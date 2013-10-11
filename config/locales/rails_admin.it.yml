@@ -1,0 +1,142 @@
+it:
+  admin:
+    loading: "Caricamento..."
+    data_import:
+      name: "Importazione Dati"
+    home:
+      name: Home
+    pagination:
+      previous: "&laquo; Precedente"
+      next: "Successivo &raquo;"
+      truncate: "…"
+    misc:
+      filter_date_format: "dd/mm/yy" # a combination of 'dd', 'mm' and 'yy' with any delimiter. No other interpolation will be done!
+      search: "Cerca"
+      filter: "Filtra"
+      refresh: "Ricarica"
+      show_all: "Mostra tutto"
+      add_filter: "Aggiungi filtro..."
+      bulk_menu_title: "Elementi selezionati..."
+      remove: "Elimina"
+      add_new: "Aggiungi nuovo"
+      chosen: "Selezionato %{name}"
+      chose_all: "Seleziona tutto"
+      clear_all: "Cancella tutto"
+      up: "Sopra"
+      down: "Sotto"
+      navigation: "Navigazione"
+      navigation_static_label: "Link Amministrativi"
+      log_out: "Esci"
+      ago: "fa"
+    flash:
+      successful: "%{name} è stato %{action} con successo"
+      error: "%{name} non ha potuto essere %{action}"
+      noaction: "Nessuna azione è stata intrapresa"
+      model_not_found: "Il modello '%{model}' non è stato trovato"
+      object_not_found: "%{model} con l'id '%{id}' non è stato trovato"
+    table_headers:
+      model_name: "Nome del modello"
+      last_used: "Ultimo utilizzo"
+      records: "Records"
+      username: "Utente"
+      changes: "Modifiche"
+      created_at: "Data/Ora"
+      item: "Elemento"
+      message: "Messaggio"
+
+    actions:
+      dashboard:
+        title: "Amministrazione del sito"
+        menu: "Pannello di controllo"
+        breadcrumb: "Pannello di controllo"
+      index:
+        title: "Lista di %{model_label_plural}"
+        menu: "Lista"
+        breadcrumb: "%{model_label_plural}"
+      show:
+        title: "Dettagli per %{model_label} '%{object_label}'"
+        menu: "Mostrare"
+        breadcrumb: "%{object_label}"
+      show_in_app:
+        menu: "Mostrare nell'applicazione"
+      new:
+        title: "Nuovo %{model_label}"
+        menu: "Aggiungere nuovo"
+        breadcrumb: "Nuovo"
+        link: "Aggiungere un nuovo %{model_label}"
+        done: "Creato"
+      edit:
+        title: "Modificare %{model_label} '%{object_label}'"
+        menu: "Modificare"
+        breadcrumb: "Modificare"
+        link: "Modificare questo %{model_label}"
+        done: "Modificato"
+      delete:
+        title: "Eliminare %{model_label} '%{object_label}'"
+        menu: "Eliminare"
+        breadcrumb: "Eliminare"
+        link: "Eliminare '%{object_label}'"
+        done: "Eliminato"
+      bulk_delete:
+        title: "Eliminare %{model_label_plural}"
+        menu: "Eliminare molteplici"
+        breadcrumb: "Eliminare molteplici"
+        bulk_link: "Eliminare %{model_label_plural} selezionato"
+      export:
+        title: "Esportare %{model_label}"
+        menu: "Esportare"
+        breadcrumb: "Esportare"
+        link: "Esportare %{model_label_plural} trovato"
+        bulk_link: "Esportare %{model_label_plural} selezionato"
+        done: "Esportato"
+      history_index:
+        title: "Cronologia per %{model_label_plural}"
+        menu: "Cronologia"
+        breadcrumb: "Cronologia"
+      history_show:
+        title: "Cronologia per %{model_label} '%{object_label}'"
+        menu: "Cronologia"
+        breadcrumb: "Cronologia"
+      data_import_results:
+        name: "Importazione dati"
+        title: "Importazione dati"
+        breadcrumb: "Importazione dati"
+        menu: "Importazione dati"
+
+    form:
+      cancel: "Cancellare"
+      basic_info: "Informazioni di base"
+      required: "Richiesto"
+      optional: "Opzionale"
+      one_char: "carattere"
+      char_length_up_to: "lunghezza fino a"
+      char_length_of: "lunghezza di"
+      save: "Salvare"
+      save_and_add_another: "Salvare ed aggiungere un'altro"
+      save_and_edit: "Salvare e Modificare"
+      all_of_the_following_related_items_will_be_deleted: "? Tutti i seguenti elementi correlati potrebbero essere eliminati o rimanere orfani:"
+      are_you_sure_you_want_to_delete_the_object: "Sei sicuro di voler eliminare questo %{model_name}"
+      confirmation: "Si, sono sicuro"
+      delete_confirmation: "Conferma di eliminazione"
+      bulk_delete: "I seguenti oggetti saranno eliminati, questo potrebbe eliminare o rendere orfana qualcuna delle loro correlate dipendenze:"
+      new_model: "%{name} (nuovo)"
+    export:      
+      confirmation: "Esportare in %{name}"
+      select: "Selezionare i campi da esportare"
+      select_all_fields: "Seleziona tutti i campi"
+      fields_from: "Campi da %{name}"
+      fields_from_associated: "Campi da %{name} associati"
+      display: "Mostrare %{name}: %{type}"
+      options_for: "Opzioni per %{name}"
+      empty_value_for_associated_objects: "<vuoto>"
+      click_to_reverse_selection: 'Cliccare per invertire la selezione'
+      csv:
+        header_for_root_methods: "%{name}" # 'model' è disponibile
+        header_for_association_methods: "%{name} [%{association}]"
+        encoding_to: "Codificare in"
+        encoding_to_help: "Scegliere come codificare l'output. Lasciare vuoto al fine di non modificare l'attuale codifica dell'input: (%{name})"
+        skip_header: "No testata"
+        skip_header_help: "Non creare output per la testata (no descrizione dei campi)"
+        default_col_sep: ","
+        col_sep: "Separatore di colonna"
+        col_sep_help: "Lasciare vuoto per il default ('%{value}')" # value is default_col_sep

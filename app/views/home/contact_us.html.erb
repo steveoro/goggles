@@ -1,0 +1,15 @@
+<div>
+	<h2><%= I18n.t(:contact_us) + ':' %></h2>
+
+	<p>Main Developer, Author: Steve A. -
+	<%= mail_to( "fasar.software@email.it" , "FASAR Software" ,
+	             :subject => I18n.t(:questions_about) + ' ' + AGEX_APP_NAME,
+	             :encode => "javascript" ) %>
+	</p>
+
+	<p>DB / Domain Architect:
+	<%= mail_to( "leegaweb@gmail.com" , "Leega" ,
+	             :subject => I18n.t(:questions_about) + ' ' + AGEX_APP_NAME,
+	             :encode => "javascript" ) %> 
+	</p>
+</div>

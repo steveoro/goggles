@@ -1,0 +1,121 @@
+<div>
+	<div class="row">
+		<div class="span3 offset1">
+			<h3>Versioning:</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1">
+			Application Framework version:
+		</div>
+		<div class="span3">
+			<b><%= h( AGEX_FRAMEWORK_VERSION ) if defined? AGEX_FRAMEWORK_VERSION %></b>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1">
+			<%= AGEX_APP_NAME %> application, version:
+		</div>
+		<div class="span3">
+			<b><%= h @versioning.send(AppParameter::PARAM_APP_NAME_FIELD) %></b> <%= show_tag( @versioning.a_bool, "time.png" ) %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1">
+			<%= AGEX_APP_NAME %> database framework, vers.:
+		</div>
+		<div class="span3">
+			<%= h @versioning.send(AppParameter::PARAM_DB_VERSION_FIELD) %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1">
+			Build date:
+		</div>
+		<div class="span3">
+			<%= h Format.a_datetime( @versioning.send( @versioning.respond_to?('updated_on') ? 'updated_on' : 'updated_at' ) ) %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1">
+			Running environment:
+		</div>
+		<div class="span6">
+			<i><b><%= h( "Rack: #{ENV['RACK_ENV']}" ) if defined? ENV %></b></i>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1"></div>
+		<div class="span6">
+			<i><b><%= h( "Rails: #{ENV['RAILS_ENV']}" ) if defined? ENV %></b></i>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span3 offset1"></div>
+		<div class="span6">
+			<i><b><%= h( "#{ENV['HOSTNAME']} (#{ENV['CPU']}, #{ENV['MACHTYPE']})" ) if defined? ENV %></b></i>
+		</div>
+	</div>
+</div>
+
+<br/>
+
+<div>
+	<div class="row">
+		<div class="span1 offset1">
+			<a href="http://www.rubyonrails.org/">
+			<%= image_tag( 'rails.png', height: '32', alt: 'Rails Logo' ) %>
+			</a>
+		</div>
+		<div class="span6">
+	        <p>
+	          Developed by Stefano Alloro, using <a href="http://www.rubyonrails.org/">Ruby On Rails</a><%= '(vers. ' + h( RAILS_GEM_VERSION ) + ')' if defined? RAILS_GEM_VERSION %>.
+	        </p>
+	        <p>
+	          AgeX Framework structure (p) 2006-2013,
+			  <%= image_tag( 'fasar_logo_1.png', size: '256x32', alt: 'FASAR Software' ) %>
+	        </p>
+		</div>
+	</div>
+</div>
+
+<br/>
+
+<div>
+	<div class="row">
+		<div class="span6 offset1">
+			<h3>Core extensions:</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span1 offset1">
+	      	<a href="http://rubyreports.org/">
+			<%= image_tag( 'ruport.png', size: '96x48', alt: 'Ruport' ) %>
+			</a>
+		</div>
+		<div class="span6">
+	        <p>
+	          RubyReports, a ruby gem library for easy(er) reporting.
+	        </p>
+		</div>
+	</div>
+</div>
+
+<br/>
+
+<div>
+	<div class="row">
+		<div class="span6 offset1">
+			<h3>Installed Gems:</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="span4 offset1">
+			<ul>
+			<% @gem_info.each do |row| %>
+				<li><%= row %></li>
+			<% end %>
+			</ul>
+		</div>
+	</div>
+</div>

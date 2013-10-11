@@ -1,0 +1,830 @@
+it:
+  admin_import:
+    title: "Admin/Importazione Dati"
+    menu: "Importazione Dati"
+    import_event_results_title: "Importa risultati Evento"
+    import_text: "Testo originale"
+    conflicting_row: "Riga in conflitto"
+    missing_data_warning: "(MODIFICAMI: DATI MANCANTI!)"
+    session: "Sessione di Import. Dati"
+    fin_results: "Risultati FIN"
+    csi_results: "Risultati CSI"
+    fin_starting_list: "Starting-list FIN"
+    csi_starting_list: "Starting-list CSI"
+    back_to_admin: "Admin"
+    step_1: "Passo 1"
+    step_2: "Passo 2"
+    step_2_1: "2.1: Stagione/Meeting"
+    step_2_2: "2.2: Sessione/Programma"
+    step_2_3: "2.3: Nuotatori"
+    step_2_4: "2.4: Team"
+    step_2_5: "2.5: Citta'"
+    step_2_6: "2.6: Badge"
+    step_2_7: "2.7: Risultati"
+    step_3: "Passo 3"
+    nothing_to_do_select_season: "Non hai selezionato la Stagione!"
+    nothing_to_do_upload_something: "Non hai fatto l'upload di nulla. Scegli un file prima di proseguire!"
+    season_not_saved_in_session: "L'ID Stagione non e' stato salvato nella Sessione di Data-Import! Questa Sessione ha dati corrotti!"
+    missing_session_parameter: "Manca il parametro di ID sessione (di importazione dati)!"
+
+
+  swimmers:
+    last_name: "Cognome"
+    first_name: "Nome"
+    year_of_birth: "Data di nascita"
+    phone_mobile: "Cellulare"
+    phone_mobile2: "Tel. alt."
+    e_mail: "e-mail"
+    nickname: "Nickname"
+
+  gender_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    i18n_short_m: "MAS"
+    i18n_description_m: "MASCHILE"
+    i18n_gender_type_m: "M"
+    i18n_short_f: "FEM"
+    i18n_description_f: "FEMMINILE"
+    i18n_gender_type_f: "F"
+    i18n_short_x: "misto"
+    i18n_description_x: "misto"
+    i18n_gender_type_x: "x"
+
+  presence_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    value: "Valore"
+    i18n_short_p: "PRE"
+    i18n_description_p: "PRESENTE"
+    i18n_short_r: "RIT"
+    i18n_description_r: "INGRESSO in RITARDO"
+    i18n_short_u: "USC"
+    i18n_description_u: "USCITA ANTICIPATA"
+    i18n_short_a: "ASS"
+    i18n_description_a: "ASSENTE"
+
+  pool_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    length_in_meters: "Lungh."
+
+  federation_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    description: "Descrizione"
+    short_name: "Sigla"
+
+  season_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    description: "Descrizione"
+    short_name: "Sigla"
+
+  stroke_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    i18n_short_sl: "SL"
+    i18n_description_sl: "STILE LIBERO"
+    i18n_short_fa: "FA"
+    i18n_description_fa: "FARFALLA"
+    i18n_short_do: "DO"
+    i18n_description_do: "DORSO"
+    i18n_short_ra: "RA"
+    i18n_description_ra: "RANA"
+    i18n_short_mi: "MI"
+    i18n_description_mi: "MISTI"
+
+  shower_types:
+    code: "Cod."
+    i18n_short_G: "GRATUITA"
+    i18n_description_G: "GRATUITA"
+    i18n_short_2: "20 CENT."
+    i18n_description_2: "MONETA DA 20 CENT."
+    i18n_short_C: "CHIAVETTA"
+    i18n_description_C: "CHIAVETTA"
+    i18n_short_B: "BADGE"
+    i18n_description_B: "BADGE"
+    
+  hair_dryer_types:
+    code: "Cod."
+    i18n_short_G: "GRATUITO"
+    i18n_description_G: "GRATUITO"
+    i18n_short_2: "20 CENT."
+    i18n_description_2: "PAGAMENTO MONETA DA 20 CENT."
+    i18n_short_C: "CHIAVETTA"
+    i18n_description_C: "CHIAVETTA"
+    i18n_short_B: "BADGE"
+    i18n_description_B: "BADGE"
+    i18n_short_T: "PRESA SCHUKO TEDESCA"
+    i18n_description_T: "PRESE DI CORRENTE TEDESCHE"
+    i18n_short_P: "PRESA PICCOLA (12A)"
+    i18n_description_P: "PRESE DI CORRENTE PICCOLE 12A"
+    i18n_short_E: "PRESA GRANDE (16A)"
+    i18n_description_E: "PRESE DI CORRENTE GRANDI 16A"
+    i18n_short_U: "PRESA UNIVERSALE"
+    i18n_description_U: "PRESE DI CORRENTE UNIVERSALI"
+    
+  locker_cabinet_types:
+    code: "Cod."
+    i18n_short_G: "GRANDE"
+    i18n_description_G: "LUCCHETTO GRANDE"
+    i18n_short_P: "PICCOLO"
+    i18n_description_P: "LUCCHETTO PICCOLO"
+    i18n_short_C: "CHIAVE"
+    i18n_description_C: "CHIAVE A NOLEGGIO"
+    i18n_short_N: "NESSUNO"
+    i18n_description_N: "NESSUNA SICUREZZA"
+    i18n_short_2: "20 CENT."
+    i18n_description_2: "MONETA DA 20 CENT."
+    i18n_short_B: "BADGE"
+    i18n_description_B: "BADGE"
+    i18n_short_0: "COMBINAZIONE"
+    i18n_description_0: "COMBINAZIONE (GIA'' PRESENTE)"
+    i18n_short_5: "50 CENT."
+    i18n_description_5: "MONETA DA 50 CENT."
+
+  disqualification_code_types:
+    code: "Cod."
+    i18n_short_GA: ""
+    i18n_description_GA: "Falsa partenza"
+    i18n_short_GB: ""
+    i18n_description_GB: "Ritardo nella presentazione"
+    i18n_short_GC: ""
+    i18n_description_GC: "Comportamento antisportivo"
+    i18n_short_GD: ""
+    i18n_description_GD: "Interferenze con un altro nuotatore"
+    i18n_short_GE: ""
+    i18n_description_GE: "Non ha nuotato nello stile previsto"
+    i18n_short_GF: ""
+    i18n_description_GF: "Non ha nuotato la distanza prevista"
+    i18n_short_GG: ""
+    i18n_description_GG: "Ha terminato in una corsia differente da quella di partenza"
+    i18n_short_GH: ""
+    i18n_description_GH: "In piedi durante la nuotata (non a stile libero)"
+    i18n_short_GI: ""
+    i18n_description_GI: "Ha nuotato nella corsia errata"
+    i18n_short_GJ: ""
+    i18n_description_GJ: "Si è avvalso di aiuti"
+    i18n_short_GK: ""
+    i18n_description_GK: "Non ha terminato la gara"
+    i18n_short_GL: ""
+    i18n_description_GL: "Si è tirato alla corsia"
+    i18n_short_GM: ""
+    i18n_description_GM: "Indossato un costume non approvato dalla FINA"
+    i18n_short_BaA: ""
+    i18n_description_BaA: "Dita dei piedi sopra la superficie dell''acqua in partenza"
+    i18n_short_BaB: ""
+    i18n_description_BaB: "La testa non è emersa entro i primi 15 metri dopo partenza o virate"
+    i18n_short_BaC: ""
+    i18n_description_BaC: "Spalle oltre la verticale"
+    i18n_short_BaD: ""
+    i18n_description_BaD: "Non ha toccato ad una virata o all''arrivo"
+    i18n_short_BaE: ""
+    i18n_description_BaE: "Posizione non sul dorso"
+    i18n_short_BaF: ""
+    i18n_description_BaF: "Non ha terminato in posizione a dorso"
+    i18n_short_BaG: ""
+    i18n_description_BaG: "Sulla pancia in virata: azione di virata non continua"
+    i18n_short_BaH: ""
+    i18n_description_BaH: "Sulla pancia in virata: azione di gambe indipendente"
+    i18n_short_BaI: ""
+    i18n_description_BaI: "Sulla pancia in virata: azione di braccia indipendente"
+    i18n_short_BfA: ""
+    i18n_description_BfA: "La testa non è emersa entro i primi 15 metri dopo partenza o virate"
+    i18n_short_BfB: ""
+    i18n_description_BfB: "Più di una trazione subacquea dopo partenza o virata"
+    i18n_short_BfC: ""
+    i18n_description_BfC: "Posizione non sul petto"
+    i18n_short_BfD: ""
+    i18n_description_BfD: "Movimento delle braccia non simultaneo"
+    i18n_short_BfE: ""
+    i18n_description_BfE: "Recupero delle braccia non simultaneo"
+    i18n_short_BfF: ""
+    i18n_description_BfF: "Movimento dei piedi non eseguito nello stesso modo"
+    i18n_short_BfG: ""
+    i18n_description_BfG: "Non ha toccato il muro in virata o arrivo con entrambe le mani simultaneamente"
+    i18n_short_BfH: ""
+    i18n_description_BfH: "Non ha toccato alla virata o all''arrivo"
+    i18n_short_BfI: ""
+    i18n_description_BfI: "Movimento delle braccia non continuo durante la gara"
+    i18n_short_BrA: ""
+    i18n_description_BrA: "La testa non ha rotto la superficie dell''acqua nel secondo ciclo"
+    i18n_short_BrB: ""
+    i18n_description_BrB: "La testa non ha rotto la superficie dell''acqua durante ogni ciclo"
+    i18n_short_BrC: ""
+    i18n_description_BrC: "Movimento delle braccia non simultaneo sul piano orizzontale"
+    i18n_short_BrD: ""
+    i18n_description_BrD: "Movimento delle gambe non simultaneo sul piano orizzontale"
+    i18n_short_BrE: ""
+    i18n_description_BrE: "Mani non portate in avanti, sopra o sotto la superficie dell''acqua"
+    i18n_short_BrF: ""
+    i18n_description_BrF: "Gomito non sempre sommerso"
+    i18n_short_BrG: ""
+    i18n_description_BrG: "Piedi non ruotati all''esterno durante la parte propulsiva del calcio"
+    i18n_short_BrH: ""
+    i18n_description_BrH: "Non ha toccato il muro in virata o arrivo con entrambe le mani simultaneamente"
+    i18n_short_BrI: ""
+    i18n_description_BrI: "Posizione non sul petto all''inizio del primo ciclo di braccia"
+    i18n_short_BrJ: ""
+    i18n_description_BrJ: "Colpo di gambe a delfino non consentito"
+    i18n_short_BrK: ""
+    i18n_description_BrK: "Ciclo di nuotata interrotto"
+    i18n_short_BrL: ""
+    i18n_description_BrL: "Più di un colpo di gambe a delfino in partenza o virata"
+    i18n_short_FrA: ""
+    i18n_description_FrA: "Non ha toccato ad una virata o all''arrivo"
+    i18n_short_FrB: ""
+    i18n_description_FrB: "Nuotato più di 15 metri sott''acqua dopo partenza o virata"
+    i18n_short_FrC: ""
+    i18n_description_FrC: "Camminato o spinto sul fondo"
+    i18n_short_IMA: ""
+    i18n_description_IMA: "Frazione a stile nuotata a dorso, delfino o rana"
+    i18n_short_IMB: ""
+    i18n_description_IMB: "Stili nuotati in ordine non corretto"
+    i18n_short_IMC: ""
+    i18n_description_IMC: "Errore tecnico di uno degli stili (vedi cod. stile)"
+    i18n_short_RA2: ""
+    i18n_description_RA2: "Cambio anticipato frazione 2"
+    i18n_short_RA3: ""
+    i18n_description_RA3: "Cambio anticipato frazione 3"
+    i18n_short_RA4: ""
+    i18n_description_RA4: "Cambio anticipato frazione 4"
+    i18n_short_RB: ""
+    i18n_description_RB: "Stili nuotati in ordine non corretto"
+    i18n_short_RC: ""
+    i18n_description_RC: "Ordine frazionisti cambiato"
+    i18n_short_RD: ""
+    i18n_description_RD: "Frazionista non in elenco"
+    i18n_short_RE1: ""
+    i18n_description_RE1: "Errore tecnico di nuotata frazionista 1"
+    i18n_short_RE2: ""
+    i18n_description_RE2: "Errore tecnico di nuotata frazionista 2"
+    i18n_short_RE3: ""
+    i18n_description_RE3: "Errore tecnico di nuotata frazionista 3"
+    i18n_short_RE4: ""
+    i18n_description_RE4: "Errore tecnico di nuotata frazionista 4"
+    i18n_short_RF: ""
+    i18n_description_RF: "Nuotatore non ammesso nell'area cambio"
+
+  event_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    length_in_meters: "Lungh."
+    style_order: "Ord. stile"
+
+  category_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    federation_code: "Cod.Federazione"
+    description: "Descrizione"
+    short_name: "Sigla"
+    group_name: "Gruppo"
+    age_begin: "Da Anni"
+    age_end: "Ad Anni"
+
+  accreditation_time_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    i18n_short_m: "MAN"
+    i18n_description_m: "MANUALE"
+    i18n_short_p: "PER"
+    i18n_description_p: "PERSONALE"
+    i18n_short_o: "OBE"
+    i18n_description_o: "OBERCUP"
+    i18n_short_a: "APR"
+    i18n_description_a: "ANNO PRECEDENTE"
+    i18n_short_u: "ULT"
+    i18n_description_u: "ULTIMA GARA"
+
+  passage_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    length_in_meters: "Lungh."
+
+  relay_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    mixed_gender: "Sesso misto"
+    partecipants: "Partecipanti"
+    phases: "Num.Frazioni"
+    phase_length_in_meters: "Lungh.fraz.(mt.)"
+    relay: "Staff."
+    relay_short: "St."
+    mixed_relay: "Mistaff."
+    mixed_relay_short: "Ms."
+
+  events_by_pool_types:
+    pool_type_id: "ID Tipo Piscina"
+    event_type_id: "ID Tipo Evento"
+
+  result_types:
+    code: "Cod."
+    is_valid: "Valido?"
+    default_value: "Default"
+    i18n_short_b: "BAT"
+    i18n_description_b: "BATTERIE"
+    i18n_short_s: "SEM"
+    i18n_description_s: "SEMIFINALI"
+    i18n_short_f: "FIN"
+    i18n_description_f: "FINALI"
+
+  swimmer:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Nuotatori! (tab: 'swimmers')"
+
+  team:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Squadre! (tab: 'teams')"
+
+  badge:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Cartellini! (tab: 'badges')"
+
+  city:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Citta'! (tab: 'cities')"
+
+  season:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Stagioni'! (tab: 'seasons')"
+
+  meeting:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
+
+  meeting_session:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
+
+  meeting_program:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_programs')"
+
+  meeting_individual_result:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Risultati Individ. Meeting'! (tab: 'meeting_individual_results')"
+
+  meeting_relay:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Staffette Meeting'! (tab: 'meeting_relays')"
+
+  meeting_relay_result:
+    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Risultati Staff. Meeting'! (tab: 'meeting_relay_results')"
+
+
+  agex_action:
+    main: Principale
+    home: "Home"
+    home_tooltip: "Vai alla pagina principale"
+    login: "Login"
+    logout: "Esci / Rientra"
+    logout_tooltip: "Esci (effettua il Log-out richiedendo un nuovo log-in)"
+    about: "Informazioni"
+    about_tooltip: "Vai alla pagina Informazioni"
+    contact_us: "Contattaci"
+    contact_us_tooltip: "Vai alla pagina 'Contattaci'"
+    news_log: "Archivio news"
+    news_log_tooltip: "Vai alla pagina 'Archivio news'"
+    sub_entities: "Sotto-entita'"
+    sub_entities_tooltip: "Vai alla pagina di gestione Sotto-entita'"
+    whos_online: "Chi e' on-line"
+    whos_online_tooltip: "Vai alla pagina 'Chi e' on-line'"
+
+    data_filtered_from: "Dati filtrati a partire dal"
+    data_filtered_to: "al"
+
+    articles: "Articoli Blog"
+    articles_tooltip: "Vai alla pagina di gestione degli Articoli del Blog interno"
+
+    manage_system: "Gestione Sistema"
+    users: Utenti
+    users_tooltip: "Gestisci la lista degli Utenti"
+    edit_current_user: "Modifica profilo Utente"
+    edit_current_user_tooltip: "Modifica il tuo profilo Utente o cambia la password utilizzata"
+    app_parameters: Parametri Applicazione
+    app_parameters_tooltip: "Gestisci la lista dei Parametri interni dell'Applicazione"
+    go_to_date: 'Trova la data'
+
+
+  something_went_wrong: "Qualcosa e' andato storto, controllare il file di log."
+  transaction_cancelled: "Transazione annullata."
+  missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"
+  invalid_action_request: "Azione richiesta non valida!"
+  main: 'Principale:'
+  home: Home
+  login: Login
+  logout: Disconnetti
+  sign_up: "Registrati!"
+  about: Informazioni
+  contact_us: Contattaci
+  questions_about: Domande riguardanti
+  sections: 'Sezioni:'
+  setup: 'Setup:'
+  user: Utente
+  user_name: Nome utente
+  login_to_proceed: "Per continuare e' necessario fare Log-in." 
+  login_tooltip: Accedi
+  password: Password
+  user_not_authenticated: 'Utente non registrato'
+  invalid_user: "Utente / Password non corretti!"
+  access_denied: "Accesso negato."
+  disconnected: Disconnesso
+  welcome: 'Benvenuti !'
+  hi: Ciao
+  user_created: Utente creato con successo.
+  user_deleted: Utente eliminato con successo.
+  req_functionality_under_development: "La funzionalita' richiesta non e' attualmente disponibile perche' e' stata sottoposta a revisione o ci sono lavori di manutenzione in corso."
+
+  no_new_articles: Nessun nuovo articolo
+  select_file: "Scegli un file"
+  commit_rows: "Concludi"
+  commit_rows_tooltip: "Conclude l'importazione dati, salvando tutte le righe elencate nella loro destinazione"
+  existing_data_import_sessions: "Sessioni di importazione dati esistenti o in progresso"
+  last_phase: "Ultima fase"
+  data_rows: "Righe dati"
+  data_format: "Formato"
+  select_create_session: "Seleziona / Crea sessione"
+  review_edit_data: "Rivedi / Modifica dati"
+  continue_on_phase2: "Continua con Fase 2"
+  result_log: "Log risultato"
+  please_select: "-- Scegli --"
+  please_wait: "Attendi..."
+
+  id: Id
+  name: Nome
+  description: Descrizione
+  tot: Tot.
+  sum: 'Somma'
+  mean: 'Media'
+  notes: Note
+  tag: Tag
+  created_at: Creato il
+  updated_at: Modificato il
+  created_on: Creato il
+  updated_on: Modificato il
+  created_slash_updated_at: "Creato/Aggiorn. il"
+  created_slash_updated_on: "Creato/Aggiorn. il"
+  details_for: Dettagli per
+  refresh: Aggiorna
+  refresh_tooltip: "Ricarica i dati per la pagina corrente"
+  click_on_the_grid: "(Clicca sulla griglia per contare)"
+  tot_rows: "Righe tot."
+  selected: Selezionate
+  grand_total: Totale Complessivo
+  subtotals: Subtotali
+  sums: Somme
+  costs: Costi
+  error: Errore
+  undefined: "(non definito)"
+  in_conflict: "In conflitto"
+
+  meters: "metri"
+  meters_short: "mt."
+  athletes: "atleti"
+
+  warning_no_data_to_send: "Non ci sono righe dati da elaborare!"
+  drag_to_resize: "Trascina per ridimensionare le aree"
+  show_details_tooltip: "Mostra i dettagli della riga selezionata in una finestra pop-up"
+  add: Aggiungi
+  edit: Modifica
+  user: Utente
+  manage_details: Gestisci dettagli
+  manage_details_tooltip: "Gestisci nei dettagli l'elemento selezionato [anche: SPAZIO o INVIO dopo aver selezionato la riga]"
+  row_added: "Riga aggiunta con successo."
+  some_rows_were_skipped_because_invoiced: "Alcune righe sono state escluse perche' erano gia' state fatturate."
+  some_rows_were_skipped_because_not_invoiced: "Alcune righe sono state escluse perche' non avevano ricevuta."
+
+  reporting: "Report"
+  data_export: "Esportazioni"
+  add_default_row: "Aggiungi righe 'default'"
+
+  user__name: Utente
+  authorization_level: "Livello Autorizz."
+  password_confirmation: Conferma password
+  password_missing: "Password mancante"
+  salt: "Cod. salt"
+  hashed_pwd: "Hashed Pwd."
+  session_deleted: "Sessione eliminata."
+  unable_to_delete_session: "Impossibile eliminare la sessione."
+  upload_failed: "Upload fallito!"
+  upload: "Upload"
+  keep_offline: "Mantieni off-line"
+  warning_no_import_data_session_found: "Non e' stata trovata nessuna sessione di importazione dati."
+  uploaded_files_still_present: "Files caricati e ancora presenti"
+
+  enable_blog: "Blogger?"
+  enable_edit: "Puo'modif.?"
+  enable_delete: "Puo'canc.?"
+  enable_setup: "Setup abil.?"
+  authorization_level: "Liv.Autorizz."
+
+  edit_inline: Modifica su griglia
+  edit_in_form: Modifica in finestra
+  show_details: Mostra dettagli
+  details: Dettagli di riga
+  search: Cerca
+
+  articles_list: Elenco Articoli
+  articles: Articoli
+  title: Titolo
+  entry_text: Testo
+  is_sticky: "Perman.?"
+  le_user__name: Utente
+
+  sub_entities_management: "Gestione sotto-entita'"
+
+  enable_blog_tooltip: "Abilita/disabilita il permesso di creare articoli di Blog per questo utente"
+  enable_edit_tooltip: "Abilita/disabilita il permesso di modificare righe dati (entita' principali) per questo utente"
+  enable_delete_tooltip: "Abilita/disabilita il permesso di eliminare righe dati (entita' principali) per questo utente"
+  enable_setup_tooltip: "Abilita/disabilita il permesso gestione entita' secondarie (di look-up) per questo utente"
+
+  cities: "Citta'"
+  users: Utenti
+  code: Cod.
+  zip: CAP
+  area: Provincia
+  country: "Paese / Nazione"
+  country_code: Sigla Nazione
+  display_symbol: Simbolo
+  is_a_parent: "Macrotipo?"
+  value_format: Formato
+  source_currency: Origine
+  destination_currency: Destinazione
+  date_exchange: Data Cambio
+  factor: Fattore
+  comment: Commento
+
+  privacy_statement: "<b>Informativa sintetica sulla Privacy</b> - Nel rispetto delle ultime versioni della normativa sulla tutela dei dati personali, vi informiamo che gli eventuali dati in nostro possesso, acquisiti durante il corso dei rapporti di collaborazione o consulenza appena compiuti, saranno conservati e utilizzati esclusivamente a fine amministrativo e fiscale. In qualsiasi momento potete richiederne l'eliminazione o la rettifica rivolgendovi direttamente al titolare del nostro studio."
+
+  netzke:
+    basepack:
+      grid_panel:
+        actions:
+          add: Aggiungi
+          edit: Modifica
+          del: Elimina
+          apply: Applica
+          add_in_form: Aggiungi su form
+          edit_in_form: Modifica su form
+          search: Cerca
+
+        deleted_n_records: "%{n} record eliminati"
+        cannot_delete: "Non hai l'autorizzazione per eliminare dati"
+        confirmation: Conferma
+        are_you_sure: Siamo sicuri di voler continuare?
+
+        record_form_window:
+          actions:
+            ok: OK
+            cancel: Annulla
+
+      search_window:
+        title: Ricerca estesa
+        actions:
+          search: Cerca
+          cancel: Annulla
+        action:
+          search: Cerca
+          cancel: Annulla
+
+      form_panel:
+        actions:
+          edit: Modifica
+          edit_tooltip: Modifica
+          cancel: Annulla
+          cancel_tooltip: Annulla le modifiche
+          apply: Applica
+          apply_tooltip: Applica le modifiche
+
+      search_panel:
+        presets: Valori predefiniti
+        equals: Uguale
+        greater_than: Maggiore di
+        less_than: Minore di
+        contains: Contiene
+        matches: Uguale
+        date_equals: "esattamente il"
+        before: Prima
+        after: Dopo
+
+      paging_form_panel:
+        actions:
+          search: Ricerca
+          search_tooltip: Ricerca estesa
+
+      query_builder:
+        presets: Preset
+        preset_saved: Preset salvato
+        preset_deleted: Preset cancellato
+        overwrite_confirm: "Sicuri di voler sovrascrivere il preset '{0}'?"
+        overwrite_confirm_title: "Sovrascrittura preset"
+        delete_confirm: "Sicuri di voler eliminare il preset '{0}'?"
+        delete_confirm_title: "Eliminazione preset"
+        actions:
+          clear_all: Ripulisci
+          clear_all_tooltip: Ripulisci tutte le condizioni
+          reset: Reset
+          reset_tooltip: "Reset di tutte le condizioni"
+          save_preset: Salva preset
+          save_preset_tooltip: Salva preset
+          delete_preset: Elimina preset
+          delete_preset_tooltip: Elimina preset
+          apply: Applica
+          apply_tooltip: Applica le condizioni aggiornate
+
+    formats:
+      date: Y-m-d
+      datetime: Y-m-d H:i:s
+      time: H:i:s
+
+
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      # When no format has been given, it uses default.
+      # You can provide other formats here if you like!
+      default: "%d-%m-%Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+
+    day_names: [Domenica, Lunedì, Martedì, Mercoledì, Giovedì, Venerdì, Sabato]
+    abbr_day_names: [Dom, Lun, Mar, Mer, Gio, Ven, Sab]
+
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, Gennaio, Febbraio, Marzo, Aprile, Maggio, Giugno, Luglio, Agosto, Settembre, Ottobre, Novembre, Dicembre]
+    abbr_month_names: [~, Gen, Feb, Mar, Apr, Mag, Giu, Lug, Ago, Sett, Ott, Nov, Dic]
+    # Used in date_select and datime_select.
+    order: [ :year, :month, :day ]
+
+  time:
+    formats:
+      default: "%a %d-%m-%Y %H:%M:%S %z"
+      short: "%d-%m %H:%M"
+      long: "%B %d, %Y %H:%M"
+    am: "AM"
+    pm: "PM"
+
+# Used in array.to_sentence.
+  support:
+    array:
+      words_connector: ", "
+      two_words_connector: " e "
+      last_word_connector: ", e "
+
+
+  activerecord:
+    models:
+      user: Utente
+      article: Articolo
+      category_type: "Tipo Categoria"
+      city: "Citta'"
+      data_import_city: "Citta' (tab. temp.)"
+      event_type: "Tipo Evento"
+      result_type: "Tipo Risultato"
+      season_type: "Tipo Stagione"
+      season: "Stagione"
+      data_import_season: "Stagione (tab. temp.)"
+      meeting: "Meeting"
+      data_import_meeting: "Meeting (tab. temp.)"
+      meeting_session: "Sessione Meeting"
+      data_import_meeting_session: "Sessione Meeting (temp.)"
+      meeting_program: "Programma Meeting"
+      data_import_meeting_program: "Programma Meeting (temp.)"
+      meeting_individual_result: "Ris. Individ. Meeting"
+      data_import_meeting_individual_result: "Ris. Ind. Meeting (temp.)"
+      swimmer: "Nuotatore"
+      data_import_swimmer: "Nuotatore (tab. temp.)"
+      swimming_pool: "Piscina"
+      team: "Squadra"
+      data_import_team: "Squadra (tab. temp.)"
+      badge: "Cartellino"
+      data_import_badge: "Cartellino (tab. temp.)"
+      meeting_relay: "Staffetta Meeting"
+      data_import_meeting_relay: "Staffetta Meeting (temp.)"
+      meeting_relay_result: "Risultato Staff. Meeting"
+      data_import_meeting_relay_result: "Risult. Staff. Meeting (temp.)"
+      meeting_relay_swimmer: "Nuotatore Staff. Meeting"
+      data_import_meeting_team_score: "Punteggio Squadra (temp.)"
+      meeting_team_score: "Punteggio Squadra"
+      relay_type: "Tipo Staff."
+      gender_type: "Sesso"
+      stroke_type: "Stile"
+      accreditation_time_type: "Tipo Tempo Accred."
+
+    attributes:
+      user:
+        created_on: Creato il
+        updated_on: Ultima modifica
+        name: Nome
+        hashed_pwd: Password codificata
+        password_confirmation: Conferma password
+        description: "Descrizione / nome completo"
+        enable_blog: "Blogger?"
+        enable_edit: "Puo' modificare?"
+        enable_delete: "Puo' eliminare?"
+        enable_setup: Abilita set-up
+        authorization_level: Liv. autorizz.
+      article:
+        user: Nome utente
+        title: Titolo
+        entry_text: Testo
+        is_sticky: "Perman.?"
+      city:
+        name: Nome
+        zip: CAP
+        area: Provincia
+        country: Nazione
+        country_code: "Cod.Nazione"
+      season:
+        begin_date: "Inizia il"
+        end_date: "Finisce il"
+        must_use_time_standards: "Usa tempi std?" 
+        max_points: "Max punti"
+      meeting:
+        entry_deadline: "Limite registraz."
+        has_warm_up_pool: "Con piscina di risc.?"
+        is_under_25_admitted: "Ammessi under-25?"
+        reference_phone: "Tel. di riferim."
+        reference_e_mail: "e-mail di riferim."
+        reference_name: "Nome referente"
+        has_invitation: "C'e' l'invito?"
+        has_start_list: "C'e' la starting-list?"
+        are_results_acquired: "Risult. acquisiti?"
+        max_individual_events: "Max eventi x atleta"
+        configuration_file: "File di config."
+        challenge_number: "Numero Gara"
+      meeting_session:
+        session_order: "Ord. sessione"
+        scheduled_date: "Data prevista"
+        warm_up_time: "Data riscaldam."
+        begin_time: "Data/Ora inizio"
+      meeting_program:
+        event_order: "Ord. evento"
+        begin_time: "Ora inizio"
+        minutes: "Min."
+        seconds: "Sec."
+        hundreds: "Cent."
+      meeting_individual_result:
+        athlete_name: "Nome Atleta"
+        team_name: "Nome Squadra"
+        athlete_badge_number: "Cartellino #" 
+        team_badge_number: "Cod. squadra"
+        year_of_birth: "Data nascita"
+        rank: "Posizione"
+        is_play_off: "Finale?"
+        is_out_of_race: "Fuori gara?"
+        is_disqualified: "Squalif.?"
+        standard_points: "Punt. std."
+        meeting_points: "Punt. meeting"
+        minutes: "Min."
+        seconds: "Sec."
+        hundreds: "Cent."
+      swimmer:
+        last_name: "Cognome"
+        first_name: "Nome"
+        complete_name: "Nome completo"
+        year_of_birth: "Data nascita"
+        phone_mobile: "Cellulare"
+        phone_number: "Telefono"
+        e_mail: "e-mail"
+        nickname: "Nickname"
+        gender_type: "Sesso"
+        associated_user_id: "Utente associato"
+      team:
+        name: Nome
+        address: "Indirizzo"
+        phone_mobile: "Cellulare"
+        phone_number: "Telefono"
+        e_mail: "e-mail"
+        fax_number: "FAX" 
+        contact_name: "Contatto"
+        badge_number: "N.Cartellino"
+      badge:
+        number: "N.Cartellino"
+
+      meeting_relay_result:
+        rank: "Posizione"
+        is_play_off: "Finale?"
+        is_out_of_race: "Fuori gara?"
+        is_disqualified: "Squalif.?"
+        standard_points: "Punt. std."
+        meeting_points: "Punt. meeting"
+        minutes: "Min."
+        seconds: "Sec."
+        hundreds: "Cent."
+      meeting_relay_swimmer:
+        relay_order: "Ordine"
+      meeting_team_score:
+        rank: "Posizione"
+        total_individual_points: "Punti individ."
+        total_relay_points: "Punti Staff."
+
+    errors:
+      unable_to_retrieve_row_data: "Non ho trovato il record richiesto."
+
+      models:
+        article:
+          attributes:
+            user:
+              invalid: "non valido"
+              blank: "non puo' essere vuoto (va scelto dall'elenco)"
+            title:
+              too_long: "troppo lungo (max. 80 caratteri)"
+              too_short: troppo corto
+              blank: "non puo' essere vuoto (minimo 1 carattere)"
+            entry_text:
+              blank: "non puo' essere vuoto (minimo 1 carattere)"
+      category_type:
+        attributes:
+          code:
+            already_exists: "esiste gia'"

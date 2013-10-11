@@ -1,0 +1,705 @@
+en:
+  admin_import:
+    title: "Admin/Data Import"
+    menu: "Data Import"
+    import_event_results_title: "Import Event results data"
+    import_text: "Original text"
+    conflicting_row: "Conflicting row"
+    missing_data_warning: "(EDIT ME: MISSING DATA!)"
+    session: "Data Import Session"
+    fin_results: "FIN Results"
+    csi_results: "CSI Results"
+    fin_starting_list: "FIN Starting-list"
+    csi_starting_list: "CSI Starting-list"
+    back_to_admin: "Goggles/Admin"
+    step_1: "Step 1"
+    step_2: "Step 2"
+    step_2_1: "2.1: Season/Meeting"
+    step_2_2: "2.2: Session/Program"
+    step_2_3: "2.3: Swimmers"
+    step_2_4: "2.4: Teams"
+    step_2_5: "2.5: Cities'"
+    step_2_6: "2.6: Badges"
+    step_2_7: "2.7: Results"
+    step_3: "Step 3"
+    nothing_to_do_upload_something: "You haven't uploaded anything. Select a file for upload!"
+    nothing_to_do_select_season: "You haven't selected the Season!"
+    season_not_saved_in_session: "Season ID was not saved in Data-Import Session! This session data is corrupted!"
+    missing_session_parameter: "The session ID parameter is missing!"
+
+
+  swimmers:
+    last_name: "Surname"
+    first_name: "Name"
+    year_of_birth: "Year of Birth"
+    phone_mobile: "Mobile #"
+    phone_mobile2: "Alt. Phone"
+    e_mail: "e-mail"
+    nickname: "Nickname"
+
+  gender_types:
+    code: "Code"
+    is_valid: "Valid?"
+    i18n_short_m: "MEN"
+    i18n_description_m: "MEN"
+    i18n_gender_type_m: "M"
+    i18n_short_f: "WOM"
+    i18n_description_f: "WOMEN"
+    i18n_gender_type_f: "W"
+    i18n_short_x: "mixed"
+    i18n_description_x: "mixed"
+    i18n_gender_type_x: "x"
+
+  presence_types:
+    code: "Code"
+    is_valid: "Valid?"
+    value: "Value"
+    i18n_short_p: "PRE"
+    i18n_description_p: "PRESENT"
+    i18n_short_r: "LAT"
+    i18n_description_r: "LATE ARRIVAL"
+    i18n_short_u: "OUT"
+    i18n_description_u: "EARLY OUT"
+    i18n_short_a: "ABS"
+    i18n_description_a: "ABSENT"
+
+  pool_types:
+    code: "Code"
+    is_valid: "Valid?"
+    length_in_meters: "Length"
+
+  federation_types:
+    code: "Code"
+    is_valid: "Valid?"
+    description: "Description"
+    short_name: "Short name"
+
+  season_types:
+    code: "Code"
+    is_valid: "Valid?"
+    description: "Description"
+    short_name: "Short name"
+
+  stroke_types:
+    code: "Code"
+    is_valid: "Valid?"
+    i18n_short_sl: "FRST"
+    i18n_description_sl: "FREESTYLE"
+    i18n_short_fa: "BFLY"
+    i18n_description_fa: "BUTTERFLY"
+    i18n_short_do: "BACK"
+    i18n_description_do: "BACKSTROKE"
+    i18n_short_ra: "BRST"
+    i18n_description_ra: "BREASTSTROKE"
+    i18n_short_mi: "MIX"
+    i18n_description_mi: "MIXED"
+
+  shower_types:
+    code: "code"
+    i18n_short_G: "FREE"
+    i18n_description_G: "FREE"
+    i18n_short_2: "20 CENT."
+    i18n_description_2: "20 CENT COIN"
+    i18n_short_C: "KEY"
+    i18n_description_C: "KEY"
+    i18n_short_B: "BADGE"
+    i18n_description_B: "BADGE"
+    
+  hair_dryer_types:
+    code: "code"
+    i18n_short_G: "FREE"
+    i18n_description_G: "FREE"
+    i18n_short_2: "20 CENT."
+    i18n_description_2: "20 CENT COIN"
+    i18n_short_C: "KEY"
+    i18n_description_C: "KEY"
+    i18n_short_B: "BADGE"
+    i18n_description_B: "BADGE"
+    i18n_short_T: "GERMAN"
+    i18n_description_T: "GERMAN SCHUKO"
+    i18n_short_P: "ITA12"
+    i18n_description_P: "ITALIAN 12A"
+    i18n_short_E: "ITA16"
+    i18n_description_E: "ITALIAN 16A"
+    i18n_short_U: "ITAUNI"
+    i18n_description_U: "ITALIAN UNIVERSAL"
+    
+  locker_cabinet_types:
+    code: "code"
+    i18n_short_G: "BIG"
+    i18n_description_G: "LOCKER (BIG)"
+    i18n_short_P: "SMALL"
+    i18n_description_P: "LOCKER (SMALL)"
+    i18n_short_C: "KEY"
+    i18n_description_C: "RENT KEY"
+    i18n_short_N: "NO"
+    i18n_description_N: "NO LOCKING"
+    i18n_short_2: "20 CENT."
+    i18n_description_2: "20 CENT COIN"
+    i18n_short_B: "BADGE"
+    i18n_description_B: "BADGE"
+    i18n_short_0: "COMBINATION"
+    i18n_description_0: "COMBINATION LOCK PROVIDED"
+    i18n_short_5: "50 CENT."
+    i18n_description_5: "50 CENT COIN"
+
+  disqualification_code_types:
+    code: "code"
+    i18n_short_GA: ""
+    i18n_description_GA: "False start"
+    i18n_short_GB: ""
+    i18n_description_GB: "Delay of meet"
+    i18n_short_GC: ""
+    i18n_description_GC: "Unsportsmanlike conduct"
+    i18n_short_GD: ""
+    i18n_description_GD: "Interference with another swimmer"
+    i18n_short_GE: ""
+    i18n_description_GE: "Did not swim the specified stroke"
+    i18n_short_GF: ""
+    i18n_description_GF: "Did not swim the specified distance"
+    i18n_short_GG: ""
+    i18n_description_GG: "Did not finish in same lane"
+    i18n_short_GH: ""
+    i18n_description_GH: "Standing on bottom during any stroke but freestyle"
+    i18n_short_GI: ""
+    i18n_description_GI: "Swimmer swam in wrong lane"
+    i18n_short_GJ: ""
+    i18n_description_GJ: "Swimmer made use of aids"
+    i18n_short_GK: ""
+    i18n_description_GK: "Swimmer did not finish"
+    i18n_short_GL: ""
+    i18n_description_GL: "Pulled on lane ropes"
+    i18n_short_GM: ""
+    i18n_description_GM: "Use of not FINA-approved swim suit"
+    i18n_short_BaA: ""
+    i18n_description_BaA: "Toes above water surface at start"
+    i18n_short_BaB: ""
+    i18n_description_BaB: "Head did not break surface by 15 meters after start or turn"
+    i18n_short_BaC: ""
+    i18n_description_BaC: "Shoulders past vertical"
+    i18n_short_BaD: ""
+    i18n_description_BaD: "No touch at turn and/or finish"
+    i18n_short_BaE: ""
+    i18n_description_BaE: "Not on back of wall"
+    i18n_short_BaF: ""
+    i18n_description_BaF: "Did not finish on back"
+    i18n_short_BaG: ""
+    i18n_description_BaG: "Past vertical at turn: non continuous turning action"
+    i18n_short_BaH: ""
+    i18n_description_BaH: "Past vertical at turn: independent kicks"
+    i18n_short_BaI: ""
+    i18n_description_BaI: "Past vertical at turn: independent strokes"
+    i18n_short_BfA: ""
+    i18n_description_BfA: "Head did not break surface 15 meters after start or turn"
+    i18n_short_BfB: ""
+    i18n_description_BfB: "More than one arm pull under water atfer start or turn"
+    i18n_short_BfC: ""
+    i18n_description_BfC: "Not toward breast of the wall"
+    i18n_short_BfD: ""
+    i18n_description_BfD: "Did not bring arms forward and/or backward simultaneously"
+    i18n_short_BfE: ""
+    i18n_description_BfE: "Did not bring arms forward over water"
+    i18n_short_BfF: ""
+    i18n_description_BfF: "Did not execute movement of both feet in same way"
+    i18n_short_BfG: ""
+    i18n_description_BfG: "Did not touch wall with both hands simultaneously at turn and/or finish"
+    i18n_short_BfH: ""
+    i18n_description_BfH: "No touch at turn and/or finish"
+    i18n_short_BfI: ""
+    i18n_description_BfI: "Arm movements did not continue throughout race"
+    i18n_short_BrA: ""
+    i18n_description_BrA: "Head did not break surface before hands turned inside 2nd st"
+    i18n_short_BrB: ""
+    i18n_description_BrB: "Head did not break surface of water during each stroke cycle"
+    i18n_short_BrC: ""
+    i18n_description_BrC: "Arm movements not always simultaneous in horizontal plane"
+    i18n_short_BrD: ""
+    i18n_description_BrD: "Leg movements not always simultaneous in horizontal plane"
+    i18n_short_BrE: ""
+    i18n_description_BrE: "Hands not pushed forward on, under or over water"
+    i18n_short_BrF: ""
+    i18n_description_BrF: "Elbows not always submerged during race"
+    i18n_short_BrG: ""
+    i18n_description_BrG: "Feet not turned outward during propulsive part of kick"
+    i18n_short_BrH: ""
+    i18n_description_BrH: "Did not touch wall with both hands simultaneously"
+    i18n_short_BrI: ""
+    i18n_description_BrI: "Body not on breast from beginning of 1st arm stroke"
+    i18n_short_BrJ: ""
+    i18n_description_BrJ: "Illegal downward dolphin kick"
+    i18n_short_BrK: ""
+    i18n_description_BrK: "Broke stroke cycle"
+    i18n_short_BrL: ""
+    i18n_description_BrL: "More than one butterfly kick during the first arm stroke after start or turn"
+    i18n_short_FrA: ""
+    i18n_description_FrA: "No touch at turn or finish "
+    i18n_short_FrB: ""
+    i18n_description_FrB: "Swam under water more than 15 meters after start or turn "
+    i18n_short_FrC: ""
+    i18n_description_FrC: "Walked on pool bottom and/or pushed off bottom "
+    i18n_short_IMA: ""
+    i18n_description_IMA: "Freestyle swum as backstroke, breststroke or butterfly"
+    i18n_short_IMB: ""
+    i18n_description_IMB: "Not swum in right order"
+    i18n_short_IMC: ""
+    i18n_description_IMC: "Stroke infraction (see stroke code)"
+    i18n_short_RA2: ""
+    i18n_description_RA2: "Early swimmer take-off swimmer #2"
+    i18n_short_RA3: ""
+    i18n_description_RA3: "Early swimmer take-off swimmer #3"
+    i18n_short_RA4: ""
+    i18n_description_RA4: "Early swimmer take-off swimmer #4"
+    i18n_short_RB: ""
+    i18n_description_RB: "Medley not swum in right order"
+    i18n_short_RC: ""
+    i18n_description_RC: "Changed order of swimmers"
+    i18n_short_RD: ""
+    i18n_description_RD: "Non listed swimmer swam"
+    i18n_short_RE1: ""
+    i18n_description_RE1: "Stroke infraction swimmer #1"
+    i18n_short_RE2: ""
+    i18n_description_RE2: "Stroke infraction swimmer #2"
+    i18n_short_RE3: ""
+    i18n_description_RE3: "Stroke infraction swimmer #3"
+    i18n_short_RE4: ""
+    i18n_description_RE4: "Stroke infraction swimmer #4"
+    i18n_short_RF: ""
+    i18n_description_RF: "Swimmer other than swimmer designated to swim entered area"
+
+  event_types:
+    code: "Code"
+    is_valid: "Valid?"
+    length_in_meters: "Length"
+    style_order: "Style order"
+
+  category_types:
+    code: "Code"
+    is_valid: "Valid?"
+    federation_code: "Fed.Code"
+    description: "Description"
+    short_name: "Short name"
+    group_name: "Group"
+    age_begin: "From Age"
+    age_end: "To Age"
+
+  accreditation_time_types:
+    code: "Code"
+    is_valid: "Valid?"
+    i18n_short_m: "MAN"
+    i18n_description_m: "MANUAL"
+    i18n_short_p: "PER"
+    i18n_description_p: "PERSONAL"
+    i18n_short_o: "OBE"
+    i18n_description_o: "OBERCUP"
+    i18n_short_a: "PRE"
+    i18n_description_a: "PRECEDING YEAR"
+    i18n_short_u: "LAS"
+    i18n_description_u: "LAST RACE"
+
+  passage_types:
+    code: "Code"
+    is_valid: "Valid?"
+    length_in_meters: "Length"
+
+  relay_types:
+    code: "Code"
+    is_valid: "Valid?"
+    mixed_gender: "Mixed gender"
+    partecipants: "Partecipants"
+    phases: "Tot.Phases"
+    phase_length_in_meters: "Phase Len.(mt.)"
+    relay: "Relay"
+    relay_short: "Rel."
+    mixed_relay: "Mixed Rel."
+    mixed_relay_short: "Mix."
+
+  events_by_pool_types:
+    pool_type_id: "Pool type ID"
+    event_type_id: "Event Type ID"
+
+  result_types:
+    code: "Code"
+    is_valid: "Valid?"
+    default_value: "Default"
+    i18n_short_b: "HEAT"
+    i18n_description_b: "HEAT"
+    i18n_short_s: "SEMI"
+    i18n_description_s: "SEMI-FINALS"
+    i18n_short_f: "FINALS"
+    i18n_description_f: "FINALS"
+
+  swimmer:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'swimmers'!"
+
+  team:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'teams'!"
+
+  badge:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'badges'!"
+
+  city:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'cities'!"
+
+  season:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'seasons'!"
+
+  meeting:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
+
+  meeting_session:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
+
+  meeting_program:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_programs'!"
+
+  meeting_individual_result:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_individual_results'!"
+
+  meeting_relay:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_relays'!"
+
+  meeting_relay_result:
+    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_relay_results'!"
+
+
+  agex_action:
+    main: Main
+    home: "Home"
+    home_tooltip: "Go to the Home page"
+    login: "Login"
+    logout: "Exit / Re-enter"
+    logout_tooltip: "Exit (Executes a new log-in)"
+    about: "About"
+    about_tooltip: "Go to the About page"
+    contact_us: "Contact Us"
+    contact_us_tooltip: "Go to the 'Contact us' page"
+    news_log: "News log"
+    news_log_tooltip: "Go to the 'News' archive"
+    sub_entities: "Sub-entities"
+    sub_entities_tooltip: "Go to the management page for the Sub-entities"
+    whos_online: "Who's on-line"
+    whos_online_tooltip: "Check out 'Who's on-line'"
+    data_filtered_from: "Data filtered from"
+    data_filtered_to: "to"
+
+    articles: "Blog Articles"
+    articles_tooltip: "Go to the management page for the Blog news Articles"
+
+    manage_system: "Manage System"
+    users: Users
+    users_tooltip: "Manage the User list"
+    edit_current_user: "Edit User profile"
+    edit_current_user_tooltip: "Edit your User profile or change the current password"
+    app_parameters: Application Parameters
+    app_parameters_tooltip: "Manage the internal Application Parameters list"
+    go_to_date: 'Find date'
+
+
+  something_went_wrong: "Something went wrong, check the log file."
+  transaction_cancelled: "Transaction cancelled."
+  missing_request_parameter: "Invalid Action: missing a request parameter!"
+  invalid_action_request: "Invalid Action requested!"
+  main: 'Main:'
+  home: Home
+  login: Login
+  logout: Logout
+  sign_up: "Sign-up!"
+  about: About
+  contact_us: Contact us
+  questions_about: Questions about
+  sections: 'Sections:'
+  setup: 'Setup:'
+  user: User
+  user_name: User name
+  password: Password
+  login_to_proceed: To proceed, a log-in is required.
+  login_tooltip: Log in
+  user_not_authenticated: 'User Not Yet Authenticated'
+  invalid_user: "Invalid User / Password combination!"
+  access_denied: "Access denied."
+  disconnected: Disconnected
+  welcome: 'Welcome !'
+  hi: Hi
+  user_created: User successfully created.
+  user_deleted: User successfully deleted.
+  req_functionality_under_development: "The requested functionality is not currently available due to revisions or maintenance."
+
+  no_new_articles: No new articles
+  select_file: "Select a file"
+  commit_rows: "Commit"
+  commit_rows_tooltip: "Commit all enlisted data rows to their import destination"
+  existing_data_import_sessions: "Existing or in-progress data-import sessions"
+  last_phase: "Last phase"
+  data_rows: "Data rows"
+  data_format: "Data format"
+  select_create_session: "Select / Create session"
+  review_edit_data: "Review / Edit data"
+  continue_on_phase2: "Continue with Phase 2"
+  result_log: "Result Log"
+  please_select: "-- Select --"
+  please_wait: "Please wait..."
+
+  id: Id
+  name: Name
+  description: Description
+  tot: Tot.
+  sum: Sum
+  mean: 'Aver.'
+  notes: Notes
+  tag: Tag
+  created_at: Created at
+  updated_at: Updated at
+  created_on: Created on
+  updated_on: Updated on
+  created_slash_updated_at: "Created/Updated at"
+  created_slash_updated_on: "Created/Updated on"
+  details_for: Details for
+  refresh: Refresh
+  refresh_tooltip: "Reload data for the current page"
+  click_on_the_grid: "(Click on the grid to count)"
+  tot_rows: "Tot. rows"
+  selected: Selected
+  grand_total: Grand total
+  subtotals: Subtotals
+  sums: Sums
+  costs: Costs
+  error: Error
+  undefined: "(undefined)"
+  in_conflict: "In conflict"
+
+  meters: "meters"
+  meters_short: "mt."
+  athletes: "athletes"
+
+  warning_no_data_to_send: "There aren't any data rows to process!"
+  drag_to_resize: "Drag to resize the area"
+  show_details_tooltip: "Show the row details in a small pop-up window"
+  add: Add
+  edit: Edit
+  user: User
+  manage_details: Manage details
+  manage_details_tooltip: "Manage the details of the selected record [also: SPACE or ENTER just after row selection]"
+  row_added: "Row successfully added."
+  some_rows_were_skipped_because_invoiced: "Some rows were skipped because they were already invoiced."
+  some_rows_were_skipped_because_not_invoiced: "Some rows were skipped because they had no invoice."
+
+  reporting: "Reporting"
+  data_export: "Data export"
+  add_default_row: "Add 'default' rows"
+
+  user__name: User
+  authorization_level: "Authorization lev."
+  password_confirmation: Confirm Password
+  salt: "Salt code"
+  hashed_pwd: "Hashed Pwd."
+  password_missing: "Password missing"
+  session_deleted: "Session deleted."
+  unable_to_delete_session: "Unable to delete this Session."
+  upload_failed: "Upload failed!"
+  upload: "Upload"
+  keep_offline: "Keep off-line"
+  warning_no_import_data_session_found: "No import data session was found."
+  uploaded_files_still_present: "Uploaded Files still present"
+
+  enable_blog: "Blogger?"
+  enable_edit: "Can modify?"
+  enable_delete: "Can delete?"
+  enable_setup: "Can set-up?"
+  authorization_level: "Author.lev."
+
+  edit_inline: Edit in-line
+  edit_in_form: Edit in form
+  show_details: Show details
+  details: Row details
+  search: Search
+
+  articles_list: Articles list
+  articles: Articles
+  title: Title
+  entry_text: Text
+  is_sticky: "Sticky?"
+  le_user__name: User
+
+  sub_entities_management: Sub-entities Management
+
+  enable_blog_tooltip: "Toggles on/off the possibility to post blog entries for this user"
+  enable_edit_tooltip: "Enables/disables row editing permission for this user"
+  enable_delete_tooltip: "Enables/disables row deleting permission for this user"
+  enable_setup_tooltip: "Enables/disables secondary (look-up) entity management permission for this user"
+
+  cities: Cities
+  users: Users
+  contact_types: Contact Types
+  code: Code
+  zip: ZIP
+  area: Area
+  country: Country
+  country_code: Country Code
+  display_symbol: Symbol
+  is_a_parent: "Macrotype?"
+  value_format: Format
+  source_currency: Source
+  destination_currency: Destination
+  date_exchange: Exchange Date
+  factor: Factor
+  comment: Comment
+
+  privacy_statement: ""
+
+
+  activerecord:
+    models:
+      user: User
+      article: Article
+      category_type: "Category Type"
+      city: "City"
+      data_import_city: "City (temp. table)"
+      event_type: "Event Type"
+      result_type: "Result Type"
+      season_type: "Season Type"
+      season: "Season"
+      data_import_season: "Season (temp. table)"
+      meeting: "Meeting"
+      data_import_meeting: "Meeting (temp.table)"
+      meeting_session: "Meeting Session"
+      data_import_meeting_session: "Meeting Session (temp.)"
+      meeting_program: "Meeting Program"
+      data_import_meeting_program: "Meeting Program (temp.)"
+      meeting_individual_result: "Meeting Individ. Result"
+      data_import_meeting_individual_result: "Meeting Ind. Result (temp.)"
+      swimmer: "Swimmer"
+      data_import_swimmer: "Swimmer (temp. table)"
+      swimming_pool: "Swimming Pool"
+      team: "Team"
+      data_import_team: "Team (temp. table)"
+      badge: "Badge"
+      data_import_badge: "Badge (temp. table)"
+      meeting_relay: "Meeting Relay"
+      data_import_meeting_relay: "Meeting Relay (temp.)"
+      meeting_relay_result: "Meeting Relay Result"
+      data_import_meeting_relay_result: "Meeting Relay Result (temp.)"
+      meeting_relay_swimmer: "Meeting Relay Swimmer"
+      data_import_meeting_team_score: "Meeting Team Score (temp.)"
+      meeting_team_score: "Meeting Team Score"
+      relay_type: "Relay"
+      gender_type: "Gender"
+      stroke_type: "Stroke"
+      accreditation_time_type: "Accred. Time Type"
+
+    attributes:
+      user:
+        created_on: Created on
+        updated_on: Updated on
+        name: Name
+        hashed_pwd: Hashed password
+        password_confirmation: Confirm Password
+        description: "Description/Full name"
+        enable_blog: "Blogger?"
+        enable_edit: "Can edit?"
+        enable_delete: "Can delete?"
+        enable_setup: Enable set-up
+        authorization_level: "Author.lev."
+      article:
+        user: User
+        title: "Title"
+        entry_text: "Entry text"
+        is_sticky: "Sticky?"
+      city:
+        name: Name
+        zip: ZIP
+        area: Area
+        country: Country
+        country_code: Country Code
+      season:
+        begin_date: "Begins on"
+        end_date: "Ends on"
+        must_use_time_standards: "Must use time std?"
+        max_points: "Max points"
+      meeting:
+        entry_deadline: "Entry deadline"
+        has_warm_up_pool: "Warm-up pool?"
+        is_under_25_admitted: "Under-25 allowed?"
+        reference_phone: "Ref. phone #"
+        reference_e_mail: "Ref. e-mail"
+        reference_name: "Ref. contact"
+        has_invitation: "Invitation?"
+        has_start_list: "Starting list?"
+        are_results_acquired: "Results acquired?"
+        max_individual_events: "Max individ. events"
+        configuration_file: "Config. file"
+        challenge_number: "Challenge #"
+      meeting_session:
+        session_order: "Session ord."
+        scheduled_date: "Scheduled date"
+        warm_up_time: "Warm-up at"
+        begin_time: "Begins at"
+      meeting_program:
+        event_order: "Event ord." 
+        begin_time: "Begins at"
+        minutes: "Min."
+        seconds: "Sec."
+        hundreds: "Hnd."
+      meeting_individual_result:
+        athlete_name: "Athlete"
+        team_name: "Team"
+        athlete_badge_number: "Athlete badge #"
+        team_badge_number: "Team badge #"
+        year_of_birth: "Birth date"
+        rank: "Rank"
+        is_play_off: "Finals?" 
+        is_out_of_race: "Out of race?"
+        is_disqualified: "Disqualified?"
+        standard_points: "Std. points"
+        meeting_points: "Meeting points"
+        minutes: "Min."
+        seconds: "Sec."
+        hundreds: "Hnd."
+      swimmer:
+        last_name: "Last name"
+        first_name: "First name"
+        complete_name: "Complete name"
+        year_of_birth: "Birth date"
+        phone_mobile: "Mobile #"
+        phone_number: "Phone #"
+        e_mail: "e-mail"
+        nickname: "Nickname"
+        gender_type: "Gender"
+        associated_user_id: "Associated user"
+      team:
+        name: Name
+        address: "Address"
+        phone_mobile: "Mobile #"
+        phone_number: "Phone #"
+        e_mail: "e-mail"
+        fax_number: "FAX #" 
+        contact_name: "Contact name" 
+        badge_number: "Badge #"
+      badge:
+        number: "Badge #"
+
+      meeting_relay_result:
+        rank: "Rank"
+        is_play_off: "Finals?" 
+        is_out_of_race: "Out of race?"
+        is_disqualified: "Disqualified?"
+        standard_points: "Std. points"
+        meeting_points: "Meeting points"
+        minutes: "Min."
+        seconds: "Sec."
+        hundreds: "Hnd."
+      meeting_relay_swimmer:
+        relay_order: "Order"
+      meeting_team_score:
+        rank: "Rank"
+        total_individual_points: "Individ. Score"
+        total_relay_points: "Relay Score"
+
+
+  errors:
+    unable_to_retrieve_row_data: "Unable to retrieve the requested record."
+
+    models:
+      category_type:
+        attributes:
+          code:
+            already_exists: "already exists"
