@@ -546,6 +546,13 @@ it:
 
   privacy_statement: "<b>Informativa sintetica sulla Privacy</b> - Nel rispetto delle ultime versioni della normativa sulla tutela dei dati personali, vi informiamo che gli eventuali dati in nostro possesso, acquisiti durante il corso dei rapporti di collaborazione o consulenza appena compiuti, saranno conservati e utilizzati esclusivamente a fine amministrativo e fiscale. In qualsiasi momento potete richiederne l'eliminazione o la rettifica rivolgendovi direttamente al titolare del nostro studio."
 
+  meetings: "Gare"
+  rankings: "Classifiche"
+  results: "Risultati"
+  search: "Cerca"
+  no_data_found: "Non ho trovato nessuna riga dati!"
+
+
   netzke:
     basepack:
       grid_panel:
@@ -789,6 +796,7 @@ it:
         fax_number: "FAX" 
         contact_name: "Contatto"
         badge_number: "N.Cartellino"
+        zip: CAP
       badge:
         number: "N.Cartellino"
 

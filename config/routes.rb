@@ -19,6 +19,27 @@ Goggles::Application.routes.draw do
       match "wip",        :controller => 'home', :action => 'wip',          :as => :wip
       match "about",      :controller => 'home', :action => 'about',        :as => :about
       match "contact_us", :controller => 'home', :action => 'contact_us',   :as => :contact_us
+
+      resources :meetings do
+        collection do
+          get 'index'
+          post 'search'
+        end
+      end
+
+      resources :rankings do
+        collection do
+          get 'index'
+          post 'search'
+        end
+      end
+
+      resources :results do
+        collection do
+          get 'index'
+          post 'search'
+        end
+      end
     end
   end
 

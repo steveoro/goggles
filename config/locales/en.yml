@@ -546,6 +546,12 @@ en:
 
   privacy_statement: ""
 
+  meetings: "Meetings"
+  rankings: "Rankings"
+  results: "Results"
+  search: "Search"
+  no_data_found: "No data found!"
+
 
   activerecord:
     models:
@@ -674,6 +680,7 @@ en:
         fax_number: "FAX #" 
         contact_name: "Contact name" 
         badge_number: "Badge #"
+        zip: ZIP
       badge:
         number: "Badge #"
 

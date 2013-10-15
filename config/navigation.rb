@@ -50,6 +50,11 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
     primary.item :key_home,         t('home'),        root_path() #, options
+    primary.item :key_meetings,     t('meetings'),    meetings_path()
+    primary.item :key_rankings,     t('rankings'),    rankings_path()
+    primary.item :key_results,      t('results'),     results_path()
+
+    primary.item :key_separator0,   '&nbsp;', '#', :class => 'disabled'
     primary.item :key_about,        t('about'),       about_path() #, options
     primary.item :key_contact_us,   t('contact_us'),  contact_us_path() #, options
 

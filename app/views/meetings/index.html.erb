@@ -1,0 +1,43 @@
+<button type="button" class="btn btn-danger" data-toggle="collapse" data-target="#searchPanel">
+Toggle search panel
+</button>
+
+<div id="searchPanel" class="row collapse in">
+	<div class="span2 offset1">
+		<%= form_tag( search_meetings_path(), :class => 'form-horizontal',
+				:onsubmit => "$('#loadingIndicator').show();",
+				:remote => true
+			) do -%>
+			<div class="control-group">
+				<label class="control-label" for="season[id]">
+					<%= I18n.t(:season, {:scope=>[:activerecord, :models]}) %>:
+				</label>
+				<label class="control-label" for="season_type[id]">
+					<%= I18n.t(:season_type, {:scope=>[:activerecord, :models]}) %>:
+				</label>
+				<div class="controls">
+					<%= select( :season, :id,
+								Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] },
+								{ :prompt => I18n.t(:please_select) },	# select options
+								{ :class => 'input-xlarge' } )	# html options
+					%>
+					<%= select( :season_type, :id,
+								SeasonType.all.collect { |s| [s.short_name, s.id] }.sort,
+								{ :prompt => I18n.t(:please_select) },	# select options
+								{ :class => 'input-xlarge' } )	# html options
+					%>
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+				  	<%= submit_tag( I18n.t(:search), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' ) %>
+				  	<span id='loadingIndicator' hidden='true'><%= image_tag( 'indicator.gif' ) %></span>
+					<div id="divProgress" hidden='true' class="progress progress-striped active"></div>
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>
+
+<div id="searchResults">
+</div>
