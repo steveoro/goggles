@@ -4,6 +4,9 @@
 			<%= AGEX_APP_NAME %>
 			<%= image_tag( AGEX_APP_LOGO ) %>
 		</a>
-		<%= render_navigation( :expand_all => true, :renderer => :bootstrap ) %>
+		<%= render_navigation( :level => 1, :renderer => :bootstrap ) %>
 	</div>
+</div>
+<div class="text-right">
+	<%= render_navigation( :renderer => :breadcrumbs, :prefix => "#{I18n.t(:you_are_here)}&nbsp;", :join_with => " &gt; " ) %>
 </div>

@@ -37,7 +37,7 @@ class Passage < ActiveRecord::Base
 
   # Returns just the formatted timing information
   def get_timing
-    "#{minutes}'#{seconds}""#{hundreds}"
+    "#{minutes}'#{seconds}\"." + sprintf("%02.0f", hundreds)
   end
 
   # Computes a shorter description for the name associated with this data

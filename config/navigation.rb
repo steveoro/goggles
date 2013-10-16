@@ -49,14 +49,20 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
-    primary.item :key_home,         t('home'),        root_path() #, options
-    primary.item :key_meetings,     t('meetings'),    meetings_path()
-    primary.item :key_rankings,     t('rankings'),    rankings_path()
-    primary.item :key_results,      t('results'),     results_path()
+    primary.item :key_home,         t('home'),        root_path()
+    primary.item :key_meetings,     t('meetings'),    meetings_path(), :highlights_on => %r(/meetings) do |sub_nav|
+      sub_nav.item :key_meetings_show, t('show_details'), '#', :highlights_on => %r(/meetings\/\d)
+    end
+    primary.item :key_rankings,     t('rankings'),    rankings_path(), :highlights_on => %r(/rankings) do |sub_nav|
+      sub_nav.item :key_rankings_show, t('show_details'), '#', :highlights_on => %r(/rankings\/\d)
+    end
+    primary.item :key_results,      t('results'),     results_path(), :highlights_on => %r(/results) do |sub_nav|
+      sub_nav.item :key_results_show, t('show_details'), '#', :highlights_on => %r(/results\/\d)
+    end
 
     primary.item :key_separator0,   '&nbsp;', '#', :class => 'disabled'
-    primary.item :key_about,        t('about'),       about_path() #, options
-    primary.item :key_contact_us,   t('contact_us'),  contact_us_path() #, options
+    primary.item :key_about,        t('about'),       about_path()
+    primary.item :key_contact_us,   t('contact_us'),  contact_us_path()
 
     # Add an item which has a sub navigation (same params, but with block)
 #    primary.item :key_2, 'name', url, options do |sub_nav|

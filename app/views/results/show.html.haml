@@ -1,0 +1,9 @@
+%h3= link_to(@meeting_program.get_meeting_session_name, meeting_path(@meeting_program.meeting.id))
+%h2= @meeting_program.get_event_name
+.row-fluid
+  .span12
+    = render( partial: 'individual_results_grid' ) if (@meeting_program.meeting_individual_results.instance_of?(Array) && @meeting_program.meeting_individual_results.size > 0)
+
+.row-fluid
+  .span12
+    = render( partial: 'relay_results_grid' ) if (@meeting_program.meeting_relay_results.instance_of?(Array) && @meeting_program.meeting_relay_results.size > 0)

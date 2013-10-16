@@ -345,6 +345,7 @@ it:
 
   meeting:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
+    index_title: "Gare - ricerca"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -546,11 +547,21 @@ it:
 
   privacy_statement: "<b>Informativa sintetica sulla Privacy</b> - Nel rispetto delle ultime versioni della normativa sulla tutela dei dati personali, vi informiamo che gli eventuali dati in nostro possesso, acquisiti durante il corso dei rapporti di collaborazione o consulenza appena compiuti, saranno conservati e utilizzati esclusivamente a fine amministrativo e fiscale. In qualsiasi momento potete richiederne l'eliminazione o la rettifica rivolgendovi direttamente al titolare del nostro studio."
 
+  you_are_here: "Tu sei qui:"
+  show: "Mostra"
+  show_details: "mostra dettagli"
   meetings: "Gare"
   rankings: "Classifiche"
   results: "Risultati"
+  individual_results: "Risultati individuali"
+  relay_results: "Risultati Staffette"
   search: "Cerca"
+  search_tooltip: "Clicca sul titolo per nascondere o mostrare i comandi di filtraggio principali. E' possibile filtrare ulteriormente i risultati inserendo poi altri valori direttamente nell'elenco dei risultati."
+  detail_show_tooltip: "Clicca sul titolo per nascondere o mostrare i dettagli."
   no_data_found: "Non ho trovato nessuna riga dati!"
+  any_date: "Data"
+  submit: "Vai"
+  reset: "Reset"
 
 
   netzke:
@@ -773,6 +784,7 @@ it:
         is_disqualified: "Squalif.?"
         standard_points: "Punt. std."
         meeting_points: "Punt. meeting"
+        timing: "Tempo"
         minutes: "Min."
         seconds: "Sec."
         hundreds: "Cent."
@@ -799,7 +811,6 @@ it:
         zip: CAP
       badge:
         number: "N.Cartellino"
-
       meeting_relay_result:
         rank: "Posizione"
         is_play_off: "Finale?"
@@ -807,6 +818,7 @@ it:
         is_disqualified: "Squalif.?"
         standard_points: "Punt. std."
         meeting_points: "Punt. meeting"
+        timing: "Tempo"
         minutes: "Min."
         seconds: "Sec."
         hundreds: "Cent."

@@ -59,7 +59,7 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   # Returns just the formatted timing information
   def get_timing
-    "#{minutes}'#{seconds}""#{hundreds}"
+    "#{minutes}'#{seconds}\"." + sprintf("%02.0f", hundreds)
   end
 
   # Computes a shorter description for the name associated with this data
@@ -77,6 +77,11 @@ class MeetingIndividualResult < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the associated Team full name
+  def get_team_name
+    self.team ? self.team.get_full_name() : '?'
+  end
 
   # Retrieves the localized Event Type code
   def get_event_type

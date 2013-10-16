@@ -1,0 +1,86 @@
+.accordion#accordionShw
+  .accordion-group
+    .accordion-heading
+      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionshw', :href => '#collapseShw'}
+        %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @meeting.get_verbose_name
+        %script
+          $('#headerShw').tooltip(placement:'bottom')
+
+    .accordion-body.collapse#collapseShw
+      .accordion-inner
+        .row-fluid
+          .span2
+            = I18n.t(:season_type, {:scope=>[:activerecord, :models]}) +':'
+          .span10
+            = @meeting.get_season_type if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:any_date) +':'
+          .span10
+            = @meeting.entry_deadline if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:challenge_number, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = @meeting.challenge_number if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:has_warm_up_pool, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = show_tag( @meeting.has_warm_up_pool )
+
+        .row-fluid
+          .span2
+            = I18n.t(:is_under_25_admitted, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = show_tag( @meeting.is_under_25_admitted )
+
+        .row-fluid
+          .span2
+            = I18n.t(:has_invitation, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = show_tag( @meeting.has_invitation )
+
+        .row-fluid
+          .span2
+            = I18n.t(:has_start_list, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = show_tag( @meeting.has_start_list )
+
+        .row-fluid
+          .span2
+            = I18n.t(:max_individual_events, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = @meeting.max_individual_events if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:reference_phone, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = @meeting.reference_phone if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:reference_e_mail, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = @meeting.reference_e_mail if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:reference_name, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          .span10
+            = @meeting.reference_name if @meeting
+
+        .row-fluid
+          .span2
+            = I18n.t(:notes) +':'
+          .span10
+            = @meeting.notes if @meeting
+
+
+.row-fluid
+  .span12
+    = render partial: 'meeting_programs_grid'

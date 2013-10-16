@@ -97,6 +97,7 @@ GEM
     jquery-ui-rails (3.0.1)
       jquery-rails
       railties (>= 3.1.0)
+    jquery_datepicker (0.4)
     json (1.8.0)
     kaminari (0.14.1)
       actionpack (>= 3.0.0)
@@ -239,6 +240,8 @@ DEPENDENCIES
   generator
   i18n
   jquery-rails
+  jquery-ui-rails
+  jquery_datepicker
   json
   mysql2
   netzke-basepack (~> 0.7.7)

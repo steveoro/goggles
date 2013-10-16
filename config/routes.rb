@@ -20,26 +20,16 @@ Goggles::Application.routes.draw do
       match "about",      :controller => 'home', :action => 'about',        :as => :about
       match "contact_us", :controller => 'home', :action => 'contact_us',   :as => :contact_us
 
-      resources :meetings do
-        collection do
-          get 'index'
-          post 'search'
-        end
-      end
+      resources :meetings
+      resources :meeting_programs
 
-      resources :rankings do
-        collection do
-          get 'index'
-          post 'search'
-        end
-      end
-
-      resources :results do
-        collection do
-          get 'index'
-          post 'search'
-        end
-      end
+      resources :rankings
+      resources :results
+#      resources :meetings do
+#        collection do
+#          get 'index'
+#        end
+#      end
     end
   end
 

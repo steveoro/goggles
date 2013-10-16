@@ -345,6 +345,7 @@ en:
 
   meeting:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
+    index_title: "Meetings - search"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -546,11 +547,21 @@ en:
 
   privacy_statement: ""
 
+  you_are_here: "You are here:"
+  show: "Show"
+  show_details: "Show details"
   meetings: "Meetings"
   rankings: "Rankings"
   results: "Results"
+  individual_results: "Individual Results"
+  relay_results: "Relay Results"
   search: "Search"
+  search_tooltip: "Click on the title bar to toggle the filtering controls. It's also possible to narrow the search results by typing other values in the dedicated cells on the grid."
+  detail_show_tooltip: "Click on the title bar to toggle the details."
   no_data_found: "No data found!"
+  any_date: "Date"
+  submit: "Submit"
+  reset: "Reset"
 
 
   activerecord:
@@ -657,6 +668,7 @@ en:
         is_disqualified: "Disqualified?"
         standard_points: "Std. points"
         meeting_points: "Meeting points"
+        timing: "Time"
         minutes: "Min."
         seconds: "Sec."
         hundreds: "Hnd."
@@ -683,7 +695,6 @@ en:
         zip: ZIP
       badge:
         number: "Badge #"
-
       meeting_relay_result:
         rank: "Rank"
         is_play_off: "Finals?" 
@@ -691,6 +702,7 @@ en:
         is_disqualified: "Disqualified?"
         standard_points: "Std. points"
         meeting_points: "Meeting points"
+        timing: "Time"
         minutes: "Min."
         seconds: "Sec."
         hundreds: "Hnd."

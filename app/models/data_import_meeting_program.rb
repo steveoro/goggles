@@ -78,6 +78,11 @@ class DataImportMeetingProgram < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
+  # Computes a short description of just the event name for this row, without dates.
+  def get_event_name
+    "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
+  end
+
   # Computes the shortest description for the name associated with this data
   def get_short_name
     "(#{get_scheduled_date}, #{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
@@ -85,12 +90,12 @@ class DataImportMeetingProgram < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{get_meeting_session_name} (#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
+    "#{get_meeting_session_name} #{get_event_name}"
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{get_meeting_session_verbose_name} (#{event_order}) #{event_type.i18n_short} #{get_category_type_name} #{gender_type.i18n_short}"
+    "#{get_meeting_session_verbose_name} #{get_event_name}"
   end
 
   # Retrieves the user name associated with this instance

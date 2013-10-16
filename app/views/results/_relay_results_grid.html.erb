@@ -1,0 +1,42 @@
+<h5><%= t(:relay_results) %></h5>
+
+<%= grid(@relay_results_grid, show_filters: :when_filtered) do |g|
+	g.blank_slate do
+		content_tag( :div, t(:no_data_found), class: 'well' )
+	end
+
+	g.column(
+		name: I18n.t(:rank, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
+		attribute: 'rank'
+	)
+
+	g.column(
+		name: I18n.t(:team_name, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
+		attribute: 'team_id',
+		custom_filter: Team.to_dropdown
+	) do |relay_result|
+		# TODO show_team_path( relay_result.team_id ) if relay_result.team
+		# TODO otherwise: display plain text
+		link_to( relay_result.get_team_name, wip_path() )
+	end
+
+	g.column(
+		name: I18n.t(:timing, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
+		filter: false
+	) do |relay_result|
+		relay_result.get_timing
+	end
+
+	g.column(
+		name: I18n.t(:meeting_points, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
+		attribute: 'meeting_points',
+		filter: false
+	)
+
+	g.column(
+		name: I18n.t(:standard_points, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
+		attribute: 'standard_points',
+		filter: false
+	)
+
+end -%>
