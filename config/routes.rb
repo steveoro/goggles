@@ -20,9 +20,13 @@ Goggles::Application.routes.draw do
       match "about",      :controller => 'home', :action => 'about',        :as => :about
       match "contact_us", :controller => 'home', :action => 'contact_us',   :as => :contact_us
 
-      resources :meetings
-      resources :meeting_programs
+      resources :meetings do
+        member do
+          get 'show_full'
+        end
+      end
 
+      resources :meeting_programs
       resources :rankings
       resources :results
 #      resources :meetings do

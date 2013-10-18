@@ -24,6 +24,8 @@ class MeetingProgram < ActiveRecord::Base
   has_one  :pool_type,    :through => :meeting_session
   has_one  :season_type,  :through => :meeting_session
 
+  has_one  :stroke_type,  :through => :event_type
+
   # TODO Eventually use & test an alias table for the following additional helpers:
 #  has_many :individual_teams, :through => :meeting_individual_results
 #  has_many :individual_badges, :through => :meeting_individual_results
@@ -56,11 +58,21 @@ class MeetingProgram < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
+
+  # Returns just the formatted timing information
+  def get_timing
+    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"." + sprintf("%02.0f", hundreds)
+  end
 
   # Computes a short description of just the event name for this row, without dates.
   def get_event_name
     "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
+  end
+
+  # Computes a verbose description of just the event name for this row, without dates.
+  def get_verbose_event_name
+    "(#{I18n.t(:event)} #{event_order}) #{event_type.i18n_description} #{get_category_type_name} #{gender_type.i18n_description}"
   end
 
   # Computes the shortest description for the name associated with this data

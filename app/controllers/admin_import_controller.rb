@@ -1520,7 +1520,12 @@ class AdminImportController < ApplicationController
 #       SINCE the key name MAY CHANGE in BETWEEN SEASONS!
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-    result_row = Team.where( ["(name LIKE ?)", team_name+'%'] ).first
+    team_affiliation = TeamAffiliation.where( ["(name LIKE ?)", team_name+'%'] ).first
+
+    result_row = team_affiliation ? 
+                 team_affiliation.team :
+                 Team.where( ["(name LIKE ?)", team_name+'%'] ).first
+
     if result_row                                   # We must differentiate the result: negative for Team, positive for DataImportTeam
       result_id = - result_row.id
       not_found = false
@@ -1530,7 +1535,8 @@ class AdminImportController < ApplicationController
       team_affiliation = TeamAffiliation.where(
         :team_id => result_row.id,
         :season_id  => season_id
-      ).first
+      ).first unless team_affiliation
+
       unless team_affiliation                       # When missing, we must add the TeamAffiliation row for this season!
         begin                
           TeamAffiliation.transaction do
@@ -1553,9 +1559,9 @@ class AdminImportController < ApplicationController
           logger.error( "*** #{ $!.to_s }\r\n" ) if $!
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         end
-      end
+      end # (END unless team_affiliation)
 
-    else                                            # Search also inside DataImportTeam when unsuccesful:
+    else                                            # result_row.nil? Search also inside DataImportTeam when unsuccesful:
       result_row = DataImportTeam.where(
         [ "(data_import_session_id = ?) AND (name LIKE ?)",
           session_id, team_name+'%' ]

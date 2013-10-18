@@ -15,6 +15,9 @@ class MeetingRelayResult < ActiveRecord::Base
 # TODO for this helper a 3-chain-through vs. meeting_relay_swimmers is needed:
 #  has_many :swimmers, :through => :meeting_program
 
+  has_one  :meeting_session,  :through => :meeting_program
+  has_one  :meeting,          :through => :meeting_program
+
   belongs_to :disqualification_code_type
 
   validates_presence_of     :rank
@@ -51,7 +54,7 @@ class MeetingRelayResult < ActiveRecord::Base
 
   # Returns just the formatted timing information
   def get_timing
-    "#{minutes}'#{seconds}\"." + sprintf("%02.0f", hundreds)
+    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"." + sprintf("%02.0f", hundreds)
   end
 
   # Computes a shorter description for the name associated with this data

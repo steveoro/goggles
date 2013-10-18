@@ -5,3 +5,16 @@
  *= require_self
  *= require_tree . 
  */
+
+.goggles-breadcrumb{
+	padding: 60px 20px 0px 0px;
+	text-align: right;
+}
+
+table td.goggles-centeralign{
+	text-align: center;
+}
+
+table td.goggles-rightalign{
+	text-align: right;
+}

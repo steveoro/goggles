@@ -49,39 +49,68 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
-    primary.item :key_home,         t('home'),        root_path()
-    primary.item :key_meetings,     t('meetings'),    meetings_path(), :highlights_on => %r(/meetings) do |sub_nav|
-      sub_nav.item :key_meetings_show, t('show_details'), '#', :highlights_on => %r(/meetings\/\d)
-    end
-    primary.item :key_rankings,     t('rankings'),    rankings_path(), :highlights_on => %r(/rankings) do |sub_nav|
-      sub_nav.item :key_rankings_show, t('show_details'), '#', :highlights_on => %r(/rankings\/\d)
-    end
-    primary.item :key_results,      t('results'),     results_path(), :highlights_on => %r(/results) do |sub_nav|
-      sub_nav.item :key_results_show, t('show_details'), '#', :highlights_on => %r(/results\/\d)
+    primary.item( :key_home,          t('home'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_about,       t('main'),        root_path()
+      lev2_nav.item :key_about,       t('about'),       about_path()
+      lev2_nav.item :key_contact_us,  t('contact_us'),  contact_us_path()
     end
 
-    primary.item :key_separator0,   '&nbsp;', '#', :class => 'disabled'
-    primary.item :key_about,        t('about'),       about_path()
-    primary.item :key_contact_us,   t('contact_us'),  contact_us_path()
+    primary.item( :key_meetings,      t('meetings'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => %r(/meetings) do |lev3_nav|
+        lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings\/\d\/show_full)
+      end
+    end
 
-    # Add an item which has a sub navigation (same params, but with block)
-#    primary.item :key_2, 'name', url, options do |sub_nav|
-      # Add an item to the sub navigation (same params again)
-#      sub_nav.item :key_2_1, 'name', url, options
-#    end
+    primary.item( :key_rankings,      t('rankings'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_rankings_index, t('search_rankings'), rankings_path(), :highlights_on => %r(/rankings) do |lev3_nav|
+        lev3_nav.item :key_rankings_show_full, t('show_details'), '#', :highlights_on => %r(/rankings\/\d\/show_full)
+      end
+    end
 
-    # You can also specify a condition-proc that needs to be fullfilled to display an item.
-    # Conditions are part of the options. They are evaluated in the context of the views,
-    # thus you can use all the methods and vars you have available in the views.
-    primary.item :key_separator1,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item :key_admin_dashboard,    content_tag( :p, t('admin.actions.dashboard.menu'), class:"text-error" ), rails_admin_path(), :class => 'special', :if => Proc.new { admin_signed_in? }
-    primary.item :key_admin_data_import,  content_tag( :p, t('admin_import.menu'), class:"text-error" ), goggles_di_step1_status_path(), :class => 'special', :if => Proc.new { admin_signed_in? }
-    primary.item :key_edit_admin,         content_tag( :p, (current_admin.nil? ? '' : current_admin.name), class:"text-error" ), rails_admin_path(), :if => Proc.new { admin_signed_in? }
+    primary.item( :key_results,       t('results'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_results_index, t('search_results'), results_path(), :highlights_on => %r(/results) do |lev3_nav|
+        lev3_nav.item :key_results_show_full, t('show_details'), '#', :highlights_on => %r(/results\/\d\/show_full)
+      end
+    end
 
-    primary.item :key_separator2,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { user_signed_in? }
+    primary.item :key_separator0,     '&nbsp;&nbsp;', '#', :class => 'disabled'
+#    primary.item :key_separator1,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { user_signed_in? }
+    primary.item(
+      :key_user_who_is_it,
+      content_tag(:span, t('who_are_you') ), '#', :class => 'disabled',
+      :unless => Proc.new { user_signed_in? }
+    )
+    primary.item(
+      :key_user_login,
+      content_tag(:span, t(:login), class:"label label-important" ),
+      new_user_session_path(),
+      :unless => Proc.new { user_signed_in? }
+    )
+    primary.item(
+      :key_user_edit,
+      (current_user.nil? ? '' : current_user.email),
+      edit_user_registration_path(),
+      :if => Proc.new { user_signed_in? }
+    )
+    primary.item(
+      :key_user_logout,
+      content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ),
+      destroy_user_session_path(),
+      :method => Devise.sign_out_via,
+      :if => Proc.new { user_signed_in? }
+    )
 
-    primary.item :key_edit_user,          (current_user.nil? ? '' : current_user.email), edit_user_registration_path(), :if => Proc.new { user_signed_in? }
-    primary.item :key_log_out,            content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_user_session_path(), :method => Devise.sign_out_via, :if => Proc.new { user_signed_in? }
+#    primary.item :key_edit_user,      (current_user.nil? ? '' : current_user.email), edit_user_registration_path(), :if => Proc.new { user_signed_in? }
+    #primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_user_session_path(), :method => Devise.sign_out_via, :if => Proc.new { user_signed_in? }
+
+    primary.item :key_separator2,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item( :key_admin,         content_tag(:span, t('admin.back_to_admin'), class:"text-error" ), '#', :if => Proc.new { admin_signed_in? }
+    ) do |lev2_nav|
+      lev2_nav.item :key_admin_dashboard,    content_tag(:span, t('admin.actions.dashboard.menu'), class:"text-error" ), rails_admin_path()
+      lev2_nav.item :key_admin_data_import,  content_tag(:span, t('admin_import.menu'), class:"text-error" ), goggles_di_step1_status_path()
+      lev2_nav.item :key_separator2,         '<hr/>', '#', :class => 'disabled'
+      lev2_nav.item :key_edit_admin,         (current_admin.nil? ? '?' : current_admin.email), '#', :class => 'disabled'
+    end
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu
@@ -90,7 +119,6 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # You can turn off auto highlighting for a specific level
     primary.auto_highlight = false
-
   end
 
 end

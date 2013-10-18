@@ -22,11 +22,20 @@
 				    </div>
 				<% end %>
 				<% if alert %>
-				    <div class="alert alert-block">
-					    <button type="button" class="close" data-dismiss="alert">&times;</button>
-					    <h4>Mmmh...</h4>
-					    <%= alert %>
-				    </div>
+					<div class="span12">
+						<ul class="inline">
+							<li class="span9">
+							    <div class="alert alert-block">
+								    <button type="button" class="close" data-dismiss="alert">&times;</button>
+								    <h4>Mmmh...</h4>
+								    <%= alert %>
+							    </div>
+							</li>
+							<li class="span3">
+							    <%= image_tag( "mmh.jpg", :size => '180x135', :class => 'thumbnail' ) %>
+							</li>
+						</ul>
+					</div>
 				<% end %>
 				<% if flash[:error] %>
 				    <div class="alert alert-error">

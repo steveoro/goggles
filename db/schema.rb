@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131008175822) do
+ActiveRecord::Schema.define(:version => 20131016235422) do
 
   create_table "accreditation_time_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -995,7 +995,7 @@ ActiveRecord::Schema.define(:version => 20131008175822) do
 
   add_index "team_affiliations", ["name"], :name => "index_team_affiliations_on_name"
   add_index "team_affiliations", ["number"], :name => "index_team_affiliations_on_number"
-  add_index "team_affiliations", ["season_id"], :name => "fk_team_affiliations_seasons"
+  add_index "team_affiliations", ["season_id", "team_id"], :name => "uk_team_affiliations_seasons_teams", :unique => true
   add_index "team_affiliations", ["team_id"], :name => "fk_team_affiliations_teams"
 
   create_table "teams", :force => true do |t|

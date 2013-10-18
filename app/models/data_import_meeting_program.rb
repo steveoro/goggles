@@ -60,7 +60,6 @@ class DataImportMeetingProgram < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
 
 
   # Computes a verbose or formal description for the row data "conflicting" with the current import data row
@@ -78,9 +77,20 @@ class DataImportMeetingProgram < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
+
+  # Returns just the formatted timing information
+  def get_timing
+    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"." + sprintf("%02.0f", hundreds)
+  end
+
   # Computes a short description of just the event name for this row, without dates.
   def get_event_name
     "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
+  end
+
+  # Computes a verbose description of just the event name for this row, without dates.
+  def get_verbose_event_name
+    "(#{I18n.t(:event)} #{event_order}) #{event_type.i18n_description} #{get_category_type_name} #{gender_type.i18n_description}"
   end
 
   # Computes the shortest description for the name associated with this data

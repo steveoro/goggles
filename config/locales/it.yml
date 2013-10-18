@@ -401,8 +401,10 @@ it:
   transaction_cancelled: "Transazione annullata."
   missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"
   invalid_action_request: "Azione richiesta non valida!"
-  main: 'Principale:'
+  main: 'Principale'
   home: Home
+  top_of_page: Inizio pagina
+  who_are_you: "Hey tu! Chi sei?"
   login: Login
   logout: Disconnetti
   sign_up: "Registrati!"
@@ -422,6 +424,7 @@ it:
   disconnected: Disconnesso
   welcome: 'Benvenuti !'
   hi: Ciao
+  or: oppure
   user_created: Utente creato con successo.
   user_deleted: Utente eliminato con successo.
   req_functionality_under_development: "La funzionalita' richiesta non e' attualmente disponibile perche' e' stata sottoposta a revisione o ci sono lavori di manutenzione in corso."
@@ -551,8 +554,12 @@ it:
   show: "Mostra"
   show_details: "mostra dettagli"
   meetings: "Gare"
+  event: "Evento"
   rankings: "Classifiche"
   results: "Risultati"
+  search_meetings: "Cerca Gare"
+  search_rankings: "Cerca Classifiche"
+  search_results: "Cerca Risultati"
   individual_results: "Risultati individuali"
   relay_results: "Risultati Staffette"
   search: "Cerca"
