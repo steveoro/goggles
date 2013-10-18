@@ -10,7 +10,7 @@ class MeetingsController < ApplicationController
     @meetings_grid = initialize_grid(
       Meeting,
       :include => [:season, :season_type],
-      :order => 'meetings.description',
+      :order => 'meetings.entry_deadline',
       :order_direction => 'asc',
       :per_page => 20
     )
@@ -27,33 +27,17 @@ class MeetingsController < ApplicationController
       redirect_to( meetings_path() ) and return
     end
     
-    @meeting_programs_list = @meeting.meeting_programs.order(:event_order).includes( :event_type, :stroke_type ).select( :event_type_id ).collect{ |row|
+    @meeting_programs_list = @meeting.meeting_programs.includes(
+      :event_type, :stroke_type
+    ).order(
+      'event_types.is_a_relay, meeting_programs.event_order'
+    ).select( :event_type_id ).collect{ |row|
       row.event_type
     }.uniq
 
-#    @meeting_programs = @meeting.meeting_programs
-
-    # @full_results_grid = initialize_grid(
-      # @meeting.meeting_programs,
-      # # :include => [
-          # # :meeting_program, :result_type,
-          # # :swimmer, :team,
-          # # :badge, :disqualification_code_type
-      # # ],
-      # :order => 'event_order',
-      # :per_page => 30
-    # )
-
-    # @relay_results_grid = initialize_grid(
-      # MeetingRelayResult,
-      # :conditions => {:meeting_program_id => @meeting_program.id},
-      # :include => [
-          # :meeting_program, :result_type,
-          # :team, :disqualification_code_type
-      # ],
-      # :order => 'meeting_relay_results.rank',
-      # :per_page => 30
-    # )
+    @meeting_programs_with_results = @meeting.meeting_programs.includes(
+      :event_type
+    ).order( 'event_types.is_a_relay, meeting_programs.event_order' )
   end
   # ----------------------------------------------------------------------------
 
