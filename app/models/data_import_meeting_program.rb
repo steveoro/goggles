@@ -13,17 +13,17 @@ class DataImportMeetingProgram < ActiveRecord::Base
 
   belongs_to :meeting_session
   belongs_to :data_import_meeting_session
-  belongs_to :event_type
   belongs_to :category_type
   belongs_to :gender_type
-  belongs_to :accreditation_time_type
+  belongs_to :event_type
+  belongs_to :heat_type
 
   validates_associated :meeting_session
   validates_associated :data_import_meeting_session
-  validates_associated :event_type
   validates_associated :category_type
   validates_associated :gender_type
-  validates_associated :accreditation_time_type
+  validates_associated :event_type
+  validates_associated :heat_type
 
   has_many :meeting_individual_results
   has_many :data_import_meeting_individual_results
@@ -45,7 +45,7 @@ class DataImportMeetingProgram < ActiveRecord::Base
   validates_length_of       :hundreds, :maximum => 2
   validates_numericality_of :hundreds
 
-
+# FIXME:
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)
 

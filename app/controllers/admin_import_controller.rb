@@ -1306,6 +1306,7 @@ class AdminImportController < ApplicationController
     meeting_ss_ids    = meeting_ss.collect{ |row| row.id }
     di_meeting_ss_ids = di_meeting_ss.collect{ |row| row.id }
                                                     # Collect ALL meeting_programs IDs:
+# FIXME !!!!
     meeting_prgs    = MeetingProgram.only_relays.where( :meeting_session_id => meeting_ss_ids )
     di_meeting_prgs = DataImportMeetingProgram.only_relays.where(
       [ '(meeting_session_id IN (?)) OR (data_import_meeting_session_id IN (?))',

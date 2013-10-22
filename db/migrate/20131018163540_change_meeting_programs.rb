@@ -68,6 +68,17 @@ class ChangeMeetingPrograms < ActiveRecord::Migration
         # CHECK (is_out_of_race < 2);
     # ALTER TABLE `meeting_programs` ADD CONSTRAINT `CC_meeting_programs_is_autofilled` 
         # CHECK (is_autofilled < 2);
+
+
+    # ----------------- DATA IMPORT MEETING PROGRAMS --------------------------
+    change_table(:data_import_meeting_programs) do |t|
+      t.remove_references( :accreditation_time_type )
+
+      t.boolean :is_out_of_race, :null => false, :default => false, :comment => 'This event does not compete for score inside the result chart'
+
+      references :heat_type
+      references :time_standard
+    end
   end
   # ---------------------------------------------------------------------------
 end
