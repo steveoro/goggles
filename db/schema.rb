@@ -554,8 +554,8 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "lock_version",                            :default => 0
     t.integer  "event_order",                :limit => 3, :default => 0,     :null => false
     t.datetime "begin_time"
-    t.integer  "meeting_session_id"
-    t.integer  "event_type_id"
+#    t.integer  "meeting_session_id"
+#    t.integer  "event_type_id"
     t.integer  "category_type_id"
     t.integer  "gender_type_id"
     t.integer  "user_id"

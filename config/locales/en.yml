@@ -63,11 +63,6 @@ en:
     i18n_short_a: "ABS"
     i18n_description_a: "ABSENT"
 
-  pool_types:
-    code: "Code"
-    is_valid: "Valid?"
-    length_in_meters: "Length"
-
   federation_types:
     code: "Code"
     is_valid: "Valid?"
@@ -252,23 +247,88 @@ en:
     i18n_short_RB: ""
     i18n_description_RB: "Medley not swum in right order"
     i18n_short_RC: ""
-    i18n_description_RC: "Changed order of swimmers"
+    i18n_description_RC: "Changed the order of swimmers"
     i18n_short_RD: ""
-    i18n_description_RD: "Non listed swimmer swam"
+    i18n_description_RD: "Non-enlisted swimmer swam"
     i18n_short_RE1: ""
-    i18n_description_RE1: "Stroke infraction swimmer #1"
+    i18n_description_RE1: "Stroke infraction for swimmer #1"
     i18n_short_RE2: ""
-    i18n_description_RE2: "Stroke infraction swimmer #2"
+    i18n_description_RE2: "Stroke infraction for swimmer #2"
     i18n_short_RE3: ""
-    i18n_description_RE3: "Stroke infraction swimmer #3"
+    i18n_description_RE3: "Stroke infraction for swimmer #3"
     i18n_short_RE4: ""
-    i18n_description_RE4: "Stroke infraction swimmer #4"
+    i18n_description_RE4: "Stroke infraction for swimmer #4"
     i18n_short_RF: ""
-    i18n_description_RF: "Swimmer other than swimmer designated to swim entered area"
+    i18n_description_RF: "Swimmer other than the designated entered the area"
+
+  day_type_parts:
+    code: "Code"
+    i18n_short_M: "MNG"
+    i18n_description_M: "MORNING"
+    i18n_short_P: "AFT"
+    i18n_description_P: "AFTERNOON"
+    i18n_short_S: "EVE"
+    i18n_description_S: "EVENING"
+    i18n_short_N: "NGT"
+    i18n_description_N: "NIGHT"
+
+  edition_types:
+    code: "Code"
+    i18n_short_O: "ORD"
+    i18n_description_O: "ORDINAL"
+    i18n_short_R: "ROM"
+    i18n_description_R: "ROMAN"
+    i18n_short_N: "NO"
+    i18n_description_N: "NONE"
+    i18n_short_A: "YEA"
+    i18n_description_A: "YEAR"
+    i18n_short_S: "SEA"
+    i18n_description_S: "SEASON"
+
+  timing_types:
+    code: "Code"
+    i18n_short_M: "MAN"
+    i18n_description_M: "MANUAL"
+    i18n_short_S: "SEM"
+    i18n_description_S: "SEMI-AUTOMATIC"
+    i18n_short_A: "AUT"
+    i18n_description_A: "AUTOMATIC"
+
+  heat_types:
+    code: "Code"
+    i18n_short_B: "HT"
+    i18n_description_B: "HEATS"
+    i18n_short_S: "SF"
+    i18n_description_S: "SEMIFINALS"
+    i18n_short_F: "FN"
+    i18n_description_F: "FINALS"
+
+  entry_time_types:
+    code: "Code"
+    i18n_short_M: "MAN"
+    i18n_description_M: "MANUAL"
+    i18n_short_P: "PER"
+    i18n_description_P: "PERSONAL"
+    i18n_short_O: "GC"
+    i18n_description_O: "GOGGLE CUP"
+    i18n_short_A: "PRE"
+    i18n_description_A: "PREVIOUS YEAR"
+    i18n_short_U: "LST"
+    i18n_description_U: "LAST RESULT"
+
+  pool_types:
+    code: "Code"
+    length_in_meters: "Length"
+    i18n_short_25: "25 Mt"
+    i18n_description_25: "25 METERS"
+    i18n_short_50: "50 Mt"
+    i18n_description_50: "50 METERS"
+    i18n_short_33: "33 Mt"
+    i18n_description_33: "33 METERS"
 
   event_types:
     code: "Code"
-    is_valid: "Valid?"
+    is_a_relay: "Relay?"
     length_in_meters: "Length"
     style_order: "Style order"
 
@@ -281,20 +341,6 @@ en:
     group_name: "Group"
     age_begin: "From Age"
     age_end: "To Age"
-
-  accreditation_time_types:
-    code: "Code"
-    is_valid: "Valid?"
-    i18n_short_m: "MAN"
-    i18n_description_m: "MANUAL"
-    i18n_short_p: "PER"
-    i18n_description_p: "PERSONAL"
-    i18n_short_o: "OBE"
-    i18n_description_o: "OBERCUP"
-    i18n_short_a: "PRE"
-    i18n_description_a: "PRECEDING YEAR"
-    i18n_short_u: "LAS"
-    i18n_description_u: "LAST RACE"
 
   passage_types:
     code: "Code"
@@ -316,17 +362,6 @@ en:
   events_by_pool_types:
     pool_type_id: "Pool type ID"
     event_type_id: "Event Type ID"
-
-  result_types:
-    code: "Code"
-    is_valid: "Valid?"
-    default_value: "Default"
-    i18n_short_b: "HEAT"
-    i18n_description_b: "HEAT"
-    i18n_short_s: "SEMI"
-    i18n_description_s: "SEMI-FINALS"
-    i18n_short_f: "FINALS"
-    i18n_description_f: "FINALS"
 
   swimmer:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'swimmers'!"

@@ -4,47 +4,31 @@ class MeetingProgram < ActiveRecord::Base
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
 #  validates_associated :user                       # (Do not enable this for User)
 
-  belongs_to :meeting_session
-  belongs_to :event_type
+  belongs_to :meeting_event
   belongs_to :category_type
   belongs_to :gender_type
-  belongs_to :accreditation_time_type
-  validates_associated :meeting_session
-  validates_associated :event_type
+  belongs_to :pool_type
+  belongs_to :time_standard
+  validates_associated :meeting_event
   validates_associated :category_type
   validates_associated :gender_type
-  validates_associated :accreditation_time_type
+  validates_associated :pool_type
+  validates_associated :time_standard
 
   has_many :meeting_individual_results
   has_many :meeting_relay_results
   has_many :meeting_relay_swimmers
   # TODO Add other has_many relationships only when needed
 
-  has_one  :meeting,      :through => :meeting_session
-  has_one  :pool_type,    :through => :meeting_session
-  has_one  :season_type,  :through => :meeting_session
-
+  has_one  :meeting,      :through => :meeting_event
+  has_one  :pool_type,    :through => :meeting_event
+  has_one  :season_type,  :through => :meeting_event
   has_one  :stroke_type,  :through => :event_type
-
-  # TODO Eventually use & test an alias table for the following additional helpers:
-#  has_many :individual_teams, :through => :meeting_individual_results
-#  has_many :individual_badges, :through => :meeting_individual_results
-#  has_many :swimmers, :through => :meeting_individual_results
-#  has_many :relay_teams,   :through => :meeting_relay_results
-#  has_many :relay_badges,  :through => :meeting_relay_swimmers
-#  has_many :relay_swimmers, :through => :meeting_relay_swimmers
 
   validates_presence_of :event_order
   validates_length_of   :event_order, :within => 1..3, :allow_nil => false
-                                                    # Base timing (may not be available)
-  validates_length_of       :minutes, :maximum => 3
-  validates_numericality_of :minutes
-  validates_length_of       :seconds, :maximum => 2
-  validates_numericality_of :seconds
-  validates_length_of       :hundreds, :maximum => 2
-  validates_numericality_of :hundreds
 
-
+# FIXME:
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)
 

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ResultTypeTest < ActiveSupport::TestCase
+class TrainingModeTypeTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

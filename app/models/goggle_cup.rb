@@ -1,4 +1,4 @@
-class OberCup < ActiveRecord::Base
+class GoggleCup < ActiveRecord::Base
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
@@ -7,7 +7,7 @@ class OberCup < ActiveRecord::Base
   belongs_to :team
   validates_associated :team
 
-  has_many :ober_cup_standards
+  has_many :goggle_cup_standards
 
   validates_presence_of     :description
   validates_length_of       :description, :within => 1..60, :allow_nil => false
@@ -20,8 +20,8 @@ class OberCup < ActiveRecord::Base
   validates_numericality_of :max_points
 
 
-  scope :sort_ober_cup_standard_by_user,  lambda { |dir| order("users.name #{dir.to_s}, teams.name #{dir.to_s}, ober_cups.year #{dir.to_s}") }
-  scope :sort_ober_cup_standard_by_team,  lambda { |dir| order("teams.name #{dir.to_s}, ober_cups.year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_user,  lambda { |dir| order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_team,  lambda { |dir| order("teams.name #{dir.to_s}, goggle_cups.year #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

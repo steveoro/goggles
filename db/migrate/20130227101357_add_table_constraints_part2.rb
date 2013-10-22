@@ -325,7 +325,7 @@ class AddTableConstraintsPart2 < ActiveRecord::Migration
     # ----------------- MEETING INDIVIDUAL RESULTS ----------------------------
     execute <<-SQL
       ALTER TABLE meeting_individual_results
-        DROP FOREIGN KEY fk_individual_accreditations_meeting_programs
+        DROP FOREIGN KEY fk_meeting_individual_results_meeting_programs
     SQL
     execute <<-SQL
       ALTER TABLE meeting_individual_results

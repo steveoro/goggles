@@ -63,11 +63,6 @@ it:
     i18n_short_a: "ASS"
     i18n_description_a: "ASSENTE"
 
-  pool_types:
-    code: "Cod."
-    is_valid: "Valido?"
-    length_in_meters: "Lungh."
-
   federation_types:
     code: "Cod."
     is_valid: "Valido?"
@@ -266,9 +261,75 @@ it:
     i18n_short_RF: ""
     i18n_description_RF: "Nuotatore non ammesso nell'area cambio"
 
+  day_type_parts:
+    code: "Cod."
+    i18n_short_M: "MAT"
+    i18n_description_M: "MATTINA"
+    i18n_short_P: "POM"
+    i18n_description_P: "POMERIGGIO"
+    i18n_short_S: "SER"
+    i18n_description_S: "SERA"
+    i18n_short_N: "NOT"
+    i18n_description_N: "NOTTE"
+
+  edition_types:
+    code: "Cod."
+    i18n_short_O: "ORD"
+    i18n_description_O: "ORDINALE"
+    i18n_short_R: "ROM"
+    i18n_description_R: "ROMANO"
+    i18n_short_N: "NO"
+    i18n_description_N: "NESSUNO"
+    i18n_short_A: "ANN"
+    i18n_description_A: "ANNO"
+    i18n_short_S: "STA"
+    i18n_description_S: "STAGIONE"
+
+  timing_types:
+    code: "Cod."
+    i18n_short_M: "MAN"
+    i18n_description_M: "MANUALE"
+    i18n_short_S: "SEM"
+    i18n_description_S: "SEMIAUTOMATICO"
+    i18n_short_A: "AUT"
+    i18n_description_A: "AUTOMATICO"
+
+  heat_types:
+    code: "Cod."
+    default_value: "Default"
+    i18n_short_B: "BT"
+    i18n_description_B: "BATTERIE"
+    i18n_short_S: "SF"
+    i18n_description_S: "SEMIFINALI"
+    i18n_short_F: "FI"
+    i18n_description_F: "FINALI"
+
+  entry_time_types:
+    code: "Cod."
+    i18n_short_M: "MAN"
+    i18n_description_M: "MANUALE"
+    i18n_short_P: "PER"
+    i18n_description_P: "PERSONALE"
+    i18n_short_O: "GC"
+    i18n_description_O: "GOGGLE CUP"
+    i18n_short_A: "APR"
+    i18n_description_A: "ANNO PRECEDENTE"
+    i18n_short_U: "ULT"
+    i18n_description_U: "ULTIMA GARA"
+
+  pool_types:
+    code: "Cod."
+    length_in_meters: "Lungh."
+    i18n_short_25: "25 Mt"
+    i18n_description_25: "25 METRI"
+    i18n_short_50: "50 Mt"
+    i18n_description_50: "50 METRI"
+    i18n_short_33: "33 Mt"
+    i18n_description_33: "33 METRI"
+
   event_types:
     code: "Cod."
-    is_valid: "Valido?"
+    is_a_relay: "Staff.?"
     length_in_meters: "Lungh."
     style_order: "Ord. stile"
 
@@ -281,20 +342,6 @@ it:
     group_name: "Gruppo"
     age_begin: "Da Anni"
     age_end: "Ad Anni"
-
-  accreditation_time_types:
-    code: "Cod."
-    is_valid: "Valido?"
-    i18n_short_m: "MAN"
-    i18n_description_m: "MANUALE"
-    i18n_short_p: "PER"
-    i18n_description_p: "PERSONALE"
-    i18n_short_o: "OBE"
-    i18n_description_o: "OBERCUP"
-    i18n_short_a: "APR"
-    i18n_description_a: "ANNO PRECEDENTE"
-    i18n_short_u: "ULT"
-    i18n_description_u: "ULTIMA GARA"
 
   passage_types:
     code: "Cod."
@@ -316,17 +363,6 @@ it:
   events_by_pool_types:
     pool_type_id: "ID Tipo Piscina"
     event_type_id: "ID Tipo Evento"
-
-  result_types:
-    code: "Cod."
-    is_valid: "Valido?"
-    default_value: "Default"
-    i18n_short_b: "BAT"
-    i18n_description_b: "BATTERIE"
-    i18n_short_s: "SEM"
-    i18n_description_s: "SEMIFINALI"
-    i18n_short_f: "FIN"
-    i18n_description_f: "FINALI"
 
   swimmer:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Nuotatori! (tab: 'swimmers')"

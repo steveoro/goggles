@@ -3,13 +3,13 @@ module Version
   # ** DO NOT CHANGE THE FOLLOWING UNLESS YOU KNOW WHAT YOU'RE DOING!! **
   CORE    = 'core-six'
   MAJOR   = '4.00'
-  MINOR   = '54'
-  BUILD   = '20131018'
+  MINOR   = '58'
+  BUILD   = '20131022 WIP'
 
   # Internal constant used to discriminate between all the existing and
   # running versions of the AgeX framework.
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"
 
   # Current internal DB version (indipendent from migrations and framework release)
-  DB      = "1.09.01"
+  DB      = "1.11.00 WIP"
 end

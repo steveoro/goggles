@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class IndividualAccreditationTest < ActiveSupport::TestCase
+class TrainingRowTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

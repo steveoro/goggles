@@ -14,9 +14,11 @@ class DataImportMeetingSession < ActiveRecord::Base
   belongs_to :data_import_meeting
   belongs_to :meeting
   belongs_to :swimming_pool
+  belongs_to :day_part_type
   validates_associated :data_import_meeting
   validates_associated :meeting
   validates_associated :swimming_pool
+  validates_associated :day_part_type
 
   has_many :meeting_programs
   has_many :data_import_meeting_programs
