@@ -13,10 +13,10 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
 
   belongs_to :data_import_meeting_program
   belongs_to :meeting_program
-  belongs_to :result_type
+  belongs_to :entry_time_type
   validates_associated :data_import_meeting_program
   validates_associated :meeting_program
-  validates_associated :result_type
+  validates_associated :entry_time_type
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :data_import_swimmer
   belongs_to :data_import_team
@@ -41,6 +41,15 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   validates_length_of       :rank, :within => 1..4, :allow_nil => false
   validates_numericality_of :rank
 
+  validates_presence_of     :standard_points
+  validates_numericality_of :standard_points
+  validates_presence_of     :meeting_points
+  validates_numericality_of :meeting_points
+  validates_presence_of     :goggle_cup_points
+  validates_numericality_of :goggle_cup_points
+
+  validates_presence_of     :reaction_time
+  validates_numericality_of :reaction_time
   validates_presence_of     :minutes
   validates_length_of       :minutes, :within => 1..3, :allow_nil => false
   validates_numericality_of :minutes
@@ -51,9 +60,15 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
 
+  validates_length_of       :entry_minutes, :maximum => 3
+  validates_numericality_of :entry_minutes
+  validates_length_of       :entry_seconds, :maximum => 2
+  validates_numericality_of :entry_seconds
+  validates_length_of       :entry_hundreds, :maximum => 2
+  validates_numericality_of :entry_hundreds
+
   scope :sort_data_import_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_data_import_meeting_individual_result_by_meeting,       lambda { |dir| order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_data_import_meeting_individual_result_by_result_type,   lambda { |dir| order("result_types.code #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_data_import_meeting_individual_result_by_swimmer,       lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, data_import_meeting_individual_results.rank #{dir.to_s}") }
   scope :sort_data_import_meeting_individual_result_by_team,          lambda { |dir| order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_data_import_meeting_individual_result_by_badge,         lambda { |dir| order("badges.number #{dir.to_s}") }

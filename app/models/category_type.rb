@@ -1,7 +1,7 @@
 class CategoryType < ActiveRecord::Base
 
   validates_presence_of   :code
-  validates_length_of     :code, :within => 1..6
+  validates_length_of     :code, :within => 1..6, :allow_nil => false
 
   validates_length_of     :federation_code, :within => 1..2
   validates_length_of     :description, :maximum => 100

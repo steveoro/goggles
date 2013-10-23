@@ -1,7 +1,7 @@
 class LockerCabinetType < ActiveRecord::Base
 
   validates_presence_of   :code
-  validates_length_of     :code, :maximum => 3
+  validates_length_of     :code, :within => 1..3, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
 
   # Unique IDs used inside the DB, the description will be retrieved using I18n.t() 
@@ -35,12 +35,12 @@ class LockerCabinetType < ActiveRecord::Base
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
-    I18n.t( "i18n_short_#{ self.code.downcase }".to_sym, {:scope=>[:locker_cabinet_types]} )
+    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:locker_cabinet_types]} )
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description
-    I18n.t( "i18n_description_#{ self.code.downcase }".to_sym, {:scope=>[:locker_cabinet_types]} )
+    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:locker_cabinet_types]} )
   end
   # ----------------------------------------------------------------------------
 

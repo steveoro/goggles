@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AccreditationTimeTypeTest < ActiveSupport::TestCase
+class UserResultTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

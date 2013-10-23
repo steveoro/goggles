@@ -6,19 +6,21 @@ class MeetingRelayResult < ActiveRecord::Base
 
   belongs_to :meeting_program
   belongs_to :team
-  belongs_to :result_type
+  belongs_to :team_affiliation
+  belongs_to :entry_time_type
+  belongs_to :disqualification_code_type
 
   validates_associated :meeting_program
   validates_associated :team
-  validates_associated :result_type
+  validates_associated :team_affiliation
+  validates_associated :entry_time_type
 
-# TODO for this helper a 3-chain-through vs. meeting_relay_swimmers is needed:
-#  has_many :swimmers, :through => :meeting_program
-
+  has_one  :meeting_event,    :through => :meeting_program
   has_one  :meeting_session,  :through => :meeting_program
   has_one  :meeting,          :through => :meeting_program
 
-  belongs_to :disqualification_code_type
+  validates_presence_of     :relay_header
+  validates_length_of       :relay_header, :within => 1..60, :allow_nil => false
 
   validates_presence_of     :rank
   validates_length_of       :rank, :within => 1..4, :allow_nil => false
@@ -29,6 +31,8 @@ class MeetingRelayResult < ActiveRecord::Base
   validates_presence_of     :meeting_points
   validates_numericality_of :meeting_points
 
+  validates_presence_of     :reaction_time
+  validates_numericality_of :reaction_time
   validates_presence_of     :minutes
   validates_length_of       :minutes, :within => 1..3, :allow_nil => false
   validates_numericality_of :minutes
@@ -39,12 +43,18 @@ class MeetingRelayResult < ActiveRecord::Base
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
 
+  validates_length_of       :entry_minutes, :maximum => 3
+  validates_numericality_of :entry_minutes
+  validates_length_of       :entry_seconds, :maximum => 2
+  validates_numericality_of :entry_seconds
+  validates_length_of       :entry_hundreds, :maximum => 2
+  validates_numericality_of :entry_hundreds
+
 
   scope :is_valid_for_score,  where( :is_out_of_race => false, :is_disqualified => false )
 
   scope :sort_meeting_relay_result_by_user,           lambda { |dir| order("users.name #{dir.to_s}, meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }
   scope :sort_meeting_relay_result_by_meeting_relay,  lambda { |dir| order("meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }
-  scope :sort_meeting_relay_result_by_result_type,    lambda { |dir| order("result_type.code #{dir.to_s}, rank #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

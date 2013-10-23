@@ -30,7 +30,7 @@ class NamingTools
     :meeting_team_scores,
     :meeting_individual_results,
     :swimmer_results,
-    :ober_cups, :ober_cup_standards,
+    :goggle_cups, :goggle_cup_standards,
     :swimming_pool, :swimming_pool_reviews,
     :data_import
   ]

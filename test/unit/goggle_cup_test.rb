@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SwimmerResultTest < ActiveSupport::TestCase
+class GoggleCupTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

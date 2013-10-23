@@ -19,6 +19,19 @@ class DataImportMeeting < ActiveRecord::Base
   validates_associated :edition_type
   validates_associated :timing_type
 
+  belongs_to( :individual_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "individual_score_computation_type_id"
+  )
+  belongs_to( :relay_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "relay_score_computation_type_id"
+  )
+  belongs_to( :team_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "team_score_computation_type_id"
+  )
+
   has_one  :season_type, :through => :season
 
   has_many :meeting_sessions

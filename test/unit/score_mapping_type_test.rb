@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MeetingTeamScoreTest < ActiveSupport::TestCase
+class ScoreMappingTypeTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

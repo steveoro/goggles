@@ -4,19 +4,31 @@ class MeetingRelaySwimmer < ActiveRecord::Base
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
 #  validates_associated :user                       # (Do not enable this for User)
 
-  belongs_to :meeting_program
+  belongs_to :meeting_relay_result
   belongs_to :swimmer
   belongs_to :badge
   belongs_to :stroke_type
 
-  validates_associated :meeting_program
+  validates_associated :meeting_relay_result
   validates_associated :swimmer
   validates_associated :badge
   validates_associated :stroke_type
 
   validates_presence_of     :relay_order
-  validates_length_of       :relay_order, :maximum => 1, :allow_nil => false
+  validates_length_of       :relay_order, :within => 1..3, :allow_nil => false
   validates_numericality_of :relay_order
+
+  validates_presence_of     :reaction_time
+  validates_numericality_of :reaction_time
+  validates_presence_of     :minutes
+  validates_length_of       :minutes, :within => 1..3, :allow_nil => false
+  validates_numericality_of :minutes
+  validates_presence_of     :seconds
+  validates_length_of       :seconds, :within => 1..2, :allow_nil => false
+  validates_numericality_of :seconds
+  validates_presence_of     :hundreds
+  validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
+  validates_numericality_of :hundreds
 
 
   scope :sort_meeting_relay_swimmer_by_user,            lambda { |dir| order("users.name #{dir.to_s}") }

@@ -22,9 +22,9 @@ class ChangeMeetingPrograms < ActiveRecord::Migration
       t.boolean :is_out_of_race, :null => false, :default => false, :comment => 'This event does not compete for score inside the result chart'
       t.time :begin_time
 
-      references :meeting_event
-      references :pool_type
-      references :time_standard
+      t.references :meeting_event
+      t.references :pool_type
+      t.references :time_standard
     end
 
     execute <<-SQL
@@ -76,8 +76,8 @@ class ChangeMeetingPrograms < ActiveRecord::Migration
 
       t.boolean :is_out_of_race, :null => false, :default => false, :comment => 'This event does not compete for score inside the result chart'
 
-      references :heat_type
-      references :time_standard
+      t.references :heat_type
+      t.references :time_standard
     end
   end
   # ---------------------------------------------------------------------------

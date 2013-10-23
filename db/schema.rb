@@ -11,16 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131016235422) do
-
-  create_table "accreditation_time_types", :force => true do |t|
-    t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 1,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-  end
-
-  add_index "accreditation_time_types", ["code"], :name => "index_accreditation_time_types_on_code", :unique => true
+ActiveRecord::Schema.define(:version => 20131023165931) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -84,6 +75,15 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
 
   add_index "app_parameters", ["code"], :name => "index_app_parameters_on_code", :unique => true
 
+  create_table "arm_aux_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+  end
+
+  add_index "arm_aux_types", ["code"], :name => "index_arm_aux_types_on_code", :unique => true
+
   create_table "articles", :force => true do |t|
     t.integer  "lock_version",               :default => 0
     t.string   "title",        :limit => 80,                    :null => false
@@ -107,18 +107,58 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "user_id"
     t.datetime "created_at",                                              :null => false
     t.datetime "updated_at",                                              :null => false
+    t.integer  "entry_time_type_id"
   end
 
   add_index "badges", ["accreditation_time_type_id"], :name => "fk_badges_accreditation_time_types"
   add_index "badges", ["category_type_id"], :name => "fk_badges_category_types"
+  add_index "badges", ["entry_time_type_id"], :name => "fk_badges_entry_time_types"
   add_index "badges", ["number"], :name => "index_badges_on_number"
   add_index "badges", ["season_id"], :name => "fk_badges_seasons"
   add_index "badges", ["swimmer_id"], :name => "fk_badges_swimmers"
   add_index "badges", ["team_id"], :name => "fk_badges_teams"
 
+  create_table "base_movements", :force => true do |t|
+    t.integer  "lock_version",                        :default => 0
+    t.datetime "created_at",                                             :null => false
+    t.datetime "updated_at",                                             :null => false
+    t.string   "code",                   :limit => 6,                    :null => false
+    t.boolean  "is_arm_aux_allowed",                  :default => false, :null => false
+    t.boolean  "is_kick_aux_allowed",                 :default => false, :null => false
+    t.boolean  "is_body_aux_allowed",                 :default => false, :null => false
+    t.boolean  "is_breath_aux_allowed",               :default => false, :null => false
+    t.integer  "movement_type_id"
+    t.integer  "stroke_type_id"
+    t.integer  "movement_scope_type_id"
+    t.integer  "user_id"
+  end
+
+  add_index "base_movements", ["code"], :name => "index_base_movements_on_code", :unique => true
+  add_index "base_movements", ["movement_scope_type_id"], :name => "fk_base_movements_movement_scope_types"
+  add_index "base_movements", ["movement_type_id"], :name => "fk_base_movements_movement_types"
+  add_index "base_movements", ["stroke_type_id"], :name => "fk_base_movements_stroke_types"
+
+  create_table "body_aux_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+  end
+
+  add_index "body_aux_types", ["code"], :name => "index_body_aux_types_on_code", :unique => true
+
+  create_table "breath_aux_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+  end
+
+  add_index "breath_aux_types", ["code"], :name => "index_breath_aux_types_on_code", :unique => true
+
   create_table "category_types", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
-    t.string   "code",            :limit => 6,                      :null => false
+    t.string   "code",            :limit => 7,                      :null => false
     t.string   "federation_code", :limit => 2,                      :null => false
     t.string   "description",     :limit => 100
     t.string   "short_name",      :limit => 50
@@ -224,7 +264,6 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "hundreds",                                 :limit => 2,                                  :default => 0,     :null => false
     t.integer  "data_import_meeting_program_id"
     t.integer  "meeting_program_id"
-    t.integer  "result_type_id"
     t.integer  "data_import_swimmer_id"
     t.integer  "data_import_team_id"
     t.integer  "data_import_badge_id"
@@ -233,16 +272,22 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "badge_id"
     t.integer  "user_id"
     t.integer  "disqualification_code_type_id"
+    t.decimal  "goggle_cup_points",                                       :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "reaction_time",                                           :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.integer  "entry_minutes",                            :limit => 3
+    t.integer  "entry_seconds",                            :limit => 2
+    t.integer  "entry_hundreds",                           :limit => 2
+    t.integer  "entry_time_type_id"
   end
 
   create_table "data_import_meeting_programs", :force => true do |t|
     t.integer  "lock_version",                                :default => 0
-    t.datetime "created_at",                                                 :null => false
-    t.datetime "updated_at",                                                 :null => false
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
     t.integer  "data_import_session_id"
     t.integer  "conflicting_meeting_program_id", :limit => 8, :default => 0
-    t.string   "import_text",                                                :null => false
-    t.integer  "event_order",                    :limit => 3, :default => 0, :null => false
+    t.string   "import_text",                                                    :null => false
+    t.integer  "event_order",                    :limit => 3, :default => 0,     :null => false
     t.time     "begin_time"
     t.integer  "data_import_meeting_session_id"
     t.integer  "meeting_session_id"
@@ -253,7 +298,9 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "minutes",                        :limit => 3, :default => 0
     t.integer  "seconds",                        :limit => 2, :default => 0
     t.integer  "hundreds",                       :limit => 2, :default => 0
-    t.integer  "accreditation_time_type_id"
+    t.boolean  "is_out_of_race",                              :default => false, :null => false
+    t.integer  "heat_type_id"
+    t.integer  "time_standard_id"
   end
 
   add_index "data_import_meeting_programs", ["meeting_session_id", "category_type_id"], :name => "meeting_category_type"
@@ -262,28 +309,34 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "data_import_meeting_programs", ["meeting_session_id", "gender_type_id"], :name => "meeting_gender_type"
 
   create_table "data_import_meeting_relay_results", :force => true do |t|
-    t.integer  "lock_version",                                                                    :default => 0
-    t.datetime "created_at",                                                                                         :null => false
-    t.datetime "updated_at",                                                                                         :null => false
+    t.integer  "lock_version",                                                                     :default => 0
+    t.datetime "created_at",                                                                                          :null => false
+    t.datetime "updated_at",                                                                                          :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_relay_result_id", :limit => 8,                                :default => 0
-    t.string   "import_text",                                                                                        :null => false
-    t.integer  "rank",                                                                            :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                     :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                                  :default => false, :null => false
-    t.boolean  "is_disqualified",                                                                 :default => false, :null => false
-    t.decimal  "standard_points",                                  :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                                   :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                             :limit => 3,                                :default => 0,     :null => false
-    t.integer  "seconds",                             :limit => 2,                                :default => 0,     :null => false
-    t.integer  "hundreds",                            :limit => 2,                                :default => 0,     :null => false
+    t.integer  "conflicting_meeting_relay_result_id", :limit => 8,                                 :default => 0
+    t.string   "import_text",                                                                                         :null => false
+    t.integer  "rank",                                                                             :default => 0,     :null => false
+    t.boolean  "is_play_off",                                                                      :default => false, :null => false
+    t.boolean  "is_out_of_race",                                                                   :default => false, :null => false
+    t.boolean  "is_disqualified",                                                                  :default => false, :null => false
+    t.decimal  "standard_points",                                   :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_points",                                    :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "minutes",                             :limit => 3,                                 :default => 0,     :null => false
+    t.integer  "seconds",                             :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "hundreds",                            :limit => 2,                                 :default => 0,     :null => false
     t.integer  "data_import_team_id"
     t.integer  "team_id"
-    t.integer  "result_type_id"
     t.integer  "user_id"
     t.integer  "data_import_meeting_program_id"
     t.integer  "meeting_program_id"
     t.integer  "disqualification_code_type_id"
+    t.string   "relay_header",                        :limit => 60,                                :default => "",    :null => false
+    t.decimal  "reaction_time",                                     :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.integer  "entry_minutes",                       :limit => 3
+    t.integer  "entry_seconds",                       :limit => 2
+    t.integer  "entry_hundreds",                      :limit => 2
+    t.integer  "team_affiliation_id"
+    t.integer  "entry_time_type_id"
   end
 
   create_table "data_import_meeting_sessions", :force => true do |t|
@@ -303,69 +356,91 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "swimming_pool_id"
     t.integer  "user_id"
     t.string   "description",                    :limit => 100,                :null => false
+    t.integer  "day_part_type_id"
   end
 
   add_index "data_import_meeting_sessions", ["scheduled_date"], :name => "index_data_import_meeting_sessions_on_scheduled_date"
 
   create_table "data_import_meeting_team_scores", :force => true do |t|
-    t.integer  "lock_version",                                                               :default => 0
-    t.datetime "created_at",                                                                                  :null => false
-    t.datetime "updated_at",                                                                                  :null => false
+    t.integer  "lock_version",                                                                  :default => 0
+    t.datetime "created_at",                                                                                     :null => false
+    t.datetime "updated_at",                                                                                     :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_challenge_score_id", :limit => 8,                                :default => 0
-    t.string   "import_text",                                                                                 :null => false
-    t.decimal  "total_individual_points",                     :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "total_relay_points",                          :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "conflicting_meeting_team_score_id", :limit => 8,                                :default => 0
+    t.string   "import_text",                                                                                    :null => false
+    t.decimal  "sum_individual_points",                          :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_relay_points",                               :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "data_import_team_id"
     t.integer  "data_import_meeting_id"
     t.integer  "team_id"
     t.integer  "meeting_id"
-    t.integer  "rank",                                                                       :default => 0,   :null => false
+    t.integer  "rank",                                                                          :default => 0,   :null => false
     t.integer  "user_id"
+    t.decimal  "sum_team_points",                                :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_individual_points",                      :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_relay_points",                           :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_team_points",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_individual_points",                       :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_relay_points",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_team_points",                             :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "season_id"
   end
 
   create_table "data_import_meetings", :force => true do |t|
-    t.integer  "lock_version",                          :default => 0
-    t.datetime "created_at",                                               :null => false
-    t.datetime "updated_at",                                               :null => false
+    t.integer  "lock_version",                                        :default => 0
+    t.datetime "created_at",                                                             :null => false
+    t.datetime "updated_at",                                                             :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_id", :limit => 8,   :default => 0
-    t.string   "import_text",                                              :null => false
-    t.string   "description",            :limit => 100
+    t.integer  "conflicting_meeting_id",               :limit => 8,   :default => 0
+    t.string   "import_text",                                                            :null => false
+    t.string   "description",                          :limit => 100
     t.date     "entry_deadline"
-    t.boolean  "has_warm_up_pool",                      :default => false
-    t.boolean  "is_under_25_admitted",                  :default => false
-    t.string   "reference_phone",        :limit => 40
-    t.string   "reference_e_mail",       :limit => 50
-    t.string   "reference_name",         :limit => 50
+    t.boolean  "has_warm_up_pool",                                    :default => false
+    t.boolean  "is_under_25_admitted",                                :default => false
+    t.string   "reference_phone",                      :limit => 40
+    t.string   "reference_e_mail",                     :limit => 50
+    t.string   "reference_name",                       :limit => 50
     t.text     "notes"
-    t.string   "tag",                    :limit => 20
-    t.boolean  "has_invitation",                        :default => false
-    t.boolean  "has_start_list",                        :default => false
-    t.boolean  "are_results_acquired",                  :default => false
-    t.integer  "max_individual_events",  :limit => 1,   :default => 2
-    t.string   "configuration_file",     :limit => 50
-    t.integer  "challenge_number",       :limit => 3,   :default => 0
+    t.string   "tag",                                  :limit => 20
+    t.boolean  "has_invitation",                                      :default => false
+    t.boolean  "has_start_list",                                      :default => false
+    t.boolean  "are_results_acquired",                                :default => false
+    t.integer  "max_individual_events",                :limit => 1,   :default => 2
+    t.string   "configuration_file",                   :limit => 50
+    t.integer  "edition",                              :limit => 3,   :default => 0,     :null => false
     t.integer  "data_import_season_id"
     t.integer  "season_id"
     t.integer  "user_id"
+    t.date     "header_date"
+    t.string   "code",                                 :limit => 20,                     :null => false
+    t.string   "header_year",                          :limit => 9,                      :null => false
+    t.integer  "max_individual_events_per_session",    :limit => 2,   :default => 2
+    t.boolean  "is_out_of_season",                                    :default => false, :null => false
+    t.integer  "edition_type_id"
+    t.integer  "timing_type_id"
+    t.integer  "individual_score_computation_type_id"
+    t.integer  "relay_score_computation_type_id"
+    t.integer  "team_score_computation_type_id"
   end
 
+  add_index "data_import_meetings", ["code", "edition"], :name => "idx_di_meetings_code"
   add_index "data_import_meetings", ["entry_deadline"], :name => "index_data_import_meetings_on_entry_deadline"
+  add_index "data_import_meetings", ["header_date"], :name => "idx_di_meetings_header_date"
 
   create_table "data_import_seasons", :force => true do |t|
-    t.integer  "lock_version",                           :default => 0
-    t.datetime "created_at",                                                :null => false
-    t.datetime "updated_at",                                                :null => false
+    t.integer  "lock_version",                          :default => 0
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_season_id",   :limit => 8,   :default => 0
-    t.string   "import_text",                                               :null => false
-    t.string   "description",             :limit => 100,                    :null => false
-    t.date     "begin_date",                                                :null => false
+    t.integer  "conflicting_season_id",  :limit => 8,   :default => 0
+    t.string   "import_text",                                          :null => false
+    t.string   "description",            :limit => 100,                :null => false
+    t.date     "begin_date",                                           :null => false
     t.date     "end_date"
-    t.boolean  "must_use_time_standards",                :default => false, :null => false
-    t.integer  "max_points",                             :default => 0,     :null => false
     t.integer  "season_type_id"
+    t.string   "header_year",            :limit => 9,                  :null => false
+    t.integer  "edition",                :limit => 3,   :default => 0, :null => false
+    t.integer  "edition_type_id"
   end
 
   add_index "data_import_seasons", ["begin_date"], :name => "index_data_import_seasons_on_begin_date"
@@ -424,6 +499,15 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "data_import_teams", ["data_import_city_id"], :name => "data_import_city_id"
   add_index "data_import_teams", ["name"], :name => "index_data_import_teams_on_name"
 
+  create_table "day_part_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1,                :null => false
+  end
+
+  add_index "day_part_types", ["code"], :name => "index_day_part_types_on_code", :unique => true
+
   create_table "disqualification_code_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
     t.datetime "created_at",                                     :null => false
@@ -435,6 +519,24 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
 
   add_index "disqualification_code_types", ["is_a_relay", "code"], :name => "code", :unique => true
   add_index "disqualification_code_types", ["is_a_relay"], :name => "index_disqualification_code_types_on_is_a_relay"
+
+  create_table "edition_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1,                :null => false
+  end
+
+  add_index "edition_types", ["code"], :name => "index_edition_types_on_code", :unique => true
+
+  create_table "entry_time_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.string   "code",         :limit => 1,                :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+  end
+
+  add_index "entry_time_types", ["code"], :name => "idx_entry_time_types_code", :unique => true
 
   create_table "event_types", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
@@ -461,6 +563,46 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "events_by_pool_types", ["event_type_id"], :name => "fk_events_by_pool_types_event_types"
   add_index "events_by_pool_types", ["pool_type_id"], :name => "fk_events_by_pool_types_pool_types"
 
+  create_table "exercise_rows", :force => true do |t|
+    t.integer  "lock_version",                       :default => 0
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+    t.string   "code",                  :limit => 6,                :null => false
+    t.integer  "part_order",            :limit => 3, :default => 0, :null => false
+    t.integer  "percentage",            :limit => 3, :default => 0, :null => false
+    t.integer  "start_and_rest",                     :default => 0, :null => false
+    t.integer  "pause",                              :default => 0, :null => false
+    t.integer  "exercise_id"
+    t.integer  "base_movement_id"
+    t.integer  "training_mode_type_id"
+    t.integer  "arm_aux_type_id"
+    t.integer  "kick_aux_type_id"
+    t.integer  "body_aux_type_id"
+    t.integer  "breath_aux_type_id"
+    t.integer  "user_id"
+  end
+
+  add_index "exercise_rows", ["arm_aux_type_id"], :name => "fk_exercise_rows_arm_aux_types"
+  add_index "exercise_rows", ["base_movement_id"], :name => "fk_exercise_rows_base_movements"
+  add_index "exercise_rows", ["body_aux_type_id"], :name => "fk_exercise_rows_body_aux_types"
+  add_index "exercise_rows", ["breath_aux_type_id"], :name => "fk_exercise_rows_breath_aux_types"
+  add_index "exercise_rows", ["code"], :name => "index_exercise_rows_on_code", :unique => true
+  add_index "exercise_rows", ["exercise_id", "part_order"], :name => "idx_exercise_rows_part_order"
+  add_index "exercise_rows", ["kick_aux_type_id"], :name => "fk_exercise_rows_kick_aux_types"
+  add_index "exercise_rows", ["training_mode_type_id"], :name => "fk_exercise_rows_training_mode_types"
+
+  create_table "exercises", :force => true do |t|
+    t.integer  "lock_version",                       :default => 0
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+    t.string   "code",                  :limit => 6,                :null => false
+    t.integer  "training_step_type_id"
+    t.integer  "user_id"
+  end
+
+  add_index "exercises", ["code"], :name => "index_exercises_on_code", :unique => true
+  add_index "exercises", ["training_step_type_id"], :name => "fk_exercises_training_step_types"
+
   create_table "federation_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
     t.string   "code",         :limit => 4,                  :null => false
@@ -481,6 +623,38 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
 
   add_index "gender_types", ["code"], :name => "index_gender_types_on_code", :unique => true
 
+  create_table "goggle_cup_standards", :force => true do |t|
+    t.integer  "lock_version",                                             :default => 0
+    t.integer  "minutes",       :limit => 3,                               :default => 0,   :null => false
+    t.integer  "seconds",       :limit => 2,                               :default => 0,   :null => false
+    t.integer  "hundreds",      :limit => 2,                               :default => 0,   :null => false
+    t.integer  "badge_id"
+    t.integer  "event_type_id"
+    t.integer  "pool_type_id"
+    t.datetime "created_at",                                                                :null => false
+    t.datetime "updated_at",                                                                :null => false
+    t.decimal  "reaction_time",              :precision => 5, :scale => 2, :default => 0.0, :null => false
+    t.integer  "goggle_cup_id"
+  end
+
+  add_index "goggle_cup_standards", ["badge_id"], :name => "fk_goggle_cup_standards_badges"
+  add_index "goggle_cup_standards", ["event_type_id"], :name => "fk_goggle_cup_standards_event_types"
+  add_index "goggle_cup_standards", ["goggle_cup_id"], :name => "fk_goggle_cup_standards_goggle_cups"
+  add_index "goggle_cup_standards", ["pool_type_id"], :name => "fk_goggle_cup_standards_pool_types"
+
+  create_table "goggle_cups", :force => true do |t|
+    t.integer  "lock_version",               :default => 0
+    t.string   "description",  :limit => 60,                   :null => false
+    t.integer  "season_year",                :default => 2010, :null => false
+    t.integer  "max_points",                 :default => 1000, :null => false
+    t.integer  "team_id"
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  add_index "goggle_cups", ["season_year"], :name => "idx_season_year"
+  add_index "goggle_cups", ["team_id"], :name => "fk_goggle_cups_teams"
+
   create_table "hair_dryer_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
     t.string   "code",         :limit => 3,                :null => false
@@ -490,23 +664,24 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
 
   add_index "hair_dryer_types", ["code"], :name => "index_hair_dryer_types_on_code", :unique => true
 
-  create_table "individual_accreditations", :force => true do |t|
-    t.integer  "lock_version",                            :default => 0
-    t.integer  "minutes",                    :limit => 3, :default => 0, :null => false
-    t.integer  "seconds",                    :limit => 2, :default => 0, :null => false
-    t.integer  "hundreds",                   :limit => 2, :default => 0, :null => false
-    t.text     "notes"
-    t.integer  "meeting_program_id"
-    t.integer  "badge_id"
-    t.integer  "accreditation_time_type_id"
-    t.integer  "user_id"
-    t.datetime "created_at",                                             :null => false
-    t.datetime "updated_at",                                             :null => false
+  create_table "heat_types", :force => true do |t|
+    t.integer  "lock_version",                   :default => 0
+    t.string   "code",             :limit => 10,                    :null => false
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+    t.boolean  "is_default_value",               :default => false, :null => false
   end
 
-  add_index "individual_accreditations", ["accreditation_time_type_id"], :name => "fk_individual_accreditations_accreditation_time_types"
-  add_index "individual_accreditations", ["badge_id"], :name => "fk_individual_accreditations_badges"
-  add_index "individual_accreditations", ["meeting_program_id", "badge_id"], :name => "accreditations_x_badges"
+  add_index "heat_types", ["code"], :name => "idx_heat_types_code", :unique => true
+
+  create_table "kick_aux_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+  end
+
+  add_index "kick_aux_types", ["code"], :name => "index_kick_aux_types_on_code", :unique => true
 
   create_table "locker_cabinet_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -517,70 +692,28 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
 
   add_index "locker_cabinet_types", ["code"], :name => "index_locker_cabinet_types_on_code", :unique => true
 
+  create_table "meeting_events", :force => true do |t|
+    t.integer  "lock_version",                    :default => 0
+    t.datetime "created_at",                                         :null => false
+    t.datetime "updated_at",                                         :null => false
+    t.integer  "event_order",        :limit => 3, :default => 0,     :null => false
+    t.time     "begin_time"
+    t.boolean  "is_out_of_race",                  :default => false, :null => false
+    t.boolean  "is_autofilled",                   :default => false, :null => false
+    t.text     "notes"
+    t.integer  "meeting_session_id"
+    t.integer  "event_type_id"
+    t.integer  "heat_type_id"
+    t.integer  "user_id"
+  end
+
+  add_index "meeting_events", ["event_type_id"], :name => "fk_meeting_events_event_types"
+  add_index "meeting_events", ["heat_type_id"], :name => "fk_meeting_events_heat_types"
+  add_index "meeting_events", ["meeting_session_id"], :name => "fk_meeting_events_meeting_sessions"
+
   create_table "meeting_individual_results", :force => true do |t|
-    t.integer  "lock_version",                                                                :default => 0
-    t.string   "athlete_name",                  :limit => 100,                                                   :null => false
-    t.string   "team_name",                     :limit => 60,                                                    :null => false
-    t.string   "athlete_badge_number",          :limit => 40
-    t.string   "team_badge_number",             :limit => 40
-    t.integer  "year_of_birth",                                                               :default => 1900,  :null => false
-    t.integer  "rank",                                                                        :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                 :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                              :default => false, :null => false
-    t.boolean  "is_disqualified",                                                             :default => false, :null => false
-    t.decimal  "standard_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                       :limit => 3,                                  :default => 0,     :null => false
-    t.integer  "seconds",                       :limit => 2,                                  :default => 0,     :null => false
-    t.integer  "hundreds",                      :limit => 2,                                  :default => 0,     :null => false
-    t.integer  "meeting_program_id"
-    t.integer  "result_type_id"
-    t.integer  "swimmer_id"
-    t.integer  "team_id"
-    t.integer  "badge_id"
-    t.integer  "user_id"
-    t.datetime "created_at",                                                                                     :null => false
-    t.datetime "updated_at",                                                                                     :null => false
-    t.integer  "disqualification_code_type_id"
-  end
-
-  add_index "meeting_individual_results", ["badge_id"], :name => "fk_meeting_individual_results_badges"
-  add_index "meeting_individual_results", ["meeting_program_id"], :name => "fk_meeting_individual_results_meeting_programs"
-  add_index "meeting_individual_results", ["result_type_id"], :name => "fk_meeting_individual_results_result_types"
-  add_index "meeting_individual_results", ["swimmer_id"], :name => "fk_meeting_individual_results_swimmers"
-  add_index "meeting_individual_results", ["team_id"], :name => "fk_meeting_individual_results_teams"
-
-  create_table "meeting_programs", :force => true do |t|
-    t.integer  "lock_version",                            :default => 0
-    t.integer  "event_order",                :limit => 3, :default => 0,     :null => false
-    t.datetime "begin_time"
-#    t.integer  "meeting_session_id"
-#    t.integer  "event_type_id"
-    t.integer  "category_type_id"
-    t.integer  "gender_type_id"
-    t.integer  "user_id"
-    t.datetime "created_at",                                                 :null => false
-    t.datetime "updated_at",                                                 :null => false
-    t.integer  "minutes",                    :limit => 3, :default => 0
-    t.integer  "seconds",                    :limit => 2, :default => 0
-    t.integer  "hundreds",                   :limit => 2, :default => 0
-    t.integer  "accreditation_time_type_id"
-    t.boolean  "is_autofilled",                           :default => false, :null => false
-  end
-
-  add_index "meeting_programs", ["accreditation_time_type_id"], :name => "fk_meeting_programs_accreditation_time_types"
-  add_index "meeting_programs", ["category_type_id"], :name => "fk_meeting_programs_category_types"
-  add_index "meeting_programs", ["event_type_id"], :name => "fk_meeting_programs_event_types"
-  add_index "meeting_programs", ["gender_type_id"], :name => "fk_meeting_programs_gender_types"
-  add_index "meeting_programs", ["meeting_session_id", "category_type_id"], :name => "meeting_category_type"
-  add_index "meeting_programs", ["meeting_session_id", "event_order"], :name => "meeting_order"
-  add_index "meeting_programs", ["meeting_session_id", "event_type_id"], :name => "meeting_event_type"
-  add_index "meeting_programs", ["meeting_session_id", "gender_type_id"], :name => "meeting_gender_type"
-
-  create_table "meeting_relay_results", :force => true do |t|
     t.integer  "lock_version",                                                              :default => 0
-    t.datetime "created_at",                                                                                   :null => false
-    t.datetime "updated_at",                                                                                   :null => false
+    t.integer  "year_of_birth",                                                             :default => 1900,  :null => false
     t.integer  "rank",                                                                      :default => 0,     :null => false
     t.boolean  "is_play_off",                                                               :default => false, :null => false
     t.boolean  "is_out_of_race",                                                            :default => false, :null => false
@@ -590,31 +723,101 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.integer  "minutes",                       :limit => 3,                                :default => 0,     :null => false
     t.integer  "seconds",                       :limit => 2,                                :default => 0,     :null => false
     t.integer  "hundreds",                      :limit => 2,                                :default => 0,     :null => false
+    t.integer  "meeting_program_id"
+    t.integer  "swimmer_id"
     t.integer  "team_id"
-    t.integer  "result_type_id"
+    t.integer  "badge_id"
+    t.integer  "user_id"
+    t.datetime "created_at",                                                                                   :null => false
+    t.datetime "updated_at",                                                                                   :null => false
+    t.integer  "disqualification_code_type_id"
+    t.decimal  "goggle_cup_points",                          :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "reaction_time",                              :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.integer  "entry_minutes",                 :limit => 3
+    t.integer  "entry_seconds",                 :limit => 2
+    t.integer  "entry_hundreds",                :limit => 2
+    t.integer  "entry_time_type_id"
+  end
+
+  add_index "meeting_individual_results", ["badge_id"], :name => "fk_meeting_individual_results_badges"
+  add_index "meeting_individual_results", ["entry_time_type_id"], :name => "fk_meeting_individual_results_entry_time_types"
+  add_index "meeting_individual_results", ["meeting_program_id"], :name => "fk_meeting_individual_results_meeting_programs"
+  add_index "meeting_individual_results", ["swimmer_id"], :name => "fk_meeting_individual_results_swimmers"
+  add_index "meeting_individual_results", ["team_id"], :name => "fk_meeting_individual_results_teams"
+
+  create_table "meeting_programs", :force => true do |t|
+    t.integer  "lock_version",                  :default => 0
+    t.integer  "event_order",      :limit => 3, :default => 0,     :null => false
+    t.integer  "category_type_id"
+    t.integer  "gender_type_id"
+    t.integer  "user_id"
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
+    t.boolean  "is_autofilled",                 :default => false, :null => false
+    t.boolean  "is_out_of_race",                :default => false, :null => false
+    t.time     "begin_time"
+    t.integer  "meeting_event_id"
+    t.integer  "pool_type_id"
+    t.integer  "time_standard_id"
+  end
+
+  add_index "meeting_programs", ["category_type_id"], :name => "meeting_category_type"
+  add_index "meeting_programs", ["event_order"], :name => "meeting_order"
+  add_index "meeting_programs", ["gender_type_id"], :name => "meeting_gender_type"
+  add_index "meeting_programs", ["meeting_event_id"], :name => "fk_meeting_programs_meeting_events"
+  add_index "meeting_programs", ["pool_type_id"], :name => "fk_meeting_programs_pool_types"
+  add_index "meeting_programs", ["time_standard_id"], :name => "fk_meeting_programs_time_standards"
+
+  create_table "meeting_relay_results", :force => true do |t|
+    t.integer  "lock_version",                                                               :default => 0
+    t.datetime "created_at",                                                                                    :null => false
+    t.datetime "updated_at",                                                                                    :null => false
+    t.integer  "rank",                                                                       :default => 0,     :null => false
+    t.boolean  "is_play_off",                                                                :default => false, :null => false
+    t.boolean  "is_out_of_race",                                                             :default => false, :null => false
+    t.boolean  "is_disqualified",                                                            :default => false, :null => false
+    t.decimal  "standard_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "minutes",                       :limit => 3,                                 :default => 0,     :null => false
+    t.integer  "seconds",                       :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "hundreds",                      :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "team_id"
     t.integer  "user_id"
     t.integer  "meeting_program_id"
     t.integer  "disqualification_code_type_id"
+    t.string   "relay_header",                  :limit => 60,                                :default => "",    :null => false
+    t.decimal  "reaction_time",                               :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.integer  "entry_minutes",                 :limit => 3
+    t.integer  "entry_seconds",                 :limit => 2
+    t.integer  "entry_hundreds",                :limit => 2
+    t.integer  "team_affiliation_id"
+    t.integer  "entry_time_type_id"
   end
 
+  add_index "meeting_relay_results", ["entry_time_type_id"], :name => "fk_meeting_relay_results_entry_time_types"
   add_index "meeting_relay_results", ["meeting_program_id", "rank"], :name => "results_x_relay"
-  add_index "meeting_relay_results", ["result_type_id"], :name => "fk_meeting_relay_results_result_types"
+  add_index "meeting_relay_results", ["team_affiliation_id"], :name => "fk_meeting_relay_results_team_affiliations"
   add_index "meeting_relay_results", ["team_id"], :name => "fk_meeting_relay_results_teams"
 
   create_table "meeting_relay_swimmers", :force => true do |t|
-    t.integer  "lock_version",                    :default => 0
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
-    t.integer  "relay_order",        :limit => 1, :default => 0, :null => false
+    t.integer  "lock_version",                                                       :default => 0
+    t.datetime "created_at",                                                                          :null => false
+    t.datetime "updated_at",                                                                          :null => false
+    t.integer  "relay_order",             :limit => 3,                               :default => 0
     t.integer  "swimmer_id"
     t.integer  "badge_id"
     t.integer  "stroke_type_id"
     t.integer  "user_id"
-    t.integer  "meeting_program_id"
+    t.decimal  "reaction_time",                        :precision => 5, :scale => 2, :default => 0.0, :null => false
+    t.integer  "minutes",                 :limit => 3,                               :default => 0,   :null => false
+    t.integer  "seconds",                 :limit => 2,                               :default => 0,   :null => false
+    t.integer  "hundreds",                :limit => 2,                               :default => 0,   :null => false
+    t.integer  "meeting_relay_result_id"
   end
 
   add_index "meeting_relay_swimmers", ["badge_id"], :name => "fk_meeting_relay_swimmers_badges"
-  add_index "meeting_relay_swimmers", ["meeting_program_id", "relay_order"], :name => "relay_order"
+  add_index "meeting_relay_swimmers", ["meeting_relay_result_id"], :name => "fk_meeting_relay_swimmers_meeting_relay_results"
+  add_index "meeting_relay_swimmers", ["relay_order"], :name => "relay_order"
   add_index "meeting_relay_swimmers", ["stroke_type_id"], :name => "fk_meeting_relay_swimmers_stroke_types"
   add_index "meeting_relay_swimmers", ["swimmer_id"], :name => "fk_meeting_relay_swimmers_swimmers"
 
@@ -632,83 +835,98 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
     t.datetime "updated_at",                                         :null => false
     t.string   "description",      :limit => 100,                    :null => false
     t.boolean  "is_autofilled",                   :default => false, :null => false
+    t.integer  "day_part_type_id"
   end
 
+  add_index "meeting_sessions", ["day_part_type_id"], :name => "fk_meeting_sessions_day_part_types"
   add_index "meeting_sessions", ["meeting_id"], :name => "fk_meeting_sessions_meetings"
   add_index "meeting_sessions", ["scheduled_date"], :name => "index_meeting_sessions_on_scheduled_date"
   add_index "meeting_sessions", ["swimming_pool_id"], :name => "fk_meeting_sessions_swimming_pools"
 
   create_table "meeting_team_scores", :force => true do |t|
-    t.integer  "lock_version",                                           :default => 0
-    t.decimal  "total_individual_points", :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "total_relay_points",      :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "lock_version",                                             :default => 0
+    t.decimal  "sum_individual_points",     :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_relay_points",          :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "team_id"
     t.integer  "meeting_id"
-    t.datetime "created_at",                                                              :null => false
-    t.datetime "updated_at",                                                              :null => false
-    t.integer  "rank",                                                   :default => 0,   :null => false
+    t.datetime "created_at",                                                                :null => false
+    t.datetime "updated_at",                                                                :null => false
+    t.integer  "rank",                                                     :default => 0,   :null => false
     t.integer  "user_id"
+    t.decimal  "sum_team_points",           :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_individual_points", :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_relay_points",      :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_team_points",       :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_individual_points",  :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_relay_points",       :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_team_points",        :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "season_id"
   end
 
   add_index "meeting_team_scores", ["meeting_id", "team_id"], :name => "teams_x_meeting"
+  add_index "meeting_team_scores", ["season_id"], :name => "fk_meeting_team_scores_seasons"
   add_index "meeting_team_scores", ["team_id"], :name => "fk_meeting_team_scores_teams"
 
   create_table "meetings", :force => true do |t|
-    t.integer  "lock_version",                         :default => 0
-    t.string   "description",           :limit => 100,                    :null => false
+    t.integer  "lock_version",                                        :default => 0
+    t.string   "description",                          :limit => 100,                    :null => false
     t.date     "entry_deadline"
-    t.boolean  "has_warm_up_pool",                     :default => false
-    t.boolean  "is_under_25_admitted",                 :default => false
-    t.string   "reference_phone",       :limit => 40
-    t.string   "reference_e_mail",      :limit => 50
-    t.string   "reference_name",        :limit => 50
+    t.boolean  "has_warm_up_pool",                                    :default => false
+    t.boolean  "is_under_25_admitted",                                :default => false
+    t.string   "reference_phone",                      :limit => 40
+    t.string   "reference_e_mail",                     :limit => 50
+    t.string   "reference_name",                       :limit => 50
     t.text     "notes"
-    t.boolean  "has_invitation",                       :default => false
-    t.boolean  "has_start_list",                       :default => false
-    t.boolean  "are_results_acquired",                 :default => false
-    t.integer  "max_individual_events", :limit => 1,   :default => 2
+    t.boolean  "has_invitation",                                      :default => false
+    t.boolean  "has_start_list",                                      :default => false
+    t.boolean  "are_results_acquired",                                :default => false
+    t.integer  "max_individual_events",                :limit => 1,   :default => 2
     t.string   "configuration_file"
-    t.integer  "challenge_number",      :limit => 3,   :default => 0
+    t.integer  "edition",                              :limit => 3,   :default => 0,     :null => false
     t.integer  "season_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
-    t.boolean  "is_autofilled",                        :default => false, :null => false
+    t.datetime "created_at",                                                             :null => false
+    t.datetime "updated_at",                                                             :null => false
+    t.boolean  "is_autofilled",                                       :default => false, :null => false
+    t.date     "header_date"
+    t.string   "code",                                 :limit => 20,                     :null => false
+    t.string   "header_year",                          :limit => 9,                      :null => false
+    t.integer  "max_individual_events_per_session",    :limit => 2,   :default => 2
+    t.boolean  "is_out_of_season",                                    :default => false, :null => false
+    t.integer  "edition_type_id"
+    t.integer  "timing_type_id"
+    t.integer  "individual_score_computation_type_id"
+    t.integer  "relay_score_computation_type_id"
+    t.integer  "team_score_computation_type_id"
   end
 
+  add_index "meetings", ["code", "edition"], :name => "idx_meetings_code"
+  add_index "meetings", ["edition_type_id"], :name => "fk_meetings_edition_types"
   add_index "meetings", ["entry_deadline"], :name => "index_meetings_on_entry_deadline"
+  add_index "meetings", ["header_date"], :name => "idx_meetings_header_date"
+  add_index "meetings", ["individual_score_computation_type_id"], :name => "fk_meetings_score_individual_score_computation_types"
+  add_index "meetings", ["relay_score_computation_type_id"], :name => "fk_meetings_score_relay_score_computation_types"
   add_index "meetings", ["season_id"], :name => "fk_meetings_seasons"
+  add_index "meetings", ["team_score_computation_type_id"], :name => "fk_meetings_score_team_score_computation_types"
+  add_index "meetings", ["timing_type_id"], :name => "fk_meetings_timing_types"
 
-  create_table "ober_cup_standards", :force => true do |t|
-    t.integer  "lock_version",               :default => 0
-    t.integer  "minutes",       :limit => 3, :default => 0, :null => false
-    t.integer  "seconds",       :limit => 2, :default => 0, :null => false
-    t.integer  "hundreds",      :limit => 2, :default => 0, :null => false
-    t.integer  "ober_cup_id"
-    t.integer  "badge_id"
-    t.integer  "event_type_id"
-    t.integer  "pool_type_id"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+  create_table "movement_scope_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1,                :null => false
   end
 
-  add_index "ober_cup_standards", ["badge_id"], :name => "fk_ober_cup_standards_badges"
-  add_index "ober_cup_standards", ["event_type_id"], :name => "fk_ober_cup_standards_event_types"
-  add_index "ober_cup_standards", ["ober_cup_id"], :name => "fk_ober_cup_standards_ober_cups"
-  add_index "ober_cup_standards", ["pool_type_id"], :name => "fk_ober_cup_standards_pool_types"
+  add_index "movement_scope_types", ["code"], :name => "index_movement_scope_types_on_code", :unique => true
 
-  create_table "ober_cups", :force => true do |t|
-    t.integer  "lock_version",               :default => 0
-    t.string   "description",  :limit => 60,                   :null => false
-    t.integer  "year",                       :default => 2010, :null => false
-    t.integer  "max_points",                 :default => 1000, :null => false
-    t.integer  "team_id"
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+  create_table "movement_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1,                :null => false
   end
 
-  add_index "ober_cups", ["team_id"], :name => "fk_ober_cups_teams"
-  add_index "ober_cups", ["year"], :name => "index_ober_cups_on_year"
+  add_index "movement_types", ["code"], :name => "index_movement_types_on_code", :unique => true
 
   create_table "passage_types", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
@@ -785,15 +1003,52 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "relay_types", ["code"], :name => "index_relay_types_on_code", :unique => true
   add_index "relay_types", ["stroke_type_id"], :name => "fk_relay_types_stroke_types"
 
-  create_table "result_types", :force => true do |t|
-    t.integer  "lock_version",                :default => 0
-    t.string   "code",          :limit => 10,                :null => false
-    t.integer  "default_value", :limit => 1
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+  create_table "score_computation_type_rows", :force => true do |t|
+    t.integer  "lock_version",                                                            :default => 0
+    t.datetime "created_at",                                                                               :null => false
+    t.datetime "updated_at",                                                                               :null => false
+    t.string   "code",                      :limit => 20,                                                  :null => false
+    t.string   "class_name",                :limit => 100,                                                 :null => false
+    t.string   "method_name",               :limit => 100,                                                 :null => false
+    t.decimal  "default_score",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "score_computation_type_id"
+    t.integer  "score_mapping_type_id"
   end
 
-  add_index "result_types", ["code"], :name => "index_result_types_on_code", :unique => true
+  add_index "score_computation_type_rows", ["code"], :name => "index_score_computation_type_rows_on_code", :unique => true
+  add_index "score_computation_type_rows", ["score_computation_type_id"], :name => "fk_score_computation_type_rows_score_computation_types"
+  add_index "score_computation_type_rows", ["score_mapping_type_id"], :name => "fk_score_computation_type_rows_score_mapping_types"
+
+  create_table "score_computation_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 6,                :null => false
+  end
+
+  add_index "score_computation_types", ["code"], :name => "index_score_computation_types_on_code", :unique => true
+
+  create_table "score_mapping_type_rows", :force => true do |t|
+    t.integer  "lock_version",                                                      :default => 0
+    t.datetime "created_at",                                                                         :null => false
+    t.datetime "updated_at",                                                                         :null => false
+    t.string   "code",                  :limit => 6,                                                 :null => false
+    t.integer  "position",              :limit => 8,                                :default => 0,   :null => false
+    t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "score_mapping_type_id"
+  end
+
+  add_index "score_mapping_type_rows", ["code"], :name => "index_score_mapping_type_rows_on_code", :unique => true
+  add_index "score_mapping_type_rows", ["score_mapping_type_id"], :name => "fk_score_mapping_type_rows_score_mapping_types"
+
+  create_table "score_mapping_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 6,                :null => false
+  end
+
+  add_index "score_mapping_types", ["code"], :name => "index_score_mapping_types_on_code", :unique => true
 
   create_table "season_types", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -809,18 +1064,20 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "season_types", ["federation_type_id"], :name => "fk_season_types_federation_types"
 
   create_table "seasons", :force => true do |t|
-    t.integer  "lock_version",                           :default => 0
-    t.string   "description",             :limit => 100,                    :null => false
-    t.date     "begin_date",                                                :null => false
+    t.integer  "lock_version",                   :default => 0
+    t.string   "description",     :limit => 100,                :null => false
+    t.date     "begin_date",                                    :null => false
     t.date     "end_date"
-    t.boolean  "must_use_time_standards",                :default => false, :null => false
-    t.integer  "max_points",                             :default => 0,     :null => false
     t.integer  "season_type_id"
-    t.datetime "created_at",                                                :null => false
-    t.datetime "updated_at",                                                :null => false
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+    t.string   "header_year",     :limit => 9,                  :null => false
+    t.integer  "edition",         :limit => 3,   :default => 0, :null => false
+    t.integer  "edition_type_id"
   end
 
   add_index "seasons", ["begin_date"], :name => "index_seasons_on_begin_date"
+  add_index "seasons", ["edition_type_id"], :name => "fk_seasons_edition_types"
   add_index "seasons", ["season_type_id"], :name => "fk_seasons_season_types"
 
   create_table "sessions", :force => true do |t|
@@ -851,37 +1108,14 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
 
   add_index "stroke_types", ["code"], :name => "index_stroke_types_on_code", :unique => true
 
-  create_table "swimmer_results", :force => true do |t|
-    t.integer  "lock_version",                                                              :default => 0
-    t.decimal  "standard_points",                            :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "obercup_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "rank",                          :limit => 8,                                :default => 0,     :null => false
-    t.boolean  "is_disqualified",                                                           :default => false, :null => false
-    t.integer  "minutes",                       :limit => 3,                                :default => 0,     :null => false
-    t.integer  "seconds",                       :limit => 2,                                :default => 0,     :null => false
-    t.integer  "hundreds",                      :limit => 2,                                :default => 0,     :null => false
-    t.integer  "swimmer_id"
-    t.integer  "badge_id"
-    t.integer  "meeting_program_id"
-    t.integer  "season_type_id"
-    t.integer  "category_type_id"
-    t.integer  "result_type_id"
-    t.integer  "pool_type_id"
-    t.integer  "meeting_individual_result_id"
-    t.integer  "user_id"
-    t.datetime "created_at",                                                                                   :null => false
-    t.datetime "updated_at",                                                                                   :null => false
-    t.integer  "disqualification_code_type_id"
+  create_table "swimmer_level_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
   end
 
-  add_index "swimmer_results", ["badge_id"], :name => "fk_swimmer_results_badges"
-  add_index "swimmer_results", ["category_type_id"], :name => "fk_swimmer_results_category_types"
-  add_index "swimmer_results", ["meeting_individual_result_id", "meeting_program_id", "rank"], :name => "meeting_id_rank"
-  add_index "swimmer_results", ["meeting_program_id"], :name => "fk_swimmer_results_meeting_programs"
-  add_index "swimmer_results", ["pool_type_id"], :name => "fk_swimmer_results_pool_types"
-  add_index "swimmer_results", ["result_type_id"], :name => "fk_swimmer_results_result_types"
-  add_index "swimmer_results", ["season_type_id"], :name => "fk_swimmer_results_season_types"
-  add_index "swimmer_results", ["swimmer_id"], :name => "fk_swimmer_results_swimmers"
+  add_index "swimmer_level_types", ["code"], :name => "index_swimmer_level_types_on_code", :unique => true
 
   create_table "swimmers", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -981,16 +1215,16 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
 
   create_table "team_affiliations", :force => true do |t|
-    t.integer  "lock_version",                         :default => 0
-    t.string   "number",                :limit => 20
-    t.string   "name",                  :limit => 100,                    :null => false
-    t.boolean  "must_compute_ober_cup",                :default => false, :null => false
+    t.integer  "lock_version",                             :default => 0
+    t.string   "number",                    :limit => 20
+    t.string   "name",                      :limit => 100,                    :null => false
+    t.boolean  "must_calculate_goggle_cup",                :default => false, :null => false
     t.integer  "team_id"
     t.integer  "season_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
-    t.boolean  "is_autofilled",                        :default => false, :null => false
+    t.datetime "created_at",                                                  :null => false
+    t.datetime "updated_at",                                                  :null => false
+    t.boolean  "is_autofilled",                            :default => false, :null => false
   end
 
   add_index "team_affiliations", ["name"], :name => "index_team_affiliations_on_name"
@@ -1040,6 +1274,94 @@ ActiveRecord::Schema.define(:version => 20131016235422) do
   add_index "time_standards", ["gender_type_id"], :name => "fk_time_standards_gender_types"
   add_index "time_standards", ["pool_type_id"], :name => "fk_time_standards_pool_types"
   add_index "time_standards", ["season_id"], :name => "fk_time_standards_seasons"
+
+  create_table "timing_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.string   "code",         :limit => 1,                :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+  end
+
+  add_index "timing_types", ["code"], :name => "index_timing_types_on_code", :unique => true
+
+  create_table "training_mode_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+  end
+
+  add_index "training_mode_types", ["code"], :name => "index_training_mode_types_on_code", :unique => true
+
+  create_table "training_rows", :force => true do |t|
+    t.integer  "lock_version",                       :default => 0
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+    t.integer  "part_order",            :limit => 3, :default => 0, :null => false
+    t.integer  "times",                 :limit => 3, :default => 0, :null => false
+    t.integer  "distance",                           :default => 0, :null => false
+    t.integer  "start_and_rest",                     :default => 0, :null => false
+    t.integer  "pause",                              :default => 0, :null => false
+    t.integer  "training_id"
+    t.integer  "exercise_id"
+    t.integer  "training_step_type_id"
+    t.integer  "user_id"
+  end
+
+  add_index "training_rows", ["exercise_id"], :name => "fk_training_exercises"
+  add_index "training_rows", ["training_id", "part_order"], :name => "idx_training_rows_part_order"
+  add_index "training_rows", ["training_step_type_id"], :name => "fk_training_rows_training_step_types"
+
+  create_table "training_step_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1,                :null => false
+  end
+
+  add_index "training_step_types", ["code"], :name => "index_training_step_types_on_code", :unique => true
+
+  create_table "trainings", :force => true do |t|
+    t.integer  "lock_version",                         :default => 0
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
+    t.string   "title",                 :limit => 100, :default => "", :null => false
+    t.text     "description",                                          :null => false
+    t.integer  "swimmer_level_type_id"
+    t.integer  "user_id"
+  end
+
+  add_index "trainings", ["swimmer_level_type_id"], :name => "fk_trainings_swimmer_level_types"
+  add_index "trainings", ["title"], :name => "index_trainings_on_title", :unique => true
+
+  create_table "user_results", :force => true do |t|
+    t.integer  "lock_version",                                                               :default => 0
+    t.decimal  "standard_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "rank",                          :limit => 8,                                 :default => 0,     :null => false
+    t.boolean  "is_disqualified",                                                            :default => false, :null => false
+    t.integer  "minutes",                       :limit => 3,                                 :default => 0,     :null => false
+    t.integer  "seconds",                       :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "hundreds",                      :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "swimmer_id"
+    t.integer  "category_type_id"
+    t.integer  "pool_type_id"
+    t.integer  "meeting_individual_result_id"
+    t.integer  "user_id"
+    t.datetime "created_at",                                                                                    :null => false
+    t.datetime "updated_at",                                                                                    :null => false
+    t.integer  "disqualification_code_type_id"
+    t.string   "description",                   :limit => 60,                                :default => "",    :null => false
+    t.date     "event_date"
+    t.decimal  "reaction_time",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "event_type_id"
+  end
+
+  add_index "user_results", ["category_type_id"], :name => "fk_user_results_category_types"
+  add_index "user_results", ["event_type_id"], :name => "fk_user_results_event_types"
+  add_index "user_results", ["meeting_individual_result_id", "rank"], :name => "meeting_id_rank"
+  add_index "user_results", ["pool_type_id"], :name => "fk_user_results_pool_types"
+  add_index "user_results", ["swimmer_id"], :name => "fk_user_results_swimmers"
 
   create_table "users", :force => true do |t|
     t.integer  "lock_version",                                :default => 0

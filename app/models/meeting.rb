@@ -11,6 +11,19 @@ class Meeting < ActiveRecord::Base
   validates_associated :edition_type
   validates_associated :timing_type
 
+  belongs_to( :individual_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "individual_score_computation_type_id"
+  )
+  belongs_to( :relay_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "relay_score_computation_type_id"
+  )
+  belongs_to( :team_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "team_score_computation_type_id"
+  )
+
   has_one  :season_type, :through => :season
 
   has_many :meeting_sessions
@@ -22,6 +35,12 @@ class Meeting < ActiveRecord::Base
   validates_presence_of :code
   validates_length_of   :code, :within => 1..20, :allow_nil => false
 
+  validates_presence_of :header_year
+  validates_length_of :header_year, :within => 1..9, :allow_nil => false
+
+  validates_presence_of :edition
+  validates_length_of   :edition, :maximum => 3, :allow_nil => false
+
   validates_presence_of :description
   validates_length_of :description, :maximum => 100
 
@@ -29,12 +48,10 @@ class Meeting < ActiveRecord::Base
   validates_length_of :reference_e_mail, :maximum => 50
   validates_length_of :reference_name, :maximum => 50
 
-  validates_length_of :header_year, :maximum => 9
   validates_length_of :configuration_file, :maximum => 255
 
   validates_length_of :max_individual_events, :maximum => 1
   validates_length_of :max_individual_events_per_session, :maximum => 1
-  validates_length_of :edition, :maximum => 3, :allow_nil => false
 
 
   scope :sort_meeting_by_user,                    lambda { |dir| order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }

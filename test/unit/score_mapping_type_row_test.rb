@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class OberCupTest < ActiveSupport::TestCase
+class ScoreMappingTypeRowTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

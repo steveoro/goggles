@@ -15,10 +15,10 @@ class CreateMeetingEvents < ActiveRecord::Migration
       t.boolean :is_autofilled, :default => false, :null => false, :comment => "data-confirmation flag; set to true only when the values of the row have been guessed/filled by the data-import parser."
       t.text    :notes
 
-      references :meeting_session
-      references :event_type
-      references :heat_type
-      references :user
+      t.references :meeting_session
+      t.references :event_type
+      t.references :heat_type
+      t.references :user
     end
 
     # ----------------- MEETING EVENTS ----------------------------------------

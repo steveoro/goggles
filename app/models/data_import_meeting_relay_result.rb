@@ -16,10 +16,15 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
 
   belongs_to :data_import_team
   belongs_to :team
-  belongs_to :disqualification_code_type
 
-  belongs_to :result_type
-  validates_associated :result_type
+  belongs_to :team_affiliation
+  belongs_to :disqualification_code_type
+  belongs_to :entry_time_type
+
+  validates_associated :entry_time_type
+
+  validates_presence_of     :relay_header
+  validates_length_of       :relay_header, :within => 1..60, :allow_nil => false
 
   validates_presence_of     :rank
   validates_length_of       :rank, :within => 1..4, :allow_nil => false
@@ -30,6 +35,8 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   validates_presence_of     :meeting_points
   validates_numericality_of :meeting_points
 
+  validates_presence_of     :reaction_time
+  validates_numericality_of :reaction_time
   validates_presence_of     :minutes
   validates_length_of       :minutes, :within => 1..3, :allow_nil => false
   validates_numericality_of :minutes
@@ -40,11 +47,17 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
 
+  validates_length_of       :entry_minutes, :maximum => 3
+  validates_numericality_of :entry_minutes
+  validates_length_of       :entry_seconds, :maximum => 2
+  validates_numericality_of :entry_seconds
+  validates_length_of       :entry_hundreds, :maximum => 2
+  validates_numericality_of :entry_hundreds
+
 
   scope :is_valid_for_score,  where( :is_out_of_race => false, :is_disqualified => false )
 
   scope :sort_data_import_meeting_relay_result_by_user,                 lambda { |dir| order("users.name #{dir.to_s}, meeting_program_id #{dir.to_s}") }
-  scope :sort_data_import_meeting_relay_result_by_result_type,          lambda { |dir| order("result_type.code #{dir.to_s}, rank #{dir.to_s}") }
 
   scope :sort_data_import_meeting_relay_result_by_meeting,              lambda { |dir| order("meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }
   scope :sort_data_import_meeting_relay_result_by_data_import_meeting,  lambda { |dir| order("data_import_meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }

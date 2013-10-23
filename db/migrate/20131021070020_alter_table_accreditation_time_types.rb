@@ -4,7 +4,7 @@ class AlterTableAccreditationTimeTypes < ActiveRecord::Migration
       ALTER TABLE badges
         DROP FOREIGN KEY fk_badges_accreditation_time_types
     SQL
-    remove_index :accreditation_time_types, :index_accreditation_time_types_on_code
+    remove_index :accreditation_time_types, :code
 
     rename_table :accreditation_time_types, :entry_time_types
     add_index :entry_time_types, [:code], :name => :idx_entry_time_types_code, :unique => true

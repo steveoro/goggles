@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DayTypePartTest < ActiveSupport::TestCase
+class DayPartTypeTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

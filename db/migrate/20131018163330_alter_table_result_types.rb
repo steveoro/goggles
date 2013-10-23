@@ -23,25 +23,6 @@ class AlterTableResultTypes < ActiveRecord::Migration
     end
     add_index :heat_types, [:code], :name => :idx_heat_types_code, :unique => true
 
-    execute <<-SQL
-      ALTER TABLE swimmer_results
-        ADD CONSTRAINT fk_swimmer_results_heat_types
-        FOREIGN KEY (heat_type_id)
-        REFERENCES heat_types(id)
-    SQL
-    execute <<-SQL
-      ALTER TABLE meeting_individual_results
-        ADD CONSTRAINT fk_meeting_individual_results_heat_types
-        FOREIGN KEY (heat_type_id)
-        REFERENCES heat_types(id)
-    SQL
-    execute <<-SQL
-      ALTER TABLE meeting_relay_results
-        ADD CONSTRAINT fk_meeting_relay_results_heat_types
-        FOREIGN KEY (heat_type_id)
-        REFERENCES heat_types(id)
-    SQL
-
     # CREATE TABLE `heat_types` (
         # `id` INTEGER(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         # `code` VARCHAR(1) NOT NULL,

@@ -1,6 +1,6 @@
 class AlterTableTeamAffiliations < ActiveRecord::Migration
   def change
-    change_table(:meeting_individual_results) do |t|
+    change_table(:team_affiliations) do |t|
       t.rename :must_compute_ober_cup, :must_calculate_goggle_cup
     end
 
@@ -12,9 +12,9 @@ class AlterTableTeamAffiliations < ActiveRecord::Migration
         # `number` VARCHAR(15) NOT NULL,
         # `name` VARCHAR(60) NOT NULL,
         # `must_calculate_goggle_cup` SMALLINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Indicatore per calcolo ober cup abilitato per il tipo di stagione',
-        # `lock_version` INTEGER(11) UNSIGNED DEFAULT 0,
-        # `created_at` DATETIME NOT NULL COMMENT 'Data creazione record',
-        # `updated_at` DATETIME NOT NULL COMMENT 'Data ultima modifica record',
+        # `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Created at',
+        # `updated_at` DATETIME NOT NULL COMMENT 'Updated at',
+        # `lock_version` INTEGER(11) UNSIGNED DEFAULT 0 COMMENT 'Internal row locking mechanism',
         # CONSTRAINT `pk_team_affiliations` PRIMARY KEY (`id`),
         # CONSTRAINT `uk_team_affiliations_1` UNIQUE (`team_id`, `season_id`),
         # CONSTRAINT `uk_team_affiliations_2` UNIQUE (`season_id`, `number`)

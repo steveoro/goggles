@@ -23,7 +23,7 @@ class Badge < ActiveRecord::Base
   has_many :swimmer_results
   has_many :passages
   has_many :individual_accreditations
-  has_many :ober_cup_standards
+  has_many :goggle_cup_standards
 
   validates_presence_of :number
   validates_length_of :number, :within => 1..40, :allow_nil => false

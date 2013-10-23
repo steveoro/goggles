@@ -1,14 +1,14 @@
 class AddDefaultTypesPart2 < ActiveRecord::Migration
   def up
-    say 'Adding AccreditationTimeType default data...'
-    AccreditationTimeType.transaction do            # -- START TRANSACTION --
-      AccreditationTimeType::TYPES_HASH.each { |id, code|
-        AccreditationTimeType.create( { :id => id, :code => code } )
+    say 'Adding EntryTimeType default data...'
+    EntryTimeType.transaction do            # -- START TRANSACTION --
+      EntryTimeType::TYPES_HASH.each { |id, code|
+        EntryTimeType.create( { :id => id, :code => code } )
       }
     end                                             # -- END TRANSACTION --
-    say 'Verifying AccreditationTimeType rows existence...'
-    AccreditationTimeType::TYPES_HASH.each { |id, code|
-      raise "AccreditationTimeType with code #{code} not found!" unless AccreditationTimeType.find_by_code( code )
+    say 'Verifying EntryTimeType rows existence...'
+    EntryTimeType::TYPES_HASH.each { |id, code|
+      raise "EntryTimeType with code #{code} not found!" unless EntryTimeType.find_by_code( code )
       say "Code '#{code}' found."
     }
 
@@ -149,27 +149,27 @@ class AddDefaultTypesPart2 < ActiveRecord::Migration
     }
 
 
-    say 'Adding ResultType default data...'
-    result_types = [
-      { :id => ResultType::HEAT_ID,   :default_value => 0 },      # Heat/Battery result
-      { :id => ResultType::SEMI_ID,   :default_value => 0 },      # Semi-final result
-      { :id => ResultType::FINALS_ID, :default_value => 1 }       # Final result
+    say 'Adding HeatType default data...'
+    heat_types = [
+      { :id => HeatType::HEAT_ID,   :is_default_value => false }, # Heat/Battery result
+      { :id => HeatType::SEMI_ID,   :is_default_value => false }, # Semi-final result
+      { :id => HeatType::FINALS_ID, :is_default_value => true }   # Final result
     ]
-    ResultType.transaction do                     # -- START TRANSACTION --
-      result_types.each { |hash|
-        ResultType.create( {
+    HeatType.transaction do                     # -- START TRANSACTION --
+      heat_types.each { |hash|
+        HeatType.create( {
             :id => hash[:id],
-            :code => ResultType::TYPES_HASH[ hash[:id] ],
-            :default_value => hash[:default_value]
+            :code => HeatType::TYPES_HASH[ hash[:id] ],
+            :is_default_value => hash[:is_default_value]
         } )
       }
     end                                             # -- END TRANSACTION --
-    say 'Verifying ResultType rows existence...'
-    result_types.each { |hash|
-      raise "ResultType with code #{hash[:code]} not found!" unless ResultType.find_by_code(
-          ResultType::TYPES_HASH[ hash[:id] ]
+    say 'Verifying HeatType rows existence...'
+    heat_types.each { |hash|
+      raise "HeatType with code #{hash[:code]} not found!" unless HeatType.find_by_code(
+          HeatType::TYPES_HASH[ hash[:id] ]
       )
-      say "Code '#{ResultType::TYPES_HASH[ hash[:id] ]}' found."
+      say "Code '#{HeatType::TYPES_HASH[ hash[:id] ]}' found."
     }
 
     say 'Done.'
@@ -178,8 +178,8 @@ class AddDefaultTypesPart2 < ActiveRecord::Migration
 
 
   def down
-    say 'Deleting default data for ResultType...'
-    ResultType.delete_all
+    say 'Deleting default data for HeatType...'
+    HeatType.delete_all
     say 'Deleting default data for EventsByPoolType...'
     EventsByPoolType.delete_all
     say 'Deleting default data for RelayType...'

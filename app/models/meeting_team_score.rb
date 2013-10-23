@@ -12,18 +12,29 @@ class MeetingTeamScore < ActiveRecord::Base
 
   belongs_to :team                                  # Since meetings are already "filtered" by season, here we link directly to teams, instead of team_affiliations
   belongs_to :meeting
+  belongs_to :season
   validates_associated :team
   validates_associated :meeting
+  validates_associated :season
 
-  validates_presence_of     :total_individual_points
-  validates_numericality_of :total_individual_points
-  validates_presence_of     :total_relay_points
-  validates_numericality_of :total_relay_points
-
-
-  scope :sort_challenge_score_by_user,        lambda { |dir| order("users.name #{dir.to_s}, teams.name #{dir.to_s}, meetings.description #{dir.to_s}, meeting_team_scores.total_individual_points #{dir.to_s}, meeting_team_scores.total_relay_points #{dir.to_s}") }
-  scope :sort_challenge_score_by_team,        lambda { |dir| order("teams.name #{dir.to_s}, meetings.description #{dir.to_s}, meeting_team_scores.total_individual_points #{dir.to_s}, meeting_team_scores.total_relay_points #{dir.to_s}") }
-  scope :sort_challenge_score_by_meeting,     lambda { |dir| order("meetings.description #{dir.to_s}, teams.name #{dir.to_s}, meeting_team_scores.total_individual_points #{dir.to_s}, meeting_team_scores.total_relay_points #{dir.to_s}") }
+  validates_presence_of     :sum_individual_points
+  validates_presence_of     :sum_relay_points
+  validates_presence_of     :sum_team_points
+  validates_presence_of     :meeting_individual_points
+  validates_presence_of     :meetingm_relay_points
+  validates_presence_of     :meeting_team_points
+  validates_presence_of     :season_individual_points
+  validates_presence_of     :season_relay_points
+  validates_presence_of     :season_team_points
+  validates_numericality_of :sum_individual_points
+  validates_numericality_of :sum_relay_points
+  validates_numericality_of :sum_team_points
+  validates_numericality_of :meeting_individual_points
+  validates_numericality_of :meetingm_relay_points
+  validates_numericality_of :meeting_team_points
+  validates_numericality_of :season_individual_points
+  validates_numericality_of :season_relay_points
+  validates_numericality_of :season_team_points
 
 
   # ----------------------------------------------------------------------------

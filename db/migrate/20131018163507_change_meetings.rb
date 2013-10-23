@@ -6,11 +6,12 @@ class ChangeMeetings < ActiveRecord::Migration
       t.string  :code,        :limit => 20, :null => false, :comment => 'Meeting code extracted from data-import file or hand-filled'
       t.string  :header_year, :limit => 9, :null => false, :comment => 'Additiona Meeting year grouping in the variable format "YY(YY)([/-]yy(yy))" and extracted from the data-import file or hand-filled'
       t.integer :max_individual_events_per_session, :limit => 2,   :default => 2
+      t.boolean :is_out_of_season, :null => false, :default => false, :comment => 'This whole meeting does not compete for the overall season score'
 
       t.rename :challenge_number, :edition
 
-      references :edition_type
-      references :timing_type
+      t.references :edition_type
+      t.references :timing_type
     end
 
     change_column( :meetings, :edition, :integer, :limit => 3, :null => false, :default => 0, :comment => 'Progressive edition of the same meeting (usually 1 each year)' )
@@ -83,11 +84,12 @@ class ChangeMeetings < ActiveRecord::Migration
       t.string  :code,        :limit => 20, :null => false, :comment => 'Meeting code extracted from data-import file or hand-filled'
       t.string  :header_year, :limit => 9, :null => false, :comment => 'Additiona Meeting year grouping in the variable format "YY(YY)([/-]yy(yy))" and extracted from the data-import file or hand-filled'
       t.integer :max_individual_events_per_session, :limit => 2,   :default => 2
+      t.boolean :is_out_of_season, :null => false, :default => false, :comment => 'This whole meeting does not compete for the overall season score'
 
       t.rename :challenge_number, :edition
 
-      references :edition_type
-      references :timing_type
+      t.references :edition_type
+      t.references :timing_type
     end
 
     change_column( :data_import_meetings, :edition, :integer, :limit => 3, :null => false, :default => 0, :comment => 'Progressive edition of the same meeting (usually 1 each year)' )

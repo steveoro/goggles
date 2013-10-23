@@ -1,7 +1,7 @@
 class ChangeMeetingSessions < ActiveRecord::Migration
   def change
     change_table(:meeting_sessions) do |t|
-      references :day_part_type
+      t.references :day_part_type
     end
 
     # ----------------- MEETINGS SESSIONS -------------------------------------
@@ -42,7 +42,7 @@ class ChangeMeetingSessions < ActiveRecord::Migration
 
     # ----------------- DATA IMPORT MEETINGS SESSIONS -------------------------
     change_table(:data_import_meeting_sessions) do |t|
-      references :day_part_type
+      t.references :day_part_type
     end
   end
   # ---------------------------------------------------------------------------

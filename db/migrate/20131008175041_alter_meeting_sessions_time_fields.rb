@@ -7,7 +7,9 @@ class AlterMeetingSessionsTimeFields < ActiveRecord::Migration
   end
 
   def down
+    change_table(:meeting_sessions) do |t|
       t.rename   :warm_up_time, :warm_up_datetime
       t.rename   :begin_time, :begin_datetime
+    end
   end
 end
