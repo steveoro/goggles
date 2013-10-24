@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131023165931) do
+ActiveRecord::Schema.define(:version => 20131024123906) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -166,13 +166,13 @@ ActiveRecord::Schema.define(:version => 20131023165931) do
     t.integer  "age_begin",       :limit => 3
     t.integer  "age_end",         :limit => 3
     t.boolean  "is_a_relay",                     :default => false, :null => false
-    t.integer  "season_type_id"
     t.datetime "created_at",                                        :null => false
     t.datetime "updated_at",                                        :null => false
+    t.integer  "season_id"
   end
 
   add_index "category_types", ["federation_code", "is_a_relay"], :name => "federation_code"
-  add_index "category_types", ["season_type_id", "is_a_relay", "code"], :name => "season_type_and_code", :unique => true
+  add_index "category_types", ["season_id", "is_a_relay", "code"], :name => "season_and_code", :unique => true
 
   create_table "cities", :force => true do |t|
     t.integer  "lock_version",               :default => 0
@@ -441,6 +441,7 @@ ActiveRecord::Schema.define(:version => 20131023165931) do
     t.string   "header_year",            :limit => 9,                  :null => false
     t.integer  "edition",                :limit => 3,   :default => 0, :null => false
     t.integer  "edition_type_id"
+    t.integer  "timing_type_id"
   end
 
   add_index "data_import_seasons", ["begin_date"], :name => "index_data_import_seasons_on_begin_date"
@@ -1074,11 +1075,13 @@ ActiveRecord::Schema.define(:version => 20131023165931) do
     t.string   "header_year",     :limit => 9,                  :null => false
     t.integer  "edition",         :limit => 3,   :default => 0, :null => false
     t.integer  "edition_type_id"
+    t.integer  "timing_type_id"
   end
 
   add_index "seasons", ["begin_date"], :name => "index_seasons_on_begin_date"
   add_index "seasons", ["edition_type_id"], :name => "fk_seasons_edition_types"
   add_index "seasons", ["season_type_id"], :name => "fk_seasons_season_types"
+  add_index "seasons", ["timing_type_id"], :name => "fk_seasons_timing_types"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

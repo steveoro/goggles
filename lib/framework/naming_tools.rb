@@ -22,14 +22,14 @@ class NamingTools
   # for any of the enlisted actions.
   #
   PARAM_CTRL_SYMS = [
-    :welcome, :articles, :comments, :tags, :setup,
+    :home, :articles, :comments, :tags, :setup,
     :seasons, :teams, :swimmers, :badges, :team_affiliations,
     :time_standards,
-    :meetings,  # :meeting_sessions & :meeting_programs managed by :meetings controller?
-    :individual_accreditations, :passages,
-    :meeting_team_scores,
-    :meeting_individual_results,
-    :swimmer_results,
+    :meetings,
+    :meeting_programs, :rankings,
+    :results,
+    :exercises,
+    :trainings,
     :goggle_cups, :goggle_cup_standards,
     :swimming_pool, :swimming_pool_reviews,
     :data_import
