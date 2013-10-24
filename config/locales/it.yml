@@ -26,6 +26,7 @@ it:
     nothing_to_do_upload_something: "Non hai fatto l'upload di nulla. Scegli un file prima di proseguire!"
     season_not_saved_in_session: "L'ID Stagione non e' stato salvato nella Sessione di Data-Import! Questa Sessione ha dati corrotti!"
     missing_session_parameter: "Manca il parametro di ID sessione (di importazione dati)!"
+    force_meeting_creation: "Crea Meeting mancanti"
 
 
   swimmers:
@@ -437,6 +438,7 @@ it:
 
 
   something_went_wrong: "Qualcosa e' andato storto, controllare il file di log."
+  requested_entity_missing: "Un entita' fondamentale non e' stata ancora creata"
   transaction_cancelled: "Transazione annullata."
   missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"
   invalid_action_request: "Azione richiesta non valida!"

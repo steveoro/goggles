@@ -83,10 +83,11 @@ class AdminImportController < ApplicationController
   #
   def step2_checkout
 # DEBUG
-#    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-#    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile]}"
+    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
+    logger.debug "PARAMS: #{params.inspect}"
+    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile]}"
     @season_id = 0                                  # (Must retrieve Season ID from form parameters)
+    @force_missing_meeting_creation = false
 
     if params[:id]                                  # -- CASE #1: id parameter present? We then assume a session is already in progress:
       data_import_session = DataImportSession.find_by_id( params[:id].to_i )
@@ -94,8 +95,8 @@ class AdminImportController < ApplicationController
                                                     # Session retrieval successful? Head on to phase #2 and let the component handle the rest:
       @data_import_session_id = data_import_session ? data_import_session.id : nil
 # DEBUG
-#      logger.debug "SEASON.....: ID=#{@season_id}"
-#      logger.debug "!! ===========================\r\n\r\n"
+      logger.debug "SEASON.....: ID=#{@season_id}"
+      logger.debug "!! ===========================\r\n\r\n"
       if ( @season_id.to_i < 1 )
         flash[:notice] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
         redirect_to( goggles_di_step1_status_path() ) and return
@@ -119,17 +120,19 @@ class AdminImportController < ApplicationController
         redirect_to( goggles_di_step1_status_path() ) and return
       end
       data_import_session = nil
+      force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
       @season_description = '?'
       begin
         season = Season.find_by_id(@season_id)
         @season_description = season.description if season
       rescue
       end
+
       tmp_file = params[:datafile].tempfile         # (This is an ActionDispatch::Http::UploadedFile object)
       destination_filename = File.join( "public/uploads", params[:datafile].original_filename )
       FileUtils.cp tmp_file.path, destination_filename
-                                                    # Create a new data-import session and consume the file:
-      data_import_session = consume_txt_file( destination_filename, @season_id )
+                                                    # === Create a new data-import session and consume the file: ===
+      data_import_session = consume_txt_file( destination_filename, @season_id, force_missing_meeting_creation )
                                                     # Session retrieval successful? Head on to phase #2 and let the component handle the rest:
       @data_import_session_id = data_import_session ? data_import_session.id : nil
 
@@ -301,10 +304,10 @@ class AdminImportController < ApplicationController
   #
   # === Returns the newly created "data_import" session instance if successful; nil otherwise
   #
-  def consume_txt_file( full_pathname, season_id )
+  def consume_txt_file( full_pathname, season_id, force_missing_meeting_creation = false )
 # DEBUG
-#    logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): parsing file..." )
-#    @phase_1_log = "Parsing file: #{full_pathname}, season ID: #{season_id}...\r\n"
+    logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): force_missing_meeting_creation=#{force_missing_meeting_creation}. Parsing file..." )
+    @phase_1_log = "Parsing file: #{full_pathname}, season ID: #{season_id}, force_missing_meeting_creation=#{force_missing_meeting_creation}...\r\n"
     data_rows = []
 
     # TODO PARSE file_type
@@ -354,21 +357,27 @@ class AdminImportController < ApplicationController
       # the results of only 1 day/session/program at a time, even if the event/meeting
       # is divided into more that 1 day.
                                                     # Create just one header row for each one of Meeting/Meeting Session entities:
-      meeting_id, meeting_session_id = 0
-      season_type_id, season_starting_year = 0      # This is needed by the individual results
-      meeting_header_row, meeting_dates, scheduled_date = nil
-      @esteemed_meeting_mins = 0                      # Used to calc approx event duration for meeting programs
+      meeting_id = meeting_session_id = 0
+      season_type_id = season_starting_year = 0     # This is needed by the individual results
+      meeting_header_row = meeting_dates = scheduled_date = nil
+      @esteemed_meeting_mins = 0                    # Used to calc approx event duration for meeting programs
       logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): parsing file done. Digesting..." )
       @phase_1_log = "Parsing of '#{full_pathname}' done.\r\nDigesting data...\r\n"
 
+      filename_fields = FinResultParserTools.parse_filename_fields( full_pathname )
 
       if season_id > 0                              # -- MEETING HEADER digest --
         meeting_headers = result_hash[:parse_result][:meeting_header]
         meeting_header_row = meeting_headers.first if meeting_headers
-        meeting_dates = meeting_header_row[:fields][:meeting_dates] if meeting_header_row
-        if meeting_dates
+        if meeting_header_row                       # If the meeting_dates are found inside the data file, use them:
+          meeting_dates = meeting_header_row[:fields][:meeting_dates]
+        elsif filename_fields[:header_date]         # ...Otherwise, parse them from the filename:
+          scheduled_date = filename_fields[:header_date]
+        end
+                                                    # If we still need to parse the scheduled date, let's do it:
+        if meeting_dates && scheduled_date.nil?
           scheduled_date = FinResultParserTools.parse_meeting_date( meeting_dates )
-        else
+        elsif scheduled_date.nil?
           begin
             scheduled_date = SeasonType.find_by_id( season_id ).begin_date
           rescue
@@ -386,10 +395,10 @@ class AdminImportController < ApplicationController
 #        logger.debug( "Found season '#{season.inspect}'; season_type_id=#{season_type_id}, season_starting_year=#{season_starting_year}" )
         meeting_id = search_or_add_a_corresponding_meeting(
             full_pathname, session_id, season_id, meeting_header_row,
-            meeting_dates, scheduled_date
+            meeting_dates, scheduled_date, filename_fields, force_missing_meeting_creation
         )
       end
-
+############################################# WIP HERE vvvvvv ###################à
                                                     # -- MEETING SESSION (digest part) --
       if meeting_id != 0
         meeting_session_id = search_or_add_a_corresponding_meeting_session(
@@ -631,7 +640,6 @@ class AdminImportController < ApplicationController
     description = I18n.t(:missing_data_warning, {:scope=>[:admin_import]})
     begin_date  = Date.parse( "#{Date.today.year - 1}-09-01" )
     end_date    = Date.parse( "#{Date.today.year}-06-30" )
-    max_points  = 1000
     season_type_id = SeasonType.first.id            # FIXME ASSERT: season type is always "MASFIN"
     must_use_time_standards = true
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
@@ -646,7 +654,6 @@ class AdminImportController < ApplicationController
             :description  => description,
             :begin_date   => begin_date,
             :end_date     => end_date,
-            :max_points   => max_points,
             :must_use_time_standards => must_use_time_standards,
             :season_type_id => season_type_id
           )
@@ -681,12 +688,13 @@ class AdminImportController < ApplicationController
   #   - 0 only on error/unable to process.
   #
   def search_or_add_a_corresponding_meeting( full_pathname, session_id, season_id,
-                                             meeting_header_row, meeting_dates, scheduled_date )
+                                             meeting_header_row, meeting_dates, scheduled_date,
+                                             filename_fields, force_missing_meeting_creation = false )
     result_id = 0
     result_row = nil
     not_found = true
                                                     # --- FIELD SETUP: Extract field values before the search:
-    title, organization, notes = nil
+    title = organization = notes = nil
 
     if ( meeting_header_row )
       title         = meeting_header_row[:fields][:title]
@@ -724,22 +732,36 @@ class AdminImportController < ApplicationController
         not_found = false
       end
     end
+
+    if not_found && (!force_missing_meeting_creation)
+      flash[:error] = "#{I18n.t(:requested_entity_missing)}: 'Meeting'"
+      return 0
+    end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
       begin                                         # --- BEGIN transaction ---
         DataImportMeeting.transaction do
           result_row = DataImportMeeting.new(
             :data_import_session_id => session_id,
-            :import_text    => meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
-            :description    => title ? title : I18n.t(:missing_data_warning, {:scope=>[:admin_import]}),
-            :entry_deadline => scheduled_date,
+            :import_text      => meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
+            :description      => title ? title : I18n.t(:missing_data_warning, {:scope=>[:admin_import]}),
+            :entry_deadline   => scheduled_date,
             :are_results_acquired => true,
-            :configuration_file => full_pathname,
+            :is_under_25_admitted => true,          # (This is just a guess)
+            :configuration_file   => full_pathname,
+            :header_date      => filename_fields[:header_date],
+            :code             => filename_fields[:code],
+            :header_year      => filename_fields[:header_year],
+            :edition          => 0,                 # FIXME unable to parse the edition number from the header (yet)
+            :edition_type_id  => EditionType::SEASON_ID,
+            :timing_type_id   => TimingType::AUTOMATIC_ID,
+            # TODO/FUTURE DEV:
+#            :individual_score_computation_type_id => 0,
+#            :relay_score_computation_type_id      => 0,
+#            :team_score_computation_type_id       => 0,
             :notes          => notes,
             :season_id      => season_id,
             :user_id        => current_admin.id
-            # TODO :challenge_number is not used!
-            # TODO :is_under_25_admitted is not used!
           )
           result_row.save!                          # raise automatically an exception if save is not successful
         end
@@ -1168,7 +1190,7 @@ class AdminImportController < ApplicationController
     is_play_off     = true
     is_out_of_race  = FinResultParserTools.parse_out_of_race_from_result_time( rank )
     is_disqualified = FinResultParserTools.parse_disqualified_from_result_time( result_time )
-    dsq_code_type_id  = is_disqualified ? FinResultParserTools.parse_disqualification_code_type_id_from_result_time( result_time ) : nil
+    dsq_code_type_id = is_disqualified ? FinResultParserTools.parse_disqualification_code_type_id_from_result_time( result_time ) : nil
     mins, secs, hds = FinResultParserTools.parse_mins_secs_hds_from_result_time( result_time )
     standard_points = result_score
     meeting_points  = result_score
@@ -1420,7 +1442,7 @@ class AdminImportController < ApplicationController
                                                     # --- FIELD SETUP: Extract field values before the search:
     complete_name = swimmer_name.gsub(/\s+/, ' ')
     splitted_name = swimmer_name.gsub(/\s{3,}/, '  ').split('  ') # Normalize multi-space separator between last_name and first_name
-    last_name, first_name = nil
+    last_name = first_name = nil
 # DEBUG
 #    @phase_1_log << "Processing swimmer_name='#{swimmer_name}', splitted_name='#{splitted_name.inspect}'\r\n"
                                                     # (Must find a "separator length" that at least results in a last_name + first_name array)    
@@ -2032,7 +2054,7 @@ class AdminImportController < ApplicationController
     di_records = DataImportTeam.where( :data_import_session_id => data_import_session_id )
     result_id  = 0
     is_ok = true
-    committed_row, additional_row = nil
+    committed_row = additional_row = nil
     if di_records
       di_records.each do |di_row|
 # DEBUG

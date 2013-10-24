@@ -26,6 +26,7 @@ en:
     nothing_to_do_select_season: "You haven't selected the Season!"
     season_not_saved_in_session: "Season ID was not saved in Data-Import Session! This session data is corrupted!"
     missing_session_parameter: "The session ID parameter is missing!"
+    force_meeting_creation: "Create missing Meetings"
 
 
   swimmers:
@@ -436,6 +437,7 @@ en:
 
 
   something_went_wrong: "Something went wrong, check the log file."
+  requested_entity_missing: "A requested entity has not been created yet"
   transaction_cancelled: "Transaction cancelled."
   missing_request_parameter: "Invalid Action: missing a request parameter!"
   invalid_action_request: "Invalid Action requested!"

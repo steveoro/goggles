@@ -23,9 +23,6 @@ class Season < ActiveRecord::Base
   validates_presence_of :begin_date
 #  validates_presence_of :end_date
 
-  validates_length_of :max_points, :maximum => 9, :allow_nil => false
-  validates_numericality_of :max_points
-
 
   scope :sort_season_by_begin_date,  lambda { |dir| order("seasons.begin_date #{dir.to_s}") }
   scope :sort_season_by_season_type, lambda { |dir| order("season_types.code #{dir.to_s}, seasons.begin_date #{dir.to_s}") }

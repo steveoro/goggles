@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+require 'fileutils'
+require 'common/format'
+
 
 # == FinResultParserTools module
 #
@@ -12,6 +15,42 @@
 # with the format used in these kind of files. 
 #
 module FinResultParserTools
+
+  # Parses the data-import header fields encoded in the filename.
+  # This method assumes data-import filename format as follows:
+  #
+  # <prefix><date_ISO><code><.extension>
+  #
+  # - prefix: a variable length (usually 3 chars) prefix, stating the format of the data
+  # - date_ISO: the encoded date of the data, in ISO-format without separators ("YYYYmmdd")
+  # - code: a variable length string code, which identifies the Meeting, indipendently from season or year
+  # - extension: usually, "txt"
+  #
+  # == Returns:
+  # An Hash with the format:
+  #
+  #    {
+  #       :prefix => prefix string,
+  #       :header_year => 4-digit year (integer) extracted from date_ISO,
+  #       :header_date => Date instance parsed from date_ISO,
+  #       :code => code string
+  #    }
+  #
+  def self.parse_filename_fields( full_pathname )
+    ext  = File.extname(full_pathname)
+    name = File.basename(full_pathname, ext)
+    date_start_idx = name =~ /\d{8}/
+    code_start_idx = name =~ /(?<=\d{8})\D/
+    header_date = Date.parse( name[date_start_idx .. code_start_idx-1] )
+    {
+      :prefix       => name[ 0 .. date_start_idx-1 ],
+      :header_year  => name[ date_start_idx .. date_start_idx+3 ],
+      :header_date  => header_date,
+      :code         => name[ code_start_idx .. name.size ]
+    }
+  end
+  # ---------------------------------------------------------------------------
+
 
   # Parses a text date extracted from a FIN result text file. 
   #
