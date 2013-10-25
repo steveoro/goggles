@@ -45,13 +45,11 @@ class DataImportMeetingProgram < ActiveRecord::Base
   validates_length_of       :hundreds, :maximum => 2
   validates_numericality_of :hundreds
 
-# FIXME:
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)
 
-  scope :sort_data_import_meeting_program_by_user,            lambda { |dir| order("users.name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}, data_import_meeting_programs.event_order #{dir.to_s}") }
-  scope :sort_data_import_meeting_program_by_meeting_session, lambda { |dir| order("meeting_sessions.scheduled_date #{dir.to_s}, data_import_meeting_programs.event_order #{dir.to_s}") }
-  scope :sort_data_import_meeting_program_by_event_type,      lambda { |dir| order("event_types.code #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}, data_import_meeting_programs.event_order #{dir.to_s}") }
+  scope :sort_data_import_meeting_program_by_user,            lambda { |dir| order("users.name #{dir.to_s}") }
+  scope :sort_data_import_meeting_program_by_event_type,      lambda { |dir| order("event_types.code #{dir.to_s}") }
   scope :sort_data_import_meeting_program_by_category_type,   lambda { |dir| order("category_types.code #{dir.to_s}") }
   scope :sort_data_import_meeting_program_by_gender_type,     lambda { |dir| order("gender_type.code #{dir.to_s}") }
   # ---------------------------------------------------------------------------

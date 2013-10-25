@@ -13,8 +13,10 @@ class DataImportSeason < ActiveRecord::Base
 
   belongs_to :season_type
   belongs_to :edition_type
+  belongs_to :timing_type
   validates_associated :season_type
   validates_associated :edition_type
+  validates_associated :timing_type
 
   validates_presence_of :header_year
   validates_length_of   :header_year, :within => 1..9, :allow_nil => false

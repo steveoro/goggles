@@ -6,8 +6,10 @@ class Season < ActiveRecord::Base
 
   belongs_to :season_type
   belongs_to :edition_type
+  belongs_to :timing_type
   validates_associated :season_type
   validates_associated :edition_type
+  validates_associated :timing_type
 
   has_many :meetings
 

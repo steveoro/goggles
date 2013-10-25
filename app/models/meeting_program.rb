@@ -20,21 +20,21 @@ class MeetingProgram < ActiveRecord::Base
   has_many :meeting_relay_swimmers
   # TODO Add other has_many relationships only when needed
 
-  has_one  :meeting,      :through => :meeting_event
-  has_one  :pool_type,    :through => :meeting_event
-  has_one  :season_type,  :through => :meeting_event
-  has_one  :stroke_type,  :through => :event_type
+  has_one  :meeting,          :through => :meeting_event
+  has_one  :event_type,       :through => :meeting_event
+  has_one  :meeting_session,  :through => :meeting_event
+  has_one  :pool_type,        :through => :meeting_event
+  has_one  :season_type,      :through => :meeting_event
+  has_one  :stroke_type,      :through => :event_type
 
   validates_presence_of :event_order
   validates_length_of   :event_order, :within => 1..3, :allow_nil => false
 
-# FIXME:
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)
 
   scope :sort_meeting_program_by_user,            lambda { |dir| order("users.name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}, meeting_programs.event_order #{dir.to_s}") }
-  scope :sort_meeting_program_by_meeting_session, lambda { |dir| order("meeting_sessions.scheduled_date #{dir.to_s}, meeting_programs.event_order #{dir.to_s}") }
-  scope :sort_meeting_program_by_event_type,      lambda { |dir| order("event_types.code #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}, meeting_programs.event_order #{dir.to_s}") }
+  scope :sort_meeting_program_by_event_type,      lambda { |dir| order("event_types.code #{dir.to_s}") }
   scope :sort_meeting_program_by_category_type,   lambda { |dir| order("category_types.code #{dir.to_s}") }
   scope :sort_meeting_program_by_gender_type,     lambda { |dir| order("gender_type.code #{dir.to_s}") }
 

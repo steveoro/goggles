@@ -35,13 +35,21 @@ class StrokeType < ActiveRecord::Base
 
 
   # Computes a localized shorter description for the value/code associated with this data
-  def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:stroke_types]} )
+  def i18n_short( is_a_relay = false )
+    if ( is_a_relay && code == TYPES_HASH[MIXED_ID] ) # Handle special cases:
+      I18n.t( :i18n_short_M, {:scope=>[:stroke_types]} )
+    else
+      I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:stroke_types]} )
+    end
   end
 
   # Computes a localized description for the value/code associated with this data
-  def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:stroke_types]} )
+  def i18n_description( is_a_relay = false )
+    if ( is_a_relay && code == TYPES_HASH[MIXED_ID] ) # Handle special cases:
+      I18n.t( :i18n_description_M, {:scope=>[:stroke_types]} )
+    else
+      I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:stroke_types]} )
+    end
   end
   # ----------------------------------------------------------------------------
   #++

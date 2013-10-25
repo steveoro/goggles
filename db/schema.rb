@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131024123906) do
+ActiveRecord::Schema.define(:version => 20131025120658) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -540,18 +540,24 @@ ActiveRecord::Schema.define(:version => 20131024123906) do
   add_index "entry_time_types", ["code"], :name => "idx_entry_time_types_code", :unique => true
 
   create_table "event_types", :force => true do |t|
-    t.integer  "lock_version",                   :default => 0
-    t.string   "code",             :limit => 10,                    :null => false
-    t.integer  "length_in_meters", :limit => 8
-    t.boolean  "is_a_relay",                     :default => false, :null => false
+    t.integer  "lock_version",                         :default => 0
+    t.string   "code",                   :limit => 10,                    :null => false
+    t.integer  "length_in_meters",       :limit => 8
+    t.boolean  "is_a_relay",                           :default => false, :null => false
     t.integer  "stroke_type_id"
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.datetime "created_at",                                              :null => false
+    t.datetime "updated_at",                                              :null => false
+    t.integer  "style_order",            :limit => 2,  :default => 0,     :null => false
+    t.integer  "is_mixed_gender",        :limit => 1,  :default => 0
+    t.integer  "partecipants",           :limit => 2,  :default => 4
+    t.integer  "phases",                 :limit => 2,  :default => 4
+    t.integer  "phase_length_in_meters", :limit => 3,  :default => 50
   end
 
   add_index "event_types", ["is_a_relay", "code"], :name => "code", :unique => true
   add_index "event_types", ["is_a_relay"], :name => "index_event_types_on_is_a_relay"
   add_index "event_types", ["stroke_type_id"], :name => "fk_event_types_stroke_types"
+  add_index "event_types", ["style_order"], :name => "index_event_types_on_style_order"
 
   create_table "events_by_pool_types", :force => true do |t|
     t.integer  "lock_version",  :default => 0
@@ -568,7 +574,6 @@ ActiveRecord::Schema.define(:version => 20131024123906) do
     t.integer  "lock_version",                       :default => 0
     t.datetime "created_at",                                        :null => false
     t.datetime "updated_at",                                        :null => false
-    t.string   "code",                  :limit => 6,                :null => false
     t.integer  "part_order",            :limit => 3, :default => 0, :null => false
     t.integer  "percentage",            :limit => 3, :default => 0, :null => false
     t.integer  "start_and_rest",                     :default => 0, :null => false
@@ -587,7 +592,6 @@ ActiveRecord::Schema.define(:version => 20131024123906) do
   add_index "exercise_rows", ["base_movement_id"], :name => "fk_exercise_rows_base_movements"
   add_index "exercise_rows", ["body_aux_type_id"], :name => "fk_exercise_rows_body_aux_types"
   add_index "exercise_rows", ["breath_aux_type_id"], :name => "fk_exercise_rows_breath_aux_types"
-  add_index "exercise_rows", ["code"], :name => "index_exercise_rows_on_code", :unique => true
   add_index "exercise_rows", ["exercise_id", "part_order"], :name => "idx_exercise_rows_part_order"
   add_index "exercise_rows", ["kick_aux_type_id"], :name => "fk_exercise_rows_kick_aux_types"
   add_index "exercise_rows", ["training_mode_type_id"], :name => "fk_exercise_rows_training_mode_types"
@@ -988,21 +992,6 @@ ActiveRecord::Schema.define(:version => 20131024123906) do
   end
 
   add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
-
-  create_table "relay_types", :force => true do |t|
-    t.integer  "lock_version",                         :default => 0
-    t.string   "code",                   :limit => 10,                 :null => false
-    t.integer  "mixed_gender",           :limit => 1,  :default => 0
-    t.integer  "partecipants",           :limit => 2,  :default => 4
-    t.integer  "phases",                 :limit => 2,  :default => 4
-    t.integer  "phase_length_in_meters", :limit => 3,  :default => 50
-    t.integer  "stroke_type_id"
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
-  end
-
-  add_index "relay_types", ["code"], :name => "index_relay_types_on_code", :unique => true
-  add_index "relay_types", ["stroke_type_id"], :name => "fk_relay_types_stroke_types"
 
   create_table "score_computation_type_rows", :force => true do |t|
     t.integer  "lock_version",                                                            :default => 0

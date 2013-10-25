@@ -19,11 +19,6 @@ class ExerciseRow < ActiveRecord::Base
   validates_associated :body_aux_type
   validates_associated :breath_aux_type
 
-
-  validates_presence_of   :code
-  validates_length_of     :code, :within => 1..6, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
-
   validates_presence_of     :part_order
   validates_length_of       :part_order, :within => 1..3, :allow_nil => false
   validates_numericality_of :part_order
@@ -42,21 +37,9 @@ class ExerciseRow < ActiveRecord::Base
   # Base methods:
   # ---------------------------------------------------------------------------
 
-
-  # Computes a localized shorter description for the value/code associated with this data
-  def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:exercise_rows]} )
-  end
-
-  # Computes a localized description for the value/code associated with this data
-  def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:exercise_rows]} )
-  end
-  # ----------------------------------------------------------------------------
-
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{part_order}) #{:percentage}% #{i18n_short} p.#{pause}\" (S-R: #{start_and_rest})"
+    "#{part_order}) #{:percentage}% p.#{pause}\" (S-R: #{start_and_rest})"
   end
   # ---------------------------------------------------------------------------
 

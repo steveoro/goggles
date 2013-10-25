@@ -31,7 +31,6 @@ module FinResultParserTools
   #
   #    {
   #       :prefix => prefix string,
-  #       :header_year => 4-digit year (integer) extracted from date_ISO,
   #       :header_date => Date instance parsed from date_ISO,
   #       :code => code string
   #    }
@@ -44,7 +43,6 @@ module FinResultParserTools
     header_date = Date.parse( name[date_start_idx .. code_start_idx-1] )
     {
       :prefix       => name[ 0 .. date_start_idx-1 ],
-      :header_year  => name[ date_start_idx .. date_start_idx+3 ],
       :header_date  => header_date,
       :code         => name[ code_start_idx .. name.size ]
     }

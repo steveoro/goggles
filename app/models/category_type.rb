@@ -11,20 +11,24 @@ class CategoryType < ActiveRecord::Base
   validates_length_of     :age_begin, :maximum => 3
   validates_length_of     :age_end, :maximum => 3
 
-  belongs_to :season_type
-  validates_presence_of :season_type                # (must be not null)
-  validates_associated :season_type                 # (foreign key integrity)
+  belongs_to :season
+  validates_presence_of :season                     # (must be not null)
+  validates_associated :season                      # (foreign key integrity)
 
+  has_one :season_type, :through => :season
   # ----------------------------------------------------------------------------
-  #++
 
 
   # Returns the corresponding id given season type id, year of birth and
   # chosen year for the result; 0 on error.
   #
-  def self.get_id_from( season_type_id, year_of_birth, chosen_year )
+  def self.get_id_from( season_id, year_of_birth )
     target_age = chosen_year.to_i - year_of_birth.to_i
-    category_type = CategoryType.where( ['season_type_id = ? AND age_begin >= ? AND age_end <= ?', season_type_id, target_age-5, target_age+5] ).first
+    category_type = CategoryType.includes(:season).where(
+      [ 'season_id = ? AND category_types.age_begin >= ? AND category_types.age_end <= ?',
+        season_id, target_age-5, target_age+5
+      ]
+    ).first
     category_type ? category_type.id : 0
   end
   # ----------------------------------------------------------------------------
@@ -33,7 +37,7 @@ class CategoryType < ActiveRecord::Base
   # Given a localized text description from an imported text,
   # returns the corresponding CategoryType.id; 0 when unable to parse.
   #
-  def self.parse_category_type_from_import_text( season_type_id, category_token )
+  def self.parse_category_type_from_import_text( season_id, category_token )
     result_code = ''
                                                     # NOTE: assuming 'Master YY'|'Under 25' format is used:
     if idx = category_token =~ /master/ui
@@ -48,8 +52,10 @@ class CategoryType < ActiveRecord::Base
       result_code = category_token[ idx .. idx+3 ]
     end
 # DEBUG
-#    puts "=> CategoryType.parse_category_type_from_import_text( #{season_type_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
-    category_type = CategoryType.where( ['season_type_id = ? AND code = ?', season_type_id, result_code] ).first
+#    puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
+    category_type =  CategoryType.where(
+      [ 'season_id = ? AND category_types.code = ?', season_id, result_code ]
+    ).first
     category_type ? category_type.id : 0
   end
   # ----------------------------------------------------------------------------
