@@ -18,8 +18,6 @@ class CreateExerciseRows < ActiveRecord::Migration
       t.references :kick_aux_type
       t.references :body_aux_type
       t.references :breath_aux_type
-
-      t.references :user
     end
 
     add_index :exercise_rows, :code, :unique => true

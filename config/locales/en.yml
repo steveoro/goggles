@@ -766,6 +766,8 @@ en:
 
   errors:
     unable_to_retrieve_row_data: "Unable to retrieve the requested record."
+    messages:
+      record_invalid: "The record has failed the validation process."
 
     models:
       category_type:

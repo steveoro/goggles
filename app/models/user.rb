@@ -15,13 +15,9 @@ class User < ActiveRecord::Base
 
   include Rails.application.routes.url_helpers
 
-# XXX [Steve, 20100211] Firm entity not used here:
-#  belongs_to :firm
-#  validates_associated :firm
 #  belongs_to :user                                  # Used by the "updated_by" getter
 
   has_one :swimmer
-  has_one :badge
 
   validates_presence_of   :name
   validates_length_of     :name, :within => 1..20

@@ -15,8 +15,6 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   belongs_to :meeting_program
   belongs_to :entry_time_type
   validates_associated :data_import_meeting_program
-  validates_associated :meeting_program
-  validates_associated :entry_time_type
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :data_import_swimmer
   belongs_to :data_import_team
@@ -59,13 +57,6 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   validates_presence_of     :hundreds
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
-
-  validates_length_of       :entry_minutes, :maximum => 3
-  validates_numericality_of :entry_minutes
-  validates_length_of       :entry_seconds, :maximum => 2
-  validates_numericality_of :entry_seconds
-  validates_length_of       :entry_hundreds, :maximum => 2
-  validates_numericality_of :entry_hundreds
 
   scope :sort_data_import_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_data_import_meeting_individual_result_by_meeting,       lambda { |dir| order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }

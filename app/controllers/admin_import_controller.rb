@@ -305,14 +305,13 @@ class AdminImportController < ApplicationController
   # === Returns the newly created "data_import" session instance if successful; nil otherwise
   #
   def consume_txt_file( full_pathname, season, force_missing_meeting_creation = false )
+    # TODO PARSE file_type
+    file_type = 'fin_results'                       # FIXME Pre-fixed file structure type, only FIN Results supported, no parsing at all
+    season_id = season.id
 # DEBUG
     logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): force_missing_meeting_creation=#{force_missing_meeting_creation}. Parsing file..." )
     @phase_1_log = "Parsing file: #{full_pathname}, season ID: #{season_id}, force_missing_meeting_creation=#{force_missing_meeting_creation}...\r\n"
     data_rows = []
-
-    # TODO PARSE file_type
-    file_type = 'fin_results'                       # FIXME Pre-fixed file structure type, only FIN Results supported, no parsing at all
-    season_id = season.id
 
     result_hash = FinResultParser.parse_txt_file( full_pathname, false, logger ) # (=> show_progress = false)
     # NOTE: result_hash has the following structure:
@@ -407,7 +406,8 @@ class AdminImportController < ApplicationController
       if meeting_id != 0
         meeting_session_id = search_or_add_a_corresponding_meeting_session(
             full_pathname, session_id, meeting_id,
-            meeting_dates, scheduled_date
+            meeting_dates, scheduled_date,
+            header_fields, force_missing_meeting_creation
         )
       end
 
@@ -441,7 +441,6 @@ class AdminImportController < ApplicationController
           relay_details, scheduled_date
       )
       return nil unless is_ok
-############################################# WIP HERE vvvvvv ###################à
                                                     # --- TEAM RANKING/SCORES (digest part) --
       logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.3) processing TEAM RANKING...\r\n" )
       @phase_1_log << "PHASE #1.3: processing team_ranking...\r\n"
@@ -572,7 +571,6 @@ class AdminImportController < ApplicationController
       )
       is_ok = (meeting_program_id != 0)
       return unless is_ok
-############################################# WIP HERE vvvvvv ###################à
                                          # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index { |detail_row, detail_row_idx|
@@ -1059,7 +1057,7 @@ class AdminImportController < ApplicationController
     team_id    = search_or_add_a_corresponding_team( session_id, season_id, team_name )
     badge_id   = search_or_add_a_corresponding_badge(
         session_id, athlete_badge, season_id, team_id, swimmer_id,
-        category_type_id, AccreditationTimeType::LAST_RACE_ID
+        category_type_id, EntryTimeType::LAST_RACE_ID
     )
                                                 # Retrieve team_badge_number from team_affiliation, but only if the team name was found in Team: (team_affiliations require an existing team)
     ta = TeamAffiliation.where(:team_id => -team_id, :season_id => season_id).first if (team_id.to_i < 0)
@@ -1086,7 +1084,7 @@ class AdminImportController < ApplicationController
     if (meeting_program_id < 0) && (swimmer_id < 0) && (team_id < 0)
 # DEBUG
       logger.debug( "Seeking existing MeetingIndividualResult..." )
-#      @phase_1_log << "Seeking existing MeetingIndividualResult...\r\n"
+      @phase_1_log << "Seeking existing MeetingIndividualResult...\r\n"
       result_row = MeetingIndividualResult.where(   # ASSERT: there can be only 1 row keyed by this tuple:
         [ "(meeting_program_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
           -meeting_program_id, -swimmer_id, -team_id ]
@@ -1098,7 +1096,7 @@ class AdminImportController < ApplicationController
       not_found = false
     else                                            # Search also inside data_import_xxx table counterpart when unsuccesful:
 # DEBUG
-      logger.debug( "Seeking existing DataImportMeetingIndividualResult..." )
+#      logger.debug( "Seeking existing DataImportMeetingIndividualResult..." )
 #      @phase_1_log << "Seeking existing DataImportMeetingIndividualResult...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
       result_row = DataImportMeetingIndividualResult.where(
@@ -1134,12 +1132,15 @@ class AdminImportController < ApplicationController
           :disqualification_code_type_id => dsq_code_type_id,
           :standard_points  => standard_points,
           :meeting_points   => meeting_points,
+          :goggle_cup_points=> 0,
           :minutes  => mins,
           :seconds  => secs,
           :hundreds => hds,
+          :reaction_time => 0,
           # TODO FUTURE DEV:
 #          :entry_time_type_id => nil,
-          :heat_type_id   => ( is_play_off ? HeatType::FINALS_ID : HeatType::HEAT_ID ),
+# TODO Remove this after meeting_events commit/creation:
+#          :heat_type_id   => ( is_play_off ? HeatType::FINALS_ID : HeatType::HEAT_ID ),
           :user_id => current_admin.id
         }.merge(
           meeting_program_id < 0 ? { :meeting_program_id => -meeting_program_id } : { :data_import_meeting_program_id => meeting_program_id }
@@ -1150,6 +1151,8 @@ class AdminImportController < ApplicationController
         ).merge(
           badge_id.to_i < 0 ?    { :badge_id => -badge_id } : { :data_import_badge_id => badge_id }
         )
+# DEBUG
+#        logger.debug( "\r\nDataImportMeetingIndividualResult before save:\r\n#{field_hash.inspect}" )
 
         DataImportMeetingIndividualResult.transaction do
           result_row = DataImportMeetingIndividualResult.new( field_hash )
@@ -1261,8 +1264,10 @@ class AdminImportController < ApplicationController
           :minutes  => mins,
           :seconds  => secs,
           :hundreds => hds,
-# FIXME
-          :heat_type_id   => ( is_play_off ? HeatType::FINALS_ID : HeatType::HEAT_ID ),
+          # TODO FUTURE DEV:
+#          :entry_time_type_id => nil,
+# TODO Remove this after meeting_events commit/creation:
+#          :heat_type_id => ( is_play_off ? HeatType::FINALS_ID : HeatType::HEAT_ID ),
           :user_id => current_admin.id
         }.merge(
           meeting_program_id.to_i < 0 ? { :meeting_program_id => -meeting_program_id } : { :data_import_meeting_program_id => meeting_program_id }
@@ -1344,8 +1349,10 @@ class AdminImportController < ApplicationController
     meeting_ss_ids    = meeting_ss.collect{ |row| row.id }
     di_meeting_ss_ids = di_meeting_ss.collect{ |row| row.id }
                                                     # Collect ALL meeting_programs IDs:
-# FIXME !!!!
-    meeting_prgs    = MeetingProgram.only_relays.where( :meeting_session_id => meeting_ss_ids )
+    meeting_prgs    = MeetingProgram.includes(:meeting_session).only_relays.where(
+      '(meeting_events.meeting_session_id IN (?))',
+      meeting_ss_ids
+    )
     di_meeting_prgs = DataImportMeetingProgram.only_relays.where(
       [ '(meeting_session_id IN (?)) OR (data_import_meeting_session_id IN (?))',
         meeting_ss_ids, di_meeting_ss_ids ]
@@ -1408,8 +1415,15 @@ class AdminImportController < ApplicationController
         field_hash = {
           :data_import_session_id   => session_id,
           :import_text              => import_text,
-          :total_individual_points  => result_score,
-          :total_relay_points       => total_relay_points.to_f,
+          :sum_individual_points    => result_score,
+          :sum_relay_points         => total_relay_points.to_f,
+          # :sum_team_points          => TODO
+          # :meeting_individual_points=> TODO
+          # :meeting_relay_points     => TODO
+          # :meeting_team_points      => TODO
+          # :season_individual_points => TODO
+          # :season_relay_points      => TODO
+          # :season_team_points       => TODO
           :rank     => rank.to_i,
           :user_id  => current_admin.id
         }.merge(
@@ -1581,10 +1595,10 @@ class AdminImportController < ApplicationController
           TeamAffiliation.transaction do
             team_affiliation = TeamAffiliation.new(
               :name       => result_row.name,
-              :must_compute_ober_cup => false,
-              :is_autofilled  => true,              # signal that we have guessed some of the values
               :team_id    => result_row.id,
               :season_id  => season_id,
+              :is_autofilled => true,               # signal that we have guessed some of the values
+              :must_compute_ober_cup => false,
               :user_id    => current_admin.id
               # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
             )
@@ -1661,7 +1675,7 @@ class AdminImportController < ApplicationController
   #   - 0 only on error/unable to process.
   #
   def search_or_add_a_corresponding_badge( session_id, badge_code, season_id, team_id, swimmer_id,
-                                           category_type_id, accreditation_time_type_id )
+                                           category_type_id, entry_time_type_id )
     return 0 if badge_code.nil? || badge_code.size < 2
                                                     # --- FIELD SETUP: Extract field values before the search:
     result_id = 0
@@ -1699,7 +1713,7 @@ class AdminImportController < ApplicationController
           :import_text => badge_code,
           :number => badge_code,
           :category_type_id => category_type_id,
-          :accreditation_time_type_id => accreditation_time_type_id,
+          :entry_time_type_id => entry_time_type_id,
           :season_id => season_id,
           :user_id => current_admin.id
         }.merge(

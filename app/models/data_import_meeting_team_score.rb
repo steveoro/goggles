@@ -21,7 +21,7 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
   validates_presence_of     :sum_relay_points
   validates_presence_of     :sum_team_points
   validates_presence_of     :meeting_individual_points
-  validates_presence_of     :meetingm_relay_points
+  validates_presence_of     :meeting_relay_points
   validates_presence_of     :meeting_team_points
   validates_presence_of     :season_individual_points
   validates_presence_of     :season_relay_points
@@ -30,7 +30,7 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
   validates_numericality_of :sum_relay_points
   validates_numericality_of :sum_team_points
   validates_numericality_of :meeting_individual_points
-  validates_numericality_of :meetingm_relay_points
+  validates_numericality_of :meeting_relay_points
   validates_numericality_of :meeting_team_points
   validates_numericality_of :season_individual_points
   validates_numericality_of :season_relay_points

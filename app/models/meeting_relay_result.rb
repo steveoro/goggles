@@ -43,13 +43,6 @@ class MeetingRelayResult < ActiveRecord::Base
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
 
-  validates_length_of       :entry_minutes, :maximum => 3
-  validates_numericality_of :entry_minutes
-  validates_length_of       :entry_seconds, :maximum => 2
-  validates_numericality_of :entry_seconds
-  validates_length_of       :entry_hundreds, :maximum => 2
-  validates_numericality_of :entry_hundreds
-
 
   scope :is_valid_for_score,  where( :is_out_of_race => false, :is_disqualified => false )
 

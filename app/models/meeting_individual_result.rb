@@ -7,7 +7,6 @@ class MeetingIndividualResult < ActiveRecord::Base
   belongs_to :meeting_program
   belongs_to :entry_time_type
   validates_associated :meeting_program
-  validates_associated :entry_time_type
 
   has_one  :meeting_session,  :through => :meeting_program
   has_one  :meeting,          :through => :meeting_program
@@ -48,12 +47,6 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
 
-  validates_length_of       :entry_minutes, :maximum => 3
-  validates_numericality_of :entry_minutes
-  validates_length_of       :entry_seconds, :maximum => 2
-  validates_numericality_of :entry_seconds
-  validates_length_of       :entry_hundreds, :maximum => 2
-  validates_numericality_of :entry_hundreds
 
   scope :sort_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_meeting_individual_result_by_meeting,       lambda { |dir| order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }

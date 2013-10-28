@@ -881,6 +881,8 @@ it:
 
     errors:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."
+      messages:
+        record_invalid: "Il record processato ha fallito le validazioni."
 
       models:
         article:

@@ -3,7 +3,7 @@
 # components in a tabbed view.
 #
 # - author: Steve A.
-# - vers. : 4.00.11.20130912
+# - vers. : 4.00.72.20131028
 #
 # == Params
 #
@@ -207,7 +207,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { :name => :hundreds,               :label => I18n.t(:hundreds, {:scope=>[:activerecord, :attributes, :meeting_program]}),
                 :width => 30 },
 
-              { :name => :accreditation_time_type__i18n_description, :label => I18n.t(:accreditation_time_type, {:scope=>[:activerecord, :models]}),
+              { :name => :heat_type__i18n_description, :label => I18n.t(:accreditation_time_type, {:scope=>[:activerecord, :models]}),
                 :width => 80 }
           ],
           :lazy_loading => true
@@ -271,6 +271,9 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { :name => :is_disqualified,        :label => I18n.t(:is_disqualified, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
                 :width => 50, :default_value => false, :unchecked_value => 'false' },
 
+              { :name => :disqualification_code_type__i18n_short, :label => I18n.t(:result_type, {:scope=>[:activerecord, :models]}),
+                :width => 50 },
+
               { :name => :standard_points,        :label => I18n.t(:standard_points, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
                 :width => 50 },
               { :name => :meeting_points,         :label => I18n.t(:meeting_points, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
@@ -280,10 +283,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { :name => :seconds,                :label => I18n.t(:seconds, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
                 :width => 30 },
               { :name => :hundreds,               :label => I18n.t(:hundreds, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-                :width => 30 },
-
-              { :name => :result_type__i18n_short, :label => I18n.t(:result_type, {:scope=>[:activerecord, :models]}),
-                :width => 50 }
+                :width => 30 }
           ],
           :lazy_loading => true
         },
@@ -326,6 +326,8 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
                 :width => 50, :default_value => false, :unchecked_value => 'false' },
               { :name => :is_disqualified,        :label => I18n.t(:is_disqualified, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
                 :width => 50, :default_value => false, :unchecked_value => 'false' },
+              { :name => :disqualification_code_type__i18n_short, :label => I18n.t(:result_type, {:scope=>[:activerecord, :models]}),
+                :width => 50 },
 
               { :name => :standard_points,        :label => I18n.t(:standard_points, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
                 :width => 50 },
@@ -336,10 +338,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { :name => :seconds,                :label => I18n.t(:seconds, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
                 :width => 30 },
               { :name => :hundreds,               :label => I18n.t(:hundreds, {:scope=>[:activerecord, :attributes, :meeting_relay_result]}),
-                :width => 30 },
-
-              { :name => :result_type__i18n_short, :label => I18n.t(:result_type, {:scope=>[:activerecord, :models]}),
-                :width => 50 }
+                :width => 30 }
           ],
           :lazy_loading => true
         },
@@ -365,9 +364,17 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
 
               { :name => :rank,                   :label => I18n.t(:rank, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
                 :width => 30 },
-              { :name => :total_individual_points, :label => I18n.t(:total_individual_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
+              { :name => :sum_individual_points, :label => I18n.t(:total_individual_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
                 :width => 80 },
-              { :name => :total_relay_points, :label => I18n.t(:total_relay_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
+              { :name => :sum_relay_points, :label => I18n.t(:total_relay_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
+                :width => 80 },
+              { :name => :sum_team_points, :label => I18n.t(:total_relay_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
+                :width => 80 },
+              { :name => :meeting_individual_points, :label => I18n.t(:total_individual_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
+                :width => 80 },
+              { :name => :meeting_relay_points, :label => I18n.t(:total_relay_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
+                :width => 80 },
+              { :name => :meeting_team_points, :label => I18n.t(:total_relay_points, {:scope=>[:activerecord, :attributes, :meeting_team_score]}),
                 :width => 80 },
 
               { :name => :data_import_team__name, :label => I18n.t(:data_import_team, {:scope=>[:activerecord, :models]}),
@@ -514,7 +521,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
 
               { :name => :category_type__code, :label => I18n.t(:category_type, {:scope=>[:activerecord, :models]}),
                 :width => 80 },
-              { :name => :accreditation_time_type__i18n_short, :label => I18n.t(:accreditation_time_type, {:scope=>[:activerecord, :models]}),
+              { :name => :entry_time_type__i18n_short, :label => I18n.t(:accreditation_time_type, {:scope=>[:activerecord, :models]}),
                 :width => 80 }
           ],
           :lazy_loading => true

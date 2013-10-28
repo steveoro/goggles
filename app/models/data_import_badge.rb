@@ -19,10 +19,10 @@ class DataImportBadge < ActiveRecord::Base
   belongs_to :team
 
   belongs_to :category_type
-  belongs_to :accreditation_time_type
+  belongs_to :entry_time_type
 
   validates_associated :category_type
-  validates_associated :accreditation_time_type
+  validates_associated :entry_time_type
 
   validates_presence_of :number
   validates_length_of :number, :maximum =>  40
@@ -34,7 +34,6 @@ class DataImportBadge < ActiveRecord::Base
   scope :sort_data_import_badge_by_team,                    lambda { |dir| order("teams.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
   scope :sort_data_import_badge_by_swimmer,                 lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_data_import_badge_by_category_type,           lambda { |dir| order("category_types.code #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
-  scope :sort_data_import_badge_by_accreditation_time_type, lambda { |dir| order("accreditation_time_types.code #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
   # ----------------------------------------------------------------------------
 
 

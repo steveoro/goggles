@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131025120658) do
+ActiveRecord::Schema.define(:version => 20131027173631) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -97,20 +97,18 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
   add_index "articles", ["title"], :name => "index_articles_on_title"
 
   create_table "badges", :force => true do |t|
-    t.integer  "lock_version",                             :default => 0
-    t.string   "number",                     :limit => 40,                :null => false
+    t.integer  "lock_version",                     :default => 0
+    t.string   "number",             :limit => 40,                :null => false
     t.integer  "season_id"
     t.integer  "swimmer_id"
     t.integer  "team_id"
     t.integer  "category_type_id"
-    t.integer  "accreditation_time_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
     t.integer  "entry_time_type_id"
   end
 
-  add_index "badges", ["accreditation_time_type_id"], :name => "fk_badges_accreditation_time_types"
   add_index "badges", ["category_type_id"], :name => "fk_badges_category_types"
   add_index "badges", ["entry_time_type_id"], :name => "fk_badges_entry_time_types"
   add_index "badges", ["number"], :name => "index_badges_on_number"
@@ -203,13 +201,13 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
   add_index "comments", ["swimming_pool_review_id"], :name => "fk_comments_swimming_pool_reviews"
 
   create_table "data_import_badges", :force => true do |t|
-    t.integer  "lock_version",                             :default => 0
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
+    t.integer  "lock_version",                         :default => 0
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_badge_id",       :limit => 8,  :default => 0
-    t.string   "import_text",                                             :null => false
-    t.string   "number",                     :limit => 40
+    t.integer  "conflicting_badge_id",   :limit => 8,  :default => 0
+    t.string   "import_text",                                         :null => false
+    t.string   "number",                 :limit => 40
     t.integer  "data_import_swimmer_id"
     t.integer  "data_import_team_id"
     t.integer  "data_import_season_id"
@@ -217,8 +215,8 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
     t.integer  "team_id"
     t.integer  "season_id"
     t.integer  "category_type_id"
-    t.integer  "accreditation_time_type_id"
     t.integer  "user_id"
+    t.integer  "entry_time_type_id"
   end
 
   add_index "data_import_badges", ["number"], :name => "index_data_import_badges_on_number"
@@ -509,6 +507,16 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
 
   add_index "day_part_types", ["code"], :name => "index_day_part_types_on_code", :unique => true
 
+  create_table "day_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 6,                :null => false
+    t.integer  "week_order",   :limit => 3, :default => 0, :null => false
+  end
+
+  add_index "day_types", ["code"], :name => "index_day_types_on_code", :unique => true
+
   create_table "disqualification_code_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
     t.datetime "created_at",                                     :null => false
@@ -548,7 +556,7 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
     t.datetime "created_at",                                              :null => false
     t.datetime "updated_at",                                              :null => false
     t.integer  "style_order",            :limit => 2,  :default => 0,     :null => false
-    t.integer  "is_mixed_gender",        :limit => 1,  :default => 0
+    t.boolean  "is_mixed_gender",                      :default => false, :null => false
     t.integer  "partecipants",           :limit => 2,  :default => 4
     t.integer  "phases",                 :limit => 2,  :default => 4
     t.integer  "phase_length_in_meters", :limit => 3,  :default => 50
@@ -585,7 +593,6 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
     t.integer  "kick_aux_type_id"
     t.integer  "body_aux_type_id"
     t.integer  "breath_aux_type_id"
-    t.integer  "user_id"
   end
 
   add_index "exercise_rows", ["arm_aux_type_id"], :name => "fk_exercise_rows_arm_aux_types"
@@ -1105,6 +1112,7 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
     t.string   "code",         :limit => 5,                :null => false
+    t.integer  "level",        :limit => 3, :default => 0, :null => false
   end
 
   add_index "swimmer_level_types", ["code"], :name => "index_swimmer_level_types_on_code", :unique => true
@@ -1360,7 +1368,6 @@ ActiveRecord::Schema.define(:version => 20131025120658) do
     t.string   "name",                                                          :null => false
     t.string   "description",                   :limit => 50
     t.integer  "swimmer_id"
-    t.integer  "badge_id"
     t.datetime "created_at",                                                    :null => false
     t.datetime "updated_at",                                                    :null => false
     t.string   "email",                                       :default => "",   :null => false

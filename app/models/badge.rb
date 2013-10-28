@@ -8,21 +8,20 @@ class Badge < ActiveRecord::Base
   belongs_to :swimmer
   belongs_to :team
   belongs_to :category_type
-  # [Steve, 20130924] accreditation_time_type is used as a (default) user-preference
+  # [Steve, 20130924] entry_time_type is used as a (default) user-preference
   # for time accreditation during meeting registration. Since it can change
   # on a user/season basis, the reference is on the  badge.
-  belongs_to :accreditation_time_type
+  belongs_to :entry_time_type
 
   validates_associated :season
   validates_associated :swimmer
   validates_associated :team
   validates_associated :category_type
-  validates_associated :accreditation_time_type
+  validates_associated :entry_time_type
 
   has_many :meeting_individual_results
   has_many :swimmer_results
   has_many :passages
-  has_many :individual_accreditations
   has_many :goggle_cup_standards
 
   validates_presence_of :number
@@ -34,7 +33,6 @@ class Badge < ActiveRecord::Base
   scope :sort_badge_by_team,                    lambda { |dir| order("teams.name #{dir.to_s}, badges.number #{dir.to_s}") }
   scope :sort_badge_by_swimmer,                 lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_badge_by_category_type,           lambda { |dir| order("category_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_badge_by_accreditation_time_type, lambda { |dir| order("accreditation_time_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
