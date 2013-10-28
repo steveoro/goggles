@@ -108,14 +108,14 @@ class FinResultParserTest < ActiveSupport::TestCase
       parse_result = result_hash[:parse_result]
       assert( parse_result.instance_of?( Hash ), "parse_result is not an Hash!" )
 # DEBUG
-#      puts "\r\n--- result_hash[:parse_result] inspect, file #{src_file}:"
-#      result_hash[:parse_result].each{ |key, val|
-#        puts "    - key '#{key}' |=> #{val.class}, size=#{val.size}"
-#        puts "    - Array first element: #{val[0].inspect}"
-#        puts "    - Array element -3:    #{val[-3].inspect}"
-#        puts "    - Array element -2:    #{val[-2].inspect}"
-#        puts "    - Array element -1:    #{val[-1].inspect}"
-#      }
+      puts "\r\n--- result_hash[:parse_result] inspect, file #{src_file}:"
+      result_hash[:parse_result].each{ |key, val|
+        puts "    - key '#{key}' |=> #{val.class}, size=#{val.size}"
+        puts "    - Array first element: #{val[0].inspect}"
+        puts "    - Array element -3:    #{val[-3].inspect}"
+        puts "    - Array element -2:    #{val[-2].inspect}"
+        puts "    - Array element -1:    #{val[-1].inspect}"
+      }
                                                     # Check result classes:
       FinResultParser.get_context_keys().each { |context_key|
         assert parse_result.has_key?( context_key ), "parse_result doesn't have the context key '#{context_key}'!"

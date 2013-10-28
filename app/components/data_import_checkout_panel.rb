@@ -97,10 +97,21 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { :name => :import_text,            :label => I18n.t(:import_text, {:scope=>[:admin_import]}), :flex => 1 },
               { :name => :description,            :label => I18n.t(:description), :width => 160 },
 
-              { :name => :challenge_number,       :label => I18n.t(:challenge_number, {:scope=>[:activerecord, :attributes, :meeting]}),
+              { :name => :code,                   :label => I18n.t(:code, {:scope=>[:activerecord, :attributes, :meeting]}),
+                :width => 80 },
+              { :name => :edition,                :label => I18n.t(:edition, {:scope=>[:activerecord, :attributes, :meeting]}),
                 :width => 50 },
-              { :name => :season__description,    :label => I18n.t(:season, {:scope=>[:activerecord, :models]}),
+              { :name => :edition_type__i18n_description, :label => I18n.t(:edition_type, {:scope=>[:activerecord, :models]}),
+                :width => 80 },
+              { :name => :header_date,            :label => I18n.t(:header_date, {:scope=>[:activerecord, :attributes, :meeting]}),
+                :width => 80, :format => 'Y-m-d' },
+              { :name => :header_year,            :label => I18n.t(:header_year, {:scope=>[:activerecord, :attributes, :meeting]}),
+                :width => 80 },
+
+              { :name => :season__get_full_name,  :label => I18n.t(:season, {:scope=>[:activerecord, :models]}),
                 :width => 110 },
+              { :name => :timing_type__i18n_description, :label => I18n.t(:timing_type, {:scope=>[:activerecord, :models]}),
+                :width => 80 },
 
               { :name => :entry_deadline,         :label => I18n.t(:entry_deadline, {:scope=>[:activerecord, :attributes, :meeting]}),
                 :width => 80, :format => 'Y-m-d' },
@@ -108,13 +119,10 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
                 :default_value => false, :unchecked_value => 'false' },
               { :name => :is_under_25_admitted,   :label => I18n.t(:is_under_25_admitted, {:scope=>[:activerecord, :attributes, :meeting]}),
                 :default_value => false, :unchecked_value => 'false' },
-
-              { :name => :reference_phone,        :label => I18n.t(:reference_phone, {:scope=>[:activerecord, :attributes, :meeting]}) },
-              { :name => :reference_e_mail,       :label => I18n.t(:reference_e_mail, {:scope=>[:activerecord, :attributes, :meeting]}) },
-              { :name => :reference_name,         :label => I18n.t(:reference_name, {:scope=>[:activerecord, :attributes, :meeting]}) },
               { :name => :notes,                  :label => I18n.t(:notes) },
-              { :name => :tag,                    :label => I18n.t(:tag) },
 
+              { :name => :is_out_of_season,       :label => I18n.t(:is_out_of_season, {:scope=>[:activerecord, :attributes, :meeting]}),
+                :default_value => false, :unchecked_value => 'false' },
               { :name => :has_invitation,         :label => I18n.t(:has_invitation, {:scope=>[:activerecord, :attributes, :meeting]}),
                 :default_value => false, :unchecked_value => 'false' },
               { :name => :has_start_list,         :label => I18n.t(:has_start_list, {:scope=>[:activerecord, :attributes, :meeting]}),
@@ -124,8 +132,15 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
 
               { :name => :max_individual_events,  :label => I18n.t(:max_individual_events, {:scope=>[:activerecord, :attributes, :meeting]}),
                 :width => 80 },
+              { :name => :max_individual_events_per_session,  :label => I18n.t(:max_individual_events_per_session, {:scope=>[:activerecord, :attributes, :meeting]}),
+                :width => 80 },
               { :name => :configuration_file,     :label => I18n.t(:configuration_file, {:scope=>[:activerecord, :attributes, :meeting]}),
-                :width => 80 }
+                :width => 80 },
+
+              { :name => :reference_phone,        :label => I18n.t(:reference_phone, {:scope=>[:activerecord, :attributes, :meeting]}) },
+              { :name => :reference_e_mail,       :label => I18n.t(:reference_e_mail, {:scope=>[:activerecord, :attributes, :meeting]}) },
+              { :name => :reference_name,         :label => I18n.t(:reference_name, {:scope=>[:activerecord, :attributes, :meeting]}) },
+              { :name => :tag,                    :label => I18n.t(:tag) },
           ]
         },
         {
@@ -155,11 +170,14 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
                 :width => 80, :xtype => 'datecolumn', :format => 'H:i' },
               { :name => :begin_time,             :label => I18n.t(:begin_time, {:scope=>[:activerecord, :attributes, :meeting_session]}),
                 :width => 80, :xtype => 'datecolumn', :format => 'H:i' },
+              { :name => :day_part_type__i18n_short, :label => I18n.t(:day_part_type, {:scope=>[:activerecord, :models]}),
+                :width => 80 },
+              { :name => :description,            :label => I18n.t(:description), :width => 160 },
               { :name => :notes,                  :label => I18n.t(:notes) },
 
-              { :name => :data_import_meeting__description, :label => I18n.t(:data_import_meeting, {:scope=>[:activerecord, :models]}),
+              { :name => :data_import_meeting__get_short_name, :label => I18n.t(:data_import_meeting, {:scope=>[:activerecord, :models]}),
                 :width => 160 },
-              { :name => :meeting__description,   :label => I18n.t(:meeting, {:scope=>[:activerecord, :models]}),
+              { :name => :meeting__get_short_name, :label => I18n.t(:meeting, {:scope=>[:activerecord, :models]}),
                 :width => 120 },
               { :name => :swimming_pool__nick_name, :label => I18n.t(:swimming_pool, {:scope=>[:activerecord, :models]}),
                 :width => 110 }
@@ -206,8 +224,10 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
                 :width => 30 },
               { :name => :hundreds,               :label => I18n.t(:hundreds, {:scope=>[:activerecord, :attributes, :meeting_program]}),
                 :width => 30 },
+              { :name => :time_standard__get_timing, :label => I18n.t(:time_standard, {:scope=>[:activerecord, :models]}),
+                :width => 110 },
 
-              { :name => :heat_type__i18n_description, :label => I18n.t(:accreditation_time_type, {:scope=>[:activerecord, :models]}),
+              { :name => :heat_type__i18n_description, :label => I18n.t(:heat_type, {:scope=>[:activerecord, :models]}),
                 :width => 80 }
           ],
           :lazy_loading => true

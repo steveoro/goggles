@@ -216,7 +216,7 @@ en:
     i18n_short_RF: ""
     i18n_description_RF: "Swimmer other than the designated entered the area"
 
-  day_type_parts:
+  day_part_types:
     code: "Code"
     i18n_short_M: "MNG"
     i18n_description_M: "MORNING"
@@ -651,7 +651,17 @@ en:
       relay_type: "Relay"
       gender_type: "Gender"
       stroke_type: "Stroke"
-      accreditation_time_type: "Accred. Time Type"
+      entry_time_type: "Entry-Time Type"
+      heat_type: "Heat Type"
+      edition_type: "Edition Type"
+      timing_type: "Timing Type"
+      time_standard: "Base Time"
+      score_computation_type: "Scoring Type"
+      individual_score_computation_type: "Individ. Scoring Type"
+      relay_score_computation_type: "Relay Scoring Type"
+      team_score_computation_type: "Team Scoring Type"
+      meeting_event: "Meeting Event"
+      day_part_type: "Day Part"
 
     attributes:
       user:
@@ -694,18 +704,27 @@ en:
         are_results_acquired: "Results acquired?"
         max_individual_events: "Max individ. events"
         configuration_file: "Config. file"
-        challenge_number: "Challenge #"
+        code: "Code"
+        edition: "Edition"
+        header_date: "Header date"
+        header_year: "Header year"
+        max_individual_events_per_session: "Max events/athlete x session"
+        is_out_of_season: "Out of Season?"
+        tag: "Tag"
+        is_autofilled: "Auto-filled?"
       meeting_session:
         session_order: "Session ord."
         scheduled_date: "Scheduled date"
         warm_up_time: "Warm-up at"
         begin_time: "Begins at"
+        is_autofilled: "Auto-filled?"
       meeting_program:
         event_order: "Event ord." 
         begin_time: "Begins at"
         minutes: "Min."
         seconds: "Sec."
         hundreds: "Hnd."
+        is_autofilled: "Auto-filled?"
       meeting_individual_result:
         athlete_name: "Athlete"
         team_name: "Team"

@@ -8,8 +8,8 @@ class MeetingSession < ActiveRecord::Base
   belongs_to :swimming_pool
   belongs_to :day_part_type
   validates_associated :meeting
-  validates_associated :swimming_pool
-  validates_associated :day_part_type
+  # [Steve, 20131028] Cannot enable validation on :swimming_pool, since it can be null
+  # [Steve, 20131028] Cannot enable validation on :day_part_type, since it can be null
 
   has_one  :pool_type,   :through => :swimming_pool
   has_one  :season_type, :through => :meeting

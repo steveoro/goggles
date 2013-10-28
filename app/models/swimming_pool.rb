@@ -9,11 +9,9 @@ class SwimmingPool < ActiveRecord::Base
   belongs_to :shower_type
   belongs_to :hair_dryer_type
   belongs_to :locker_cabinet_type
+
   validates_associated :city
   validates_associated :pool_type
-  validates_associated :shower_type
-  validates_associated :hair_dryer_type
-  validates_associated :locker_cabinet_type
 
   validates_presence_of :name
   validates_length_of   :name, :within => 1..100, :allow_nil => false
@@ -67,5 +65,4 @@ class SwimmingPool < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
   #++
-
 end

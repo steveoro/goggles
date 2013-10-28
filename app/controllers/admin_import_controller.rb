@@ -852,7 +852,9 @@ class AdminImportController < ApplicationController
       return 0
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
-    if not_found
+    if not_found                                    # (the following is an educated guess)
+      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields[:code]}%" ]).first
+
       begin                                         # --- BEGIN transaction ---
         field_hash = {
           :data_import_session_id => session_id,
@@ -861,10 +863,12 @@ class AdminImportController < ApplicationController
           :warm_up_time => warm_up_time,
           :begin_time => begin_time,
           :description => description,
-          :session_order  => 1,
-          :user_id => current_admin.id
+          :session_order  => 1,                     # (since we are processing just 1 meeting session at a time; but is far from correct)
+          :user_id => current_admin.id,
+          :swimming_pool_id => ( swimming_pool ? swimming_pool.id : nil ),
+          :day_part_type_id => DayPartType::MORNING_ID
+
           # TODO :notes is not used!
-          # TODO :swimming_pool_id is not used!
         }.merge(
           meeting_id.to_i < 0 ?  { :meeting_id => -meeting_id } : { :data_import_meeting_id => meeting_id }
         )
@@ -875,8 +879,10 @@ class AdminImportController < ApplicationController
         end
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\DataImportMeetingSession creation: exception caught during save!\r\n"
+        @phase_1_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
         logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeetingSession creation: exception caught during save!" )
+        logger.error( "field_hash = #{ field_hash.inspect }\r\n" ) if field_hash
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -891,6 +897,70 @@ class AdminImportController < ApplicationController
     result_id
   end
   # ---------------------------------------------------------------------------
+
+
+  # TimeStandard relation getter / adder.
+  # Searches for a corresponding / existing TimeStandard row.
+  # Note that while all other search_or_add_a_XYZ methods create temporary rows
+  # on dedicated (temporary) entities, this method is one of the only 2 which commit
+  # directly to the destination entity (when a corresponding row is not found).
+  #
+  # == Returns: the corresponding id of searched entity row,
+  #   - positive if freshly added into time_standards table;
+  #   - 0 or less only on error/unable to process.
+  #
+  def search_or_add_a_corresponding_time_standard( season_id, event_type_id, category_type_id,
+                                                   gender_type_id, pool_type_id,
+                                                   mins, secs, hds )
+    result_id = 0
+    result_row = TimeStandard.where(
+      :event_type_id => event_type_id,
+      :category_type_id => category_type_id,
+      :gender_type_id => gender_type_id,
+      :pool_type_id => pool_type_id,
+      :minutes => mins,
+      :seconds => secs,
+      :hundreds => hds
+    ).first
+
+    if result_row
+      result_id = result_row.id
+    else
+# DEBUG
+      logger.debug( "Adding new TimeStandard having:  #{mins}'#{secs}\".#{hds} @ season_id=#{season_id}, event_type_id=#{event_type_id}, :category_type_id=#{category_type_id}, pool_type_id=#{pool_type_id}, gender_type_id=#{gender_type_id}..." )
+      begin                                         # --- BEGIN transaction ---
+        field_hash = {
+          :season_id => season_id,
+          :gender_type_id => gender_type_id,
+          :pool_type_id => pool_type_id,
+          :event_type_id => event_type_id,
+          :category_type_id => category_type_id,
+          :minutes => mins,
+          :seconds => secs,
+          :hundreds => hds
+        }
+        TimeStandard.transaction do
+          result_row = TimeStandard.new( field_hash )
+          result_row.save!                          # raise automatically an exception if save is not successful
+        end
+      rescue                                        # --- RESCUE (failed) transaction ---
+        @phase_1_log << "\r\TimeStandard creation: exception caught during save!\r\n"
+        @phase_1_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
+        @phase_1_log << "#{ $!.to_s }\r\n" if $!
+        logger.error( "\r\n*** TimeStandard creation: exception caught during save!" )
+        logger.error( "field_hash = #{ field_hash.inspect }\r\n" ) if field_hash
+        logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+        flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+      else
+        result_id = result_row.id
+# DEBUG
+        logger.debug( "Created TimeStandard, ID:'#{result_id}', '#{result_row.get_verbose_name}'." )
+        @phase_1_log << "Created TimeStandard, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
+        @stored_data_rows += 1
+      end                                           # --- END transaction ---
+    end
+    result_id
+  end
 
 
   # DataImportMeetingProgram relation getter / adder.
@@ -978,6 +1048,21 @@ class AdminImportController < ApplicationController
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
+      meeting_session = ( meeting_session_id < 0 ?
+        MeetingSession.find( -meeting_session_id ) :
+        DataImportMeetingSession.find( meeting_session_id )
+      )
+      pool_type_id = ( meeting_session.swimming_pool ?
+        meeting_session.swimming_pool.pool_type_id :
+        PoolType::MT50_ID
+      )
+      time_standard_id = nil
+      if ( mins > 0 || secs > 0 || hds > 0 )        # Base time found? Search for a corresponding standard time:
+        time_standard_id = search_or_add_a_corresponding_time_standard(
+          @season_id, event_type_id, category_type_id, gender_type_id, pool_type_id,
+          mins, secs, hds
+        )
+      end
       begin                                         # --- BEGIN transaction ---
 # DEBUG
 #        logger.debug( "Adding new DataImportMeetingProgram with: event_type_id=#{event_type_id}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type_id}, category_type_id=#{category_type_id}..." )
@@ -992,6 +1077,9 @@ class AdminImportController < ApplicationController
           :minutes  => mins,
           :seconds  => secs,
           :hundreds => hds,
+          :is_out_of_race   => false,               # FIXME This is not parsed at all
+          :heat_type_id     => HeatType::FINALS_ID, # (This is just a guess, since this is the phase-2 processing of a "fin-result" type file)
+          :time_standard_id => time_standard_id,
           :user_id => current_admin.id
         }.merge(
           meeting_session_id.to_i < 0 ?  { :meeting_session_id => -meeting_session_id } : { :data_import_meeting_session_id => meeting_session_id }
@@ -1139,8 +1227,6 @@ class AdminImportController < ApplicationController
           :reaction_time => 0,
           # TODO FUTURE DEV:
 #          :entry_time_type_id => nil,
-# TODO Remove this after meeting_events commit/creation:
-#          :heat_type_id   => ( is_play_off ? HeatType::FINALS_ID : HeatType::HEAT_ID ),
           :user_id => current_admin.id
         }.merge(
           meeting_program_id < 0 ? { :meeting_program_id => -meeting_program_id } : { :data_import_meeting_program_id => meeting_program_id }
@@ -1264,10 +1350,10 @@ class AdminImportController < ApplicationController
           :minutes  => mins,
           :seconds  => secs,
           :hundreds => hds,
+          :relay_header => team_name,
+          :reaction_time => 0,
           # TODO FUTURE DEV:
 #          :entry_time_type_id => nil,
-# TODO Remove this after meeting_events commit/creation:
-#          :heat_type_id => ( is_play_off ? HeatType::FINALS_ID : HeatType::HEAT_ID ),
           :user_id => current_admin.id
         }.merge(
           meeting_program_id.to_i < 0 ? { :meeting_program_id => -meeting_program_id } : { :data_import_meeting_program_id => meeting_program_id }
@@ -1849,12 +1935,26 @@ class AdminImportController < ApplicationController
               :entry_deadline => di_row.entry_deadline,
               :is_autofilled  => true,              # signal that we have guessed some of the values (for instance, the begin/scheduled times)
               :are_results_acquired => di_row.are_results_acquired,
-              :configuration_file => di_row.configuration_file,
-              :notes          => di_row.notes,
-              :season_id      => di_row.season_id,
-              :user_id        => di_row.user_id
-              # TODO :challenge_number is not used!
-              # TODO :is_under_25_admitted is not used!
+              :configuration_file   => di_row.configuration_file,
+
+              :is_under_25_admitted => di_row.is_under_25_admitted,
+              :max_individual_events => di_row.max_individual_events,
+              :max_individual_events_per_session => di_row.max_individual_events_per_session,
+
+              :code => di_row.code,
+              :edition => di_row.edition,
+              :header_date => di_row.header_date,
+              :header_year => di_row.header_year,
+              :is_out_of_season => di_row.is_out_of_season,
+              :notes            => di_row.notes,
+              :season_id        => di_row.season_id,
+              :edition_type_id  => di_row.edition_type_id,
+              :timing_type_id   => di_row.timing_type_id,
+              :individual_score_computation_type_id => di_row.individual_score_computation_type_id,
+              :relay_score_computation_type_id      => di_row.relay_score_computation_type_id,
+              :team_score_computation_type_id       => di_row.team_score_computation_type_id,
+              :user_id          => di_row.user_id
+              # TODO FUTURE DEV: di_row.tag is not yet used
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -1917,9 +2017,10 @@ class AdminImportController < ApplicationController
               :is_autofilled  => true,              # signal that we have guessed some of the values (for instance, the begin/scheduled times)
               :description    => di_row.description,
               :meeting_id     => di_row.meeting_id,
+              :swimming_pool_id => di_row.swimming_pool_id,
+              :day_part_type_id => di_row.day_part_type_id,
               :user_id        => di_row.user_id
               # TODO :notes is not used!
-              # TODO :swimming_pool_id is not used!
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -1949,6 +2050,67 @@ class AdminImportController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
+  # MeetingEvent relation getter / adder.
+  # Searches for a corresponding / existing MeetingEvent row.
+  # Note that while all other search_or_add_a_XYZ methods create temporary rows
+  # on dedicated (temporary) entities, this method is one of the only 2 which commit
+  # directly to the destination entity (when a corresponding row is not found).
+  #
+  # == Returns: the corresponding id of searched entity row,
+  #   - positive when freshly added into MeetingEvent;
+  #   - negative IDs only for already existing/commited rows in MeetingEvent;
+  #   - 0 only on error/unable to process.
+  #
+  def search_or_add_a_corresponding_meeting_event( meeting_session_id, event_type_id,
+                                                   heat_type_id, event_order, begin_time,
+                                                   is_out_of_race )
+    result_id = 0
+    result_row = MeetingEvent.where(
+      :meeting_session_id => meeting_session_id,
+      :event_type_id => event_type_id,
+      :heat_type_id => heat_type_id
+    ).first
+
+    if result_row
+      result_id = -result_row.id
+    else
+# DEBUG
+      logger.debug( "Adding new MeetingEvent having: meeting_session_id=#{meeting_session_id}, event_type_id=#{event_type_id}, heat_type_id=#{heat_type_id}..." )
+      begin                                         # --- BEGIN transaction ---
+        field_hash = {
+          :meeting_session_id => meeting_session_id,
+          :event_type_id  => event_type_id,
+          :heat_type_id   => heat_type_id,
+          :event_order    => event_order,
+          :begin_time     => begin_time,
+          :is_out_of_race => is_out_of_race,
+          :is_autofilled  => true
+          # TODO notes is not used
+        }
+        MeetingEvent.transaction do
+          result_row = MeetingEvent.new( field_hash )
+          result_row.save!                          # raise automatically an exception if save is not successful
+        end
+      rescue                                        # --- RESCUE (failed) transaction ---
+        @phase_1_log << "\r\nMeetingEvent creation: exception caught during save!\r\n"
+        @phase_1_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
+        @phase_1_log << "#{ $!.to_s }\r\n" if $!
+        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): MeetingEvent creation: exception caught during save!" )
+        logger.error( "field_hash = #{ field_hash.inspect }\r\n" ) if field_hash
+        logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+        flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+      else
+        result_id = result_row.id
+# DEBUG
+        logger.debug( "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'." )
+        @phase_1_log << "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
+        @stored_data_rows += 1
+      end                                           # --- END transaction ---
+    end
+    result_id
+  end
+
+
   # Commit method for DataImportMeetingProgram / MeetingProgram.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
@@ -1962,39 +2124,40 @@ class AdminImportController < ApplicationController
   def commit_data_import_meeting_program( data_import_session_id )
     di_records = DataImportMeetingProgram.where( :data_import_session_id => data_import_session_id )
     result_id  = 0
+    event_order = 1
     is_ok = true
     committed_row = nil
 
-# FIXME / TODO CREATE MeetingEvent if missing
-
-# FIXME 4commit pool_type_id from meeting_session.swimming_pool.pool_type_id || default=pool_type 50 mt
-# FIXME 4commit time_standard_id => from (season_id, gender_id, pool_type_id, event_type_id, category_type_id )
-# FIXME 4commit meeting_event_id => ( heat_type_id, event_type_id, meeting_session_id )
-
     if di_records
       di_records.each do |di_row|
+                                                    # Create or retrieve the MeetingEvent
+        meeting_event_id = search_or_add_a_corresponding_meeting_event(
+          di_row.meeting_session_id,
+          di_row.event_type_id,
+          di_row.heat_type_id,
+          event_order,
+          di_row.begin_time,
+          di_row.is_out_of_race
+        )
+        if meeting_event_id > 0                     # New MeetingEvent created?
+          event_order += 1                          # Increase event_order
+        else                                        # Otherwise, fix ID sign:
+          meeting_event_id = -meeting_event_id
+        end
 # DEBUG
-#        logger.debug( "\r\nCommitting #{di_row.class.name} = '#{di_row.get_short_name}'..." )
+        logger.debug( "\r\nCommitting #{di_row.class.name} = '#{di_row.get_short_name}'..." )
         begin                                       # --- BEGIN transaction ---
           MeetingProgram.transaction do
             committed_row = MeetingProgram.new(
               :event_order => di_row.event_order,
-# FIXME
-              :is_out_of_race => false,
-              :meeting_session_id => di_row.meeting_session_id,
-              :category_type_id   => di_row.category_type_id,
-              :gender_type_id     => di_row.gender_type_id,
-
-#              :event_type_id      => di_row.event_type_id,
-#              :minutes  => di_row.minutes,
-#              :seconds  => di_row.seconds,
-#              :hundreds => di_row.hundreds,
-
-#              :meeting_event_id   => ?,
-#              :pool_type_id       => ?,
-#              :time_standard_id   => ?,
-              :begin_time  => di_row.begin_time,
-              :is_autofilled  => true,              # signal that we have guessed some of the values (for instance, the begin/scheduled times)
+              :category_type_id => di_row.category_type_id,
+              :gender_type_id   => di_row.gender_type_id,
+              :pool_type_id     => ( di_row.meeting_session.swimming_pool ? di_row.meeting_session.swimming_pool.pool_type_id : nil ),
+              :time_standard_id => di_row.time_standard_id,
+              :meeting_event_id => meeting_event_id,
+              :begin_time       => di_row.begin_time, # (wild guessed)
+              :is_out_of_race   => di_row.is_out_of_race,
+              :is_autofilled    => true,            # signal that we have guessed some of the values (for instance, the begin/scheduled times)
               :user_id  => di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
@@ -2119,7 +2282,7 @@ class AdminImportController < ApplicationController
           TeamAffiliation.transaction do            # Create dependancy: |=> team_affiliations(team, season)
             additional_row = TeamAffiliation.new(
               :name       => committed_row.name,
-              :must_compute_ober_cup => false,
+              :must_calculate_goggle_cup => false,
               :is_autofilled  => true,              # signal that we have guessed some of the values
               :team_id    => result_id,
               :season_id  => season_id,
@@ -2133,16 +2296,16 @@ class AdminImportController < ApplicationController
           DataImportBadge.where(
             :data_import_team_id => di_row.id
           ).update_all( :team_id => result_id )
-
           DataImportMeetingIndividualResult.where(
             :data_import_team_id => di_row.id
           ).update_all( :team_id => result_id )
+
           DataImportMeetingRelayResult.where(
             :data_import_team_id => di_row.id
-          ).update_all( :team_id => result_id )
+          ).update_all( :team_id => result_id, :team_affiliation_id => additional_row.id )
           DataImportMeetingTeamScore.where(
             :data_import_team_id => di_row.id
-          ).update_all( :team_id => result_id )
+          ).update_all( :team_id => result_id, :team_affiliation_id => additional_row.id )
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
@@ -2245,7 +2408,7 @@ class AdminImportController < ApplicationController
             committed_row = Badge.new(
               :number   => di_row.number,
               :category_type_id => di_row.category_type_id,
-              :accreditation_time_type_id => di_row.accreditation_time_type_id,
+              :entry_time_type_id => di_row.entry_time_type_id,
               :swimmer_id => di_row.swimmer_id,
               :team_id    => di_row.team_id,
               :season_id  => di_row.season_id,
@@ -2302,27 +2465,26 @@ class AdminImportController < ApplicationController
         begin                                       # --- BEGIN transaction ---
           MeetingIndividualResult.transaction do
             committed_row = MeetingIndividualResult.new(
-              :athlete_name => di_row.athlete_name,
-              :team_name    => di_row.team_name,
-              :athlete_badge_number => di_row.athlete_badge_number,
-              :team_badge_number    => di_row.team_badge_number,
-              :year_of_birth => di_row.year_of_birth,
-              :rank     => di_row.rank,
+              :year_of_birth    => di_row.year_of_birth,
+              :rank             => di_row.rank,
               :is_play_off      => di_row.is_play_off,
               :is_out_of_race   => di_row.is_out_of_race,
               :is_disqualified  => di_row.is_disqualified,
               :disqualification_code_type_id => di_row.disqualification_code_type_id,
               :standard_points  => di_row.standard_points,
               :meeting_points   => di_row.meeting_points,
-              :minutes  => di_row.minutes,
-              :seconds  => di_row.seconds,
-              :hundreds => di_row.hundreds,
+              :goggle_cup_points=> di_row.goggle_cup_points,
+
+              :reaction_time    => di_row.reaction_time,
+              :minutes          => di_row.minutes,
+              :seconds          => di_row.seconds,
+              :hundreds         => di_row.hundreds,
+
               :meeting_program_id => di_row.meeting_program_id,
-              :result_type_id     => di_row.result_type_id,
-              :swimmer_id => di_row.swimmer_id,
-              :team_id    => di_row.team_id,
-              :badge_id   => di_row.badge_id,
-              :user_id    => di_row.user_id
+              :swimmer_id       => di_row.swimmer_id,
+              :team_id          => di_row.team_id,
+              :badge_id         => di_row.badge_id,
+              :user_id          => di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -2371,19 +2533,24 @@ class AdminImportController < ApplicationController
           MeetingRelayResult.transaction do
             committed_row = MeetingRelayResult.new(
               :meeting_program_id => di_row.meeting_program_id,
+
               :is_play_off      => di_row.is_play_off,
               :is_out_of_race   => di_row.is_out_of_race,
               :is_disqualified  => di_row.is_disqualified,
               :disqualification_code_type_id => di_row.disqualification_code_type_id,
               :standard_points  => di_row.standard_points,
               :meeting_points   => di_row.meeting_points,
-              :result_type_id   => di_row.result_type_id,
-              :team_id  => di_row.team_id,
-              :rank     => di_row.rank,
-              :minutes  => di_row.minutes,
-              :seconds  => di_row.seconds,
-              :hundreds => di_row.hundreds,
-              :user_id  => di_row.user_id
+
+              :team_id          => di_row.team_id,
+              :team_affiliation_id => di_row.team_affiliation_id,
+              :relay_header     => di_row.relay_header,
+
+              :reaction_time    => di_row.reaction_time,
+              :rank             => di_row.rank,
+              :minutes          => di_row.minutes,
+              :seconds          => di_row.seconds,
+              :hundreds         => di_row.hundreds,
+              :user_id          => di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end

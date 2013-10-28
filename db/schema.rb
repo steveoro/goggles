@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131027173631) do
+ActiveRecord::Schema.define(:version => 20131028164201) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -382,6 +382,7 @@ ActiveRecord::Schema.define(:version => 20131027173631) do
     t.decimal  "season_relay_points",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.decimal  "season_team_points",                             :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "season_id"
+    t.integer  "team_affiliation_id"
   end
 
   create_table "data_import_meetings", :force => true do |t|
@@ -873,10 +874,12 @@ ActiveRecord::Schema.define(:version => 20131027173631) do
     t.decimal  "season_relay_points",       :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.decimal  "season_team_points",        :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "season_id"
+    t.integer  "team_affiliation_id"
   end
 
   add_index "meeting_team_scores", ["meeting_id", "team_id"], :name => "teams_x_meeting"
   add_index "meeting_team_scores", ["season_id"], :name => "fk_meeting_team_scores_seasons"
+  add_index "meeting_team_scores", ["team_affiliation_id"], :name => "fk_meeting_team_scores_team_affiliations"
   add_index "meeting_team_scores", ["team_id"], :name => "fk_meeting_team_scores_teams"
 
   create_table "meetings", :force => true do |t|
@@ -1010,9 +1013,12 @@ ActiveRecord::Schema.define(:version => 20131027173631) do
     t.decimal  "default_score",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "score_computation_type_id"
     t.integer  "score_mapping_type_id"
+    t.integer  "computation_order",         :limit => 8,                                  :default => 0,   :null => false
+    t.integer  "position_limit",                                                          :default => 0,   :null => false
   end
 
   add_index "score_computation_type_rows", ["code"], :name => "index_score_computation_type_rows_on_code", :unique => true
+  add_index "score_computation_type_rows", ["computation_order"], :name => "idx_score_computation_type_rows_computation_order"
   add_index "score_computation_type_rows", ["score_computation_type_id"], :name => "fk_score_computation_type_rows_score_computation_types"
   add_index "score_computation_type_rows", ["score_mapping_type_id"], :name => "fk_score_computation_type_rows_score_mapping_types"
 
@@ -1029,13 +1035,12 @@ ActiveRecord::Schema.define(:version => 20131027173631) do
     t.integer  "lock_version",                                                      :default => 0
     t.datetime "created_at",                                                                         :null => false
     t.datetime "updated_at",                                                                         :null => false
-    t.string   "code",                  :limit => 6,                                                 :null => false
     t.integer  "position",              :limit => 8,                                :default => 0,   :null => false
     t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "score_mapping_type_id"
   end
 
-  add_index "score_mapping_type_rows", ["code"], :name => "index_score_mapping_type_rows_on_code", :unique => true
+  add_index "score_mapping_type_rows", ["position"], :name => "idx_score_mapping_type_rows_position"
   add_index "score_mapping_type_rows", ["score_mapping_type_id"], :name => "fk_score_mapping_type_rows_score_mapping_types"
 
   create_table "score_mapping_types", :force => true do |t|

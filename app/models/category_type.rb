@@ -1,7 +1,7 @@
 class CategoryType < ActiveRecord::Base
 
   validates_presence_of   :code
-  validates_length_of     :code, :within => 1..6, :allow_nil => false
+  validates_length_of     :code, :within => 1..7, :allow_nil => false
 
   validates_length_of     :federation_code, :within => 1..2
   validates_length_of     :description, :maximum => 100
@@ -48,13 +48,13 @@ class CategoryType < ActiveRecord::Base
     elsif category_token =~ /under/ui
       result_code = 'U25'
 
-    elsif idx = (category_token =~ /m\d\d\d/ui)
-      result_code = category_token[ idx .. idx+3 ]
+    elsif idx = (category_token =~ /\d\d\d\-\d\d\d/ui)
+      result_code = category_token[ idx .. idx+6 ]
     end
 # DEBUG
-#    puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
+    puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
     category_type =  CategoryType.where(
-      [ 'season_id = ? AND category_types.code = ?', season_id, result_code ]
+      [ '(season_id = ?) AND (category_types.code = ?)', season_id, result_code ]
     ).first
     category_type ? category_type.id : 0
   end

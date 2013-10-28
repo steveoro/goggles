@@ -17,6 +17,7 @@ class DataImportMeetingProgram < ActiveRecord::Base
   belongs_to :gender_type
   belongs_to :event_type
   belongs_to :heat_type
+  belongs_to :time_standard
 
   validates_associated :meeting_session
   validates_associated :data_import_meeting_session

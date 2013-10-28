@@ -22,7 +22,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = false
+  DEBUG_VERBOSE                                     = true
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
@@ -83,9 +83,9 @@ class FinResultParser
   #
   @context_types = {                                # HEADER CONTEXT(s) def. arrays:
     :meeting_header => [
-      /\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)|\d\d((\/|-|\,)\d\d)*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui,
+      /\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)|\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
       /\s*Manifestazione organizzata da|\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)/ui,
-      /\d\d((\/|-|\,)\d\d)*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}|\s*Manifestazione organizzata da/ui
+      /\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}|\s*Manifestazione organizzata da/ui
     ],
 
     :category_header => [
@@ -138,7 +138,7 @@ class FinResultParser
         ),
         TokenExtractor.new(
           :meeting_dates,
-          /\d\d((\/|-|\,)\d\d)*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui,
+          /\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
           /$/ui
         )
       ],
@@ -159,7 +159,7 @@ class FinResultParser
       [
         TokenExtractor.new(
           :meeting_dates,
-          /\d\d((\/|-|\,)\d\d)*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui,
+          /\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
           /$/ui
         ),
         TokenExtractor.new(
@@ -224,8 +224,8 @@ class FinResultParser
         ),
         TokenExtractor.new(
           :category_group,
-          /\s*(M100-|M120-|M160-|M200-|M240-|M280-|M320-) */ui,
-          /\s*tempo base\s*/ui
+          /\s*(M\d\d0\-\d\d\d)*/ui,
+          /tempo base\s*/ui
         ),
         TokenExtractor.new(
           :base_time,

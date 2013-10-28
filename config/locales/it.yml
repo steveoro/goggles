@@ -216,7 +216,7 @@ it:
     i18n_short_RF: ""
     i18n_description_RF: "Nuotatore non ammesso nell'area cambio"
 
-  day_type_parts:
+  day_part_types:
     code: "Cod."
     i18n_short_M: "MAT"
     i18n_description_M: "MATTINA"
@@ -767,7 +767,17 @@ it:
       relay_type: "Tipo Staff."
       gender_type: "Sesso"
       stroke_type: "Stile"
-      accreditation_time_type: "Tipo Tempo Accred."
+      entry_time_type: "Tipo Tempo Accred."
+      heat_type: "Tipo Batteria"
+      edition_type: "Tipo Edizione"
+      timing_type: "Cronometraggio"
+      time_standard: "Tempo Base"
+      score_computation_type: "Tipo Calcolo Punti"
+      individual_score_computation_type: "Tipo Calcolo Punti Ind."
+      relay_score_computation_type: "Tipo Calcolo Punti Staff."
+      team_score_computation_type: "Tipo Calcolo Punti Squadra"
+      meeting_event: "Eventi Meeting"
+      day_part_type: "Parte giorno"
 
     attributes:
       user:
@@ -808,20 +818,29 @@ it:
         has_invitation: "C'e' l'invito?"
         has_start_list: "C'e' la starting-list?"
         are_results_acquired: "Risult. acquisiti?"
-        max_individual_events: "Max eventi x atleta"
+        max_individual_events: "Max gare/atleta"
         configuration_file: "File di config."
-        challenge_number: "Numero Gara"
+        code: "Codice"
+        edition: "Edizione"
+        header_date: "Data intest."
+        header_year: "Anno intest."
+        max_individual_events_per_session: "Max gare/atleta x sessione"
+        is_out_of_season: "Fuori stagione?"
+        tag: "Tag"
+        is_autofilled: "Auto-fill?"
       meeting_session:
         session_order: "Ord. sessione"
         scheduled_date: "Data prevista"
         warm_up_time: "Data riscaldam."
         begin_time: "Data/Ora inizio"
+        is_autofilled: "Auto-fill?"
       meeting_program:
         event_order: "Ord. evento"
         begin_time: "Ora inizio"
         minutes: "Min."
         seconds: "Sec."
         hundreds: "Cent."
+        is_autofilled: "Auto-fill?"
       meeting_individual_result:
         athlete_name: "Nome Atleta"
         team_name: "Nome Squadra"
