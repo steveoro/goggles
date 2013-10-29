@@ -5,10 +5,6 @@ class ScoreComputationTypeRow < ActiveRecord::Base
   validates_associated :score_computation_type
   validates_associated :score_mapping_type
 
-  validates_presence_of   :code
-  validates_length_of     :code, :within => 1..20, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
-
   validates_presence_of   :class_name
   validates_length_of     :class_name, :within => 1..20, :allow_nil => false
   validates_uniqueness_of :class_name, :message => :already_exists

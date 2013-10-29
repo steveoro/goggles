@@ -32,16 +32,16 @@
 	end
 
 	g.column(
-		name: I18n.t(:challenge_number, {:scope=>[:activerecord, :attributes, :meeting]}),
-		attribute: 'challenge_number'
+		name: I18n.t(:edition, {:scope=>[:activerecord, :attributes, :meeting]}),
+		attribute: 'edition'
 	)
 
 	g.column(
 		name: I18n.t(:any_date),
-		attribute: 'entry_deadline',
-		detach_with_id: :flt_entry_deadline
+		attribute: 'header_date',
+		detach_with_id: :flt_entry_header_date
 	) do |meeting|
-		meeting.entry_deadline
+		meeting.header_date
 	end
 
 	g.column(

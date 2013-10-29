@@ -3,7 +3,7 @@ module Version
   # ** DO NOT CHANGE THE FOLLOWING UNLESS YOU KNOW WHAT YOU'RE DOING!! **
   CORE    = 'core-six'
   MAJOR   = '4.00'
-  MINOR   = '75'
+  MINOR   = '76'
   BUILD   = '20131029'
 
   # Internal constant used to discriminate between all the existing and
@@ -11,5 +11,5 @@ module Version
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"
 
   # Current internal DB version (indipendent from migrations and framework release)
-  DB      = "1.15.03"
+  DB      = "1.15.04"
 end

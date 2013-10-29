@@ -11,6 +11,10 @@
 	text-align: right;
 }
 
+.goggles-category-gap{
+	padding: 40px 20px 0px 0px;
+}
+
 table td.goggles-centeralign{
 	text-align: center;
 }

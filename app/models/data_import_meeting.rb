@@ -31,6 +31,10 @@ class DataImportMeeting < ActiveRecord::Base
               :class_name  => "ScoreComputationType", 
               :foreign_key => "team_score_computation_type_id"
   )
+  belongs_to( :meeting_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "meeting_score_computation_type_id"
+  )
 
   has_one  :season_type, :through => :season
 

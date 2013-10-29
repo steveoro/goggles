@@ -12,13 +12,6 @@ class CreateScoreMappingTypeRows < ActiveRecord::Migration
     end
 
     add_index :score_mapping_type_rows, :code, :unique => true
-
-    execute <<-SQL
-      ALTER TABLE score_mapping_type_rows
-        ADD CONSTRAINT fk_score_mapping_type_rows_score_mapping_types
-        FOREIGN KEY (score_mapping_type_id)
-        REFERENCES score_mapping_types(id)
-    SQL
     # -------------------------------------------------------------------------
   end
 end

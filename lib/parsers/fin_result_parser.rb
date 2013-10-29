@@ -22,7 +22,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = true
+  DEBUG_VERBOSE                                     = false
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
@@ -203,7 +203,7 @@ class FinResultParser
       nil
     ],
 
-    # -- Fields to be extracted: :type, :distance, :style, :category_group, :base_time
+    # -- Fields to be extracted: :type, :distance, :style, :gender (can be nil), :category_group, :base_time
     :relay_header => [
       nil,
       [
@@ -221,6 +221,11 @@ class FinResultParser
           :style,
           /(?<=\d\s)\s*(stile|mi|sl|mx).*/ui,
           /\s-\s/ui
+        ),
+        TokenExtractor.new(
+          :gender,
+          / *(maschi|femmi)/ui,
+          / * - *categoria/ui
         ),
         TokenExtractor.new(
           :category_group,
@@ -362,7 +367,7 @@ class FinResultParser
     ],
     :relay_header => [
       nil,
-      [ :type, :distance, :style, :category_group, :base_time ],
+      [ :type, :distance, :style, :gender, :category_group, :base_time ],
       nil
     ],
 
@@ -402,7 +407,7 @@ class FinResultParser
   @context_keys = {
     :meeting_header =>  [:title],
     :category_header => [:distance, :style, :gender, :category_group],
-    :relay_header =>    [:type, :category_group]
+    :relay_header =>    [:type, :category_group]    # (type includes also the gender token)
   }
 
 

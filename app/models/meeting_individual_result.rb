@@ -30,10 +30,12 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   validates_presence_of     :standard_points
   validates_numericality_of :standard_points
-  validates_presence_of     :meeting_points
-  validates_numericality_of :meeting_points
+  validates_presence_of     :meeting_individual_points
+  validates_numericality_of :meeting_individual_points
   validates_presence_of     :goggle_cup_points
   validates_numericality_of :goggle_cup_points
+  validates_presence_of     :team_points
+  validates_numericality_of :team_points
 
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
@@ -67,12 +69,12 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{get_scheduled_date} #{get_event_type}: #{rank}) #{athlete_name}, #{get_timing}"
+    "#{get_scheduled_date} #{get_event_type}: #{rank}) #{get_athlete_name}, #{get_timing}"
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{get_meeting_program_verbose_name}: #{rank}) #{athlete_name} (#{year_of_birth}), #{get_timing}"
+    "#{get_meeting_program_verbose_name}: #{rank}) #{get_athlete_name} (#{year_of_birth}), #{get_timing}"
   end
 
   # Retrieves the user name associated with this instance
@@ -80,6 +82,11 @@ class MeetingIndividualResult < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the associated Swimmer full name
+  def get_athlete_name
+    self.swimmer ? self.swimmer.get_full_name() : '?'
+  end
 
   # Retrieves the associated Team full name
   def get_team_name

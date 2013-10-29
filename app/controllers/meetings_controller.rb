@@ -10,7 +10,7 @@ class MeetingsController < ApplicationController
     @meetings_grid = initialize_grid(
       Meeting,
       :include => [:season, :season_type],
-      :order => 'meetings.entry_deadline',
+      :order => 'meetings.header_date',
       :order_direction => 'asc',
       :per_page => 20
     )
@@ -26,12 +26,12 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_path() ) and return
     end
-    
+
     @meeting_programs_list = @meeting.meeting_programs.includes(
       :event_type, :stroke_type
     ).order(
       'event_types.is_a_relay, meeting_programs.event_order'
-    ).select( :event_type_id ).collect{ |row|
+    ).collect{ |row|
       row.event_type
     }.uniq
 

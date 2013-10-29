@@ -1220,7 +1220,8 @@ class AdminImportController < ApplicationController
           :is_disqualified  => is_disqualified,     # any DSQ possible code
           :disqualification_code_type_id => dsq_code_type_id,
           :standard_points  => standard_points,
-          :meeting_points   => meeting_points,
+          :meeting_individual_points => meeting_points,
+          :team_points      => 0,                   # FIXME TODO
           :goggle_cup_points=> 0,
           :minutes  => mins,
           :seconds  => secs,
@@ -2464,7 +2465,7 @@ class AdminImportController < ApplicationController
     if di_records
       di_records.each do |di_row|
 # DEBUG
-#        logger.debug( "\r\nCommitting #{di_row.class.name} = '#{di_row.athlete_name}', pts. #{di_row.meeting_points}..." )
+#        logger.debug( "\r\nCommitting #{di_row.class.name} = '#{di_row.athlete_name}', pts. #{di_row.meeting_individual_points}..." )
         begin                                       # --- BEGIN transaction ---
           MeetingIndividualResult.transaction do
             committed_row = MeetingIndividualResult.new(
@@ -2475,7 +2476,8 @@ class AdminImportController < ApplicationController
               :is_disqualified  => di_row.is_disqualified,
               :disqualification_code_type_id => di_row.disqualification_code_type_id,
               :standard_points  => di_row.standard_points,
-              :meeting_points   => di_row.meeting_points,
+              :meeting_individual_points => di_row.meeting_individual_points,
+              :team_points      => di_row.team_points,
               :goggle_cup_points=> di_row.goggle_cup_points,
 
               :reaction_time    => di_row.reaction_time,
@@ -2502,8 +2504,8 @@ class AdminImportController < ApplicationController
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else
 # DEBUG
-#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.athlete_name}', pts. #{committed_row.meeting_points}." )
-#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.athlete_name}', pts. #{committed_row.meeting_points}.\r\n"
+#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.athlete_name}', pts. #{committed_row.meeting_individual_points}." )
+#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.athlete_name}', pts. #{committed_row.meeting_individual_points}.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end

@@ -18,6 +18,8 @@ class MeetingEvent < ActiveRecord::Base
   has_one  :season,       :through => :meeting_session
   has_one  :season_type,  :through => :meeting_session
 
+  has_many :meeting_programs
+
 
   # ----------------------------------------------------------------------------
   # Base methods:

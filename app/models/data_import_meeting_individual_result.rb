@@ -41,10 +41,12 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
 
   validates_presence_of     :standard_points
   validates_numericality_of :standard_points
-  validates_presence_of     :meeting_points
-  validates_numericality_of :meeting_points
+  validates_presence_of     :meeting_individual_points
+  validates_numericality_of :meeting_individual_points
   validates_presence_of     :goggle_cup_points
   validates_numericality_of :goggle_cup_points
+  validates_presence_of     :team_points
+  validates_numericality_of :team_points
 
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
@@ -107,6 +109,11 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the associated Swimmer full name
+  def get_athlete_name
+    self.swimmer ? self.swimmer.get_full_name() : ( self.data_import_swimmer ? self.data_import_swimmer.get_full_name() : '?')
+  end
 
   # Retrieves the associated Team full name
   def get_team_name

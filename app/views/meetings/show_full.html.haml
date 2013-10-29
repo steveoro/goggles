@@ -31,12 +31,12 @@
         .span2
           = I18n.t(:any_date) +':'
         .span10
-          = @meeting.entry_deadline if @meeting
+          = @meeting.header_date if @meeting
       .row-fluid
         .span2
-          = I18n.t(:challenge_number, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+          = I18n.t(:edition, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
         .span10
-          = @meeting.challenge_number if @meeting
+          = @meeting.edition if @meeting
       .row-fluid
         .span2
           = I18n.t(:has_warm_up_pool, {:scope=>[:activerecord, :attributes, :meeting]}) +':'

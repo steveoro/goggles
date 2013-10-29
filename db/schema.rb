@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131028164201) do
+ActiveRecord::Schema.define(:version => 20131029113102) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -256,7 +256,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.boolean  "is_out_of_race",                                                                         :default => false, :null => false
     t.boolean  "is_disqualified",                                                                        :default => false, :null => false
     t.decimal  "standard_points",                                         :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                                          :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_individual_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.integer  "minutes",                                  :limit => 3,                                  :default => 0,     :null => false
     t.integer  "seconds",                                  :limit => 2,                                  :default => 0,     :null => false
     t.integer  "hundreds",                                 :limit => 2,                                  :default => 0,     :null => false
@@ -276,6 +276,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "entry_seconds",                            :limit => 2
     t.integer  "entry_hundreds",                           :limit => 2
     t.integer  "entry_time_type_id"
+    t.decimal  "team_points",                                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
   end
 
   create_table "data_import_meeting_programs", :force => true do |t|
@@ -420,6 +421,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "individual_score_computation_type_id"
     t.integer  "relay_score_computation_type_id"
     t.integer  "team_score_computation_type_id"
+    t.integer  "meeting_score_computation_type_id"
   end
 
   add_index "data_import_meetings", ["code", "edition"], :name => "idx_di_meetings_code"
@@ -732,7 +734,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.boolean  "is_out_of_race",                                                            :default => false, :null => false
     t.boolean  "is_disqualified",                                                           :default => false, :null => false
     t.decimal  "standard_points",                            :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_individual_points",                  :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.integer  "minutes",                       :limit => 3,                                :default => 0,     :null => false
     t.integer  "seconds",                       :limit => 2,                                :default => 0,     :null => false
     t.integer  "hundreds",                      :limit => 2,                                :default => 0,     :null => false
@@ -750,6 +752,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "entry_seconds",                 :limit => 2
     t.integer  "entry_hundreds",                :limit => 2
     t.integer  "entry_time_type_id"
+    t.decimal  "team_points",                                :precision => 10, :scale => 2, :default => 0.0,   :null => false
   end
 
   add_index "meeting_individual_results", ["badge_id"], :name => "fk_meeting_individual_results_badges"
@@ -913,6 +916,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "individual_score_computation_type_id"
     t.integer  "relay_score_computation_type_id"
     t.integer  "team_score_computation_type_id"
+    t.integer  "meeting_score_computation_type_id"
   end
 
   add_index "meetings", ["code", "edition"], :name => "idx_meetings_code"
@@ -920,6 +924,7 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
   add_index "meetings", ["entry_deadline"], :name => "index_meetings_on_entry_deadline"
   add_index "meetings", ["header_date"], :name => "idx_meetings_header_date"
   add_index "meetings", ["individual_score_computation_type_id"], :name => "fk_meetings_score_individual_score_computation_types"
+  add_index "meetings", ["meeting_score_computation_type_id"], :name => "fk_meetings_score_meeting_score_computation_types"
   add_index "meetings", ["relay_score_computation_type_id"], :name => "fk_meetings_score_relay_score_computation_types"
   add_index "meetings", ["season_id"], :name => "fk_meetings_seasons"
   add_index "meetings", ["team_score_computation_type_id"], :name => "fk_meetings_score_team_score_computation_types"
@@ -1032,14 +1037,10 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "lock_version",                                                      :default => 0
     t.datetime "created_at",                                                                         :null => false
     t.datetime "updated_at",                                                                         :null => false
-    t.string   "code",                  :limit => 6,                                                 :null => false
     t.integer  "position",              :limit => 8,                                :default => 0,   :null => false
     t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "score_mapping_type_id"
   end
-
-  add_index "score_mapping_type_rows", ["code"], :name => "index_score_mapping_type_rows_on_code", :unique => true
-  add_index "score_mapping_type_rows", ["score_mapping_type_id"], :name => "fk_score_mapping_type_rows_score_mapping_types"
 
   create_table "score_mapping_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0

@@ -23,11 +23,16 @@ class Meeting < ActiveRecord::Base
               :class_name  => "ScoreComputationType", 
               :foreign_key => "team_score_computation_type_id"
   )
+  belongs_to( :meeting_score_computation_type,
+              :class_name  => "ScoreComputationType", 
+              :foreign_key => "meeting_score_computation_type_id"
+  )
 
   has_one  :season_type, :through => :season
 
   has_many :meeting_sessions
-  has_many :meeting_programs, :through => :meeting_sessions
+  has_many :meeting_events, :through => :meeting_sessions
+  has_many :meeting_programs, :through => :meeting_events
   has_many :meeting_individual_results, :through => :meeting_programs
   has_many :meeting_relay_results, :through => :meeting_programs
   # TODO Add other has_many relationships only when needed

@@ -16,23 +16,21 @@ require File.join( Rails.root.to_s, 'config/environment' )
 
 
 # Script revision number
-SCRIPT_VERSION = '4.01.20131011'
-
-# Default Text prefix to be searched during SQL script scanning inside the DB scripts directory
-DEFAULT_SEARCH_TXT = '*update*'
+SCRIPT_VERSION = '4.02.20131029'
 
 # Gives current application name
 APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]
 
 MAX_BACKUP_KEPT = 30
 DB_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.db' )
+DB_SEED_DIR = File.join( "#{Rails.root}", 'db/seed' )
 TAR_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.src' )
 LOG_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.log' )
 
 # The following is used only for clearing temp file
 ODT_OUTPUT_DIR = File.join( Rails.root, 'public/output' )
 
-NEEDED_DIRS = [DB_BACKUP_DIR, TAR_BACKUP_DIR, LOG_BACKUP_DIR]
+NEEDED_DIRS = [DB_BACKUP_DIR, DB_SEED_DIR, TAR_BACKUP_DIR, LOG_BACKUP_DIR]
 
 SHORT_AGEX_VERSION = AGEX_FRAMEWORK_VERSION.split(' ')[0]
 
@@ -78,9 +76,35 @@ Rake::TaskManager.class_eval do
     @tasks.delete(task_name.to_s)
   end
 end
+Rake.application.remove_task 'db:reset'
 Rake.application.remove_task 'db:test:prepare'
 
+
 namespace :db do
+  desc <<-DESC
+  This is an override of the standard Rake db:reset task.
+  It actually DROPS the Database, recreates it using a mysql shell command
+  and invokes the db:migrate task, all in one place.
+  DESC
+  task :reset do |t|
+    puts "*** Task: Custom DB RESET ***"
+    rails_config  = Rails.configuration             # Prepare & check configuration:
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+                                                    # Display some info:
+    puts "DB name:      #{db_name}"
+    puts "DB user:      #{db_user}"
+    puts "\r\nDropping DB..."
+    Rake::Task['db:drop'].invoke
+    puts "\r\nRecreating DB..."
+    sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\""
+    puts "\r\nInvoking migrations (this will take a while)..."
+    Rake::Task['db:migrate'].invoke
+    # TODO invoke sql seed auto-load?
+  end
+
+
   namespace :test do 
     task :prepare do |t|
       # rewrite the task to not do anything you don't want
@@ -94,12 +118,12 @@ end
 
 namespace :sql do
 
-desc <<-DESC
-Creates a bzipped MySQL dump of the whole DB or just of a few tables, rotating the backups.
+  desc <<-DESC
+  Creates a bzipped MySQL dump of the whole DB or just of a few tables, rotating the backups.
 
-    Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
-             [output_dir=#{DB_BACKUP_DIR}] [max_backup_kept=#{MAX_BACKUP_KEPT}] [Rails.env=#{Rails.env}]
-DESC
+Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
+         [output_dir=#{DB_BACKUP_DIR}] [max_backup_kept=#{MAX_BACKUP_KEPT}] [Rails.env=#{Rails.env}]
+  DESC
   task :dump => ['utils:script_status', 'utils:chk_needed_dirs'] do
     puts "*** Task: SQL DB dump ***"
                                                     # Prepare & check configuration:
@@ -132,6 +156,50 @@ DESC
                                                     # Rotate the backups leaving only the newest ones:
     rotate_backups( backup_folder, max_backups )
     puts "Dump done.\r\n\r\n"
+  end
+  # ---------------------------------------------------------------------------
+
+
+  desc <<-DESC
+  Executes all the SQL scripts ('*.sql') found in a special directory (usually for data seed).
+Allows also to clear the executed files afterwards.
+
+Options: [exec_dir=#{DB_SEED_DIR}] [consume=1|<0>]
+
+- 'exec_dir' is the path where the files are found
+- 'delete' allows to kill the executed file after completion; defaults to '0' (false)
+
+  DESC
+  task :exec => ['utils:script_status', 'utils:chk_needed_dirs'] do
+    puts "*** Task: SQL script execute ***"
+                                                    # Prepare & check configuration:
+    rails_config  = Rails.configuration
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+    exec_folder = ENV.include?("exec_dir") ? get_full_path( ENV["exec_dir"] ) : DB_SEED_DIR
+                                                    # Display some info:
+    puts "DB name:      #{db_name}"
+    puts "DB user:      #{db_user}"
+  
+    if File.directory?( exec_folder )               # If directory exists, scan it and execute each SQL file found:
+      parse_params[:data_dir] = add_trailing_slash( parse_params[:data_dir] )
+      puts "\r\n- Processing directory: '#{exec_folder}'..."
+                                                    # For each file match in pathname recursively do "process file":
+      Dir.glob( File.join(exec_folder, '*.sql'), File::FNM_PATHNAME ).sort.each do |subpathname|
+        puts "executing '#{subpathname}'..."
+        sh "mysql --user=#{db_user} --password={db_pwd} --database=#{db_name} --execute=\"\. #{subpathname}\""
+        # TODO Eventually, capture output to a log file somewhere
+                                                    # Kill the file if asked to do so:
+        unless ( ENV.include?("delete") && ENV.include?("delete") == '0' )
+          FileUtils.rm( subpathname )
+        end
+      end
+    else
+      puts "Can't find directory '#{exec_folder}'! Nothing to do..."
+    end
+
+    puts "SQL script execute done.\r\n\r\n"
   end
   # ---------------------------------------------------------------------------
 end
