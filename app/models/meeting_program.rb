@@ -21,10 +21,10 @@ class MeetingProgram < ActiveRecord::Base
   # TODO Add other has_many relationships only when needed
 
   has_one  :meeting,          :through => :meeting_event
-  has_one  :event_type,       :through => :meeting_event
   has_one  :meeting_session,  :through => :meeting_event
-  has_one  :pool_type,        :through => :meeting_event
+  has_one  :season,           :through => :meeting_event
   has_one  :season_type,      :through => :meeting_event
+  has_one  :event_type,       :through => :meeting_event
   has_one  :stroke_type,      :through => :event_type
 
   validates_presence_of :event_order

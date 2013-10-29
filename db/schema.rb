@@ -1007,7 +1007,6 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "lock_version",                                                            :default => 0
     t.datetime "created_at",                                                                               :null => false
     t.datetime "updated_at",                                                                               :null => false
-    t.string   "code",                      :limit => 20,                                                  :null => false
     t.string   "class_name",                :limit => 100,                                                 :null => false
     t.string   "method_name",               :limit => 100,                                                 :null => false
     t.decimal  "default_score",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
@@ -1017,10 +1016,8 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "position_limit",                                                          :default => 0,   :null => false
   end
 
-  add_index "score_computation_type_rows", ["code"], :name => "index_score_computation_type_rows_on_code", :unique => true
   add_index "score_computation_type_rows", ["computation_order"], :name => "idx_score_computation_type_rows_computation_order"
   add_index "score_computation_type_rows", ["score_computation_type_id"], :name => "fk_score_computation_type_rows_score_computation_types"
-  add_index "score_computation_type_rows", ["score_mapping_type_id"], :name => "fk_score_computation_type_rows_score_mapping_types"
 
   create_table "score_computation_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -1035,12 +1032,13 @@ ActiveRecord::Schema.define(:version => 20131028164201) do
     t.integer  "lock_version",                                                      :default => 0
     t.datetime "created_at",                                                                         :null => false
     t.datetime "updated_at",                                                                         :null => false
+    t.string   "code",                  :limit => 6,                                                 :null => false
     t.integer  "position",              :limit => 8,                                :default => 0,   :null => false
     t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "score_mapping_type_id"
   end
 
-  add_index "score_mapping_type_rows", ["position"], :name => "idx_score_mapping_type_rows_position"
+  add_index "score_mapping_type_rows", ["code"], :name => "index_score_mapping_type_rows_on_code", :unique => true
   add_index "score_mapping_type_rows", ["score_mapping_type_id"], :name => "fk_score_mapping_type_rows_score_mapping_types"
 
   create_table "score_mapping_types", :force => true do |t|

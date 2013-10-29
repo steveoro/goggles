@@ -706,6 +706,7 @@ class AdminImportController < ApplicationController
       notes = (meeting_dates ? "#{meeting_dates}\r\n" : '') +
               (organization ? "#{organization}" : '')
     end
+    description = ( title ? title : I18n.t(:missing_data_warning, {:scope=>[:admin_import]}) )
 # DEBUG
 #    logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
 
@@ -715,8 +716,8 @@ class AdminImportController < ApplicationController
 #    @phase_1_log << "Seeking existing Meeting @ #{scheduled_date}...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
     result_row = Meeting.where(
-      [ "(entry_deadline = ?) AND (season_id = ?)",
-        scheduled_date, season_id ]
+      [ "(header_date = ?) AND (season_id = ?) AND (description = ?)",
+        header_fields[:header_date], season_id, description ]
     ).first
     if result_row                                   # We must differentiate the result: negative for Meeting, positive for DataImportMeeting
       result_id = - result_row.id
@@ -728,8 +729,8 @@ class AdminImportController < ApplicationController
 #      @phase_1_log << "Seeking existing DataImportMeeting @ #{scheduled_date}...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
       result_row = DataImportMeeting.where(
-        [ "(data_import_session_id = ?) AND (entry_deadline = ?) AND (season_id = ?)",
-          session_id, scheduled_date, season_id ]
+        [ "(data_import_session_id = ?) AND (header_date = ?) AND (season_id = ?) AND (description = ?)",
+          session_id, header_fields[:header_date], season_id, description ]
       ).first
       if result_row
         result_id = result_row.id
@@ -748,7 +749,7 @@ class AdminImportController < ApplicationController
           result_row = DataImportMeeting.new(
             :data_import_session_id => session_id,
             :import_text      => meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
-            :description      => title ? title : I18n.t(:missing_data_warning, {:scope=>[:admin_import]}),
+            :description      => description,
             # [Steve, 20131025] No default value for this one:
 #            :entry_deadline   => scheduled_date - 14, # (This is just a guess)
             :are_results_acquired => true,
@@ -1510,8 +1511,10 @@ class AdminImportController < ApplicationController
           # :season_individual_points => TODO
           # :season_relay_points      => TODO
           # :season_team_points       => TODO
-          :rank     => rank.to_i,
-          :user_id  => current_admin.id
+          # team_affiliation_id will be updated upon Team/TeamAffiliation commit
+          :rank                     => rank.to_i,
+          :season_id                => season_id,
+          :user_id                  => current_admin.id
         }.merge(
           meeting_id.to_i < 0 ? { :meeting_id => -meeting_id } : { :data_import_meeting_id => meeting_id }
         ).merge(
@@ -2092,9 +2095,9 @@ class AdminImportController < ApplicationController
           result_row.save!                          # raise automatically an exception if save is not successful
         end
       rescue                                        # --- RESCUE (failed) transaction ---
-        @phase_1_log << "\r\nMeetingEvent creation: exception caught during save!\r\n"
-        @phase_1_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
-        @phase_1_log << "#{ $!.to_s }\r\n" if $!
+        @phase_2_log << "\r\nMeetingEvent creation: exception caught during save!\r\n"
+        @phase_2_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
+        @phase_2_log << "#{ $!.to_s }\r\n" if $!
         logger.error( "\r\n*** consume_txt_file(#{full_pathname}): MeetingEvent creation: exception caught during save!" )
         logger.error( "field_hash = #{ field_hash.inspect }\r\n" ) if field_hash
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
@@ -2103,8 +2106,8 @@ class AdminImportController < ApplicationController
         result_id = result_row.id
 # DEBUG
         logger.debug( "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'." )
-        @phase_1_log << "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
-        @stored_data_rows += 1
+        @phase_2_log << "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
+        @committed_data_rows += 1
       end                                           # --- END transaction ---
     end
     result_id
@@ -2598,12 +2601,21 @@ class AdminImportController < ApplicationController
         begin                                       # --- BEGIN transaction ---
           MeetingTeamScore.transaction do
             committed_row = MeetingTeamScore.new(
-              :meeting_id => di_row.meeting_id,
-              :team_id  => di_row.team_id,
-              :rank     => di_row.rank,
-              :total_individual_points  => di_row.total_individual_points,
-              :total_relay_points   => di_row.total_relay_points,
-              :user_id  => di_row.user_id
+              :meeting_id               => di_row.meeting_id,
+              :team_id                  => di_row.team_id,
+              :team_affiliation_id      => di_row.team_affiliation_id,
+              :rank                     => di_row.rank,
+              :sum_individual_points    => di_row.sum_individual_points,
+              :sum_relay_points         => di_row.sum_relay_points,
+              :sum_team_points          => di_row.sum_team_points,
+              # :meeting_individual_points=> TODO
+              # :meeting_relay_points     => TODO
+              # :meeting_team_points      => TODO
+              # :season_individual_points => TODO
+              # :season_relay_points      => TODO
+              # :season_team_points       => TODO
+              :season_id                => di_row.season_id,
+              :user_id                  => di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end

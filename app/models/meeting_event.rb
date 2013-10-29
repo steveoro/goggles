@@ -14,6 +14,10 @@ class MeetingEvent < ActiveRecord::Base
   validates_presence_of :event_order
   validates_length_of   :event_order, :within => 1..3, :allow_nil => false
 
+  has_one  :meeting,      :through => :meeting_session
+  has_one  :season,       :through => :meeting_session
+  has_one  :season_type,  :through => :meeting_session
+
 
   # ----------------------------------------------------------------------------
   # Base methods:

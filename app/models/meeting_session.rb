@@ -12,6 +12,7 @@ class MeetingSession < ActiveRecord::Base
   # [Steve, 20131028] Cannot enable validation on :day_part_type, since it can be null
 
   has_one  :pool_type,   :through => :swimming_pool
+  has_one  :season,      :through => :meeting
   has_one  :season_type, :through => :meeting
 
   has_many :meeting_programs

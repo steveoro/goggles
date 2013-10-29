@@ -21,12 +21,6 @@ class CreateScoreComputationTypeRows < ActiveRecord::Migration
         FOREIGN KEY (score_computation_type_id)
         REFERENCES score_computation_types(id)
     SQL
-    execute <<-SQL
-      ALTER TABLE score_computation_type_rows
-        ADD CONSTRAINT fk_score_computation_type_rows_score_mapping_types
-        FOREIGN KEY (score_mapping_type_id)
-        REFERENCES score_mapping_types(id)
-    SQL
     # -------------------------------------------------------------------------
   end
 end
