@@ -77,6 +77,9 @@ gem 'simple-navigation-bootstrap'
 #gem 'rspec'
 
 gem "wice_grid", '~> 3.3'
+gem 'daemons'
+gem 'delayed_job_active_record'
+gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git' # This version has more verbose exception reporting instead of YAML trace
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

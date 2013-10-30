@@ -9,7 +9,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 
 
-# == FinResultParser
+# = FinResultParser
 #
 # Dedicated parser for FIN Results.
 # FIN Results are swimming meeting result text files, written mostly in UTF-8 italian

@@ -50,15 +50,15 @@ class FinResultParserTest < ActiveSupport::TestCase
 
   test "sample data files returning a full result Hash" do
     [
-      './test/unit/parsers/sample_result_2012bologna.txt',
-      './test/unit/parsers/sample_result_2012ravenna.txt'
+      './test/unit/parsers/ris20121112bologna-sample.txt',
+      './test/unit/parsers/ris20120114ravenna-sample.txt'
     ].each_with_index do | src_file, file_idx |
       puts "\r\n=== Testing with file #{src_file}:"
 
       result_hash = FinResultParser.parse_txt_file( src_file, true )
       # Expected fixture files STATS:
       #
-      # File 'sample_result_2012bologna.txt':
+      # File 'ris20121112bologna-sample.txt':
       # Total 'meeting_header' data pages : 1 / 229 lines found
       # Total 'category_header' data pages : 15 / 229 lines found
       # Total 'relay_header' data pages : 5 / 229 lines found
@@ -69,7 +69,7 @@ class FinResultParserTest < ActiveSupport::TestCase
       # Total read lines ....... : 399 (including garbage)
       # Protocol efficiency .... : 57.39 %
       #
-      # File 'sample_result_2012ravenna.txt':
+      # File 'ris20120114ravenna-sample.txt':
       # Total 'meeting_header' data pages : 1 / 176 lines found
       # Total 'category_header' data pages : 11 / 176 lines found
       # Total 'relay_header' data pages : 0 / 176 lines found
@@ -80,7 +80,7 @@ class FinResultParserTest < ActiveSupport::TestCase
       # Total read lines ....... : 376 (including garbage)
       # Protocol efficiency .... : 46.81 %
       #
-      if ( file_idx == 0 )                          # "sample_result_2012bologna"
+      if ( file_idx == 0 )                          # "ris20121112bologna-sample"
         expected_values = {
           :meeting_header   => 1,
           :category_header  => 15,  :result_row       => 127,
@@ -88,7 +88,7 @@ class FinResultParserTest < ActiveSupport::TestCase
           :team_ranking     => 1,   :ranking_row      => 56,
           :line_count       => 399
         }
-      else                                          # "sample_result_2012ravenna"
+      else                                          # "ris20120114ravenna-sample"
         expected_values = { 
           :meeting_header   => 1,
           :category_header  => 11,  :result_row       => 75,

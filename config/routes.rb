@@ -2,6 +2,7 @@ Goggles::Application.routes.draw do
 
   devise_for :admins
   mount RailsAdmin::Engine => '/admin', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.
+  mount DjMon::Engine => 'dj_mon'
 
   devise_for :users
 

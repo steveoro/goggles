@@ -68,8 +68,12 @@ SimpleNavigation::Configuration.run do |navigation|
     # thus you can use all the methods and vars you have available in the views.
 
     primary.item :key_separator2,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+      # TODO Copy sub-navition menu from standar navigation.rb
     primary.item :key_admin_dashboard,    t('admin.actions.dashboard.menu'), rails_admin_path(), :class => 'special', :if => Proc.new { admin_signed_in? }
     primary.item :key_admin_data_import,  t('admin_import.menu'), goggles_di_step1_status_path(), :class => 'special', :if => Proc.new { admin_signed_in? }
+    primary.item :key_admin_dj_mon,       'DJ Monitor', dj_mon_path(), :class => 'special', :if => Proc.new { admin_signed_in? }
+      # TODO ADD navigation to /dj_mon
+      # TODO customize dj_mon main menu for override support with custom view?
     primary.item :key_home,               t('home'), root_path() #, options
 
     primary.item :key_separator3,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }

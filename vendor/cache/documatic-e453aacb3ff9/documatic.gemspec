@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dave Nelson", "Antonio Liccardo", "Zachris Trolin", "Stefano Alloro"]
   s.autorequire = "documatic.rb"
-  s.date = "2013-09-12"
+  s.date = "2013-10-30"
   s.description = "Forked from http://github.com/zachris/documatic. This branch simply adds default UTF-8 encoding on most of the source files and a brand new demo invoice document to test the output results. New bundler-friendly gemspecs were added also."
   s.email = ["steve.alloro@gmail.com"]
   s.extra_rdoc_files = ["README"]
