@@ -16,7 +16,7 @@ require File.join( Rails.root.to_s, 'config/environment' )
 
 
 # Script revision number
-SCRIPT_VERSION = '4.02.20131029'
+SCRIPT_VERSION = '4.04.20131029'
 
 # Gives current application name
 APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]
@@ -83,8 +83,7 @@ Rake.application.remove_task 'db:test:prepare'
 namespace :db do
   desc <<-DESC
   This is an override of the standard Rake db:reset task.
-  It actually DROPS the Database, recreates it using a mysql shell command
-  and invokes the db:migrate task, all in one place.
+It actually DROPS the Database, recreates it using a mysql shell command.
   DESC
   task :reset do |t|
     puts "*** Task: Custom DB RESET ***"
@@ -99,9 +98,6 @@ namespace :db do
     Rake::Task['db:drop'].invoke
     puts "\r\nRecreating DB..."
     sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\""
-    puts "\r\nInvoking migrations (this will take a while)..."
-    Rake::Task['db:migrate'].invoke
-    # TODO invoke sql seed auto-load?
   end
 
 
@@ -181,17 +177,17 @@ Options: [exec_dir=#{DB_SEED_DIR}] [consume=1|<0>]
                                                     # Display some info:
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
-  
+
     if File.directory?( exec_folder )               # If directory exists, scan it and execute each SQL file found:
-      parse_params[:data_dir] = add_trailing_slash( parse_params[:data_dir] )
       puts "\r\n- Processing directory: '#{exec_folder}'..."
                                                     # For each file match in pathname recursively do "process file":
       Dir.glob( File.join(exec_folder, '*.sql'), File::FNM_PATHNAME ).sort.each do |subpathname|
         puts "executing '#{subpathname}'..."
-        sh "mysql --user=#{db_user} --password={db_pwd} --database=#{db_name} --execute=\"\. #{subpathname}\""
+        sh "mysql --user=#{db_user} --password=#{db_pwd} --database=#{db_name} --execute=\"\\. #{subpathname}\""
         # TODO Eventually, capture output to a log file somewhere
                                                     # Kill the file if asked to do so:
-        unless ( ENV.include?("delete") && ENV.include?("delete") == '0' )
+        if ( ENV.include?("delete") && ENV.include?("delete") == '1' )
+          puts "deleting '#{subpathname}'."
           FileUtils.rm( subpathname )
         end
       end
