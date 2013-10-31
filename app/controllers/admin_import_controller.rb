@@ -87,7 +87,6 @@ class AdminImportController < ApplicationController
 #    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile]}"
     @season_id = 0                                  # (Must retrieve Season ID from form parameters)
     @force_missing_meeting_creation = false
-    data_importer = nil
 
     if params[:id]                                  # -- CASE #1: id parameter present? We then assume a session is already in progress:
       data_import_session = DataImportSession.find_by_id( params[:id].to_i )
@@ -105,7 +104,6 @@ class AdminImportController < ApplicationController
       begin
         season = Season.find_by_id(@season_id)
         @season_description = season.description if season
-        data_importer = DataImporter.new( logger, flash, @season_id, current_admin.id )
       rescue
       end
 
@@ -120,7 +118,6 @@ class AdminImportController < ApplicationController
         flash[:notice] = I18n.t(:nothing_to_do_select_season, {:scope=>[:admin_import]})
         redirect_to( goggles_di_step1_status_path() ) and return
       end
-      data_importer = DataImporter.new( logger, flash, @season_id, current_admin.id )
       data_import_session = nil
       force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
       @season_description = '?'
@@ -134,6 +131,7 @@ class AdminImportController < ApplicationController
       destination_filename = File.join( "public/uploads", params[:datafile].original_filename )
       FileUtils.cp tmp_file.path, destination_filename
                                                     # === Create a new data-import session and consume the file: ===
+      data_importer = DataImporter.new( logger, flash, current_admin.id )
       data_import_session = data_importer.consume_txt_file(
         destination_filename, season, force_missing_meeting_creation
       )
@@ -186,7 +184,7 @@ class AdminImportController < ApplicationController
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
-    data_importer = DataImporter.new( logger, flash, season_id, current_admin.id )
+    data_importer = DataImporter.new( logger, flash, current_admin.id )
     is_ok = data_importer.commit( data_import_session )
 
     @phase_2_log  = data_importer.get_phase_2_log()

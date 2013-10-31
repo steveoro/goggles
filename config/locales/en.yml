@@ -26,6 +26,8 @@ en:
     nothing_to_do_select_season: "You haven't selected the Season!"
     season_not_saved_in_session: "Season ID was not saved in Data-Import Session! This session data is corrupted!"
     missing_session_parameter: "The session ID parameter is missing!"
+    season_not_found: "Unable to find the required season in the database!"
+    season_type_not_found: "Unable to find a required season_type in the database!"
     force_meeting_creation: "Create missing Meetings"
 
 

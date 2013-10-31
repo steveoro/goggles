@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.78.20131030
+  - Goggles framework vers.:  4.00.79.20131031
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -19,7 +19,6 @@ require 'parsers/fin_result_phase3'
 
   === Defines:
   - @current_admin_id ID of the current Admin instance
-  - @season_id integer variable member
 
   - @phase_1_log string (log text) variable member
   - @esteemed_meeting_mins integer variable member: total minutes counter
@@ -28,26 +27,28 @@ require 'parsers/fin_result_phase3'
   - @phase_2_log string (log text) variable member
   - @committed_data_rows integer variable member
 
-  - @import_log string variable member: full import log, filled at the end
+  - @import_log string variable member: full import log
 
 =end
 class DataImporter
   include FinResultPhase2
   include FinResultPhase3
 
-  attr_accessor :logger, :flash
+  attr_accessor :logger, :flash, 
+                # Batch/delayed execution parameters:
+                :full_pathname, :season, :force_missing_meeting_creation,
+                :do_not_consume_file, :log_dir
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
   DEBUG_VERBOSE = false
   # ---------------------------------------------------------------------------
 
-  # Creates a new instance
+  # Creates a new instance.
   #
-  def initialize( logger, flash, season_id, current_admin_id = 1 )
+  def initialize( logger, flash, current_admin_id = 1 )
     self.logger = logger
     self.flash = flash
-    @season_id = season_id
     @current_admin_id = current_admin_id
     @phase_1_log = ''
     @phase_2_log = ''
@@ -55,6 +56,12 @@ class DataImporter
     @esteemed_meeting_mins = 0
     @stored_data_rows = 0
     @committed_data_rows = 0
+                                                    # Batch parameters' default
+    self.full_pathname = nil
+    self.season = nil
+    self.force_missing_meeting_creation = false
+    self.do_not_consume_file = false
+    self.log_dir = File.join( Rails.root, 'log' )
   end
 
 
@@ -70,12 +77,12 @@ class DataImporter
     @esteemed_meeting_mins = 0
     @stored_data_rows = 0
     @committed_data_rows = 0
-  end
-
-
-  # Getter for @season_id
-  def get_season_id
-    @season_id
+                                                    # Batch parameters' default
+    self.full_pathname = nil
+    self.season = nil
+    self.force_missing_meeting_creation = false
+    self.do_not_consume_file = false
+    self.log_dir = File.join( Rails.root, 'log' )
   end
 
   # Getter for @phase_1_log
@@ -161,27 +168,95 @@ class DataImporter
   # ---------------------------------------------------------------------------
 
 
+  # Executes the batch action using a delayed_job-compatible
+  # +perform+ method signature.
+  # This assumes that all parameters relevant to the execution
+  # must be already set into their dedicated class members.  
+  # 
+  def perform
+    batch_import()
+  end
+
+  # Display name used by delayed_job gem.
+  #
+  def display_name
+    "batch_import(#{self.full_pathname})"
+  end
+
+  # Max attempts used by delayed_job gem.
+  #
+  def max_attempts
+    3
+  end
+
+  # Sets the parameter values for batch/delayed execution.  
+  # 
+  def set_batch_parameters( full_pathname, season = nil,
+                            force_missing_meeting_creation = false,
+                            do_not_consume_file = false,
+                            log_dir = File.join( Rails.root, 'log' ) )
+    self.full_pathname = full_pathname
+    self.season = season
+    self.force_missing_meeting_creation = force_missing_meeting_creation
+    self.do_not_consume_file = do_not_consume_file
+    self.log_dir = log_dir
+  end
+
+
+  # Stores the content of the internal log text to a specified
+  # filename (assuming permissions are correctly set).
+  # If found, file is overwritten, otherwise is created.
+  #
+  def to_logfile( log_filename )
+    File.open( log_filename, 'w' ) do |f|
+      if ( flash[:error] )
+        f.puts "*** Latest flash[:error]: ***"
+        f.puts flash[:error]
+        f.puts "------------------------------\r\n"
+      end
+      f.puts get_import_log  
+    end  
+  end
+
+
   # Executes a single data-import task as a whole process, without phases 
   # interruption.
   #
+  # If +season+ instance is +nil+, it will be assumed from the pathname
+  # of the file.
+  #
   # With the delayed_job gem, use:
   #
-  #        data_importer.delayed(:queue=>'data_import').batch_import( params )
+  #        data_importer.delay(:queue=>'data-import').batch_import( params )
   #
   # ...To add this to the delayed_job queue on the database.
   #
-  def batch_import( full_pathname, season, force_missing_meeting_creation = false,
-                   do_not_consume_file = false )
+  def batch_import()
+    log_filename = File.join( self.log_dir, (File.basename(self.full_pathname).split('.')[0])+'.log' )
     data_import_session = consume_txt_file(
-      full_pathname,
-      season,
-      force_missing_meeting_creation,
-      do_not_consume_file
+      self.full_pathname,
+      self.season,
+      self.force_missing_meeting_creation,
+      self.do_not_consume_file
     )
-    commit(
-      data_import_session,
-      !do_not_consume_file                          # remove left-over files?
-    ) if data_import_session
+    if data_import_session
+      is_ok = commit(
+        data_import_session,
+        !self.do_not_consume_file                   # Remove left-over files?
+      )
+      unless is_ok                                  # Report error on commit phase
+        to_logfile( log_filename )                  # store log file somewhere
+        raise "Error during COMMIT phase! Check the log file: '#{log_filename}'."
+      end
+    else                                            # Report error on digest phase
+        to_logfile( log_filename )                  # store log file somewhere
+        raise "Error during DIGEST phase! Check the log file: '#{log_filename}'."
+    end
+    to_logfile( log_filename )
+    if FileTest.exists?( log_filename )
+      logger.info( "-- batch_import(): renaming log file as '.ok'..." ) if self.logger
+      File.rename( log_filename, log_filename+'.ok' )
+    end
   end
   # ---------------------------------------------------------------------------
 
@@ -199,17 +274,65 @@ class DataImporter
   # from the temporary tables so that any mistakes or conflicts can be edited before the final
   # commit (Phase #3).
   #
+  # If +season+ instance is +nil+, it will be assumed from the pathname
+  # of the file.
+  #
   # === Returns the newly created "data_import" session instance if successful; +nil+ otherwise.
   #     The parse result hash is directly stored into dedicated temporary table on the database.
   #
-  def consume_txt_file( full_pathname, season, force_missing_meeting_creation = false,
+  def consume_txt_file( full_pathname, season = nil, force_missing_meeting_creation = false,
                         do_not_consume_file = false )
-    # TODO PARSE file_type
+    logger.info( "\r\n-- consume_txt_file: '#{full_pathname}', force_missing_meeting_creation=#{force_missing_meeting_creation}, do_not_consume_file=#{do_not_consume_file}." )
+    @phase_1_log = "Parsing file: #{full_pathname}, force_missing_meeting_creation=#{force_missing_meeting_creation}, do_not_consume_file=#{do_not_consume_file}.\r\n"
+
+    # TODO PARSE file_type => '<ris><date_header><code>.txt' for FIN results type
     file_type = 'fin_results'                       # FIXME Pre-fixed file structure type, only FIN Results supported, no parsing at all
-    season_id = season.id
-# DEBUG
-    logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): force_missing_meeting_creation=#{force_missing_meeting_creation}. Parsing file..." )
-    @phase_1_log = "Parsing file: #{full_pathname}, season ID: #{season_id}, force_missing_meeting_creation=#{force_missing_meeting_creation}...\r\n"
+                                                    # -- FILE HEADER digest --
+    header_fields = FinResultParserTools.parse_filename_fields( full_pathname )
+    season_id = 0
+    if season.nil?                                  # Try to detect which season from the path/name of the file
+      container_dir_parts = File.dirname(full_pathname).split(File::SEPARATOR).last.split('.')
+                                                    # Get the season override from the containing folder name, if present (must be: "season.<ID>")
+      if ( (container_dir_parts.size == 2) &&
+           (container_dir_parts[0] == 'season') )
+        season_id = (container_dir_parts[1]).to_i
+        season = Season.find_by_id( season_id )
+        unless ( season && season.id.to_i > 0 )
+          flash[:error] = "#{I18n.t(:season_not_found, {:scope=>[:admin_import]})} (FORCED season_id=#{season_id})"
+          return nil
+        end
+        logger.info( "   Detected forced season ID=#{season_id} from container folder name. Parsing file..." )
+        @phase_1_log = "Detected forced season ID=#{season_id} from container folder name. Parsing file...\r\n"
+      else
+        seek_date = header_fields[:header_date]
+        mas_fin_season_type = SeasonType.find_by_code('MASFIN')
+        unless ( mas_fin_season_type && mas_fin_season_type.id.to_i > 0 )
+          flash[:error] = "#{I18n.t(:season_type_not_found, {:scope=>[:admin_import]})} (code='MASFIN'))"
+          return nil
+        end
+        season = Season.where([
+          '(begin_date <= ?) AND (end_date >= ?) AND (season_type_id = ?)',
+          seek_date, seek_date, mas_fin_season_type.id
+        ]).first
+        unless ( season && season.id.to_i > 0 )
+          flash[:error] = "#{I18n.t(:season_not_found, {:scope=>[:admin_import]})} (DETECTED season_id=#{season_id})"
+          return nil
+        end
+        season_id = season.id
+        logger.info( "   Detected season ID=#{season_id} from file header date. Parsing file..." )
+        @phase_1_log = "Detected season ID=#{season_id} from file header date. Parsing file...\r\n"
+      end
+    else
+      season_id = season.id
+      logger.info( "   Specified season ID=#{season_id}. Parsing file..." )
+      @phase_1_log = "Specified season ID=#{season_id}. Parsing file...\r\n"
+    end
+                                                    # Get the remaining default values from the season instance:
+    header_fields[:header_year] = season.header_year
+    header_fields[:edition] = season.edition
+    header_fields[:edition_type_id] = season.edition_type_id
+    header_fields[:timing_type_id]  = season.timing_type_id
+    @season_id = season_id                          # Set the currently used season_id (this member variable is used just by its getter method)
     data_rows = []
 
     result_hash = FinResultParser.parse_txt_file( full_pathname, false, logger ) # (=> show_progress = false)
@@ -263,15 +386,7 @@ class DataImporter
       @esteemed_meeting_mins = 0                    # Used to calc approx event duration for meeting programs
       logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): parsing file done. Digesting..." )
       @phase_1_log = "Parsing of '#{full_pathname}' done.\r\nDigesting data...\r\n"
-
                                                     # -- MEETING HEADER digest --
-      header_fields = FinResultParserTools.parse_filename_fields( full_pathname )
-                                                    # Get the remaining default values from the season instance:
-      header_fields[:header_year] = season.header_year
-      header_fields[:edition] = season.edition
-      header_fields[:edition_type_id] = season.edition_type_id
-      header_fields[:timing_type_id]  = season.timing_type_id
-
       if season
         meeting_headers = result_hash[:parse_result][:meeting_header]
         meeting_header_row = meeting_headers.first if meeting_headers
@@ -374,7 +489,8 @@ class DataImporter
 # DEBUG
 #    logger.debug( "-- consume_txt_file(#{full_pathname}):\r\n" )
 #    logger.debug( @phase_1_log )
-
+                                                    # Update the import log:
+    @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
     return data_import_session
   end
   # ---------------------------------------------------------------------------
@@ -438,8 +554,9 @@ class DataImporter
 
     if ( is_ok )
       DataImporter.destroy_data_import_session( data_import_session_id, logger, do_consume_residual_file )
+      @phase_1_log = data_import_session.phase_1_log
       @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" +
-                    data_import_session.phase_1_log +
+                    @phase_1_log +
                     "\r\n\r\n--------------------[Phase #2 - COMMIT]--------------------\r\n\r\n" +
                     @phase_2_log +
                     "data-import PHASE #2 DONE.\r\n" +
@@ -448,6 +565,7 @@ class DataImporter
                     "===========================================================\r\n"
     else                                            # Store data_import_session.phase_2_log if something goes awry:
       data_import_session.phase = 2
+      @phase_1_log = data_import_session.phase_1_log
       data_import_session.phase_2_log = @phase_2_log
       data_import_session.save
       is_ok = false

@@ -26,6 +26,8 @@ it:
     nothing_to_do_upload_something: "Non hai fatto l'upload di nulla. Scegli un file prima di proseguire!"
     season_not_saved_in_session: "L'ID Stagione non e' stato salvato nella Sessione di Data-Import! Questa Sessione ha dati corrotti!"
     missing_session_parameter: "Manca il parametro di ID sessione (di importazione dati)!"
+    season_not_found: "Non ho trovato la stagione richiesta nel database!"
+    season_type_not_found: "Non ho trovato il tipo di stagione richiesto nel database!"
     force_meeting_creation: "Crea Meeting mancanti"
 
 

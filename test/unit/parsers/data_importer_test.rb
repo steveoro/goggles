@@ -20,10 +20,10 @@ class DataImporterTest < ActiveSupport::TestCase
   test "respond to main public methods" do
     logger = ConsoleLogger.new
     flash = {}
-    di = DataImporter.new( logger, flash, 1, 1 )
+    di = DataImporter.new( logger, flash, 1 )
     assert( di.instance_of?(DataImporter) )
     [
-      'get_season_id', 'get_phase_1_log', 'get_phase_2_log',
+      'get_phase_1_log', 'get_phase_2_log',
       'get_import_log', 'get_esteemed_meeting_mins',
       'get_stored_data_rows', 'get_committed_data_rows',
       'reset', 'consume_txt_file', 'commit'
@@ -54,18 +54,18 @@ class DataImporterTest < ActiveSupport::TestCase
     ].each_with_index do | hash_params, file_idx |
       full_pathname = hash_params[:filename]
       season_id     = hash_params[:season_id]
-      season = Season.find_by_id( season_id )
+      season = Season.find_by_id( season_id )       # season instance will be used later for assertion
       assert_not_nil( season, "Couldn't find season with ID #{season_id}!" )
       logger = ConsoleLogger.new
       flash = {}
 
-      puts "\r\n=== Testing with file #{full_pathname}, season ID #{season_id}:"
-      di = DataImporter.new( logger, flash, 1, 1 )
+      puts "\r\n=== Testing file #{full_pathname}, expecting to find (after data-import) a Meeting with season ID #{season_id}:"
+      di = DataImporter.new( logger, flash, 1 )
       assert( di.instance_of?(DataImporter) )
 
       data_import_session = di.consume_txt_file(
         full_pathname,
-        season,
+        nil,                                        # Force auto-detect of the season from path/file name
         true,                                       # Force missing meeting creation
         true                                        # SKIP consume data files
       )
@@ -128,6 +128,8 @@ class DataImporterTest < ActiveSupport::TestCase
       assert_not_nil( m, "Cannot find the meeting having season ID=#{season_id}!" )
       assert( m.instance_of?(Meeting) )
       assert( m.id.to_i > 0 )
+      assert_equal( season.id, m.season_id )
+
       ms = MeetingSession.where( :meeting_id => m.id ).first
       assert_not_nil( ms, "Cannot find the meeting session having meeting ID=#{m.id}!" )
       assert( ms.instance_of?(MeetingSession) )

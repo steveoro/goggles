@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.78.20131030
+  - Goggles framework vers.:  4.00.79.20131031
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -23,7 +23,6 @@ require 'parsers/fin_result_parser_tools'
   - +flash+ (error report) Hash
 
   === Defines:
-  - @season_id integer variable
   - @current_admin_id ID of the current Admin instance
   - @phase_1_log string (log text) variable
   - @stored_data_rows integer (counter) variable
@@ -40,9 +39,6 @@ module FinResultPhase2
 
   # Esteemed total minutes since the beginning of the current parsed meeting
   @esteemed_meeting_mins = 0
-
-  # Currently selected season id (set as a parameter)
-  @season_id = 0
 
   # Current Admin instace
   @current_admin_id = 0
@@ -77,7 +73,7 @@ module FinResultPhase2
       logger.debug( "CATEGORY HEADER: Current header_row: #{header_row.inspect}\r\nResulting category_type_id=#{category_type_id}, gender_type_id=#{gender_type_id}, stroke_type_id=#{stroke_type_id}, data_import_session ID=#{data_import_session_id}" )
 
       meeting_program_id = search_or_add_a_corresponding_meeting_program(
-          full_pathname, data_import_session_id, meeting_session_id,
+          full_pathname, data_import_session_id, season_id, meeting_session_id,
           header_row, header_index, gender_type_id,
           category_type_id, stroke_type_id, length_in_meters,
           scheduled_date, false, detail_rows.size
@@ -134,7 +130,7 @@ module FinResultPhase2
       logger.debug( "RELAY HEADER: Current header_row: #{header_row.inspect}\r\nResulting category_type_id=#{category_type_id}, gender_type_id=#{gender_type_id}, stroke_type_id=#{stroke_type_id}" )
 
       meeting_program_id = search_or_add_a_corresponding_meeting_program(
-          full_pathname, data_import_session_id, meeting_session_id,
+          full_pathname, data_import_session_id, season_id, meeting_session_id,
           header_row, header_index, gender_type_id,
           category_type_id, stroke_type_id, length_in_meters,
           scheduled_date, true, detail_rows.size
@@ -543,7 +539,7 @@ module FinResultPhase2
   #   - negative IDs only for already existing/commited rows in "standard" entity;
   #   - 0 only on error/unable to process.
   #
-  def search_or_add_a_corresponding_meeting_program( full_pathname, session_id, meeting_session_id,
+  def search_or_add_a_corresponding_meeting_program( full_pathname, session_id, season_id, meeting_session_id,
                                                      header_row, header_index, gender_type_id,
                                                      category_type_id, stroke_type_id, length_in_meters,
                                                      scheduled_date, is_a_relay, detail_rows_size )
@@ -630,7 +626,7 @@ module FinResultPhase2
       time_standard_id = nil
       if ( mins > 0 || secs > 0 || hds > 0 )        # Base time found? Search for a corresponding standard time:
         time_standard_id = search_or_add_a_corresponding_time_standard(
-          @season_id, event_type_id, category_type_id, gender_type_id, pool_type_id,
+          season_id, event_type_id, category_type_id, gender_type_id, pool_type_id,
           mins, secs, hds
         )
       end
@@ -742,8 +738,8 @@ module FinResultPhase2
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
     if (meeting_program_id < 0) && (swimmer_id < 0) && (team_id < 0)
 # DEBUG
-      logger.debug( "Seeking existing MeetingIndividualResult..." )
-      @phase_1_log << "Seeking existing MeetingIndividualResult...\r\n"
+#      logger.debug( "Seeking existing MeetingIndividualResult..." )
+#      @phase_1_log << "Seeking existing MeetingIndividualResult...\r\n"
       result_row = MeetingIndividualResult.where(   # ASSERT: there can be only 1 row keyed by this tuple:
         [ "(meeting_program_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
           -meeting_program_id, -swimmer_id, -team_id ]
@@ -875,7 +871,7 @@ module FinResultPhase2
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
     if (meeting_program_id < 0) && (team_id < 0)
 # DEBUG
-      logger.debug( "Seeking existing MeetingRelayResult..." )
+#      logger.debug( "Seeking existing MeetingRelayResult..." )
 #      @phase_1_log << "Seeking existing MeetingRelayResult...\r\n"
       result_row = MeetingRelayResult.where(        # ASSERT: there can be only 1 row keyed by this tuple:
         [ "(meeting_program_id = ?) AND (team_id = ?) AND (rank = ?) AND (minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
@@ -888,7 +884,7 @@ module FinResultPhase2
       not_found = false
     else                                            # Search also inside data_import_xxx table counterpart when unsuccesful:
 # DEBUG
-      logger.debug( "Seeking existing DataImportMeetingRelayResult..." )
+#      logger.debug( "Seeking existing DataImportMeetingRelayResult..." )
 #      @phase_1_log << "Seeking existing DataImportMeetingRelayResult...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
       result_row = DataImportMeetingRelayResult.where(
@@ -1038,7 +1034,7 @@ module FinResultPhase2
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
     if (meeting_id < 0) && (team_id < 0)
 # DEBUG
-      logger.debug( "Seeking existing MeetingTeamScore..." )
+#      logger.debug( "Seeking existing MeetingTeamScore..." )
 #      @phase_1_log << "Seeking existing MeetingTeamScore...\r\n"
       result_row = MeetingTeamScore.where(          # ASSERT: there can be only 1 row keyed by this tuple:
         [ "(meeting_id = ?) AND (team_id = ?)",
@@ -1051,7 +1047,7 @@ module FinResultPhase2
       not_found = false
     else                                            # Search also inside data_import_xxx table counterpart when unsuccesful:
 # DEBUG
-      logger.debug( "Seeking existing DataImportMeetingTeamScore..." )
+#      logger.debug( "Seeking existing DataImportMeetingTeamScore..." )
 #      @phase_1_log << "Seeking existing DataImportMeetingTeamScore...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
       result_row = DataImportMeetingTeamScore.where(

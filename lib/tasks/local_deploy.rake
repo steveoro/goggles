@@ -16,21 +16,22 @@ require File.join( Rails.root.to_s, 'config/environment' )
 
 
 # Script revision number
-SCRIPT_VERSION = '4.04.20131029'
+SCRIPT_VERSION = '4.06.20131031'
 
 # Gives current application name
 APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]
 
 MAX_BACKUP_KEPT = 30
 DB_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.db' )
-DB_SEED_DIR = File.join( "#{Rails.root}", 'db/seed' )
 TAR_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.src' )
 LOG_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.log' )
 
+DB_SEED_DIR = File.join( Rails.root, 'db/seed' ) unless defined? DB_SEED_DIR
+UPLOADS_DIR = File.join( Rails.root, 'public/uploads' ) unless defined? UPLOADS_DIR
 # The following is used only for clearing temp file
-ODT_OUTPUT_DIR = File.join( Rails.root, 'public/output' )
+ODT_OUTPUT_DIR = File.join( Rails.root, 'public/output' ) unless defined? ODT_OUTPUT_DIR
 
-NEEDED_DIRS = [DB_BACKUP_DIR, DB_SEED_DIR, TAR_BACKUP_DIR, LOG_BACKUP_DIR]
+NEEDED_DIRS = [DB_BACKUP_DIR, DB_SEED_DIR, UPLOADS_DIR, TAR_BACKUP_DIR, LOG_BACKUP_DIR]
 
 SHORT_AGEX_VERSION = AGEX_FRAMEWORK_VERSION.split(' ')[0]
 
@@ -54,7 +55,7 @@ end
 # and deleting in rotation the oldest ones.
 #
 def rotate_backups( backup_folder, max_backups )
-    all_backups = Dir.glob("#{backup_folder}*", File::FNM_PATHNAME).sort.reverse
+    all_backups = Dir.glob(File.join(backup_folder, '*'), File::FNM_PATHNAME).sort.reverse
     unwanted_backups = all_backups[max_backups..-1] || []
                                                     # Remove the backups in excess:
     for unwanted_backup in unwanted_backups
@@ -131,9 +132,9 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
 # TODO [FUTUREDEV] get current version from app_parameter table
     db_version    = ENV.include?("db_version") ? ENV['db_version'] + '.' + Date.today.strftime("%Y%m%d.%H%M") : 'backup' + '.' + DateTime.now.strftime("%Y%m%d.%H%M%S")
     max_backups   = ENV.include?("max_backup_kept") ? ENV["max_backup_kept"].to_i : MAX_BACKUP_KEPT
-    backup_folder = ENV.include?("output_dir") ? get_full_path( ENV["output_dir"] ) : DB_BACKUP_DIR
+    backup_folder = ENV.include?("output_dir") ? ENV["output_dir"] : DB_BACKUP_DIR
                                                     # Compress output? (Default = yes)
-    unless ( ENV.include?("bzip2") && ENV.include?("bzip2") == '0' )
+    unless ( ENV.include?("bzip2") && (ENV["bzip2"].to_i < 1) )
       zip_pipe = ' | bzip2 -c'
       file_ext = '.sql.bz2'
     else
@@ -160,7 +161,7 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
   Executes all the SQL scripts ('*.sql') found in a special directory (usually for data seed).
 Allows also to clear the executed files afterwards.
 
-Options: [exec_dir=#{DB_SEED_DIR}] [consume=1|<0>]
+Options: [exec_dir=#{DB_SEED_DIR}] [delete=1|<0>]
 
 - 'exec_dir' is the path where the files are found
 - 'delete' allows to kill the executed file after completion; defaults to '0' (false)
@@ -173,7 +174,7 @@ Options: [exec_dir=#{DB_SEED_DIR}] [consume=1|<0>]
     db_name       = rails_config.database_configuration[Rails.env]['database']
     db_user       = rails_config.database_configuration[Rails.env]['username']
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    exec_folder = ENV.include?("exec_dir") ? get_full_path( ENV["exec_dir"] ) : DB_SEED_DIR
+    exec_folder = ENV.include?("exec_dir") ? ENV["exec_dir"] : DB_SEED_DIR
                                                     # Display some info:
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
@@ -234,7 +235,7 @@ DESC
                                                     # Prepare & check configuration:
     time_signature  = DateTime.now.strftime("%Y%m%d.%H%M%S")
     max_backups     = ENV.include?("max_backup_kept") ? ENV["max_backup_kept"].to_i : MAX_BACKUP_KEPT
-    backup_folder   = ENV.include?("output_dir") ? get_full_path( ENV["output_dir"] ) : LOG_BACKUP_DIR
+    backup_folder   = ENV.include?("output_dir") ? ENV["output_dir"] : LOG_BACKUP_DIR
                                                     # Create a backup of each log:
     Dir.chdir( get_full_path('log') ) do |curr_path|
       for log_filename in Dir.glob(File.join("#{curr_path}",'*.log'), File::FNM_PATHNAME)
@@ -262,7 +263,7 @@ DESC
   task :tar => ['build:log_rotate'] do
     puts "*** Task: Tar BZip2 Application Backup ***"
                                                     # Prepare & check configuration:
-    backup_folder = ENV.include?("output_dir") ? get_full_path( ENV["output_dir"] ) : TAR_BACKUP_DIR
+    backup_folder = ENV.include?("output_dir") ? ENV["output_dir"] : TAR_BACKUP_DIR
     app_version   = ENV.include?("app_version") ?
                     ENV['app_version'] + '.' + Date.today.strftime("%Y%m%d") :
                     SHORT_AGEX_VERSION + '.' + DateTime.now.strftime("%Y%m%d.%H%M")
@@ -372,6 +373,9 @@ namespace :utils do
     puts "- TAR_BACKUP_DIR  : #{TAR_BACKUP_DIR}"
     puts "- LOG_BACKUP_DIR  : #{LOG_BACKUP_DIR}"
     puts "- ODT_OUTPUT_DIR  : #{ODT_OUTPUT_DIR}"
+    puts "- UPLOADS_DIR     : #{UPLOADS_DIR}"
+    puts "- DB_SEED_DIR     : #{DB_SEED_DIR}"
+    
     puts ""
   end
   # ----------------------------------------------------------------------------
@@ -393,8 +397,20 @@ namespace :utils do
     if File.directory?(ODT_OUTPUT_DIR)              # Output Directory found existing?
       puts "Clearing temp output directory..."
       FileUtils.rm( Dir.glob("#{ODT_OUTPUT_DIR}/*") )
-    else                                              # Processing a file?
+    else                                            # Processing a file?
       puts "Temp output directory not found, nothing to do."
+    end
+    puts 'Done.'
+  end
+
+
+  desc "Clears the app 'uploads' directory (if existing) contained inside /public."
+  task(:clear_uploads) do
+    if File.directory?(UPLOADS_DIR)                 # Uploads Directory found existing?
+      puts "Clearing temp uploads directory..."
+      FileUtils.rm( Dir.glob("#{UPLOADS_DIR}/*") )
+    else                                            # Processing a file?
+      puts "Temp uploads directory not found, nothing to do."
     end
     puts 'Done.'
   end

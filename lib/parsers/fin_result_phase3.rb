@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.78.20131030
+  - Goggles framework vers.:  4.00.79.20131031
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
