@@ -142,9 +142,17 @@ class TokenExtractorTest < ActiveSupport::TestCase
     [
     #            10        20        30        40        50        60        70        80        90
     #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
-      "                               10° Trofeo Città di Ravenna Master",
-      "                    Manifestazione organizzata da Rinascita Team Romagna asd",
-      "                                  Ravenna - 14/15 Gennaio 2012",
+      "                                  8° Trofeo Città di Riccione                                  ",
+      "                        Manifestazione organizzata da POL. COM. RICCIONE                       ",
+      "                                  RICCIONE - 3/4 Dicembre 2011                                 ",
+      # False positive:
+#      " 19 MAR-034567 1979 GINONE  ALESSANDRO            AS FIGARO NUOTO             0'29\"05  800,69",
+#      " 20 EMI-023456 1978 GILBERTAZZI  PAOLINO          NUOTO CLUB FIDENZUOLA       0'29\"11  799,04",
+#      " 21 MAR-012345 1979 CICCIO  MERCUZIO              POLISP. QUALUNQUE           0'29\"15  797,94",
+
+      "                               10° Trofeo Città di Ravenna Master                              ",
+      "                    Manifestazione organizzata da Rinascita Team Romagna asd                   ",
+      "                                  Ravenna - 14/15 Gennaio 2012                                 ",
       "11 novembre 2012",
       "10° Trofeo De Akker Team ASI",
       "Manifestazione organizzata da De Akker",
@@ -165,6 +173,14 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   def get_expectations_for_meeting_header()
     [ # field list = [:title, :meeting_dates, :organization]
+      ["8° Trofeo Città di Riccione", '', ''],
+      ['', '', 'POL. COM. RICCIONE'],
+      ['', "3/4 Dicembre 2011", ''],
+      # False positive:
+#      ['', '', ''],
+#      ['', '', ''],
+#      ['', '', ''],
+
       ["10° Trofeo Città di Ravenna Master", '', ''],
       ['', '', 'Rinascita Team Romagna asd'],
       ['', "14/15 Gennaio 2012", ''],
@@ -206,6 +222,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   def get_expectations_for_category_header()
     [
+#     [ :distance, :style, :gender, :category_group, :base_time ],
       ['50', 'stile libero', 'maschile', 'Master 45', "0'24\"09"],
       ['200', 'farfalla', 'femminile', 'Master 25', "2'20\"95"],
       ['50', 'farfalla', 'femminile', 'Under 25', ""],
@@ -237,6 +254,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   def get_expectations_for_result_row()
     [
+#      :result_position, :team_code, :swimmer_name, :swimmer_year, :team_name, :result_time, :result_score
       ['1', '', 'BIBBIBBI  FRANCESCA', '1981', 'MILANO  NUOTO CSI', "1'19\"58", '650,73'],
       ['2', '', 'DIDDIEFFIGGI  FEDERICA', '1980', 'ROMA  NUOTO SSD  AR', "1'17\"73", '682,05'],
       ['3', '', 'D`ALAMBERTO  MARUGONA', '1982', 'A.S.D. RICCIO', "1'20\"63", '622,03'],
@@ -284,17 +302,28 @@ class TokenExtractorTest < ActiveSupport::TestCase
       "        mistaffetta 4x100 stile libero -  Categoria M120-159      Tempo Base   :  1'43\"07",
       "        mistaffetta 4x200 stile libero -  Categoria M160-199      Tempo Base   :  1'44\"97",
       "        mistaffetta 4x50 mista  -  Categoria M160-199             Tempo Base   :  1'57\"26",
-      "        mistaffetta 4x50 mista  -  Categoria M200-239             Tempo Base   :  2'05\"20"
+      "        mistaffetta 4x50 mista  -  Categoria M200-239             Tempo Base   :  2'05\"20",
+
+      "        staffetta 4x50 mista  Maschile   -  Categoria M100-119    Tempo Base   :  1'49\"09",
+      "        staffetta 4x50 mista  Femminile  -  Categoria M160-199    Tempo Base   :  2'09\"12",
+      "        staffetta 4x50 stile libero  Maschile   -  Categoria M160-199Tempo Base   :  1'39\"09",
+      "        staffetta 4x50 stile libero  Femminile  -  Categoria M200-239Tempo Base   :  2'04\"15"
     ]
   end
 
   def get_expectations_for_relay_header()
     [
-      ['mistaffetta 4x50 stile libero', '4x50', 'stile libero', 'M100-119', "1'42\"99"],
-      ['mistaffetta 4x100 stile libero', '4x100', 'stile libero', 'M120-159', "1'43\"07"],
-      ['mistaffetta 4x200 stile libero', '4x200', 'stile libero', 'M160-199', "1'44\"97"],
-      ['mistaffetta 4x50 mista', '4x50', 'mista', 'M160-199', "1'57\"26"],
-      ['mistaffetta 4x50 mista', '4x50', 'mista', 'M200-239', "2'05\"20"],
+#     [ :type, :distance, :style, :gender, :category_group, :base_time ]      
+      ['mistaffetta 4x50 stile libero', '4x50', 'stile libero', '', 'M100-119', "1'42\"99"],
+      ['mistaffetta 4x100 stile libero', '4x100', 'stile libero', '', 'M120-159', "1'43\"07"],
+      ['mistaffetta 4x200 stile libero', '4x200', 'stile libero', '', 'M160-199', "1'44\"97"],
+      ['mistaffetta 4x50 mista', '4x50', 'mista', '', 'M160-199', "1'57\"26"],
+      ['mistaffetta 4x50 mista', '4x50', 'mista', '', 'M200-239', "2'05\"20"],
+
+      ["staffetta 4x50 mista  Maschile", "4x50", "mista", "Maschile", "M100-119", "1'49\"09"],
+      ["staffetta 4x50 mista  Femminile", "4x50", "mista", "Femminile", "M160-199", "2'09\"12"],
+      ["staffetta 4x50 stile libero  Maschile", "4x50", "stile libero", "Maschile", "M160-199", "1'39\"09"],
+      ["staffetta 4x50 stile libero  Femminile", "4x50", "stile libero", "Femminile", "M200-239", "2'04\"15"]
     ]
   end
   # ---------------------------------------------------------------------------
@@ -317,6 +346,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   def get_expectations_for_relay_row()
     [
+#     [ :result_position, :team_name, :result_time, :result_score ]
       ['1', 'ADRIA NUOTO SSD  AR', "2'07\"17", '809,86'],
       ['Fuori gara', 'AS DELFINO 93', "1'54\"15", '902,23'],
       ['2', 'MASTERNUOTOFIDENZA', "2'20\"59", '733,12'],

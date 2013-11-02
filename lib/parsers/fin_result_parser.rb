@@ -22,7 +22,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = false
+  DEBUG_VERBOSE                                     = true
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
@@ -83,9 +83,9 @@ class FinResultParser
   #
   @context_types = {                                # HEADER CONTEXT(s) def. arrays:
     :meeting_header => [
-      /\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)|\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
-      /\s*Manifestazione organizzata da|\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)/ui,
-      /\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}|\s*Manifestazione organizzata da/ui
+      /(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))|(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
+      /(\s*Manifestazione organizzata da)|(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))/ui,
+      /(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)/ui
     ],
 
     :category_header => [
@@ -133,13 +133,15 @@ class FinResultParser
       [
         TokenExtractor.new(
           :title,
-          /\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)/ui,
-          /$/ui
+          /\s*(\d{1,3}\D\s)?(\w+|Trof|Region)/ui,
+          /$/ui,
+          3                                         # line_timeout
         ),
         TokenExtractor.new(
           :meeting_dates,
-          /\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
-          /$/ui
+          /\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
+          /$/ui,
+          3                                         # line_timeout
         )
       ],
       # -- Fields to be extracted: :organization OR :title
@@ -147,25 +149,29 @@ class FinResultParser
         TokenExtractor.new(
           :organization,
           /(?<=manifestazione organizzata da)\s/ui,
-          /$/ui
+          /$/ui,
+          3                                         # line_timeout
         ),
         TokenExtractor.new(
           :title,
           /\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)/ui,
-          /$/ui
+          /$/ui,
+          3                                         # line_timeout
         )
       ],
       # -- Fields to be extracted: :meeting_dates OR :organization
       [
         TokenExtractor.new(
           :meeting_dates,
-          /\d\d((\/|-|\,)\d\d)?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
-          /$/ui
+          /\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
+          /$/ui,
+          3                                         # line_timeout
         ),
         TokenExtractor.new(
           :organization,
           /(?<=manifestazione organizzata da)\s/ui,
-          /$/ui
+          /$/ui,
+          3                                         # line_timeout
         )
       ]
     ],
@@ -209,7 +215,7 @@ class FinResultParser
       [
         TokenExtractor.new(
           :type,
-          /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
+          /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx)/i,
           /\s+-\s+cat/ui
         ),
         TokenExtractor.new(
@@ -219,18 +225,19 @@ class FinResultParser
         ),
         TokenExtractor.new(
           :style,
-          /(?<=\d\s)\s*(stile|mi|sl|mx).*/ui,
-          /\s-\s/ui
+          /(?<=\d\s)\s*(stile|mi|sl|mx)/ui,
+          /\s+(-\s+cat|masch|femm)/ui
         ),
         TokenExtractor.new(
           :gender,
-          / *(maschi|femmi)/ui,
-          / * - *categoria/ui
+          /\s+(maschi|femmi)/ui,
+          /\s+-\s+categoria/ui
         ),
         TokenExtractor.new(
           :category_group,
-          /\s*(M\d\d0\-\d\d\d)*/ui,
-          /tempo base\s*/ui
+          /M\d\d0\-\d\d\d/ui,
+          7
+#          /\s*tempo base\s*/ui
         ),
         TokenExtractor.new(
           :base_time,
@@ -554,7 +561,7 @@ class FinResultParser
                                                     # Have we reached the end of the condition list? => TOKENIZE context cache! 
               if ( previous_rows[ context_sym ].size == condition_array.size )
                 logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
-                token_hash = tokenize_context_cache( context_sym, previous_rows[ context_sym ], logger )
+                token_hash = tokenize_context_cache( context_sym, previous_rows[ context_sym ], logger, line_count+1 )
                                                     # Current context does NOT depend on another? ("L0" parse result)
                 if @context_groups[ context_sym ].nil?
                   previous_parent_context = context_sym
@@ -740,7 +747,7 @@ class FinResultParser
   # for token extraction, only the last extracted field with the same name will survive
   # the flatten+merge operation.)
   #
-  def self.tokenize_context_cache( context_sym, row_cache_array, logger = nil )
+  def self.tokenize_context_cache( context_sym, row_cache_array, logger = nil, current_line_number = 0 )
     tokenizer_context_list = @tokenizer_types[ context_sym ]
     raise "Tokenizer context list not found for context '#{context_sym}'!" unless tokenizer_context_list.kind_of?(Array)
     token_list = []
@@ -762,7 +769,7 @@ class FinResultParser
 # DEBUG
           logger.debug( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (logger && DEBUG_VERY_VERBOSE)
           puts( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (DEBUG_VERBOSE)
-          token = token_extractor.tokenize( row_to_be_parsed )
+          token = token_extractor.tokenize( row_to_be_parsed, current_line_number )
 # DEBUG
           logger.debug( "   Extracted '#{token}'." ) if (logger && DEBUG_VERBOSE)
           puts( "   Extracted '#{token}'." ) if (DEBUG_VERBOSE)

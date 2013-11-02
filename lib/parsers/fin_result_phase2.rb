@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.79.20131031
+  - Goggles framework vers.:  4.00.80.20131101
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -272,9 +272,10 @@ module FinResultPhase2
       notes = (meeting_dates ? "#{meeting_dates}\r\n" : '') +
               (organization ? "#{organization}" : '')
     end
-    description = ( title ? title : I18n.t(:missing_data_warning, {:scope=>[:admin_import]}) )
+    description = ( title ? title : "#{header_fields[:code]} (#{Format.a_date(scheduled_date)})" )
 # DEBUG
-#    logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
+    logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
+    @phase_1_log << "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n"
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
 # DEBUG
@@ -1428,29 +1429,54 @@ module FinResultPhase2
     country_code  = names.size > 4 ? names[4] : 'ITA'
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-    result_row = City.where( ["(name LIKE ?) AND (area LIKE ?) AND (country_code LIKE ?)", name+'%', area+'%', country_code+'%'] ).first
+    result_row = nil
+    City.all.each { |city|                          # Loop on all pre-inserted cities and search for a match
+      is_same_city = FinResultParserTools.seems_to_be_the_same_city(
+        name, city.name,
+        area, city.area,
+        country_code, city.country_code
+      )
+      if is_same_city
+        result_row = city
+        break
+      end
+    }
+    # XXX [Steve, 20131101] Old SQL-pure method, too strict:
+#    result_row = City.where( ["(name LIKE ?) AND (area LIKE ?) AND (country_code LIKE ?)", name+'%', area+'%', country_code+'%'] ).first
     if result_row                                   # We must differentiate the result: negative for City, positive for DataImportCity
       result_id = - result_row.id
       not_found = false
 # DEBUG
-#      logger.debug( "City found! (ID=#{result_id})" )
+#      logger.debug( "City found! (#{result_row.name}, ID=#{result_id})" )
     else                                            # Search also inside DataImportTeam when unsuccesful:
-      result_row = DataImportCity.where(
-        [ "(data_import_session_id = ?) AND (name LIKE ?) AND (area LIKE ?) AND (country_code LIKE ?)",
-          session_id, name+'%', area+'%', country_code+'%' ]
-      ).first
+      DataImportCity.all.each { |city|              # Loop on all pre-inserted cities and search for a match
+        is_same_city = FinResultParserTools.seems_to_be_the_same_city(
+          name, city.name,
+          area, city.area,
+          country_code, city.country_code
+        )
+        if is_same_city
+          result_row = city
+          break
+        end
+      }
+      # XXX [Steve, 20131101] Old SQL-pure method, too strict:
+#      result_row = DataImportCity.where(
+#        [ "(data_import_session_id = ?) AND (name LIKE ?) AND (area LIKE ?) AND (country_code LIKE ?)",
+#          session_id, name+'%', area+'%', country_code+'%' ]
+#      ).first
       if result_row
         result_id = result_row.id
         not_found = false
 # DEBUG
-#        logger.debug( "DataImportCity found! (ID=#{result_id})" )
+#        logger.debug( "DataImportCity found! (#{result_row.name}, ID=#{result_id})" )
       end
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
       begin                                         # --- BEGIN transaction ---
 # DEBUG
-#        logger.debug( "City not found: creating new DataImportCity row..." )
+        logger.debug( "City not found: creating new DataImportCity row..." )
         DataImportCity.transaction do
           result_row = DataImportCity.new(
             :data_import_session_id => session_id,

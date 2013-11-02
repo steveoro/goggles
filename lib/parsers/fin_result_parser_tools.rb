@@ -202,5 +202,58 @@ module FinResultParserTools
       ''
     end
   end
+
+  # Strips a City or Area or Country name of common prefixes, abbreviations and
+  # connections or grammar characters, in a sort of a "normalization process".
+  #
+  # Note that this name should only be used on City members or places names,
+  # since rules for abbreviating persons' names do not apply in the same manner.
+  #
+  # === Returns
+  # An array or "normalized" tokens that, if joined together,
+  # still "look like" the actual name of the city.
+  #
+  def self.get_token_array_from_city_name( full_city_name )
+    arr_of_tokens = full_city_name.split(/[\'\,\s\.]/)
+    arr_of_tokens.delete_if{ |el|
+      # TODO Add more frequently used abbreviations
+      [ 'di','nel','nell','del','dell','in',
+        'da','dal','dall','san','s','sant'
+      ].include?(el.downcase)
+    }
+  end
+
+  # Compare two city-related names (either city name, area or country),
+  # using the normalization process from #get_token_array_from_city_name().
+  #
+  # Note that this name should only be used on City members or places names,
+  # since rules for abbreviating persons' names do not apply in the same manner.
+  #
+  # === Returns
+  # true if there seems to be a match, false otherwise.
+  #
+  def self.compare_city_member_strings( possibly_new_city_name, existing_city_name )
+    possibly_new_normalized = FinResultParserTools.get_token_array_from_city_name( possibly_new_city_name ).join(' ')
+    existing_normalized_arr = FinResultParserTools.get_token_array_from_city_name( existing_city_name )
+    reg = Regexp.new( existing_normalized_arr.join('\s.*'), Regexp::IGNORECASE )
+    match = ( possibly_new_normalized =~ reg )
+    ! match.nil?
+  end
+
+  # Strips a City or Area or Country name of common prefixes, abbreviations and
+  # connections or grammar characters, in a sort of a "normalization process".
+  #
+  # === Returns
+  # An array or "normalized" tokens that, if joined together,
+  # still "look like" the actual name of the city.
+  #
+  def self.seems_to_be_the_same_city( new_city_name, existing_city_name,
+                                      new_area_name, existing_area_name,
+                                      new_country_code, existing_country_code )
+    ( compare_city_member_strings( new_city_name, existing_city_name ) &&
+      compare_city_member_strings( new_area_name, existing_area_name ) &&
+      (new_country_code.upcase == existing_country_code.upcase)
+    )
+  end
   # ---------------------------------------------------------------------------
 end

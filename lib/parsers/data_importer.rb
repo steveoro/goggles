@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.79.20131031
+  - Goggles framework vers.:  4.00.80.20131101
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -177,7 +177,7 @@ class DataImporter
     batch_import()
   end
 
-  # Display name used by delayed_job gem.
+  # Verbose display name for the job.
   #
   def display_name
     "batch_import(#{self.full_pathname})"
@@ -186,7 +186,7 @@ class DataImporter
   # Max attempts used by delayed_job gem.
   #
   def max_attempts
-    3
+    1
   end
 
   # Sets the parameter values for batch/delayed execution.  
@@ -210,9 +210,10 @@ class DataImporter
   def to_logfile( log_filename )
     File.open( log_filename, 'w' ) do |f|
       if ( flash[:error] )
-        f.puts "*** Latest flash[:error]: ***"
+        f.puts "               *** Latest flash[:error]: ***"
         f.puts flash[:error]
-        f.puts "------------------------------\r\n"
+        f.puts "-----------------------------------------------------------"
+        f.puts "\r\n"
       end
       f.puts get_import_log  
     end  
@@ -332,6 +333,9 @@ class DataImporter
     header_fields[:edition] = season.edition
     header_fields[:edition_type_id] = season.edition_type_id
     header_fields[:timing_type_id]  = season.timing_type_id
+# DEBUG
+    logger.debug( "\r\nParsed header_fields: #{header_fields.inspect}" )
+    @phase_1_log = "\r\nnParsed header_fields: #{header_fields.inspect}\r\n"
     @season_id = season_id                          # Set the currently used season_id (this member variable is used just by its getter method)
     data_rows = []
 
@@ -490,7 +494,8 @@ class DataImporter
 #    logger.debug( "-- consume_txt_file(#{full_pathname}):\r\n" )
 #    logger.debug( @phase_1_log )
                                                     # Update the import log:
-    @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
+    @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" +
+                  @phase_1_log
     return data_import_session
   end
   # ---------------------------------------------------------------------------

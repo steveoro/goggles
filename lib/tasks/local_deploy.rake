@@ -16,7 +16,7 @@ require File.join( Rails.root.to_s, 'config/environment' )
 
 
 # Script revision number
-SCRIPT_VERSION = '4.06.20131031'
+SCRIPT_VERSION = '4.07.20131101'
 
 # Gives current application name
 APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]
@@ -82,6 +82,14 @@ Rake.application.remove_task 'db:test:prepare'
 
 
 namespace :db do
+
+  namespace :test do 
+    task :prepare do |t|
+      # rewrite the task to not do anything you don't want
+    end
+  end
+
+
   desc <<-DESC
   This is an override of the standard Rake db:reset task.
 It actually DROPS the Database, recreates it using a mysql shell command.
@@ -96,16 +104,9 @@ It actually DROPS the Database, recreates it using a mysql shell command.
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
     puts "\r\nDropping DB..."
-    Rake::Task['db:drop'].invoke
+    sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"drop database if exists #{db_name}\""
     puts "\r\nRecreating DB..."
     sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\""
-  end
-
-
-  namespace :test do 
-    task :prepare do |t|
-      # rewrite the task to not do anything you don't want
-    end
   end
 end
 # =============================================================================

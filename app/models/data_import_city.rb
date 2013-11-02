@@ -19,10 +19,6 @@ class DataImportCity < ActiveRecord::Base
   validates_length_of     :area, :maximum => 50
   validates_length_of     :country, :maximum => 50
   validates_length_of     :country_code, :maximum => 10
-
-
-  scope :sort_data_import_badge_by_conflicting_rows_id,     lambda { |dir| order("conflicting_city_id #{dir.to_s}") }
-  scope :sort_data_import_badge_by_user,                    lambda { |dir| order("users.name #{dir.to_s}, data_import_cities.name #{dir.to_s}") }
   # ----------------------------------------------------------------------------
 
 

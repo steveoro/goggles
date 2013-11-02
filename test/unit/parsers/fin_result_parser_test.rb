@@ -47,16 +47,29 @@ class FinResultParserTest < ActiveSupport::TestCase
   end
   # ---------------------------------------------------------------------------
 
+#      File.join(Rails.root, 'test/fixtures/samples/ris20121112bologna-sample.txt'),
+#      File.join(Rails.root, 'test/fixtures/samples/ris20120114ravenna-sample.txt')
+
 
   test "sample data files returning a full result Hash" do
     [
-      './test/unit/parsers/ris20121112bologna-sample.txt',
-      './test/unit/parsers/ris20120114ravenna-sample.txt'
+      File.join(Rails.root, 'test/fixtures/samples/ris20111203riccione-sample.txt')
     ].each_with_index do | src_file, file_idx |
       puts "\r\n=== Testing with file #{src_file}:"
 
       result_hash = FinResultParser.parse_txt_file( src_file, true )
       # Expected fixture files STATS:
+      #
+      # File 'ris20111120riccione-sample.txt':
+      # Total 'meeting_header' data pages : 8 / 204 lines found
+      # Total 'category_header' data pages : 6 / 204 lines found
+      # Total 'relay_header' data pages : 0 / 204 lines found
+      # Total 'team_ranking' data pages : 1 / 204 lines found
+      # Total 'result_row' data pages : 55 / 204 lines found
+      # Total 'relay_row' data pages : 0 / 204 lines found
+      # Total 'ranking_row' data pages : 134 / 204 lines found
+      # Total read lines ....... : 308 (including garbage)
+      # Protocol efficiency .... : 66.23 %
       #
       # File 'ris20121112bologna-sample.txt':
       # Total 'meeting_header' data pages : 1 / 229 lines found
@@ -80,7 +93,16 @@ class FinResultParserTest < ActiveSupport::TestCase
       # Total read lines ....... : 376 (including garbage)
       # Protocol efficiency .... : 46.81 %
       #
-      if ( file_idx == 0 )                          # "ris20121112bologna-sample"
+      case file_idx
+      when 0                                        # "ris20111120riccione-sample"
+        expected_values = {
+          :meeting_header   => 1,
+          :category_header  => 6,   :result_row       => 55,
+          :relay_header     => 0,   :relay_row        => 0,
+          :team_ranking     => 1,   :ranking_row      => 134,
+          :line_count       => 308
+        }
+      when 1                                        # "ris20121112bologna-sample"
         expected_values = {
           :meeting_header   => 1,
           :category_header  => 15,  :result_row       => 127,
@@ -88,7 +110,7 @@ class FinResultParserTest < ActiveSupport::TestCase
           :team_ranking     => 1,   :ranking_row      => 56,
           :line_count       => 399
         }
-      else                                          # "ris20120114ravenna-sample"
+      when 2                                        # "ris20120114ravenna-sample"
         expected_values = { 
           :meeting_header   => 1,
           :category_header  => 11,  :result_row       => 75,

@@ -18,7 +18,7 @@ class City < ActiveRecord::Base
   validates_presence_of   :country_code
   validates_length_of     :country_code, :within => 1..10
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

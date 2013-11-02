@@ -49,8 +49,9 @@ class DataImporterTest < ActiveSupport::TestCase
 
   test "import sample data files" do
     [
-      {:filename => './test/unit/parsers/ris20121112bologna-sample.txt', :season_id => 122},
-      {:filename => './test/unit/parsers/ris20120114ravenna-sample.txt', :season_id => 112}
+      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20111203riccione-sample.txt'),  :season_id => 112},
+      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20121112bologna-sample.txt'),   :season_id => 122},
+      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20120114ravenna-sample.txt'),   :season_id => 112}
     ].each_with_index do | hash_params, file_idx |
       full_pathname = hash_params[:filename]
       season_id     = hash_params[:season_id]

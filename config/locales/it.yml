@@ -921,3 +921,11 @@ it:
         attributes:
           code:
             already_exists: "esiste gia'"
+      city:
+        attributes:
+          name:
+            already_exists: "esiste gia'"
+      data_import_city:
+        attributes:
+          name:
+            already_exists: "esiste gia'"

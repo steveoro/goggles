@@ -795,3 +795,11 @@ en:
         attributes:
           code:
             already_exists: "already exists"
+      city:
+        attributes:
+          name:
+            already_exists: "already exists"
+      data_import_city:
+        attributes:
+          name:
+            already_exists: "already exists"

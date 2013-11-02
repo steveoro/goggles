@@ -8,13 +8,13 @@ class EventType < ActiveRecord::Base
   validates_length_of     :code, :within => 1..10, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
 
-  validates_length_of     :length_in_meters, :maximum => 5
-  validates_length_of     :partecipants, :maximum => 2
-  validates_length_of     :phases, :maximum => 2
-  validates_length_of     :phase_length_in_meters, :maximum => 3
+  validates_length_of     :length_in_meters, :maximum => 12
+  validates_length_of     :partecipants, :maximum => 5
+  validates_length_of     :phases, :maximum => 5
+  validates_length_of     :phase_length_in_meters, :maximum => 8
 
   validates_presence_of     :style_order
-  validates_length_of       :style_order, :within => 1..2, :allow_nil => false
+  validates_length_of       :style_order, :within => 1..3, :allow_nil => false
   validates_numericality_of :style_order
 
 

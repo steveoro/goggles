@@ -26,12 +26,12 @@ class TimeStandard < ActiveRecord::Base
   validates_numericality_of :hundreds
 
 
-  scope :sort_passage_by_user,            lambda { |dir| order("users.name #{dir.to_s}, seasons.code #{dir.to_s}") }
-  scope :sort_passage_by_season,          lambda { |dir| order("seasons.code #{dir.to_s}") }
-  scope :sort_passage_by_gender_type,     lambda { |dir| order("seasons.code #{dir.to_s}, gender_types.code #{dir.to_s}") }
-  scope :sort_passage_by_pool_type,       lambda { |dir| order("seasons.code #{dir.to_s}, pool_types.code #{dir.to_s}") }
-  scope :sort_passage_by_event_type,      lambda { |dir| order("seasons.code #{dir.to_s}, event_types.code #{dir.to_s}") }
-  scope :sort_passage_by_category_type,   lambda { |dir| order("seasons.code #{dir.to_s}, category_types.code #{dir.to_s}") }
+  scope :sort_time_standard_by_user,            lambda { |dir| order("users.name #{dir.to_s}, seasons.code #{dir.to_s}") }
+  scope :sort_time_standard_by_season,          lambda { |dir| order("seasons.code #{dir.to_s}") }
+  scope :sort_time_standard_by_gender_type,     lambda { |dir| order("seasons.code #{dir.to_s}, gender_types.code #{dir.to_s}") }
+  scope :sort_time_standard_by_pool_type,       lambda { |dir| order("seasons.code #{dir.to_s}, pool_types.code #{dir.to_s}") }
+  scope :sort_time_standard_by_event_type,      lambda { |dir| order("seasons.code #{dir.to_s}, event_types.code #{dir.to_s}") }
+  scope :sort_time_standard_by_category_type,   lambda { |dir| order("seasons.code #{dir.to_s}, category_types.code #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
