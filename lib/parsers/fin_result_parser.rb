@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'common/format'
+require 'parsers/context_detector'
 require 'parsers/token_extractor'
 require 'parsers/fin_result_parser_tools'
                                                     # The following applies only to Ruby <= 1.9.2   
@@ -9,15 +10,21 @@ require 'iconv' unless String.method_defined?( :encode )
 
 
 
-# = FinResultParser
-#
-# Dedicated parser for FIN Results.
-# FIN Results are swimming meeting result text files, written mostly in UTF-8 italian
-# locale (since F.I.N. is the Italian Swimming Federation).
-#
-# All the RegExp used by this Parser class assume the file to be processed is compliant
-# with the format used in these kind of files. 
-#
+=begin
+
+= FinResultParser
+
+  - Goggles framework vers.:  4.00.81.20131104
+  - author: Steve A.
+
+ Dedicated parser for FIN Results.
+ FIN Results are swimming meeting result text files, written mostly in UTF-8 italian
+ locale (since F.I.N. is the Italian Swimming Federation).
+
+ All the RegExp used by this Parser class assume the file to be processed is compliant
+ with the format used in these kind of files. 
+
+=end
 class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
@@ -31,35 +38,7 @@ class FinResultParser
   # Set this to true or false to enable or disable debugging output, L3.
   #
   DEBUG_EXTRA_VERBOSE                               = false
-
-
-  # [Steve, 20130703] Here are reported some of the samples with which the following RegExp were
-  # tested.
-  #
-  #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MEETING HEADER TYPE SAMPLE #1:
-  #                               10° Trofeo Città di Ravenna Master                              
-  #                    Manifestazione organizzata da Rinascita Team Romagna asd                   
-  #                                  Ravenna - 14/15 Gennaio 2012
-  #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MEETING HEADER TYPE SAMPLE #2:
-  #11 novembre 2012  
-  #10° Trofeo De Akker Team ASI
-  #Manifestazione organizzata da De Akker
-  #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CATEGORY HEADER + DETAIL SAMPLES TYPE #1:
-  #
-  #        100 misti  maschile   -  Categoria  Master 40             Tempo Base   :  0'59"22
-  #----------------------------------------------------------------------------------------------
-  #       1   YYYYYYYYYY  RAFFAELE           1972   NUOTOPIÙ ACADEMY AS         1'00"82  973,69
-  #       2   YYYYYY  ALESSANDRO             1969   LEAENA SSD                  1'05"52  903,85
-  #       3   YYYYYY  MASSIMO                1973   NUOTOPIÙ ACADEMY AS         1'06"58  889,46
-  #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CATEGORY HEADER + DETAIL SAMPLES TYPE #2:
-  #
-  #        50 dorso  femminile  -  Categoria  Master 40              Tempo Base   :  0'32"01
-  #----------------------------------------------------------------------------------------------
-  #  1 EMI-123456 1972 ZZZZZZZ  ELISA                NUOTATORI RAVENNATI         0'41"37  773,75
-  #  2 EMI-123456 1971 ZZZZZZ  VERONICA              NUOTO CLUB 2000             0'42"00  762,14
-  #  3 EMI-123456 1971 ZZZZZZ  BARBARA               CSI NUOTO OBER FERR         0'43"46  736,54
-  #  4 EMI-123456 1972 ZZZZZZZ  RAFFAELLA            ESTENSE NUOTO CSI           0'44"19  724,37
-  #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SAMPLES END.
+  # ---------------------------------------------------------------------------
 
 
   # == Context type parser hash - an Hash of row type symbols pointing to an array of conditions to be satisfied.
@@ -82,36 +61,61 @@ class FinResultParser
   # context of data, if the conditions are loose enough).
   #
   @context_types = {                                # HEADER CONTEXT(s) def. arrays:
-    :meeting_header => [
-      /(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))|(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
-      /(\s*Manifestazione organizzata da)|(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))/ui,
-      /(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)/ui
-    ],
-
-    :category_header => [
-      '',
-      /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
-      /^--------------------------/
-    ],
-    :relay_header => [
-      '',
-      /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
-      /^--------------------------/
-    ],
-    :team_ranking => [
-      /classifica(\s+di)?(\s+societ)?/ui,
-      ''
-    ],
+    :meeting_header => ContextDetector.new(
+      :meeting_header,
+      [
+        /(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))|(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
+        /(\s*Manifestazione organizzata da)|(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))/ui,
+        /(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)/ui
+      ],
+      nil,                                          # parent context
+      4                                             # line_timeout (line after which these checks will be skipped)
+    ),
+    :category_header => ContextDetector.new(
+      :category_header,
+      [
+        '',
+        /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
+        /^--------------------------/
+      ]      
+    ),
+    :relay_header => ContextDetector.new(
+      :relay_header,
+      [
+        '',
+        /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
+        /^--------------------------/
+      ]      
+    ),
+    :team_ranking => ContextDetector.new(
+      :team_ranking,
+      [
+        /classifica(\s+di)?(\s+societ)?/ui,
+        ''
+      ]      
+    ),
                                                     # DETAIL CONTEXT(s) def. arrays:
-    :result_row => [
-      /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
-    ],
-    :relay_row => [
-      /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
-    ],
-    :ranking_row => [
-      /\s+\d{1,6}[\,|\.]\d\d$/ui
-    ]
+    :result_row => ContextDetector.new(
+      :result_row,
+      [
+        /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
+      ],
+      :category_header                              # parent context
+    ),
+    :relay_row => ContextDetector.new(
+      :relay_row,
+      [
+        /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)$/i
+      ],
+      :relay_header    
+    ),
+    :ranking_row => ContextDetector.new(
+      :ranking_row,
+      [
+        /\s+\d{1,6}[\,|\.]\d\d$/ui
+      ],
+      :team_ranking    
+    )
   }
 
 
@@ -416,24 +420,23 @@ class FinResultParser
     :category_header => [:distance, :style, :gender, :category_group],
     :relay_header =>    [:type, :category_group]    # (type includes also the gender token)
   }
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
 
 
-  # == Context Group Hash - this Hash links in hierarchical order the context "pages" among themselves.
-  # Each context symbol enlisted here as a key will be dependant (thus, literally "grouped by") its
-  # value symbol.
-  # (That is, for each "value symbol" change, a new page of the "key symbol" will be added.)
+  # Creates a new instance.
   #
-  @context_groups = {
-    :result_row  => :category_header,
-    :relay_row   => :relay_header,
-    :ranking_row => :team_ranking
-  }
+  def initialize( full_pathname, show_progress = DEBUG_VERBOSE, logger = nil )
+    raise "ContextDetector: condition_array not valid for context '#{context_name}'!" unless condition_array.kind_of?(Array)
+    self.full_pathname = full_pathname
+    self.show_progress = show_progress
+    self.logger = logger
+  end
 
 
   # Read and parse a single txt file into a complex Hash structure in memory.
   # Returned data storage is divided into each "context" page found, whose format
-  # is specified by @context_types, @tokenizer_types, @tokenizer_fields, @context_keys
-  # and @context_groups.
+  # is specified by @context_types, @tokenizer_types, @tokenizer_fields and @context_keys.
   #
   # === Returns:
   #
@@ -563,6 +566,8 @@ class FinResultParser
                 logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
                 token_hash = tokenize_context_cache( context_sym, previous_rows[ context_sym ], logger, line_count+1 )
                                                     # Current context does NOT depend on another? ("L0" parse result)
+# FIXME use detector.parent_context_name.nil?
+
                 if @context_groups[ context_sym ].nil?
                   previous_parent_context = context_sym
                                                     # There must be a unique key defined for this context
@@ -591,6 +596,7 @@ class FinResultParser
                   previous_key[ context_sym ] = key_string
                                                     # Current context depends on another? ("L1" parse result)
                 else
+# FIXME use detector.parent_context_name
                   parent_context = @context_groups[ context_sym ]
                                                     # No change in parent context?
                   if ( parent_context == previous_parent_context )
@@ -622,8 +628,8 @@ class FinResultParser
                     # checks each single defined context for possible multiple context assignment
                     # (it doesn't stop after the first successfull reckognition and works in a FIFO way,
                     # allowing the possibility to have a single text line that spawns multiple contexts
-                    # of data), the grouping/dependancy defined with @context_groups is the only correct
-                    # method to uniquely identify two context with the same RegExp.
+                    # of data), defining a parent_context_name in the ContextDetector instance is the
+                    # only correct method to uniquely identify two context with the same RegExp.
                   end
                 end
 
@@ -705,6 +711,14 @@ class FinResultParser
     @tokenizer_fields[ context_sym ].flatten.compact.uniq
   end
   # ---------------------------------------------------------------------------
+
+
+  # Returns the ContextDetector instance associated with the context symbol specified.
+  # 
+  def self.get_detector_for( context_sym )
+    return {} if @context_types[ context_sym ].nil?
+    @context_types[ context_sym ]
+  end
 
 
   # Returns an Hash of field name symbols as keys with their corresponding

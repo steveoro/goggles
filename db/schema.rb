@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131030164819) do
+ActiveRecord::Schema.define(:version => 20131104093426) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -744,7 +744,6 @@ ActiveRecord::Schema.define(:version => 20131030164819) do
 
   create_table "meeting_individual_results", :force => true do |t|
     t.integer  "lock_version",                                                              :default => 0
-    t.integer  "year_of_birth",                                                             :default => 1900,  :null => false
     t.integer  "rank",                                                                      :default => 0,     :null => false
     t.boolean  "is_play_off",                                                               :default => false, :null => false
     t.boolean  "is_out_of_race",                                                            :default => false, :null => false

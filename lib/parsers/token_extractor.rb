@@ -1,17 +1,26 @@
 # encoding: utf-8
 
-# Utility class to store tokenizing expressions/conditions or absolute indexes
-# to retrieve the values (tokens) associated to a single field name.
-#
-# <tt>starting_with</tt> and <tt>ending_with</tt> may store either
-# Regexp or Fixnum instances.
-#
-# <tt>line_timeout</tt> is an accessory member that may be used by the
-# parsers to store a maximum line number associated to the instance,
-# after which the result from tokenize will always be negative (empty string)
-# if the additional parameter current_line_number is also used.
-#
+=begin
+
+= TokenExtractor
+
+ Utility class to store tokenizing expressions/conditions or absolute indexes
+ to retrieve the values (tokens) associated to a single field name.
+
+
+=== Members:
+
+ - <tt>starting_with</tt> and <tt>ending_with</tt> may store either
+   Regexp or Fixnum instances.
+
+ - <tt>line_timeout</tt> is an accessory member that may be used by the
+   parsers to store a maximum line number associated to the instance,
+   after which the result from tokenize will always be negative (empty string)
+   if the additional parameter current_line_number is also used.
+
+=end
 class TokenExtractor
+
   attr_accessor :field_name, :starting_with, :ending_with, :line_timeout
 
   # Creates a new instance
@@ -58,6 +67,7 @@ class TokenExtractor
       @computed_end = nil
     end
   end
+  # ---------------------------------------------------------------------------
 
 
   # Returns the token specified by the conditions defined with this
@@ -69,7 +79,7 @@ class TokenExtractor
   # empty string.
   #
   def tokenize( text, current_line_number = 0 )
-    return '' if ( (self.line_timeout > 0) && (current_line_number > self.line_timeout) )
+    return '' if ((self.line_timeout > 0) && (current_line_number > self.line_timeout))
     token = ''
     sidx = get_start_index( text )
     if ( sidx && (text.size >= sidx.to_i) )
@@ -86,4 +96,5 @@ class TokenExtractor
     (@computed_start ? " => [#{@computed_start}.." : ' => [nil..') +
     (@computed_end ? "#{@computed_end}]" : 'nil]')
   end
+  # ---------------------------------------------------------------------------
 end
