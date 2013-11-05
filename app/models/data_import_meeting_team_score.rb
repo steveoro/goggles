@@ -8,6 +8,7 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
 
   belongs_to :data_import_team
   belongs_to :team
+  belongs_to :team_affiliation
   belongs_to :data_import_meeting
   belongs_to :meeting
   belongs_to :season

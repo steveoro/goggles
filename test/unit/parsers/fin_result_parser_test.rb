@@ -18,26 +18,26 @@ class FinResultParserTest < ActiveSupport::TestCase
 
   test "sample data files returning a full result Hash" do
     [
-      File.join(Rails.root, 'test/fixtures/samples/ris20111203riccione-sample.txt')
-# XXX TEMP disable samples:
-#      File.join(Rails.root, 'test/fixtures/samples/ris20121112bologna-sample.txt'),
-#      File.join(Rails.root, 'test/fixtures/samples/ris20120114ravenna-sample.txt')
+      File.join(Rails.root, 'test/fixtures/samples/ris20111203riccione-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20121112bologna-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20120114ravenna-sample.txt')
     ].each_with_index do | src_file, file_idx |
       puts "\r\n=== Testing with file #{src_file}:"
 
       result_hash = FinResultParser.parse_txt_file( src_file, true )
+      parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
+
       # Expected fixture files STATS:
       #
       # File 'ris20111120riccione-sample.txt':
-      # Total 'meeting_header' data pages : 8 / 204 lines found
+      # Total 'meeting_header' data pages : 1 / 204 lines found
       # Total 'category_header' data pages : 6 / 204 lines found
       # Total 'relay_header' data pages : 0 / 204 lines found
       # Total 'team_ranking' data pages : 1 / 204 lines found
-      # Total 'result_row' data pages : 55 / 204 lines found
+      # Total 'result_row' data pages : 144 / 204 lines found
       # Total 'relay_row' data pages : 0 / 204 lines found
       # Total 'ranking_row' data pages : 134 / 204 lines found
       # Total read lines ....... : 308 (including garbage)
-      # Protocol efficiency .... : 66.23 %
       #
       # File 'ris20121112bologna-sample.txt':
       # Total 'meeting_header' data pages : 1 / 229 lines found
@@ -45,10 +45,9 @@ class FinResultParserTest < ActiveSupport::TestCase
       # Total 'relay_header' data pages : 5 / 229 lines found
       # Total 'team_ranking' data pages : 1 / 229 lines found
       # Total 'result_row' data pages : 127 / 229 lines found
-      # Total 'relay_row' data pages : 24 / 229 lines found
+      # Total 'relay_row' data pages : 26 / 229 lines found
       # Total 'ranking_row' data pages : 56 / 229 lines found
       # Total read lines ....... : 399 (including garbage)
-      # Protocol efficiency .... : 57.39 %
       #
       # File 'ris20120114ravenna-sample.txt':
       # Total 'meeting_header' data pages : 1 / 176 lines found
@@ -59,13 +58,12 @@ class FinResultParserTest < ActiveSupport::TestCase
       # Total 'relay_row' data pages : 0 / 176 lines found
       # Total 'ranking_row' data pages : 88 / 176 lines found
       # Total read lines ....... : 376 (including garbage)
-      # Protocol efficiency .... : 46.81 %
       #
       case file_idx
       when 0                                        # "ris20111120riccione-sample"
         expected_values = {
           :meeting_header   => 1,
-          :category_header  => 6,   :result_row       => 55,
+          :category_header  => 6,   :result_row       => 144,
           :relay_header     => 0,   :relay_row        => 0,
           :team_ranking     => 1,   :ranking_row      => 134,
           :line_count       => 308
@@ -74,7 +72,7 @@ class FinResultParserTest < ActiveSupport::TestCase
         expected_values = {
           :meeting_header   => 1,
           :category_header  => 15,  :result_row       => 127,
-          :relay_header     => 5,   :relay_row        => 24,
+          :relay_header     => 5,   :relay_row        => 26,
           :team_ranking     => 1,   :ranking_row      => 56,
           :line_count       => 399
         }
@@ -98,16 +96,16 @@ class FinResultParserTest < ActiveSupport::TestCase
       parse_result = result_hash[:parse_result]
       assert( parse_result.instance_of?( Hash ), "parse_result is not an Hash!" )
 # DEBUG
-      puts "\r\n--- result_hash[:parse_result] inspect, file #{src_file}:"
-      result_hash[:parse_result].each{ |key, val|
-        puts "    - key '#{key}' |=> #{val.class}, size=#{val.size}"
-        puts "    - Array first element: #{val[0].inspect}"
-        puts "    - Array element -3:    #{val[-3].inspect}"
-        puts "    - Array element -2:    #{val[-2].inspect}"
-        puts "    - Array element -1:    #{val[-1].inspect}"
-      }
+#      puts "\r\n--- result_hash[:parse_result] inspect, file #{src_file}:"
+#      result_hash[:parse_result].each{ |key, val|
+#        puts "    - key '#{key}' |=> #{val.class}, size=#{val.size}"
+#        puts "    - Array first element:\r\n      #{val[0].inspect}"
+#        puts "    - Array element -3:\r\n      #{val[-3].inspect}"
+#        puts "    - Array element -2:\r\n      #{val[-2].inspect}"
+#        puts "    - Array element -1:\r\n      #{val[-1].inspect}"
+#      }
                                                     # Check result classes:
-      FinResultParser.get_context_keys().each { |context_key|
+      parsing_defs.get_context_keys().each { |context_key|
         assert parse_result.has_key?( context_key ), "parse_result doesn't have the context key '#{context_key}'!"
         context_data_pages = parse_result[ context_key ]
         assert( context_data_pages.instance_of?( Array ), "parse_result[ :#{context_key} ] is not an Array!" )
@@ -118,8 +116,9 @@ class FinResultParserTest < ActiveSupport::TestCase
             assert( data_page.has_key?(key), "parse_result[:#{context_key}][#{idx}] doesn't have the :#{key} key!" )
           end
 
-          required_field_list = FinResultParser.get_required_field_keys( context_key )
-          FinResultParser.get_field_list_for( context_key ).each do |field_sym|
+          required_field_list = parsing_defs.get_required_field_keys( context_key )
+
+          parsing_defs.get_field_list_for( context_key ).each do |field_sym|
             if required_field_list.include?( field_sym )
               assert( data_page[:fields].has_key?(field_sym), "parse_result[:#{context_key}][:fields] doesn't have the required field :#{field_sym}!" )
             end

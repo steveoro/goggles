@@ -7,6 +7,7 @@ class Badge < ActiveRecord::Base
   belongs_to :season
   belongs_to :swimmer
   belongs_to :team
+  belongs_to :team_affiliation
   belongs_to :category_type
   # [Steve, 20130924] entry_time_type is used as a (default) user-preference
   # for time accreditation during meeting registration. Since it can change
@@ -16,6 +17,7 @@ class Badge < ActiveRecord::Base
   validates_associated :season
   validates_associated :swimmer
   validates_associated :team
+  validates_associated :team_affiliation
   validates_associated :category_type
   validates_associated :entry_time_type
 

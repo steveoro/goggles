@@ -11,9 +11,11 @@ class MeetingTeamScore < ActiveRecord::Base
 #  validates_associated :user                       # (Do not enable this for User)
 
   belongs_to :team                                  # Since meetings are already "filtered" by season, here we link directly to teams, instead of team_affiliations
+  belongs_to :team_affiliation
   belongs_to :meeting
   belongs_to :season
   validates_associated :team
+  validates_associated :team_affiliation
   validates_associated :meeting
   validates_associated :season
 

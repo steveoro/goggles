@@ -4,16 +4,24 @@ require 'fileutils'
 require 'common/format'
 
 
-# == FinResultParserTools module
-#
-# Container dedicated to parsing tools for FIN Results files.
-#
-# FIN Results are swimming meeting result text files, written mostly in UTF-8 italian
-# locale (since F.I.N. is the Italian Swimming Federation).
-#
-# All the RegExp used by this Parser class assume the file to be processed is compliant
-# with the format used in these kind of files. 
-#
+=begin
+
+= DataImporter
+
+  - Goggles framework vers.:  4.00.83.20131105
+  - author: Steve A.
+
+== FinResultParserTools module
+
+ Container dedicated to parsing tools for FIN Results files.
+
+ FIN Results are swimming meeting result text files, written mostly in UTF-8 italian
+ locale (since F.I.N. is the Italian Swimming Federation).
+
+ All the RegExp used by this Parser class assume the file to be processed is compliant
+ with the format used in these kind of files. 
+
+=end
 module FinResultParserTools
 
   # Parses the data-import header fields encoded in the filename.
@@ -53,7 +61,9 @@ module FinResultParserTools
   # Parses a text date extracted from a FIN result text file. 
   #
   def self.parse_meeting_date( text_token )
-    date_num_idx = text_token =~ /\d\d((\/|-|\,)\d\d)*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui
+# DEBUG
+#    puts("parse_meeting_date( '#{text_token}' ) called.")
+    date_num_idx = text_token =~ /\d{1,2}((\/|-|\,)\d{1,2})?\s/ui
     month_idx    = text_token =~ /(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui
     year_idx     = text_token =~ /\s\d{2,4}/ui
 
@@ -63,6 +73,8 @@ module FinResultParserTools
     year      = text_token[ year_idx .. year_idx+4 ].strip if year_idx
 
     text_date = "#{year}-#{sprintf( "%#{2.2}i", month_num.to_i+1)}-#{day}"
+# DEBUG
+#    puts("parse_meeting_date(): resulting text date: '#{text_date}'.")
     Date.parse( text_date )
   end
   # ---------------------------------------------------------------------------
@@ -218,6 +230,7 @@ module FinResultParserTools
     arr_of_tokens.delete_if{ |el|
       # TODO Add more frequently used abbreviations
       [ 'di','nel','nell','del','dell','in',
+        'su', 'sul', 'sull',
         'da','dal','dall','san','s','sant'
       ].include?(el.downcase)
     }
@@ -244,8 +257,7 @@ module FinResultParserTools
   # connections or grammar characters, in a sort of a "normalization process".
   #
   # === Returns
-  # An array or "normalized" tokens that, if joined together,
-  # still "look like" the actual name of the city.
+  # +true+ if the comparison "seems a match".
   #
   def self.seems_to_be_the_same_city( new_city_name, existing_city_name,
                                       new_area_name, existing_area_name,
@@ -253,6 +265,42 @@ module FinResultParserTools
     ( compare_city_member_strings( new_city_name, existing_city_name ) &&
       compare_city_member_strings( new_area_name, existing_area_name ) &&
       (new_country_code.upcase == existing_country_code.upcase)
+    )
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Splits a Team or a Swimmer name into an array of tokens.
+  #
+  def self.get_token_array_from_name( full_name )
+    arr_of_tokens = full_name.split(/[\'\,\s\.]/)
+# FIXME / TODO
+  end
+
+  # Compare two names (either a team name or a swimmer name),
+  # using the normalization process from #get_token_array_from_name().
+  #
+  # === Returns
+  # true if there seems to be a match, false otherwise.
+  #
+  def self.compare_tokenized_strings( possibly_new_name, existing_name )
+# FIXME / TODO
+    possibly_new_normalized = FinResultParserTools.get_token_array_from_name( possibly_new_name ).join(' ')
+    existing_normalized_arr = FinResultParserTools.get_token_array_from_name( existing_name )
+    reg = Regexp.new( existing_normalized_arr.join('\s.*'), Regexp::IGNORECASE )
+    match = ( possibly_new_normalized =~ reg )
+    ! match.nil?
+  end
+
+  # Normalizes and compares a Club/Team name or a Swimmer name to a couple of alternative names.
+  # (Specifically the actual registration name and its user-editable counterpart.)
+  #
+  # === Returns
+  # +true+ if the comparison "seems a match".
+  #
+  def self.seems_to_have_the_same_name( new_name, existing_name, alt_existing_name )
+    ( compare_tokenized_strings( new_name, existing_name ) &&
+      compare_tokenized_strings( new_name, alt_existing_name )
     )
   end
   # ---------------------------------------------------------------------------

@@ -21,6 +21,9 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   belongs_to :disqualification_code_type
   belongs_to :entry_time_type
 
+  # The following helper is used only by data_importer_test:
+  has_one  :data_import_meeting,  :through => :data_import_meeting_program
+
   validates_associated :entry_time_type
 
   validates_presence_of     :relay_header

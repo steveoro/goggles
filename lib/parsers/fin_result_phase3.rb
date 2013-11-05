@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.79.20131031
+  - Goggles framework vers.:  4.00.83.20131105
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -104,8 +104,8 @@ module FinResultPhase3
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else
 # DEBUG
-#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
-#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
+          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
+          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
@@ -166,8 +166,8 @@ module FinResultPhase3
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else
 # DEBUG
-#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
-#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
+          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
+          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
@@ -308,8 +308,8 @@ module FinResultPhase3
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else
 # DEBUG
-#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'." )
-#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'.\r\n"
+          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'." )
+          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
@@ -362,8 +362,8 @@ module FinResultPhase3
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else
 # DEBUG
-#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'." )
-#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'.\r\n"
+          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'." )
+          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
@@ -422,10 +422,10 @@ module FinResultPhase3
                                                     # Update dependancy: |=> data_import_badges(swimmer, team, category, season)
           DataImportBadge.where(
             :data_import_team_id => di_row.id
-          ).update_all( :team_id => result_id )
+          ).update_all( :team_id => result_id, :team_affiliation_id => additional_row.id )
           DataImportMeetingIndividualResult.where(
             :data_import_team_id => di_row.id
-          ).update_all( :team_id => result_id )
+          ).update_all( :team_id => result_id, :team_affiliation_id => additional_row.id )
 
           DataImportMeetingRelayResult.where(
             :data_import_team_id => di_row.id
@@ -533,13 +533,14 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           Badge.transaction do
             committed_row = Badge.new(
-              :number   => di_row.number,
-              :category_type_id => di_row.category_type_id,
-              :entry_time_type_id => di_row.entry_time_type_id,
-              :swimmer_id => di_row.swimmer_id,
-              :team_id    => di_row.team_id,
-              :season_id  => di_row.season_id,
-              :user_id    => di_row.user_id
+              :number               => di_row.number,
+              :category_type_id     => di_row.category_type_id,
+              :entry_time_type_id   => di_row.entry_time_type_id,
+              :swimmer_id           => di_row.swimmer_id,
+              :team_id              => di_row.team_id,
+              :team_affiliation_id  => di_row.team_affiliation_id,
+              :season_id            => di_row.season_id,
+              :user_id              => di_row.user_id
             )
             # ASSERT: assuming season_id is always positive (chosen by admin during data-import)
             committed_row.save!                     # raise automatically an exception if save is not successful
@@ -592,7 +593,6 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           MeetingIndividualResult.transaction do
             committed_row = MeetingIndividualResult.new(
-              :year_of_birth    => di_row.year_of_birth,
               :rank             => di_row.rank,
               :is_play_off      => di_row.is_play_off,
               :is_out_of_race   => di_row.is_out_of_race,
@@ -609,10 +609,11 @@ module FinResultPhase3
               :hundreds         => di_row.hundreds,
 
               :meeting_program_id => di_row.meeting_program_id,
-              :swimmer_id       => di_row.swimmer_id,
-              :team_id          => di_row.team_id,
-              :badge_id         => di_row.badge_id,
-              :user_id          => di_row.user_id
+              :swimmer_id         => di_row.swimmer_id,
+              :team_id            => di_row.team_id,
+              :team_affiliation_id  => di_row.team_affiliation_id,
+              :badge_id           => di_row.badge_id,
+              :user_id            => di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -722,7 +723,7 @@ module FinResultPhase3
     if di_records
       di_records.each do |di_row|
 # DEBUG
-#        logger.debug( "\r\nCommitting #{di_row.class.name} = team_id: #{di_row.team_id}, pts. #{di_row.total_individual_points}..." )
+        logger.debug( "\r\nCommitting #{di_row.class.name} = team_id: #{di_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}..." )
         begin                                       # --- BEGIN transaction ---
           MeetingTeamScore.transaction do
             committed_row = MeetingTeamScore.new(
@@ -755,8 +756,8 @@ module FinResultPhase3
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else
 # DEBUG
-#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, pts. #{committed_row.total_individual_points}." )
-#          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, pts. #{committed_row.total_individual_points}.\r\n"
+          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}..." )
+          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}...\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end

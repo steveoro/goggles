@@ -74,6 +74,43 @@ class DataImporterTest < ActiveSupport::TestCase
       assert( data_import_session.instance_of?(DataImportSession) )
       assert( data_import_session.id.to_i > 0 )
 
+      expected_values = get_expected_values( file_idx )
+
+                                                    # === TEST PHASE 1/2:
+      # Check size of destination entity tables before the test transaction
+      # rollback destroys the committed data:
+      puts "\r\n\r\n\t*** #{full_pathname} ***\r\n"
+      m = DataImportMeeting.where( :data_import_session_id => data_import_session.id ).first
+      assert_not_nil( m, "Cannot find DataImportMeeting with :data_import_session_id ID=#{data_import_session.id}!" )
+      assert( m.instance_of?(DataImportMeeting) )
+      assert( m.id.to_i > 0 )
+      assert_equal( season.id, m.season_id )
+
+      ms = DataImportMeetingSession.where( :data_import_session_id => data_import_session.id ).first
+      assert_not_nil( ms, "Cannot find the meeting session having meeting ID=#{m.id}!" )
+      assert( ms.instance_of?(DataImportMeetingSession) )
+      assert( ms.id.to_i > 0 )
+
+#      mp = DataImportMeetingProgram.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
+      mp = DataImportMeetingProgram.where( :data_import_session_id => data_import_session.id )
+      total_programs = expected_values[:category_header].to_i + expected_values[:relay_header].to_i
+      puts "==> DataImportMeetingProgram............size=#{mp.size} vs. expected=#{total_programs})"
+      assert_equal( total_programs, mp.size )
+
+      mir = DataImportMeetingIndividualResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
+      puts "==> DataImportMeetingIndividualResult...size=#{mir.size} vs. expected=#{expected_values[:result_row]})"
+      assert_equal( expected_values[:result_row], mir.size )
+
+      mrr = DataImportMeetingRelayResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
+      puts "==> DataImportMeetingRelayResult........size=#{mrr.size} vs. expected=#{expected_values[:relay_row]})"
+      assert_equal( expected_values[:relay_row], mrr.size )
+
+#      mts = DataImportMeetingTeamScore.where( :data_import_meeting_id => m.id )
+      mts = DataImportMeetingTeamScore.where( :data_import_session_id => data_import_session.id )
+      puts "==> DataImportMeetingTeamScore..........size=#{mts.size} vs. expected=#{expected_values[:ranking_row]})"
+      assert_equal( expected_values[:ranking_row], mts.size )
+
+                                                    # === TEST PHASE 3:
       is_ok = di.commit(
         data_import_session,
         false                                       # DO NOT erase any residual data file found
@@ -82,48 +119,6 @@ class DataImporterTest < ActiveSupport::TestCase
 
       # Check size of destination entity tables before the test transaction
       # rollback destroys the committed data:
-      if ( file_idx == 0 )                          # "ris20121112bologna-sample"
-        # Expected fixture files STATS:
-        #
-        # File 'ris20121112bologna-sample.txt':
-        # Total 'meeting_header' data pages : 1 / 229 lines found
-        # Total 'category_header' data pages : 15 / 229 lines found
-        # Total 'relay_header' data pages : 5 / 229 lines found
-        # Total 'team_ranking' data pages : 1 / 229 lines found
-        # Total 'result_row' data pages : 127 / 229 lines found
-        # Total 'relay_row' data pages : 24 / 229 lines found
-        # Total 'ranking_row' data pages : 56 / 229 lines found
-        # Total read lines ....... : 399 (including garbage)
-        # Protocol efficiency .... : 57.39 %
-        expected_values = {
-          :meeting_header   => 1,
-          :category_header  => 15,  :result_row       => 127,
-          :relay_header     => 5,   :relay_row        => 24,
-          :team_ranking     => 1,
-          # TODO Don't know why, but only 54/56 team stores get committed on this one
-          #      (maybe its due to more than one null score at the end)
-          :ranking_row      => 54,  # FIXME Should be 56/56!!!
-          :line_count       => 399
-        }
-      else                                          # "ris20120114ravenna-sample"
-        # File 'ris20120114ravenna-sample.txt':
-        # Total 'meeting_header' data pages : 1 / 176 lines found
-        # Total 'category_header' data pages : 11 / 176 lines found
-        # Total 'relay_header' data pages : 0 / 176 lines found
-        # Total 'team_ranking' data pages : 1 / 176 lines found
-        # Total 'result_row' data pages : 75 / 176 lines found
-        # Total 'relay_row' data pages : 0 / 176 lines found
-        # Total 'ranking_row' data pages : 88 / 176 lines found
-        # Total read lines ....... : 376 (including garbage)
-        # Protocol efficiency .... : 46.81 %
-        expected_values = { 
-          :meeting_header   => 1,
-          :category_header  => 11,  :result_row       => 75,
-          :relay_header     => 0,   :relay_row        => 0,
-          :team_ranking     => 1,   :ranking_row      => 88,
-          :line_count       => 376
-        }
-      end
       puts "\r\n\r\n\t*** #{full_pathname} ***\r\n"
       m = Meeting.where( :season_id => season_id ).first
       assert_not_nil( m, "Cannot find the meeting having season ID=#{season_id}!" )
@@ -155,5 +150,72 @@ class DataImporterTest < ActiveSupport::TestCase
     end                                             # -- end of loop on file names --
   end
   # ---------------------------------------------------------------------------
+
+
+  def get_expected_values( file_idx )
+    expected_values = {}
+    # Expected fixture files STATS:
+    #
+    # File 'ris20111120riccione-sample.txt':
+    # Total 'meeting_header' data pages : 1 / 204 lines found
+    # Total 'category_header' data pages : 6 / 204 lines found
+    # Total 'relay_header' data pages : 0 / 204 lines found
+    # Total 'team_ranking' data pages : 1 / 204 lines found
+    # Total 'result_row' data pages : 144 / 204 lines found
+    # Total 'relay_row' data pages : 0 / 204 lines found
+    # Total 'ranking_row' data pages : 134 / 204 lines found
+    # Total read lines ....... : 308 (including garbage)
+    #
+    # File 'ris20121112bologna-sample.txt':
+    # Total 'meeting_header' data pages : 1 / 229 lines found
+    # Total 'category_header' data pages : 15 / 229 lines found
+    # Total 'relay_header' data pages : 5 / 229 lines found
+    # Total 'team_ranking' data pages : 1 / 229 lines found
+    # Total 'result_row' data pages : 127 / 229 lines found
+    # Total 'relay_row' data pages : 26 / 229 lines found
+    # Total 'ranking_row' data pages : 56 / 229 lines found
+    # Total read lines ....... : 399 (including garbage)
+    #
+    # File 'ris20120114ravenna-sample.txt':
+    # Total 'meeting_header' data pages : 1 / 176 lines found
+    # Total 'category_header' data pages : 11 / 176 lines found
+    # Total 'relay_header' data pages : 0 / 176 lines found
+    # Total 'team_ranking' data pages : 1 / 176 lines found
+    # Total 'result_row' data pages : 75 / 176 lines found
+    # Total 'relay_row' data pages : 0 / 176 lines found
+    # Total 'ranking_row' data pages : 88 / 176 lines found
+    # Total read lines ....... : 376 (including garbage)
+    #
+    case file_idx
+    when 0                                        # "ris20111120riccione-sample"
+      expected_values = {
+        :meeting_header   => 1,
+        :category_header  => 6,   :result_row       => 144,
+        :relay_header     => 0,   :relay_row        => 0,
+        :team_ranking     => 1,   :ranking_row      => 134,
+        :line_count       => 308
+      }
+    when 1                                        # "ris20121112bologna-sample"
+      expected_values = {
+        :meeting_header   => 1,
+        :category_header  => 15,  :result_row       => 127,
+        :relay_header     => 5,   :relay_row        => 26,
+        :team_ranking     => 1,
+# FIXME Don't know why DataImporter commits just 54/56 rows... The others works just fine
+# FIXME It should be :ranking_row => 56 !!!!
+        :ranking_row      => 56,
+        :line_count       => 399
+      }
+    when 2                                        # "ris20120114ravenna-sample"
+      expected_values = { 
+        :meeting_header   => 1,
+        :category_header  => 11,  :result_row       => 75,
+        :relay_header     => 0,   :relay_row        => 0,
+        :team_ranking     => 1,   :ranking_row      => 88,
+        :line_count       => 376
+      }
+    end
+    expected_values
+  end
   # ---------------------------------------------------------------------------
 end

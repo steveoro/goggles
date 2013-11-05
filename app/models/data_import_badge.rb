@@ -17,6 +17,7 @@ class DataImportBadge < ActiveRecord::Base
   belongs_to :season
   belongs_to :swimmer
   belongs_to :team
+  belongs_to :team_affiliation
 
   belongs_to :category_type
   belongs_to :entry_time_type

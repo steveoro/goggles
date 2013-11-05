@@ -30,6 +30,7 @@ class MeetingDateParsingMethodTest < ActiveSupport::TestCase
     [
       "14/15 Gennaio 2012",
       "11 novembre 2012",
+      "3/4 Dicembre 2011",
       "20-21 aprile 2013"
     ]
   end
@@ -38,6 +39,7 @@ class MeetingDateParsingMethodTest < ActiveSupport::TestCase
     [
       "2012-01-14",
       "2012-11-11",
+      "2011-12-03",
       "2013-04-20"
     ]
   end

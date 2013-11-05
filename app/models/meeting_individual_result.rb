@@ -18,12 +18,16 @@ class MeetingIndividualResult < ActiveRecord::Base
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :swimmer
   belongs_to :team
+  belongs_to :team_affiliation
   belongs_to :badge
   belongs_to :disqualification_code_type
 
-  validates_presence_of     :year_of_birth
-  validates_length_of       :year_of_birth, :within => 2..4, :allow_nil => false
-  validates_numericality_of :year_of_birth
+  validates_associated :swimmer
+  validates_associated :team
+  validates_associated :team_affiliation
+  validates_associated :badge
+  validates_associated :disqualification_code_type
+
   validates_presence_of     :rank
   validates_length_of       :rank, :within => 1..4, :allow_nil => false
   validates_numericality_of :rank
@@ -74,7 +78,7 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{get_meeting_program_verbose_name}: #{rank}) #{get_athlete_name} (#{year_of_birth}), #{get_timing}"
+    "#{get_meeting_program_verbose_name}: #{rank}) #{get_athlete_name} (#{get_year_of_birth}), #{get_timing}"
   end
 
   # Retrieves the user name associated with this instance
@@ -86,6 +90,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Retrieves the associated Swimmer full name
   def get_athlete_name
     self.swimmer ? self.swimmer.get_full_name() : '?'
+  end
+
+  # Retrieves the associated Swimmer's year_of_birth
+  def get_year_of_birth
+    self.swimmer ? self.swimmer.year_of_birth : '?'
   end
 
   # Retrieves the associated Team full name

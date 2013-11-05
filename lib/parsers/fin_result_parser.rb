@@ -15,7 +15,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.82.20131105
+  - Goggles framework vers.:  4.00.83.20131105
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -30,7 +30,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = true
+  DEBUG_VERBOSE                                     = false
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
@@ -121,8 +121,6 @@ class FinResultParser
         end
         full_text_file_contents << curr_line
                                                     # For each context type defined...
-# FIXME WAS: @context_types.each { |context_sym, condition_array|
-
         parsing_defs.get_context_types().each { |context_sym, detector|
           if DEBUG_EXTRA_VERBOSE
             logger ? logger.debug( "Using #{detector}..." ) : puts( "Using #{detector}..." )
@@ -134,57 +132,12 @@ class FinResultParser
           
           if ( is_detected )                        # === DETECTION SUCCESSFULL ===
             logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
+            cached_rows = detector.dump_line_cache()
             token_hash = tokenize_context_cache( 
                 parsing_defs, context_sym,
-                detector.dump_line_cache(),
+                cached_rows,
                 logger, line_count + 1
             )
-#######################################à
-                                                    # # Do we have any condition list to check for?
-          # if ( condition_array.kind_of?( Array ) && condition_array.size > 0 )
-                                                    # # Retrieve index for the condition of the current context
-            # index_to_check = ( previous_rows[ context_sym ].nil? ? 0 : previous_rows[ context_sym ].size )
-            # raise "Malformed array of conditions in parse_txt_file!" if ( index_to_check >= condition_array.size )
-                                                    # # Retrieve condition to check:
-            # condition_to_check = condition_array[ index_to_check ]
-            # if DEBUG_EXTRA_VERBOSE
-              # logger ? logger.debug("Curr line: <#{curr_line}>") : puts("Curr line: <#{curr_line}>")
-            # end
-                                                    # # Check if condition applies:
-            # if ( condition_to_check.kind_of?( String ) )
-              # if DEBUG_EXTRA_VERBOSE
-                # logger ? logger.debug("Checking with String condition <#{condition_to_check.inspect}>...") : puts("Checking with String condition <#{condition_to_check.inspect}>...")
-              # end
-              # condition_ok = ( curr_line == condition_to_check )
-            # elsif ( condition_to_check.kind_of?( Regexp ) )
-              # if DEBUG_EXTRA_VERBOSE
-                # logger ? logger.debug("Checking with Regexp condition <#{condition_to_check.inspect}>...") : puts("Checking with Regexp condition <#{condition_to_check.inspect}>...")
-              # end
-              # condition_ok = !( curr_line =~ condition_to_check ).nil?
-            # end
-                                                    # Condition satisfied => Store current line in cache:
-            # if ( condition_ok )
-              # if DEBUG_VERY_VERBOSE
-                # logger ? logger.debug( "Condition OK for '#{context_sym}>'." ) : puts( "Condition OK for '#{context_sym}>'." )
-              # end
-              # if ( previous_rows[ context_sym ].nil? )
-                # previous_rows[ context_sym ] = [ curr_line ]
-              # else
-                # previous_rows[ context_sym ] << curr_line
-              # end
-              # if DEBUG_VERY_VERBOSE
-                # logger ?  logger.debug( "previous_rows[#{context_sym}].size=#{previous_rows[ context_sym ].size} VS #{condition_array.size}." ) :
-                          # puts( "previous_rows[#{context_sym}].size=#{previous_rows[ context_sym ].size} VS #{condition_array.size}." )
-              # end
-                                                    # Have we reached the end of the condition list? => TOKENIZE context cache!
-#              if ( previous_rows[ context_sym ].size == condition_array.size )
-                # logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
-                # token_hash = tokenize_context_cache( context_sym, previous_rows[ context_sym ], logger, line_count+1 )
-                                                    # Current context does NOT depend on another? ("L0" parse result)
-# FIXME use detector.parent_context_name.nil?
-
-#                if @context_groups[ context_sym ].nil?
-#####################################################
 
             if detector.is_a_parent_context()       # *** CONTEXT -is- PARENT: HEADER
               previous_parent_context = context_sym
@@ -203,7 +156,6 @@ class FinResultParser
                   end
                 end
               else                                  # Extract unique key and store new current context page
-# FIXME
                 key_string = compose_memstorage_key( parsing_defs, context_sym, token_hash, logger )
               end
 
@@ -211,7 +163,10 @@ class FinResultParser
                 logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{key_string}'.") : puts("   Adding new context '#{context_sym}', key_string='#{key_string}'.")
               end
               
-              parse_result[ context_sym ] << { :id => key_string, :fields => token_hash, :import_text => previous_rows[context_sym].join("\r\n") }
+              parse_result[ context_sym ] << {
+                :id => key_string, :fields => token_hash,
+                :import_text => cached_rows.join("\r\n")
+              }
               tot_rows += 1                         # Increase data rows stat only when actually adding any data
                                                     # Store new unique key in previous_key hash linked by current context (which may be a new parent context for other sub-pages)
               previous_key[ context_sym ] = key_string
@@ -236,7 +191,10 @@ class FinResultParser
                   if show_progress
                     logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ]}'.") : puts("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ]}'")
                   end
-                  parse_result[ context_sym ] << { :id => previous_key[ parent_context ], :fields => token_hash, :import_text => curr_line }
+                  parse_result[ context_sym ] << {
+                    :id => previous_key[ parent_context ], :fields => token_hash,
+                    :import_text => cached_rows.join("\r\n")
+                  }
                   tot_rows += 1                     # Increase data rows stat only when actually adding any data
                 end
                 # ELSE: parent context changed or different? => quietly skip the storing!
@@ -251,24 +209,13 @@ class FinResultParser
                 # only correct method to uniquely identify two context with the same RegExp.
               end
             end
-#                previous_rows[ context_sym ] = []   # Clear the cache afterwards
             if DEBUG_VERY_VERBOSE && parse_result[ context_sym ].last
               logger ? logger.debug("   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}") : puts("   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}\r\n")
             end
-
-          else                                      # === DETECTION UNSUCCESSFULL ===
+          # else                                    # === DETECTION UNSUCCESSFULL ===
             # ( nothing to do )
           end
-
- #             end
-                                                    # Condition not satisfied => Clear context cache:
-#            else
-#                previous_rows[ context_sym ] = []
-#            end
-#          end
-
         }
-
         line_count += 1
       }
     end                                             # (automatically closes the file)
@@ -287,6 +234,7 @@ class FinResultParser
       end
       tot_data_rows += data_page_array.size         # (ASSERT: it should be that tot_data_rows == tot_rows)
     }
+
     if logger
       logger.info( "\r\nTotal read lines ....... : #{line_count} (including garbage)" )
       logger.info( "Protocol efficiency .... : #{(( tot_rows.to_f)/line_count.to_f * 10000.0).round / 100.0} %" )
@@ -351,12 +299,12 @@ class FinResultParser
         tokenizer_row_list.each_with_index { |token_extractor, tok_idx|
           token_field = ( parsing_defs.get_tokenizer_fields_for( context_sym ) )[row_idx][tok_idx]
 # DEBUG
-          logger.debug( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (logger && DEBUG_VERY_VERBOSE)
-          puts( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (DEBUG_VERBOSE)
+#          logger.debug( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (logger && DEBUG_VERY_VERBOSE)
+#          puts( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (DEBUG_VERBOSE)
           token = token_extractor.tokenize( row_to_be_parsed, current_line_number )
 # DEBUG
-          logger.debug( "   Extracted '#{token}'." ) if (logger && DEBUG_VERBOSE)
-          puts( "   Extracted '#{token}'." ) if (DEBUG_VERBOSE)
+#          logger.debug( "   Extracted '#{token}'." ) if (logger && DEBUG_VERBOSE)
+#          puts( "   Extracted '#{token}'." ) if (DEBUG_VERBOSE)
           token_extractor.clear()                   # Add to the token list only if it contains anything
           token_list.last[ token_field ] = token if token && token.length > 0
         }

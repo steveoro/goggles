@@ -32,8 +32,9 @@
 
 	g.column(
 		name: I18n.t(:year_of_birth, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		attribute: 'year_of_birth'
-	)
+	) do |individual_result|
+		individual_result.get_year_of_birth
+	end
 
 	g.column(
 		name: I18n.t(:timing, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),

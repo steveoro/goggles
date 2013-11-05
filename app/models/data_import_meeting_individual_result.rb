@@ -21,8 +21,12 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   belongs_to :data_import_badge
   belongs_to :swimmer
   belongs_to :team
+  belongs_to :team_affiliation
   belongs_to :badge
   belongs_to :disqualification_code_type
+
+  # The following helper is used only by data_importer_test:
+  has_one  :data_import_meeting,  :through => :data_import_meeting_program
 
   validates_presence_of :athlete_name
   validates_length_of   :athlete_name, :within => 1..100, :allow_nil => false

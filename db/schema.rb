@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131104093426) do
+ActiveRecord::Schema.define(:version => 20131105120845) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -97,16 +97,17 @@ ActiveRecord::Schema.define(:version => 20131104093426) do
   add_index "articles", ["title"], :name => "index_articles_on_title"
 
   create_table "badges", :force => true do |t|
-    t.integer  "lock_version",                     :default => 0
-    t.string   "number",             :limit => 40,                :null => false
+    t.integer  "lock_version",                      :default => 0
+    t.string   "number",              :limit => 40,                :null => false
     t.integer  "season_id"
     t.integer  "swimmer_id"
     t.integer  "team_id"
     t.integer  "category_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
     t.integer  "entry_time_type_id"
+    t.integer  "team_affiliation_id"
   end
 
   add_index "badges", ["category_type_id"], :name => "fk_badges_category_types"
@@ -114,6 +115,7 @@ ActiveRecord::Schema.define(:version => 20131104093426) do
   add_index "badges", ["number"], :name => "index_badges_on_number"
   add_index "badges", ["season_id"], :name => "fk_badges_seasons"
   add_index "badges", ["swimmer_id"], :name => "fk_badges_swimmers"
+  add_index "badges", ["team_affiliation_id"], :name => "fk_badges_team_affiliations"
   add_index "badges", ["team_id"], :name => "fk_badges_teams"
 
   create_table "base_movements", :force => true do |t|
@@ -217,6 +219,7 @@ ActiveRecord::Schema.define(:version => 20131104093426) do
     t.integer  "category_type_id"
     t.integer  "user_id"
     t.integer  "entry_time_type_id"
+    t.integer  "team_affiliation_id"
   end
 
   add_index "data_import_badges", ["number"], :name => "index_data_import_badges_on_number"
@@ -277,6 +280,7 @@ ActiveRecord::Schema.define(:version => 20131104093426) do
     t.integer  "entry_hundreds",                           :limit => 2
     t.integer  "entry_time_type_id"
     t.decimal  "team_points",                                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "team_affiliation_id"
   end
 
   create_table "data_import_meeting_programs", :force => true do |t|
@@ -768,12 +772,14 @@ ActiveRecord::Schema.define(:version => 20131104093426) do
     t.integer  "entry_hundreds",                :limit => 2
     t.integer  "entry_time_type_id"
     t.decimal  "team_points",                                :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "team_affiliation_id"
   end
 
   add_index "meeting_individual_results", ["badge_id"], :name => "fk_meeting_individual_results_badges"
   add_index "meeting_individual_results", ["entry_time_type_id"], :name => "fk_meeting_individual_results_entry_time_types"
   add_index "meeting_individual_results", ["meeting_program_id"], :name => "fk_meeting_individual_results_meeting_programs"
   add_index "meeting_individual_results", ["swimmer_id"], :name => "fk_meeting_individual_results_swimmers"
+  add_index "meeting_individual_results", ["team_affiliation_id"], :name => "fk_meeting_individual_results_team_affiliations"
   add_index "meeting_individual_results", ["team_id"], :name => "fk_meeting_individual_results_teams"
 
   create_table "meeting_programs", :force => true do |t|
