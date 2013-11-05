@@ -4,6 +4,9 @@
 
 = TokenExtractor
 
+  - Goggles framework vers.:  4.00.82.20131105
+  - author: Steve A.
+
  Utility class to store tokenizing expressions/conditions or absolute indexes
  to retrieve the values (tokens) associated to a single field name.
 
@@ -93,8 +96,8 @@ class TokenExtractor
   # Converts the current instance to a readable string
   def to_s
     "[TokenExtractor: #{field_name}, start=#{starting_with}, end=#{ending_with}]" +
-    (@computed_start ? " => [#{@computed_start}.." : ' => [nil..') +
-    (@computed_end ? "#{@computed_end}]" : 'nil]')
+    (@computed_start ? " cached: (#{@computed_start}.." : ' cached: (nil..') +
+    (@computed_end ? "#{@computed_end})" : 'nil)')
   end
   # ---------------------------------------------------------------------------
 end

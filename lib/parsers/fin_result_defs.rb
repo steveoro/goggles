@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.81.20131104
+  - Goggles framework vers.:  4.00.82.20131105
   - author: Steve A.
 
  Container class for the lists of ContextDetector and TokenExtractor
@@ -410,18 +410,32 @@ class FinResultDefs
     @context_keys = {
       :meeting_header =>  [:title],
       :category_header => [:distance, :style, :gender, :category_group],
-      :relay_header =>    [:type, :category_group]    # (type includes also the gender token)
+      :relay_header =>    [:type, :category_group]  # (type includes also the gender token)
+    }
+                                                    # === Internal structure integrity checks: ===
+                                                    # Pre-check format type definition:
+    raise "Malformed parser Hash!" unless (@context_types.size == @tokenizer_types.size) && (@tokenizer_types.size == @tokenizer_fields.size)
+    @context_types.each { |key, detector|
+      raise "Missing parser Hash key '#{key}'!" unless ( @tokenizer_types.has_key?(key) && @tokenizer_fields.has_key?(key) )
+      rails "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)
     }
   end
   # ---------------------------------------------------------------------------
 
 
-  # Returns the Array of all defined context types key syms.
+  # Returns the whole Hash of all defined Context Types, where the hash key
+  # is the context symbol and the value is the corresponding ContextDetector
+  # instance.
+  # 
+  def get_context_types()
+    return @context_types
+  end
+
+  # Returns just the Array of all defined context key symbols.
   # 
   def get_context_keys()
     return @context_types.keys
   end
-
 
   # Returns the Array of all the *required* (that is, guaranteed to be
   # created) output field keys for a specified context symbol.
@@ -430,7 +444,6 @@ class FinResultDefs
   def get_required_field_keys( context_sym )
     return @context_keys[ context_sym ] ? @context_keys[ context_sym ] : []
   end
-
 
   # Returns the Array of _possible_ field symbols used to populate the value item Hash
   # (indexed by the key :fields) of the returned parse_result[context_sym].
@@ -446,16 +459,29 @@ class FinResultDefs
   # ---------------------------------------------------------------------------
 
 
-  # Returns the ContextDetector instance associated with the context symbol specified.
+  # Returns the specific ContextDetector instance associated with the context symbol specified.
+  # Returns +nil+ when not found.
   # 
   def get_detector_for( context_sym )
-    return {} if @context_types[ context_sym ].nil?
     @context_types[ context_sym ]
   end
 
 
+  # Returns +true+ if the specified context symbol points to a ContextDetector
+  # instance that is root or has a +nil+ parent context.
+  # 
+  def is_a_parent( context_sym )
+    detector = get_detector_for( context_sym )
+    ( detector.nil? || detector.is_a_parent_context() )
+  end
+  # ---------------------------------------------------------------------------
+
+
   # Returns an Hash of field name symbols as keys with their corresponding
   # @tokenizer_types instances as values. ( {<field_name_sym> => <corresponding_tokenizer_instance>, ...} )
+  #
+  # Note that this is "flattened" version of the same result
+  # obtained from #get_tokenizer_types_for( context_sym ).
   # 
   def get_tokenizers_for( context_sym )
     return {} if @tokenizer_fields[ context_sym ].nil? || @tokenizer_types[ context_sym ].nil?
@@ -466,6 +492,36 @@ class FinResultDefs
       result_hash[ k ] = values[i]
     }
     result_hash 
+  end
+
+  # Returns the intact structure of the tokenizer type defined for
+  # the specified context symbol, or +nil+ when not found.
+  #
+  # The returned value is the Array (lines) of Array of TokenExtractor
+  # instances (fields), with one TokenExtractor defined for each field
+  # that must be extracted, and grouped together in lines (belonging
+  # to the same context -- thus the array of array).
+  #
+  # This complex structure is actually used only by the parser
+  # instance itself.
+  # 
+  def get_tokenizer_types_for( context_sym )
+    @tokenizer_types[ context_sym ]
+  end
+
+  # Returns the intact structure of the tokenizer fields defined for
+  # the specified context symbol, or +nil+ when not found.
+  #
+  # The returned value is somehow similar in structure to the
+  # one returned by #get_tokenizer_types_for( context_sym ),
+  # but simpler, since it just has a matrix of field names (in symbols)
+  # with one list of row symbols for each row of context defined.  
+  #
+  # This complex structure is actually used only by the parser
+  # instance itself.
+  # 
+  def get_tokenizer_fields_for( context_sym )
+    @tokenizer_fields[ context_sym ]
   end
   # ---------------------------------------------------------------------------
 end

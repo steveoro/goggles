@@ -4,7 +4,7 @@
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.81.20131104
+  - Goggles framework vers.:  4.00.82.20131105
   - author: Steve A.
 
  Utility class for detecting context changes in the text scanned
@@ -23,12 +23,12 @@
  (The internal counter for matching increases only upon successful matching.)
 
  The context detected is cached and stored up and until the next
- unsuccessful line check or up until the complete context detection:
- after context detection or an unsuccessful condition check, both the
- internal index and the line cache get erased.
+ unsuccessful line check or until an immediate call to </tt>dump_line_cache()</tt>.
+ (Since after the next feed it would be compromised.)
 
- Furthermore, clearing the instance is usually not required but it
- could be useful when using the same instance on different source files.
+ Furthermore, clearing the instance with </tt>clear()</tt> is usually
+ unnecessary but it could be useful when using the same instance on
+ different source files.
 
 
 === Members:
@@ -98,11 +98,27 @@ class ContextDetector
     @detection_index = 0
   end
 
+  # Returns +true+ if the context defined with this instance
+  # is a "root/parent" (that is, an instance with no parents).
+  #
+  def is_a_parent_context()
+    self.parent_context_name.nil?
+  end
+
   # Getter for <tt>current_context</tt>; returns the symbol of the
   # currently detected context, or +nil+ if none.
   #
   def get_current_context()
     @current_context
+  end
+
+  # Returns the current buffered lines cache, automatically
+  # clearing it afterwards.
+  #
+  def dump_line_cache()
+    dump_cache = @array_of_lines.dup
+    @array_of_lines = []
+    dump_cache
   end
   # ---------------------------------------------------------------------------
 
@@ -152,7 +168,6 @@ class ContextDetector
         logger.debug( "ContextDetector: ==> context '#{self.context_name}' DETECTED <==" ) if (logger && DEBUG_VERBOSE)
         is_context_detected = true
         @current_context  = self.context_name
-        @array_of_lines = []
         @detection_index = 0
       end
     else

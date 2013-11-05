@@ -16,6 +16,7 @@ class ContextDetectorTest < ActiveSupport::TestCase
       :a_parent
     )
     assert_not_nil( cd, "new ContextDetector instance is nil!")
+    assert( cd.instance_of?(ContextDetector) )
     assert_equal( cd.context_name, :whatever, "context_name is different!")
     assert_equal( cd.parent_context_name, :a_parent, "parent_context_name is different!")
     assert_equal( cd.line_timeout, 0, "line_timeout should be 0!")
@@ -102,6 +103,11 @@ class ContextDetectorTest < ActiveSupport::TestCase
         puts "    Checking fixture line <<#{txt_line}>>...\r\n    (Line: #{line_idx}, fake line counter: #{fake_line_counter}, fixture: #{fixture_idx+1}/#{fixtures.size})"
         is_context_changed = detector.feed_and_detect( txt_line, fake_line_counter, previous_context )
         assert_equal( results[line_idx], is_context_changed )
+        
+        if ( is_context_changed )
+          cached_lines = detector.dump_line_cache()
+          assert_equal( feed.size, cached_lines.size, "feed.size:#{feed.size} <> cached_lines.size:#{cached_lines.size}!" )
+        end
       }
     }
   end
