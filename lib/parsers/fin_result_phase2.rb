@@ -1268,13 +1268,16 @@ module FinResultPhase2
     result_row = team_affiliation.team if team_affiliation
                                                     # Do also an extensive search on Team if team affiliation for this season is not found:
     unless result_row
+# FIXME *****************************************+
+# FIXME WIP
+      best_score = 0
       Team.all.each { |team|                        # Searching on Team/DataImportTeam requires much more fuzzy logic (similarly to City name, or Swimmer name)
-        is_the_same = FinResultParserTools.seems_to_have_the_same_name(
+        match_score = FinResultParserTools.seems_to_have_the_same_name(
           team_name, team.name, team.editable_name
         )
-        if is_the_same
+        if ( (match_score > 2) && (best_score < match_score) )
+          best_score = match_score
           result_row = team
-          break
         end
       }
     end
@@ -1316,6 +1319,7 @@ module FinResultPhase2
 
     else                                            # result_row.nil? Search also inside DataImportTeam when unsuccesful:
       unless result_row                             # Searching on Team/DataImportTeam requires much more fuzzy logic (similarly to City name, or Swimmer name)
+# FIXME *****************************************+
         DataImportTeam.where( :data_import_session_id => session_id ).each { |team|
           is_the_same = FinResultParserTools.seems_to_have_the_same_name(
             team_name, team.name, team.editable_name

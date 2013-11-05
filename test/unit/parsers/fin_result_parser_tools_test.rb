@@ -44,19 +44,26 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
 
 
   test "seems_to_have_the_same_name" do
-    is_the_same = FinResultParserTools.seems_to_have_the_same_name(
+    score = FinResultParserTools.seems_to_have_the_same_name(
       # new:     /   existing:
-      "C.S.I. Nuoto Master Ober Ferrari", "CSI NUOTO OBER FERR",
+      "C.S.I.Nuoto Master Ober Ferrari", "CSI NUOTO OBER FERR",
       "CSI NUOTO OBER FERRARI"
     )
-    assert( is_the_same )
+    assert( score >= 2 )
 
-    is_the_same = FinResultParserTools.seems_to_have_the_same_name(
+    score = FinResultParserTools.seems_to_have_the_same_name(
+      # new:     /   existing:
+      "C.S.I. Nuoto Master Ober Ferrari", "CSI NUOTO OBER FERR",
+      "CSI OBER FERRARI"
+    )
+    assert( score >= 2 )
+
+    score = FinResultParserTools.seems_to_have_the_same_name(
       # new:     /   existing:
       "C.S.I. Nuoto Master Ober Ferrari", "CSI OBER FERR",
       "C.S.I. NUOTO OBER FERRARI"
     )
-    assert( is_the_same )
+    assert( score >= 2 )
   end
   # ---------------------------------------------------------------------------
 end

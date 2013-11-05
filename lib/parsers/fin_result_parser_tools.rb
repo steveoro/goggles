@@ -274,34 +274,47 @@ module FinResultParserTools
   #
   def self.get_token_array_from_name( full_name )
     arr_of_tokens = full_name.split(/[\'\,\s\.]/)
-# FIXME / TODO
   end
+
 
   # Compare two names (either a team name or a swimmer name),
   # using the normalization process from #get_token_array_from_name().
   #
   # === Returns
-  # true if there seems to be a match, false otherwise.
+  # The comparison score. 1 point for each token that "resembles"
+  # a possible match. Higher the score, higher the possibility.
   #
   def self.compare_tokenized_strings( possibly_new_name, existing_name )
-# FIXME / TODO
-    possibly_new_normalized = FinResultParserTools.get_token_array_from_name( possibly_new_name ).join(' ')
+    possibly_new_normalized = FinResultParserTools.get_token_array_from_name( possibly_new_name )
     existing_normalized_arr = FinResultParserTools.get_token_array_from_name( existing_name )
-    reg = Regexp.new( existing_normalized_arr.join('\s.*'), Regexp::IGNORECASE )
-    match = ( possibly_new_normalized =~ reg )
-    ! match.nil?
+
+    possible_matches = []
+    possibly_new_normalized.each{ |token_new|
+      is_a_match = existing_normalized_arr.any?{ |token_old|
+        if ( token_old.size < token_new.size )
+          shortest = token_old
+          other    = token_new
+        else
+          shortest = token_new
+          other    = token_old
+        end
+        ( other =~ Regexp.new("#{shortest}.*", Regexp::IGNORECASE) ) == 0
+      }
+      possible_matches << token_new if is_a_match
+    }
+    possible_matches.size
   end
 
   # Normalizes and compares a Club/Team name or a Swimmer name to a couple of alternative names.
   # (Specifically the actual registration name and its user-editable counterpart.)
   #
   # === Returns
-  # +true+ if the comparison "seems a match".
+  # The comparison score. 1 point for each token that "resembles"
+  # a possible match. Higher the score, higher the possibility.
   #
   def self.seems_to_have_the_same_name( new_name, existing_name, alt_existing_name )
-    ( compare_tokenized_strings( new_name, existing_name ) &&
-      compare_tokenized_strings( new_name, alt_existing_name )
-    )
+    compare_tokenized_strings( new_name, existing_name ) +
+    compare_tokenized_strings( new_name, alt_existing_name )
   end
   # ---------------------------------------------------------------------------
 end
