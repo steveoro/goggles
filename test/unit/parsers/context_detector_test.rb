@@ -17,9 +17,9 @@ class ContextDetectorTest < ActiveSupport::TestCase
     )
     assert_not_nil( cd, "new ContextDetector instance is nil!")
     assert( cd.instance_of?(ContextDetector) )
-    assert_equal( cd.context_name, :whatever, "context_name is different!")
-    assert_equal( cd.parent_context_name, :a_parent, "parent_context_name is different!")
-    assert_equal( cd.line_timeout, 0, "line_timeout should be 0!")
+    assert_equal( :whatever, cd.context_name, "context_name is different!")
+    assert_equal( :a_parent, cd.parent_context_name, "parent_context_name is different!")
+    assert_equal( 0, cd.line_timeout, "line_timeout should be 0!")
   end
   # ---------------------------------------------------------------------------
 

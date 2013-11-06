@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.83.20131105
+  - Goggles framework vers.:  4.00.85.20131106
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -38,10 +38,6 @@ class DataImporter
                 # Batch/delayed execution parameters:
                 :full_pathname, :season, :force_missing_meeting_creation,
                 :do_not_consume_file, :log_dir
-
-  # Set this to true or false to enable or disable debugging output, L1.
-  #
-  DEBUG_VERBOSE = false
   # ---------------------------------------------------------------------------
 
   # Creates a new instance.
@@ -422,7 +418,7 @@ class DataImporter
         )
       end
                                                     # -- MEETING SESSION (digest part) --
-      if meeting_id != 0
+      if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
         meeting_session_id = search_or_add_a_corresponding_meeting_session(
             full_pathname, session_id, meeting_id,
             meeting_dates, scheduled_date,
@@ -442,7 +438,7 @@ class DataImporter
       is_ok = process_category_headers(
           full_pathname, data_import_session.id,
           season_id, season_type_id, season_starting_year,
-          meeting_session_id, category_headers, category_headers_ids,
+          meeting_id, meeting_session_id, category_headers, category_headers_ids,
           category_details, scheduled_date
       )
       return nil unless is_ok
@@ -456,7 +452,7 @@ class DataImporter
       is_ok = process_relay_headers(
           full_pathname, data_import_session.id,
           season_id, season_type_id, season_starting_year,
-          meeting_session_id, relay_headers, relay_headers_ids,
+          meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
           relay_details, scheduled_date
       )
       return nil unless is_ok

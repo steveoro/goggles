@@ -21,7 +21,7 @@ class NameParsingMethodTest < ActiveSupport::TestCase
       first_name = splitted_name.reject{ |s| s == last_name }.join(' ')
       expected_value = expectations[index]
       splitted_value = "#{last_name},#{first_name}"
-      assert_equal( splitted_value, expected_value, "splitted result='#{splitted_value}' is different from expected='#{expected_value}'!")
+      assert_equal( expected_value, splitted_value, "splitted result='#{splitted_value}' is different from expected='#{expected_value}'!")
     }
   end
   # ---------------------------------------------------------------------------

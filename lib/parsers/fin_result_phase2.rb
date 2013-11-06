@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.83.20131105
+  - Goggles framework vers.:  4.00.85.20131106
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -30,6 +30,8 @@ require 'parsers/fin_result_parser_tools'
 
 =end
 module FinResultPhase2
+  
+  FUZZY_SEARCH_BIAS_SCORE = 0.98
 
   # Previous/current phase text log stored as an UTF-8 string
   @phase_1_log = ''
@@ -50,7 +52,7 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_category_headers( full_pathname, data_import_session_id, season_id, season_type_id, season_starting_year,
-                                meeting_session_id, category_headers, category_headers_ids,
+                                meeting_id, meeting_session_id, category_headers, category_headers_ids,
                                 category_details, scheduled_date )
     is_ok = true
                                                     # **** HEADER LOOP **** For each header row:...
@@ -73,7 +75,8 @@ module FinResultPhase2
       logger.debug( "CATEGORY HEADER: Current header_row: #{header_row.inspect}\r\nResulting category_type_id=#{category_type_id}, gender_type_id=#{gender_type_id}, stroke_type_id=#{stroke_type_id}, data_import_session ID=#{data_import_session_id}" )
 
       meeting_program_id = search_or_add_a_corresponding_meeting_program(
-          full_pathname, data_import_session_id, season_id, meeting_session_id,
+          full_pathname, data_import_session_id, season_id,
+          meeting_id, meeting_session_id,
           header_row, header_index, gender_type_id,
           category_type_id, stroke_type_id, length_in_meters,
           scheduled_date, false, detail_rows.size
@@ -106,7 +109,7 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_relay_headers( full_pathname, data_import_session_id, season_id, season_type_id, season_starting_year,
-                             meeting_session_id, relay_headers, relay_headers_ids,
+                             meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
                              relay_details, scheduled_date )
     is_ok = true
                                                     # **** HEADER LOOP **** For each header row:...
@@ -130,7 +133,8 @@ module FinResultPhase2
       logger.debug( "RELAY HEADER: Current header_row: #{header_row.inspect}\r\nResulting category_type_id=#{category_type_id}, gender_type_id=#{gender_type_id}, stroke_type_id=#{stroke_type_id}" )
 
       meeting_program_id = search_or_add_a_corresponding_meeting_program(
-          full_pathname, data_import_session_id, season_id, meeting_session_id,
+          full_pathname, data_import_session_id, season_id,
+          meeting_id, meeting_session_id,
           header_row, header_index, gender_type_id,
           category_type_id, stroke_type_id, length_in_meters,
           scheduled_date, true, detail_rows.size
@@ -361,12 +365,14 @@ module FinResultPhase2
   # Searches for a corresponding / existing MeetingSession row. When not found a new temp row (data_import_xxx)
   # is added.
   #
+  # If a Meeting already exists and has more than one MeetingSession, only the first session
+  # will be returned. This will be the "default" MeetingSession used for the insertion of all
+  # missing MeetingEvents or MeetingPrograms found during phase 1.
+  #
   # == Returns: the corresponding id of searched entity row,
   #   - positive if freshly added into its dedicated data_import_xxx table;
   #   - negative IDs only for already existing/commited rows in "standard" entity;
   #   - 0 only on error/unable to process.
-  #
-  # TODO supports only 1 meeting session per data-import file; assumes all data regards just the 1st meeting session
   #
   def search_or_add_a_corresponding_meeting_session( full_pathname, session_id, meeting_id,
                                                      meeting_dates, scheduled_date,
@@ -540,13 +546,15 @@ module FinResultPhase2
   #   - negative IDs only for already existing/commited rows in "standard" entity;
   #   - 0 only on error/unable to process.
   #
-  def search_or_add_a_corresponding_meeting_program( full_pathname, session_id, season_id, meeting_session_id,
+  def search_or_add_a_corresponding_meeting_program( full_pathname, session_id, season_id, 
+                                                     meeting_id, meeting_session_id,
                                                      header_row, header_index, gender_type_id,
                                                      category_type_id, stroke_type_id, length_in_meters,
                                                      scheduled_date, is_a_relay, detail_rows_size )
     result_id = 0
     result_row = nil
     not_found = true
+    meeting_session = nil
                                                     # --- FIELD SETUP: Extract field values before the search:
     # NOTE:
     # header_row[:fields] => [ :distance, :style, :gender, :category_group, :base_time ]
@@ -581,15 +589,15 @@ module FinResultPhase2
     ).first.id                                      # |=> 'MASTER FIN'.id
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-    if ( meeting_session_id < 0 )                   # We can search in non-data_import table only when the value is negative! (only data_import tables have references to both type of tables)
+    if ( meeting_id < 0 )                           # We can search in non-data_import table only when the value is negative! (only data_import tables have references to both type of tables)
 # DEBUG
 #      logger.debug( "Seeking existing MeetingProgram..." )
 #      @phase_1_log << "Seeking existing MeetingProgram...\r\n"
-        result_row = MeetingProgram.includes(:meeting_session, :event_type).where(              # ASSERT: there can be only 1 row keyed by this tuple:
-        [ "(meeting_sessions.id = ?) AND (event_types.id = ?) AND " +
-          "(meeting_programs.category_type_id = ?) AND " +
-          "(meeting_programs.gender_type_id = ?)",
-          -meeting_session_id, event_type_id, category_type_id, gender_type_id ]
+      result_row = MeetingProgram.includes(:meeting, :event_type).where( # ASSERT: there can be only 1 row keyed by this tuple:
+      [ "(meetings.id = ?) AND (event_types.id = ?) AND " +
+        "(meeting_programs.category_type_id = ?) AND " +
+        "(meeting_programs.gender_type_id = ?)",
+        -meeting_id, event_type_id, category_type_id, gender_type_id ]
       ).first
     end
 
@@ -599,10 +607,22 @@ module FinResultPhase2
 # DEBUG
       logger.debug( "Found existing M.Program! #{result_row.class.name}, ID:#{result_row.id} => #{result_row.inspect}" )
       @phase_1_log << "Found existing M.Program! #{result_row.class.name}, ID:#{result_row.id} => #{result_row.inspect}\r\n"
-    else                                            # Search also inside data_import_xxx table counterpart when unsuccesful:
+                                                    # Search also inside data_import_xxx table counterpart when unsuccesful:
+    else                                            # Choose the correct meeting_session_id before further search or insertion (and fallback to default if the meeting event doesn't exist):
+      me = MeetingEvent.includes(:meeting, :meeting_session).where(
+        [ "(meetings.id = ?) AND (event_type_id = ?)",
+          -meeting_id, event_type_id ]
+      ).first
+      if me
 # DEBUG
-#      logger.debug( "Seeking existing DataImportMeetingProgram..." )
-#      @phase_1_log << "Seeking existing DataImportMeetingProgram...\r\n"
+        logger.debug( "Found existing M.Event (but not the Program)! ID:#{me.id} => #{me.inspect}" )
+        @phase_1_log << "Found existing M.Event (but not the Program)! ID:#{me.id} => #{me.inspect}\r\n"
+        meeting_session = me.meeting_session
+        meeting_session_id = - me.meeting_session_id
+      end
+# DEBUG
+      logger.debug( "Seeking existing DataImportMeetingProgram (w/ meeting_session_id=#{meeting_session_id})..." )
+      @phase_1_log << "Seeking existing DataImportMeetingProgram (w/ meeting_session_id=#{meeting_session_id})...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
       result_row = DataImportMeetingProgram.where(
         [ "(data_import_session_id = ?) AND " +
@@ -612,6 +632,7 @@ module FinResultPhase2
           (meeting_session_id < 0 ? -meeting_session_id : meeting_session_id),
           event_type_id, category_type_id, gender_type_id ]
       ).first
+
       if result_row
         result_id = result_row.id
         not_found = false
@@ -622,14 +643,18 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
-      meeting_session = ( meeting_session_id < 0 ?
-        MeetingSession.find( -meeting_session_id ) :
-        DataImportMeetingSession.find( meeting_session_id )
-      )
+      if meeting_session.nil?                       # Both meeting event & program were not found? Let's retrieve the default meeting session:
+        meeting_session = ( meeting_session_id < 0 ?
+          MeetingSession.find( -meeting_session_id ) :
+          DataImportMeetingSession.find( meeting_session_id )
+        )
+      end
+                                                    # Retrieve the swimming pool type from the meeting session: (otherwise use a default)
       pool_type_id = ( meeting_session.swimming_pool ?
         meeting_session.swimming_pool.pool_type_id :
         PoolType::MT50_ID
       )
+                                                    # Define also the base time or standard time, if any:
       time_standard_id = nil
       if ( mins > 0 || secs > 0 || hds > 0 )        # Base time found? Search for a corresponding standard time:
         time_standard_id = search_or_add_a_corresponding_time_standard(
@@ -1183,6 +1208,12 @@ module FinResultPhase2
     not_found = true
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
+# [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
+#    result_row = FinResultParserTools.find_best_fuzzy_match(
+#      team_name,
+#      Swimmer.where(:year_of_birth => swimmer_year),
+#      :complete_name
+#    ) unless result_row
     result_row = Swimmer.where(
       [ 
         "(year_of_birth = ?) AND (complete_name LIKE ?)",
@@ -1195,6 +1226,12 @@ module FinResultPhase2
 # DEBUG
 #      logger.debug( "Swimmer found! (ID=#{result_id})" )
     else                                            # Search also inside DataImportSwimmer when unsuccesful:
+# [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
+#    result_row = FinResultParserTools.find_best_fuzzy_match(
+#      team_name,
+#      DataImportSwimmer.where(:data_import_session_id => session_id, :year_of_birth => swimmer_year),
+#      :complete_name
+#    ) unless result_row
       result_row = DataImportSwimmer.where(
         [ "(data_import_session_id = ?) AND (year_of_birth = ?) AND (complete_name LIKE ?)",
           session_id, swimmer_year, complete_name+'%'
@@ -1246,6 +1283,20 @@ module FinResultPhase2
   # corresponding row in Teams is searched for.
   # Whenever none is found a new one is added to the temp table data_import_team.
   #
+  # === Entity look-up order:
+  # 1) scan if the wanted 'team_name' was just inserted into DataImportTeam
+  #
+  # 2) if not found, scan TeamAffiliation to seek affiliations created/inserted from
+  #    previous runs, which allegedly should have name just like '<team_name>%'.
+  # => if found, Team must exist (due to validations)
+  #
+  # 3) if not found, scan Team for a name just like '<team_name>%'.
+  #
+  # 4) if not found, re-scan Team with some fuzzy-logic metric to seek for a
+  #    "best-match".
+  #    This should be the last resort, since a positive match could be wrong
+  #    anyway if the bias is not high enough.
+  #
   # == Returns: the corresponding id of searched entity row,
   #   - positive if freshly added into its dedicated data_import_xxx table;
   #   - negative IDs only for already existing/commited rows in "standard" entity;
@@ -1260,29 +1311,42 @@ module FinResultPhase2
 #    logger.debug( "Seeking Team '#{team_name}'..." )
 #    @phase_1_log << "Seeking Team '#{team_name}'...\r\n"
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-    result_row = nil                                # Search of TeamAffiliation name is more strict: (shouldn't change at all in the same season)
+    # [Steve, 20131106] We must first do a "strict search" on the rows that we may
+    # have already inserted, since if we have added a new data_import row, it
+    # will have the same exact team_name that we are searching.
+    # If nothing will come out of this, we can then try some more exotic stuff,
+    # like fuzzy searching the "absolute" Team.name in the destination entity.  
+    result_row = DataImportTeam.where([
+        "(data_import_session_id = ?) AND (name LIKE ?)",
+        session_id, team_name+'%'
+    ]).first
+
+    if result_row                                   # Existing team found in data_import_teams? (Yet to be committed)
+      result_id = result_row.id
+      not_found = false
+# DEBUG
+#        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
+    end
+#####################
+                                                    # Search of TeamAffiliation name is more strict: (shouldn't change at all in the same season)
     team_affiliation = TeamAffiliation.where([
         "(season_id = ?) AND (name LIKE ?)",
         season_id, team_name+'%'
     ]).first
     result_row = team_affiliation.team if team_affiliation
                                                     # Do also an extensive search on Team if team affiliation for this season is not found:
-    unless result_row
-# FIXME *****************************************+
-# FIXME WIP
-      best_score = 0
-      Team.all.each { |team|                        # Searching on Team/DataImportTeam requires much more fuzzy logic (similarly to City name, or Swimmer name)
-        match_score = FinResultParserTools.seems_to_have_the_same_name(
-          team_name, team.name, team.editable_name
-        )
-        if ( (match_score > 2) && (best_score < match_score) )
-          best_score = match_score
-          result_row = team
-        end
-      }
-    end
+    result_row = FinResultParserTools.find_best_fuzzy_match(
+      team_name,
+      Team.all,
+      :name, :editable_name,
+      FUZZY_SEARCH_BIAS_SCORE
+    ) unless result_row
                                                     # (At this point either we have a Team or we have not)
     if result_row                                   # We must differentiate the result: negative for Team, positive for DataImportTeam
+      if ( team_name != result_row.team_name )      # Log "best match" results
+        @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' for '#{team_name}'.\r\n"
+        logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' for '#{team_name}'." )
+      end
       result_id = - result_row.id
       not_found = false
 # DEBUG
@@ -1316,26 +1380,9 @@ module FinResultPhase2
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         end
       end # (END unless team_affiliation)
-
-    else                                            # result_row.nil? Search also inside DataImportTeam when unsuccesful:
-      unless result_row                             # Searching on Team/DataImportTeam requires much more fuzzy logic (similarly to City name, or Swimmer name)
-# FIXME *****************************************+
-        DataImportTeam.where( :data_import_session_id => session_id ).each { |team|
-          is_the_same = FinResultParserTools.seems_to_have_the_same_name(
-            team_name, team.name, team.editable_name
-          )
-          if is_the_same
-            result_row = team
-            break
-          end
-        }
-      end
-      if result_row                                 # Existing team found in data_import_teams? (Yet to be committed)
-        result_id = result_row.id
-        not_found = false
-# DEBUG
-#        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
-      end
+                                                    # result_row.nil? Search also inside DataImportTeam when unsuccesful:
+    else
+#############################
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found

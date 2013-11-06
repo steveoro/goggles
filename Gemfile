@@ -74,6 +74,8 @@ gem 'rails_admin'
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
+gem "fuzzy-string-match_pure"                       # [Steve, 20131106] Used for Team/Swimmer names comparison & existence checking
+
 #gem 'rspec'
 
 gem "wice_grid", '~> 3.3'

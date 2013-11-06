@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'fileutils'
+require 'fuzzystringmatch'
 require 'common/format'
 
 
@@ -8,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.83.20131105
+  - Goggles framework vers.:  4.00.85.20131106
   - author: Steve A.
 
 == FinResultParserTools module
@@ -270,51 +271,88 @@ module FinResultParserTools
   # ---------------------------------------------------------------------------
 
 
-  # Splits a Team or a Swimmer name into an array of tokens.
+  # Using a fuzzy-string matching metric, this method loops on all instances
+  # supplied as parameter to seek the highest-scoring match.
   #
-  def self.get_token_array_from_name( full_name )
-    arr_of_tokens = full_name.split(/[\'\,\s\.]/)
-  end
-
-
-  # Compare two names (either a team name or a swimmer name),
-  # using the normalization process from #get_token_array_from_name().
+  # The matching value can be any string.
+  # The array can contain any Model/Class instance, as long as it responds to
+  # the specified method to retrieve the comparison value.
+  # A score_bias can be specified to override the minimum sufficient acceptable score
+  # (default = 0.6 -- which is kinda low and permissive, depending on the context).
   #
   # === Returns
-  # The comparison score. 1 point for each token that "resembles"
-  # a possible match. Higher the score, higher the possibility.
+  # The item of the array with the best score. +nil+ if none has a sufficient
+  # matching score (greater than the bias).
   #
-  def self.compare_tokenized_strings( possibly_new_name, existing_name )
-    possibly_new_normalized = FinResultParserTools.get_token_array_from_name( possibly_new_name )
-    existing_normalized_arr = FinResultParserTools.get_token_array_from_name( existing_name )
+  def self.find_best_fuzzy_match( matching_string, array_of_rows, getter_for_comparison,
+                                  alternative_getter_method = nil, score_bias = 0.6 )
+    raise "array_of_rows does not support the :each enumerator!" unless array_of_rows.respond_to?(:each)
+    result_row = nil
+    matcher    = FuzzyStringMatch::JaroWinkler.create()
+    best_score = 0
 
-    possible_matches = []
-    possibly_new_normalized.each{ |token_new|
-      is_a_match = existing_normalized_arr.any?{ |token_old|
-        if ( token_old.size < token_new.size )
-          shortest = token_old
-          other    = token_new
-        else
-          shortest = token_new
-          other    = token_old
+    array_of_rows.each { |row|
+# DEBUG
+#      raise "row does not respond to '#{getter_for_comparison}'!" unless row.respond_to?( getter_for_comparison )
+      comparison_string = row.send( getter_for_comparison )
+      match_score = matcher.getDistance( matching_string.upcase, comparison_string.upcase )
+      if ( (match_score > score_bias) && (best_score < match_score) )
+# DEBUG
+#        puts( "find_best_fuzzy_match(): '#{matching_string}' vs. '#{comparison_string}' => score: #{match_score}" )
+        best_score = match_score
+        result_row = row
+      end
+                                                    # Search for a match also with the alternative getter, when provided
+      if ( alternative_getter_method )
+# DEBUG
+#        raise "row does not respond to '#{alternative_getter_method}'!" unless row.respond_to?( alternative_getter_method )
+        comparison_string = row.send( alternative_getter_method )
+        match_score = matcher.getDistance( matching_string.upcase, comparison_string.upcase )
+        if ( (match_score > score_bias) && (best_score < match_score) )
+# DEBUG
+#          puts( "find_best_fuzzy_match(): '#{matching_string}' vs. '#{comparison_string}' => score: #{match_score} (alt.)" )
+          best_score = match_score
+          result_row = row
         end
-        ( other =~ Regexp.new("#{shortest}.*", Regexp::IGNORECASE) ) == 0
-      }
-      possible_matches << token_new if is_a_match
+      end
+      break if (best_score > 9.9999)
     }
-    possible_matches.size
+    result_row
   end
 
-  # Normalizes and compares a Club/Team name or a Swimmer name to a couple of alternative names.
-  # (Specifically the actual registration name and its user-editable counterpart.)
+
+  # Similarly to #find_best_fuzzy_match(), uses a fuzzy string search and simply
+  # collects the best matches found, given the bias score.
+  #
+  # Matches are collected in FIFO order, with each one selected having a better
+  # score than the previous one. The resulting array is sorted on score.
   #
   # === Returns
-  # The comparison score. 1 point for each token that "resembles"
-  # a possible match. Higher the score, higher the possibility.
+  # An array of Hash having each element as:
   #
-  def self.seems_to_have_the_same_name( new_name, existing_name, alt_existing_name )
-    compare_tokenized_strings( new_name, existing_name ) +
-    compare_tokenized_strings( new_name, alt_existing_name )
+  #  { :score => <match_score>, :row => <match_row_instance> }
+  # 
+  # Where the match_row_instance is a match that has scored higher than the bias.
+  #
+  def self.collect_best_fuzzy_matches( matching_string, array_of_rows, getter_for_comparison,
+                                       score_bias = 0.6 )
+    raise "array_of_rows does not support the :each enumerator!" unless array_of_rows.respond_to?(:each)
+    matcher    = FuzzyStringMatch::JaroWinkler.create()
+    results    = []
+    best_score = 0
+
+    array_of_rows.each { |row|
+# DEBUG
+#      raise "row does not respond to '#{getter_for_comparison}'!" unless row.respond_to?( getter_for_comparison )
+      comparison_string = row.send( getter_for_comparison )
+      match_score = matcher.getDistance( matching_string.upcase, comparison_string.upcase )
+      if ( (match_score > score_bias) && (best_score < match_score) )
+# DEBUG
+#        puts( "count_best_fuzzy_matches(): '#{matching_string}' vs. '#{comparison_string}' => score: #{match_score}" )
+        results << { :score => match_score, :row => row }
+      end
+    }
+    results.sort!{ |x,y| x[:score] <=> y[:score] }
   end
   # ---------------------------------------------------------------------------
 end

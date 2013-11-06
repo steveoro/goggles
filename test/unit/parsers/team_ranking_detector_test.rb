@@ -36,7 +36,7 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
         assert( match_idx >= 0, "match_idx was expected to be >= 0! (and is nil)" )
         expected_value = expectations[index]
         tokenized_value = row[ match_idx .. match_idx+10 ].strip
-        assert_equal( tokenized_value, expected_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
+        assert_equal( expected_value, tokenized_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
       else
         assert_nil( match_idx )
       end
@@ -55,7 +55,7 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       assert( end_idx >= 0, "end_idx was expected to be >= 0! (and is nil)" )
       expected_value = expectations[index]
       tokenized_value = row[ match_idx .. end_idx ].strip
-      assert_equal( tokenized_value, expected_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
+      assert_equal( expected_value, tokenized_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
     }
   end
 
@@ -71,7 +71,7 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       assert( end_idx >= 0, "end_idx was expected to be >= 0! (and is nil)" )
       expected_value = expectations[index]
       tokenized_value = row[ match_idx .. end_idx ].strip
-      assert_equal( tokenized_value, expected_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
+      assert_equal( expected_value, tokenized_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
     }
   end
   # ---------------------------------------------------------------------------

@@ -14,7 +14,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
       / (?=[a-z]+)/i
     )
     assert_not_nil( te, "new TokenExtractor instance is nil!")
-    assert_equal( te.field_name, :position, "field name is different!")
+    assert_equal( :position, te.field_name, "field name is different!")
   end
   # ---------------------------------------------------------------------------
 
