@@ -68,6 +68,7 @@ class DataImporterTest < ActiveSupport::TestCase
         full_pathname,
         nil,                                        # Force auto-detect of the season from path/file name
         true,                                       # Force missing meeting creation
+        true,                                       # Force missing team creation
         true                                        # SKIP consume data files
       )
       assert_not_nil( data_import_session, "Something went wrong with the digest phase of '#{full_pathname}'!" )

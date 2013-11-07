@@ -29,6 +29,7 @@ it:
     season_not_found: "Non ho trovato la stagione richiesta nel database!"
     season_type_not_found: "Non ho trovato il tipo di stagione richiesto nel database!"
     force_meeting_creation: "Crea Meeting mancanti"
+    force_team_creation: "Crea Team/Club mancanti"
 
 
   swimmers:

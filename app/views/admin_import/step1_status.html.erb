@@ -122,6 +122,7 @@
 				<label class="control-label" for="season[season_id]"><%= I18n.t(:season, {:scope=>[:activerecord, :models]}) %>:</label>
 				<label class="control-label" for="datafile"><%= I18n.t(:select_file) %>:</label>
 				<label class="control-label" for="force_meeting_creation"><%= I18n.t('admin_import.force_meeting_creation') %>:</label>
+				<label class="control-label" for="force_team_creation"><%= I18n.t('admin_import.force_team_creation') %>:</label>
 				<div class="controls">
 					<%= select( :season, :season_id,
 								Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] },
@@ -130,6 +131,7 @@
 					%>
 					<%= file_field_tag( :datafile ) %>
 					<%= check_box_tag( :force_meeting_creation ) %>
+					<%= check_box_tag( :force_team_creation ) %>
 				</div>
 			</div>
 			<div class="control-group">

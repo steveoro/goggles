@@ -80,6 +80,9 @@ class AdminImportController < ApplicationController
   # - <tt>:id</tt> => id of the data-import session in progress; when present, takes precedence over the +datafile+ parameter
   # - <tt>:datafile</tt> => an uploaded datafile (an ActionDispatch::Http::UploadedFile object)
   #
+  # - <tt>:force_meeting_creation</tt> => true/not nil to enable the creation of missing Meeting / MeetingSession rows (Season is assumed to be always pre-existent)
+  # - <tt>:force_team_creation</tt> => true/not nil to enable the creation of missing Team / TeamAssociation rows
+  #
   def step2_checkout
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
@@ -120,6 +123,7 @@ class AdminImportController < ApplicationController
       end
       data_import_session = nil
       force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
+      force_missing_team_creation = ( params[:force_team_creation].to_i > 0 )
       @season_description = '?'
       begin
         season = Season.find_by_id(@season_id)
@@ -133,7 +137,8 @@ class AdminImportController < ApplicationController
                                                     # === Create a new data-import session and consume the file: ===
       data_importer = DataImporter.new( logger, flash, current_admin.id )
       data_import_session = data_importer.consume_txt_file(
-        destination_filename, season, force_missing_meeting_creation
+        destination_filename, season, force_missing_meeting_creation,
+        force_missing_team_creation
       )
                                                     # Session retrieval successful? Head on to phase #2 and let the component handle the rest:
       @data_import_session_id = data_import_session ? data_import_session.id : nil

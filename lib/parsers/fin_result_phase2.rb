@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.85.20131106
+  - Goggles framework vers.:  4.00.86.20131107
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -53,7 +53,7 @@ module FinResultPhase2
   #
   def process_category_headers( full_pathname, data_import_session_id, season_id, season_type_id, season_starting_year,
                                 meeting_id, meeting_session_id, category_headers, category_headers_ids,
-                                category_details, scheduled_date )
+                                category_details, scheduled_date, force_missing_team_creation = false )
     is_ok = true
                                                     # **** HEADER LOOP **** For each header row:...
     category_headers_ids.each_with_index { |category_id, header_index|
@@ -91,7 +91,8 @@ module FinResultPhase2
             full_pathname, data_import_session_id,
             season_id, season_type_id, season_starting_year,
             meeting_program_id, detail_row, detail_row_idx, detail_rows.size,
-            gender_type_id, category_type_id
+            gender_type_id, category_type_id,
+            force_missing_team_creation
         )
         is_ok = (result_id != 0)
         return unless is_ok
@@ -110,7 +111,7 @@ module FinResultPhase2
   #
   def process_relay_headers( full_pathname, data_import_session_id, season_id, season_type_id, season_starting_year,
                              meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
-                             relay_details, scheduled_date )
+                             relay_details, scheduled_date, force_missing_team_creation = false )
     is_ok = true
                                                     # **** HEADER LOOP **** For each header row:...
     relay_headers_ids.each_with_index { |relay_id, header_index|
@@ -147,7 +148,8 @@ module FinResultPhase2
                                                     # -- MEETING RELAY RESULT (digest part) --                                                    
         result_id = search_or_add_a_corresponding_meeting_relay_result(
             full_pathname, data_import_session_id, season_id, meeting_program_id,
-            detail_row, detail_row_idx, detail_rows.size
+            detail_row, detail_row_idx, detail_rows.size,
+            force_missing_team_creation
         )
         is_ok = (result_id != 0)
         return unless is_ok
@@ -165,7 +167,8 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_team_ranking( full_pathname, data_import_session_id, season_id, meeting_id,
-                            ranking_headers, ranking_headers_ids, ranking_details )
+                            ranking_headers, ranking_headers_ids, ranking_details,
+                            force_missing_team_creation = false )
     is_ok = true
                                                     # **** HEADER LOOP **** For each header row (even if there's only one):...
     ranking_headers_ids.each_with_index { |ranking_id, header_index|
@@ -181,7 +184,8 @@ module FinResultPhase2
                                                     # -- MEETING RELAY RESULT (digest part) --                                                    
         result_id = search_or_add_a_corresponding_meeting_team_score(
             full_pathname, data_import_session_id, season_id, meeting_id, 
-            detail_row, detail_row_idx, detail_rows.size
+            detail_row, detail_row_idx, detail_rows.size,
+            force_missing_team_creation
         )
         is_ok = (result_id != 0)
         return unless is_ok
@@ -236,7 +240,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportSeason creation: exception caught during save!\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportSeason creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportSeason creation: exception caught during save!" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -345,7 +349,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportMeeting creation: exception caught during save!\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeeting creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportMeeting creation: exception caught during save!" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -455,7 +459,7 @@ module FinResultPhase2
         @phase_1_log << "\r\nDataImportMeetingSession creation: exception caught during save!\r\n"
         @phase_1_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeetingSession creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportMeetingSession creation: exception caught during save!" )
         logger.error( "field_hash = #{ field_hash.inspect }\r\n" ) if field_hash
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
@@ -693,7 +697,7 @@ module FinResultPhase2
         @phase_1_log << "event_type_id = #{ event_type_id.inspect }\r\n" if event_type_id
         @phase_1_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeetingProgram creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportMeetingProgram creation: exception caught during save!" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -721,7 +725,8 @@ module FinResultPhase2
   #
   def search_or_add_a_corresponding_individual_result( full_pathname, session_id, season_id, season_type_id, season_starting_year,
                                                        meeting_program_id, detail_row, detail_row_idx, detail_rows_size,
-                                                       gender_type_id, category_type_id )
+                                                       gender_type_id, category_type_id,
+                                                       force_missing_team_creation = false )
     result_id = 0
     result_row = nil
     not_found = true
@@ -747,7 +752,7 @@ module FinResultPhase2
       flash[:error] = "#{I18n.t(:something_went_wrong)} ['returned swimmer_id IS ZERO']"
       return 0
     end
-    team_id    = search_or_add_a_corresponding_team( session_id, season_id, team_name )
+    team_id    = search_or_add_a_corresponding_team( session_id, season_id, team_name, force_missing_team_creation )
     if ( team_id == 0 )                             # Immediately exit on team search/add error:
       @phase_1_log << "\r\nsearch_or_add_a_corresponding_individual_result(): returned team_id IS ZERO! (And it can't be.)\r\n"
       logger.error( "\r\nsearch_or_add_a_corresponding_individual_result(): returned team_id IS ZERO! (And it can't be.)" )
@@ -859,7 +864,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportMeetingIndividualResult creation: exception caught during save!\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeetingIndividualResult creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportMeetingIndividualResult creation: exception caught during save!" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -887,7 +892,8 @@ module FinResultPhase2
   #   - 0 only on error/unable to process.
   #
   def search_or_add_a_corresponding_meeting_relay_result( full_pathname, session_id, season_id, meeting_program_id,
-                                                          detail_row, detail_row_idx, detail_rows_size )
+                                                          detail_row, detail_row_idx, detail_rows_size,
+                                                          force_missing_team_creation = false )
     result_id = 0
     result_row = nil
     not_found = true
@@ -901,7 +907,7 @@ module FinResultPhase2
     team_name     = detail_row[:fields][:team_name]
     result_time   = detail_row[:fields][:result_time]
     result_score  = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
-    team_id       = search_or_add_a_corresponding_team( session_id, season_id, team_name )
+    team_id       = search_or_add_a_corresponding_team( session_id, season_id, team_name, force_missing_team_creation )
     if ( team_id == 0 )                             # Immediately exit on team search/add error:
       @phase_1_log << "\r\nsearch_or_add_a_corresponding_meeting_relay_result(): returned team_id IS ZERO! (And it can't be.)\r\n"
       logger.error( "\r\nsearch_or_add_a_corresponding_meeting_relay_result(): returned team_id IS ZERO! (And it can't be.)" )
@@ -986,7 +992,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportMeetingRelayResult creation: exception caught during save!\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeetingRelayResult creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportMeetingRelayResult creation: exception caught during save!" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -1014,7 +1020,8 @@ module FinResultPhase2
   #   - 0 only on error/unable to process.
   #
   def search_or_add_a_corresponding_meeting_team_score( full_pathname, session_id, season_id, meeting_id,
-                                                        detail_row, detail_row_idx, detail_rows_size )
+                                                        detail_row, detail_row_idx, detail_rows_size,
+                                                        force_missing_team_creation = false )
     result_id = 0
     result_row = nil
     not_found = true
@@ -1028,7 +1035,7 @@ module FinResultPhase2
 # FIXME TEAM CODE is not used! (It could be used to fill-in missing data, when possible)
     team_code     = detail_row[:fields][:team_code]
     team_name     = detail_row[:fields][:team_name]
-    team_id       = search_or_add_a_corresponding_team( session_id, season_id, team_name )
+    team_id       = search_or_add_a_corresponding_team( session_id, season_id, team_name, force_missing_team_creation )
     if ( team_id == 0 )                             # Immediately exit on team search/add error:
       @phase_1_log << "\r\nsearch_or_add_a_corresponding_meeting_team_score(): returned team_id IS ZERO! (And it can't be.)\r\n"
       logger.error( "\r\nsearch_or_add_a_corresponding_meeting_team_score(): returned team_id IS ZERO! (And it can't be.)" )
@@ -1157,7 +1164,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportMeetingTeamScore creation: exception caught during save!\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file(#{full_pathname}): DataImportMeetingTeamScore creation: exception caught during save!" )
+        logger.error( "\r\n*** DataImportMeetingTeamScore creation: exception caught during save!" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -1265,7 +1272,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportSwimmer creation: exception caught during save! (Data: #{complete_name}='#{last_name}'+'#{first_name}', #{swimmer_year})\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file: DataImportSwimmer creation: exception caught during save! (Data: #{swimmer_name}='#{last_name}'+'#{first_name}', #{swimmer_year})" )
+        logger.error( "\r\n*** DataImportSwimmer creation: exception caught during save! (Data: #{swimmer_name}='#{last_name}'+'#{first_name}', #{swimmer_year})" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -1283,85 +1290,110 @@ module FinResultPhase2
   # corresponding row in Teams is searched for.
   # Whenever none is found a new one is added to the temp table data_import_team.
   #
-  # === Entity look-up order:
-  # 1) scan if the wanted 'team_name' was just inserted into DataImportTeam
+  # === Note:
+  # Team add/creation is considered as "mission-critical" since a wrong Team
+  # assignation (due to typos or mistakes during manual data-input) could forfait
+  # a whole bunch of results data.
   #
-  # 2) if not found, scan TeamAffiliation to seek affiliations created/inserted from
+  # Normally the automatic Team creation procedure is disabled and requires a
+  # separate pre-analisys stage, with a statistical report of the best-match
+  # data before actual data insertion.
+  #
+  # === Entity look-up order/algorithm:
+  # 1) Scan TeamAffiliation to seek affiliations created/inserted from
   #    previous runs, which allegedly should have name just like '<team_name>%'.
   # => if found, Team must exist (due to validations)
   #
-  # 3) if not found, scan Team for a name just like '<team_name>%'.
+  # 2) If not found, scan if the wanted 'team_name' was just inserted into
+  #    DataImportTeam (due to be committed on next phase).
   #
-  # 4) if not found, re-scan Team with some fuzzy-logic metric to seek for a
-  #    "best-match".
+  # 3) If not found, scan Team with some fuzzy-logic metric to seek for a
+  #    "best-match", but using a very-high bias score (>= 0.98).
   #    This should be the last resort, since a positive match could be wrong
   #    anyway if the bias is not high enough.
+  #
+  # 3.1) Additional (*integrity*) check on TeamAffiliation:
+  #    If a Team was found, we can actually create at this point the missing
+  #    TeamAffiliation using the searched <team_name>.
+  #    (NOTE: THIS IS THE ONLY STAGE AND SITUATION IN WHICH TeamAffiliations are
+  #     added when missing because their corresponding Team is already found!
+  #     During phase 3 TeamAffiliations are _always_ added because all the Teams
+  #     processed there are considered as "new" or missing.)
+  #
+  # 4) If all else fails, insert a new Team ONLY if its enabling flag has been
+  #    set to true (force_missing_team_creation).
   #
   # == Returns: the corresponding id of searched entity row,
   #   - positive if freshly added into its dedicated data_import_xxx table;
   #   - negative IDs only for already existing/commited rows in "standard" entity;
   #   - 0 only on error/unable to process.
   #
-  def search_or_add_a_corresponding_team( session_id, season_id, team_name )
+  def search_or_add_a_corresponding_team( session_id, season_id, team_name,
+                                          force_missing_team_creation = false )
     return 0 if team_name.nil? || team_name.size < 2
     result_id = 0
     not_found = true
-                                                    # --- FIELD SETUP: Extract field values before the search:
+                                                    # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
 # DEBUG
 #    logger.debug( "Seeking Team '#{team_name}'..." )
 #    @phase_1_log << "Seeking Team '#{team_name}'...\r\n"
-                                                    # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-    # [Steve, 20131106] We must first do a "strict search" on the rows that we may
-    # have already inserted, since if we have added a new data_import row, it
-    # will have the same exact team_name that we are searching.
-    # If nothing will come out of this, we can then try some more exotic stuff,
-    # like fuzzy searching the "absolute" Team.name in the destination entity.  
-    result_row = DataImportTeam.where([
-        "(data_import_session_id = ?) AND (name LIKE ?)",
-        session_id, team_name+'%'
-    ]).first
-
-    if result_row                                   # Existing team found in data_import_teams? (Yet to be committed)
-      result_id = result_row.id
-      not_found = false
-# DEBUG
-#        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
-    end
-#####################
-                                                    # Search of TeamAffiliation name is more strict: (shouldn't change at all in the same season)
-    team_affiliation = TeamAffiliation.where([
+                                                    # *** (1) SCAN TeamAffiliation:
+    team_affiliation = TeamAffiliation.where([      # Search of TeamAffiliation name is more strict: (shouldn't change at all in the same season)
         "(season_id = ?) AND (name LIKE ?)",
         season_id, team_name+'%'
     ]).first
-    result_row = team_affiliation.team if team_affiliation
-                                                    # Do also an extensive search on Team if team affiliation for this season is not found:
-    result_row = FinResultParserTools.find_best_fuzzy_match(
-      team_name,
-      Team.all,
-      :name, :editable_name,
-      FUZZY_SEARCH_BIAS_SCORE
-    ) unless result_row
-                                                    # (At this point either we have a Team or we have not)
-    if result_row                                   # We must differentiate the result: negative for Team, positive for DataImportTeam
-      if ( team_name != result_row.team_name )      # Log "best match" results
+    if team_affiliation
+      result_row = team_affiliation.team
+      result_id = - result_row.id                   # We must differentiate the result: negative for Team, positive for DataImportTeam
+      not_found = false
+    end
+                                                    # *** (2) SCAN DataImportTeam:
+    if not_found
+      # [Steve, 20131106] We must do a "strict search" on the rows that we may
+      # have already inserted, since new data_import rows always
+      # will have the same exact team_name that we are searching.
+      # If nothing will come out of this, we can then try some more exotic stuff,
+      # like fuzzy searching the "absolute" Team.name in the destination entity.
+      result_row = DataImportTeam.where([
+          "(data_import_session_id = ?) AND (name LIKE ?)",
+          session_id, team_name+'%'
+      ]).first
+      if result_row                                 # Existing team found in data_import_teams? (Yet to be committed)
+        result_id = result_row.id                   # We must differentiate the result: negative for Team, positive for DataImportTeam
+        not_found = false
+  # DEBUG
+  #        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
+      end
+    end
+                                                    # *** (3) FUZZY SCAN on Teams:
+    if not_found
+      result_row = FinResultParserTools.find_best_fuzzy_match(
+        team_name,
+        Team.all,
+        :name, :editable_name,
+        FUZZY_SEARCH_BIAS_SCORE
+      )                                             # ALWAYS LOG any chosen "best match" which is slightly different from the searched string:
+      if result_row
+# DEBUG
+#        logger.debug( "Team found! (ID=#{result_id})" )
         @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' for '#{team_name}'.\r\n"
         logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' for '#{team_name}'." )
+        result_id = - result_row.id                 # We must differentiate the result: negative for Team, positive for DataImportTeam
+        not_found = false
       end
-      result_id = - result_row.id
-      not_found = false
-# DEBUG
-#      logger.debug( "Team found! (ID=#{result_id})" )
-                                                    # Check if there is (& there must be) a corresponding TeamAffiliation: if missing, add it for current season
-      team_affiliation = TeamAffiliation.where(
+    end
+
+    if result_id < 0                                # Do we have an actual Team? => INTEGRITY Check on TeamAffiliation     
+      team_affiliation = TeamAffiliation.where(     # Check if there is (& there must be) a corresponding TeamAffiliation: if missing, add it for current season
         :team_id    => result_row.id,
         :season_id  => season_id
       ).first unless team_affiliation
-
-      unless team_affiliation                       # When missing, we must add the TeamAffiliation row for this season!
+                                                    # Always add any MISSING TeamAffiliation
+      unless team_affiliation                       # (since the allegedly linked Team was found)
         begin                
           TeamAffiliation.transaction do
             team_affiliation = TeamAffiliation.new(
-              :name       => result_row.name,
+              :name       => team_name,             # Use the actual provided (and searched) name instead of the result_row.name
               :team_id    => result_row.id,
               :season_id  => season_id,
               :is_autofilled => true,               # signal that we have guessed some of the values
@@ -1375,17 +1407,19 @@ module FinResultPhase2
         rescue
           @phase_1_log << "\r\nDataImportTeam, TeamAffiliation creation: exception caught during save! (Name:'#{team_name}')\r\n"
           @phase_1_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** consume_txt_file: DataImportTeam, TeamAffiliation creation: exception caught during save! (Name:'#{team_name}')" )
+          logger.error( "\r\n*** DataImportTeam, TeamAffiliation creation: exception caught during save! (Name:'#{team_name}')" )
           logger.error( "*** #{ $!.to_s }\r\n" ) if $!
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         end
       end # (END unless team_affiliation)
-                                                    # result_row.nil? Search also inside DataImportTeam when unsuccesful:
-    else
-#############################
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
-    if not_found
+    if not_found && (!force_missing_team_creation)
+      flash[:error] = "#{I18n.t(:requested_entity_missing)}: 'Team'"
+      return 0
+    end
+
+    if not_found                                    # --- FIELD SETUP: Extract field values before the search:
       city_id = search_or_add_a_corresponding_city(
         session_id,
         FinResultParserTools.guess_city_from_team_name(team_name)
@@ -1409,7 +1443,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportTeam creation: exception caught during save! (Name:'#{team_name}')\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file: DataImportTeam creation: exception caught during save! (Name:'#{team_name}')" )
+        logger.error( "\r\n*** DataImportTeam creation: exception caught during save! (Name:'#{team_name}')" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -1487,7 +1521,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportBadge creation: exception caught during save! (Number:'#{badge_code}')\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file: DataImportBadge creation: exception caught during save! (Number='#{badge_code}')" )
+        logger.error( "\r\n*** DataImportBadge creation: exception caught during save! (Number='#{badge_code}')" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
@@ -1594,7 +1628,7 @@ module FinResultPhase2
       rescue                                        # --- RESCUE (failed) transaction ---
         @phase_1_log << "\r\nDataImportCity creation: exception caught during save! (#{names.inspect})\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** consume_txt_file: DataImportCity creation: exception caught during save! (#{names.inspect})" )
+        logger.error( "\r\n*** DataImportCity creation: exception caught during save! (#{names.inspect})" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else

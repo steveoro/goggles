@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.85.20131106
+  - Goggles framework vers.:  4.00.86.20131107
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -37,6 +37,7 @@ class DataImporter
   attr_accessor :logger, :flash, 
                 # Batch/delayed execution parameters:
                 :full_pathname, :season, :force_missing_meeting_creation,
+                :force_missing_team_creation,
                 :do_not_consume_file, :log_dir
   # ---------------------------------------------------------------------------
 
@@ -56,6 +57,7 @@ class DataImporter
     self.full_pathname = nil
     self.season = nil
     self.force_missing_meeting_creation = false
+    self.force_missing_team_creation = false
     self.do_not_consume_file = false
     self.log_dir = File.join( Rails.root, 'log' )
   end
@@ -77,6 +79,7 @@ class DataImporter
     self.full_pathname = nil
     self.season = nil
     self.force_missing_meeting_creation = false
+    self.force_missing_team_creation = false
     self.do_not_consume_file = false
     self.log_dir = File.join( Rails.root, 'log' )
   end
@@ -168,10 +171,11 @@ class DataImporter
   # +perform+ method signature.
   # This assumes that all parameters relevant to the execution
   # must be already set into their dedicated class members.  
-  # 
-  def perform
-    batch_import()
-  end
+  #
+# FIXME TEST delayed_job execution without perform method
+#  def perform
+#    batch_import()
+#  end
 
   # Verbose display name for the job.
   #
@@ -189,11 +193,13 @@ class DataImporter
   # 
   def set_batch_parameters( full_pathname, season = nil,
                             force_missing_meeting_creation = false,
+                            force_missing_team_creation = false,
                             do_not_consume_file = false,
                             log_dir = File.join( Rails.root, 'log' ) )
     self.full_pathname = full_pathname
     self.season = season
     self.force_missing_meeting_creation = force_missing_meeting_creation
+    self.force_missing_team_creation = force_missing_team_creation
     self.do_not_consume_file = do_not_consume_file
     self.log_dir = log_dir
   end
@@ -234,6 +240,7 @@ class DataImporter
       self.full_pathname,
       self.season,
       self.force_missing_meeting_creation,
+      self.force_missing_team_creation,
       self.do_not_consume_file
     )
     if data_import_session
@@ -278,9 +285,9 @@ class DataImporter
   #     The parse result hash is directly stored into dedicated temporary table on the database.
   #
   def consume_txt_file( full_pathname, season = nil, force_missing_meeting_creation = false,
-                        do_not_consume_file = false )
-    logger.info( "\r\n-- consume_txt_file: '#{full_pathname}', force_missing_meeting_creation=#{force_missing_meeting_creation}, do_not_consume_file=#{do_not_consume_file}." )
-    @phase_1_log = "Parsing file: #{full_pathname}, force_missing_meeting_creation=#{force_missing_meeting_creation}, do_not_consume_file=#{do_not_consume_file}.\r\n"
+                        force_missing_team_creation = false, do_not_consume_file = false )
+    logger.info( "\r\n-- consume_txt_file: '#{full_pathname}', force_missing_meeting_creation=#{force_missing_meeting_creation}, force_missing_team_creation=#{force_missing_team_creation}, do_not_consume_file=#{do_not_consume_file}." )
+    @phase_1_log = "Parsing file: #{full_pathname}, force_missing_meeting_creation=#{force_missing_meeting_creation}, force_missing_team_creation=#{force_missing_team_creation}, do_not_consume_file=#{do_not_consume_file}.\r\n"
 
     # TODO PARSE file_type => '<ris><date_header><code>.txt' for FIN results type
     file_type = 'fin_results'                       # FIXME Pre-fixed file structure type, only FIN Results supported, no parsing at all
@@ -439,7 +446,7 @@ class DataImporter
           full_pathname, data_import_session.id,
           season_id, season_type_id, season_starting_year,
           meeting_id, meeting_session_id, category_headers, category_headers_ids,
-          category_details, scheduled_date
+          category_details, scheduled_date, force_missing_team_creation
       )
       return nil unless is_ok
                                                     # --- RELAY (digest part) --
@@ -453,7 +460,7 @@ class DataImporter
           full_pathname, data_import_session.id,
           season_id, season_type_id, season_starting_year,
           meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
-          relay_details, scheduled_date
+          relay_details, scheduled_date, force_missing_team_creation
       )
       return nil unless is_ok
                                                     # --- TEAM RANKING/SCORES (digest part) --
@@ -465,7 +472,7 @@ class DataImporter
 
       is_ok = process_team_ranking(
           full_pathname, data_import_session.id, season_id, meeting_id,
-          ranking_headers, ranking_headers_ids, ranking_details
+          ranking_headers, ranking_headers_ids, ranking_details, force_missing_team_creation
       )
       return nil unless is_ok
 

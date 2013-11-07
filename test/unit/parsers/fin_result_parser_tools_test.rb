@@ -91,10 +91,30 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
   end
   # ---------------------------------------------------------------------------
 
+
+  test "find minimum bias score for a single match" do
+    perform_seek_minimum_bias_score_for( "CSI Nuoto Ober Ferrari ASD" )
+    perform_seek_minimum_bias_score_for( "CSINuoto Ober Ferrari" )
+    perform_seek_minimum_bias_score_for( "CSI Nuoto Master Ober Ferrari" )
+    perform_seek_minimum_bias_score_for( "Nuotatori" )
+    perform_seek_minimum_bias_score_for( "Acquatime" )
+    perform_seek_minimum_bias_score_for( "Acqua Time" )
+    perform_seek_minimum_bias_score_for( "Acquambiente" )
+    perform_seek_minimum_bias_score_for( "Sport Management" )
+    perform_seek_minimum_bias_score_for( "Albatros" )
+    perform_seek_minimum_bias_score_for( "Albatros ASD" )
+  end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+
+
   test "collect matches using edited names" do
     check_for_multiple_matches( "CSI Nuoto Ober Ferrari ASD", 0.97, true, false )
     check_for_multiple_matches( "CSI Nuoto Master Ober Ferrari", 0.8, true, false )
     check_for_multiple_matches( "Nuotatori", 0.8, true, false )
+
+    check_for_multiple_matches( "Acquatime", 0.97, true, false )
+    check_for_multiple_matches( "Acquambiente", 0.97, true, false )
   end
   # ---------------------------------------------------------------------------
   # ---------------------------------------------------------------------------
@@ -170,12 +190,43 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
   # ---------------------------------------------------------------------------
 
 
+  def perform_seek_minimum_bias_score_for( checked_name, starting_bias_score = 0.99, show_report = true )
+    puts "\r\n=== Collecting best matches for '#{checked_name}', bias: #{starting_bias_score} ==="
+    result_bias = seek_minimum_bias_score_for( checked_name, starting_bias_score, show_report )
+    puts "============================================\r\n>>> MIN. bias = #{result_bias} <<<\r\n"
+                                                    # Test the lower search limit for the bias score
+    assert( result_bias > 0.8 )                     # (below this value it is assumed that most of the matches may be actually false positives)
+  end
+
+
+  def seek_minimum_bias_score_for( checked_name, starting_bias_score, show_report = true )
+    puts "- bias: #{starting_bias_score}..."
+    team_names = get_some_team_names()
+    comparable_names = team_names.collect{ |e| NameContainer.new(e) }
+    total_matches = collect_multiple_matches(
+        checked_name, comparable_names,
+        starting_bias_score,
+        show_report,
+        false,                                      # do_exact_match_test
+        true,                                       # show_even_1_result
+        true                                        # return_actual_number_of_matches
+    )
+    puts "#{ show_report ? '' : "\r\n" }#{total_matches > 1 ? 'MULTIPLE MATCHES FOUND !' : '(single match)'}" if total_matches > 0
+    if ( total_matches < 1 )                        # Search deeper using a more relaxed bias:
+      starting_bias_score = seek_minimum_bias_score_for( checked_name, starting_bias_score - 0.01, show_report )
+    end
+    starting_bias_score
+  end
+  # ---------------------------------------------------------------------------
+
+
   def collect_multiple_matches( checked_name, comparable_names, bias_score,
                                 show_report = true, do_exact_match_test = true,
-                                show_even_1_result = false )
+                                show_even_1_result = false,
+                                return_actual_number_of_matches = false )
     result_list = FinResultParserTools.collect_best_fuzzy_matches( checked_name, comparable_names, :name, bias_score )
     exact_match = nil                               # Skip reporting if only an exact match was found:
-    puts("\r\nBest-matches for '#{checked_name}': (total #{result_list.size})") if show_even_1_result || ( show_report && result_list.size > 1 )
+    puts("Best-matches for '#{checked_name}': (total #{result_list.size})") if show_even_1_result || (show_report && result_list.size > 1)
 
     result_list.each { |result|
       if show_even_1_result || (result_list.size > 1)
@@ -191,7 +242,11 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
       assert_not_nil( exact_match )
       assert_equal( checked_name, exact_match.name )
     end
-    result_list.size > 1 ? 1 : 0
+    if return_actual_number_of_matches
+      result_list.size
+    else
+      result_list.size > 1 ? 1 : 0
+    end
   end
   # ---------------------------------------------------------------------------
 

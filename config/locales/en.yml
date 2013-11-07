@@ -29,6 +29,7 @@ en:
     season_not_found: "Unable to find the required season in the database!"
     season_type_not_found: "Unable to find a required season_type in the database!"
     force_meeting_creation: "Create missing Meetings"
+    force_team_creation: "Create missing Teams"
 
 
   swimmers:
