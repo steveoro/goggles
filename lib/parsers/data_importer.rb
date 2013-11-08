@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.86.20131107
+  - Goggles framework vers.:  4.00.87.20131108
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -21,6 +21,9 @@ require 'parsers/fin_result_phase3'
   - @current_admin_id ID of the current Admin instance
 
   - @phase_1_log string (log text) variable member
+  - @team_analysis_log string (additional log text) variable
+  - @sql_executable_log string (additional log text) variable
+
   - @esteemed_meeting_mins integer variable member: total minutes counter
   - @stored_data_rows integer (counter) variable member
 
@@ -49,6 +52,8 @@ class DataImporter
     @current_admin_id = current_admin_id
     @phase_1_log = ''
     @phase_2_log = ''
+    @team_analysis_log = ''
+    @sql_executable_log = ''
     @import_log  = ''
     @esteemed_meeting_mins = 0
     @stored_data_rows = 0
@@ -71,6 +76,8 @@ class DataImporter
     @current_admin_id = current_admin_id
     @phase_1_log = ''
     @phase_2_log = ''
+    @team_analysis_log = ''
+    @sql_executable_log = ''
     @import_log  = ''
     @esteemed_meeting_mins = 0
     @stored_data_rows = 0
@@ -92,6 +99,16 @@ class DataImporter
   # Getter for @phase_2_log
   def get_phase_2_log
     @phase_2_log
+  end
+
+  # Getter for @team_analysis_log
+  def get_team_analysis_log
+    @team_analysis_log
+  end
+
+  # Getter for @sql_executable_log
+  def get_sql_executable_log
+    @sql_executable_log
   end
 
   # Getter for @import_log
@@ -205,9 +222,12 @@ class DataImporter
   end
 
 
-  # Stores the content of the internal log text to a specified
+  # Stores the content of the internal log texts to a specified
   # filename (assuming permissions are correctly set).
   # If found, file is overwritten, otherwise is created.
+  #
+  # If the Team analysis sub-phase was started, their corresponding
+  # log files are created also (same name, different extension).
   #
   def to_logfile( log_filename )
     File.open( log_filename, 'w' ) do |f|
@@ -218,7 +238,21 @@ class DataImporter
         f.puts "\r\n"
       end
       f.puts get_import_log  
-    end  
+    end 
+    extensionless_filename = log_filename.split(File.extname(log_filename))[0]
+    if @team_analysis_log.size > 0
+      File.open( extensionless_filename+'.team.log', 'w' ) do |f|
+        f.puts "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n"  
+        f.puts get_team_analysis_log  
+      end 
+    end 
+    if @sql_executable_log.size > 0
+      File.open( extensionless_filename+'.team.sql', 'w' ) do |f|
+        f.puts "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n"  
+        f.puts get_team_analysis_log  
+        f.puts "\r\nCOMMIT;"  
+      end 
+    end
   end
 
 
@@ -424,6 +458,21 @@ class DataImporter
             meeting_dates, scheduled_date, header_fields, force_missing_meeting_creation
         )
       end
+
+                                                    # --- TEAM RANKING/SCORES (digest part) --
+      if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
+        logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.1) processing TEAM RANKING...\r\n" )
+        @phase_1_log << "PHASE #1.1: processing team_ranking...\r\n"
+        ranking_headers = result_hash[:parse_result][:team_ranking]
+        ranking_details = result_hash[:parse_result][:ranking_row]
+        ranking_headers_ids = ranking_headers.collect{|e| e[:id] }.compact.uniq.sort
+
+        is_ok = process_team_ranking(
+            full_pathname, data_import_session.id, season_id, meeting_id,
+            ranking_headers, ranking_headers_ids, ranking_details, force_missing_team_creation
+        )
+        return nil unless is_ok
+      end
                                                     # -- MEETING SESSION (digest part) --
       if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
         meeting_session_id = search_or_add_a_corresponding_meeting_session(
@@ -435,9 +484,10 @@ class DataImporter
 
       return nil unless (season_id > 0) && (season_type_id > 0) &&
                         (meeting_id != 0) && (meeting_session_id != 0)
+
                                                     # --- CATEGORY (digest part) --
-      logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.1) processing CATEGORY HEADERS...\r\n" )
-      @phase_1_log << "PHASE #1.1: processing category_headers...\r\n"
+      logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.2) processing CATEGORY HEADERS...\r\n" )
+      @phase_1_log << "PHASE #1.2: processing category_headers...\r\n"
       category_headers = result_hash[:parse_result][:category_header]
       category_details = result_hash[:parse_result][:result_row]
       category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
@@ -450,8 +500,8 @@ class DataImporter
       )
       return nil unless is_ok
                                                     # --- RELAY (digest part) --
-      logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.2) processing RELAY HEADERS...\r\n" )
-      @phase_1_log << "PHASE #1.2: processing relay_headers...\r\n"
+      logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.3) processing RELAY HEADERS...\r\n" )
+      @phase_1_log << "PHASE #1.3: processing relay_headers...\r\n"
       relay_headers = result_hash[:parse_result][:relay_header]
       relay_details = result_hash[:parse_result][:relay_row]
       relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
@@ -461,18 +511,6 @@ class DataImporter
           season_id, season_type_id, season_starting_year,
           meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
           relay_details, scheduled_date, force_missing_team_creation
-      )
-      return nil unless is_ok
-                                                    # --- TEAM RANKING/SCORES (digest part) --
-      logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.3) processing TEAM RANKING...\r\n" )
-      @phase_1_log << "PHASE #1.3: processing team_ranking...\r\n"
-      ranking_headers = result_hash[:parse_result][:team_ranking]
-      ranking_details = result_hash[:parse_result][:ranking_row]
-      ranking_headers_ids = ranking_headers.collect{|e| e[:id] }.compact.uniq.sort
-
-      is_ok = process_team_ranking(
-          full_pathname, data_import_session.id, season_id, meeting_id,
-          ranking_headers, ranking_headers_ids, ranking_details, force_missing_team_creation
       )
       return nil unless is_ok
 

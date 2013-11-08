@@ -9,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.85.20131106
+  - Goggles framework vers.:  4.00.87.20131108
   - author: Steve A.
 
 == FinResultParserTools module
@@ -353,6 +353,247 @@ module FinResultParserTools
       end
     }
     results.sort!{ |x,y| x[:score] <=> y[:score] }
+  end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+
+
+  # Uses #collect_best_fuzzy_matches() to iterate until it finds at least
+  # a single possible match, provided it has a minimum result bias score.
+  #
+  # All matches found and collected are described inside the returned analysis
+  # text string.
+  # Matches are collected in FIFO order, with each one selected having a better
+  # score than the previous one. The resulting array is sorted on score.
+  #
+  # If no match is found, a separate SQL-executable log text is returned also.
+  #
+  # === Parameters:
+  # - matching_string: the name of the Team that must be seeked
+  #
+  # - desired_season_id: the season ID for which the Team is supposed to be
+  #   affiliated with if the affiliation row is missing.
+  #   (This is actually used only to generate SQL statements in the separated log)
+  #
+  # - analysis_text_log: the string holding the resulting analysis log
+  #
+  # - sql_text_log: the string holding the executable SQL stament log, which
+  #   contains any suggested action to be executed next. (Which should only
+  #   be executed after human check.)
+  #
+  # - starting_bias_score: the starting bias score for the search
+  #
+  # - ending_bias_score: the ending limit bias score for the search
+  #
+  # === Returns:
+  # An Hash with the structure:
+  #
+  #     { 
+  #       :analysis => <string_holding_the_result_analysis_text>,
+  #       :sql => <string_holding_the_SQL_executable_text>
+  #     }
+  #
+  def self.analyze_team_name_best_matches( matching_string, desired_season_id,
+                                           analysis_text_log, sql_text_log,
+                                           starting_bias_score = 0.99,
+                                           ending_bias_score = 0.8 )
+    all_teams = Team.all
+    result_hash1 = self.seek_minimum_bias_score_for(
+      matching_string, all_teams, :name,
+      starting_bias_score, ending_bias_score
+    )
+    all_affiliations = TeamAffiliation.all
+    result_hash2 = self.seek_minimum_bias_score_for(
+      matching_string, all_affiliations, :name,
+      starting_bias_score, ending_bias_score
+    )
+                                                    # Collect result lists and min. bias:
+    result_list = result_hash1[:result_list] + result_hash2[:result_list]
+    min_bias_score = result_hash1[:updated_bias_score] < result_hash2[:updated_bias_score] ? result_hash1[:updated_bias_score] : result_hash2[:updated_bias_score]
+                                                    # Prepare report:
+    analysis_text_log << "\r\n--------------------------------------------------------------------------------\r\n"
+    analysis_text_log << "[[[ '#{matching_string}' ]]]  --  best-match search:\r\n\r\n"
+    result_hash3 = self.prepare_analysis_report(
+      matching_string, desired_season_id, analysis_text_log,
+      result_list, min_bias_score
+    )
+
+    analysis_text_log = result_hash3[:analysis]
+    team_match        = result_hash3[:team_match]
+    team_id           = result_hash3[:team_id]
+    affiliation_match = result_hash3[:affiliation_match]
+    best_match        = result_hash3[:best_match]
+    do_insert_team    = false
+    do_insert_affiliation = false
+
+    # TODO This is not needed unless we want to store the uniq'ed list of results somewhere: (ALIAS table?)
+                                                    # Re-sort the overall result list, clearing duplicates:
+#    unique_name_list = result_list.collect{|e| e[:row].name }.uniq
+#    overall_unique_list = unique_name_list.collect { |uniq_name| result_list.detect{|e| e[:row].name == uniq_name} }
+#    overall_unique_list = overall_unique_list.sort!{ |x,y| x[:score] <=> y[:score] }
+
+    if ( result_list.size < 1 )             # No matches found for a Team? Suggest an SQL INSERT statement:
+      analysis_text_log << "   => NOT FOUND.\r\n"
+      do_insert_team = true
+      do_insert_affiliation = true
+
+    elsif ( result_list.size == 1 )
+      analysis_text_log << "   => SINGLE MATCH!\r\n"
+# FIXME Check if really TeamAffiliation SQL INSERT is needed
+      do_insert_affiliation = best_match.nil?
+      # TODO >>>> OK, we have a match. WE STILL NEED TO SOLVE HOW TO INPUT DATA WITH A SLIGHTLY DIFFERENT NAME AVAILABLE FOR DATA-IMPORT <<<<
+      # TODO => Ideal would be to add an alias somewhere
+
+    elsif ( result_list.size > 1 )
+      analysis_text_log << "   --- MULTIPLE MATCHES FOUND ---\r\n"
+# FIXME Check if really TeamAffiliation SQL INSERT is needed
+      do_insert_affiliation = best_match.nil?
+      # TODO >>>> OK, we have a best-match. WE STILL NEED TO SOLVE HOW TO INPUT DATA WITH A SLIGHTLY DIFFERENT NAME AVAILABLE FOR DATA-IMPORT <<<<
+      # TODO => Ideal would be to add an alias somewhere
+    end
+                                                    # Store suggested SQL action:
+    if ( do_insert_team || do_insert_affiliation )
+      matching_string.gsub!("'", "''")              # Escape single quotes in names in case we have to write SQL statements:
+      sql_text_log << "\r\n"
+      if ( do_insert_team )
+        sql_text_log << "INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES\r\n"
+        sql_text_log << "    ('#{matching_string}','#{matching_string}','','','',1,CURDATE(),CURDATE());\r\n"
+      end
+      if ( do_insert_affiliation )
+        sql_text_log << "INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES\r\n"
+        if team_id
+          sql_text_log << "    (#{desired_season_id},#{team_id},'#{matching_string}','',0,1,CURDATE(),CURDATE());\r\n"
+        else
+          sql_text_log << "    (#{desired_season_id},(select t.id from teams t where t.name = '#{matching_string}'),'#{matching_string}','',0,1,CURDATE(),CURDATE());\r\n"
+        end
+      end
+    end
+    {
+      :analysis => analysis_text_log,
+      :sql => sql_text_log
+    }
+  end
+  # ---------------------------------------------------------------------------
+
+
+  private
+
+
+  # Prepares the list of best-matches text given the result hash.
+  #
+  # === Returns:
+  # An hash with the structure:
+  #    {
+  #      :analysis          => analysis_text_log,
+  #      :team_match        => match {:row, :score} from teams,
+  #      :team_id           => id from the row above,
+  #      :affiliation_match => match {:row, :score} from affiliations,
+  #      :best_match        => best match {:row, :score} from affiliation, defined only if season_id is equal
+  #    }
+  #
+  def self.prepare_analysis_report( matching_string, desired_season_id, analysis_text_log,
+                                    result_list, min_bias_score )
+    affiliation_match = nil
+    team_match = nil
+    team_id = nil
+    best_match = nil
+
+    result_list = result_list.sort!{ |x,y| x[:score] <=> y[:score] }
+    result_list.each { |result|
+      analysis_text_log << "   - (#{sprintf("%-16s", result[:row].class.name)})"
+      analysis_text_log << " '#{result[:row].name}', score #{sprintf("%1.4f", result[:score])}"
+      analysis_text_log << ", ID: #{sprintf("%4s", result[:row].id)}"
+      if result[:row].respond_to?(:season_id)       # Is an affiliation?
+        analysis_text_log << ", season_id: #{sprintf("%4s", result[:row].season_id)}"
+        if ( desired_season_id == result[:row].season_id )
+          best_match = result                       # Only affiliations with the desired_season_id are the best matches:
+        end
+                                                    # Store the highest matches per class, while looping on the results:
+        affiliation_match = result if affiliation_match.nil? || (affiliation_match && affiliation_match[:score] < result[:score])
+      else
+        team_match = result if team_match.nil? || (team_match && team_match[:score] < result[:score])
+      end
+      analysis_text_log << "\t=> Team ID: #{sprintf("%4s", result[:row].team_id)}" if result[:row].respond_to?(:team_id)
+      analysis_text_log << "\r\n"
+    }
+    if (team_match.nil? && affiliation_match)       # Similar affiliation found but from a too different team-name?
+      team_match = { :score => affiliation_match[:score], :row => affiliation_match[:row].team }
+    end
+    team_id = team_match[:row].id if team_match && team_match[:row]
+
+    if (result_list.size > 0)
+      analysis_text_log << "\r\n#{result_list.size} results tot., min. bias: #{sprintf("%1.4f", min_bias_score)}\r\n"
+    else
+      analysis_text_log << "(no results)\r\n"
+    end
+
+    if team_match
+      analysis_text_log << sprintf("%-16s BEST ", team_match[:row].class.name)
+      analysis_text_log << "=> #{sprintf("%26s", team_match[:row].name)}, score #{sprintf("%1.4f", team_match[:score])}"
+      analysis_text_log << ", ID: #{sprintf("%4d", team_match[:row].id)}\r\n"
+    end
+    if affiliation_match
+      analysis_text_log << sprintf("%-16s BEST ", affiliation_match[:row].class.name)
+      analysis_text_log << "=> #{sprintf("%26s", affiliation_match[:row].name)}, score #{sprintf("%1.4f", affiliation_match[:score])}"
+      analysis_text_log << ", ID: #{sprintf("%4d", affiliation_match[:row].id)}"
+      analysis_text_log << " => Team ID: #{sprintf("%4d", affiliation_match[:row].team_id)}\r\n"
+    end
+    if best_match
+      analysis_text_log << "Preferred (#{ best_match[:row].class.name}): "
+      analysis_text_log << " #{best_match[:row].name}, score #{sprintf("%1.4f", best_match[:score])}"
+      analysis_text_log << ", ID: #{sprintf("%4d", best_match[:row].id)}"
+      analysis_text_log << " => Team ID: #{sprintf("%4d", best_match[:row].team_id)}\r\n"
+    end
+
+    if result_list.last
+      hi_match = result_list.last[:row]
+      hi_score = result_list.last[:score]
+      analysis_text_log << "Hi-scoring best: #{hi_match.class.name} '#{hi_match.name}', score #{sprintf("%1.4f", hi_score)}"
+      if hi_score > 0.9999
+        analysis_text_log << " (>>> EXACT MATCH! <<<)"
+      end
+      analysis_text_log << ", ID: #{sprintf("%4s", hi_match.id)}"
+      analysis_text_log << " => Team ID: #{sprintf("%4s", hi_match.team_id)}" if hi_match.respond_to?(:team_id)
+      analysis_text_log << "\r\n"
+    end
+    analysis_text_log << "Chosen team_id = #{team_id}\r\n" if team_id
+    {
+      :analysis   => analysis_text_log,
+      :team_id    => team_id,
+      :team_match => team_match,
+      :affiliation_match => affiliation_match,
+      :best_match => best_match
+    }
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Iterates on itself until at least a match is found or the minimum bias score is
+  # reached.
+  #
+  # Returns both the updated bias score and the result list of best-matches in
+  # a single hash.
+  #
+  def self.seek_minimum_bias_score_for( matching_string, array_of_rows, getter_for_comparison,
+                                        bias_score, limit_bias_score )
+    result_list = self.collect_best_fuzzy_matches(
+      matching_string, array_of_rows, getter_for_comparison,
+      bias_score
+    )
+    total_matches = result_list.size
+                                                    # Search deeper using a more relaxed bias:
+    if ( (total_matches < 1) && (bias_score > limit_bias_score) )
+      result_hash = seek_minimum_bias_score_for(
+          matching_string, array_of_rows, getter_for_comparison,
+          bias_score - 0.01, limit_bias_score
+      )
+      bias_score = result_hash[:updated_bias_score]
+      result_list = result_list + result_hash[:result_list]
+    end
+    {
+      :updated_bias_score => bias_score,
+      :result_list => result_list
+    }
   end
   # ---------------------------------------------------------------------------
 end

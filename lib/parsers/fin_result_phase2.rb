@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.86.20131107
+  - Goggles framework vers.:  4.00.87.20131108
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -24,17 +24,34 @@ require 'parsers/fin_result_parser_tools'
 
   === Defines:
   - @current_admin_id ID of the current Admin instance
+
   - @phase_1_log string (log text) variable
+  - @team_analysis_log string (additional log text) variable
+  - @sql_executable_log string (additional log text) variable
+
   - @stored_data_rows integer (counter) variable
   - @esteemed_meeting_mins integer (total minutes counter) variable
 
 =end
 module FinResultPhase2
   
+  # Certainty bias score result for "fuzzy name search".
   FUZZY_SEARCH_BIAS_SCORE = 0.98
+
+  # Allowed minimum "fuzzy name search" bias score result,
+  # used as limit for an interative search if no matching
+  # candidates are found.
+  # If no match is found before reaching this limit, the
+  # name is declared as "not found".
+  MIN_FUZZY_SEARCH_BIAS_SCORE = 0.8
 
   # Previous/current phase text log stored as an UTF-8 string
   @phase_1_log = ''
+
+  # Team analysis/recognition log, stored as an UTF-8 string.
+  # Any uncertain team name match is always logged as well as all the
+  # existing possible "best-matches" for a minimun result bias score. 
+  @team_analysis_log = ''
 
   # Total of stored data rows
   @stored_data_rows = 0
@@ -188,6 +205,8 @@ module FinResultPhase2
             force_missing_team_creation
         )
         is_ok = (result_id != 0)
+# FIXME Make it so that the loop continues until all team names are scanned and checked:
+# TODO Recognize any non-OK status as errors from the team-analysis phase!
         return unless is_ok
       }                                             # **** (END of DETAIL) ****
                                                     # Update current header count into "progress counter column"
@@ -1296,7 +1315,7 @@ module FinResultPhase2
   # a whole bunch of results data.
   #
   # Normally the automatic Team creation procedure is disabled and requires a
-  # separate pre-analisys stage, with a statistical report of the best-match
+  # separate pre-analysis stage, with a statistical report of the best-match
   # data before actual data insertion.
   #
   # === Entity look-up order/algorithm:
@@ -1338,9 +1357,9 @@ module FinResultPhase2
 #    logger.debug( "Seeking Team '#{team_name}'..." )
 #    @phase_1_log << "Seeking Team '#{team_name}'...\r\n"
                                                     # *** (1) SCAN TeamAffiliation:
-    team_affiliation = TeamAffiliation.where([      # Search of TeamAffiliation name is more strict: (shouldn't change at all in the same season)
-        "(season_id = ?) AND (name LIKE ?)",
-        season_id, team_name+'%'
+    team_affiliation = TeamAffiliation.where([      # Search of TeamAffiliation name is more strict (it shouldn't change at all in the same season;
+        "(name LIKE ?)",                            # also, we extend the search to a very similar name in ANY season, just to find the actual team)
+        team_name+'%'
     ]).first
     if team_affiliation
       result_row = team_affiliation.team
@@ -1376,18 +1395,19 @@ module FinResultPhase2
       if result_row
 # DEBUG
 #        logger.debug( "Team found! (ID=#{result_id})" )
-        @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' for '#{team_name}'.\r\n"
-        logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' for '#{team_name}'." )
+        @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
+        @team_analysis_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
+        logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' (Team ID: #{result_row.id}) for '#{team_name}'." )
         result_id = - result_row.id                 # We must differentiate the result: negative for Team, positive for DataImportTeam
         not_found = false
       end
     end
 
     if result_id < 0                                # Do we have an actual Team? => INTEGRITY Check on TeamAffiliation     
-      team_affiliation = TeamAffiliation.where(     # Check if there is (& there must be) a corresponding TeamAffiliation: if missing, add it for current season
+      team_affiliation = TeamAffiliation.where(     # Check if there is (& there must be) a corresponding TeamAffiliation for THIS season: if missing, add it.
         :team_id    => result_row.id,
         :season_id  => season_id
-      ).first unless team_affiliation
+      ).first
                                                     # Always add any MISSING TeamAffiliation
       unless team_affiliation                       # (since the allegedly linked Team was found)
         begin                
@@ -1415,6 +1435,12 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found && (!force_missing_team_creation)
+      result_hash = FinResultParserTools.analyze_team_name_best_matches(
+          team_name, season_id, @team_analysis_log,
+          @sql_executable_log, 0.99, 0.8
+      )
+      @team_analysis_log  = result_hash[:analysis]
+      @sql_executable_log = result_hash[:sql]
       flash[:error] = "#{I18n.t(:requested_entity_missing)}: 'Team'"
       return 0
     end
