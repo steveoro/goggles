@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131105120845) do
+ActiveRecord::Schema.define(:version => 20131110230401) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -486,6 +486,32 @@ ActiveRecord::Schema.define(:version => 20131105120845) do
 
   add_index "data_import_swimmers", ["complete_name"], :name => "index_data_import_swimmers_on_complete_name"
   add_index "data_import_swimmers", ["last_name", "first_name"], :name => "full_name"
+
+  create_table "data_import_team_aliases", :force => true do |t|
+    t.integer  "lock_version",               :default => 0
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.string   "name",         :limit => 60,                :null => false
+    t.integer  "team_id"
+  end
+
+  add_index "data_import_team_aliases", ["team_id", "name"], :name => "idx_team_id_name", :unique => true
+
+  create_table "data_import_team_analysis_results", :force => true do |t|
+    t.integer  "lock_version",                                                        :default => 0
+    t.datetime "created_at",                                                                           :null => false
+    t.datetime "updated_at",                                                                           :null => false
+    t.integer  "data_import_session_id"
+    t.text     "analysis_log_text"
+    t.text     "sql_text"
+    t.string   "searched_team_name",     :limit => 60
+    t.integer  "desired_season_id"
+    t.integer  "chosen_team_id"
+    t.string   "team_match_name",        :limit => 60
+    t.decimal  "team_match_score",                     :precision => 10, :scale => 4, :default => 0.0
+    t.string   "best_match_name",        :limit => 60
+    t.decimal  "best_match_score",                     :precision => 10, :scale => 4, :default => 0.0
+  end
 
   create_table "data_import_teams", :force => true do |t|
     t.integer  "lock_version",                         :default => 0

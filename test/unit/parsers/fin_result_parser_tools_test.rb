@@ -111,33 +111,33 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
   test "analyze_team_name_best_matches" do
     sql_text_log = "--\r\n-- *** Test SQL output: ***\r\n--\r\n\r\n"
     output_text_log = "\r\n\r\n\t*****************************\r\n\t  Test Team Analysis Report\r\n\t*****************************\r\n"
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "CSINuoto Ober Ferrari ASD", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "CSINuoto Ober Ferrari ASD", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "NC Azzurra", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "NC Azzurra", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "Acquatime", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "Acquatime", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "Acqua Time", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "Acqua Time", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "Acquambiente", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "Acquambiente", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "Sport Management", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "Sport Management", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
-    result_hash = FinResultParserTools.analyze_team_name_best_matches( "NuovoNuoto ASD", 101, output_text_log, sql_text_log )
-    output_text_log = result_hash[:analysis]
-    sql_text_log    = result_hash[:sql]
+    result = FinResultParserTools.analyze_team_name_best_matches( "NuovoNuoto ASD", 101, output_text_log, sql_text_log )
+    output_text_log = result.analysis_log_text
+    sql_text_log    = result.sql_text
 
     puts output_text_log
     puts "\r\n\t\t-- * --\r\n"

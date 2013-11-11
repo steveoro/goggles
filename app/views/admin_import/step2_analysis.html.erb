@@ -1,0 +1,71 @@
+<ul class="nav nav-tabs">
+	<%= content_tag( :li, link_to(t('admin_import.step_1'), goggles_di_step1_status_path()), 	:class => 'active' ) %>
+	<%= content_tag( :li, link_to(t('admin_import.step_2'), '#'),	:class => 'active' ) %>
+	<%= content_tag( :li, link_to(t('admin_import.step_3'), '#'), 	:class => 'disabled' ) %>
+</ul>
+
+
+<p class="text-center lead">
+	<%= "#{I18n.t('admin_import.import_event_results_title')}" %>: <%="#{I18n.t('admin_import.team_analysis_results')}"%>
+</p>
+
+
+<div class="row">
+	<div class="span12 offset1">
+		<div class="span3 control-label"><%= I18n.t('admin_import.searched_team') %></div>
+		<div class="span4 control-label"><%= I18n.t('admin_import.team_match_name') %></div>
+		<div class="span1 control-label"><%= I18n.t('admin_import.add_alias') %></div>
+		<div class="span1 control-label"><%= I18n.t('admin_import.add_team') %></div>
+		<div class="span1 control-label"><%= I18n.t('admin_import.add_affiliation') %></div>
+		<div class="span1 control-label"><%= I18n.t('admin_import.is_ok') %></div>
+	</div>
+</div>
+<div class="row">
+	<div class="span12 offset1">
+		<%= form_tag( 'step3_analysis_commit',
+				:multipart => true, :class => 'form',
+				:onsubmit => "$('#loadingIndicator').show(); "
+			) do -%>
+			<%= hidden_field_tag( :data_import_session_id, @data_import_session_id ) %>
+
+			<% @analysis_results.each do |result_row| -%>
+				<% do_insert_alias = result_row.can_insert_alias -%>
+				<% do_insert_team = result_row.can_insert_team -%>
+				<% do_insert_affiliation = result_row.can_insert_affiliation -%>
+				<div class="control-group">
+					<div class="span3">
+						<b>"<%= result_row.searched_team_name %>"</b>						
+					</div>
+					<div class="span4">
+						<b>
+						<%= result_row.team_match_name ?	"\"#{result_row.team_match_name}\"" : "-" %>
+						</b>&nbsp;
+						<%= result_row.chosen_team_id ?	"(Team ID: #{result_row.chosen_team_id})" : '' %>
+					</div>
+					<div class="span1">
+						<%= show_tag( do_insert_alias ) %>
+					</div>
+					<div class="span1">
+						<%= show_tag( do_insert_team ) %>
+					</div>
+					<div class="span1">
+						<%= show_tag( do_insert_affiliation ) %>
+					</div>
+					<div class="span1">
+						<%= check_box_tag( :is_ok, '1', do_insert_team ) %>
+					</div>
+				</div>
+			<% end -%>
+
+			<div class="control-group">
+				<div class="controls">
+				  	<%= submit_tag( I18n.t('admin_import.confirm'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' ) %>
+				  	<span id='loadingIndicator' hidden='true'>
+				  		<%= image_tag( 'indicator.gif' ) %>
+				  	</span>
+					<div id="divProgress" hidden='true' class="progress progress-striped active"></div>
+				</div>
+			</div>
+		<% end -%>
+	</div>
+</div>

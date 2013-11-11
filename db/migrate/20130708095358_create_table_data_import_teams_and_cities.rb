@@ -18,7 +18,6 @@ class CreateTableDataImportTeamsAndCities < ActiveRecord::Migration
 
       # Used by the "updated_by" getter:
       t.references :user
-      t.timestamps
     end
 
     add_index :data_import_cities, :name
@@ -45,7 +44,6 @@ class CreateTableDataImportTeamsAndCities < ActiveRecord::Migration
       t.references :city
       # Used by the "updated_by" getter:
       t.references :user
-      t.timestamps
     end
 
     add_index :data_import_teams, :name

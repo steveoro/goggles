@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.87.20131108
+  - Goggles framework vers.:  4.00.89.20131110
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -23,6 +23,9 @@ require 'parsers/fin_result_phase3'
   - @phase_1_log string (log text) variable member
   - @team_analysis_log string (additional log text) variable
   - @sql_executable_log string (additional log text) variable
+
+  - @team_analysis_results an Array of DataImportTeamAnalysisResults
+    instances;
 
   - @esteemed_meeting_mins integer variable member: total minutes counter
   - @stored_data_rows integer (counter) variable member
@@ -58,6 +61,8 @@ class DataImporter
     @esteemed_meeting_mins = 0
     @stored_data_rows = 0
     @committed_data_rows = 0
+    @team_analysis_results = []
+    @created_data_import_session_id = 0
                                                     # Batch parameters' default
     self.full_pathname = nil
     self.season = nil
@@ -82,6 +87,8 @@ class DataImporter
     @esteemed_meeting_mins = 0
     @stored_data_rows = 0
     @committed_data_rows = 0
+    @team_analysis_results = []
+    @created_data_import_session_id = 0
                                                     # Batch parameters' default
     self.full_pathname = nil
     self.season = nil
@@ -89,6 +96,11 @@ class DataImporter
     self.force_missing_team_creation = false
     self.do_not_consume_file = false
     self.log_dir = File.join( Rails.root, 'log' )
+  end
+
+  # Getter for @created_data_import_session_id
+  def get_created_data_import_session_id
+    @created_data_import_session_id
   end
 
   # Getter for @phase_1_log
@@ -111,6 +123,11 @@ class DataImporter
     @sql_executable_log
   end
 
+  # Getter for @team_analysis_results
+  def get_team_analysis_results
+    @team_analysis_results
+  end
+
   # Getter for @import_log
   def get_import_log
     @import_log
@@ -130,6 +147,17 @@ class DataImporter
   def get_committed_data_rows
     @committed_data_rows
   end
+
+  # +true+ if the team_analysis phase was executed
+  # due to some problematic team name.
+  def has_team_analysis_results
+    ( @team_analysis_results.instance_of?(Array) && (@team_analysis_results.size > 0) ) 
+  end
+
+  # Getter for the default log base file name (pathname + log filename w/o extension)
+  def get_log_filename
+    File.join( self.log_dir, (File.basename(self.full_pathname).split('.')[0]) )
+  end
   # ---------------------------------------------------------------------------
   # ---------------------------------------------------------------------------
 
@@ -139,7 +167,7 @@ class DataImporter
   def self.create_new_data_import_session( full_pathname, full_text_file_contents,
                                            total_data_rows, file_format, season_id,
                                            current_admin_id )
-    DataImportSession.create(
+    new_session = DataImportSession.create(
       :file_name => full_pathname,
       :source_data => full_text_file_contents,
       :total_data_rows => total_data_rows,
@@ -148,6 +176,8 @@ class DataImporter
       :phase_3_log => '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers") 
       :user_id => current_admin_id
     )
+    @created_data_import_session_id = new_session.id
+    new_session
   end
 
 
@@ -208,11 +238,11 @@ class DataImporter
 
   # Sets the parameter values for batch/delayed execution.  
   # 
-  def set_batch_parameters( full_pathname, season = nil,
-                            force_missing_meeting_creation = false,
-                            force_missing_team_creation = false,
-                            do_not_consume_file = false,
-                            log_dir = File.join( Rails.root, 'log' ) )
+  def set_parameters( full_pathname, season = nil,
+                      force_missing_meeting_creation = false,
+                      force_missing_team_creation = false,
+                      do_not_consume_file = false,
+                      log_dir = File.join( Rails.root, 'log' ) )
     self.full_pathname = full_pathname
     self.season = season
     self.force_missing_meeting_creation = force_missing_meeting_creation
@@ -229,8 +259,8 @@ class DataImporter
   # If the Team analysis sub-phase was started, their corresponding
   # log files are created also (same name, different extension).
   #
-  def to_logfile( log_filename )
-    File.open( log_filename, 'w' ) do |f|
+  def to_logfile( log_filename = get_log_filename() )
+    File.open( log_filename+'.log', 'w' ) do |f|
       if ( flash[:error] )
         f.puts "               *** Latest flash[:error]: ***"
         f.puts flash[:error]
@@ -239,17 +269,16 @@ class DataImporter
       end
       f.puts get_import_log  
     end 
-    extensionless_filename = log_filename.split(File.extname(log_filename))[0]
     if @team_analysis_log.size > 0
-      File.open( extensionless_filename+'.team.log', 'w' ) do |f|
+      File.open( log_filename+'.team.log', 'w' ) do |f|
         f.puts "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n"  
-        f.puts get_team_analysis_log  
+        f.puts @team_analysis_log  
       end 
     end 
     if @sql_executable_log.size > 0
-      File.open( extensionless_filename+'.team.sql', 'w' ) do |f|
+      File.open( log_filename+'.team.sql', 'w' ) do |f|
         f.puts "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n"  
-        f.puts get_team_analysis_log  
+        f.puts @sql_executable_log  
         f.puts "\r\nCOMMIT;"  
       end 
     end
@@ -269,7 +298,7 @@ class DataImporter
   # ...To add this to the delayed_job queue on the database.
   #
   def batch_import()
-    log_filename = File.join( self.log_dir, (File.basename(self.full_pathname).split('.')[0])+'.log' )
+    full_log_filename = get_log_filename() +'.log'
     data_import_session = consume_txt_file(
       self.full_pathname,
       self.season,
@@ -283,17 +312,17 @@ class DataImporter
         !self.do_not_consume_file                   # Remove left-over files?
       )
       unless is_ok                                  # Report error on commit phase
-        to_logfile( log_filename )                  # store log file somewhere
-        raise "Error during COMMIT phase! Check the log file: '#{log_filename}'."
+        to_logfile()                                # store log file somewhere
+        raise "Error during COMMIT phase! Check the log file: '#{full_log_filename}'."
       end
     else                                            # Report error on digest phase
-        to_logfile( log_filename )                  # store log file somewhere
-        raise "Error during DIGEST phase! Check the log file: '#{log_filename}'."
+        to_logfile()                                # store log file somewhere
+        raise "Error during DIGEST phase! Check the log file: '#{full_log_filename}'."
     end
-    to_logfile( log_filename )
-    if FileTest.exists?( log_filename )
+    to_logfile()
+    if FileTest.exists?( full_log_filename )
       logger.info( "-- batch_import(): renaming log file as '.ok'..." ) if self.logger
-      File.rename( log_filename, log_filename+'.ok' )
+      File.rename( full_log_filename, full_log_filename+'.ok' )
     end
   end
   # ---------------------------------------------------------------------------
@@ -325,6 +354,10 @@ class DataImporter
 
     # TODO PARSE file_type => '<ris><date_header><code>.txt' for FIN results type
     file_type = 'fin_results'                       # FIXME Pre-fixed file structure type, only FIN Results supported, no parsing at all
+                                                    # Set internal class parameters:
+    set_parameters( full_pathname, season, force_missing_meeting_creation,
+                    force_missing_team_creation, do_not_consume_file )
+
                                                     # -- FILE HEADER digest --
     header_fields = FinResultParserTools.parse_filename_fields( full_pathname )
     season_id = 0

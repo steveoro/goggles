@@ -129,8 +129,14 @@
 								{ :prompt => I18n.t(:please_select) },	# select options
 								{ :class => 'input-xxlarge' } )	# html options
 					%>
+				</div>
+				<div class="controls">
 					<%= file_field_tag( :datafile ) %>
+				</div>
+				<div class="controls">
 					<%= check_box_tag( :force_meeting_creation ) %>
+				</div>
+				<div class="controls">
 					<%= check_box_tag( :force_team_creation ) %>
 				</div>
 			</div>

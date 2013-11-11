@@ -31,6 +31,7 @@ class AdminImportController < ApplicationController
 #    logger.debug "current_admin: #{current_admin.inspect}"
     @existing_import_sessions = DataImportSession.where( :user_id => current_admin.id )
   end
+  # ---------------------------------------------------------------------------
 
 
   # AJAX-only action to retrieve the step-2/step-3 progress updates of either the specified or the latest
@@ -66,6 +67,24 @@ class AdminImportController < ApplicationController
     else
       flash[:notice] = I18n.t(:invalid_action_request)
       redirect_to( goggles_di_step1_status_path() ) and return
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Alternative phase-2 outcome from phase-1, if some problematic team names
+  # are found.
+  #
+  def step2_analysis
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ admin_import::step2_analysis -----"
+    logger.debug "PARAMS: #{params.inspect}"
+    if params[:id]
+      @data_import_session_id = params[:id].to_i
+      @analysis_results = DataImportTeamAnalysisResults.where( :data_import_session_id => @data_import_session_id )
+    else
+      @data_import_session_id = 0
+      @analysis_results = []
     end
   end
   # ---------------------------------------------------------------------------
@@ -140,6 +159,12 @@ class AdminImportController < ApplicationController
         destination_filename, season, force_missing_meeting_creation,
         force_missing_team_creation
       )
+      if data_importer
+        data_importer.to_logfile()
+        if data_importer.has_team_analysis_results
+          redirect_to( goggles_di_step2_analysis_path(:id => data_importer.get_created_data_import_session_id) ) and return
+        end
+      end
                                                     # Session retrieval successful? Head on to phase #2 and let the component handle the rest:
       @data_import_session_id = data_import_session ? data_import_session.id : nil
 
@@ -158,6 +183,30 @@ class AdminImportController < ApplicationController
                                                     # Compute the filtering parameters:
     ap = AppParameter.get_parameter_row_for( :data_import )
     @max_view_height = ap.get_view_height()
+  end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+
+
+  # Data Import Wizard: Parallel Phase-3 Team-Analysis Commit Phase.
+  # (Invoked after the alternative phase-2 outcome, when the Team-Analysis
+  # phase has been triggered.)
+  #
+  def step3_analysis_commit
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ admin_import::step3_analysis_commit -----"
+    logger.debug "PARAMS: #{params.inspect}"
+    is_ok = true
+
+    # TODO retrieve results from dedicated table
+    # TODO retrieve results confirmation from parameters
+
+    @results = DataImportTeamAnalysisResults.all
+    # TODO do the suggested actions
+    # TODO clear the session
+
+    flash[:notice] = I18n.t('admin_import.team_analysis_completed') if is_ok
+    redirect_to( goggles_di_step1_status_path() ) and return
   end
   # ---------------------------------------------------------------------------
 

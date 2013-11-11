@@ -14,13 +14,6 @@ it:
     back_to_admin: "Admin"
     step_1: "Passo 1"
     step_2: "Passo 2"
-    step_2_1: "2.1: Stagione/Meeting"
-    step_2_2: "2.2: Sessione/Programma"
-    step_2_3: "2.3: Nuotatori"
-    step_2_4: "2.4: Team"
-    step_2_5: "2.5: Citta'"
-    step_2_6: "2.6: Badge"
-    step_2_7: "2.7: Risultati"
     step_3: "Passo 3"
     nothing_to_do_select_season: "Non hai selezionato la Stagione!"
     nothing_to_do_upload_something: "Non hai fatto l'upload di nulla. Scegli un file prima di proseguire!"
@@ -29,7 +22,17 @@ it:
     season_not_found: "Non ho trovato la stagione richiesta nel database!"
     season_type_not_found: "Non ho trovato il tipo di stagione richiesto nel database!"
     force_meeting_creation: "Crea Meeting mancanti"
-    force_team_creation: "Crea Team/Club mancanti"
+    force_team_creation: "Crea Team mancanti"
+    team_analysis_results: "Analisi dei nomi Team (non riconosciuti)"
+    team_analysis_needed: "E' necessario prima completare l'Analisi dei nomi Team (non riconosciuti)."
+    searched_team: "Team cercato"
+    team_match_name: "Nome Team simile"
+    add_alias: "Crea Alias"
+    add_team: "Crea Team"
+    add_affiliation: "Crea Affil."
+    is_ok: "Va bene?"
+    confirm: Confermo
+    team_analysis_completed: "Analisi dei Team completata. Azioni suggerite eseguite con sucesso."
 
 
   swimmers:

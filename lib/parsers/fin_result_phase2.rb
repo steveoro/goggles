@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.87.20131108
+  - Goggles framework vers.:  4.00.89.20131110
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -28,6 +28,9 @@ require 'parsers/fin_result_parser_tools'
   - @phase_1_log string (log text) variable
   - @team_analysis_log string (additional log text) variable
   - @sql_executable_log string (additional log text) variable
+
+  - @team_analysis_results an Array of DataImportTeamAnalysisResults
+    instances.
 
   - @stored_data_rows integer (counter) variable
   - @esteemed_meeting_mins integer (total minutes counter) variable
@@ -61,6 +64,10 @@ module FinResultPhase2
 
   # Current Admin instace
   @current_admin_id = 0
+
+  # When not nil and not empty, contains the array of hash of
+  # results from the "team analysis" phase. 
+  @team_analysis_results = []
   # ---------------------------------------------------------------------------
 
 
@@ -204,10 +211,8 @@ module FinResultPhase2
             detail_row, detail_row_idx, detail_rows.size,
             force_missing_team_creation
         )
-        is_ok = (result_id != 0)
-# FIXME Make it so that the loop continues until all team names are scanned and checked:
-# TODO Recognize any non-OK status as errors from the team-analysis phase!
-        return unless is_ok
+                                                    # Make it so that the loop continues until all team names are scanned and checked:
+        is_ok = is_ok && (result_id != 0)
       }                                             # **** (END of DETAIL) ****
                                                     # Update current header count into "progress counter column"
       DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "RNK.3:#{header_index+1}/#{ranking_headers_ids.size}" )
@@ -1380,11 +1385,21 @@ module FinResultPhase2
       if result_row                                 # Existing team found in data_import_teams? (Yet to be committed)
         result_id = result_row.id                   # We must differentiate the result: negative for Team, positive for DataImportTeam
         not_found = false
-  # DEBUG
-  #        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
+# DEBUG
+#        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
       end
     end
-                                                    # *** (3) FUZZY SCAN on Teams:
+                                                    # *** (3) SCAN DataImportTeamAlias
+    if not_found
+      result_row = DataImportTeamAlias.where(["(name = ?)", team_name]).first
+      if result_row                                 # Existing team found in aliases?
+        result_id = - result_row.team_id            # Signal that this ID belongs to a Team (already committed)
+        not_found = false
+# DEBUG
+        logger.debug( "Team ALIAS found! (ID=#{result_id})" )
+      end
+    end
+                                                    # *** (4) FUZZY SCAN on Teams:
     if not_found
       result_row = FinResultParserTools.find_best_fuzzy_match(
         team_name,
@@ -1395,9 +1410,9 @@ module FinResultPhase2
       if result_row
 # DEBUG
 #        logger.debug( "Team found! (ID=#{result_id})" )
-        @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
-        @team_analysis_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
-        logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.team_name}' (Team ID: #{result_row.id}) for '#{team_name}'." )
+        @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
+        @team_analysis_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
+        logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'." )
         result_id = - result_row.id                 # We must differentiate the result: negative for Team, positive for DataImportTeam
         not_found = false
       end
@@ -1435,13 +1450,28 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found && (!force_missing_team_creation)
-      result_hash = FinResultParserTools.analyze_team_name_best_matches(
+      result = FinResultParserTools.analyze_team_name_best_matches(
           team_name, season_id, @team_analysis_log,
           @sql_executable_log, 0.99, 0.8
       )
-      @team_analysis_log  = result_hash[:analysis]
-      @sql_executable_log = result_hash[:sql]
-      flash[:error] = "#{I18n.t(:requested_entity_missing)}: 'Team'"
+      @team_analysis_log  = result.analysis_log_text
+      @sql_executable_log = result.sql_text
+      result.data_import_session_id = session_id
+# FIXME Array structure is no more needed!
+      @team_analysis_results << result
+      begin
+        DataImportTeamAnalysisResults.transaction do
+          result.save!
+        end
+      rescue
+        @phase_1_log << "\r\nDataImportTeamAnalysisResults creation: exception caught during save! (Result:#{result})\r\n"
+        @phase_1_log << "#{ $!.to_s }\r\n" if $!
+        logger.error( "\r\n*** DataImportTeamAnalysisResults creation: exception caught during save! (Result:#{result})\r\n" )
+        logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+        flash[:error] = "(DataImportTeamAnalysisResults): #{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+      else
+        flash[:info] = I18n.t('admin_import.team_analysis_needed')
+      end
       return 0
     end
 
@@ -1452,7 +1482,7 @@ module FinResultPhase2
       )
       begin                                         # --- BEGIN transaction ---
 # DEBUG
- #       logger.debug( "Team not found: creating new DataImportTeam row..." )
+#        logger.debug( "Team not found: creating new DataImportTeam row..." )
         field_hash = {
           :data_import_session_id => session_id,
           :import_text => team_name,
