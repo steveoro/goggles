@@ -387,7 +387,7 @@ module FinResultParserTools
   # - ending_bias_score: the ending limit bias score for the search
   #
   # === Returns:
-  # A #DataImportTeamAnalysisResults instance.
+  # A #DataImportTeamAnalysisResult instance.
   #
   def self.analyze_team_name_best_matches( matching_string, desired_season_id,
                                            analysis_text_log, sql_text_log,
@@ -476,7 +476,7 @@ module FinResultParserTools
       end
     end
 
-    return DataImportTeamAnalysisResults.new({
+    return DataImportTeamAnalysisResult.new({
       analysis_log_text:  analysis_text_log,
       sql_text:           sql_text_log,
       searched_team_name: matching_string,

@@ -13,6 +13,7 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /log/*.ok
+/log/*.sql
 /tmp
 
 # Ignore ExtJS library and other directories:

@@ -15,6 +15,16 @@
 	padding: 40px 20px 0px 0px;
 }
 
+.goggles-divlist-even {
+	background: #eeeeee;
+}
+.goggles-divlist-odd {
+	background: #ffffff;
+}
+.goggles-div-centeralign {
+	text-align: center;
+}
+
 table td.goggles-centeralign{
 	text-align: center;
 }

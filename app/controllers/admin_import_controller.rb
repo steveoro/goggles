@@ -79,9 +79,9 @@ class AdminImportController < ApplicationController
 # DEBUG
     logger.debug "\r\n\r\n!! ------ admin_import::step2_analysis -----"
     logger.debug "PARAMS: #{params.inspect}"
-    if params[:id]
+    if ( params[:id].to_i > 0 )
       @data_import_session_id = params[:id].to_i
-      @analysis_results = DataImportTeamAnalysisResults.where( :data_import_session_id => @data_import_session_id )
+      @analysis_results = DataImportTeamAnalysisResult.where( :data_import_session_id => @data_import_session_id )
     else
       @data_import_session_id = 0
       @analysis_results = []
@@ -197,16 +197,143 @@ class AdminImportController < ApplicationController
     logger.debug "\r\n\r\n!! ------ admin_import::step3_analysis_commit -----"
     logger.debug "PARAMS: #{params.inspect}"
     is_ok = true
+    data_import_session_id = 0
+    must_go_back_on_commit = false
+    confirmed_actions_ids = []
+                                                    # Parse parameters:
+    params.each{ |key, value|
+      data_import_session_id = value.to_i if ( key.to_sym == :data_import_session_id)
+      if ( key.to_s =~ /id_/i )
+        confirmed_actions_ids << ( key.to_s.split('id_')[1] ).to_i
+      end
+      must_go_back_on_commit = value.to_i > 0 if ( key.to_sym == :must_go_back)
+    }
+# DEBUG
+    logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
+    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
 
-    # TODO retrieve results from dedicated table
-    # TODO retrieve results confirmation from parameters
+    team_analysis_log  = ''
+    equivalent_sql_log = ''
+    team_analysis_ext  = '.team.log'
+    equivalent_sql_ext = '.team.sql'
+    data_import_session = DataImportSession.find( data_import_session_id )
+    log_filename = File.join(                       # Compute log filename using data file as a start:
+      File.join(Rails.root, 'log'),
+      (File.basename(data_import_session.file_name).split('.')[0])
+    )
+                                                    # retrieve results from dedicated table:
+    @all_results = DataImportTeamAnalysisResult.where( :data_import_session_id => data_import_session_id )
+    @all_results.each { |result|                    # For each confirmed result, do the suggested actions:
+      is_confirmed = confirmed_actions_ids.include?( result.id )
+# DEBUG
+      logger.debug "\r\nProcessing #{is_confirmed ? 'CONFIRMED' : 'unconfirmed'} #{result}..."
+      team_name = result.searched_team_name
+      team_id   = result.chosen_team_id
+      season_id = result.desired_season_id
+                                                    # -- Can ADD new Team? (Default action for unconfirmed results)
+      if ( (! is_confirmed) || result.can_insert_team )
+        begin                
+          Team.transaction do                       # Let's make sure other threads have not already done what we want to do:
+            if ( Team.where(:name => team_name).none? )
+              committed_row = Team.new(
+                :name             => team_name,
+                :editable_name    => team_name,     # (let's initialize this with the data-import name)
+                :name_variations  => team_name,
+                :user_id => current_admin.id
+                # XXX Unable to guess city id (not filled-in, to be added by hand)
+              )
+              committed_row.save!                   # raise automatically an exception if save is not successful
+              team_id = committed_row.id            # update the team_id with the actual value that shold be used probably also below
+            else
+              logger.info( "\r\n*** admin_import::step3_analysis_commit: WARNING: skipping Team creation because was (unexpectedly) found already existing! (Name:'#{team_name}')" )
+            end
+          end
+        rescue
+          logger.error( "\r\n*** admin_import::step3_analysis_commit: exception caught during Team save! (Name:'#{team_name}')" )
+          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          is_ok = false
+        end
+      end
+                                                    # -- Can ADD new Team Alias?
+      if ( is_confirmed && result.can_insert_alias )
+        begin                
+          DataImportTeamAlias.transaction do       # Let's make sure other threads have not already done what we want to do:
+            if ( DataImportTeamAlias.where(:name => team_name, :team_id  => team_id).none? )
+              committed_row = DataImportTeamAlias.new(
+                :name     => team_name,
+                :team_id  => team_id
+              )
+              committed_row.save!                   # raise automatically an exception if save is not successful
+            else
+              logger.info( "\r\n*** admin_import::step3_analysis_commit: WARNING: skipping DataImportTeamAlias creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id})" )
+            end
+          end
+        rescue
+          logger.error( "\r\n*** admin_import::step3_analysis_commit: exception caught during DataImportTeamAlias save! (Name:'#{team_name}', team_id:#{team_id})" )
+          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          is_ok = false
+        end
+      end
+                                                    # -- Can ADD new TeamAffiliation?
+      if ( is_confirmed && result.can_insert_affiliation )
+        begin                
+          TeamAffiliation.transaction do            # Let's make sure other threads have not already done what we want to do:
+            if ( TeamAffiliation.where(:team_id => team_id, :season_id  => desired_season_id).none? )
+              committed_row = TeamAffiliation.new(
+                :name       => team_name,           # Use the actual provided (and searched) name instead of the result_row.name
+                :team_id    => team_id,
+                :season_id  => season_id,
+                :is_autofilled => true,             # signal that we have guessed some of the values
+                :must_calculate_goggle_cup => false,
+                :user_id    => current_admin.id
+                # XXX Unable to guess team affiliation number (not filled-in, to be added by hand)
+              )
+              committed_row.save!                   # raise automatically an exception if save is not successful
+            else
+              logger.info( "\r\n*** admin_import::step3_analysis_commit: WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})" )
+            end
+          end
+        rescue
+          logger.error( "\r\n*** admin_import::step3_analysis_commit: exception caught during TeamAffiliation save! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})" )
+          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          is_ok = false
+        end
+      end
+                                                    # Rebuild corrected log files:
+      if ( is_confirmed )
+        team_analysis_log  += result.analysis_log_text
+        equivalent_sql_log += result.sql_text
+      else
+        team_analysis_log  += "\r\n-------------------------------------------------------------------------------------------------------------\r\n" +
+                              "                    [[[ '#{team_name}' ]]]  -- search overridden:\r\n\r\n" +
+                              "   => NOT FOUND.\r\n"
+        equivalent_sql_log += "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n" +
+                              "    ('#{team_name}','#{team_name}','','','',1,CURDATE(),CURDATE());\r\n"
+      end
+    }
 
-    @results = DataImportTeamAnalysisResults.all
-    # TODO do the suggested actions
-    # TODO clear the session
-
-    flash[:notice] = I18n.t('admin_import.team_analysis_completed') if is_ok
-    redirect_to( goggles_di_step1_status_path() ) and return
+    if is_ok
+      if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
+        DataImporter.destroy_data_import_session( :data_import_session_id => data_import_session_id ) 
+      else                                          # Clear just the results from the session if everything is ok:
+        DataImportTeamAnalysisResult.delete_all( :data_import_session_id => data_import_session_id )
+      end
+      team_analysis_ext  += '.ok'
+      equivalent_sql_ext += '.ok'
+      flash[:notice] = I18n.t('admin_import.team_analysis_completed')
+    end
+                                                    # Write the log files, if there's any content:
+    DataImporter.to_analysis_logfile( log_filename, team_analysis_log, team_analysis_ext )
+    DataImporter.to_sql_executable_logfile( log_filename, equivalent_sql_log, equivalent_sql_ext )
+                                                    # Either, go on with data-import or go back to the status page:
+    if is_ok && (! must_go_back_on_commit)
+      redirect_to( goggles_di_step2_checkout_path( :id => data_import_session_id ) ) and return
+    else
+      redirect_to( goggles_di_step1_status_path() ) and return
+    end
   end
   # ---------------------------------------------------------------------------
 

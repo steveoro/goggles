@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.89.20131110
+  - Goggles framework vers.:  4.00.90.20131111
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -24,7 +24,7 @@ require 'parsers/fin_result_phase3'
   - @team_analysis_log string (additional log text) variable
   - @sql_executable_log string (additional log text) variable
 
-  - @team_analysis_results an Array of DataImportTeamAnalysisResults
+  - @team_analysis_results an Array of DataImportTeamAnalysisResult
     instances;
 
   - @esteemed_meeting_mins integer variable member: total minutes counter
@@ -167,7 +167,7 @@ class DataImporter
   def self.create_new_data_import_session( full_pathname, full_text_file_contents,
                                            total_data_rows, file_format, season_id,
                                            current_admin_id )
-    new_session = DataImportSession.create(
+    DataImportSession.create(
       :file_name => full_pathname,
       :source_data => full_text_file_contents,
       :total_data_rows => total_data_rows,
@@ -176,8 +176,6 @@ class DataImporter
       :phase_3_log => '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers") 
       :user_id => current_admin_id
     )
-    @created_data_import_session_id = new_session.id
-    new_session
   end
 
 
@@ -204,6 +202,7 @@ class DataImporter
       DataImportTeam.delete_all( :data_import_session_id => session_id )
       DataImportBadge.delete_all( :data_import_session_id => session_id )
       DataImportCity.delete_all( :data_import_session_id => session_id )
+      DataImportTeamAnalysisResult.delete_all( :data_import_session_id => session_id )
       DataImportSession.delete( session_id )
       logger.info( "-- destroy_data_import_session(#{session_id}): data-import session clean-up done.\r\n" ) if logger
     else
@@ -250,6 +249,49 @@ class DataImporter
     self.do_not_consume_file = do_not_consume_file
     self.log_dir = log_dir
   end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+
+
+  # Saves to the specifed log_filename the log_contents, adding a default
+  # dedicated header and footer and using a default extension.
+  # If the content string is empty, nothing gets written to the file path.
+  #
+  def self.to_logfile( log_filename, log_contents, header_text, footer_text = '', extension = '.log' )
+    if log_contents.size > 0
+      File.open( log_filename + extension, 'w' ) do |f|
+        f.puts header_text if header_text.size > 0
+        f.puts log_contents  
+        f.puts footer_text if footer_text.size > 0
+      end 
+    end 
+  end
+
+  # Saves to the specifed log_filename the log_contents, adding a default
+  # dedicated header and footer and using a default extension ('team.log').
+  # If the content string is empty, nothing gets written to the file path.
+  #
+  def self.to_analysis_logfile( log_filename, log_contents, extension = '.team.log' )
+    self.to_logfile(
+      log_filename, log_contents,
+      "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
+      '',
+      extension
+    )
+  end
+
+  # Saves to the specifed log_filename the log_contents, adding a default
+  # dedicated header and footer and using a default extension ('team.sql').
+  # If the content string is empty, nothing gets written to the file path.
+  #
+  def self.to_sql_executable_logfile( log_filename, log_contents, extension = '.team.sql' )
+    self.to_logfile(
+      log_filename, log_contents,
+      "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n",
+      "\r\nCOMMIT;",
+      extension
+    )
+  end
 
 
   # Stores the content of the internal log texts to a specified
@@ -260,29 +302,15 @@ class DataImporter
   # log files are created also (same name, different extension).
   #
   def to_logfile( log_filename = get_log_filename() )
-    File.open( log_filename+'.log', 'w' ) do |f|
-      if ( flash[:error] )
-        f.puts "               *** Latest flash[:error]: ***"
-        f.puts flash[:error]
-        f.puts "-----------------------------------------------------------"
-        f.puts "\r\n"
-      end
-      f.puts get_import_log  
-    end 
-    if @team_analysis_log.size > 0
-      File.open( log_filename+'.team.log', 'w' ) do |f|
-        f.puts "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n"  
-        f.puts @team_analysis_log  
-      end 
-    end 
-    if @sql_executable_log.size > 0
-      File.open( log_filename+'.team.sql', 'w' ) do |f|
-        f.puts "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n"  
-        f.puts @sql_executable_log  
-        f.puts "\r\nCOMMIT;"  
-      end 
-    end
+    DataImporter.to_logfile(
+      log_filename, get_import_log,
+      ( flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error]}\r\n-----------------------------------------------------------\r\n" : '' )
+    )
+    DataImporter.to_analysis_logfile( log_filename, @team_analysis_log )
+    DataImporter.to_sql_executable_logfile( log_filename, @sql_executable_log )
   end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
 
 
   # Executes a single data-import task as a whole process, without phases 
@@ -444,6 +472,7 @@ class DataImporter
         season_id,
         @current_admin_id
     )
+    @created_data_import_session_id = data_import_session.id
 
     if ( data_import_session )                      # Create all the data-import rows from the parsed result:
       session_id = data_import_session.id
@@ -635,9 +664,9 @@ class DataImporter
       DataImporter.destroy_data_import_session( data_import_session_id, logger, do_consume_residual_file )
       @phase_1_log = data_import_session.phase_1_log
       @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" +
-                    @phase_1_log +
+                    @phase_1_log.to_s +
                     "\r\n\r\n--------------------[Phase #2 - COMMIT]--------------------\r\n\r\n" +
-                    @phase_2_log +
+                    @phase_2_log.to_s +
                     "data-import PHASE #2 DONE.\r\n" +
                     "\r\nTotal committed rows: #{@committed_data_rows}\r\n" +
                     "Data-import session destroyed successfully.\r\n" +

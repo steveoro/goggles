@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.89.20131110
+  - Goggles framework vers.:  4.00.90.20131111
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -29,7 +29,7 @@ require 'parsers/fin_result_parser_tools'
   - @team_analysis_log string (additional log text) variable
   - @sql_executable_log string (additional log text) variable
 
-  - @team_analysis_results an Array of DataImportTeamAnalysisResults
+  - @team_analysis_results an Array of DataImportTeamAnalysisResult
     instances.
 
   - @stored_data_rows integer (counter) variable
@@ -1063,8 +1063,7 @@ module FinResultPhase2
     if ( team_id == 0 )                             # Immediately exit on team search/add error:
       @phase_1_log << "\r\nsearch_or_add_a_corresponding_meeting_team_score(): returned team_id IS ZERO! (And it can't be.)\r\n"
       logger.error( "\r\nsearch_or_add_a_corresponding_meeting_team_score(): returned team_id IS ZERO! (And it can't be.)" )
-      flash[:error] = "#{I18n.t(:something_went_wrong)} ['returned team_id IS ZERO']"
-      return 0
+      return 0                                      # flash[:error] is already defined at this point.
     end
                                                     # Init the retrieval of the relay results, from meeting -> meeting_sessions -> meeting_programs entities
     relay_results = []
@@ -1359,8 +1358,8 @@ module FinResultPhase2
     not_found = true
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
 # DEBUG
-#    logger.debug( "Seeking Team '#{team_name}'..." )
-#    @phase_1_log << "Seeking Team '#{team_name}'...\r\n"
+    logger.debug( "Seeking TeamAffiliation '#{team_name}'..." )
+    @phase_1_log << "Seeking TeamAffiliation '#{team_name}'...\r\n"
                                                     # *** (1) SCAN TeamAffiliation:
     team_affiliation = TeamAffiliation.where([      # Search of TeamAffiliation name is more strict (it shouldn't change at all in the same season;
         "(name LIKE ?)",                            # also, we extend the search to a very similar name in ANY season, just to find the actual team)
@@ -1432,7 +1431,7 @@ module FinResultPhase2
               :team_id    => result_row.id,
               :season_id  => season_id,
               :is_autofilled => true,               # signal that we have guessed some of the values
-              :must_compute_ober_cup => false,
+              :must_calculate_goggle_cup => false,
               :user_id    => @current_admin_id
               # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
             )
@@ -1460,15 +1459,15 @@ module FinResultPhase2
 # FIXME Array structure is no more needed!
       @team_analysis_results << result
       begin
-        DataImportTeamAnalysisResults.transaction do
+        DataImportTeamAnalysisResult.transaction do
           result.save!
         end
       rescue
-        @phase_1_log << "\r\nDataImportTeamAnalysisResults creation: exception caught during save! (Result:#{result})\r\n"
+        @phase_1_log << "\r\nDataImportTeamAnalysisResult creation: exception caught during save! (Result:#{result})\r\n"
         @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** DataImportTeamAnalysisResults creation: exception caught during save! (Result:#{result})\r\n" )
+        logger.error( "\r\n*** DataImportTeamAnalysisResult creation: exception caught during save! (Result:#{result})\r\n" )
         logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-        flash[:error] = "(DataImportTeamAnalysisResults): #{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+        flash[:error] = "(DataImportTeamAnalysisResult): #{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
         flash[:info] = I18n.t('admin_import.team_analysis_needed')
       end
