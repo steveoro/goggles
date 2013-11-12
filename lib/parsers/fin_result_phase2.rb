@@ -1454,10 +1454,10 @@ module FinResultPhase2
       )                                             # ALWAYS LOG any chosen "best match" which is slightly different from the searched string:
       if result_row
 # DEBUG
-        logger.debug( "Team found by (strict) fuzzy search! (ID=#{result_id})" )
+        logger.debug( "Team found by (strict) fuzzy search! (with ID=#{result_row.id})" )
         @phase_1_log << "Using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
         @team_analysis_log << "Using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
-        logger.info( "\r\nUsing best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'." )
+        logger.info( "Using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\b" )
         result_id = - result_row.id                 # We must differentiate the result: negative for Team, positive for DataImportTeam
         not_found = false
       end

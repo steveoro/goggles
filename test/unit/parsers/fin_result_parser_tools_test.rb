@@ -32,80 +32,80 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
   # ---------------------------------------------------------------------------
 
 
-  # test "seems_to_be_the_same_city" do
-    # is_the_same = FinResultParserTools.seems_to_be_the_same_city(
-      # # new:     /   existing:
-      # "Reggio nell'Emilia", "REGGIO EMILIA",
-      # 'Reggio Emilia', "REGGIO EMILIA",
-      # 'ITA', 'ITA'
-    # )
-    # assert( is_the_same )
-# 
-    # is_the_same = FinResultParserTools.seems_to_be_the_same_city(
-      # # new:     /   existing:
-      # "Reggio Calabria", "REGGIO EMILIA",
-      # 'Reggio Calabria', "REGGIO EMILIA",
-      # 'ITA', 'ITA'
-    # )
-    # assert( !is_the_same )
-  # end
-  # # ---------------------------------------------------------------------------
-# 
-# 
-  # test "find_best_fuzzy_match" do
-    # row = FinResultParserTools.find_best_fuzzy_match(
-      # 'Reggio Emilia',
-      # [
-        # NameContainer.new("PARMA"),
-        # NameContainer.new("REGGIO NELL'EMILIA"),
-        # NameContainer.new("MODENA"),
-        # NameContainer.new("REGGIO CALABRIA"),
-        # NameContainer.new("BOLOGNA")
-      # ], :name
-    # )
-    # assert_equal( "REGGIO NELL'EMILIA", row.name )
-# 
-    # row = FinResultParserTools.find_best_fuzzy_match(
-      # 'CSI NUOTO OBER FERR',
-      # [
-        # NameContainer.new("CSI Nuoto Ober Ferrari ASD"),
-        # NameContainer.new("CSI NUOTO CORREGGIO"),
-        # NameContainer.new("CSI NUOTO MASTER IMOLA"),
-        # NameContainer.new("FERRARI NUOTO MODENA"),
-        # NameContainer.new("NUOTO MASTER CSI LUGO")
-      # ], :name
-    # )
-    # assert_equal( "CSI Nuoto Ober Ferrari ASD", row.name )
-# 
-    # row = FinResultParserTools.find_best_fuzzy_match(
-      # 'CSInuoto OberFerrari',
-      # [
-        # NameContainer.new("CSI Nuoto Ober Ferrari ASD"),
-        # NameContainer.new("CSI NUOTO CORREGGIO"),
-        # NameContainer.new("CSI NUOTO MASTER IMOLA"),
-        # NameContainer.new("FERRARI NUOTO MODENA"),
-        # NameContainer.new("NUOTO MASTER CSI LUGO")
-      # ], :name
-    # )
-    # assert_equal( "CSI Nuoto Ober Ferrari ASD", row.name )
-  # end
-  # # ---------------------------------------------------------------------------
-# 
-# 
-  # test "find minimum bias score for a single match" do
-    # perform_seek_minimum_bias_score_for( "CSI Nuoto Ober Ferrari ASD" )
-    # perform_seek_minimum_bias_score_for( "CSINuoto Ober Ferrari" )
-    # perform_seek_minimum_bias_score_for( "CSI Nuoto Master Ober Ferrari" )
-    # perform_seek_minimum_bias_score_for( "Nuotatori" )
-    # perform_seek_minimum_bias_score_for( "Acquatime" )
-    # perform_seek_minimum_bias_score_for( "Acqua Time" )
-    # perform_seek_minimum_bias_score_for( "Acquambiente" )
-    # perform_seek_minimum_bias_score_for( "Sport Management" )
-    # perform_seek_minimum_bias_score_for( "Albatros" )
-    # perform_seek_minimum_bias_score_for( "Albatros ASD" )
-  # end
-  # # ---------------------------------------------------------------------------
-  # # ---------------------------------------------------------------------------
+  test "seems_to_be_the_same_city" do
+    is_the_same = FinResultParserTools.seems_to_be_the_same_city(
+      # new:     /   existing:
+      "Reggio nell'Emilia", "REGGIO EMILIA",
+      'Reggio Emilia', "REGGIO EMILIA",
+      'ITA', 'ITA'
+    )
+    assert( is_the_same )
+
+    is_the_same = FinResultParserTools.seems_to_be_the_same_city(
+      # new:     /   existing:
+      "Reggio Calabria", "REGGIO EMILIA",
+      'Reggio Calabria', "REGGIO EMILIA",
+      'ITA', 'ITA'
+    )
+    assert( !is_the_same )
+  end
+  # ---------------------------------------------------------------------------
+
+
+  test "find_best_fuzzy_match" do
+    row = FinResultParserTools.find_best_fuzzy_match(
+      'Reggio Emilia',
+      [
+        NameContainer.new("PARMA"),
+        NameContainer.new("REGGIO NELL'EMILIA"),
+        NameContainer.new("MODENA"),
+        NameContainer.new("REGGIO CALABRIA"),
+        NameContainer.new("BOLOGNA")
+      ], :name
+    )
+    assert_equal( "REGGIO NELL'EMILIA", row.name )
+
+    row = FinResultParserTools.find_best_fuzzy_match(
+      'CSI NUOTO OBER FERR',
+      [
+        NameContainer.new("CSI Nuoto Ober Ferrari ASD"),
+        NameContainer.new("CSI NUOTO CORREGGIO"),
+        NameContainer.new("CSI NUOTO MASTER IMOLA"),
+        NameContainer.new("FERRARI NUOTO MODENA"),
+        NameContainer.new("NUOTO MASTER CSI LUGO")
+      ], :name
+    )
+    assert_equal( "CSI Nuoto Ober Ferrari ASD", row.name )
+
+    row = FinResultParserTools.find_best_fuzzy_match(
+      'CSInuoto OberFerrari',
+      [
+        NameContainer.new("CSI Nuoto Ober Ferrari ASD"),
+        NameContainer.new("CSI NUOTO CORREGGIO"),
+        NameContainer.new("CSI NUOTO MASTER IMOLA"),
+        NameContainer.new("FERRARI NUOTO MODENA"),
+        NameContainer.new("NUOTO MASTER CSI LUGO")
+      ], :name
+    )
+    assert_equal( "CSI Nuoto Ober Ferrari ASD", row.name )
+  end
+  # ---------------------------------------------------------------------------
+
+
+  test "find minimum bias score for a single match" do
+    perform_seek_minimum_bias_score_for( "CSI Nuoto Ober Ferrari ASD" )
+    perform_seek_minimum_bias_score_for( "CSINuoto Ober Ferrari" )
+    perform_seek_minimum_bias_score_for( "CSI Nuoto Master Ober Ferrari" )
+    perform_seek_minimum_bias_score_for( "Nuotatori" )
+    perform_seek_minimum_bias_score_for( "Acquatime" )
+    perform_seek_minimum_bias_score_for( "Acqua Time" )
+    perform_seek_minimum_bias_score_for( "Acquambiente" )
+    perform_seek_minimum_bias_score_for( "Sport Management" )
+    perform_seek_minimum_bias_score_for( "Albatros" )
+    perform_seek_minimum_bias_score_for( "Albatros ASD" )
+  end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
 
 
   test "analyze_team_name_best_matches" do
@@ -147,53 +147,53 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
   # ---------------------------------------------------------------------------
 
 
-  # test "collect matches using edited names" do
-    # check_for_multiple_matches( "CSI Nuoto Ober Ferrari ASD", 0.97, true, false )
-    # check_for_multiple_matches( "CSI Nuoto Master Ober Ferrari", 0.8, true, false )
-    # check_for_multiple_matches( "Nuotatori", 0.8, true, false )
-# 
-    # check_for_multiple_matches( "Acquatime", 0.97, true, false )
-    # check_for_multiple_matches( "Acquambiente", 0.97, true, false )
-  # end
-  # # ---------------------------------------------------------------------------
-  # # ---------------------------------------------------------------------------
-# 
-# 
-  # test "collect best matches report with bias 08" do
-    # report_multiple_matches( 0.8, false )
-  # end
-# 
-  # test "collect best matches report with bias 09" do
-    # report_multiple_matches( 0.9, false )
-  # end
-# 
-  # test "collect best matches report with bias 092" do
-    # report_multiple_matches( 0.92, false )
-  # end
-# 
-  # test "collect best matches report with bias 093" do
-    # report_multiple_matches( 0.93, false )
-  # end
-# 
-  # test "collect best matches report with bias 095" do
-    # report_multiple_matches( 0.95, false )
-  # end
-# 
-  # test "collect best matches report with bias 096" do
-    # report_multiple_matches( 0.96 )
-  # end
-# 
-  # test "collect best matches report with bias 097" do
-    # report_multiple_matches( 0.97 )
-  # end
-# 
-  # test "collect best matches report with bias 098" do
-    # report_multiple_matches( 0.98 )
-  # end
-# 
-  # test "collect best matches report with bias 099" do
-    # report_multiple_matches( 0.99 )
-  # end
+  test "collect matches using edited names" do
+    check_for_multiple_matches( "CSI Nuoto Ober Ferrari ASD", 0.97, true, false )
+    check_for_multiple_matches( "CSI Nuoto Master Ober Ferrari", 0.8, true, false )
+    check_for_multiple_matches( "Nuotatori", 0.8, true, false )
+
+    check_for_multiple_matches( "Acquatime", 0.97, true, false )
+    check_for_multiple_matches( "Acquambiente", 0.97, true, false )
+  end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+
+
+  test "collect best matches report with bias 08" do
+    report_multiple_matches( 0.8, false )
+  end
+
+  test "collect best matches report with bias 09" do
+    report_multiple_matches( 0.9, false )
+  end
+
+  test "collect best matches report with bias 092" do
+    report_multiple_matches( 0.92, false )
+  end
+
+  test "collect best matches report with bias 093" do
+    report_multiple_matches( 0.93, false )
+  end
+
+  test "collect best matches report with bias 095" do
+    report_multiple_matches( 0.95, false )
+  end
+
+  test "collect best matches report with bias 096" do
+    report_multiple_matches( 0.96 )
+  end
+
+  test "collect best matches report with bias 097" do
+    report_multiple_matches( 0.97 )
+  end
+
+  test "collect best matches report with bias 098" do
+    report_multiple_matches( 0.98 )
+  end
+
+  test "collect best matches report with bias 099" do
+    report_multiple_matches( 0.99 )
+  end
   # ---------------------------------------------------------------------------
   # ---------------------------------------------------------------------------
 

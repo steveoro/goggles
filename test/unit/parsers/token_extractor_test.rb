@@ -139,7 +139,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
   def do_tokenize( token_extractor, txt, expected_value )
     token = token_extractor.tokenize( txt )
     assert_not_nil( token, "token is nil!" )
-    assert_equal( expected_value, token, "token ('#{token}') differs from expected value ('#{expected_value}')!" )
+    assert_equal( expected_value, token, "token (#{token_extractor.field_name}: '#{token}') differs from expected value ('#{expected_value}')!" )
   end
   # ---------------------------------------------------------------------------
 
@@ -379,22 +379,34 @@ class TokenExtractorTest < ActiveSupport::TestCase
       "            2      CN UISP BOLOGNA                   44667,70",
       "            3      NUOTO CLUB 2000                   37112,33",
       "            4      NUOVO NUOTO                       31562,33",
-      "            5      AS MOLINELLA NUOTO                24085,60"
+      "            5      AS MOLINELLA NUOTO                24085,60",
+      "          143      SEA SUB MODENA                        0,00",
+      "                   ASD SANTA CLARA - G                   0,00",
+      "                   ASOLA N                               0,00",
+      "                   FIRENZE NUOTA MASTER A.S.D.           0,00",
+      "                   TEAM EUGANEO                          0,00",
+      ""
     ]
   end
 
   def get_expectations_for_ranking_row()
     [
-      [ '1', "EMI-001444", "ESTENSE NUOTO CSI", "62525,95" ],
-      [ '2', "EMI-001481", "N MODENESI", "58272,35" ],
-      [ '3', "EMI-001451", "RINASCITA TEAM ROMA", "46753,95" ],
-      [ '4', "EMI-001457", "NUOTO CLUB 2000", "37724,16" ],
-      [ '5', "EMI-001452", "AQUATIC TEAM RAVENN", "29332,89" ],
-      [ '1', '', "N MODENESI", "66495,23" ],
-      [ '2', '', "CN UISP BOLOGNA", "44667,70" ],
-      [ '3', '', "NUOTO CLUB 2000", "37112,33" ],
-      [ '4', '', "NUOVO NUOTO", "31562,33" ],
-      [ '5', '', "AS MOLINELLA NUOTO", "24085,60" ]
+      [ '1',    "EMI-001444", "ESTENSE NUOTO CSI", "62525,95" ],
+      [ '2',    "EMI-001481", "N MODENESI", "58272,35" ],
+      [ '3',    "EMI-001451", "RINASCITA TEAM ROMA", "46753,95" ],
+      [ '4',    "EMI-001457", "NUOTO CLUB 2000", "37724,16" ],
+      [ '5',    "EMI-001452", "AQUATIC TEAM RAVENN", "29332,89" ],
+      [ '1',    '', "N MODENESI", "66495,23" ],
+      [ '2',    '', "CN UISP BOLOGNA", "44667,70" ],
+      [ '3',    '', "NUOTO CLUB 2000", "37112,33" ],
+      [ '4',    '', "NUOVO NUOTO", "31562,33" ],
+      [ '5',    '', "AS MOLINELLA NUOTO", "24085,60" ],
+      [ '143',  '', "SEA SUB MODENA", "0,00" ],
+      [ '',     '', "ASD SANTA CLARA - G", "0,00" ],
+      [ '',     '', "ASOLA N", "0,00" ],
+      [ '',     '', "FIRENZE NUOTA MASTER A.S.D.", "0,00" ],
+      [ '',     '', "TEAM EUGANEO", "0,00" ],
+      [ '',     '', "", "" ]
     ]
   end
   # ---------------------------------------------------------------------------

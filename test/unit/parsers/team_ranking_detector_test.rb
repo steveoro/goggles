@@ -33,7 +33,8 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       match_idx = row =~ /\w\w\w-\d{6}/ui
       puts "Testing team_code for '#{row}'..."
       if index < 5
-        assert( match_idx >= 0, "match_idx was expected to be >= 0! (and is nil)" )
+        assert_not_nil( match_idx )
+        assert( match_idx >= 0, "match_idx was expected to be >= 0!" )
         expected_value = expectations[index]
         tokenized_value = row[ match_idx .. match_idx+10 ].strip
         assert_equal( expected_value, tokenized_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
@@ -51,8 +52,10 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       match_idx = row =~ /\s\d{1,6}[\,|\.]\d\d$/ui
       end_idx   = row =~ /$/ui
       puts "Testing team_score for '#{row}'..."
-      assert( match_idx >= 0, "match_idx was expected to be >= 0! (and is nil)" )
-      assert( end_idx >= 0, "end_idx was expected to be >= 0! (and is nil)" )
+      assert_not_nil( match_idx )
+      assert_not_nil( end_idx )
+      assert( match_idx >= 0, "match_idx was expected to be >= 0!" )
+      assert( end_idx >= 0, "end_idx was expected to be >= 0!" )
       expected_value = expectations[index]
       tokenized_value = row[ match_idx .. end_idx ].strip
       assert_equal( expected_value, tokenized_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
@@ -64,11 +67,13 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
     txts = get_chart_fixtures()
     expectations = get_name_expectations()
     txts.each_with_index { |row, index|
-      match_idx = row =~ /(?<=\w{3}-\d{6})\s{2}\w+|(?<=\d\s{6})\w+/ui
+      match_idx = row =~ /(?<=(\w{3}-\d{6}\s{2})|(\d\s{6})|(\s{19}))\w+/ui
       end_idx   = row =~ /\s\d{1,6}[\,|\.]\d\d$/ui
       puts "Testing team_name for '#{row}'..."
-      assert( match_idx >= 0, "match_idx was expected to be >= 0! (and is nil)" )
-      assert( end_idx >= 0, "end_idx was expected to be >= 0! (and is nil)" )
+      assert_not_nil( match_idx )
+      assert_not_nil( end_idx )
+      assert( match_idx >= 0, "match_idx was expected to be >= 0!" )
+      assert( end_idx >= 0, "end_idx was expected to be >= 0!" )
       expected_value = expectations[index]
       tokenized_value = row[ match_idx .. end_idx ].strip
       assert_equal( expected_value, tokenized_value, "tokenized_value result='#{tokenized_value}' is different from expected='#{expected_value}'!")
@@ -102,7 +107,10 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       "            2      CN UISP BOLOGNA                   44667,70",
       "            3      NUOTO CLUB 2000                   37112,33",
       "            4      NUOVO NUOTO                       31562,33",
-      "            5      AS MOLINELLA NUOTO                24085,60"
+      "            5      AS MOLINELLA NUOTO                24085,60",
+      "          143      SEA SUB MODENA                        0,00",
+      "                   ASD SANTA CLARA - G                   0,00",
+      "                   ASOLA N                               0,00"
     ]
   end
 
@@ -113,6 +121,9 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       "EMI-001451",
       "EMI-001457",
       "EMI-001452",
+      '',
+      '',
+      '',
       '',
       '',
       '',
@@ -132,7 +143,10 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       "44667,70",
       "37112,33",
       "31562,33",
-      "24085,60"
+      "24085,60",
+      "0,00",
+      "0,00",
+      "0,00"
     ]
   end
 
@@ -147,7 +161,10 @@ class TeamRankingDetectorTest < ActiveSupport::TestCase
       "CN UISP BOLOGNA",
       "NUOTO CLUB 2000",
       "NUOVO NUOTO",
-      "AS MOLINELLA NUOTO"
+      "AS MOLINELLA NUOTO",
+      "SEA SUB MODENA",
+      "ASD SANTA CLARA - G",
+      "ASOLA N"
     ]
   end
   # ---------------------------------------------------------------------------

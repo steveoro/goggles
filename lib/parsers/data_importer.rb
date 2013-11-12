@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.91.20131111
+  - Goggles framework vers.:  4.00.92.20131112
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -372,13 +372,25 @@ class DataImporter
   # If +season+ instance is +nil+, it will be assumed from the pathname
   # of the file.
   #
+  # If data_import_session is not +nil+ it will be used as a "continuation session",
+  # assuming the whole parsing from scratch of the data-file will not generate duplicates.
+  # (This is actually possible for most cases in which an existing session has been abruptely
+  # interrupted at the start, for example due to the "team names pre-analysis phase".
+  # In all other cases of interrupted sessions, passing a non-nil data_import_session will
+  # likely generate corrupted data!)
+  #
   # === Returns the newly created "data_import" session instance if successful; +nil+ otherwise.
   #     The parse result hash is directly stored into dedicated temporary table on the database.
   #
   def consume_txt_file( full_pathname, season = nil, force_missing_meeting_creation = false,
-                        force_missing_team_creation = false, do_not_consume_file = false )
+                        force_missing_team_creation = false, do_not_consume_file = false,
+                        data_import_session = nil )
     logger.info( "\r\n-- consume_txt_file: '#{full_pathname}', force_missing_meeting_creation=#{force_missing_meeting_creation}, force_missing_team_creation=#{force_missing_team_creation}, do_not_consume_file=#{do_not_consume_file}." )
     @phase_1_log = "Parsing file: #{full_pathname}, force_missing_meeting_creation=#{force_missing_meeting_creation}, force_missing_team_creation=#{force_missing_team_creation}, do_not_consume_file=#{do_not_consume_file}.\r\n"
+    unless data_import_session.nil?
+      logger.info( "\r\n                     ==> CONTINUING SESSION (after team name Analysis, stored in separate log file) <==" )
+      @phase_1_log = "*** CONTINUING SESSION (after team name Analysis, stored in separate log file) ***\r\n"
+    end
 
     # TODO PARSE file_type => '<ris><date_header><code>.txt' for FIN results type
     file_type = 'fin_results'                       # FIXME Pre-fixed file structure type, only FIN Results supported, no parsing at all
@@ -472,7 +484,7 @@ class DataImporter
         file_type,
         season_id,
         @current_admin_id
-    )
+    ) if data_import_session.nil?
     @created_data_import_session_id = data_import_session.id
 
     if ( data_import_session )                      # Create all the data-import rows from the parsed result:

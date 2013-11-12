@@ -79,6 +79,9 @@ class AdminImportController < ApplicationController
 # DEBUG
     logger.debug "\r\n\r\n!! ------ admin_import::step2_analysis -----"
     logger.debug "PARAMS: #{params.inspect}"
+                                                    # Propagate forward (phase-3) the parameters from Phase-1, if any:
+    @force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
+    @force_missing_team_creation    = ( params[:force_team_creation].to_i > 0 )
     if ( params[:id].to_i > 0 )
       @data_import_session_id = params[:id].to_i
       @analysis_results = DataImportTeamAnalysisResult.where( :data_import_session_id => @data_import_session_id )
@@ -107,43 +110,43 @@ class AdminImportController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
 #    logger.debug "PARAMS: #{params.inspect}"
 #    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile]}"
+    filename_to_be_parsed = nil
+    data_import_session   = nil
+    data_importer         = nil
+    force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
+    force_missing_team_creation    = ( params[:force_team_creation].to_i > 0 )
     @season_id = 0                                  # (Must retrieve Season ID from form parameters)
-    @force_missing_meeting_creation = false
+    @season_description = '?'
 
-    if params[:id]                                  # -- CASE #1: id parameter present? We then assume a session is already in progress:
+                                                    # === CASE 1: id parameter present? We then assume a session is already in progress:
+    if params[:id]
       data_import_session = DataImportSession.find_by_id( params[:id].to_i )
       @season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
-                                                    # Session retrieval successful? Head on to phase #2 and let the component handle the rest:
-      @data_import_session_id = data_import_session ? data_import_session.id : nil
 # DEBUG
 #      logger.debug "SEASON.....: ID=#{@season_id}"
-#      logger.debug "!! ===========================\r\n\r\n"
+#      logger.debug "!! ---------------------------\r\n\r\n"
       if ( @season_id.to_i < 1 )
         flash[:notice] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
         redirect_to( goggles_di_step1_status_path() ) and return
       end
-      @season_description = '?'
       begin
         season = Season.find_by_id(@season_id)
         @season_description = season.description if season
       rescue
       end
 
-    elsif params[:datafile]                         # -- CASE #2: datafile parameter present? Copy the file to its destination:
+                                                    # === CASE 2: datafile parameter present? Copy the file to its destination:
+    elsif params[:datafile]
       if params[:season]                            # Retrieve season_id from parameters:
         @season_id = params[:season][:season_id].to_i
 # DEBUG
 #       logger.debug "SEASON.....: #{params[:season].inspect} (from params), ID=#{@season_id}"
       end
-#      logger.debug "!! ===========================\r\n\r\n"
+#      logger.debug "!! ---------------------------\r\n\r\n"
       if ( @season_id.to_i < 1 )
         flash[:notice] = I18n.t(:nothing_to_do_select_season, {:scope=>[:admin_import]})
         redirect_to( goggles_di_step1_status_path() ) and return
       end
-      data_import_session = nil
-      force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
-      force_missing_team_creation = ( params[:force_team_creation].to_i > 0 )
-      @season_description = '?'
       begin
         season = Season.find_by_id(@season_id)
         @season_description = season.description if season
@@ -151,36 +154,48 @@ class AdminImportController < ApplicationController
       end
 
       tmp_file = params[:datafile].tempfile         # (This is an ActionDispatch::Http::UploadedFile object)
-      destination_filename = File.join( "public/uploads", params[:datafile].original_filename )
-      FileUtils.cp tmp_file.path, destination_filename
-                                                    # === Create a new data-import session and consume the file: ===
-      data_importer = DataImporter.new( logger, flash, current_admin.id )
-      data_import_session = data_importer.consume_txt_file(
-        destination_filename, season, force_missing_meeting_creation,
-        force_missing_team_creation
-      )
-      if data_importer
-        data_importer.to_logfile()
-        if data_importer.has_team_analysis_results
-          flash[:info] = I18n.t('admin_import.team_analysis_needed')
-          redirect_to( goggles_di_step2_analysis_path(:id => data_importer.get_created_data_import_session_id) ) and return
-        end
-      end
-                                                    # Session retrieval successful? Head on to phase #2 and let the component handle the rest:
-      @data_import_session_id = data_import_session ? data_import_session.id : nil
+      filename_to_be_parsed = File.join( "public/uploads", params[:datafile].original_filename )
+      FileUtils.cp tmp_file.path, filename_to_be_parsed
 
-    else                                            # -- CASE ELSE: form not-fully completed
+                                                    # === CASE ELSE: form not-fully completed
+    else
       flash[:notice] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
       redirect_to( goggles_di_step1_status_path() ) and return
     end
-                                                    # -- CHECK OUTCOME: something went awfully wrong? Redirect:
-    if @data_import_session_id.nil?
-      if data_import_session                        # Store the log, if possible
-        data_import_session.phase_1_log = data_importer.get_phase_1_log()
-        data_import_session.save
+
+                                                    # === Re-launch consume_txt_file if we can/must do it:
+    if filename_to_be_parsed || ( data_import_session && (data_import_session.phase.to_i < 1) )
+      filename_to_be_parsed ||= data_import_session.file_name if data_import_session
+                                                    # Create a new data-import session to consume the datafile:
+      data_importer = DataImporter.new( logger, flash, current_admin.id )
+
+      data_import_session = data_importer.consume_txt_file(
+        filename_to_be_parsed, season, force_missing_meeting_creation,
+        force_missing_team_creation, data_import_session
+      )
+      if data_importer                              # First, update the DB-based phase log whenever possible:
+        DataImportSession.where(
+            :id => data_importer.get_created_data_import_session_id
+        ).update_all( :phase_1_log => data_importer.get_phase_1_log() )
+        data_importer.to_logfile()                  # Update the additional file-based logs
+
+        if data_importer.has_team_analysis_results
+          flash[:info] = I18n.t('admin_import.team_analysis_needed')
+          redirect_to(
+              goggles_di_step2_analysis_path(
+                  :id => data_importer.get_created_data_import_session_id,
+                  :force_meeting_creation => force_missing_meeting_creation,
+                  :force_team_creation => force_missing_team_creation
+              )
+          ) and return
+        end
       end
-      redirect_to( goggles_di_step1_status_path() ) and return
     end
+                                                    # Session successful? Head on to phase #2 and let the component handle the rest:
+    @data_import_session_id = data_import_session ? data_import_session.id : nil
+
+                                                    # -- CHECK OUTCOME: something went awfully wrong? Redirect:
+    redirect_to( goggles_di_step1_status_path() ) and return if @data_import_session_id.nil?
                                                     # Compute the filtering parameters:
     ap = AppParameter.get_parameter_row_for( :data_import )
     @max_view_height = ap.get_view_height()
@@ -201,6 +216,7 @@ class AdminImportController < ApplicationController
     data_import_session_id = 0
     must_go_back_on_commit = false
     confirmed_actions_ids = []
+    overridden_alias_actions = {}
                                                     # Parse parameters:
     params.each{ |key, value|
       data_import_session_id = value.to_i if ( key.to_sym == :data_import_session_id)
@@ -209,9 +225,15 @@ class AdminImportController < ApplicationController
       end
       must_go_back_on_commit = value.to_i > 0 if ( key.to_sym == :must_go_back)
     }
+    force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
+    force_missing_team_creation    = ( params[:force_team_creation].to_i > 0 )
+    # [Steve] The following override hash has the structure:
+    # params[:alias_ids] => { analysis_result.id.to_s => overridden_alias_team_id.to_s, ... }
+    overridden_alias_actions = params[:alias_ids] if params[:alias_ids].instance_of?(Hash)
 # DEBUG
     logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
     logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
+    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}"
 
     team_analysis_log  = ''
     equivalent_sql_log = ''
@@ -229,7 +251,14 @@ class AdminImportController < ApplicationController
 # DEBUG
       logger.debug "\r\nProcessing #{is_confirmed ? 'CONFIRMED' : 'unconfirmed'} #{result}..."
       team_name = result.searched_team_name
-      team_id   = result.chosen_team_id
+      if ( overridden_alias_actions.has_key?( result.id.to_s ) )
+        team_id = overridden_alias_actions[ result.id.to_s ].to_i
+        result.chosen_team_id = team_id
+        result.rebuild_sql_text()                   # (No need to save the instance, since rows will be deleted at the end -- and if something goes wrong, hopefully we still have the log files...)
+        logger.debug "Using overridden alias team_id=#{team_id} for '#{team_name}'..."
+      else
+        team_id = result.chosen_team_id
+      end
       season_id = result.desired_season_id
                                                     # -- Can ADD new Team? (Default action for unconfirmed results)
       if ( (! is_confirmed) || result.can_insert_team )
@@ -334,7 +363,11 @@ class AdminImportController < ApplicationController
     DataImporter.to_sql_executable_logfile( log_filename, equivalent_sql_log, equivalent_sql_ext )
                                                     # Either, go on with data-import or go back to the status page:
     if is_ok && (! must_go_back_on_commit)
-      redirect_to( goggles_di_step2_checkout_path( :id => data_import_session_id ) ) and return
+      redirect_to( goggles_di_step2_checkout_path(
+          :id => data_import_session_id,
+          :force_meeting_creation => force_missing_meeting_creation,
+          :force_team_creation => force_missing_team_creation
+      ) ) and return
     else
       redirect_to( goggles_di_step1_status_path() ) and return
     end

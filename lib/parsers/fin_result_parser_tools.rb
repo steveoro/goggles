@@ -438,15 +438,6 @@ module FinResultParserTools
 #    overall_unique_list = unique_name_list.collect { |uniq_name| result_list.detect{|e| e[:row].name == uniq_name} }
 #    overall_unique_list = overall_unique_list.sort!{ |x,y| x[:score] <=> y[:score] }
 
-    # [Steve] OK, we could have a match. But we still need to solve how to import all
-    # the data linked to a Team which seems to be existing, but under a slightly
-    # different affiliation name.
-    # The solution is to create aliases to team_id(s) with the current searched name,
-    # storing them in a dedicated table that gets checked during data-import on phase-1.
-    do_insert_alias = (team_id.to_i > 0)
-    do_insert_team = team_id.nil?
-    do_insert_affiliation = best_match.nil?
-
     if ( result_list.size < 1 )
       analysis_text_log << "   => NOT FOUND.\r\n"
     elsif ( result_list.size == 1 )
@@ -454,31 +445,20 @@ module FinResultParserTools
     elsif ( result_list.size > 1 )
       analysis_text_log << "   --- MULTIPLE CHOICES ---\r\n"
     end
-                                                    # Store suggested SQL action:
-    if ( do_insert_alias || do_insert_team || do_insert_affiliation )
-      matching_string.gsub!("'", "''")              # Escape single quotes in names in case we have to write SQL statements:
-      sql_text_log << "\r\n"
-      if ( do_insert_team )
-        sql_text_log << "INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES\r\n"
-        sql_text_log << "    ('#{matching_string}','#{matching_string}','','','',1,CURDATE(),CURDATE());\r\n"
-      end
-      if ( do_insert_alias )
-        sql_text_log << "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n"
-        sql_text_log << "    ('#{matching_string}',#{team_id},CURDATE(),CURDATE());\r\n"
-      end
-      if ( do_insert_affiliation )
-        sql_text_log << "INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES\r\n"
-        if do_insert_alias
-          sql_text_log << "    (#{desired_season_id},#{team_id},'#{matching_string}','',0,1,CURDATE(),CURDATE());\r\n"
-        else
-          sql_text_log << "    (#{desired_season_id},(select t.id from teams t where t.name = '#{matching_string}'),'#{matching_string}','',0,1,CURDATE(),CURDATE());\r\n"
-        end
-      end
-    end
+    # [Steve] OK, we could have a match. But we still need to solve how to import all
+    # the data linked to a Team which seems to be existing, but under a slightly
+    # different affiliation name.
+    #
+    # The solution is to create aliases to team_id(s) with the current searched name,
+    # storing them in a dedicated table that gets checked during data-import on phase-1.
+    #
+    # The data_import_team_aliases table does just that, and is checked only during
+    # the first phase of the data-import procedure.
 
-    return DataImportTeamAnalysisResult.new({
+    matching_string.gsub!("'", "''")              # Escape single quotes in names in case we have to write SQL statements:
+
+    team_analysis_result = DataImportTeamAnalysisResult.new({
       analysis_log_text:  analysis_text_log,
-      sql_text:           sql_text_log,
       searched_team_name: matching_string,
       desired_season_id:  desired_season_id,
       chosen_team_id:     team_id,
@@ -487,6 +467,9 @@ module FinResultParserTools
       best_match_name:    ( best_match && best_match[:row] ? best_match[:row].team_name : nil ),
       best_match_score:   ( best_match ? best_match[:score] : nil )
     })
+                                                    # Store suggested SQL action into the external log:
+    sql_text_log << team_analysis_result.rebuild_sql_text()
+    team_analysis_result
   end
   # ---------------------------------------------------------------------------
   # ---------------------------------------------------------------------------

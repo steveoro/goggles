@@ -155,65 +155,85 @@ class DataImporterTest < ActiveSupport::TestCase
 
   def get_expected_values( file_idx )
     expected_values = {}
-    # Expected fixture files STATS:
-    #
-    # File 'ris20111120riccione-sample.txt':
-    # Total 'meeting_header' data pages : 1 / 204 lines found
-    # Total 'category_header' data pages : 6 / 204 lines found
-    # Total 'relay_header' data pages : 0 / 204 lines found
-    # Total 'team_ranking' data pages : 1 / 204 lines found
-    # Total 'result_row' data pages : 144 / 204 lines found
-    # Total 'relay_row' data pages : 0 / 204 lines found
-    # Total 'ranking_row' data pages : 134 / 204 lines found
-    # Total read lines ....... : 308 (including garbage)
-    #
-    # File 'ris20121112bologna-sample.txt':
-    # Total 'meeting_header' data pages : 1 / 229 lines found
-    # Total 'category_header' data pages : 15 / 229 lines found
-    # Total 'relay_header' data pages : 5 / 229 lines found
-    # Total 'team_ranking' data pages : 1 / 229 lines found
-    # Total 'result_row' data pages : 127 / 229 lines found
-    # Total 'relay_row' data pages : 26 / 229 lines found
-    # Total 'ranking_row' data pages : 56 / 229 lines found
-    # Total read lines ....... : 399 (including garbage)
-    #
-    # File 'ris20120114ravenna-sample.txt':
-    # Total 'meeting_header' data pages : 1 / 176 lines found
-    # Total 'category_header' data pages : 11 / 176 lines found
-    # Total 'relay_header' data pages : 0 / 176 lines found
-    # Total 'team_ranking' data pages : 1 / 176 lines found
-    # Total 'result_row' data pages : 75 / 176 lines found
-    # Total 'relay_row' data pages : 0 / 176 lines found
-    # Total 'ranking_row' data pages : 88 / 176 lines found
-    # Total read lines ....... : 376 (including garbage)
-    #
     case file_idx
-    when 0                                        # "ris20111120riccione-sample"
+    when 0
+      # File 'ris20111203riccione-sample.txt':
+      # Total 'meeting_header' data pages : 1 / 286 lines found
+      # Total 'category_header' data pages : 6 / 286 lines found
+      # Total 'relay_header' data pages : 0 / 286 lines found
+      # Total 'team_ranking' data pages : 1 / 286 lines found
+      # Total 'stats' data pages : 0 / 286 lines found
+      # Total 'result_row' data pages : 144 / 286 lines found
+      # Total 'relay_row' data pages : 0 / 286 lines found
+      # Total 'ranking_row' data pages : 134 / 286 lines found
+      # Total 'stats_teams_tot' data pages : 0 / 286 lines found
+      # Total 'stats_teams_presence' data pages : 0 / 286 lines found
+      # Total 'stats_swimmer_tot' data pages : 0 / 286 lines found
+      # Total 'stats_swimmer_presence' data pages : 0 / 286 lines found
+      # Total read lines ....... : 308 (including garbage)
+      # Protocol efficiency .... : 92.86 %
       expected_values = {
-        :meeting_header   => 1,
-        :category_header  => 6,   :result_row       => 144,
-        :relay_header     => 0,   :relay_row        => 0,
-        :team_ranking     => 1,   :ranking_row      => 134,
-        :line_count       => 308
+        :meeting_header     => 1,
+        :category_header    => 6,   :result_row             => 144,
+        :relay_header       => 0,   :relay_row              => 0,
+        :team_ranking       => 1,   :ranking_row            => 134,
+        :stats              => 0,
+        :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
+        :stats_swimmer_tot  => 0,   :stats_swimmer_presence => 0,
+        :line_count         => 308
       }
-    when 1                                        # "ris20121112bologna-sample"
+
+    when 1
+      # File 'ris20121112bologna-sample.txt':
+      # Total 'meeting_header' data pages : 1 / 231 lines found
+      # Total 'category_header' data pages : 15 / 231 lines found
+      # Total 'relay_header' data pages : 5 / 231 lines found
+      # Total 'team_ranking' data pages : 1 / 231 lines found
+      # Total 'stats' data pages : 0 / 231 lines found
+      # Total 'result_row' data pages : 127 / 231 lines found
+      # Total 'relay_row' data pages : 26 / 231 lines found
+      # Total 'ranking_row' data pages : 56 / 231 lines found
+      # Total 'stats_teams_tot' data pages : 0 / 231 lines found
+      # Total 'stats_teams_presence' data pages : 0 / 231 lines found
+      # Total 'stats_swimmer_tot' data pages : 0 / 231 lines found
+      # Total 'stats_swimmer_presence' data pages : 0 / 231 lines found
+      # Total read lines ....... : 399 (including garbage)
+      # Protocol efficiency .... : 57.89 %
       expected_values = {
-        :meeting_header   => 1,
-        :category_header  => 15,  :result_row       => 127,
-        :relay_header     => 5,   :relay_row        => 26,
-        :team_ranking     => 1,
-# FIXME Don't know why DataImporter commits just 54/56 rows... The others works just fine
-# FIXME It should be :ranking_row => 56 !!!!
-        :ranking_row      => 56,
-        :line_count       => 399
+        :meeting_header     => 1,
+        :category_header    => 15,  :result_row             => 127,
+        :relay_header       => 5,   :relay_row              => 26,
+        :team_ranking       => 1,   :ranking_row            => 56,
+        :stats              => 0,
+        :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
+        :stats_swimmer_tot  => 0,   :stats_swimmer_presence => 0,
+        :line_count         => 399
       }
-    when 2                                        # "ris20120114ravenna-sample"
+    when 2
+      # File 'ris20120114ravenna-sample.txt':
+      # Total 'meeting_header' data pages : 1 / 181 lines found
+      # Total 'category_header' data pages : 11 / 181 lines found
+      # Total 'relay_header' data pages : 0 / 181 lines found
+      # Total 'team_ranking' data pages : 1 / 181 lines found
+      # Total 'stats' data pages : 1 / 181 lines found
+      # Total 'result_row' data pages : 75 / 181 lines found
+      # Total 'relay_row' data pages : 0 / 181 lines found
+      # Total 'ranking_row' data pages : 88 / 181 lines found
+      # Total 'stats_teams_tot' data pages : 1 / 181 lines found
+      # Total 'stats_teams_presence' data pages : 1 / 181 lines found
+      # Total 'stats_swimmer_tot' data pages : 1 / 181 lines found
+      # Total 'stats_swimmer_presence' data pages : 1 / 181 lines found
+      # Total read lines ....... : 376 (including garbage)
+      # Protocol efficiency .... : 48.14 %
       expected_values = { 
-        :meeting_header   => 1,
-        :category_header  => 11,  :result_row       => 75,
-        :relay_header     => 0,   :relay_row        => 0,
-        :team_ranking     => 1,   :ranking_row      => 88,
-        :line_count       => 376
+        :meeting_header     => 1,
+        :category_header    => 11,  :result_row             => 75,
+        :relay_header       => 0,   :relay_row              => 0,
+        :team_ranking       => 1,   :ranking_row            => 88,
+        :stats              => 1,
+        :stats_teams_tot    => 1,   :stats_teams_presence   => 1,
+        :stats_swimmer_tot  => 1,   :stats_swimmer_presence => 1,
+        :line_count         => 376
       }
     end
     expected_values

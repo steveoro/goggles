@@ -22,8 +22,9 @@
 		:multipart => true, :class => 'form',
 		:onsubmit => "$('#loadingIndicator').show(); "
 	) do -%>
-	<%= hidden_field_tag( :data_import_session_id, @data_import_session_id ) %>
-
+	<%= hidden_field_tag( :data_import_session_id, 	@data_import_session_id ) %>
+	<%= hidden_field_tag( :force_meeting_creation, 	@force_missing_meeting_creation ) %>
+	<%= hidden_field_tag( :force_team_creation, 	@force_missing_team_creation ) %>
 	<div class="row span11">
 		<div class="span3 control-label goggles-div-centeralign"><%= I18n.t('admin_import.searched_team') %></div>
 		<div class="span4 control-label goggles-div-centeralign"><%= I18n.t('admin_import.team_match_name') %></div>
@@ -43,10 +44,13 @@
 					<b>"<%= result_row.searched_team_name %>"</b>						
 				</div>
 				<div class="span4">
-					<b>
-					<%= result_row.team_match_name ?	"\"#{result_row.team_match_name}\"" : "-" %>
-					</b>&nbsp;
-					<%= result_row.chosen_team_id ?	"(Team ID: #{result_row.chosen_team_id})" : '' %>
+					<% if result_row.chosen_team_id -%>
+						<%= select( :alias_ids, result_row.id,
+									Team.order(:name => :asc).select([:name, :id]).collect { |s| ["#{s.name} (ID:#{s.id})", s.id] },
+									{ :prompt => I18n.t(:please_select), :selected => result_row.chosen_team_id },	# select options
+									{ :class => 'input-xlarge' } )	# html options
+						%>
+					<% end -%>
 				</div>
 				<div class="span1">
 					<%= show_tag( do_insert_alias ) %>

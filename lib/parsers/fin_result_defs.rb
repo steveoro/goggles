@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.82.20131105
+  - Goggles framework vers.:  4.00.92.20131112
   - author: Steve A.
 
  Container class for the lists of ContextDetector and TokenExtractor
@@ -86,6 +86,15 @@ class FinResultDefs
         ],
         logger
       ),
+      :stats => ContextDetector.new(
+        :stats,
+        [
+          '',
+          /statistiche/ui,
+          ''
+        ],
+        logger
+      ),
                                                       # DETAIL CONTEXT(s) def. arrays:
       :result_row => ContextDetector.new(
         :result_row,
@@ -110,6 +119,31 @@ class FinResultDefs
         ],
         logger,
         :team_ranking    
+      ),
+
+      :stats_teams_tot => ContextDetector.new(
+        :stats_teams_tot,
+        [ /Numero di soc.+\siscritte\s/ui ],
+        logger,
+        :stats    
+      ),
+      :stats_teams_presence => ContextDetector.new(
+        :stats_teams_presence,
+        [ /Numero di soc.+\spartecipanti\s/ui ],
+        logger,
+        :stats    
+      ),
+      :stats_swimmer_tot => ContextDetector.new(
+        :stats_swimmer_tot,
+        [ /Numero totale di atleti iscritti\s/ui ],
+        logger,
+        :stats    
+      ),
+      :stats_swimmer_presence => ContextDetector.new(
+        :stats_swimmer_presence,
+        [ /Numero di atleti partecipanti\s/ui ],
+        logger,
+        :stats    
       )
     }
 
@@ -201,7 +235,7 @@ class FinResultDefs
           TokenExtractor.new(
             :base_time,
             /\d{1,2}'\d\d"\d\d$/u,
-            9
+            9                                       # (max size)
           )
         ],
         nil
@@ -219,7 +253,7 @@ class FinResultDefs
           TokenExtractor.new(
             :distance,
             /\dx\d{2,3}\s+(stile|mi|sl|mx)/ui,
-            4
+            4                                       # (max size)
           ),
           TokenExtractor.new(
             :style,
@@ -234,13 +268,13 @@ class FinResultDefs
           TokenExtractor.new(
             :category_group,
             /M\d\d0\-\d\d\d/ui,
-            7
+            7                                       # (max size)
   #          /\s*tempo base\s*/ui
           ),
           TokenExtractor.new(
             :base_time,
             /\s\d{1,2}'\d\d"\d\d/ui,
-            9
+            9                                       # (max size)
           )
         ],
         nil
@@ -250,9 +284,14 @@ class FinResultDefs
       :team_ranking => [
         nil, nil
       ],
+
+      # -- Fields to be extracted: (nothing, 3 lines in cache)
+      :stats => [
+        nil, nil, nil
+      ],
   
-      :result_row => [                                # 1 condition => 1 cached row
-        [                                             # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
+      :result_row => [                              # 1 condition => 1 cached row
+        [                                           # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
           TokenExtractor.new(
             :result_position,
             / \d{1,3}(?= {1,3})/ui,
@@ -261,35 +300,35 @@ class FinResultDefs
           TokenExtractor.new(
             :team_code,
             /(\w\w\w-\d{6})/ui,
-            10
+            10                                      # (max size)
           ),
           TokenExtractor.new(
             :swimmer_name,
             /(?<=[\sa-z0-9-]{10}|[\sa-z0-9-]{18})\s(\D{25})/ui,
-            29
+            29                                      # (max size)
           ),
           TokenExtractor.new(
             :swimmer_year,
             /\b\d{4} +(?=\D+)/ui,
-            4
+            4                                       # (max size)
           ),
           TokenExtractor.new(
             :team_name,
             # [Steve, 20130809] Regexp is too slow!! (And doesn't work for team names with numbers in it.) Using Fixnum absolute index instead:
   #          /([a-zA-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝß]+[\ |\-|\.|\`|\']{1,3})+ {3,}(Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/u,
-            48,
-            26
+            48,                                     # (starting idx)
+            26                                      # (max size)
           ),
           TokenExtractor.new(
             :result_time,
   #          /(Ritirat|Squalif|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i,
             / (Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d)/ui,
-            8
+            8                                       # (max size)
           ),
           TokenExtractor.new(
             :result_score,
             /\b\d{1,4}[\,|\.]\d\d$/ui,
-            7
+            7                                       # (max size)
           )
         ]
       ],
@@ -301,25 +340,25 @@ class FinResultDefs
             :result_position,
   #          / \d{1,3}(?= {1,3})/ui,
   #          / (?=[a-z]+)/ui
-            8,
-            12
+            8,                                      # (starting idx)
+            12                                      # (max size)
           ),
           TokenExtractor.new(
             :team_name,
-            24,
-            25
+            24,                                     # (starting idx)
+            25                                      # (max size)
           ),
           TokenExtractor.new(
             :result_time,
   #          / (Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/ui,
-            59,
-            8
+            59,                                     # (starting idx)
+            8                                       # (max size)
           ),
           TokenExtractor.new(
             :result_score,
   #          /\b\d{1,4}[\,|\.]\d\d$/ui,
-            68,
-            7
+            68,                                     # (starting idx)
+            7                                       # (max size)
           )
         ]
       ],
@@ -330,22 +369,60 @@ class FinResultDefs
           TokenExtractor.new(
             :result_position,
             8,
-            /(?<=\d)\s+\S+/ui
+            7                                       # (max size)
           ),
           TokenExtractor.new(
             :team_code,
-            /\w\w\w-\d{6}/ui,
-            10
+            /(?<=\s)\w\w\w-\d{6}/ui,
+            10                                      # (max size)
           ),
           TokenExtractor.new(
             :team_name,
-            /(?<=\w{3}-\d{6})\s{2}\w+|(?<=\d\s{6})\w+/ui,
+            /(?<=(\w{3}-\d{6}\s{2})|(\d\s{6})|(\s{19}))\w+/ui,
             /\s\d{1,6}[\,|\.]\d\d$/ui
           ),
           TokenExtractor.new(
             :result_score,
             /\s\d{1,6}[\,|\.]\d\d$/ui,
             /$/ui
+          )
+        ]
+      ],
+
+      # -- Fields to be extracted: :total (for all rows)
+      :stats_teams_tot => [
+        [
+          TokenExtractor.new(
+            :total,
+            /\d/ui,
+            10                                      # (max size)
+          )
+        ]
+      ],
+      :stats_teams_presence => [
+        [
+          TokenExtractor.new(
+            :total,
+            /\d/ui,
+            10                                      # (max size)
+          )
+        ]
+      ],
+      :stats_swimmer_tot => [
+        [
+          TokenExtractor.new(
+            :total,
+            /\d/ui,
+            10                                      # (max size)
+          )
+        ]
+      ],
+      :stats_swimmer_presence => [
+        [
+          TokenExtractor.new(
+            :total,
+            /\d/ui,
+            10                                      # (max size)
           )
         ]
       ]
@@ -396,7 +473,15 @@ class FinResultDefs
       ],
       :ranking_row => [
         [ :result_position, :team_code, :team_name, :result_score ]
-      ]
+      ],
+
+      :stats => [                                     # 3 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
+        nil, nil, nil
+      ],
+      :stats_teams_tot        => [ [ :total ] ],
+      :stats_teams_presence   => [ [ :total ] ],
+      :stats_swimmer_tot      => [ [ :total ] ],
+      :stats_swimmer_presence => [ [ :total ] ]
     }
 
     # == Context Group Keys Hash - this Hash contains as each item value the array of all
@@ -415,6 +500,7 @@ class FinResultDefs
                                                     # === Internal structure integrity checks: ===
                                                     # Pre-check format type definition:
     raise "Malformed parser Hash!" unless (@context_types.size == @tokenizer_types.size) && (@tokenizer_types.size == @tokenizer_fields.size)
+
     @context_types.each { |key, detector|
       raise "Missing parser Hash key '#{key}'!" unless ( @tokenizer_types.has_key?(key) && @tokenizer_fields.has_key?(key) )
       rails "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)

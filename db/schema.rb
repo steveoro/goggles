@@ -513,6 +513,8 @@ ActiveRecord::Schema.define(:version => 20131110230401) do
     t.decimal  "best_match_score",                     :precision => 10, :scale => 4, :default => 0.0
   end
 
+  add_index "data_import_team_analysis_results", ["data_import_session_id", "searched_team_name", "desired_season_id"], :name => "idx_di_session_name_and_season", :unique => true
+
   create_table "data_import_teams", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
     t.datetime "created_at",                                          :null => false

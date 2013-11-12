@@ -348,9 +348,9 @@
  VEN-025396 CONSELVE NUOTO SSD                    6        6        0        0       0       1       0
                                 Statistiche                                
 
-                Numero di societ� iscritte                                89     
-                Societ� che hanno fatto iscrizioni online                 89     
-                Numero di societ� partecipanti                            88     
+                Numero di società iscritte                                89     
+                Società che hanno fatto iscrizioni online                 89     
+                Numero di società partecipanti                            88     
 
                 Numero totale di atleti iscritti                        1071     
                 Numero di atleti under 25 iscritti                        82     

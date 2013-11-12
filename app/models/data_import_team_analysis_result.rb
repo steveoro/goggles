@@ -67,6 +67,38 @@ class DataImportTeamAnalysisResult < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
+  # Overwrites (rebuilds from scratch) the sql_text using the (already set) internal values of
+  # its members. It doesn't save the instance, it just updates its sql_text member
+  # according to the other current values.
+  #
+  # === Returns:
+  # The updated (and current) values of sql_text.
+  #
+  def rebuild_sql_text()
+    do_insert_alias = (self.chosen_team_id.to_i > 0)
+    do_insert_team = self.chosen_team_id.nil?
+    do_insert_affiliation = self.best_match_name.nil?
+    self.sql_text = "\r\n"
+    if ( do_insert_team )
+      self.sql_text << "INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES\r\n"
+      self.sql_text << "    ('#{self.searched_team_name}','#{self.searched_team_name}','','','',1,CURDATE(),CURDATE());\r\n"
+    end
+    if ( do_insert_alias )
+      self.sql_text << "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n"
+      self.sql_text << "    ('#{self.searched_team_name}',#{self.chosen_team_id.to_i},CURDATE(),CURDATE());\r\n"
+    end
+    if ( do_insert_affiliation )
+      self.sql_text << "INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES\r\n"
+      if do_insert_alias
+        self.sql_text << "    (#{self.desired_season_id},#{self.chosen_team_id.to_i},'#{self.searched_team_name}','',0,1,CURDATE(),CURDATE());\r\n"
+      else
+        self.sql_text << "    (#{self.desired_season_id},(select t.id from teams t where t.name = '#{self.searched_team_name}'),'#{self.searched_team_name}','',0,1,CURDATE(),CURDATE());\r\n"
+      end
+    end
+    self.sql_text
+  end
+
+
   # Convert the current instance to a readable string
   def to_s
     "[DataImportTeamAnalysisResult: data_import_session_id=#{data_import_session_id}, '#{searched_team_name}', season_id=#{desired_season_id} -" +
