@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.90.20131111
+  - Goggles framework vers.:  4.00.91.20131111
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -463,6 +463,7 @@ class DataImporter
 
     line_count = result_hash[:line_count]
     @stored_data_rows = 0
+    can_go_on = true
                                                     # Store the raw text file into its row header
     data_import_session = DataImporter.create_new_data_import_session(
         full_pathname,
@@ -510,11 +511,23 @@ class DataImporter
         end
       end
 
-      if season                                     # -- MEETING digest --
+      if season                                     # -- PRE-SCAN TEAM Names --
         season_type_id = season.season_type_id if season
         season_starting_year = season.begin_date.year if season
 # DEBUG
         logger.debug( "Found season '#{season.inspect}'; season_type_id=#{season_type_id}, season_starting_year=#{season_starting_year}" )
+                                                    # The prescan will abort the rest of the procedure when false:
+        can_go_on = prescan_parse_result_for_unknown_team_names(
+            session_id, season_id, result_hash[:parse_result],
+            force_missing_team_creation
+        )
+        unless can_go_on
+          logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.1) Team name Analysis checkout requested...\r\n" )
+          @phase_1_log << "PHASE #1.1: Team name Analysis checkout requested...\r\n"
+        end
+      end
+
+      if season && can_go_on                        # -- MEETING digest --
         meeting_id = search_or_add_a_corresponding_meeting(
             full_pathname, session_id, season_id, meeting_header_row,
             meeting_dates, scheduled_date, header_fields, force_missing_meeting_creation
@@ -529,11 +542,10 @@ class DataImporter
         ranking_details = result_hash[:parse_result][:ranking_row]
         ranking_headers_ids = ranking_headers.collect{|e| e[:id] }.compact.uniq.sort
 
-        is_ok = process_team_ranking(
+        can_go_on = process_team_ranking(
             full_pathname, data_import_session.id, season_id, meeting_id,
             ranking_headers, ranking_headers_ids, ranking_details, force_missing_team_creation
         )
-        return nil unless is_ok
       end
                                                     # -- MEETING SESSION (digest part) --
       if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
@@ -544,8 +556,12 @@ class DataImporter
         )
       end
 
-      return nil unless (season_id > 0) && (season_type_id > 0) &&
-                        (meeting_id != 0) && (meeting_session_id != 0)
+      unless (season_id > 0) && (season_type_id > 0) && can_go_on &&
+             (meeting_id != 0) && (meeting_session_id != 0)
+                                                    # Update the import log before exiting:
+        @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
+        return nil 
+      end
 
                                                     # --- CATEGORY (digest part) --
       logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.2) processing CATEGORY HEADERS...\r\n" )
@@ -554,13 +570,16 @@ class DataImporter
       category_details = result_hash[:parse_result][:result_row]
       category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
 
-      is_ok = process_category_headers(
+      can_go_on = process_category_headers(
           full_pathname, data_import_session.id,
           season_id, season_type_id, season_starting_year,
           meeting_id, meeting_session_id, category_headers, category_headers_ids,
           category_details, scheduled_date, force_missing_team_creation
       )
-      return nil unless is_ok
+      unless can_go_on                              # Update the import log before exiting:
+        @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
+        return nil 
+      end
                                                     # --- RELAY (digest part) --
       logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.3) processing RELAY HEADERS...\r\n" )
       @phase_1_log << "PHASE #1.3: processing relay_headers...\r\n"
@@ -568,13 +587,16 @@ class DataImporter
       relay_details = result_hash[:parse_result][:relay_row]
       relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
 
-      is_ok = process_relay_headers(
+      can_go_on = process_relay_headers(
           full_pathname, data_import_session.id,
           season_id, season_type_id, season_starting_year,
           meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
           relay_details, scheduled_date, force_missing_team_creation
       )
-      return nil unless is_ok
+      unless can_go_on                              # Update the import log before exiting:
+        @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
+        return nil 
+      end
 
                                                     # After having successfully stored the contents, remove the file
       logger.info( "-- consume_txt_file(#{full_pathname}): file processed and 'digested' on temp. tables." )
@@ -597,8 +619,7 @@ class DataImporter
 #    logger.debug( "-- consume_txt_file(#{full_pathname}):\r\n" )
 #    logger.debug( @phase_1_log )
                                                     # Update the import log:
-    @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" +
-                  @phase_1_log
+    @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
     return data_import_session
   end
   # ---------------------------------------------------------------------------

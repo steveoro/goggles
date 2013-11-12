@@ -162,6 +162,7 @@ class AdminImportController < ApplicationController
       if data_importer
         data_importer.to_logfile()
         if data_importer.has_team_analysis_results
+          flash[:info] = I18n.t('admin_import.team_analysis_needed')
           redirect_to( goggles_di_step2_analysis_path(:id => data_importer.get_created_data_import_session_id) ) and return
         end
       end
@@ -280,7 +281,10 @@ class AdminImportController < ApplicationController
       if ( is_confirmed && result.can_insert_affiliation )
         begin                
           TeamAffiliation.transaction do            # Let's make sure other threads have not already done what we want to do:
-            if ( TeamAffiliation.where(:team_id => team_id, :season_id  => desired_season_id).none? )
+            if ( TeamAffiliation.where(
+                    :team_id => team_id,
+                    :season_id  => season_id
+                 ).none? )
               committed_row = TeamAffiliation.new(
                 :name       => team_name,           # Use the actual provided (and searched) name instead of the result_row.name
                 :team_id    => team_id,

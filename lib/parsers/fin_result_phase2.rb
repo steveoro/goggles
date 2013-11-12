@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.90.20131111
+  - Goggles framework vers.:  4.00.91.20131111
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -69,6 +69,49 @@ module FinResultPhase2
   # results from the "team analysis" phase. 
   @team_analysis_results = []
   # ---------------------------------------------------------------------------
+
+
+  # Scans parse_result hash structure to collect all team_names found.
+  #
+  # For each team_name found, the search_or_add_a_corresponding_team
+  # method is executed. If the team is not found or some problem arise,
+  # that same method will also run the team name analysis (which will
+  # then require human supervision before commit).
+  #
+  # == Returns: when +false+, the additional "Team name analysis" phase must be
+  #    run; +true+ if the "standard" data-import phase can go on.
+  #
+  def prescan_parse_result_for_unknown_team_names( data_import_session_id, season_id,
+                                                   parse_result, force_missing_team_creation = false )
+    is_ok = true
+    team_names = []
+                                                    # Collect all team names in the parsed file:
+    parse_result[:result_row].each { |result_row|
+      team_names << result_row[:fields][:team_name] if result_row[:fields][:team_name]
+    }
+    parse_result[:relay_row].each { |relay_row|
+      team_names << relay_row[:fields][:team_name] if relay_row[:fields][:team_name]
+    }
+    parse_result[:ranking_row].each { |ranking_row|
+      team_names << ranking_row[:fields][:team_name] if ranking_row[:fields][:team_name]
+    }
+
+    team_names.uniq!                                # Clear the duplicates
+    team_names.each_with_index { |team_name, idx|
+      team_id = search_or_add_a_corresponding_team( data_import_session_id, season_id, team_name,
+                                                    force_missing_team_creation )
+      if ( team_id == 0 )
+        @phase_1_log << "\r\nPrescan Team names: '#{team_name}' (#{idx+1}/#{team_names.size}) needs the additional 'Team name Analysis' phase.\r\n"
+        logger.info( "\r\nPrescan Team names: '#{team_name}' (#{idx+1}/#{team_names.size}) needs the additional 'Team name Analysis' phase." )
+        is_ok = false
+      end
+                                                    # Update progress on current session:
+      DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "TEAM-CHECK:#{idx+1}/#{team_names.size}" )
+    }
+    is_ok
+  end
+  # -----------------------------------------------------------------------------
+  # -----------------------------------------------------------------------------
 
 
   # "Digest" process for the :category_headers array extracted by the Parser
@@ -1063,6 +1106,7 @@ module FinResultPhase2
     if ( team_id == 0 )                             # Immediately exit on team search/add error:
       @phase_1_log << "\r\nsearch_or_add_a_corresponding_meeting_team_score(): returned team_id IS ZERO! (And it can't be.)\r\n"
       logger.error( "\r\nsearch_or_add_a_corresponding_meeting_team_score(): returned team_id IS ZERO! (And it can't be.)" )
+      flash[:error] = "#{I18n.t(:something_went_wrong)} ['returned team_id IS ZERO']"
       return 0                                      # flash[:error] is already defined at this point.
     end
                                                     # Init the retrieval of the relay results, from meeting -> meeting_sessions -> meeting_programs entities
@@ -1385,7 +1429,8 @@ module FinResultPhase2
         result_id = result_row.id                   # We must differentiate the result: negative for Team, positive for DataImportTeam
         not_found = false
 # DEBUG
-#        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
+        logger.debug( "DataImportTeam found! (ID=#{result_id})" )
+        @phase_1_log << "DataImportTeam found! (ID=#{result_id})...\r\n"
       end
     end
                                                     # *** (3) SCAN DataImportTeamAlias
@@ -1396,6 +1441,7 @@ module FinResultPhase2
         not_found = false
 # DEBUG
         logger.debug( "Team ALIAS found! (ID=#{result_id})" )
+        @phase_1_log << "Team ALIAS found! (ID=#{result_id})...\r\n"
       end
     end
                                                     # *** (4) FUZZY SCAN on Teams:
@@ -1408,10 +1454,10 @@ module FinResultPhase2
       )                                             # ALWAYS LOG any chosen "best match" which is slightly different from the searched string:
       if result_row
 # DEBUG
-#        logger.debug( "Team found! (ID=#{result_id})" )
-        @phase_1_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
-        @team_analysis_log << "search_or_add_a_corresponding_team(): using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
-        logger.info( "\r\nsearch_or_add_a_corresponding_team(): using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'." )
+        logger.debug( "Team found by (strict) fuzzy search! (ID=#{result_id})" )
+        @phase_1_log << "Using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
+        @team_analysis_log << "Using best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'.\r\n"
+        logger.info( "\r\nUsing best-match '#{result_row.name}' (Team ID: #{result_row.id}) for '#{team_name}'." )
         result_id = - result_row.id                 # We must differentiate the result: negative for Team, positive for DataImportTeam
         not_found = false
       end
@@ -1419,7 +1465,7 @@ module FinResultPhase2
 
     if result_id < 0                                # Do we have an actual Team? => INTEGRITY Check on TeamAffiliation     
       team_affiliation = TeamAffiliation.where(     # Check if there is (& there must be) a corresponding TeamAffiliation for THIS season: if missing, add it.
-        :team_id    => result_row.id,
+        :team_id    => - result_id,
         :season_id  => season_id
       ).first
                                                     # Always add any MISSING TeamAffiliation
@@ -1428,7 +1474,7 @@ module FinResultPhase2
           TeamAffiliation.transaction do
             team_affiliation = TeamAffiliation.new(
               :name       => team_name,             # Use the actual provided (and searched) name instead of the result_row.name
-              :team_id    => result_row.id,
+              :team_id    => - result_id,
               :season_id  => season_id,
               :is_autofilled => true,               # signal that we have guessed some of the values
               :must_calculate_goggle_cup => false,
@@ -1458,9 +1504,15 @@ module FinResultPhase2
       result.data_import_session_id = session_id
 # FIXME Array structure is no more needed!
       @team_analysis_results << result
-      begin
+      begin                                         # Make sure we haven't already inserted an analysis result like this:
         DataImportTeamAnalysisResult.transaction do
-          result.save!
+          if ( DataImportTeamAnalysisResult.where(
+                  :data_import_session_id => result.data_import_session_id,
+                  :searched_team_name     => result.searched_team_name,
+                  :desired_season_id      => result.desired_season_id
+               ).none? )
+            result.save!
+          end
         end
       rescue
         @phase_1_log << "\r\nDataImportTeamAnalysisResult creation: exception caught during save! (Result:#{result})\r\n"
@@ -1503,6 +1555,9 @@ module FinResultPhase2
         flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
       else
         result_id = result_row.id
+# DEBUG
+        logger.debug( "Created data_import_team, ID:'#{result_id}', '#{result_row.name}'." )
+        @phase_1_log << "Created data_import_team, ID:'#{result_id}', '#{result_row.name}'.\r\n"
         @stored_data_rows += 1
       end                                           # --- END transaction ---
     end

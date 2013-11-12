@@ -19,5 +19,7 @@ class CreateDataImportTeamAnalysisResults < ActiveRecord::Migration
       t.string  :best_match_name,  :limit => 60
       t.decimal :best_match_score, :precision => 10, :scale => 4, :default => 0.0
     end
+
+    add_index :data_import_team_aliases, [:data_import_session_id, :searched_team_name, :desired_season_id], :name => :idx_di_session_name_and_season, :unique => true
   end
 end
