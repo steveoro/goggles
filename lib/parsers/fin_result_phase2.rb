@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.91.20131111
+  - Goggles framework vers.:  4.00.93.20131113
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -135,8 +135,11 @@ module FinResultPhase2
 
                                                     # -- MEETING PROGRAM (digest part) --                                                    
       gender_type_id   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
+      raise "Unrecognized GenderType in category headers! (token='#{header_row[:fields][:gender]}')" if gender_type_id == 0
       category_type_id = CategoryType.parse_category_type_from_import_text( season_id, header_row[:fields][:category_group] )
+      raise "Unrecognized CategoryType in category headers! (season_id=#{season_id}, token='#{header_row[:fields][:category_group]}')" if category_type_id == 0
       stroke_type_id   = StrokeType.parse_stroke_type_from_import_text( header_row[:fields][:style] )
+      raise "Unrecognized StrokeType in category headers! (token='#{header_row[:fields][:style]}')" if stroke_type_id == 0
       length_in_meters = header_row[:fields][:distance].to_i
 # DEBUG
       logger.debug( "CATEGORY HEADER: Current header_row: #{header_row.inspect}\r\nResulting category_type_id=#{category_type_id}, gender_type_id=#{gender_type_id}, stroke_type_id=#{stroke_type_id}, data_import_session ID=#{data_import_session_id}" )
@@ -192,8 +195,11 @@ module FinResultPhase2
 
                                                     # -- MEETING PROGRAM (digest part) -- (add also a Program entry for each found Relay)
       gender_type_id   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
+      raise "Unrecognized GenderType in relay headers! (token='#{header_row[:fields][:gender]}')" if gender_type_id == 0
       category_type_id = CategoryType.parse_category_type_from_import_text( season_id, header_row[:fields][:category_group] )
+      raise "Unrecognized CategoryType in relay headers! (season_id=#{season_id}, token='#{header_row[:fields][:category_group]}')" if category_type_id == 0
       stroke_type_id   = StrokeType.parse_stroke_type_from_import_text( header_row[:fields][:style] )
+      raise "Unrecognized StrokeType in relay headers! (token='#{header_row[:fields][:style]}')" if stroke_type_id == 0
       phases           = header_row[:fields][:distance][0].to_i     # "NxMMM " |=> "N".to_i
       phase_length     = header_row[:fields][:distance][2..4].to_i  # "NxMM " |=> "MM ".to_i
       length_in_meters = phases * phase_length
@@ -888,6 +894,43 @@ module FinResultPhase2
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
       begin                                         # --- BEGIN transaction ---
+        # ASSERT: foreach data-import session, we are treating "atomically" at least 1 "full"
+        #         category or context header of data-import at a time.
+        #
+        #         (This means: no support for half-finished data-imports of team scores,
+        #         relay results, individual results of whatever.
+        #         If a session halts in the middle of this phase, the only safe way to carry
+        #         on is to fix by hand the issue, delete the session and redo from scratch.)
+        #
+        #         Assuming this, we can safely try to fix a nil +rank+ by just checking
+        #         the current data_import temp session (not the destination entity).
+                                                    # RANK fixup:
+        if ( rank.to_i == 0 && standard_points >= 0.0 && !is_out_of_race )# Retrieve previous row in ranking and assign same rank:
+          logger.info( "Rank == 0 (relay results). Searching previous same-scored row to assign same rank..." )
+          @phase_1_log << "Rank == 0 (relay results). Searching previous same-scored row to assign same rank...\r\n"
+          prev_row = DataImportMeetingIndividualResult.where(
+            [ "(data_import_session_id = ?) AND " +
+              "(#{meeting_program_id < 0 ? '' : 'data_import_'}meeting_program_id = ?) AND " +
+              "(standard_points = ?)",
+              session_id,
+              (meeting_program_id < 0 ? -meeting_program_id : meeting_program_id),
+              standard_points ]
+          ).last
+          if prev_row                               # Assign same rank as "previous" row:
+            rank = prev_row.rank
+          else                                      # Assign rank as total existing rows + 1 in same category/context:
+            tot_rows = DataImportMeetingIndividualResult.where(
+              [ "(data_import_session_id = ?) AND " +
+                "(#{meeting_program_id < 0 ? '' : 'data_import_'}meeting_program_id = ?)",
+                session_id,
+                (meeting_program_id < 0 ? -meeting_program_id : meeting_program_id) ]
+            ).count
+            logger.info( "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})..." )
+            @phase_1_log << "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})...\r\n"
+            rank = tot_rows + 1
+          end
+        end
+
         field_hash = {
           :data_import_session_id => session_id,
           :import_text  => import_text,
@@ -1028,9 +1071,46 @@ module FinResultPhase2
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
       begin                                         # --- BEGIN transaction ---
+        # ASSERT: foreach data-import session, we are treating "atomically" at least 1 "full"
+        #         category or context header of data-import at a time.
+        #
+        #         (This means: no support for half-finished data-imports of team scores,
+        #         relay results, individual results of whatever.
+        #         If a session halts in the middle of this phase, the only safe way to carry
+        #         on is to fix by hand the issue, delete the session and redo from scratch.)
+        #
+        #         Assuming this, we can safely try to fix a nil +rank+ by just checking
+        #         the current data_import temp session (not the destination entity).
+                                                    # RANK fixup:
+        if ( rank.to_i == 0 && standard_points >= 0.0 && !is_out_of_race )# Retrieve previous row in ranking and assign same rank:
+          logger.info( "Rank == 0 (relay results). Searching previous same-scored row to assign same rank..." )
+          @phase_1_log << "Rank == 0 (relay results). Searching previous same-scored row to assign same rank...\r\n"
+          prev_row = DataImportMeetingRelayResult.where(
+            [ "(data_import_session_id = ?) AND " +
+              "(#{ meeting_program_id < 0 ? '' : 'data_import_' }meeting_program_id = ?) AND " +
+              "(standard_points = ?)",
+              session_id,
+              (meeting_program_id < 0 ? -meeting_program_id : meeting_program_id),
+              standard_points ]
+          ).last
+          if prev_row                               # Assign same rank as "previous" row:
+            rank = prev_row.rank
+          else                                      # Assign rank as total existing rows + 1 in same category/context:
+            tot_rows = DataImportMeetingRelayResult.where(
+              [ "(data_import_session_id = ?) AND " +
+                "(#{ meeting_program_id < 0 ? '' : 'data_import_' }meeting_program_id = ?)",
+                session_id,
+                (meeting_program_id < 0 ? -meeting_program_id : meeting_program_id) ]
+            ).count
+            logger.info( "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})..." )
+            @phase_1_log << "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})...\r\n"
+            rank = tot_rows + 1
+          end
+        end
+
         field_hash = {
           :data_import_session_id => session_id,
-          :import_text  => import_text,
+          :import_text      => import_text,
           :is_play_off      => is_play_off,
           :is_out_of_race   => is_out_of_race,
           :is_disqualified  => is_disqualified,
@@ -1202,6 +1282,43 @@ module FinResultPhase2
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found
       begin                                         # --- BEGIN transaction ---
+        # ASSERT: foreach data-import session, we are treating "atomically" at least 1 "full"
+        #         category or context header of data-import at a time.
+        #
+        #         (This means: no support for half-finished data-imports of team scores,
+        #         relay results, individual results of whatever.
+        #         If a session halts in the middle of this phase, the only safe way to carry
+        #         on is to fix by hand the issue, delete the session and redo from scratch.)
+        #
+        #         Assuming this, we can safely try to fix a nil +rank+ by just checking
+        #         the current data_import temp session (not the destination entity).
+                                                    # RANK fixup:
+        if ( rank.to_i == 0 && result_score >= 0.0 )# Retrieve previous row in ranking and assign same rank:
+          logger.debug( "Rank == 0 (team scores). Searching previous same-scored row to assign same rank..." )
+          @phase_1_log << "Rank == 0 (team scores). Searching previous same-scored row to assign same rank...\r\n"
+          prev_row = DataImportMeetingTeamScore.where(
+            [ "(data_import_session_id = ?) AND " +
+              "(#{meeting_id < 0 ? '' : 'data_import_'}meeting_id = ?)",
+              session_id,
+              (meeting_id < 0 ? -meeting_id : meeting_id)
+            ]
+          ).last
+          if prev_row                               # Assign same rank as "previous" row:
+            rank = prev_row.rank
+          else                                      # Assign rank as total existing rows + 1 in same category/context:
+            tot_rows = DataImportMeetingTeamScore.where(
+              [ "(data_import_session_id = ?) AND " +
+                "(#{meeting_id < 0 ? '' : 'data_import_'}meeting_id = ?)",
+                session_id,
+                (meeting_id < 0 ? -meeting_id : meeting_id)
+              ]
+            ).count
+            logger.info( "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})..." )
+            @phase_1_log << "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})...\r\n"
+            rank = tot_rows + 1
+          end
+        end
+
         field_hash = {
           :data_import_session_id   => session_id,
           :import_text              => import_text,

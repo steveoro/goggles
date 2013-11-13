@@ -120,6 +120,38 @@ class ContextDetectorTest < ActiveSupport::TestCase
         #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
       {
         :feed => [
+          "                                     Distanze speciali EMI                                     ",
+          "                Manifestazione organizzata da San Marino Nuoto - Molinellanuoto                ",
+          "                                 San Marino - 4 Novembre 2007                                  "
+        ],
+        :results => [ false, false, true ]
+      },
+      {
+        :feed => [
+          "                                    VIII Trofeo Nuovo Nuoto                                    ",
+          "                         Manifestazione organizzata da ASD Nuovo Nuoto                         ",
+          "                                    Bologna - 30 Marzo 2008                                    "
+        ],
+        :results => [ false, false, true ]
+      },
+      {
+        :feed => [
+          "                                    Bologna - 31 Marzo 2008                                    ",
+          "                                    VIII Trofeo Nuovo Nuoto                                    ",
+          "                         Manifestazione organizzata da ASD Nuovo Nuoto                         "
+        ],
+        :results => [ false, false, true ]
+      },
+      {
+        :feed => [
+          "13° Trofeo Città di Desenzano",
+          "Manifestazione organizzata da AICS Master - BS",
+          ""
+        ],
+        :results => [ false, false, true ]
+      },
+      {
+        :feed => [
           "11 novembre 2012",
           "10° Trofeo De Akker Team ASI",
           "Manifestazione organizzata da De Akker"

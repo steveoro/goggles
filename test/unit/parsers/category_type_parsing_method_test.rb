@@ -40,7 +40,9 @@ class CategoryTypeParsingMethodTest < ActiveSupport::TestCase
       " Categoria M200-239  ",
       " -  Categoria M240-279",
       " M280-319",
-      "M320-359 "
+      "M320-359 ",
+      "Categoria M60",
+      "Categoria U25"
     ]
   end
 
@@ -58,7 +60,9 @@ class CategoryTypeParsingMethodTest < ActiveSupport::TestCase
       "200-239",
       "240-279",
       "280-319",
-      "320-359"
+      "320-359",
+      "M60",
+      "U25"
     ]
   end
   # ---------------------------------------------------------------------------

@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.92.20131112
+  - Goggles framework vers.:  4.00.93.20131113
   - author: Steve A.
 
  Container class for the lists of ContextDetector and TokenExtractor
@@ -52,9 +52,9 @@ class FinResultDefs
       :meeting_header => ContextDetector.new(
         :meeting_header,
         [
-          /(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))|(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
-          /(\s*Manifestazione organizzata da)|(\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region))/ui,
-          /(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)/ui
+          /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
+          /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/ui,
+          /(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/ui
         ],
         logger,
         nil,                                          # parent context
@@ -165,7 +165,8 @@ class FinResultDefs
         [
           TokenExtractor.new(
             :title,
-            /\s*(\d{1,3}\D\s)?(\w+|Trof|Region)/ui,
+            /\s*(\d{1,3}\D\s)?(\D+|Trof|Region)/ui,   # (simplified old version)
+#            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region)))/ui,
             /$/ui,
             3                                         # line_timeout
           ),
@@ -186,7 +187,11 @@ class FinResultDefs
           ),
           TokenExtractor.new(
             :title,
-            /\s*(\d{1,3}\D{1,2}\s\S+|Trof|Region)/ui,
+#            /\s*(\d{1,3}\D\s)?(\D+|Trof|Region)/ui,   # (simplified old version)
+#            /((\d{1,3}\D\s)?(\D+|Trof|Region))(?!manifestazione organizzata da)/ui,
+#            /\s*(?<!manifestazione organizzata da)(\d{1,3}\D\s)?(\D+|Trof|Region)/ui,
+#            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region)))/ui,
+            /\.*((\d{1,3}\D{1,2}\s)|Distanze speciali|Trof|Region)/ui,
             /$/ui,
             3                                         # line_timeout
           )
@@ -225,11 +230,11 @@ class FinResultDefs
           TokenExtractor.new(
             :gender,
             / *(maschi|femmi)/ui,
-            / * - *categoria/ui
+            /\s+-\s+categoria/ui
           ),
           TokenExtractor.new(
             :category_group,
-            / *(master|under) */ui,
+            / *((master|under)\s\d\d|[MU]\d\d)/ui,
             / *tempo base */ui
           ),
           TokenExtractor.new(

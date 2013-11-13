@@ -40,16 +40,17 @@ class CategoryType < ActiveRecord::Base
   def self.parse_category_type_from_import_text( season_id, category_token )
     result_code = ''
                                                     # NOTE: assuming 'Master YY'|'Under 25' format is used:
-    if idx = category_token =~ /master/ui
-      result_code = 'M'
-      subtokens = category_token[ idx .. idx+10 ].split(' ')
-      result_code << subtokens[1] if subtokens.size > 0
-
-    elsif category_token =~ /under/ui
-      result_code = 'U25'
-
-    elsif idx = (category_token =~ /\d\d\d\-\d\d\d/ui)
+    if idx = (category_token =~ /\d\d\d\-\d\d\d/ui)
       result_code = category_token[ idx .. idx+6 ]
+
+    elsif idx = category_token =~ /m/ui
+      result_code = 'M'
+      idx = category_token =~ /\d\d/ui
+      subtokens = category_token[ idx .. idx+1 ]
+      result_code << subtokens if subtokens.size > 0
+
+    elsif category_token =~ /u/ui
+      result_code = 'U25'
     end
 # DEBUG
     puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"

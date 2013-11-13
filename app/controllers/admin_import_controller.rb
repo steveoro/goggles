@@ -80,8 +80,8 @@ class AdminImportController < ApplicationController
     logger.debug "\r\n\r\n!! ------ admin_import::step2_analysis -----"
     logger.debug "PARAMS: #{params.inspect}"
                                                     # Propagate forward (phase-3) the parameters from Phase-1, if any:
-    @force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
-    @force_missing_team_creation    = ( params[:force_team_creation].to_i > 0 )
+    @force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
+    @force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
     if ( params[:id].to_i > 0 )
       @data_import_session_id = params[:id].to_i
       @analysis_results = DataImportTeamAnalysisResult.where( :data_import_session_id => @data_import_session_id )
@@ -113,8 +113,8 @@ class AdminImportController < ApplicationController
     filename_to_be_parsed = nil
     data_import_session   = nil
     data_importer         = nil
-    force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
-    force_missing_team_creation    = ( params[:force_team_creation].to_i > 0 )
+    force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
+    force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
     @season_id = 0                                  # (Must retrieve Season ID from form parameters)
     @season_description = '?'
 
@@ -165,13 +165,15 @@ class AdminImportController < ApplicationController
 
                                                     # === Re-launch consume_txt_file if we can/must do it:
     if filename_to_be_parsed || ( data_import_session && (data_import_session.phase.to_i < 1) )
-      filename_to_be_parsed ||= data_import_session.file_name if data_import_session
+      filename_to_be_parsed = data_import_session.file_name if filename_to_be_parsed.nil? && data_import_session
                                                     # Create a new data-import session to consume the datafile:
       data_importer = DataImporter.new( logger, flash, current_admin.id )
-
+                                                    # If data_import_session is existing, it will be "continued" (restarted, depending on last finished phase)
       data_import_session = data_importer.consume_txt_file(
-        filename_to_be_parsed, season, force_missing_meeting_creation,
-        force_missing_team_creation, data_import_session
+        filename_to_be_parsed, season,
+        force_missing_meeting_creation, force_missing_team_creation,
+        false,                                      # Do NOT consume local data files (this is the default value for server runs)
+        data_import_session
       )
       if data_importer                              # First, update the DB-based phase log whenever possible:
         DataImportSession.where(
@@ -184,8 +186,8 @@ class AdminImportController < ApplicationController
           redirect_to(
               goggles_di_step2_analysis_path(
                   :id => data_importer.get_created_data_import_session_id,
-                  :force_meeting_creation => force_missing_meeting_creation,
-                  :force_team_creation => force_missing_team_creation
+                  :force_meeting_creation => force_missing_meeting_creation ? '1' : nil,
+                  :force_team_creation => force_missing_team_creation ? '1' : nil
               )
           ) and return
         end
@@ -225,8 +227,8 @@ class AdminImportController < ApplicationController
       end
       must_go_back_on_commit = value.to_i > 0 if ( key.to_sym == :must_go_back)
     }
-    force_missing_meeting_creation = ( params[:force_meeting_creation].to_i > 0 )
-    force_missing_team_creation    = ( params[:force_team_creation].to_i > 0 )
+    force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
+    force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
     # [Steve] The following override hash has the structure:
     # params[:alias_ids] => { analysis_result.id.to_s => overridden_alias_team_id.to_s, ... }
     overridden_alias_actions = params[:alias_ids] if params[:alias_ids].instance_of?(Hash)
@@ -237,8 +239,8 @@ class AdminImportController < ApplicationController
 
     team_analysis_log  = ''
     equivalent_sql_log = ''
-    team_analysis_ext  = '.team.log'
-    equivalent_sql_ext = '.team.sql'
+    team_analysis_ext  = '.team_commit.log'
+    equivalent_sql_ext = '.team_commit.sql'
     data_import_session = DataImportSession.find( data_import_session_id )
     log_filename = File.join(                       # Compute log filename using data file as a start:
       File.join(Rails.root, 'log'),
@@ -365,8 +367,8 @@ class AdminImportController < ApplicationController
     if is_ok && (! must_go_back_on_commit)
       redirect_to( goggles_di_step2_checkout_path(
           :id => data_import_session_id,
-          :force_meeting_creation => force_missing_meeting_creation,
-          :force_team_creation => force_missing_team_creation
+          :force_meeting_creation => force_missing_meeting_creation ? '1' : '0',
+          :force_team_creation    => force_missing_team_creation ? '1' : '0'
       ) ) and return
     else
       redirect_to( goggles_di_step1_status_path() ) and return

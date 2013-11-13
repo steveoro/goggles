@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.92.20131112
+  - Goggles framework vers.:  4.00.93.20131113
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -271,7 +271,7 @@ class DataImporter
   # dedicated header and footer and using a default extension ('team.log').
   # If the content string is empty, nothing gets written to the file path.
   #
-  def self.to_analysis_logfile( log_filename, log_contents, extension = '.team.log' )
+  def self.to_analysis_logfile( log_filename, log_contents, extension = '.team_scan.log' )
     self.to_logfile(
       log_filename, log_contents,
       "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
@@ -284,7 +284,7 @@ class DataImporter
   # dedicated header and footer and using a default extension ('team.sql').
   # If the content string is empty, nothing gets written to the file path.
   #
-  def self.to_sql_executable_logfile( log_filename, log_contents, extension = '.team.sql' )
+  def self.to_sql_executable_logfile( log_filename, log_contents, extension = '.team_scan.sql' )
     self.to_logfile(
       log_filename, log_contents,
       "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n",

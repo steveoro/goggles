@@ -23,8 +23,8 @@
 		:onsubmit => "$('#loadingIndicator').show(); "
 	) do -%>
 	<%= hidden_field_tag( :data_import_session_id, 	@data_import_session_id ) %>
-	<%= hidden_field_tag( :force_meeting_creation, 	@force_missing_meeting_creation ) %>
-	<%= hidden_field_tag( :force_team_creation, 	@force_missing_team_creation ) %>
+	<%= hidden_field_tag( :force_meeting_creation, 	@force_missing_meeting_creation ? '1' : '0' ) %>
+	<%= hidden_field_tag( :force_team_creation, 	@force_missing_team_creation ? '1' : '0' ) %>
 	<div class="row span11">
 		<div class="span3 control-label goggles-div-centeralign"><%= I18n.t('admin_import.searched_team') %></div>
 		<div class="span4 control-label goggles-div-centeralign"><%= I18n.t('admin_import.team_match_name') %></div>
