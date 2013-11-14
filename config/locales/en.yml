@@ -398,6 +398,8 @@ en:
   meeting:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
     index_title: "Meetings - search"
+    show_swimmer_results_tooltip: "Click to show all the results for this swimmer at this Meeting"
+    show_team_results_tooltip: "Click to show all the results for this team at this Meeting"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -610,10 +612,11 @@ en:
   event: "Event"
   rankings: "Rankings"
   results: "Results"
+  team_results: "Team Results"
+  individual_results: "Individ. Results"
   search_meetings: "Search Meetings"
   search_rankings: "Search Rankings"
   search_results: "Search Results"
-  individual_results: "Individual Results"
   relay_results: "Relay Results"
   search: "Search"
   search_tooltip: "Click on the title bar to toggle the filtering controls. It's also possible to narrow the search results by typing other values in the dedicated cells on the grid."

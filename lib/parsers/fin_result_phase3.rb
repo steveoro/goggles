@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.83.20131105
+  - Goggles framework vers.:  4.00.95.20131114
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -290,10 +290,14 @@ module FinResultPhase3
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
           result_id = committed_row.id
+# DEBUG
+          logger.debug( "\r\Updating all individual results linked to this meeting program..." )
                                                     # Update dependancy: |=> data_import_meeting_individual_results(meeting_program)
           DataImportMeetingIndividualResult.where(
             :data_import_meeting_program_id => di_row.id
           ).update_all( :meeting_program_id => result_id )
+# DEBUG
+          logger.debug( "\r\Updating all relay results linked to this meeting program..." )
                                                     # Update dependancy: |=> data_import_meeting_relay_results(meeting_program)
           DataImportMeetingRelayResult.where(
             :data_import_meeting_program_id => di_row.id
@@ -302,8 +306,10 @@ module FinResultPhase3
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
           @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          @phase_2_log << "committed_row: #{ committed_row.inspect }\r\n"
           @phase_2_log << "#{ $!.to_s }\r\n" if $!
           logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
+          logger.error( "committed_row: #{ committed_row.inspect }" )
           logger.error( "*** #{ $!.to_s }\r\n" ) if $!
           flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         else

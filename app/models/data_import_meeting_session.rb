@@ -15,10 +15,8 @@ class DataImportMeetingSession < ActiveRecord::Base
   belongs_to :meeting
   belongs_to :swimming_pool
   belongs_to :day_part_type
-  validates_associated :data_import_meeting
-  validates_associated :meeting
-  # [Steve, 20131028] Cannot enable validation on :swimming_pool, since it can be null
-  # [Steve, 20131028] Cannot enable validation on :day_part_type, since it can be null
+  # [Steve, 20131028] Cannot enable validation on :swimming_pool, :day_part_type, since they can be null
+  # [Steve, 20131114] Cannot enable validation on :meeting, :data_import_meeting, since they can be null (not both)
 
   has_many :meeting_programs
   has_many :data_import_meeting_programs

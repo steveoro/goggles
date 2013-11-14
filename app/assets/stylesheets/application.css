@@ -12,7 +12,7 @@
 }
 
 .goggles-category-gap{
-	padding: 40px 20px 0px 0px;
+	padding: 50px 20px 0px 0px;
 }
 
 .goggles-divlist-even {
@@ -31,4 +31,25 @@ table td.goggles-centeralign{
 
 table td.goggles-rightalign{
 	text-align: right;
+}
+
+.navbar .ghost-divider-vertical {
+    height: 20px;
+    margin: 0 9px;
+}
+
+.navbar .goggles-small-brand {
+    color: #777777;
+    display: block;
+    float: left;
+    font-size: 18px;
+    font-weight: 200;
+    margin-left: 0;
+    padding: 2px 5px;
+    text-shadow: 0 1px 0 #FFFFFF;
+	line-height: 0px;
+}
+.navbar .nav > li > a.goggles-a-compact {
+    padding: 2px 5px;
+	line-height: 0px;
 }

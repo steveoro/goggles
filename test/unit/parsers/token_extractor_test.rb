@@ -168,6 +168,10 @@ class TokenExtractorTest < ActiveSupport::TestCase
       "                         Manifestazione organizzata da ASD Nuovo Nuoto                         ",
       "                                    Bologna - 30 Marzo 2008                                    ",
 
+      "                      Trofeo A.I.C.S. \"Città di Desenzano\" - 12ª edizione                      ",
+      "                 Manifestazione organizzata da A.S.D. Master A.I.C.S. Brescia                  ",
+      "                                Desenzano - 26/27 Gennaio 2008                                 ",
+
       "11 novembre 2012",
       "10° Trofeo De Akker Team ASI",
       "Manifestazione organizzata da De Akker",
@@ -207,7 +211,11 @@ class TokenExtractorTest < ActiveSupport::TestCase
       ["VIII Trofeo Nuovo Nuoto", '', ''],
       ['', '', 'ASD Nuovo Nuoto'],
       ['', "30 Marzo 2008", ''],
-      
+
+      ["Trofeo A.I.C.S. \"Città di Desenzano\" - 12ª edizione", '', ''],
+      ['', '', 'A.S.D. Master A.I.C.S. Brescia'],
+      ['', "26/27 Gennaio 2008", ''],
+
       ['', "11 novembre 2012", ''],
       ["10° Trofeo De Akker Team ASI", '', ''],
       ['', '', "De Akker"],

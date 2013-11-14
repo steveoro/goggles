@@ -14,7 +14,6 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   belongs_to :data_import_meeting_program
   belongs_to :meeting_program
   belongs_to :entry_time_type
-  validates_associated :data_import_meeting_program
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :data_import_swimmer
   belongs_to :data_import_team

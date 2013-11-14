@@ -115,42 +115,39 @@ class AdminImportController < ApplicationController
     data_importer         = nil
     force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
     force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
-    @season_id = 0                                  # (Must retrieve Season ID from form parameters)
+    season_id = 0                                  # (Possibly retrieve Season ID from form parameters; otherwise, parse it from filename)
+    season = nil
     @season_description = '?'
 
                                                     # === CASE 1: id parameter present? We then assume a session is already in progress:
     if params[:id]
       data_import_session = DataImportSession.find_by_id( params[:id].to_i )
-      @season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
+      season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
 # DEBUG
-#      logger.debug "SEASON.....: ID=#{@season_id}"
+#      logger.debug "SEASON.....: ID=#{season_id}"
 #      logger.debug "!! ---------------------------\r\n\r\n"
-      if ( @season_id.to_i < 1 )
+      if ( season_id.to_i < 1 )
         flash[:notice] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
         redirect_to( goggles_di_step1_status_path() ) and return
       end
       begin
-        season = Season.find_by_id(@season_id)
+        season = Season.find_by_id(season_id)
         @season_description = season.description if season
       rescue
       end
 
                                                     # === CASE 2: datafile parameter present? Copy the file to its destination:
     elsif params[:datafile]
-      if params[:season]                            # Retrieve season_id from parameters:
-        @season_id = params[:season][:season_id].to_i
+      season_id = params[:season][:season_id].to_i if params[:season] # Retrieve season_id from parameters
 # DEBUG
-#       logger.debug "SEASON.....: #{params[:season].inspect} (from params), ID=#{@season_id}"
-      end
+#      logger.debug "SEASON.....: #{params[:season].inspect} (from params), ID=#{season_id}"
 #      logger.debug "!! ---------------------------\r\n\r\n"
-      if ( @season_id.to_i < 1 )
-        flash[:notice] = I18n.t(:nothing_to_do_select_season, {:scope=>[:admin_import]})
-        redirect_to( goggles_di_step1_status_path() ) and return
-      end
-      begin
-        season = Season.find_by_id(@season_id)
-        @season_description = season.description if season
-      rescue
+      if ( season_id.to_i > 0 )
+        begin
+          season = Season.find_by_id(season_id)
+          @season_description = season.description if season
+        rescue
+        end
       end
 
       tmp_file = params[:datafile].tempfile         # (This is an ActionDispatch::Http::UploadedFile object)
@@ -176,6 +173,10 @@ class AdminImportController < ApplicationController
         data_import_session
       )
       if data_importer                              # First, update the DB-based phase log whenever possible:
+        if data_importer.season && (season_id.to_i < 0)
+          season_id = data_importer.season.id
+          @season_description = data_importer.season.description
+        end
         DataImportSession.where(
             :id => data_importer.get_created_data_import_session_id
         ).update_all( :phase_1_log => data_importer.get_phase_1_log() )

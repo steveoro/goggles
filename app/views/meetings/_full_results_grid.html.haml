@@ -1,55 +1,70 @@
 %div.span10
-  - remaining_programs_list = @meeting_programs_list
-  - @meeting_programs_with_results.each do |meeting_program|
-    - is_individual_result = (meeting_program.meeting_individual_results.size > 0)
+  - @meeting_events_list.each do |meeting_event|
+    - is_a_relay = meeting_event.event_type.is_a_relay
     -# --- Header with unique ID for each starting event_type "group":
-    - if ( remaining_programs_list.find{|event_type| event_type.id == meeting_program.event_type.id } )
-      - remaining_programs_list.delete_if{|event_type| event_type.id == meeting_program.event_type.id }
-      %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_program.event_type.code}"}
-        %h3= meeting_program.event_type.i18n_description
+    %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_event.event_type.code}"}
+      %h3= meeting_event.event_type.i18n_description
+    - # --- Sub-legend for each category + gender
+    .navbar
+      %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::FEMALE_ID).i18n_short + ':'
+      %ul.nav
+        - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(:gender_type_id => GenderType::FEMALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
+          %li
+            %a.goggles-a-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
+      .ghost-divider-vertical
+      %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
+      %ul.nav
+        - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(:gender_type_id => GenderType::MALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
+          %li
+            %a.goggles-a-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
 
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        %tr{'class'=>"#{is_individual_result ? 'info' : 'success'}"}
-          %td{'colspan'=>'8'}
-            %b= meeting_program.get_verbose_event_name
-        -# --- Individual Detail result rows: TODO 1) 0th rank must be moved to bottom 2) same size column in percentage 3) use meeting_events which should be simpler
-        - if is_individual_result
-          - meeting_program.meeting_individual_results.each do |individual_result|
-            %tr
-              %td.span1.goggles-rightalign
-                = individual_result.rank
-              %td.span4
-                = individual_result.get_athlete_name
-              %td.span1
-                = individual_result.get_year_of_birth
-              %td.span4
-                = individual_result.get_team_name
-              %td.span1.goggles-rightalign
-                = individual_result.get_timing
-              %td.span1.goggles-rightalign
-                = sprintf( "%02.2f", individual_result.standard_points )
-              %td.span1.goggles-rightalign
-                = sprintf( "%02.2f", individual_result.meeting_individual_points )
-              %td.span1
-                = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png" )
-                = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png" )
-                = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png" )
-        -# --- Team Relay result rows:
-        - unless is_individual_result
-          - meeting_program.meeting_relay_results.each do |relay_result|
-            %tr
-              %td.goggles-rightalign
-                = relay_result.rank
-              %td{'colspan'=>'3'}
-                = relay_result.get_team_name
-              %td.goggles-rightalign
-                = relay_result.get_timing
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", relay_result.meeting_points )
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", relay_result.standard_points )
-              %td
-                = show_tag( relay_result.rank==1 && relay_result.meeting_points>0, "medal_gold_3.png" )
-                = show_tag( relay_result.rank==2 && relay_result.meeting_points>0, "medal_silver_3.png" )
-                = show_tag( relay_result.rank==3 && relay_result.meeting_points>0, "medal_bronze_3.png" )
+    - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('meeting_programs.event_order ASC').each do |meeting_program|
+      %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
+              %td{'colspan'=>'8'}
+                %b= meeting_program.get_verbose_event_name
+            -# --- Individual Detail result rows: TODO 1) 0th rank must be moved to bottom 2) same size column in percentage 3) use meeting_events which should be simpler
+            - unless is_a_relay
+              - meeting_program.meeting_individual_results.order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
+                %tr
+                  %td.span1.goggles-rightalign
+                    = individual_result.rank
+                  %td.span4
+                    %a{'id'=>"swimmer#{individual_result.id}", 'href'=>'#', 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                      = individual_result.get_athlete_name
+                  %td.span1
+                    = individual_result.get_year_of_birth
+                  %td.span4
+                    %a{'id'=>"team#{individual_result.id}", 'href'=>'#', 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+                      = individual_result.get_team_name
+                  %td.span1.goggles-rightalign
+                    = individual_result.get_timing
+                  %td.span1.goggles-rightalign
+                    = sprintf( "%02.2f", individual_result.standard_points )
+                  %td.span1.goggles-rightalign
+                    = sprintf( "%02.2f", individual_result.meeting_individual_points )
+                  %td.span1
+                    = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png" )
+                    = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png" )
+                    = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png" )
+            -# --- Team Relay result rows:
+            - if is_a_relay
+              - meeting_program.meeting_relay_results.order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
+                %tr
+                  %td.goggles-rightalign
+                    = relay_result.rank
+                  %td{'colspan'=>'3'}
+                    %a{'id'=>"team#{relay_result.id}", 'href'=>'#', 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+                      = relay_result.get_team_name
+                  %td.goggles-rightalign
+                    = relay_result.get_timing
+                  %td.goggles-rightalign
+                    = sprintf( "%02.2f", relay_result.meeting_points )
+                  %td.goggles-rightalign
+                    = sprintf( "%02.2f", relay_result.standard_points )
+                  %td
+                    = show_tag( relay_result.rank==1 && relay_result.meeting_points>0, "medal_gold_3.png" )
+                    = show_tag( relay_result.rank==2 && relay_result.meeting_points>0, "medal_silver_3.png" )
+                    = show_tag( relay_result.rank==3 && relay_result.meeting_points>0, "medal_bronze_3.png" )

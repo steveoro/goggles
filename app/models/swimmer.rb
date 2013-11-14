@@ -44,7 +44,7 @@ class Swimmer < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    last_name ? "#{last_name} #{first_name}" : "#{complete_name}"
+    last_name.to_s.empty? ? "#{complete_name}" : "#{last_name} #{first_name}"
   end
 
   # Computes a verbose or formal description for the name associated with this data

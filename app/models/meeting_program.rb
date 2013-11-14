@@ -12,8 +12,6 @@ class MeetingProgram < ActiveRecord::Base
   validates_associated :meeting_event
   validates_associated :category_type
   validates_associated :gender_type
-  validates_associated :pool_type
-  validates_associated :time_standard
 
   has_many :meeting_individual_results
   has_many :meeting_relay_results
@@ -51,7 +49,7 @@ class MeetingProgram < ActiveRecord::Base
 
   # Computes a short description of just the event name for this row, without dates.
   def get_event_name
-    "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
+    "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.i18n_short}"
   end
 
   # Computes a verbose description of just the event name for this row, without dates.
@@ -61,7 +59,7 @@ class MeetingProgram < ActiveRecord::Base
 
   # Computes the shortest description for the name associated with this data
   def get_short_name
-    "(#{get_scheduled_date}, #{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.code}"
+    "(#{get_scheduled_date}, #{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.i18n_short}"
   end
 
   # Computes a shorter description for the name associated with this data
@@ -79,6 +77,11 @@ class MeetingProgram < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
+
+  # Getter for short display name of Category + Gender.
+  def get_category_and_gender_short
+    "#{get_category_type_name} #{gender_type.i18n_short}"
+  end
 
   # Retrieves the Category Type code
   def get_category_type_code

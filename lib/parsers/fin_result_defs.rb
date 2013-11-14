@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.93.20131113
+  - Goggles framework vers.:  4.00.95.20131114
   - author: Steve A.
 
  Container class for the lists of ContextDetector and TokenExtractor
@@ -186,7 +186,7 @@ class FinResultDefs
           ),
           TokenExtractor.new(
             :title,
-            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Regionali|Campionati))/ui,
+            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Trofeo|Regionali|Campionati))/ui,
             /$/ui,
             3                                         # line_timeout
           )

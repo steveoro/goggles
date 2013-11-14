@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.93.20131113
+  - Goggles framework vers.:  4.00.95.20131114
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -360,25 +360,32 @@ module FinResultPhase2
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
 # DEBUG
-#    logger.debug( "Seeking existing Meeting @ #{scheduled_date}..." )
-#    @phase_1_log << "Seeking existing Meeting @ #{scheduled_date}...\r\n"
+    logger.debug( "Seeking existing Meeting @ #{scheduled_date}..." )
+    @phase_1_log << "Seeking existing Meeting @ #{scheduled_date}...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
     result_row = Meeting.where(
-      [ "(header_date = ?) AND (season_id = ?) AND (description = ?)",
-        header_fields[:header_date], season_id, description ]
+      [ "(header_date = ?) AND (season_id = ?) AND (code = ?)",
+        scheduled_date, season_id, header_fields[:code] ]
     ).first
     if result_row                                   # We must differentiate the result: negative for Meeting, positive for DataImportMeeting
+# DEBUG
+      logger.debug( "Meeting found! (#{result_row.description})" )
+      @phase_1_log << "Meeting found! (#{result_row.description})\r\n"
       result_id = - result_row.id
       not_found = false
+                                                    # [Steve, 20131114] Sometimes header_year is missing from old seed data; we need to check this (otherwise validation fails):
+      result_row.header_year = header_fields[:header_year] if header_fields[:header_year]
+      result_row.notes = notes if notes
+      result_row.save! if result_row.changed?
                                                     # Search also inside data_import_xxx table counterpart when unsuccesful:
     else
 # DEBUG
-#      logger.debug( "Seeking existing DataImportMeeting @ #{scheduled_date}..." )
-#      @phase_1_log << "Seeking existing DataImportMeeting @ #{scheduled_date}...\r\n"
+      logger.debug( "Seeking existing DataImportMeeting @ #{scheduled_date}..." )
+      @phase_1_log << "Seeking existing DataImportMeeting @ #{scheduled_date}...\r\n"
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
       result_row = DataImportMeeting.where(
         [ "(data_import_session_id = ?) AND (header_date = ?) AND (season_id = ?) AND (description = ?)",
-          session_id, header_fields[:header_date], season_id, description ]
+          session_id, scheduled_date, season_id, description ]
       ).first
       if result_row
         result_id = result_row.id
@@ -403,7 +410,7 @@ module FinResultPhase2
             :are_results_acquired => true,
             :is_under_25_admitted => true, # (This is just a guess)
             :configuration_file   => full_pathname,
-            :header_date      => header_fields[:header_date],
+            :header_date      => scheduled_date,
             :code             => header_fields[:code],
             :header_year      => header_fields[:header_year],
             :edition          => header_fields[:edition], # (This is just a guess)
@@ -480,6 +487,8 @@ module FinResultPhase2
     end
 
     if result_row                                   # We must differentiate the result: negative for MeetingSession, positive for DataImportMeetingSession
+      result_row.description = description if result_row.description.to_s.empty?
+      result_row.save! if result_row.changed?
       result_id = - result_row.id
       not_found = false
     else                                            # Search also inside data_import_xxx table counterpart when unsuccesful:

@@ -86,6 +86,8 @@ class DataImporterTest < ActiveSupport::TestCase
       assert( m.instance_of?(DataImportMeeting) )
       assert( m.id.to_i > 0 )
       assert_equal( season.id, m.season_id )
+      header_date = m.header_date
+      description = m.description
 
       ms = DataImportMeetingSession.where( :data_import_session_id => data_import_session.id ).first
       assert_not_nil( ms, "Cannot find the meeting session having meeting ID=#{m.id}!" )
@@ -93,23 +95,23 @@ class DataImporterTest < ActiveSupport::TestCase
       assert( ms.id.to_i > 0 )
 
 #      mp = DataImportMeetingProgram.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
-      mp = DataImportMeetingProgram.where( :data_import_session_id => data_import_session.id )
+      mp = DataImportMeetingProgram.where( :data_import_session_id => data_import_session.id ).count
       total_programs = expected_values[:category_header].to_i + expected_values[:relay_header].to_i
-      puts "==> DataImportMeetingProgram............size=#{mp.size} vs. expected=#{total_programs})"
-      assert_equal( total_programs, mp.size )
+      puts "==> DataImportMeetingProgram............count=#{mp} vs. expected=#{total_programs})"
+      assert_equal( total_programs, mp )
 
-      mir = DataImportMeetingIndividualResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
-      puts "==> DataImportMeetingIndividualResult...size=#{mir.size} vs. expected=#{expected_values[:result_row]})"
-      assert_equal( expected_values[:result_row], mir.size )
+      mir = DataImportMeetingIndividualResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] ).count
+      puts "==> DataImportMeetingIndividualResult...count=#{mir} vs. expected=#{expected_values[:result_row]})"
+      assert_equal( expected_values[:result_row], mir )
 
-      mrr = DataImportMeetingRelayResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
-      puts "==> DataImportMeetingRelayResult........size=#{mrr.size} vs. expected=#{expected_values[:relay_row]})"
-      assert_equal( expected_values[:relay_row], mrr.size )
+      mrr = DataImportMeetingRelayResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] ).count
+      puts "==> DataImportMeetingRelayResult........count=#{mrr} vs. expected=#{expected_values[:relay_row]})"
+      assert_equal( expected_values[:relay_row], mrr )
 
 #      mts = DataImportMeetingTeamScore.where( :data_import_meeting_id => m.id )
-      mts = DataImportMeetingTeamScore.where( :data_import_session_id => data_import_session.id )
-      puts "==> DataImportMeetingTeamScore..........size=#{mts.size} vs. expected=#{expected_values[:ranking_row]})"
-      assert_equal( expected_values[:ranking_row], mts.size )
+      mts = DataImportMeetingTeamScore.where( :data_import_session_id => data_import_session.id ).count
+      puts "==> DataImportMeetingTeamScore..........count=#{mts} vs. expected=#{expected_values[:ranking_row]})"
+      assert_equal( expected_values[:ranking_row], mts )
 
                                                     # === TEST PHASE 3:
       is_ok = di.commit(
@@ -121,7 +123,12 @@ class DataImporterTest < ActiveSupport::TestCase
       # Check size of destination entity tables before the test transaction
       # rollback destroys the committed data:
       puts "\r\n\r\n\t*** #{full_pathname} ***\r\n"
-      m = Meeting.where( :season_id => season_id ).first
+      m = Meeting.where(
+        [ "(header_date = ?) AND (season_id = ?) AND (description = ?)",
+          header_date, season_id, description ]
+      ).first
+      puts "Found committed Meeting: #{m.get_verbose_name}, #{header_date}\r\n"
+
       assert_not_nil( m, "Cannot find the meeting having season ID=#{season_id}!" )
       assert( m.instance_of?(Meeting) )
       assert( m.id.to_i > 0 )
@@ -132,22 +139,22 @@ class DataImporterTest < ActiveSupport::TestCase
       assert( ms.instance_of?(MeetingSession) )
       assert( ms.id.to_i > 0 )
 
-      mp = MeetingProgram.includes(:meeting).where( ['meetings.id = ?', m.id] )
+      mp = MeetingProgram.includes(:meeting).where( ['meetings.id = ?', m.id] ).count
       total_programs = expected_values[:category_header].to_i + expected_values[:relay_header].to_i
-      puts "==> MeetingProgram............size=#{mp.size} vs. expected=#{total_programs})"
-      assert_equal( total_programs, mp.size )
+      puts "==> MeetingProgram............count=#{mp} vs. expected=#{total_programs})"
+      assert_equal( total_programs, mp )
 
-      mir = MeetingIndividualResult.includes(:meeting).where( ['meetings.id = ?', m.id] )
-      puts "==> MeetingIndividualResult...size=#{mir.size} vs. expected=#{expected_values[:result_row]})"
-      assert_equal( expected_values[:result_row], mir.size )
+      mir = MeetingIndividualResult.includes(:meeting).where( ['meetings.id = ?', m.id] ).count
+      puts "==> MeetingIndividualResult...count=#{mir} vs. expected=#{expected_values[:result_row]})"
+      assert_equal( expected_values[:result_row], mir )
 
-      mrr = MeetingRelayResult.includes(:meeting).where( ['meetings.id = ?', m.id] )
-      puts "==> MeetingRelayResult........size=#{mrr.size} vs. expected=#{expected_values[:relay_row]})"
-      assert_equal( expected_values[:relay_row], mrr.size )
+      mrr = MeetingRelayResult.includes(:meeting).where( ['meetings.id = ?', m.id] ).count
+      puts "==> MeetingRelayResult........count=#{mrr} vs. expected=#{expected_values[:relay_row]})"
+      assert_equal( expected_values[:relay_row], mrr )
 
-      mts = MeetingTeamScore.where( :meeting_id => m.id )
-      puts "==> MeetingTeamScore..........size=#{mts.size} vs. expected=#{expected_values[:ranking_row]})"
-      assert_equal( expected_values[:ranking_row], mts.size )
+      mts = MeetingTeamScore.where( :meeting_id => m.id ).count
+      puts "==> MeetingTeamScore..........count=#{mts} vs. expected=#{expected_values[:ranking_row]})"
+      assert_equal( expected_values[:ranking_row], mts )
     end                                             # -- end of loop on file names --
   end
   # ---------------------------------------------------------------------------

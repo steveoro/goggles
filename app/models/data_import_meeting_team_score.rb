@@ -12,10 +12,6 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
   belongs_to :data_import_meeting
   belongs_to :meeting
   belongs_to :season
-  validates_associated :data_import_team
-  validates_associated :team
-  validates_associated :data_import_meeting
-  validates_associated :meeting
   validates_associated :season
 
   validates_presence_of     :sum_individual_points

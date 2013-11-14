@@ -2,17 +2,17 @@
   %li.active
     = link_to(t(:results), '#')
   %li.disabled
-    = link_to('risult. squadra', '#')
+    = link_to(t(:team_results), '#')
   %li.disabled
-    = link_to('risult. individuali', '#')
+    = link_to(t(:individual_results), '#')
 
 .row
   %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom#goggles-float-list
     %li
       %a(href="#topOfPage")= I18n.t(:top_of_page)
-    - @meeting_programs_list.each do |event_type|
+    - @meeting_events_list.each do |me|
       %li
-        %a(href="\##{event_type.code}")= event_type.i18n_description
+        %a(href="\##{me.event_type.code}")= me.event_type.i18n_description
 
 .accordion#accordionShw
   .accordion-group

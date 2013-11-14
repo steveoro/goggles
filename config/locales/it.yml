@@ -398,6 +398,8 @@ it:
   meeting:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
     index_title: "Gare - ricerca"
+    show_swimmer_results_tooltip: "Clicca per mostrare tutti i risultati di questo atleta a questo Meeting"
+    show_team_results_tooltip: "Clicca per mostrare tutti i risultati di questa squadra a questo Meeting"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -610,10 +612,11 @@ it:
   event: "Evento"
   rankings: "Classifiche"
   results: "Risultati"
+  team_results: "Ris. di Squadra"
+  individual_results: "Ris. individuali"
   search_meetings: "Cerca Gare"
   search_rankings: "Cerca Classifiche"
   search_results: "Cerca Risultati"
-  individual_results: "Risultati individuali"
   relay_results: "Risultati Staffette"
   search: "Cerca"
   search_tooltip: "Clicca sul titolo per nascondere o mostrare i comandi di filtraggio principali. E' possibile filtrare ulteriormente i risultati inserendo poi altri valori direttamente nell'elenco dei risultati."

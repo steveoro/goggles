@@ -17,6 +17,7 @@ class MeetingEvent < ActiveRecord::Base
   has_one  :meeting,      :through => :meeting_session
   has_one  :season,       :through => :meeting_session
   has_one  :season_type,  :through => :meeting_session
+  has_one  :stroke_type,  :through => :event_type
 
   has_many :meeting_programs
 

@@ -17,7 +17,7 @@ class MeetingsController < ApplicationController
   end
   # ----------------------------------------------------------------------------
 
-  # Show all details regarding a single Meeting row
+  # Show all details regarding a single Meeting
   # Assumes params[:id] refers to a specific Meeting row.
   #
   def show_full
@@ -27,17 +27,31 @@ class MeetingsController < ApplicationController
       redirect_to( meetings_path() ) and return
     end
 
-    @meeting_programs_list = @meeting.meeting_programs.includes(
+    @meeting_events_list = @meeting.meeting_events.includes(
       :event_type, :stroke_type
     ).order(
-      'event_types.is_a_relay, meeting_programs.event_order'
-    ).collect{ |row|
-      row.event_type
-    }.uniq
+      'event_types.is_a_relay, meeting_events.event_order'
+    )
+  end
+  # ----------------------------------------------------------------------------
 
-    @meeting_programs_with_results = @meeting.meeting_programs.includes(
-      :event_type
-    ).order( 'event_types.is_a_relay, meeting_programs.event_order' )
+  # Show all details regarding a single Swimmer for the whole Meeting
+  # === Params:
+  # - :id => Meeting row id.
+  # - :swimmer_id => Swimmer id.
+  #
+  def show_swimmer_results
+    @meeting = ( params[:id].to_i > 0 ) ? Meeting.find_by_id( params[:id].to_i ) : nil
+    unless ( @meeting )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_path() ) and return
+    end
+
+    @meeting_events_list = @meeting.meeting_events.includes(
+      :event_type, :stroke_type
+    ).order(
+      'event_types.is_a_relay, meeting_events.event_order'
+    )
   end
   # ----------------------------------------------------------------------------
 

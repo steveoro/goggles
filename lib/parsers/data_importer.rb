@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.93.20131113
+  - Goggles framework vers.:  4.00.95.20131114
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -63,6 +63,7 @@ class DataImporter
     @committed_data_rows = 0
     @team_analysis_results = []
     @created_data_import_session_id = 0
+    @season_id = 0
                                                     # Batch parameters' default
     self.full_pathname = nil
     self.season = nil
@@ -101,6 +102,11 @@ class DataImporter
   # Getter for @created_data_import_session_id
   def get_created_data_import_session_id
     @created_data_import_session_id
+  end
+
+  # Getter for @season_id
+  def get_processed_season_id
+    @season_id
   end
 
   # Getter for @phase_1_log
@@ -438,6 +444,8 @@ class DataImporter
       logger.info( "   Specified season ID=#{season_id}. Parsing file..." )
       @phase_1_log = "Specified season ID=#{season_id}. Parsing file...\r\n"
     end
+    self.season = season                            # Update the internal reference member
+    @season_id = season_id                          # Set the currently used season_id (this member variable is used just by its getter method)
                                                     # Get the remaining default values from the season instance:
     header_fields[:header_year] = season.header_year
     header_fields[:edition] = season.edition
@@ -445,8 +453,7 @@ class DataImporter
     header_fields[:timing_type_id]  = season.timing_type_id
 # DEBUG
     logger.debug( "\r\nParsed header_fields: #{header_fields.inspect}" )
-    @phase_1_log = "\r\nnParsed header_fields: #{header_fields.inspect}\r\n"
-    @season_id = season_id                          # Set the currently used season_id (this member variable is used just by its getter method)
+    @phase_1_log = "\r\nParsed header_fields: #{header_fields.inspect}\r\n"
     data_rows = []
 
     result_hash = FinResultParser.parse_txt_file( full_pathname, false, logger ) # (=> show_progress = false)
@@ -507,14 +514,18 @@ class DataImporter
         meeting_headers = result_hash[:parse_result][:meeting_header]
         meeting_header_row = meeting_headers.first if meeting_headers
         if meeting_header_row                       # If the meeting_dates are found inside the data file, use them:
+# DEBUG
+          logger.debug( "meeting_header_row = #{meeting_header_row.inspect}" )
+          @phase_1_log = "meeting_header_row = #{meeting_header_row.inspect}\r\n"
           meeting_dates = meeting_header_row[:fields][:meeting_dates]
+          scheduled_date = FinResultParserTools.parse_meeting_date( meeting_dates )
+# DEBUG
+          logger.debug( "meeting_dates = '#{meeting_dates}', scheduled_date=#{scheduled_date}" )
+          @phase_1_log = "meeting_dates = '#{meeting_dates}', scheduled_date=#{scheduled_date}\r\n"
         elsif header_fields[:header_date]           # ...Otherwise, parse them from the filename/header:
           scheduled_date = header_fields[:header_date]
         end
-                                                    # If we still need to parse the scheduled date, let's do it:
-        if meeting_dates && scheduled_date.nil?
-          scheduled_date = FinResultParserTools.parse_meeting_date( meeting_dates )
-        elsif scheduled_date.nil?
+        if scheduled_date.nil?                      # If we still need to parse the scheduled date, let's do it:
           begin
             scheduled_date = season.begin_date
           rescue
