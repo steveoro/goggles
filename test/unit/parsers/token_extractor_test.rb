@@ -160,6 +160,10 @@ class TokenExtractorTest < ActiveSupport::TestCase
       "                    Manifestazione organizzata da Rinascita Team Romagna asd                   ",
       "                                  Ravenna - 14/15 Gennaio 2012                                 ",
 
+      "                                      2° Trofeo del Golfo",
+      "                        Manifestazione organizzata da AS DIL RN SPEZIA",
+      "                                   LA SPEZIA - 8 Marzo 2008",
+
       "                                    VIII Trofeo Nuovo Nuoto                                    ",
       "                         Manifestazione organizzata da ASD Nuovo Nuoto                         ",
       "                                    Bologna - 30 Marzo 2008                                    ",
@@ -195,6 +199,10 @@ class TokenExtractorTest < ActiveSupport::TestCase
       ["10° Trofeo Città di Ravenna Master", '', ''],
       ['', '', 'Rinascita Team Romagna asd'],
       ['', "14/15 Gennaio 2012", ''],
+
+      ["2° Trofeo del Golfo", '', ''],
+      ['', '', 'AS DIL RN SPEZIA'],
+      ['', "8 Marzo 2008", ''],
 
       ["VIII Trofeo Nuovo Nuoto", '', ''],
       ['', '', 'ASD Nuovo Nuoto'],

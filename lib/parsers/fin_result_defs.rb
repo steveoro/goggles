@@ -165,8 +165,7 @@ class FinResultDefs
         [
           TokenExtractor.new(
             :title,
-            /\s*(\d{1,3}\D\s)?(\D+|Trof|Region)/ui,   # (simplified old version)
-#            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region)))/ui,
+            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Regionali|Campionati))/ui,
             /$/ui,
             3                                         # line_timeout
           ),
@@ -187,11 +186,7 @@ class FinResultDefs
           ),
           TokenExtractor.new(
             :title,
-#            /\s*(\d{1,3}\D\s)?(\D+|Trof|Region)/ui,   # (simplified old version)
-#            /((\d{1,3}\D\s)?(\D+|Trof|Region))(?!manifestazione organizzata da)/ui,
-#            /\s*(?<!manifestazione organizzata da)(\d{1,3}\D\s)?(\D+|Trof|Region)/ui,
-#            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region)))/ui,
-            /\.*((\d{1,3}\D{1,2}\s)|Distanze speciali|Trof|Region)/ui,
+            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Regionali|Campionati))/ui,
             /$/ui,
             3                                         # line_timeout
           )
