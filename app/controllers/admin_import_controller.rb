@@ -180,6 +180,7 @@ class AdminImportController < ApplicationController
         DataImportSession.where(
             :id => data_importer.get_created_data_import_session_id
         ).update_all( :phase_1_log => data_importer.get_phase_1_log() )
+        data_importer.clear_team_analysis_and_sql_log()
         data_importer.to_logfile()                  # Update the additional file-based logs
 
         if data_importer.has_team_analysis_results

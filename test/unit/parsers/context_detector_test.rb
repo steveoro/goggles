@@ -120,6 +120,14 @@ class ContextDetectorTest < ActiveSupport::TestCase
         #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
       {
         :feed => [
+          "                                  Campionati Regionali Emilia                                  ",
+          "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      ",
+          "                              Molinella - 15/16/17 Febbraio 2009                               "
+        ],
+        :results => [ false, false, true ]
+      },
+      {
+        :feed => [
           "                                     Distanze speciali EMI                                     ",
           "                Manifestazione organizzata da San Marino Nuoto - Molinellanuoto                ",
           "                                 San Marino - 4 Novembre 2007                                  "

@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.95.20131114
+  - Goggles framework vers.:  4.00.96.20131115
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -97,6 +97,12 @@ class DataImporter
     self.force_missing_team_creation = false
     self.do_not_consume_file = false
     self.log_dir = File.join( Rails.root, 'log' )
+  end
+
+  # Resets just the 2 log texts for the team analysis
+  def clear_team_analysis_and_sql_log
+    @team_analysis_log = ''
+    @sql_executable_log = ''
   end
 
   # Getter for @created_data_import_session_id
@@ -518,14 +524,20 @@ class DataImporter
           logger.debug( "meeting_header_row = #{meeting_header_row.inspect}" )
           @phase_1_log = "meeting_header_row = #{meeting_header_row.inspect}\r\n"
           meeting_dates = meeting_header_row[:fields][:meeting_dates]
-          scheduled_date = FinResultParserTools.parse_meeting_date( meeting_dates )
+          scheduled_date = FinResultParserTools.parse_meeting_date( meeting_dates ) unless meeting_dates.to_s.empty?
 # DEBUG
           logger.debug( "meeting_dates = '#{meeting_dates}', scheduled_date=#{scheduled_date}" )
           @phase_1_log = "meeting_dates = '#{meeting_dates}', scheduled_date=#{scheduled_date}\r\n"
-        elsif header_fields[:header_date]           # ...Otherwise, parse them from the filename/header:
-          scheduled_date = header_fields[:header_date]
         end
-        if scheduled_date.nil?                      # If we still need to parse the scheduled date, let's do it:
+                                                    # ...Otherwise, parse them from the filename/header:
+        if scheduled_date.nil? && header_fields[:header_date]
+          scheduled_date = header_fields[:header_date]
+# DEBUG
+          logger.debug( "scheduled_date=#{scheduled_date} (set to file name date)" )
+          @phase_1_log = "scheduled_date=#{scheduled_date} (set to file name date)\r\n"
+        end
+                                                    # If we still haven't found the scheduled date, fall back to some defaults:
+        if scheduled_date.nil?
           begin
             scheduled_date = season.begin_date
           rescue

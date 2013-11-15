@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.95.20131114
+  - Goggles framework vers.:  4.00.96.20131115
   - author: Steve A.
 
  Container class for the lists of ContextDetector and TokenExtractor
@@ -52,9 +52,9 @@ class FinResultDefs
       :meeting_header => ContextDetector.new(
         :meeting_header,
         [
-          /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
+          /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
           /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/ui,
-          /(\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/ui
+          /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/ui
         ],
         logger,
         nil,                                          # parent context
@@ -171,7 +171,7 @@ class FinResultDefs
           ),
           TokenExtractor.new(
             :meeting_dates,
-            /\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
+            /\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
             /$/ui,
             3                                         # line_timeout
           )
@@ -186,7 +186,7 @@ class FinResultDefs
           ),
           TokenExtractor.new(
             :title,
-            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Trofeo|Regionali|Campionati))/ui,
+            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\w+|Trof)|Trofeo|Regionali|Campionati))/ui,
             /$/ui,
             3                                         # line_timeout
           )
@@ -195,7 +195,7 @@ class FinResultDefs
         [
           TokenExtractor.new(
             :meeting_dates,
-            /\d{1,2}((\/|-|\,)\d{1,2})?\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
+            /\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
             /$/ui,
             3                                         # line_timeout
           ),
@@ -341,24 +341,27 @@ class FinResultDefs
   #          / \d{1,3}(?= {1,3})/ui,
   #          / (?=[a-z]+)/ui
             8,                                      # (starting idx)
-            12                                      # (max size)
+            /(?<=\s{3}\d|gara|\s{18})\s+\w+/ui
+#            12                                      # (max size)
           ),
           TokenExtractor.new(
             :team_name,
-            24,                                     # (starting idx)
+            /(?<=\s{3}\d\s{3}|gara\s|\d{6}\s|\s{22})\s+\w+/ui,
+#            24,                                     # (starting idx)
             25                                      # (max size)
           ),
           TokenExtractor.new(
             :result_time,
   #          / (Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/ui,
             59,                                     # (starting idx)
-            8                                       # (max size)
+            /(\s\d{1,4}[\,|\.]\d\d$|(?<=Squalif\.)$)/ui
+#            8                                       # (max size)
           ),
           TokenExtractor.new(
             :result_score,
-  #          /\b\d{1,4}[\,|\.]\d\d$/ui,
-            68,                                     # (starting idx)
-            7                                       # (max size)
+            /\s\d{1,4}[\,|\.]\d\d$/ui,
+#            68,                                     # (starting idx)
+            8                                       # (max size)
           )
         ]
       ],

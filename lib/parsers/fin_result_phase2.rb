@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.95.20131114
+  - Goggles framework vers.:  4.00.96.20131115
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -487,10 +487,9 @@ module FinResultPhase2
     end
 
     if result_row                                   # We must differentiate the result: negative for MeetingSession, positive for DataImportMeetingSession
-      result_row.description = description if result_row.description.to_s.empty?
-      result_row.save! if result_row.changed?
-      result_id = - result_row.id
-      not_found = false
+      result_row = fix_existing_invalid_meeting_session( result_row )
+      result_id  = - result_row.id
+      not_found  = false
     else                                            # Search also inside data_import_xxx table counterpart when unsuccesful:
 # DEBUG
 #      logger.debug( "Seeking existing DataImportMeetingSession @ #{scheduled_date}..." )
@@ -703,7 +702,7 @@ module FinResultPhase2
 # DEBUG
         logger.debug( "Found existing M.Event (but not the Program)! ID:#{me.id} => #{me.inspect}" )
         @phase_1_log << "Found existing M.Event (but not the Program)! ID:#{me.id} => #{me.inspect}\r\n"
-        meeting_session = me.meeting_session
+        meeting_session = fix_existing_invalid_meeting_session( me.meeting_session )
         meeting_session_id = - me.meeting_session_id
       end
 # DEBUG
@@ -734,6 +733,7 @@ module FinResultPhase2
           MeetingSession.find( -meeting_session_id ) :
           DataImportMeetingSession.find( meeting_session_id )
         )
+        meeting_session = fix_existing_invalid_meeting_session( meeting_session )
       end
                                                     # Retrieve the swimming pool type from the meeting session: (otherwise use a default)
       pool_type_id = ( meeting_session.swimming_pool ?
@@ -792,6 +792,21 @@ module FinResultPhase2
     end
 
     result_id
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Checks if a meeting_session instance is invalid (validation usually fails for
+  # a missing description) and fixes it.
+  #
+  def fix_existing_invalid_meeting_session( meeting_session )
+    if meeting_session.description.to_s.empty?      # [Steve, bugfix 2013115]: Make sure that the pre-existing meeting session doesn't have an empty description:
+      logger.info( "Fixing meeting session empty description..." )
+      @phase_1_log << "Fixing meeting session empty description...\r\n"
+      meeting_session.description = meeting_session.get_order_with_date
+      meeting_session.save!
+    end
+    meeting_session
   end
   # ---------------------------------------------------------------------------
 

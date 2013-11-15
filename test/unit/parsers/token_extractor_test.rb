@@ -159,18 +159,19 @@ class TokenExtractorTest < ActiveSupport::TestCase
       "                               10° Trofeo Città di Ravenna Master                              ",
       "                    Manifestazione organizzata da Rinascita Team Romagna asd                   ",
       "                                  Ravenna - 14/15 Gennaio 2012                                 ",
-
       "                                      2° Trofeo del Golfo",
       "                        Manifestazione organizzata da AS DIL RN SPEZIA",
       "                                   LA SPEZIA - 8 Marzo 2008",
-
       "                                    VIII Trofeo Nuovo Nuoto                                    ",
       "                         Manifestazione organizzata da ASD Nuovo Nuoto                         ",
       "                                    Bologna - 30 Marzo 2008                                    ",
-
       "                      Trofeo A.I.C.S. \"Città di Desenzano\" - 12ª edizione                      ",
       "                 Manifestazione organizzata da A.S.D. Master A.I.C.S. Brescia                  ",
       "                                Desenzano - 26/27 Gennaio 2008                                 ",
+
+      "                                  Campionati Regionali Emilia                                  ",
+      "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      ",
+      "                              Molinella - 15/16/17 Febbraio 2009                               ",
 
       "11 novembre 2012",
       "10° Trofeo De Akker Team ASI",
@@ -215,6 +216,10 @@ class TokenExtractorTest < ActiveSupport::TestCase
       ["Trofeo A.I.C.S. \"Città di Desenzano\" - 12ª edizione", '', ''],
       ['', '', 'A.S.D. Master A.I.C.S. Brescia'],
       ['', "26/27 Gennaio 2008", ''],
+
+      ["Campionati Regionali Emilia", '', ''],
+      ['', '', 'a.s.d. Molinella Nuoto'],
+      ['', "15/16/17 Febbraio 2009", ''],
 
       ['', "11 novembre 2012", ''],
       ["10° Trofeo De Akker Team ASI", '', ''],
@@ -385,7 +390,11 @@ class TokenExtractorTest < ActiveSupport::TestCase
       "                  4     PADOVANUOTO S.R.L.                  2'14\"12  874,29",
       "                        CSI NUOTO OBER FERR                Squalif.",
       "                  5     CN UISP BOLOGNA                     2'23\"74  871,02",
-      "                  6     NUOTO CLUB 2000                     2'41\"79  773,84"
+      "                  6     NUOTO CLUB 2000                     2'41\"79  773,84",
+
+      "                1  SIC-000140   POL. WATERPOLO PALE              2'06\"56  987,67",
+      "                1  LOM-009402   MALASPINA SC                     1'35\"98 1003,23",
+      "                1  LOM-037241   SPORT MANAGEMENT                 1'45\"45  955,05"
     ]
   end
 
@@ -401,6 +410,10 @@ class TokenExtractorTest < ActiveSupport::TestCase
       ['', 'CSI NUOTO OBER FERR', 'Squalif.', ''],
       ['5', 'CN UISP BOLOGNA', "2'23\"74", '871,02'],
       ['6', 'NUOTO CLUB 2000', "2'41\"79", '773,84'],
+
+      ['1', 'POL. WATERPOLO PALE', "2'06\"56", '987,67'],
+      ['1', 'MALASPINA SC', "1'35\"98", '1003,23'],
+      ['1', 'SPORT MANAGEMENT', "1'45\"45", '955,05']
     ]
   end
   # ---------------------------------------------------------------------------

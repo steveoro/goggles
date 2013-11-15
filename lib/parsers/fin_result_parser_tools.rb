@@ -9,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.89.20131110
+  - Goggles framework vers.:  4.00.96.20131115
   - author: Steve A.
 
 == FinResultParserTools module
@@ -64,7 +64,7 @@ module FinResultParserTools
   def self.parse_meeting_date( text_token )
 # DEBUG
 #    puts("parse_meeting_date( '#{text_token}' ) called.")
-    date_num_idx = text_token =~ /\d{1,2}((\/|-|\,)\d{1,2})?\s/ui
+    date_num_idx = text_token =~ /\d{1,2}((\/|-|\,)\d{1,2})*\s/ui
     month_idx    = text_token =~ /(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui
     year_idx     = text_token =~ /\s\d{2,4}/ui
 
@@ -76,6 +76,8 @@ module FinResultParserTools
     text_date = "#{year}-#{sprintf( "%#{2.2}i", month_num.to_i+1)}-#{day}"
 # DEBUG
 #    puts("parse_meeting_date(): resulting text date: '#{text_date}'.")
+# TODO FUTURE DEV return an hash or an array of allowed meeting (session) dates
+# TODO FUTURE DEV when a meeting is not found, try again with the next available meeting date
     Date.parse( text_date )
   end
   # ---------------------------------------------------------------------------
