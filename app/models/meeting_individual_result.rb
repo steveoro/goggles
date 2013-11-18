@@ -8,6 +8,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   belongs_to :entry_time_type
   validates_associated :meeting_program
 
+  has_one  :meeting_event,    :through => :meeting_program
   has_one  :meeting_session,  :through => :meeting_program
   has_one  :meeting,          :through => :meeting_program
 
@@ -120,6 +121,31 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Retrieves the Meeting Program verbose name
   def get_meeting_program_verbose_name
     self.meeting_program ? self.meeting_program.get_verbose_name() : '?'
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and
+  # minimum result score.
+  #
+  def self.count_team_results_for( meeting_id, team_id, min_meeting_score )
+    self.includes(:meeting).where(
+      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' +
+        'meeting_individual_results.meeting_individual_points >= ?',
+        meeting_id, team_id, min_meeting_score ]
+    ).count
+  end
+
+
+  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and <tt>rank</tt>.
+  #
+  def self.count_team_ranks_for( meeting_id, team_id, rank )
+    self.includes(:meeting).where(
+      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' +
+        'meeting_individual_results.rank = ? AND ' +
+        'meeting_individual_results.meeting_individual_points > 0',
+        meeting_id, team_id, rank ]
+    ).count
   end
   # ----------------------------------------------------------------------------
 

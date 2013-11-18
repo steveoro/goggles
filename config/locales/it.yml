@@ -400,6 +400,13 @@ it:
     index_title: "Gare - ricerca"
     show_swimmer_results_tooltip: "Clicca per mostrare tutti i risultati di questo atleta a questo Meeting"
     show_team_results_tooltip: "Clicca per mostrare tutti i risultati di questa squadra a questo Meeting"
+    team_total_athletes: "Tot. atleti gareggianti"
+    team_total_events: "Tot. gare effettuate"
+    team_total_gold_medals: "Tot. medaglie Oro"
+    team_total_silver_medals: "Tot. medaglie Argento"
+    team_total_bronze_medals: "Tot. medaglie Bronzo"
+    team_total_wooden_medals: "Tot. medaglie di Legno [:-)]"
+    team_total_750plus_scores: "Tot. punteggi notevoli (> 750)"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -456,6 +463,7 @@ it:
   transaction_cancelled: "Transazione annullata."
   missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"
   invalid_action_request: "Azione richiesta non valida!"
+  no_result_to_show: "Non ci sono risultati da mostrare per i parametri richiesti!"
   main: 'Principale'
   home: Home
   top_of_page: Inizio pagina
@@ -612,8 +620,9 @@ it:
   event: "Evento"
   rankings: "Classifiche"
   results: "Risultati"
-  team_results: "Ris. di Squadra"
-  individual_results: "Ris. individuali"
+  team_results: "Risultati di Squadra"
+  individual_results: "Risultati individuali"
+  swimmer_results: "Risultati individuali"
   search_meetings: "Cerca Gare"
   search_rankings: "Cerca Classifiche"
   search_results: "Cerca Risultati"

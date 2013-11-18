@@ -400,6 +400,13 @@ en:
     index_title: "Meetings - search"
     show_swimmer_results_tooltip: "Click to show all the results for this swimmer at this Meeting"
     show_team_results_tooltip: "Click to show all the results for this team at this Meeting"
+    team_total_athletes: "Tot. athletes involved"
+    team_total_events: "Tot. competing events"
+    team_total_gold_medals: "Tot. Gold medals"
+    team_total_silver_medals: "Tot. Silver medals"
+    team_total_bronze_medals: "Tot. Bronze medals"
+    team_total_wooden_medals: "Tot. 'Wooden' medals [:-)]"
+    team_total_750plus_scores: "Tot. outstanding scores (> 750)"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -455,6 +462,7 @@ en:
   transaction_cancelled: "Transaction cancelled."
   missing_request_parameter: "Invalid Action: missing a request parameter!"
   invalid_action_request: "Invalid Action requested!"
+  no_result_to_show: "There aren't any results to show with the specified parameters!"
   main: 'Main'
   home: Home
   top_of_page: Top of page
@@ -613,7 +621,8 @@ en:
   rankings: "Rankings"
   results: "Results"
   team_results: "Team Results"
-  individual_results: "Individ. Results"
+  individual_results: "Individual Results"
+  swimmer_results: "Individual Results"
   search_meetings: "Search Meetings"
   search_rankings: "Search Rankings"
   search_results: "Search Results"

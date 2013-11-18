@@ -4,21 +4,21 @@
     -# --- Header with unique ID for each starting event_type "group":
     %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_event.event_type.code}"}
       %h3= meeting_event.event_type.i18n_description
-    -# --- Sub-legend for each category + gender
+    - # --- Sub-legend for each category + gender
     .navbar
       %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::FEMALE_ID).i18n_short + ':'
       %ul.nav
-        - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(:gender_type_id => GenderType::FEMALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
+        - @meeting_programs_list.includes(:category_type, :gender_type).where(:meeting_event_id=>meeting_event.id, :gender_type_id => GenderType::FEMALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
           %li
             %a.goggles-a-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
       .ghost-divider-vertical
       %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
       %ul.nav
-        - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(:gender_type_id => GenderType::MALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
+        - @meeting_programs_list.includes(:category_type, :gender_type).where(:meeting_event_id=>meeting_event.id, :gender_type_id => GenderType::MALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
           %li
             %a.goggles-a-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
 
-    - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('meeting_programs.event_order ASC').each do |meeting_program|
+    - @meeting_programs_list.includes(:category_type, :gender_type).where(:meeting_event_id=>meeting_event.id).order('meeting_programs.event_order ASC').each do |meeting_program|
       %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
@@ -26,7 +26,7 @@
               %td{'colspan'=>'8'}
                 %b= meeting_program.get_verbose_event_name
             - unless is_a_relay
-              - meeting_program.meeting_individual_results.order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
+              - meeting_program.meeting_individual_results.where(['meeting_individual_results.team_id = ?', @team_id]).order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
                 %tr
                   %td.span1.goggles-rightalign
                     = individual_result.rank
@@ -50,7 +50,7 @@
                     = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png" )
             -# --- Team Relay result rows:
             - if is_a_relay
-              - meeting_program.meeting_relay_results.order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
+              - meeting_program.meeting_relay_results.where(['meeting_relay_results.team_id = ?', @team_id]).order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
                 %tr
                   %td.goggles-rightalign
                     = relay_result.rank

@@ -24,6 +24,8 @@ Goggles::Application.routes.draw do
       resources :meetings do
         member do
           get 'show_full'
+          get 'show_swimmer_results'
+          get 'show_team_results'
         end
       end
 

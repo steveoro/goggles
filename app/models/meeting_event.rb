@@ -20,6 +20,8 @@ class MeetingEvent < ActiveRecord::Base
   has_one  :stroke_type,  :through => :event_type
 
   has_many :meeting_programs
+  has_many :meeting_individual_results, :through => :meeting_programs
+  has_many :meeting_relay_results, :through => :meeting_programs
 
 
   # ----------------------------------------------------------------------------

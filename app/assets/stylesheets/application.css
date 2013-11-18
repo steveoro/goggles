@@ -24,6 +24,9 @@
 .goggles-div-centeralign {
 	text-align: center;
 }
+.goggles-div-rightalign {
+	text-align: right;
+}
 
 table td.goggles-centeralign{
 	text-align: center;

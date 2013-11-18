@@ -101,4 +101,29 @@ class MeetingRelayResult < ActiveRecord::Base
     self.meeting_program ? self.meeting_program.get_meeting_program_verbose_name() : '?'
   end
   # ----------------------------------------------------------------------------
+
+
+  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and
+  # minimum result score.
+  #
+  def self.count_team_results_for( meeting_id, team_id, min_meeting_score )
+    self.includes(:meeting).where(
+      [ 'meetings.id = ? AND meeting_relay_results.team_id = ? AND ' +
+        'meeting_relay_results.meeting_points >= ?',
+        meeting_id, team_id, min_meeting_score ]
+    ).count
+  end
+
+
+  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and <tt>rank</tt>.
+  #
+  def self.count_team_ranks_for( meeting_id, team_id, rank )
+    self.includes(:meeting).where(
+      [ 'meetings.id = ? AND meeting_relay_results.team_id = ? AND ' +
+        'meeting_relay_results.rank = ? AND ' +
+        'meeting_relay_results.meeting_points > 0',
+        meeting_id, team_id, rank ]
+    ).count
+  end
+  # ----------------------------------------------------------------------------
 end

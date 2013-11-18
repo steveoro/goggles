@@ -1,0 +1,14 @@
+%ul.nav.nav-tabs#topOfPage
+  %li
+    = link_to(t(:results), "#{ show_full_meeting_path(:id => @meeting.id) }")
+  %li.active
+    = link_to(t(:team_results), '#')
+  %li.disabled
+    = link_to(t(:swimmer_results), '#')
+
+= render( partial: 'meeting_header' )
+= render( partial: 'team_header' )
+
+.row-fluid
+  .span12
+    = render( partial: 'full_results_filtered_grid' )
