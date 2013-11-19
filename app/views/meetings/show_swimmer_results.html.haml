@@ -19,7 +19,7 @@
               %b= individual_result.get_meeting_program_verbose_name
           %tr
             %td.span1.goggles-rightalign
-              = individual_result.rank
+              = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
             %td.span4
               %a{'id'=>"swimmer#{individual_result.id}", 'href'=>'#', 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                 = individual_result.get_athlete_name

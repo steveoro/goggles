@@ -47,12 +47,14 @@
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
               %tr
-                %td{'colspan'=>'4'}
+                %td{'colspan'=>'5'}
                   %i= I18n.t(:team_total_athletes, {:scope=>[:meeting]}) + ": #{ @meeting_team_swimmers.size }"
               - @meeting_team_swimmers.each do |swimmer|
                 %tr
                   %td{'colspan'=>'1'}
                     %b= swimmer.get_full_name
+                  %td{'colspan'=>'1'}
+                    = (mir = @events_per_swimmers[swimmer.id].first) ? mir.category_type.code : '?'
                   - @events_per_swimmers[swimmer.id].each do |row|
                     %td{'colspan'=>"#{ @events_per_swimmers[swimmer.id].size < 2 ? 2 : 1 }"}
                       - event_type = row.meeting_event.event_type

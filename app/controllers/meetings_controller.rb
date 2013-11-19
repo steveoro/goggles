@@ -3,12 +3,24 @@ class MeetingsController < ApplicationController
   require 'common/format'
 
 
-  # Index/Search action
+  # Index/Search action.
+  #
+  # Supports the optional parameters:
+  # - :preselected_ids, to obtain an array of IDs with which pre-filter the grid results.
+  # - :prefilter_swimmer, a text to be displayed for additional info regarding the pre-filtering process
+  # - :prefilter_team, a text to be displayed for additional info regarding the pre-filtering process
   #
   def index
-    @title = I18n.t(:index_title, {:scope=>[:meeting]})
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+    prefilter = [ params[:prefilter_swimmer], params[:prefilter_team] ].compact.join(', ')
+    @title = I18n.t(:index_title, {:scope=>[:meeting]}) +
+             (prefilter.size > 0 ? " (#{prefilter})" : '')
+    preselected_ids = params[:preselected_ids] ? params[:preselected_ids].collect{|p| p.to_i} : nil
+
     @meetings_grid = initialize_grid(
-      Meeting,
+      (preselected_ids ? Meeting.where(:id => preselected_ids) : Meeting),
       :include => [:season, :season_type],
       :order => 'meetings.header_date',
       :order_direction => 'asc',
@@ -93,7 +105,7 @@ class MeetingsController < ApplicationController
       [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
         meeting_id, @team_id ]
     )
-    @team = mir.first.team
+    @team = Team.find_by_id(@team_id)
                                                     # Get the swimmer list and some stats:
     @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order(
       'swimmers.complete_name ASC'
@@ -148,24 +160,31 @@ class MeetingsController < ApplicationController
     )
   end
   # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
 
 
-  # Show details action
-  # Assumes params[:id] refers to a specific Meeting row.
+  # Search meeting results for a specific swimmer
   #
-  def show
-    @meeting = ( params[:id].to_i > 0 ) ? Meeting.find_by_id( params[:id].to_i ) : nil
-    unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
-    end
+  def search_swimmer
+    @title = I18n.t(:search_by_swimmer, {:scope=>[:meeting]})
+    @swimmers_grid = initialize_grid(
+      Swimmer,
+      :order => 'swimmers.complete_name',
+      :order_direction => 'asc',
+      :per_page => 20
+    )
+  end
+  # ----------------------------------------------------------------------------
 
-    @season_type_id = @meeting.season.season_type_id if @meeting.season
-    @meeting_programs_grid = initialize_grid(
-      MeetingProgram,
-      :conditions => ['meeting_sessions.meeting_id = ?', @meeting.id],
-      :include => [:meeting_session, :event_type, :category_type, :gender_type],
-      :order => 'meeting_programs.event_order', # 'meeting_sessions.session_order',
+
+  # Search meeting results for a specific team
+  #
+  def search_team
+    @title = I18n.t(:search_by_team, {:scope=>[:meeting]})
+    @teams_grid = initialize_grid(
+      Team,
+      :order => 'teams.name',
+      :order_direction => 'asc',
       :per_page => 20
     )
   end

@@ -42,6 +42,7 @@ en:
   swimmers:
     last_name: "Surname"
     first_name: "Name"
+    complete_name: "Complete name"
     year_of_birth: "Year of Birth"
     phone_mobile: "Mobile #"
     phone_mobile2: "Alt. Phone"
@@ -407,6 +408,10 @@ en:
     team_total_bronze_medals: "Tot. Bronze medals"
     team_total_wooden_medals: "Tot. 'Wooden' medals [:-)]"
     team_total_750plus_scores: "Tot. outstanding scores (> 750)"
+    search_by_swimmer: "Search by Athlete"
+    search_by_team: "Search by Team"
+    total_attended_meetings: "Attended Meetings"
+    total_results: "Total Results"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -634,6 +639,9 @@ en:
   any_date: "Date"
   submit: "Submit"
   reset: "Reset"
+
+  title_wrong_meeting_result: "There's something wrong with some results of a certain Meeting..."
+  title_feature_request: "'Feature request': I think you should really add this..."
 
 
   activerecord:

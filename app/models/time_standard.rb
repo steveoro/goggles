@@ -41,7 +41,7 @@ class TimeStandard < ActiveRecord::Base
 
   # Returns just the formatted timing information
   def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"." + sprintf("%02.0f", hundreds)
+    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
   end
 
   # Computes a shorter description for the name associated with this data

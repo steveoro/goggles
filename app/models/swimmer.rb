@@ -15,6 +15,7 @@ class Swimmer < ActiveRecord::Base
   has_many :badges
   has_many :teams, :through => :badges
   has_many :meeting_individual_results
+  has_many :meetings, :through => :meeting_individual_results
   has_many :swimmer_results
 
   validates_presence_of :complete_name
@@ -57,6 +58,21 @@ class Swimmer < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
-  #++
 
+
+  # Returns the array of distinct team names associated to the specified swimmer_id.
+  # An empty array when not found.
+  #
+  def self.get_team_names( swimmer_id )
+    swimmer = Swimmer.find_by_id( swimmer_id )
+    swimmer ? swimmer.teams.collect{|row| row.name }.uniq : []    
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves a comma-separated string containing all the distinct team
+  # names associated with this instance.
+  #
+  def get_team_names
+    Swimmer.get_team_names( self.id ).join(', ')
+  end
 end

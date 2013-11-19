@@ -56,20 +56,22 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item( :key_meetings,      t('meetings'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => %r(/meetings) do |lev3_nav|
-        lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings\/\d\/show_full)
+      lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
+        lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
       end
+      lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), search_swimmer_meetings_path(), :highlights_on => %r(search_swimmer|prefilter_swimmer)
+      lev2_nav.item :key_meetings_search_team, t('meeting.search_by_team'), search_team_meetings_path(), :highlights_on => %r(search_team|prefilter_team)
     end
 
     primary.item( :key_rankings,      t('rankings'), '#' ) do |lev2_nav|
       lev2_nav.item :key_rankings_index, t('search_rankings'), rankings_path(), :highlights_on => %r(/rankings) do |lev3_nav|
-        lev3_nav.item :key_rankings_show_full, t('show_details'), '#', :highlights_on => %r(/rankings\/\d\/show_full)
+        lev3_nav.item :key_rankings_show_full, t('show_details'), '#', :highlights_on => %r(/rankings/\d/show_full)
       end
     end
 
     primary.item( :key_results,       t('results'), '#' ) do |lev2_nav|
       lev2_nav.item :key_results_index, t('search_results'), results_path(), :highlights_on => %r(/results) do |lev3_nav|
-        lev3_nav.item :key_results_show_full, t('show_details'), '#', :highlights_on => %r(/results\/\d\/show_full)
+        lev3_nav.item :key_results_show_full, t('show_details'), '#', :highlights_on => %r(/results/\d/show_full)
       end
     end
 

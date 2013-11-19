@@ -29,7 +29,7 @@
               - meeting_program.meeting_individual_results.where(['meeting_individual_results.team_id = ?', @team_id]).order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
                 %tr
                   %td.span1.goggles-rightalign
-                    = individual_result.rank
+                    = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
                   %td.span4
                     %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                       = individual_result.get_athlete_name
@@ -53,7 +53,7 @@
               - meeting_program.meeting_relay_results.where(['meeting_relay_results.team_id = ?', @team_id]).order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
                 %tr
                   %td.goggles-rightalign
-                    = relay_result.rank
+                    = relay_result.is_disqualified ? 'DSQ' : relay_result.rank
                   %td{'colspan'=>'3'}
                     %a{'id'=>"team#{relay_result.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>relay_result.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
                       = relay_result.get_team_name

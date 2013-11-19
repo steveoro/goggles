@@ -7,6 +7,9 @@ class Team < ActiveRecord::Base
   validates_associated :city
 
   has_many :badges
+  has_many :meeting_individual_results
+  has_many :meetings, :through => :meeting_individual_results
+  has_many :meeting_relay_results
 
   validates_presence_of :name
   validates_length_of :name, :within => 1..60, :allow_nil => false

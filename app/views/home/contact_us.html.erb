@@ -12,4 +12,18 @@
 	             :subject => I18n.t(:questions_about) + ' ' + AGEX_APP_NAME,
 	             :encode => "javascript" ) %> 
 	</p>
+
+	<hr/>
+
+	<p><%= I18n.t(:title_wrong_meeting_result) %>
+	<%= mail_to( "leegaweb@gmail.com" , "Leega" ,
+	             :subject => "[#{AGEX_APP_NAME}] #{I18n.t(:title_wrong_meeting_result)}",
+	             :encode => "javascript" ) %> 
+	</p>
+
+	<p><%= I18n.t(:title_feature_request) %>
+	<%= mail_to( "fasar.software@email.it" , "Steve" ,
+	             :subject => "[#{AGEX_APP_NAME}] #{I18n.t(:title_feature_request)}",
+	             :encode => "javascript" ) %> 
+	</p>
 </div>

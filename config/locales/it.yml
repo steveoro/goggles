@@ -42,6 +42,7 @@ it:
   swimmers:
     last_name: "Cognome"
     first_name: "Nome"
+    complete_name: "Nome completo"
     year_of_birth: "Data di nascita"
     phone_mobile: "Cellulare"
     phone_mobile2: "Tel. alt."
@@ -407,6 +408,10 @@ it:
     team_total_bronze_medals: "Tot. medaglie Bronzo"
     team_total_wooden_medals: "Tot. medaglie di Legno [:-)]"
     team_total_750plus_scores: "Tot. punteggi notevoli (> 750)"
+    search_by_swimmer: "Cerca per Atleta"
+    search_by_team: "Cerca per Squadra"
+    total_attended_meetings: "Partecipaz. a Meeting"
+    total_results: "Risultati totali"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -635,6 +640,8 @@ it:
   submit: "Vai"
   reset: "Reset"
 
+  title_wrong_meeting_result: "C'e' qualcosa che non mi torna coi risultati di un certo Meeting..."
+  title_feature_request: "'Nuova Feature': credo che dobbiate assolutamente aggiungere..."
 
   netzke:
     basepack:

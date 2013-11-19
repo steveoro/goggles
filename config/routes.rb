@@ -22,6 +22,11 @@ Goggles::Application.routes.draw do
       match "contact_us", :controller => 'home', :action => 'contact_us',   :as => :contact_us
 
       resources :meetings do
+        collection do
+          get 'index'
+          get 'search_swimmer'
+          get 'search_team'
+        end
         member do
           get 'show_full'
           get 'show_swimmer_results'
@@ -32,11 +37,6 @@ Goggles::Application.routes.draw do
       resources :meeting_programs
       resources :rankings
       resources :results
-#      resources :meetings do
-#        collection do
-#          get 'index'
-#        end
-#      end
     end
   end
 

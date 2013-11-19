@@ -44,7 +44,7 @@ class MeetingProgram < ActiveRecord::Base
 
   # Returns just the formatted timing information
   def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"." + sprintf("%02.0f", hundreds)
+    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
   end
 
   # Computes a short description of just the event name for this row, without dates.

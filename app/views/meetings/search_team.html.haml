@@ -1,4 +1,4 @@
-= render partial: 'search_meeting_grid'
+= render partial: 'search_team_grid'
 
 .accordion#accordionFlt
   .accordion-group
@@ -12,19 +12,9 @@
       .accordion-inner
         .row-fluid
           .span2
-            = I18n.t(:season_type, {:scope=>[:activerecord, :models]})
+            = I18n.t('name')
           .span10
-            = grid_filter @meetings_grid, :flt_season_type_id
-        .row-fluid
-          .span2
-            = I18n.t(:season, {:scope=>[:activerecord, :models]})
-          .span10
-            = grid_filter @meetings_grid, :flt_season_id
-        .row-fluid
-          .span2
-            = I18n.t(:any_date)
-          .span10
-            = grid_filter @meetings_grid, :flt_entry_header_date
+            = grid_filter @teams_grid, :flt_team_name
         .row-fluid
           .span12
             .external-buttons
@@ -35,4 +25,4 @@
 
 .row-fluid
   .span12
-    = render_grid( @meetings_grid )
+    = render_grid( @teams_grid )
