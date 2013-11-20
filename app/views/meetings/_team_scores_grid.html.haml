@@ -1,0 +1,43 @@
+%div.span10
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'success'}
+        %td{'colspan'=>'4'}
+          %b= I18n.t(:ranking)
+        %td
+          = I18n.t('meeting.team_total_athletes')
+        %td
+          = I18n.t('meeting_team_score.sum_individual_points')
+        %td
+          = I18n.t('meeting_team_score.sum_relay_points')
+        %td
+          = I18n.t('meeting_team_score.sum_team_points')
+        %td
+      - tot_swimmers = 0
+      - @meeting_team_scores.each do |team_score|
+        %tr
+          %td.goggles-rightalign
+            = team_score.rank
+          %td{'colspan'=>'3'}
+            %a{'id'=>"team#{team_score.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>team_score.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+              = team_score.get_team_name
+          %td.goggles-rightalign
+            - tot_swimmers += (swimmers_count = Team.get_swimmer_ids_for(team_score.team_id, @meeting.id).size)
+            = swimmers_count
+          %td.goggles-rightalign
+            = sprintf( "%02.2f", team_score.sum_individual_points )
+          %td.goggles-rightalign
+            = sprintf( "%02.2f", team_score.sum_relay_points )
+          %td.goggles-rightalign
+            = sprintf( "%02.2f", team_score.sum_team_points )
+          %td
+            = show_tag( team_score.rank==1 && team_score.sum_individual_points>0, "medal_gold_3.png" )
+            = show_tag( team_score.rank==2 && team_score.sum_individual_points>0, "medal_silver_3.png" )
+            = show_tag( team_score.rank==3 && team_score.sum_individual_points>0, "medal_bronze_3.png" )
+      %tr
+        %td
+        %td{'colspan'=>'3'}
+          = "#{I18n.t('meeting.total_teams')}: #{@meeting_team_scores.size}"
+        %td.goggles-rightalign
+          = tot_swimmers
+        %td{'colspan'=>'4'}

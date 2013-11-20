@@ -162,6 +162,26 @@ class MeetingsController < ApplicationController
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
+  # Show the ranking regarding a single Meeting
+  # Assumes params[:id] refers to a specific Meeting row.
+  #
+  def show_ranking
+    meeting_id = params[:id].to_i
+    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
+    unless ( @meeting )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_path() ) and return
+    end
+
+    @meeting_team_scores = @meeting.meeting_team_scores.includes(
+      :team, :team_affiliation
+    ).order(
+      'meeting_team_scores.rank'
+    )
+  end
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
 
   # Search meeting results for a specific swimmer
   #

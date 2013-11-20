@@ -90,7 +90,7 @@ SimpleNavigation::Configuration.run do |navigation|
     )
     primary.item(
       :key_user_edit,
-      (current_user.nil? ? '' : current_user.email),
+      (current_user.nil? ? '' : current_user.name),
       edit_user_registration_path(),
       :if => Proc.new { user_signed_in? }
     )

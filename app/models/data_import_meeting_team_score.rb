@@ -14,6 +14,7 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
   belongs_to :season
   validates_associated :season
 
+  validates_presence_of     :rank
   validates_presence_of     :sum_individual_points
   validates_presence_of     :sum_relay_points
   validates_presence_of     :sum_team_points
@@ -23,6 +24,7 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
   validates_presence_of     :season_individual_points
   validates_presence_of     :season_relay_points
   validates_presence_of     :season_team_points
+  validates_numericality_of :rank
   validates_numericality_of :sum_individual_points
   validates_numericality_of :sum_relay_points
   validates_numericality_of :sum_team_points

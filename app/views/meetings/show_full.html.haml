@@ -1,6 +1,8 @@
 %ul.nav.nav-tabs#topOfPage
   %li.active
     = link_to(t(:results), '#')
+  %li
+    = link_to(t(:ranking), show_ranking_meeting_path(@meeting))
   %li.disabled
     = link_to(t(:team_results), '#')
   %li.disabled

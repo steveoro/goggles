@@ -6,10 +6,10 @@
     .accordion-body.collapse.in#collapseTeam
       .accordion-inner
         .row-fluid
-          .span3
+          .span2
             = I18n.t(:team_total_events, {:scope=>[:meeting]}) +':'
-          .span1.goggles-div-rightalign
-            = @team_tot_events
+          .span2.goggles-div-rightalign
+            = "#{@team_tot_events} / #{@meeting.meeting_events.count} #{I18n.t(:tot_events)}"
         .row-fluid
           .span3
             = I18n.t(:team_total_gold_medals, {:scope=>[:meeting]}) +':'

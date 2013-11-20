@@ -78,7 +78,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :key_separator3,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
 
-    primary.item :key_edit_admin,         (current_admin.nil? ? '' : current_admin.email), rails_admin_path(), :if => Proc.new { admin_signed_in? }
+    primary.item :key_edit_admin,         (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), :if => Proc.new { admin_signed_in? }
     primary.item :key_log_out,            content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), :method => Devise.sign_out_via, :if => Proc.new { admin_signed_in? }
 
     # you can also specify a css id or class to attach to this particular level

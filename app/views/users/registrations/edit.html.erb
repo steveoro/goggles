@@ -1,35 +1,74 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<h2><%= t('devise.edit_user_title') %> <%= t(resource_name).humanize %></h2>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= devise_error_messages! %>
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' }) do |f| %>
+	<%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, :autofocus => true %></div>
+	<div class="control-group">
+		<%= f.label( :email, :for => :user_email, :class => 'control-label' ) %>
+		<div class="controls">
+			<%= f.email_field :email, :autofocus => true %>
+		</div>
+	</div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+	<div class="control-group">
+	<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+		<div><%= t('devise.edit_user_waiting_confirm_info') %> <%= resource.unconfirmed_email %></div>
+	<% end %>
+	</div>
 
-  <div><%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-  <%= f.password_field :password, :autocomplete => "off" %></div>
+	<div class="control-group">
+		<%= f.label( :password, :for => :user_password, :class => 'control-label' ) %>
+		<div class="controls">
+			<%= f.password_field :password, :autocomplete => "off" %>
+			<i><%= t('devise.edit_user_leave_blank_info') %></i>
+		</div>
+	</div>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
+	<div class="control-group">
+		<%= f.label( :password_confirmation, :for => :user_password_confirmation, :class => 'control-label' ) %>
+		<div class="controls">
+			<%= f.password_field :password_confirmation %>
+		</div>
+	</div>
 
-  <div><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-  <%= f.password_field :current_password %></div>
+	<div class="control-group">
+		<%= f.label( :current_password, :for => :user_current_password, :class => 'control-label' ) %>
+		<div class="controls">
+			<%= f.password_field :current_password %>
+			<i><%= t('devise.edit_user_need_password_info') %></i>
+		</div>
+	</div>
 
-  <div><%= f.label :name %><br />
-  <%= f.text_field :name %></div>
+	<div class="control-group">
+		<%= f.label( :name, :for => :user_name, :class => 'control-label' ) %>
+		<div class="controls">
+			<%= f.text_field :name %>
+		</div>
+	</div>
 
-  <div><%= f.label :description %><br />
-  <%= f.text_field :description %></div>
+	<div class="control-group">
+		<%= f.label( :description, :for => :user_description, :class => 'control-label' ) %>
+		<div class="controls">
+			<%= f.text_field :description %>
+		</div>
+	</div>
 
-  <div><%= f.submit "Update" %></div>
+	<div class="control-group">
+		<div class="controls">
+			<%= f.submit( t('devise.edit_user_submit') ) %>
+		</div>
+	</div>
 <% end %>
 
-<h3>Cancel my account</h3>
+<hr />
 
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete %></p>
+<h3><%= t('devise.edit_user_cancel_account_title') %></h3>
 
-<%= link_to "Back", :back %>
+<div class="control-group">
+	<%= t('devise.edit_user_unregister_title') %>
+	<div class="controls">
+		<%= button_to( t('devise.edit_user_unregister_submit'), registration_path(resource_name), :data => { :confirm => t('devise.edit_user_unregister_confirmation') }, :method => :delete ) %>
+	</div>
+</div>
+
+<%= link_to( t('devise.edit_user_link_to_back_title'), :back ) %>

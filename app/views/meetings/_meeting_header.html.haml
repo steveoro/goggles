@@ -7,6 +7,11 @@
       .accordion-inner
         .row-fluid
           .span2
+            = 'ID:'
+          .span10
+            = @meeting.id if @meeting
+        .row-fluid
+          .span2
             = I18n.t(:season_type, {:scope=>[:activerecord, :models]}) +':'
           .span10
             = @meeting.get_season_type if @meeting

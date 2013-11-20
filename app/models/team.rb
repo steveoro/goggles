@@ -77,4 +77,12 @@ class Team < ActiveRecord::Base
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the array of unique swimmer IDs registered for a specified meeting_id
+  # 
+  def self.get_swimmer_ids_for( team_id, meeting_id )
+    team = Team.find_by_id( team_id )
+    team ? team.meeting_individual_results.includes(:meeting).where(['meetings.id=?', meeting_id]).collect{|row| row.swimmer_id}.uniq : []
+  end
+  # ----------------------------------------------------------------------------
 end

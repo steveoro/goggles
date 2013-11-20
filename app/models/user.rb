@@ -25,6 +25,8 @@ class User < ActiveRecord::Base
 
   validates_length_of   :description, :maximum => 50
 
+  attr_accessible :name, :email, :description, :password, :password_confirmation
+
   # validates_presence_of :hashed_pwd
   # validates_length_of   :hashed_pwd, :within => 1..128
 # 

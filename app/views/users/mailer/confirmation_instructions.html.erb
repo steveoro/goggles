@@ -1,7 +1,7 @@
-<h2>-- Goggles --</h2>
+<h2>--=[  Goggles  -o^o-  ]=--</h2>
 
-<p>Hi <%= @email %>, welcome to Goggles!</p>
+<p><%= t('devise.resend_confirm_email_title').gsub('<EMAIL>', @email) %></p>
 
-<p>You can confirm your account email through the link below:</p>
+<p><%= t('devise.confirm_email_text') %></p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>
+<p><%= link_to( t('devise.confirm_email_submit'), confirmation_url(@resource, :confirmation_token => @token) ) %></p>

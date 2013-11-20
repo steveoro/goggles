@@ -1,0 +1,54 @@
+it:
+  devise:
+    resend_confirm_email_title: "Rispedisci le istruzioni di conferma"
+    resend_confirm_email_submit: "Rispedisci le istruzioni di conferma"
+
+    confirm_email_greetings: "Heila' <EMAIL>! Benvenuto in Goggles!"
+    confirm_email_text: "Puoi confermare il tuo account di e-mail cliccando sul link qui sotto:"
+    confirm_email_submit: "Conferma il mio account"
+
+    reset_password_greetings: "Ciao <EMAIL>!"
+    reset_password_text: "Qualcuno ha richiesto un link per resettare la tua password. Puoi fare questo cliccando sul link qui sotto."
+    reset_password_submit: "Cambia la mia password"
+    reset_password_footnote1: "Se non l'hai richiesto tu, per favore ignora questa email."
+    reset_password_footnote2: "Tieni presente che la tua password non cambiera' sintanto che tu non cliccherai sul link qui sopra e ne creerai una nuova."
+
+    unlock_password_greetings: "Ciao <EMAIL>!"
+    unlock_password_info: "Il tuo account e' stato bloccato a causa di un numero eccessivo di accessi sbagliati."
+    unlock_password_text: "Clicca sul link qui sotto per sbloccare il tuo account:"
+    unlock_password_submit: "Sblocca il mio account"
+
+    edit_password_title: "Cambia la mia password"
+    edit_password_new_password: "Nuova password"
+    edit_password_confirm: "Conferma nuova password"
+    edit_password_submit: "Cambia la mia password"
+
+    new_password_title: "Hai dimenticato la tua password?"
+    new_password_submit: "Inviami il link per il reset della password"
+
+    edit_user_title: "Modifica"
+    edit_user_waiting_confirm_info: "Attualmente in attesa di conferma per:"
+    edit_user_leave_blank_info: "(lascia in bianco se non vuoi cambiare)"
+    edit_user_need_password_info: "(abbiamo bisogno della tua password corrente per confermare i cambiamenti)"
+    edit_user_submit: "Aggiorna"
+    edit_user_cancel_account_title: "Elimina il mio account"
+    edit_user_unregister_title: "Insoddisfatto?"
+    edit_user_unregister_submit: "Elimina il mio account"
+    edit_user_unregister_confirmation: "Siamo sicuri di voler continuare?"
+    edit_user_link_to_back_title: "Indietro"
+
+    new_user_title: "Registrati"
+    new_user_submit: "Registrati"
+
+    new_session_title: "Accedi"
+    new_session_submit: "Accedi"
+
+    link_log_in: "Accedi"
+    link_register: "Registrati"
+    link_forgot_password: "Password dimenticata?"
+    link_resend_confirm_email: "Non hai ricevuto il link per confermare l'account?"
+    link_resend_unlock_email: "Non hai ricevuto il link per sbloccare l'account?"
+    link_log_in_with: "Accedi con"
+
+    unlock_user_title: "Rispedisci il link di sblocco"
+    unlock_user_submit: "Rispedisci il link di sblocco"

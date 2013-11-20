@@ -412,6 +412,7 @@ it:
     search_by_team: "Cerca per Squadra"
     total_attended_meetings: "Partecipaz. a Meeting"
     total_results: "Risultati totali"
+    total_teams: "Squadre tot."
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -428,12 +429,23 @@ it:
   meeting_relay_result:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Risultati Staff. Meeting'! (tab: 'meeting_relay_results')"
 
+  meeting_team_score:
+    sum_individual_points: "Individ."
+    sum_relay_points: "Staff."
+    sum_team_points: "Squadra"
+    meeting_individual_points: "Individ. (Meeting)"
+    meeting_relay_points: "Staff. (Meeting)"
+    meeting_team_points: "Squadra (Meeting)"
+    season_individual_points: "Individ. (Stagione)"
+    season_relay_points: "Staff. (Stagione)"
+    season_team_points: "Squadra (Stagione)"
+
 
   agex_action:
     main: Principale
     home: "Home"
     home_tooltip: "Vai alla pagina principale"
-    login: "Login"
+    login: "Accedi"
     logout: "Esci / Rientra"
     logout_tooltip: "Esci (effettua il Log-out richiedendo un nuovo log-in)"
     about: "Informazioni"
@@ -473,8 +485,9 @@ it:
   home: Home
   top_of_page: Inizio pagina
   who_are_you: "Hey tu! Chi sei?"
-  login: Login
+  login: Accedi
   logout: Disconnetti
+  remember_me: "Ricordati di me"
   sign_up: "Registrati!"
   about: Informazioni
   contact_us: Contattaci
@@ -623,6 +636,8 @@ it:
   show_details: "mostra dettagli"
   meetings: "Gare"
   event: "Evento"
+  tot_events: "eventi in tot."
+  ranking: "Classifica"
   rankings: "Classifiche"
   results: "Risultati"
   team_results: "Risultati di Squadra"
