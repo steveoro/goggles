@@ -16,7 +16,7 @@ require File.join( Rails.root.to_s, 'config/environment' )
 
 
 # Script revision number
-SCRIPT_VERSION = '4.07.20131101'
+SCRIPT_VERSION = '4.08.20131121'
 
 # Gives current application name
 APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]
@@ -131,7 +131,7 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
 
 # TODO [FUTUREDEV] get current version from app_parameter table
-    db_version    = ENV.include?("db_version") ? ENV['db_version'] + '.' + Date.today.strftime("%Y%m%d.%H%M") : 'backup' + '.' + DateTime.now.strftime("%Y%m%d.%H%M%S")
+    db_version    = ENV.include?("db_version") ? ENV['db_version'] + '.' + DateTime.now.strftime("%Y%m%d.%H%M") : 'backup' + '.' + DateTime.now.strftime("%Y%m%d.%H%M%S")
     max_backups   = ENV.include?("max_backup_kept") ? ENV["max_backup_kept"].to_i : MAX_BACKUP_KEPT
     backup_folder = ENV.include?("output_dir") ? ENV["output_dir"] : DB_BACKUP_DIR
                                                     # Compress output? (Default = yes)
@@ -149,7 +149,7 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
     puts "extracted tables: " + ( ENV.include?("tables") ? tables : "(entire DB)" )
     file_name = File.join( backup_folder, ( ENV.include?("tables") ? "#{db_name}-update-tables#{file_ext}" : "#{db_name}-#{db_version}#{file_ext}" ) )
     puts "Creating #{file_name} ...\r\n"
-    sh "mysqldump -u #{db_user} -p#{db_pwd} --add-drop-database --add-drop-table --triggers --routines --comments -c -i --no-autocommit --single-transaction -B #{db_name} #{zip_pipe} > #{file_name}"
+    sh "mysqldump -u #{db_user} -p#{db_pwd} --add-drop-database --add-drop-table --extended-insert --triggers --routines --comments -c -i --no-autocommit --single-transaction -B #{db_name} #{zip_pipe} > #{file_name}"
 
                                                     # Rotate the backups leaving only the newest ones:
     rotate_backups( backup_folder, max_backups )

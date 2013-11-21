@@ -56,6 +56,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item( :key_meetings,      t('meetings'), '#' ) do |lev2_nav|
+
       lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
         lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
       end
@@ -108,12 +109,14 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :key_separator2,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
     primary.item( :key_admin,         content_tag(:span, t('admin.back_to_admin'), class:"text-error" ), '#', :if => Proc.new { admin_signed_in? }
     ) do |lev2_nav|
+      lev2_nav.item :key_admin_index,        content_tag(:span, t('admin_index.title'), class:"text-error" ), goggles_admin_index_path()
+      lev2_nav.item :key_separator21,        '<hr/>', '#', :class => 'disabled'
       lev2_nav.item :key_admin_dashboard,    content_tag(:span, t('admin.actions.dashboard.menu'), class:"text-error" ), rails_admin_path()
       lev2_nav.item :key_admin_data_import,  content_tag(:span, t('admin_import.menu'), class:"text-error" ), goggles_di_step1_status_path()
       lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor', class:"text-error" ), dj_mon_path()
       # TODO ADD navigation to /dj_mon
       # TODO customize dj_mon main menu for override support with custom view?
-      lev2_nav.item :key_separator2,         '<hr/>', '#', :class => 'disabled'
+      lev2_nav.item :key_separator22,        '<hr/>', '#', :class => 'disabled'
       lev2_nav.item :key_edit_admin,         (current_admin.nil? ? '?' : current_admin.email), '#', :class => 'disabled'
     end
 

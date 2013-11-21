@@ -1,6 +1,7 @@
 .navbar.navbar-fixed-top
   .navbar-inner
-    %a.brand(href="#")
+    %a.brand(href="/")
+      %span &nbsp;
       = AGEX_APP_NAME
       = image_tag( AGEX_APP_LOGO )
     = render_navigation( :level => 1..2, :expand_all => true, :renderer => :bootstrap )

@@ -1,4 +1,40 @@
 en:
+  admin_index:
+    title: "Admin/main"
+    sections: "Sub-sections"
+    commands: "Commands"
+    download: "Download"
+    download_db_dump: "Download DB dump"
+    download_db_dump_info: "Allows to download the whole Database SQL dump currently being used."
+    download_team_dump: "Download Teams + data"
+    download_team_dump_info: "Allows to download the SQL dump of teams, team_affiliations, data_import_team_aliases & cities"
+    download_swimmer_dump: "Download Swimmers + Badges"
+    download_user_dump: "Download Users + Admins"
+
+    upload_whole_db: "Upload whole DB"
+    upload_whole_db_info: "Allows to upload a whole Database dump (SQL file, either zip,tar,gz or bzip'ed), which should wrap a DROP, CREATE database + INSERT data in a single transaction."
+
+    delete_whole_meeting: "Delete Meeting + data"
+    delete_whole_meeting_info: "Allows to erase a whole Meeting together with its events, results and subscription data, without touching auxiliary entities like Team, Swimmer or TimeStandard."
+    merge_teams: "Merge Teams"
+    merge_teams_info: "Allows to merge two Teams (including their TeamAssociation & alias) if wrongly imported as separated rows. (Scans also all Badges, the Meeting results, the subscriptions and all the other associated data to update them as well if needed.)"
+
+    execute_source_upgrade: "Execute Application upgrade"
+    execute_source_upgrade_info: "The main App is set on W.I.P. static page while the source upgrade is being downloaded from the repository (if available)."
+
+    execute_rake_command: "Execute custom rake command"
+    execute_rake_command_info: "Allows to enter and execute a rake command on the server."
+    execute_bundle_command: "Execute custom bundler command"
+    execute_bundle_command_info: "Allows to enter and execute a bundler command on the server."
+    execute_sudo_command: "Execute custom sudo command"
+    execute_sudo_command_info: "Allows to enter and execute a sudo command on the server."
+    rake_cmd: "Rake parameters"
+    bundle_cmd: "Bundler parameters"
+    sudo_cmd: "SUDO command"
+    go: "Go!"
+    cleanup_output_dir: "Clean-up public/output"
+    existing_output_files: "Existing files under public/output:"
+
   admin_import:
     title: "Admin/Data Import"
     menu: "Data Import"
@@ -480,6 +516,7 @@ en:
   missing_request_parameter: "Invalid Action: missing a request parameter!"
   invalid_action_request: "Invalid Action requested!"
   no_result_to_show: "There aren't any results to show with the specified parameters!"
+  file_not_created_for_some_reason: "The file hasn't been created as expected."
   main: 'Main'
   home: Home
   top_of_page: Top of page

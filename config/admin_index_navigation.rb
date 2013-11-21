@@ -49,40 +49,42 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
-#    primary.item :key_status,             t('admin_import.menu'), goggles_di_step1_status_path() #, options
-    # TODO: (this is 'data_import.fin_results')
-    # 'data_import.fin_starting_list'
-    # 'data_import.csi_starting_list'
-    # 'data_import.csi_results'
-    primary.item :key_separator1,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-
-
-    # Add an item which has a sub navigation (same params, but with block)
-#    primary.item :key_2, 'name', url, options do |sub_nav|
-      # Add an item to the sub navigation (same params again)
-#      sub_nav.item :key_2_1, 'name', url, options
-#    end
-    # You can also specify a condition-proc that needs to be fullfilled to display an item.
-    # Conditions are part of the options. They are evaluated in the context of the views,
-    # thus you can use all the methods and vars you have available in the views.
-
-    primary.item :key_separator1,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item( :key_admin,         content_tag(:span, t('admin_index.sections') ), '#', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator1,             '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item( :key_sections,              content_tag(:span, t('admin_index.sections') ), '#', :if => Proc.new { admin_signed_in? }
     ) do |lev2_nav|
-      lev2_nav.item :key_admin_index,        content_tag(:span, t('admin_index.title') ), goggles_admin_index_path()
-      lev2_nav.item :key_separator21,        '<hr/>', '#', :class => 'disabled'
-      lev2_nav.item :key_admin_dashboard,    content_tag(:span, t('admin.actions.dashboard.menu') ), rails_admin_path()
-      lev2_nav.item :key_admin_data_import,  content_tag(:span, t('admin_import.menu') ), goggles_di_step1_status_path()
-      lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor' ), dj_mon_path()
+      lev2_nav.item :key_admin_index,         content_tag(:span, t('admin_index.title') ), goggles_admin_index_path()
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_admin_dashboard,     content_tag(:span, t('admin.actions.dashboard.menu') ), rails_admin_path()
+      lev2_nav.item :key_admin_data_import,   content_tag(:span, t('admin_import.menu') ), goggles_di_step1_status_path()
+      lev2_nav.item :key_admin_dj_mon,        content_tag(:span, 'DJ Monitor' ), dj_mon_path()
     end
 
-    primary.item :key_separator2,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item :key_home,               t('home'), root_path() #, options
+    primary.item( :key_commands,              content_tag(:span, t('admin_index.commands') ), '#', :if => Proc.new { admin_signed_in? }
+    ) do |lev2_nav|
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_admin_run_rake,      content_tag(:span, t('admin_index.execute_rake_command') ),   run_rake_path()
+      lev2_nav.item :key_admin_run_bundle,    content_tag(:span, t('admin_index.execute_bundle_command') ), run_bundle_path()
+      lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ),   run_sudo_command_path()
+      lev2_nav.item :key_separator22,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_admin_run_upgrade,   content_tag(:span, t('admin_index.execute_source_upgrade') ), run_src_upgrade_path()
 
-    primary.item :key_separator3,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    end
 
-    primary.item :key_edit_admin,         (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), :if => Proc.new { admin_signed_in? }
-    primary.item :key_log_out,            content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), :method => Devise.sign_out_via, :if => Proc.new { admin_signed_in? }
+    primary.item :key_download,               t('admin_index.download'), '#' do |lev2_nav|
+      lev2_nav.item :key_download_db,         t('admin_index.download_db_dump'), download_db_dump_path()
+      lev2_nav.item :key_download_teams,      t('admin_index.download_team_dump'), download_team_dump_path()
+      lev2_nav.item :key_download_swimmers,   t('admin_index.download_swimmer_dump'), download_swimmer_dump_path()
+      lev2_nav.item :key_download_users,      t('admin_index.download_user_dump'), download_user_dump_path()
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_cleanup_output,      t('admin_index.cleanup_output_dir'), cleanup_output_dir_path()
+    end
+
+    primary.item :key_separator3,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item :key_home,           t('home'), root_path() #, options
+
+    primary.item :key_separator4,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item :key_edit_admin,     (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), :if => Proc.new { admin_signed_in? }
+    primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), :method => Devise.sign_out_via, :if => Proc.new { admin_signed_in? }
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

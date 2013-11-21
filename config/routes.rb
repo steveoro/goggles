@@ -1,8 +1,8 @@
 Goggles::Application.routes.draw do
 
   devise_for :admins
-  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.
-  mount DjMon::Engine => 'dj_mon'
+  mount RailsAdmin::Engine => '/goggles_dashboard', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.
+  mount DjMon::Engine => 'goggles_dj_mon'
 
   devise_for :users
 
@@ -52,6 +52,24 @@ Goggles::Application.routes.draw do
 
       match "step2_analysis",         :controller => 'admin_import', :action => 'step2_analysis',         :as => :goggles_di_step2_analysis
       match "step3_analysis_commit",  :controller => 'admin_import', :action => 'step3_analysis_commit',  :as => :goggles_di_step3_analysis_commit, :method => :post
+    end
+  end
+
+  scope "goggles_admin" do
+    scope "(:locale)", :locale => /en|it/ do
+      match "/",                      :controller => 'admin_index', :action => 'index',             :as => :goggles_admin_index
+      match "index",                  :controller => 'admin_index', :action => 'index',             :as => :goggles_admin_index
+
+      match "run_rake",               :controller => 'admin_index', :action => 'run_rake',          :via => [:get, :post]
+      match "run_bundle",             :controller => 'admin_index', :action => 'run_bundle',        :via => [:get, :post]
+      match "run_sudo_command",       :controller => 'admin_index', :action => 'run_sudo_command',  :via => [:get, :post]
+      match "run_src_upgrade",        :controller => 'admin_index', :action => 'run_src_upgrade',   :via => [:get, :post]
+
+      match "download_db_dump",       :controller => 'admin_index', :action => 'download_db_dump'
+      match "download_team_dump",     :controller => 'admin_index', :action => 'download_team_dump'
+      match "download_swimmer_dump",  :controller => 'admin_index', :action => 'download_swimmer_dump'
+      match "download_user_dump",     :controller => 'admin_index', :action => 'download_user_dump'
+      match "cleanup_output_dir",     :controller => 'admin_index', :action => 'cleanup_output_dir'
     end
   end
 
