@@ -19,6 +19,8 @@ class MeetingRelayResult < ActiveRecord::Base
   has_one  :meeting_session,  :through => :meeting_program
   has_one  :meeting,          :through => :meeting_program
 
+  has_many :meeting_relay_swimmers, :dependent => :delete_all
+
   validates_presence_of     :relay_header
   validates_length_of       :relay_header, :within => 1..60, :allow_nil => false
 

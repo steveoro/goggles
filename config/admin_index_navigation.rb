@@ -61,16 +61,24 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item( :key_commands,              content_tag(:span, t('admin_index.commands') ), '#', :if => Proc.new { admin_signed_in? }
     ) do |lev2_nav|
+      lev2_nav.item :key_admin_db_structure,  content_tag(:span, t('admin_index.db_structure') ), db_structure_path()
       lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_admin_delete_meeting,content_tag(:span, t('admin_index.delete_whole_meeting') ), select_meeting_path()
+      lev2_nav.item :key_admin_merge_teams,   content_tag(:span, t('admin_index.merge_teams') ), select_teams_path()
+      lev2_nav.item :key_separator22,         content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_admin_run_rake,      content_tag(:span, t('admin_index.execute_rake_command') ),   run_rake_path()
       lev2_nav.item :key_admin_run_bundle,    content_tag(:span, t('admin_index.execute_bundle_command') ), run_bundle_path()
-      lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ),   run_sudo_command_path()
-      lev2_nav.item :key_separator22,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ), run_sudo_command_path()
+      lev2_nav.item :key_separator23,         content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_admin_run_upgrade,   content_tag(:span, t('admin_index.execute_source_upgrade') ), run_src_upgrade_path()
-
+      lev2_nav.item :key_separator24,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_admin_restart_apache,content_tag(:span, t('admin_index.restart_apache') ), restart_apache_path()
     end
 
-    primary.item :key_download,               t('admin_index.download'), '#' do |lev2_nav|
+    primary.item :key_updownload,             t('admin_index.up_download'), '#' do |lev2_nav|
+      lev2_nav.item :key_upload_db_dump,      t('admin_index.upload_db_dump'), upload_db_dump_path()
+      lev2_nav.item :key_upload_db_seed,      t('admin_index.upload_db_seed'), upload_db_seed_path()
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_download_db,         t('admin_index.download_db_dump'), download_db_dump_path()
       lev2_nav.item :key_download_teams,      t('admin_index.download_team_dump'), download_team_dump_path()
       lev2_nav.item :key_download_swimmers,   t('admin_index.download_swimmer_dump'), download_swimmer_dump_path()

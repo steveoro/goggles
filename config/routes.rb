@@ -60,10 +60,25 @@ Goggles::Application.routes.draw do
       match "/",                      :controller => 'admin_index', :action => 'index',             :as => :goggles_admin_index
       match "index",                  :controller => 'admin_index', :action => 'index',             :as => :goggles_admin_index
 
+      match "db_structure",           :controller => 'admin_index', :action => 'db_structure'
+      match "db_reset",               :controller => 'admin_index', :action => 'db_reset',          :via => :post
+      match "run_db_migrations",      :controller => 'admin_index', :action => 'run_db_migrations', :via => :post
+      match "run_sql_exec",           :controller => 'admin_index', :action => 'run_sql_exec',      :via => :post
+
+      match "select_meeting",         :controller => 'admin_index', :action => 'select_meeting'
+      match "delete_meeting",         :controller => 'admin_index', :action => 'delete_meeting',    :via => :post
+      match "select_teams",           :controller => 'admin_index', :action => 'select_teams'
+      match "merge_teams",            :controller => 'admin_index', :action => 'merge_teams',       :via => :post
+
       match "run_rake",               :controller => 'admin_index', :action => 'run_rake',          :via => [:get, :post]
       match "run_bundle",             :controller => 'admin_index', :action => 'run_bundle',        :via => [:get, :post]
       match "run_sudo_command",       :controller => 'admin_index', :action => 'run_sudo_command',  :via => [:get, :post]
+      match "restart_apache",         :controller => 'admin_index', :action => 'restart_apache',    :via => [:get, :post]
+
       match "run_src_upgrade",        :controller => 'admin_index', :action => 'run_src_upgrade',   :via => [:get, :post]
+
+      match "upload_db_dump",         :controller => 'admin_index', :action => 'upload_db_dump',    :via => [:get, :post]
+      match "upload_db_seed",         :controller => 'admin_index', :action => 'upload_db_seed',    :via => [:get, :post]
 
       match "download_db_dump",       :controller => 'admin_index', :action => 'download_db_dump'
       match "download_team_dump",     :controller => 'admin_index', :action => 'download_team_dump'

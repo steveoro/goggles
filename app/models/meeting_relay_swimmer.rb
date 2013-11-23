@@ -14,6 +14,11 @@ class MeetingRelaySwimmer < ActiveRecord::Base
   validates_associated :badge
   validates_associated :stroke_type
 
+  has_one  :meeting, :through => :meeting_relay_result
+  has_one  :meeting_session,  :through => :meeting_relay_result
+  has_one  :meeting_event,    :through => :meeting_relay_result
+  has_one  :meeting_program,  :through => :meeting_relay_result
+
   validates_presence_of     :relay_order
   validates_length_of       :relay_order, :within => 1..3, :allow_nil => false
   validates_numericality_of :relay_order

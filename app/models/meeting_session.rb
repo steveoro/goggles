@@ -15,9 +15,9 @@ class MeetingSession < ActiveRecord::Base
   has_one  :season,      :through => :meeting
   has_one  :season_type, :through => :meeting
 
-  has_many :meeting_events
-  has_many :meeting_programs, :through => :meeting_events
-  has_many :meeting_individual_results, :through => :meeting_programs
+  has_many :meeting_events, :dependent => :delete_all
+  has_many :meeting_programs, :through => :meeting_events, :dependent => :delete_all
+  has_many :meeting_individual_results, :through => :meeting_programs, :dependent => :delete_all
   # TODO Add other has_many relationships only when needed
 
   validates_presence_of :session_order

@@ -30,13 +30,13 @@ class Meeting < ActiveRecord::Base
 
   has_one  :season_type, :through => :season
 
-  has_many :meeting_sessions
-  has_many :meeting_team_scores
+  has_many :meeting_sessions, :dependent => :delete_all
+  has_many :meeting_team_scores, :dependent => :delete_all
 
-  has_many :meeting_events, :through => :meeting_sessions
-  has_many :meeting_programs, :through => :meeting_events
-  has_many :meeting_individual_results, :through => :meeting_programs
-  has_many :meeting_relay_results, :through => :meeting_programs
+  has_many :meeting_events, :through => :meeting_sessions, :dependent => :delete_all
+  has_many :meeting_programs, :through => :meeting_events, :dependent => :delete_all
+  has_many :meeting_individual_results, :through => :meeting_programs, :dependent => :delete_all
+  has_many :meeting_relay_results, :through => :meeting_programs, :dependent => :delete_all
 
   # TODO Add other has_many relationships only when needed
 

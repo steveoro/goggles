@@ -1,0 +1,22 @@
+%p.text-center.lead= I18n.t('admin_index.db_structure')
+
+.row.span4
+  = form_tag( :db_reset, :class => 'form-horizontal', :onsubmit => "$('#loadIndicator1').show(); ") do
+    = submit_tag( I18n.t('admin_index.db_reset'), :confirm => I18n.t('netzke.basepack.grid_panel.are_you_sure'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+    %span(id='loadIndicator1' hidden='true')
+      = image_tag( 'indicator.gif' )
+.row.span2
+  = form_tag( :run_db_migrations, :class => 'form-horizontal', :onsubmit => "$('#loadIndicator2').show(); ") do
+    = submit_tag( I18n.t('admin_index.run_db_migrations'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+    %span(id='loadIndicator2' hidden='true')
+      = image_tag( 'indicator.gif' )
+.row.span4
+  = form_tag( :run_sql_exec, :class => 'form-horizontal', :onsubmit => "$('#loadIndicator3').show(); ") do
+    = submit_tag( I18n.t('admin_index.run_sql_exec'), :confirm => I18n.t('netzke.basepack.grid_panel.are_you_sure'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+    %span(id='loadIndicator3' hidden='true')
+      = image_tag( 'indicator.gif' )
+
+.row.span11
+  - if (@console_output && @console_output.size > 0)
+    %hr
+    %pre.prettyprint.linenums= @console_output
