@@ -25,7 +25,9 @@ it:
     merge_teams_info: "Permette di unire due Team (incluse le loro TeamAssociation e gli alias) se importati per sbaglio come diversi. (Aggiorna anche i Badge, le righe dei Meeting e tutti gli altri dati associati se necessario.)"
 
     execute_source_upgrade: "Esegui upgrade applicazione"
-    execute_source_upgrade_info: "L'App principale viene messa su pagina W.I.P. statica mentre viene scaricata una nuova versione dal repository (se disponibile)."
+    execute_source_upgrade_info: "Crea un backup della versione corrente dell'App per poi eseguire il pull della nuova versione. Il server deve essere riavviato successivamente."
+    backup_dir: "Backup directory"
+    git_pull: "git pull"
 
     db_structure: "DB structure"
     db_reset: "DB full reset (DROP + recreate + SEED)"

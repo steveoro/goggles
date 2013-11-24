@@ -379,10 +379,43 @@ class AdminIndexController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
+  # Creates a backup of the current running app and invokes a git pull update
+  # on the sources.
+  #
+  # === Params:
+  # - :backup_folder => pathname used to backup the running version of the application
+  #
   def run_src_upgrade
-    # TODO !!!
-    flash[:error] = I18n.t(:req_functionality_under_development)
-    redirect_to goggles_admin_index_path()
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.run_src_upgrade() -----"
+    logger.debug "PARAMS: #{params.inspect}"
+    dest_filename = "#{Version::COMPACT}#{DateTime.now.strftime("%Y%m%d%H%M%S")}.tar.bz2"
+    @default_backup_folder = "#{Rails.root}.sav"
+    @console_output = ''
+
+    if request.post?                                # Create a backup copy of the current version:
+      logger.info( "\r\n\r\n!! ------ run_src_upgrade() -----" )
+      logger.info( "#{current_admin.name} is executing run_src_upgrade()...\r\n" )
+      dest_folder = params[:backup_folder] || @default_backup_folder
+      logger.info( "Dest. folder: #{dest_folder}\r\n" )
+      @console_output << "Making sure folder '#{dest_folder}' exists...\r\n"
+      FileUtils.makedirs( dest_folder )
+      @console_output << "Creating #{dest_filename} under #{dest_folder}...\r\n"
+      Dir.chdir( dest_folder )
+      src_folder = Rails.root.to_s
+      src_folder = src_folder.chop if src_folder[src_folder.size-1] == '/'
+      @console_output << `tar --bzip2 -cf #{dest_filename} #{src_folder}`
+      Dir.chdir( Rails.root.to_s )
+      execute_cmd( 'rake', 'log:clear' )
+
+      if $?.success?
+        @console_output <<  "\r\nBackup done."
+        execute_cmd( 'git', 'pull' )
+      else
+        @console_output <<  "\r\nBackup FAILED!"
+        flash[:error] = I18n.t(:something_went_wrong)
+      end
+    end
   end
   # ---------------------------------------------------------------------------
 

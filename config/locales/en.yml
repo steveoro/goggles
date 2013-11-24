@@ -25,7 +25,9 @@ en:
     merge_teams_info: "Allows to merge two Teams (including their TeamAssociation & alias) if wrongly imported as separated rows. (Scans also all Badges, the Meeting results, the subscriptions and all the other associated data to update them as well if needed.)"
 
     execute_source_upgrade: "Execute Application upgrade"
-    execute_source_upgrade_info: "The main App is set on W.I.P. static page while the source upgrade is being downloaded from the repository (if available)."
+    execute_source_upgrade_info: "Creates a backup of the current version and then dowloads the pull of the new version. The web server needs to be restarted afterwards."
+    backup_dir: "Backup directory"
+    git_pull: "git pull"
 
     db_structure: "Struttura DB"
     db_reset: "DB full reset (DROP + recreate + SEED)"

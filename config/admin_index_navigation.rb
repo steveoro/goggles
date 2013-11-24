@@ -71,7 +71,6 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ), run_sudo_command_path()
       lev2_nav.item :key_separator23,         content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_admin_run_upgrade,   content_tag(:span, t('admin_index.execute_source_upgrade') ), run_src_upgrade_path()
-      lev2_nav.item :key_separator24,         content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_admin_restart_apache,content_tag(:span, t('admin_index.restart_apache') ), restart_apache_path()
     end
 
