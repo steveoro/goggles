@@ -110,13 +110,11 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item( :key_admin,         content_tag(:span, t('admin.back_to_admin'), class:"text-error" ), '#', :if => Proc.new { admin_signed_in? }
     ) do |lev2_nav|
       lev2_nav.item :key_admin_index,        content_tag(:span, t('admin_index.title'), class:"text-error" ), goggles_admin_index_path()
-      lev2_nav.item :key_separator21,        '<hr/>', '#', :class => 'disabled'
+      lev2_nav.item :key_separator21,        content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_admin_dashboard,    content_tag(:span, t('admin.actions.dashboard.menu'), class:"text-error" ), rails_admin_path()
       lev2_nav.item :key_admin_data_import,  content_tag(:span, t('admin_import.menu'), class:"text-error" ), goggles_di_step1_status_path()
       lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor', class:"text-error" ), dj_mon_path()
-      # TODO ADD navigation to /dj_mon
-      # TODO customize dj_mon main menu for override support with custom view?
-      lev2_nav.item :key_separator22,        '<hr/>', '#', :class => 'disabled'
+      lev2_nav.item :key_separator22,        content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_edit_admin,         (current_admin.nil? ? '?' : current_admin.email), '#', :class => 'disabled'
     end
 
