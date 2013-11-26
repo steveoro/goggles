@@ -11,7 +11,7 @@ Goggles::Application.configure do
   config.action_controller.perform_caching = true
 
   # false = Disable Rails's static asset server (false for Apache or nginx that will already do this)
-  config.serve_static_assets = true
+  config.serve_static_assets = false                # [Steve, 20131125] Run demo production on Apache2 server (Webrick for development only)
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -55,7 +55,7 @@ Goggles::Application.configure do
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
 
-  config.action_mailer.perform_deliveries = false
+  config.action_mailer.perform_deliveries = true
   # Use this to disable delivery errors, and bad email addresses will be ignored:
   config.action_mailer.raise_delivery_errors = false
 

@@ -43,6 +43,11 @@ class Team < ActiveRecord::Base
     "#{editable_name}#{address ? ', '+address : ''}"
   end
 
+  # Same as get_full_name but adds also the ID at the end.
+  def get_full_name_with_id
+    "#{editable_name} (#{id})"
+  end
+
 
   # Retrieves the user name associated with this instance
   def user_name

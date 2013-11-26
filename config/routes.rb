@@ -35,6 +35,14 @@ Goggles::Application.routes.draw do
         end
       end
 
+      resources :teams do
+        member do
+          get 'count_meetings'
+          get 'count_results'
+          get 'count_details'
+        end
+      end
+
       resources :meeting_programs
       resources :rankings
       resources :results
@@ -68,7 +76,6 @@ Goggles::Application.routes.draw do
       match "select_meeting",         :controller => 'admin_index', :action => 'select_meeting'
       match "delete_meeting",         :controller => 'admin_index', :action => 'delete_meeting',    :via => :post
       match "select_teams",           :controller => 'admin_index', :action => 'select_teams'
-      match "merge_teams",            :controller => 'admin_index', :action => 'merge_teams',       :via => :post
 
       match "run_rake",               :controller => 'admin_index', :action => 'run_rake',          :via => [:get, :post]
       match "run_bundle",             :controller => 'admin_index', :action => 'run_bundle',        :via => [:get, :post]

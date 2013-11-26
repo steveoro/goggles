@@ -365,16 +365,18 @@ class AdminIndexController < ApplicationController
 
 
   def select_teams
-    # TODO !!!
-    flash[:error] = I18n.t(:req_functionality_under_development)
-    redirect_to goggles_admin_index_path()
-  end
-
-
-  def merge_teams
-    # TODO !!!
-    flash[:error] = I18n.t(:req_functionality_under_development)
-    redirect_to goggles_admin_index_path()
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.select_teams() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+    @title = I18n.t('admin_index.merge_teams')
+    @console_output = ''
+    if request.post?
+      logger.info( "\r\n\r\n!! ------ select_teams() -----" )
+      src_id  = params[:merge_teams][:src_id].to_i
+      dest_id = params[:merge_teams][:dest_id].to_i
+      logger.info( "#{current_admin.name} has selected for merge, teams ID #{src_id} => #{dest_id}...\r\n" )
+      merge_teams( src_id, dest_id )
+    end
   end
   # ---------------------------------------------------------------------------
 
@@ -421,6 +423,31 @@ class AdminIndexController < ApplicationController
 
 
   private
+
+
+  def merge_teams( src_id, dest_id )
+    if (src_id < 1 || dest_id < 1 || src_id == dest_id)
+      flash[:error] = I18n.t(:wrong_parameters)
+      redirect_to select_teams_path()
+    end
+    logger.info( "r\n!! ------ merge_teams() -----" )
+    logger.info( "#{current_admin.name} is merging teams ID #{src_id} => #{dest_id}...\r\n" )
+    src_team = Team.find_by_id( src_id )
+    dest_id  = Team.find_by_id( dest_id )
+    is_ok = true
+    # TODO merge teams:
+    # TODO foreach existing TeamAssociation for src_team, copy to dest_id if not existing
+    # TODO foreach existing DataImportTeamAlias for src_team, copy to dest_id if not existing
+    # TODO foreach existing MeetingIndividualResult for src_team, copy to dest_id if not existing
+    # TODO foreach existing MeetingRelayResult for src_team, copy to dest_id if not existing
+    # TODO foreach existing MeetingTeamScore for src_team, copy to dest_id if not existing
+    # TODO foreach existing GoggleCup for src_team, copy to dest_id if not existing
+    # TODO foreach existing Badge for src_team, copy to dest_id if not existing
+
+    flash[:error] = I18n.t(:req_functionality_under_development)
+#    flash[:info] = I18n.t(:teams_merged) if is_ok
+  end
+  # ---------------------------------------------------------------------------
 
 
   # Executes the specified command name with its parameters on the running server.

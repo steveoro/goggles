@@ -1,0 +1,35 @@
+.text-center
+  .lead= I18n.t('admin_index.merge_teams')
+  %i= I18n.t('admin_index.merge_teams_info')
+
+.row-fluid
+  .span12
+%script
+  function validateSubmit() { $('#submitBtn').attr('disabled', ($('#merge_teams_src_id')[0].value == $('#merge_teams_dest_id')[0].value)); }
+  function ajaxCount(label_id, team_id) { $(label_id).load( "#{count_details_team_path(:id=>-1)}".replace('-1',team_id) ); }
+
+= form_for :merge_teams, html: {onsubmit: "$('#loadingIndicator').show();"} do |f|
+  .row-fluid
+    .span3= I18n.t('admin_index.select_source_team')
+    .span4= f.select( :src_id, Team.to_dropdown(nil, :id, :get_full_name_with_id), {prompt: I18n.t(:please_select)}, {class: 'input-xlarge', onchange: "validateSubmit(); ajaxCount('#labelSrc', $('#merge_teams_src_id')[0].value);"} )
+    .span4
+      %i(id='labelSrc')
+  .row-fluid
+    .span3= I18n.t('admin_index.select_dest_team')
+    .span4= f.select( :dest_id, Team.to_dropdown(nil, :id, :get_full_name_with_id), {prompt: I18n.t(:please_select)}, {class: 'input-xlarge', onchange: "validateSubmit(); ajaxCount('#labelDest', $('#merge_teams_dest_id')[0].value);"} )
+    .span4
+      %i(id='labelDest')
+  .row-fluid
+    .offset3.span2
+      %p= f.submit( I18n.t('admin_index.merge_teams'), :id => 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+    .span2
+      %span(id='loadingIndicator' hidden='true')
+        = image_tag( 'indicator.gif' )
+
+.row-fluid
+  .span12
+.row-fluid
+  .span12
+    - if (@console_output && @console_output.size > 0)
+      %hr
+      %pre.prettyprint.linenums= @console_output

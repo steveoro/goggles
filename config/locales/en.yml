@@ -22,7 +22,11 @@ en:
     delete_whole_meeting_info: "Allows to erase a whole Meeting together with its events, results and subscription data, without touching auxiliary entities like Team, Swimmer or TimeStandard."
     select_meeting_to_be_deleted: "Select the Meeting to be deleted with its data"
     merge_teams: "Merge Teams"
-    merge_teams_info: "Allows to merge two Teams (including their TeamAssociation & alias) if wrongly imported as separated rows. (Scans also all Badges, the Meeting results, the subscriptions and all the other associated data to update them as well if needed.)"
+    merge_teams_info: "Allows to merge two Teams (including their TeamAssociation & alias, when defined) if wrongly imported as separated rows. The first 2 selected Teams are processed (only 2 teams at a time can be merged) and then the procedure scans and updates all the Badges, the Meeting results, the subscriptions and all the other associated data if needed."
+    search_name: "Search Name"
+    unable_to_find_one_team: "One of the selected Teams wasn't found."
+    wrong_parameters: "Wrong parameters."
+    teams_merged: "Teams merged successfully."
 
     execute_source_upgrade: "Execute Application upgrade"
     execute_source_upgrade_info: "Creates a backup of the current version and then dowloads the pull of the new version. The web server needs to be restarted afterwards."
