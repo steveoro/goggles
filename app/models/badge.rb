@@ -44,7 +44,7 @@ class Badge < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    number
+    "#{number} (#{swimmer ? swimmer.get_full_name : '?'})"
   end
 
   # Computes a verbose or formal description for the name associated with this data

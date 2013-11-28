@@ -11,6 +11,7 @@ class Passage < ActiveRecord::Base
   validates_associated :badge
   validates_associated :passage_type
 
+  has_one :meeting, :through => :meeting_program
   has_one :swimmer, :through => :badge
 
   validates_presence_of     :minutes

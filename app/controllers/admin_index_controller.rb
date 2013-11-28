@@ -345,6 +345,8 @@ class AdminIndexController < ApplicationController
     rows = MeetingRelaySwimmer.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
     deleted_rel_swi = rows.size
     MeetingTeamScore.delete_all( :meeting_id => meeting_id )
+    rows = Passage.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
+    deleted_pass = rows.size
     rows = MeetingProgram.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
     deleted_progs = rows.size
     rows = MeetingEvent.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
@@ -356,6 +358,7 @@ class AdminIndexController < ApplicationController
              "MeetingIndividualResult rows deleted: #{deleted_ind_res}\r\n" +
              "MeetingRelayResult rows deleted: #{deleted_rel_res}\r\n" +
              "MeetingRelaySwimmer rows deleted: #{deleted_rel_swi}\r\n" +
+             "Passage rows deleted: #{deleted_pass}\r\n" +
              "MeetingProgram rows deleted: #{deleted_progs}\r\n" +
              "MeetingEvent rows deleted: #{deleted_events}\r\n" +
              "+ all associated MeetingTeamScore & MeetingSession rows.\r\n" 
@@ -423,31 +426,6 @@ class AdminIndexController < ApplicationController
 
 
   private
-
-
-  def merge_teams( src_id, dest_id )
-    if (src_id < 1 || dest_id < 1 || src_id == dest_id)
-      flash[:error] = I18n.t(:wrong_parameters)
-      redirect_to select_teams_path()
-    end
-    logger.info( "r\n!! ------ merge_teams() -----" )
-    logger.info( "#{current_admin.name} is merging teams ID #{src_id} => #{dest_id}...\r\n" )
-    src_team = Team.find_by_id( src_id )
-    dest_id  = Team.find_by_id( dest_id )
-    is_ok = true
-    # TODO merge teams:
-    # TODO foreach existing TeamAssociation for src_team, copy to dest_id if not existing
-    # TODO foreach existing DataImportTeamAlias for src_team, copy to dest_id if not existing
-    # TODO foreach existing MeetingIndividualResult for src_team, copy to dest_id if not existing
-    # TODO foreach existing MeetingRelayResult for src_team, copy to dest_id if not existing
-    # TODO foreach existing MeetingTeamScore for src_team, copy to dest_id if not existing
-    # TODO foreach existing GoggleCup for src_team, copy to dest_id if not existing
-    # TODO foreach existing Badge for src_team, copy to dest_id if not existing
-
-    flash[:error] = I18n.t(:req_functionality_under_development)
-#    flash[:info] = I18n.t(:teams_merged) if is_ok
-  end
-  # ---------------------------------------------------------------------------
 
 
   # Executes the specified command name with its parameters on the running server.
@@ -534,5 +512,419 @@ class AdminIndexController < ApplicationController
       redirect_to goggles_admin_index_path( :console_output => output )
     end
   end
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+
+
+  # Merge two teams, given their ID.
+  #
+  # This rather complex procedure tries to separate all the duplicates
+  # resulting from the update from the non-duplicates. In doing so:
+  #
+  # - it collects all non-duplicate and duplicate rows from all
+  #   the linked entities;
+  # - logs what it is about to update and delete;
+  # - performs the actual update on the non-duplicates;
+  # - deletes all the duplicates.
+  #
+  # === Returns:
+  # false on error.
+  #
+  def merge_teams( src_id, dest_id )
+    if (src_id < 1 || dest_id < 1 || src_id == dest_id)
+      flash[:error] = I18n.t(:wrong_parameters)
+      redirect_to select_teams_path()
+    end
+    logger.info( "r\n!! ------ merge_teams() -----" )
+    logger.info( "#{current_admin.name} is merging teams ID #{src_id} => #{dest_id}...\r\n" )
+    logger.info( "\r\n--- Merging Teams: collecting data ---" )
+    @console_output << "\r\n*** Merging Teams: collecting data ***\r\n"
+                                                    # *** COLLECT DATA PHASE starts here ***
+    src_team  = Team.find_by_id( src_id )
+    dest_team = Team.find_by_id( dest_id )
+    is_ok = true
+
+    # Regarding :badge_id and :team_affiliation_id:
+    # ---------------------------------------------
+    # These two have to change only if they refer to a duplicate row;
+    # that is, a row that will become a duplicate (and it will have to
+    # be deleted) once that the update (and translation) process has been
+    # completed.
+    # Thus, each linked entity that has a reference to one of these
+    # possibly duplicate IDs has to be updated with the new destination value
+    # (of which they are the duplicate); else, the value for :badge_id and
+    # :team_affiliation_id can stay untouched.
+
+    # [Steve, 20131126] Having dest.Team id overwriting src Team id:
+    # => duplicates must be identified and safely removed afterwards
+    # => non-duplicates must be updated with the new values
+    # - collect non-duplicates (new) TeamAffiliation
+    # - collect duplicates TeamAffiliation
+    #   - duplicate row must be converted to equivalent destination (the one they are the duplicate of)
+    #   - destination value must be used for update
+    #   - duplicate row can then be safely removed 
+    # - collect non-duplicates (new) Badge
+    # - collect duplicates Badge
+    #   - proceed as above [...]
+    # All other linked entites have similar dependencies:...
+
+    # => foreach non-duplicate DataImportTeamAlias: update them (team_id)
+    #   => delete remaining duplicates 
+    # => foreach non-duplicate GoggleCup: update them (team_id)
+    #   => delete remaining duplicates 
+
+    # => process non-duplicate Badges and update them (one by one)
+    #    for each new Badge, find and update its linked:
+    #     => MeetingRelaySwimmer (:badge_id)
+    #     => GoggleCupStandard (:badge_id)
+    #     => Passage (:badge_id)
+    #     => MeetingIndividualResult (:badge_id, :team_id (corrected), :team_affiliation_id(corrected))
+    #    for each duplicate Badge, find and delete its linked:
+    #     => MeetingRelaySwimmer (:badge_id)
+    #     => GoggleCupStandard (:badge_id)
+    #     => Passage (:badge_id)
+    #     => MeetingIndividualResult (:badge_id, :team_id (corrected), :team_affiliation_id(corrected))
+
+    # => process non-duplicate TeamAffiliations and update them (one by one)
+    #    for each non-duplicate TeamAffiliation, find and update its linked:
+    #     => MeetingRelayResult and update them (:team_id, :team_affiliation_id)
+    #     => MeetingTeamScore and update them (:team_id, :team_affiliation_id)
+    #    for each duplicate TeamAffiliation, find and delete its linked:
+    #     => MeetingRelayResult and update them (:team_id, :team_affiliation_id)
+    #     => MeetingTeamScore and update them (:team_id, :team_affiliation_id)
+
+                                                    # --- TeamAffiliation ---
+    dest_taffs = TeamAffiliation.where( :team_id => dest_id )
+    dest_season_ids = dest_taffs.collect{ |row| row.season_id }
+                                                    # Separate duplicates from new (updatable) rows:
+    duplicates_src_taffs = TeamAffiliation.where( :team_id => src_id, :season_id => dest_season_ids )
+    duplicates_src_taffs_ids = duplicates_src_taffs.collect{ |row| row.id }
+    src_taffs = TeamAffiliation.where( :team_id => src_id )
+    src_taffs_ids = src_taffs.collect{ |row| row.id }
+    nonduplicates_src_taffs_ids = src_taffs_ids.reject{ |id| duplicates_src_taffs_ids.member?(id) }
+    nonduplicates_src_taffs = src_taffs.reject{ |row| duplicates_src_taffs_ids.member?(row.id) }
+                                                    # Compose a duplicate-translation hash, with the src TeamAffiliation.id as key and dest TeamAffiliation.id as value
+    duplicate_taff_matrix_ids = {}                  # This will allow: src key id |=> dest value id
+    duplicates_src_taffs.each do |src_taff_row|
+      # ASSERT: there's only 1 TeamAffiliation for each (team_id, season_id) pair
+      dest_taffs_candidate = dest_taffs.find{ |r| src_taff_row.season_id == r.season_id }
+      duplicate_taff_matrix_ids[ src_taff_row.id ] = dest_taffs_candidate.id
+    end
+    log_row_sizes( TeamAffiliation, :name, duplicates_src_taffs, nonduplicates_src_taffs )
+
+                                                    # --- Badge ---
+    src_badges  = Badge.where( :team_id => src_id )
+    dest_badges = Badge.where( :team_id => dest_id )
+                                                    # Separate future non-duplicate, updatable rows from the duplicate ones:
+    nonduplicates_src_badges = src_badges.reject{ |src_row|
+      dest_badges.any?{ |dest_row|
+        (dest_row.swimmer_id == src_row.swimmer_id) &&
+        (dest_row.season_id == src_row.season_id)
+      }
+    }
+    duplicates_src_badges = src_badges.reject{ |src_row|
+      nonduplicates_src_badges.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    nonduplicates_src_badges_ids = nonduplicates_src_badges.collect{ |row| row.id }
+    duplicates_src_badges_ids    = duplicates_src_badges.collect{ |row| row.id }
+    src_badges_ids  = src_badges.collect{ |row| row.id }
+    dest_badges_ids = dest_badges.collect{ |row| row.id }
+    duplicate_badge_matrix_ids = {}                 # This will allow: src key id |=> dest value id
+    duplicates_src_badges.each do |src_badge_row|
+      dest_badge_candidate = dest_badges.find{ |r|
+        (src_badge_row.swimmer_id == r.swimmer_id) &&
+        (src_badge_row.season_id == r.season_id)
+      }
+      duplicate_badge_matrix_ids[ src_badge_row.id ] = dest_badge_candidate.id
+    end
+    log_row_sizes( Badge, :get_full_name, duplicates_src_badges, nonduplicates_src_badges )
+
+                                                    # --- DataImportTeamAlias (:team_id) ---
+    src_di_tals  = DataImportTeamAlias.where( :team_id => src_id )
+    dest_di_tals = DataImportTeamAlias.where( :team_id => dest_id )
+    nonduplicates_src_di_tals = src_di_tals.reject{ |src_row|
+      dest_di_tals.any?{ |dest_row| dest_row.name == src_row.name }
+    }
+    duplicates_src_di_tals = src_di_tals.reject{ |src_row|
+      nonduplicates_src_di_tals.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( DataImportTeamAlias, :name, duplicates_src_di_tals, nonduplicates_src_di_tals )
+
+                                                    # --- GoggleCup (:team_id) ---
+    src_gcups  = GoggleCup.where( :team_id => src_id )
+    dest_gcups = GoggleCup.where( :team_id => dest_id )
+    nonduplicates_src_gcups = src_gcups.reject{ |src_row|
+      dest_gcups.any?{ |dest_row| dest_row.year == src_row.year }
+    }
+    duplicates_src_gcups = src_gcups.reject{ |src_row|
+      nonduplicates_src_gcups.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    nonduplicates_src_gcup_ids = nonduplicates_src_gcups.collect{ |row| row.id }
+    duplicates_src_gcup_ids    = duplicates_src_gcups.collect{ |row| row.id }
+    src_gcups_ids  = src_gcups.collect{ |row| row.id }
+    dest_gcups_ids = dest_gcups.collect{ |row| row.id }
+    log_row_sizes( GoggleCup, :year, duplicates_src_gcups, nonduplicates_src_gcups )
+
+    # [Steve, 20131128] The remaining linked entites (MeetingRelaySwimmer, MeetingIndividualResult,
+    # MeetingRelayResult, ...) may contain rows that have been added separately from the creation
+    # of the source/destination team. Thus, the following entites may have rows that refer to
+    # a "duplicate" Team/TeamAffiliation/Badge, but that are indeed new or updatable as well.
+    # The only safe way to check this, is to process them one by one, during update, and compare
+    # them for possible duplicate after update; if the row will result in a duplicate, it must be
+    # deleted.
+                                                    # --- MeetingIndividualResult (:badge_id, :team_id, :team_affiliation_id) ---
+    src_mirs  = MeetingIndividualResult.where( :team_id => src_id )
+    dest_mirs = MeetingIndividualResult.where( :team_id => dest_id )
+    nonduplicates_src_mirs = src_mirs.reject{ |src_row|
+      dest_mirs.any?{ |dest_row|
+        (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+        (dest_row.swimmer_id == src_row.swimmer_id)
+      }
+    }
+    duplicates_src_mirs = src_mirs.reject{ |src_row|
+      nonduplicates_src_mirs.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( MeetingIndividualResult, :get_full_name, duplicates_src_mirs, nonduplicates_src_mirs )
+
+                                                    # --- MeetingRelayResult (:team_id, :team_affiliation_id) ---
+    src_mrrs  = MeetingRelayResult.where( :team_id => src_id )
+    dest_mrrs = MeetingRelayResult.where( :team_id => dest_id )
+    nonduplicates_src_mrrs = src_mrrs.reject{ |src_row|
+      dest_mrrs.any?{ |dest_row|
+        (dest_row.meeting_program_id == src_row.meeting_program_id)
+      }
+    }
+    duplicates_src_mrrs = src_mrrs.reject{ |src_row|
+      nonduplicates_src_mirs.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( MeetingRelayResult, :get_full_name, duplicates_src_mrrs, nonduplicates_src_mrrs )
+
+                                                    # --- MeetingTeamScore (:team_id, :team_affiliation_id) ---
+    src_mtss  = MeetingTeamScore.where( :team_id => src_id )
+    dest_mtss = MeetingTeamScore.where( :team_id => dest_id )
+    nonduplicates_src_mtss = src_mtss.reject{ |src_row|
+      dest_mtss.any?{ |dest_row|
+        (dest_row.meeting_id == src_row.meeting_id)
+      }
+    }
+    duplicates_src_mtss = src_mtss.reject{ |src_row|
+      nonduplicates_src_mtss.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( MeetingTeamScore, :get_full_name, duplicates_src_mtss, nonduplicates_src_mtss )
+
+                                                    # --- MeetingRelaySwimmer (:badge_id) ---
+    src_mrss  = MeetingRelaySwimmer.includes(:badge).where( :badge_id => src_badges_ids )
+    dest_mrss = MeetingRelaySwimmer.includes(:badge).where( :badge_id => dest_badges_ids )
+    nonduplicates_src_mrss = src_mrss.reject{ |src_row|
+      dest_mrss.any?{ |dest_row|
+        (dest_row.meeting_relay_result_id == src_row.meeting_relay_result_id) &&
+        (dest_row.swimmer_id == src_row.swimmer_id)
+      }
+    }
+    duplicates_src_mrss = src_mrss.reject{ |src_row|
+      nonduplicates_src_mrss.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( MeetingRelaySwimmer, :get_full_name, duplicates_src_mrss, nonduplicates_src_mrss )
+
+                                                    # --- Passage (:badge_id) ---
+    src_pass  = Passage.includes(:badge).where( :badge_id => src_badges_ids )
+    dest_pass = Passage.includes(:badge).where( :badge_id => dest_badges_ids )
+    nonduplicates_src_pass = src_pass.reject{ |src_row|
+      dest_pass.any?{ |dest_row|
+        (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+        (dest_row.badge.swimmer_id == src_row.badge.swimmer_id) &&
+        (dest_row.badge.season_id == src_row.badge.season_id)
+      }
+    }
+    duplicates_src_pass = src_pass.reject{ |src_row|
+      nonduplicates_src_pass.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( Passage, :get_full_name, duplicates_src_pass, nonduplicates_src_pass )
+
+                                                    # --- GoggleCupStandard (:badge_id) ---
+    src_gcstds  = GoggleCupStandard.includes(:goggle_cup).where( :goggle_cup_id => src_gcups_ids )
+    dest_gcstds = GoggleCupStandard.includes(:goggle_cup).where( :goggle_cup_id => dest_gcups_ids )
+    nonduplicates_src_gcstds = src_gcstds.reject{ |src_row|
+      dest_gcstds.any?{ |dest_row|
+        (dest_row.goggle_cup.year == src_row.goggle_cup.year) &&
+        (dest_row.badge_id == src_row.badge_id)
+      }
+    }
+    duplicates_src_gcstds = src_gcstds.reject{ |src_row|
+      nonduplicates_src_gcstds.any?{ |nondup_row| nondup_row.id == src_row.id }
+    }
+    log_row_sizes( GoggleCupStandard, :get_full_name, duplicates_src_gcstds, nonduplicates_src_gcstds )
+
+
+    phase_name = ''
+    begin                                           # *** UPDATE PHASE starts here ***
+      phase_name = 'Badge update'
+      execute_update_operation( Badge, nonduplicates_src_badges,
+        # has_team, has_team_affiliation, has_badge
+        true, true, false,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'DataImportTeamAlias update'
+      execute_update_operation( DataImportTeamAlias, nonduplicates_src_di_tals,
+        # has_team, has_team_affiliation, has_badge
+        true, false, false,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'MeetingTeamScore update'
+      execute_update_operation( MeetingTeamScore, nonduplicates_src_mtss,
+        # has_team, has_team_affiliation, has_badge
+        true, true, false,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'MeetingRelayResult update'
+      execute_update_operation( MeetingRelayResult, nonduplicates_src_mrrs,
+        # has_team, has_team_affiliation, has_badge
+        true, true, false,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'MeetingRelaySwimmer update'
+      execute_update_operation( MeetingRelaySwimmer, nonduplicates_src_mrss,
+        # has_team, has_team_affiliation, has_badge
+        true, false, true,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'MeetingIndividualResult update'
+      execute_update_operation( MeetingIndividualResult, nonduplicates_src_mirs,
+        # has_team, has_team_affiliation, has_badge
+        true, true, true,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'Passage update'
+      execute_update_operation( Passage, nonduplicates_src_pass,
+        # has_team, has_team_affiliation, has_badge
+        false, false, true,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'GoggleCup update'
+      execute_update_operation( GoggleCup, nonduplicates_src_gcups,
+        # has_team, has_team_affiliation, has_badge
+        true, false, false,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'GoggleCupStandard update'
+      execute_update_operation( GoggleCupStandard, nonduplicates_src_gcstds,
+        # has_team, has_team_affiliation, has_badge
+        false, false, true,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+
+      phase_name = 'TeamAffiliation update'
+      execute_update_operation( TeamAffiliation, nonduplicates_src_taffs,
+        # has_team, has_team_affiliation, has_badge
+        true, false, false,
+        dest_id, duplicate_taff_matrix_ids,
+        duplicate_badge_matrix_ids
+      )
+                                                    # *** DELETE PHASE starts here ***
+      phase_name = 'TeamAffiliation delete'
+      execute_delete_operation( TeamAffiliation, duplicates_src_taffs )
+      phase_name = 'Badge delete'
+      execute_delete_operation( Badge, duplicates_src_badges )
+      phase_name = 'DataImportTeamAlias delete'
+      execute_delete_operation( DataImportTeamAlias, duplicates_src_di_tals )
+      phase_name = 'GoggleCup delete'
+      execute_delete_operation( GoggleCup, duplicates_src_gcups )
+      phase_name = 'MeetingIndividualResult delete'
+      execute_delete_operation( MeetingIndividualResult, duplicates_src_mirs )
+      phase_name = 'MeetingRelayResult delete'
+      execute_delete_operation( MeetingRelayResult, duplicates_src_mrrs )
+      phase_name = 'MeetingTeamScore delete'
+      execute_delete_operation( MeetingTeamScore, duplicates_src_mtss )
+      phase_name = 'MeetingRelaySwimmer delete'
+      execute_delete_operation( MeetingRelaySwimmer, duplicates_src_mrss )
+      phase_name = 'Passage delete'
+      execute_delete_operation( Passage, duplicates_src_pass )
+      phase_name = 'GoggleCupStandard delete'
+      execute_delete_operation( GoggleCupStandard, duplicates_src_gcstds )
+                                                  # Final act: old Team destroy:
+      phase_name = 'SRC Team delete'
+      src_team.destroy
+    rescue
+      @console_output << "\r\n*** Team Merge: exception caught!\r\n"
+      @console_output << "*** Phase '#{phase_name}': #{ $!.to_s }\r\n" if $!
+      logger.error( "\r\n*** Team Merge: exception caught!" )
+      logger.error( "*** Phase '#{phase_name}': #{ $!.to_s }\r\n" ) if $!
+      flash[:error] = "#{I18n.t(:something_went_wrong)} [Phase '#{phase_name}': '#{ $!.to_s }']"
+      is_ok = false
+    end
+
+    flash[:info] = I18n.t(:teams_merged) if is_ok
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Logs what was found during the collection phase.
+  #
+  def log_row_sizes( activerecord_class, display_sym, duplicate_rows, nonduplicate_rows )
+    @console_output << "- #{activerecord_class.name}: duplicate rows = #{duplicate_rows.size}, non-duplicate_rows rows = #{nonduplicate_rows.size}.\r\n"
+    logger.error( "- #{activerecord_class.name}: duplicate rows = #{duplicate_rows.size}, non-duplicate_rows rows = #{nonduplicate_rows.size}." )
+    if (duplicate_rows.size > 0)
+      duplicate_rows.each { |row|
+        @console_output << "    - id:#{row.id}) #{row.send( display_sym )}\r\n"
+        logger.error( "    - id:#{row.id}) #{row.send( display_sym )}" )
+      }
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Executes a single group of update operations for the team-merge process
+  # May raise exceptions in case of error.
+  #
+  def execute_update_operation( activerecord_class, nonduplicates_src,
+                                has_team, has_team_affiliation, has_badge,
+                                dest_team_id, duplicate_taff_matrix_ids,
+                                duplicate_badge_matrix_ids )
+    @console_output << "Updating #{activerecord_class.name}...\r\n"
+    logger.info( "Updating #{activerecord_class.name}...\r\n" )
+    nonduplicates_src.each do |row|
+      if has_team
+        row.team_id = dest_id
+      end
+      if has_team_affiliation
+        row.team_affiliation_id = duplicate_taff_matrix_ids.has_key?( row.team_affiliation_id ) ? duplicate_taff_matrix_ids[ row.team_affiliation_id ] : row.team_affiliation_id
+      end
+      if has_badge
+        row.badge_id = duplicate_badge_matrix_ids.has_key?( row.badge_id ) ? duplicate_badge_matrix_ids[ row.badge_id ] : row.badge_id
+      end
+      row.save!
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Executes a single group of delete operations for the team-merge process
+  # May raise exceptions in case of error.
+  #
+  def execute_delete_operation( activerecord_class, duplicates_src )
+    @console_output << "Deleting #{activerecord_class.name} #{duplicates_src.size} duplicates...\r\n"
+    logger.info( "Deleting #{activerecord_class.name} #{duplicates_src.size} duplicates...\r\n" )
+    nonduplicates_src.each do |row|
+      row.destroy
+    end
+  end
+  # ---------------------------------------------------------------------------
   # ---------------------------------------------------------------------------
 end
