@@ -488,7 +488,7 @@ class AdminIndexController < ApplicationController
       command_line << "--tables #{db_name} #{table_names.join(' ')}"
       file_name << "_#{table_names[0]}"
     else
-      command_line << "-B #{db_name}"
+      command_line << "--add-drop-database -B #{db_name}"
     end
     file_name << "-#{db_version}#{file_ext}"
                                                     # Do the actual run and capture the output:
@@ -921,7 +921,7 @@ class AdminIndexController < ApplicationController
   def execute_delete_operation( activerecord_class, duplicates_src )
     @console_output << "Deleting #{activerecord_class.name} #{duplicates_src.size} duplicates...\r\n"
     logger.info( "Deleting #{activerecord_class.name} #{duplicates_src.size} duplicates...\r\n" )
-    nonduplicates_src.each do |row|
+    duplicates_src.each do |row|
       row.destroy
     end
   end
