@@ -11,6 +11,10 @@
       = label_tag( :backup_folder, t('admin_index.backup_dir'), :for => :backup_folder, :class => 'control-label' )
       .controls
         = text_field_tag( :backup_folder, @default_backup_folder, :class => 'input-xxlarge' )
+    .control-group
+      = label_tag( :password, t(:password), :for => :password, :class => 'control-label' )
+      .controls
+        = password_field_tag( :password, nil, :class => 'input-large' )
 
     .control-group
       .controls

@@ -296,7 +296,7 @@ class AdminIndexController < ApplicationController
   def run_sudo_command
 # DEBUG
     logger.debug "\r\n\r\n!! ------ run_sudo_command() -----"
-    logger.debug "PARAMS: #{params.inspect}"
+#    logger.debug "PARAMS: #{params.inspect}"
     @console_output = ''
     execute_sudo_cmd( params[:sudo_cmd], params[:password] ) if request.post?
   end
@@ -393,7 +393,7 @@ class AdminIndexController < ApplicationController
   def run_src_upgrade
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.run_src_upgrade() -----"
-    logger.debug "PARAMS: #{params.inspect}"
+#    logger.debug "PARAMS: #{params.inspect}"
     dest_filename = "#{Version::COMPACT}#{DateTime.now.strftime("%Y%m%d%H%M%S")}.tar.bz2"
     @default_backup_folder = "#{Rails.root}.sav"
     @console_output = ''
@@ -404,7 +404,10 @@ class AdminIndexController < ApplicationController
       dest_folder = params[:backup_folder] || @default_backup_folder
       logger.info( "Dest. folder: #{dest_folder}\r\n" )
       @console_output << "Making sure folder '#{dest_folder}' exists...\r\n"
-      FileUtils.makedirs( dest_folder )
+      unless File.exists?( dest_folder )
+        execute_sudo_cmd( "mkdir #{dest_folder}", params[:password] )
+        execute_sudo_cmd( "chown -R wwwrun:www #{dest_folder}", params[:password] )
+      end
       @console_output << "Creating #{dest_filename} under #{dest_folder}...\r\n"
       Dir.chdir( dest_folder )
       src_folder = Rails.root.to_s
@@ -415,7 +418,7 @@ class AdminIndexController < ApplicationController
 
       if $?.success?
         @console_output <<  "\r\nBackup done."
-        execute_cmd( 'git', 'pull' )
+        execute_sudo_cmd( 'git pull', params[:password] )
       else
         @console_output <<  "\r\nBackup FAILED!"
         flash[:error] = I18n.t(:something_went_wrong)
@@ -453,11 +456,7 @@ class AdminIndexController < ApplicationController
   #
   def execute_sudo_cmd( command_line, password )
     output = ''
-    Open3.popen2( "sudo #{command_line}" ) { |i, o, t|
-      i.puts "#{password}\r\n\r\n\r\n"
-      i.close
-      output << o.readlines.join("")
-    }
+    output, status = Open3.capture2e( "sudo -S #{command_line}", :stdin_data => password + "\r\n" )
     output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
     command_line.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
                                                   # Log what the admin has been doing:
@@ -466,6 +465,7 @@ class AdminIndexController < ApplicationController
     logger.info( output )
     @console_output = "Executing \"sudo #{command_line}\"...\r\n"
     @console_output << output
+    @console_output << "\r\nExit status: #{status}"
   end
   # ---------------------------------------------------------------------------
 
@@ -901,7 +901,7 @@ class AdminIndexController < ApplicationController
     logger.info( "Updating #{activerecord_class.name}...\r\n" )
     nonduplicates_src.each do |row|
       if has_team
-        row.team_id = dest_id
+        row.team_id = dest_team_id
       end
       if has_team_affiliation
         row.team_affiliation_id = duplicate_taff_matrix_ids.has_key?( row.team_affiliation_id ) ? duplicate_taff_matrix_ids[ row.team_affiliation_id ] : row.team_affiliation_id
