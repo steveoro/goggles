@@ -76,7 +76,9 @@ SimpleNavigation::Configuration.run do |navigation|
       end
     end
 
-    primary.item :key_separator0,     '&nbsp;&nbsp;', '#', :class => 'disabled'
+    primary.item( :key_calendar,      t('meeting_calendar.navigation'), meeting_calendars_path() )
+
+    primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'
 #    primary.item :key_separator1,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { user_signed_in? }
     primary.item(
       :key_user_who_is_it,

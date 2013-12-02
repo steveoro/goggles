@@ -496,6 +496,12 @@ it:
     season_relay_points: "Staff. (Stagione)"
     season_team_points: "Squadra (Stagione)"
 
+  meeting_calendar:
+    navigation: "Calendario"
+    index_title: "Ricerca Calendario Meeting"
+    year: "Anno"
+    filtering_tooltip: "Clicca sul titolo per mostrare o nascondere i comandi di filtraggio principali"
+
 
   agex_action:
     main: Principale

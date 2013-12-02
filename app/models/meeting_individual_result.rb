@@ -11,6 +11,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   has_one  :meeting_event,    :through => :meeting_program
   has_one  :meeting_session,  :through => :meeting_program
   has_one  :meeting,          :through => :meeting_program
+  has_one  :season,           :through => :meeting_program
 
   has_one  :pool_type,      :through => :meeting_program
   has_one  :season_type,    :through => :meeting_program

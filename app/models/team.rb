@@ -9,6 +9,7 @@ class Team < ActiveRecord::Base
   has_many :badges
   has_many :meeting_individual_results
   has_many :meetings, :through => :meeting_individual_results
+  has_many :seasons, :through => :meetings
   has_many :meeting_relay_results
 
   validates_presence_of :name

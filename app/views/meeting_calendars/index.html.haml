@@ -1,0 +1,44 @@
+.accordion#accordionFlt
+  .accordion-group
+    .accordion-heading
+      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionFlt', :href => '#collapseFlt'}
+        %h3#headerFlt{'data-toggle' => 'tooltip', 'title' => I18n.t('meeting_calendar.filtering_tooltip')}= @title
+        %script
+          $('#headerFlt').tooltip({placement:'bottom'});
+
+    .accordion-body.collapse.in#collapseFlt
+      .accordion-inner
+        = form_tag( :meeting_calendars, :remote => true, :class => 'form-horizontal', :onsubmit => "$('#loadingIndicator').show();") do
+          .row-fluid
+            .control-group
+              = label_tag( :season_id, I18n.t(:season, {:scope=>[:activerecord, :models]}), :for => :season, :class => 'control-label' )
+              .controls
+                = select( :season, :season_id, Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] }, { :prompt => I18n.t(:please_select) }, { :class => 'input-xlarge' } )
+          .row-fluid
+            .control-group
+              = label_tag( :year, I18n.t('meeting_calendar.year'), :for => :year, :class => 'control-label' )
+              .controls
+                = text_field_tag( :year, nil, :class=>'input-mini', :autocomplete => 'off', 'data-provide' => 'typeahead', 'data-source'=>(2000 .. Date.today.year+1).to_a.collect{|e|e.to_s}.to_s, :placeholder=>Date.today.year )
+              %script
+                $('.typeahead').typeahead();
+          .row-fluid
+            .control-group
+              = label_tag( :team, I18n.t(:team, {:scope=>[:activerecord, :models]}), :for => :team, :class => 'control-label' )
+              .controls
+                = select( :team, :team_id, Team.to_dropdown(), { :prompt => I18n.t(:please_select) }, { :class => 'input-xlarge' } )
+          .row-fluid
+            .control-group
+              = label_tag( :a_date, I18n.t('any_date'), :for => :a_date, :class => 'control-label' )
+              .controls
+                = text_field_tag( :a_date, nil, :class=>'input-small', :placeholder=>Date.today )
+              %script
+                $('#a_date').datepicker({changeMonth: true, changeYear: true});
+          .row-fluid
+            .control-group
+              .controls
+                = link_to( I18n.t(:reset), meeting_calendars_path(), :class => 'btn' )
+                = submit_tag( I18n.t(:submit), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+                %span(id='loadingIndicator' hidden='true')
+                  = image_tag( 'indicator.gif' )
+
+#meeting_calendar_grid

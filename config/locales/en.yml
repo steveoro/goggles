@@ -494,6 +494,12 @@ en:
     season_relay_points: "Season Relay pts."
     season_team_points: "Season Team pts."
 
+  meeting_calendar:
+    navigation: "Calendar"
+    index_title: "Search Meeting Calendar"
+    year: "Year"
+    filtering_tooltip: "Click on the title bar to hide or show the main filtering controls"
+
 
   agex_action:
     main: Main

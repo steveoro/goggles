@@ -105,4 +105,13 @@ class Meeting < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Computes the shortest possible description for the list of all the events created
+  # for this meeting.
+  # 
+  def get_short_events
+    events = self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
+    events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
+  end
+  # ----------------------------------------------------------------------------
+
 end

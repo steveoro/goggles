@@ -1,0 +1,22 @@
+%div.span10
+  - @seasons.each do |season|
+    %div{'class'=>"goggles-category-gap", 'id'=>"season#{season.id}"}
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td{'colspan'=>'10'}
+              %b= season.get_full_name
+          - season.meetings.each do |meeting|
+            %tr
+              %td.span3
+                = link_to(meeting.description, show_full_meeting_path(meeting))
+              %td.span1
+                TODO get date
+              %td.span1
+                TODO warm-up time
+              %td.span1
+                TODO start time
+              %td.span3
+                = meeting.get_short_events
+              %td.span1
+                TODO piscina / map url
