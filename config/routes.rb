@@ -47,6 +47,8 @@ Goggles::Application.routes.draw do
       resources :rankings
       resources :results
 
+      resources :swimming_pools
+
       match "meeting_calendars",      :controller => 'meeting_calendars', :action => 'index'
     end
   end

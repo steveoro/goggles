@@ -55,7 +55,7 @@ class SwimmingPool < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{name} #{address ? address : ''}"
+    "#{name}, #{address ? address : ''} #{city ? city.get_full_name : ''}"
   end
 
 
@@ -64,5 +64,10 @@ class SwimmingPool < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
-  #++
+
+  # Retrieves the city name
+  def get_city_name
+    city ? city.get_full_name : ''
+  end
+
 end

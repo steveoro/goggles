@@ -38,6 +38,9 @@ class Meeting < ActiveRecord::Base
   has_many :meeting_individual_results, :through => :meeting_programs, :dependent => :delete_all
   has_many :meeting_relay_results, :through => :meeting_programs, :dependent => :delete_all
 
+  has_many :swimming_pools, :through => :meeting_sessions
+  has_many :pool_types,     :through => :meeting_sessions
+
   # TODO Add other has_many relationships only when needed
 
   validates_presence_of :code

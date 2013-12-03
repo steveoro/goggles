@@ -1,0 +1,23 @@
+%ul.nav.nav-tabs#topOfPage
+  %li.active
+    = link_to(t('swimming_pool.details'), '#')
+  %li.disabled
+    = link_to(t('swimming_pool.reviews'), '#')
+
+TODO render( partial: 'pool_header' ) Like this:
+
+.row-fluid
+  .span2
+    = 'ID:'
+  .span10
+    = @pool.id if @pool
+.row-fluid
+  .span2
+    = I18n.t(:name) +':'
+  .span10
+    = @pool.get_verbose_name if @pool
+
+
+.row-fluid
+  .span12
+    TODO render( partial: 'pool_details' )

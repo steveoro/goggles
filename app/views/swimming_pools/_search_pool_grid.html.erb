@@ -1,0 +1,45 @@
+<%= define_grid(@pools_grid, hide_submit_button: true, hide_reset_button: true) do |g|
+	g.blank_slate do
+		content_tag( :div, t(:no_data_found), class: 'well' )
+	end
+
+	g.column( name: 'ID', attribute: 'id', filter: false )
+
+	g.column(
+		name: I18n.t(:name),
+		attribute: 'name',
+		detach_with_id: :flt_pool_name,
+	) do |pool|
+		link_to( pool.name, swimming_pool_path(pool) )
+	end
+
+	g.column(
+		name: I18n.t('swimmers.nickname'),
+		attribute: 'nick_name',
+		detach_with_id: :flt_pool_nick_name,
+	)
+
+	g.column(
+		name: I18n.t(:city, {:scope=>[:activerecord, :models]}),
+		model: City,
+		attribute: 'id',
+		custom_filter: City.to_dropdown,
+		detach_with_id: :flt_pool_city_id,
+	) do |pool|
+		pool.get_city_name
+	end
+
+	g.column(
+		name: I18n.t(:pool_type, {:scope=>[:activerecord, :models]}),
+		model: PoolType,
+		attribute: 'id',
+		custom_filter: PoolType.to_dropdown
+	) do |pool|
+		pool.pool_type.i18n_short
+	end
+
+	g.column(
+		name: I18n.t(:lanes_number, {:scope=>[:activerecord, :attributes, :swimming_pool]}),
+		attribute: 'lanes_number'
+	)
+end -%>

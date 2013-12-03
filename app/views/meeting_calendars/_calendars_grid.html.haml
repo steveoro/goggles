@@ -1,22 +1,34 @@
-%div.span10
+%div.span10#meeting_calendar_grid
   - @seasons.each do |season|
     %div{'class'=>"goggles-category-gap", 'id'=>"season#{season.id}"}
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
-            %td{'colspan'=>'10'}
+            %td.span3
               %b= season.get_full_name
+            %td.span1
+            %td.span1
+              %i= I18n.t('meeting_calendar.warm_up_time')
+            %td.span1
+              %i= I18n.t('meeting_calendar.start_up_time')
+            %td.span3
+            %td.span3
+              %i= I18n.t('meeting_calendar.pool')
           - season.meetings.each do |meeting|
             %tr
-              %td.span3
+              %td.span3.goggles-td
                 = link_to(meeting.description, show_full_meeting_path(meeting))
-              %td.span1
-                TODO get date
-              %td.span1
-                TODO warm-up time
-              %td.span1
-                TODO start time
-              %td.span3
+              %td.span1.goggles-td
+                - meeting.meeting_sessions.each do |ms|
+                  = ms.scheduled_date.instance_of?(Date) ? Format.a_date( ms.scheduled_date ) : '?'
+              %td.span1.goggles-td
+                - meeting.meeting_sessions.each do |ms|
+                  = ms.warm_up_time.kind_of?(Time) ? Format.a_time( ms.warm_up_time ) : '?'
+              %td.span1.goggles-td
+                - meeting.meeting_sessions.each do |ms|
+                  = ms.begin_time.kind_of?(Time) ? Format.a_time( ms.begin_time ) : '?'
+              %td.span3.goggles-td
                 = meeting.get_short_events
-              %td.span1
-                TODO piscina / map url
+              %td.span3.goggles-td
+                - meeting.swimming_pools.uniq.each do |pool|
+                  = link_to( pool.get_verbose_name, swimming_pool_path(pool) )

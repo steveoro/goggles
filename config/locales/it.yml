@@ -501,6 +501,15 @@ it:
     index_title: "Ricerca Calendario Meeting"
     year: "Anno"
     filtering_tooltip: "Clicca sul titolo per mostrare o nascondere i comandi di filtraggio principali"
+    warm_up_time: "Risc."
+    start_up_time: "Inizio"
+    pool: "Piscina"
+
+  swimming_pool:
+    pools: "Piscine"
+    index_title: "Ricerca Piscine"
+    details: "Dettagli"
+    reviews: "Recensioni"
 
 
   agex_action:
@@ -886,6 +895,7 @@ it:
       meeting_event: "Eventi Meeting"
       day_part_type: "Parte giorno"
       accreditation_time_type: "Tipo Tempo Accred."
+      pool_type: "Tipo Piscina"
 
     attributes:
       user:
@@ -1005,6 +1015,8 @@ it:
         rank: "Posizione"
         total_individual_points: "Punti individ."
         total_relay_points: "Punti Staff."
+      swimming_pool:
+        lanes_number: "N. corsie"
 
     errors:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."

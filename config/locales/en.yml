@@ -499,6 +499,15 @@ en:
     index_title: "Search Meeting Calendar"
     year: "Year"
     filtering_tooltip: "Click on the title bar to hide or show the main filtering controls"
+    warm_up_time: "Warm-up"
+    start_up_time: "Start"
+    pool: "Swimming Pool"
+
+  swimming_pool:
+    pools: "Pools"
+    index_title: "Search Swimming-pools"
+    details: "Details"
+    reviews: "Reviews"
 
 
   agex_action:
@@ -769,6 +778,7 @@ en:
       meeting_event: "Meeting Event"
       day_part_type: "Day Part"
       accreditation_time_type: "Accred. Time Type"
+      pool_type: "Pool Type"
 
     attributes:
       user:
@@ -888,6 +898,8 @@ en:
         rank: "Rank"
         total_individual_points: "Individ. Score"
         total_relay_points: "Relay Score"
+      swimming_pool:
+        lanes_number: "Lanes #"
 
 
   errors:

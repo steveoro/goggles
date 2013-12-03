@@ -5,6 +5,7 @@
         %h3#headerFlt{'data-toggle' => 'tooltip', 'title' => I18n.t('meeting_calendar.filtering_tooltip')}= @title
         %script
           $('#headerFlt').tooltip({placement:'bottom'});
+          function resetFields() { $('#season_season_id').val(''); $('#year').val(''); $('#team_team_id').val(''); $('#a_date').val(''); }
 
     .accordion-body.collapse.in#collapseFlt
       .accordion-inner
@@ -36,7 +37,7 @@
           .row-fluid
             .control-group
               .controls
-                = link_to( I18n.t(:reset), meeting_calendars_path(), :class => 'btn' )
+                = link_to_function( I18n.t(:reset), "resetFields();", :class => 'btn' )
                 = submit_tag( I18n.t(:submit), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
                 %span(id='loadingIndicator' hidden='true')
                   = image_tag( 'indicator.gif' )

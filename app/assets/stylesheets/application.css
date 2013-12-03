@@ -56,3 +56,7 @@ table td.goggles-rightalign{
     padding: 2px 5px;
 	line-height: 0px;
 }
+
+.table td.goggles-td {
+	line-height: 15px;
+}
