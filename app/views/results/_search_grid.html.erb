@@ -48,6 +48,6 @@
 		name: I18n.t(:are_results_acquired, {:scope=>[:activerecord, :attributes, :meeting]}),
 		attribute: 'are_results_acquired'
 	) do |meeting|
-		meeting.are_results_acquired? ? 'Ok' : '-'
+		meeting.are_results_acquired? ? I18n.t(:ok) : '--'
 	end
 end -%>

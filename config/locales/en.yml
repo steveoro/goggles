@@ -1,4 +1,8 @@
 en:
+  yes: "Yes"
+  no: "No"
+  ok: OK
+
   admin_index:
     title: "Admin/main"
     sections: "Sub-sections"
@@ -508,6 +512,7 @@ en:
     index_title: "Search Swimming-pools"
     details: "Details"
     reviews: "Reviews"
+    maps_link_tooltip: "Click on the map icon to go to the Google Maps site, where you can also retrieve navigation directions from your preferred position"
 
 
   agex_action:
@@ -698,9 +703,7 @@ en:
   date_exchange: Exchange Date
   factor: Factor
   comment: Comment
-
   privacy_statement: ""
-
   you_are_here: "You are here:"
   show: "Show"
   show_details: "Show details"
@@ -779,6 +782,9 @@ en:
       day_part_type: "Day Part"
       accreditation_time_type: "Accred. Time Type"
       pool_type: "Pool Type"
+      locker_cabinet_type: "Locker Cabinet Type"
+      hair_dryer_type: "Hair-drier Type"
+      shower_type: "Shower Type"
 
     attributes:
       user:
@@ -899,7 +905,18 @@ en:
         total_individual_points: "Individ. Score"
         total_relay_points: "Relay Score"
       swimming_pool:
+        nick_name: "Codename"
         lanes_number: "Lanes #"
+        phone_number: "Phone #"
+        fax_number: "FAX #"
+        e_mail: "e-mail"
+        contact_name: "Contact name"
+        has_multiple_pools: "With multiple pools?"
+        has_open_area: "With outside open area?"
+        has_bar: "With bar?"
+        has_restaurant_service: "With restaurant?"
+        has_gym_area: "With gym?"
+        has_children_area: "With children area?"
 
 
   errors:

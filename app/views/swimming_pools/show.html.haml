@@ -4,20 +4,112 @@
   %li.disabled
     = link_to(t('swimming_pool.reviews'), '#')
 
-TODO render( partial: 'pool_header' ) Like this:
-
-.row-fluid
-  .span2
-    = 'ID:'
-  .span10
-    = @pool.id if @pool
-.row-fluid
-  .span2
-    = I18n.t(:name) +':'
-  .span10
-    = @pool.get_verbose_name if @pool
-
-
-.row-fluid
-  .span12
-    TODO render( partial: 'pool_details' )
+.accordion
+  .accordion-group
+    .accordion-heading.goggles-accordion-heading
+      .row-fluid
+        .span11
+          %h3= "#{I18n.t('meeting_calendar.pool')} #{@pool.get_verbose_name}"
+        .span1
+          - unless @pool.get_maps_url.nil?
+            #mapsLink{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool.maps_link_tooltip')}= link_to( image_tag('gmaps_new_32.png'), @pool.get_maps_url )
+    .accordion-body
+      .accordion-inner
+        .row-fluid
+          .span2
+            = 'ID:'
+          .span10
+            = @pool.id
+        .row-fluid
+          .span12
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.nick_name') + ':'
+          .span10
+            = @pool.nick_name
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.lanes_number') + ':'
+          .span10
+            = @pool.lanes_number
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.phone_number') + ':'
+          .span10
+            = @pool.phone_number
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.fax_number') + ':'
+          .span10
+            = @pool.fax_number
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.e_mail') + ':'
+          .span10
+            = @pool.e_mail
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.contact_name') + ':'
+          .span10
+            = @pool.contact_name
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.has_multiple_pools') + ':'
+          .span10
+            = show_tag( @pool.has_multiple_pools )
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.has_open_area') + ':'
+          .span10
+            = show_tag( @pool.has_open_area )
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.has_bar') + ':'
+          .span10
+            = show_tag( @pool.has_bar )
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.has_restaurant_service') + ':'
+          .span10
+            = show_tag( @pool.has_restaurant_service )
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.has_gym_area') + ':'
+          .span10
+            = show_tag( @pool.has_gym_area )
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.swimming_pool.has_children_area') + ':'
+          .span10
+            = show_tag( @pool.has_children_area )
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.pool_type') + ':'
+          .span10
+            = @pool.get_pool_type
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.locker_cabinet_type') + ':'
+          .span10
+            = @pool.get_locker_cabinet_type
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.shower_type') + ':'
+          .span10
+            = @pool.get_shower_type
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.hair_dryer_type') + ':'
+          .span10
+            = @pool.get_hair_dryer_type
+        .row-fluid
+          .span2
+            %i= I18n.t(:updated_at) + ':'
+          .span10
+            %i= Format.a_short_datetime( @pool.updated_at )
+        %script
+          $('#mapsLink').tooltip(placement:'bottom')
+        - unless @pool.maps_uri.nil? || @pool.maps_uri.empty?
+          .row-fluid
+            %hr
+          %iframe(src="#{@pool.maps_uri}" width="100%" height="450" frameborder="0" style="border:0")

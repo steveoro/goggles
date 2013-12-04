@@ -15,6 +15,15 @@
 	padding: 50px 20px 0px 0px;
 }
 
+.goggles-accordion-heading{
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+.goggles-accordion-heading img{
+	padding-top: 10px;
+}
+
 .goggles-divlist-even {
 	background: #eeeeee;
 }

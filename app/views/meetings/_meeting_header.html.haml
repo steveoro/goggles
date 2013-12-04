@@ -14,17 +14,23 @@
           .span2
             = I18n.t(:season_type, {:scope=>[:activerecord, :models]}) +':'
           .span10
-            = @meeting.get_season_type if @meeting
+            = @meeting.get_season_type
         .row-fluid
           .span2
             = I18n.t(:any_date) +':'
           .span10
-            = @meeting.header_date if @meeting
+            = @meeting.header_date
         .row-fluid
           .span2
             = I18n.t(:edition, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
           .span10
-            = @meeting.edition if @meeting
+            = @meeting.edition
+        .row-fluid
+          .span2
+            = I18n.t('meeting_calendar.pool') +':'
+          .span10
+            - @meeting.swimming_pools.uniq.each do |pool|
+              = link_to( pool.get_verbose_name, swimming_pool_path(pool) )
         .row-fluid
           .span2
             = I18n.t(:has_warm_up_pool, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
@@ -49,27 +55,27 @@
           .span2
             = I18n.t(:max_individual_events, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
           .span10
-            = @meeting.max_individual_events if @meeting
+            = @meeting.max_individual_events
         .row-fluid
           .span2
             = I18n.t(:reference_phone, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
           .span10
-            = @meeting.reference_phone if @meeting
+            = @meeting.reference_phone
         .row-fluid
           .span2
             = I18n.t(:reference_e_mail, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
           .span10
-            = @meeting.reference_e_mail if @meeting
+            = @meeting.reference_e_mail
         .row-fluid
           .span2
             = I18n.t(:reference_name, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
           .span10
-            = @meeting.reference_name if @meeting
+            = @meeting.reference_name
         .row-fluid
           .span2
             = I18n.t(:notes) +':'
           .span10
-            = @meeting.notes if @meeting
+            = @meeting.notes
 
 %script
   $('#headerShw').tooltip({placement:'bottom'});

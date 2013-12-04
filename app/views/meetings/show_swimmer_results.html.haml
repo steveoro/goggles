@@ -37,6 +37,6 @@
             %td.span1.goggles-rightalign
               = sprintf( "%02.2f", individual_result.meeting_individual_points )
             %td.span1
-              = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png" )
-              = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png" )
-              = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png" )
+              = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png", '' )
+              = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png", '' )
+              = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png", '' )

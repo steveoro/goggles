@@ -1,4 +1,8 @@
 it:
+  yes: "Sì"
+  no: "No"
+  ok: OK
+
   admin_index:
     title: "Admin/principale"
     sections: "Sotto-sezioni"
@@ -510,6 +514,7 @@ it:
     index_title: "Ricerca Piscine"
     details: "Dettagli"
     reviews: "Recensioni"
+    maps_link_tooltip: "Clicca sull'icona della mappa per andare al sito di Google Maps, dove e' anche possibile ottenere indicazioni di navigazione a partire da un indirizzo di tua scelta"
 
 
   agex_action:
@@ -700,9 +705,7 @@ it:
   date_exchange: Data Cambio
   factor: Fattore
   comment: Commento
-
   privacy_statement: "<b>Informativa sintetica sulla Privacy</b> - Nel rispetto delle ultime versioni della normativa sulla tutela dei dati personali, vi informiamo che gli eventuali dati in nostro possesso, acquisiti durante il corso dei rapporti di collaborazione o consulenza appena compiuti, saranno conservati e utilizzati esclusivamente a fine amministrativo e fiscale. In qualsiasi momento potete richiederne l'eliminazione o la rettifica rivolgendovi direttamente al titolare del nostro studio."
-
   you_are_here: "Tu sei qui:"
   show: "Mostra"
   show_details: "mostra dettagli"
@@ -896,6 +899,9 @@ it:
       day_part_type: "Parte giorno"
       accreditation_time_type: "Tipo Tempo Accred."
       pool_type: "Tipo Piscina"
+      locker_cabinet_type: "Tipo Armadietti"
+      shower_type: "Tipo Docce"
+      hair_dryer_type: "Tipo Asciugacapelli"
 
     attributes:
       user:
@@ -1016,7 +1022,18 @@ it:
         total_individual_points: "Punti individ."
         total_relay_points: "Punti Staff."
       swimming_pool:
+        nick_name: "Nome in codice"
         lanes_number: "N. corsie"
+        phone_number: "Tel."
+        fax_number: "Fax"
+        e_mail: "e-mail"
+        contact_name: "Nome contatto"
+        has_multiple_pools: "Con più vasche?"
+        has_open_area: "Con distesa all'aperto?"
+        has_bar: "Con bar?"
+        has_restaurant_service: "Con ristorante?"
+        has_gym_area: "Con palestra?"
+        has_children_area: "Con area bimbi?"
 
     errors:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."

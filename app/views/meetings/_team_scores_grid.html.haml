@@ -31,9 +31,9 @@
           %td.goggles-rightalign
             = sprintf( "%02.2f", team_score.sum_team_points )
           %td
-            = show_tag( team_score.rank==1 && team_score.sum_individual_points>0, "medal_gold_3.png" )
-            = show_tag( team_score.rank==2 && team_score.sum_individual_points>0, "medal_silver_3.png" )
-            = show_tag( team_score.rank==3 && team_score.sum_individual_points>0, "medal_bronze_3.png" )
+            = show_tag( team_score.rank==1 && team_score.sum_individual_points>0, "medal_gold_3.png", '' )
+            = show_tag( team_score.rank==2 && team_score.sum_individual_points>0, "medal_silver_3.png", '' )
+            = show_tag( team_score.rank==3 && team_score.sum_individual_points>0, "medal_bronze_3.png", '' )
       %tr
         %td
         %td{'colspan'=>'3'}

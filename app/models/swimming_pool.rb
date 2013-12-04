@@ -55,7 +55,7 @@ class SwimmingPool < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{name}, #{address ? address : ''} #{city ? city.get_full_name : ''}"
+    "'#{name}', #{get_full_address}"
   end
 
 
@@ -65,9 +65,49 @@ class SwimmingPool < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Retrieves the city name
+  # Retrieves just the city name
   def get_city_name
     city ? city.get_full_name : ''
   end
+
+  # Retrieves the full address
+  def get_full_address
+    "#{address ? address : ''} #{get_city_name}"
+  end
+
+  # Computes the URL for the Google Maps API service, according to the current instance
+  # address, if defined. Returns nil otherwise.
+  #
+  def get_maps_url
+    full_address = get_full_address
+    if full_address.size > 0
+      full_address.gsub!(' ', '+')
+      "https://www.google.com/maps/preview#!q=#{full_address}"
+    else
+      nil
+    end
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the Pool Type short name
+  def get_pool_type
+    self.pool_type ? self.pool_type.i18n_short : '?'
+  end
+
+  # Retrieves the Locker Cabinet Type full description
+  def get_locker_cabinet_type
+    self.locker_cabinet_type ? self.locker_cabinet_type.i18n_description : '?'
+  end
+
+  # Retrieves the Shower Type full description
+  def get_shower_type
+    self.shower_type ? self.shower_type.i18n_description : '?'
+  end
+
+  # Retrieves the Hair-drier Type full description
+  def get_hair_dryer_type
+    self.hair_dryer_type ? self.hair_dryer_type.i18n_description : '?'
+  end
+  # ----------------------------------------------------------------------------
 
 end

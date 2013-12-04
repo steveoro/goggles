@@ -59,10 +59,10 @@
                     %td{'colspan'=>"#{ @events_per_swimmers[swimmer.id].size < 2 ? 2 : 1 }"}
                       - event_type = row.meeting_event.event_type
                       %a(href="\##{event_type.code}")= event_type.i18n_short
-                      = show_tag( row.rank==1 && row.meeting_individual_points>0, "medal_gold_3.png" )
-                      = show_tag( row.rank==2 && row.meeting_individual_points>0, "medal_silver_3.png" )
-                      = show_tag( row.rank==3 && row.meeting_individual_points>0, "medal_bronze_3.png" )
-                      = show_tag( row.meeting_individual_points>800, "asterisk_orange.png" )
+                      = show_tag( row.rank==1 && row.meeting_individual_points>0, "medal_gold_3.png", '' )
+                      = show_tag( row.rank==2 && row.meeting_individual_points>0, "medal_silver_3.png", '' )
+                      = show_tag( row.rank==3 && row.meeting_individual_points>0, "medal_bronze_3.png", '' )
+                      = show_tag( row.meeting_individual_points>800, "asterisk_orange.png", '' )
                       = "#{row.meeting_individual_points} !" if row.meeting_individual_points>800
 
 %script
