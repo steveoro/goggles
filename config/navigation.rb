@@ -76,6 +76,13 @@ SimpleNavigation::Configuration.run do |navigation|
       end
     end
 
+    primary.item( :key_records,       t('records.menu_root'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_records_everything,    t('records.menu_everything'),   for_everything_records_path()
+      lev2_nav.item :key_records_season_type,   t('records.menu_season_type'),  for_season_type_records_path()
+      lev2_nav.item :key_records_swimmer,       t('records.menu_swimmer'),      for_swimmer_records_path()
+      lev2_nav.item :key_records_team,          t('records.menu_team'),         for_team_records_path()
+    end
+
     primary.item( :key_calendar,      t('meeting_calendar.navigation'), meeting_calendars_path() )
     primary.item( :key_pools,         t('swimming_pool.pools'), swimming_pools_path() )
 

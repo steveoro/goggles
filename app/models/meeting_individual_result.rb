@@ -17,6 +17,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   has_one  :season_type,    :through => :meeting_program
   has_one  :event_type,     :through => :meeting_program
   has_one  :category_type,  :through => :meeting_program
+  has_one  :gender_type,    :through => :meeting_program
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :swimmer
   belongs_to :team
@@ -55,6 +56,8 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
   validates_numericality_of :hundreds
 
+
+  scope :is_valid, -> { where(is_out_of_race: false, is_disqualified: false) }
 
   scope :sort_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_meeting_individual_result_by_meeting,       lambda { |dir| order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }

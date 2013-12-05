@@ -516,6 +516,17 @@ it:
     reviews: "Recensioni"
     maps_link_tooltip: "Clicca sull'icona della mappa per andare al sito di Google Maps, dove e' anche possibile ottenere indicazioni di navigazione a partire da un indirizzo di tua scelta"
 
+  records:
+    menu_root: "Record"
+    everything_title: "Record Complessivi ('All Time Best')"
+    menu_everything: "per TUTTO quello che c'e'!"
+    season_type_title: "Record Tipo Stagione"
+    menu_by_season_type: "per Tipo Stagione"
+    swimmer_title: "Record Atleta"
+    menu_by_swimmer: "per Atleta"
+    team_title: "Record di Squadra"
+    menu_by_team: "per Squadra"
+
 
   agex_action:
     main: Principale

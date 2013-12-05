@@ -16,6 +16,10 @@ class CategoryType < ActiveRecord::Base
   validates_associated :season                      # (foreign key integrity)
 
   has_one :season_type, :through => :season
+
+
+  scope :only_relays,     where(:is_a_relay => true)
+  scope :are_not_relays,  where(:is_a_relay => false)
   # ----------------------------------------------------------------------------
 
 

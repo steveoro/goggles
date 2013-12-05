@@ -514,6 +514,17 @@ en:
     reviews: "Reviews"
     maps_link_tooltip: "Click on the map icon to go to the Google Maps site, where you can also retrieve navigation directions from your preferred position"
 
+  records:
+    menu_root: "Records"
+    everything_title: "All Time Best"
+    menu_everything: "for EVERYTHING there is!"
+    season_type_title: "Season Type Records"
+    menu_season_type: "for a selected Season Type"
+    swimmer_title: "Athlete Records"
+    menu_swimmer: "for a selected Athlete"
+    team_title: "Team Records"
+    menu_team: "for a selected Team"
+
 
   agex_action:
     main: Main
