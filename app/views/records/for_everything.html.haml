@@ -1,34 +1,26 @@
+.row-fluid.span12#pageTop
+  %h2= @title
+
 .row-fluid.span12.goggles-category-gap#pageTop
-  %h3= @title
+  %h3= "F / 25 mt."
 
-.row-fluid.span12
-  - @records.each do |individual_result|
-
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
-          %td{'colspan'=>'8'}
-            %b= meeting_program.get_verbose_event_name
-        - unless is_a_relay
-          - meeting_program.meeting_individual_results.where(['meeting_individual_results.team_id = ?', @team_id]).order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
-            %tr
-              %td.span1.goggles-rightalign
-                = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
-              %td.span4
-                %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                  = individual_result.get_athlete_name
-              %td.span1
-                = individual_result.get_year_of_birth
-              %td.span4
-                %a{'id'=>"team#{individual_result.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>individual_result.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
-                  = individual_result.get_team_name
-              %td.span1.goggles-rightalign
-                = individual_result.get_timing
-              %td.span1.goggles-rightalign
-                = sprintf( "%02.2f", individual_result.standard_points )
-              %td.span1.goggles-rightalign
-                = sprintf( "%02.2f", individual_result.meeting_individual_points )
-              %td.span1
-                = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png", '' )
-                = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png", '' )
-                = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png", '' )
+.row-fluid
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          = "/"
+        - @category_short_names.each do |cat_short_name|
+          %td.goggles-centeralign
+            %b= cat_short_name
+      - @events.each do |event_type|
+        %tr
+          %td.goggles-td.goggles-rightalign
+            %b= event_type.i18n_short
+          - @category_short_names.each do |cat_short_name|
+            %td.goggles-td
+              - ind_result = @f25mt_rec_hash.has_key?(event_type.id) ? @f25mt_rec_hash[ event_type.id ][ cat_short_name ] : nil
+              %p
+                %b= ind_result ? ind_result.get_timing : ''
+              %p= ind_result ? ind_result.get_athlete_name : ''
+              %p= ind_result ? ( (sched_date = ind_result.get_scheduled_date).kind_of?(Date) ? Format.a_date(ind_result.get_scheduled_date) : '-' ) : ''

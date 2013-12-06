@@ -26,13 +26,21 @@ class RecordsController < ApplicationController
     ).group(
       'event_types.code, category_types.code, gender_types.code, pool_types.code'
     )
-                                                    # Partition records in GenderType::FEMALE_ID vs. GenderType::MALE_ID:
-    f_records, m_records = all_records.partition{ |individual_result| individual_result.gender_type.id == GenderType::FEMALE_ID }
-                                                    # Partition records in PoolType::MT25_ID vs. PoolType::MT50_ID:
-    f25_records = f_records.partition{ |individual_result| individual_result.pool_type.id == PoolType::MT25_ID }
-    f50_records = f_records.partition{ |individual_result| individual_result.pool_type.id == PoolType::MT50_ID }
-    m25_records = m_records.partition{ |individual_result| individual_result.pool_type.id == PoolType::MT25_ID }
-    m50_records = m_records.partition{ |individual_result| individual_result.pool_type.id == PoolType::MT50_ID }
+                                                    # Partition records in GenderType::FEMALE_ID vs. GenderType::MALE_ID -- prevent also orphan rows to be included:
+    f_records, m_records = all_records.partition{ |ind_result| ind_result.gender_type && (ind_result.gender_type.id == GenderType::FEMALE_ID) }
+                                                    # Partition records in PoolType::MT25_ID vs. PoolType::MT50_ID -- prevent also orphan rows to be included:
+    f25mt_rec_list = f_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT25_ID) }
+    f50mt_rec_list = f_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT50_ID) }
+    m25mt_rec_list = m_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT25_ID) }
+    m50mt_rec_list = m_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT50_ID) }
+
+    @f25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f25mt_rec_list )
+    @f50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f50mt_rec_list )
+    @m25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m25mt_rec_list )
+    @m50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m50mt_rec_list )
+# DEBUG
+#    logger.debug "\r\n@f25mt_rec_hash.class.name: #{@f25mt_rec_hash.class.name}"
+#    logger.debug "@f25mt_rec_hash.keys: #{@f25mt_rec_hash.keys.inspect}"
   end
   # ----------------------------------------------------------------------------
 
@@ -120,4 +128,34 @@ class RecordsController < ApplicationController
     end
   end
   # ----------------------------------------------------------------------------
+
+
+  private
+
+
+  # Given a list of meeting_individual_results, compiles and retuns an hash-matrix
+  # with event_type ids as row keys and category short names as column keys.
+  #
+  def distribute_records_to_matrix( event_types_array, category_short_names_list, ind_result_records_list )
+    result_hash_matrix = {}                         # Init the result hash:
+# DEBUG
+#    logger.debug "\r\nresult_hash_matrix.class.name: #{result_hash_matrix.class.name}"
+    event_types_array.each do |event_type|
+      result_hash_matrix.merge!({ event_type.id => {} })
+      category_short_names_list.each do |cat_short_name|
+        result_hash_matrix[ event_type.id ].merge!({ cat_short_name => nil })
+      end
+    end
+# DEBUG
+#    logger.debug "result_hash_matrix.keys: #{result_hash_matrix.keys.inspect}"
+                                                    # Fill the result hash
+    ind_result_records_list.each do |ind_result|
+      cat_short_name  = ind_result.category_type.short_name
+      event_type_key = ind_result.event_type.id
+      result_hash_matrix[ event_type_key ].merge!({ cat_short_name => ind_result })
+    end
+    result_hash_matrix
+  end
+  # ----------------------------------------------------------------------------
+
 end
