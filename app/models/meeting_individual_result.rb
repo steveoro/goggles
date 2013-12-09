@@ -92,6 +92,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Check if this result is valid for the ranking system.
+  def is_valid_for_ranking
+    (!self.is_out_of_race) && (!self.is_disqualified)
+  end
+
   # Retrieves the associated Swimmer full name
   def get_athlete_name
     self.swimmer ? self.swimmer.get_full_name() : '?'

@@ -23,4 +23,4 @@
               %p
                 %b= ind_result ? ind_result.get_timing : ''
               %p= ind_result ? ind_result.get_athlete_name : ''
-              %p= ind_result ? ( (sched_date = ind_result.get_scheduled_date).kind_of?(Date) ? Format.a_date(ind_result.get_scheduled_date) : '-' ) : ''
+              %p= ind_result ? ( (sched_date = ind_result.get_scheduled_date).kind_of?(Date) ? link_to(Format.a_date(ind_result.get_scheduled_date), show_full_meeting_path(ind_result.meeting)) : '-' ) : ''

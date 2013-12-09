@@ -6,6 +6,12 @@
  *= require_tree . 
  */
 
+/* ----- Navbar & Titlebar ----- */
+#goggles-inner-navbar {
+    min-height: 26px;
+    height: 26px;
+}
+
 .navbar .goggles-brand {
 	color: #777777;
     display: block;
@@ -13,56 +19,12 @@
     font-size: 16px;
     font-weight: 200;
     margin-left: -10px;
-    padding: 4px 10px;
+    padding: 3px 10px;
     text-shadow: 0 1px 0 #FFFFFF;
 }
 
 .navbar .goggles-brand img {
     height: 14px;
-}
-
-.goggles-breadcrumb{
-	padding: 40px 10px 0px 0px;
-	text-align: right;
-}
-
-.goggles-category-gap{
-	padding: 40px 0px 0px 0px;
-}
-
-.goggles-accordion-heading{
-	padding-right: 10px;
-	padding-left: 10px;
-}
-
-.goggles-accordion-heading img{
-	padding-top: 10px;
-}
-
-.goggles-divlist-even {
-	background: #eeeeee;
-}
-.goggles-divlist-odd {
-	background: #ffffff;
-}
-.goggles-div-centeralign {
-	text-align: center;
-}
-.goggles-div-rightalign {
-	text-align: right;
-}
-
-table td.goggles-centeralign{
-	text-align: center;
-}
-
-table td.goggles-rightalign{
-	text-align: right;
-}
-
-.navbar .ghost-divider-vertical {
-    height: 20px;
-    margin: 0 9px;
 }
 
 .navbar .goggles-small-brand {
@@ -77,14 +39,80 @@ table td.goggles-rightalign{
 	line-height: 0px;
 }
 
-#navigationMenu > a {
-    padding: 4px 10px;
+.navbar ul.nav > li > a {
+    padding: 3px 10px;
 }
 .navbar .nav > li > a.goggles-nav-compact {
     padding: 2px 5px;
 	line-height: 0px;
 }
 
+.navbar .ghost-divider-vertical {
+    height: 20px;
+    margin: 0 9px;
+}
+
+
+/* ----- Navigation / breadcrumbs ----- */
+.goggles-breadcrumb{
+	padding: 26px 10px 0px 0px;
+	text-align: right;
+}
+
+.goggles-category-gap{
+	padding: 26px 0px 0px 0px;
+}
+
+
+/* ----- Tables / Headers with accordion ----- */
 .table td.goggles-td {
 	line-height: 15px;
+}
+
+table.table {
+    margin-bottom: 0;
+}
+
+table.table.goggles-meeting-team-results-table {
+    margin-bottom: 8px;
+}
+
+table td.goggles-border-right{
+	border-right: 1px solid #DDDDDD;
+}
+
+table td.goggles-noborder{
+	border: none;
+}
+
+table td.goggles-centeralign{
+	text-align: center;
+}
+
+table td.goggles-rightalign{
+	text-align: right;
+}
+
+.goggles-accordion-heading{
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+.goggles-accordion-heading img{
+	padding-top: 10px;
+}
+
+
+/* ----- Div lists ----- */
+.goggles-divlist-even {
+	background: #eeeeee;
+}
+.goggles-divlist-odd {
+	background: #ffffff;
+}
+.goggles-div-centeralign {
+	text-align: center;
+}
+.goggles-div-rightalign {
+	text-align: right;
 }

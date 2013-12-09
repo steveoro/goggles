@@ -43,8 +43,8 @@
             = @team_outstanding_scores
 
       .accordion-inner
-        %div.span10
-          %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %div.span12
+          %table.table.table-striped.table-bordered.table-hover.table-condensed.goggles-meeting-team-results-table
             %tbody
               %tr
                 %td{'colspan'=>'5'}
@@ -52,18 +52,20 @@
               - @meeting_team_swimmers.each do |swimmer|
                 %tr
                   %td{'colspan'=>'1'}
-                    %b= swimmer.get_full_name
-                  %td{'colspan'=>'1'}
+                    %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                      = swimmer.get_full_name
+                  %td.goggles-border-right{'colspan'=>'1'}
                     = (mir = @events_per_swimmers[swimmer.id].first) ? mir.category_type.code : '?'
                   - @events_per_swimmers[swimmer.id].each do |row|
-                    %td{'colspan'=>"#{ @events_per_swimmers[swimmer.id].size < 2 ? 2 : 1 }"}
+                    %td.goggles-noborder.goggles-rightalign{'colspan'=>"2"}
+                      = show_tag( row.rank==1 && row.is_valid_for_ranking, "medal_gold_3.png", '' )
+                      = show_tag( row.rank==2 && row.is_valid_for_ranking, "medal_silver_3.png", '' )
+                      = show_tag( row.rank==3 && row.is_valid_for_ranking, "medal_bronze_3.png", '' )
                       - event_type = row.meeting_event.event_type
                       %a(href="\##{event_type.code}")= event_type.i18n_short
-                      = show_tag( row.rank==1 && row.meeting_individual_points>0, "medal_gold_3.png", '' )
-                      = show_tag( row.rank==2 && row.meeting_individual_points>0, "medal_silver_3.png", '' )
-                      = show_tag( row.rank==3 && row.meeting_individual_points>0, "medal_bronze_3.png", '' )
+                    %td.goggles-noborder{'colspan'=>"1"}
                       = show_tag( row.meeting_individual_points>800, "asterisk_orange.png", '' )
-                      = "#{row.meeting_individual_points} !" if row.meeting_individual_points>800
+                      = (row.meeting_individual_points>800 ? "#{row.meeting_individual_points} !" : row.meeting_individual_points)
 
 %script
   $('#headerTeam').tooltip({placement:'bottom'});

@@ -78,6 +78,11 @@ class MeetingRelayResult < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Check if this result is valid for the ranking system.
+  def is_valid_for_ranking
+    (!self.is_out_of_race) && (!self.is_disqualified)
+  end
+
   # Retrieves the associated Team full name
   def get_team_name
     self.team ? self.team.get_full_name() : '?'

@@ -45,9 +45,9 @@
                   %td.span1.goggles-rightalign
                     = sprintf( "%02.2f", individual_result.meeting_individual_points )
                   %td.span1
-                    = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png", '' )
-                    = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png", '' )
-                    = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png", '' )
+                    = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+                    = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+                    = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
             -# --- Team Relay result rows:
             - if is_a_relay
               - meeting_program.meeting_relay_results.where(['meeting_relay_results.team_id = ?', @team_id]).order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
@@ -64,6 +64,6 @@
                   %td.goggles-rightalign
                     = sprintf( "%02.2f", relay_result.standard_points )
                   %td
-                    = show_tag( relay_result.rank==1 && relay_result.meeting_points>0, "medal_gold_3.png", '' )
-                    = show_tag( relay_result.rank==2 && relay_result.meeting_points>0, "medal_silver_3.png", '' )
-                    = show_tag( relay_result.rank==3 && relay_result.meeting_points>0, "medal_bronze_3.png", '' )
+                    = show_tag( relay_result.rank==1 && relay_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+                    = show_tag( relay_result.rank==2 && relay_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+                    = show_tag( relay_result.rank==3 && relay_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
