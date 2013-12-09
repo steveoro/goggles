@@ -6,13 +6,28 @@
  *= require_tree . 
  */
 
+.navbar .goggles-brand {
+	color: #777777;
+    display: block;
+    float: left;
+    font-size: 16px;
+    font-weight: 200;
+    margin-left: -10px;
+    padding: 4px 10px;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.navbar .goggles-brand img {
+    height: 14px;
+}
+
 .goggles-breadcrumb{
-	padding: 60px 20px 0px 0px;
+	padding: 40px 10px 0px 0px;
 	text-align: right;
 }
 
 .goggles-category-gap{
-	padding: 50px 20px 0px 0px;
+	padding: 40px 0px 0px 0px;
 }
 
 .goggles-accordion-heading{
@@ -61,7 +76,11 @@ table td.goggles-rightalign{
     text-shadow: 0 1px 0 #FFFFFF;
 	line-height: 0px;
 }
-.navbar .nav > li > a.goggles-a-compact {
+
+#navigationMenu > a {
+    padding: 4px 10px;
+}
+.navbar .nav > li > a.goggles-nav-compact {
     padding: 2px 5px;
 	line-height: 0px;
 }

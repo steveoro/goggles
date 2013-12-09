@@ -44,8 +44,9 @@ gem 'jquery_datepicker'
 #
 # - When ready, re-comment the following line and push/update the app
 #   to CloudFoundry using vmc (after a "bundle package" + "bundle install")
-gem 'therubyracer'
-#gem 'therubyrhino'				    # || therubyracer
+
+gem 'therubyracer', :platforms => :ruby
+# gem 'therubyrhino'
 
                                                     # [Steve, 20111216] Netzke:
 gem 'netzke-core', '~> 0.7.7'			      #, :git => "git://github.com/skozlov/netzke-core.git"

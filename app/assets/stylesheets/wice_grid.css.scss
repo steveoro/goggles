@@ -5,7 +5,11 @@
 
 .table th, .table td{
   line-height: 10px;
-  padding: 8px;
+  padding: 5px;
+}
+
+.table th img, .table td img{
+  height: 12px;
 }
 
 .wg-detached-filter, .wice-grid{

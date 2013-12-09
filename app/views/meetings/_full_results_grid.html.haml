@@ -10,13 +10,13 @@
       %ul.nav
         - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(:gender_type_id => GenderType::FEMALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
           %li
-            %a.goggles-a-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
+            %a.goggles-nav-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
       .ghost-divider-vertical
       %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
       %ul.nav
         - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(:gender_type_id => GenderType::MALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
           %li
-            %a.goggles-a-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
+            %a.goggles-nav-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
 
     - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('meeting_programs.event_order ASC').each do |meeting_program|
       %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
