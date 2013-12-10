@@ -9,7 +9,10 @@
 		name: I18n.t(:description),
 		attribute: 'description'
 	) do |meeting|
-		link_to(meeting.description, show_full_meeting_path(meeting))
+		link_to(
+			meeting.description,
+			show_full_meeting_path( :id=>meeting.id, :team_id=>@preselected_team_id, :swimmer_id=>@preselected_swimmer_id )
+		)
 	end
 
 	g.column(

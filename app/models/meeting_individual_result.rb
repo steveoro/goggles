@@ -112,9 +112,19 @@ class MeetingIndividualResult < ActiveRecord::Base
     self.team ? self.team.get_full_name() : '?'
   end
 
-  # Retrieves the localized Event Type code
+  # Retrieves the localized Event Type code (short)
   def get_event_type
     self.meeting_program ? self.meeting_program.event_type.i18n_short : '?'
+  end
+
+  # Retrieves the localized Event Type code (full description)
+  def get_event_type_description
+    self.meeting_program ? self.meeting_program.event_type.i18n_description : '?'
+  end
+
+  # Getter for short display name of Category + Gender.
+  def get_category_and_gender_short
+    self.meeting_program ? self.meeting_program.get_category_and_gender_short : '?'
   end
 
   # Retrieves the scheduled_date of this result

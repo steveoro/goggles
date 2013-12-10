@@ -1,4 +1,4 @@
-%div.span10
+.span10
   - @meeting_events_list.each do |meeting_event|
     - is_a_relay = meeting_event.event_type.is_a_relay
     -# --- Header with unique ID for each starting event_type "group":
@@ -27,7 +27,8 @@
                 %b= meeting_program.get_verbose_event_name
             - unless is_a_relay
               - meeting_program.meeting_individual_results.order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
-                %tr
+                - is_highlighted = (@preselected_team_id.to_i == individual_result.team_id) || (@preselected_swimmer_id.to_i == individual_result.swimmer_id)
+                %tr{'class' => is_highlighted ? 'warning' : ''}
                   %td.span1.goggles-rightalign
                     = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
                   %td.span4

@@ -8,16 +8,23 @@ class MeetingsController < ApplicationController
   # Supports the optional parameters:
   # - :preselected_ids, to obtain an array of IDs with which pre-filter the grid results.
   # - :prefilter_swimmer, a text to be displayed for additional info regarding the pre-filtering process
+  # - :swimmer_id => Swimmer id, defined only when prefiltered from previous search actions.
   # - :prefilter_team, a text to be displayed for additional info regarding the pre-filtering process
+  # - :team_id => Team id, defined only when prefiltered from previous search actions.
   #
   def index
 # DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     prefilter = [ params[:prefilter_swimmer], params[:prefilter_team] ].compact.join(', ')
     @title = I18n.t(:index_title, {:scope=>[:meeting]}) +
              (prefilter.size > 0 ? " (#{prefilter})" : '')
+    @preselected_swimmer_id = params[:swimmer_id]
+    @preselected_team_id    = params[:team_id]
     preselected_ids = params[:preselected_ids] ? params[:preselected_ids].collect{|p| p.to_i} : nil
+# DEBUG
+    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
+    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
     @meetings_grid = initialize_grid(
       (preselected_ids ? Meeting.where(:id => preselected_ids) : Meeting),
@@ -32,6 +39,10 @@ class MeetingsController < ApplicationController
   # Show all details regarding a single Meeting
   # Assumes params[:id] refers to a specific Meeting row.
   #
+  # Supports the optional parameters:
+  # - :swimmer_id => Swimmer id to be highlighted, defined only when prefiltered from previous search actions.
+  # - :team_id => Team id to be highlighted, defined only when prefiltered from previous search actions.
+  #
   def show_full
     meeting_id = params[:id].to_i
     @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
@@ -39,6 +50,11 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_path() ) and return
     end
+    @preselected_swimmer_id = params[:swimmer_id]
+    @preselected_team_id    = params[:team_id]
+# DEBUG
+    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
+    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
     @meeting_events_list = @meeting.meeting_events.includes(
       :event_type, :stroke_type

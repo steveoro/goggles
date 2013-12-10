@@ -9,34 +9,45 @@
     = link_to(t(:swimmer_results), '#')
 
 = render( partial: 'meeting_header' )
-%h4= @swimmer.get_full_name
 
-%div.span10
-  - @individual_result_list.each do |individual_result|
-    %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{individual_result.id}"}
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>"info"}
-            %td{'colspan'=>'8'}
-              %b= individual_result.get_meeting_program_verbose_name
-          %tr
-            %td.span1.goggles-rightalign
-              = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
-            %td.span4
-              %a{'id'=>"swimmer#{individual_result.id}", 'href'=>'#', 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                = individual_result.get_athlete_name
-            %td.span1
-              = individual_result.get_year_of_birth
-            %td.span4
-              %a{'id'=>"team#{individual_result.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>individual_result.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
-                = individual_result.get_team_name
-            %td.span1.goggles-rightalign
-              = individual_result.get_timing
-            %td.span1.goggles-rightalign
-              = sprintf( "%02.2f", individual_result.standard_points )
-            %td.span1.goggles-rightalign
-              = sprintf( "%02.2f", individual_result.meeting_individual_points )
-            %td.span1
-              = show_tag( individual_result.rank==1 && individual_result.meeting_individual_points>0, "medal_gold_3.png", '' )
-              = show_tag( individual_result.rank==2 && individual_result.meeting_individual_points>0, "medal_silver_3.png", '' )
-              = show_tag( individual_result.rank==3 && individual_result.meeting_individual_points>0, "medal_bronze_3.png", '' )
+.row-fluid.span12
+  .span3
+    %h4= @swimmer.get_full_name
+  .span1
+    %h4= @swimmer.year_of_birth
+  .span2
+    %h4= @individual_result_list.first.get_category_and_gender_short
+  .span6
+    %h4
+      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>@individual_result_list.first.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+        = @swimmer.get_team_names
+
+.row-fluid
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr
+        %td.span4
+        %td.span1.goggles-rightalign
+          %i= I18n.t('activerecord.attributes.meeting_individual_result.rank')
+        %td.span2.goggles-rightalign
+        %td.span2.goggles-rightalign
+          %i= I18n.t('activerecord.attributes.meeting_individual_result.standard_points')
+        %td.span2.goggles-rightalign
+          %i= I18n.t('activerecord.attributes.meeting_individual_result.meeting_points')
+        %td.span1
+      - @individual_result_list.each do |individual_result|
+        %tr
+          %td.span4
+            %b= individual_result.get_event_type_description
+          %td.span1.goggles-rightalign
+            = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
+          %td.span2.goggles-rightalign
+            = individual_result.get_timing
+          %td.span2.goggles-rightalign
+            = sprintf( "%02.2f", individual_result.standard_points )
+          %td.span2.goggles-rightalign
+            = sprintf( "%02.2f", individual_result.meeting_individual_points )
+          %td.span1
+            = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+            = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+            = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
