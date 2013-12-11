@@ -168,4 +168,55 @@ class MeetingIndividualResult < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+
+  # Returns an array of "Meeting records" scoped from MeetingIndividualResult (an array,
+  # in case there is more than one row with the same exact timing result), being selected by the
+  # speficied parameters.
+  #
+  # If <tt>category_type_id_or_code</tt> is a Fixnum is assumed to be an ID; if it's a String,
+  # it's assumed to be the +code+.
+  #
+  # Obviously, if the value used for this parameter is a Fixnum and the ID is used for the query,
+  # this will allow a more precise fine-tuning of the results, since both the season and the code
+  # identify a single, unique category_types.id.
+  #
+  # When meeting_id is supplied only the best timing records for the specified meeting
+  # are searched. Otherwise the search is extended to all the individual results specified
+  # with the remaining parameters. 
+  #
+  def self.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id,
+                            meeting_id = nil, limit_for_same_ranking_results = 3 )
+#FIXME DEBUG THIS:
+
+    if meeting_id
+      where_cond = [
+        "(meetings.id = ?) AND (event_types.code = ?) AND " +
+        "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +
+        "(gender_types.id = ?) AND (pool_types.id = ?)",
+        meeting_id, event_type_code, category_type_id_or_code, gender_type_id, pool_type_id
+      ]
+    else
+      where_cond = [
+        "(event_types.code = ?) AND " +
+        "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +
+        "(gender_types.id = ?) AND (pool_types.id = ?)",
+        event_type_code, category_type_id_or_code, gender_type_id, pool_type_id
+      ]
+    end
+
+    first_recs = self.includes( :meeting, :event_type, :category_type, :gender_type, :pool_type ).joins(
+      :meeting, :event_type, :category_type, :gender_type, :pool_type 
+    ).is_valid.select(
+      'meetings.id, meeting_program_id, swimmer_id, team_id, minutes, seconds, hundreds, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    ).where( where_cond ).order(
+      :minutes, :seconds, :hundreds
+    ).limit( limit_for_same_ranking_results )
+
+    if first_recs.size > 0                          # Compute the first timing result value
+      first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
+                                                    # Remove from the result all other rows that have a greater timing result (keep same ranking results)
+      first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
+    end
+    first_recs
+  end
 end
