@@ -7,7 +7,8 @@
 
 	g.column(
 		name: I18n.t(:description),
-		attribute: 'description'
+		attribute: 'description',
+		detach_with_id: :flt_description
 	) do |meeting|
 		link_to(
 			meeting.description,
@@ -35,11 +36,6 @@
 	end
 
 	g.column(
-		name: I18n.t(:edition, {:scope=>[:activerecord, :attributes, :meeting]}),
-		attribute: 'edition'
-	)
-
-	g.column(
 		name: I18n.t(:any_date),
 		attribute: 'header_date',
 		detach_with_id: :flt_entry_header_date
@@ -48,8 +44,16 @@
 	end
 
 	g.column(
+		name: I18n.t('meeting.total_results_short'),
+	) do |meeting|
+		( meeting.meeting_relay_results.count +
+		  meeting.meeting_individual_results.count )
+	end
+
+	g.column(
 		name: I18n.t(:are_results_acquired, {:scope=>[:activerecord, :attributes, :meeting]}),
-		attribute: 'are_results_acquired'
+		attribute: 'are_results_acquired',
+		detach_with_id: :flt_are_results_acquired
 	) do |meeting|
 		meeting.are_results_acquired? ? I18n.t(:ok) : '--'
 	end

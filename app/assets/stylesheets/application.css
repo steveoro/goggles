@@ -68,6 +68,9 @@
 .table td.goggles-td {
 	line-height: 15px;
 }
+.table td.goggles-td p {
+    margin-bottom: 2px;
+}
 
 table.table {
     margin-bottom: 0;

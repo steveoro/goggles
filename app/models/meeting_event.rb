@@ -23,6 +23,8 @@ class MeetingEvent < ActiveRecord::Base
   has_many :meeting_individual_results, :through => :meeting_programs, :dependent => :delete_all
   has_many :meeting_relay_results, :through => :meeting_programs, :dependent => :delete_all
 
+  has_many :category_types, :through => :meeting_programs
+
 
   # ----------------------------------------------------------------------------
   # Base methods:

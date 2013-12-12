@@ -526,6 +526,9 @@ it:
     menu_by_swimmer: "per Atleta"
     team_title: "Record di Squadra"
     menu_by_team: "per Squadra"
+    personal_best: "Personale"
+    seasonal_best: "Stagionale"
+    meeting_best: "Rec. Meeting"
 
 
   agex_action:
@@ -738,6 +741,7 @@ it:
   detail_show_tooltip: "Clicca sul titolo per nascondere o mostrare i dettagli."
   no_data_found: "Non ho trovato nessuna riga dati!"
   any_date: "Data"
+  date_from_to: "Data (da/a)"
   submit: "Vai"
   reset: "Reset"
 

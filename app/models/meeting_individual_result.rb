@@ -111,16 +111,50 @@ class MeetingIndividualResult < ActiveRecord::Base
   def get_team_name
     self.team ? self.team.get_full_name() : '?'
   end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the localized Event Type code (short)
   def get_event_type
-    self.meeting_program ? self.meeting_program.event_type.i18n_short : '?'
+    self.event_type ? self.event_type.i18n_short : '?'
   end
 
   # Retrieves the localized Event Type code (full description)
   def get_event_type_description
-    self.meeting_program ? self.meeting_program.event_type.i18n_description : '?'
+    self.event_type ? self.event_type.i18n_description : '?'
   end
+
+  # Retrieves the Event Type code as it is
+  def get_event_type_code
+    self.event_type ? self.event_type.code : '?'
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the Category Type id as it is; returns 0 in case of an invalid record
+  def get_category_type_id
+    self.category_type ? self.category_type.id : 0
+  end
+
+  # Retrieves the Category Type code as it is; returns '?' in case of an invalid record
+  def get_category_type_code
+    self.category_type ? self.category_type.code : '?'
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the Season id as it is; returns 0 in case of an invalid record
+  def get_season_id
+    self.season ? self.season.id : 0
+  end
+
+  # Retrieves the Gender Type id as it is; returns 0 in case of an invalid record
+  def get_gender_type_id
+    self.gender_type ? self.gender_type.id : 0
+  end
+
+  # Retrieves the Pool Type id as it is; returns 0 in case of an invalid record
+  def get_pool_type_id
+    self.pool_type ? self.pool_type.id : 0
+  end
+  # ----------------------------------------------------------------------------
 
   # Getter for short display name of Category + Gender.
   def get_category_and_gender_short
@@ -169,51 +203,68 @@ class MeetingIndividualResult < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
-  # Returns an array of "Meeting records" scoped from MeetingIndividualResult (an array,
-  # in case there is more than one row with the same exact timing result), being selected by the
-  # speficied parameters.
+  # Returns an array of 1st-rank Meeting result records, scoped from MeetingIndividualResult
+  # (an array, in case there is more than one row with the same exact timing result at the same
+  # ranking position), being selected by the speficied parameters.
   #
-  # If <tt>category_type_id_or_code</tt> is a Fixnum is assumed to be an ID; if it's a String,
+  # This allows to find out what is/are the current record(s) for a specified event, category, gender
+  # and pool type.
+  #
+  # === "Special" parameters:
+  #
+  # - <tt>category_type_id_or_code</tt> => if it's a Fixnum is assumed to be an ID; if it's a String,
   # it's assumed to be the +code+.
-  #
   # Obviously, if the value used for this parameter is a Fixnum and the ID is used for the query,
   # this will allow a more precise fine-tuning of the results, since both the season and the code
-  # identify a single, unique category_types.id.
+  # identify a single, unique category_types.id (whereas, using the code, you'll get the current
+  # record among all seasons).
   #
-  # When meeting_id is supplied only the best timing records for the specified meeting
-  # are searched. Otherwise the search is extended to all the individual results specified
-  # with the remaining parameters. 
+  # - <tt>pool_type_id</tt> => when supplied, only the results obtained from meetings attended at a
+  # matching pool_type will be selected; if +nil+, this WHERE condition is skipped (and the result
+  # will be computed among all available pool types).
   #
-  def self.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id,
-                            meeting_id = nil, limit_for_same_ranking_results = 3 )
-#FIXME DEBUG THIS:
+  # - <tt>meeting_id</tt> => when supplied, only the best timing records for the specified meeting
+  # are searched; when +nil+, the search is extended to all the individual results specified
+  # with the remaining parameters. Remember that if also <tt>pool_type_id</tt> is present, the latter
+  # must match the actual pool_type_id used for the selected meeting, otherwise the result will
+  # be an empty array.
+  #
+  # - <tt>swimmer_id</tt> => when supplied, only the best timing records for the specified swimmer
+  # will be collected; when +nil+, the search is extended to all swimmers.
+  #
+  def self.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id = nil,
+                            meeting_id = nil, swimmer_id = nil, limit_for_same_ranking_results = 3 )
+    mir = MeetingIndividualResult.is_valid
+    mir = mir.joins( :pool_type ).where( ['pool_types.id = ?', pool_type_id]) if pool_type_id
+    mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
+    mir = mir.where( ['swimmer_id = ?', swimmer_id]) if swimmer_id
+    where_cond = [
+      "(event_types.code = ?) AND " +
+      "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +
+      "(gender_types.id = ?)",
+      event_type_code, category_type_id_or_code, gender_type_id
+    ]
+# DEBUG
+#    puts "\r\n---[ #{self.name}.get_records_for() ]---"
+#    puts "- pool_type_id = #{pool_type_id}"
+#    puts "- meeting_id = #{meeting_id}"
+#    puts "- where_cond = #{where_cond.inspect}\r\n"
 
-    if meeting_id
-      where_cond = [
-        "(meetings.id = ?) AND (event_types.code = ?) AND " +
-        "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +
-        "(gender_types.id = ?) AND (pool_types.id = ?)",
-        meeting_id, event_type_code, category_type_id_or_code, gender_type_id, pool_type_id
-      ]
-    else
-      where_cond = [
-        "(event_types.code = ?) AND " +
-        "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +
-        "(gender_types.id = ?) AND (pool_types.id = ?)",
-        event_type_code, category_type_id_or_code, gender_type_id, pool_type_id
-      ]
-    end
-
-    first_recs = self.includes( :meeting, :event_type, :category_type, :gender_type, :pool_type ).joins(
-      :meeting, :event_type, :category_type, :gender_type, :pool_type 
-    ).is_valid.select(
-      'meetings.id, meeting_program_id, swimmer_id, team_id, minutes, seconds, hundreds, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    first_recs = mir.includes(
+      :meeting_program, :event_type, :category_type, :gender_type
+    ).joins(
+      :meeting_program, :event_type, :category_type, :gender_type 
     ).where( where_cond ).order(
       :minutes, :seconds, :hundreds
     ).limit( limit_for_same_ranking_results )
+# DEBUG
+#    puts "\r\n- first_recs.size = #{first_recs.size}"
 
     if first_recs.size > 0                          # Compute the first timing result value
       first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
+# DEBUG
+#      puts "- first_timing_value = #{first_timing_value}"
+#      puts "- first_recs.first => #{first_recs.first.get_athlete_name}, #{first_recs.first.get_meeting_program_verbose_name}\r\n"
                                                     # Remove from the result all other rows that have a greater timing result (keep same ranking results)
       first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
     end

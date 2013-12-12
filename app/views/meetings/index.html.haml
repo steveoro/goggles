@@ -12,6 +12,11 @@
       .accordion-inner
         .row-fluid
           .span2
+            = I18n.t(:description)
+          .span10
+            = grid_filter @meetings_grid, :flt_description
+        .row-fluid
+          .span2
             = I18n.t(:season_type, {:scope=>[:activerecord, :models]})
           .span10
             = grid_filter @meetings_grid, :flt_season_type_id
@@ -22,9 +27,14 @@
             = grid_filter @meetings_grid, :flt_season_id
         .row-fluid
           .span2
-            = I18n.t(:any_date)
+            = I18n.t(:date_from_to)
           .span10
             = grid_filter @meetings_grid, :flt_entry_header_date
+        .row-fluid
+          .span2
+            = I18n.t(:are_results_acquired, {:scope=>[:activerecord, :attributes, :meeting]})
+          .span10
+            = grid_filter @meetings_grid, :flt_are_results_acquired
         .row-fluid
           .span12
             .external-buttons

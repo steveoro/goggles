@@ -524,6 +524,9 @@ en:
     menu_swimmer: "for a selected Athlete"
     team_title: "Team Records"
     menu_team: "for a selected Team"
+    personal_best: "Personal Best"
+    seasonal_best: "Season Best"
+    meeting_best: "Meeting Best"
 
 
   agex_action:
@@ -736,6 +739,7 @@ en:
   detail_show_tooltip: "Click on the title bar to toggle the details."
   no_data_found: "No data found!"
   any_date: "Date"
+  date_from_to: "Date (from/to)"
   submit: "Submit"
   reset: "Reset"
 

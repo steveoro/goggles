@@ -83,6 +83,11 @@ class MeetingProgram < ActiveRecord::Base
     "#{get_category_type_name} #{gender_type.i18n_short}"
   end
 
+  # Retrieves the Category Type id
+  def get_category_type_id
+    self.category_type ? self.category_type.id : '?'
+  end
+
   # Retrieves the Category Type code
   def get_category_type_code
     self.category_type ? self.category_type.code : '?'

@@ -15,6 +15,7 @@
             = I18n.t(:season_type, {:scope=>[:activerecord, :models]}) +':'
           .span10
             = @meeting.get_season_type
+            = admin_signed_in? ? " (season.id=#{@meeting.season_id})" : ''
         .row-fluid
           .span2
             = I18n.t(:any_date) +':'
@@ -31,6 +32,7 @@
           .span10
             - @meeting.swimming_pools.uniq.each do |pool|
               = link_to( pool.get_verbose_name, swimming_pool_path(pool) )
+              = admin_signed_in? ? " (swimming_pools.id=#{pool.id})" : ''
         .row-fluid
           .span2
             = I18n.t(:has_warm_up_pool, {:scope=>[:activerecord, :attributes, :meeting]}) +':'

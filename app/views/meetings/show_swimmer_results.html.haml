@@ -27,27 +27,69 @@
     %tbody
       %tr
         %td.span4
-        %td.span1.goggles-rightalign
+        %td.span1.goggles-centeralign
           %i= I18n.t('activerecord.attributes.meeting_individual_result.rank')
-        %td.span2.goggles-rightalign
-        %td.span2.goggles-rightalign
+        %td.span2.goggles-centeralign
+        %td.span2.goggles-centeralign
           %i= I18n.t('activerecord.attributes.meeting_individual_result.standard_points')
-        %td.span2.goggles-rightalign
+        %td.span2.goggles-centeralign
           %i= I18n.t('activerecord.attributes.meeting_individual_result.meeting_points')
         %td.span1
+        %td.span2.goggles-centeralign
+          %i= I18n.t('records.personal_best')
+        %td.span2.goggles-centeralign
+          %i= I18n.t('records.seasonal_best')
+        %td.span2.goggles-centeralign
+          %i= I18n.t('records.meeting_best')
+
+      - category_type_id = 0
+      - gender_type_id   = 0
+      - pool_type_id     = 0
+      - if @individual_result_list.size > 0
+        - category_type_code = @individual_result_list.first.get_category_type_code
+        - category_type_id = @individual_result_list.first.get_category_type_id
+        - gender_type_id = @individual_result_list.first.get_gender_type_id
+        - pool_type_id = @individual_result_list.first.get_pool_type_id
+        - meeting_id = @individual_result_list.first.meeting.id
+
       - @individual_result_list.each do |individual_result|
+        - event_type_code = individual_result.get_event_type_code
         %tr
-          %td.span4
+          %td.span3
             %b= individual_result.get_event_type_description
           %td.span1.goggles-rightalign
             = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
-          %td.span2.goggles-rightalign
+          %td.span1.goggles-rightalign
             = individual_result.get_timing
-          %td.span2.goggles-rightalign
+          %td.span1.goggles-rightalign
             = sprintf( "%02.2f", individual_result.standard_points )
-          %td.span2.goggles-rightalign
+          %td.span1.goggles-rightalign
             = sprintf( "%02.2f", individual_result.meeting_individual_points )
           %td.span1
             = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
             = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
             = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+          %td.span1.goggles-rightalign
+            - personal_bests = MeetingIndividualResult.get_records_for( event_type_code, category_type_code, gender_type_id, pool_type_id, nil, individual_result.swimmer_id )
+            - if personal_bests.size > 0
+              %p
+                %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>personal_bests.first.meeting.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                  = personal_bests.first.get_timing
+            - else
+              = ''
+          %td.span1.goggles-td.goggles-rightalign
+            - seasonal_bests = MeetingIndividualResult.get_records_for( event_type_code, category_type_id, gender_type_id, pool_type_id )
+            - if seasonal_bests.size > 0
+              %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>seasonal_bests.first.meeting.id, :swimmer_id=>seasonal_bests.first.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                %p= seasonal_bests.first.get_timing
+                %p= seasonal_bests.first.get_athlete_name
+            - else
+              = ''
+          %td.span1.goggles-td.goggles-rightalign
+            - meeting_bests  = MeetingIndividualResult.get_records_for( event_type_code, category_type_code, gender_type_id, nil, meeting_id )
+            - if meeting_bests.size > 0
+              %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>meeting_bests.first.meeting.id, :swimmer_id=>meeting_bests.first.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                %p= meeting_bests.first.get_timing
+                %p= meeting_bests.first.get_athlete_name
+            - else
+              = ''
