@@ -51,7 +51,7 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   validates_numericality_of :hundreds
 
 
-  scope :is_valid_for_score,  where( :is_out_of_race => false, :is_disqualified => false )
+  scope :is_valid, -> { where(is_out_of_race: false, is_disqualified: false) }
 
   scope :sort_data_import_meeting_relay_result_by_user,                 lambda { |dir| order("users.name #{dir.to_s}, meeting_program_id #{dir.to_s}") }
 

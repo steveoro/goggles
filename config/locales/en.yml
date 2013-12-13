@@ -446,6 +446,7 @@ en:
 
   badge:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'badges'!"
+    short: "Badge"
 
   city:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'cities'!"
@@ -727,7 +728,9 @@ en:
   ranking: "Ranking"
   rankings: "Rankings"
   results: "Results"
+  stats: "Statistics"
   team_results: "Team Results"
+  team_stats: "Team Stats"
   individual_results: "Individual Results"
   swimmer_results: "Individual Results"
   search_meetings: "Search Meetings"

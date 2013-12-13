@@ -59,9 +59,23 @@ class Swimmer < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Returns true if the current row's gender_type_id is equal to MALE_ID 
+  def is_male
+    ( self.gender_type_id == GenderType::MALE_ID )
+  end
+
+  # Returns true if the current row's gender_type_id is equal to FEMALE_ID 
+  def is_female
+    ( self.gender_type_id == GenderType::FEMALE_ID )
+  end
+  # ----------------------------------------------------------------------------
+
 
   # Returns the array of distinct team names associated to the specified swimmer_id.
   # An empty array when not found.
+  #
+  # This is useful to create multiple links to team-related data, looping on each
+  # item.
   #
   def self.get_team_names( swimmer_id )
     swimmer = Swimmer.find_by_id( swimmer_id )
@@ -73,6 +87,38 @@ class Swimmer < ActiveRecord::Base
   # names associated with this instance.
   #
   def get_team_names
-    Swimmer.get_team_names( self.id ).join(', ')
+     self.teams.collect{ |row| row.name }.uniq.join(', ')
   end
+  # ----------------------------------------------------------------------------
+
+  # Returns the Badge row instance for the affiliation to <tt>team_id</tt> for
+  # the specified <tt>season_id</tt>.
+  # Returns +nil+ when not found.
+  #
+  def get_badge_for( season_id, team_id )
+     self.badges.includes(:season, :team).where( :season_id => season_id, :team_id => team_id ).first
+  end
+
+  # Returns an +Array+ of Badge row instances linked to this Swimmer,
+  # possibly filtered by season, if the parameter is given.
+  #
+  def get_badges_array( season_id = nil )
+     all_badges = self.badges.includes(:season, :team)
+     all_badges = all_badges.where( :season_id => season_id ) if season_id
+     all_badges
+  end
+
+  # Similarly to <tt>self.get_team_names( swimmer_id )</tt>, returns an +Array+
+  # where each item is a String composed of the TeamAffiliation's Badge number and
+  # the corresponding Team name.
+  #
+  # This is useful to create multiple links to team-related data, looping on each
+  # item.
+  # The parameter, when present, allows to filter the results by season.
+  #
+  def get_badges_with_team_names_array( season_id = nil )
+     all_badges = get_badges_array( season_id )
+     all_badges.collect{ |row| "#{I18n.t('badge.short')} #{row.number}, #{row.team.editable_name}" }
+  end
+  # ----------------------------------------------------------------------------
 end

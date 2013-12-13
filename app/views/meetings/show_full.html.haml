@@ -1,15 +1,17 @@
 %ul.nav.nav-tabs#topOfPage
-  %li.active
+  %li.active#firstTab
     = link_to(t(:results), '#')
   %li
-    = link_to(t(:ranking), show_ranking_meeting_path(@meeting))
-  %li.disabled
-    = link_to(t(:team_results), '#')
+    = link_to(t(:ranking), show_ranking_meeting_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
+  %li{ :class => (@preselected_team_id ? '' : 'disabled') }
+    = link_to(t(:stats), (@preselected_team_id ? show_stats_meeting_path(:id=>@meeting.id, :team_id=>@preselected_team_id) : '#'))
+  %li{ :class => (@preselected_team_id ? '' : 'disabled') }
+    = link_to(t(:team_results), (@preselected_team_id ? show_team_results_meeting_path(:id=>@meeting.id, :team_id=>@preselected_team_id) : '#'))
   %li.disabled
     = link_to(t(:swimmer_results), '#')
 
 .row
-  %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom#goggles-float-list
+  %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
     %li
       %a(href="#topOfPage")= I18n.t(:top_of_page)
     - @meeting_events_list.each do |me|
@@ -21,3 +23,6 @@
 .row-fluid
   .span12
     = render( partial: 'full_results_grid' )
+
+%script
+  $('#firstTab').addClass('active');

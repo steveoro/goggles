@@ -41,7 +41,17 @@ class GenderType < ActiveRecord::Base
     I18n.t( "i18n_gender_type_#{ self.code }".to_sym, {:scope=>[:gender_types]} )
   end
   # ----------------------------------------------------------------------------
-  #++
+
+  # Returns true if the current row's ID is equal to MALE_ID 
+  def is_male
+    ( self.id == MALE_ID )
+  end
+
+  # Returns true if the current row's ID is equal to FEMALE_ID 
+  def is_female
+    ( self.id == FEMALE_ID )
+  end
+  # ----------------------------------------------------------------------------
 
 
   # Label symbol corresponding to either a column name or a model method to be used

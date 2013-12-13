@@ -448,6 +448,7 @@ it:
 
   badge:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Cartellini! (tab: 'badges')"
+    short: "Cart."
 
   city:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Citta'! (tab: 'cities')"
@@ -729,7 +730,9 @@ it:
   ranking: "Classifica"
   rankings: "Classifiche"
   results: "Risultati"
+  stats: "Statistiche"
   team_results: "Risultati di Squadra"
+  team_stats: "Statistiche di Squadra"
   individual_results: "Risultati individuali"
   swimmer_results: "Risultati individuali"
   search_meetings: "Cerca Gare"

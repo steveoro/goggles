@@ -30,8 +30,9 @@ Goggles::Application.routes.draw do
         member do
           get 'show_full'
           get 'show_ranking'
-          get 'show_swimmer_results'
+          get 'show_stats'
           get 'show_team_results'
+          get 'show_swimmer_results'
         end
       end
 

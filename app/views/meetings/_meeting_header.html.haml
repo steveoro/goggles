@@ -12,9 +12,9 @@
             = @meeting.id if @meeting
         .row-fluid
           .span2
-            = I18n.t(:season_type, {:scope=>[:activerecord, :models]}) +':'
+            = I18n.t(:season, {:scope=>[:activerecord, :models]}) +':'
           .span10
-            = @meeting.get_season_type
+            = @meeting.season.get_full_name
             = admin_signed_in? ? " (season.id=#{@meeting.season_id})" : ''
         .row-fluid
           .span2

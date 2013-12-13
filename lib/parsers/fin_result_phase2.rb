@@ -1248,12 +1248,12 @@ module FinResultPhase2
     meeting_prgs_ids    = meeting_prgs.collect{ |row| row.id }
     di_meeting_prgs_ids = di_meeting_prgs.collect{ |row| row.id }
                                                     # Collect ALL relay results:
-    relay_results += MeetingRelayResult.is_valid_for_score.where(
+    relay_results += MeetingRelayResult.is_valid.where(
       :meeting_program_id => meeting_prgs_ids,
       :team_id => -team_id
     ) if ( team_id < 0 )
 
-    relay_results += DataImportMeetingRelayResult.is_valid_for_score.where(
+    relay_results += DataImportMeetingRelayResult.is_valid.where(
       [ "(#{team_id < 0 ? '' : 'data_import_'}team_id = ?) AND " +
         "( (meeting_program_id IN (?)) OR (data_import_meeting_program_id IN (?)) )",
         (team_id < 0 ? -team_id : team_id),

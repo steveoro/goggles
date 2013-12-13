@@ -53,8 +53,8 @@ class MeetingsController < ApplicationController
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
 # DEBUG
-    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
-    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
+#    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
+#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
     @meeting_events_list = @meeting.meeting_events.includes(
       :event_type, :stroke_type
@@ -64,38 +64,170 @@ class MeetingsController < ApplicationController
   end
   # ----------------------------------------------------------------------------
 
-  # Show all details regarding a single Swimmer for the whole Meeting
-  # === Params:
-  # - :id => Meeting row id.
-  # - :swimmer_id => Swimmer id.
-  #
-  def show_swimmer_results
-    swimmer_id = params[:swimmer_id].to_i
-    meeting_id = params[:id].to_i
-    unless ( meeting_id > 0 && swimmer_id > 0 )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
-    end
 
-    @meeting = Meeting.find_by_id( meeting_id )
+  # Show the ranking regarding a single Meeting
+  # Assumes params[:id] refers to a specific Meeting row.
+  #
+  # Supports also the facultative params[:team_id] to highlight a specific team
+  #
+  def show_ranking
+    meeting_id = params[:id].to_i
+    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_path() ) and return
     end
+    @preselected_team_id = params[:team_id]
+# DEBUG
+#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
-    @individual_result_list = MeetingIndividualResult.includes(:meeting).where(
-      [
-        'meetings.id = ? AND meeting_individual_results.swimmer_id = ?',
-        meeting_id, swimmer_id
-      ]
-    )
-    unless ( @individual_result_list.size > 0 )
-      flash[:error] = I18n.t(:no_result_to_show)
-      redirect_to( meetings_path() ) and return
+    if ( @meeting.meeting_team_scores.count > 0 )
+      @meeting_team_scores = @meeting.meeting_team_scores.includes(
+        :team, :team_affiliation
+      ).order(
+        'meeting_team_scores.rank'
+      )
+    else
+      team_scores_hash = {}
+      mir = @meeting.meeting_individual_results.is_valid
+      mrr = @meeting.meeting_relay_results.is_valid
+                                                    # Sum all individual scores into each team score row:
+      mir.each { |ind_result|
+        team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( :team_id => ind_result.team_id, :meeting_id => meeting_id )
+        team_score.sum_individual_points += ind_result.standard_points
+                                                    # Save the updated score into the collection Hash:
+        team_scores_hash[ ind_result.team_id ] = team_score
+      }
+                                                    # Sum all relay scores into each team score row:
+      mrr.each { |relay_result|
+        team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( :team_id => relay_result.team_id, :meeting_id => meeting_id )
+        team_score.sum_relay_points += relay_result.standard_points
+                                                    # Save the updated score into the collection Hash:
+        team_scores_hash[ relay_result.team_id ] = team_score
+      }
+                                                    # Collect the individual score rows and sort them:
+      @meeting_team_scores = team_scores_hash.values
+      @meeting_team_scores.sort!{ |a, b|
+        (b.sum_individual_points + b.sum_relay_points) <=> (a.sum_individual_points + a.sum_relay_points) 
+      }
+                                                    # Update ranking and total score:
+      @meeting_team_scores.each_with_index{ |team_score, index|
+        team_score.rank = index + 1
+        team_score.sum_team_points = team_score.sum_individual_points + team_score.sum_relay_points
+      }
+      @meeting_team_scores
     end
-    @swimmer = @individual_result_list.first.swimmer
   end
   # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+
+  # Computes and shows all the statistics regarding the whole Meeting.
+  #
+  # === Params:
+  # - :id => Meeting row id.
+  # - :team_id => (facultative) used as a pass-throught parameter in the tabbed links
+  #
+  def show_stats
+    meeting_id = params[:id].to_i
+    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
+    unless ( @meeting )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_path() ) and return
+    end
+    @preselected_team_id = params[:team_id]
+# DEBUG
+#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
+
+######################### WIP ##################
+
+
+# TODO For each Category:
+# - list category, Male count, female count, tot. count
+# - list row totals 
+
+# TODO For each EventType:
+# - list event_type:, Male count, female count, tot. count 
+# - list row totals
+
+# TODO Specials / misc:
+# - oldest_male_athlete:    Atleta maschio meno giovane (Cognome e nome ed anno)
+# - oldest_female_athlete:  Idem per femmina
+# - best_3_male_scores:     3 punteggi tabellari (standard_points) maschili maggiori
+# - best_3_female_scores:   3 punteggi tabellari (standard_points) fem. maggiori
+# - worst_male_score:       punteggio speciale (worst) peggiore maschio
+# - worst_female_score:     punteggio speciale (worst) peggiore fem.
+
+# TODO
+
+    teams_hash = {}
+    # Stores, for each Team id as key:
+    # team_id => [ Team name, Male count, female count, tot. count ], 
+    # row_totals = [ <array of row totals> ]
+    # Sort resulting list by team name, ASC 
+
+    categories_hash = {}
+    # Stores, for each category id as key:
+    # team_id => [ category name, Male count, female count, tot. count ], 
+    # row_totals = [ <array of row totals> ]
+    # Sort resulting list by team name, ASC 
+
+    event_types_hash = {}
+    # Stores, for each EventType id as key:
+    # team_id => [ EventType name, Male count, female count, tot. count ], 
+    # row_totals = [ <array of row totals> ]
+    # Sort resulting list by team name, ASC 
+    specials_hash = {}
+
+    mir = @meeting.meeting_individual_results.is_valid
+                                                  # Loop upon all individual results and count the athletes:
+    mir.each { |ind_result|
+      male   = ind_result.swimmer.is_male ? 1 : 0
+      female = ind_result.swimmer.is_female ? 1 : 0
+      if teams_hash[ ind_result.team_id ].nil?
+        teams_hash[ ind_result.team_id ] = [ind_result.team.get_full_name, male, female, male + female ]
+      else
+        curr_arr = teams_hash[ ind_result.team_id ]
+        curr_arr[1] += male
+        curr_arr[2] += female
+        curr_arr[3] += male + female
+      end
+      
+      # TODO collect here also categories_hash, event_types_hash & specials_hash
+    }
+
+######################### WIP ################## the following code is used just to have a test output:
+    mrr = @meeting.meeting_relay_results.is_valid
+    team_scores_hash = {}
+                                                  # Sum all individual scores into each team score row:
+    mir.each { |ind_result|
+      team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( :team_id => ind_result.team_id, :meeting_id => meeting_id )
+      team_score.sum_individual_points += ind_result.standard_points
+                                                  # Save the updated score into the collection Hash:
+      team_scores_hash[ ind_result.team_id ] = team_score
+    }
+                                                  # Sum all relay scores into each team score row:
+    mrr.each { |relay_result|
+      team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( :team_id => relay_result.team_id, :meeting_id => meeting_id )
+      team_score.sum_relay_points += relay_result.standard_points
+                                                  # Save the updated score into the collection Hash:
+      team_scores_hash[ relay_result.team_id ] = team_score
+    }
+                                                  # Collect the individual score rows and sort them:
+    @meeting_team_scores = team_scores_hash.values
+    @meeting_team_scores.sort!{ |a, b|
+      (b.sum_individual_points + b.sum_relay_points) <=> (a.sum_individual_points + a.sum_relay_points) 
+    }
+                                                  # Update ranking and total score:
+    @meeting_team_scores.each_with_index{ |team_score, index|
+      team_score.rank = index + 1
+      team_score.sum_team_points = team_score.sum_individual_points + team_score.sum_relay_points
+    }
+    @meeting_team_scores
+  end
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
 
   # Show all details regarding a single Team for the whole Meeting.
   #
@@ -178,22 +310,37 @@ class MeetingsController < ApplicationController
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
-  # Show the ranking regarding a single Meeting
-  # Assumes params[:id] refers to a specific Meeting row.
+
+  # Show all details regarding a single Swimmer for the whole Meeting
+  # === Params:
+  # - :id => Meeting row id.
+  # - :swimmer_id => Swimmer id.
   #
-  def show_ranking
+  def show_swimmer_results
+    swimmer_id = params[:swimmer_id].to_i
     meeting_id = params[:id].to_i
-    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
+    unless ( meeting_id > 0 && swimmer_id > 0 )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_path() ) and return
+    end
+
+    @meeting = Meeting.find_by_id( meeting_id )
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_path() ) and return
     end
 
-    @meeting_team_scores = @meeting.meeting_team_scores.includes(
-      :team, :team_affiliation
-    ).order(
-      'meeting_team_scores.rank'
+    @individual_result_list = MeetingIndividualResult.includes(:meeting).where(
+      [
+        'meetings.id = ? AND meeting_individual_results.swimmer_id = ?',
+        meeting_id, swimmer_id
+      ]
     )
+    unless ( @individual_result_list.size > 0 )
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_path() ) and return
+    end
+    @swimmer = @individual_result_list.first.swimmer
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------

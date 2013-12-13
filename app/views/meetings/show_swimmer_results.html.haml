@@ -1,26 +1,38 @@
+- team_id = @individual_result_list.first.team_id
+- team_name = @individual_result_list.first.team.get_full_name
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to(t(:results), show_full_meeting_path(@meeting))
+    = link_to(t(:results), show_full_meeting_path(:id=>@meeting.id, :team_id=>team_id))
   %li
-    = link_to(t(:ranking), show_ranking_meeting_path(@meeting))
-  %li.disabled
-    = link_to(t(:team_results), '#')
+    = link_to(t(:ranking), show_ranking_meeting_path(:id=>@meeting.id, :team_id=>team_id))
+  %li
+    = link_to(t(:stats), show_stats_meeting_path(:id=>@meeting.id, :team_id=>team_id))
+  %li
+    = link_to(t(:team_results), show_team_results_meeting_path(:id=>@meeting.id, :team_id=>team_id))
   %li.active
     = link_to(t(:swimmer_results), '#')
 
 = render( partial: 'meeting_header' )
 
 .row-fluid.span12
-  .span3
+  - season_id = @meeting.season_id
+  - season_name = @meeting.season.get_full_name
+  .span3.alert.alert-success
     %h4= @swimmer.get_full_name
   .span1
     %h4= @swimmer.year_of_birth
-  .span2
+  .span1
     %h4= @individual_result_list.first.get_category_and_gender_short
-  .span6
+  .span2
+    - badge = @swimmer.get_badge_for( season_id, team_id )
+    %h4= badge ? "#{I18n.t('badge.short')} #{badge.number}" : "(#{I18n.t('badge.short')} ?)"
+    %i= season_name
+  .span5
     %h4
-      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>@individual_result_list.first.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
-        = @swimmer.get_team_names
+      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+        = team_name
+
+.row-fluid.span12
 
 .row-fluid
   %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -79,17 +91,13 @@
               = ''
           %td.span1.goggles-td.goggles-rightalign
             - seasonal_bests = MeetingIndividualResult.get_records_for( event_type_code, category_type_id, gender_type_id, pool_type_id )
-            - if seasonal_bests.size > 0
-              %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>seasonal_bests.first.meeting.id, :swimmer_id=>seasonal_bests.first.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                %p= seasonal_bests.first.get_timing
-                %p= seasonal_bests.first.get_athlete_name
-            - else
-              = ''
+            %p= (seasonal_bests.size > 0 ? seasonal_bests.first.get_timing : '')
+            - seasonal_bests.sort.each do |mir_best|
+              %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ show_full_meeting_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{mir_best.meeting.description})"}
+                %p= mir_best.get_athlete_name
           %td.span1.goggles-td.goggles-rightalign
             - meeting_bests  = MeetingIndividualResult.get_records_for( event_type_code, category_type_code, gender_type_id, nil, meeting_id )
-            - if meeting_bests.size > 0
-              %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>meeting_bests.first.meeting.id, :swimmer_id=>meeting_bests.first.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                %p= meeting_bests.first.get_timing
-                %p= meeting_bests.first.get_athlete_name
-            - else
-              = ''
+            %p= (meeting_bests.size > 0 ? meeting_bests.first.get_timing : '')
+            - meeting_bests.sort.each do |mir_best|
+              %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ show_full_meeting_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{mir_best.meeting.description})"}
+                %p= mir_best.get_athlete_name
