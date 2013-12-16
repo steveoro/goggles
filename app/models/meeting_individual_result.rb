@@ -113,6 +113,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Retrieves the localized Event Type ID as it is; returns 0 in case of an invalid record
+  def get_event_type_id
+    self.event_type ? self.event_type.id : 0
+  end
+
   # Retrieves the localized Event Type code (short)
   def get_event_type
     self.event_type ? self.event_type.i18n_short : '?'
@@ -137,6 +142,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Retrieves the Category Type code as it is; returns '?' in case of an invalid record
   def get_category_type_code
     self.category_type ? self.category_type.code : '?'
+  end
+
+  # Retrieves the Category Type short name as it is; returns '?' in case of an invalid record
+  def get_category_type_short_name
+    self.category_type ? self.category_type.short_name : '?'
   end
   # ----------------------------------------------------------------------------
 

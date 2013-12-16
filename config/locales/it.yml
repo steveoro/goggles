@@ -531,6 +531,26 @@ it:
     seasonal_best: "Stagionale"
     meeting_best: "Rec. Meeting"
 
+  meeting_stats:
+    females: "Femmine"
+    males: "Maschi"
+    total: "Totale"
+    team_athletes: "Atleti per ogni Squadra"
+    category_athletes: "Atleti per Categoria"
+    event_athletes: "Atleti per Gara"
+    tot_athletes_by_event: "Tot. Atleti / Gara"
+    specials: "Speciali"
+    oldest_male_athlete: "Atleta maschio meno giovane"
+    oldest_female_athlete: "Atleta femmina meno giovane"
+    worst_male_score: "Peggior Punteggio maschi"
+    worst_female_score: "Peggior Punteggio femmine"
+    best_1st_male_score: "1° miglior Punteggio maschi"
+    best_2nd_male_score: "2° miglior Punteggio maschi"
+    best_3rd_male_score: "3° miglior Punteggio maschi"
+    best_1st_female_score: "1° miglior Punteggio femmine"
+    best_2nd_female_score: "2° miglior Punteggio femmine"
+    best_3rd_female_score: "3° miglior Punteggio femmine"
+
 
   agex_action:
     main: Principale

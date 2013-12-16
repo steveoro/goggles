@@ -115,7 +115,6 @@ class MeetingsController < ApplicationController
         team_score.rank = index + 1
         team_score.sum_team_points = team_score.sum_individual_points + team_score.sum_relay_points
       }
-      @meeting_team_scores
     end
   end
   # ----------------------------------------------------------------------------
@@ -126,7 +125,8 @@ class MeetingsController < ApplicationController
   #
   # === Params:
   # - :id => Meeting row id.
-  # - :team_id => (facultative) used as a pass-throught parameter in the tabbed links
+  # - :team_id => (facultative) used as a pass-throught parameter in the tabbed links,
+  #               just to highlight a specific team
   #
   def show_stats
     meeting_id = params[:id].to_i
@@ -137,93 +137,104 @@ class MeetingsController < ApplicationController
     end
     @preselected_team_id = params[:team_id]
 # DEBUG
-#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
-
-######################### WIP ##################
-
-
-# TODO For each Category:
-# - list category, Male count, female count, tot. count
-# - list row totals 
-
-# TODO For each EventType:
-# - list event_type:, Male count, female count, tot. count 
-# - list row totals
-
-# TODO Specials / misc:
-# - oldest_male_athlete:    Atleta maschio meno giovane (Cognome e nome ed anno)
-# - oldest_female_athlete:  Idem per femmina
-# - best_3_male_scores:     3 punteggi tabellari (standard_points) maschili maggiori
-# - best_3_female_scores:   3 punteggi tabellari (standard_points) fem. maggiori
-# - worst_male_score:       punteggio speciale (worst) peggiore maschio
-# - worst_female_score:     punteggio speciale (worst) peggiore fem.
-
-# TODO
+#    logger.debug "@preselected_team_id : #{params[:team_id]}"
 
     teams_hash = {}
     # Stores, for each Team id as key:
-    # team_id => [ Team name, Male count, female count, tot. count ], 
-    # row_totals = [ <array of row totals> ]
+    # team_id => [ [array of processed swimmer ids], Team name, Male count, female count, tot. count, is_highlighted ], 
     # Sort resulting list by team name, ASC 
 
     categories_hash = {}
     # Stores, for each category id as key:
-    # team_id => [ category name, Male count, female count, tot. count ], 
-    # row_totals = [ <array of row totals> ]
+    # team_id => [ [array of processed swimmer ids], category name, Male count, female count, tot. count ], 
     # Sort resulting list by team name, ASC 
 
     event_types_hash = {}
     # Stores, for each EventType id as key:
     # team_id => [ EventType name, Male count, female count, tot. count ], 
-    # row_totals = [ <array of row totals> ]
     # Sort resulting list by team name, ASC 
-    specials_hash = {}
+
+    @specials_hash = {}
+    # Stores, for the current meeting:
+    # - :oldest_male_athlete
+    # - :oldest_female_athlete
+    # - :best_3_male_scores
+    # - :best_3_female_scores
+    # - :worst_male_score
+    # - :worst_female_score
 
     mir = @meeting.meeting_individual_results.is_valid
-                                                  # Loop upon all individual results and count the athletes:
-    mir.each { |ind_result|
-      male   = ind_result.swimmer.is_male ? 1 : 0
-      female = ind_result.swimmer.is_female ? 1 : 0
+                                                    # Loop upon all individual results and count the athletes, without duplicates (each athlete may have more than 1 result for its own team):
+    mir.each { |ind_result|                         # "1 loop to bind them all..."
+      swimmer = ind_result.swimmer
+      male   = swimmer.is_male ? 1 : 0
+      female = swimmer.is_female ? 1 : 0
+      male_female = male + female
+                                                    # Collect athletes' gender for each team:
       if teams_hash[ ind_result.team_id ].nil?
-        teams_hash[ ind_result.team_id ] = [ind_result.team.get_full_name, male, female, male + female ]
+        teams_hash[ ind_result.team_id ] = [ [ind_result.swimmer_id], ind_result.team.get_full_name, male, female, male_female, (ind_result.team_id == @preselected_team_id.to_i) ]
       else
-        curr_arr = teams_hash[ ind_result.team_id ]
-        curr_arr[1] += male
-        curr_arr[2] += female
-        curr_arr[3] += male + female
+        team_arr = teams_hash[ ind_result.team_id ]
+        unless team_arr[0].include?( ind_result.swimmer_id )
+          team_arr[0] << ind_result.swimmer_id      # Add current result's swimmer to the "already processed list"
+          team_arr[2] += male
+          team_arr[3] += female
+          team_arr[4] += male_female
+        end
       end
-      
-      # TODO collect here also categories_hash, event_types_hash & specials_hash
+                                                    # Collect athletes' gender for each category, without duplicates (each athlete may have more than 1 result for its own category):
+      if categories_hash[ ind_result.get_category_type_id ].nil?
+        categories_hash[ ind_result.get_category_type_id ] = [ [ind_result.swimmer_id], ind_result.get_category_type_short_name, male, female, male_female ]
+      else
+        cat_arr = categories_hash[ ind_result.get_category_type_id ]
+        unless cat_arr[0].include?( ind_result.swimmer_id )
+          cat_arr[0] << ind_result.swimmer_id       # Add current result's swimmer to the "already processed list" 
+          cat_arr[2] += male
+          cat_arr[3] += female
+          cat_arr[4] += male_female
+        end
+      end
+                                                    # Collect athletes' gender for each event type (each athlete will ALWAYS have just 1 result for each event type):
+      if event_types_hash[ ind_result.get_event_type_id ].nil?
+        event_types_hash[ ind_result.get_event_type_id ] = [ ind_result.get_event_type_description, male, female, male_female ]
+      else
+        evnt_arr = event_types_hash[ ind_result.get_event_type_id ]
+        evnt_arr[1] += male
+        evnt_arr[2] += female
+        evnt_arr[3] += male_female
+      end
+                                                    # Collect also the specials:
+      if ( male == 1 )
+        @specials_hash[ :oldest_male_athlete ] ||= swimmer
+# FIXME: MUST use a sorted query to get first-3 best scores from ind. results
+        @specials_hash[ :best_1st_male_score ] ||= ind_result
+        @specials_hash[ :best_2nd_male_score ] ||= ind_result
+        @specials_hash[ :best_3rd_male_score ] ||= ind_result
+        @specials_hash[ :worst_male_score    ] ||= ind_result
+        @specials_hash[ :oldest_male_athlete ] = swimmer    if @specials_hash[ :oldest_male_athlete ].year_of_birth > swimmer.year_of_birth
+        @specials_hash[ :best_1st_male_score ] = ind_result if @specials_hash[ :best_1st_male_score ].standard_points < ind_result.standard_points
+        @specials_hash[ :best_2nd_male_score ] = ind_result if @specials_hash[ :best_2nd_male_score ].standard_points < ind_result.standard_points
+        @specials_hash[ :best_3rd_male_score ] = ind_result if @specials_hash[ :best_3rd_male_score ].standard_points < ind_result.standard_points
+        @specials_hash[ :worst_male_score    ] = ind_result if @specials_hash[ :worst_male_score    ].standard_points > ind_result.standard_points
+      else
+        @specials_hash[ :oldest_female_athlete ] ||= swimmer
+        @specials_hash[ :best_1st_female_score ] ||= ind_result
+        @specials_hash[ :best_2nd_female_score ] ||= ind_result
+        @specials_hash[ :best_3rd_female_score ] ||= ind_result
+        @specials_hash[ :worst_female_score    ] ||= ind_result
+        @specials_hash[ :oldest_female_athlete ] = swimmer    if @specials_hash[ :oldest_female_athlete ].year_of_birth > swimmer.year_of_birth
+        @specials_hash[ :best_1st_female_score ] = ind_result if @specials_hash[ :best_1st_female_score ].standard_points < ind_result.standard_points
+        @specials_hash[ :best_2nd_female_score ] = ind_result if @specials_hash[ :best_2nd_female_score ].standard_points < ind_result.standard_points
+        @specials_hash[ :best_3rd_female_score ] = ind_result if @specials_hash[ :best_3rd_female_score ].standard_points < ind_result.standard_points
+        @specials_hash[ :worst_female_score    ] = ind_result if @specials_hash[ :worst_female_score    ].standard_points > ind_result.standard_points
+      end
     }
-
-######################### WIP ################## the following code is used just to have a test output:
-    mrr = @meeting.meeting_relay_results.is_valid
-    team_scores_hash = {}
-                                                  # Sum all individual scores into each team score row:
-    mir.each { |ind_result|
-      team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( :team_id => ind_result.team_id, :meeting_id => meeting_id )
-      team_score.sum_individual_points += ind_result.standard_points
-                                                  # Save the updated score into the collection Hash:
-      team_scores_hash[ ind_result.team_id ] = team_score
-    }
-                                                  # Sum all relay scores into each team score row:
-    mrr.each { |relay_result|
-      team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( :team_id => relay_result.team_id, :meeting_id => meeting_id )
-      team_score.sum_relay_points += relay_result.standard_points
-                                                  # Save the updated score into the collection Hash:
-      team_scores_hash[ relay_result.team_id ] = team_score
-    }
-                                                  # Collect the individual score rows and sort them:
-    @meeting_team_scores = team_scores_hash.values
-    @meeting_team_scores.sort!{ |a, b|
-      (b.sum_individual_points + b.sum_relay_points) <=> (a.sum_individual_points + a.sum_relay_points) 
-    }
-                                                  # Update ranking and total score:
-    @meeting_team_scores.each_with_index{ |team_score, index|
-      team_score.rank = index + 1
-      team_score.sum_team_points = team_score.sum_individual_points + team_score.sum_relay_points
-    }
-    @meeting_team_scores
+                                                  # Prepare the team gender count list and sort it by name:
+    @teams_array = teams_hash.values.sort{ |a, b|  a[1] <=> b[1] }
+                                                  # Prepare the category gender count list and sort it by category ID (hash key):
+    @categories_array = categories_hash.keys.sort.collect{ |k| categories_hash[k] }
+                                                  # Prepare the event type gender count list and sort it by name:
+    @event_types_array = event_types_hash.values.sort{ |a, b|  a[0] <=> b[0] }
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------

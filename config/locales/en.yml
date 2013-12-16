@@ -529,6 +529,26 @@ en:
     seasonal_best: "Season Best"
     meeting_best: "Meeting Best"
 
+  meeting_stats:
+    females: "Females"
+    males: "Males"
+    total: "Total"
+    team_athletes: "Athletes for each Team"
+    category_athletes: "Athletes by Category"
+    event_athletes: "Athletes by Event"
+    tot_athletes_by_event: "Tot. Athletes / Event"
+    specials: "Specials"
+    oldest_male_athlete: "Oldest male Athlete"
+    oldest_female_athlete: "Oldest female Athlete"
+    worst_male_score: "Worst male Score"
+    worst_female_score: "Worst female Score"
+    best_1st_male_score: "1st-best male Score"
+    best_2nd_male_score: "2nd-best male Score"
+    best_3rd_male_score: "3rd-best male Score"
+    best_1st_female_score: "1st-best female Score"
+    best_2nd_female_score: "2nd-best female Score"
+    best_3rd_female_score: "3rd-best female Score"
+
 
   agex_action:
     main: Main
