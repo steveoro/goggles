@@ -1,23 +1,33 @@
 .row-fluid
-  .span6
+  .span10
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
-          %td.span6{'colspan'=>'4'}
+          %td.span10.goggles-centeralign{'colspan'=>'8'}
             %b= I18n.t(:stats)
         %tr{'class'=>'success'}
-          %td.span3
+          %td.span3.goggles-centeralign
             %b
               %i= I18n.t('meeting_stats.team_athletes')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.females')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.males')
-          %td.span1
+          %td.span1.goggles-centeralign
+            %i= I18n.t('meeting_stats.total')
+          %td.span1.goggles-centeralign
+            = image_tag( "medal_gold_3.png" )
+          %td.span1.goggles-centeralign
+            = image_tag( "medal_silver_3.png" )
+          %td.span1.goggles-centeralign
+            = image_tag( "medal_bronze_3.png" )
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.total')
         - gtot_name = gtot_fem = gtot_mal = gtot = 0
+        - tot_gold = tot_silver = tot_bronze = tot_medals = 0
         - @teams_array.each do |team_array|
-          - name = team_array[1]
+          - team_id = team_array[0]
+          - name    = team_array[1]
           - tot_fem = team_array[2]
           - tot_mal = team_array[3]
           - sub_tot = team_array[4]
@@ -26,15 +36,29 @@
           - gtot_fem  += tot_fem
           - gtot_mal  += tot_mal
           - gtot      += sub_tot
+          - tot_gold   += team_array[6]
+          - tot_silver += team_array[7]
+          - tot_bronze += team_array[8]
+          - subtot_medals = team_array[6] + team_array[7] + team_array[8]
+          - tot_medals += subtot_medals
           %tr{'class' => is_highlighted ? 'warning' : ''}
             %td.span3
-              = name
+              %a{'id'=>"team#{team_id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+                = name
             %td.span1.goggles-rightalign
               = tot_fem
             %td.span1.goggles-rightalign
               = tot_mal
             %td.span1.goggles-rightalign
               = sub_tot
+            %td.span1.goggles-rightalign
+              = team_array[6]
+            %td.span1.goggles-rightalign
+              = team_array[7]
+            %td.span1.goggles-rightalign
+              = team_array[8]
+            %td.span1.goggles-rightalign
+              = subtot_medals
         %tr
           %td.span3.goggles-rightalign
             %i= gtot_name
@@ -44,6 +68,14 @@
             %i= gtot_mal
           %td.span1.goggles-rightalign
             %i= gtot
+          %td.span1.goggles-rightalign
+            %i= tot_gold
+          %td.span1.goggles-rightalign
+            %i= tot_silver
+          %td.span1.goggles-rightalign
+            %i= tot_bronze
+          %td.span1.goggles-rightalign
+            %i= tot_medals
 .row-fluid
   .span12
 
@@ -52,14 +84,14 @@
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
-          %td.span2
+          %td.span2.goggles-centeralign
             %b
               %i= I18n.t('meeting_stats.category_athletes')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.females')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.males')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.total')
         - gtot_name = gtot_fem = gtot_mal = gtot = 0
         - @categories_array.each do |category_array|
@@ -97,14 +129,14 @@
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
-          %td.span2
+          %td.span2.goggles-centeralign
             %b
               %i= I18n.t('meeting_stats.event_athletes')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.females')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.males')
-          %td.span1
+          %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.total')
         - gtot_name = gtot_fem = gtot_mal = gtot = 0
         - @event_types_array.each do |event_type_array|
@@ -138,18 +170,18 @@
   .span12
 
 .row-fluid
-  .span6
+  .span7
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
-          %td.span2
+          %td.span3.goggles-centeralign
             %b
               %i= I18n.t('meeting_stats.specials')
           %td.span1
           %td.span2
           %td.span1
         %tr
-          %td.span2
+          %td.span3
             = I18n.t('meeting_stats.oldest_female_athlete')
           %td.span1.goggles-rightalign
             = @specials_hash[ :oldest_female_athlete ].year_of_birth
@@ -157,7 +189,7 @@
             = @specials_hash[ :oldest_female_athlete ].get_full_name
           %td.span1.goggles-rightalign
         %tr
-          %td.span2
+          %td.span3
             = I18n.t('meeting_stats.best_1st_female_score')
           %td.span1.goggles-rightalign
             = @specials_hash[ :best_1st_female_score ].standard_points
@@ -166,7 +198,7 @@
           %td.span1
             = @specials_hash[ :best_1st_female_score ].get_event_type
         %tr
-          %td.span2
+          %td.span3
             = I18n.t('meeting_stats.worst_female_score')
           %td.span1.goggles-rightalign
             = @specials_hash[ :worst_female_score ].standard_points
@@ -175,7 +207,7 @@
           %td.span1
             = @specials_hash[ :worst_female_score ].get_event_type
         %tr
-          %td.span2
+          %td.span3
             = I18n.t('meeting_stats.oldest_male_athlete')
           %td.span1.goggles-rightalign
             = @specials_hash[ :oldest_male_athlete ].year_of_birth
@@ -183,7 +215,7 @@
             = @specials_hash[ :oldest_male_athlete ].get_full_name
           %td.span1.goggles-rightalign
         %tr
-          %td.span2
+          %td.span3
             = I18n.t('meeting_stats.best_1st_male_score')
           %td.span1.goggles-rightalign
             = @specials_hash[ :best_1st_male_score ].standard_points
@@ -192,7 +224,7 @@
           %td.span1
             = @specials_hash[ :best_1st_male_score ].get_event_type
         %tr
-          %td.span2
+          %td.span3
             = I18n.t('meeting_stats.worst_male_score')
           %td.span1.goggles-rightalign
             = @specials_hash[ :worst_male_score ].standard_points

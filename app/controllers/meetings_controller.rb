@@ -141,18 +141,18 @@ class MeetingsController < ApplicationController
 
     teams_hash = {}
     # Stores, for each Team id as key:
-    # team_id => [ [array of processed swimmer ids], Team name, Male count, female count, tot. count, is_highlighted ], 
+    # team_id => [ [array of processed swimmer ids], Team name, Male count, female count, tot. count, is_highlighted, gold_count, silver_count, bronze_count ], 
     # Sort resulting list by team name, ASC 
 
     categories_hash = {}
     # Stores, for each category id as key:
-    # team_id => [ [array of processed swimmer ids], category name, Male count, female count, tot. count ], 
-    # Sort resulting list by team name, ASC 
+    # category_id => [ [array of processed swimmer ids], category name, Male count, female count, tot. count ], 
+    # Sort resulting list by category ID, ASC 
 
     event_types_hash = {}
     # Stores, for each EventType id as key:
-    # team_id => [ EventType name, Male count, female count, tot. count ], 
-    # Sort resulting list by team name, ASC 
+    # event_type_id => [ EventType name, Male count, female count, tot. count ], 
+    # Sort resulting list by event_type name, ASC 
 
     @specials_hash = {}
     # Stores, for the current meeting:
@@ -170,9 +170,22 @@ class MeetingsController < ApplicationController
       male   = swimmer.is_male ? 1 : 0
       female = swimmer.is_female ? 1 : 0
       male_female = male + female
+      gold   = ( ind_result.rank==1 && ind_result.is_valid_for_ranking ? 1 : 0 )
+      silver = ( ind_result.rank==2 && ind_result.is_valid_for_ranking ? 1 : 0 )
+      bronze = ( ind_result.rank==3 && ind_result.is_valid_for_ranking ? 1 : 0 )
                                                     # Collect athletes' gender for each team:
       if teams_hash[ ind_result.team_id ].nil?
-        teams_hash[ ind_result.team_id ] = [ [ind_result.swimmer_id], ind_result.team.get_full_name, male, female, male_female, (ind_result.team_id == @preselected_team_id.to_i) ]
+        teams_hash[ ind_result.team_id ] = [
+          [ind_result.swimmer_id],
+          ind_result.team.get_full_name,
+          male,
+          female,
+          male_female,
+          (ind_result.team_id == @preselected_team_id.to_i),
+          gold,
+          silver,
+          bronze
+        ]
       else
         team_arr = teams_hash[ ind_result.team_id ]
         unless team_arr[0].include?( ind_result.swimmer_id )
@@ -180,6 +193,10 @@ class MeetingsController < ApplicationController
           team_arr[2] += male
           team_arr[3] += female
           team_arr[4] += male_female
+          # idx 5 => is_highlighted
+          team_arr[6] += gold
+          team_arr[7] += silver
+          team_arr[8] += bronze
         end
       end
                                                     # Collect athletes' gender for each category, without duplicates (each athlete may have more than 1 result for its own category):
@@ -206,16 +223,16 @@ class MeetingsController < ApplicationController
                                                     # Collect also the specials:
       if ( male == 1 )
         @specials_hash[ :oldest_male_athlete ] ||= swimmer
-# FIXME: MUST use a sorted query to get first-3 best scores from ind. results
         @specials_hash[ :best_1st_male_score ] ||= ind_result
         @specials_hash[ :best_2nd_male_score ] ||= ind_result
         @specials_hash[ :best_3rd_male_score ] ||= ind_result
         @specials_hash[ :worst_male_score    ] ||= ind_result
         @specials_hash[ :oldest_male_athlete ] = swimmer    if @specials_hash[ :oldest_male_athlete ].year_of_birth > swimmer.year_of_birth
+# FIXME: Use a sorted query to get first-3 best scores from ind. results!
         @specials_hash[ :best_1st_male_score ] = ind_result if @specials_hash[ :best_1st_male_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :best_2nd_male_score ] = ind_result if @specials_hash[ :best_2nd_male_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :best_3rd_male_score ] = ind_result if @specials_hash[ :best_3rd_male_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :worst_male_score    ] = ind_result if @specials_hash[ :worst_male_score    ].standard_points > ind_result.standard_points
+        @specials_hash[ :best_2nd_male_score ] = ind_result if @specials_hash[ :best_2nd_male_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_1st_male_score ]
+        @specials_hash[ :best_3rd_male_score ] = ind_result if @specials_hash[ :best_3rd_male_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_2nd_male_score ]
+        @specials_hash[ :worst_male_score    ] = ind_result if @specials_hash[ :worst_male_score    ].standard_points > ind_result.standard_points && ind_result.standard_points > 0
       else
         @specials_hash[ :oldest_female_athlete ] ||= swimmer
         @specials_hash[ :best_1st_female_score ] ||= ind_result
@@ -223,13 +240,15 @@ class MeetingsController < ApplicationController
         @specials_hash[ :best_3rd_female_score ] ||= ind_result
         @specials_hash[ :worst_female_score    ] ||= ind_result
         @specials_hash[ :oldest_female_athlete ] = swimmer    if @specials_hash[ :oldest_female_athlete ].year_of_birth > swimmer.year_of_birth
+# FIXME: Use a sorted query to get first-3 best scores from ind. results!
         @specials_hash[ :best_1st_female_score ] = ind_result if @specials_hash[ :best_1st_female_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :best_2nd_female_score ] = ind_result if @specials_hash[ :best_2nd_female_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :best_3rd_female_score ] = ind_result if @specials_hash[ :best_3rd_female_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :worst_female_score    ] = ind_result if @specials_hash[ :worst_female_score    ].standard_points > ind_result.standard_points
+        @specials_hash[ :best_2nd_female_score ] = ind_result if @specials_hash[ :best_2nd_female_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_1st_female_score ]
+        @specials_hash[ :best_3rd_female_score ] = ind_result if @specials_hash[ :best_3rd_female_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_2nd_female_score ]
+        @specials_hash[ :worst_female_score    ] = ind_result if @specials_hash[ :worst_female_score    ].standard_points > ind_result.standard_points && ind_result.standard_points > 0
       end
     }
                                                   # Prepare the team gender count list and sort it by name:
+    teams_hash.each { |key, val| val[0] = key }   # Substitute each 0-th element with the key (team_id)
     @teams_array = teams_hash.values.sort{ |a, b|  a[1] <=> b[1] }
                                                   # Prepare the category gender count list and sort it by category ID (hash key):
     @categories_array = categories_hash.keys.sort.collect{ |k| categories_hash[k] }

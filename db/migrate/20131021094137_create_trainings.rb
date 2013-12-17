@@ -5,7 +5,7 @@ class CreateTrainings < ActiveRecord::Migration
       t.timestamps
 
       t.string :title, :limit => 100, :null => false, :default => '', :comment => "Description or purposed scope of this training"
-      t.text :description, :null => false, :default => '', :comment => "Description or purposed scope of this training"
+      t.text :description, :null => false, :comment => "Description or purposed scope of this training"
 
       t.references :swimmer_level_type
       t.references :user
