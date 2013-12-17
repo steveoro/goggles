@@ -80,8 +80,22 @@ table.table.goggles-meeting-team-results-table {
     margin-bottom: 8px;
 }
 
+table td.goggles-border-onlyright{
+	border-top: none;
+	border-right: 1px solid #DDDDDD;
+	border-bottom: none;
+	border-left: none;
+}
+
 table td.goggles-border-right{
 	border-right: 1px solid #DDDDDD;
+}
+
+table td.goggles-border-onlyleft{
+	border-top: none;
+	border-right: none;
+	border-bottom: none;
+	border-left: 1px solid #DDDDDD;
 }
 
 table td.goggles-noborder{

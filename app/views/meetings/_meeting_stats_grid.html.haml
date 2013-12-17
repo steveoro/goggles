@@ -23,7 +23,7 @@
             = image_tag( "medal_bronze_3.png" )
           %td.span1.goggles-centeralign
             %i= I18n.t('meeting_stats.total')
-        - gtot_name = gtot_fem = gtot_mal = gtot = 0
+        - gtot_name = gtot_fem = gtot_mal = gtot = curr_line = 0
         - tot_gold = tot_silver = tot_bronze = tot_medals = 0
         - @teams_array.each do |team_array|
           - team_id = team_array[0]
@@ -41,6 +41,24 @@
           - tot_bronze += team_array[8]
           - subtot_medals = team_array[6] + team_array[7] + team_array[8]
           - tot_medals += subtot_medals
+          - curr_line += 1
+          - if ( curr_line % 40 == 0 )
+            %tr{'class'=>'success'}
+              %td.span3
+              %td.span1.goggles-centeralign
+                %i= I18n.t('meeting_stats.females')
+              %td.span1.goggles-centeralign
+                %i= I18n.t('meeting_stats.males')
+              %td.span1.goggles-centeralign
+                %i= I18n.t('meeting_stats.total')
+              %td.span1.goggles-centeralign
+                = image_tag( "medal_gold_3.png" )
+              %td.span1.goggles-centeralign
+                = image_tag( "medal_silver_3.png" )
+              %td.span1.goggles-centeralign
+                = image_tag( "medal_bronze_3.png" )
+              %td.span1.goggles-centeralign
+                %i= I18n.t('meeting_stats.total')
           %tr{'class' => is_highlighted ? 'warning' : ''}
             %td.span3
               %a{'id'=>"team#{team_id}", 'href'=>"#{ show_team_results_meeting_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
@@ -170,7 +188,7 @@
   .span12
 
 .row-fluid
-  .span7
+  .span9
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
@@ -178,59 +196,58 @@
             %b
               %i= I18n.t('meeting_stats.specials')
           %td.span1
-          %td.span2
+          %td.span3
+          %td.span1
           %td.span1
         %tr
           %td.span3
             = I18n.t('meeting_stats.oldest_female_athlete')
           %td.span1.goggles-rightalign
+            = @meeting.header_date.year - @specials_hash[ :oldest_female_athlete ].year_of_birth.to_i
+            = image_tag( "cake.png" )
+          %td.span3
+            %a{'id'=>"swimmer#{@specials_hash[ :oldest_female_athlete ].id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ :oldest_female_athlete ].id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+              = @specials_hash[ :oldest_female_athlete ].get_full_name
+          %td.span1.goggles-rightalign
             = @specials_hash[ :oldest_female_athlete ].year_of_birth
-          %td.span2
-            = @specials_hash[ :oldest_female_athlete ].get_full_name
           %td.span1.goggles-rightalign
-        %tr
-          %td.span3
-            = I18n.t('meeting_stats.best_1st_female_score')
-          %td.span1.goggles-rightalign
-            = @specials_hash[ :best_1st_female_score ].standard_points
-          %td.span2
-            = @specials_hash[ :best_1st_female_score ].get_athlete_name
-          %td.span1
-            = @specials_hash[ :best_1st_female_score ].get_event_type
-        %tr
-          %td.span3
-            = I18n.t('meeting_stats.worst_female_score')
-          %td.span1.goggles-rightalign
-            = @specials_hash[ :worst_female_score ].standard_points
-          %td.span2
-            = @specials_hash[ :worst_female_score ].get_athlete_name
-          %td.span1
-            = @specials_hash[ :worst_female_score ].get_event_type
+        - [ :best_1st_female_score, :best_2nd_female_score, :best_3rd_female_score, :worst_female_score ].each do | key |
+          %tr
+            %td.span3
+              = I18n.t( key, :scope =>[:meeting_stats] )
+            %td.span1.goggles-rightalign
+              = sprintf( "%02.2f", @specials_hash[ key ].standard_points )
+            %td.span3
+              %a{'id'=>"swimmer#{@specials_hash[ key ].id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ key ].swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                = @specials_hash[ key ].get_athlete_name
+            %td.span1.goggles-rightalign
+              = @specials_hash[ key ].get_year_of_birth
+            %td.span1
+              = @specials_hash[ key ].get_event_type
         %tr
           %td.span3
             = I18n.t('meeting_stats.oldest_male_athlete')
           %td.span1.goggles-rightalign
+            = @meeting.header_date.year - @specials_hash[ :oldest_male_athlete ].year_of_birth.to_i
+            = image_tag( "cake.png" )
+          %td.span3
+            %a{'id'=>"swimmer#{@specials_hash[ :oldest_male_athlete ].id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ :oldest_male_athlete ].id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+              = @specials_hash[ :oldest_male_athlete ].get_full_name
+          %td.span1.goggles-rightalign
             = @specials_hash[ :oldest_male_athlete ].year_of_birth
-          %td.span2
-            = @specials_hash[ :oldest_male_athlete ].get_full_name
           %td.span1.goggles-rightalign
-        %tr
-          %td.span3
-            = I18n.t('meeting_stats.best_1st_male_score')
-          %td.span1.goggles-rightalign
-            = @specials_hash[ :best_1st_male_score ].standard_points
-          %td.span2
-            = @specials_hash[ :best_1st_male_score ].get_athlete_name
-          %td.span1
-            = @specials_hash[ :best_1st_male_score ].get_event_type
-        %tr
-          %td.span3
-            = I18n.t('meeting_stats.worst_male_score')
-          %td.span1.goggles-rightalign
-            = @specials_hash[ :worst_male_score ].standard_points
-          %td.span2
-            = @specials_hash[ :worst_male_score ].get_athlete_name
-          %td.span1
-            = @specials_hash[ :worst_male_score ].get_event_type
+        - [ :best_1st_male_score, :best_2nd_male_score, :best_3rd_male_score, :worst_male_score ].each do | key |
+          %tr
+            %td.span3
+              = I18n.t( key, :scope =>[:meeting_stats] )
+            %td.span1.goggles-rightalign
+              = sprintf( "%02.2f", @specials_hash[ key ].standard_points )
+            %td.span3
+              %a{'id'=>"swimmer#{@specials_hash[ key ].swimmer_id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ key ].swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                = @specials_hash[ key ].get_athlete_name
+            %td.span1.goggles-rightalign
+              = @specials_hash[ key ].get_year_of_birth
+            %td.span1
+              = @specials_hash[ key ].get_event_type
 .row-fluid
   .span12

@@ -1,0 +1,29 @@
+.row-fluid.span12.goggles-category-gap{ :id => div_id }
+  %h3
+    = grid_title
+    %a{ :href=>"#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+.row-fluid
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+        - @category_short_names.each do |cat_short_name|
+          %td.goggles-centeralign
+            %b= cat_short_name
+      - @events.each do |event_type|
+        - unless event_type.length_in_meters < min_pool_length
+          %tr
+            %td.goggles-td.goggles-rightalign
+              %b= event_type.i18n_short
+            - @category_short_names.each do |cat_short_name|
+              %td.goggles-td
+                - ind_result = rec_hash.has_key?(event_type.id) ? rec_hash[ event_type.id ][ cat_short_name ] : nil
+                %p
+                  %b= ind_result ? ind_result.get_timing : ''
+                %p= ind_result ? ind_result.get_athlete_name : ''
+                - if ind_result
+                  - if (sched_date = ind_result.get_scheduled_date).kind_of?(Date)
+                    %a{'id'=>"rec#{ind_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>ind_result.meeting.id, :swimmer_id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{ind_result.meeting.description})"}
+                      %p= Format.a_date(ind_result.get_scheduled_date)
+                  - else
+                    %p= '-'

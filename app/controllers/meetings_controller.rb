@@ -170,9 +170,9 @@ class MeetingsController < ApplicationController
       male   = swimmer.is_male ? 1 : 0
       female = swimmer.is_female ? 1 : 0
       male_female = male + female
-      gold   = ( ind_result.rank==1 && ind_result.is_valid_for_ranking ? 1 : 0 )
-      silver = ( ind_result.rank==2 && ind_result.is_valid_for_ranking ? 1 : 0 )
-      bronze = ( ind_result.rank==3 && ind_result.is_valid_for_ranking ? 1 : 0 )
+      gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      bronze = ( (ind_result.rank==3) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
                                                     # Collect athletes' gender for each team:
       if teams_hash[ ind_result.team_id ].nil?
         teams_hash[ ind_result.team_id ] = [
@@ -194,10 +194,11 @@ class MeetingsController < ApplicationController
           team_arr[3] += female
           team_arr[4] += male_female
           # idx 5 => is_highlighted
-          team_arr[6] += gold
-          team_arr[7] += silver
-          team_arr[8] += bronze
         end
+                                                    # Always count the medals: (we have to count just one swimmer for each result, but we want to count all the medals)
+        team_arr[6] += gold
+        team_arr[7] += silver
+        team_arr[8] += bronze
       end
                                                     # Collect athletes' gender for each category, without duplicates (each athlete may have more than 1 result for its own category):
       if categories_hash[ ind_result.get_category_type_id ].nil?
@@ -229,10 +230,10 @@ class MeetingsController < ApplicationController
         @specials_hash[ :worst_male_score    ] ||= ind_result
         @specials_hash[ :oldest_male_athlete ] = swimmer    if @specials_hash[ :oldest_male_athlete ].year_of_birth > swimmer.year_of_birth
 # FIXME: Use a sorted query to get first-3 best scores from ind. results!
-        @specials_hash[ :best_1st_male_score ] = ind_result if @specials_hash[ :best_1st_male_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :best_2nd_male_score ] = ind_result if @specials_hash[ :best_2nd_male_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_1st_male_score ]
-        @specials_hash[ :best_3rd_male_score ] = ind_result if @specials_hash[ :best_3rd_male_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_2nd_male_score ]
-        @specials_hash[ :worst_male_score    ] = ind_result if @specials_hash[ :worst_male_score    ].standard_points > ind_result.standard_points && ind_result.standard_points > 0
+        @specials_hash[ :best_1st_male_score ] = ind_result if @specials_hash[ :best_1st_male_score ].standard_points.to_f < ind_result.standard_points.to_f
+        @specials_hash[ :best_2nd_male_score ] = ind_result if @specials_hash[ :best_2nd_male_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_1st_male_score ].standard_points.to_f
+        @specials_hash[ :best_3rd_male_score ] = ind_result if @specials_hash[ :best_3rd_male_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_2nd_male_score ].standard_points.to_f
+        @specials_hash[ :worst_male_score    ] = ind_result if @specials_hash[ :worst_male_score    ].standard_points.to_f > ind_result.standard_points.to_f && ind_result.standard_points.to_f > 0
       else
         @specials_hash[ :oldest_female_athlete ] ||= swimmer
         @specials_hash[ :best_1st_female_score ] ||= ind_result
@@ -241,10 +242,23 @@ class MeetingsController < ApplicationController
         @specials_hash[ :worst_female_score    ] ||= ind_result
         @specials_hash[ :oldest_female_athlete ] = swimmer    if @specials_hash[ :oldest_female_athlete ].year_of_birth > swimmer.year_of_birth
 # FIXME: Use a sorted query to get first-3 best scores from ind. results!
-        @specials_hash[ :best_1st_female_score ] = ind_result if @specials_hash[ :best_1st_female_score ].standard_points < ind_result.standard_points
-        @specials_hash[ :best_2nd_female_score ] = ind_result if @specials_hash[ :best_2nd_female_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_1st_female_score ]
-        @specials_hash[ :best_3rd_female_score ] = ind_result if @specials_hash[ :best_3rd_female_score ].standard_points < ind_result.standard_points && ind_result.standard_points < @specials_hash[ :best_2nd_female_score ]
-        @specials_hash[ :worst_female_score    ] = ind_result if @specials_hash[ :worst_female_score    ].standard_points > ind_result.standard_points && ind_result.standard_points > 0
+        @specials_hash[ :best_1st_female_score ] = ind_result if @specials_hash[ :best_1st_female_score ].standard_points.to_f < ind_result.standard_points.to_f
+        @specials_hash[ :best_2nd_female_score ] = ind_result if @specials_hash[ :best_2nd_female_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_1st_female_score ].standard_points.to_f
+        @specials_hash[ :best_3rd_female_score ] = ind_result if @specials_hash[ :best_3rd_female_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_2nd_female_score ].standard_points.to_f
+        @specials_hash[ :worst_female_score    ] = ind_result if @specials_hash[ :worst_female_score    ].standard_points.to_f > ind_result.standard_points.to_f && ind_result.standard_points.to_f > 0
+      end
+    }
+                                                    # Add also relay medals to the medal count:
+    mrr = @meeting.meeting_relay_results.is_valid
+    mrr.each { |rel_result|
+      team_arr = teams_hash[ rel_result.team_id ]
+      if team_arr
+        gold   = ( rel_result.rank==1 && rel_result.is_valid_for_ranking ? 1 : 0 )
+        silver = ( rel_result.rank==2 && rel_result.is_valid_for_ranking ? 1 : 0 )
+        bronze = ( rel_result.rank==3 && rel_result.is_valid_for_ranking ? 1 : 0 )
+        team_arr[6] += gold
+        team_arr[7] += silver
+        team_arr[8] += bronze
       end
     }
                                                   # Prepare the team gender count list and sort it by name:
@@ -292,7 +306,7 @@ class MeetingsController < ApplicationController
     @team_ranks_2 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 2 )
     @team_ranks_3 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 3 )
     @team_ranks_4 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 4 )
-    @team_outstanding_scores = MeetingIndividualResult.count_team_results_for( meeting_id, @team_id, 750 )
+    @team_outstanding_scores = MeetingIndividualResult.count_team_results_for( meeting_id, @team_id, 800 )
                                                     # Collect an Hash with the swimmer_id pointing to the description of all the events performed by each swimmer:
     meeting_team_swimmers_ids = @meeting_team_swimmers.collect{|row| row.id}
     @events_per_swimmers = {}
@@ -319,7 +333,7 @@ class MeetingsController < ApplicationController
     @team_ranks_2 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 2 )
     @team_ranks_3 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 3 )
     @team_ranks_4 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 4 )
-    @team_outstanding_scores += MeetingRelayResult.count_team_results_for( meeting_id, @team_id, 750 )
+    @team_outstanding_scores += MeetingRelayResult.count_team_results_for( meeting_id, @team_id, 800 )
 
                                                     # Get the programs filtered by team_id:
     ind_prg_ids = MeetingIndividualResult.includes(:meeting, :meeting_program).where(

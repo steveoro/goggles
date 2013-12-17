@@ -38,7 +38,7 @@
             = @team_ranks_4
         .row-fluid
           .span3
-            = I18n.t(:team_total_750plus_scores, {:scope=>[:meeting]}) +':'
+            = I18n.t(:team_total_outstanding_scores, {:scope=>[:meeting]}) +" (> #{ 800 }):"
           .span1.goggles-div-rightalign
             = @team_outstanding_scores
 
@@ -47,7 +47,7 @@
           %table.table.table-striped.table-bordered.table-hover.table-condensed.goggles-meeting-team-results-table
             %tbody
               %tr
-                %td{'colspan'=>'5'}
+                %td{'colspan'=>'2'}
                   %i= I18n.t(:team_total_athletes, {:scope=>[:meeting]}) + ": #{ @meeting_team_swimmers.size }"
               - @meeting_team_swimmers.each do |swimmer|
                 %tr
@@ -59,14 +59,17 @@
                     = (mir && admin_signed_in? ? " (id=#{mir.category_type.id})" : '')
                   - @events_per_swimmers[swimmer.id].each do |row|
                     %td.goggles-noborder.goggles-rightalign{'colspan'=>"2"}
+                      - event_type = row.meeting_event.event_type
+                      %a(href="\##{event_type.code}")= event_type.i18n_short
+                    %td.goggles-noborder.goggles-rightalign
                       = show_tag( row.rank==1 && row.is_valid_for_ranking, "medal_gold_3.png", '' )
                       = show_tag( row.rank==2 && row.is_valid_for_ranking, "medal_silver_3.png", '' )
                       = show_tag( row.rank==3 && row.is_valid_for_ranking, "medal_bronze_3.png", '' )
-                      - event_type = row.meeting_event.event_type
-                      %a(href="\##{event_type.code}")= event_type.i18n_short
-                    %td.goggles-noborder{'colspan'=>"1"}
+                      = row.rank
+                    %td.goggles-border-onlyright.goggles-rightalign
+                      = (row.meeting_individual_points>800 ? "! " : '' )
                       = show_tag( row.meeting_individual_points>800, "asterisk_orange.png", '' )
-                      = (row.meeting_individual_points>800 ? "#{row.meeting_individual_points} !" : row.meeting_individual_points)
+                      = sprintf( "%02.2f", row.meeting_individual_points )
 
 %script
   $('#headerTeam').tooltip({placement:'bottom'});

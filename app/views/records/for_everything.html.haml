@@ -1,26 +1,28 @@
 .row-fluid.span12#pageTop
   %h2= @title
 
-.row-fluid.span12.goggles-category-gap#pageTop
-  %h3= "F / 25 mt."
+-# --- Sub-legend for each category + gender
+- pool25_desc = PoolType.find_by_id( PoolType::MT25_ID ).i18n_description
+- pool50_desc = PoolType.find_by_id( PoolType::MT50_ID ).i18n_description
+.navbar
+  %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::FEMALE_ID).i18n_short + ':'
+  %ul.nav
+    %li
+      %a.goggles-nav-compact(href="#f25")= pool25_desc
+    %li
+      %a.goggles-nav-compact(href="#f50")= pool50_desc
+  .ghost-divider-vertical
+  %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
+  %ul.nav
+    %li
+      %a.goggles-nav-compact(href="#m25")= pool25_desc
+    %li
+      %a.goggles-nav-compact(href="#m50")= pool50_desc
+
+= render( :partial=>'records_grid', :locals => {:div_id=>'f25', :grid_title=>"#{I18n.t('meeting_stats.females')}, #{pool25_desc}", :rec_hash=>@f25mt_rec_hash, :min_pool_length=>25} )
+= render( :partial=>'records_grid', :locals => {:div_id=>'f50', :grid_title=>"#{I18n.t('meeting_stats.females')}, #{pool50_desc}", :rec_hash=>@f50mt_rec_hash, :min_pool_length=>50} )
+= render( :partial=>'records_grid', :locals => {:div_id=>'m25', :grid_title=>"#{I18n.t('meeting_stats.males')}, #{pool25_desc}", :rec_hash=>@m25mt_rec_hash, :min_pool_length=>25} )
+= render( :partial=>'records_grid', :locals => {:div_id=>'m50', :grid_title=>"#{I18n.t('meeting_stats.males')}, #{pool50_desc}", :rec_hash=>@m50mt_rec_hash, :min_pool_length=>50} )
 
 .row-fluid
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-      %tr{'class'=>'info'}
-        %td
-          = "/"
-        - @category_short_names.each do |cat_short_name|
-          %td.goggles-centeralign
-            %b= cat_short_name
-      - @events.each do |event_type|
-        %tr
-          %td.goggles-td.goggles-rightalign
-            %b= event_type.i18n_short
-          - @category_short_names.each do |cat_short_name|
-            %td.goggles-td
-              - ind_result = @f25mt_rec_hash.has_key?(event_type.id) ? @f25mt_rec_hash[ event_type.id ][ cat_short_name ] : nil
-              %p
-                %b= ind_result ? ind_result.get_timing : ''
-              %p= ind_result ? ind_result.get_athlete_name : ''
-              %p= ind_result ? ( (sched_date = ind_result.get_scheduled_date).kind_of?(Date) ? link_to(Format.a_date(ind_result.get_scheduled_date), show_full_meeting_path(ind_result.meeting)) : '-' ) : ''
+  .span12

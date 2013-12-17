@@ -44,10 +44,14 @@
 	end
 
 	g.column(
-		name: I18n.t('meeting.total_results_short'),
+		name: I18n.t('meeting.ind_results_short'),
 	) do |meeting|
-		( meeting.meeting_relay_results.count +
-		  meeting.meeting_individual_results.count )
+		meeting.meeting_individual_results.count
+	end
+	g.column(
+		name: I18n.t('meeting.rel_results_short'),
+	) do |meeting|
+		meeting.meeting_relay_results.count
 	end
 
 	g.column(

@@ -27,6 +27,13 @@ class User < ActiveRecord::Base
 
   attr_accessible :name, :email, :description, :password, :password_confirmation
 
+
+  # TODO ADD:
+  # :outstanding_score_bias (default = 800)
+  # column to manage upload of user avatar image
+  # 
+
+
   # validates_presence_of :hashed_pwd
   # validates_length_of   :hashed_pwd, :within => 1..128
 # 

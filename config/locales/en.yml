@@ -465,12 +465,14 @@ en:
     team_total_silver_medals: "Tot. Silver medals"
     team_total_bronze_medals: "Tot. Bronze medals"
     team_total_wooden_medals: "Tot. 'Wooden' medals [:-)]"
-    team_total_750plus_scores: "Tot. outstanding scores (> 750)"
+    team_total_outstanding_scores: "Tot. outstanding scores"
     search_by_swimmer: "Search by Athlete"
     search_by_team: "Search by Team"
     total_attended_meetings: "Attended Meetings"
     total_results: "Total Results"
     total_results_short: "Tot. Results"
+    ind_results_short: "Indiv. results"
+    rel_results_short: "Relay results"
     total_teams: "Tot. teams"
 
   meeting_session:
@@ -507,6 +509,7 @@ en:
     warm_up_time: "Warm-up"
     start_up_time: "Start"
     pool: "Swimming Pool"
+    federation: "Federation"
 
   swimming_pool:
     pools: "Pools"
