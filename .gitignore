@@ -16,6 +16,9 @@
 /log/*.sql
 /tmp
 
+# Ignore downloaded gems and packages:
+/vendor/cache/*
+
 # Ignore ExtJS library and other directories:
 /public/extjs/*
 /public/output/*
