@@ -11,9 +11,23 @@
     = link_to( t('radiography.misc'), misc_swimmer_path(:id=>@swimmer.id) )
 
 .container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    - tab_title = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
+    %h4
+      = I18n.t('radiography.radio_tab') + ' -- '
+      = tab_title
   .row-fluid
     .span9
-      = "main tab content" 
+      .row-fluid
+        = @swimmer.get_full_name
+      .row-fluid
+        = @swimmer.first_name
+      .row-fluid
+        = @swimmer.last_name
+      .row-fluid
+        = @swimmer.nickname
+      .row-fluid
+        = @swimmer.year_of_birth
     .span3
       = image_tag( 'img_radiography.jpg' ) 
 

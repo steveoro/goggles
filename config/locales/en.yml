@@ -555,6 +555,7 @@ en:
   radiography:
     radio_tab: "Radiography"
     radio_tab_tooltip: "Go to this Athlete 'Radiography' page"
+    radio_tab_title: "The History of {SWIMMER_NAME} according to the Chronometer"
     id_card: "ID Card"
     medals_tab: "Medals"
     best_timings_tab: "Best Timings"

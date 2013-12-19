@@ -557,6 +557,7 @@ it:
   radiography:
     radio_tab: "Radiografia"
     radio_tab_tooltip: "Vai alla 'Radiografia' per questo Atleta"
+    radio_tab_title: "La storia di {SWIMMER_NAME} secondo il Cronometro"
     id_card: "Carta d'Identità"
     medals_tab: "Medagliere"
     best_timings_tab: "Tempi migliori"
