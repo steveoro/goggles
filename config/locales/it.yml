@@ -554,6 +554,16 @@ it:
     best_2nd_female_score: "2° miglior Punteggio femmine"
     best_3rd_female_score: "3° miglior Punteggio femmine"
 
+  radiography:
+    radio_tab: "Radiografia"
+    radio_tab_tooltip: "Vai alla 'Radiografia' per questo Atleta"
+    id_card: "Carta d'Identità"
+    medals_tab: "Medagliere"
+    best_timings_tab: "Tempi migliori"
+    all_races_tab: "Tutte le gare"
+    misc_tab: "Varie ed eventuali"
+    compute_fin_score_for: "Calcola il punteggio FIN per"
+
 
   agex_action:
     main: Principale

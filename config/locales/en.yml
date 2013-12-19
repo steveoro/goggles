@@ -552,6 +552,16 @@ en:
     best_2nd_female_score: "2nd-best female Score"
     best_3rd_female_score: "3rd-best female Score"
 
+  radiography:
+    radio_tab: "Radiography"
+    radio_tab_tooltip: "Go to this Athlete 'Radiography' page"
+    id_card: "ID Card"
+    medals_tab: "Medals"
+    best_timings_tab: "Best Timings"
+    all_races_tab: "All the races"
+    misc_tab: "Misc"
+    compute_fin_score_for: "Compute FIN score for"
+
 
   agex_action:
     main: Main

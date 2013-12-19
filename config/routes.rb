@@ -60,6 +60,16 @@ Goggles::Application.routes.draw do
           get 'for_team'
         end
       end
+
+      resources :swimmers do
+        member do
+          get 'radio'
+          get 'medals'
+          get 'best_timings'
+          get 'all_races'
+          get 'misc'
+        end
+      end
     end
   end
 

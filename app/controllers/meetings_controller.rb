@@ -167,8 +167,8 @@ class MeetingsController < ApplicationController
                                                     # Loop upon all individual results and count the athletes, without duplicates (each athlete may have more than 1 result for its own team):
     mir.each { |ind_result|                         # "1 loop to bind them all..."
       swimmer = ind_result.swimmer
-      male   = swimmer.is_male ? 1 : 0
       female = swimmer.is_female ? 1 : 0
+      male   = swimmer.is_male ? 1 : 0
       male_female = male + female
       gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
       silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
@@ -178,8 +178,8 @@ class MeetingsController < ApplicationController
         teams_hash[ ind_result.team_id ] = [
           [ind_result.swimmer_id],
           ind_result.team.get_full_name,
-          male,
           female,
+          male,
           male_female,
           (ind_result.team_id == @preselected_team_id.to_i),
           gold,
@@ -190,8 +190,8 @@ class MeetingsController < ApplicationController
         team_arr = teams_hash[ ind_result.team_id ]
         unless team_arr[0].include?( ind_result.swimmer_id )
           team_arr[0] << ind_result.swimmer_id      # Add current result's swimmer to the "already processed list"
-          team_arr[2] += male
-          team_arr[3] += female
+          team_arr[2] += female
+          team_arr[3] += male
           team_arr[4] += male_female
           # idx 5 => is_highlighted
         end
@@ -202,23 +202,34 @@ class MeetingsController < ApplicationController
       end
                                                     # Collect athletes' gender for each category, without duplicates (each athlete may have more than 1 result for its own category):
       if categories_hash[ ind_result.get_category_type_id ].nil?
-        categories_hash[ ind_result.get_category_type_id ] = [ [ind_result.swimmer_id], ind_result.get_category_type_short_name, male, female, male_female ]
+        categories_hash[ ind_result.get_category_type_id ] = [
+          [ind_result.swimmer_id],
+          ind_result.get_category_type_short_name,
+          female,
+          male,
+          male_female
+        ]
       else
         cat_arr = categories_hash[ ind_result.get_category_type_id ]
         unless cat_arr[0].include?( ind_result.swimmer_id )
           cat_arr[0] << ind_result.swimmer_id       # Add current result's swimmer to the "already processed list" 
-          cat_arr[2] += male
-          cat_arr[3] += female
+          cat_arr[2] += female
+          cat_arr[3] += male
           cat_arr[4] += male_female
         end
       end
                                                     # Collect athletes' gender for each event type (each athlete will ALWAYS have just 1 result for each event type):
       if event_types_hash[ ind_result.get_event_type_id ].nil?
-        event_types_hash[ ind_result.get_event_type_id ] = [ ind_result.get_event_type_description, male, female, male_female ]
+        event_types_hash[ ind_result.get_event_type_id ] = [
+          ind_result.get_event_type_description,
+          female,
+          male,
+          male_female
+        ]
       else
         evnt_arr = event_types_hash[ ind_result.get_event_type_id ]
-        evnt_arr[1] += male
-        evnt_arr[2] += female
+        evnt_arr[1] += female
+        evnt_arr[2] += male
         evnt_arr[3] += male_female
       end
                                                     # Collect also the specials:

@@ -1,0 +1,17 @@
+%ul.nav.nav-tabs#topOfPage
+  %li
+    = link_to( t('radiography.radio_tab'), radio_swimmer_path(:id=>@swimmer.id) )
+  %li
+    = link_to( t('radiography.medals_tab'), medals_swimmer_path(:id=>@swimmer.id) )
+  %li
+    = link_to( t('radiography.best_timings_tab'), best_timings_swimmer_path(:id=>@swimmer.id) )
+  %li
+    = link_to( t('radiography.all_races_tab'), all_races_swimmer_path(:id=>@swimmer.id) )
+  %li.active
+    = link_to( t('radiography.misc'), '#' )
+
+.container-fluid
+  .row-fluid
+    .span12
+      = "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}" 
+      = "TODO" 
