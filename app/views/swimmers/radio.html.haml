@@ -19,15 +19,85 @@
   .row-fluid
     .span9
       .row-fluid
-        = @swimmer.get_full_name
+        .span3
+          = I18n.t(:name) +':'
+        .span7
+          = @swimmer.get_full_name_with_nickname
       .row-fluid
-        = @swimmer.first_name
+        .span3
+          = I18n.t('swimmers.affiliated_in_teams') +':'
+        .span7
+          = @swimmer.get_team_names
       .row-fluid
-        = @swimmer.last_name
+        .span3
+          = I18n.t('swimmers.year_of_birth') +':'
+        .span7
+          = @swimmer.year_of_birth
       .row-fluid
-        = @swimmer.nickname
+        .span3
+          = I18n.t('swimmers.current_category') +':'
+        .span7
+          = @swimmer.get_current_category_type_codes.join(' / ')
       .row-fluid
-        = @swimmer.year_of_birth
+        .span3
+          = I18n.t('swimmers.last_registered_category') +':'
+        .span7
+          - category = @swimmer.get_current_category_type_from_badges
+          = category ? category.code : '?'
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.meeting_presence') +':'
+        .span7
+          = @swimmer.meetings.uniq.count
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.events_attended') +':'
+        .span7
+          = @swimmer.meeting_individual_results.count
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.total_metres_swam') +':'
+        .span7
+          = 'TODO'
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.total_time_swam') +':'
+        .span7
+          = 'TODO'
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.first_attended_meeting') +':'
+        .span7
+          = 'TODO'
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.last_attended_meeting') +':'
+        .span7
+          = 'TODO'
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.best_score_ever') +':'
+        .span7
+          - mir = @swimmer.meeting_individual_results.is_valid.where('standard_points > 0').order(:standard_points).last
+          - if mir
+            %p= "#{mir.standard_points}, " + mir.meeting.get_verbose_name
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.worst_score_ever') +':'
+        .span7
+          - mir = @swimmer.meeting_individual_results.is_valid.where('standard_points > 0').order(:standard_points).first
+          - if mir
+            %p= "#{mir.standard_points}, " + mir.meeting.get_verbose_name
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.total_team_records') +':'
+        .span7
+          = 'TODO'
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.total_disqualifications') +':'
+        .span7
+          = 'TODO'
     .span3
       = image_tag( 'img_radiography.jpg' ) 
 

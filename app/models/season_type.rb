@@ -1,5 +1,11 @@
 class SeasonType < ActiveRecord::Base
 
+  # Commodity reference to a specific code stored in the DB; make sure this value is always correct
+  CODE_MAS_FIN = 'MASFIN'
+
+  # Commodity reference to a specific code stored in the DB; make sure this value is always correct
+  CODE_MAS_CSI = 'MASCSI'
+
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..10, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
@@ -39,4 +45,11 @@ class SeasonType < ActiveRecord::Base
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
+
+  # ID getter for the specified code; returns 0 on error
+  #
+  def self.get_id_by_code( code )
+    season_type = SeasonType.find_by_code( code )
+    season_type ? season_type.id : 0
+  end
 end

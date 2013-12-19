@@ -1,3 +1,7 @@
+# encoding: utf-8
+require 'date'
+
+
 class CategoryType < ActiveRecord::Base
 
   validates_presence_of   :code
@@ -16,17 +20,13 @@ class CategoryType < ActiveRecord::Base
   validates_associated :season                      # (foreign key integrity)
 
   has_one :season_type, :through => :season
-
-
-  scope :only_relays,     where(:is_a_relay => true)
-  scope :are_not_relays,  where(:is_a_relay => false)
   # ----------------------------------------------------------------------------
 
 
   # Returns the corresponding id given season type id, year of birth and
-  # chosen year for the result; 0 on error.
+  # chosen year for the result; 0 on error/not found.
   #
-  def self.get_id_from( season_id, year_of_birth )
+  def self.get_id_from( season_id, year_of_birth, chosen_year = Date.today.year )
     target_age = chosen_year.to_i - year_of_birth.to_i
     category_type = CategoryType.includes(:season).where(
       [ 'season_id = ? AND category_types.age_begin >= ? AND category_types.age_end <= ?',
@@ -34,6 +34,19 @@ class CategoryType < ActiveRecord::Base
       ]
     ).first
     category_type ? category_type.id : 0
+  end
+
+  # Returns the corresponding CategoryType given season type id, year of birth and
+  # chosen year for the result; nil on error/not found.
+  #
+  def self.get_category_from( season_id, year_of_birth, chosen_year = Date.today.year )
+    target_age = chosen_year.to_i - year_of_birth.to_i
+    category_type = CategoryType.includes(:season).where(
+      [ 'season_id = ? AND category_types.age_begin >= ? AND category_types.age_end <= ?',
+        season_id, target_age-5, target_age+5
+      ]
+    ).first
+    category_type
   end
   # ----------------------------------------------------------------------------
 

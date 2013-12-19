@@ -16,6 +16,7 @@ AGEX_FEATURES = {
 } unless defined?(AGEX_FEATURES)
 
 LOCALES = {'it' => 'it-IT', 'en' => 'en-US'}.freeze
+I18n.enforce_available_locales = false
 
 # Set this to false to enable the self-destruct sequence on application timeout expiring.
 DISABLE_SELF_DESTRUCT = true unless defined?(DISABLE_SELF_DESTRUCT)
@@ -32,7 +33,6 @@ AGEX_FILTER_DATE_FORMAT_EXTJS  = 'Y-m-d';
 #
 AGEX_FILTER_DATE_FORMAT_SQL    = '%Y-%m-%d';
 # ----------------------------------------------------------------------------
-
 
 # Initialize the rails application
 Goggles::Application.initialize!

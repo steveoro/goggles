@@ -14,6 +14,8 @@ class Swimmer < ActiveRecord::Base
 
   has_many :badges
   has_many :teams, :through => :badges
+  has_many :category_types, :through => :badges
+
   has_many :meeting_individual_results
   has_many :meetings, :through => :meeting_individual_results
   has_many :swimmer_results
@@ -48,9 +50,19 @@ class Swimmer < ActiveRecord::Base
     last_name.to_s.empty? ? "#{complete_name}" : "#{last_name} #{first_name}"
   end
 
+  # Computes a description for the name associated with this data
+  def get_full_name_with_nickname
+    last_name.to_s.empty? ? "#{complete_name}#{nickname.to_s.empty? ? '' : ' ('+nickname+')'}" : "#{first_name} #{nickname.to_s.empty? ? '' : ' ('+nickname+') '} #{last_name}"
+  end
+
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
     "#{get_full_name} (#{year_of_birth}, #{gender_type ? gender_type.code : '?'})"
+  end
+
+  # Safe getter for the nickname (it can be nil)
+  def get_nickname
+    self.nickname ? self.nickname : ''
   end
 
   # Retrieves the user name associated with this instance
@@ -119,6 +131,28 @@ class Swimmer < ActiveRecord::Base
   def get_badges_with_team_names_array( season_id = nil )
      all_badges = get_badges_array( season_id )
      all_badges.collect{ |row| "#{I18n.t('badge.short')} #{row.number}, #{row.team.editable_name}" }
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Helper getter for the current category type of this swimmer,
+  # according to the latest registered badge.
+  #
+  def get_current_category_type_from_badges
+    self.badges.joins(:season).order('seasons.header_year').last.category_type
+  end
+
+
+  # Helper getter for the current category type of this swimmer,
+  # computed from the two most common season types (MASFIN & MASCSI).
+  # Returns an array with the unique category type codes found.
+  #
+  def get_current_category_type_codes
+    last_fin_season = Season.get_last_season_by_type( SeasonType::CODE_MAS_FIN )
+    last_csi_season = Season.get_last_season_by_type( SeasonType::CODE_MAS_CSI )
+    curr_fin_category = last_fin_season ? CategoryType.get_category_from( last_fin_season.id, self.year_of_birth ) : nil
+    curr_csi_category = last_csi_season ? CategoryType.get_category_from( last_csi_season.id, self.year_of_birth ) : nil
+    [ curr_fin_category, curr_csi_category ].compact.collect{ |category| category.code }.uniq
   end
   # ----------------------------------------------------------------------------
 end

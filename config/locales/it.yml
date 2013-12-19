@@ -107,6 +107,20 @@ it:
     phone_mobile2: "Tel. alt."
     e_mail: "e-mail"
     nickname: "Nickname"
+    affiliated_in_teams: "Società"
+    current_category: "Categoria attuale"
+    last_registered_category: "Ultima Categoria registrata"
+    meeting_presence: "Presenze in Squadra"
+    events_attended: "Eventi/Gare disputate"
+    total_metres_swam: "Metri di gara percorsi"
+    total_time_swam: "Tempo totale di gara"
+    first_attended_meeting: "Prima gara disputata"
+    last_attended_meeting: "Ultima gara disputata"
+    best_score_ever: "Miglior punteggio di sempre"
+    worst_score_ever: "Peggior punteggio di sempre (non nullo)"
+    total_team_records: "Record societari"
+    total_disqualifications: "Squalifiche subite"
+
 
   gender_types:
     code: "Cod."
