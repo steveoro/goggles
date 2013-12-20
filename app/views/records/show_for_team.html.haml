@@ -1,0 +1,11 @@
+.row-fluid.span12#pageTop
+
+#records_4x_grid
+  .span12
+    %h2
+      = @title
+      %span(id='loadingIndicator')
+        = image_tag( 'indicator.gif' )
+
+%script
+  $.get( "#{ records_show_for_team_path(:team_id=>@team_id, :swimmer_id=>@preselected_swimmer_id) }", function(data) {$( "#records_4x_grid" ).html( data );} );

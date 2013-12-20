@@ -11,36 +11,22 @@ class RecordsController < ApplicationController
   def for_everything
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.everything() -----"
-    @title = I18n.t(:everything_title, {:scope=>[:records]})
-    @events = EventType.order(:style_order).are_not_relays
-    @category_short_names = CategoryType.are_not_relays.group(
-      'season_types.code, category_types.code'
-    ).includes( :season_type ).having(
-      [ 'season_types.code = ?', 'MASFINA' ]
-    ).sort.collect{ |r| r.short_name }
+    @title = I18n.t( :everything_title, {:scope=>[:records]} )
 
-    all_records = MeetingIndividualResult.includes(
-      :event_type, :category_type, :gender_type, :pool_type
-    ).is_valid.select(
-      'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    ).group(
-      'event_types.code, category_types.code, gender_types.code, pool_types.code'
-    )
-                                                    # Partition records in GenderType::FEMALE_ID vs. GenderType::MALE_ID -- prevent also orphan rows to be included:
-    f_records, m_records = all_records.partition{ |ind_result| ind_result.gender_type && (ind_result.gender_type.id == GenderType::FEMALE_ID) }
-                                                    # Partition records in PoolType::MT25_ID vs. PoolType::MT50_ID -- prevent also orphan rows to be included:
-    f25mt_rec_list = f_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT25_ID) }
-    f50mt_rec_list = f_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT50_ID) }
-    m25mt_rec_list = m_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT25_ID) }
-    m50mt_rec_list = m_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT50_ID) }
+    if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
+      prepare_events_and_category_variables()
 
-    @f25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f25mt_rec_list )
-    @f50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f50mt_rec_list )
-    @m25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m25mt_rec_list )
-    @m50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m50mt_rec_list )
-# DEBUG
-#    logger.debug "\r\n@f25mt_rec_hash.class.name: #{@f25mt_rec_hash.class.name}"
-#    logger.debug "@f25mt_rec_hash.keys: #{@f25mt_rec_hash.keys.inspect}"
+      all_records = MeetingIndividualResult.includes(
+        :season, :event_type, :category_type, :gender_type, :pool_type
+      ).is_valid.select(
+        'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+      ).group(
+        'event_types.code, category_types.code, gender_types.code, pool_types.code'
+      )
+                                                    # This will partition and distribute all records into the destination member variables:
+      distribute_all_records_to_destination_member_variables( all_records )
+      render( :partial => 'records_4x_grid' )
+    end
   end
   # ----------------------------------------------------------------------------
 
@@ -51,7 +37,46 @@ class RecordsController < ApplicationController
   # team_id, in every event type ever inserted, according to the latest data available.
   #
   def for_season_type
-    redirect_to wip_path() and return
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.for_season_type() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+    if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
+      season_type_id  = params[:season_type][:season_type_id].to_i if params[:season_type]
+      year            = params[:year].to_i
+#      logger.debug "year: #{year}, season_type_id: #{season_type_id}"
+      season_type = SeasonType.find_by_id( season_type_id )
+
+      if ( season_type_id > 0 && season_type )       # Validate parameters before proceeding
+        @title = "#{season_type.description} -- #{I18n.t('records.season_type_title')}"
+        prepare_events_and_category_variables()
+        if (year > 0)
+          where_cond = [
+            '(season_types.id = ?) AND (YEAR(seasons.begin_date) <= ?) AND (YEAR(seasons.end_date) >= ?)',
+            season_type_id, year, year
+          ]
+        else
+          where_cond = [ '(season_types.id = ?)', season_type_id ]
+        end
+  
+        all_records = MeetingIndividualResult.includes(
+          :season, :season_type, :event_type, :category_type, :gender_type, :pool_type
+        ).is_valid.where( where_cond ).select(
+          'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+        ).group(
+          'event_types.code, category_types.code, gender_types.code, pool_types.code'
+        )
+                                                    # This will partition and distribute all records into the destination member variables:
+        distribute_all_records_to_destination_member_variables( all_records )
+      else
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( root_path() ) and return
+      end
+    end
+                                                    # Respond according to requested format:
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
 
@@ -61,7 +86,43 @@ class RecordsController < ApplicationController
   # event type ever inserted, according to the latest data available.
   #
   def for_swimmer
-    redirect_to wip_path() and return
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.for_swimmer() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+    if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
+      season_id   = params[:season][:season_id].to_i if params[:season]
+      swimmer_id  = params[:swimmer][:swimmer_id].to_i if params[:swimmer]
+#      logger.debug "season_id: #{season_id}, swimmer_id #{swimmer_id}"
+      swimmer = Swimmer.find_by_id( swimmer_id )
+
+      if ( swimmer_id > 0 && swimmer )              # Validate parameters before proceeding
+        @title = "#{swimmer.get_full_name} -- #{I18n.t('records.swimmer_title')}"
+        prepare_events_and_category_variables( swimmer )
+        if (season_id > 0)
+          where_cond = ['(meeting_individual_results.swimmer_id = ?) AND (seasons.id = ?)', swimmer_id, season_id]
+        else
+          where_cond = ['(meeting_individual_results.swimmer_id = ?)', swimmer_id]
+        end
+  
+        all_records = MeetingIndividualResult.includes(
+          :season, :event_type, :category_type, :gender_type, :pool_type
+        ).is_valid.where( where_cond ).select(
+          'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+        ).group(
+          'event_types.code, category_types.code, gender_types.code, pool_types.code'
+        )
+                                                    # This will partition and distribute all records into the destination member variables:
+        distribute_all_records_to_destination_member_variables( all_records )
+      else
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( root_path() ) and return
+      end
+    end
+                                                    # Respond according to requested format:
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
 
@@ -74,52 +135,34 @@ class RecordsController < ApplicationController
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.for_team() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-    redirect_to wip_path() and return
-    ###########################################################
-    @title = I18n.t(:index_title, {:scope=>[:records]})
-    @records = MeetingIndividualResult.includes(
-      :event_type, :category_type, :gender_type, :pool_type
-    ).is_valid.select(
-      'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    ).group(
-      'event_types.code, category_types.code, gender_types.code, pool_types.code'
-    )
+    if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
+      season_id = params[:season][:season_id].to_i if params[:season]
+      team_id   = params[:team][:team_id].to_i if params[:team]
+#      logger.debug "season_id: #{season_id}, team_id: #{team_id}"
+      team = Team.find_by_id( team_id )
 
-    if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve season range:
-      season_id = params[:season][:season_id].to_i
-      team_id   = params[:team][:team_id].to_i
-      year      = params[:year].to_i
-      a_date    = nil
-      begin
-        a_date = Date.parse(params[:a_date]) if params[:a_date]
-      rescue
-      end
-      logger.debug "season_id: #{season_id}, team_id: #{team_id}, year: #{year}, a_date: #{a_date}"
-
-      if (season_id > 0)
-        @seasons = Season.where(:id => season_id)
-      elsif (team_id > 0)
-        team = Team.find_by_id( team_id )
-        @seasons = team ? team.seasons.uniq : []
-        if (year > 0)
-          @seasons.reject!{ |season|
-             season.begin_date.instance_of?(Date) && ( season.begin_date.year != year ) &&
-             season.end_date.instance_of?(Date) && ( season.end_date.year != year )
-          }
-        elsif a_date.instance_of?(Date)
-          @seasons.reject!{ |season|
-             (season.begin_date.instance_of?(Date) && ( season.begin_date.year > a_date )) ||
-             (season.end_date.instance_of?(Date) && ( season.end_date.year < a_date ))
-          }
+      if ( team_id > 0 && team )                    # Validate parameters before proceeding
+        @title = "#{team.get_full_name} -- #{I18n.t('records.team_title')}"
+        prepare_events_and_category_variables()
+        if (season_id > 0)
+          where_cond = ['(meeting_individual_results.team_id = ?) AND (seasons.id = ?)', team_id, season_id]
+        else
+          where_cond = ['(meeting_individual_results.team_id = ?)', team_id]
         end
-      elsif (year > 0)
-        @seasons = Season.where(['(YEAR(seasons.begin_date) = ?) OR (YEAR(seasons.end_date) = ?)', year, year])
-      elsif (! a_date.nil?)
-        @seasons = Season.where(['(seasons.begin_date <= ?) AND (seasons.end_date >= ?)', a_date, a_date])
+  
+        all_records = MeetingIndividualResult.includes(
+          :season, :event_type, :category_type, :gender_type, :pool_type
+        ).is_valid.where( where_cond ).select(
+          'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+        ).group(
+          'event_types.code, category_types.code, gender_types.code, pool_types.code'
+        )
+                                                    # This will partition and distribute all records into the destination member variables:
+        distribute_all_records_to_destination_member_variables( all_records )
       else
-        @seasons = Season.all
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( root_path() ) and return
       end
-      logger.debug "@seasons.size = #{@seasons.size}\r\n"
     end
                                                     # Respond according to requested format:
     respond_to do |format|
@@ -130,7 +173,74 @@ class RecordsController < ApplicationController
   # ----------------------------------------------------------------------------
 
 
+  # Same as action <tt>for_team</tt>, but works only for Ajax requests and
+  # without search header.
+  #
+  # Allows the direct passage of the search parameters, so that the result
+  # grids can be displayed directly without issuing a search with the form.
+  # The rendering works as in the <tt>for_everything</tt> action, using an internal
+  # Ajax call to update the page after the data collection phase is through.
+  #
+  # == Parameters:
+  #
+  # - [:team_id] => the team id for the search
+  # - [:swimmer_id] => the swimmer id to be highlighted on the grid, if any
+  #
+  def show_for_team
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show_for_team() -----"
+    @team_id = params[:team_id].to_i
+    @preselected_swimmer_id = params[:swimmer_id]
+    team = Team.find_by_id( @team_id )
+
+    if ( @team_id > 0 && team )                     # Validate parameters before proceeding
+      @title = "#{team.get_full_name} -- #{I18n.t('records.team_title')}"
+                                                    # Was an AJAX call?
+      if request.xhr?
+# DEBUG
+#        logger.debug "\r\nparams = #{params.inspect}\r\n"
+        prepare_events_and_category_variables()
+        where_cond = ['(meeting_individual_results.team_id = ?)', @team_id]
+
+        all_records = MeetingIndividualResult.includes(
+          :season, :event_type, :category_type, :gender_type, :pool_type
+        ).is_valid.where( where_cond ).select(
+          'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+        ).group(
+          'event_types.code, category_types.code, gender_types.code, pool_types.code'
+        )
+                                                    # This will partition and distribute all records into the destination member variables:
+        distribute_all_records_to_destination_member_variables( all_records )
+        render( :partial => 'records_4x_grid' )
+      end
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( root_path() ) and return
+    end
+  end
+  # ----------------------------------------------------------------------------
+
+
   private
+
+
+  # Prepares the 2 member variables @events (lists of all events)
+  # and @category_short_names (list of all category short names) plus
+  # the gender limit for the rendering, if any.
+  #
+  def prepare_events_and_category_variables( swimmer = nil )
+    @only_gender = ( swimmer ?
+                     swimmer.gender_type_id :       # This will disable the rendering of the grids for the opposite gender type 
+                     0                              # This will set no gender limit for the rendering
+    )
+    @events = EventType.order(:style_order).are_not_relays
+    @preselected_swimmer_id  ||= 0                  # Clear preselected swimmer id if not defined
+    @category_short_names = CategoryType.are_not_relays.group( 'season_types.code, category_types.code' ).includes(
+      :season_type
+    ).having(
+      [ 'season_types.code = ?', 'MASFINA' ]
+    ).sort.collect{ |r| r.short_name }
+  end
 
 
   # Given a list of meeting_individual_results, compiles and retuns an hash-matrix
@@ -158,4 +268,30 @@ class RecordsController < ApplicationController
   end
   # ----------------------------------------------------------------------------
 
+
+  # Prepares the 4 member variables containing all records specified as parameter
+  # (<tt>all_records</tt>, array of MeetingIndividualResult rows), separated
+  # according to the gender and pool type of each single row.
+  #
+  # The 4 member variables updated are:
+  # - @f25mt_rec_hash
+  # - @f50mt_rec_hash
+  # - @m25mt_rec_hash
+  # - @m50mt_rec_hash
+  #
+  def distribute_all_records_to_destination_member_variables( all_records )
+                                                    # Partition records in GenderType::FEMALE_ID vs. GenderType::MALE_ID -- prevent also orphan rows to be included:
+    f_records, m_records = all_records.partition{ |ind_result| ind_result.gender_type && (ind_result.gender_type.id == GenderType::FEMALE_ID) }
+                                                    # Partition records in PoolType::MT25_ID vs. PoolType::MT50_ID -- prevent also orphan rows to be included:
+    f25mt_rec_list = f_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT25_ID) }
+    f50mt_rec_list = f_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT50_ID) }
+    m25mt_rec_list = m_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT25_ID) }
+    m50mt_rec_list = m_records.reject{ |ind_result| ind_result.pool_type.nil? || (ind_result.pool_type && ind_result.pool_type.id != PoolType::MT50_ID) }
+
+    @f25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f25mt_rec_list )
+    @f50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f50mt_rec_list )
+    @m25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m25mt_rec_list )
+    @m50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m50mt_rec_list )
+  end
+  # ----------------------------------------------------------------------------
 end

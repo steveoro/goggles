@@ -1,3 +1,6 @@
+require 'wrappers/timing'
+
+
 class MeetingRelayResult < ActiveRecord::Base
 
   belongs_to :user
@@ -18,6 +21,13 @@ class MeetingRelayResult < ActiveRecord::Base
   has_one  :meeting_event,    :through => :meeting_program
   has_one  :meeting_session,  :through => :meeting_program
   has_one  :meeting,          :through => :meeting_program
+  has_one  :season,           :through => :meeting_program
+
+  has_one  :pool_type,      :through => :meeting_program
+  has_one  :season_type,    :through => :meeting_program
+  has_one  :event_type,     :through => :meeting_program
+  has_one  :category_type,  :through => :meeting_program
+  has_one  :gender_type,    :through => :meeting_program
 
   has_many :meeting_relay_swimmers, :dependent => :delete_all
 
@@ -60,6 +70,11 @@ class MeetingRelayResult < ActiveRecord::Base
   # Returns just the formatted timing information
   def get_timing
     "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
+  end
+
+  # Returns a new Timing class instance initialized with the timing data from this row
+  def get_timing_instance
+    Timing.new( hundreds, seconds, minutes )
   end
 
   # Computes a shorter description for the name associated with this data

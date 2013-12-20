@@ -93,7 +93,7 @@ class Meeting < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{description} (#{get_season_type})"
+    "#{get_full_name} (#{get_season_type}, #{header_year})"
   end
 
   # Retrieves the user name associated with this instance
@@ -101,6 +101,17 @@ class Meeting < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the first scheduled date for this meeting; nil when not found 
+  def get_scheduled_date
+    ms = self.meeting_sessions.first
+    ms ? Format.a_date( ms.scheduled_date ) : nil
+  end
+
+  # Gets together the scheduled date with the verbose name but without the header year
+  def get_scheduled_date_with_verbose_name
+    "#{get_scheduled_date}, #{get_full_name} (#{get_season_type})"
+  end
 
   # Retrieves the Season Type short name
   def get_season_type

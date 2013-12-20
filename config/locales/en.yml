@@ -118,6 +118,7 @@ en:
     worst_score_ever: "Worst Score ever (not null)"
     total_team_records: "Tot. Team Records holding"
     total_disqualifications: "Total Disqualifications"
+    no_disqualifications: "None !!"
 
 
   gender_types:
@@ -471,6 +472,7 @@ en:
   meeting:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
     index_title: "Meetings - search"
+    show_results_tooltip: "Click to show all the results for this Meeting"
     show_swimmer_results_tooltip: "Click to show all the results for this swimmer at this Meeting"
     show_team_results_tooltip: "Click to show all the results for this team at this Meeting"
     team_total_athletes: "Tot. athletes involved"
@@ -536,11 +538,15 @@ en:
     menu_root: "Records"
     everything_title: "All Time Best"
     menu_everything: "for EVERYTHING there is!"
+    season_type_search_title: "Search Season Type Records"
     season_type_title: "Season Type Records"
     menu_season_type: "for a selected Season Type"
+    swimmer_search_title: "Search Athlete Records"
     swimmer_title: "Athlete Records"
     menu_swimmer: "for a selected Athlete"
+    team_search_title: "Search Team Records"
     team_title: "Team Records"
+    team_title_disclaimer_tooltip: "This total count will include also Records held with Affiliations from different Teams. Click to go the page of the Team Records for the first Team on the list for this Athlete."
     menu_team: "for a selected Team"
     personal_best: "Personal Best"
     seasonal_best: "Season Best"
@@ -646,6 +652,7 @@ en:
   user_created: User successfully created.
   user_deleted: User successfully deleted.
   req_functionality_under_development: "The requested functionality is not currently available due to revisions or maintenance."
+  coming_soon: "Coming soon!!"
 
   no_new_articles: No new articles
   select_file: "Select a file"
