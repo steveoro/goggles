@@ -107,6 +107,21 @@ it:
     phone_mobile2: "Tel. alt."
     e_mail: "e-mail"
     nickname: "Nickname"
+    affiliated_in_teams: "Società"
+    current_category: "Categoria attuale"
+    last_registered_category: "Ultima Categoria registrata"
+    meeting_presence: "Presenze in Squadra"
+    events_attended: "Eventi/Gare disputate"
+    total_metres_swam: "Metri di gara percorsi"
+    total_time_swam: "Tempo totale di gara"
+    first_attended_meeting: "Prima gara disputata"
+    last_attended_meeting: "Ultima gara disputata"
+    best_score_ever: "Miglior punteggio di sempre"
+    worst_score_ever: "Peggior punteggio di sempre (non nullo)"
+    total_team_records: "Record societari"
+    total_disqualifications: "Squalifiche subite"
+    no_disqualifications: "Nessuna !!"
+
 
   gender_types:
     code: "Cod."
@@ -459,6 +474,7 @@ it:
   meeting:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
     index_title: "Gare - ricerca"
+    show_results_tooltip: "Clicca per mostrare tutti i risultati di questo Meeting"
     show_swimmer_results_tooltip: "Clicca per mostrare tutti i risultati di questo atleta a questo Meeting"
     show_team_results_tooltip: "Clicca per mostrare tutti i risultati di questa squadra a questo Meeting"
     team_total_athletes: "Tot. atleti gareggianti"
@@ -524,11 +540,16 @@ it:
     menu_root: "Record"
     everything_title: "Record Complessivi ('All Time Best')"
     menu_everything: "per TUTTO quello che c'e'!"
-    season_type_title: "Record Tipo Stagione"
+    filtering_tooltip: "Clicca sul titolo per mostrare o nascondere i comandi di filtraggio principali"
+    season_type_search_title: "Cerca Record per Tipo Stagione"
+    season_type_title: "Record per Tipo Stagione"
     menu_by_season_type: "per Tipo Stagione"
+    swimmer_search_title: "Cerca Record per Atleta"
     swimmer_title: "Record Atleta"
     menu_by_swimmer: "per Atleta"
+    team_search_title: "Cerca Record di Squadra"
     team_title: "Record di Squadra"
+    team_title_disclaimer_tooltip: "Il conteggio totale include tutti i Record ottenuti anche con Tesseramenti su Squadre diverse. Clicca per andare alla pagina dei Record della prima Squadra in lista per questo Atleta."
     menu_by_team: "per Squadra"
     personal_best: "Personale"
     seasonal_best: "Stagionale"
@@ -635,6 +656,7 @@ it:
   user_created: Utente creato con successo.
   user_deleted: Utente eliminato con successo.
   req_functionality_under_development: "La funzionalita' richiesta non e' attualmente disponibile perche' e' stata sottoposta a revisione o ci sono lavori di manutenzione in corso."
+  coming_soon: "Coming soon!!"
 
   no_new_articles: Nessun nuovo articolo
   select_file: "Scegli un file"

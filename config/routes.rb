@@ -50,16 +50,12 @@ Goggles::Application.routes.draw do
 
       resources :swimming_pools
 
-      match "meeting_calendars",      :controller => 'meeting_calendars', :action => 'index'
-
-      resources :records do
-        collection do
-          get 'for_everything'
-          get 'for_season_type'
-          get 'for_swimmer'
-          get 'for_team'
-        end
-      end
+      match "meeting_calendars",        :controller => 'meeting_calendars', :action => 'index'
+      match "records_for_everything",   :controller => 'records', :action => 'for_everything'
+      match "records_for_season_type",  :controller => 'records', :action => 'for_season_type'
+      match "records_for_swimmer",      :controller => 'records', :action => 'for_swimmer'
+      match "records_for_team",         :controller => 'records', :action => 'for_team'
+      match "records_show_for_team",    :controller => 'records', :action => 'show_for_team'
 
       resources :swimmers do
         member do

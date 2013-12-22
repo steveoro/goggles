@@ -1,3 +1,6 @@
+require 'wrappers/timing'
+
+
 class Swimmer < ActiveRecord::Base
 
   belongs_to :user
@@ -14,8 +17,15 @@ class Swimmer < ActiveRecord::Base
 
   has_many :badges
   has_many :teams, :through => :badges
+  has_many :category_types, :through => :badges
+
   has_many :meeting_individual_results
-  has_many :meetings, :through => :meeting_individual_results
+  has_many :meeting_relay_swimmers
+  has_many :meeting_relay_results,  :through => :meeting_relay_swimmers
+
+  has_many :meeting_sessions,       :through => :meeting_individual_results
+  has_many :meetings,               :through => :meeting_individual_results
+
   has_many :swimmer_results
 
   validates_presence_of :complete_name
@@ -48,9 +58,19 @@ class Swimmer < ActiveRecord::Base
     last_name.to_s.empty? ? "#{complete_name}" : "#{last_name} #{first_name}"
   end
 
+  # Computes a description for the name associated with this data
+  def get_full_name_with_nickname
+    last_name.to_s.empty? ? "#{complete_name}#{nickname.to_s.empty? ? '' : ' ('+nickname+')'}" : "#{first_name} #{nickname.to_s.empty? ? '' : ' ('+nickname+') '} #{last_name}"
+  end
+
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
     "#{get_full_name} (#{year_of_birth}, #{gender_type ? gender_type.code : '?'})"
+  end
+
+  # Safe getter for the nickname (it can be nil)
+  def get_nickname
+    self.nickname ? self.nickname : ''
   end
 
   # Retrieves the user name associated with this instance
@@ -58,6 +78,35 @@ class Swimmer < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+
+  # Label symbol corresponding to either a column name or a model method to be used
+  # mainly in generating DropDown option lists.
+  #
+  def self.get_label_symbol
+    :get_full_name
+  end
+
+  # Returns an Array of 2-items Arrays, in which each item is the ID of the record
+  # and the other is assumed to be its label
+  #
+  # == Parameters:
+  #
+  # - where_condition: an ActiveRecord::Relation WHERE-clause; defaults to +nil+ (returns all records)
+  # - key_sym: the key symbol/column name (defaults to :id)
+  # - label_sym: the key symbol/column name (defaults to self.get_label_symbol())
+  #
+  # == Returns:
+  # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
+  #
+  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
+    self.where( where_condition ).map{ |row|
+      [row.send(label_sym), row.send(key_sym)]
+    }.sort_by{ |ar| ar[0] }
+  end
+  # ----------------------------------------------------------------------------
+
 
   # Returns true if the current row's gender_type_id is equal to MALE_ID 
   def is_male
@@ -119,6 +168,80 @@ class Swimmer < ActiveRecord::Base
   def get_badges_with_team_names_array( season_id = nil )
      all_badges = get_badges_array( season_id )
      all_badges.collect{ |row| "#{I18n.t('badge.short')} #{row.number}, #{row.team.editable_name}" }
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Helper getter for the current category type of this swimmer,
+  # according to the latest registered badge.
+  #
+  def get_current_category_type_from_badges
+    self.badges.joins(:season).order('seasons.header_year').last.category_type
+  end
+
+
+  # Helper getter for the current category type of this swimmer,
+  # computed from the two most common season types (MASFIN & MASCSI).
+  # Returns an array with the unique category type codes found.
+  #
+  def get_current_category_type_codes
+    last_fin_season = Season.get_last_season_by_type( SeasonType::CODE_MAS_FIN )
+    last_csi_season = Season.get_last_season_by_type( SeasonType::CODE_MAS_CSI )
+    curr_fin_category = last_fin_season ? CategoryType.get_category_from( last_fin_season.id, self.year_of_birth ) : nil
+    curr_csi_category = last_csi_season ? CategoryType.get_category_from( last_csi_season.id, self.year_of_birth ) : nil
+    [ curr_fin_category, curr_csi_category ].compact.collect{ |category| category.code }.uniq
+  end
+  # ----------------------------------------------------------------------------
+
+  # Returns the total meters swam by this swimmer
+  #
+  def get_total_meters_swam
+    relay_lengths = self.meeting_relay_swimmers.includes(:event_type).collect{ |mrs| mrs.event_type.phase_length_in_meters }
+    ind_lengths   = self.meeting_individual_results.includes(:event_type).collect{ |mir| mir.event_type.length_in_meters }
+    ( relay_lengths + ind_lengths ).inject{ |sum, lenght| sum + lenght }
+  end
+
+  # Returns the total time swam by this swimmer as a Timing instance
+  #
+  def get_total_time_swam
+    relay_timings = self.meeting_relay_swimmers.collect{ |mrs| mrs.get_timing_instance.to_hundreds }
+    ind_timings   = self.meeting_individual_results.collect{ |mir| mir.get_timing_instance.to_hundreds }
+    total_hundreds = ( relay_timings + ind_timings ).inject{ |sum, hundreds| sum + hundreds }
+    Timing.new( total_hundreds )
+  end
+  # ----------------------------------------------------------------------------
+
+  # Returns the first meeting registered for this Swimmer; nil when not found.
+  def get_first_meeting
+    ms = self.meeting_sessions.includes(:meeting).order(:scheduled_date).first
+    ms ? ms.meeting : nil
+  end
+
+  # Returns the last meeting registered for this Swimmer; nil when not found.
+  def get_last_meeting
+    ms = self.meeting_sessions.includes(:meeting).order(:scheduled_date).last
+    ms ? ms.meeting : nil
+  end
+  # ----------------------------------------------------------------------------
+
+  # Returns the best-ever MeetingIndividualResult according to the not-null standard points registered.
+  # +nil+ when not found.
+  #
+  def get_best_individual_result
+    self.meeting_individual_results.is_valid.where('standard_points > 0').order(:standard_points).last
+  end
+
+  # Returns the worst-ever MeetingIndividualResult according to the not-null standard points registered.
+  # +nil+ when not found.
+  #
+  def get_worst_individual_result
+    self.meeting_individual_results.is_valid.where('standard_points > 0').order(:standard_points).first
+  end
+
+  # Returns the total count of registered disqualifications
+  def get_disqualifications_count
+    ( self.meeting_individual_results.where(:is_disqualified => true).count +
+      self.meeting_relay_results.where(:is_disqualified => true).count )
   end
   # ----------------------------------------------------------------------------
 end

@@ -1,3 +1,6 @@
+require 'wrappers/timing'
+
+
 class MeetingIndividualResult < ActiveRecord::Base
 
   belongs_to :user
@@ -74,6 +77,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Returns just the formatted timing information
   def get_timing
     "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
+  end
+
+  # Returns a new Timing class instance initialized with the timing data from this row
+  def get_timing_instance
+    Timing.new( hundreds, seconds, minutes )
   end
 
   # Computes a shorter description for the name associated with this data

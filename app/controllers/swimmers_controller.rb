@@ -17,18 +17,22 @@ class SwimmersController < ApplicationController
   #
   def radio
     # --- "Radiography" tab: ---
-    # TODO Collect teams list w/ latest affiliations
-    # TODO Compute current category
-    # TODO Count meeting presence
-    # TODO Count meeting results
-    # TODO Count total meters swam
-    # TODO Count total race time
-    # TODO Collect first race swam
-    # TODO Collect last race swam
-    # TODO Get highest score w/ meeting info
-
-    # TODO Count total records among team
-    # TODO Count how many disqualifications he/she has
+    @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
+                                                    # Retrieve all records for the Swimmer Team(s)
+    all_teams_records = MeetingIndividualResult.includes(
+      :event_type, :category_type, :gender_type, :pool_type
+    ).is_valid.where(
+      [ 'team_id IN (?)', @team_ids ]
+    ).select(
+      'meeting_program_id, team_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    ).group(
+      'team_id, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    )
+                                                    # Count how many Team records are held by this swimmer:
+    @tot_team_records_for_this_swimmer = 0
+    all_teams_records.each{ | mir |
+      @tot_team_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
+    }
   end
   # ---------------------------------------------------------------------------
 
@@ -46,6 +50,16 @@ class SwimmersController < ApplicationController
     # TODO Count 4th places
 
     # TODO Collect "Palmares": find all Championship holders having swimmer id = swimmer_id
+    
+    # FIXME this has not been tested yet:
+    all_championships_records = MeetingIndividualResult.includes(
+      :season, :event_type, :category_type, :gender_type, :pool_type
+    ).is_valid.select(
+      'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    ).group(
+      'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    )
+    # TODO filter all_championships_records and find out how many records this swimmer still holds (if any)
   end
   # ---------------------------------------------------------------------------
 
@@ -87,7 +101,7 @@ class SwimmersController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
-  protected
+  private
 
 
   # Verifies that a swimmer id is provided as parameter; otherwise
