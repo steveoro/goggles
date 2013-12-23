@@ -16,23 +16,33 @@ class RecordsController < ApplicationController
     if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
       prepare_events_and_category_variables()
 
-######################## WIP
+######################## WIP  => ~0'57" execution on wks-8:
+      @f25mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
+      )
+      @f50mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT50_ID
+      )
+      @m25mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::MALE_ID, PoolType::MT25_ID
+      )
+      @m50mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
+      )
 
-      # TODO loop on each GenderType
-      # TODO loop on @events
-      # TODO loop on @category_short_names
-      
-      # TODO or use MeetingIndividualResult.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id = nil )
-      
-      all_records = MeetingIndividualResult.is_valid.includes(
-        :season, :event_type, :category_type, :gender_type, :pool_type
-      ).where(
-        "event_types.code='50FA' AND " +
-        "category_types.code='M40' AND " +
-        "gender_types.code = 'M' AND " +
-        "pool_types.length_in_meters = 50"
-      ).order( "minutes, seconds, hundreds" ).first
-      # TODO get just the first record to have the best result
+######################## WIP  => ~2'05" execution on wks-8:
+      # @f25mt_rec_hash = fill_hash_with_only_1_query(
+          # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
+      # )
+      # @f50mt_rec_hash = fill_hash_with_only_1_query(
+          # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT50_ID
+      # )
+      # @m25mt_rec_hash = fill_hash_with_only_1_query(
+          # @events, @category_codes, GenderType::MALE_ID, PoolType::MT25_ID
+      # )
+      # @m50mt_rec_hash = fill_hash_with_only_1_query(
+          # @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
+      # )
 
 ########################## WIP
       # [Steve, 20131223] Old, wrong version:
@@ -44,7 +54,7 @@ class RecordsController < ApplicationController
         # 'event_types.code, category_types.code, gender_types.code, pool_types.code'
       # )
                                                     # This will partition and distribute all records into the destination member variables:
-      distribute_all_records_to_destination_member_variables( all_records )
+#      distribute_all_records_to_destination_member_variables( all_records )
       render( :partial => 'records_4x_grid' )
     end
   end
@@ -255,12 +265,15 @@ class RecordsController < ApplicationController
     )
     @events = EventType.order(:style_order).are_not_relays
     @preselected_swimmer_id  ||= 0                  # Clear preselected swimmer id if not defined
-    @category_short_names = CategoryType.are_not_relays.group( 'season_types.code, category_types.code' ).includes(
+    categories = CategoryType.are_not_relays.group( 'season_types.code, category_types.code' ).includes(
       :season_type
     ).having(
       [ 'season_types.code = ?', 'MASFINA' ]
-    ).sort.collect{ |r| r.short_name }
+    ).sort
+    @category_short_names = categories.collect{ |r| r.short_name }
+    @category_codes = categories.collect{ |r| r.code }
   end
+  # ----------------------------------------------------------------------------
 
 
   # Given a list of meeting_individual_results, compiles and retuns an hash-matrix
@@ -286,7 +299,6 @@ class RecordsController < ApplicationController
     end
     result_hash_matrix
   end
-  # ----------------------------------------------------------------------------
 
 
   # Prepares the 4 member variables containing all records specified as parameter
@@ -312,6 +324,98 @@ class RecordsController < ApplicationController
     @f50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, f50mt_rec_list )
     @m25mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m25mt_rec_list )
     @m50mt_rec_hash = distribute_records_to_matrix( @events, @category_short_names, m50mt_rec_list )
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Returns an hash of record rows that can be used to fill one of the 4 member variables
+  # that are used to render the main view, according to the parameters specified.
+  # The result hash has the format:
+  #
+  # {
+  #   :event_type_code => { :category_type_code => MeetingIndividualResult row }
+  # }
+  #
+  # The best individual result record chosen is the first one on the list, even
+  # if there are more than 1 result having the same timing.
+  #
+  # The 4 member data variables that are used to render the 4 data
+  # grids are:
+  #
+  # - @f25mt_rec_hash => female, 25mt pool, best record timings
+  # - @f50mt_rec_hash => female, 50mt pool, best record timings
+  # - @m25mt_rec_hash => male, 25mt pool, best record timings
+  # - @m50mt_rec_hash => male, 50mt pool, best record timings
+  #
+  def fill_hash_with_1_query_per_record_type( event_types_array, category_codes_list,
+                                              gender_type_id, pool_type_id )
+    result_hash_matrix = {}                         # Init the result hash:
+# DEBUG
+#    logger.debug "\r\nresult_hash_matrix.class.name: #{result_hash_matrix.class.name}"
+    event_types_array.each do |event_type|
+      result_hash_matrix.merge!({ event_type.id => {} })
+      category_codes_list.each do |category_code|
+        result_hash_matrix[ event_type.id ].merge!(
+          {
+            category_code => MeetingIndividualResult.get_records_for(
+              event_type.code,
+              category_code,
+              gender_type_id,
+              pool_type_id
+            ).first
+          }
+        )
+      end
+    end
+    result_hash_matrix
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Returns an hash of record rows that can be used to fill one of the 4 member variables
+  # that are used to render the main view, according to the parameters specified.
+  # The result hash has the format:
+  #
+  # {
+  #   :event_type_code => { :category_type_code => MeetingIndividualResult row }
+  # }
+  #
+  # The best individual result record chosen is the first one on the list, even
+  # if there are more than 1 result having the same timing.
+  #
+  # The 4 member data variables that are used to render the 4 data
+  # grids are:
+  #
+  # - @f25mt_rec_hash => female, 25mt pool, best record timings
+  # - @f50mt_rec_hash => female, 50mt pool, best record timings
+  # - @m25mt_rec_hash => male, 25mt pool, best record timings
+  # - @m50mt_rec_hash => male, 50mt pool, best record timings
+  #
+  def fill_hash_with_only_1_query( event_types_array, category_codes_list,
+                                   gender_type_id, pool_type_id )
+    result_hash_matrix = {}                         # Init the result hash:
+    mir_list = MeetingIndividualResult.is_valid.includes(
+      :season, :event_type, :category_type, :gender_type, :pool_type
+    ).where([
+      "gender_types.id = ? AND pool_types.id = ?",
+      gender_type_id, pool_type_id
+    ]).order(
+      "event_types.code, category_types.code, minutes ASC, seconds ASC, hundreds ASC"
+    )
+
+    event_types_array.each do |event_type|
+      result_hash_matrix.merge!({ event_type.id => {} })
+      category_codes_list.each do |category_code|
+        best_record = mir_list.detect{ |mir|        # Find the first one in the list for which the conditions are true:
+          (mir.event_type.id == event_type.id) &&
+          (mir.category_type.code == category_code)
+        }
+        result_hash_matrix[ event_type.id ].merge!(
+          { category_code => best_record }
+        )
+      end
+    end
+    result_hash_matrix
   end
   # ----------------------------------------------------------------------------
 end
