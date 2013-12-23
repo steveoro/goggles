@@ -108,6 +108,16 @@ It actually DROPS the Database, recreates it using a mysql shell command.
     puts "\r\nRecreating DB..."
     sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\""
   end
+
+  desc 'Recreates the DB from scratch. Invokes db:reset + db:migrate + sql:exec in one shot.'
+  task :rebuild_from_scratch do
+    puts "*** Task: Compound DB RESET + MIGRATE + SQL:EXEC ***"
+    Rake::Task['db:reset'].invoke
+    Rake::Task['db:migrate'].invoke
+    Rake::Task['sql:exec'].invoke
+    puts "Done."
+  end
+  # ---------------------------------------------------------------------------
 end
 # =============================================================================
 # =============================================================================

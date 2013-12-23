@@ -16,13 +16,33 @@ class RecordsController < ApplicationController
     if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
       prepare_events_and_category_variables()
 
-      all_records = MeetingIndividualResult.includes(
+######################## WIP
+
+      # TODO loop on each GenderType
+      # TODO loop on @events
+      # TODO loop on @category_short_names
+      
+      # TODO or use MeetingIndividualResult.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id = nil )
+      
+      all_records = MeetingIndividualResult.is_valid.includes(
         :season, :event_type, :category_type, :gender_type, :pool_type
-      ).is_valid.select(
-        'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-      ).group(
-        'event_types.code, category_types.code, gender_types.code, pool_types.code'
-      )
+      ).where(
+        "event_types.code='50FA' AND " +
+        "category_types.code='M40' AND " +
+        "gender_types.code = 'M' AND " +
+        "pool_types.length_in_meters = 50"
+      ).order( "minutes, seconds, hundreds" ).first
+      # TODO get just the first record to have the best result
+
+########################## WIP
+      # [Steve, 20131223] Old, wrong version:
+      # all_records = MeetingIndividualResult.includes(
+        # :season, :event_type, :category_type, :gender_type, :pool_type
+      # ).is_valid.select(
+        # 'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+      # ).group(
+        # 'event_types.code, category_types.code, gender_types.code, pool_types.code'
+      # )
                                                     # This will partition and distribute all records into the destination member variables:
       distribute_all_records_to_destination_member_variables( all_records )
       render( :partial => 'records_4x_grid' )
