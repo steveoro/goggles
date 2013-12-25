@@ -16,7 +16,7 @@ class RecordsController < ApplicationController
     if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
       prepare_events_and_category_variables()
 
-######################## WIP  => ~0'57" execution on wks-8:
+      # [Steve, 20131223] => ~0'57" execution on wks-8:
       @f25mt_rec_hash = fill_hash_with_1_query_per_record_type(
           @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
       )
@@ -30,7 +30,8 @@ class RecordsController < ApplicationController
           @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
       )
 
-######################## WIP  => ~2'05" execution on wks-8:
+      # [Steve, 20131223] Kept here as profiling reference:
+      #                   => ~2'05" execution on wks-8:
       # @f25mt_rec_hash = fill_hash_with_only_1_query(
           # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
       # )
@@ -44,17 +45,6 @@ class RecordsController < ApplicationController
           # @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
       # )
 
-########################## WIP
-      # [Steve, 20131223] Old, wrong version:
-      # all_records = MeetingIndividualResult.includes(
-        # :season, :event_type, :category_type, :gender_type, :pool_type
-      # ).is_valid.select(
-        # 'meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-      # ).group(
-        # 'event_types.code, category_types.code, gender_types.code, pool_types.code'
-      # )
-                                                    # This will partition and distribute all records into the destination member variables:
-#      distribute_all_records_to_destination_member_variables( all_records )
       render( :partial => 'records_4x_grid' )
     end
   end
@@ -87,7 +77,7 @@ class RecordsController < ApplicationController
         else
           where_cond = [ '(season_types.id = ?)', season_type_id ]
         end
-  
+
         all_records = MeetingIndividualResult.includes(
           :season, :season_type, :event_type, :category_type, :gender_type, :pool_type
         ).is_valid.where( where_cond ).select(
@@ -349,6 +339,9 @@ class RecordsController < ApplicationController
   #
   def fill_hash_with_1_query_per_record_type( event_types_array, category_codes_list,
                                               gender_type_id, pool_type_id )
+# TODO Add support for season_id parameter using category_type_id_or_code
+# TODO Add support for swimmer_id parameter
+# TODO Add support for team_id parameter
     result_hash_matrix = {}                         # Init the result hash:
 # DEBUG
 #    logger.debug "\r\nresult_hash_matrix.class.name: #{result_hash_matrix.class.name}"
@@ -372,6 +365,8 @@ class RecordsController < ApplicationController
   # ----------------------------------------------------------------------------
 
 
+  # @deprecated: outperformed by #fill_hash_with_1_query_per_record_type 
+  #
   # Returns an hash of record rows that can be used to fill one of the 4 member variables
   # that are used to render the main view, according to the parameters specified.
   # The result hash has the format:

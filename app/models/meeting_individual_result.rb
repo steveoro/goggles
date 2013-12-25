@@ -252,6 +252,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   #
   def self.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id = nil,
                             meeting_id = nil, swimmer_id = nil, limit_for_same_ranking_results = 3 )
+# TODO Add support for team_id parameter
     mir = MeetingIndividualResult.is_valid
     mir = mir.joins( :pool_type ).where( ['pool_types.id = ?', pool_type_id]) if pool_type_id
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
