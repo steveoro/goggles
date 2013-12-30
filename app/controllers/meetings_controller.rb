@@ -94,14 +94,14 @@ class MeetingsController < ApplicationController
                                                     # Sum all individual scores into each team score row:
       mir.each { |ind_result|
         team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( :team_id => ind_result.team_id, :meeting_id => meeting_id )
-        team_score.sum_individual_points += ind_result.standard_points
+        team_score.sum_individual_points += ind_result.individual_meeting_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ ind_result.team_id ] = team_score
       }
                                                     # Sum all relay scores into each team score row:
       mrr.each { |relay_result|
         team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( :team_id => relay_result.team_id, :meeting_id => meeting_id )
-        team_score.sum_relay_points += relay_result.standard_points
+        team_score.sum_relay_points += relay_result.meeting_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ relay_result.team_id ] = team_score
       }
