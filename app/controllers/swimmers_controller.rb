@@ -44,13 +44,11 @@ class SwimmersController < ApplicationController
   #
   def medals
     # --- "Medals" tab: ---
-    # TODO Count gold medals
-    # TODO Count silver medals
-    # TODO Count bronze medals
-    # TODO Count 4th places
-
-    # TODO Collect "Palmares": find all Championship holders having swimmer id = swimmer_id
-    
+    @gold_medals   = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 1 )
+    @silver_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 2 )
+    @bronze_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 3 )
+    @wooden_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 4 )
+                                                    # Collect "Palmares": find all Championship holders having swimmer id = swimmer_id
     # FIXME this has not been tested yet:
     all_championships_records = MeetingIndividualResult.includes(
       :season, :event_type, :category_type, :gender_type, :pool_type
@@ -59,7 +57,14 @@ class SwimmersController < ApplicationController
     ).group(
       'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
     )
-    # TODO filter all_championships_records and find out how many records this swimmer still holds (if any)
+                                                    # Filter all_championships_records and find out how many records this swimmer still holds (if any)
+    # FIXME this has not been tested yet:
+   @tot_season_records_for_this_swimmer = 0         # Count how many Season records are held by this swimmer:
+    all_championships_records.each{ | mir |
+      @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
+    }
+
+    # TODO Collect actual Palmares array (displayed on a table)
   end
   # ---------------------------------------------------------------------------
 
@@ -82,8 +87,12 @@ class SwimmersController < ApplicationController
   # :id => the swimmer id to be processed
   #
   def all_races
-    # --- "All the races" tab: ---
-    # TODO Collect all the races swam for each style, divided for each pool type
+    # --- "All the races" tab: ---                  # Collect all the races swam for each style, divided for each pool type:
+    swimmer_mirs = MeetingIndividualResult.is_valid.where( :swimmer_id => @swimmer.id )
+    @mirs_in_25mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT25_ID])
+    @mirs_in_50mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT50_ID])
+
+    # TODO get all the partial timings for each race & display them on a grid
   end
   # ---------------------------------------------------------------------------
 

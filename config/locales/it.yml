@@ -585,6 +585,12 @@ it:
     all_races_tab: "Tutte le gare"
     misc_tab: "Varie ed eventuali"
     compute_fin_score_for: "Calcola il punteggio FIN per"
+    total_gold_medals: "Tot. Medaglie Oro"
+    total_silver_medals: "Tot. Medaglie Argento"
+    total_bronze_medals: "Tot. Medaglie Bronzo"
+    total_wooden_medals: "Tot. Medaglie Legno [:-)]"
+    total_season_records: "Record Stagionali detenuti"
+    palmares: "Palmares"
 
 
   agex_action:

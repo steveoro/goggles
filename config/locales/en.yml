@@ -28,6 +28,8 @@ en:
     merge_teams: "Merge Teams"
     merge_teams_info: "Allows to merge two Teams (including their TeamAssociation & alias, when defined) if wrongly imported as separated rows. The first 2 selected Teams are processed (only 2 teams at a time can be merged) and then the procedure scans and updates all the Badges, the Meeting results, the subscriptions and all the other associated data if needed."
     search_name: "Search Name"
+    select_dest_team: "Select the destination Team"
+    select_source_team: "Select the Team to be merged"
     unable_to_find_one_team: "One of the selected Teams wasn't found."
     wrong_parameters: "Wrong parameters."
     teams_merged: "Teams merged successfully."
@@ -582,6 +584,12 @@ en:
     all_races_tab: "All the races"
     misc_tab: "Misc"
     compute_fin_score_for: "Compute FIN score for"
+    total_gold_medals: "Gold Medals tot."
+    total_silver_medals: "Silver Medals tot."
+    total_bronze_medals: "Bronze Medals tot."
+    total_wooden_medals: "Wood Medals tot. [:-)]"
+    total_season_records: "Season Records held"
+    palmares: "Palmares"
 
 
   agex_action:

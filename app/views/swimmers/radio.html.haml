@@ -21,34 +21,34 @@
       .row-fluid
         .span3
           = I18n.t(:name) +':'
-        .span7
+        .span6
           %b= @swimmer.get_full_name_with_nickname
           = admin_signed_in? ? " (id=#{@swimmer.id})" : ''
       .row-fluid
         .span3
           = I18n.t('swimmers.affiliated_in_teams') +':'
-        .span7
+        .span6
           = @swimmer.get_team_names
       .row-fluid
         .span3
           = I18n.t('swimmers.year_of_birth') +':'
-        .span7
+        .span6
           = @swimmer.year_of_birth
       .row-fluid
         .span3
           = I18n.t('swimmers.current_category') +':'
-        .span7
+        .span6
           = @swimmer.get_current_category_type_codes.join(' / ')
       .row-fluid
         .span3
           = I18n.t('swimmers.last_registered_category') +':'
-        .span7
+        .span6
           - category = @swimmer.get_current_category_type_from_badges
           = category ? category.code : '?'
       .row-fluid
         .span3
           = I18n.t('swimmers.meeting_presence') +':'
-        .span7
+        .span6
           - presence_count = @swimmer.meetings.uniq.count
           = presence_count
           - ( presence_count / 100 ).times do
@@ -56,7 +56,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.events_attended') +':'
-        .span7
+        .span6
           - event_count = (@swimmer.meeting_individual_results.count + @swimmer.meeting_relay_swimmers.count)
           = event_count
           - ( event_count / 100 ).times do
@@ -64,7 +64,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.total_metres_swam') +':'
-        .span7
+        .span6
           - tot_mt = @swimmer.get_total_meters_swam
           = tot_mt
           - ( tot_mt / 10000 ).times do
@@ -72,12 +72,12 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.total_time_swam') +':'
-        .span7
+        .span6
           = @swimmer.get_total_time_swam.to_s
       .row-fluid
         .span3
           = I18n.t('swimmers.first_attended_meeting') +':'
-        .span7
+        .span6
           - m = @swimmer.get_first_meeting
           - if m
             %a{'id'=>"firstSwim#{m.id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
@@ -88,7 +88,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.last_attended_meeting') +':'
-        .span7
+        .span6
           - m = @swimmer.get_last_meeting
           - if m
             %a{'id'=>"lastSwim#{m.id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
@@ -99,7 +99,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.best_score_ever') +':'
-        .span7
+        .span6
           - mir = @swimmer.get_best_individual_result
           - if mir
             - m = mir.meeting
@@ -117,7 +117,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.worst_score_ever') +':'
-        .span7
+        .span6
           - mir = @swimmer.get_worst_individual_result
           - if mir
             - m = mir.meeting
@@ -135,7 +135,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.total_team_records') +':'
-        .span7
+        .span6
           - if @tot_team_records_for_this_swimmer > 0
             %a{'id'=>"teamRecs#{@swimmer.id}", 'href'=>"#{ records_show_for_team_path(:team_id=>@team_ids.first, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('records.team_title_disclaimer_tooltip')}
               = @tot_team_records_for_this_swimmer
@@ -144,7 +144,7 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.total_disqualifications') +':'
-        .span7
+        .span6
           - dsq_count = @swimmer.get_disqualifications_count
           - if dsq_count > 0
             = dsq_count

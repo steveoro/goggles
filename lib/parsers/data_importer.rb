@@ -11,7 +11,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.96.20131115
+  - Goggles framework vers.:  4.00.131.20131230
   - author: Steve A.
 
   Data-Import methods container class. 
@@ -415,9 +415,8 @@ class DataImporter
     season_id = 0
     if season.nil?                                  # Try to detect which season from the path/name of the file
       container_dir_parts = File.dirname(full_pathname).split(File::SEPARATOR).last.split('.')
-                                                    # Get the season override from the containing folder name, if present (must be: "season.<ID>")
-      if ( (container_dir_parts.size == 2) &&
-           (container_dir_parts[0] == 'season') )
+                                                    # Get the season override from the containing folder name, if present (must be: "<anything>.<ID>")
+      if ( container_dir_parts.size == 2 )
         season_id = (container_dir_parts[1]).to_i
         season = Season.find_by_id( season_id )
         unless ( season && season.id.to_i > 0 )

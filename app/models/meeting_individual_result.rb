@@ -218,6 +218,19 @@ class MeetingIndividualResult < ActiveRecord::Base
         meeting_id, team_id, rank ]
     ).count
   end
+
+
+  # Counts the query results for a specified <tt>meeting_id</tt> (optional), <tt>swimmer_id</tt> and <tt>rank</tt>.
+  #
+  def self.count_swimmer_ranks_for( swimmer_id, rank, meeting_id = nil )
+    mir = MeetingIndividualResult.is_valid.where([
+      '(swimmer_id = ?) AND (rank = ?) AND ' +
+      '(meeting_individual_results.meeting_individual_points > 0)',
+      swimmer_id, rank
+    ])
+    mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
+    mir.count
+  end
   # ----------------------------------------------------------------------------
 
 
@@ -250,13 +263,17 @@ class MeetingIndividualResult < ActiveRecord::Base
   # - <tt>swimmer_id</tt> => when supplied, only the best timing records for the specified swimmer
   # will be collected; when +nil+, the search is extended to all swimmers.
   #
+  # - <tt>team_id</tt> => when supplied, only the best timing records for the specified team
+  # will be collected; when +nil+, the search is extended to all teams.
+  #
   def self.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id = nil,
-                            meeting_id = nil, swimmer_id = nil, limit_for_same_ranking_results = 3 )
-# TODO Add support for team_id parameter
+                            meeting_id = nil, swimmer_id = nil, team_id = nil,
+                            limit_for_same_ranking_results = 3 )
     mir = MeetingIndividualResult.is_valid
     mir = mir.joins( :pool_type ).where( ['pool_types.id = ?', pool_type_id]) if pool_type_id
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
     mir = mir.where( ['swimmer_id = ?', swimmer_id]) if swimmer_id
+    mir = mir.where( ['team_id = ?', team_id]) if team_id
     where_cond = [
       "(event_types.code = ?) AND " +
       "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +

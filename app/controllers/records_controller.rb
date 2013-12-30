@@ -67,6 +67,9 @@ class RecordsController < ApplicationController
       season_type = SeasonType.find_by_id( season_type_id )
 
       if ( season_type_id > 0 && season_type )       # Validate parameters before proceeding
+
+# TODO REWRITE & TEST PERFORMANCE USING fill_hash_with_1_query_per_record_type()
+
         @title = "#{season_type.description} -- #{I18n.t('records.season_type_title')}"
         prepare_events_and_category_variables()
         if (year > 0)
@@ -116,6 +119,9 @@ class RecordsController < ApplicationController
       swimmer = Swimmer.find_by_id( swimmer_id )
 
       if ( swimmer_id > 0 && swimmer )              # Validate parameters before proceeding
+
+# TODO REWRITE & TEST PERFORMANCE USING fill_hash_with_1_query_per_record_type()
+
         @title = "#{swimmer.get_full_name} -- #{I18n.t('records.swimmer_title')}"
         prepare_events_and_category_variables( swimmer )
         if (season_id > 0)
@@ -162,6 +168,9 @@ class RecordsController < ApplicationController
       team = Team.find_by_id( team_id )
 
       if ( team_id > 0 && team )                    # Validate parameters before proceeding
+
+# TODO REWRITE & TEST PERFORMANCE USING fill_hash_with_1_query_per_record_type()
+
         @title = "#{team.get_full_name} -- #{I18n.t('records.team_title')}"
         prepare_events_and_category_variables()
         if (season_id > 0)
@@ -219,6 +228,9 @@ class RecordsController < ApplicationController
       if request.xhr?
 # DEBUG
 #        logger.debug "\r\nparams = #{params.inspect}\r\n"
+
+# TODO REWRITE & TEST PERFORMANCE USING fill_hash_with_1_query_per_record_type()
+
         prepare_events_and_category_variables()
         where_cond = ['(meeting_individual_results.team_id = ?)', @team_id]
 
@@ -323,7 +335,7 @@ class RecordsController < ApplicationController
   # The result hash has the format:
   #
   # {
-  #   :event_type_code => { :category_type_code => MeetingIndividualResult row }
+  #   :event_type_code => { :category_type_id_or_code => MeetingIndividualResult row }
   # }
   #
   # The best individual result record chosen is the first one on the list, even
@@ -337,24 +349,26 @@ class RecordsController < ApplicationController
   # - @m25mt_rec_hash => male, 25mt pool, best record timings
   # - @m50mt_rec_hash => male, 50mt pool, best record timings
   #
-  def fill_hash_with_1_query_per_record_type( event_types_array, category_codes_list,
-                                              gender_type_id, pool_type_id )
-# TODO Add support for season_id parameter using category_type_id_or_code
-# TODO Add support for swimmer_id parameter
-# TODO Add support for team_id parameter
+  def fill_hash_with_1_query_per_record_type( event_types_array, category_type_ids_or_codes_list,
+                                              gender_type_id, pool_type_id,
+                                              meeting_id = nil, swimmer_id = nil,
+                                              team_id = nil )
     result_hash_matrix = {}                         # Init the result hash:
 # DEBUG
 #    logger.debug "\r\nresult_hash_matrix.class.name: #{result_hash_matrix.class.name}"
     event_types_array.each do |event_type|
       result_hash_matrix.merge!({ event_type.id => {} })
-      category_codes_list.each do |category_code|
+      category_type_ids_or_codes_list.each do |category_type_id_or_code|
         result_hash_matrix[ event_type.id ].merge!(
           {
             category_code => MeetingIndividualResult.get_records_for(
               event_type.code,
-              category_code,
+              category_type_id_or_code,
               gender_type_id,
-              pool_type_id
+              pool_type_id,
+              meeting_id,
+              swimmer_id,
+              team_id
             ).first
           }
         )
