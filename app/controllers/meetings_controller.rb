@@ -387,7 +387,8 @@ class MeetingsController < ApplicationController
     end
 
     @meeting = Meeting.find_by_id( meeting_id )
-    unless ( @meeting )
+    @swimmer = Swimmer.find_by_id( swimmer_id )
+    unless ( @meeting && @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_path() ) and return
     end
@@ -402,7 +403,6 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_path() ) and return
     end
-    @swimmer = @individual_result_list.first.swimmer
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------

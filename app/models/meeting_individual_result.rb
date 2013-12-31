@@ -244,7 +244,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   # === "Special" parameters:
   #
   # - <tt>category_type_id_or_code</tt> => if it's a Fixnum is assumed to be an ID; if it's a String,
-  # it's assumed to be the +code+.
+  # it's assumed to be the +code+. If it's +nil+, the "all time" value will be searched.
   # Obviously, if the value used for this parameter is a Fixnum and the ID is used for the query,
   # this will allow a more precise fine-tuning of the results, since both the season and the code
   # identify a single, unique category_types.id (whereas, using the code, you'll get the current
@@ -266,19 +266,24 @@ class MeetingIndividualResult < ActiveRecord::Base
   # - <tt>team_id</tt> => when supplied, only the best timing records for the specified team
   # will be collected; when +nil+, the search is extended to all teams.
   #
-  def self.get_records_for( event_type_code, category_type_id_or_code, gender_type_id, pool_type_id = nil,
+  def self.get_records_for( event_type_code, category_type_id_or_code_or_nil, gender_type_id, pool_type_id = nil,
                             meeting_id = nil, swimmer_id = nil, team_id = nil,
                             limit_for_same_ranking_results = 3 )
     mir = MeetingIndividualResult.is_valid
     mir = mir.joins( :pool_type ).where( ['pool_types.id = ?', pool_type_id]) if pool_type_id
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
     mir = mir.where( ['swimmer_id = ?', swimmer_id]) if swimmer_id
+    if category_type_id_or_code_or_nil
+      if category_type_id_or_code_or_nil.instance_of?(String)
+        mir = mir.where( ['category_types.code = ?', category_type_id_or_code_or_nil])
+      elsif category_type_id_or_code_or_nil.instance_of?(Fixnum)
+        mir = mir.where( ['category_types.id = ?', category_type_id_or_code_or_nil])
+      end
+    end
     mir = mir.where( ['team_id = ?', team_id]) if team_id
     where_cond = [
-      "(event_types.code = ?) AND " +
-      "(#{ category_type_id_or_code.instance_of?(String) ? 'category_types.code' : 'category_types.id' } = ?) AND " +
-      "(gender_types.id = ?)",
-      event_type_code, category_type_id_or_code, gender_type_id
+      "(event_types.code = ?) AND (gender_types.id = ?)",
+      event_type_code, gender_type_id
     ]
 # DEBUG
 #    puts "\r\n---[ #{self.name}.get_records_for() ]---"

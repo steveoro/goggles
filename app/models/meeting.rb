@@ -88,7 +88,18 @@ class Meeting < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    description
+    case edition_type_id
+    when EditionType::ORDINAL_ID
+      "#{edition} #{description}"
+    when EditionType::ROMAN_ID
+      "#{edition} #{description}"
+    when EditionType::SEASON_ID
+      "#{description} #{season.get_full_name}"
+    when EditionType::YEAR_ID
+      "#{description} #{header_year}"
+    else
+      description
+    end
   end
 
   # Computes a verbose or formal description for the name associated with this data

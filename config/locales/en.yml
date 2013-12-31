@@ -492,6 +492,11 @@ en:
     ind_results_short: "Indiv. results"
     rel_results_short: "Relay results"
     total_teams: "Tot. teams"
+    scores: "Scores"
+    personal_records: "Personal records"
+    rank: "Rank"
+    standard: "Std."
+    meeting: "Meeting"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -554,9 +559,9 @@ en:
     team_title: "Team Records"
     team_title_disclaimer_tooltip: "This total count will include also Records held with Affiliations from different Teams. Click to go the page of the Team Records for the first Team on the list for this Athlete."
     menu_team: "for a selected Team"
-    personal_best: "Personal Best"
-    seasonal_best: "Season Best"
-    meeting_best: "Meeting Best"
+    personal_best: "Personal"
+    seasonal_best: "Seasonal"
+    meeting_best: "Meeting"
 
   meeting_stats:
     females: "Females"

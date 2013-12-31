@@ -492,6 +492,12 @@ it:
     ind_results_short: "Ris. indiv."
     rel_results_short: "Ris. staff."
     total_teams: "Squadre tot."
+    scores: "Punteggi"
+    personal_records: "Record personali"
+    rank: "Pos."
+    timing: "Tempo"
+    standard: "Std."
+    meeting: "Meeting"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -557,7 +563,7 @@ it:
     menu_by_team: "per Squadra"
     personal_best: "Personale"
     seasonal_best: "Stagionale"
-    meeting_best: "Rec. Meeting"
+    meeting_best: "Meeting"
 
   meeting_stats:
     females: "Femmine"
