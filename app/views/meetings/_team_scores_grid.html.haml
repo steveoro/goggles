@@ -1,18 +1,20 @@
-.offset2.span8
+.offset1.span10
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
-        %td{'colspan'=>'4'}
-          %b= I18n.t(:ranking)
-        %td
-          = I18n.t('meeting.team_total_athletes')
-        %td
-          = I18n.t('meeting_team_score.sum_individual_points')
-        %td
-          = I18n.t('meeting_team_score.sum_relay_points')
-        %td
-          = I18n.t('meeting_team_score.sum_team_points')
-        %td
+        %td.goggles-centeralign{'colspan'=>'4'}
+          %b= I18n.t('meeting_team_score.ranking')
+        %td.goggles-centeralign
+          = I18n.t('meeting_team_score.team_total_athletes')
+        %td.goggles-centeralign
+          = I18n.t('meeting_team_score.meeting_individual_points')
+        %td.goggles-centeralign
+          = I18n.t('meeting_team_score.meeting_relay_points')
+        - if @total_team_bonus > 0
+          %td.goggles-centeralign
+            = I18n.t('meeting_team_score.meeting_team_points')
+        %td.goggles-centeralign
+          %b= I18n.t('meeting_team_score.total')
       - tot_swimmers = 0
       - @meeting_team_scores.each do |team_score|
         - is_highlighted = (@preselected_team_id.to_i == team_score.team_id)
@@ -26,21 +28,20 @@
             - tot_swimmers += (swimmers_count = Team.get_swimmer_ids_for(team_score.team_id, @meeting.id).size)
             = swimmers_count
           %td.goggles-rightalign
-            = sprintf( "%02.2f", team_score.sum_individual_points )
+            = sprintf( "%02.2f", team_score.meeting_individual_points )
           %td.goggles-rightalign
-            = sprintf( "%02.2f", team_score.sum_relay_points )
+            = sprintf( "%02.2f", team_score.meeting_relay_points )
+          - if @total_team_bonus > 0
+            %td.goggles-rightalign
+              = sprintf( "%02.2f", team_score.meeting_team_points )
           %td.goggles-rightalign
-            = sprintf( "%02.2f", team_score.sum_team_points )
-          %td
-            = show_tag( team_score.rank==1 && team_score.sum_individual_points>0, "medal_gold_3.png", '' )
-            = show_tag( team_score.rank==2 && team_score.sum_individual_points>0, "medal_silver_3.png", '' )
-            = show_tag( team_score.rank==3 && team_score.sum_individual_points>0, "medal_bronze_3.png", '' )
+            %b= sprintf( "%02.2f", team_score.meeting_individual_points + team_score.meeting_relay_points + team_score.meeting_team_points )
       %tr
         %td
         %td{'colspan'=>'3'}
-          = "#{I18n.t('meeting.total_teams')}: #{@meeting_team_scores.size}"
+          %i= "#{I18n.t('meeting_team_score.attending_teams')}: #{@meeting_team_scores.size}"
         %td.goggles-rightalign
-          = tot_swimmers
+          %i= tot_swimmers
         %td{'colspan'=>'4'}
 
 .row-fluid

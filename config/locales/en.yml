@@ -509,15 +509,19 @@ en:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_relay_results'!"
 
   meeting_team_score:
+    ranking: "Partial Team ranking"
+    attending_teams: "Attending teams"
+    team_total_athletes: "Athletes"
+    total: "Total"
     sum_individual_points: "Individ. pts."
     sum_relay_points: "Relay pts."
-    sum_team_points: "Team pts."
-    meeting_individual_points: "Meeting Individ. pts."
-    meeting_relay_points: "Meeting Relay pts."
-    meeting_team_points: "Meeting Team pts."
-    season_individual_points: "Season Individ. pts."
-    season_relay_points: "Season Relay pts."
-    season_team_points: "Season Team pts."
+    sum_team_points: "Bonus pts."
+    meeting_individual_points: "Individ. pts."
+    meeting_relay_points: "Relay pts."
+    meeting_team_points: "Bonus pts."
+    season_individual_points: "Individ. pts."
+    season_relay_points: "Relay pts."
+    season_team_points: "Bonus pts."
 
   meeting_calendar:
     navigation: "Calendar"

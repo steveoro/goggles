@@ -84,9 +84,10 @@ class MeetingsController < ApplicationController
     if ( @meeting.meeting_team_scores.count > 0 )
       @meeting_team_scores = @meeting.meeting_team_scores.includes(
         :team, :team_affiliation
-      ).order(
-        'meeting_team_scores.rank'
       )
+      # [Steve, 20131231] Cannot order via SQL since rank could be blank for CSI meetings
+      #  (as in  .order('meeting_team_scores.rank'))
+
     else
       team_scores_hash = {}
       mir = @meeting.meeting_individual_results.is_valid
@@ -94,28 +95,34 @@ class MeetingsController < ApplicationController
                                                     # Sum all individual scores into each team score row:
       mir.each { |ind_result|
         team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( :team_id => ind_result.team_id, :meeting_id => meeting_id )
-        team_score.sum_individual_points += ind_result.individual_meeting_points
+        team_score.meeting_individual_points += ind_result.standard_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ ind_result.team_id ] = team_score
       }
                                                     # Sum all relay scores into each team score row:
       mrr.each { |relay_result|
         team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( :team_id => relay_result.team_id, :meeting_id => meeting_id )
-        team_score.sum_relay_points += relay_result.meeting_points
+        team_score.meeting_relay_points += relay_result.standard_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ relay_result.team_id ] = team_score
       }
                                                     # Collect the individual score rows and sort them:
       @meeting_team_scores = team_scores_hash.values
-      @meeting_team_scores.sort!{ |a, b|
-        (b.sum_individual_points + b.sum_relay_points) <=> (a.sum_individual_points + a.sum_relay_points) 
-      }
-                                                    # Update ranking and total score:
-      @meeting_team_scores.each_with_index{ |team_score, index|
-        team_score.rank = index + 1
-        team_score.sum_team_points = team_score.sum_individual_points + team_score.sum_relay_points
-      }
     end
+                                                    # Do the manual sorting of the array to assure a valorized ranking:
+    @meeting_team_scores.sort!{ |a, b|
+      (
+        b.meeting_individual_points + b.meeting_relay_points + b.meeting_team_points
+      ) <=> (
+        a.meeting_individual_points + a.meeting_relay_points + a.meeting_team_points
+      ) 
+    }
+                                                    # Finally, update ranking according to the sorted array:
+    @total_team_bonus = 0
+    @meeting_team_scores.each_with_index{ |team_score, index|
+      team_score.rank = index + 1
+      @total_team_bonus += team_score.meeting_team_points
+    }
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------

@@ -39,7 +39,7 @@ class EventType < ActiveRecord::Base
     if self.is_a_relay
       relay_name = I18n.t( (self.is_mixed_gender ? :mixed_relay : :relay), {:scope=>[:relay_types]} )
       "#{ self.phases }x#{ self.phase_length_in_meters } #{ self.stroke_type.i18n_description(true) } " +
-      ( self.partecipants != self.phases ? "(#{relay_name} #{self.partecipants} #{I18n.t(athletes)})" : "(#{relay_name})" )
+      ( self.partecipants != self.phases ? "(#{relay_name} #{self.partecipants} #{I18n.t(:athletes)})" : "(#{relay_name})" )
     else
       "#{self.length_in_meters} " + self.stroke_type.i18n_description()
     end

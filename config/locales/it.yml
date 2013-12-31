@@ -509,15 +509,19 @@ it:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Risultati Staff. Meeting'! (tab: 'meeting_relay_results')"
 
   meeting_team_score:
-    sum_individual_points: "Individ."
-    sum_relay_points: "Staff."
-    sum_team_points: "Squadra"
-    meeting_individual_points: "Individ. (Meeting)"
-    meeting_relay_points: "Staff. (Meeting)"
-    meeting_team_points: "Squadra (Meeting)"
-    season_individual_points: "Individ. (Stagione)"
-    season_relay_points: "Staff. (Stagione)"
-    season_team_points: "Squadra (Stagione)"
+    ranking: "Classifica parziale società"
+    attending_teams: "Società partecipanti"
+    team_total_athletes: "Atleti"
+    total: "Totale"
+    sum_individual_points: "Individuali"
+    sum_relay_points: "Staffette"
+    sum_team_points: "Bonus"
+    meeting_individual_points: "Individuali"
+    meeting_relay_points: "Staffette"
+    meeting_team_points: "Bonus"
+    season_individual_points: "Individuali"
+    season_relay_points: "Staffette"
+    season_team_points: "Bonus"
 
   meeting_calendar:
     navigation: "Calendario"
