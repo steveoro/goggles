@@ -7,6 +7,13 @@ class Training < ActiveRecord::Base
   belongs_to :swimmer_level_type
   validates_associated :swimmer_level_type
 
+  has_many :training_rows
+  attr_accessible :training_rows_attributes         # (Needed by the nested_form gem)
+
+  has_many :exercises, :through => :training_rows
+  has_many :training_step_types, :through => :training_rows
+
+
   validates_presence_of :title
   validates_length_of   :title, :within => 1..100, :allow_nil => false
 
@@ -27,4 +34,14 @@ class Training < ActiveRecord::Base
     title
   end
   # ---------------------------------------------------------------------------
+
+  # Retrieves the User short name (the owner of this Training)
+  def get_user_name
+    user ? user.name : ''
+  end
+
+  # Retrieves the Swimmer level type short name
+  def get_swimmer_level_type_short
+    swimmer_level_type ? swimmer_level_type.i18n_short : ''
+  end
 end

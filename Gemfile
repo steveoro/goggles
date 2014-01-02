@@ -84,6 +84,11 @@ gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git' # This version has more verbose exception reporting instead of YAML trace
 
+gem 'country_select'
+gem 'simple_form'
+gem "nested_form"
+
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

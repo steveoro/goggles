@@ -1,8 +1,9 @@
+# encoding: utf-8
+require 'date'
+require 'common/format'
+
+
 class SwimmingPoolsController < ApplicationController
-
-  require 'date'
-  require 'common/format'
-
 
   # Index/Search action.
   #

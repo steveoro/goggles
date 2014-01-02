@@ -1,5 +1,9 @@
 class Exercise < ActiveRecord::Base
 
+  has_many :exercise_rows
+  has_many :trainings, :through => :training_rows
+  has_many :training_step_types, :through => :training_rows
+
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..6, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists

@@ -1,0 +1,41 @@
+.accordion
+  .accordion-group
+    .accordion-heading.goggles-accordion-heading
+      .row-fluid
+        .span12
+          %h3= @title
+    .accordion-body
+      .accordion-inner
+        - if admin_signed_in?
+          .row-fluid
+            .span2
+              = 'ID:'
+            .span10
+              = @training.id
+        .row-fluid
+          .span12
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.training.title') + ':'
+          .span10
+            = @training.title
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.training.description') + ':'
+          .span10
+            = @training.description
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.user') + ':'
+          .span10
+            = @training.get_user_name
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.swimmer_level_type') + ':'
+          .span10
+            = @training.get_swimmer_level_type_short
+        .row-fluid
+          .span2
+            %i= I18n.t(:updated_at) + ':'
+          .span10
+            %i= Format.a_short_datetime( @training.updated_at )

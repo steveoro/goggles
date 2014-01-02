@@ -602,6 +602,15 @@ it:
     total_season_records: "Record Stagionali detenuti"
     palmares: "Palmares"
 
+  trainings:
+    index_title: "Ricerca allenamenti"
+    details: "Dettagli"
+    training_created: "Allenamento creato con successo!"
+    training_updated: "Allenamento aggiornato con successo!"
+    training_deleted: "Allenamento eliminato!"
+    show_title: "Allenamento '{TRAINING_TITLE}'"
+    chose_swimmer_level_type: "Scegli il liv. nuotatore"
+
 
   agex_action:
     main: Principale
@@ -725,6 +734,7 @@ it:
   drag_to_resize: "Trascina per ridimensionare le aree"
   show_details_tooltip: "Mostra i dettagli della riga selezionata in una finestra pop-up"
   add: Aggiungi
+  add_new: Aggiungi nuovo!
   edit: Modifica
   user: Utente
   manage_details: Gestisci dettagli
@@ -992,6 +1002,13 @@ it:
       locker_cabinet_type: "Tipo Armadietti"
       shower_type: "Tipo Docce"
       hair_dryer_type: "Tipo Asciugacapelli"
+      exercise: "Esercizio"
+      training_row: "Dettaglio esercizio"
+      training: "Allenamento"
+      training_row: "Dettaglio allenamento"
+      swimmer_level_type: "Liv. nuotatore"
+      training_step_type: "Passo allenam."
+      training_mode_types: "Modo allenam."
 
     attributes:
       user:
@@ -1124,6 +1141,17 @@ it:
         has_restaurant_service: "Con ristorante?"
         has_gym_area: "Con palestra?"
         has_children_area: "Con area bimbi?"
+      training:
+        title: "Titolo"
+        description: "Descrizione"
+        user: "Un allenamento di"
+        swimmer_level_type: "Livello del nuotatore"
+      training_rows:
+        part_order: "Parte"
+        times: "Ripetiz.(x)"
+        distance: "Distanza (mt)"
+        start_and_rest: "Scatto+Riposo (sec)"
+        pause: "Pausa (sec)"
 
     errors:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."

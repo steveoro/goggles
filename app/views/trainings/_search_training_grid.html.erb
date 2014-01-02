@@ -1,0 +1,37 @@
+<%= define_grid(@trainings_grid) do |g|
+	g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
+
+	g.column(
+		name: I18n.t( :title, {:scope=>[:activerecord, :attributes, :training]} ),
+		attribute: 'title',
+	) do |training|
+		link_to( training.title, training_path(training) )
+	end
+
+	g.column(
+		name: I18n.t( :description, {:scope=>[:activerecord, :attributes, :training]} ),
+		attribute: 'description',
+	)
+
+	g.column(
+		name: I18n.t(:swimmer_level_type, {:scope=>[:activerecord, :models]}),
+		model: SwimmerLevelType,
+		attribute: 'id',
+		custom_filter: SwimmerLevelType.to_dropdown,
+	) do |training|
+		training.get_swimmer_level_type_short
+	end
+
+	g.column(
+		name: I18n.t(:user, {:scope=>[:activerecord, :models]}),
+		model: User,
+		attribute: 'id',
+		custom_filter: User.to_dropdown,
+	) do |training|
+		training.get_user_name
+	end
+
+	g.column do |training|
+		link_to( I18n.t(:edit), edit_training_path(training) )
+	end
+end -%>

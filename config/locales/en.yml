@@ -600,6 +600,15 @@ en:
     total_season_records: "Season Records held"
     palmares: "Palmares"
 
+  trainings:
+    index_title: "Search trainings"
+    details: "Details"
+    training_created: "Training successfully created!"
+    training_updated: "Training successfully updated!"
+    training_deleted: "Training successfully deleted!"
+    show_title: "Training '{TRAINING_TITLE}'"
+    chose_swimmer_level_type: "Choose the swimmer level"
+
 
   agex_action:
     main: Main
@@ -722,6 +731,7 @@ en:
   drag_to_resize: "Drag to resize the area"
   show_details_tooltip: "Show the row details in a small pop-up window"
   add: Add
+  add_new: Add new!
   edit: Edit
   user: User
   manage_details: Manage details
@@ -873,8 +883,15 @@ en:
       accreditation_time_type: "Accred. Time Type"
       pool_type: "Pool Type"
       locker_cabinet_type: "Locker Cabinet Type"
-      hair_dryer_type: "Hair-drier Type"
       shower_type: "Shower Type"
+      hair_dryer_type: "Hair-drier Type"
+      exercise: "Exercise"
+      exercise_row: "Exercise detail"
+      training: "Training"
+      training_row: "Training detail"
+      swimmer_level_type: "Swimmer level"
+      training_step_type: "Training step"
+      training_mode_types: "Training mode"
 
     attributes:
       user:
@@ -1007,6 +1024,17 @@ en:
         has_restaurant_service: "With restaurant?"
         has_gym_area: "With gym?"
         has_children_area: "With children area?"
+      training:
+        title: "Title"
+        description: "Description"
+        swimmer_level_type: "Swimmer level type"
+        user: "A training from"
+      training_rows:
+        part_order: "Part"
+        times: "Times (x)"
+        distance: "Distance (mt)"
+        start_and_rest: "Start+Rest (sec)"
+        pause: "Pause (sec)"
 
 
   errors:

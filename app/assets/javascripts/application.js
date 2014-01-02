@@ -9,4 +9,5 @@
 //= require jquery-ui.min
 //= require wice_grid
 //= require jquery.ui.datepicker
+//= require jquery_nested_form
 //= require_tree .

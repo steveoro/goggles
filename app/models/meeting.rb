@@ -1,3 +1,8 @@
+# encoding: utf-8
+
+require 'extensions/roman_numeral'
+
+
 class Meeting < ActiveRecord::Base
 
   belongs_to :user
@@ -92,7 +97,7 @@ class Meeting < ActiveRecord::Base
     when EditionType::ORDINAL_ID
       "#{edition} #{description}"
     when EditionType::ROMAN_ID
-      "#{edition} #{description}"
+      "#{edition.to_roman} #{description}"
     when EditionType::SEASON_ID
       "#{description} #{season.get_full_name}"
     when EditionType::YEAR_ID
