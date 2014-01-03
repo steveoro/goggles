@@ -7,8 +7,11 @@ class Training < ActiveRecord::Base
   belongs_to :swimmer_level_type
   validates_associated :swimmer_level_type
 
-  has_many :training_rows
-  attr_accessible :training_rows_attributes         # (Needed by the nested_form gem)
+  has_many :training_rows, :dependent => :delete_all
+  accepts_nested_attributes_for :training_rows, :allow_destroy => true
+
+  attr_accessible :title, :description, :swimmer_level_type_id, :user_id,
+                  :training_rows_attributes         # (Needed by the nested_form gem)
 
   has_many :exercises, :through => :training_rows
   has_many :training_step_types, :through => :training_rows
@@ -44,4 +47,5 @@ class Training < ActiveRecord::Base
   def get_swimmer_level_type_short
     swimmer_level_type ? swimmer_level_type.i18n_short : ''
   end
+  # ---------------------------------------------------------------------------
 end

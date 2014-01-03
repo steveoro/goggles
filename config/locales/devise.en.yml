@@ -1,6 +1,6 @@
 en:
   devise:
-    resend_confirm_email_title: "Resend confirmation instructions"
+    resend_confirm_email_title: "Account confirmation instructions"
     resend_confirm_email_submit: "Resend confirmation instructions"
 
     confirm_email_greetings: "Hi there, <EMAIL>! Welcome to Goggles!"

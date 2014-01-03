@@ -32,6 +32,18 @@
 	end
 
 	g.column do |training|
-		link_to( I18n.t(:edit), edit_training_path(training) )
+		link_to(									# Enable edit action link, but only if the current user is the owner:
+			I18n.t(:edit),
+			edit_training_path(training)
+		) if (training.user_id == current_user.id)
+	end
+
+	g.column do |training|
+		link_to(									# Enable delete action link, but only if the current user is the owner:
+				I18n.t(:delete),
+				training_path(training),
+				:method => :delete,
+				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
+ 		) if (training.user_id == current_user.id)
 	end
 end -%>

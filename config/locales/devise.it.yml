@@ -1,6 +1,6 @@
 it:
   devise:
-    resend_confirm_email_title: "Rispedisci le istruzioni di conferma"
+    resend_confirm_email_title: "Istruzioni di conferma Account"
     resend_confirm_email_submit: "Rispedisci le istruzioni di conferma"
 
     confirm_email_greetings: "Heila' <EMAIL>! Benvenuto in Goggles!"

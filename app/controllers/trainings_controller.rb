@@ -58,12 +58,11 @@ class TrainingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.create() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
-      @training = Training.new()
-      @training.title = params[:training][:title]
-      @training.description = params[:training][:description]
-      @training.swimmer_level_type_id = params[:training][:swimmer_level_type_id]
+      @training = Training.new( params[:training] )
+                                                    # Set the owner for all the records:
       @training.user_id = current_user.id
-      
+      @training.training_rows.each{|row| row.user_id = current_user.id }
+
       if @training.save
         flash[:notice] = I18n.t('trainings.training_created')
         redirect_to( trainings_path() )
@@ -106,11 +105,11 @@ class TrainingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
-    @training.title = params[:training][:title] if params[:training][:title]
-    @training.description = params[:training][:description] if params[:training][:description]
-    @training.swimmer_level_type_id = params[:training][:swimmer_level_type_id] if params[:training][:swimmer_level_type_id]
-    @training.user_id = current_user.id
-    if @training.save
+#    @training.title = params[:training][:title] if params[:training][:title]
+#    @training.description = params[:training][:description] if params[:training][:description]
+#    @training.swimmer_level_type_id = params[:training][:swimmer_level_type_id] if params[:training][:swimmer_level_type_id]
+#    @training.user_id = current_user.id
+    if @training.update_attributes( params[:training] )
       flash[:notice] = I18n.t('trainings.training_updated')
       redirect_to( training_path(@training) )
     else

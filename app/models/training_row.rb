@@ -27,6 +27,9 @@ class TrainingRow < ActiveRecord::Base
   validates_length_of       :pause, :within => 1..4, :allow_nil => false
   validates_numericality_of :pause
 
+  attr_accessible :part_order, :times, :distance, :start_and_rest, :pause,
+                  :training_id, :exercise_id, :training_step_type_id, :user_id
+
 
   # ---------------------------------------------------------------------------
   # Base methods:
@@ -74,6 +77,23 @@ class TrainingRow < ActiveRecord::Base
     self.where( where_condition ).map{ |row|
       [row.send(label_sym), row.send(key_sym)]
     }.sort_by{ |ar| ar[0] }
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the User short name (the owner of this Training)
+  def get_user_name
+    user ? user.name : ''
+  end
+
+  # Retrieves the Training step type short name
+  def get_training_step_type_short
+    training_step_type ? training_step_type.i18n_short : ''
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the Exercise short name
+  def get_exercise_short
+    exercise ? exercise.i18n_short : ''
   end
   # ----------------------------------------------------------------------------
 end

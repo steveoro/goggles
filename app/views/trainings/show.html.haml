@@ -1,3 +1,7 @@
+.row-fluid
+  .span12
+    = link_to( I18n.t(:back_to_index_view), trainings_path() )
+
 .accordion
   .accordion-group
     .accordion-heading.goggles-accordion-heading
@@ -26,7 +30,7 @@
             = @training.description
         .row-fluid
           .span2
-            = I18n.t('activerecord.models.user') + ':'
+            = I18n.t('activerecord.attributes.training.user') + ':'
           .span10
             = @training.get_user_name
         .row-fluid

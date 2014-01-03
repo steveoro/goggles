@@ -83,8 +83,11 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_records_team,          t('records.menu_by_team'),        records_for_team_path()
     end
 
-    primary.item( :key_calendar,      t('meeting_calendar.navigation'), meeting_calendars_path() )
-    primary.item( :key_pools,         t('swimming_pool.pools'), swimming_pools_path() )
+    primary.item( :key_misc,  t('misc_main_menu.title'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_calendar,    t('meeting_calendar.navigation'), meeting_calendars_path()
+      lev2_nav.item :key_pools,       t('swimming_pool.pools'),         swimming_pools_path()
+      lev2_nav.item :key_trainings,   t('misc_main_menu.trainings'),    trainings_path()
+    end
 
     primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'
 #    primary.item :key_separator1,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { user_signed_in? }

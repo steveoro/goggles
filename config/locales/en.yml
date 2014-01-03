@@ -600,6 +600,12 @@ en:
     total_season_records: "Season Records held"
     palmares: "Palmares"
 
+  misc_main_menu:
+    title: "Misc"
+    caledar: "Calendar"
+    pools: "Swimming pools"
+    trainings: "Trainings"
+
   trainings:
     index_title: "Search trainings"
     details: "Details"
@@ -608,6 +614,7 @@ en:
     training_deleted: "Training successfully deleted!"
     show_title: "Training '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Choose the swimmer level"
+    leave_zero_to_ignore: "Leave zero to ignore this component"
 
 
   agex_action:
@@ -733,6 +740,7 @@ en:
   add: Add
   add_new: Add new!
   edit: Edit
+  delete: Delete
   user: User
   manage_details: Manage details
   manage_details_tooltip: "Manage the details of the selected record [also: SPACE or ENTER just after row selection]"
@@ -743,6 +751,8 @@ en:
   reporting: "Reporting"
   data_export: "Data export"
   add_default_row: "Add 'default' rows"
+  add_new_row: "Add a new row"
+  back_to_index_view: "Back to search index view"
 
   user__name: User
   authorization_level: "Authorization lev."

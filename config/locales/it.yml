@@ -602,6 +602,12 @@ it:
     total_season_records: "Record Stagionali detenuti"
     palmares: "Palmares"
 
+  misc_main_menu:
+    title: "Varie"
+    caledar: "Calendario"
+    pools: "Piscine"
+    trainings: "Allenamenti"
+
   trainings:
     index_title: "Ricerca allenamenti"
     details: "Dettagli"
@@ -610,6 +616,7 @@ it:
     training_deleted: "Allenamento eliminato!"
     show_title: "Allenamento '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Scegli il liv. nuotatore"
+    leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
 
 
   agex_action:
@@ -736,6 +743,7 @@ it:
   add: Aggiungi
   add_new: Aggiungi nuovo!
   edit: Modifica
+  delete: Elimina
   user: Utente
   manage_details: Gestisci dettagli
   manage_details_tooltip: "Gestisci nei dettagli l'elemento selezionato [anche: SPAZIO o INVIO dopo aver selezionato la riga]"
@@ -746,6 +754,8 @@ it:
   reporting: "Report"
   data_export: "Esportazioni"
   add_default_row: "Aggiungi righe 'default'"
+  add_new_row: "Aggiungi una nuova riga"
+  back_to_index_view: "Torna all'indice di ricerca"
 
   user__name: Utente
   authorization_level: "Livello Autorizz."
