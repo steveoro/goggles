@@ -2,7 +2,7 @@ class Exercise < ActiveRecord::Base
 
   has_many :exercise_rows
   has_many :trainings, :through => :training_rows
-  has_many :training_step_types, :through => :training_rows
+  has_many :training_step_types
 
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..6, :allow_nil => false
@@ -11,8 +11,8 @@ class Exercise < ActiveRecord::Base
 
 
   # Computes a full description for this data row
-  def get_full_name
-    exercise_rows.collect{ |row| row.get_full_name }.join("\r\n")
+  def get_full_name( separator = "\r\n" )
+    exercise_rows.collect{ |row| row.get_full_name }.join(separator)
   end
   # ---------------------------------------------------------------------------
 
@@ -36,7 +36,8 @@ class Exercise < ActiveRecord::Base
   # == Returns:
   # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
   #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
+  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol(),
+                        multiline_separator = '<br/>' )
     self.where( where_condition ).map{ |row|
       [row.send(label_sym), row.send(key_sym)]
     }.sort_by{ |ar| ar[0] }
