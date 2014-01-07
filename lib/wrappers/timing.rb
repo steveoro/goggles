@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.127.20131220
+  - Goggles framework vers.:  4.00.135.20140107
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -98,11 +98,31 @@ class Timing
     self.hours * 360000 + self.days * 8640000
   end
 
-  # Converts the current instance to a readable string
+  # Converts the current instance to a readable string.
+  # If +hide_zero_members+ is true, members of the class that have a zero value
+  # will not be included in the output string.
   def to_s
     (days > 0 ? "#{days}d " : '') +
     (hours > 0 ? "#{hours}h " : '') +
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
+    sprintf("%2s'%2s\"%02.0f", minutes, seconds, hundreds)
+  end
+  # ---------------------------------------------------------------------------
+
+  # Commodity class method. Same as to_s.
+  #
+  def self.to_s( hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0 )
+    Timing.new( hundreds, seconds, minutes, hours, days ).to_s
+  end
+
+  # Commodity class method. Similar to +to_s+ method, but it doesn't include
+  # members with non positive values in the output string.
+  #
+  def self.to_compact_s( hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0 )
+    (days > 0 ? "#{days}d " : '') +
+    (hours > 0 ? "#{hours}h " : '') +
+    (minutes > 0 ? sprintf("%2s'", minutes) : '') +
+    (seconds > 0 ? sprintf("%2s\"", seconds) : '') +
+    (hundreds > 0 ? sprintf("%02.0f", hundreds) : '')
   end
   # ---------------------------------------------------------------------------
 end

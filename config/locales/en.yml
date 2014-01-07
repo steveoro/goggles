@@ -614,6 +614,7 @@ en:
     training_deleted: "Training successfully deleted!"
     show_title: "Training '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Choose the swimmer level"
+    chose_exercise: "Choose which exercise"
     leave_zero_to_ignore: "Leave zero to ignore this component"
 
 
@@ -1043,6 +1044,7 @@ en:
         part_order: "Part"
         times: "Times (x)"
         distance: "Distance (mt)"
+        exercise: "Esercise"
         start_and_rest: "Start+Rest (sec)"
         pause: "Pause (sec)"
 

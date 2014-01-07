@@ -1,24 +1,27 @@
 .row-fluid
   .span12
-    = simple_nested_form_for @training do |f|
-      = f.input :title, input_html: { class: 'span5' }
-      = f.input :description, input_html: { rows: 3, class: 'span8' }
-      = f.association :swimmer_level_type, collection: SwimmerLevelType.to_dropdown, prompt: I18n.t('trainings.chose_swimmer_level_type')
 
-      %table.table.table-condensed.table-striped.table-bordered#training_rows
-        %tr
-          %td= I18n.t('activerecord.attributes.training_rows.part_order')
-          %td= I18n.t('activerecord.attributes.training_rows.times')
-          %td= I18n.t('activerecord.attributes.training_rows.distance')
-          %td= I18n.t('activerecord.attributes.training_rows.start_and_rest')
-          %td= I18n.t('activerecord.attributes.training_rows.pause')
-        = f.fields_for :training_rows, :wrapper => false do |training_row_form|
-          %tr
-            %td= training_row_form.input :part_order, :label => false, :wrapper => false
-            %td= training_row_form.input :times, :label => false, :wrapper => false
-            %td= training_row_form.input :distance, :label => false, :wrapper => false
-            %td= training_row_form.input :start_and_rest, :label => false, :wrapper => false, :hint => I18n.t('trainings.leave_zero_to_ignore')
-            %td= training_row_form.input :pause, :label => false, :wrapper => false, :hint => I18n.t('trainings.leave_zero_to_ignore')
-            %td= training_row_form.link_to_remove I18n.t(:delete)
-      %p= f.link_to_add I18n.t(:add_new_row), :training_rows, :data => { :target => "#training_rows" }
-      %p= f.button :submit
+= simple_nested_form_for @training do |f|
+  = f.input :title, input_html: { class: 'span5' }
+  = f.input :description, input_html: { rows: 3, class: 'span8' }
+  = f.association :swimmer_level_type, collection: SwimmerLevelType.to_dropdown, prompt: I18n.t('trainings.chose_swimmer_level_type')
+
+  %table.table.table-condensed.table-striped.table-bordered#training_rows
+    %tr
+      %td= I18n.t('activerecord.attributes.training_rows.part_order')
+      %td= I18n.t('activerecord.attributes.training_rows.times')
+      %td= I18n.t('activerecord.attributes.training_rows.distance')
+      %td= I18n.t('activerecord.attributes.training_rows.exercise')
+      %td= I18n.t('activerecord.attributes.training_rows.start_and_rest')
+      %td= I18n.t('activerecord.attributes.training_rows.pause')
+    = f.fields_for :training_rows, :wrapper => false do |training_row_form|
+      %tr
+        %td= training_row_form.input :part_order, :label => false, :wrapper => false
+        %td= training_row_form.input :times, :label => false, :wrapper => false
+        %td= training_row_form.input :distance, :label => false, :wrapper => false
+        %td= training_row_form.association :exercise, :label => false, :wrapper => false, collection: Exercise.to_dropdown, prompt: I18n.t('trainings.chose_exercise')
+        %td= training_row_form.input :start_and_rest, :label => false, :wrapper => false # :hint => I18n.t('trainings.leave_zero_to_ignore')
+        %td= training_row_form.input :pause, :label => false, :wrapper => false # :hint => I18n.t('trainings.leave_zero_to_ignore')
+        %td= training_row_form.link_to_remove I18n.t(:delete)
+  %p= f.link_to_add I18n.t(:add_new_row), :training_rows, :data => { :target => "#training_rows" }
+  %p= f.button :submit

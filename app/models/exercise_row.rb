@@ -33,9 +33,20 @@ class ExerciseRow < ActiveRecord::Base
   # Base methods:
   # ---------------------------------------------------------------------------
 
+
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{part_order}) #{:percentage}% p.#{pause}\" (S-R: #{start_and_rest})"
+    "#{sprintf("%02s)", part_order)} #{sprintf("%02s", percentage)}% " +
+# FIXME ?
+    [ 
+      get_base_movement_full,
+      get_arm_aux_type_short,
+      get_kick_aux_type_short,
+      get_body_aux_type_short,
+      get_breath_aux_type_short,
+      get_formatted_start_and_rest,
+      get_formatted_pause
+    ].delete_if{ |e| e.empty? }.join(', ')
   end
   # ---------------------------------------------------------------------------
 
@@ -63,6 +74,49 @@ class ExerciseRow < ActiveRecord::Base
     self.where( where_condition ).map{ |row|
       [row.send(label_sym), row.send(key_sym)]
     }.sort_by{ |ar| ar[0] }
+  end
+  # ----------------------------------------------------------------------------
+
+  # Getter for the formatted string of the +pause+ value
+  def get_formatted_pause
+# FIXME with pause > 60", Timing conversion won't be perfomed using to_compact_s
+    pause > 0 ? " p.#{Timing.to_compact_s(0, pause)}" : ''
+  end
+
+  # Getter for the formatted string of the +start_and_rest+ value
+  def get_formatted_start_and_rest
+    start_and_rest > 0 ? " S-R: #{Timing.to_s(0, start_and_rest)}" : ''
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the BaseMovement full description
+  def get_base_movement_full
+    base_movement ? base_movement.get_full_name : ''
+  end
+
+  # Retrieves the Training Mode type short name
+  def get_training_mode_type_short
+    training_mode_type ? training_mode_type.i18n_short : ''
+  end
+
+  # Retrieves the Arm Aux Type short name
+  def get_arm_aux_type_short
+    (base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_short : ''
+  end
+
+  # Retrieves the Kick Aux Type short name
+  def get_kick_aux_type_short
+    (base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_short : ''
+  end
+
+  # Retrieves the Body Aux Type short name
+  def get_body_aux_type_short
+    (base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_short : ''
+  end
+
+  # Retrieves the Breath Aux Type short name
+  def get_breath_aux_type_short
+    (base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_short : ''
   end
   # ----------------------------------------------------------------------------
 end

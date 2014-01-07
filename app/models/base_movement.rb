@@ -21,23 +21,23 @@ class BaseMovement < ActiveRecord::Base
   # ---------------------------------------------------------------------------
 
 
-  # Computes a localized shorter description for the value/code associated with this data
-  def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:base_movements]} )
+  # Computes a shorter description for the name associated with this data
+  def get_full_name
+# TODO (?) show something according to
+#  is_arm_aux_allowed
+#  is_kick_aux_allowed
+#  is_body_aux_allowed
+#  is_breath_aux_allowed
+    "#{get_movement_type_short}, #{get_stroke_type_short} #{get_movement_scope_type_short}"
   end
-
-  # Computes a localized description for the value/code associated with this data
-  def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:base_movements]} )
-  end
-  # ----------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
 
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
   def self.get_label_symbol
-    :i18n_short
+    :get_full_name
   end
 
   # Returns an Array of 2-items Arrays, in which each item is the ID of the record
@@ -58,4 +58,21 @@ class BaseMovement < ActiveRecord::Base
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the Movement Type short name
+  def get_movement_type_short
+    movement_type ? movement_type.i18n_short : ''
+  end
+
+  # Retrieves the Stroke Type short name
+  def get_stroke_type_short
+    stroke_type ? stroke_type.i18n_short : ''
+  end
+
+  # Retrieves the Movement Scope Type short name
+  def get_movement_scope_type_short
+    movement_scope_type ? movement_scope_type.i18n_short : ''
+  end
+  # ----------------------------------------------------------------------------
+  
 end

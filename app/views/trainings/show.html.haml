@@ -43,3 +43,9 @@
             %i= I18n.t(:updated_at) + ':'
           .span10
             %i= Format.a_short_datetime( @training.updated_at )
+
+.row-fluid
+  .span12
+    - @training_rows.each do |training_row|
+      .row-fluid
+        %pre= training_row.get_full_name

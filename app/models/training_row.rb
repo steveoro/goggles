@@ -1,3 +1,8 @@
+# encoding: utf-8
+
+require 'wrappers/timing'
+
+
 class TrainingRow < ActiveRecord::Base
 
   belongs_to :user
@@ -10,6 +15,14 @@ class TrainingRow < ActiveRecord::Base
   validates_associated :training
   validates_associated :exercise
   validates_associated :training_step_type
+
+  has_many :exercise_rows,      :through => :exercise
+  has_many :base_movements,     :through => :exercise_rows
+  has_many :training_mode_type, :through => :exercise_rows
+  has_many :arm_aux_type,       :through => :exercise_rows
+  has_many :kick_aux_type,      :through => :exercise_rows
+  has_many :body_aux_type,      :through => :exercise_rows
+  has_many :breath_aux_type,    :through => :exercise_rows
 
   validates_presence_of     :part_order
   validates_length_of       :part_order, :within => 1..3, :allow_nil => false
@@ -36,20 +49,17 @@ class TrainingRow < ActiveRecord::Base
   # ---------------------------------------------------------------------------
 
 
-  # Computes a localized shorter description for the value/code associated with this data
-  def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:training_rows]} )
-  end
-
-  # Computes a localized description for the value/code associated with this data
-  def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:training_rows]} )
-  end
-  # ----------------------------------------------------------------------------
-
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{part_order}) #{times}x#{distance} #{i18n_short} p.#{pause}\" (S-R: #{start_and_rest})"
+    "#{sprintf("%02s)", part_order)} #{sprintf("%02s", times)}x#{sprintf("%03s", distance)}: " +
+# TODO add exercise (HOW?)
+# TODO add style from base_movements
+# TODO add training_step_type (HOW?)
+# FIXME ?
+    [ 
+      get_formatted_start_and_rest,
+      get_formatted_pause
+    ].delete_if{ |e| e.empty? }.join(', ')
   end
   # ---------------------------------------------------------------------------
 
@@ -60,40 +70,34 @@ class TrainingRow < ActiveRecord::Base
   def self.get_label_symbol
     :get_full_name
   end
-
-  # Returns an Array of 2-items Arrays, in which each item is the ID of the record
-  # and the other is assumed to be its label
-  #
-  # == Parameters:
-  #
-  # - where_condition: an ActiveRecord::Relation WHERE-clause; defaults to +nil+ (returns all records)
-  # - key_sym: the key symbol/column name (defaults to :id)
-  # - label_sym: the key symbol/column name (defaults to self.get_label_symbol())
-  #
-  # == Returns:
-  # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
-  #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
-    self.where( where_condition ).map{ |row|
-      [row.send(label_sym), row.send(key_sym)]
-    }.sort_by{ |ar| ar[0] }
-  end
   # ----------------------------------------------------------------------------
 
   # Retrieves the User short name (the owner of this Training)
   def get_user_name
     user ? user.name : ''
   end
+  # ----------------------------------------------------------------------------
+
+  # Getter for the formatted string of the +pause+ value
+  def get_formatted_pause
+# FIXME with pause > 60", Timing conversion won't be perfomed using to_compact_s
+    pause > 0 ? " p.#{Timing.to_compact_s(0, pause)}" : ''
+  end
+
+  # Getter for the formatted string of the +start_and_rest+ value
+  def get_formatted_start_and_rest
+    start_and_rest > 0 ? " S-R: #{Timing.to_s(0, start_and_rest)}" : ''
+  end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the Training step type short name
   def get_training_step_type_short
     training_step_type ? training_step_type.i18n_short : ''
   end
-  # ----------------------------------------------------------------------------
 
-  # Retrieves the Exercise short name
-  def get_exercise_short
-    exercise ? exercise.i18n_short : ''
+  # Retrieves the Exercise full description
+  def get_exercise_full
+    exercise ? exercise.get_full_name : ''
   end
   # ----------------------------------------------------------------------------
 end

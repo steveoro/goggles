@@ -10,23 +10,18 @@ class Exercise < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
-  # Computes a localized shorter description for the value/code associated with this data
-  def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:exercises]} )
+  # Computes a full description for this data row
+  def get_full_name
+    exercise_rows.collect{ |row| row.get_full_name }.join("\r\n")
   end
-
-  # Computes a localized description for the value/code associated with this data
-  def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:exercises]} )
-  end
-  # ----------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
 
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
   def self.get_label_symbol
-    :i18n_short
+    :get_full_name
   end
 
   # Returns an Array of 2-items Arrays, in which each item is the ID of the record

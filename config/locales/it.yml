@@ -616,6 +616,7 @@ it:
     training_deleted: "Allenamento eliminato!"
     show_title: "Allenamento '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Scegli il liv. nuotatore"
+    chose_exercise: "Scegli quale esercizio"
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
 
 
@@ -1159,6 +1160,7 @@ it:
       training_rows:
         part_order: "Parte"
         times: "Ripetiz.(x)"
+        exercise: "Esercizio"
         distance: "Distanza (mt)"
         start_and_rest: "Scatto+Riposo (sec)"
         pause: "Pausa (sec)"
