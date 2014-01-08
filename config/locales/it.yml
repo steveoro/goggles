@@ -177,7 +177,6 @@ it:
     i18n_short_M: "MI"
     i18n_description_M: "MISTI"
 
-
   disqualification_code_types:
     code: "Cod."
     i18n_short_GA: ""
@@ -417,6 +416,107 @@ it:
     i18n_short_5: "50 CENT."
     i18n_description_5: "MONETA DA 50 CENT."
 
+  training_mode_types:
+    code: "Cod."
+    i18n_short_A1: "AEROBICO BLANDO/TECNICA"
+    i18n_description_A1: "Regime aerobico blando (sotti i 125 battiti). Riscaldamento, defaticamento e parti tecniche. Non produce acido lattico"
+    i18n_short_A2: "AEROBICO"
+    i18n_description_A2: "Regime aerobico (sotto i 145 battiti). Non produce acido lattico. Riposi brevi, richiede serie molto lunghe"
+    i18n_short_B1: "SOGLIA"
+    i18n_description_B1: "Soglia aerobica (tra i 145 e 160 battiti). Produce poco acido lattico. Serie lunghe di intensita media con riposi contenuti"
+    i18n_short_B2: "VO2MAX"
+    i18n_description_B2: "Massimo consumo di ossigeno (attorno ai 165 battiti). Produce acido lattico in quantità moderate. Necessita di riposi più ampi"
+    i18n_short_C1: "TOLLLERANZA"
+    i18n_description_C1: "Regime anaerobico (oltre ai 180 battiti). Andature massimali o submassimali con riposi sostanziosi. Distanze ridotte"
+    i18n_short_C2: "PICCO"
+    i18n_description_C2: "Regime anaerobico (oltre 180 battiti). Velocita massimali. Distanze brevi. Recuperi molto ampi"
+    i18n_short_C3: "RAPIDITÀ"
+    i18n_description_C3: "Regime anaerobico alattacido. Frequenza massimale. Intensità massimale. Durate attorno ai 10" con recuperi di almeno 45""
+    i18n_short_A1/C3: "PROGRESSIONE"
+    i18n_description_A1/C3: "Progressione (da sciolto a massimale)"
+    i18n_short_C3/A1: "DECELERAZIONE"
+    i18n_description_C3/A1: "Decelerazione (da massimale a sciolto)"
+    i18n_short_D: "GARA"
+    i18n_description_D: "Passi gara"
+
+  training_step_types:
+    code: "Cod."
+    i18n_short_R: "RISC"
+    i18n_description_R: "RISCALDAMENTO"
+    i18n_short_T: "TECNICA"
+    i18n_description_T: "ESERCITAZIONI TECNICHE"
+    i18n_short_A: "ATTIVAZIONE"
+    i18n_description_A: "ATTIVAZIONE"
+    i18n_short_C: "CENTRALE"
+    i18n_description_C: "LAVORO CENTRALE"
+    i18n_short_D: "DEF."
+    i18n_description_D: "DEFATICAMENTO"
+
+  movement_types:
+    code: "Cod."
+    i18n_short_C: "comp."
+    i18n_description_C: "completo"
+    i18n_short_G: "gambe"
+    i18n_description_G: "solo gambe"
+    i18n_short_B: "braccia"
+    i18n_description_B: "solo braccia"
+
+  movement_scope_types:
+    code: "Cod."
+    i18n_short_I: "Isolamento"
+    i18n_description_I: "Isolamento o esclusione"
+    i18n_short_E: "Enfatizzazione"
+    i18n_description_E: "Enfatizzazione (errori)"
+    i18n_short_N: "Nuotata"
+    i18n_description_N: "Nuotata generale"
+    i18n_short_C: "Coord."
+    i18n_description_C: "Coordinazione"
+
+  arm_aux_types:
+    code: "Cod."
+    i18n_short_P: "Pale"
+    i18n_description_P: "Palette"
+    i18n_short_H: "1/2 pale"
+    i18n_description_H: "Mezze palette"
+    i18n_short_G: "Guanti"
+    i18n_description_G: "Guanti"
+    i18n_short_8: "Tutore 8"
+    i18n_description_8: "Tutore posizione polso ad 8"
+
+  kick_aux_types:
+    code: "Cod."
+    i18n_short_L: "Pinne lunghe"
+    i18n_description_L: "Pinne lunghe"
+    i18n_short_C: "Pinne"
+    i18n_description_C: "Pinnette corte"
+    i18n_short_M: "Mono"
+    i18n_description_M: "Monopinna"
+    i18n_short_P: "Pullbuoy"
+    i18n_description_P: "Pullbuoy"
+    i18n_short_E: "Elastico"
+    i18n_description_E: "Elastico (gambe ferme)"
+    i18n_short_T: "Tavola"
+    i18n_description_T: "Tavoletta"
+
+  breath_aux_types:
+    code: "Cod."
+    i18n_short_S: "Snorkel"
+    i18n_description_S: "Snorkel centrale"
+    i18n_short_B: "Boccaglio"
+    i18n_description_B: "Boccaglio laterale"
+
+  body_aux_types:
+    code: "Cod."
+    i18n_short_M: "Maglia"
+    i18n_description_M: "Maglietta"
+    i18n_short_C: "Slip freno"
+    i18n_description_C: "Costume frenante"
+    i18n_short_S: "Secchio"
+    i18n_description_S: "Secchio"
+    i18n_short_E: "Elastico"
+    i18n_description_E: "Elastico al bordo"
+    i18n_short_T: "Traino"
+    i18n_description_T: "Elastico al traino"
 
   event_types:
     code: "Cod."
@@ -1018,8 +1118,8 @@ it:
       training: "Allenamento"
       training_row: "Dettaglio allenamento"
       swimmer_level_type: "Liv. nuotatore"
-      training_step_type: "Passo allenam."
-      training_mode_types: "Modo allenam."
+      training_step_type: "Parte allenam."
+      training_mode_types: "Regime allenam."
 
     attributes:
       user:

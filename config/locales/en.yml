@@ -358,7 +358,6 @@ en:
     i18n_short_U: "LST"
     i18n_description_U: "LAST RESULT"
 
-
   pool_types:
     code: "code"
     i18n_short_25: "25 M"
@@ -417,6 +416,107 @@ en:
     i18n_short_5: "50 CENT."
     i18n_description_5: "50 CENT COIN"
 
+  training_mode_types:
+    code: "code"
+    i18n_short_A1: "SLOW AEROBIC"
+    i18n_description_A1: ""
+    i18n_short_A2: "AEROBIC"
+    i18n_description_A2: ""
+    i18n_short_B1: ""
+    i18n_description_B1: ""
+    i18n_short_B2: ""
+    i18n_description_B2: ""
+    i18n_short_C1: ""
+    i18n_description_C1: ""
+    i18n_short_C2: ""
+    i18n_description_C2: ""
+    i18n_short_C3: ""
+    i18n_description_C3: ""
+    i18n_short_A1/C3: ""
+    i18n_description_A1/C3: ""
+    i18n_short_C3/A1: ""
+    i18n_description_C3/A1: ""
+    i18n_short_D: ""
+    i18n_description_D: ""
+
+  training_step_types:
+    code: "code"
+    i18n_short_R: "WARMUP"
+    i18n_description_R: "WARM UP"
+    i18n_short_T: "TECH"
+    i18n_description_T: "TECNIQUE EXERCISES"
+    i18n_short_A: "ATT."
+    i18n_description_A: "ATTIVATION"
+    i18n_short_C: "CORE"
+    i18n_description_C: "TRAINING CORE"
+    i18n_short_D: "DOWN"
+    i18n_description_D: "WARM DOWN"
+
+  movement_types:
+    code: "code"
+    i18n_short_C: "comp."
+    i18n_description_C: "complete"
+    i18n_short_G: "kick"
+    i18n_description_G: "kick only"
+    i18n_short_B: "arm"
+    i18n_description_B: "arm only"
+
+  movement_scope_types:
+    code: "code"
+    i18n_short_I: "Isolation"
+    i18n_description_I: "Isolation"
+    i18n_short_E: "Enphasys"
+    i18n_description_E: "Enphasys"
+    i18n_short_N: "General"
+    i18n_description_N: "General swimming"
+    i18n_short_C: "Coord."
+    i18n_description_C: "Coordination"
+
+  arm_aux_types:
+    code: "code"
+    i18n_short_P: "Pad"
+    i18n_description_P: "Paddles"
+    i18n_short_H: "1/2 pad"
+    i18n_description_H: "Half paddles"
+    i18n_short_G: "Gloves"
+    i18n_description_G: "Gloves"
+    i18n_short_8: "8 tutor"
+    i18n_description_8: "8 shape wrist tutor"
+
+  kick_aux_types:
+    code: "code"
+    i18n_short_L: "Long fins"
+    i18n_description_L: "Long fins"
+    i18n_short_C: "Fins"
+    i18n_description_C: "Short fins"
+    i18n_short_M: "Twin"
+    i18n_description_M: "Twin fins"
+    i18n_short_P: "Pullbuoy"
+    i18n_description_P: "Pullbuoy"
+    i18n_short_E: "Elastic"
+    i18n_description_E: "Elastic"
+    i18n_short_T: "Tab"
+    i18n_description_T: "Tablet"
+
+  breath_aux_types:
+    code: "code"
+    i18n_short_S: "Snorkel"
+    i18n_description_S: "Snorkel"
+    i18n_short_B: "Side snorkel"
+    i18n_description_B: "Side snorkel"
+
+  body_aux_types:
+    code: "code"
+    i18n_short_M: "T-shirt"
+    i18n_description_M: "T-shirt"
+    i18n_short_C: "Brakers"
+    i18n_description_C: "Brakeing slip"
+    i18n_short_S: "Bin"
+    i18n_description_S: "Bin"
+    i18n_short_E: "Elastic"
+    i18n_description_E: "Elasti from wall"
+    i18n_short_T: "Aiding el"
+    i18n_description_T: "Aiding elastic"
 
   event_types:
     code: "code"
