@@ -11,8 +11,8 @@ class Exercise < ActiveRecord::Base
 
 
   # Computes a full description for this data row
-  def get_full_name( separator = "\r\n" )
-    exercise_rows.collect{ |row| row.get_full_name }.join(separator)
+  def get_full_name( separator = " + " )
+    exercise_rows.sort_by_part_order.collect{ |row| row.get_full_name }.join(separator)
   end
   # ---------------------------------------------------------------------------
 
@@ -36,8 +36,7 @@ class Exercise < ActiveRecord::Base
   # == Returns:
   # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
   #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol(),
-                        multiline_separator = '<br/>' )
+  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
     self.where( where_condition ).map{ |row|
       [row.send(label_sym), row.send(key_sym)]
     }.sort_by{ |ar| ar[0] }

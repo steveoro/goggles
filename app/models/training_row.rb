@@ -19,10 +19,6 @@ class TrainingRow < ActiveRecord::Base
   has_many :exercise_rows,      :through => :exercise
   has_many :base_movements,     :through => :exercise_rows
   has_many :training_mode_type, :through => :exercise_rows
-  has_many :arm_aux_type,       :through => :exercise_rows
-  has_many :kick_aux_type,      :through => :exercise_rows
-  has_many :body_aux_type,      :through => :exercise_rows
-  has_many :breath_aux_type,    :through => :exercise_rows
 
   validates_presence_of     :part_order
   validates_length_of       :part_order, :within => 1..3, :allow_nil => false
@@ -43,6 +39,8 @@ class TrainingRow < ActiveRecord::Base
   attr_accessible :part_order, :times, :distance, :start_and_rest, :pause,
                   :training_id, :exercise_id, :training_step_type_id, :user_id
 
+  scope :sort_by_part_order, order('part_order')
+
 
   # ---------------------------------------------------------------------------
   # Base methods:
@@ -50,16 +48,16 @@ class TrainingRow < ActiveRecord::Base
 
 
   # Computes a shorter description for the name associated with this data
-  def get_full_name
-    "#{sprintf("%02s)", part_order)} #{sprintf("%02s", times)}x#{sprintf("%03s", distance)}: " +
-# TODO add exercise (HOW?)
-# TODO add style from base_movements
-# TODO add training_step_type (HOW?)
-# FIXME ?
-    [ 
+  def get_full_name( show_also_ordinal_part = false )
+    [
+      ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
+      get_training_step_type_short,
+      "#{sprintf("%02s", times)}x#{sprintf("%03s", distance)}:",
+# FIXME create method to get exercise description applying percentages to current distance set
+      get_exercise_full,
       get_formatted_start_and_rest,
       get_formatted_pause
-    ].delete_if{ |e| e.empty? }.join(', ')
+    ].delete_if{ |e| e.empty? }.join(' ')
   end
   # ---------------------------------------------------------------------------
 

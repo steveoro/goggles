@@ -1,3 +1,8 @@
+# encoding: utf-8
+
+require 'wrappers/timing'
+
+
 class ExerciseRow < ActiveRecord::Base
 
   belongs_to :exercise
@@ -29,24 +34,28 @@ class ExerciseRow < ActiveRecord::Base
   validates_numericality_of :pause
 
 
+  scope :sort_by_part_order, order('part_order')
+
+
   # ---------------------------------------------------------------------------
   # Base methods:
   # ---------------------------------------------------------------------------
 
 
-  # Computes a shorter description for the name associated with this data
-  def get_full_name
-    "#{sprintf("%02s)", part_order)} #{sprintf("%02s", percentage)}% " +
-# FIXME ?
-    [ 
+  # Computes a description for the name associated with this data
+  def get_full_name( show_also_ordinal_part = false )
+    [
+      ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
+      ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' ),
       get_base_movement_full,
+      get_training_mode_type_short,
       get_arm_aux_type_short,
       get_kick_aux_type_short,
       get_body_aux_type_short,
       get_breath_aux_type_short,
       get_formatted_start_and_rest,
       get_formatted_pause
-    ].delete_if{ |e| e.empty? }.join(', ')
+    ].delete_if{ |e| e.empty? }.join(' ')
   end
   # ---------------------------------------------------------------------------
 
