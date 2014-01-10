@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131110230401) do
+ActiveRecord::Schema.define(:version => 20140110161451) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -1153,12 +1153,14 @@ ActiveRecord::Schema.define(:version => 20131110230401) do
 
   create_table "stroke_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 2,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 2,                    :null => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+    t.boolean  "is_eventable",              :default => false, :null => false
   end
 
   add_index "stroke_types", ["code"], :name => "index_stroke_types_on_code", :unique => true
+  add_index "stroke_types", ["is_eventable"], :name => "idx_is_eventable"
 
   create_table "swimmer_level_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -1417,18 +1419,18 @@ ActiveRecord::Schema.define(:version => 20131110230401) do
   add_index "user_results", ["swimmer_id"], :name => "fk_user_results_swimmers"
 
   create_table "users", :force => true do |t|
-    t.integer  "lock_version",                                :default => 0
-    t.string   "name",                                                          :null => false
+    t.integer  "lock_version",                                 :default => 0
+    t.string   "name",                                                           :null => false
     t.string   "description",                   :limit => 50
     t.integer  "swimmer_id"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
-    t.string   "email",                                       :default => "",   :null => false
-    t.string   "encrypted_password",                          :default => "",   :null => false
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
+    t.string   "email",                                        :default => "",   :null => false
+    t.string   "encrypted_password",                           :default => "",   :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                               :default => 0
+    t.integer  "sign_in_count",                                :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -1437,13 +1439,14 @@ ActiveRecord::Schema.define(:version => 20131110230401) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.integer  "failed_attempts",                             :default => 0
+    t.integer  "failed_attempts",                              :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
-    t.boolean  "use_email_data_updates_notify",               :default => true, :null => false
-    t.boolean  "use_email_achievements_notify",               :default => true, :null => false
-    t.boolean  "use_email_newsletter_notify",                 :default => true, :null => false
-    t.boolean  "use_email_community_notify",                  :default => true, :null => false
+    t.boolean  "use_email_data_updates_notify",                :default => true, :null => false
+    t.boolean  "use_email_achievements_notify",                :default => true, :null => false
+    t.boolean  "use_email_newsletter_notify",                  :default => true, :null => false
+    t.boolean  "use_email_community_notify",                   :default => true, :null => false
+    t.string   "avatar_resource_filename",      :limit => 250
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
