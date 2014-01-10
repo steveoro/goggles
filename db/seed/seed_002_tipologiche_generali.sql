@@ -18,16 +18,18 @@ INSERT INTO gender_types (id,code,lock_version,created_at,updated_at) VALUES
 (2,'F',0,CURDATE(),CURDATE()),
 (3,'X',0,CURDATE(),CURDATE());
 
-
 --
 -- Dump dei dati per la tabella stroke_types
 -- 
-INSERT INTO stroke_types (id,code,lock_version,created_at,updated_at) VALUES 
-(1,'SL',0,CURDATE(),CURDATE()),
-(2,'FA',0,CURDATE(),CURDATE()),
-(3,'DO',0,CURDATE(),CURDATE()),
-(4,'RA',0,CURDATE(),CURDATE()),
-(5,'MI',0,CURDATE(),CURDATE());
+INSERT INTO stroke_types (id,code,is_eventable,lock_version,created_at,updated_at) VALUES 
+(1,'SL',1,0,CURDATE(),CURDATE()),
+(2,'FA',1,0,CURDATE(),CURDATE()),
+(3,'DO',1,0,CURDATE(),CURDATE()),
+(4,'RA',1,0,CURDATE(),CURDATE()),
+(5,'MI',1,0,CURDATE(),CURDATE()),
+(6,'PA',0,0,CURDATE(),CURDATE()),
+(7,'VI',0,0,CURDATE(),CURDATE()),
+(8,'GE',0,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella presence_types
