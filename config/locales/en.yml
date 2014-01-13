@@ -649,7 +649,7 @@ en:
     i18n_short_SLCOCO: "FS reverse"
     i18n_description_SLCOCO: "FS reversed"
     i18n_short_SLCOEG: "FS egyptian"
-    i18n_description_SLCOEG: "FS one leg standing 90° out of water"
+    i18n_description_SLCOEG: "FS one leg standing 90ï¿½ out of water"
     i18n_short_SLBRSO: "FS legs standing"
     i18n_description_SLBRSO: "FS arms only, legs standing"
     i18n_short_SLBRRL: "FS hyper rolls"
@@ -1468,8 +1468,8 @@ en:
         times: "Times (x)"
         distance: "Distance (mt)"
         exercise: "Esercise"
-        start_and_rest: "Start+Rest (sec)"
-        pause: "Pause (sec)"
+        start_and_rest: "Start+Rest"
+        pause: "Pause"
 
 
   errors:

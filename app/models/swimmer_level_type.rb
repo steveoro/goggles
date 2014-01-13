@@ -22,7 +22,7 @@ class SwimmerLevelType < ActiveRecord::Base
   # mainly in generating DropDown option lists.
   #
   def self.get_label_symbol
-    :i18n_short
+    :i18n_description
   end
 
   # Returns an Array of 2-items Arrays, in which each item is the ID of the record

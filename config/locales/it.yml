@@ -1585,8 +1585,8 @@ it:
         times: "Ripetiz.(x)"
         exercise: "Esercizio"
         distance: "Distanza (mt)"
-        start_and_rest: "Scatto+Riposo (sec)"
-        pause: "Pausa (sec)"
+        start_and_rest: "Scatto+Riposo"
+        pause: "Pausa"
 
     errors:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."

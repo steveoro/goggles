@@ -42,6 +42,16 @@ class TrainingRow < ActiveRecord::Base
   scope :sort_by_part_order, order('part_order')
 
 
+  # Overload constructor for setting default values
+  #
+  def initialize( options = nil )
+    super( options )
+    self.part_order = 1 unless self.part_order.to_i != 0
+    self.times = 1 unless self.times.to_i > 0
+    self.distance = 50 unless self.distance.to_i > 0
+  end
+
+
   # ---------------------------------------------------------------------------
   # Base methods:
   # ---------------------------------------------------------------------------

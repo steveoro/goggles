@@ -97,7 +97,7 @@ gem "nested_form"
 
 # Deploy with Capistrano
 gem 'capistrano'
-gem 'rvm-capistrano'
+# gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
 gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
 # To use debugger

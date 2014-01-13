@@ -49,6 +49,7 @@ class TrainingsController < ApplicationController
   #
   def new
     @training = Training.new
+    @training_max_part_order = 0
   end
 
 
@@ -86,6 +87,7 @@ class TrainingsController < ApplicationController
 #    logger.debug "PARAMS: #{params.inspect}"
     training_id = params[:id].to_i
     @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
+    @training_max_part_order = @training.training_rows.maximum(:part_order)
     unless ( @training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
