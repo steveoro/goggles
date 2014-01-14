@@ -146,7 +146,15 @@ INSERT INTO base_movements (id,code,user_id,is_arm_aux_allowed,is_kick_aux_allow
 (139,'VICOFA',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
 (140,'VICORA',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
 (141,'VICOMI',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
-(142,'POBALZ',2,0,0,0,0,(select t.id from stroke_types t where t.code = 'PO'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE());
+(142,'POBALZ',2,0,0,0,0,(select t.id from stroke_types t where t.code = 'PO'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(143,'VICOMF',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(144,'VICOMD',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(145,'VICOMR',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(146,'VICOMC',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(147,'VICOSP',2,0,1,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(148,'VICOS2',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(149,'VICORF',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(150,'POMARI',2,0,0,0,0,(select t.id from stroke_types t where t.code = 'PO'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella exercises
