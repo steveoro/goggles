@@ -44,8 +44,8 @@ class TrainingRow < ActiveRecord::Base
 
   # Overload constructor for setting default values
   #
-  def initialize( options = nil )
-    super( options )
+  def initialize( attributes = nil, options = {} )
+    super( attributes, options )
     self.part_order = 1 unless self.part_order.to_i != 0
     self.times = 1 unless self.times.to_i > 0
     self.distance = 50 unless self.distance.to_i > 0
@@ -67,7 +67,7 @@ class TrainingRow < ActiveRecord::Base
       get_exercise_full,
       get_formatted_start_and_rest,
       get_formatted_pause
-    ].delete_if{ |e| e.empty? }.join(' ')
+    ].delete_if{ |e| e.to_s.empty? }.join(' ')
   end
   # ---------------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ class TrainingRow < ActiveRecord::Base
 
   # Retrieves the Exercise full description
   def get_exercise_full
-    exercise ? exercise.get_full_name : ''
+    exercise ? exercise.get_full_name(distance) : ''
   end
   # ----------------------------------------------------------------------------
 end

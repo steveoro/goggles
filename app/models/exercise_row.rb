@@ -43,10 +43,10 @@ class ExerciseRow < ActiveRecord::Base
 
 
   # Computes a description for the name associated with this data
-  def get_full_name( show_also_ordinal_part = false )
+  def get_full_name( total_distance = 0, show_also_ordinal_part = false )
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
-      ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' ),
+      compute_distance( total_distance ),
       get_base_movement_full,
       get_training_mode_type_short,
       get_arm_aux_type_short,
@@ -55,7 +55,17 @@ class ExerciseRow < ActiveRecord::Base
       get_breath_aux_type_short,
       get_formatted_start_and_rest,
       get_formatted_pause
-    ].delete_if{ |e| e.empty? }.join(' ')
+    ].delete_if{ |e| e.to_s.empty? }.join(' ')
+  end
+
+
+  # Returns the computed distance for this exercise row.
+  def compute_distance( total_distance )
+    if total_distance > 0
+      ( percentage < 100 ? "#{sprintf("%02s", total_distance * percentage / 100)}" : total_distance )
+    else
+      ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' )
+    end
   end
   # ---------------------------------------------------------------------------
 

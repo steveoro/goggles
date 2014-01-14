@@ -11,8 +11,8 @@ class Exercise < ActiveRecord::Base
 
 
   # Computes a full description for this data row
-  def get_full_name( separator = " + " )
-    exercise_rows.sort_by_part_order.collect{ |row| row.get_full_name }.join(separator)
+  def get_full_name( total_distance = 0, separator = " + " )
+    exercise_rows.sort_by_part_order.collect{ |row| row.get_full_name(total_distance) }.join(separator)
   end
   # ---------------------------------------------------------------------------
 
