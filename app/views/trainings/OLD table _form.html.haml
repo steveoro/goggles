@@ -47,3 +47,46 @@
       seqField.val(maxSeq);                   |
     }                                         |
   );                                          |
+
+
+--------------------- WIP -------------------
+
+
+  function getExerciseSource( request, response ) {                             |
+    $.ajax({
+      url: "http://ws.geonames.org/searchJSON",
+      dataType: "jsonp",
+      data: {
+        featureClass: "P",
+        style: "full",
+        maxRows: 12,
+        name_startsWith: request.term
+      },
+      success: function( data ) {
+      response( $.map( data.geonames, function( item ) {
+        return {
+          label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+          value: item.name
+        }
+      }));
+  };                                                                            |
+
+
+
+  $(document).on( 'nested:fieldAdded',                                          |
+    function(event){                                                            |
+      var f=event.field;                                                        |
+      var seqField=f.find('.autosequence');                                     |
+      maxSeq += 1;                                                              |
+      seqField.val(maxSeq);                                                     |
+      var spnField = $('.spinner');                                             |
+      if ( spnField ) {                                                         |
+        spnField.spinner();                                                     |
+      }                                                                         |
+      var spnField = $( ".autocompleteExercise" ).autocomplete(                 |
+        source: getExerciseSource( request, response );                         |
+      });                                                                       |
+    }                                                                           |
+  );                                                                            |
+
+

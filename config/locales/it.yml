@@ -1144,6 +1144,7 @@ it:
   result_log: "Log risultato"
   please_select: "-- Scegli --"
   please_wait: "Attendi..."
+  drag_and_drop_to_sort_rows: "Clicca negli spazi fra le celle e trascina le righe per riordinarle."
 
   id: Id
   name: Nome
@@ -1600,7 +1601,7 @@ it:
         part_order: "Parte"
         times: "Ripetiz.(x)"
         exercise: "Esercizio"
-        distance: "Distanza (mt)"
+        distance: "Metri"
         start_and_rest: "Scatto+Riposo"
         pause: "Pausa"
 

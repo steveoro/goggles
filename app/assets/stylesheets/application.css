@@ -111,7 +111,7 @@ table td.goggles-rightalign{
 }
 
 .goggles-bakckground-highlight{
-	background: #FFEF8F;
+	background: #FFEFAF;
 }
 
 
@@ -127,46 +127,51 @@ table td.goggles-rightalign{
 
 
 /* ----- Custom table input-related overrides ----- */
-.goggles-w15 input { width: 15px; }
-.goggles-w30 input { width: 30px; }
-.goggles-w30 select { width: 30px; }
-.goggles-w50 input { width: 50px; }
-.goggles-w50 select { width: 50px; }
-.goggles-w80 input { width: 80px; }
-.goggles-w80 select { width: 80px; }
-.goggles-w100 input { width: 100px; }
-.goggles-w100 select { width: 100px; }
+.goggles-float input, .goggles-float select { float: left; margin-left: 1em; }
+
+.goggles-w15 input, .goggles-w15 select   { width: 15px; }
+.goggles-w30 input, .goggles-w30 select   { width: 30px; }
+.goggles-w50 input, .goggles-w50 select   { width: 50px; }
+.goggles-w80 input, .goggles-w80 select   { width: 80px; }
+.goggles-w100 input, .goggles-w100 select { width: 100px; }
 
 
 /* ----- jQuery Spinner styles overrides ----- */
+.goggles-float span.ui-spinner  {
+	border: none;
+	float: left;
+	margin-left: 1em;
+}
+.goggles-float 
+
 span.ui-spinner {
 	border: none;
 }
 span.ui-icon-triangle-1-n {
-    background-position: 0px -10px;
+    background-position: 0px -13px;
 }
 span.ui-spinner .ui-icon-triangle-1-s {
-	background-position: -65px -20px;
+	background-position: -65px -18px;
 }
 span.ui-spinner .ui-icon {
     position: absolute;
-    margin-top: -12px;
-    top: 50%;
-    left: -4px;
+    margin-top: 0px;
+    top: 0px;
+    left: 0px;
 }
 
 .goggles-sortable {
 	list-style-type: none;
-	margin: 0;
-	padding: 0;
+	margin: 0px;
+	padding: 0px;
 	width: 100%;
 }
 li.goggles-sortable {
-	height: 1.5em;
+	margin-bottom: 2px;
 	line-height: 1.2em;
 }
 .ui-state-highlight {
-	height: 1.5em;
+	height: 30px;
 	line-height: 1.2em;
 }
 /*
@@ -184,7 +189,6 @@ li.goggles-sortable div {
 */
 
 
-
 /* ----- Div lists ----- */
 .goggles-divlist-even {
 	background: #eeeeee;
@@ -197,4 +201,7 @@ li.goggles-sortable div {
 }
 .goggles-div-rightalign {
 	text-align: right;
+}
+.goggles-smallfont {
+	font-size: 0.9em;
 }
