@@ -23,5 +23,4 @@ module ApplicationHelper
     bool_value ? image_tag(image_name, {:alt => "X"}) : false_text
   end
   # ----------------------------------------------------------------------------
-  #++
 end

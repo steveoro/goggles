@@ -86,7 +86,7 @@ gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git' # This version ha
 
 gem 'country_select'
 gem 'simple_form'
-gem "nested_form"
+gem "cocoon"
 
 
 # To use ActiveModel has_secure_password

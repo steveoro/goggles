@@ -1,6 +1,6 @@
 .row-fluid.span12
 
-= simple_nested_form_for @training do |f|
+= simple_form_for @training do |f|
   = f.input :title, input_html: { class: 'span5' }
   = f.input :description, input_html: { rows: 3, class: 'span8' }
   = f.association :swimmer_level_type, collection: SwimmerLevelType.to_dropdown, prompt: I18n.t('trainings.chose_swimmer_level_type')
@@ -24,32 +24,13 @@
 
   .row-fluid#training_rows
     %ul#sortable.goggles-sortable
-      = f.fields_for :training_rows, :wrapper => false do |training_row_form|
-        %li.goggles-sortable
-          .controls.controls-row.row-fluid
-            .goggles-float.goggles-w15
-              = training_row_form.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
-            .goggles-float
-              = training_row_form.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'autocomplete'}
-            .goggles-float.goggles-w30
-              = training_row_form.input :times, label: false, wrapper: false, input_html: {class: 'spinner'}
-            .goggles-float.goggles-w50
-              = training_row_form.input :distance, label: false, wrapper: false
-            .goggles-float
-              = training_row_form.association :exercise, label: false, wrapper: false, collection: Exercise.to_dropdown, prompt: I18n.t('trainings.chose_exercise')
-            .goggles-float.goggles-w80
-              = training_row_form.input :start_and_rest, label: false, wrapper: false do
-                = training_row_form.select :start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-            .goggles-float.goggles-w80
-              = training_row_form.input :pause, label: false, wrapper: false do
-                = training_row_form.select :pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-            .goggles-float.goggles-w50
-              .controls
-                = training_row_form.link_to_remove( image_tag('delete.png'), :onclick => "alert('Jimbo! This will be deleted when you post everything!'); disableRowToBeDeleted(this);" )
+      = f.simple_fields_for :training_rows do |training_row_form|
+        = render 'training_row_fields', :f => training_row_form
+
   %p
   %p
     %i= "#{I18n.t(:drag_and_drop_to_sort_rows)} / "
-    = f.link_to_add I18n.t(:add_new_row), :training_rows, :data => { :target => "#training_rows" }
+    = link_to_add_association( I18n.t(:add_new_row), f, :training_rows, :data => {'association-insertion-node'=>'#sortable', 'association-insertion-method'=>'append'} )
   %p= f.button :submit
 
   #maxPartOrder{'data-value' => @training_max_part_order || 0 }
@@ -64,30 +45,23 @@
     });                                                                         |
   };                                                                            |
 
-  function disableRowToBeDeleted( obj ){                                        |
-    console.log( obj );                                                         |
-  };
-
   $(document).ready( function(obj) {                                            |
-    var spnField=$('.spinner');                                                 |
-    if ( spnField ) {                                                           |
-      spnField.spinner();                                                       |
-    }                                                                           |
+    $('.spinner').spinner();                                                    |
     $( "#sortable" ).sortable({                                                 |
       placeholder: "ui-state-highlight",                                        |
       beforeStop: updateAutoSeq                                                 |
     });                                                                         |
-  });                                                                           |
 
-  $(document).on( 'nested:fieldAdded',                                          |
-    function(event){                                                            |
-      var f=event.field;                                                        |
-      var seqField=f.find('.autosequence');                                     |
-      maxSeq += 1;                                                              |
-      seqField.val(maxSeq);                                                     |
-      var spnField = $('.spinner');                                             |
-      if ( spnField ) {                                                         |
-        spnField.spinner();                                                     |
+    $('#training_rows').on( "cocoon:before-remove", function(e, training_row) { |
+        $(this).data('remove-timeout', 1000);                                   |
+        training_row.fadeOut('slow');                                           |
       }                                                                         |
-    }                                                                           |
-  );                                                                            |
+    ).on( "cocoon:after-insert", function(e, training_row_to_be_added) {        |
+        $('.spinner').spinner();                                                |
+        updateAutoSeq();                                                        |
+      }                                                                         |
+    ).on( "cocoon:after-remove", function() {                                   |
+        updateAutoSeq();                                                        |
+    });                                                                         |
+
+  } );                                                                          |

@@ -1,0 +1,22 @@
+.nested-fields
+  %li.goggles-sortable
+    .controls.controls-row.row-fluid
+      .goggles-float.goggles-w15
+        = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
+      .goggles-float
+        = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'autocomplete'}
+      .goggles-float.goggles-w30
+        = f.input :times, label: false, wrapper: false, input_html: {class: 'spinner'}
+      .goggles-float.goggles-w50
+        = f.input :distance, label: false, wrapper: false
+      .goggles-float
+        = f.association :exercise, label: false, wrapper: false, collection: Exercise.to_dropdown, prompt: I18n.t('trainings.chose_exercise')
+      .goggles-float.goggles-w80
+        = f.input :start_and_rest, label: false, wrapper: false do
+          = f.select :start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+      .goggles-float.goggles-w80
+        = f.input :pause, label: false, wrapper: false do
+          = f.select :pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+      .goggles-float.goggles-w50
+        .controls
+          = link_to_remove_association( image_tag('delete.png'), f, :confirm => I18n.t('netzke.basepack.grid_panel.are_you_sure') )
