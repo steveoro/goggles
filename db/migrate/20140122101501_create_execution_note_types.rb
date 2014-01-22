@@ -1,4 +1,4 @@
-class CreateTableExecutionNoteTypes < ActiveRecord::Migration
+class CreateExecutionNoteTypes < ActiveRecord::Migration
   def change
     create_table :execution_note_types do |t|
       t.integer :lock_version, :default => 0
