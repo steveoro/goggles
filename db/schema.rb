@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140122101501) do
+ActiveRecord::Schema.define(:version => 20140122102927) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -639,13 +639,13 @@ ActiveRecord::Schema.define(:version => 20140122101501) do
   add_index "execution_note_types", ["code"], :name => "index_execution_note_types_on_code", :unique => true
 
   create_table "exercise_rows", :force => true do |t|
-    t.integer  "lock_version",                       :default => 0
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
-    t.integer  "part_order",            :limit => 3, :default => 0, :null => false
-    t.integer  "percentage",            :limit => 3, :default => 0, :null => false
-    t.integer  "start_and_rest",                     :default => 0, :null => false
-    t.integer  "pause",                              :default => 0, :null => false
+    t.integer  "lock_version",                        :default => 0
+    t.datetime "created_at",                                         :null => false
+    t.datetime "updated_at",                                         :null => false
+    t.integer  "part_order",             :limit => 3, :default => 0, :null => false
+    t.integer  "percentage",             :limit => 3, :default => 0, :null => false
+    t.integer  "start_and_rest",                      :default => 0, :null => false
+    t.integer  "pause",                               :default => 0, :null => false
     t.integer  "exercise_id"
     t.integer  "base_movement_id"
     t.integer  "training_mode_type_id"
@@ -653,6 +653,7 @@ ActiveRecord::Schema.define(:version => 20140122101501) do
     t.integer  "kick_aux_type_id"
     t.integer  "body_aux_type_id"
     t.integer  "breath_aux_type_id"
+    t.integer  "execution_note_type_id"
   end
 
   add_index "exercise_rows", ["arm_aux_type_id"], :name => "fk_exercise_rows_arm_aux_types"
