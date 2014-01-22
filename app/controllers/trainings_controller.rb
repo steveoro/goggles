@@ -50,6 +50,7 @@ class TrainingsController < ApplicationController
   def new
     @training = Training.new
     @training_max_part_order = 0
+    render :edit
   end
 
 

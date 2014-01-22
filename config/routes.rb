@@ -51,6 +51,12 @@ Goggles::Application.routes.draw do
       resources :swimming_pools
       resources :trainings
 
+      resources :exercises do
+        collection do
+          get 'json_list'
+        end
+      end
+
       match "meeting_calendars",        :controller => 'meeting_calendars', :action => 'index'
       match "records_for_everything",   :controller => 'records', :action => 'for_everything'
       match "records_for_season_type",  :controller => 'records', :action => 'for_season_type'

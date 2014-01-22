@@ -4,12 +4,14 @@
       .goggles-float.goggles-w15
         = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
       .goggles-float
-        = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'autocomplete'}
+        = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
       .goggles-float.goggles-w30
         = f.input :times, label: false, wrapper: false, input_html: {class: 'spinner'}
       .goggles-float.goggles-w50
         = f.input :distance, label: false, wrapper: false
       .goggles-float
+        = f.input :exercise_id, label: false, wrapper: false, disabled: true, input_html: {'data-ref'=>'exercise_id', :type=>:hidden}
+        = text_field_tag( :exercise_desc, nil, class: 'exercise-autocomplete', placeholder: I18n.t('trainings.type_something') )
         = f.association :exercise, label: false, wrapper: false, collection: Exercise.to_dropdown, prompt: I18n.t('trainings.chose_exercise')
       .goggles-float.goggles-w80
         = f.input :start_and_rest, label: false, wrapper: false do

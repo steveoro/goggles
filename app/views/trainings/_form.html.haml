@@ -36,32 +36,6 @@
   #maxPartOrder{'data-value' => @training_max_part_order || 0 }
 
 %script
-  var maxSeq = Number( $('#maxPartOrder').attr('data-value') );
+  var exerciseAutocompleteURL = "#{ json_list_exercises_path() }"
 
-  function updateAutoSeq( event, ui ){                                          |
-    var fieldList = $('#sortable').first().find('input.autosequence');          |
-    fieldList.each( function(index, element) {                                  |
-      element.value = index + 1;                                                |
-    });                                                                         |
-  };                                                                            |
-
-  $(document).ready( function(obj) {                                            |
-    $('.spinner').spinner();                                                    |
-    $( "#sortable" ).sortable({                                                 |
-      placeholder: "ui-state-highlight",                                        |
-      beforeStop: updateAutoSeq                                                 |
-    });                                                                         |
-
-    $('#training_rows').on( "cocoon:before-remove", function(e, training_row) { |
-        $(this).data('remove-timeout', 1000);                                   |
-        training_row.fadeOut('slow');                                           |
-      }                                                                         |
-    ).on( "cocoon:after-insert", function(e, training_row_to_be_added) {        |
-        $('.spinner').spinner();                                                |
-        updateAutoSeq();                                                        |
-      }                                                                         |
-    ).on( "cocoon:after-remove", function() {                                   |
-        updateAutoSeq();                                                        |
-    });                                                                         |
-
-  } );                                                                          |
+= javascript_include_tag 'training_row_form'

@@ -1073,6 +1073,7 @@ it:
     show_title: "Allenamento '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Scegli il liv. nuotatore"
     chose_exercise: "Scegli quale esercizio"
+    type_something: "Digita qualcosa..."
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
 
 
