@@ -554,6 +554,23 @@ en:
     i18n_short_T: "Aiding el"
     i18n_description_T: "Aiding elastic"
 
+  execution_note_types:
+    code: "code"
+    i18n_short_CBR: "counting strokes"
+    i18n_description_CBR: "Long, counting stroke cycles"
+    i18n_short_LUN: "long"
+    i18n_description_LUN: "Long"
+    i18n_short_FMX: "max freq"
+    i18n_description_FMX: "Maximal frequency"
+    i18n_short_VLN: "long turn"
+    i18n_description_VLN: "Long turn"
+    i18n_short_FUO: "start"
+    i18n_description_FUO: "Starting from block"
+    i18n_short_GAL: "no push at start"
+    i18n_description_GAL: "Starting without border push"
+    i18n_short_VIR: "turn start"
+    i18n_description_VIR: "Starting locking at the border with turn"
+
   base_movements:
     code: "code"
     i18n_short_GECMPL: "Free"

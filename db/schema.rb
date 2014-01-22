@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140110161451) do
+ActiveRecord::Schema.define(:version => 20140122101501) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -628,6 +628,15 @@ ActiveRecord::Schema.define(:version => 20140110161451) do
 
   add_index "events_by_pool_types", ["event_type_id"], :name => "fk_events_by_pool_types_event_types"
   add_index "events_by_pool_types", ["pool_type_id"], :name => "fk_events_by_pool_types_pool_types"
+
+  create_table "execution_note_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 3,                :null => false
+  end
+
+  add_index "execution_note_types", ["code"], :name => "index_execution_note_types_on_code", :unique => true
 
   create_table "exercise_rows", :force => true do |t|
     t.integer  "lock_version",                       :default => 0
@@ -1339,6 +1348,15 @@ ActiveRecord::Schema.define(:version => 20140110161451) do
 
   add_index "timing_types", ["code"], :name => "index_timing_types_on_code", :unique => true
 
+  create_table "training_groups", :force => true do |t|
+    t.integer  "part_order",     :limit => 3, :default => 0, :null => false
+    t.integer  "times",          :limit => 3, :default => 0, :null => false
+    t.integer  "start_and_rest",              :default => 0, :null => false
+    t.integer  "pause",                       :default => 0, :null => false
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+  end
+
   create_table "training_mode_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
     t.datetime "created_at",                               :null => false
@@ -1361,6 +1379,7 @@ ActiveRecord::Schema.define(:version => 20140110161451) do
     t.integer  "exercise_id"
     t.integer  "training_step_type_id"
     t.integer  "user_id"
+    t.integer  "training_group_id"
   end
 
   add_index "training_rows", ["exercise_id"], :name => "fk_training_exercises"

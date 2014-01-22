@@ -249,6 +249,18 @@ INSERT INTO body_aux_types (id,code,lock_version,created_at,updated_at) VALUES
 (5,'T',0,CURDATE(),CURDATE());
 
 --
+-- Dump dei dati per la tabella execution_note_types
+-- 
+INSERT INTO execution_note_types (id,code,lock_version,created_at,updated_at) VALUES 
+(1,'CBR',0,CURDATE(),CURDATE()),
+(2,'LUN',0,CURDATE(),CURDATE()),
+(3,'FMX',0,CURDATE(),CURDATE()),
+(4,'VLN',0,CURDATE(),CURDATE()),
+(5,'FUO',0,CURDATE(),CURDATE()),
+(6,'GAL',0,CURDATE(),CURDATE()),
+(7,'VIR',0,CURDATE(),CURDATE());
+
+--
 -- Dump dei dati per la tabella event_types
 -- 
 INSERT INTO event_types (id,code,length_in_meters,style_order,is_a_relay,is_mixed_gender,partecipants,phases,phase_length_in_meters,stroke_type_id,lock_version,created_at,updated_at) VALUES 

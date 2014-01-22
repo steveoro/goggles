@@ -553,6 +553,23 @@ it:
     i18n_description_E: "Elastico al bordo"
     i18n_short_T: "Traino"
     i18n_description_T: "Elastico al traino"
+
+  execution_note_types:
+    code: "Cod."
+    i18n_short_CBR: "contando bracc."
+    i18n_description_CBR: "Lungo, contando le bracciate"
+    i18n_short_LUN: "lungo"
+    i18n_description_LUN: "Lungo"
+    i18n_short_FMX: "max freq"
+    i18n_description_FMX: "Massima frequenza"
+    i18n_short_VLN: "vir lunga"
+    i18n_description_VLN: "Virata lunga"
+    i18n_short_FUO: "partenza"
+    i18n_description_FUO: "Con partenza da fuori"
+    i18n_short_GAL: "partenza in galleggiamento"
+    i18n_description_GAL: "Con partenza in galleggiamento"
+    i18n_short_VIR: "partenza con virata"
+    i18n_description_VIR: "Partenza fronte bordo con virata"
     
   base_movements:
     code: "Cod."
