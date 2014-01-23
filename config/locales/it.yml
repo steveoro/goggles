@@ -1075,6 +1075,7 @@ it:
     chose_exercise: "Scegli quale esercizio"
     type_something: "Digita qualcosa..."
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
+    training: "Allenamento"
 
 
   agex_action:
@@ -1109,6 +1110,7 @@ it:
     app_parameters: Parametri Applicazione
     app_parameters_tooltip: "Gestisci la lista dei Parametri interni dell'Applicazione"
     go_to_date: 'Trova la data'
+    download_pdf: 'Scarica PDF'
 
 
   something_went_wrong: "Qualcosa e' andato storto, controllare il file di log."
@@ -1297,6 +1299,7 @@ it:
   any_date: "Data"
   date_from_to: "Data (da/a)"
   submit: "Vai"
+  save: "Salva"
   reset: "Reset"
 
   title_wrong_meeting_result: "C'e' qualcosa che non mi torna coi risultati di un certo Meeting..."

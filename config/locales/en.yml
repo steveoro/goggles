@@ -1073,6 +1073,7 @@ en:
     chose_exercise: "Choose which exercise"
     type_something: "Type something..."
     leave_zero_to_ignore: "Leave zero to ignore this component"
+    training: "Training"
 
 
   agex_action:
@@ -1106,6 +1107,7 @@ en:
     app_parameters: Application Parameters
     app_parameters_tooltip: "Manage the internal Application Parameters list"
     go_to_date: 'Find date'
+    download_pdf: 'Download PDF'
 
 
   something_went_wrong: "Something went wrong, check the log file."
@@ -1295,6 +1297,7 @@ en:
   any_date: "Date"
   date_from_to: "Date (from/to)"
   submit: "Submit"
+  save: "Save"
   reset: "Reset"
 
   title_wrong_meeting_result: "There's something wrong with some results of a certain Meeting..."

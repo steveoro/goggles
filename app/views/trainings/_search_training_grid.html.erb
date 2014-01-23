@@ -31,11 +31,15 @@
 		training.get_user_name
 	end
 
+	g.column do |training|							# Enable edit action link, but only if the current user is the owner:
+		link_to( edit_training_path(training) ) do
+			image_tag('page_edit.png') << " #{I18n.t(:edit)}"
+		end if (training.user_id == current_user.id)
+	end
 	g.column do |training|
-		link_to(									# Enable edit action link, but only if the current user is the owner:
-			I18n.t(:edit),
-			edit_training_path(training)
-		) if (training.user_id == current_user.id)
+		link_to( printout_training_path(training) ) do
+			image_tag('page_white_acrobat.png') << " PDF"
+		end
 	end
 
 	g.column do |training|

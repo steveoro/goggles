@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
   # a date and time string signature at the end.
   #
   def create_unique_filename( text_value, suffix = DateTime.now.strftime("_%Y%m%d_%H%M") )
-    text_value.gsub(/[òàèùçé^!"'£$%&?.,;:§°<>]/,'').gsub(/[\s|]/,'_').gsub(/[\\\/=]/,'-') + suffix
+    text_value.gsub(/[òàèùçé\^\!\"\'£\$%&?\.\,;:§°<>]/,'').gsub(/[\s|]/,'_').gsub(/[\\\/=]/,'-') + suffix
   end
   # ---------------------------------------------------------------------------
 

@@ -10,9 +10,8 @@
       .goggles-float.goggles-w50
         = f.input :distance, label: false, wrapper: false
       .goggles-float
-        = f.input :exercise_id, label: false, wrapper: false, disabled: true, input_html: {'data-ref'=>'exercise_id', :type=>:hidden}
+        = f.input :exercise_id, label: false, wrapper: false, input_html: {class: 'exercise_id', :type=>:hidden}
         = text_field_tag( :exercise_desc, nil, class: 'exercise-autocomplete', placeholder: I18n.t('trainings.type_something') )
-        = f.association :exercise, label: false, wrapper: false, collection: Exercise.to_dropdown, prompt: I18n.t('trainings.chose_exercise')
       .goggles-float.goggles-w80
         = f.input :start_and_rest, label: false, wrapper: false do
           = f.select :start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })

@@ -15,6 +15,7 @@ class ExercisesController < ApplicationController
   # TODO [Steve, 20140122] [Future DEV] Move this action to an API-dedicated controller.
   #
   # == Params:
+  # - <tt>:exercise_id</tt> => filter bypass to retrieve a single Exercise instance
   # - <tt>:training_step_type_id</tt> => when present, it is used as a filtering parameter for the result data set.
   # - <tt>:limit</tt> => to limit the array of results; the default is 100
   # - <tt>:query</tt> => a string match for the verbose description
@@ -24,7 +25,12 @@ class ExercisesController < ApplicationController
   #
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one
-      where_condition = nil                         # Set up parameters:
+      where_condition = nil                         # Set up and check parameters:
+      if params[:exercise_id].to_i > 0
+        row = Exercise.find_by_id(params[:exercise_id].to_i)
+        render( :json => { label: row.get_full_name, value: row.id } ) and return
+      end
+
       if params[:training_step_type_id].to_i > 0
         where_condition = [
           '(training_step_type_id = ?) OR (training_step_type_id IS NULL)',

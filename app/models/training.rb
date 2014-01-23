@@ -47,5 +47,10 @@ class Training < ActiveRecord::Base
   def get_swimmer_level_type_short
     swimmer_level_type ? swimmer_level_type.i18n_short : ''
   end
+
+  # Retrieves the Swimmer level type full description
+  def get_swimmer_level_type_description
+    swimmer_level_type ? swimmer_level_type.i18n_description : ''
+  end
   # ---------------------------------------------------------------------------
 end

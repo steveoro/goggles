@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'date'
 require 'common/format'
+require 'training_printout_layout'
 
 
 class TrainingsController < ApplicationController
@@ -137,6 +138,47 @@ class TrainingsController < ApplicationController
     end
     @training.destroy
     redirect_to( trainings_path() )
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Prepares the selected training data for a PDF print-out.
+  # Supports the creation of a single file contaning a single Training header only
+  # (including all its detail rows).
+  #
+  # == Params:
+  #
+  # - <tt>:id</tt> =>
+  #   The id of the Training header; all its details will be retrieved also.
+  #
+  def printout()
+# DEBUG
+#    logger.debug( "\r\n\r\n---[ #{controller_name()}.printout ] ---" ) if DEBUG_VERBOSE
+#    logger.debug( "Params: #{params.inspect()}" ) if DEBUG_VERBOSE
+    training_id = params[:id].to_i
+    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
+    unless ( @training )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( trainings_path() ) and return
+    end
+    @training_rows = @training.training_rows.includes(:exercise, :training_step_type).all
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
+
+                                                    # == OPTIONS setup + RENDERING phase ==
+    filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{@training.title}" ) + '.pdf'
+    options = {
+      :report_title         => @title,
+      :meta_info_subject    => 'training model printout',
+      :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, '#{@training.title}'",
+      :header_row           => @training,
+      :detail_rows          => @training_rows
+    }
+                                                    # == Render layout & send data:
+    send_data(
+        TrainingPrintoutLayout.render( options ),
+        :type => 'application/pdf',
+        :filename => filename
+    )
   end
   # ---------------------------------------------------------------------------
 end

@@ -1,6 +1,17 @@
 .row-fluid
-  .span12
-    = link_to( I18n.t(:back_to_index_view), trainings_path() )
+  .span3
+    = link_to( trainings_path() ) do
+      = image_tag('page_find.png')
+      = I18n.t(:back_to_index_view)
+  .span2
+    = link_to( printout_training_path(@training.id) ) do
+      = image_tag('page_white_acrobat.png')
+      = I18n.t('agex_action.download_pdf')
+  .span2
+    - if (@training.user_id == current_user.id)
+      = link_to( edit_training_path(@training.id) ) do
+        = image_tag('page_edit.png')
+        = I18n.t(:edit)
 
 .accordion
   .accordion-group
@@ -37,7 +48,7 @@
           .span2
             = I18n.t('activerecord.models.swimmer_level_type') + ':'
           .span10
-            = @training.get_swimmer_level_type_short
+            = @training.get_swimmer_level_type_description
         .row-fluid
           .span2
             %i= I18n.t(:updated_at) + ':'

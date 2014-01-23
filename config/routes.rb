@@ -49,7 +49,11 @@ Goggles::Application.routes.draw do
       resources :results
 
       resources :swimming_pools
-      resources :trainings
+      resources :trainings do
+        member do
+          get 'printout'
+        end
+      end
 
       resources :exercises do
         collection do
