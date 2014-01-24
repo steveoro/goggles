@@ -27,8 +27,8 @@ class ExercisesController < ApplicationController
     if request.xhr?                                 # Make sure the request is an AJAX one
       where_condition = nil                         # Set up and check parameters:
       if params[:exercise_id].to_i > 0
-        row = Exercise.find_by_id(params[:exercise_id].to_i)
-        render( :json => { label: row.get_full_name, value: row.id } ) and return
+        result_row = Exercise.find_by_id(params[:exercise_id].to_i)
+        render( :json => { label: result_row.get_full_name, value: result_row.id } ) and return
       end
 
       if params[:training_step_type_id].to_i > 0
