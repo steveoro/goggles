@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140122102927) do
+ActiveRecord::Schema.define(:version => 20140124190256) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -665,16 +665,15 @@ ActiveRecord::Schema.define(:version => 20140122102927) do
   add_index "exercise_rows", ["training_mode_type_id"], :name => "fk_exercise_rows_training_mode_types"
 
   create_table "exercises", :force => true do |t|
-    t.integer  "lock_version",                       :default => 0
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
-    t.string   "code",                  :limit => 6,                :null => false
-    t.integer  "training_step_type_id"
+    t.integer  "lock_version",                           :default => 0
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
+    t.string   "code",                     :limit => 6,                 :null => false
     t.integer  "user_id"
+    t.string   "training_step_type_codes", :limit => 50
   end
 
   add_index "exercises", ["code"], :name => "index_exercises_on_code", :unique => true
-  add_index "exercises", ["training_step_type_id"], :name => "fk_exercises_training_step_types"
 
   create_table "federation_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
@@ -1397,16 +1396,16 @@ ActiveRecord::Schema.define(:version => 20140122102927) do
   add_index "training_step_types", ["code"], :name => "index_training_step_types_on_code", :unique => true
 
   create_table "trainings", :force => true do |t|
-    t.integer  "lock_version",                         :default => 0
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
-    t.string   "title",                 :limit => 100, :default => "", :null => false
-    t.text     "description",                                          :null => false
-    t.integer  "swimmer_level_type_id"
+    t.integer  "lock_version",                     :default => 0
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
+    t.string   "title",             :limit => 100, :default => "", :null => false
+    t.text     "description",                                      :null => false
     t.integer  "user_id"
+    t.integer  "min_swimmer_level", :limit => 3,   :default => 0,  :null => false
+    t.integer  "max_swimmer_level", :limit => 3,   :default => 0,  :null => false
   end
 
-  add_index "trainings", ["swimmer_level_type_id"], :name => "fk_trainings_swimmer_level_types"
   add_index "trainings", ["title"], :name => "index_trainings_on_title", :unique => true
 
   create_table "user_results", :force => true do |t|

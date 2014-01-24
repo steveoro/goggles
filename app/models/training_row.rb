@@ -16,6 +16,8 @@ class TrainingRow < ActiveRecord::Base
   validates_associated :exercise
   validates_associated :training_step_type
 
+  belongs_to :training_group                        # (Do not validate this, since it can be null)
+
   has_many :exercise_rows,      :through => :exercise
   has_many :base_movements,     :through => :exercise_rows
   has_many :training_mode_type, :through => :exercise_rows
@@ -37,7 +39,8 @@ class TrainingRow < ActiveRecord::Base
   validates_numericality_of :pause
 
   attr_accessible :part_order, :times, :distance, :start_and_rest, :pause,
-                  :training_id, :exercise_id, :training_step_type_id, :user_id
+                  :training_id, :exercise_id, :training_step_type_id,
+                  :training_group_id, :user_id
 
   scope :sort_by_part_order, order('part_order')
 
@@ -59,6 +62,7 @@ class TrainingRow < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name( show_also_ordinal_part = false )
+# FIXME ********* REWRITE THIS FOR TRAINING ROW GROUPS *****
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       get_training_step_type_short,

@@ -1,21 +1,21 @@
-class TrainingStepType < ActiveRecord::Base
+class ExecutionNoteTypes < ActiveRecord::Base
 
   validates_presence_of   :code
-  validates_length_of     :code, :maximum => 1, :allow_nil => false
+  validates_length_of     :code, :within => 1..3, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
   # ----------------------------------------------------------------------------
 
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:training_step_types]} )
+    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:execution_note_types]} )
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:training_step_types]} )
+    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:execution_note_types]} )
   end
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
 
 
   # Label symbol corresponding to either a column name or a model method to be used

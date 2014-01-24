@@ -3,7 +3,7 @@ module Version
   # ** DO NOT CHANGE THE FOLLOWING UNLESS YOU KNOW WHAT YOU'RE DOING!! **
   CORE    = 'core-six'
   MAJOR   = '4.00'
-  MINOR   = '149'
+  MINOR   = '150'
   BUILD   = '20140124'
 
   # Internal constant used to discriminate between all the existing and
@@ -14,5 +14,5 @@ module Version
   COMPACT = "#{MAJOR.gsub('.','')}#{MINOR}"
 
   # Current internal DB version (indipendent from migrations and framework release)
-  DB      = "1.15.10"
+  DB      = "1.15.12"
 end

@@ -12,6 +12,7 @@ class ExerciseRow < ActiveRecord::Base
   belongs_to :kick_aux_type
   belongs_to :body_aux_type
   belongs_to :breath_aux_type
+  belongs_to :execution_note_type
   validates_associated :exercise
   validates_associated :base_movement
   validates_associated :training_mode_type
@@ -19,6 +20,7 @@ class ExerciseRow < ActiveRecord::Base
   validates_associated :kick_aux_type
   validates_associated :body_aux_type
   validates_associated :breath_aux_type
+  validates_associated :execution_note_type
 
   validates_presence_of     :part_order
   validates_length_of       :part_order, :within => 1..3, :allow_nil => false
@@ -44,6 +46,7 @@ class ExerciseRow < ActiveRecord::Base
 
   # Computes a description for the name associated with this data
   def get_full_name( total_distance = 0, show_also_ordinal_part = false )
+# FIXME ********* ADAPT THIS FOR execution_note_type *****
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       compute_distance( total_distance ),

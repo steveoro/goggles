@@ -1,17 +1,15 @@
+# encoding: utf-8
+
 class Training < ActiveRecord::Base
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
 #  validates_associated :user                       # (Do not enable this for User)
 
-  belongs_to :swimmer_level_type
-  validates_associated :swimmer_level_type
-
   has_many :training_rows, :dependent => :delete_all
   accepts_nested_attributes_for :training_rows, :allow_destroy => true
 
-  attr_accessible :title, :description, :swimmer_level_type_id, :user_id,
-                  :training_rows_attributes         # (Needed by the nested_form gem)
+  has_many :training_groups, :through => :training_rows
 
   has_many :exercises, :through => :training_rows
   has_many :training_step_types, :through => :training_rows
@@ -21,6 +19,18 @@ class Training < ActiveRecord::Base
   validates_length_of   :title, :within => 1..100, :allow_nil => false
 
   validates_presence_of :description
+
+  validates_presence_of     :min_swimmer_level
+  validates_length_of       :min_swimmer_level, :within => 1..3, :allow_nil => false
+  validates_numericality_of :min_swimmer_level
+
+  validates_presence_of     :max_swimmer_level
+  validates_length_of       :max_swimmer_level, :within => 1..3, :allow_nil => false
+  validates_numericality_of :max_swimmer_level
+
+
+  attr_accessible :title, :description, :min_swimmer_level, :max_swimmer_level,
+                  :user_id, :training_rows_attributes # (Needed by the nested_form gem)
 
 
   # ---------------------------------------------------------------------------
@@ -45,12 +55,14 @@ class Training < ActiveRecord::Base
 
   # Retrieves the Swimmer level type short name
   def get_swimmer_level_type_short
-    swimmer_level_type ? swimmer_level_type.i18n_short : ''
+# TODO get list of short descriptions from SwimmerLevelType, according to level range
+    "L.#{min_swimmer_level}..#{max_swimmer_level}"
   end
 
   # Retrieves the Swimmer level type full description
   def get_swimmer_level_type_description
-    swimmer_level_type ? swimmer_level_type.i18n_description : ''
+# TODO get list of full descriptions from SwimmerLevelType, according to level range
+    "L. #{min_swimmer_level}..#{max_swimmer_level}"
   end
   # ---------------------------------------------------------------------------
 end
