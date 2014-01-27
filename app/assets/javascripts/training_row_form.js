@@ -51,7 +51,7 @@ function setupAutocomplete() {
 //      console.log( ui );
       return false; // this will stop further event handlers
     },
-    minLength: 2
+    minLength: 1
   });
 };
 

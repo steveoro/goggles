@@ -123,22 +123,22 @@ class ExerciseRow < ActiveRecord::Base
 
   # Retrieves the Arm Aux Type short name
   def get_arm_aux_type_short
-    (base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_short : ''
+    (base_movement && base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_short : ''
   end
 
   # Retrieves the Kick Aux Type short name
   def get_kick_aux_type_short
-    (base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_short : ''
+    (base_movement && base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_short : ''
   end
 
   # Retrieves the Body Aux Type short name
   def get_body_aux_type_short
-    (base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_short : ''
+    (base_movement && base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_short : ''
   end
 
   # Retrieves the Breath Aux Type short name
   def get_breath_aux_type_short
-    (base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_short : ''
+    (base_movement && base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_short : ''
   end
   # ----------------------------------------------------------------------------
 end
