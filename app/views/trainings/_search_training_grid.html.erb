@@ -13,14 +13,14 @@
 		attribute: 'description',
 	)
 
-	g.column(
-		name: I18n.t(:swimmer_level_type, {:scope=>[:activerecord, :models]}),
-		model: SwimmerLevelType,
-		attribute: 'id',
-		custom_filter: SwimmerLevelType.to_dropdown,
-	) do |training|
-		training.get_swimmer_level_type_short
-	end
+#	g.column(
+#		name: I18n.t(:swimmer_level_type, {:scope=>[:activerecord, :models]}),
+#		model: SwimmerLevelType,
+#		attribute: 'id',
+#		custom_filter: SwimmerLevelType.to_dropdown,
+#	) do |training|
+#		training.i18n_description
+#	end
 
 	g.column(
 		name: I18n.t(:user, {:scope=>[:activerecord, :models]}),

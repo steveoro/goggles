@@ -1070,6 +1070,8 @@ en:
     training_deleted: "Training successfully deleted!"
     show_title: "Training '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Choose the swimmer level"
+    chose_min_swimmer_level: "Choose min swimmer lev."
+    chose_max_swimmer_level: "Choose max swimmer lev."
     chose_exercise: "Choose which exercise"
     type_something: "Type something..."
     leave_zero_to_ignore: "Leave zero to ignore this component"
@@ -1500,6 +1502,8 @@ en:
         title: "Title"
         description: "Description"
         swimmer_level_type: "Swimmer level type"
+        min_swimmer_level: "Min swimmer level"
+        max_swimmer_level: "Max swimmer level"
         user: "A training from"
       training_rows:
         part_order: "Part"

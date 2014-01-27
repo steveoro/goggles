@@ -1072,6 +1072,8 @@ it:
     training_deleted: "Allenamento eliminato!"
     show_title: "Allenamento '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Scegli il liv. nuotatore"
+    chose_min_swimmer_level: "Scegli il liv. min. nuotatore"
+    chose_max_swimmer_level: "Scegli il liv. max. nuotatore"
     chose_exercise: "Scegli quale esercizio"
     type_something: "Digita qualcosa..."
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
@@ -1616,8 +1618,10 @@ it:
       training:
         title: "Titolo"
         description: "Descrizione"
-        user: "Un allenamento di"
         swimmer_level_type: "Livello del nuotatore"
+        min_swimmer_level: "Livello min. nuotatore"
+        max_swimmer_level: "Livello max. nuotatore"
+        user: "Un allenamento di"
       training_rows:
         part_order: "Parte"
         times: "Ripetiz.(x)"

@@ -25,29 +25,29 @@ class ExercisesController < ApplicationController
   #
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one
-      where_condition = nil                         # Set up and check parameters:
-      if params[:exercise_id].to_i > 0
+      if params[:exercise_id].to_i > 0              # Set up and check parameters:
         result_row = Exercise.find_by_id(params[:exercise_id].to_i)
         render( :json => { label: result_row.get_full_name, value: result_row.id } ) and return
       end
-
-      if params[:training_step_type_id].to_i > 0
-        where_condition = [
-          '(training_step_type_id = ?) OR (training_step_type_id IS NULL)',
-          params[:training_step_type_id].to_i
-        ]
-      end
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 100 )
-                                                    # Get the results and filter them:
-      result = Exercise.where( where_condition ).limit( limit )
+      if params[:training_step_type_id].to_i > 0    # Filter by :training_step_type_id when specified:
+        result = Exercise.belongs_to_training_step_code( params[:training_step_type_id].to_i )
+      end
+                                                    # Get the results and filter them even more using the query chars:
       result = result.find_all { |row|
         row.get_full_name =~ Regexp.new( params[:query], true )
       } if params[:query]
-                                                    # Map the result to an array of custom objects:
-      result_array = result.map{ |row|
-        { label: row.get_full_name, value: row.id }
-      }.sort_by{ |item| item[:label] }
-                                                    # Render the result array as JSON:
+                                                    # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
+      if result.instance_of?( Array )
+        result_array = result.map{ |row|
+          { label: row.get_full_name, value: row.id }
+        }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
+      else
+        result_array = []
+      end
+                                                    # Limit the result array, if necessary:
+      result_array = result_array[0 .. limit-1] if result_array.size > limit
+                                                    # Finally, render the result array as JSON:
       render( :json => result_array )
     else
       flash[:notice] = I18n.t(:invalid_action_request)

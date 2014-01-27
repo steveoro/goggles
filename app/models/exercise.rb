@@ -8,6 +8,19 @@ class Exercise < ActiveRecord::Base
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..6, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
+
+
+  # Custom scope to detect all Exercises that may be used during a specified training_step_code
+  scope :belongs_to_training_step_code, lambda{ |training_step_code|
+    all.find_all{ |row|
+      training_step_code.nil? ||
+      training_step_code.to_s.empty? ||
+      row.training_step_type_codes.nil? ||
+      ( row.training_step_type_codes.instance_of?(String) &&
+        row.training_step_type_codes.split(',').include?( training_step_code.to_s.upcase )
+      ) 
+    }
+  }
   # ----------------------------------------------------------------------------
 
 
