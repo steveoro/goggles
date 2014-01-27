@@ -1,6 +1,14 @@
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 
+-- Ripulisco in giro
+delete from training_rows;
+delete from training_groups;
+delete from trainings;
+delete from exercise_rows;
+delete from exercises;
+delete from base_movements;
+
 --
 -- Dump dei dati per la tabella base_movements
 -- 
@@ -159,43 +167,51 @@ INSERT INTO base_movements (id,code,user_id,is_arm_aux_allowed,is_kick_aux_allow
 --
 -- Dump dei dati per la tabella exercises
 -- 
-INSERT INTO exercises (id,code,user_id,training_step_type_id,lock_version,created_at,updated_at) VALUES 
-(1,'A1PIAC',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(2,'A1SLCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(3,'A1DOCM',2,(select t.id from training_step_types t where t.code = 'T'),0,CURDATE(),CURDATE()),
-(4,'A1SLDO',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(5,'A2SLCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(6,'A2DOCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(7,'A2FACM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(8,'A2RACM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(9,'A2MICM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(10,'ACSLPR',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(11,'ACDOPR',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(12,'ACFAPR',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(13,'ACRAPR',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(14,'ACMIPR',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(15,'ACSLCP',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(16,'ACSLDA',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(17,'B1SLCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(18,'B1DOCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(19,'B2SLCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(20,'B2DOCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(21,'C1SLCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(22,'C1DOCM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(23,'C1FACM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(24,'C1RACM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(25,'C1MICM',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(26,'A2GASL',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(27,'A2GADO',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(28,'A2GAFA',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(29,'A2GARA',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(30,'A2GAMI',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(31,'CGSLRA',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(32,'COSLFA',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(33,'ECSLPG',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(34,'ECSLAA',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(35,'ECSLBG',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(36,'ECSLBS',2,(select t.id from training_step_types t where t.code = ''),0,CURDATE(),CURDATE());
+INSERT INTO exercises (id,code,user_id,training_step_type_codes,lock_version,created_at,updated_at) VALUES 
+(1,'A1PIAC',2,'R,A,C,D',0,CURDATE(),CURDATE()),
+(2,'A1SLCM',2,null,0,CURDATE(),CURDATE()),
+(3,'A1DOCM',2,null,0,CURDATE(),CURDATE()),
+(4,'A1SLDO',2,null,0,CURDATE(),CURDATE()),
+(5,'A2SLCM',2,'A,C',0,CURDATE(),CURDATE()),
+(6,'A2DOCM',2,'A,C',0,CURDATE(),CURDATE()),
+(7,'A2FACM',2,'A,C',0,CURDATE(),CURDATE()),
+(8,'A2RACM',2,'A,C',0,CURDATE(),CURDATE()),
+(9,'A2MICM',2,'A,C',0,CURDATE(),CURDATE()),
+(10,'ACSLPR',2,'T,A,C',0,CURDATE(),CURDATE()),
+(11,'ACDOPR',2,'T,A,C',0,CURDATE(),CURDATE()),
+(12,'ACFAPR',2,'T,A,C',0,CURDATE(),CURDATE()),
+(13,'ACRAPR',2,'T,A,C',0,CURDATE(),CURDATE()),
+(14,'ACMIPR',2,'T,A,C',0,CURDATE(),CURDATE()),
+(15,'ACSLCP',2,'T,A,C',0,CURDATE(),CURDATE()),
+(16,'ACDOCP',2,'T,A,C',0,CURDATE(),CURDATE()),
+(17,'ACFACP',2,'T,A,C',0,CURDATE(),CURDATE()),
+(18,'ACRACP',2,'T,A,C',0,CURDATE(),CURDATE()),
+(19,'ACSLDA',2,'T,A,C',0,CURDATE(),CURDATE()),
+(20,'ACDODA',2,'T,A,C',0,CURDATE(),CURDATE()),
+(21,'ACFADA',2,'T,A,C',0,CURDATE(),CURDATE()),
+(22,'ACRADA',2,'T,A,C',0,CURDATE(),CURDATE()),
+(23,'B1SLCM',2,'A,C',0,CURDATE(),CURDATE()),
+(24,'B1DOCM',2,'A,C',0,CURDATE(),CURDATE()),
+(25,'B2SLCM',2,'A,C',0,CURDATE(),CURDATE()),
+(26,'B2DOCM',2,'A,C',0,CURDATE(),CURDATE()),
+(27,'C1SLCM',2,'T,A,C',0,CURDATE(),CURDATE()),
+(28,'C1DOCM',2,'T,A,C',0,CURDATE(),CURDATE()),
+(29,'C1FACM',2,'T,A,C',0,CURDATE(),CURDATE()),
+(30,'C1RACM',2,'T,A,C',0,CURDATE(),CURDATE()),
+(31,'C1MICM',2,'T,A,C',0,CURDATE(),CURDATE()),
+(32,'A2GASL',2,null,0,CURDATE(),CURDATE()),
+(33,'A2GADO',2,null,0,CURDATE(),CURDATE()),
+(34,'A2GAFA',2,null,0,CURDATE(),CURDATE()),
+(35,'A2GARA',2,null,0,CURDATE(),CURDATE()),
+(36,'A2GAMI',2,null,0,CURDATE(),CURDATE()),
+(37,'CGSLRA',2,null,0,CURDATE(),CURDATE()),
+(38,'ECSLST',2,'T',0,CURDATE(),CURDATE()),
+(39,'ECSLPG',2,'T',0,CURDATE(),CURDATE()),
+(40,'ECSLAA',2,'T',0,CURDATE(),CURDATE()),
+(41,'ECSLBG',2,'T',0,CURDATE(),CURDATE()),
+(42,'ECSLBS',2,'T',0,CURDATE(),CURDATE()),
+(43,'ECSLTA',2,'T,A',0,CURDATE(),CURDATE()),
+(44,'COSLFA',2,'T,A,C',0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella exercise_rows
@@ -236,15 +252,31 @@ INSERT INTO exercise_rows (id,part_order,percentage,start_and_rest,pause,exercis
 (33,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLPG'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
 (34,1,50,0,0,(select t.id from exercises t where t.code = 'ACSLCP'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = 'CBR'),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
 (35,2,50,0,0,(select t.id from exercises t where t.code = 'ACSLCP'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(36,1,50,0,10,(select t.id from exercises t where t.code = 'ACSLDA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'C3/A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(37,2,50,0,20,(select t.id from exercises t where t.code = 'ACSLDA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(38,1,50,0,0,(select t.id from exercises t where t.code = 'CGSLRA'),(select t.id from base_movements t where t.code = 'SLGBAL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = 'T'),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(39,2,50,0,0,(select t.id from exercises t where t.code = 'CGSLRA'),(select t.id from base_movements t where t.code = 'RAGBAL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = 'T'),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(40,1,50,0,0,(select t.id from exercises t where t.code = 'ECSLAA'),(select t.id from base_movements t where t.code = 'SLBRLT'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(41,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLAA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(42,1,50,0,0,(select t.id from exercises t where t.code = 'ECSLBG'),(select t.id from base_movements t where t.code = 'SLBRBA'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(43,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLBG'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(44,1,50,0,0,(select t.id from exercises t where t.code = 'ECSLBS'),(select t.id from base_movements t where t.code = 'SLBRAL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
-(45,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLBS'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE());
+(36,1,50,0,0,(select t.id from exercises t where t.code = 'ACDOCP'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = 'CBR'),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(37,2,50,0,0,(select t.id from exercises t where t.code = 'ACDOCP'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(38,1,50,0,0,(select t.id from exercises t where t.code = 'ACFACP'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = 'CBR'),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(39,2,50,0,0,(select t.id from exercises t where t.code = 'ACFACP'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(40,1,50,0,0,(select t.id from exercises t where t.code = 'ACRACP'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = 'CBR'),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(41,2,50,0,0,(select t.id from exercises t where t.code = 'ACRACP'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(42,1,50,0,10,(select t.id from exercises t where t.code = 'ACSLDA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'C3/A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(43,2,50,0,20,(select t.id from exercises t where t.code = 'ACSLDA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(44,1,50,0,10,(select t.id from exercises t where t.code = 'ACDODA'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'C3/A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(45,2,50,0,20,(select t.id from exercises t where t.code = 'ACDODA'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(46,1,50,0,10,(select t.id from exercises t where t.code = 'ACFADA'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'C3/A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(47,2,50,0,20,(select t.id from exercises t where t.code = 'ACFADA'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(48,1,50,0,10,(select t.id from exercises t where t.code = 'ACRADA'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'C3/A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(49,2,50,0,20,(select t.id from exercises t where t.code = 'ACRADA'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'A1/C3'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(50,1,50,0,0,(select t.id from exercises t where t.code = 'CGSLRA'),(select t.id from base_movements t where t.code = 'SLGBAL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = 'T'),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(51,2,50,0,0,(select t.id from exercises t where t.code = 'CGSLRA'),(select t.id from base_movements t where t.code = 'RAGBAL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = 'T'),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(52,1,50,0,0,(select t.id from exercises t where t.code = 'ECSLAA'),(select t.id from base_movements t where t.code = 'SLBRLT'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(53,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLAA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(54,1,50,0,0,(select t.id from exercises t where t.code = 'ECSLBG'),(select t.id from base_movements t where t.code = 'SLBRBA'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(55,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLBG'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(56,1,50,0,0,(select t.id from exercises t where t.code = 'ECSLBS'),(select t.id from base_movements t where t.code = 'SLBRAL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(57,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLBS'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(58,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLTA'),(select t.id from base_movements t where t.code = 'SLCMTA'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(59,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLTA'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(60,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLST'),(select t.id from base_movements t where t.code = 'SLBRRS'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(61,2,50,0,0,(select t.id from exercises t where t.code = 'ECSLST'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = ''),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE());
 
 COMMIT;
