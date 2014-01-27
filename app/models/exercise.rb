@@ -12,12 +12,17 @@ class Exercise < ActiveRecord::Base
 
   # Custom scope to detect all Exercises that may be used during a specified training_step_code
   scope :belongs_to_training_step_code, lambda{ |training_step_code|
+# DEBUG
+#    puts "\r\nExercise.belongs_to_training_step_code(#{training_step_code}) invoked."
     all.find_all{ |row|
-      training_step_code.nil? ||
-      training_step_code.to_s.empty? ||
-      row.training_step_type_codes.nil? ||
-      ( row.training_step_type_codes.instance_of?(String) &&
-        row.training_step_type_codes.split(',').include?( training_step_code.to_s.upcase )
+# DEBUG
+#      puts "> ID: #{row.id}, row.training_step_type_codes: #{row.training_step_type_codes}"
+      ( training_step_code.nil? ||
+        row.training_step_type_codes.nil? ||
+        (training_step_code.to_s == '') ||
+        ( row.training_step_type_codes.instance_of?(String) &&
+          row.training_step_type_codes.split(',').include?( training_step_code.to_s.upcase )
+        )
       ) 
     }
   }

@@ -30,6 +30,12 @@ select, input[type="file"] {
     padding-top: 7px;
 }
 
+.ui-autocomplete {
+	max-height: 218px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
 
 /* [Steve, 20140120] WIP: tested only with Trainings edit form: */
 /*

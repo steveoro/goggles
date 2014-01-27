@@ -29,21 +29,28 @@ class ExercisesController < ApplicationController
   #
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one
+# DEBUG
+#      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+#      logger.debug "PARAMS: #{params.inspect}"
       if params[:exercise_id].to_i > 0              # Set up and check parameters:
         result_row = Exercise.find_by_id(params[:exercise_id].to_i)
         render( :json => { label: result_row.get_full_name, value: result_row.id } ) and return
       end
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 100 )
       if params[:training_step_type_id].to_i > 0    # Filter by :training_step_type_id when specified:
-        result = Exercise.belongs_to_training_step_code( params[:training_step_type_id].to_i )
+        training_step_čode = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
+        result = Exercise.belongs_to_training_step_code( training_step_čode )
       else
         result = Exercise.all
       end
                                                     # Get the results and filter them even more using the query chars:
-      result = result.find_all { |row|
-        ( params[:query].to_s == QUERY_WILDCHAR ) ||
-        ( row.get_full_name =~ Regexp.new( params[:query], true ) )
-      } if params[:query]
+      if params[:query] && ( params[:query].to_s != QUERY_WILDCHAR )
+# DEBUG
+#        logger.debug "result (before filtering): #{result.inspect}"
+        result = result.find_all { |row|
+          row.get_full_name =~ Regexp.new( params[:query], true )
+        }
+      end
                                                     # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
       if result.instance_of?( Array )
         result_array = result.map{ |row|
