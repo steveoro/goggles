@@ -28,6 +28,9 @@ class ExerciseRow < ActiveRecord::Base
   validates_presence_of     :percentage
   validates_length_of       :percentage, :within => 1..3, :allow_nil => false
   validates_numericality_of :percentage
+  validates_presence_of     :distance
+  validates_length_of       :distance, :within => 1..4, :allow_nil => false
+  validates_numericality_of :distance
   validates_presence_of     :start_and_rest
   validates_length_of       :start_and_rest, :within => 1..4, :allow_nil => false
   validates_numericality_of :start_and_rest
@@ -46,11 +49,11 @@ class ExerciseRow < ActiveRecord::Base
 
   # Computes a description for the name associated with this data
   def get_full_name( total_distance = 0, show_also_ordinal_part = false )
-# FIXME ********* ADAPT THIS FOR execution_note_type *****
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       compute_distance( total_distance ),
       get_base_movement_full,
+      get_execution_note_type_short,
       get_training_mode_type_short,
       get_arm_aux_type_short,
       get_kick_aux_type_short,
@@ -64,10 +67,14 @@ class ExerciseRow < ActiveRecord::Base
 
   # Returns the computed distance for this exercise row.
   def compute_distance( total_distance )
-    if total_distance > 0
-      ( percentage < 100 ? "#{sprintf("%02s", total_distance * percentage / 100)}" : total_distance )
+    if self.distance > 0
+      self.distance
     else
-      ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' )
+      if total_distance > 0
+        ( percentage < 100 ? "#{sprintf("%02s", total_distance * percentage / 100)}" : total_distance )
+      else
+        ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' )
+      end
     end
   end
   # ---------------------------------------------------------------------------
@@ -114,6 +121,11 @@ class ExerciseRow < ActiveRecord::Base
   # Retrieves the BaseMovement full description
   def get_base_movement_full
     base_movement ? base_movement.get_full_name : ''
+  end
+
+  # Retrieves the ExecutionNoteTypes short description
+  def get_execution_note_type_short
+    execution_note_type ? execution_note_type.i18n_short : ''
   end
 
   # Retrieves the Training Mode type short name

@@ -181,4 +181,42 @@ class TrainingsController < ApplicationController
     )
   end
   # ---------------------------------------------------------------------------
+
+
+  # Ditto a training with all its details (POST only).
+  #
+  # == Params:
+  #
+  # - <tt>:id</tt> =>
+  #   The id of the Training; all its details will be retrieved also.
+  #
+  def duplicate
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+    if request.post?
+      training_id = params[:id].to_i
+      old_training = Training.find_by_id( training_id )
+      old_training_rows = TrainingRow.where(:training_id => old_training.id)
+# TODO / FIXME COPY ALSO all TrainingGroup found for these old_training_rows
+
+      new_training = Training.new( old_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+      new_training.title = "#{I18n.t(:copy_of)} '#{old_training.title}'"
+
+      if new_training.save!
+        old_training_rows.each { |old_row|
+          new_row = TrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+          new_row.training_id = new_training.id
+          new_row.save!
+        }
+
+        flash[:notice] = I18n.t('trainings.training_created')
+        redirect_to( edit_training_path(new_training) ) and return
+      end
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( trainings_path() ) and return
+    end
+  end
+  # ---------------------------------------------------------------------------
 end

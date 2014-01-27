@@ -52,6 +52,7 @@ Goggles::Application.routes.draw do
       resources :trainings do
         member do
           get 'printout'
+          post 'duplicate'
         end
       end
 

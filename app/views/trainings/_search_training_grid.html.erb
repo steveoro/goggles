@@ -50,4 +50,13 @@
 				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
  		) if (training.user_id == current_user.id)
 	end
+
+	g.column do |training|
+		link_to(
+				I18n.t(:duplicate),
+				duplicate_training_path(training),
+				:method => :post,
+				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
+ 		)
+	end
 end -%>

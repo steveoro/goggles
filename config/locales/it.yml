@@ -1151,6 +1151,7 @@ it:
   user_deleted: Utente eliminato con successo.
   req_functionality_under_development: "La funzionalita' richiesta non e' attualmente disponibile perche' e' stata sottoposta a revisione o ci sono lavori di manutenzione in corso."
   coming_soon: "Coming soon!!"
+  copy_of: "Copia di"
 
   no_new_articles: Nessun nuovo articolo
   select_file: "Scegli un file"
@@ -1207,6 +1208,7 @@ it:
   add_new: Aggiungi nuovo!
   edit: Modifica
   delete: Elimina
+  duplicate: Copia
   user: Utente
   manage_details: Gestisci dettagli
   manage_details_tooltip: "Gestisci nei dettagli l'elemento selezionato [anche: SPAZIO o INVIO dopo aver selezionato la riga]"

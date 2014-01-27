@@ -1,8 +1,14 @@
 class TrainingStepType < ActiveRecord::Base
 
+  validates_presence_of     :step_order
+  validates_length_of       :step_order, :within => 1..3, :allow_nil => false
+  validates_numericality_of :step_order
+
   validates_presence_of   :code
   validates_length_of     :code, :maximum => 1, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
+
+  scope :sort_by_step_order, order('step_order')
   # ----------------------------------------------------------------------------
 
 
@@ -38,9 +44,12 @@ class TrainingStepType < ActiveRecord::Base
   # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
   #
   def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
-    self.where( where_condition ).map{ |row|
+    self.where( where_condition ).sort_by_step_order.map{ |row|
       [row.send(label_sym), row.send(key_sym)]
-    }.sort_by{ |ar| ar[0] }
+    }
+    # [Steve, 20140127] Update: since we want to force ordering according to the step order,
+    # we'll use the dedicated scope method sort_by_step_order instead of the more standardized
+    # array sorting by label method: [].sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
 end

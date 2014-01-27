@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140124190256) do
+ActiveRecord::Schema.define(:version => 20140127181613) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -654,6 +654,7 @@ ActiveRecord::Schema.define(:version => 20140124190256) do
     t.integer  "body_aux_type_id"
     t.integer  "breath_aux_type_id"
     t.integer  "execution_note_type_id"
+    t.integer  "distance",                            :default => 0, :null => false
   end
 
   add_index "exercise_rows", ["arm_aux_type_id"], :name => "fk_exercise_rows_arm_aux_types"
@@ -1391,9 +1392,11 @@ ActiveRecord::Schema.define(:version => 20140124190256) do
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
     t.string   "code",         :limit => 1,                :null => false
+    t.integer  "step_order",   :limit => 3, :default => 0, :null => false
   end
 
   add_index "training_step_types", ["code"], :name => "index_training_step_types_on_code", :unique => true
+  add_index "training_step_types", ["step_order"], :name => "index_training_step_types_on_step_order"
 
   create_table "trainings", :force => true do |t|
     t.integer  "lock_version",                     :default => 0

@@ -1148,6 +1148,7 @@ en:
   user_deleted: User successfully deleted.
   req_functionality_under_development: "The requested functionality is not currently available due to revisions or maintenance."
   coming_soon: "Coming soon!!"
+  copy_of: "Copy of"
 
   no_new_articles: No new articles
   select_file: "Select a file"
@@ -1204,6 +1205,7 @@ en:
   add_new: Add new!
   edit: Edit
   delete: Delete
+  duplicate: Copy
   user: User
   manage_details: Manage details
   manage_details_tooltip: "Manage the details of the selected record [also: SPACE or ENTER just after row selection]"
