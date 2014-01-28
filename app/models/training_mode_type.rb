@@ -15,6 +15,11 @@ class TrainingModeType < ActiveRecord::Base
   def i18n_description
     I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:training_mode_types]} )
   end
+  
+  # Computes a localized shorter description for the value/code associated with this data
+  def i18n_execution
+    I18n.t( "i18n_execution_#{ self.code }".to_sym, {:scope=>[:training_mode_types]} )
+  end
   # ----------------------------------------------------------------------------
 
 

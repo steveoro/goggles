@@ -91,7 +91,7 @@ class ExerciseRow < ActiveRecord::Base
         compute_distance( total_distance ),
         get_base_movement_short( true, swimmer_level_type_id ),
         get_execution_note_type_name( :short ),
-        get_training_mode_type_name( :short ),
+        get_training_mode_type_name( :execution ),
         get_arm_aux_type_name( :short ),
         get_kick_aux_type_name( :short ),
         get_body_aux_type_name( :short ),
@@ -221,7 +221,7 @@ class ExerciseRow < ActiveRecord::Base
     if verbose_level.to_sym == :short
       training_mode_type.i18n_short
     else
-      training_mode_type.i18n_description
+      training_mode_type.i18n_execution
     end
   end
 
