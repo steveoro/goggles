@@ -1,4 +1,4 @@
-class ExecutionNoteTypes < ActiveRecord::Base
+class ExecutionNoteType < ActiveRecord::Base
 
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..3, :allow_nil => false

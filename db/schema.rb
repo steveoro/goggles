@@ -661,6 +661,7 @@ ActiveRecord::Schema.define(:version => 20140127181613) do
   add_index "exercise_rows", ["base_movement_id"], :name => "fk_exercise_rows_base_movements"
   add_index "exercise_rows", ["body_aux_type_id"], :name => "fk_exercise_rows_body_aux_types"
   add_index "exercise_rows", ["breath_aux_type_id"], :name => "fk_exercise_rows_breath_aux_types"
+  add_index "exercise_rows", ["execution_note_type_id"], :name => "fk_exercise_rows_execution_note_types"
   add_index "exercise_rows", ["exercise_id", "part_order"], :name => "idx_exercise_rows_part_order"
   add_index "exercise_rows", ["kick_aux_type_id"], :name => "fk_exercise_rows_kick_aux_types"
   add_index "exercise_rows", ["training_mode_type_id"], :name => "fk_exercise_rows_training_mode_types"
