@@ -187,12 +187,12 @@ INSERT INTO training_mode_types (id,code,lock_version,created_at,updated_at) VAL
 --
 -- Dump dei dati per la tabella training_step_types
 -- 
-INSERT INTO training_step_types (id,code,lock_version,created_at,updated_at) VALUES 
-(1,'R',0,CURDATE(),CURDATE()),
-(2,'T',0,CURDATE(),CURDATE()),
-(3,'A',0,CURDATE(),CURDATE()),
-(4,'C',0,CURDATE(),CURDATE()),
-(5,'D',0,CURDATE(),CURDATE());
+INSERT INTO training_step_types (id,code,step_order,lock_version,created_at,updated_at) VALUES 
+(1,'R',1,0,CURDATE(),CURDATE()),
+(2,'T',2,0,CURDATE(),CURDATE()),
+(3,'A',3,0,CURDATE(),CURDATE()),
+(4,'C',4,0,CURDATE(),CURDATE()),
+(5,'D',5,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella movement_types
