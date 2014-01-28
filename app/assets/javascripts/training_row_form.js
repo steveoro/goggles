@@ -33,8 +33,8 @@ function setupAutocomplete() {
           dataType: "json",
           data: {
             training_step_type_id: idSelected,
-            query: request.term,
-            limit: 20
+            query: request.term
+//            limit: 20
           }
         }
       ).done(

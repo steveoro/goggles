@@ -21,7 +21,7 @@ class ExercisesController < ApplicationController
   # == Params:
   # - <tt>:exercise_id</tt> => filter bypass to retrieve a single Exercise instance
   # - <tt>:training_step_type_id</tt> => when present, it is used as a filtering parameter for the result data set.
-  # - <tt>:limit</tt> => to limit the array of results; the default is 100
+  # - <tt>:limit</tt> => to limit the array of results; the default top limit is set to 1000 for performance reasons (but it can be overridden by this parameter).
   # - <tt>:query</tt> => a string match for the verbose description; when equal to '%', the parameter is ignored.
   #
   # == Returns:
@@ -34,9 +34,18 @@ class ExercisesController < ApplicationController
 #      logger.debug "PARAMS: #{params.inspect}"
       if params[:exercise_id].to_i > 0              # Set up and check parameters:
         result_row = Exercise.find_by_id(params[:exercise_id].to_i)
-        render( :json => { label: result_row.get_full_name, value: result_row.id } ) and return
+        render(
+          :json => {
+            label: result_row.get_full_name(
+              0,
+              Exercise.get_default_verbosity_for_label_symbol(),
+              current_user.get_preferred_swimmer_level_id()
+            ),
+            value: result_row.id
+          }
+        ) and return
       end
-      limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 100 )
+      limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
       if params[:training_step_type_id].to_i > 0    # Filter by :training_step_type_id when specified:
         training_step_čode = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
         result = Exercise.belongs_to_training_step_code( training_step_čode )
@@ -48,13 +57,24 @@ class ExercisesController < ApplicationController
 # DEBUG
 #        logger.debug "result (before filtering): #{result.inspect}"
         result = result.find_all { |row|
-          row.get_full_name =~ Regexp.new( params[:query], true )
+          row.get_full_name(
+            0,
+            Exercise.get_default_verbosity_for_label_symbol(),
+            current_user.get_preferred_swimmer_level_id()
+          ) =~ Regexp.new( params[:query], true )
         }
       end
                                                     # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
       if result.instance_of?( Array )
         result_array = result.map{ |row|
-          { label: row.get_full_name, value: row.id }
+          {
+            label: row.get_full_name(
+              0,
+              Exercise.get_default_verbosity_for_label_symbol(),
+              current_user.get_preferred_swimmer_level_id()
+            ),
+            value: row.id
+          }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else
         result_array = []

@@ -47,21 +47,59 @@ class ExerciseRow < ActiveRecord::Base
   # ---------------------------------------------------------------------------
 
 
-  # Computes a description for the name associated with this data
-  def get_full_name( total_distance = 0, show_also_ordinal_part = false )
-    [
-      ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
-      compute_distance( total_distance ),
-      get_base_movement_short,
-      get_execution_note_type_short,
-      get_training_mode_type_short,
-      get_arm_aux_type_short,
-      get_kick_aux_type_short,
-      get_body_aux_type_short,
-      get_breath_aux_type_short,
-      get_formatted_start_and_rest,
-      get_formatted_pause
-    ].delete_if{ |e| e.to_s.empty? }.join(' ')
+  # Computes a full description for this data row.
+  #
+  # === Params:
+  # - total_distance: can be 0 if it must be obtained from each component
+  # - verbose_level: either :short, :full or :verbose; default: :full
+  # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
+  # - show_also_ordinal_part: true to show also the part_order; defaults to false.
+  #
+  def get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, show_also_ordinal_part = false )
+    case verbose_level.to_sym
+    when :short
+      [
+        ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
+        compute_distance( total_distance ),
+        get_base_movement_short( true, swimmer_level_type_id ),
+        get_execution_note_type_name( verbose_level ),
+        get_training_mode_type_name( verbose_level ),
+        get_arm_aux_type_name( verbose_level ),
+        get_kick_aux_type_name( verbose_level ),
+        get_body_aux_type_name( verbose_level ),
+        get_breath_aux_type_name( verbose_level ),
+        get_formatted_start_and_rest,
+        get_formatted_pause
+      ].delete_if{ |e| e.to_s.empty? }.join(' ')
+    when :verbose
+      [
+        ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
+        compute_distance( total_distance ),
+        get_base_movement_full( true, swimmer_level_type_id ),
+        get_execution_note_type_name( verbose_level ),
+        get_training_mode_type_name( verbose_level ),
+        get_arm_aux_type_name( verbose_level ),
+        get_kick_aux_type_name( verbose_level ),
+        get_body_aux_type_name( verbose_level ),
+        get_breath_aux_type_name( verbose_level ),
+        get_formatted_start_and_rest,
+        get_formatted_pause
+      ].delete_if{ |e| e.to_s.empty? }.join(' ')
+    else
+      [
+        ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
+        compute_distance( total_distance ),
+        get_base_movement_short( true, swimmer_level_type_id ),
+        get_execution_note_type_name( verbose_level ),
+        get_training_mode_type_name( verbose_level ),
+        get_arm_aux_type_name( verbose_level ),
+        get_kick_aux_type_name( verbose_level ),
+        get_body_aux_type_name( verbose_level ),
+        get_breath_aux_type_name( verbose_level ),
+        get_formatted_start_and_rest,
+        get_formatted_pause
+      ].delete_if{ |e| e.to_s.empty? }.join(' ')
+    end
   end
 
 
@@ -87,6 +125,14 @@ class ExerciseRow < ActiveRecord::Base
     :get_full_name
   end
 
+  # Returns the default parameter verbosity (override) for the corresponding label method used by get_label_symbol
+  # and to_dropdown methods.
+  # It can be nil if the method specified in get_label_symbol doesn't take any parameters.
+  #
+  def self.get_default_verbosity_for_label_symbol
+    :short
+  end
+
   # Returns an Array of 2-items Arrays, in which each item is the ID of the record
   # and the other is assumed to be its label
   #
@@ -99,9 +145,10 @@ class ExerciseRow < ActiveRecord::Base
   # == Returns:
   # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
   #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
+  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol(),
+                        verbose_level_for_label_method = self.get_default_verbosity_for_label_symbol() )
     self.where( where_condition ).map{ |row|
-      [row.send(label_sym), row.send(key_sym)]
+      [row.send(label_sym, 0, verbose_level_for_label_method), row.send(key_sym)]
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
@@ -119,43 +166,117 @@ class ExerciseRow < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Retrieves the BaseMovement full description
-  def get_base_movement_full
-    base_movement ? base_movement.get_full_name : ''
-  end
-  
-  # Retrieves the BaseMovement full description
-  def get_base_movement_short
-    base_movement ? base_movement.i18n_short : ''
-  end
-
-  # Retrieves the ExecutionNoteTypes short description
-  def get_execution_note_type_short
-    execution_note_type ? execution_note_type.i18n_short : ''
-  end
-
-  # Retrieves the Training Mode type short name
-  def get_training_mode_type_short
-    training_mode_type ? training_mode_type.i18n_short : ''
+  #
+  # === Params:
+  # - use_i18n_desc: true to use the localized version of the description instead of the computed one; default to false
+  # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
+  #
+  def get_base_movement_full( use_i18n_desc = false, swimmer_level_type_id = 0 )
+    return '' unless base_movement
+    if use_i18n_desc
+      base_movement.i18n_description
+    else
+      base_movement.get_full_name( :full, swimmer_level_type_id )
+    end
   end
 
-  # Retrieves the Arm Aux Type short name
-  def get_arm_aux_type_short
-    (base_movement && base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_short : ''
+  # Retrieves the BaseMovement short description
+  #
+  # === Params:
+  # - use_i18n_desc: true to use the localized version of the description instead of the computed one; default to false
+  # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
+  #
+  def get_base_movement_short( use_i18n_desc = false, swimmer_level_type_id = 0 )
+    return '' unless base_movement
+    if use_i18n_desc
+      base_movement.i18n_short
+    else
+      base_movement.get_full_name( :short, swimmer_level_type_id )
+    end
   end
 
-  # Retrieves the Kick Aux Type short name
-  def get_kick_aux_type_short
-    (base_movement && base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_short : ''
+  # Retrieves the ExecutionNoteTypes name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_execution_note_type_name( verbose_level = :short )
+    return '' unless execution_note_type
+    if verbose_level.to_sym == :short
+      execution_note_type.i18n_short
+    else
+      execution_note_type.i18n_description
+    end
   end
 
-  # Retrieves the Body Aux Type short name
-  def get_body_aux_type_short
-    (base_movement && base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_short : ''
+  # Retrieves the Training Mode type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_training_mode_type_name( verbose_level = :short )
+    return '' unless training_mode_type
+    if verbose_level.to_sym == :short
+      training_mode_type.i18n_short
+    else
+      training_mode_type.i18n_description
+    end
   end
 
-  # Retrieves the Breath Aux Type short name
-  def get_breath_aux_type_short
-    (base_movement && base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_short : ''
+  # Retrieves the Arm Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_arm_aux_type_name( verbose_level = :short )
+    return '' unless base_movement
+    if verbose_level.to_sym == :short
+      (base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_short : ''
+    else
+      (base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_description : ''
+    end
+  end
+
+  # Retrieves the Kick Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_kick_aux_type_name( verbose_level = :short )
+    return '' unless base_movement
+    if verbose_level.to_sym == :short
+      (base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_short : ''
+    else
+      (base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_description : ''
+    end
+  end
+
+  # Retrieves the Body Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_body_aux_type_name( verbose_level = :short )
+    return '' unless base_movement
+    if verbose_level.to_sym == :short
+      (base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_short : ''
+    else
+      (base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_description : ''
+    end
+  end
+
+  # Retrieves the Breath Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_breath_aux_type_name( verbose_level = :short )
+    return '' unless base_movement
+    if verbose_level.to_sym == :short
+      (base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_short : ''
+    else
+      (base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_description : ''
+    end
   end
   # ----------------------------------------------------------------------------
 end

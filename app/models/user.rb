@@ -106,6 +106,19 @@ class User < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
+  # Returns either the preffered swimmer level ID for this user or its own computed
+  # value (TODO)
+  #
+  def get_preferred_swimmer_level_id
+    # TODO add user-editable field to manage preferred swimmer_level_type_id associated to the user 
+    # TODO add feature to auto-compute the esteemed swimmer_level_type_id for a specific user
+    # TODO eventually, add a parameter to this method to choose which result one may want
+    SwimmerLevelType::MA_ID
+  end
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+
+
   # Checks if a specified +ctrl_name+ is included in the list of accessible controllers
   # for this user instance access level (defined in +authorization_level+).
   #

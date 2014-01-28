@@ -1,5 +1,21 @@
 class SwimmerLevelType < ActiveRecord::Base
 
+  # Unique ID used inside the DB to address a specific code 
+  PR_ID    = 1
+
+  # Unique ID used inside the DB to address a specific code 
+  IN_ID    = 2
+
+  # Unique ID used inside the DB to address a specific code 
+  AV_ID    = 3
+
+  # Unique ID used inside the DB to address a specific code 
+  ES_ID    = 4
+
+  # Unique ID used inside the DB to address a specific code 
+  MA_ID    = 5
+
+
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..5, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists

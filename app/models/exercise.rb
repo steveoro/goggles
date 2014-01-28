@@ -30,8 +30,15 @@ class Exercise < ActiveRecord::Base
 
 
   # Computes a full description for this data row
-  def get_full_name( total_distance = 0, separator = " + " )
-    exercise_rows.sort_by_part_order.collect{ |row| row.get_full_name(total_distance) }.join(separator)
+  #
+  # === Params:
+  # - total_distance: can be 0 if it must be obtained from each component
+  # - verbose_level: either :short, :full or :verbose; default: :full
+  # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
+  # - separator: string separator for joining each field
+  #
+  def get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, separator = " + " )
+    exercise_rows.sort_by_part_order.collect{ |row| row.get_full_name( total_distance, verbose_level.to_sym, swimmer_level_type_id ) }.join(separator)
   end
   # ---------------------------------------------------------------------------
 
@@ -41,6 +48,14 @@ class Exercise < ActiveRecord::Base
   #
   def self.get_label_symbol
     :get_full_name
+  end
+
+  # Returns the default parameter verbosity (override) for the corresponding label method used by get_label_symbol
+  # and to_dropdown methods.
+  # It can be nil if the method specified in get_label_symbol doesn't take any parameters.
+  #
+  def self.get_default_verbosity_for_label_symbol
+    :short
   end
 
   # Returns an Array of 2-items Arrays, in which each item is the ID of the record
@@ -55,9 +70,10 @@ class Exercise < ActiveRecord::Base
   # == Returns:
   # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
   #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
+  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol(),
+                        verbose_level_for_label_method = self.get_default_verbosity_for_label_symbol() )
     self.where( where_condition ).map{ |row|
-      [row.send(label_sym), row.send(key_sym)]
+      [row.send(label_sym, 0, verbose_level_for_label_method), row.send(key_sym)]
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------

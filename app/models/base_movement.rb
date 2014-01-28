@@ -33,7 +33,7 @@ class BaseMovement < ActiveRecord::Base
   end
 
 
-  # Computes a run-tim description for the name associated with this data
+  # Computes a run-time description for the name associated with this data
   #
   # Please note that due to the current [20140108] DB structure, this method doesn't take
   # into account that there are several base movements that may have different codes but
@@ -46,12 +46,31 @@ class BaseMovement < ActiveRecord::Base
   # For this reason, the standard, localized <tt>#i18n_short</tt> and <tt>#i18n_description</tt>
   # are the preferred methods of obtaining unique descriptions for any data row.
   #
-  def get_full_name
-    [ 
-      get_stroke_type_short,
-      get_movement_type_short,
-      get_movement_scope_type_short
-    ].delete_if{ |e| e.empty? }.join(' ')
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :full
+  # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
+  #
+  def get_full_name( verbose_level = :full, swimmer_level_type_id = 0 )
+    case verbose_level.to_sym
+    when :short
+      [ 
+        get_stroke_type_name( verbose_level ),
+        get_movement_type_name( verbose_level ),
+        get_movement_scope_type_name( verbose_level )
+      ].delete_if{ |e| e.empty? }.join(' ')
+    when :verbose
+      [ 
+        get_stroke_type_name( verbose_level ),
+        get_movement_type_name( verbose_level ),
+        get_movement_scope_type_name( verbose_level )
+      ].delete_if{ |e| e.empty? }.join(' ')
+    else
+      [ 
+        get_stroke_type_name( verbose_level ),
+        get_movement_type_name( verbose_level ),
+        get_movement_scope_type_name( verbose_level )
+      ].delete_if{ |e| e.empty? }.join(' ')
+    end
   end
   # ---------------------------------------------------------------------------
 
@@ -82,28 +101,54 @@ class BaseMovement < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Retrieves the Movement Type short name
-  def get_movement_type_short
+
+  # Retrieves the Movement Type name
+  #
+  # === Params:
+  # - verbose_level: either :short or anything else; default: :short
+  #
+  def get_movement_type_name( verbose_level = :short )
     if ( movement_type && movement_type.code == MovementType::CODE_FULL )
       ''
     elsif movement_type                       # Retrieve the movement_scope_type only if it is defined and it's not "generic"
-      movement_type.i18n_short
+      if ( verbose_level.to_sym == :short )
+        movement_type.i18n_short
+      else
+        movement_type.i18n_description
+      end
     else
       ''
     end
   end
 
-  # Retrieves the Stroke Type short name
-  def get_stroke_type_short
-    stroke_type ? stroke_type.i18n_short : ''
+  # Retrieves the Stroke Type name
+  #
+  # === Params:
+  # - verbose_level: either :short or anything else; default: :short
+  #
+  def get_stroke_type_name( verbose_level = :short )
+    return '' unless stroke_type
+    if ( verbose_level.to_sym == :short )
+      stroke_type.i18n_short
+    else
+      stroke_type.i18n_description
+    end
   end
 
-  # Retrieves the Movement Scope Type short name
-  def get_movement_scope_type_short
+  # Retrieves the Movement Scope Type name
+  #
+  # === Params:
+  # - verbose_level: either :short or anything else; default: :short
+  #
+  def get_movement_scope_type_name( verbose_level = :short )
     if ( movement_scope_type && movement_scope_type.code == MovementScopeType::CODE_GENERIC )
       ''
     elsif movement_scope_type                       # Retrieve the movement_scope_type only if it is defined and it's not "generic"
-      movement_scope_type.i18n_short
+      if ( verbose_level.to_sym == :short )
+        movement_scope_type.i18n_short
+      else
+        movement_scope_type.i18n_description
+      end
     else
       ''
     end
