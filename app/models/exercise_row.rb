@@ -112,8 +112,7 @@ class ExerciseRow < ActiveRecord::Base
         # what's percentage?!? I added 'self.' supposing it was execrcise row percentage, but I don't understand
         ( self.percentage < 100 ? "#{sprintf("%02s", total_distance * self.percentage / 100)}" : total_distance )
       else
-        # ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' )
-        ( self.percentage >= 100 ? "#{sprintf("%02s", self.percentage )}%" : '' )
+        ( self.percentage < 100 ? "#{sprintf("%02s", self.percentage)}%" : '' )
       end
     end
   end
