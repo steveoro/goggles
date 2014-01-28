@@ -66,7 +66,7 @@ class TrainingRow < ActiveRecord::Base
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       get_training_step_type_short,
-      "#{sprintf("%02s", times)}x#{sprintf("%03s", distance)}:",
+      ( times > 1 ? "#{sprintf("%02s", times)}x#{sprintf("%03s", distance)}:" : ''),
 # FIXME create method to get exercise description applying percentages to current distance set
       get_exercise_full,
       get_formatted_start_and_rest,
