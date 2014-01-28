@@ -90,12 +90,12 @@ class ExerciseRow < ActiveRecord::Base
         ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
         compute_distance( total_distance ),
         get_base_movement_short( true, swimmer_level_type_id ),
-        get_execution_note_type_name( verbose_level ),
-        get_training_mode_type_name( verbose_level ),
-        get_arm_aux_type_name( verbose_level ),
-        get_kick_aux_type_name( verbose_level ),
-        get_body_aux_type_name( verbose_level ),
-        get_breath_aux_type_name( verbose_level ),
+        get_execution_note_type_name( :short ),
+        get_training_mode_type_name( :short ),
+        get_arm_aux_type_name( :short ),
+        get_kick_aux_type_name( :short ),
+        get_body_aux_type_name( :short ),
+        get_breath_aux_type_name( :short ),
         get_formatted_start_and_rest,
         get_formatted_pause
       ].delete_if{ |e| e.to_s.empty? }.join(' ')
@@ -109,9 +109,11 @@ class ExerciseRow < ActiveRecord::Base
       self.distance
     else
       if total_distance > 0
-        ( percentage < 100 ? "#{sprintf("%02s", total_distance * percentage / 100)}" : total_distance )
+        # what's percentage?!? I added 'self.' supposing it was execrcise row percentage, but I don't understand
+        ( self.percentage < 100 ? "#{sprintf("%02s", total_distance * self.percentage / 100)}" : total_distance )
       else
-        ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' )
+        # ( percentage < 100 ? "#{sprintf("%02s", percentage)}%" : '' )
+        ( self.percentage >= 100 ? "#{sprintf("%02s", self.percentage )}%" : '' )
       end
     end
   end

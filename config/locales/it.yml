@@ -573,7 +573,7 @@ it:
     
   base_movements:
     code: "Cod."
-    i18n_short_GECMPL: "Piacere"
+    i18n_short_GECMPL: "A piacere"
     i18n_description_GECMPL: "A piacere"
     i18n_short_SLCMPL: "SL"
     i18n_description_SLCMPL: "SL completo"
