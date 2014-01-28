@@ -24,12 +24,12 @@ class BaseMovement < ActiveRecord::Base
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:movement_scope_types]} )
+    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:base_movements]} )
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:movement_scope_types]} )
+    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:base_movements]} )
   end
 
 

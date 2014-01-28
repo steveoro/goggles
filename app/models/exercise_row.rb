@@ -52,7 +52,7 @@ class ExerciseRow < ActiveRecord::Base
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       compute_distance( total_distance ),
-      get_base_movement_full,
+      get_base_movement_short,
       get_execution_note_type_short,
       get_training_mode_type_short,
       get_arm_aux_type_short,
@@ -121,6 +121,11 @@ class ExerciseRow < ActiveRecord::Base
   # Retrieves the BaseMovement full description
   def get_base_movement_full
     base_movement ? base_movement.get_full_name : ''
+  end
+  
+  # Retrieves the BaseMovement full description
+  def get_base_movement_short
+    base_movement ? base_movement.i18n_short : ''
   end
 
   # Retrieves the ExecutionNoteTypes short description
