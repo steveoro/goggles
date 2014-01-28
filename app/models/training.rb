@@ -65,4 +65,13 @@ class Training < ActiveRecord::Base
     "L. #{min_swimmer_level}..#{max_swimmer_level}"
   end
   # ---------------------------------------------------------------------------
+
+  # Computes the total distance in metres for this training
+  def compute_total_distance
+# FIXME Adapt this to groups of training_rows!!
+    self.training_rows.sort_by_part_order.inject(0){ |sum, row|
+      sum + ( row.compute_distance().to_i * row.times )
+    }
+  end
+  # ---------------------------------------------------------------------------
 end

@@ -38,7 +38,9 @@ class Exercise < ActiveRecord::Base
   # - separator: string separator for joining each field
   #
   def get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, separator = " + " )
-    exercise_rows.sort_by_part_order.collect{ |row| row.get_full_name( total_distance, verbose_level.to_sym, swimmer_level_type_id ) }.join(separator)
+    exercise_rows.sort_by_part_order.collect{ |row|
+      row.get_full_name( total_distance, verbose_level.to_sym, swimmer_level_type_id )
+    }.join(separator)
   end
   # ---------------------------------------------------------------------------
 

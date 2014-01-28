@@ -1088,6 +1088,7 @@ it:
     type_something: "Digita qualcosa..."
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
     training: "Allenamento"
+    total_meters: "Totale mt."
 
 
   agex_action:

@@ -28,6 +28,9 @@ class ExerciseRow < ActiveRecord::Base
   validates_presence_of     :percentage
   validates_length_of       :percentage, :within => 1..3, :allow_nil => false
   validates_numericality_of :percentage
+  # [Steve, 20140128] An exercise_row may or may not have a pre-defined distance
+  # When left == 0, distance is assumed to be specified either by training_row.distance
+  # itself or computed from the percentage field applied to it (training_row.distance).
   validates_presence_of     :distance
   validates_length_of       :distance, :within => 1..4, :allow_nil => false
   validates_numericality_of :distance
@@ -101,15 +104,24 @@ class ExerciseRow < ActiveRecord::Base
       ].delete_if{ |e| e.to_s.empty? }.join(' ')
     end
   end
+  # ---------------------------------------------------------------------------
 
 
   # Returns the computed distance for this exercise row.
+  # Parameter total_distance is assumed to refer to the external (training row) distance
+  # set by the entity that is referring this exercise row.
+  #
+  # Note that if the member distance is set to this row, it will take
+  # precedence over the computed distance (obtained applying the percentage field
+  # to the "external" total_distance).
+  #
   def compute_distance( total_distance )
-    if self.distance > 0
+# DEBUG
+#    puts "-- compute_distance( #{total_distance.inspect} ) called."
+    if ( self.distance > 0 )
       self.distance
     else
-      if total_distance > 0
-        # what's percentage?!? I added 'self.' supposing it was execrcise row percentage, but I don't understand
+      if ( total_distance > 0 )
         ( self.percentage < 100 ? "#{sprintf("%02s", total_distance * self.percentage / 100)}" : total_distance )
       else
         ( self.percentage < 100 ? "#{sprintf("%02s", self.percentage)}%" : '' )

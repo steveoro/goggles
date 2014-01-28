@@ -205,3 +205,6 @@ li.goggles-sortable div {
 .goggles-smallfont {
 	font-size: 0.9em;
 }
+.goggles-training pre {
+	font-size: 12px;
+}

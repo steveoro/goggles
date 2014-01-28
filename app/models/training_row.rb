@@ -63,15 +63,36 @@ class TrainingRow < ActiveRecord::Base
   # Computes a shorter description for the name associated with this data
   def get_full_name( show_also_ordinal_part = false )
 # FIXME ********* REWRITE THIS FOR TRAINING ROW GROUPS *****
+    full_row_distance = compute_distance()
     [
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       get_training_step_type_short,
-      ( times > 1 ? "#{sprintf("%02s", times)}x#{sprintf("%03s", distance)}:" : ''),
-# FIXME create method to get exercise description applying percentages to current distance set
-      get_exercise_full,
+      # Hide any 1x multiplier:
+      ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}:" : full_row_distance),
+      get_exercise_full( full_row_distance ),
       get_formatted_start_and_rest,
       get_formatted_pause
-    ].delete_if{ |e| e.to_s.empty? }.join(' ')
+    ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
+  end
+  # ---------------------------------------------------------------------------
+
+  # Similarly to get_full_name, computes the description for the name associated with
+  # this row, storing each main group of data as items of a single array result.
+  #
+  def to_array()
+# FIXME ********* REWRITE THIS FOR TRAINING ROW GROUPS *****
+    full_row_distance = compute_distance()
+    [
+      sprintf("%02s)", part_order),
+      get_training_step_type_short,
+      # Hide any 1x multiplier:
+      ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}:" : full_row_distance),
+      [
+        get_exercise_full( full_row_distance ),
+        get_formatted_start_and_rest,
+        get_formatted_pause
+      ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
+    ]
   end
   # ---------------------------------------------------------------------------
 
@@ -92,7 +113,7 @@ class TrainingRow < ActiveRecord::Base
 
   # Getter for the formatted string of the +pause+ value
   def get_formatted_pause
-# FIXME with pause > 60", Timing conversion won't be perfomed using to_compact_s
+    # Note that with pause > 60", Timing conversion won't be perfomed using to_compact_s
     pause > 0 ? " p.#{Timing.to_compact_s(0, pause)}" : ''
   end
 
@@ -108,8 +129,22 @@ class TrainingRow < ActiveRecord::Base
   end
 
   # Retrieves the Exercise full description
-  def get_exercise_full
-    exercise ? exercise.get_full_name(distance) : ''
+  def get_exercise_full( precomputed_distance = 0 )
+    precomputed_distance = compute_distance() if ( precomputed_distance == 0)
+    self.exercise ? self.exercise.get_full_name( precomputed_distance ) : ''
   end
   # ----------------------------------------------------------------------------
+
+  # Computes the total distance in metres for this training row
+  def compute_distance
+# FIXME Adapt this to groups of training_rows!!
+    if self.exercise_rows
+      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        sum + row.compute_distance( self.distance ).to_i
+      }
+    else
+      self.distance
+    end
+  end
+  # ---------------------------------------------------------------------------
 end

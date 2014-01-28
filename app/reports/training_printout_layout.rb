@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.148.20140123
+- version:  4.00.161.20140128
 - author:   Steve A.
 
 =end
@@ -113,7 +113,7 @@ class TrainingPrintoutLayout
     training = options[:header_row]
     detail_rows = options[:detail_rows]
                                                     # We must compose data for the table as an Array of Arrays:
-    detail_table_array = detail_rows.collect{ |row| [ row.get_full_name ] }
+    detail_table_array = detail_rows.collect{ |row| row.to_array() }
 
     whole_table_format_opts = {
       :header => false
@@ -145,12 +145,24 @@ class TrainingPrintoutLayout
                                                     # -- Main data table:
       pdf.table( detail_table_array, whole_table_format_opts ) do
         cells.style( :size => 8, :inline_format => true, :align => :left )
+        columns(0).style( :align => :right )
+        columns(2).style( :align => :right )
         cells.style do |c|
           if c.content.empty? || c.content.nil?
             c.background_color = "ffffff"
             c.borders = []
           else
             c.background_color = (c.row % 2).zero? ? "ffffff" : "eeeeee"
+            case c.column
+            when 0
+              c.borders = [:top, :bottom, :left]
+            when 1
+              c.borders = [:top, :bottom, :right]
+            when 2
+              c.borders = [:top, :bottom, :left]
+            when 3
+              c.borders = [:top, :bottom, :right]
+            end
           end
         end
         # rows(0).style(
@@ -163,6 +175,11 @@ class TrainingPrintoutLayout
         # )
       end
 
+      pdf.move_down( 10 )
+      pdf.text(
+        "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
+        { :align => :left, :size => 10, :inline_format => true } 
+      )
       pdf.move_down( 10 )
       pdf.stroke_horizontal_rule()
     end
