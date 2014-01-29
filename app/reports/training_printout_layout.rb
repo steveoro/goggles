@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.161.20140128
+- version:  4.00.163.20140129
 - author:   Steve A.
 
 =end
@@ -142,6 +142,12 @@ class TrainingPrintoutLayout
         { :align => :left, :size => 10, :inline_format => true } 
       )
       pdf.move_down( 10 )
+
+      pdf.text(
+        "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
+        { :align => :left, :size => 10, :inline_format => true } 
+      )
+      pdf.move_down( 10 )
                                                     # -- Main data table:
       pdf.table( detail_table_array, whole_table_format_opts ) do
         cells.style( :size => 8, :inline_format => true, :align => :left )
@@ -174,12 +180,6 @@ class TrainingPrintoutLayout
           # :min_font_size    => 6
         # )
       end
-
-      pdf.move_down( 10 )
-      pdf.text(
-        "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
-        { :align => :left, :size => 10, :inline_format => true } 
-      )
       pdf.move_down( 10 )
       pdf.stroke_horizontal_rule()
     end

@@ -3,8 +3,8 @@
 = simple_form_for @training do |f|
   = f.input :title, input_html: { class: 'span5' }
   = f.input :description, input_html: { rows: 3, class: 'span8' }
-  = f.select :min_swimmer_level, SwimmerLevelType.to_dropdown(nil, :level), prompt: I18n.t('trainings.chose_min_swimmer_level')
-  = f.select :max_swimmer_level, SwimmerLevelType.to_dropdown(nil, :level), prompt: I18n.t('trainings.chose_max_swimmer_level')
+  = f.input :min_swimmer_level, as: :select, collection: SwimmerLevelType.to_dropdown(nil, :level), prompt: I18n.t('trainings.chose_min_swimmer_level')
+  = f.input :max_swimmer_level, as: :select, collection: SwimmerLevelType.to_dropdown(nil, :level), prompt: I18n.t('trainings.chose_max_swimmer_level')
 
   .row-fluid.goggles-div-centeralign.goggles-smallfont
     .span1.goggles-w15

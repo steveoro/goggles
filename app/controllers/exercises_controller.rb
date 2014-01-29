@@ -25,7 +25,12 @@ class ExercisesController < ApplicationController
   # - <tt>:query</tt> => a string match for the verbose description; when equal to '%', the parameter is ignored.
   #
   # == Returns:
-  # A JSON array of Hash instances having the structure: <tt>{ :label => row.get_full_name, :value => row.id }</tt>. 
+  # A JSON array of Hash instances having the structure:
+  # <tt>{
+  #       :label => row.get_full_name, :value => row.id,
+  #       :tot_distance => row.compute_total_distance(),
+  #       :tot_secs => row.compute_total_seconds()
+  #     }</tt>. 
   #
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one
@@ -41,7 +46,9 @@ class ExercisesController < ApplicationController
               Exercise.get_default_verbosity_for_label_symbol(),
               current_user.get_preferred_swimmer_level_id()
             ),
-            value: result_row.id
+            value: result_row.id,
+            tot_distance: row.compute_total_distance(),
+            tot_secs: row.compute_total_seconds()
           }
         ) and return
       end
@@ -73,7 +80,9 @@ class ExercisesController < ApplicationController
               Exercise.get_default_verbosity_for_label_symbol(),
               current_user.get_preferred_swimmer_level_id()
             ),
-            value: row.id
+            value: row.id,
+            tot_distance: row.compute_total_distance(),
+            tot_secs: row.compute_total_seconds()
           }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else

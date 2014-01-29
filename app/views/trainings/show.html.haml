@@ -57,6 +57,11 @@
             %i= I18n.t(:updated_at) + ':'
           .span10
             %i= Format.a_short_datetime( @training.updated_at )
+        .row-fluid
+          .span2
+            = I18n.t('trainings.total_meters') + ':'
+          .span10
+            = @training.compute_total_distance
 
 .row-fluid
   .span12
@@ -69,9 +74,3 @@
           %pre= fields[2]
         .span9.goggles-training
           %pre= fields[3]
-
-.row-fluid
-  .span1
-    = I18n.t('trainings.total_meters') + ':'
-  .span10
-    = @training.compute_total_distance

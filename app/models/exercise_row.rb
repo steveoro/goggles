@@ -63,7 +63,7 @@ class ExerciseRow < ActiveRecord::Base
     when :short
       [
         ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
-        compute_distance( total_distance ),
+        compute_displayable_distance( total_distance ),
         get_base_movement_short( true, swimmer_level_type_id ),
         get_training_mode_type_name( verbose_level ),
         get_execution_note_type_name( verbose_level ),
@@ -77,7 +77,7 @@ class ExerciseRow < ActiveRecord::Base
     when :verbose
       [
         ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
-        compute_distance( total_distance ),
+        compute_displayable_distance( total_distance ),
         get_base_movement_full( true, swimmer_level_type_id ),
         get_training_mode_type_name( verbose_level ),
         get_execution_note_type_name( verbose_level ),
@@ -91,7 +91,7 @@ class ExerciseRow < ActiveRecord::Base
     else
       [
         ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
-        compute_distance( total_distance ),
+        compute_displayable_distance( total_distance ),
         get_base_movement_short( true, swimmer_level_type_id ),
         get_training_mode_type_name( :execution ),
         get_execution_note_type_name( :short ),
@@ -107,17 +107,21 @@ class ExerciseRow < ActiveRecord::Base
   # ---------------------------------------------------------------------------
 
 
-  # Returns the computed distance for this exercise row.
+  # Returns a displayable (string) computed distance for this exercise row.
   # Parameter total_distance is assumed to refer to the external (training row) distance
   # set by the entity that is referring this exercise row.
+  #
+  # If the total "external" distance is specified but the percentage of this row is 100%,
+  # an empty string is returned, assuming the total_distance will be displayed elsewhere
+  # (since it is externally provided).
   #
   # Note that if the member distance is set to this row, it will take
   # precedence over the computed distance (obtained applying the percentage field
   # to the "external" total_distance).
   #
-  def compute_distance( total_distance )
+  def compute_displayable_distance( total_distance )
 # DEBUG
-#    puts "-- compute_distance( #{total_distance.inspect} ) called."
+#    puts "-- compute_displayable_distance( #{total_distance.inspect} ) called."
     if ( self.distance > 0 )
       self.distance
     else
@@ -126,6 +130,20 @@ class ExerciseRow < ActiveRecord::Base
       else
         ( self.percentage < 100 ? "#{sprintf("%02s", self.percentage)}%" : '' )
       end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  # Computes the total seconds of expected duration for this exercise row.
+  # When the internal row distance is set, returns an esteemed duration (based on a slow-pace).
+  # In case the distance or the start_and_rest member are not set, returns the pause member.
+  #
+  def compute_total_seconds
+    if self.start_and_rest > 0
+      self.start_and_rest
+    else                                            # Compute expected duration based on distance:
+      # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
+      ( self.distance > 0 ? self.pause + (self.distance.to_f * 1.2).to_i : self.pause ) 
     end
   end
   # ---------------------------------------------------------------------------

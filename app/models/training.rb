@@ -55,14 +55,16 @@ class Training < ActiveRecord::Base
 
   # Retrieves the Swimmer level type short name
   def get_swimmer_level_type_short
-# TODO get list of short descriptions from SwimmerLevelType, according to level range
-    "L.#{min_swimmer_level}..#{max_swimmer_level}"
+    min_level = SwimmerLevelType.find_by_level( min_swimmer_level )
+    max_level = SwimmerLevelType.find_by_level( max_swimmer_level )
+    "#{min_level.i18n_short}..#{max_level.i18n_short}"
   end
 
   # Retrieves the Swimmer level type full description
   def get_swimmer_level_type_description
-# TODO get list of full descriptions from SwimmerLevelType, according to level range
-    "L. #{min_swimmer_level}..#{max_swimmer_level}"
+    min_level = SwimmerLevelType.find_by_level( min_swimmer_level )
+    max_level = SwimmerLevelType.find_by_level( max_swimmer_level )
+    "#{min_level.i18n_description} .. #{max_level.i18n_description}"
   end
   # ---------------------------------------------------------------------------
 
@@ -71,6 +73,16 @@ class Training < ActiveRecord::Base
 # FIXME Adapt this to groups of training_rows!!
     self.training_rows.sort_by_part_order.inject(0){ |sum, row|
       sum + ( row.compute_distance().to_i * row.times )
+    }
+  end
+  # ---------------------------------------------------------------------------
+
+  # Computes the total seconds of expected duration for this training
+  #
+  def compute_total_seconds
+# FIXME Adapt this to groups of training_rows!!
+    self.training_rows.sort_by_part_order.inject(0){ |sum, row|
+      sum + ( row.compute_total_seconds() * row.times )
     }
   end
   # ---------------------------------------------------------------------------

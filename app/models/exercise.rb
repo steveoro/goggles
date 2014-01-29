@@ -79,4 +79,33 @@ class Exercise < ActiveRecord::Base
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
+
+
+  # Computes the total distance in metres for this exercise.
+  # (May return 0 in most cases.)
+  #
+  def compute_total_distance
+    if self.exercise_rows
+      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        actual_row_distance = row.compute_displayable_distance(0).to_i
+        sum + actual_row_distance
+      }
+    else
+      0
+    end
+  end
+
+  # Computes the total seconds of expected duration for this exercise
+  # (May return 0 in most cases.)
+  #
+  def compute_total_seconds
+    if self.exercise_rows
+      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        sum + row.compute_total_seconds()
+      }
+    else
+      0
+    end
+  end
+  # ---------------------------------------------------------------------------
 end

@@ -135,16 +135,42 @@ class TrainingRow < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Computes the total distance in metres for this training row
+  # Computes the value of the total distance in metres for this training row
+  #
   def compute_distance
 # FIXME Adapt this to groups of training_rows!! Mind that training row distance has to be already calculated by CRUD acording to execrcise
-    #if self.exercise_rows
-    #  self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-    #    sum + row.compute_distance( self.distance ).to_i
-    #  }
-    #else
+    if self.exercise_rows
+      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        actual_row_distance = row.compute_displayable_distance( self.distance ).to_i
+        actual_row_distance = self.distance if actual_row_distance == 0
+        sum + actual_row_distance
+      }
+    else
       self.distance
-    #end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  # Computes the total seconds of expected duration for this training row
+  #
+  def compute_total_seconds
+# FIXME Adapt this to groups of training_rows!!
+    if self.exercise_rows
+      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        sum + ( row.compute_total_seconds() * row.times )
+      }
+    else
+      if self.start_and_rest > 0
+        self.start_and_rest * row.times
+      else                                            # Compute expected duration based on distance:
+        # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
+        (
+          self.distance > 0 ?
+          self.pause + (self.distance.to_f * 1.2).to_i :
+          self.pause
+        ) * row.times 
+      end
+    end
   end
   # ---------------------------------------------------------------------------
 end
