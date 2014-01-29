@@ -466,7 +466,7 @@ it:
     i18n_short_B2: "VO2MAX (B2)"
     i18n_description_B2: "Massimo consumo di ossigeno (attorno ai 165 battiti per un giovane maschio allenato); produce acido lattico in quantità moderate; necessita di riposi più ampi"
     i18n_execution_B2: "sostenuto"
-    i18n_short_C1: "TOLLLERANZA (C1)"
+    i18n_short_C1: "TOLLERANZA (C1)"
     i18n_description_C1: "Regime anaerobico (oltre ai 180 battiti per un giovane maschio allenato); andature massimali o submassimali con riposi sostanziosi; distanze ridotte"
     i18n_execution_C1: "forte"
     i18n_short_C2: "PICCO (C2)"
