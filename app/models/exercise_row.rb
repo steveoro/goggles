@@ -122,7 +122,7 @@ class ExerciseRow < ActiveRecord::Base
       self.distance
     else
       if ( total_distance > 0 )
-        ( self.percentage < 100 ? "#{sprintf("%02s", total_distance * self.percentage / 100)}" : total_distance )
+        ( self.percentage < 100 ? "#{sprintf("%02s", total_distance * self.percentage / 100)}" : '' )
       else
         ( self.percentage < 100 ? "#{sprintf("%02s", self.percentage)}%" : '' )
       end

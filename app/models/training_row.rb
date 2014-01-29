@@ -137,14 +137,14 @@ class TrainingRow < ActiveRecord::Base
 
   # Computes the total distance in metres for this training row
   def compute_distance
-# FIXME Adapt this to groups of training_rows!!
-    if self.exercise_rows
-      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-        sum + row.compute_distance( self.distance ).to_i
-      }
-    else
+# FIXME Adapt this to groups of training_rows!! Mind that training row distance has to be already calculated by CRUD acording to execrcise
+    #if self.exercise_rows
+    #  self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+    #    sum + row.compute_distance( self.distance ).to_i
+    #  }
+    #else
       self.distance
-    end
+    #end
   end
   # ---------------------------------------------------------------------------
 end
