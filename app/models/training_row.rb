@@ -42,7 +42,8 @@ class TrainingRow < ActiveRecord::Base
                   :training_id, :exercise_id, :training_step_type_id,
                   :training_group_id, :user_id
 
-  scope :sort_by_part_order, order('part_order')
+  scope :sort_by_part_order,    order('part_order')
+  scope :without_groups,        where('training_group_id IS NULL')
 
 
   # Overload constructor for setting default values
@@ -60,15 +61,16 @@ class TrainingRow < ActiveRecord::Base
   # ---------------------------------------------------------------------------
 
 
-  # Computes a shorter description for the name associated with this data
+  # Computes a compact description for this data
+  #
   def get_full_name( show_also_ordinal_part = false )
-# FIXME ********* REWRITE THIS FOR TRAINING ROW GROUPS *****
     full_row_distance = compute_distance()
     [
+      get_training_group_text(),
       ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
       get_training_step_type_short,
       # Hide any 1x multiplier:
-      ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}:" : full_row_distance),
+      ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}" : full_row_distance),
       get_exercise_full( full_row_distance ),
       get_formatted_start_and_rest,
       get_formatted_pause
@@ -79,14 +81,30 @@ class TrainingRow < ActiveRecord::Base
   # Similarly to get_full_name, computes the description for the name associated with
   # this row, storing each main group of data as items of a single array result.
   #
-  def to_array()
-# FIXME ********* REWRITE THIS FOR TRAINING ROW GROUPS *****
+  # Please note that this method will not consider any additional multiplier given by
+  # any training_group linked by this row.
+  # Training groups should be checked for existance and managed elsewhere, for instance,
+  # during ouput formatting or in other parent entities.
+  #
+  # == Returns:
+  # An array having the structure:
+  #    [
+  #      #0: ordering (string),
+  #      #1: training_step_type description,
+  #      #2: esteemed tot. duration in secs (integer or string, depending on the parameter),
+  #      #3: total distance with multiplier (string), 
+  #      #4: full exercise description
+  #    ]
+  #
+  def to_array( format_everything_to_string = false )
     full_row_distance = compute_distance()
+    esteemed_row_secs = compute_total_seconds()
     [
       sprintf("%02s)", part_order),
       get_training_step_type_short,
+      format_everything_to_string ? "(#{Timing.to_minute_string(esteemed_row_secs)})" : esteemed_row_secs,
       # Hide any 1x multiplier:
-      ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}:" : full_row_distance),
+      ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}" : full_row_distance),
       [
         get_exercise_full( full_row_distance ),
         get_formatted_start_and_rest,
@@ -123,6 +141,11 @@ class TrainingRow < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Retrieves the Training group descriptive text
+  def get_training_group_text
+    training_group ? training_group.get_full_name : ''
+  end
+
   # Retrieves the Training step type short name
   def get_training_step_type_short
     training_step_type ? training_step_type.i18n_short : ''
@@ -136,9 +159,14 @@ class TrainingRow < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Computes the value of the total distance in metres for this training row
+  # For this method, the result value does *NOT* include the times multiplier.
+  #
+  # Note also that this method will not consider any additional multiplier given by
+  # any training_group linked by this row.
+  # Training groups should be checked for existance and managed elsewhere, for example
+  # during ouput formatting or in other parent entities.
   #
   def compute_distance
-# FIXME Adapt this to groups of training_rows!! Mind that training row distance has to be already calculated by CRUD acording to execrcise
     if self.exercise_rows
       self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
         actual_row_distance = row.compute_displayable_distance( self.distance ).to_i
@@ -151,25 +179,38 @@ class TrainingRow < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
-  # Computes the total seconds of expected duration for this training row
+  # Computes the esteemed total seconds of expected duration for this training row.
+  # For this method, the result value *ALREADY* includes the times multiplier.
+  #
+  # Field start_and_rest has the precedence on everything else, unless pre-defined
+  # exercise_row distances or start_and_rest values are specified.
+  #
+  # When the internal row distance is set, it returns an esteemed duration (based on a slow-pace).
+  # In case the distance or the start_and_rest member are not set, returns the pause member.
+  #
+  # Note also that this method will not consider any additional multiplier given by
+  # any training_group linked by this row.
+  # Training groups should be checked for existance and managed elsewhere, for example
+  # during ouput formatting or in other parent entities.
+  #
   #
   def compute_total_seconds
-# FIXME Adapt this to groups of training_rows!!
-    if self.exercise_rows
-      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-        sum + ( row.compute_total_seconds() * row.times )
-      }
-    else
-      if self.start_and_rest > 0
-        self.start_and_rest * row.times
-      else                                            # Compute expected duration based on distance:
+    exercise_seconds = self.exercise_rows.inject(0){ |sum, row|
+      sum + row.compute_total_seconds()             # Compute row sum excluding row.pause
+    }
+    if ( exercise_seconds == 0 )                    # Zero esteemed duration (excluding pause)?
+      if ( self.start_and_rest > 0 )
+        self.start_and_rest * self.times + (self.pause * self.times)
+      elsif ( self.distance > 0 )
         # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
-        (
-          self.distance > 0 ?
-          self.pause + (self.distance.to_f * 1.2).to_i :
-          self.pause
-        ) * row.times 
+        ( self.pause + (self.distance.to_f * 1.2).to_i ) * self.times
+      else
+        self.pause * self.times
       end
+    else
+      self.exercise_rows.inject(0){ |sum, row|
+        sum + row.compute_total_seconds( true )     # Re-compute row sum including row.pause
+      } * self.times + (self.pause * self.times)
     end
   end
   # ---------------------------------------------------------------------------

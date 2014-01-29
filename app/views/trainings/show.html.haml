@@ -31,8 +31,6 @@
             .span10
               = @training.id
         .row-fluid
-          .span12
-        .row-fluid
           .span2
             = I18n.t('activerecord.attributes.training.title') + ':'
           .span10
@@ -62,15 +60,44 @@
             = I18n.t('trainings.total_meters') + ':'
           .span10
             = @training.compute_total_distance
+        .row-fluid
+          .span2
+            = I18n.t('trainings.esteemed_timing') + ':'
+          .span10
+            = Timing.to_hour_string( @training.compute_total_seconds() )
 
 .row-fluid
   .span12
+    - curr_group_id = old_group_id = 0
     - @training_rows.each do |training_row|
-      .row-fluid
-        - fields = training_row.to_array()
-        .span2.goggles-training
-          %pre= "#{fields[0]} #{fields[1]}"
-        .span1.goggles-div-rightalign.goggles-training
-          %pre= fields[2]
-        .span9.goggles-training
-          %pre= fields[3]
+      - fields = training_row.to_array()
+      - if group = training_row.training_group
+        - curr_group_id = group.id
+        - if old_group_id != curr_group_id          # Start of new group?
+          - old_group_id = curr_group_id
+          .row-fluid
+            .span2.goggles-training
+              %pre= "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(group.compute_total_seconds()) })"
+            .span1.goggles-div-rightalign.goggles-training
+              %pre= "#{group.times}x"
+          .row-fluid
+            .offset2.span1.goggles-div-rightalign.goggles-training
+              %pre= fields[3]
+            .span9.goggles-training
+              %pre= fields[4]
+        - else                                      # Same old group?
+          .row-fluid
+            .offset2.span1.goggles-div-rightalign.goggles-training
+              %pre= fields[3]
+            .span9.goggles-training
+              %pre= fields[4]
+      - else                                        # Not in a group?
+        - curr_group_id = 0
+        .row-fluid
+          .span2.goggles-training
+            %pre
+              = "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(fields[2]) })"
+          .span1.goggles-div-rightalign.goggles-training
+            %pre= fields[3]
+          .span9.goggles-training
+            %pre= fields[4]

@@ -134,16 +134,21 @@ class ExerciseRow < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
-  # Computes the total seconds of expected duration for this exercise row.
-  # When the internal row distance is set, returns an esteemed duration (based on a slow-pace).
-  # In case the distance or the start_and_rest member are not set, returns the pause member.
+  # Computes the esteemed total seconds of expected duration for this exercise row.
   #
-  def compute_total_seconds
+  # Field start_and_rest has the precedence on everything else.
+  # When the internal row distance is set, it returns an esteemed duration (based on a slow-pace).
+  #
+  # In case the distance or the start_and_rest member are not set,
+  # returns 0 or the pause member, if with_pause parameter is set to true .
+  #
+  def compute_total_seconds( with_pause = false )
     if self.start_and_rest > 0
       self.start_and_rest
     else                                            # Compute expected duration based on distance:
-      # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
-      ( self.distance > 0 ? self.pause + (self.distance.to_f * 1.2).to_i : self.pause ) 
+      # FIXME Quick'n'dirty esteem: 1.2 mt/sec
+      result = ( self.distance > 0 ? (self.distance.to_f * 1.2).to_i : 0 )
+      with_pause ? result + self.pause : result
     end
   end
   # ---------------------------------------------------------------------------

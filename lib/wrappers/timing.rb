@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.135.20140107
+  - Goggles framework vers.:  4.00.164.20140129
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -123,6 +123,21 @@ class Timing
     (minutes > 0 ? sprintf("%2s'", minutes) : '') +
     (seconds > 0 ? sprintf("%2s\"", seconds) : '') +
     (hundreds > 0 ? sprintf("%02.0f", hundreds) : '')
+  end
+  # ---------------------------------------------------------------------------
+
+  # Outputs the specified value of seconds in an hour-format string (Hh MM' SS").
+  #
+  def self.to_hour_string( total_seconds )
+    tot_h = total_seconds.to_i/3600
+    rem_min = (total_seconds.to_i%3600)
+    sprintf("%1s\h %2s\' %02.0f\"", tot_h, rem_min/60, rem_min%60)
+  end
+
+  # Outputs the specified value of seconds in a minute-format (M'SS").
+  #
+  def self.to_minute_string( total_seconds )
+    sprintf( "%1s\'%02.0f\"", total_seconds.to_i/60, total_seconds.to_i%60 )
   end
   # ---------------------------------------------------------------------------
 end

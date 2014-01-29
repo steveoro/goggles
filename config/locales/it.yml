@@ -1089,6 +1089,7 @@ it:
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
     training: "Allenamento"
     total_meters: "Totale mt."
+    esteemed_timing: "Tempo previsto/stimato"
 
 
   agex_action:
@@ -1496,6 +1497,7 @@ it:
       swimmer_level_type: "Liv. nuotatore"
       training_step_type: "Parte allenam."
       training_mode_types: "Regime allenam."
+      trainings: "Allenamenti"
 
     attributes:
       user:
@@ -1647,7 +1649,6 @@ it:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."
       messages:
         record_invalid: "Il record processato ha fallito le validazioni."
-
       models:
         article:
           attributes:
@@ -1672,3 +1673,13 @@ it:
         attributes:
           name:
             already_exists: "esiste gia'"
+      training:
+        attributes:
+          title:
+            blank: "non puo' essere vuoto"
+          description:
+            blank: "non puo' essere vuoto"
+          min_swimmer_level:
+            blank: "non puo' essere vuoto"
+          max_swimmer_level:
+            blank: "non puo' essere vuoto"

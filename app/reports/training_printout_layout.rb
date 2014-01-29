@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.163.20140129
+- version:  4.00.164.20140129
 - author:   Steve A.
 
 =end
@@ -113,7 +113,7 @@ class TrainingPrintoutLayout
     training = options[:header_row]
     detail_rows = options[:detail_rows]
                                                     # We must compose data for the table as an Array of Arrays:
-    detail_table_array = detail_rows.collect{ |row| row.to_array() }
+    detail_table_array = detail_rows.collect{ |row| row.to_array( true ) }
 
     whole_table_format_opts = {
       :header => false
@@ -147,12 +147,17 @@ class TrainingPrintoutLayout
         "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
         { :align => :left, :size => 10, :inline_format => true } 
       )
+      tot_secs = training.compute_total_seconds()
+      pdf.text(
+        "<i>#{I18n.t('trainings.esteemed_timing')}:</i> #{Timing.to_hour_string(tot_secs)}",
+        { :align => :left, :size => 10, :inline_format => true } 
+      )
       pdf.move_down( 10 )
                                                     # -- Main data table:
       pdf.table( detail_table_array, whole_table_format_opts ) do
         cells.style( :size => 8, :inline_format => true, :align => :left )
         columns(0).style( :align => :right )
-        columns(2).style( :align => :right )
+        columns(3).style( :align => :right )
         cells.style do |c|
           if c.content.empty? || c.content.nil?
             c.background_color = "ffffff"
@@ -163,10 +168,12 @@ class TrainingPrintoutLayout
             when 0
               c.borders = [:top, :bottom, :left]
             when 1
-              c.borders = [:top, :bottom, :right]
+              c.borders = [:top, :bottom]
             when 2
-              c.borders = [:top, :bottom, :left]
+              c.borders = [:top, :bottom]
             when 3
+              c.borders = [:top, :bottom, :left]
+            when 4
               c.borders = [:top, :bottom, :right]
             end
           end

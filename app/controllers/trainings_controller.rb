@@ -71,7 +71,7 @@ class TrainingsController < ApplicationController
         flash[:notice] = I18n.t('trainings.training_created')
         redirect_to( trainings_path() )
       else
-        render :action => 'new'
+        render :action => :edit
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)

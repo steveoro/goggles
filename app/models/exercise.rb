@@ -12,11 +12,7 @@ class Exercise < ActiveRecord::Base
 
   # Custom scope to detect all Exercises that may be used during a specified training_step_code
   scope :belongs_to_training_step_code, lambda{ |training_step_code|
-# DEBUG
-#    puts "\r\nExercise.belongs_to_training_step_code(#{training_step_code}) invoked."
     all.find_all{ |row|
-# DEBUG
-#      puts "> ID: #{row.id}, row.training_step_type_codes: #{row.training_step_type_codes}"
       ( training_step_code.nil? ||
         row.training_step_type_codes.nil? ||
         (training_step_code.to_s == '') ||
@@ -95,7 +91,7 @@ class Exercise < ActiveRecord::Base
     end
   end
 
-  # Computes the total seconds of expected duration for this exercise
+  # Computes the esteemed total seconds of expected duration for this exercise
   # (May return 0 in most cases.)
   #
   def compute_total_seconds
