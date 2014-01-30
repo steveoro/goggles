@@ -67,7 +67,7 @@ class Training < ActiveRecord::Base
   # Computes the total distance in metres for this training.
   #
   def compute_total_distance
-    groups = self.training_groups
+    groups = self.training_groups.uniq
     group_distance = 0
     # [Steve, 20140129] Even if the DB structure supports unlimited nesting of
     # training_rows by training_groups, as of this version we limit the support
@@ -77,7 +77,8 @@ class Training < ActiveRecord::Base
         sum + ( row.compute_distance().to_i * row.times )
       } * group.times
     }
-    group_distance + self.training_rows.without_groups.inject(0){ |sum, row|
+                                                    # Start the sum of the rest of the rows using the previous result:
+    self.training_rows.without_groups.inject( group_distance ){ |sum, row|
       sum + ( row.compute_distance().to_i * row.times )
     }
   end
@@ -86,7 +87,7 @@ class Training < ActiveRecord::Base
   # Computes the esteemed total seconds of expected duration for this training
   #
   def compute_total_seconds
-    groups = self.training_groups
+    groups = self.training_groups.uniq
     group_secs = 0
     # [Steve, 20140129] Even if the DB structure supports unlimited nesting of
     # training_rows by training_groups, as of this version we limit the support
@@ -96,7 +97,8 @@ class Training < ActiveRecord::Base
         sum + row.compute_total_seconds()
       } * group.times
     }
-    group_secs + self.training_rows.without_groups.inject(0){ |sum, row|
+                                                    # Start the sum of the rest of the rows using the previous result:
+    self.training_rows.without_groups.inject( group_secs ){ |sum, row|
       sum + row.compute_total_seconds()
     }
   end

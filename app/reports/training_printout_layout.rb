@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.164.20140129
+- version:  4.00.165.20140130
 - author:   Steve A.
 
 =end
@@ -105,23 +105,72 @@ class TrainingPrintoutLayout
   # page headers and footers.
   #
   def self.build_report_body( pdf, options )
-# DEBUG
-#    puts "\r\n-----------------------------------------"
-#    puts "#{options[:header_row].inspect}"
-#    puts "#{options[:detail_rows].inspect}"
-                                                    # Table data & column names adjustments:
-    training = options[:header_row]
+    training = options[:header_row]                 # Table data & column names adjustments:
     detail_rows = options[:detail_rows]
                                                     # We must compose data for the table as an Array of Arrays:
-    detail_table_array = detail_rows.collect{ |row| row.to_array( true ) }
+    detail_table_array = []
+    group_array = nil
+    group_subtable_array = []
+    curr_group_id = old_group_id = 0
+    
+    column_widths = [
+       20,                                          # part order
+       60,                                          # training_step_type description
+       40,                                          # esteemed tot. duration in secs
+       20,                                          # grouping multiplier
+       40,                                          # total distance with multiplier
+      350                                           # full exercise description
+    ]
 
-    whole_table_format_opts = {
-      :header => false
+    detail_rows.each{ |training_row|
+      fields = training_row.to_array()              # Extract main data chunks from current row
+      if group = training_row.training_group        # Detect if current row belongs to a grouping
+        curr_group_id = group.id                    # Store group id for future reference
+                                                    # For each context, format accordingly:
+        if old_group_id != curr_group_id            # Start of new group?
+          old_group_id = curr_group_id
+          tot_group_timing = Timing.to_minute_string( group.compute_total_seconds() )
+          group_array = [
+            fields[0],                              # part order
+            fields[1],                              # training_step_type description
+            "(#{tot_group_timing})",                # esteemed tot. duration in secs
+            "#{group.times}x"                       # grouping multiplier
+          ]
+          group_subtable_array << [ fields[3], fields[4] ]
+        else                                        # Same old group?
+          group_subtable_array << [ fields[3], fields[4] ]
+        end
+      else                                          # Not in a group?
+        curr_group_id = 0
+        if group_array                              # Do we have a group to add to the table data?
+          sub_table = pdf.make_table( group_subtable_array, :cell_style => {:size=>8}, :position => :left ) do
+            cells.column(0).align = :right
+            cells.column(0).width = column_widths[4]
+            cells.column(1).borders = [:top, :bottom]
+            cells.column(1).align = :left
+            cells.column(1).borders = [:top, :bottom, :left]
+            cells.column(1).width = column_widths[5]
+          end
+          group_array << { :content => sub_table, :colspan => 2 }
+          detail_table_array << group_array
+          group_array = nil                         # Reset the group temp storage
+          group_subtable_array = []
+        end
+                                                    # Proceed adding current data row:
+        detail_table_array << [
+          fields[0],
+          fields[1],
+          "(#{ Timing.to_minute_string(fields[2]) })",
+          '',
+          fields[3],
+          fields[4]
+        ]
+      end
     }
 
     pdf.bounding_box( [0, pdf.bounds.height - 40],
-                  :width => pdf.bounds.width,
-                  :height => pdf.bounds.height-80 ) do
+                      :width => pdf.bounds.width,
+                      :height => pdf.bounds.height-80 ) do
                                                     # -- Report title and header:
       pdf.text(
         "<u><b>#{options[:report_title]}</b></u>",
@@ -135,8 +184,6 @@ class TrainingPrintoutLayout
         "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type_description}",
         { :align => :left, :size => 10, :inline_format => true } 
       )
-      pdf.move_down( 10 )
-
       pdf.text(
         training.description,
         { :align => :left, :size => 10, :inline_format => true } 
@@ -145,47 +192,58 @@ class TrainingPrintoutLayout
 
       pdf.text(
         "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
-        { :align => :left, :size => 10, :inline_format => true } 
+        { :align => :left, :size => 8, :inline_format => true } 
       )
       tot_secs = training.compute_total_seconds()
       pdf.text(
         "<i>#{I18n.t('trainings.esteemed_timing')}:</i> #{Timing.to_hour_string(tot_secs)}",
-        { :align => :left, :size => 10, :inline_format => true } 
+        { :align => :left, :size => 8, :inline_format => true } 
       )
       pdf.move_down( 10 )
                                                     # -- Main data table:
-      pdf.table( detail_table_array, whole_table_format_opts ) do
-        cells.style( :size => 8, :inline_format => true, :align => :left )
-        columns(0).style( :align => :right )
-        columns(3).style( :align => :right )
-        cells.style do |c|
-          if c.content.empty? || c.content.nil?
-            c.background_color = "ffffff"
-            c.borders = []
-          else
-            c.background_color = (c.row % 2).zero? ? "ffffff" : "eeeeee"
+      pdf.table( detail_table_array, :position => :center, :row_colors => ["ffffff", "eeeeee"] ) do
+        cells.style do |c|                          # Cell is not a subtable and it's empty? Clear it:
+          if ( !c.content.instance_of?(Prawn::Table) ) &&
+             ( c.content.empty? || c.content.nil? )
+#            c.background_color = (c.row % 2).zero? ? "ffffff" : "eeeeee"
+            c.borders = [:top, :bottom, :left]
+                                                    # Cell is normal training row?
+          elsif ( !c.content.instance_of?(Prawn::Table) )
+#            c.background_color = (c.row % 2).zero? ? "ffffff" : "eeeeee"
+            c.size = 8
             case c.column
             when 0
               c.borders = [:top, :bottom, :left]
+              c.align = :right
+              c.width = column_widths[0]
+              c.size = 7
             when 1
               c.borders = [:top, :bottom]
+              c.align = :left
+              c.width = column_widths[1]
+              c.size = 7
             when 2
               c.borders = [:top, :bottom]
+              c.align = :right
+              c.width = column_widths[2]
             when 3
               c.borders = [:top, :bottom, :left]
+              c.align = :left
+              c.width = column_widths[3]
             when 4
-              c.borders = [:top, :bottom, :right]
+              c.borders = [:top, :bottom]
+              c.align = :right
+              c.width = column_widths[4]
+            when 5
+              c.borders = [:top, :bottom, :left, :right]
+              c.align = :left
+              c.width = column_widths[5]
             end
+                                                    # Cell is a group sub-table?
+          elsif c.content.instance_of?(Prawn::Table)
+            c.content.row_colors = (c.row % 2).zero? ? ["ffffff"] : ["eeeeee"]
           end
         end
-        # rows(0).style(
-          # :background_color => "c0ffc0",
-          # :text_color       => "00076d",
-          # :align            => :center,
-          # :size             => 7,
-          # :overflow         => :shrink_to_fit,
-          # :min_font_size    => 6
-        # )
       end
       pdf.move_down( 10 )
       pdf.stroke_horizontal_rule()

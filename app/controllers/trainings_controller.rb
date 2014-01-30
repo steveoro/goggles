@@ -161,7 +161,7 @@ class TrainingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
-    @training_rows = @training.training_rows.includes(:exercise, :training_step_type).all
+    @training_rows = @training.training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
 
                                                     # == OPTIONS setup + RENDERING phase ==

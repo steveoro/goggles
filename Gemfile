@@ -56,7 +56,7 @@ gem 'i18n'                                          # [Steve, 20111216] Internat
 
 gem 'ruport', :git => 'https://github.com/ruport/ruport.git', :branch => 'ruby19-compat'
 gem 'acts_as_reportable'
-gem 'prawn'
+gem 'prawn', '~> 0.14'
                                                     # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
 gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
 
