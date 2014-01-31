@@ -47,8 +47,8 @@ class ExercisesController < ApplicationController
               current_user.get_preferred_swimmer_level_id()
             ),
             value: result_row.id,
-            tot_distance: row.compute_total_distance(),
-            tot_secs: row.compute_total_seconds()
+            tot_distance: result_row.compute_total_distance(),
+            tot_secs: result_row.compute_total_seconds()
           }
         ) and return
       end

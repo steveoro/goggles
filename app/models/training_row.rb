@@ -43,7 +43,8 @@ class TrainingRow < ActiveRecord::Base
                   :training_group_id, :user_id
 
   scope :sort_by_part_order,    order('part_order')
-  scope :without_groups,        where('training_group_id IS NULL')
+  scope :with_groups,           where('training_group_id > 0').order('part_order')
+  scope :without_groups,        where('(training_group_id is null) or (training_group_id = 0)').order('part_order')
 
 
   # Overload constructor for setting default values

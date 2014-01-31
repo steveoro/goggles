@@ -34,7 +34,7 @@
 	g.column do |training|							# Enable edit action link, but only if the current user is the owner:
 		link_to( edit_training_path(training) ) do
 			image_tag('page_edit.png') << " #{I18n.t(:edit)}"
-		end if (training.user_id == current_user.id)
+		end if (training.user_id == current_user.id) || admin_signed_in?
 	end
 	g.column do |training|
 		link_to( printout_training_path(training) ) do
@@ -48,7 +48,7 @@
 				training_path(training),
 				:method => :delete,
 				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
- 		) if (training.user_id == current_user.id)
+ 		) if (training.user_id == current_user.id) || admin_signed_in?
 	end
 
 	g.column do |training|

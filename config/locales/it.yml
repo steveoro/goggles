@@ -1090,6 +1090,7 @@ it:
     training: "Allenamento"
     total_meters: "Totale mt."
     esteemed_timing: "Tempo previsto/stimato"
+    something_went_wrong_during_copy: "Mmmh... Forse hai già un allenamento con questo nome o c'è qualcos'altro di sbagliato..."
 
 
   agex_action:

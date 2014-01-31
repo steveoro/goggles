@@ -1088,6 +1088,7 @@ en:
     training: "Training"
     total_meters: "Total mt."
     esteemed_timing: "Expected/esteemed timing"
+    something_went_wrong_during_copy: "Mmmh... Something went wrong. Do you have already a Training with the same name? Or perhaps is something else..."
 
 
   agex_action:

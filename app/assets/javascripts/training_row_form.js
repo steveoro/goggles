@@ -78,6 +78,15 @@ function prepareSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
 };
 
 
+/*
+ * Drop target implementation. --- WIP ---
+ */
+function dropOnRow( event, ui ) {
+  console.log( event );
+  console.log( ui );
+};
+
+
 /* Document OnReady: initialization
  */
 $(document).ready( function(obj) {
@@ -86,6 +95,13 @@ $(document).ready( function(obj) {
   $( "#sortable" ).sortable({
     placeholder: "ui-state-highlight",
     beforeStop: updateAutoSeq
+  });
+  $( "li.goggles-sortable" ).droppable({
+    accept: "li.goggles-sortable",
+//    activeClass: "custom-state-active",
+    drop: function( event, ui ) {
+      dropOnRow( event, ui );
+    }
   });
 
   // Set value for each exercise_desc, according to exercise_id

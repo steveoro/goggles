@@ -198,20 +198,36 @@ class TrainingsController < ApplicationController
       training_id = params[:id].to_i
       old_training = Training.find_by_id( training_id )
       old_training_rows = TrainingRow.where(:training_id => old_training.id)
-# TODO / FIXME COPY ALSO all TrainingGroup found for these old_training_rows
 
       new_training = Training.new( old_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
       new_training.title = "#{I18n.t(:copy_of)} '#{old_training.title}'"
+      new_training.user_id = current_user.id
 
-      if new_training.save!
-        old_training_rows.each { |old_row|
-          new_row = TrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
-          new_row.training_id = new_training.id
-          new_row.save!
-        }
-
-        flash[:notice] = I18n.t('trainings.training_created')
-        redirect_to( edit_training_path(new_training) ) and return
+      begin
+        if new_training.save!
+          created_group_ids = {}                    # Store in a hash which group IDs we have already created
+          old_training_rows.each { |old_row|
+            new_row = TrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+            new_row.training_id = new_training.id
+            new_row.user_id = current_user.id
+                                                    # Current row belongs to a group?
+            if ( old_group = old_row.training_group )# Do we need to create a new group?
+              if created_group_ids[ old_group.id ].nil?
+                new_group = TrainingGroup.new( old_group.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+                new_group.save!                     # Save group and store its ID into the hash:
+                created_group_ids[ old_group.id ] = new_group.id
+              end                                   # Assign new group ID to current row:
+              new_row.training_group_id = created_group_ids[ old_group.id ]
+            end
+            new_row.save!
+          }
+          flash[:notice] = I18n.t('trainings.training_created')
+          redirect_to( edit_training_path(new_training) ) and return
+        end
+      rescue
+        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
+                        ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        redirect_to( trainings_path() ) and return
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)

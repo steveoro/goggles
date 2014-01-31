@@ -6,22 +6,23 @@
   = f.input :min_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_min_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) ) 
   = f.input :max_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_max_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) )
 
-  .row-fluid.goggles-div-centeralign.goggles-smallfont
-    .span1.goggles-w15
-      %i= I18n.t('activerecord.attributes.training_rows.part_order')
-    .span2
-      %i= I18n.t('activerecord.models.training_step_type')
-    .span1.goggles-w30
-      %i= I18n.t('activerecord.attributes.training_rows.times')
-    .span1.goggles-w50
-      %i= I18n.t('activerecord.attributes.training_rows.distance')
-    .span2
-      %i= I18n.t('activerecord.attributes.training_rows.exercise')
-    .span1.goggles-w50
-      %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
-    .span1.goggles-w50
-      %i= I18n.t('activerecord.attributes.training_rows.pause')
-    .span1.goggles-w50
+  %table
+    %tr
+      %td{width: 35, class: 'goggles-centeralign'}
+      %td{width: 80, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.attributes.training_rows.part_order')
+      %td{width: 250, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.models.training_step_type')
+      %td{width: 80, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.attributes.training_rows.times')
+      %td{width: 80, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.attributes.training_rows.distance')
+      %td{width: 250, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.attributes.training_rows.exercise')
+      %td{width: 110, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
+      %td{width: 110, class: 'goggles-centeralign'}
+        %i= I18n.t('activerecord.attributes.training_rows.pause')
 
   .row-fluid#training_rows
     %ul#sortable.goggles-sortable

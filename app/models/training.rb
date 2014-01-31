@@ -9,7 +9,13 @@ class Training < ActiveRecord::Base
   has_many :training_rows, :dependent => :delete_all
   accepts_nested_attributes_for :training_rows, :allow_destroy => true
 
-  has_many :training_groups, :through => :training_rows
+  has_many :training_groups, :through => :training_rows, :dependent => :delete_all
+  accepts_nested_attributes_for :training_groups, :allow_destroy => true
+
+  has_many :grouped_training_rows, :class_name  => "TrainingRow",
+    :conditions => TrainingRow.with_groups.where_values,
+    :order => TrainingRow.with_groups.order_values
+  accepts_nested_attributes_for :grouped_training_rows
 
   has_many :exercises, :through => :training_rows
   has_many :training_step_types, :through => :training_rows
@@ -30,7 +36,8 @@ class Training < ActiveRecord::Base
 
 
   attr_accessible :title, :description, :min_swimmer_level, :max_swimmer_level,
-                  :user_id, :training_rows_attributes # (Needed by the nested_form gem)
+                  :user_id, :training_rows_attributes,  # (Needed by the nested_form gem)
+                  :training_groups_attributes           # (Needed by the nested_form gem)
 
 
   # ---------------------------------------------------------------------------

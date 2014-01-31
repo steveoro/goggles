@@ -106,7 +106,7 @@ table td.goggles-centeralign{
 	text-align: center;
 }
 
-table td.goggles-rightalign{
+table td.goggles-rightalign {
 	text-align: right;
 }
 
@@ -127,13 +127,14 @@ table td.goggles-rightalign{
 
 
 /* ----- Custom table input-related overrides ----- */
-.goggles-float input, .goggles-float select { float: left; margin-left: 1em; }
+.goggles-float, .goggles-float input, .goggles-float select { float: left; margin-left: 1em; }
 
-.goggles-w15 input, .goggles-w15 select   { width: 15px; }
-.goggles-w30 input, .goggles-w30 select   { width: 30px; }
-.goggles-w50 input, .goggles-w50 select   { width: 50px; }
-.goggles-w80 input, .goggles-w80 select   { width: 80px; }
+.goggles-w15  input, .goggles-w15  select { width: 15px; }
+.goggles-w30  input, .goggles-w30  select { width: 30px; }
+.goggles-w50  input, .goggles-w50  select { width: 50px; }
+.goggles-w80  input, .goggles-w80  select { width: 80px; }
 .goggles-w100 input, .goggles-w100 select { width: 100px; }
+.goggles-w300 input, .goggles-w300 select { width: 300px; }
 
 
 /* ----- jQuery Spinner styles overrides ----- */
