@@ -146,9 +146,9 @@ class TrainingPrintoutLayout
           sub_table = pdf.make_table( group_subtable_array, :cell_style => {:size=>8}, :position => :left ) do
             cells.column(0).align = :right
             cells.column(0).width = column_widths[4]
-            cells.column(1).borders = [:top, :bottom]
+            cells.column(0).borders = [:top, :bottom, :left]
             cells.column(1).align = :left
-            cells.column(1).borders = [:top, :bottom, :left]
+            cells.column(1).borders = [:top, :bottom, :right]
             cells.column(1).width = column_widths[5]
           end
           group_array << { :content => sub_table, :colspan => 2 }
@@ -235,7 +235,7 @@ class TrainingPrintoutLayout
               c.align = :right
               c.width = column_widths[4]
             when 5
-              c.borders = [:top, :bottom, :left, :right]
+              c.borders = [:top, :bottom, :right]
               c.align = :left
               c.width = column_widths[5]
             end

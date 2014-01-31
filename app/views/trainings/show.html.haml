@@ -78,17 +78,17 @@
           .row-fluid
             .span2.goggles-training
               %pre= "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(group.compute_total_seconds()) })"
-            .span1.goggles-div-rightalign.goggles-training
+            .span1.goggles-training
               %pre= "#{group.times}x"
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= fields[3]
+              %pre= "(+) #{fields[3]}"
             .span9.goggles-training
               %pre= fields[4]
         - else                                      # Same old group?
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= fields[3]
+              %pre= "(+) #{fields[3]}"
             .span9.goggles-training
               %pre= fields[4]
       - else                                        # Not in a group?
