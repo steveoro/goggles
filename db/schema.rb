@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140127181613) do
+ActiveRecord::Schema.define(:version => 20140203174739) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -1350,15 +1350,6 @@ ActiveRecord::Schema.define(:version => 20140127181613) do
 
   add_index "timing_types", ["code"], :name => "index_timing_types_on_code", :unique => true
 
-  create_table "training_groups", :force => true do |t|
-    t.integer  "part_order",     :limit => 3, :default => 0, :null => false
-    t.integer  "times",          :limit => 3, :default => 0, :null => false
-    t.integer  "start_and_rest",              :default => 0, :null => false
-    t.integer  "pause",                       :default => 0, :null => false
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
-  end
-
   create_table "training_mode_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
     t.datetime "created_at",                               :null => false
@@ -1381,10 +1372,14 @@ ActiveRecord::Schema.define(:version => 20140127181613) do
     t.integer  "exercise_id"
     t.integer  "training_step_type_id"
     t.integer  "user_id"
-    t.integer  "training_group_id"
+    t.integer  "group_id",              :limit => 3, :default => 0, :null => false
+    t.integer  "group_times",           :limit => 3, :default => 0, :null => false
+    t.integer  "group_start_and_rest",               :default => 0, :null => false
+    t.integer  "group_pause",                        :default => 0, :null => false
   end
 
   add_index "training_rows", ["exercise_id"], :name => "fk_training_exercises"
+  add_index "training_rows", ["group_id", "part_order"], :name => "index_training_rows_on_group_id_and_part_order"
   add_index "training_rows", ["training_id", "part_order"], :name => "idx_training_rows_part_order"
   add_index "training_rows", ["training_step_type_id"], :name => "fk_training_rows_training_step_types"
 

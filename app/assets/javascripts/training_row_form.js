@@ -13,12 +13,19 @@ function updateAutoSeq() {
 };
 
 
-/* Set-up the autocomplete widget on each element which has the right class type.
+
+/* Set-up the form widgets for:
+ *
+ * - spinners
+ * - autocomplete
+ * - drop targets
  *
  * The autocomplete AJAX call will be using the path
  * specified by the global variable exerciseAutocompleteURL.
  */
-function setupAutocomplete() {
+function setupWidgets() {
+  $('.spinner').spinner();                          // Init spinners
+                                                    // Init autocomplete combos:
   $( ".exercise-autocomplete" ).autocomplete({
     source: function( request, response ) {
       // Get to the parent of the current row to find the select component:
@@ -53,7 +60,24 @@ function setupAutocomplete() {
     },
     minLength: 1
   });
+                                                    // Init drop targets:
+  $( ".drop-add-group" ).draggable({
+    revert: 'invalid',
+    opacity: 0.35
+  });
+                                                    // Init drop targets:
+  $( ".drop-add-group" ).droppable({
+//    accept: "li.goggles-sortable",
+//    activeClass: "custom-state-active",
+    over: function( event, ui ) {
+      dropOnRow( event, ui );
+    },
+    drop: function( event, ui ) {
+      dropOnRow( event, ui );
+    }
+  });
 };
+
 
 
 /* Retrieve and set a single Exercise description via AJAX, using the path
@@ -78,6 +102,7 @@ function prepareSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
 };
 
 
+
 /*
  * Drop target implementation. --- WIP ---
  */
@@ -87,22 +112,15 @@ function dropOnRow( event, ui ) {
 };
 
 
+
 /* Document OnReady: initialization
  */
 $(document).ready( function(obj) {
-  $('.spinner').spinner();
-  setupAutocomplete();
   $( "#sortable" ).sortable({
     placeholder: "ui-state-highlight",
     beforeStop: updateAutoSeq
   });
-  $( "li.goggles-sortable" ).droppable({
-    accept: "li.goggles-sortable",
-//    activeClass: "custom-state-active",
-    drop: function( event, ui ) {
-      dropOnRow( event, ui );
-    }
-  });
+  setupWidgets();
 
   // Set value for each exercise_desc, according to exercise_id
   $('input.numeric.exercise_id[type=hidden]').each( function(index, elem) {
@@ -114,13 +132,10 @@ $(document).ready( function(obj) {
       training_row.fadeOut('slow');
     }
   ).on( "cocoon:after-insert", function(e, training_row_to_be_added) {
-      $('.spinner').spinner();
       updateAutoSeq();
-      setupAutocomplete();
+      setupWidgets();
     }
   ).on( "cocoon:after-remove", function() {
       updateAutoSeq();
   });
-
-
 } );

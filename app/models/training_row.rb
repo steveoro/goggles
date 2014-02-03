@@ -16,11 +16,22 @@ class TrainingRow < ActiveRecord::Base
   validates_associated :exercise
   validates_associated :training_step_type
 
-  belongs_to :training_group                        # (Do not validate this, since it can be null)
-
   has_many :exercise_rows,      :through => :exercise
   has_many :base_movements,     :through => :exercise_rows
   has_many :training_mode_type, :through => :exercise_rows
+
+  validates_presence_of     :group_id
+  validates_length_of       :group_id, :within => 1..3, :allow_nil => false
+  validates_numericality_of :group_id
+  validates_presence_of     :group_times
+  validates_length_of       :group_times, :within => 1..3, :allow_nil => false
+  validates_numericality_of :group_times
+  validates_presence_of     :group_start_and_rest
+  validates_length_of       :group_start_and_rest, :within => 1..4, :allow_nil => false
+  validates_numericality_of :group_start_and_rest
+  validates_presence_of     :group_pause
+  validates_length_of       :group_pause, :within => 1..4, :allow_nil => false
+  validates_numericality_of :group_pause
 
   validates_presence_of     :part_order
   validates_length_of       :part_order, :within => 1..3, :allow_nil => false
@@ -38,13 +49,15 @@ class TrainingRow < ActiveRecord::Base
   validates_length_of       :pause, :within => 1..4, :allow_nil => false
   validates_numericality_of :pause
 
-  attr_accessible :part_order, :times, :distance, :start_and_rest, :pause,
+  attr_accessible :part_order, 
+                  :group_id, :group_times, :group_start_and_rest, :group_pause,
+                  :times, :distance, :start_and_rest, :pause,
                   :training_id, :exercise_id, :training_step_type_id,
-                  :training_group_id, :user_id
+                  :user_id
 
   scope :sort_by_part_order,    order('part_order')
-  scope :with_groups,           where('training_group_id > 0').order('part_order')
-  scope :without_groups,        where('(training_group_id is null) or (training_group_id = 0)').order('part_order')
+  scope :with_groups,           where('group_id > 0').order('part_order')
+  scope :without_groups,        where('(group_id is null) or (group_id = 0)').order('part_order')
 
 
   # Overload constructor for setting default values
@@ -142,10 +155,34 @@ class TrainingRow < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Retrieves the Training group descriptive text
+
+  # Computes a description for the group data fields
+  #
   def get_training_group_text
-    training_group ? training_group.get_full_name : ''
+    if group_id.to_i > 0
+      [
+        "[G.#{group_id}: #{group_times}x",
+        get_formatted_group_start_and_rest(),
+        get_formatted_group_pause(),
+        "]"
+      ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
+    else
+      ''
+    end
   end
+
+  # Getter for the formatted string of the +group_pause+ value
+  def get_formatted_group_pause
+    # Note that with pause > 60", Timing conversion won't be perfomed using to_compact_s
+    group_pause > 0 ? " p.#{Timing.to_compact_s(0, group_pause)}" : ''
+  end
+
+  # Getter for the formatted string of the +group_start_and_rest+ value
+  def get_formatted_group_start_and_rest
+    group_start_and_rest > 0 ? " S-R: #{Timing.to_s(0, group_start_and_rest)}" : ''
+  end
+  # ----------------------------------------------------------------------------
+
 
   # Retrieves the Training step type short name
   def get_training_step_type_short
@@ -180,6 +217,7 @@ class TrainingRow < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
+
   # Computes the esteemed total seconds of expected duration for this training row.
   # For this method, the result value *ALREADY* includes the times multiplier.
   #
@@ -212,6 +250,44 @@ class TrainingRow < ActiveRecord::Base
       self.exercise_rows.inject(0){ |sum, row|
         sum + row.compute_total_seconds( true )     # Re-compute row sum including row.pause
       } * self.times + (self.pause * self.times)
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Generic group-oriented implementation for <tt>compute_total_seconds</tt>
+  # for a bunch of TrainingRow instances.
+  #
+  # Computes the esteemed total seconds of expected duration for the
+  # specified array of training rows.
+  #
+  # For this method, the result value *ALREADY* includes the group_times
+  # multiplier.
+  # This can be used, for instance, with arrays of grouped or filtered training rows.
+  #
+  # === Params:
+  # - training_rows: the array of TrainingRow instances to be processed.
+  #
+  def self.compute_total_seconds( training_rows )
+    # [Steve, 20140203] ASSUMES grouping information comes only from
+    # the first row
+                                                    # Extract grouping information
+    group_times = training_rows.first.group_times
+    group_start_and_rest = training_rows.first.group_start_and_rest
+    group_pause = training_rows.first.group_pause
+
+    group_secs = training_rows.inject(0){ |sum, row|
+        sum + row.compute_total_seconds()
+    } * group_times
+                                                    # Zero esteemed computation on exercise rows?
+    if ( group_secs == 0 )
+      if ( group_start_and_rest > 0 )
+        group_start_and_rest * group_times + (group_pause * group_times)
+      else
+        group_pause * group_times
+      end
+    else
+      group_secs + (group_pause * group_times)
     end
   end
   # ---------------------------------------------------------------------------

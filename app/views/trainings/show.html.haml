@@ -69,17 +69,20 @@
 .row-fluid
   .span12
     - curr_group_id = old_group_id = 0
+    - group_list_hash = @training.build_group_list_hash()
     - @training_rows.each do |training_row|
       - fields = training_row.to_array()
-      - if group = training_row.training_group
-        - curr_group_id = group.id
+      - if (training_row.group_id > 0) && group_list_hash.has_key?( training_row.group_id )
+        - curr_group_id = training_row.group_id
         - if old_group_id != curr_group_id          # Start of new group?
           - old_group_id = curr_group_id
+          - group_hash = group_list_hash[ training_row.group_id ]
+          - tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
           .row-fluid
             .span2.goggles-training
-              %pre= "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(group.compute_total_seconds()) })"
+              %pre= "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(tot_group_secs) })"
             .span1.goggles-training
-              %pre= "#{group.times}x"
+              %pre= "#{group_hash[:times]}x"
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
               %pre= "(+) #{fields[3]}"
