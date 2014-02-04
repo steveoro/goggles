@@ -131,9 +131,11 @@ table td.goggles-rightalign {
 
 .goggles-w15  input, .goggles-w15  select { width: 15px; }
 .goggles-w30  input, .goggles-w30  select { width: 30px; }
+.goggles-w30  input, .goggles-w40  select { width: 40px; }
 .goggles-w50  input, .goggles-w50  select { width: 50px; }
 .goggles-w80  input, .goggles-w80  select { width: 80px; }
 .goggles-w100 input, .goggles-w100 select { width: 100px; }
+.goggles-w150 input, .goggles-w150 select { width: 150px; }
 .goggles-w300 input, .goggles-w300 select { width: 300px; }
 
 
@@ -143,9 +145,8 @@ table td.goggles-rightalign {
 	float: left;
 	margin-left: 1em;
 }
-.goggles-float 
 
-span.ui-spinner {
+.goggles-float span.ui-spinner {
 	border: none;
 }
 span.ui-icon-triangle-1-n {
@@ -212,3 +213,12 @@ li.goggles-sortable div {
 	margin: 2px 0;
 	padding: 5px;
 }
+
+.training_group_header {
+	margin-top: 6px;
+	margin-bottom: 6px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	background: #efefef;
+}
+.ghost-row-controls { width: 20px; }

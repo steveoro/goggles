@@ -110,10 +110,6 @@ class TrainingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
-#    @training.title = params[:training][:title] if params[:training][:title]
-#    @training.description = params[:training][:description] if params[:training][:description]
-#    @training.swimmer_level_type_id = params[:training][:swimmer_level_type_id] if params[:training][:swimmer_level_type_id]
-#    @training.user_id = current_user.id
     if @training.update_attributes( params[:training] )
       flash[:notice] = I18n.t('trainings.training_updated')
       redirect_to( training_path(@training) )
@@ -210,15 +206,6 @@ class TrainingsController < ApplicationController
             new_row = TrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
             new_row.training_id = new_training.id
             new_row.user_id = current_user.id
-                                                    # Current row belongs to a group?
-            if ( old_group = old_row.training_group )# Do we need to create a new group?
-              if created_group_ids[ old_group.id ].nil?
-                new_group = TrainingGroup.new( old_group.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
-                new_group.save!                     # Save group and store its ID into the hash:
-                created_group_ids[ old_group.id ] = new_group.id
-              end                                   # Assign new group ID to current row:
-              new_row.training_group_id = created_group_ids[ old_group.id ]
-            end
             new_row.save!
           }
           flash[:notice] = I18n.t('trainings.training_created')

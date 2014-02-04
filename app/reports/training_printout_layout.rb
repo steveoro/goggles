@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.165.20140130
+- version:  4.00.169.20140204
 - author:   Steve A.
 
 =end
@@ -112,6 +112,7 @@ class TrainingPrintoutLayout
     group_array = nil
     group_subtable_array = []
     curr_group_id = old_group_id = 0
+    group_list_hash = training.build_group_list_hash()
     
     column_widths = [
        20,                                          # part order
@@ -124,17 +125,21 @@ class TrainingPrintoutLayout
 
     detail_rows.each{ |training_row|
       fields = training_row.to_array()              # Extract main data chunks from current row
-      if group = training_row.training_group        # Detect if current row belongs to a grouping
-        curr_group_id = group.id                    # Store group id for future reference
+                                                    # Detect if current row belongs to a grouping
+      if (training_row.group_id > 0) &&
+         group_list_hash.has_key?( training_row.group_id )
+        curr_group_id = training_row.group_id       # Store group id for future reference
                                                     # For each context, format accordingly:
         if old_group_id != curr_group_id            # Start of new group?
           old_group_id = curr_group_id
-          tot_group_timing = Timing.to_minute_string( group.compute_total_seconds() )
+          group_hash = group_list_hash[ training_row.group_id ]
+          tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
+          tot_group_timing = Timing.to_minute_string( tot_group_secs )
           group_array = [
             fields[0],                              # part order
             fields[1],                              # training_step_type description
             "(#{tot_group_timing})",                # esteemed tot. duration in secs
-            "#{group.times}x"                       # grouping multiplier
+            "#{group_hash[:times]}x"                       # grouping multiplier
           ]
           group_subtable_array << [ fields[3], fields[4] ]
         else                                        # Same old group?

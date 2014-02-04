@@ -1,43 +1,53 @@
 .nested-fields
   %li.goggles-sortable
-    .controls.controls-row.row-fluid#training_group
-      .goggles-float.goggles-w15
-        = f.input :group_id, label: false, wrapper: false, input_html: {class: 'autosequence'}
-      .goggles-float.goggles-w30
-        = f.input :group_times, label: false, wrapper: false, input_html: {class: 'spinner'}
-      .goggles-float.goggles-w80
-        = f.input :group_start_and_rest, label: false, wrapper: false do
-          = f.select :group_start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-      .goggles-float.goggles-w80
-        = f.input :group_pause, label: false, wrapper: false do
-          = f.select :group_pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-      .goggles-float.goggles-w50
-        .controls
-          = link_to_function( image_tag('group_delete.png'), "alert('WIP: this will remove a group for this row');" )
+    .drop-add-group
+      .controls.controls-row.row-fluid{class: 'training_group_header', hidden: 'true'}
+        %table
+          %tr
+            %td{width: 60, class: 'goggles-centeralign'}
+              %i= I18n.t('trainings.group')
+            %td{width: 30, class: 'goggles-w15'}
+              = f.input :group_id, label: false, disabled: true, wrapper: false, input_html: {class: 'group_id'}
+            %td{width: 276}
+            %td{width: 30, class: 'goggles-w30'}
+              = f.input :group_times, label: false, wrapper: false, input_html: {class: 'spinner'}
+            %td{width: 448}
+            %td{width: 106, class: 'goggles-w80'}
+              = f.input :group_start_and_rest, label: false, wrapper: false do
+                = f.select :group_start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+            %td{width: 100, class: 'goggles-w80'}
+              = f.input :group_pause, label: false, wrapper: false do
+                = f.select :group_pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+            %td{width: 60, class: 'goggles-w80'}
+              = link_to_function( image_tag('link_break.png'), "alert('WIP: this will ungrop the rows (FUTURE DEV)');" )
 
-    .controls.controls-row.row-fluid
-      .drop-add-group
-        .goggles-float.goggles-w15
-          = link_to_function( image_tag('group_add.png'), "alert('WIP: this will create a new group for this row');" )
-        .goggles-float.goggles-w15
-          = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
-        .goggles-float
-          = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
-        .goggles-float.goggles-w30
-          = f.input :times, label: false, wrapper: false, input_html: {class: 'spinner'}
-        .goggles-float.goggles-w50
-          = f.input :distance, label: false, wrapper: false
-        .goggles-float.goggles-w300
-          = f.input :exercise_id, label: false, wrapper: false, input_html: {class: 'exercise_id', :type=>:hidden}
-          = text_field_tag( :exercise_desc, nil, class: 'exercise-autocomplete', placeholder: I18n.t('trainings.type_something') )
-        .goggles-float.goggles-w80
-          = f.input :start_and_rest, label: false, wrapper: false do
-            = f.select :start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-        .goggles-float.goggles-w80
-          = f.input :pause, label: false, wrapper: false do
-            = f.select :pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+    .controls.controls-row.row-fluid.training_data_row
       .goggles-float.goggles-w15
-        = link_to_function( image_tag('group_delete.png'), "alert('WIP: this will remove this row from the group');" )
+        .ungrouped-row-controls
+          = link_to_function( image_tag('link_add.png'), "alert('WIP: this will create a new group with just this row (FUTURE DEV)');" )
+      .goggles-float.goggles-w15
+        .ghost-row-controls{hidden: 'true'}
+          &nbsp;
+      .goggles-float.goggles-w15
+        = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
+      .goggles-float
+        = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
+      .goggles-float.goggles-w30
+        = f.input :times, label: false, wrapper: false, input_html: {class: 'spinner'}
       .goggles-float.goggles-w50
-        .controls
+        = f.input :distance, label: false, wrapper: false
+      .goggles-float.goggles-w300
+        = f.input :exercise_id, label: false, wrapper: false, input_html: {class: 'exercise_id', :type=>:hidden}
+        = text_field_tag( :exercise_desc, nil, class: 'exercise-autocomplete', placeholder: I18n.t('trainings.type_something') )
+      .goggles-float.goggles-w80
+        = f.input :start_and_rest, label: false, wrapper: false do
+          = f.select :start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+      .goggles-float.goggles-w80
+        = f.input :pause, label: false, wrapper: false do
+          = f.select :pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+      .goggles-float.goggles-w50
+        .controls.ungrouped-row-controls
           = link_to_remove_association( image_tag('delete.png'), f, :confirm => I18n.t('netzke.basepack.grid_panel.are_you_sure') )
+      .goggles-float.goggles-w50
+        .ghost-row-controls{hidden: 'true'}
+          &nbsp;
