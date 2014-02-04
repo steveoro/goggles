@@ -883,6 +883,8 @@ it:
     i18n_description_VICORF: "Virate a RA/FA sul posto"
     i18n_short_POMARI: "Marines"
     i18n_description_POMARI: "Sollevamenti dal bordo"
+    i18n_short_GEGACM: "Gambe a piacere"
+    i18n_description_GEGACM: "Gambe a piacere"
 
   event_types:
     code: "Cod."

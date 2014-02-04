@@ -3,7 +3,6 @@ START TRANSACTION;
 
 -- Ripulisco in giro
 delete from training_rows;
-delete from training_groups;
 delete from trainings;
 delete from exercise_rows;
 delete from exercises;
@@ -46,7 +45,7 @@ INSERT INTO base_movements (id,code,user_id,is_arm_aux_allowed,is_kick_aux_allow
 (31,'SLBROP',2,1,1,1,1,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'E'),0,CURDATE(),CURDATE()),
 (32,'SLBRSV',2,1,1,1,1,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'E'),0,CURDATE(),CURDATE()),
 (33,'SLBRLT',2,1,1,1,1,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'I'),0,CURDATE(),CURDATE()),
-(34,'SLBRTA',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'E'),0,CURDATE(),CURDATE()),
+(34,'SLCMTA',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'E'),0,CURDATE(),CURDATE()),
 (35,'SLBRA3',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'C'),0,CURDATE(),CURDATE()),
 (36,'SLRE01',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'E'),0,CURDATE(),CURDATE()),
 (37,'SLRE02',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'SL'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'E'),0,CURDATE(),CURDATE()),
@@ -162,7 +161,8 @@ INSERT INTO base_movements (id,code,user_id,is_arm_aux_allowed,is_kick_aux_allow
 (147,'VICOSP',2,0,1,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
 (148,'VICOS2',2,1,1,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
 (149,'VICORF',2,0,0,1,0,(select t.id from stroke_types t where t.code = 'VI'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
-(150,'POMARI',2,0,0,0,0,(select t.id from stroke_types t where t.code = 'PO'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE());
+(150,'POMARI',2,0,0,0,0,(select t.id from stroke_types t where t.code = 'PO'),(select t.id from movement_types t where t.code = 'C'),(select t.id from movement_scope_types t where t.code = 'N'),0,CURDATE(),CURDATE()),
+(151,'GEGACM',2,0,1,1,1,(select t.id from stroke_types t where t.code = 'GE'),(select t.id from movement_types t where t.code = 'G'),(select t.id from movement_scope_types t where t.code = 'I'),0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella exercises
