@@ -1,43 +1,43 @@
-.nested-fields
-  .row-fluid.drop-add-group.training_group_header{ hidden: 'true' }
-    .goggles-w30.goggles-float.goggles-centeralign
+%tr.nested-fields
+  %tr.drop-add-group.training_group_header{ hidden: 'true' }
+    %td.goggles-centeralign
       %i= I18n.t('trainings.group')
-    .goggles-w15.goggles-float
+    %td.goggles-w15
       = f.input :group_id, label: false, disabled: true, wrapper: false, input_html: {class: 'group_id'}
-    .goggles-w150.goggles-float
-    .goggles-w20.goggles-float
+    %td
+    %td.goggles-w20
       = f.input :group_times, label: false, wrapper: false, input_html: {class: 'spinner'}
-    .goggles-w50.goggles-float
-    .goggles-w300.goggles-float
-    .goggles-w80.goggles-float
+    %td
+    %td
+    %td.goggles-w80
       = f.input :group_start_and_rest, label: false, wrapper: false do
         = f.select :group_start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-    .goggles-w80.goggles-float
+    %td.goggles-w80
       = f.input :group_pause, label: false, wrapper: false do
         = f.select :group_pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-    .goggles-w50.goggles-float
+    %td.goggles-w50
       = link_to_function( image_tag('link_break.png'), "alert('WIP: this will ungrop the rows (FUTURE DEV)');" )
 
-  .row-fluid
-    .goggles-w30.goggles-float.ungrouped-row-controls
+  %tr
+    %td.ungrouped-row-controls
       = link_to_function( image_tag('link_add.png'), "alert('WIP: this will create a new group with just this row (FUTURE DEV)');" )
-    .goggles-w15.goggles-float
+    %td.goggles-w15
       = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
-    .goggles-w150.goggles-float
+    %td
       = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
-    .goggles-w20.goggles-float
+    %td.goggles-w20
       = f.input :times, label: false, wrapper: false, input_html: {class: 'spinner'}
-    .goggles-w50.goggles-float
+    %td.goggles-w50
       = f.input :distance, label: false, wrapper: false
-    .goggles-w300.goggles-float
+    %td.goggles-w300
       = f.input :exercise_id, label: false, wrapper: false, input_html: {class: 'exercise_id', :type=>:hidden}
       = text_field_tag( :exercise_desc, nil, class: 'exercise-autocomplete', placeholder: I18n.t('trainings.type_something') )
-    .goggles-w80.goggles-float
+    %td.goggles-w80
       = f.input :start_and_rest, label: false, wrapper: false do
         = f.select :start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-    .goggles-w80.goggles-float
+    %td.goggles-w80
       = f.input :pause, label: false, wrapper: false do
         = f.select :pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
-    .goggles-w50.goggles-float
+    %td.goggles-w50
       .controls.ungrouped-row-controls
         = link_to_remove_association( image_tag('delete.png'), f, :confirm => I18n.t('netzke.basepack.grid_panel.are_you_sure') )

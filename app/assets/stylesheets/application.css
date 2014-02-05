@@ -127,7 +127,7 @@ table td.goggles-rightalign {
 
 
 /* ----- Custom table input-related overrides ----- */
-.goggles-float, .goggles-float input, .goggles-float select { float: left; margin-left: 4px; }
+.goggles-float, .goggles-float input, .goggles-float select { float: left; margin-left: 4px; margin-top: 2px; }
 
 .goggles-w15  input, .goggles-w15  select { width: 15px; }
 .goggles-w20  input, .goggles-w20  select { width: 20px; }
@@ -137,6 +137,7 @@ table td.goggles-rightalign {
 .goggles-w80  input, .goggles-w80  select { width: 80px; }
 .goggles-w100 input, .goggles-w100 select { width: 100px; }
 .goggles-w150 input, .goggles-w150 select { width: 150px; }
+.goggles-w200 input, .goggles-w200 select { width: 200px; }
 .goggles-w300 input, .goggles-w300 select { width: 300px; }
 
 
@@ -162,7 +163,11 @@ span.ui-spinner .ui-icon {
     top: 0px;
     left: 0px;
 }
-
+.ui-state-highlight {
+	height: 30px;
+	line-height: 1.2em;
+}
+/*
 .goggles-sortable {
 	list-style-type: none;
 	margin: 0px;
@@ -173,11 +178,7 @@ li.goggles-sortable {
 	margin-bottom: 2px;
 	line-height: 1.2em;
 }
-.ui-state-highlight {
-	height: 30px;
-	line-height: 1.2em;
-}
-/*
+
 li.goggles-sortable {
 	margin: 0 3px 3px 3px;
 	padding: 0.4em;

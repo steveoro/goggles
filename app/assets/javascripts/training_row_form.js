@@ -1,49 +1,24 @@
+/*
+ * === Custom Training Row Form client-side methods ===
+ * 
+ * - app. ver.: 4.00.171
+ * 
+ * Handles autocomplete combos, sortable list, drag'n'drop + other utility
+ * stuff for the edit/create form of Training / TrainingRow.
+ */
+
+
+
 // Global variable (taken from a data attribute) to retrieve the maximum number of detail rows read by the controller.
 // (instead of counting the actual HTML rows rendered -- which could be different, if any kind of pagination was used.)
 var maxSeq = Number( $('#maxPartOrder').attr('data-value') );
-
-
-/* Rebuild the auto-numbering sequence of the detail rows:
- */
-function updateAutoSeq() {
-  var fieldList = $('#sortable').first().find('input.autosequence');
-  fieldList.each( function(index, element) {
-    element.value = index + 1;
-  });
-};
-
+// ----------------------------------------------------------------------------
 
 
 /*
- * Drop target implementation. --- WIP ---
+ *  Initialize the training group header rows visibility for each detail row
  */
-function dropOnRow( event, ui ) {
-  console.log( event );
-  console.log( ui );
-// WIP / TODO hide row controls
-// TODO preserve group fields (the following will move just the data row)
-// 
-  var data_row_obj = ui.draggable.find('.training_data_row');
-  data_row_obj.find('.ungrouped-row-controls').hide();
-  data_row_obj.find('.ghost-row-controls').show();
-  data_row_obj.appendTo( event.target.firstElementChild );
-};
-
-
-
-/* Set-up the form widgets for:
- *
- * - spinners
- * - group headers visibility & data row grouping
- * - autocomplete
- * - drop targets
- *
- * The autocomplete AJAX call will be using the path
- * specified by the global variable exerciseAutocompleteURL (see: views/trainings/_form.html.haml)
- */
-function setupWidgets() {
-  $('.spinner').spinner();                          // Init spinners (this is simple)
-                                                    // -- GROUP SETUP BEGIN -- Init visibility for group rows:
+function initGroupHeaders() {
   var group_ids = $('.group_id');                   // List of controls that store the group IDs
   var data_rows = $('.training_data_row');          // List of all training data rows (excluding the group widgets)
   var processedIds = {};                            // Hash containing { group_id: row_index }, to retrieve the correct index of a processed group_id
@@ -77,9 +52,17 @@ function setupWidgets() {
       }
     }
   });                                               // -- GROUP SETUP END -- 
-                                                    // Init autocomplete combos:
+};
+
+
+/*
+ * Initialize autocomplete combo widgets in each detail row
+ */
+function initAutocomplete() {
   $( ".exercise-autocomplete" ).autocomplete({
     source: function( request, response ) {
+// DEBUG:
+      console.log( request );
       // Get to the parent of the current row to find the select component:
 // FIXME use a better selector instead of this junk:
       var selectTrainingEl = this.element.parent().parent().parent().find('.training_step_type');
@@ -108,19 +91,42 @@ function setupWidgets() {
 // FIXME use a better selector instead of this junk:
       this.parentElement.firstElementChild.firstElementChild.value = ui.item.value;
 // DEBUG:
-//      console.log( ui );
+      console.log( ui );
       return false; // this will stop further event handlers
     },
     minLength: 1
   });
-                                                    // Init drop targets:
+}
+
+
 /*
+ * Initialize the list of detail rows as a sortable widget
+ */
+function initSortable() {
+  $( "#training_rows" ).sortable({
+    placeholder: "ui-state-highlight",
+//    appendTo: document.body,
+//    axis: "y",
+    beforeStop: updateAutoSeq
+  });
+}
+
+
+/*
+ * Initialize drag source for each detail row
+ */
+function initDragSource() {
   $( ".nested-fields" ).draggable({
     revert: 'invalid',
     opacity: 0.75
   });
-*/
-                                                    // Init drop targets:
+}
+
+
+/*
+ * Initialize drop target for each detail row
+ */
+function initDropTarget() {
   $( ".drop-add-group" ).droppable({
 // FIXME Make sure only ungrouped rows can be dropped into a group
 //    accept: "li.goggles-sortable",
@@ -135,17 +141,56 @@ function setupWidgets() {
       dropOnRow( event, ui );
     }
   });
+}
+// ----------------------------------------------------------------------------
 
-  $( "#sortable" ).sortable({
-    placeholder: "ui-state-highlight",
-    appendTo: document.body,
-    axis: "y",
-    items: "> li",
-    beforeStop: updateAutoSeq
+
+/*
+ * Rebuild the auto-numbering sequence of the detail rows:
+ */
+function updateAutoSeq() {
+  var fieldList = $('#training_rows').first().find('input.autosequence');
+  fieldList.each( function(index, element) {
+    element.value = index + 1;
   });
-
 };
 
+
+/*
+ * Drop target implementation. --- WIP ---
+ */
+function dropOnRow( event, ui ) {
+  console.log( event );
+  console.log( ui );
+// WIP / TODO hide row controls
+// TODO preserve group fields (the following will move just the data row)
+// 
+  var data_row_obj = ui.draggable.find('.training_data_row');
+  data_row_obj.find('.ungrouped-row-controls').hide();
+  data_row_obj.find('.ghost-row-controls').show();
+  data_row_obj.appendTo( event.target.firstElementChild );
+};
+// ----------------------------------------------------------------------------
+
+
+/* Set-up the form widgets for:
+ *
+ * - spinners
+ * - group headers visibility & data row grouping
+ * - autocomplete
+ * - drop targets
+ *
+ * The autocomplete AJAX call will be using the path
+ * specified by the global variable exerciseAutocompleteURL (see: views/trainings/_form.html.haml)
+ */
+function setupWidgets() {
+  $('.spinner').spinner();                          // Init spinners (this is simple)
+  initGroupHeaders();
+  initAutocomplete();
+//  initDragSource(); // FIXME doesn't work with sortable!
+  initDropTarget();
+};
+// ----------------------------------------------------------------------------
 
 
 /* Retrieve and set a single Exercise description via AJAX, using the path
@@ -153,14 +198,12 @@ function setupWidgets() {
  *
  * Checkout the actual Rails exercises_controller.rb for the API specifications.
  */
-function prepareSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
+function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
   $.ajax(
     {
-      url: exerciseAutocompleteURL, // This URL will return in this case a single JSON object
+      url: exerciseAutocompleteURL, // This URL (using a single ID parameter) will return a single JSON object
       dataType: "json",
-      data: {
-        exercise_id: exerciseId
-      }
+      data: { exercise_id: exerciseId }
     }
   ).done(
     function( data ) {
@@ -168,17 +211,19 @@ function prepareSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
     }
   );
 };
+// ----------------------------------------------------------------------------
 
 
-
-/* Document OnReady: initialization
+/*
+ * Document OnReady: one-time initialization
  */
 $(document).ready( function(obj) {
   setupWidgets();
+  initSortable();
 
   // Set value for each exercise_desc, according to exercise_id
   $('input.numeric.exercise_id[type=hidden]').each( function(index, elem) {
-    prepareSingleExerciseDescByAjax( elem.value, $('input.exercise-autocomplete').get(index) );
+    getSingleExerciseDescByAjax( elem.value, $('input.exercise-autocomplete').get(index) );
   });
 
   $('#training_rows').on( "cocoon:before-remove", function(e, training_row) {
@@ -193,3 +238,4 @@ $(document).ready( function(obj) {
       updateAutoSeq();
   });
 } );
+// ----------------------------------------------------------------------------

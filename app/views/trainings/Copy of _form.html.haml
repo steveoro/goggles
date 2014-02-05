@@ -6,24 +6,6 @@
   = f.input :min_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_min_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) ) 
   = f.input :max_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_max_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) )
 
-  %table
-    %tr
-      %td{width: 35, class: 'goggles-centeralign'}
-      %td{width: 80, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.attributes.training_rows.part_order')
-      %td{width: 250, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.models.training_step_type')
-      %td{width: 80, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.attributes.training_rows.times')
-      %td{width: 100, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.attributes.training_rows.distance')
-      %td{width: 340, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.attributes.training_rows.exercise')
-      %td{width: 100, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
-      %td{width: 100, class: 'goggles-centeralign'}
-        %i= I18n.t('activerecord.attributes.training_rows.pause')
-
   .row-fluid#training_rows
     %ul#sortable.goggles-sortable
       = f.simple_fields_for :training_rows do |training_row_form|

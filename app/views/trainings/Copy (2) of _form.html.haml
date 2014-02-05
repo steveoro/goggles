@@ -7,25 +7,28 @@
   = f.input :max_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_max_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) )
 
   %table
-    %tr
-      %td{ width: 30 }
-      %td.goggles-centeralign{ width: 30 }
+    %thead
+      %th{width: 35, class: 'goggles-centeralign'}
+        &nbsp;
+      %th{width: 35, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.attributes.training_rows.part_order')
-      %td.goggles-centeralign{ width: 160 }
+      %th{width: 220, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.models.training_step_type')
-      %td.goggles-centeralign{ width: 60 }
+      %th{width: 70, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.attributes.training_rows.times')
-      %td.goggles-centeralign{ width: 90 }
+      %th{width: 70, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.attributes.training_rows.distance')
-      %td.goggles-centeralign{ width: 290 }
+      %th{width: 320, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.attributes.training_rows.exercise')
-      %td.goggles-centeralign{ width: 90 }
+      %th{width: 90, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
-      %td.goggles-centeralign{ width: 90 }
+      %th{width: 90, class: 'goggles-centeralign'}
         %i= I18n.t('activerecord.attributes.training_rows.pause')
-  .row-fluid#training_rows
-    = f.simple_fields_for :training_rows do |training_row_form|
-      = render 'training_row_fields', :f => training_row_form
+      %th{width: 60, class: 'goggles-centeralign'}
+        &nbsp;
+    %tbody#training_rows
+      = f.simple_fields_for :training_rows do |training_row_form|
+        = render 'training_row_fields', :f => training_row_form
 
   %p
   %p
