@@ -114,10 +114,12 @@ function setupWidgets() {
     minLength: 1
   });
                                                     // Init drop targets:
-  $( ".goggles-sortable" ).draggable({
+/*
+  $( ".nested-fields" ).draggable({
     revert: 'invalid',
-    opacity: 0.35
+    opacity: 0.75
   });
+*/
                                                     // Init drop targets:
   $( ".drop-add-group" ).droppable({
 // FIXME Make sure only ungrouped rows can be dropped into a group
@@ -133,6 +135,15 @@ function setupWidgets() {
       dropOnRow( event, ui );
     }
   });
+
+  $( "#sortable" ).sortable({
+    placeholder: "ui-state-highlight",
+    appendTo: document.body,
+    axis: "y",
+    items: "> li",
+    beforeStop: updateAutoSeq
+  });
+
 };
 
 
@@ -163,10 +174,6 @@ function prepareSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
 /* Document OnReady: initialization
  */
 $(document).ready( function(obj) {
-  $( "#sortable" ).sortable({
-    placeholder: "ui-state-highlight",
-    beforeStop: updateAutoSeq
-  });
   setupWidgets();
 
   // Set value for each exercise_desc, according to exercise_id
