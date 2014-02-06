@@ -209,6 +209,9 @@ li.goggles-sortable div {
 .goggles-smallfont {
 	font-size: 0.9em;
 }
+
+
+/* ----- Training Row new/edit form styles: ----- */
 .goggles-training pre {
 	font-size: 12px;
 	line-height: 14px;
@@ -223,4 +226,23 @@ li.goggles-sortable div {
 	padding-bottom: 3px;
 	background: #efefef;
 }
+
+/* ----- Training Row new/edit form Drag/Sortable styles: ----- */
+.trow-wrapper {
+   position: relative;
+   padding: 3px;
+}
+.trow-drag-handle {
+   position: absolute;
+   border: 3px solid transparent;
+   left: 0;
+   right: 0;
+   top: 0;
+   bottom: 0;
+}
+.trow-container {
+   position: relative;
+   text-align: center;
+}
+
 .ghost-row-controls { width: 20px; }
