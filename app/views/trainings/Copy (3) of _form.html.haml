@@ -23,7 +23,7 @@
         %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
       %td.goggles-centeralign{ width: 90 }
         %i= I18n.t('activerecord.attributes.training_rows.pause')
-  %ul.row-fluid.goggles-sortable#training_rows.droppable.sortable
+  .row-fluid#training_rows
     = f.simple_fields_for :training_rows do |training_row_form|
       = render 'training_row_fields', :f => training_row_form
 

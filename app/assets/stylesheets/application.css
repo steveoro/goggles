@@ -79,18 +79,15 @@ table.table {
 table.table.goggles-meeting-team-results-table {
     margin-bottom: 8px;
 }
-
 table td.goggles-border-onlyright{
 	border-top: none;
 	border-right: 1px solid #DDDDDD;
 	border-bottom: none;
 	border-left: none;
 }
-
 table td.goggles-border-right{
 	border-right: 1px solid #DDDDDD;
 }
-
 table td.goggles-border-onlyleft{
 	border-top: none;
 	border-right: none;
@@ -101,15 +98,12 @@ table td.goggles-border-onlyleft{
 table td.goggles-noborder{
 	border: none;
 }
-
 table td.goggles-centeralign{
 	text-align: center;
 }
-
 table td.goggles-rightalign {
 	text-align: right;
 }
-
 .goggles-bakckground-highlight{
 	background: #FFEFAF;
 }
@@ -119,9 +113,26 @@ table td.goggles-rightalign {
 	padding-right: 10px;
 	padding-left: 10px;
 }
-
 .goggles-accordion-heading img{
 	padding-top: 10px;
+}
+
+
+/* ----- Div lists ----- */
+.goggles-divlist-even {
+	background: #eeeeee;
+}
+.goggles-divlist-odd {
+	background: #ffffff;
+}
+.goggles-div-centeralign {
+	text-align: center;
+}
+.goggles-div-rightalign {
+	text-align: right;
+}
+.goggles-smallfont {
+	font-size: 0.9em;
 }
 
 
@@ -167,18 +178,24 @@ span.ui-spinner .ui-icon {
 	height: 30px;
 	line-height: 1.2em;
 }
-/*
-.goggles-sortable {
+
+
+/* ----- Training Row new/edit form Drag/Sortable styles: ----- */
+ul.goggles-sortable {
 	list-style-type: none;
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
 }
+ul.goggles-sortable li {
+    cursor: pointer;
+}
+/*
 li.goggles-sortable {
+    cursor: pointer;
 	margin-bottom: 2px;
 	line-height: 1.2em;
 }
-
 li.goggles-sortable {
 	margin: 0 3px 3px 3px;
 	padding: 0.4em;
@@ -192,22 +209,30 @@ li.goggles-sortable div {
 }
 */
 
+/*
+ul { list-style: none; }
+li {
+    cursor: pointer;
+}
+*/
 
-/* ----- Div lists ----- */
-.goggles-divlist-even {
-	background: #eeeeee;
+/* Flag class to signal feature on/off; enable style to debug */
+.droppable {
+    border: 1px solid;
 }
-.goggles-divlist-odd {
-	background: #ffffff;
+
+.group_hdr {
+    border: 1px dotted;
+    text-align: center;
+    display: none;   
 }
-.goggles-div-centeralign {
-	text-align: center;
+
+.full_row {
+    border: 1px dashed #2694E8;
+    padding: 8px;
 }
-.goggles-div-rightalign {
-	text-align: right;
-}
-.goggles-smallfont {
-	font-size: 0.9em;
+.full_row.grouped {
+    border: 1px dashed red;
 }
 
 
@@ -227,22 +252,5 @@ li.goggles-sortable div {
 	background: #efefef;
 }
 
-/* ----- Training Row new/edit form Drag/Sortable styles: ----- */
-.trow-wrapper {
-   position: relative;
-   padding: 3px;
-}
-.trow-drag-handle {
-   position: absolute;
-   border: 3px solid transparent;
-   left: 0;
-   right: 0;
-   top: 0;
-   bottom: 0;
-}
-.trow-container {
-   position: relative;
-   text-align: center;
-}
 
 .ghost-row-controls { width: 20px; }

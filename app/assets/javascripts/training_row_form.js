@@ -12,15 +12,39 @@
 // Global variable (taken from a data attribute) to retrieve the maximum number of detail rows read by the controller.
 // (instead of counting the actual HTML rows rendered -- which could be different, if any kind of pagination was used.)
 var maxSeq = Number( $('#maxPartOrder').attr('data-value') );
+
+// Stores the (source) parent item of a dragged sortable:
+var $initialDragParent = false;
 // ----------------------------------------------------------------------------
+
+
+/* Set-up the form widgets for:
+ *
+ * - spinners
+ * - group headers visibility & data row grouping
+ * - autocomplete
+ * - sortables + droppables
+ *
+ * The autocomplete AJAX call will be using the path
+ * specified by the global variable exerciseAutocompleteURL (see: views/trainings/_form.html.haml)
+ */
+function setupWidgets() {
+  $('.spinner').spinner();                          // Init spinners (this is simple)
+  initGroupHeadersVisibility();
+  initAutocomplete();
+  initDroppables( $('.droppable') );
+  initSortables( $('.sortable') );
+};
+// ----------------------------------------------------------------------------
+
 
 
 /*
  *  Initialize the training group header rows visibility for each detail row
  */
-function initGroupHeaders() {
+function initGroupHeadersVisibility() {
   var group_ids = $('.group_id');                   // List of controls that store the group IDs
-  var data_rows = $('.training_data_row');          // List of all training data rows (excluding the group widgets)
+  var data_rows = $('.data_row');                   // List of all training data rows (excluding the group widgets)
   var processedIds = {};                            // Hash containing { group_id: row_index }, to retrieve the correct index of a processed group_id
   group_ids.each( function( index, group_node ) {
 // DEBUG
@@ -31,21 +55,26 @@ function initGroupHeaders() {
 
       if ( processedIds[String(groupId)] >= 0 ) {   // Already processed? Append it to the header row:
         var idxOfHeader = processedIds[ groupId ];  // Get the group header at the corresponding processed ID's stored index
-        var group_hdr_obj = group_ids.eq( idxOfHeader ).closest('.training_group_header');
+        var group_hdr_obj = group_ids.eq( idxOfHeader ).closest('.group_hdr');
                                                     // Make the "ungrouped row" controls disappear and show a filler instead
         data_row_obj.find('.ungrouped-row-controls').hide();
-        data_row_obj.find('.ghost-row-controls').show();
+// FIXME maybe a filler is needed
+//        data_row_obj.find('.ghost-row-controls').show();
         data_row_obj.appendTo( group_hdr_obj );
+                                                    // Avoid sub-grouping for already grouped details:
+        data_row_obj.closest('.group_detail').removeClass('droppable');
         console.log('added to group data row #' + index);
       }
       else {                                        // Not yet processed? (Not found in processable hash?)
         var group_id_obj = group_ids.eq( index );   // Get the group jQuery object (not the html node)
                                                     // Retrieve and show the header part showing the group widgets:
-        var group_row_obj = group_id_obj.closest('.training_group_header');
+        var group_row_obj = group_id_obj.closest('.group_hdr');
         group_row_obj.show();                       // Show the group header row
+        group_row_obj.addClass('grouped');          // Add the flag-class
                                                     // Make the "ungrouped row" controls disappear and show a filler instead
         data_row_obj.find('.ungrouped-row-controls').hide();
-        data_row_obj.find('.ghost-row-controls').show();
+// FIXME maybe a filler is needed
+//        data_row_obj.find('.ghost-row-controls').show();
         data_row_obj.appendTo( group_row_obj );     // Add curr data row to the group header
         processedIds[ groupId ] = index;            // Store the group id and its index in list to display just once the header and to add all other linked rows to itself (using the index)
         console.log('processed group id: ' + groupId);
@@ -64,10 +93,13 @@ function initAutocomplete() {
 // DEBUG:
       console.log( request );
       // Get to the parent of the current row to find the select component:
-// FIXME use a better selector instead of this junk:
-      var selectTrainingEl = this.element.parent().parent().parent().find('.training_step_type');
-      var idSelected = selectTrainingEl.val();
-// DEBUG:
+// FIXME / TEST THIS: use a better selector instead of this junk:
+// this.element.parent().parent().parent().find('.training_step_type');
+      var dataRow = $(this).closest('.data_row');
+      var trainingStepType = dataRow.find('.training_step_type');
+      console.log( 'trainingStepType:' );
+      console.log( trainingStepType );
+      var idSelected = trainingStepType.val();
       console.log( 'Selected: ID=' + idSelected );
       $.ajax(
         {
@@ -88,6 +120,8 @@ function initAutocomplete() {
     },
     select: function( event, ui ) {
       this.value = ui.item.label;
+      console.log( 'ui.item:' );
+      console.log( ui.item );
 // FIXME use a better selector instead of this junk:
       this.parentElement.firstElementChild.firstElementChild.value = ui.item.value;
 // DEBUG:
@@ -97,51 +131,86 @@ function initAutocomplete() {
     minLength: 1
   });
 }
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 
-/*
- * Initialize the list of detail rows as a sortable widget
- */
-function initSortable() {
-  $( "#training_rows" ).sortable({
+/* Initialize all droppables.
+*/
+function initDroppables($element) {
+  $($element).droppable({
+    greedy: true
+  });
+}
+// ----------------------------------------------------------------------------
+
+
+/* Initialize all sortables.
+*/
+function initSortables( $element ) {
+  $element.sortable({
     placeholder: "ui-state-highlight",
-//    appendTo: document.body,
-//    axis: "y",
-    beforeStop: updateAutoSeq
-  });
-}
-
-
+    items: '.full_row',
+    connectWith: ".droppable",
+    revert: true,
+    start: function(ev, ui) {
+      ui.placeholder.height( ui.item.height() + 5 );
 /*
- * Initialize drag source for each detail row
- */
-function initDragSource() {
-  $( ".nested-fields" ).draggable({
-    revert: 'invalid',
-    opacity: 0.75
-  });
-}
-
-
-/*
- * Initialize drop target for each detail row
- */
-function initDropTarget() {
-  $( ".drop-add-group" ).droppable({
-// FIXME Make sure only ungrouped rows can be dropped into a group
-//    accept: "li.goggles-sortable",
-//    activeClass: "custom-state-active",
-// TODO use a special class to show "unable to drop status"
-    over: function( event, ui ) {
-      console.log('over event');
-//      dropOnRow( event, ui );
+      console.log( '[START]: ui.item: ' );
+      console.log( ui.item );
+      console.log( '[START]: ui.item.parent(): ($initialDragParent)' );
+      console.log( ui.item.parent() );
+*/
+      // Save the original container:
+      $initialDragParent = ui.item.parent();
     },
-    drop: function( event, ui ) {
-      console.log('drop event');
-      dropOnRow( event, ui );
+    receive: function(ev, ui) {
+/*
+      console.log( "[RECEIVE]: ui.item:" );
+      console.log( ui.item );
+      console.log( '[RECEIVE]: ui.item.parent(): ' );
+      console.log( ui.item.parent() );
+*/
+      // Cancel the event if the item dropped is already a grouped row:
+      // (This prevents sub-grouping)
+      if ( ui.item.hasClass('grouped') ) {
+        alert('We cannot create nested groups!');
+        $(ui.sender).sortable('cancel');
+      }
+    },
+    beforeStop: updateAutoSeq,
+    stop: function(event, ui) {
+/*
+      console.log( '[STOP]: ui.item: ' );
+      console.log( ui.item );
+      console.log( '[STOP]: ui.item.parent(): ' );
+      console.log( ui.item.parent() );
+      console.log( "[STOP]: ui.item.closest('.group_detail'): " );
+      console.log( ui.item.closest('.group_detail') );
+      console.log( "[STOP]: $initialDragParent: " );
+      console.log( $initialDragParent );
+*/
+      // Hide/clear source group header if it doesn't have any more full_rows:
+      if ( $initialDragParent.hasClass('group_detail') &&
+          ($initialDragParent.children('.full_row').length == 0) ) {
+          // TODO if header is user edited (not 1x), do not hide
+          makeUngroup( $initialDragParent );
+      }
+
+      if ( ui.item.parent().hasClass('group_detail') ) {
+          makeGroup( ui.item );
+      }
+      else {
+          promoteToDroppable( ui.item );
+      }
+      // Update widget setup (and sortable bindings)
+      // according to new class disposition:
+      initDroppables( $('.droppable') );
+      initSortables( $('.sortable') );
     }
   });
 }
+// ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 
@@ -156,40 +225,63 @@ function updateAutoSeq() {
 };
 
 
+
+/* Creates a grouping showing the header of the destination row.
+
+   Assumes:
+   - source-dragged $item .hasClass('full_row')
+   - targed droppable .hasClass('group_detail') (that is, item.parent.parent)
+
+   This must prevent additional sub-grouping action (by "demoting" a
+   droppable to simple sortable).
+*/
+function makeGroup( $item ) {
+    // Demote droppable: prevent the details of this dropped row to become
+    // itself a droppable target for new sub-grouping:
+    $item.find('> .group_detail').removeClass('droppable');
+    // Make sure the parent group header is visible:
+    $item.parent().siblings('.group_hdr').show();
 /*
- * Drop target implementation. --- WIP ---
- */
-function dropOnRow( event, ui ) {
-  console.log( event );
-  console.log( ui );
-// WIP / TODO hide row controls
-// TODO preserve group fields (the following will move just the data row)
-// 
-  var data_row_obj = ui.draggable.find('.training_data_row');
-  data_row_obj.find('.ungrouped-row-controls').hide();
-  data_row_obj.find('.ghost-row-controls').show();
-  data_row_obj.appendTo( event.target.firstElementChild );
-};
-// ----------------------------------------------------------------------------
+    console.log( "[makeGroup]: ui.item.parent().parent(): >> GROUPED!" );
+    console.log( $item.parent().parent() );
+*/
+    // Add the grouped flag-class to prevent additional sub-grouping
+    // by dragging this new group into another row:
+    $item.parent().parent().addClass('grouped');
+}
 
 
-/* Set-up the form widgets for:
- *
- * - spinners
- * - group headers visibility & data row grouping
- * - autocomplete
- * - drop targets
- *
- * The autocomplete AJAX call will be using the path
- * specified by the global variable exerciseAutocompleteURL (see: views/trainings/_form.html.haml)
- */
-function setupWidgets() {
-  $('.spinner').spinner();                          // Init spinners (this is simple)
-  initGroupHeaders();
-  initAutocomplete();
-//  initDragSource(); // FIXME doesn't work with sortable!
-  initDropTarget();
-};
+
+/* Removes grouping from a source sortable (a sub-list of detail rows).
+
+   Assumes: $item .hasClass('group_detail').
+*/
+function makeUngroup( $item ) {
+    $item.siblings('.group_hdr').hide();
+/*
+    console.log( "[makeUngroup]: $item.parent(): ** UNGROUPED!" );
+    console.log( $item.parent() );
+*/
+    // Remove the grouped flag-class, if present:
+    $item.parent().removeClass('grouped');
+}
+
+
+
+/* Promotes a group detail to new target droppable.
+
+   Assumes $item .hasClass('full_row').
+*/
+function promoteToDroppable( $item ) {
+/*
+    console.log( "[promoteToDroppable]: $item:" );
+    console.log( $item );
+    console.log( "[promoteToDroppable]: $item.find('> .group_detail'):" );
+    console.log( $item.find('> .group_detail') );
+*/
+    // Promote a sub-group to become a root-level group:
+    $item.find('> .group_detail').addClass('droppable');
+}
 // ----------------------------------------------------------------------------
 
 
@@ -212,6 +304,7 @@ function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
   );
 };
 // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 
 /*
@@ -219,7 +312,6 @@ function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
  */
 $(document).ready( function(obj) {
   setupWidgets();
-  initSortable();
 
   // Set value for each exercise_desc, according to exercise_id
   $('input.numeric.exercise_id[type=hidden]').each( function(index, elem) {
@@ -238,4 +330,5 @@ $(document).ready( function(obj) {
       updateAutoSeq();
   });
 } );
+// ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
