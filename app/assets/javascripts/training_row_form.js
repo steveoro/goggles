@@ -1,7 +1,7 @@
 /*
  * === Custom Training Row Form client-side methods ===
  * 
- * - app. ver.: 4.00.171
+ * - app. ver.: 4.00.174
  * 
  * Handles autocomplete combos, sortable list, drag'n'drop + other utility
  * stuff for the edit/create form of Training / TrainingRow.
@@ -48,36 +48,36 @@ function initGroupHeadersVisibility() {
   var processedIds = {};                            // Hash containing { group_id: row_index }, to retrieve the correct index of a processed group_id
   group_ids.each( function( index, group_node ) {
 // DEBUG
-    console.log('processing row: ' + index);
+//    console.log('processing row: ' + index);
     var groupId = Number( group_node.value );       // Get curr group ID 
     if ( groupId > 0 ) {                            // Does this node belong to a group?
       var data_row_obj = data_rows.eq( index );     // Get the current data row object
-
+      var full_row_obj = data_row_obj.closest('.group_detail').parent();
+                                                    // Format data rows and groupings accordingly:
+      // -- Add to existing group: ---
       if ( processedIds[String(groupId)] >= 0 ) {   // Already processed? Append it to the header row:
         var idxOfHeader = processedIds[ groupId ];  // Get the group header at the corresponding processed ID's stored index
         var group_hdr_obj = group_ids.eq( idxOfHeader ).closest('.group_hdr');
+        var group_detail = group_hdr_obj.siblings('.group_detail').first();
                                                     // Make the "ungrouped row" controls disappear and show a filler instead
         data_row_obj.find('.ungrouped-row-controls').hide();
-// FIXME maybe a filler is needed
-//        data_row_obj.find('.ghost-row-controls').show();
-        data_row_obj.appendTo( group_hdr_obj );
-                                                    // Avoid sub-grouping for already grouped details:
+                                                    // Avoid sub-grouping for already grouped details: (the detail is the one of the source data row, not the destination)
         data_row_obj.closest('.group_detail').removeClass('droppable');
-        console.log('added to group data row #' + index);
+        full_row_obj.appendTo( group_detail );      // Append the source data row (full) to the destination detail
+//        console.log('added to group data row #' + index);
       }
+      // -- Create new group: --
       else {                                        // Not yet processed? (Not found in processable hash?)
         var group_id_obj = group_ids.eq( index );   // Get the group jQuery object (not the html node)
                                                     // Retrieve and show the header part showing the group widgets:
-        var group_row_obj = group_id_obj.closest('.group_hdr');
-        group_row_obj.show();                       // Show the group header row
-        group_row_obj.addClass('grouped');          // Add the flag-class
+        var group_hdr_obj = group_id_obj.closest('.group_hdr');
+        var group_detail = group_hdr_obj.siblings('.group_detail').first();
+        group_hdr_obj.show();                       // Show the group header row
+        full_row_obj.addClass('grouped');           // Add the flag-class to the Full row parent (not the group header)
                                                     // Make the "ungrouped row" controls disappear and show a filler instead
         data_row_obj.find('.ungrouped-row-controls').hide();
-// FIXME maybe a filler is needed
-//        data_row_obj.find('.ghost-row-controls').show();
-        data_row_obj.appendTo( group_row_obj );     // Add curr data row to the group header
         processedIds[ groupId ] = index;            // Store the group id and its index in list to display just once the header and to add all other linked rows to itself (using the index)
-        console.log('processed group id: ' + groupId);
+//        console.log('processed group id: ' + groupId);
       }
     }
   });                                               // -- GROUP SETUP END -- 
@@ -90,16 +90,14 @@ function initGroupHeadersVisibility() {
 function initAutocomplete() {
   $( ".exercise-autocomplete" ).autocomplete({
     source: function( request, response ) {
-// DEBUG:
-      console.log( request );
       // Get to the parent of the current row to find the select component:
-// FIXME / TEST THIS: use a better selector instead of this junk:
-// this.element.parent().parent().parent().find('.training_step_type');
       var dataRow = $(this).closest('.data_row');
       var trainingStepType = dataRow.find('.training_step_type');
+// DEBUG
       console.log( 'trainingStepType:' );
       console.log( trainingStepType );
       var idSelected = trainingStepType.val();
+// DEBUG
       console.log( 'Selected: ID=' + idSelected );
       $.ajax(
         {
@@ -152,7 +150,7 @@ function initSortables( $element ) {
     placeholder: "ui-state-highlight",
     items: '.full_row',
     connectWith: ".droppable",
-    revert: true,
+    opacity: 0.8,
     start: function(ev, ui) {
       ui.placeholder.height( ui.item.height() + 5 );
 /*
@@ -163,6 +161,7 @@ function initSortables( $element ) {
 */
       // Save the original container:
       $initialDragParent = ui.item.parent();
+      // Highlight each container:
     },
     receive: function(ev, ui) {
 /*
@@ -248,6 +247,8 @@ function makeGroup( $item ) {
     // Add the grouped flag-class to prevent additional sub-grouping
     // by dragging this new group into another row:
     $item.parent().parent().addClass('grouped');
+                                                    // Hide all individual rows control widgets:
+    $item.parent().parent().find('.ungrouped-row-controls').hide();
 }
 
 
@@ -262,8 +263,8 @@ function makeUngroup( $item ) {
     console.log( "[makeUngroup]: $item.parent(): ** UNGROUPED!" );
     console.log( $item.parent() );
 */
-    // Remove the grouped flag-class, if present:
-    $item.parent().removeClass('grouped');
+    $item.parent().removeClass('grouped');          // Remove the grouped flag-class, if present
+    $item.find('.ungrouped-row-controls').show();   // Show the controls for the individual row
 }
 
 
@@ -279,8 +280,9 @@ function promoteToDroppable( $item ) {
     console.log( "[promoteToDroppable]: $item.find('> .group_detail'):" );
     console.log( $item.find('> .group_detail') );
 */
-    // Promote a sub-group to become a root-level group:
+                                                    // Promote a sub-group to become a root-level group:
     $item.find('> .group_detail').addClass('droppable');
+    $item.find('.ungrouped-row-controls').show();   // Show the controls for the individual row
 }
 // ----------------------------------------------------------------------------
 

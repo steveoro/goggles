@@ -1094,6 +1094,9 @@ it:
     esteemed_timing: "Tempo previsto/stimato"
     something_went_wrong_during_copy: "Mmmh... Forse hai già un allenamento con questo nome o c'è qualcos'altro di sbagliato..."
     group: "Gruppo"
+    toggle_frames_tooltip: "Mostra / nascondi i frame di aiuto per il drag-n-drop delle righe"
+    link_break_tooltip: "Azzera il raggruppamento e separa le righe"
+    delete_row_tooltip: "Marca la riga per l'eliminazione (che avviene con il salvataggio)"
 
 
   agex_action:

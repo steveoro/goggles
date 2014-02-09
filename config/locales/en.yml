@@ -1092,6 +1092,9 @@ en:
     esteemed_timing: "Expected/esteemed timing"
     something_went_wrong_during_copy: "Mmmh... Something went wrong. Do you have already a Training with the same name? Or perhaps is something else..."
     group: "Group"
+    toggle_frames_tooltip: "Toggle the helper frames for row drag'n'drop"
+    link_break_tooltip: "Clear the grouping and separate the rows"
+    delete_row_tooltip: "Set the row as 'to be deleted' when the data will be saved"
 
 
   agex_action:

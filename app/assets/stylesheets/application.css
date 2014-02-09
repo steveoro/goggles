@@ -138,57 +138,89 @@ table td.goggles-rightalign {
 
 
 /* ----- Custom table input-related overrides ----- */
-.goggles-float, .goggles-float input, .goggles-float select { float: left; margin-left: 4px; margin-top: 2px; }
-
-.goggles-w15  input, .goggles-w15  select { width: 15px; }
-.goggles-w20  input, .goggles-w20  select { width: 20px; }
-.goggles-w30  input, .goggles-w30  select { width: 30px; }
-.goggles-w30  input, .goggles-w40  select { width: 40px; }
-.goggles-w50  input, .goggles-w50  select { width: 50px; }
-.goggles-w80  input, .goggles-w80  select { width: 80px; }
-.goggles-w100 input, .goggles-w100 select { width: 100px; }
-.goggles-w150 input, .goggles-w150 select { width: 150px; }
-.goggles-w200 input, .goggles-w200 select { width: 200px; }
-.goggles-w300 input, .goggles-w300 select { width: 300px; }
-
-
-/* ----- jQuery Spinner styles overrides ----- */
-.goggles-float span.ui-spinner  {
-	border: none;
+.g-float, .g-float input, .g-float select {
 	float: left;
-	margin-left: 1em;
+	margin-left: 4px;
+	margin-top: 2px;
 }
-
-.goggles-float span.ui-spinner {
-	border: none;
-}
-span.ui-icon-triangle-1-n {
-    background-position: 0px -13px;
-}
-span.ui-spinner .ui-icon-triangle-1-s {
-	background-position: -65px -18px;
-}
-span.ui-spinner .ui-icon {
-    position: absolute;
-    margin-top: 0px;
-    top: 0px;
-    left: 0px;
-}
-.ui-state-highlight {
-	height: 30px;
-	line-height: 1.2em;
+.g-float img {
+    padding-left: 6px;
+    padding-top: 7px;
 }
 
 
-/* ----- Training Row new/edit form Drag/Sortable styles: ----- */
-ul.goggles-sortable {
+/* ----- Fixed widths: ----- */
+.g-fixed { display: inline-block; }
+.g-w15  input, .g-w15  select { min-width: 15px; width: 15px; }
+.g-w20  input, .g-w20  select { min-width: 20px; width: 20px; }
+.g-w30  input, .g-w30  select { min-width: 30px; width: 30px; }
+.g-w30  input, .g-w40  select { min-width: 40px; width: 40px; }
+.g-w50  input, .g-w50  select { min-width: 50px; width: 50px; }
+.g-w80  input, .g-w80  select { min-width: 80px; width: 80px; }
+.g-w100 input, .g-w100 select { min-width: 100px; width: 100px; }
+.g-w150 input, .g-w150 select { min-width: 150px; width: 150px; }
+.g-w200 input, .g-w200 select { min-width: 200px; width: 200px; }
+.g-w300 input, .g-w300 select { min-width: 300px; width: 300px; }
+.g-w400 input, .g-w400 select { min-width: 400px; width: 400px; }
+
+
+/* ----- Flex display layout (warning: too slow for drag'n'drop) ----- */
+.flex-row {
+   display: -webkit-flex;
+   display: flex;
+   -webkit-flex-direction: row;
+   flex-direction: row;
+
+   -webkit-flex-grow: 0;
+   flex-grow: 0;
+   -webkit-flex-shrink: 0;
+   flex-shrink: 0;
+   -webkit-flex-basis: auto;
+   flex-basis: auto;
+}
+.flex-column {
+   display: -webkit-flex;
+   display: flex;
+   -webkit-flex-direction: column;
+   flex-direction: column;
+
+   -webkit-flex-grow: 0;
+   flex-grow: 0;
+   -webkit-flex-shrink: 0;
+   flex-shrink: 0;
+   -webkit-flex-basis: auto;
+   flex-basis: auto;
+}
+/* ----- Relative widths with Flex display: ----- */
+.f-w_x1 {
+	-webkit-flex: 1 0 0;
+	flex: 1 0 0;
+}
+.f-w_x2 {
+	-webkit-flex: 2 0 0;
+	flex: 2 0 0;
+}
+.f-w_x3 {
+	-webkit-flex: 3 0 0;
+	flex: 3 0 0;
+}
+.f-w_x4 {
+	-webkit-flex: 4 0 0;
+	flex: 4 0 0;
+}
+
+
+/* ----- Training Row 'new'/'edit' form sortable/droppable styles: ----- */
+ul.sortable {
 	list-style-type: none;
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
 }
-ul.goggles-sortable li {
+ul.sortable li {
     cursor: pointer;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 /*
 li.goggles-sortable {
@@ -209,48 +241,31 @@ li.goggles-sortable div {
 }
 */
 
+
+/* Flag classes to signal feature on/off; enable styles to debug */
 /*
-ul { list-style: none; }
-li {
-    cursor: pointer;
+.droppable {
+    border: 1px dotted;
 }
 */
-
-/* Flag class to signal feature on/off; enable style to debug */
-.droppable {
-    border: 1px solid;
-}
-
 .group_hdr {
-    border: 1px dotted;
-    text-align: center;
-    display: none;   
+    margin-top: 4px;
 }
 
-.full_row {
-    border: 1px dashed #2694E8;
-    padding: 8px;
+.framed {
+    border: 1px dashed #37a5f9;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 .full_row.grouped {
-    border: 1px dashed red;
+    background: #efefef;
 }
 
 
-/* ----- Training Row new/edit form styles: ----- */
+/* ----- Training Row 'show' action styles: ----- */
 .goggles-training pre {
 	font-size: 12px;
 	line-height: 14px;
 	margin: 2px 0;
-	padding: 5px;
+	padding: 4px;
 }
-
-.training_group_header {
-	margin-top: 6px;
-	margin-bottom: 6px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	background: #efefef;
-}
-
-
-.ghost-row-controls { width: 20px; }

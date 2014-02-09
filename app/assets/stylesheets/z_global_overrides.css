@@ -4,30 +4,22 @@
  */
 
 /* ----- Bootstrap overrides ----- */
-select, input[type="file"] {
-    height: 28px;
-    line-height: 20px;
-}
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     border-radius: 4px;
     color: #555555;
     display: inline-block;
-    font-size: 14px;
-    height: 20px;
-    line-height: 20px;
+    font-size: 12px;
+    height: 16px;
+    line-height: 16px;
+    margin-left: 8px;
     margin-top: 0;
     margin-bottom: 0;
-    padding: 4px;
+    padding: 2px;
     vertical-align: middle;
 }
 select, input[type="file"] {
-    height: 30px;
-    line-height: 30px;
-}
-
-.goggles-float img {
-    padding-left: 6px;
-    padding-top: 7px;
+    height: 22px;
+    line-height: 20px;
 }
 
 .ui-autocomplete {
@@ -35,6 +27,33 @@ select, input[type="file"] {
 	overflow-y: auto;
 	/* prevent horizontal scrollbar */
 	overflow-x: hidden;
+}
+.ui-state-highlight {
+	height: 28px;
+	line-height: 1.2em;
+}
+
+
+/* ----- jQuery Spinner styles overrides ----- */
+.ui-spinner {
+	height: 24px;
+}
+
+span.ui-spinner  {
+	float: left;
+	margin-left: 1em;
+}
+span.ui-icon-triangle-1-n {
+    background-position: -4px -16px;
+}
+span.ui-spinner .ui-icon-triangle-1-s {
+	background-position: -69px -20px;
+}
+span.ui-spinner .ui-icon {
+    position: absolute;
+    margin-top: 0px;
+    top: 0px;
+    left: 0px;
 }
 
 /* [Steve, 20140120] WIP: tested only with Trainings edit form: */
