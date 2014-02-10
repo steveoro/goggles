@@ -1,7 +1,7 @@
 /*
  * === Custom Training Row Form client-side methods ===
  * 
- * - app. ver.: 4.00.174
+ * - app. ver.: 4.00.175
  * 
  * Handles autocomplete combos, sortable list, drag'n'drop + other utility
  * stuff for the edit/create form of Training / TrainingRow.
@@ -217,7 +217,7 @@ function initSortables( $element ) {
  * Rebuild the auto-numbering sequence of the detail rows:
  */
 function updateAutoSeq() {
-  var fieldList = $('#training_rows').first().find('input.autosequence');
+  var fieldList = $('input.autosequence');
   fieldList.each( function(index, element) {
     element.value = index + 1;
   });
@@ -229,7 +229,7 @@ function updateAutoSeq() {
 
    Assumes:
    - source-dragged $item .hasClass('full_row')
-   - targed droppable .hasClass('group_detail') (that is, item.parent.parent)
+   - targed droppable .hasClass('group_detail') (that is, item.parent)
 
    This must prevent additional sub-grouping action (by "demoting" a
    droppable to simple sortable).
@@ -238,17 +238,23 @@ function makeGroup( $item ) {
     // Demote droppable: prevent the details of this dropped row to become
     // itself a droppable target for new sub-grouping:
     $item.find('> .group_detail').removeClass('droppable');
-    // Make sure the parent group header is visible:
-    $item.parent().siblings('.group_hdr').show();
-/*
-    console.log( "[makeGroup]: ui.item.parent().parent(): >> GROUPED!" );
-    console.log( $item.parent().parent() );
-*/
+    var targetDroppable = $item.parent();
+    var targetFullRow   = $item.parent().parent();
+                                                    // Get group_id from current autosequence field:
+    var part_order = targetFullRow.find('.autosequence').first();
+    targetFullRow.find('.group_id').val( part_order.val() );
+                                                    // set default value for times:
+    targetFullRow.find('.group_times').val( 2 );
+    targetDroppable.siblings('.group_hdr').show();  // Make sure only the parent group header is visible
+
+    console.log( "[makeGroup]: targetDroppable: >> GROUPED!" );
+    console.log( targetDroppable );
+
     // Add the grouped flag-class to prevent additional sub-grouping
     // by dragging this new group into another row:
-    $item.parent().parent().addClass('grouped');
+    targetFullRow.addClass('grouped');
                                                     // Hide all individual rows control widgets:
-    $item.parent().parent().find('.ungrouped-row-controls').hide();
+    targetFullRow.find('.ungrouped-row-controls').hide();
 }
 
 
@@ -259,10 +265,10 @@ function makeGroup( $item ) {
 */
 function makeUngroup( $item ) {
     $item.siblings('.group_hdr').hide();
-/*
+
     console.log( "[makeUngroup]: $item.parent(): ** UNGROUPED!" );
     console.log( $item.parent() );
-*/
+
     $item.parent().removeClass('grouped');          // Remove the grouped flag-class, if present
     $item.find('.ungrouped-row-controls').show();   // Show the controls for the individual row
 }
@@ -274,15 +280,47 @@ function makeUngroup( $item ) {
    Assumes $item .hasClass('full_row').
 */
 function promoteToDroppable( $item ) {
-/*
+
     console.log( "[promoteToDroppable]: $item:" );
     console.log( $item );
+/*
     console.log( "[promoteToDroppable]: $item.find('> .group_detail'):" );
     console.log( $item.find('> .group_detail') );
 */
                                                     // Promote a sub-group to become a root-level group:
     $item.find('> .group_detail').addClass('droppable');
     $item.find('.ungrouped-row-controls').show();   // Show the controls for the individual row
+}
+
+
+
+/* 
+ * Launched when the user clicks on the "delete group" button.
+   Clears the group header from all the data_row(s) children of
+   the clicked full row.
+
+   Assumes: $item .hasClass('full_row').
+*/
+function clickBreakGrouping( $item ) {
+
+    console.log( "[clickBreakGrouping]: $item:" );
+    console.log( $item );
+
+                                                    // Retrieve all field marked for clearing:
+    $item.find('.group_clear').each( function(index, element) {
+      $(element).val( 0 );                          // Clear each group header field to 0     
+    });
+                                                    // Retrieve all child group details
+    var grp_details = $item.find('.group_detail');
+    grp_details.each( function(index, element) {    // Set visibility for each row in a group detail list
+      makeUngroup( $(element) );
+    });
+
+    var sub_full_rows = $item.find('.full_row');    // Retrieve all contained full rows
+    sub_full_rows.each( function(index, element) {  // Move each full row outside of the current full row $item:
+      promoteToDroppable( $(element) );
+      $(element).insertAfter( $item ); 
+    });
 }
 // ----------------------------------------------------------------------------
 

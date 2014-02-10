@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.169.20140204
+- version:  4.00.175.20140210
 - author:   Steve A.
 
 =end
@@ -118,9 +118,9 @@ class TrainingPrintoutLayout
        20,                                          # part order
        60,                                          # training_step_type description
        40,                                          # esteemed tot. duration in secs
-       20,                                          # grouping multiplier
+       40,                                          # grouping multiplier
        40,                                          # total distance with multiplier
-      350                                           # full exercise description
+      330                                           # full exercise description
     ]
 
     detail_rows.each{ |training_row|
@@ -135,11 +135,14 @@ class TrainingPrintoutLayout
           group_hash = group_list_hash[ training_row.group_id ]
           tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
           tot_group_timing = Timing.to_minute_string( tot_group_secs )
+          group_pause = Timing.to_formatted_pause( group_hash[:pause].to_i )
+          group_s_r   = Timing.to_formatted_start_and_rest( group_hash[:start_and_rest].to_i )
           group_array = [
             fields[0],                              # part order
             fields[1],                              # training_step_type description
             "(#{tot_group_timing})",                # esteemed tot. duration in secs
-            "#{group_hash[:times]}x"                       # grouping multiplier
+                                                    # grouping multiplier + intervals:
+            "#{group_hash[:times]}x #{group_pause} #{group_s_r}"
           ]
           group_subtable_array << [ fields[3], fields[4] ]
         else                                        # Same old group?
@@ -179,19 +182,19 @@ class TrainingPrintoutLayout
                                                     # -- Report title and header:
       pdf.text(
         "<u><b>#{options[:report_title]}</b></u>",
-        { :align => :left, :size => 10, :inline_format => true } 
+        { :align => :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
         "<i>#{I18n.t('activerecord.attributes.training.user')}:</i> #{training.get_user_name}",
-        { :align => :left, :size => 10, :inline_format => true } 
+        { :align => :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
         "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type_description}",
-        { :align => :left, :size => 10, :inline_format => true } 
+        { :align => :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
         training.description,
-        { :align => :left, :size => 10, :inline_format => true } 
+        { :align => :left, :size => 9, :inline_format => true } 
       )
       pdf.move_down( 10 )
 

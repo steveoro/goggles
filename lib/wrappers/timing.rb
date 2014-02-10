@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.164.20140129
+  - Goggles framework vers.:  4.00.175.20140210
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -138,6 +138,22 @@ class Timing
   #
   def self.to_minute_string( total_seconds )
     sprintf( "%1s\'%02.0f\"", total_seconds.to_i/60, total_seconds.to_i%60 )
+  end
+  # ---------------------------------------------------------------------------
+
+  # Outputs the specified value of seconds in a "pause in seconds" format (P.SS").
+  # Returns an empty string if the value is 0.
+  #
+  def self.to_formatted_pause( total_seconds )
+    # Note that with pause > 60", Timing conversion won't be perfomed using to_compact_s
+    total_seconds > 0 ? " p.#{Timing.to_compact_s(0, total_seconds)}" : ''
+  end
+
+  # Outputs the specified value of seconds in a "Start-Rest " format (S-R: M'.SS").
+  # Returns an empty string if the value is 0.
+  #
+  def self.to_formatted_start_and_rest( total_seconds )
+    total_seconds > 0 ? " S-R: #{Timing.to_s(0, total_seconds)}" : ''
   end
   # ---------------------------------------------------------------------------
 end

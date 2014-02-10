@@ -191,13 +191,12 @@ class ExerciseRow < ActiveRecord::Base
 
   # Getter for the formatted string of the +pause+ value
   def get_formatted_pause
-# FIXME with pause > 60", Timing conversion won't be perfomed using to_compact_s
-    pause > 0 ? " p.#{Timing.to_compact_s(0, pause)}" : ''
+    Timing.to_formatted_pause( pause )
   end
 
   # Getter for the formatted string of the +start_and_rest+ value
   def get_formatted_start_and_rest
-    start_and_rest > 0 ? " S-R: #{Timing.to_s(0, start_and_rest)}" : ''
+    Timing.to_formatted_start_and_rest( start_and_rest)
   end
   # ----------------------------------------------------------------------------
 

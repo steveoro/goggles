@@ -1,21 +1,21 @@
 %li.full_row.nested-fields
   .group_hdr.row-fluid.control-row{ hidden: 'true' }
     .span1.g-w15
-      = f.input :group_id, label: false, disabled: true, wrapper: false, input_html: {class: 'group_id'}
+      = f.input :group_id, label: false, wrapper: false, input_html: {class: 'group_id group_clear'}
     .span2.g-w150
     .span1.g-w20
-      = f.input :group_times, label: false, wrapper: false, input_html: {class: 'spinner'}
+      = f.input :group_times, label: false, wrapper: false, input_html: {class: 'spinner group_times group_clear'}
     .span1.g-w50
     .span4.g-w400
     .span1.g-w80
       = f.input :group_start_and_rest, label: false, wrapper: false do
-        = f.select :group_start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+        = f.select :group_start_and_rest, (0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }), {}, {class: 'group_clear'}
     .span1.g-w80
       = f.input :group_pause, label: false, wrapper: false do
-        = f.select :group_pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] })
+        = f.select :group_pause, (0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }), {}, {class: 'group_clear'}
     .span1.g-w50
       .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.link_break_tooltip') }
-        = link_to_function( image_tag('link_break.png'), "alert('WIP: this will clear and remove the grouping from the rows (FUTURE DEV)');" )
+        = link_to_function( image_tag('link_break.png'), "clickBreakGrouping( $(this).closest('.full_row') );" )
 
   %ul.group_detail.droppable.sortable
     %li.data_row.row-fluid.control-row
