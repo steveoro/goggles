@@ -69,7 +69,7 @@ class TrainingsController < ApplicationController
 
       if @training.save
         flash[:notice] = I18n.t('trainings.training_created')
-        redirect_to( trainings_path() )
+        redirect_to( training_path(@training) )
       else
         render :action => :edit
       end
