@@ -287,7 +287,8 @@ INSERT INTO body_aux_types (id,code,lock_version,created_at,updated_at) VALUES
 (2,'C',0,CURDATE(),CURDATE()),
 (3,'S',0,CURDATE(),CURDATE()),
 (4,'E',0,CURDATE(),CURDATE()),
-(5,'T',0,CURDATE(),CURDATE());
+(5,'P',0,CURDATE(),CURDATE()),
+(6,'T',0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella execution_note_types

@@ -537,12 +537,12 @@ en:
     i18n_description_C: "Short fins"
     i18n_short_M: "Twin"
     i18n_description_M: "Twin fins"
-    i18n_short_P: "Pull-buoy"
+    i18n_short_P: "Pull"
     i18n_description_P: "Pull-buoy"
     i18n_short_E: "Elastic"
     i18n_description_E: "Elastic on legs"
-    i18n_short_T: "Tab"
-    i18n_description_T: "Tablet"
+    i18n_short_T: "Board"
+    i18n_description_T: "Kickboard"
 
   breath_aux_types:
     code: "code"
@@ -561,8 +561,10 @@ en:
     i18n_description_S: "Bin"
     i18n_short_E: "Elastic"
     i18n_description_E: "Elastic from wall"
-    i18n_short_T: "Aiding el"
-    i18n_description_T: "Aiding elastic"
+    i18n_short_P: "Aiding el"
+    i18n_description_P: "Aiding elastic"
+    i18n_short_T: "Board"
+    i18n_description_T: "Kickboard"
 
   execution_note_types:
     code: "code"

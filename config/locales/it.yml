@@ -563,6 +563,8 @@ it:
     i18n_description_E: "Elastico al bordo"
     i18n_short_T: "Traino"
     i18n_description_T: "Elastico al traino"
+    i18n_short_T: "Tavola"
+    i18n_description_T: "Tavoletta"
 
   execution_note_types:
     code: "Cod."
@@ -583,7 +585,7 @@ it:
     
   base_movements:
     code: "Cod."
-    i18n_short_GECMPL: "A piacere"
+    i18n_short_GECMPL: "Piacere"
     i18n_description_GECMPL: "A piacere"
     i18n_short_SLCMPL: "SL"
     i18n_description_SLCMPL: "SL completo"
@@ -649,10 +651,10 @@ it:
     i18n_description_SLBRSV: "SL bracciata sovrapposta"
     i18n_short_SLBRLT: "SL alternato"
     i18n_description_SLBRLT: "SL alternato alto"
-    i18n_short_SLBRTA: "SL testa alta"
-    i18n_description_SLBRTA: "SL testa alta fuori dall''acqua"
+    i18n_short_SLCMTA: "SL testa alta"
+    i18n_description_SLCMTA: "SL testa alta fuori dall''acqua"
     i18n_short_SLBRA3: "SL 3dx + 3sx"
-    i18n_description_SLBRA3: "SL 3 braccete dx, 3 bracciate sx"
+    i18n_description_SLBRA3: "SL 3 bracciate dx, 3 bracciate sx"
     i18n_short_SLRE01: "SL resp. 1"
     i18n_description_SLRE01: "SL completo respirazione ogni bracciata"
     i18n_short_SLRE02: "SL resp. 2"
