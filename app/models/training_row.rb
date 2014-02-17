@@ -4,11 +4,6 @@ require 'wrappers/timing'
 
 
 class TrainingRow < ActiveRecord::Base
-
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
   belongs_to :training
   belongs_to :exercise
   belongs_to :training_step_type
@@ -52,8 +47,7 @@ class TrainingRow < ActiveRecord::Base
   attr_accessible :part_order, 
                   :group_id, :group_times, :group_start_and_rest, :group_pause,
                   :times, :distance, :start_and_rest, :pause,
-                  :training_id, :exercise_id, :training_step_type_id,
-                  :user_id
+                  :training_id, :exercise_id, :training_step_type_id
 
   scope :sort_by_part_order,    order('part_order')
   scope :with_groups,           where('group_id > 0').order('part_order')
@@ -134,12 +128,6 @@ class TrainingRow < ActiveRecord::Base
   #
   def self.get_label_symbol
     :get_full_name
-  end
-  # ----------------------------------------------------------------------------
-
-  # Retrieves the User short name (the owner of this Training)
-  def get_user_name
-    user ? user.name : ''
   end
   # ----------------------------------------------------------------------------
 
