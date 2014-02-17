@@ -132,12 +132,6 @@ class UserTrainingRow < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Retrieves the User short name (the owner of this Training)
-  def get_user_name
-    user ? user.name : ''
-  end
-  # ----------------------------------------------------------------------------
-
   # Getter for the formatted string of the +pause+ value
   def get_formatted_pause
     Timing.to_formatted_pause( pause )
