@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140203174739) do
+ActiveRecord::Schema.define(:version => 20140214110638) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -1435,6 +1435,51 @@ ActiveRecord::Schema.define(:version => 20140203174739) do
   add_index "user_results", ["meeting_individual_result_id", "rank"], :name => "meeting_id_rank"
   add_index "user_results", ["pool_type_id"], :name => "fk_user_results_pool_types"
   add_index "user_results", ["swimmer_id"], :name => "fk_user_results_swimmers"
+
+  create_table "user_training_rows", :force => true do |t|
+    t.integer  "lock_version",                       :default => 0
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+    t.integer  "part_order",            :limit => 3, :default => 0, :null => false
+    t.integer  "times",                 :limit => 3, :default => 0, :null => false
+    t.integer  "distance",                           :default => 0, :null => false
+    t.integer  "start_and_rest",                     :default => 0, :null => false
+    t.integer  "pause",                              :default => 0, :null => false
+    t.integer  "group_id",              :limit => 3, :default => 0, :null => false
+    t.integer  "group_times",           :limit => 3, :default => 0, :null => false
+    t.integer  "group_start_and_rest",               :default => 0, :null => false
+    t.integer  "group_pause",                        :default => 0, :null => false
+    t.integer  "user_training_id"
+    t.integer  "exercise_id"
+    t.integer  "training_step_type_id"
+  end
+
+  add_index "user_training_rows", ["group_id", "part_order"], :name => "index_user_training_rows_on_group_id_and_part_order"
+  add_index "user_training_rows", ["user_training_id", "part_order"], :name => "idx_user_training_rows_part_order"
+
+  create_table "user_training_stories", :force => true do |t|
+    t.integer  "lock_version",                     :default => 0
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+    t.date     "swam_date"
+    t.integer  "total_training_time", :limit => 3, :default => 0, :null => false
+    t.text     "notes"
+    t.integer  "user_training_id"
+    t.integer  "swimming_pool_id"
+    t.integer  "swimmer_level_id"
+  end
+
+  add_index "user_training_stories", ["user_training_id", "swam_date"], :name => "index_user_training_stories_on_user_training_id_and_swam_date"
+
+  create_table "user_trainings", :force => true do |t|
+    t.integer  "lock_version",                :default => 0
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
+    t.string   "description",  :limit => 250, :default => "", :null => false
+    t.integer  "user_id"
+  end
+
+  add_index "user_trainings", ["description"], :name => "index_user_trainings_on_description", :unique => true
 
   create_table "users", :force => true do |t|
     t.integer  "lock_version",                                 :default => 0
