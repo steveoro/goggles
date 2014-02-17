@@ -1,8 +1,4 @@
 class UserTrainingStory < ActiveRecord::Base
-  belongs_to :user #?? Leega. The entity hasn't user_id attribute. Should add it to entity? Should remove this line from the class?
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-  #  validates_associated :user                       # (Do not enable this for User)
-
   belongs_to :user_training
   belongs_to :swimmer_level_type
   belongs_to :swimming_pool

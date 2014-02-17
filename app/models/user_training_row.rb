@@ -4,10 +4,6 @@ require 'wrappers/timing'
 
 
 class UserTrainingRow < ActiveRecord::Base
-  belongs_to :user  #?? Leega. The entity hasn't user_id attribute. Should add it to entity? Should remove this line from the class?
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-  #  validates_associated :user                       # (Do not enable this for User)
-
   belongs_to :user_training
   belongs_to :exercise
   belongs_to :training_step_type
@@ -51,8 +47,7 @@ class UserTrainingRow < ActiveRecord::Base
   attr_accessible :part_order, 
                   :group_id, :group_times, :group_start_and_rest, :group_pause,
                   :times, :distance, :start_and_rest, :pause,
-                  :user_training_id, :exercise_id, :training_step_type_id,
-                  :user_id
+                  :user_training_id, :exercise_id, :training_step_type_id
 
   scope :sort_by_part_order,    order('part_order')
   scope :with_groups,           where('group_id > 0').order('part_order')
