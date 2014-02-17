@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140214110638) do
+ActiveRecord::Schema.define(:version => 20140217161530) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -1371,7 +1371,6 @@ ActiveRecord::Schema.define(:version => 20140214110638) do
     t.integer  "training_id"
     t.integer  "exercise_id"
     t.integer  "training_step_type_id"
-    t.integer  "user_id"
     t.integer  "group_id",              :limit => 3, :default => 0, :null => false
     t.integer  "group_times",           :limit => 3, :default => 0, :null => false
     t.integer  "group_start_and_rest",               :default => 0, :null => false
