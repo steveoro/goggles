@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140217161531) do
+ActiveRecord::Schema.define(:version => 20140218191040) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -649,21 +649,13 @@ ActiveRecord::Schema.define(:version => 20140217161531) do
     t.integer  "exercise_id"
     t.integer  "base_movement_id"
     t.integer  "training_mode_type_id"
-    t.integer  "arm_aux_type_id"
-    t.integer  "kick_aux_type_id"
-    t.integer  "body_aux_type_id"
-    t.integer  "breath_aux_type_id"
     t.integer  "execution_note_type_id"
     t.integer  "distance",                            :default => 0, :null => false
   end
 
-  add_index "exercise_rows", ["arm_aux_type_id"], :name => "fk_exercise_rows_arm_aux_types"
   add_index "exercise_rows", ["base_movement_id"], :name => "fk_exercise_rows_base_movements"
-  add_index "exercise_rows", ["body_aux_type_id"], :name => "fk_exercise_rows_body_aux_types"
-  add_index "exercise_rows", ["breath_aux_type_id"], :name => "fk_exercise_rows_breath_aux_types"
   add_index "exercise_rows", ["execution_note_type_id"], :name => "fk_exercise_rows_execution_note_types"
   add_index "exercise_rows", ["exercise_id", "part_order"], :name => "idx_exercise_rows_part_order"
-  add_index "exercise_rows", ["kick_aux_type_id"], :name => "fk_exercise_rows_kick_aux_types"
   add_index "exercise_rows", ["training_mode_type_id"], :name => "fk_exercise_rows_training_mode_types"
 
   create_table "exercises", :force => true do |t|
@@ -1375,10 +1367,18 @@ ActiveRecord::Schema.define(:version => 20140217161531) do
     t.integer  "group_times",           :limit => 3, :default => 0, :null => false
     t.integer  "group_start_and_rest",               :default => 0, :null => false
     t.integer  "group_pause",                        :default => 0, :null => false
+    t.integer  "arm_aux_type_id"
+    t.integer  "kick_aux_type_id"
+    t.integer  "body_aux_type_id"
+    t.integer  "breath_aux_type_id"
   end
 
+  add_index "training_rows", ["arm_aux_type_id"], :name => "fk_training_rows_arm_aux_types"
+  add_index "training_rows", ["body_aux_type_id"], :name => "fk_training_rows_body_aux_types"
+  add_index "training_rows", ["breath_aux_type_id"], :name => "fk_training_rows_breath_aux_types"
   add_index "training_rows", ["exercise_id"], :name => "fk_training_exercises"
   add_index "training_rows", ["group_id", "part_order"], :name => "index_training_rows_on_group_id_and_part_order"
+  add_index "training_rows", ["kick_aux_type_id"], :name => "fk_training_rows_kick_aux_types"
   add_index "training_rows", ["training_id", "part_order"], :name => "idx_training_rows_part_order"
   add_index "training_rows", ["training_step_type_id"], :name => "fk_training_rows_training_step_types"
 
