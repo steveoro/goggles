@@ -8,18 +8,10 @@ class ExerciseRow < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :base_movement
   belongs_to :training_mode_type
-  belongs_to :arm_aux_type
-  belongs_to :kick_aux_type
-  belongs_to :body_aux_type
-  belongs_to :breath_aux_type
   belongs_to :execution_note_type
   validates_associated :exercise
   validates_associated :base_movement
   validates_associated :training_mode_type
-  validates_associated :arm_aux_type
-  validates_associated :kick_aux_type
-  validates_associated :body_aux_type
-  validates_associated :breath_aux_type
   validates_associated :execution_note_type
 
   validates_presence_of     :part_order
@@ -67,10 +59,6 @@ class ExerciseRow < ActiveRecord::Base
         get_base_movement_short( true, swimmer_level_type_id ),
         get_training_mode_type_name( verbose_level ),
         get_execution_note_type_name( verbose_level ),
-        get_arm_aux_type_name( verbose_level ),
-        get_kick_aux_type_name( verbose_level ),
-        get_body_aux_type_name( verbose_level ),
-        get_breath_aux_type_name( verbose_level ),
         get_formatted_start_and_rest,
         get_formatted_pause
       ].delete_if{ |e| e.to_s.empty? }.join(' ')
@@ -81,10 +69,6 @@ class ExerciseRow < ActiveRecord::Base
         get_base_movement_full( true, swimmer_level_type_id ),
         get_training_mode_type_name( verbose_level ),
         get_execution_note_type_name( verbose_level ),
-        get_arm_aux_type_name( verbose_level ),
-        get_kick_aux_type_name( verbose_level ),
-        get_body_aux_type_name( verbose_level ),
-        get_breath_aux_type_name( verbose_level ),
         get_formatted_start_and_rest,
         get_formatted_pause
       ].delete_if{ |e| e.to_s.empty? }.join(' ')
@@ -95,10 +79,6 @@ class ExerciseRow < ActiveRecord::Base
         get_base_movement_short( true, swimmer_level_type_id ),
         get_training_mode_type_name( :execution ),
         get_execution_note_type_name( :short ),
-        get_arm_aux_type_name( :short ),
-        get_kick_aux_type_name( :short ),
-        get_body_aux_type_name( :short ),
-        get_breath_aux_type_name( :short ),
         get_formatted_start_and_rest,
         get_formatted_pause
       ].delete_if{ |e| e.to_s.empty? }.join(' ')
@@ -255,62 +235,6 @@ class ExerciseRow < ActiveRecord::Base
       training_mode_type.i18n_short
     else
       training_mode_type.i18n_execution
-    end
-  end
-
-  # Retrieves the Arm Aux Type name
-  #
-  # === Params:
-  # - verbose_level: either :short, :full or :verbose; default: :short
-  #
-  def get_arm_aux_type_name( verbose_level = :short )
-    return '' unless base_movement
-    if verbose_level.to_sym == :short
-      (base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_short : ''
-    else
-      (base_movement.is_arm_aux_allowed && arm_aux_type) ? arm_aux_type.i18n_description : ''
-    end
-  end
-
-  # Retrieves the Kick Aux Type name
-  #
-  # === Params:
-  # - verbose_level: either :short, :full or :verbose; default: :short
-  #
-  def get_kick_aux_type_name( verbose_level = :short )
-    return '' unless base_movement
-    if verbose_level.to_sym == :short
-      (base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_short : ''
-    else
-      (base_movement.is_kick_aux_allowed && kick_aux_type) ? kick_aux_type.i18n_description : ''
-    end
-  end
-
-  # Retrieves the Body Aux Type name
-  #
-  # === Params:
-  # - verbose_level: either :short, :full or :verbose; default: :short
-  #
-  def get_body_aux_type_name( verbose_level = :short )
-    return '' unless base_movement
-    if verbose_level.to_sym == :short
-      (base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_short : ''
-    else
-      (base_movement.is_body_aux_allowed && body_aux_type) ? body_aux_type.i18n_description : ''
-    end
-  end
-
-  # Retrieves the Breath Aux Type name
-  #
-  # === Params:
-  # - verbose_level: either :short, :full or :verbose; default: :short
-  #
-  def get_breath_aux_type_name( verbose_level = :short )
-    return '' unless base_movement
-    if verbose_level.to_sym == :short
-      (base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_short : ''
-    else
-      (base_movement.is_breath_aux_allowed && breath_aux_type) ? breath_aux_type.i18n_description : ''
     end
   end
   # ----------------------------------------------------------------------------

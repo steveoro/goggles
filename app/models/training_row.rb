@@ -7,9 +7,17 @@ class TrainingRow < ActiveRecord::Base
   belongs_to :training
   belongs_to :exercise
   belongs_to :training_step_type
+  belongs_to :arm_aux_type
+  belongs_to :kick_aux_type
+  belongs_to :body_aux_type
+  belongs_to :breath_aux_type
   validates_associated :training
   validates_associated :exercise
   validates_associated :training_step_type
+  validates_associated :arm_aux_type
+  validates_associated :kick_aux_type
+  validates_associated :body_aux_type
+  validates_associated :breath_aux_type
 
   has_many :exercise_rows,      :through => :exercise
   has_many :base_movements,     :through => :exercise_rows
@@ -80,6 +88,10 @@ class TrainingRow < ActiveRecord::Base
       # Hide any 1x multiplier:
       ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}" : full_row_distance),
       get_exercise_full( full_row_distance ),
+      get_arm_aux_type_name( :short ),
+      get_kick_aux_type_name( :short ),
+      get_body_aux_type_name( :short ),
+      get_breath_aux_type_name( :short ),     
       get_formatted_start_and_rest,
       get_formatted_pause
     ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
@@ -115,6 +127,10 @@ class TrainingRow < ActiveRecord::Base
       ( times > 1 ? "#{sprintf("%2s", times)}x#{sprintf("%2s", full_row_distance)}" : full_row_distance),
       [
         get_exercise_full( full_row_distance ),
+        get_arm_aux_type_name( :short ),
+        get_kick_aux_type_name( :short ),
+        get_body_aux_type_name( :short ),
+        get_breath_aux_type_name( :short ),             
         get_formatted_start_and_rest,
         get_formatted_pause
       ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
@@ -278,4 +294,65 @@ class TrainingRow < ActiveRecord::Base
     end
   end
   # ---------------------------------------------------------------------------
+
+  
+  # Leega
+  # Aux retrieval. Check for base_movement compatibility demanded to CRUD
+  # Verbose level never used, but kept for future implementations
+  
+  # Retrieves the Arm Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_arm_aux_type_name( verbose_level = :short )
+    return '' unless arm_aux_type
+    if verbose_level.to_sym == :short
+      arm_aux_type.i18n_short
+    else
+      arm_aux_type.i18n_description
+    end
+  end
+
+  # Retrieves the Kick Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_kick_aux_type_name( verbose_level = :short )
+    return '' unless kick_aux_type
+    if verbose_level.to_sym == :short
+      kick_aux_type.i18n_short
+    else
+      kick_aux_type.i18n_description
+    end
+  end
+
+  # Retrieves the Body Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_body_aux_type_name( verbose_level = :short )
+    return '' unless body_aux_type
+    if verbose_level.to_sym == :short
+      body_aux_type.i18n_short
+    else
+      body_aux_type.i18n_description
+    end
+  end
+
+  # Retrieves the Breath Aux Type name
+  #
+  # === Params:
+  # - verbose_level: either :short, :full or :verbose; default: :short
+  #
+  def get_breath_aux_type_name( verbose_level = :short )
+    return '' unless breath_aux_type
+    if verbose_level.to_sym == :short
+      breath_aux_type.i18n_short
+    else
+      breath_aux_type.i18n_description
+    end
+  end  
 end
