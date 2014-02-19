@@ -55,7 +55,8 @@ class TrainingRow < ActiveRecord::Base
   attr_accessible :part_order, 
                   :group_id, :group_times, :group_start_and_rest, :group_pause,
                   :times, :distance, :start_and_rest, :pause,
-                  :training_id, :exercise_id, :training_step_type_id
+                  :training_id, :exercise_id, :training_step_type_id, 
+                  :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
 
   scope :sort_by_part_order,    order('part_order')
   scope :with_groups,           where('group_id > 0').order('part_order')
