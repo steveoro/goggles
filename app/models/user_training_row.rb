@@ -7,9 +7,17 @@ class UserTrainingRow < ActiveRecord::Base
   belongs_to :user_training
   belongs_to :exercise
   belongs_to :training_step_type
+  belongs_to :arm_aux_type
+  belongs_to :kick_aux_type
+  belongs_to :body_aux_type
+  belongs_to :breath_aux_type
   validates_associated :user_training
   validates_associated :exercise
   validates_associated :training_step_type
+  validates_associated :arm_aux_type
+  validates_associated :kick_aux_type
+  validates_associated :body_aux_type
+  validates_associated :breath_aux_type
 
   has_many :exercise_rows,      :through => :exercise
   has_many :base_movements,     :through => :exercise_rows
@@ -47,7 +55,8 @@ class UserTrainingRow < ActiveRecord::Base
   attr_accessible :part_order, 
                   :group_id, :group_times, :group_start_and_rest, :group_pause,
                   :times, :distance, :start_and_rest, :pause,
-                  :user_training_id, :exercise_id, :training_step_type_id
+                  :user_training_id, :exercise_id, :training_step_type_id,
+                  :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
 
   scope :sort_by_part_order,    order('part_order')
   scope :with_groups,           where('group_id > 0').order('part_order')

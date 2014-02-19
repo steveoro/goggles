@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140218191040) do
+ActiveRecord::Schema.define(:version => 20140219164000) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -1451,21 +1451,25 @@ ActiveRecord::Schema.define(:version => 20140218191040) do
     t.integer  "user_training_id"
     t.integer  "exercise_id"
     t.integer  "training_step_type_id"
+    t.integer  "arm_aux_type_id"
+    t.integer  "kick_aux_type_id"
+    t.integer  "body_aux_type_id"
+    t.integer  "breath_aux_type_id"
   end
 
   add_index "user_training_rows", ["group_id", "part_order"], :name => "index_user_training_rows_on_group_id_and_part_order"
   add_index "user_training_rows", ["user_training_id", "part_order"], :name => "idx_user_training_rows_part_order"
 
   create_table "user_training_stories", :force => true do |t|
-    t.integer  "lock_version",                     :default => 0
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
+    t.integer  "lock_version",                       :default => 0
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
     t.date     "swam_date"
-    t.integer  "total_training_time", :limit => 3, :default => 0, :null => false
+    t.integer  "total_training_time",   :limit => 3, :default => 0, :null => false
     t.text     "notes"
     t.integer  "user_training_id"
     t.integer  "swimming_pool_id"
-    t.integer  "swimmer_level_id"
+    t.integer  "swimmer_level_type_id"
   end
 
   add_index "user_training_stories", ["user_training_id", "swam_date"], :name => "index_user_training_stories_on_user_training_id_and_swam_date"

@@ -130,14 +130,12 @@ INSERT INTO swimmer_level_types (id,code,level,lock_version,created_at,updated_a
 (1,'PR',10,0,CURDATE(),CURDATE()),
 (2,'IN',20,0,CURDATE(),CURDATE()),
 (3,'AV',30,0,CURDATE(),CURDATE()),
-(4,'ES',40,0,CURDATE(),CURDATE()),
-(5,'MA',50,0,CURDATE(),CURDATE()),
-(6,'AG',60,0,CURDATE(),CURDATE()),
-(7,'IS1',70,0,CURDATE(),CURDATE()),
-(8,'IS2',80,0,CURDATE(),CURDATE()),
-(9,'AL1',90,0,CURDATE(),CURDATE()),
-(10,'AL2',100,0,CURDATE(),CURDATE()),
-(11,'CA',110,0,CURDATE(),CURDATE());
+(4,'ES',50,0,CURDATE(),CURDATE()),
+(5,'MA',100,0,CURDATE(),CURDATE()),
+(6,'MM',150,0,CURDATE(),CURDATE()),
+(7,'MS',180,0,CURDATE(),CURDATE()),
+(8,'AG',200,0,CURDATE(),CURDATE()),
+(9,'AA',250,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella day_part_types
