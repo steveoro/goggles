@@ -19,14 +19,17 @@ class User < ActiveRecord::Base
 
   has_one :swimmer
 
+  belongs_to :swimmer_level_type
+  belongs_to :coach_level_type
+
   validates_presence_of   :name
   validates_length_of     :name, :within => 1..20
   validates_uniqueness_of :name, :message => :already_exists
 
   validates_length_of   :description, :maximum => 50
 
-  attr_accessible :name, :email, :description, :password, :password_confirmation
-
+  attr_accessible :name, :email, :description, :password, :password_confirmation,
+                  :coach_level_type, :swimmer_level_type
 
   # TODO ADD:
   # :outstanding_score_bias (default = 800)

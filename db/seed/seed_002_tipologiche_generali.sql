@@ -301,6 +301,18 @@ INSERT INTO execution_note_types (id,code,lock_version,created_at,updated_at) VA
 (7,'VIR',0,CURDATE(),CURDATE());
 
 --
+-- Dump dei dati per la tabella coach_level_types
+-- 
+INSERT INTO coach_level_types (id,code,level,lock_version,created_at,updated_at) VALUES 
+(1,'CA',10,0,CURDATE(),CURDATE()),
+(2,'IS',100,0,CURDATE(),CURDATE()),
+(3,'F1',200,0,CURDATE(),CURDATE()),
+(4,'F2',250,0,CURDATE(),CURDATE()),
+(5,'A1',300,0,CURDATE(),CURDATE()),
+(6,'A2',350,0,CURDATE(),CURDATE()),
+(7,'AC',400,0,CURDATE(),CURDATE());
+
+--
 -- Dump dei dati per la tabella event_types
 -- 
 INSERT INTO event_types (id,code,length_in_meters,style_order,is_a_relay,is_mixed_gender,partecipants,phases,phase_length_in_meters,stroke_type_id,lock_version,created_at,updated_at) VALUES 

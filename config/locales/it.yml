@@ -578,6 +578,23 @@ it:
     i18n_description_GAL: "Con partenza in galleggiamento"
     i18n_short_VIR: "partenza con virata"
     i18n_description_VIR: "Partenza fronte bordo con virata"
+
+  coach_level_types:
+    code: "Cod."
+    i18n_short_CA: "CAP"
+    i18n_description_CA: "CAPITANO"
+    i18n_short_IS: "IST"
+    i18n_description_IS: "ISTRUTTORE"
+    i18n_short_F1: "IST FIN I"
+    i18n_description_F1: "ISTRUTTORE FEDERALE I LIVELLO"
+    i18n_short_F2: "IST FIN II"
+    i18n_description_F2: "ISTRUTTORE FEDERALE II LIVELLO"
+    i18n_short_A1: "ALL I"
+    i18n_description_A1: "ALLENATOR I LIVELLO"
+    i18n_short_A2: "ALL II"
+    i18n_description_A2: "ALLENATORE II LIVELLO"
+    i18n_short_AC: "ALL CAPO"
+    i18n_description_AC: "ALLENATORE CAPO"
     
   base_movements:
     code: "Cod."

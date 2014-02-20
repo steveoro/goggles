@@ -579,6 +579,23 @@ en:
     i18n_short_VIR: "turn start"
     i18n_description_VIR: "Starting locking at the border with turn"
 
+  coach_level_types:
+    code: "code"
+    i18n_short_CA: "CAP"
+    i18n_description_CA: "CAPTAIN"
+    i18n_short_IS: "TEACH"
+    i18n_description_IS: "TEACHER"
+    i18n_short_F1: "FED TEACH I"
+    i18n_description_F1: "1st LEVEL TEACHER"
+    i18n_short_F2: "FED TEACH II"
+    i18n_description_F2: "2nd LEVEL TEACHER"
+    i18n_short_A1: "COACH I"
+    i18n_description_A1: "1st LEVEL COACH"
+    i18n_short_A2: "COACH II"
+    i18n_description_A2: "2nd LEVEL COACH"
+    i18n_short_AC: "HEAD COACH"
+    i18n_description_AC: "HEAD COACH"
+
   base_movements:
     code: "code"
     i18n_short_GECMPL: "Free"

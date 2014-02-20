@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140219164000) do
+ActiveRecord::Schema.define(:version => 20140220191030) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -188,6 +188,16 @@ ActiveRecord::Schema.define(:version => 20140219164000) do
 
   add_index "cities", ["name"], :name => "index_cities_on_name"
   add_index "cities", ["zip"], :name => "index_cities_on_zip"
+
+  create_table "coach_level_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+    t.integer  "level",        :limit => 3, :default => 0, :null => false
+  end
+
+  add_index "coach_level_types", ["code"], :name => "index_coach_level_types_on_code", :unique => true
 
   create_table "comments", :force => true do |t|
     t.integer  "lock_version",            :default => 0
@@ -1513,6 +1523,8 @@ ActiveRecord::Schema.define(:version => 20140219164000) do
     t.boolean  "use_email_newsletter_notify",                  :default => true, :null => false
     t.boolean  "use_email_community_notify",                   :default => true, :null => false
     t.string   "avatar_resource_filename",      :limit => 250
+    t.integer  "swimmer_level_type_id"
+    t.integer  "coach_level_type_id"
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
