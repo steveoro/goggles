@@ -11,7 +11,39 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140220191030) do
+ActiveRecord::Schema.define(:version => 20140221221530) do
+
+  create_table "achievement_rows", :force => true do |t|
+    t.integer  "lock_version",                      :default => 0
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
+    t.integer  "part_order",          :limit => 3,  :default => 0,     :null => false
+    t.string   "achievement_value",   :limit => 10
+    t.boolean  "is_bracket_open",                   :default => false, :null => false
+    t.boolean  "is_or_operator",                    :default => false, :null => false
+    t.boolean  "is_not_operator",                   :default => false, :null => false
+    t.boolean  "is_bracket_closed",                 :default => false, :null => false
+    t.integer  "achievement_id"
+    t.integer  "achievement_type_id"
+  end
+
+  create_table "achievement_types", :force => true do |t|
+    t.integer  "lock_version",              :default => 0
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 5,                :null => false
+  end
+
+  add_index "achievement_types", ["code"], :name => "index_achievement_types_on_code", :unique => true
+
+  create_table "achievements", :force => true do |t|
+    t.integer  "lock_version",               :default => 0
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.string   "code",         :limit => 10,                :null => false
+  end
+
+  add_index "achievements", ["code"], :name => "index_achievements_on_code", :unique => true
 
   create_table "admins", :force => true do |t|
     t.string   "email",                            :default => "", :null => false
@@ -1176,11 +1208,12 @@ ActiveRecord::Schema.define(:version => 20140220191030) do
   add_index "stroke_types", ["is_eventable"], :name => "idx_is_eventable"
 
   create_table "swimmer_level_types", :force => true do |t|
-    t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
-    t.integer  "level",        :limit => 3, :default => 0, :null => false
+    t.integer  "lock_version",                :default => 0
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+    t.string   "code",           :limit => 5,                :null => false
+    t.integer  "level",          :limit => 3, :default => 0, :null => false
+    t.integer  "achievement_id"
   end
 
   add_index "swimmer_level_types", ["code"], :name => "index_swimmer_level_types_on_code", :unique => true
@@ -1415,6 +1448,16 @@ ActiveRecord::Schema.define(:version => 20140220191030) do
   end
 
   add_index "trainings", ["title"], :name => "index_trainings_on_title", :unique => true
+
+  create_table "user_achievements", :force => true do |t|
+    t.integer  "lock_version",   :default => 0
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.integer  "user_id"
+    t.integer  "achievement_id"
+  end
+
+  add_index "user_achievements", ["user_id", "achievement_id"], :name => "index_user_achievements_on_user_id_and_achievement_id", :unique => true
 
   create_table "user_results", :force => true do |t|
     t.integer  "lock_version",                                                               :default => 0
