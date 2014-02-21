@@ -153,6 +153,7 @@ table td.goggles-rightalign {
 .g-fixed { display: inline-block; }
 .g-w15  input, .g-w15  select { min-width: 15px; width: 15px; }
 .g-w20  input, .g-w20  select { min-width: 20px; width: 20px; }
+.g-w25  input, .g-w25  select { min-width: 25px; width: 25px; }
 .g-w30  input, .g-w30  select { min-width: 30px; width: 30px; }
 .g-w30  input, .g-w40  select { min-width: 40px; width: 40px; }
 .g-w50  input, .g-w50  select { min-width: 50px; width: 50px; }

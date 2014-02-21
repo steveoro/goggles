@@ -24,9 +24,11 @@ select, input[type="file"] {
 
 .ui-autocomplete {
 	max-height: 218px;
+	max-width: 400px;
 	overflow-y: auto;
 	/* prevent horizontal scrollbar */
 	overflow-x: hidden;
+    font-size: 11px;
 }
 .ui-state-highlight {
 	height: 28px;

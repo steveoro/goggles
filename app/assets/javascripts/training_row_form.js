@@ -29,7 +29,7 @@ var $initialDragParent = false;
  * specified by the global variable exerciseAutocompleteURL (see: views/trainings/_form.html.haml)
  */
 function setupWidgets() {
-  $('.spinner').spinner();                          // Init spinners (this is simple)
+  $('.jspinner').spinner();                          // Init spinners (this is simple)
   initGroupHeadersVisibility();
   initAutocomplete();
   initDroppables( $('.droppable') );
