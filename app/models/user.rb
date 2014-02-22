@@ -112,10 +112,10 @@ class User < ActiveRecord::Base
 
 
   # Returns either the preffered swimmer level ID for this user or its own computed
-  # value
+  # value; 0 in case the association is not yet defined.
   #
   def get_preferred_swimmer_level_id
-    swimmer_level_type.id
+    swimmer_level_type ? swimmer_level_type.id : 0
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------

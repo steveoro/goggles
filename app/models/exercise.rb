@@ -2,6 +2,7 @@ class Exercise < ActiveRecord::Base
 
   has_many :exercise_rows
   has_many :trainings, :through => :training_rows
+  has_many :base_movements, :through => :exercise_rows
 
   validates_length_of   :training_step_type_codes, :maximum => 50, :allow_nil => true
 
@@ -101,6 +102,51 @@ class Exercise < ActiveRecord::Base
       }
     else
       0
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_arm_aux_allowed
+    if base_movements
+      base_movements.any?{ |row| row.is_arm_aux_allowed }
+    else
+      false
+    end
+  end
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_kick_aux_allowed
+    if base_movements
+      base_movements.any?{ |row| row.is_kick_aux_allowed }
+    else
+      false
+    end
+  end
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_body_aux_allowed
+    if base_movements
+      base_movements.any?{ |row| row.is_body_aux_allowed }
+    else
+      false
+    end
+  end
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_breath_aux_allowed
+    if base_movements
+      base_movements.any?{ |row| row.is_breath_aux_allowed }
+    else
+      false
     end
   end
   # ---------------------------------------------------------------------------

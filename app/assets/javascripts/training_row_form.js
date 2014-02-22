@@ -325,10 +325,49 @@ function clickBreakGrouping( $item ) {
 // ----------------------------------------------------------------------------
 
 
+// *************************
+// TODO [Steve, 20140222] ADD setAuxVisibilityByAjaxData call on ui-autocomplete selection event
+// *************************
+
+
+/* Updates all the AUX-entity widget according to the allow/enable flags
+ * contained in the data Object returned as Ajax result.
+ *
+ * Checkout the actual Rails exercises_controller.rb for the API
+ * specifications and the (data) Object structure returned from that call.
+ */
+function setAuxVisibilityByAjaxData( textInputHTMLElem, ajaxResultData ) {
+	if ( ajaxResultData.is_arm_aux_allowed ) {
+		$( textInputHTMLElem ).closest('.data_row').find('.arm_aux_type').show();
+	} else {
+		$( textInputHTMLElem ).closest('.data_row').find('.arm_aux_type').hide();
+	}
+
+	if ( ajaxResultData.is_kick_aux_allowed ) {
+		$( textInputHTMLElem ).closest('.data_row').find('.is_kick_aux_allowed').show();
+	} else {
+		$( textInputHTMLElem ).closest('.data_row').find('.is_kick_aux_allowed').hide();
+	}
+
+	if ( ajaxResultData.is_body_aux_allowed ) {
+		$( textInputHTMLElem ).closest('.data_row').find('.is_body_aux_allowed').show();
+	} else {
+		$( textInputHTMLElem ).closest('.data_row').find('.is_body_aux_allowed').hide();
+	}
+
+	if ( ajaxResultData.is_breath_aux_allowed ) {
+		$( textInputHTMLElem ).closest('.data_row').find('.is_breath_aux_allowed').show();
+	} else {
+		$( textInputHTMLElem ).closest('.data_row').find('.is_breath_aux_allowed').hide();
+	}
+}
+
+
 /* Retrieve and set a single Exercise description via AJAX, using the path
  * specified by the global variable exerciseAutocompleteURL.
  *
- * Checkout the actual Rails exercises_controller.rb for the API specifications.
+ * Checkout the actual Rails exercises_controller.rb for the API
+ * specifications and the (data) Object structure returned from that call.
  */
 function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
   $.ajax(
@@ -340,6 +379,7 @@ function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
   ).done(
     function( data ) {
       textInputHTMLElem.value = data.label;
+	  setAuxVisibilityByAjaxData( textInputHTMLElem, data );
     }
   );
 };

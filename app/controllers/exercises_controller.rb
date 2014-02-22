@@ -29,7 +29,11 @@ class ExercisesController < ApplicationController
   # <tt>{
   #       :label => row.get_full_name, :value => row.id,
   #       :tot_distance => row.compute_total_distance(),
-  #       :tot_secs => row.compute_total_seconds()
+  #       :tot_secs => row.compute_total_seconds(),
+  #       :is_arm_aux_allowed => row.is_arm_aux_allowed(),
+  #       :is_kick_aux_allowed => row.is_kick_aux_allowed(),
+  #       :is_body_aux_allowed => row.is_body_aux_allowed(),
+  #       :is_breath_aux_allowed => row.is_breath_aux_allowed(),
   #     }</tt>. 
   #
   def json_list
@@ -48,7 +52,11 @@ class ExercisesController < ApplicationController
             ),
             value: result_row.id,
             tot_distance: result_row.compute_total_distance(),
-            tot_secs: result_row.compute_total_seconds()
+            tot_secs: result_row.compute_total_seconds(),
+            is_arm_aux_allowed: result_row.is_arm_aux_allowed(),
+            is_kick_aux_allowed: result_row.is_kick_aux_allowed(),
+            is_body_aux_allowed: result_row.is_body_aux_allowed(),
+            is_breath_aux_allowed: result_row.is_breath_aux_allowed()
           }
         ) and return
       end
@@ -82,7 +90,11 @@ class ExercisesController < ApplicationController
             ),
             value: row.id,
             tot_distance: row.compute_total_distance(),
-            tot_secs: row.compute_total_seconds()
+            tot_secs: row.compute_total_seconds(),
+            is_arm_aux_allowed: row.is_arm_aux_allowed(),
+            is_kick_aux_allowed: row.is_kick_aux_allowed(),
+            is_body_aux_allowed: row.is_body_aux_allowed(),
+            is_breath_aux_allowed: row.is_breath_aux_allowed()
           }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else
