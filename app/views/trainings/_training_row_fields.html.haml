@@ -4,7 +4,7 @@
       = f.input :group_id, label: false, wrapper: false, input_html: {class: 'group_id group_clear'}
     .span2.g-w150
     .span1.g-w25
-      = f.input :group_times, label: false, wrapper: false, input_html: {class: 'jspinner group_times group_clear'}
+      = f.input :group_times, label: false, wrapper: false, input_html: {class: 'group_times group_clear'}
     .span1.g-w50
     .span4.g-w320
     .span1.g-w80
@@ -24,7 +24,7 @@
       .span2.g-w150
         = f.association :training_step_type, label: false, wrapper: false, collection: TrainingStepType.to_dropdown(nil,:id,:i18n_description), prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
       .span1.g-w25
-        = f.input :times, label: false, wrapper: false, input_html: {class: 'jspinner'}
+        = f.input :times, label: false, wrapper: false
       .span1.g-w50
         = f.input :distance, label: false, wrapper: false
       .span4.g-w320
