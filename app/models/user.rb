@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   belongs_to :swimmer_level_type
   belongs_to :coach_level_type
 
+  validates_associated :swimmer_level_type
+
   validates_presence_of   :name
   validates_length_of     :name, :within => 1..20
   validates_uniqueness_of :name, :message => :already_exists
@@ -110,13 +112,10 @@ class User < ActiveRecord::Base
 
 
   # Returns either the preffered swimmer level ID for this user or its own computed
-  # value (TODO)
+  # value
   #
   def get_preferred_swimmer_level_id
-    # TODO add user-editable field to manage preferred swimmer_level_type_id associated to the user 
-    # TODO add feature to auto-compute the esteemed swimmer_level_type_id for a specific user
-    # TODO eventually, add a parameter to this method to choose which result one may want
-    SwimmerLevelType::MA_ID
+    swimmer_level_type.id
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------

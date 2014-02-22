@@ -49,7 +49,15 @@ Goggles::Application.routes.draw do
       resources :results
 
       resources :swimming_pools
+      
       resources :trainings do
+        member do
+          get 'printout'
+          post 'duplicate'
+        end
+      end
+      
+      resources :user_trainings do
         member do
           get 'printout'
           post 'duplicate'
