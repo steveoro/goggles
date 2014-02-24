@@ -1,0 +1,62 @@
+<%= define_grid(@trainings_grid) do |g|
+	g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
+
+	g.column(
+		name: I18n.t( :title, {:scope=>[:activerecord, :attributes, :training]} ),
+		attribute: 'title',
+	) do |training|
+		link_to( training.title, training_path(training) )
+	end
+
+	g.column(
+		name: I18n.t( :description, {:scope=>[:activerecord, :attributes, :training]} ),
+		attribute: 'description',
+	)
+
+#	g.column(
+#		name: I18n.t(:swimmer_level_type, {:scope=>[:activerecord, :models]}),
+#		model: SwimmerLevelType,
+#		attribute: 'id',
+#		custom_filter: SwimmerLevelType.to_dropdown,
+#	) do |training|
+#		training.i18n_description
+#	end
+
+	g.column(
+		name: I18n.t(:user, {:scope=>[:activerecord, :models]}),
+		model: User,
+		attribute: 'id',
+		custom_filter: User.to_dropdown,
+	) do |training|
+		training.get_user_name
+	end
+
+	g.column do |training|							# Enable edit action link, but only if the current user is the owner:
+		link_to( edit_training_path(training) ) do
+			image_tag('page_edit.png') << " #{I18n.t(:edit)}"
+		end if (training.user_id == current_user.id) || admin_signed_in?
+	end
+	g.column do |training|
+		link_to( printout_training_path(training) ) do
+			image_tag('page_white_acrobat.png') << " PDF"
+		end
+	end
+
+	g.column do |training|
+		link_to(									# Enable delete action link, but only if the current user is the owner:
+				I18n.t(:delete),
+				training_path(training),
+				:method => :delete,
+				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
+ 		) if (training.user_id == current_user.id) || admin_signed_in?
+	end
+
+	g.column do |training|
+		link_to(
+				I18n.t(:duplicate),
+				duplicate_training_path(training),
+				:method => :post,
+				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
+ 		)
+	end
+end -%>

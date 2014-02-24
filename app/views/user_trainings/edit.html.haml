@@ -1,0 +1,14 @@
+.row-fluid
+  .span3
+    = link_to( trainings_path() ) do
+      = image_tag('page_find.png')
+      = I18n.t(:back_to_index_view)
+  .span2
+    - if ( @training.id.to_i > 0 )
+      = link_to( training_path(@training.id) ) do
+        = image_tag('page_go.png')
+        = I18n.t(:show)
+
+%h3= @title
+
+= render partial: 'form'
