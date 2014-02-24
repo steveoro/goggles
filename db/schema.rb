@@ -1535,7 +1535,7 @@ ActiveRecord::Schema.define(:version => 20140221221530) do
     t.integer  "user_id"
   end
 
-  add_index "user_trainings", ["description"], :name => "index_user_trainings_on_description", :unique => true
+  add_index "user_trainings", ["user_id", "description"], :name => "index_user_trainings_on_user_id_and_description"
 
   create_table "users", :force => true do |t|
     t.integer  "lock_version",                                 :default => 0

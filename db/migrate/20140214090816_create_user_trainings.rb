@@ -10,6 +10,6 @@ class CreateUserTrainings < ActiveRecord::Migration
       t.references :user
     end
 
-    add_index :user_trainings, [:user_id, :description], :unique => true, :type => :fulltext   
+    add_index :user_trainings, [:user_id, :description], :type => :fulltext
   end
 end
