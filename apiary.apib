@@ -1,47 +1,81 @@
 FORMAT: 1A
-HOST: http://www.google.com
+HOST: http://www.goggles.org
 
 # Goggles API
-Notes API is a *short texts saving* service similar to its physical paper presence on your table.
+Goggles API involves miscellaneous server-side actions for score and statistics computation
+of [http://steveoro.github.io/goggles]. Some of the actions may require authentication.
 
-# Group Notes
-Notes related resources of the **Notes API**
+# Goggles Front-End
 
-## Notes Collection [/notes]
-### List all Notes [GET]
+## Exercise list or single row [/exercises/json_list{/exercise_id}{?training_step_type_id}{&limit}{&query}]
+### Retrieve exercise details or list exercises based on "training step type" [GET]
+Retrieves Exercise data.
+Currently this resource works only via AJAX request, behind user authentication.
+Future versions will introduce OAuth/Facebook/Google+ user authorization.
+
++ Parameters
+    - exercise_id(optional)
+        Filter bypass to retrieve a single Exercise instance. Whem present, all other parameters are ignored.
+    - training_step_type_id(optional)
+        When present, it is used as a filtering parameter for the result data set.
+    - limit(optional)
+        Used to limit the array of results; the default top limit is set to 1000 for performance reasons (but it can be overridden by this parameter).
+    - query(optional)
+        A string match for the verbose description; when equal to '%', the parameter is ignored.
+
 + Response 200 (application/json)
 
         [{
-          "id": 1, "title": "Jogging in park"
+         "label": "localized short description of the exercise",
+         "value": row.id,
+         "tot_distance": row.compute_total_distance(),
+         "tot_secs": row.compute_total_seconds(),
+         "is_arm_aux_allowed": row.is_arm_aux_allowed(),
+         "is_kick_aux_allowed": row.is_kick_aux_allowed(),
+         "is_body_aux_allowed": row.is_body_aux_allowed(),
+         "is_breath_aux_allowed": row.is_breath_aux_allowed()
         }, {
-          "id": 2, "title": "Pick-up posters from post-office"
+         ...
         }]
 
-### Create a Note [POST]
-+ Request (application/json)
 
-        { "title": "Buy cheese and bread for breakfast." }
-
-+ Response 201 (application/json)
-
-        { "id": 3, "title": "Buy cheese and bread for breakfast." }
-
-## Note [/notes/{id}]
-A single Note object with all its details
+## Team attended Meetings [/teams/count_meetings{id}]
+### Get a Team's total number of attended meetings [GET]
+Computes and returns the total number of meetings in which a Team has at least an individual result.
+Returns 0 in case of error or when no results are found.
 
 + Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Note to perform action with. Has example value.
+    - id
+        The team_id
 
-### Retrieve a Note [GET]
 + Response 200 (application/json)
 
-    + Header
+        {10}
 
-            X-My-Header: The Value
 
-    + Body
+## Team total Results [/teams/count_results{id}]
+### Get a Team's total number of attended meetings [GET]
+Computes and returns the total number of individual and relay results found for a specified Team.
+Returns 0 in case of error or when no results are found.
 
-            { "id": 2, "title": "Pick-up posters from post-office" }
++ Parameters
+    - id
+        The team_id
 
-### Remove a Note [DELETE]
-+ Response 204
++ Response 200 (application/json)
+
+        {10}
+
+
+## Team computed details [/teams/count_details{id}]
+### Get both Team's total number of attended meetings and its total number of results [GET]
+Combines both methods above to return a localized & composed string rendered as JSON text.
+Returns an empty text in case of error.
+
++ Parameters
+    - id
+        The team_id
+
++ Response 200 (application/json)
+
+        {"Total attended meetings: 256, Total results: 2478"}
