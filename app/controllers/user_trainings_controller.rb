@@ -21,7 +21,7 @@ class UserTrainingsController < ApplicationController
     @user_trainings_grid = initialize_grid(
       UserTraining,
 #      :include => [:swimmer_level_type],
-      :order => :title,
+      :order => :updated_at,
       :order_direction => 'asc',
       :per_page => 20
     )
@@ -41,7 +41,7 @@ class UserTrainingsController < ApplicationController
       redirect_to( user_trainings_path() ) and return
     end
     @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.title )
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
   # ---------------------------------------------------------------------------
 

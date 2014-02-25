@@ -189,7 +189,7 @@ class TrainingPrintoutLayout
         { :align => :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
-        "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type_description}",
+        "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type(:i18n_description)}",
         { :align => :left, :size => 9, :inline_format => true } 
       )
       pdf.text(

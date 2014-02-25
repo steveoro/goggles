@@ -3,8 +3,8 @@
 
 .row-fluid
   .span12
-    = render_grid( @trainings_grid )
+    = render_grid( @user_trainings_grid )
 
 .row-fluid
   .span12
-    = link_to( I18n.t(:add_new), new_training_path() )
+    = link_to( I18n.t(:add_new), new_user_training_path() )

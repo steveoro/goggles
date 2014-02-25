@@ -1,19 +1,19 @@
 .row-fluid
   .span3
-    = link_to( trainings_path() ) do
+    = link_to( user_trainings_path() ) do
       = image_tag('page_find.png')
       = I18n.t(:back_to_index_view)
   .span2
-    = link_to( printout_training_path(@training.id) ) do
+    = link_to( printout_training_path(@user_training.id) ) do
       = image_tag('page_white_acrobat.png')
       = I18n.t('agex_action.download_pdf')
   .span2
-    - if (@training.user_id == current_user.id)
-      = link_to( edit_training_path(@training.id) ) do
+    - if (@user_training.user_id == current_user.id)
+      = link_to( edit_user_training_path(@user_training.id) ) do
         = image_tag('page_edit.png')
         = I18n.t(:edit)
   .span2
-    = link_to( duplicate_training_path(@training.id), :method => :post, :confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel]) ) do
+    = link_to( duplicate_user_training_path(@user_training.id), :method => :post, :confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel]) ) do
       = I18n.t(:duplicate)
 
 .accordion
@@ -29,54 +29,49 @@
             .span2
               = 'ID:'
             .span10
-              = @training.id
-        .row-fluid
-          .span2
-            = I18n.t('activerecord.attributes.training.title') + ':'
-          .span10
-            = @training.title
+              = @user_training.id
         .row-fluid
           .span2
             = I18n.t('activerecord.attributes.training.description') + ':'
           .span10
-            = @training.description
+            = @user_training.description
         .row-fluid
           .span2
             = I18n.t('activerecord.attributes.training.user') + ':'
           .span10
-            = @training.get_user_name
+            = @user_training.get_user_name
         .row-fluid
           .span2
             = I18n.t('activerecord.models.swimmer_level_type') + ':'
           .span10
-            = @training.get_swimmer_level_type_description
+            = @user_training.get_swimmer_level_type( :i18n_description )
         .row-fluid
           .span2
             %i= I18n.t(:updated_at) + ':'
           .span10
-            %i= Format.a_short_datetime( @training.updated_at )
+            %i= Format.a_short_datetime( @user_training.updated_at )
         .row-fluid
           .span2
             = I18n.t('trainings.total_meters') + ':'
           .span10
-            = @training.compute_total_distance
+            = @user_training.compute_total_distance
         .row-fluid
           .span2
             = I18n.t('trainings.esteemed_timing') + ':'
           .span10
-            = Timing.to_hour_string( @training.compute_total_seconds() )
+            = Timing.to_hour_string( @user_training.compute_total_seconds() )
 
 .row-fluid
   .span12
     - curr_group_id = old_group_id = 0
-    - group_list_hash = @training.build_group_list_hash()
-    - @training_rows.each do |training_row|
-      - fields = training_row.to_array()
-      - if (training_row.group_id > 0) && group_list_hash.has_key?( training_row.group_id )
-        - curr_group_id = training_row.group_id
+    - group_list_hash = @user_training.build_group_list_hash()
+    - @user_training_rows.each do |user_training_row|
+      - fields = user_training_row.to_array()
+      - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id )
+        - curr_group_id = user_training_row.group_id
         - if old_group_id != curr_group_id          # Start of new group?
           - old_group_id = curr_group_id
-          - group_hash = group_list_hash[ training_row.group_id ]
+          - group_hash = group_list_hash[ user_training_row.group_id ]
           - tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
           - tot_group_timing = Timing.to_minute_string( tot_group_secs )
           .row-fluid

@@ -51,14 +51,13 @@ class Training < ActiveRecord::Base
     user ? user.name : ''
   end
 
-  # Retrieves the Swimmer level type short name
-  def get_swimmer_level_type_short
-    compose_swimmer_level_text_with( :i18n_short )
-  end
-
   # Retrieves the Swimmer level type full description
-  def get_swimmer_level_type_description
-    compose_swimmer_level_text_with( :i18n_description )
+  # Allows to specify which label method can be used for the output, defaults to
+  # the framework standard :i18n_short.
+  # Returns an empty string when not available.
+  #
+  def get_swimmer_level_type( label_method_sym = :i18n_short )
+    compose_swimmer_level_text_with( label_method_sym )
   end
   # ---------------------------------------------------------------------------
 

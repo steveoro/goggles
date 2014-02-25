@@ -25,8 +25,8 @@
       .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.toggle_frames_tooltip') }
         = link_to_function( image_tag('shape_group.png'), "$('.full_row').toggleClass('framed');" )
   %ul.droppable.sortable#training_rows
-    = f.simple_fields_for :training_rows do |training_row_form|
-      = render 'training_row_fields', :f => training_row_form
+    = f.simple_fields_for :user_training_rows do |user_training_row_form|
+      = render 'training_row_fields', :f => user_training_row_form
 
   %p
   %p
@@ -34,7 +34,7 @@
     = link_to_add_association( I18n.t(:add_new_row), f, :training_rows, :data => {'association-insertion-node'=>'#training_rows', 'association-insertion-method'=>'append'} )
   %p= f.button :submit, I18n.t(:save)
 
-  #maxPartOrder{'data-value' => @training_max_part_order || 0 }
+  #maxPartOrder{'data-value' => @user_training_max_part_order || 0 }
 
 %script
   $('.toolTip').tooltip({placement:'bottom'});

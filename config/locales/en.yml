@@ -1205,7 +1205,8 @@ en:
     title: "Misc"
     caledar: "Calendar"
     pools: "Swimming pools"
-    trainings: "Trainings"
+    trainings: "Trainings Models"
+    user_trainings: "User Trainings"
 
   trainings:
     index_title: "Search trainings"

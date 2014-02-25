@@ -1207,7 +1207,8 @@ it:
     title: "Varie"
     caledar: "Calendario"
     pools: "Piscine"
-    trainings: "Allenamenti"
+    trainings: "Modelli Allenamento"
+    user_trainings: "Allenamenti Utente"
 
   trainings:
     index_title: "Ricerca allenamenti"
