@@ -77,8 +77,6 @@ gem 'simple-navigation-bootstrap'
 
 gem "fuzzy-string-match_pure"                       # [Steve, 20131106] Used for Team/Swimmer names comparison & existence checking
 
-#gem 'rspec'
-
 gem "wice_grid", '~> 3.3'
 gem 'daemons'
 gem 'delayed_job_active_record'
@@ -88,8 +86,15 @@ gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
 
-gem "rspec"
-gem "rspec-rails"
+group [:development, :test] do
+  gem "rspec"
+  gem "rspec-rails"
+  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs (RSpec)
+end
+
+group :test do
+  gem "factory_girl_rails", "~> 3.0"
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
