@@ -86,13 +86,17 @@ gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
 
-group [:development, :test] do
+group :development do
   gem "rspec"
   gem "rspec-rails"
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs (RSpec)
+  gem "factory_girl_rails", "~> 3.0"
 end
 
 group :test do
+  gem "rspec"
+  gem "rspec-rails"
+  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs (RSpec)
   gem "factory_girl_rails", "~> 3.0"
 end
 

@@ -11,11 +11,11 @@ describe UserTrainingStoriesController do
 #      expect(response.status).to eq(200)
 #    end
 
-    it "redirects to the Login page" do
+    it "redirects to the Login page when not logged in" do
       get :index
       expect(response).to redirect_to( '/users/sign_in' )
-      follow_redirect!
-      expect(response).to render_template('/users/sessions/new')
+#      follow_redirect!
+#      expect(response).to render_template('/users/sessions/new')
     end
   end
   # ---------------------------------------------------------------------------
