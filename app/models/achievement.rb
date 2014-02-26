@@ -1,5 +1,7 @@
 class Achievement < ActiveRecord::Base
 
+  belongs_to :user
+
   has_many :achievement_rows
 
   validates_presence_of   :code
