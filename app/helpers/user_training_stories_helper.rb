@@ -1,0 +1,2 @@
+module UserTrainingStoriesHelper
+end

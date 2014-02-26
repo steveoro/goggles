@@ -23,7 +23,7 @@
 		end if (user_training.user_id == current_user.id) || admin_signed_in?
 	end
 	g.column do |user_training|
-		link_to( printout_training_path(user_training) ) do
+		link_to( printout_user_training_path(user_training) ) do
 			image_tag('page_white_acrobat.png') << " PDF"
 		end
 	end
