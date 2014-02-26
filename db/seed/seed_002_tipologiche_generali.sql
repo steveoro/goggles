@@ -124,18 +124,28 @@ INSERT INTO pool_types (id,code,length_in_meters,lock_version,created_at,updated
 (3,'33',33,0,CURDATE(),CURDATE());
 
 --
--- Dump dei dati per la tabella swimmer_level_types
+-- Dump dei dati per la tabella achievement_types
 -- 
-INSERT INTO swimmer_level_types (id,code,level,lock_version,created_at,updated_at) VALUES 
-(1,'PR',10,0,CURDATE(),CURDATE()),
-(2,'IN',20,0,CURDATE(),CURDATE()),
-(3,'AV',30,0,CURDATE(),CURDATE()),
-(4,'ES',50,0,CURDATE(),CURDATE()),
-(5,'MA',100,0,CURDATE(),CURDATE()),
-(6,'MM',150,0,CURDATE(),CURDATE()),
-(7,'MS',180,0,CURDATE(),CURDATE()),
-(8,'AG',200,0,CURDATE(),CURDATE()),
-(9,'AA',250,0,CURDATE(),CURDATE());
+INSERT INTO achievement_types (id,code,lock_version,created_at,updated_at) VALUES 
+(1,'AAMG',0,CURDATE(),CURDATE()),
+(2,'ADNG',0,CURDATE(),CURDATE()),
+(3,'AMPF',0,CURDATE(),CURDATE()),
+(4,'ANGD',0,CURDATE(),CURDATE()),
+(5,'ATNG',0,CURDATE(),CURDATE()),
+(6,'ATSV',0,CURDATE(),CURDATE()),
+(7,'ASTA',0,CURDATE(),CURDATE()),
+(8,'ASQU',0,CURDATE(),CURDATE()),
+(9,'AORO',0,CURDATE(),CURDATE()),
+(10,'AMED',0,CURDATE(),CURDATE()),
+(11,'AKMA',0,CURDATE(),CURDATE()),
+(12,'AKMF',0,CURDATE(),CURDATE()),
+(13,'AKMG',0,CURDATE(),CURDATE()),
+(14,'SIRN',0,CURDATE(),CURDATE()),
+(15,'SKMA',0,CURDATE(),CURDATE()),
+(16,'SKMF',0,CURDATE(),CURDATE()),
+(17,'SKMG',0,CURDATE(),CURDATE()),
+(18,'SMDF',0,CURDATE(),CURDATE()),
+(19,'SPBS',0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella day_part_types
