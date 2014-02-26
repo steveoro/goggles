@@ -41,6 +41,15 @@ class UserTraining < ActiveRecord::Base
   def get_user_name
     user ? user.name : ''
   end
+
+  # Retrieves the Swimmer level type description
+  # Allows to specify which label method can be used for the output, defaults to
+  # the framework standard :i18n_short.
+  # Returns an empty string when not available.
+  #
+  def get_swimmer_level_type( label_method_sym = :i18n_short )
+    user ? user.get_swimmer_level_type( label_method_sym ) : ''
+  end
   # ---------------------------------------------------------------------------
 
   # Computes the total distance in metres for this training.

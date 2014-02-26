@@ -1,0 +1,43 @@
+.row-fluid.span12
+
+= simple_form_for @user_training do |f|
+  = f.input :title, input_html: { class: 'span5' }
+  = f.input :description, input_html: { rows: 3, class: 'span8' }
+  = f.input :min_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_min_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) ) 
+  = f.input :max_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_max_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) )
+
+  .row-fluid.goggles-div-centeralign
+    .span1
+      %i= I18n.t('activerecord.attributes.training_rows.part_order') + ' / ' + I18n.t('trainings.group')
+    .span2
+      %i= I18n.t('activerecord.models.training_step_type')
+    .span1
+      %i= I18n.t('activerecord.attributes.training_rows.times')
+    .span1
+      %i= I18n.t('activerecord.attributes.training_rows.distance')
+    .span4
+      %i= I18n.t('activerecord.attributes.training_rows.exercise')
+    .span1
+      %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
+    .span1
+      %i= I18n.t('activerecord.attributes.training_rows.pause')
+    .span1
+      .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.toggle_frames_tooltip') }
+        = link_to_function( image_tag('shape_group.png'), "$('.full_row').toggleClass('framed');" )
+  %ul.droppable.sortable#training_rows
+    = f.simple_fields_for :user_training_rows do |user_training_row_form|
+      = render 'training_row_fields', :f => user_training_row_form
+
+  %p
+  %p
+    %i= "#{I18n.t(:drag_and_drop_to_sort_rows)} / "
+    = link_to_add_association( I18n.t(:add_new_row), f, :training_rows, :data => {'association-insertion-node'=>'#training_rows', 'association-insertion-method'=>'append'} )
+  %p= f.button :submit, I18n.t(:save)
+
+  #maxPartOrder{'data-value' => @user_training_max_part_order || 0 }
+
+%script
+  $('.toolTip').tooltip({placement:'bottom'});
+  var exerciseAutocompleteURL = "#{ json_list_exercises_path() }";
+
+= javascript_include_tag 'training_row_form'

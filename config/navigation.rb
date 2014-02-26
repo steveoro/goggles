@@ -84,9 +84,10 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item( :key_misc,  t('misc_main_menu.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_calendar,    t('meeting_calendar.navigation'), meeting_calendars_path()
-      lev2_nav.item :key_pools,       t('swimming_pool.pools'),         swimming_pools_path()
-      lev2_nav.item :key_trainings,   t('misc_main_menu.trainings'),    trainings_path()
+      lev2_nav.item :key_calendar,              t('meeting_calendar.navigation'),   meeting_calendars_path()
+      lev2_nav.item :key_pools,                 t('swimming_pool.pools'),           swimming_pools_path()
+      lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),      trainings_path()
+      lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'), user_trainings_path()
     end
 
     primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'

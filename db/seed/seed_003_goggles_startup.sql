@@ -6684,4 +6684,106 @@ INSERT INTO meeting_events (id,event_order,begin_time,is_out_of_race,user_id,mee
 (2101,2,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 13211 and t.session_order = 9),(select t.id from event_types t where t.code = 'S4X50SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (2102,5,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 70 and t.session_order = 1),(select t.id from event_types t where t.code = 'S8X25SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE());
 
+--
+-- Dump dei dati per la tabella achievements
+-- 
+INSERT INTO achievements (id,code,user_id,lock_version,created_at,updated_at) VALUES 
+(1,'NEWENTRY',2,0,CURDATE(),CURDATE()),
+(2,'YUPPIES',2,0,CURDATE(),CURDATE()),
+(3,'SECURE',2,0,CURDATE(),CURDATE()),
+(4,'ADVANCED',2,0,CURDATE(),CURDATE()),
+(5,'EXPERT',2,0,CURDATE(),CURDATE()),
+(6,'VETERAN',2,0,CURDATE(),CURDATE()),
+(7,'SENIOR',2,0,CURDATE(),CURDATE()),
+(8,'SENVET',2,0,CURDATE(),CURDATE()),
+(9,'ELITE',2,0,CURDATE(),CURDATE()),
+(10,'ELIVET',2,0,CURDATE(),CURDATE()),
+(11,'TOP',2,0,CURDATE(),CURDATE()),
+(12,'TOPVET',2,0,CURDATE(),CURDATE());
+
+--
+-- Dump dei dati per la tabella achievement_rows
+-- 
+INSERT INTO achievement_rows (id,part_order,achievement_value,is_bracket_open,is_or_operator,is_not_operator,is_bracket_closed,achievement_id,achievement_type_id,lock_version,created_at,updated_at) VALUES 
+(1,1,'3',0,0,0,0,(select t.id from achievements t where t.code = 'NEWENTRY'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(2,2,'500',0,0,0,0,(select t.id from achievements t where t.code = 'NEWENTRY'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(3,1,'25',0,0,0,0,(select t.id from achievements t where t.code = 'YUPPIES'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(4,2,'650',0,0,0,0,(select t.id from achievements t where t.code = 'YUPPIES'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(5,3,'1',1,0,0,0,(select t.id from achievements t where t.code = 'YUPPIES'),(select t.id from achievement_types t where t.code = 'SIRN'),0,CURDATE(),CURDATE()),
+(6,4,'300',0,1,0,0,(select t.id from achievements t where t.code = 'YUPPIES'),(select t.id from achievement_types t where t.code = 'SKMA'),0,CURDATE(),CURDATE()),
+(7,5,'5',0,1,0,1,(select t.id from achievements t where t.code = 'YUPPIES'),(select t.id from achievement_types t where t.code = 'SPBS'),0,CURDATE(),CURDATE()),
+(8,1,'50',0,0,0,0,(select t.id from achievements t where t.code = 'SECURE'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(9,2,'700',0,0,0,0,(select t.id from achievements t where t.code = 'SECURE'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(10,3,'2',1,0,0,0,(select t.id from achievements t where t.code = 'SECURE'),(select t.id from achievement_types t where t.code = 'SIRN'),0,CURDATE(),CURDATE()),
+(11,4,'400',0,1,0,0,(select t.id from achievements t where t.code = 'SECURE'),(select t.id from achievement_types t where t.code = 'SKMA'),0,CURDATE(),CURDATE()),
+(12,5,'100',0,1,0,0,(select t.id from achievements t where t.code = 'SECURE'),(select t.id from achievement_types t where t.code = 'AAMG'),0,CURDATE(),CURDATE()),
+(13,6,'5',0,1,0,1,(select t.id from achievements t where t.code = 'SECURE'),(select t.id from achievement_types t where t.code = 'ASTA'),0,CURDATE(),CURDATE()),
+(14,1,'75',0,0,0,0,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(15,2,'750',0,0,0,0,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(16,3,'800',1,0,0,0,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(17,4,'500',0,1,0,0,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'SKMA'),0,CURDATE(),CURDATE()),
+(18,5,'100',0,1,0,0,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(19,6,'20000',0,1,0,0,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'ADNG'),0,CURDATE(),CURDATE()),
+(20,7,'28800',0,1,0,1,(select t.id from achievements t where t.code = 'ADVANCED'),(select t.id from achievement_types t where t.code = 'ATNG'),0,CURDATE(),CURDATE()),
+(21,1,'100',0,0,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(22,2,'750',0,0,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(23,3,'800',1,0,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(24,4,'600',0,1,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'SKMA'),0,CURDATE(),CURDATE()),
+(25,5,'125',0,1,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(26,6,'30000',0,1,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'ADNG'),0,CURDATE(),CURDATE()),
+(27,7,'43200',0,1,0,0,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'ATNG'),0,CURDATE(),CURDATE()),
+(28,8,'10',0,1,0,1,(select t.id from achievements t where t.code = 'EXPERT'),(select t.id from achievement_types t where t.code = 'ASTA'),0,CURDATE(),CURDATE()),
+(29,1,'150',0,0,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(30,2,'750',0,0,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(31,3,'2',0,0,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'SIRN'),0,CURDATE(),CURDATE()),
+(32,4,'800',1,0,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(33,5,'750',0,1,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'SKMA'),0,CURDATE(),CURDATE()),
+(34,6,'200',0,1,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(35,7,'50000',0,1,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'ADNG'),0,CURDATE(),CURDATE()),
+(36,8,'72000',0,1,0,0,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'ATNG'),0,CURDATE(),CURDATE()),
+(37,9,'15',0,1,0,1,(select t.id from achievements t where t.code = 'VETERAN'),(select t.id from achievement_types t where t.code = 'ASTA'),0,CURDATE(),CURDATE()),
+(38,1,'850',0,0,0,0,(select t.id from achievements t where t.code = 'SENIOR'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(39,2,'800',0,1,0,0,(select t.id from achievements t where t.code = 'SENIOR'),(select t.id from achievement_types t where t.code = 'SMDF'),0,CURDATE(),CURDATE()),
+(40,1,'850',1,0,0,0,(select t.id from achievements t where t.code = 'SENVET'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(41,2,'800',0,1,0,1,(select t.id from achievements t where t.code = 'SENVET'),(select t.id from achievement_types t where t.code = 'SMDF'),0,CURDATE(),CURDATE()),
+(42,3,'2',0,0,0,0,(select t.id from achievements t where t.code = 'SENVET'),(select t.id from achievement_types t where t.code = 'SIRN'),0,CURDATE(),CURDATE()),
+(43,4,'15',0,0,0,0,(select t.id from achievements t where t.code = 'SENVET'),(select t.id from achievement_types t where t.code = 'ASTA'),0,CURDATE(),CURDATE()),
+(44,5,'150',0,0,0,0,(select t.id from achievements t where t.code = 'SENVET'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(45,1,'900',0,0,0,0,(select t.id from achievements t where t.code = 'ELITE'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(46,2,'850',0,1,0,0,(select t.id from achievements t where t.code = 'ELITE'),(select t.id from achievement_types t where t.code = 'SMDF'),0,CURDATE(),CURDATE()),
+(47,1,'900',1,0,0,0,(select t.id from achievements t where t.code = 'ELIVET'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(48,2,'850',0,1,0,1,(select t.id from achievements t where t.code = 'ELIVET'),(select t.id from achievement_types t where t.code = 'SMDF'),0,CURDATE(),CURDATE()),
+(49,3,'2',0,0,0,0,(select t.id from achievements t where t.code = 'ELIVET'),(select t.id from achievement_types t where t.code = 'SIRN'),0,CURDATE(),CURDATE()),
+(50,4,'15',0,0,0,0,(select t.id from achievements t where t.code = 'ELIVET'),(select t.id from achievement_types t where t.code = 'ASTA'),0,CURDATE(),CURDATE()),
+(51,5,'150',0,0,0,0,(select t.id from achievements t where t.code = 'ELIVET'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE()),
+(52,1,'1000',0,0,0,0,(select t.id from achievements t where t.code = 'TOP'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(53,1,'1000',0,0,0,0,(select t.id from achievements t where t.code = 'TOPVET'),(select t.id from achievement_types t where t.code = 'AMPF'),0,CURDATE(),CURDATE()),
+(54,2,'2',0,0,0,0,(select t.id from achievements t where t.code = 'TOPVET'),(select t.id from achievement_types t where t.code = 'SIRN'),0,CURDATE(),CURDATE()),
+(55,3,'15',0,0,0,0,(select t.id from achievements t where t.code = 'TOPVET'),(select t.id from achievement_types t where t.code = 'ASTA'),0,CURDATE(),CURDATE()),
+(56,4,'150',0,0,0,0,(select t.id from achievements t where t.code = 'TOPVET'),(select t.id from achievement_types t where t.code = 'ANGD'),0,CURDATE(),CURDATE());
+
+--
+-- Dump dei dati per la tabella swimmer_level_types
+-- 
+INSERT INTO swimmer_level_types (id,code,level,achievement_id,lock_version,created_at,updated_at) VALUES 
+(1,'PR',10,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE()),
+(2,'IN',20,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE()),
+(3,'AV',30,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE()),
+(4,'ES',50,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE()),
+(5,'M0',100,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE()),
+(6,'MN',110,(select t.id from achievements t where t.code = 'NEWENTRY'),0,CURDATE(),CURDATE()),
+(7,'MY',120,(select t.id from achievements t where t.code = 'YUPPIES'),0,CURDATE(),CURDATE()),
+(8,'MR',130,(select t.id from achievements t where t.code = 'SECURE'),0,CURDATE(),CURDATE()),
+(9,'MA',140,(select t.id from achievements t where t.code = 'ADVANCED'),0,CURDATE(),CURDATE()),
+(10,'MX',150,(select t.id from achievements t where t.code = 'EXPERT'),0,CURDATE(),CURDATE()),
+(11,'MV',160,(select t.id from achievements t where t.code = 'VETERAN'),0,CURDATE(),CURDATE()),
+(12,'MS',200,(select t.id from achievements t where t.code = 'SENIOR'),0,CURDATE(),CURDATE()),
+(13,'SV',250,(select t.id from achievements t where t.code = 'SENVET'),0,CURDATE(),CURDATE()),
+(14,'ME',300,(select t.id from achievements t where t.code = 'ELITE'),0,CURDATE(),CURDATE()),
+(15,'EV',350,(select t.id from achievements t where t.code = 'ELIVET'),0,CURDATE(),CURDATE()),
+(16,'MT',400,(select t.id from achievements t where t.code = 'TOP'),0,CURDATE(),CURDATE()),
+(17,'TV',450,(select t.id from achievements t where t.code = 'TOPVET'),0,CURDATE(),CURDATE()),
+(18,'AG',500,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE()),
+(19,'AA',550,(select t.id from achievements t where t.code = ''),0,CURDATE(),CURDATE());
+
 COMMIT;

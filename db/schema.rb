@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140221221530) do
+ActiveRecord::Schema.define(:version => 20140226130430) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20140221221530) do
     t.datetime "created_at",                                :null => false
     t.datetime "updated_at",                                :null => false
     t.string   "code",         :limit => 10,                :null => false
+    t.integer  "user_id"
   end
 
   add_index "achievements", ["code"], :name => "index_achievements_on_code", :unique => true
@@ -1535,7 +1536,7 @@ ActiveRecord::Schema.define(:version => 20140221221530) do
     t.integer  "user_id"
   end
 
-  add_index "user_trainings", ["description"], :name => "index_user_trainings_on_description", :unique => true
+  add_index "user_trainings", ["user_id", "description"], :name => "index_user_trainings_on_user_id_and_description"
 
   create_table "users", :force => true do |t|
     t.integer  "lock_version",                                 :default => 0

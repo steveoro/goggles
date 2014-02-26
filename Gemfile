@@ -88,6 +88,8 @@ gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
 
+gem "rspec"
+gem "rspec-rails"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

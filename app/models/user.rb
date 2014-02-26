@@ -117,6 +117,18 @@ class User < ActiveRecord::Base
   def get_preferred_swimmer_level_id
     swimmer_level_type ? swimmer_level_type.id : 0
   end
+
+  # Retrieves the swimmer level typ description, when set.
+  # Allows to specify which label method can be used for the output, defaults to
+  # the framework standard :i18n_short.
+  # Returns an empty string when not available.
+  def get_swimmer_level_type( label_method_sym = :i18n_short )
+    if swimmer_level_type
+      swimmer_level_type.send( label_method_sym.to_sym )  # (just to be sure)
+    else
+      ''
+    end
+  end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 

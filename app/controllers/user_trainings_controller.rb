@@ -4,7 +4,7 @@ require 'common/format'
 require 'training_printout_layout'
 
 
-class TrainingsController < ApplicationController
+class UserTrainingsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_user!
@@ -18,10 +18,10 @@ class TrainingsController < ApplicationController
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('trainings.index_title')
-    @trainings_grid = initialize_grid(
-      Training,
+    @user_trainings_grid = initialize_grid(
+      UserTraining,
 #      :include => [:swimmer_level_type],
-      :order => :title,
+      :order => :updated_at,
       :order_direction => 'asc',
       :per_page => 20
     )
@@ -34,14 +34,14 @@ class TrainingsController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    user_training_id = params[:id].to_i
+    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    unless ( @user_training )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
-    @training_rows = @training.training_rows.includes(:exercise, :training_step_type).all
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
+    @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
   # ---------------------------------------------------------------------------
 
@@ -49,8 +49,8 @@ class TrainingsController < ApplicationController
   # New action.
   #
   def new
-    @training = Training.new
-    @training_max_part_order = 0
+    @user_training = UserTraining.new
+    @user_training_max_part_order = 0
     render :edit
   end
 
@@ -62,20 +62,20 @@ class TrainingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.create() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
-      @training = Training.new( params[:training] )
+      @user_training = UserTraining.new( params[:user_training] )
                                                     # Set the owner for all the records:
-      @training.user_id = current_user.id
-      @training.training_rows.each{|row| row.user_id = current_user.id }
+      @user_training.user_id = current_user.id
+      @user_training.user_training_rows.each{|row| row.user_id = current_user.id }
 
-      if @training.save
+      if @user_training.save
         flash[:notice] = I18n.t('trainings.training_created')
-        redirect_to( training_path(@training) )
+        redirect_to( user_training_path(@user_training) )
       else
         render :action => :edit
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
   end
   # ---------------------------------------------------------------------------
@@ -87,14 +87,14 @@ class TrainingsController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.edit() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    @training_max_part_order = @training.training_rows.maximum(:part_order)
-    unless ( @training )
+    user_training_id = params[:id].to_i
+    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
+    unless ( @user_training )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.title )
   end
 
 
@@ -104,15 +104,15 @@ class TrainingsController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.update() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    user_training_id = params[:id].to_i
+    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    unless ( @user_training )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
-    if @training.update_attributes( params[:training] )
+    if @user_training.update_attributes( params[:user_training] )
       flash[:notice] = I18n.t('trainings.training_updated')
-      redirect_to( training_path(@training) )
+      redirect_to( user_training_path(@user_training) )
     else
       render :action => 'edit'
     end
@@ -126,14 +126,14 @@ class TrainingsController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.destroy() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    user_training_id = params[:id].to_i
+    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    unless ( @user_training )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
-    @training.destroy
-    redirect_to( trainings_path() )
+    @user_training.destroy
+    redirect_to( user_trainings_path() )
   end
   # ---------------------------------------------------------------------------
 
@@ -151,14 +151,14 @@ class TrainingsController < ApplicationController
 # DEBUG
 #    logger.debug( "\r\n\r\n---[ #{controller_name()}.printout ] ---" ) if DEBUG_VERBOSE
 #    logger.debug( "Params: #{params.inspect()}" ) if DEBUG_VERBOSE
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    user_training_id = params[:id].to_i
+    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    unless ( @user_training )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
-    @training_rows = @training.training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
+    @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.title )
 
                                                     # == OPTIONS setup + RENDERING phase ==
     filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{@training.title}" ) + '.pdf'
@@ -166,8 +166,8 @@ class TrainingsController < ApplicationController
       :report_title         => @title,
       :meta_info_subject    => 'training model printout',
       :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, '#{@training.title}'",
-      :header_row           => @training,
-      :detail_rows          => @training_rows
+      :header_row           => @user_training,
+      :detail_rows          => @user_training_rows
     }
                                                     # == Render layout & send data:
     send_data(
@@ -191,33 +191,33 @@ class TrainingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
-      training_id = params[:id].to_i
-      old_training = Training.find_by_id( training_id )
-      old_training_rows = TrainingRow.where(:training_id => old_training.id)
+      user_training_id = params[:id].to_i
+      old_user_training = UserTraining.find_by_id( user_training_id )
+      old_user_training_rows = UserTrainingRow.where(:user_training_id => old_user_training.id)
 
-      new_training = Training.new( old_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
-      new_training.title = "#{I18n.t(:copy_of)} '#{old_training.title}'"
-      new_training.user_id = current_user.id
+      new_user_training = UserTraining.new( old_user_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+      new_user_training.title = "#{I18n.t(:copy_of)} '#{old_user_training.title}'"
+      new_user_training.user_id = current_user.id
 
       begin
-        if new_training.save!
+        if new_user_training.save!
           created_group_ids = {}                    # Store in a hash which group IDs we have already created
-          old_training_rows.each { |old_row|
-            new_row = TrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
-            new_row.training_id = new_training.id
+          old_user_training_rows.each { |old_row|
+            new_row = UserTrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+            new_row.user_training_id = new_user_training.id
             new_row.save!
           }
           flash[:notice] = I18n.t('trainings.training_created')
-          redirect_to( edit_training_path(new_training) ) and return
+          redirect_to( edit_user_training_path(new_user_training) ) and return
         end
       rescue
         flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
                         ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
-        redirect_to( trainings_path() ) and return
+        redirect_to( user_trainings_path() ) and return
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( trainings_path() ) and return
+      redirect_to( user_trainings_path() ) and return
     end
   end
   # ---------------------------------------------------------------------------
