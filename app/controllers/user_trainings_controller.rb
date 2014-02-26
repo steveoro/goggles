@@ -94,7 +94,7 @@ class UserTrainingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
     end
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.title )
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
 
 
@@ -158,14 +158,14 @@ class UserTrainingsController < ApplicationController
       redirect_to( user_trainings_path() ) and return
     end
     @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.title )
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
 
                                                     # == OPTIONS setup + RENDERING phase ==
-    filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{@training.title}" ) + '.pdf'
+    filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{@user_training.description}" ) + '.pdf'
     options = {
       :report_title         => @title,
       :meta_info_subject    => 'training model printout',
-      :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, '#{@training.title}'",
+      :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, #{@user_training.description}",
       :header_row           => @user_training,
       :detail_rows          => @user_training_rows
     }
@@ -196,7 +196,7 @@ class UserTrainingsController < ApplicationController
       old_user_training_rows = UserTrainingRow.where(:user_training_id => old_user_training.id)
 
       new_user_training = UserTraining.new( old_user_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
-      new_user_training.title = "#{I18n.t(:copy_of)} '#{old_user_training.title}'"
+      new_user_training.description = "#{I18n.t(:copy_of)} ""#{old_user_training.description}"""
       new_user_training.user_id = current_user.id
 
       begin

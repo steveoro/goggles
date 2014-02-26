@@ -28,3 +28,6 @@
 /config/database.yml
 /config/deploy.rb
 /config/deploy/*
+
+# Ignore auto-generated files:
+/db/schema.rb
