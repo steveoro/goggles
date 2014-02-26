@@ -19,6 +19,11 @@ class SwimmerLevelType < ActiveRecord::Base
   def i18n_description
     I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:swimmer_level_types]} )
   end
+
+  # Computes a localized verbose explanation for the value/code associated with this data
+  def i18n_explanation
+    I18n.t( "i18n_explanation_#{ self.code }".to_sym, {:scope=>[:swimmer_level_types]} )
+  end
   # ----------------------------------------------------------------------------
 
 
