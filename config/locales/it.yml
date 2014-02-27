@@ -1322,6 +1322,9 @@ it:
     create_user_story: "L'ho fatto!"
     create_user_story_ask_confirm: "Questo creera' una tua nuova Storia per questo Allenamento, assumendo che tu l'abbia effettivamente fatto (in modo da poter inserire commenti). Continuo?"
 
+  user_training_stories:
+    index_title: "Ricerca Storie Allenamento"
+
 
   agex_action:
     main: Principale

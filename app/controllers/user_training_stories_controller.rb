@@ -17,8 +17,8 @@ class UserTrainingStoriesController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
+    @title = I18n.t('user_training_stories.index_title')
 # TODO
-    # @title = I18n.t('user_trainings.index_title')
     # @user_trainings_grid = initialize_grid(
       # UserTraining,
 # #      :include => [:swimmer_level_type],

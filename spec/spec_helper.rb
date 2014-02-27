@@ -11,7 +11,7 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 RSpec.configure do |config|
   # [Steve, 20140226] Add helpers to get Devise working with RSpec
   config.include Devise::TestHelpers, :type => :controller
-  
+
   # [Steve, 20140226] Configure FactoryGirl to work with RSpec
   config.include FactoryGirl::Syntax::Methods
 
