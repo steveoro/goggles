@@ -5,6 +5,7 @@
 		name: I18n.t( :title, {:scope=>[:activerecord, :attributes, :training]} ),
 		attribute: 'title',
 	) do |training|
+		@can_edit = (training.user_id == current_user.id) || admin_signed_in?
 		link_to( training.title, training_path(training) )
 	end
 
@@ -31,32 +32,57 @@
 		training.get_user_name
 	end
 
+	g.column do |training|
+		[
+			link_to(
+					I18n.t('trainings.create_user_training'),
+					create_user_training_training_path(training),
+					:method => :post,
+					:confirm => I18n.t('trainings.create_user_training_ask_confirm')
+	 		),
+	 		{ :class => 'goggles-centeralign' }
+		]
+	end
+
 	g.column do |training|							# Enable edit action link, but only if the current user is the owner:
-		link_to( edit_training_path(training) ) do
-			image_tag('page_edit.png') << " #{I18n.t(:edit)}"
-		end if (training.user_id == current_user.id) || admin_signed_in?
-	end
+		[
+			link_to( edit_training_path(training) ) do
+				image_tag('page_edit.png') << " #{I18n.t(:edit)}"
+			end,
+	 		{ :class => 'goggles-centeralign' }
+		]
+	end if @can_edit
+
 	g.column do |training|
-		link_to( printout_training_path(training) ) do
-			image_tag('page_white_acrobat.png') << " PDF"
-		end
+		[
+			link_to( printout_training_path(training) ) do
+				image_tag('page_white_acrobat.png') << " PDF"
+			end,
+	 		{ :class => 'goggles-centeralign' }
+		]
 	end
 
 	g.column do |training|
-		link_to(									# Enable delete action link, but only if the current user is the owner:
-				I18n.t(:delete),
-				training_path(training),
-				:method => :delete,
-				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
- 		) if (training.user_id == current_user.id) || admin_signed_in?
-	end
+		[
+			link_to(								# Enable delete action link, but only if the current user is the owner:
+					I18n.t(:delete),
+					training_path(training),
+					:method => :delete,
+					:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
+	 		),
+	 		{ :class => 'goggles-centeralign' }
+		]
+	end if @can_edit
 
 	g.column do |training|
-		link_to(
-				I18n.t(:duplicate),
-				duplicate_training_path(training),
-				:method => :post,
-				:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
- 		)
+		[
+			link_to(
+					I18n.t(:duplicate),
+					duplicate_training_path(training),
+					:method => :post,
+					:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
+	 		),
+	 		{ :class => 'goggles-centeralign' }
+		]
 	end
 end -%>

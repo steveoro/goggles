@@ -15,7 +15,7 @@ class TrainingsController < ApplicationController
   #
   def index
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('trainings.index_title')
     @trainings_grid = initialize_grid(
@@ -209,6 +209,54 @@ class TrainingsController < ApplicationController
           }
           flash[:notice] = I18n.t('trainings.training_created')
           redirect_to( edit_training_path(new_training) ) and return
+        end
+      rescue
+        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
+                        ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        redirect_to( trainings_path() ) and return
+      end
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( trainings_path() ) and return
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Use a training with all its details as a model for a UserTraining (POST only).
+  #
+  # == Params:
+  #
+  # - <tt>:id</tt> =>
+  #   The id of the Training; all its details will be retrieved also.
+  #
+  def create_user_training
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+    if request.post?
+      training_id = params[:id].to_i
+      training = Training.find_by_id( training_id )
+      training_rows = TrainingRow.where(:training_id => training.id)
+
+      user_training = UserTraining.new()
+      user_training.description = "#{training.title}, #{Format.a_date(Date.today)}"
+      user_training.user_id = current_user.id
+
+      begin
+        if user_training.save!
+          created_group_ids = {}                    # Store in a hash which group IDs we have already created
+          training_rows.each { |training_row|
+            user_training_row = UserTrainingRow.new(
+              training_row.attributes.reject{|e|
+                ['id','lock_version','created_at','updated_at','training_id'].include?(e)
+              }
+            )
+            user_training_row.user_training_id = user_training.id
+            user_training_row.save!
+          }
+          flash[:notice] = I18n.t('user_trainings.training_created')
+          redirect_to( edit_user_training_path(user_training) ) and return
         end
       rescue
         flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +

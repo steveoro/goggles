@@ -54,12 +54,14 @@ Goggles::Application.routes.draw do
         member do
           get 'printout'
           post 'duplicate'
+          post 'create_user_training'
         end
       end
       resources :user_trainings do
         member do
           get 'printout'
           post 'duplicate'
+          post 'create_user_story'
         end
       end
       resources :user_training_stories

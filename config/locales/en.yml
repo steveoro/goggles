@@ -1288,11 +1288,11 @@ en:
     user_trainings: "User Trainings"
 
   trainings:
-    index_title: "Search trainings"
+    index_title: "Search Training Models"
     details: "Details"
-    training_created: "Training successfully created!"
-    training_updated: "Training successfully updated!"
-    training_deleted: "Training successfully deleted!"
+    training_created: "Training Model successfully created!"
+    training_updated: "Training Model successfully updated!"
+    training_deleted: "Training Model successfully deleted!"
     show_title: "Training '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Choose the swimmer level"
     chose_min_swimmer_level: "Choose min swimmer lev."
@@ -1308,6 +1308,16 @@ en:
     toggle_frames_tooltip: "Toggle the helper frames for row drag'n'drop"
     link_break_tooltip: "Clear the grouping and separate the rows"
     delete_row_tooltip: "Set the row as 'to be deleted' when the data will be saved"
+    create_user_training: "I'm doing this!"
+    create_user_training_ask_confirm: "This will create a new Training of yours to be done (or already done in the past). Do you want to proceed?"
+
+  user_trainings:
+    index_title: "Search User Trainings"
+    training_created: "User Training successfully created!"
+    training_updated: "User Training successfully updated!"
+    training_deleted: "User Training successfully deleted!"
+    create_user_story: "I've done it!"
+    create_user_story_ask_confirm: "This will create a new Training Story of yours regarding this Training, assuming You have indeed already done it (so that you can put in your comments). Do you want to proceed?"
 
 
   agex_action:

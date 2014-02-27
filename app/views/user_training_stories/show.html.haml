@@ -1,0 +1,107 @@
+.row-fluid
+  .span3
+    = link_to( user_trainings_path() ) do
+      = image_tag('page_find.png')
+      = I18n.t(:back_to_index_view)
+  .span2
+    = link_to( printout_user_training_path(@user_training.id) ) do
+      = image_tag('page_white_acrobat.png')
+      = I18n.t('agex_action.download_pdf')
+  .span2
+    - if (@user_training.user_id == current_user.id)
+      = link_to( edit_user_training_path(@user_training.id) ) do
+        = image_tag('page_edit.png')
+        = I18n.t(:edit)
+  .span2
+    = link_to( duplicate_user_training_path(@user_training.id), :method => :post, :confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel]) ) do
+      = I18n.t(:duplicate)
+
+.accordion
+  .accordion-group
+    .accordion-heading.goggles-accordion-heading
+      .row-fluid
+        .span12
+          %h3= @title
+    .accordion-body
+      .accordion-inner
+        - if admin_signed_in?
+          .row-fluid
+            .span2
+              = 'ID:'
+            .span10
+              = @user_training.id
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.training.description') + ':'
+          .span10
+            = @user_training.description
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.attributes.training.user') + ':'
+          .span10
+            = @user_training.get_user_name
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.swimmer_level_type') + ':'
+          .span10
+            = @user_training.get_swimmer_level_type( :i18n_description )
+        .row-fluid
+          .span2
+            %i= I18n.t(:updated_at) + ':'
+          .span10
+            %i= Format.a_short_datetime( @user_training.updated_at )
+        .row-fluid
+          .span2
+            = I18n.t('trainings.total_meters') + ':'
+          .span10
+            = @user_training.compute_total_distance
+        .row-fluid
+          .span2
+            = I18n.t('trainings.esteemed_timing') + ':'
+          .span10
+            = Timing.to_hour_string( @user_training.compute_total_seconds() )
+
+.row-fluid
+  .span12
+    - curr_group_id = old_group_id = 0
+    - group_list_hash = @user_training.build_group_list_hash()
+    - @user_training_rows.each do |user_training_row|
+      - fields = user_training_row.to_array()
+      - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id )
+        - curr_group_id = user_training_row.group_id
+        - if old_group_id != curr_group_id          # Start of new group?
+          - old_group_id = curr_group_id
+          - group_hash = group_list_hash[ user_training_row.group_id ]
+          - tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
+          - tot_group_timing = Timing.to_minute_string( tot_group_secs )
+          .row-fluid
+            .span2.goggles-training
+              %pre= "#{fields[0]} #{fields[1]} (#{ tot_group_timing })"
+            .span1.goggles-training
+              %pre= "#{group_hash[:times]}x"
+            - group_pause = group_hash[:pause].to_i
+            - group_s_r   = group_hash[:start_and_rest].to_i
+            - if ( group_pause > 0 || group_s_r > 0 )
+              .span2.goggles-training
+                %pre= "#{ Timing.to_formatted_start_and_rest( group_s_r ) } #{ Timing.to_formatted_pause( group_pause ) }"
+          .row-fluid
+            .offset2.span1.goggles-div-rightalign.goggles-training
+              %pre= "(+) #{fields[3]}"
+            .span9.goggles-training
+              %pre= fields[4]
+        - else                                      # Same old group?
+          .row-fluid
+            .offset2.span1.goggles-div-rightalign.goggles-training
+              %pre= "(+) #{fields[3]}"
+            .span9.goggles-training
+              %pre= fields[4]
+      - else                                        # Not in a group?
+        - curr_group_id = 0
+        .row-fluid
+          .span2.goggles-training
+            %pre
+              = "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(fields[2]) })"
+          .span1.goggles-div-rightalign.goggles-training
+            %pre= fields[3]
+          .span9.goggles-training
+            %pre= fields[4]

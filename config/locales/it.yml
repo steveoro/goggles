@@ -1291,11 +1291,11 @@ it:
     user_trainings: "Allenamenti Utente"
 
   trainings:
-    index_title: "Ricerca allenamenti"
+    index_title: "Ricerca Modelli Allenamento"
     details: "Dettagli"
-    training_created: "Allenamento creato con successo!"
-    training_updated: "Allenamento aggiornato con successo!"
-    training_deleted: "Allenamento eliminato!"
+    training_created: "Modello Allenamento creato con successo!"
+    training_updated: "Modello Allenamento aggiornato con successo!"
+    training_deleted: "Modello Allenamento eliminato!"
     show_title: "Allenamento '{TRAINING_TITLE}'"
     chose_swimmer_level_type: "Scegli il liv. nuotatore"
     chose_min_swimmer_level: "Scegli il liv. min. nuotatore"
@@ -1311,6 +1311,16 @@ it:
     toggle_frames_tooltip: "Mostra / nascondi i frame di aiuto per il drag-n-drop delle righe"
     link_break_tooltip: "Azzera il raggruppamento e separa le righe"
     delete_row_tooltip: "Marca la riga per l'eliminazione (che avviene con il salvataggio)"
+    create_user_training: "Faccio questo!"
+    create_user_training_ask_confirm: "Questo creera' un tuo Allenamento da fare (o fatto) basato su questo modello. Continuo?"
+
+  user_trainings:
+    index_title: "Ricerca Allenamenti Utente"
+    training_created: "Allenamento Utente creato con successo!"
+    training_updated: "Allenamento Utente aggiornato con successo!"
+    training_deleted: "Allenamento Utente eliminato!"
+    create_user_story: "L'ho fatto!"
+    create_user_story_ask_confirm: "Questo creera' una tua nuova Storia per questo Allenamento, assumendo che tu l'abbia effettivamente fatto (in modo da poter inserire commenti). Continuo?"
 
 
   agex_action:
