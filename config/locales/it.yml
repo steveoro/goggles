@@ -1289,6 +1289,7 @@ it:
     pools: "Piscine"
     trainings: "Modelli Allenamento"
     user_trainings: "Allenamenti Utente"
+    user_training_stories: "Storico Allenamenti svolti"
 
   trainings:
     index_title: "Ricerca Modelli Allenamento"
@@ -1323,7 +1324,9 @@ it:
     create_user_story_ask_confirm: "Questo creera' una tua nuova Storia per questo Allenamento, assumendo che tu l'abbia effettivamente fatto (in modo da poter inserire commenti). Continuo?"
 
   user_training_stories:
-    index_title: "Ricerca Storie Allenamento"
+    index_title: "Ricerca Storico Allenamenti Utente"
+    swam_date: "Nuotato il"
+    notes: "Commento"
 
 
   agex_action:
@@ -1732,6 +1735,8 @@ it:
       training_step_type: "Parte allenam."
       training_mode_types: "Regime allenam."
       trainings: "Allenamenti"
+      user_training: "Allenamento Utente"
+      user_training_story: "Storia Allenamento"
 
     attributes:
       user:

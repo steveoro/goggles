@@ -1,10 +1,10 @@
-= render partial: 'search_training_grid'
+= render partial: 'search_training_story_grid'
 %h3= @title
 
 .row-fluid
   .span12
-    = render_grid( @user_trainings_grid )
+    = render_grid( @user_training_stories_grid )
 
 .row-fluid
   .span12
-    = link_to( I18n.t(:add_new), new_user_training_path() )
+    = link_to( I18n.t(:add_new), new_user_training_story_path() )

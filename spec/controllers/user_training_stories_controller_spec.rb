@@ -63,7 +63,7 @@ describe UserTrainingStoriesController do
       click_button I18n.t('devise.new_session_submit')
 
       expect(response.status).to eq(200)
-      pending "will fail text match since index layout has still errors"
+#      pending "will fail text match since index layout has still errors"
       expect(page).to have_text( I18n.t('user_training_stories.index_title') )
       expect(response).to render_template(:index)
     end

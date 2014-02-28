@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140226130430) do
+ActiveRecord::Schema.define(:version => 20140228095953) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1524,6 +1524,7 @@ ActiveRecord::Schema.define(:version => 20140226130430) do
     t.integer  "user_training_id"
     t.integer  "swimming_pool_id"
     t.integer  "swimmer_level_type_id"
+    t.integer  "user_id"
   end
 
   add_index "user_training_stories", ["user_training_id", "swam_date"], :name => "index_user_training_stories_on_user_training_id_and_swam_date"

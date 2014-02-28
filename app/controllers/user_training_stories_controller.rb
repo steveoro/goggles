@@ -18,14 +18,13 @@ class UserTrainingStoriesController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('user_training_stories.index_title')
-# TODO
-    # @user_trainings_grid = initialize_grid(
-      # UserTraining,
-# #      :include => [:swimmer_level_type],
-      # :order => :updated_at,
-      # :order_direction => 'asc',
-      # :per_page => 20
-    # )
+    @user_training_stories_grid = initialize_grid(
+      UserTrainingStory,
+#      :include => [:swimmer_level_type, :user_training, :swimming_pool],
+      :order => :swam_date,
+      :order_direction => 'asc',
+      :per_page => 20
+    )
   end
 
 
