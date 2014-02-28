@@ -97,7 +97,8 @@ group :test do
   gem "rspec"
   gem "rspec-rails"
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs (RSpec)
-  gem "factory_girl_rails", "~> 3.0"
+  #gem "factory_girl_rails", "~> 3.0"
+  gem "factory_girl_rails"
 end
 
 # To use ActiveModel has_secure_password

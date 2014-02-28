@@ -296,7 +296,7 @@ DEPENDENCIES
   devise-i18n
   dj_mon!
   documatic!
-  factory_girl_rails (~> 3.0)
+  factory_girl_rails
   fuzzy-string-match_pure
   generator
   i18n
