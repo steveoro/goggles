@@ -1,9 +1,9 @@
 require 'wrappers/timing'
 
-
 class MeetingIndividualResult < ActiveRecord::Base
   include ICTimingFields
   include ICSwimmerInfo
+  include ICEventTypeInfo
   
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
@@ -99,27 +99,6 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Retrieves the associated Team full name
   def get_team_name
     self.team ? self.team.get_full_name() : '?'
-  end
-  # ----------------------------------------------------------------------------
-
-  # Retrieves the localized Event Type ID as it is; returns 0 in case of an invalid record
-  def get_event_type_id
-    self.event_type ? self.event_type.id : 0
-  end
-
-  # Retrieves the localized Event Type code (short)
-  def get_event_type
-    self.event_type ? self.event_type.i18n_short : '?'
-  end
-
-  # Retrieves the localized Event Type code (full description)
-  def get_event_type_description
-    self.event_type ? self.event_type.i18n_description : '?'
-  end
-
-  # Retrieves the Event Type code as it is
-  def get_event_type_code
-    self.event_type ? self.event_type.code : '?'
   end
   # ----------------------------------------------------------------------------
 
