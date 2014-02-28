@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140228150553) do
+ActiveRecord::Schema.define(:version => 20140228230153) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -801,9 +801,6 @@ ActiveRecord::Schema.define(:version => 20140228150553) do
     t.integer  "lock_version",                     :default => 0
     t.datetime "created_at",                                      :null => false
     t.datetime "updated_at",                                      :null => false
-    t.integer  "entry_minutes",       :limit => 3
-    t.integer  "entry_seconds",       :limit => 2
-    t.integer  "entry_hundreds",      :limit => 2
     t.integer  "start_list_number"
     t.integer  "lane_number",         :limit => 2
     t.integer  "heat_number"
@@ -815,6 +812,9 @@ ActiveRecord::Schema.define(:version => 20140228150553) do
     t.integer  "badge_id"
     t.integer  "entry_time_type_id"
     t.integer  "user_id"
+    t.integer  "minutes",             :limit => 3
+    t.integer  "seconds",             :limit => 2
+    t.integer  "hundreds",            :limit => 2
   end
 
   create_table "meeting_events", :force => true do |t|
