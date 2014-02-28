@@ -34,7 +34,7 @@
                     = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
                   %td.span4
                     %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ show_swimmer_results_meeting_path(:id=>@meeting.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                      = individual_result.get_athlete_name
+                      = individual_result.get_swimmer_name
                   %td.span1
                     = individual_result.get_year_of_birth
                   %td.span4

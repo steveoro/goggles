@@ -110,4 +110,4 @@
                 %p= (meeting_bests.size > 0 ? meeting_bests.first.get_timing : '')
                 - meeting_bests.sort.each do |mir_best|
                   %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ show_full_meeting_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{mir_best.meeting.get_full_name})"}
-                    %p= mir_best.get_athlete_name
+                    %p= mir_best.get_swimmer_name
