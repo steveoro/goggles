@@ -3,12 +3,20 @@ require 'date'
 
 FactoryGirl.define do
 
+  # TODO define factory for exercise?
+
+  # TODO define factory for training_row?
+
+  # TODO define factory for training?
+
+  # TODO define factory for user_training_row
+
   factory :user_training do
     description  "Full Anaerobic workout"
     user
-  end
 
-  # TODO define factory for user_training_row (at least 2 o 3)
+    # TODO nest define factory for user_training_with_rows
+  end
 
   factory :user_training_story do
     swam_date { Date.today } 

@@ -12,6 +12,9 @@ RSpec.configure do |config|
   # [Steve, 20140226] Add helpers to get Devise working with RSpec
   config.include Devise::TestHelpers, :type => :controller
 
+  # [Steve, 20140226] Add other custom helpers
+  config.extend ControllerMacros, :type => :controller
+
   # [Steve, 20140226] Configure FactoryGirl to work with RSpec
   config.include FactoryGirl::Syntax::Methods
 
