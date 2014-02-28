@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140228095953) do
+ActiveRecord::Schema.define(:version => 20140228150553) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -318,10 +318,6 @@ ActiveRecord::Schema.define(:version => 20140228095953) do
     t.integer  "disqualification_code_type_id"
     t.decimal  "goggle_cup_points",                                       :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.decimal  "reaction_time",                                           :precision => 5,  :scale => 2, :default => 0.0,   :null => false
-    t.integer  "entry_minutes",                            :limit => 3
-    t.integer  "entry_seconds",                            :limit => 2
-    t.integer  "entry_hundreds",                           :limit => 2
-    t.integer  "entry_time_type_id"
     t.decimal  "team_points",                                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.integer  "team_affiliation_id"
   end
@@ -801,6 +797,26 @@ ActiveRecord::Schema.define(:version => 20140228095953) do
 
   add_index "locker_cabinet_types", ["code"], :name => "index_locker_cabinet_types_on_code", :unique => true
 
+  create_table "meeting_entries", :force => true do |t|
+    t.integer  "lock_version",                     :default => 0
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+    t.integer  "entry_minutes",       :limit => 3
+    t.integer  "entry_seconds",       :limit => 2
+    t.integer  "entry_hundreds",      :limit => 2
+    t.integer  "start_list_number"
+    t.integer  "lane_number",         :limit => 2
+    t.integer  "heat_number"
+    t.integer  "heat_arrival_order",  :limit => 2
+    t.integer  "meeting_program_id"
+    t.integer  "swimmer_id"
+    t.integer  "team_id"
+    t.integer  "team_affiliation_id"
+    t.integer  "badge_id"
+    t.integer  "entry_time_type_id"
+    t.integer  "user_id"
+  end
+
   create_table "meeting_events", :force => true do |t|
     t.integer  "lock_version",                    :default => 0
     t.datetime "created_at",                                         :null => false
@@ -841,16 +857,11 @@ ActiveRecord::Schema.define(:version => 20140228095953) do
     t.integer  "disqualification_code_type_id"
     t.decimal  "goggle_cup_points",                          :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.decimal  "reaction_time",                              :precision => 5,  :scale => 2, :default => 0.0,   :null => false
-    t.integer  "entry_minutes",                 :limit => 3
-    t.integer  "entry_seconds",                 :limit => 2
-    t.integer  "entry_hundreds",                :limit => 2
-    t.integer  "entry_time_type_id"
     t.decimal  "team_points",                                :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.integer  "team_affiliation_id"
   end
 
   add_index "meeting_individual_results", ["badge_id"], :name => "fk_meeting_individual_results_badges"
-  add_index "meeting_individual_results", ["entry_time_type_id"], :name => "fk_meeting_individual_results_entry_time_types"
   add_index "meeting_individual_results", ["meeting_program_id"], :name => "fk_meeting_individual_results_meeting_programs"
   add_index "meeting_individual_results", ["swimmer_id"], :name => "fk_meeting_individual_results_swimmers"
   add_index "meeting_individual_results", ["team_affiliation_id"], :name => "fk_meeting_individual_results_team_affiliations"
@@ -1054,20 +1065,26 @@ ActiveRecord::Schema.define(:version => 20140228095953) do
   add_index "passage_types", ["code"], :name => "index_passage_types_on_code", :unique => true
 
   create_table "passages", :force => true do |t|
-    t.integer  "lock_version",                    :default => 0
-    t.integer  "minutes",            :limit => 3, :default => 0, :null => false
-    t.integer  "seconds",            :limit => 2, :default => 0, :null => false
-    t.integer  "hundreds",           :limit => 2, :default => 0, :null => false
-    t.integer  "meeting_program_id"
-    t.integer  "badge_id"
+    t.integer  "lock_version",                                                      :default => 0
+    t.integer  "minutes",                :limit => 3,                               :default => 0, :null => false
+    t.integer  "seconds",                :limit => 2,                               :default => 0, :null => false
+    t.integer  "hundreds",               :limit => 2,                               :default => 0, :null => false
     t.integer  "passage_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
+    t.datetime "created_at",                                                                       :null => false
+    t.datetime "updated_at",                                                                       :null => false
+    t.decimal  "reaction_time",                       :precision => 5, :scale => 2
+    t.integer  "stroke_cycles",          :limit => 3
+    t.integer  "not_swam_part_seconds",  :limit => 2
+    t.integer  "not_swam_part_hundreds", :limit => 2
+    t.integer  "not_swam_kick_number",   :limit => 2
+    t.integer  "breath_number",          :limit => 3
+    t.integer  "position",               :limit => 3
+    t.integer  "meeting_entry_id"
+    t.integer  "swimmer_id"
+    t.integer  "team_id"
   end
 
-  add_index "passages", ["badge_id"], :name => "fk_passages_badges"
-  add_index "passages", ["meeting_program_id", "badge_id"], :name => "passages_x_badges"
   add_index "passages", ["passage_type_id"], :name => "fk_passages_passage_types"
 
   create_table "pool_types", :force => true do |t|

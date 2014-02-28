@@ -7,18 +7,23 @@ class Passage < ActiveRecord::Base
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
 #  validates_associated :user                       # (Do not enable this for User)
 
-  belongs_to :meeting_program
-  belongs_to :badge
+  belongs_to :meeting_entry
+  belongs_to :swimmer
+  belongs_to :team
   belongs_to :passage_type
-  validates_associated :meeting_program
-  validates_associated :badge
+  validates_associated :meeting_entry
+  validates_associated :swimmer
+  validates_associated :team
   validates_associated :passage_type
 
-  has_one :meeting, :through => :meeting_program
-  has_one :swimmer, :through => :badge
+  has_one :meeting, :through => :meeting_entry
+  has_one :meeting_program, :through => :meeting_entry
+  has_one :badge, :through => :meeting_entry
+
+  # Leega: probably useful has_one :event_type, :through => ...
 
   validates_presence_of     :minutes
-  validates_length_of       :minutes, :within => 1..3, :allow_nil => false
+  validates_length_of       :minutes, :within => 1..3, :allow_nil => false, :default => 0
   validates_numericality_of :minutes
   validates_presence_of     :seconds
   validates_length_of       :seconds, :within => 1..2, :allow_nil => false
@@ -28,10 +33,10 @@ class Passage < ActiveRecord::Base
   validates_numericality_of :hundreds
 
 
-  scope :sort_passage_by_user,       lambda { |dir| order("users.name #{dir.to_s}, badges.number #{dir.to_s}") }
-#  scope :sort_passage_by_program,    lambda { |dir| order("meeting_programs.begin_time #{dir.to_s}, badges.number #{dir.to_s}") }
-#  scope :sort_passage_by_badge,      lambda { |dir| order("badges.number #{dir.to_s}") }
-#  scope :sort_passage_by_type,       lambda { |dir| order("passage_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
+  scope :sort_passage_by_user,       lambda { |dir| order("users.name #{dir.to_s}, swimmer_id #{dir.to_s}") }
+#  scope :sort_passage_by_program,    lambda { |dir| order("meeting_programs.begin_time #{dir.to_s}, swimmer.last_name #{dir.to_s}, swimmer.first_name #{dir.to_s}") }
+#  scope :sort_passage_by_swimmer,    lambda { |dir| order("swimmer.last_name #{dir.to_s}, swimmer.first_name #{dir.to_s}") }
+#  scope :sort_passage_by_type,       lambda { |dir| order("passage_types.code #{dir.to_s}, swimmer.last_name #{dir.to_s}, swimmer.first_name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

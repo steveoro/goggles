@@ -8,7 +8,6 @@ class MeetingIndividualResult < ActiveRecord::Base
 #  validates_associated :user                       # (Do not enable this for User)
 
   belongs_to :meeting_program
-  belongs_to :entry_time_type
   validates_associated :meeting_program
 
   has_one  :meeting_event,    :through => :meeting_program
