@@ -14,5 +14,5 @@ module Version
   COMPACT = "#{MAJOR.gsub('.','')}#{MINOR}"
 
   # Current internal DB version (indipendent from migrations and framework release)
-  DB      = "1.16.04"
+  DB      = "1.16.05"
 end
