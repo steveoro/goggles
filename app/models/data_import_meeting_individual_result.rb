@@ -121,7 +121,7 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Retrieves the associated Swimmer full name
-  def get_athlete_name
+  def get_swimmer_name
     self.swimmer ? self.swimmer.get_full_name() : ( self.data_import_swimmer ? self.data_import_swimmer.get_full_name() : '?')
   end
 

@@ -2,7 +2,9 @@ require 'wrappers/timing'
 
 
 class MeetingIndividualResult < ActiveRecord::Base
-
+  include ICTimingFields
+  include ICSwimmerInfo
+  
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
 #  validates_associated :user                       # (Do not enable this for User)
@@ -73,24 +75,14 @@ class MeetingIndividualResult < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   #++
 
-  # Returns just the formatted timing information
-  def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
-  end
-
-  # Returns a new Timing class instance initialized with the timing data from this row
-  def get_timing_instance
-    Timing.new( hundreds, seconds, minutes )
-  end
-
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{get_scheduled_date} #{get_event_type}: #{rank}) #{get_athlete_name}, #{get_timing}"
+    "#{get_scheduled_date} #{get_event_type}: #{rank}) #{get_swimmer_name}, #{get_timing}"
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{get_meeting_program_verbose_name}: #{rank}) #{get_athlete_name} (#{get_year_of_birth}), #{get_timing}"
+    "#{get_meeting_program_verbose_name}: #{rank}) #{get_swimmer_name} (#{get_year_of_birth}), #{get_timing}"
   end
 
   # Retrieves the user name associated with this instance
@@ -102,16 +94,6 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Check if this result is valid for the ranking system.
   def is_valid_for_ranking
     (!self.is_out_of_race) && (!self.is_disqualified)
-  end
-
-  # Retrieves the associated Swimmer full name
-  def get_athlete_name
-    self.swimmer ? self.swimmer.get_full_name() : '?'
-  end
-
-  # Retrieves the associated Swimmer's year_of_birth
-  def get_year_of_birth
-    self.swimmer ? self.swimmer.year_of_birth : '?'
   end
 
   # Retrieves the associated Team full name
@@ -304,7 +286,7 @@ class MeetingIndividualResult < ActiveRecord::Base
       first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
 # DEBUG
 #      puts "- first_timing_value = #{first_timing_value}"
-#      puts "- first_recs.first => #{first_recs.first.get_athlete_name}, #{first_recs.first.get_meeting_program_verbose_name}\r\n"
+#      puts "- first_recs.first => #{first_recs.first.get_swimmer_name}, #{first_recs.first.get_meeting_program_verbose_name}\r\n"
                                                     # Remove from the result all other rows that have a greater timing result (keep same ranking results)
       first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
     end
