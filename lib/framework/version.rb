@@ -3,7 +3,7 @@ module Version
   # ** DO NOT CHANGE THE FOLLOWING UNLESS YOU KNOW WHAT YOU'RE DOING!! **
   CORE    = 'core-six'
   MAJOR   = '4.00'
-  MINOR   = '194'
+  MINOR   = '195'
   BUILD   = '20140228'
 
   # Internal constant used to discriminate between all the existing and
