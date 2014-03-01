@@ -1,3 +1,4 @@
+require 'wrappers/timing'
 require 'spec_helper'
 
 
@@ -61,9 +62,8 @@ describe ICTimingFields do
   # of the interface.
   #
   describe "get_timing_instance" do
-    it "returns always a non-empty string" do
-      expect( @dummy.get_timing_instance ).not_to eq( '' )
-      expect( @dummy.get_timing_instance.size ).to be > 0
+    it "returns always a Timing instance" do
+      expect( @dummy.get_timing_instance ).to be_an_instance_of( Timing )
     end
   end
   # ---------------------------------------------------------------------------
