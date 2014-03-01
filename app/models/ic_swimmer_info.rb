@@ -1,6 +1,5 @@
 require 'wrappers/timing'
 
-
 =begin
   
 = ICSwimmerInfo
@@ -21,12 +20,12 @@ module ICSwimmerInfo
 
   # Retrieves the associated Swimmer full name
   def get_swimmer_name
-    self.swimmer ? self.swimmer.get_full_name() : '?'
+    swimmer ? swimmer.get_full_name() : '?'
   end
 
   # Retrieves the associated Swimmer's year_of_birth
   def get_year_of_birth
-    self.swimmer ? self.swimmer.year_of_birth : '?'
+    swimmer ? swimmer.year_of_birth : '?'
   end
   #-----------------------------------------------------------------------------
 
