@@ -4,7 +4,7 @@ module Version
   CORE    = 'core-six'
   MAJOR   = '4.00'
   MINOR   = '195'
-  BUILD   = '20140228'
+  BUILD   = '20140303'
 
   # Internal constant used to discriminate between all the existing and
   # running versions of the AgeX framework.

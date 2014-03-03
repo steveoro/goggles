@@ -17,7 +17,7 @@ FactoryGirl.define do
   end
 
   factory :swimmer_level_type do
-    code  "MASTER"
+    code  "MAS"
     level 100
   end
   # ---------------------------------------------------------------------------
