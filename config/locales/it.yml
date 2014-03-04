@@ -1327,6 +1327,8 @@ it:
     index_title: "Ricerca Storico Allenamenti Utente"
     swam_date: "Nuotato il"
     notes: "Commento"
+    show_title: "Storia Utente per '{TRAINING_TITLE}'"
+    total_training_time: "Tempo tot. di lavoro"
 
 
   agex_action:

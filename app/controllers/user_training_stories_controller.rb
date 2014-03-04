@@ -35,14 +35,13 @@ class UserTrainingStoriesController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
 # TODO
-    # user_training_id = params[:id].to_i
-    # @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
-    # unless ( @user_training )
-      # flash[:error] = I18n.t(:invalid_action_request)
-      # redirect_to( user_trainings_path() ) and return
-    # end
-    # @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
-    # @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
+    user_training_story_id = params[:id].to_i
+    @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
+    unless ( @user_training_story )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( user_training_stories_path() ) and return
+    end
+    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
   end
   # ---------------------------------------------------------------------------
 

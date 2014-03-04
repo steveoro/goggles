@@ -81,12 +81,52 @@ describe UserTrainingStoriesController do
     context "logged-in user" do
       login_user
 
+      before( :each ) do
+        @user_training_story = create( :user_training_story )
+      end
+
       it "assigns an instance to be shown" do
-        pending "NOT IMPLEMENTED YET"
+        visit user_training_story_path( @user_training_story )
+#        get :show, id: 1
+        expect( assigns(:title) ).not_to be_nil 
+        expect( assigns(:user_training_story) ).not_to be_nil 
       end
 
       it "renders the show template" do
+        visit user_training_story_path( @user_training_story )
+#        get :show, id: @user_training_story
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:show)
+      end
+    end
+    # -------------------------------------------------------------------------
+  end
+  # ===========================================================================
+
+
+  describe '[GET #new]' do
+
+    context "unlogged user" do
+      it "displays always the Login page" do
+        visit_and_check_if_its_the_login_page_for( new_user_training_story_path() )
+      end
+    end
+    # -------------------------------------------------------------------------
+
+    context "logged-in user" do
+      login_user
+
+      it "assigns an instance with default values" do
         pending "NOT IMPLEMENTED YET"
+        expect( assigns(:user_training_story) ).to be_a_new( UserTrainingStory )
+#        expect( assigns(:user_training_story_max_part_order) ).to eq( 0 )
+      end
+
+      it "renders the edit template" do
+        pending "NOT IMPLEMENTED YET"
+        get :new
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:edit)
       end
     end
     # -------------------------------------------------------------------------
@@ -111,31 +151,6 @@ describe UserTrainingStoriesController do
       end
 
       it "renders the edit template" do
-        pending "NOT IMPLEMENTED YET"
-      end
-    end
-    # -------------------------------------------------------------------------
-  end
-  # ===========================================================================
-
-
-  describe '[GET #new]' do
-
-    context "unlogged user" do
-      it "displays always the Login page" do
-        visit_and_check_if_its_the_login_page_for( new_user_training_story_path() )
-      end
-    end
-    # -------------------------------------------------------------------------
-
-    context "logged-in user" do
-      login_user
-
-      it "assigns an instance with default values" do
-        pending "NOT IMPLEMENTED YET"
-      end
-
-      it "renders the new template" do
         pending "NOT IMPLEMENTED YET"
       end
     end

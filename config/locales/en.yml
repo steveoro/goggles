@@ -1324,6 +1324,8 @@ en:
     index_title: "Search User Training History"
     swam_date: "Swam on"
     notes: "Comment"
+    show_title: "User Training Story for '{TRAINING_TITLE}'"
+    total_training_time: "Tot. Training time"
 
 
   agex_action:

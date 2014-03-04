@@ -12,8 +12,8 @@ FactoryGirl.define do
 
 
   factory :user do
-    name "Gino Pino"
-    email "gino.pino@rino.com"
+    name { "Mario Brothers N.#{ generate :counter }" }
+    email { "mario.brothers.#{ generate :counter }@fasar.org" }
     description  "Typical registered user"
     password "password"
     password_confirmation "password"
@@ -22,8 +22,8 @@ FactoryGirl.define do
 
 
   factory :admin do
-    name "Admina Strator"
-    email "admina.strator@whatever.com"
+    name { "Admina Strator N.#{ generate :counter }" }
+    email { "admina.strator.#{ generate :counter }@fasar.org" }
     description  "A new Admin"
     password "password"
     password_confirmation "password"

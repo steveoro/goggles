@@ -32,6 +32,16 @@ class UserTrainingStory < ActiveRecord::Base
   def get_user_training_name
     user_training ? user_training.get_full_name : ''
   end
+
+  # Invokes UserTraining::compute_total_distance if available; defaults to 0
+  def get_user_training_compute_total_distance
+    user_training ? user_training.compute_total_distance : 0
+  end
+
+  # Invokes UserTraining::compute_total_seconds if available; defaults to 0
+  def get_user_training_compute_total_seconds
+    user_training ? user_training.compute_total_seconds : 0
+  end
   # ----------------------------------------------------------------------------
 
   # Retrieves the swimmer level typ description, when set.
