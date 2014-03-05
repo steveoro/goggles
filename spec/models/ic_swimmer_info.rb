@@ -1,10 +1,12 @@
 require 'spec_helper'
+require 'date'
 
 
 # Dummy class holder for the fields used by the module
 class Dummy
   include ICSwimmerInfo
-  attr_accessor :comlete_name, :year_of_birth
+  attr_accessor :swimmer
+#  attr_accessor :comlete_name, :year_of_birth
 end
 # -----------------------------------------------------------------------------
 
@@ -12,16 +14,20 @@ end
 describe ICSwimmerInfo do
 
   # Init dummy class instance to test instance methods
-  def setup_dummy_instance
-    Dummy.new() do
+  def setup_dummy_instance( full_name, year_of_birth )
+    dummy = Dummy.new()
+    dummy.swimmer = Swimmer.new(
+      complete_name: full_name,
+      year_of_birth: year_of_birth
+    )
+    dummy
       # Use conplete_name instead of last_name and first_name
-      complete_name  = ('FELPATI MICHELE')
-      year_of_birth = (1904 + (rand * 100).to_i)
-    end
+#      complete_name  = ('FELPATI MICHELE')
+#      year_of_birth = (1904 + (rand * 100).to_i)
   end
 
   before(:each) do
-    @dummy = setup_dummy_instance()
+    @dummy = setup_dummy_instance( 'FELPATI MICHELE', 1904 + (rand * 100).to_i )
   end
   # ---------------------------------------------------------------------------
 
@@ -31,8 +37,9 @@ describe ICSwimmerInfo do
   #
   describe "module-includer class" do
     it "has all required fields" do
-      expect( @dummy ).to respond_to( :complete_name )
-      expect( @dummy ).to respond_to( :year_of_birth )
+      expect( @dummy ).to respond_to( :swimmer )
+#      expect( @dummy ).to respond_to( :complete_name )
+#      expect( @dummy ).to respond_to( :year_of_birth )
     end
 
     it "responds to get_swimmer_name()" do
@@ -67,16 +74,15 @@ describe ICSwimmerInfo do
   # Should retreives the year of birth of the swimmer
   #
   describe "get_year_of_birth" do
-    it "returns always a year instance" do
+    it "returns always a valid year" do
       expect( @dummy.get_year_of_birth ).to be > 1900
       
-      # Leega. TODO use current year - 8
-      expect( @dummy.get_year_of_birth ).to be < 2004
+      expect( @dummy.get_year_of_birth ).to be < (Date.today.year - 8)
     end
   end
   # ---------------------------------------------------------------------------
 
-  # Should retreives the calculate age of the swimmer
+  # Should retrieve the calculate swimmer age
   #
   describe "get_swimmer_age" do
     it "returns always a value between 8 and 120" do
@@ -85,13 +91,34 @@ describe ICSwimmerInfo do
     end
   end
 
-  # Should retreives the current category of the swimmer
-  # Needs season
+  # Should retrieve the array of all recent & available categories for
+  # which the swimmer is eligible of association, using only the defined
+  # year of birth.
+  # (Does not need any valid association on the Swimmer side).
   #
-  # Leega. TODO Verify presence of season as requested parameter
+  # TODO 
+  # Leega: Verify presence of season as requested parameter
+  # Steve: I skipped the need of any season parameter; we can do a dedicated method instead, if you think this is required
+  describe "get_swimmer_current_category_type_codes" do
+    it "returns always a valid array" do
+      expect( @dummy.get_swimmer_current_category_type_codes ).to be_an_instance_of( Array )
+    end
+  end
+
+  # Should retrieve the last among all recent & available categories for
+  # which the swimmer is eligible of association, using only the defined
+  # year of birth.
+  # (Does not need any valid association on the Swimmer side).
+  #
+  # TODO 
+  # Leega: Verify presence of season as requested parameter
+  # Steve: I skipped the need of any season parameter; we can do a dedicated method instead, if you think this is required
   describe "get_swimmer_current_category" do
     it "returns always a valid category_type" do
-      expect( @dummy.get_swimmer_current_category ).to be_an_instance_of( :category_type )
+      expect( @dummy.get_swimmer_current_category ).to be_an_instance_of( String )
+      expect(
+        CategoryType.select(:code).all.uniq.any?{ |row| row.code == @dummy.get_swimmer_current_category }
+      ).to be_true
     end
   end
   # ---------------------------------------------------------------------------
