@@ -29,4 +29,7 @@ module ICSwimmerInfo
   end
   #-----------------------------------------------------------------------------
 
+  # Leega. TODO Calculate the current age
+
+  # Leega. TODO Retrieves the current category type. Require season (default current FIN)
 end
