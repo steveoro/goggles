@@ -1,5 +1,3 @@
-require 'wrappers/timing'
-
 =begin
   
 = ICSwimmerInfo

@@ -14,6 +14,7 @@ describe ICSwimmerInfo do
   # Init dummy class instance to test instance methods
   def setup_dummy_instance
     Dummy.new() do
+      # Use conplete_name instead of last_name and first_name
       complete_name  = ('FELPATI MICHELE')
       year_of_birth = (1904 + (rand * 100).to_i)
     end
