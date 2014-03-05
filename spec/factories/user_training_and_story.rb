@@ -12,7 +12,7 @@ FactoryGirl.define do
   # TODO define factory for user_training_row
 
   factory :user_training do
-    description  "Full Anaerobic workout"
+    description "Full Anaerobic workout"
     user
 
     # TODO nest define factory for user_training_with_rows
@@ -22,6 +22,7 @@ FactoryGirl.define do
     swam_date { Date.today } 
     total_training_time 65
     notes  "Dude, that was hard!"
+    user
     user_training
     swimming_pool
     swimmer_level_type

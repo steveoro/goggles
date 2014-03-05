@@ -1,6 +1,6 @@
 require 'spec_helper'
-require 'capybara/rails'
-require 'capybara/rspec'
+#require 'capybara/rails'
+#require 'capybara/rspec'
 
 require 'date'
 require 'common/format'
@@ -9,92 +9,101 @@ require 'common/format'
 describe UserTrainingStoriesController do
 
   def check_if_its_the_login_page_with( expected_status_code )
-    expect(response.status).to eq(expected_status_code)
+    expect(response.status).to eq( expected_status_code )
     expect(response).to render_template( 'users/sessions/new' )
     expect(page).to have_text( I18n.t('devise.new_session_title') )
     expect(page).to have_field( :user_email )
     expect(page).to have_field( :user_password )
   end
 
-  def visit_and_check_if_its_the_login_page_for( route )
-    visit route
-    check_if_its_the_login_page_with( 200 )
+  def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
+    get action_sym, id: id
+#    expect(response).to redirect_to controller: :users, action: :login
+    expect(response).to redirect_to '/users/sign_in'
+
+#    check_if_its_the_login_page_with( 302 )         # must redirect to the login page
   end
   # ===========================================================================
 
 
   describe '[GET #index]' do
+    render_views
 
     context "unlogged user" do
       it "displays always the Login page" do
-        visit_and_check_if_its_the_login_page_for( user_training_stories_path() )
+        get_action_and_check_if_its_the_login_page_for( :index )
       end
     end
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
       it "populates the search grid" do
         # (Seed creation not required since we build-up our own test-db with from the db/seed directory)
         get :index
-        pending "NOT IMPLEMENTED YET"
         expect( assigns(:user_training_stories_grid) ).not_to be( nil )
       end
 
       it "renders the search template" do
         get :index
-        pending "NOT IMPLEMENTED YET"
         expect(response.status).to eq(200)     # 302 (redirect) means the user is not logged in
         expect(response).to render_template(:index)
       end
     end
     # -------------------------------------------------------------------------
 
-    # Not really useful anymore, but kept here as reference:
-    it "goes back to the index page after a successful login" do
-      visit_and_check_if_its_the_login_page_for( user_training_stories_path() )
-      user = create( :user )                        # Create an authenticated & confirmed user on the fly
-      fill_in "user_email", :with => user.email
-      fill_in "user_password", :with => user.password
-      click_button I18n.t('devise.new_session_submit')
-
-      expect(response.status).to eq(200)
-      expect(response).to render_template(:index)
-      # it asserts user is really logged-in:
-      expect( controller.stub(:current_user) ).not_to be( nil )
-    end
+    # TODO This should be moved to a feature test, but kept here as reference for the moment being:
+    # it "goes back to the index page after a successful login" do
+      # get_action_and_check_if_its_the_login_page_for( :index )
+      # user = create( :user )                        # Create an authenticated & confirmed user on the fly
+      # fill_in "user_email", :with => user.email
+      # fill_in "user_password", :with => user.password
+      # click_button I18n.t('devise.new_session_submit')
+# 
+      # expect(response.status).to eq(200)
+      # expect(response).to render_template(:index)
+      # # it asserts user is really logged-in:
+      # expect( controller.stub(:current_user) ).not_to be( nil )
+    # end
     # -------------------------------------------------------------------------
   end
   # ===========================================================================
 
 
   describe '[GET #show]' do
+    render_views
 
     context "unlogged user" do
       it "displays always the Login page" do
-        visit_and_check_if_its_the_login_page_for( user_training_story_path(1) )
+        get_action_and_check_if_its_the_login_page_for( :show, 1 )
       end
     end
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
-      before( :each ) do
-        @user_training_story = create( :user_training_story )
-      end
+#      before( :each ) do
+#        @user_training_story = create( :user_training_story )
+#      end
 
       it "assigns an instance to be shown" do
-        visit user_training_story_path( @user_training_story )
-#        get :show, id: 1
-        expect( assigns(:title) ).not_to be_nil 
+        get :show, id: 1
+# DEBUG 
+#        puts "\r\n---[DEBUG] '#{ assigns() }'\r\n"
+#        puts "\r\n---[DEBUG] '#{ flash.inspect() }'\r\n"
+        expect( response.status ).to eq(200)
         expect( assigns(:user_training_story) ).not_to be_nil 
+        expect( assigns(:title) ).not_to be_nil 
       end
 
       it "renders the show template" do
-        visit user_training_story_path( @user_training_story )
-#        get :show, id: @user_training_story
+#        visit user_training_story_path( @user_training_story )
+#        visit user_training_story_path( 1 )
+        get :show, id: 1
+#        controller.params[:id].should_be eq( 1 )
+#        expect( controller.params[:id] ).to_be eq( 1 ) 
         expect(response.status).to eq(200)
         expect(response).to render_template(:show)
       end
@@ -108,13 +117,13 @@ describe UserTrainingStoriesController do
 
     context "unlogged user" do
       it "displays always the Login page" do
-        visit_and_check_if_its_the_login_page_for( new_user_training_story_path() )
+        get_action_and_check_if_its_the_login_page_for( :new )
       end
     end
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
       it "assigns an instance with default values" do
         pending "NOT IMPLEMENTED YET"
@@ -138,13 +147,13 @@ describe UserTrainingStoriesController do
 
     context "unlogged user" do
       it "displays always the Login page" do
-        visit_and_check_if_its_the_login_page_for( edit_user_training_story_path(1) )
+        get_action_and_check_if_its_the_login_page_for( :edit, 1 )
       end
     end
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
       it "assigns an instance to be edited" do
         pending "NOT IMPLEMENTED YET"
@@ -172,7 +181,7 @@ describe UserTrainingStoriesController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
       context "with valid attributes" do
         it "creates a new row" do
@@ -226,10 +235,10 @@ describe UserTrainingStoriesController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
       before :each do
-        @user_training_story = create( :user_training_story, user_training_id: 2 )
+        @user_training_story = create( :user_training_story )
       end
 
       context "with valid attributes" do
@@ -292,7 +301,7 @@ describe UserTrainingStoriesController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user
+      login_user()
 
       it "deletes the row" do
         pending "NOT IMPLEMENTED YET"

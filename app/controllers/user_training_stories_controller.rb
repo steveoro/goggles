@@ -34,7 +34,6 @@ class UserTrainingStoriesController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-# TODO
     user_training_story_id = params[:id].to_i
     @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
     unless ( @user_training_story )

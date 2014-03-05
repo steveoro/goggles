@@ -89,14 +89,16 @@ gem "cocoon"
 group :development do
   gem "rspec"
   gem "rspec-rails"
-  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs (RSpec)
+  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   gem "factory_girl_rails"
+  gem 'guard'
+  gem 'guard-rspec'
 end
 
 group :test do
   gem "rspec"
   gem "rspec-rails"
-  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs (RSpec)
+  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   gem "factory_girl_rails"
 end
 
