@@ -86,6 +86,9 @@ gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
 
+gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
+
+
 group :development do
   gem "rspec"
   gem "rspec-rails"
