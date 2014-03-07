@@ -87,6 +87,7 @@ gem 'simple_form'
 gem "cocoon"
 
 gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
+gem "rest-client"
 
 
 group :development do
