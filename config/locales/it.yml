@@ -1329,6 +1329,9 @@ it:
     notes: "Commento"
     show_title: "Storia Utente per '{TRAINING_TITLE}'"
     total_training_time: "Tempo tot. di lavoro"
+    story_created: "Storia Allenamento Utente creata con successo!"
+    story_updated: "Storia Allenamento Utente aggiornata con successo!"
+    story_deleted: "Storia Allenamento Utente eliminata!"
 
 
   agex_action:

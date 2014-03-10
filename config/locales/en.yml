@@ -1326,6 +1326,9 @@ en:
     notes: "Comment"
     show_title: "User Training Story for '{TRAINING_TITLE}'"
     total_training_time: "Tot. Training time"
+    story_created: "User Training Story successfully created!"
+    story_updated: "User Training Story successfully updated!"
+    story_deleted: "User Training Story successfully deleted!"
 
 
   agex_action:
