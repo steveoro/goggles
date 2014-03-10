@@ -10,24 +10,23 @@ describe UserTrainingStoriesController do
 
   def check_if_its_the_login_page_with( expected_status_code )
     expect(response.status).to eq( expected_status_code )
-    expect(response).to render_template( 'users/sessions/new' )
-    expect(page).to have_text( I18n.t('devise.new_session_title') )
-    expect(page).to have_field( :user_email )
-    expect(page).to have_field( :user_password )
+#    expect(response).to render_template( 'users/sessions/new' )
+#    expect(page).to have_text( I18n.t('devise.new_session_title') )
+#    expect(page).to have_field( :user_email )
+#    expect(page).to have_field( :user_password )
   end
 
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
 #    expect(response).to redirect_to controller: :users, action: :login
     expect(response).to redirect_to '/users/sign_in'
-
+    expect(response.status).to eq( 302 )            # must redirect to the login page
 #    check_if_its_the_login_page_with( 302 )         # must redirect to the login page
   end
   # ===========================================================================
 
 
   describe '[GET #index]' do
-    render_views
 
     context "unlogged user" do
       it "displays always the Login page" do

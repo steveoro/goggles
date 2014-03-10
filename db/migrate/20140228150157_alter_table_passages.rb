@@ -9,12 +9,9 @@ class AlterTablePassages < ActiveRecord::Migration
       ALTER TABLE passages
         DROP FOREIGN KEY fk_passages_badges
     SQL
-  end 
 
-  def change    
     change_table :passages do |t|
-      t.remove_references( :meeting_program )
-      t.remove_references( :badge )
+      t.remove_references( :meeting_program, :badge )
 
       t.decimal :reaction_time, :precision => 5, :scale => 2, :null => true
 

@@ -88,6 +88,7 @@ namespace :db do
       # rewrite the task to not do anything you don't want
     end
   end
+  # ---------------------------------------------------------------------------
 
 
   desc <<-DESC
@@ -108,16 +109,63 @@ It actually DROPS the Database, recreates it using a mysql shell command.
     puts "\r\nRecreating DB..."
     sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\""
   end
+  # ---------------------------------------------------------------------------
 
-  desc 'Recreates the DB from scratch. Invokes db:reset + db:migrate + sql:exec in one shot.'
+
+  desc 'Recreates the DB(s) from scratch. Invokes db:reset + db:migrate + sql:exec + db:clone_to_test in one shot.'
+  
   task :rebuild_from_scratch do
     puts "*** Task: Compound DB RESET + MIGRATE + SQL:EXEC ***"
     Rake::Task['db:reset'].invoke
     Rake::Task['db:migrate'].invoke
     Rake::Task['sql:exec'].invoke
+    Rake::Task['db:clone_to_test'].invoke
     puts "Done."
   end
   # ---------------------------------------------------------------------------
+
+
+  desc <<-DESC
+  Clones the development or production database to the test database (according to
+  Rails environment; default is obviously 'development').
+  Assumes development db name ends in '_development' and production db name doesn't
+  have any suffix.
+
+  Options: [Rails.env=#{Rails.env}]
+
+  DESC
+  task :clone_to_test => ['utils:script_status', 'utils:chk_needed_dirs'] do
+    puts "*** Task: Clone DB on TEST DB ***"
+    if (Rails.env == 'test')
+      puts "You must specify either 'development' or 'production'!"
+      exit
+    end
+                                                    # Prepare & check configuration:
+    rails_config  = Rails.configuration
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+    output_folder = ENV.include?("output_dir") ? ENV["output_dir"] : DB_BACKUP_DIR
+                                                    # Display some info:
+    puts "DB name: #{db_name}"
+    puts "DB user: #{db_user}"
+    file_name = File.join( output_folder, "#{db_name}-clone.sql" )
+    puts "\r\nDumping #{db_name} on #{file_name} ...\r\n"
+    sh "mysqldump -u #{db_user} -p#{db_pwd} --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} > #{file_name}"
+    base_db_name = db_name.split('_development')[0]
+    puts "\r\nDropping Test DB '#{base_db_name}_test'..."
+    sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"drop database if exists #{base_db_name}_test\""
+    puts "\r\nRecreating DB..."
+    sh "mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{base_db_name}_test\""
+    puts "\r\nExecuting '#{file_name}' on #{base_db_name}_test..."
+    sh "mysql --user=#{db_user} --password=#{db_pwd} --database=#{base_db_name}_test --execute=\"\\. #{file_name}\""
+    puts "Deleting dump file '#{file_name}'..."
+    FileUtils.rm( file_name )
+
+    puts "Clone on Test DB done.\r\n\r\n"
+  end
+  # ---------------------------------------------------------------------------
+
 end
 # =============================================================================
 # =============================================================================
