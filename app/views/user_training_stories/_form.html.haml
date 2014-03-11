@@ -1,20 +1,23 @@
 .row-fluid.span12
 
-= simple_form_for @user_training_story do |f|
+= simple_form_for @user_training_story, :html => { :class => 'form-horizontal' } do |f|
   .row-fluid.span11
-    = f.input :swam_date
+    = f.input :swam_date, as: :string, label: I18n.t('user_training_stories.swam_date'), input_html: { class: 'swam_date input-small' }, placeholder: Date.today, hint: I18n.t('user_training_stories.swam_date_hint')
   .row-fluid.span11
-    = f.input :total_training_time
+    = f.input :total_training_time, label: I18n.t('user_training_stories.total_training_time'), input_html: { class: 'span1' }, hint: I18n.t('user_training_stories.total_training_time_hint')
   .row-fluid.span11
-    = f.input :notes, input_html: { rows: 3, class: 'span12' }
+    = f.association :swimming_pool, label: I18n.t('activerecord.models.swimming_pool'), collection: SwimmingPool.all, prompt: I18n.t('please_select')
   .row-fluid.span11
-    = f.association :user_training, collection: UserTraining.all, label_method: 'description', value_method: 'id', prompt: I18n.t('please_select')
+    = f.association :swimmer_level_type, label: I18n.t('activerecord.models.swimmer_level_type'), collection: SwimmerLevelType.to_dropdown(), prompt: I18n.t('please_select')
   .row-fluid.span11
-    = f.association :swimming_pool, collection: SwimmingPool.to_dropdown(), prompt: I18n.t('please_select')
+    = f.input :notes, label: I18n.t('notes'), input_html: { rows: 3, class: 'span11' }, hint: I18n.t('user_training_stories.notes_hint')
   .row-fluid.span11
-    = f.association :swimmer_level_type, collection: SwimmerLevelType.to_dropdown(), prompt: I18n.t('please_select')
+    = f.association :user_training, label: I18n.t('activerecord.models.user_training'), collection: UserTraining.sort_by_description.all, label_method: 'description', value_method: 'id', prompt: I18n.t('please_select')
+
   .row-fluid.span11
     = f.button :submit, I18n.t(:save)
 
 %script
+  $('.swam_date').datepicker({changeMonth: true, changeYear: true});
+  $('.typeahead').typeahead();
   $('.toolTip').tooltip({placement:'bottom'});

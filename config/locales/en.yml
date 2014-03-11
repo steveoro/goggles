@@ -1323,9 +1323,13 @@ en:
   user_training_stories:
     index_title: "Search User Training History"
     swam_date: "Swam on"
+    swam_date_hint: "Select the day on which You've done the Training selected below"
     notes: "Comment"
+    notes_hint: "Describe or comment with Your impressions the Training selected below"
     show_title: "User Training Story for '{TRAINING_TITLE}'"
+    user_training: "Training"
     total_training_time: "Tot. Training time"
+    total_training_time_hint: "This should be your actual total training time in minutes"
     story_created: "User Training Story successfully created!"
     story_updated: "User Training Story successfully updated!"
     story_deleted: "User Training Story successfully deleted!"
@@ -1797,4 +1801,10 @@ en:
           min_swimmer_level:
             blank: "can't be blank"
           max_swimmer_level:
+            blank: "can't be blank"
+      user_training_story:
+        attributes:
+          swimming_pool:
+            invalid: "fails validations or has invalid attributes"
+          swam_date:
             blank: "can't be blank"

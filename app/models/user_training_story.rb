@@ -1,3 +1,8 @@
+# encoding: utf-8
+
+require 'wrappers/timing'   # [Steve 20140311] Used by UserTrainingRow
+
+
 class UserTrainingStory < ActiveRecord::Base
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
@@ -16,8 +21,8 @@ class UserTrainingStory < ActiveRecord::Base
   validates_length_of       :total_training_time, :within => 1..6, :allow_nil => false
   validates_numericality_of :total_training_time
 
-  attr_accessible :swam_date, :total_training_time,
-                  :user_training_id, :swimming_pool_id, :swimmer_level_id 
+  attr_accessible :swam_date, :total_training_time, :notes,
+                  :user_training_id, :swimming_pool_id, :swimmer_level_type_id 
   
   scope :sort_by_date,        order('swam_date')
   scope :sort_by_duration,    order('total_training_time')  

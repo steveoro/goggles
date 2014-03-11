@@ -1,6 +1,6 @@
 .row-fluid
   .span3
-    = link_to( user_trainings_path() ) do
+    = link_to( user_training_stories_path() ) do
       = image_tag('page_find.png')
       = I18n.t(:back_to_index_view)
   .span2
@@ -47,7 +47,12 @@
           .span2
             %i= I18n.t('user_training_stories.swam_date') + ':'
           .span10
-            %i= Format.a_short_datetime( @user_training_story.swam_date )
+            = Format.a_short_datetime( @user_training_story.swam_date )
+        .row-fluid
+          .span2
+            %i= I18n.t('user_training_stories.user_training') + ':'
+          .span10
+            = @user_training_story.get_user_training_name()
         .row-fluid
           .span2
             = I18n.t('trainings.total_meters') + ':'

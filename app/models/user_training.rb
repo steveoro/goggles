@@ -1,3 +1,8 @@
+# encoding: utf-8
+
+require 'wrappers/timing'   # [Steve 20140311] Used by UserTrainingRow
+
+
 class UserTraining < ActiveRecord::Base
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
@@ -18,6 +23,7 @@ class UserTraining < ActiveRecord::Base
                   :user_id, :user_training_rows_attributes, # (Needed by the nested_form gem)
                   :user_training_story_attributes
 
+  scope :sort_by_description,    order('description')
 
   # ---------------------------------------------------------------------------
   # Base methods:

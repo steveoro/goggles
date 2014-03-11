@@ -230,13 +230,13 @@ describe UserTrainingStoriesController do
 
         it "changes the row attributes" do
           example_date = Date.today
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story, swam_date: example_date, user_training_id: 2, notes: "Meh.")
+          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story, swam_date: example_date, user_training_id: 2, notes: "Meh.", swimmer_level_type_id: 3)
           @user_training_story.reload
-          
+
           expect( @user_training_story.swam_date == example_date ).to be_true
+          expect( @user_training_story.notes == "Meh." ).to be_true
           expect( @user_training_story.user_training_id == 2 ).to be_true
-# DEBUG
-#          puts "\r\n@user_training_story.notes = '#{@user_training_story.notes}'"
+          expect( @user_training_story.swimmer_level_type_id == 3 ).to be_true
         end
 
         it "redirects to the updated row" do

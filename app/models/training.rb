@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+require 'wrappers/timing'   # [Steve 20140311] Used by TrainingRow
+
+
 class Training < ActiveRecord::Base
 
   belongs_to :user

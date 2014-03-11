@@ -28,12 +28,12 @@ class SwimmingPool < ActiveRecord::Base
   validates_length_of       :lanes_number, :within => 1..2, :allow_nil => false
   validates_numericality_of :lanes_number
 
-  validates_presence_of     :has_multiple_pools
-  validates_presence_of     :has_open_area
-  validates_presence_of     :has_bar
-  validates_presence_of     :has_restaurant_service
-  validates_presence_of     :has_gym_area
-  validates_presence_of     :has_children_area
+  validates :has_multiple_pools,      :inclusion => { :in => [true, false] }
+  validates :has_open_area,           :inclusion => { :in => [true, false] }
+  validates :has_bar,                 :inclusion => { :in => [true, false] }
+  validates :has_restaurant_service,  :inclusion => { :in => [true, false] }
+  validates :has_gym_area,            :inclusion => { :in => [true, false] }
+  validates :has_children_area,       :inclusion => { :in => [true, false] }
 
   scope :sort_swimming_pool_by_user,                lambda { |dir| order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
   scope :sort_swimming_pool_by_city,                lambda { |dir| order("cities.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }

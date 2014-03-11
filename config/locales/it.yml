@@ -1326,9 +1326,13 @@ it:
   user_training_stories:
     index_title: "Ricerca Storico Allenamenti Utente"
     swam_date: "Nuotato il"
+    swam_date_hint: "Scegli il giorno in cui hai fatto l'Allenamento qui sotto"
     notes: "Commento"
+    notes_hint: "Descrivi o commenta con le tue sensazioni l'Allenamento selezionato qui sotto"
     show_title: "Storia Utente per '{TRAINING_TITLE}'"
+    user_training: "Allenamento"
     total_training_time: "Tempo tot. di lavoro"
+    total_training_time_hint: "Immetti il tuo effettivo tempo totale di lavoro in minuti"
     story_created: "Storia Allenamento Utente creata con successo!"
     story_updated: "Storia Allenamento Utente aggiornata con successo!"
     story_deleted: "Storia Allenamento Utente eliminata!"
@@ -1927,3 +1931,9 @@ it:
             blank: "non puo' essere vuoto"
           max_swimmer_level:
             blank: "non puo' essere vuoto"
+      user_training_story:
+        attributes:
+          swimming_pool:
+            invalid: "fallisce le validazioni o possiede attributi che non sono validi"
+          swam_date:
+            blank: "non puo' essere vuota"
