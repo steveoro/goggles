@@ -86,6 +86,13 @@ gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
 
+gem 'draper', '~> 1.3'                              # [Steve] For Decorator pattern support
+# Draper usage: "rails generate decorator Article" for existing models,
+# or "rails generate resource Article" to scaffold a new resource;
+# Single instance => Article.first.decorate
+# Indirect => ArticleDecorator.decorate( OtherCompatibleModel.first )
+# Collection => ArticleDecorator.decorate_collection( Article.all )
+
 gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
 gem "rest-client"
 
@@ -116,6 +123,10 @@ end
 gem 'capistrano'
 # gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
 gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
+
+                                                    # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
+gem 'simplecov', '~> 0.7.1', require: false, group: :test
+# gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
 
 # To use debugger
 #gem 'ruby-debug'

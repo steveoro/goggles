@@ -5,7 +5,7 @@ require 'capybara/rspec'
 require 'date'
 
 
-describe 'log in' do
+describe 'Log in' do
   before  {
     visit new_user_session_path()
     expect(page).to have_text( I18n.t('devise.new_session_title') )
@@ -14,15 +14,14 @@ describe 'log in' do
   }
   subject { page }                                  # explicit subject for the feature tests
 
-  describe 'user should be able to log in' do
-    before do
+  describe '[AUTH user]' do
+    it 'submits valid credentials' do
       user = FactoryGirl.create(:user)
       fill_in 'user_email', with: user.email
       fill_in 'user_password', with: user.password
-      click_on 'Log in'
+      click_on I18n.t('devise.new_session_submit')
+      # TODO eventually identify & test other common features for the log-in process (i.e.: planned Avatar image display and so on...)
     end
-
-    it { should have_link 'Log out' }
   end
 
 end

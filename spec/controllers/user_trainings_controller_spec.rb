@@ -4,12 +4,18 @@ require 'date'
 require 'common/format'
 
 
-describe UserTrainingStoriesController do
+describe UserTrainingsController do
 
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
     expect(response).to redirect_to '/users/sign_in'
     expect(response.status).to eq( 302 )            # must redirect to the login page
+  end
+  # ===========================================================================
+
+
+  describe '[AJAX json_list]' do
+    it "checks the API"
   end
   # ===========================================================================
 
@@ -29,7 +35,7 @@ describe UserTrainingStoriesController do
       it "populates the search grid" do
         # (Seed creation not required since we build-up our own test-db with from the db/seed directory)
         get :index
-        expect( assigns(:user_training_stories_grid) ).not_to be( nil )
+        expect( assigns(:user_trainings_grid) ).not_to be( nil )
       end
 
       it "renders the search template" do
@@ -58,7 +64,7 @@ describe UserTrainingStoriesController do
       it "assigns an instance to be shown" do
         get :show, id: 1
         expect( response.status ).to eq(200)
-        expect( assigns(:user_training_story) ).not_to be_nil 
+        expect( assigns(:user_training) ).not_to be_nil 
         expect( assigns(:title) ).not_to be_nil 
       end
 
@@ -87,7 +93,7 @@ describe UserTrainingStoriesController do
 
       it "assigns an instance with default values" do
         get :new
-        expect( assigns(:user_training_story) ).to be_a_new( UserTrainingStory )
+        expect( assigns(:user_training) ).to be_a_new( UserTraining )
       end
 
       it "renders the edit template" do
@@ -115,7 +121,7 @@ describe UserTrainingStoriesController do
       it "assigns an instance to be edited" do
         get :edit, id: 1
         expect( response.status ).to eq(200)
-        expect( assigns(:user_training_story) ).not_to be_nil 
+        expect( assigns(:user_training) ).not_to be_nil 
         expect( assigns(:title) ).not_to be_nil 
       end
 
@@ -134,10 +140,10 @@ describe UserTrainingStoriesController do
 
     context "unlogged user" do
       it "doesn't create a new row" do 
-        entity_attrs = attributes_for( :user_training_story )
+        entity_attrs = attributes_for( :user_training )
         expect {
-          post :create, :user_training_story => entity_attrs
-        }.not_to change(UserTrainingStory, :count) 
+          post :create, :user_training => entity_attrs
+        }.not_to change(UserTraining, :count) 
       end
     end
     # -------------------------------------------------------------------------
@@ -148,25 +154,25 @@ describe UserTrainingStoriesController do
       context "with valid attributes" do
         it "creates a new row" do
           expect {
-            post :create, user_training_story: attributes_for( :user_training_story )
-          }.to change(UserTrainingStory, :count).by(1)
+            post :create, user_training: attributes_for( :user_training )
+          }.to change(UserTraining, :count).by(1)
         end
 
         it "redirects to the new row" do
-          post :create, user_training_story: attributes_for( :user_training_story )
-          expect(response).to redirect_to( UserTrainingStory.last )
+          post :create, user_training: attributes_for( :user_training )
+          expect(response).to redirect_to( UserTraining.last )
         end
       end
 
       context "with invalid attributes" do
         it "does not save the new contact" do
           expect{
-            post :create, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
-          }.to_not change(UserTrainingStory, :count)
+            post :create, user_training: attributes_for( :user_training, description: nil )
+          }.to_not change(UserTraining, :count)
         end
 
         it "re-renders the new method" do
-          post :create, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
+          post :create, user_training: attributes_for( :user_training, description: nil )
           expect(response).to render_template( :edit )
         end
       end
@@ -179,15 +185,14 @@ describe UserTrainingStoriesController do
 
     context "unlogged user" do
       it "fails the update" do
-        entity_on_db = UserTrainingStory.find(1)    # Retrieve an actual DB row: (existing, from the seeds file)
-        entity_attrs = attributes_for( :user_training_story )
+        entity_on_db = UserTraining.find(1)    # Retrieve an actual DB row: (existing, from the seeds file)
+        entity_attrs = attributes_for( :user_training )
                                                     # Check that we have different attributes, usable for an update:
-        expect( entity_attrs[:user_training_id] != entity_on_db.user_training_id ).to be_true
-        expect( entity_attrs[:notes] != entity_on_db.notes ).to be_true
+        expect( entity_attrs[:description] != entity_on_db.description ).to be_true
                                                     # Try the update without logging in:
-        put :update, id: 1, user_training_story: entity_attrs
+        put :update, id: 1, user_training: entity_attrs
                                                     # The update should not have persisted:
-        expect( UserTrainingStory.find(1) == entity_on_db ).to be_true
+        expect( UserTraining.find(1) == entity_on_db ).to be_true
       end
     end
     # -------------------------------------------------------------------------
@@ -196,45 +201,37 @@ describe UserTrainingStoriesController do
       login_user()
 
       before :each do
-        @user_training_story = create( :user_training_story )
+        @user_training = create( :user_training )
       end
 
       context "with valid attributes" do
         it "locates the requested row" do
-          example_date = Date.today
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story, swam_date: example_date, user_training_id: 1, notes: "Meh.")
-          expect( assigns(:user_training_story) == @user_training_story ).to be_true
+          put :update, id: @user_training, user_training: attributes_for(:user_training, description: "Dummy desc!")
+          expect( assigns(:user_training) == @user_training ).to be_true
         end
 
         it "changes the row attributes" do
-          example_date = Date.today
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story, swam_date: example_date, user_training_id: 2, notes: "Meh.", swimmer_level_type_id: 3)
-          @user_training_story.reload
-
-          expect( @user_training_story.swam_date == example_date ).to be_true
-          expect( @user_training_story.notes == "Meh." ).to be_true
-          expect( @user_training_story.user_training_id == 2 ).to be_true
-          expect( @user_training_story.swimmer_level_type_id == 3 ).to be_true
+          put :update, id: @user_training, user_training: attributes_for(:user_training, description: "Dummy desc!")
+          @user_training.reload
+          expect( @user_training.description == "Dummy desc!" ).to be_true
         end
 
         it "redirects to the updated row" do
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story)
-          expect(response).to redirect_to( @user_training_story )
+          put :update, id: @user_training, user_training: attributes_for(:user_training)
+          expect(response).to redirect_to( @user_training )
         end
       end
 
       context "with invalid attributes" do
         it "doesn't change the row" do
-          put :update, id: @user_training_story, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
-          expect( assigns(:user_training_story) == @user_training_story ).to be_true
-          @user_training_story.reload
-          expect( @user_training_story.swam_date ).not_to be_nil
-          expect( @user_training_story.user_training_id ).not_to be_nil
-          expect( @user_training_story.notes ).not_to be_nil
+          put :update, id: @user_training, user_training: attributes_for( :user_training, description: nil )
+          expect( assigns(:user_training) == @user_training ).to be_true
+          @user_training.reload
+          expect( @user_training.description ).not_to be_nil
         end
 
         it "renders the edit method" do
-          put :update, id: @user_training_story, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
+          put :update, id: @user_training, user_training: attributes_for( :user_training, description: nil )
           expect(response).to render_template( :edit )
         end 
       end
@@ -246,14 +243,14 @@ describe UserTrainingStoriesController do
   describe '[DELETE]' do
 
     before :each do
-      @user_training_story = create( :user_training_story, user_training_id: 2 )
+      @user_training = create( :user_training )
     end
 
     context "unlogged user" do
       it "doesn't delete the row" do 
         expect {
-          delete :destroy, id: @user_training_story
-        }.not_to change(UserTrainingStory, :count)
+          delete :destroy, id: @user_training
+        }.not_to change(UserTraining, :count)
       end
     end
     # -------------------------------------------------------------------------
@@ -263,13 +260,13 @@ describe UserTrainingStoriesController do
 
       it "deletes the row" do
         expect {
-          delete :destroy, id: @user_training_story
-        }.to change(UserTrainingStory, :count).by(-1)
+          delete :destroy, id: @user_training
+        }.to change(UserTraining, :count).by(-1)
       end
 
       it "redirects to #index" do
-        delete :destroy, id: @user_training_story
-        expect(response).to redirect_to( user_training_stories_url )
+        delete :destroy, id: @user_training
+        expect(response).to redirect_to( user_trainings_url )
       end
     end
   end

@@ -33,3 +33,9 @@
 /db/schema.rb
 db/schema.rb
 db/schema.rb
+
+# Ignore code coverage report directory:
+/coverage/*
+coverage/*
+coverage/assets/*
+coverage/index.html
