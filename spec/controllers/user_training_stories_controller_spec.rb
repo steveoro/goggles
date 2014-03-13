@@ -6,6 +6,7 @@ require 'common/format'
 
 describe UserTrainingStoriesController do
 
+  # Login checker for GET actions only.
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
     expect(response).to redirect_to '/users/sign_in'
@@ -15,7 +16,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[GET #index]' do
-
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :index )
@@ -43,8 +43,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[GET #show]' do
-    render_views
-
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :show, 1 )
@@ -74,7 +72,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[GET #new]' do
-
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :new )
@@ -101,7 +98,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[GET #edit]' do
-
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :edit, 1 )
@@ -131,7 +127,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[POST create]' do
-
     context "unlogged user" do
       it "doesn't create a new row" do 
         entity_attrs = attributes_for( :user_training_story )
@@ -176,7 +171,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[PUT update]' do
-
     context "unlogged user" do
       it "fails the update" do
         entity_on_db = UserTrainingStory.find(1)    # Retrieve an actual DB row: (existing, from the seeds file)
@@ -244,7 +238,6 @@ describe UserTrainingStoriesController do
 
 
   describe '[DELETE]' do
-
     before :each do
       @user_training_story = create( :user_training_story, user_training_id: 2 )
     end

@@ -14,12 +14,12 @@ class ExercisesController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
-  # AJAX-only action to retrieve a filtered row list.
+  # AJAX-only action to retrieve a filtered row list or a single instance.
   #
   # TODO [Steve, 20140122] [Future DEV] Move this action to an API-dedicated controller.
   #
   # == Params:
-  # - <tt>:exercise_id</tt> => filter bypass to retrieve a single Exercise instance
+  # - <tt>:id</tt> => filter bypass, used to retrieve the specified single row instance identified by its id
   # - <tt>:training_step_type_id</tt> => when present, it is used as a filtering parameter for the result data set.
   # - <tt>:limit</tt> => to limit the array of results; the default top limit is set to 1000 for performance reasons (but it can be overridden by this parameter).
   # - <tt>:query</tt> => a string match for the verbose description; when equal to '%', the parameter is ignored.
@@ -27,7 +27,8 @@ class ExercisesController < ApplicationController
   # == Returns:
   # A JSON array of Hash instances having the structure:
   # <tt>{
-  #       :label => row.get_full_name, :value => row.id,
+  #       :label => row.get_full_name,
+  #       :value => row.id,
   #       :tot_distance => row.compute_total_distance(),
   #       :tot_secs => row.compute_total_seconds(),
   #       :is_arm_aux_allowed => row.is_arm_aux_allowed(),
@@ -41,8 +42,8 @@ class ExercisesController < ApplicationController
 # DEBUG
 #      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #      logger.debug "PARAMS: #{params.inspect}"
-      if params[:exercise_id].to_i > 0              # Set up and check parameters:
-        result_row = Exercise.find_by_id(params[:exercise_id].to_i)
+      if params[:id].to_i > 0                       # Set up and check parameters:
+        result_row = Exercise.find_by_id( params[:id].to_i )
         render(
           :json => {
             label: result_row.get_full_name(
@@ -80,7 +81,7 @@ class ExercisesController < ApplicationController
         }
       end
                                                     # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
-      if result.instance_of?( Array )
+      if result.respond_to?( :map ) && result.respond_to?( :sort_by )
         result_array = result.map{ |row|
           {
             label: row.get_full_name(

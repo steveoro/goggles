@@ -1,4 +1,4 @@
-== Goggles - Swimming Results Browser
+## Goggles - Swimming Results Browser
 
 [![Code Climate](https://codeclimate.com/github/steveoro/goggles.png)](https://codeclimate.com/github/steveoro/goggles)
 

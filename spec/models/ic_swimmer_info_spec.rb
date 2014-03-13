@@ -6,7 +6,6 @@ require 'date'
 class Dummy
   include ICSwimmerInfo
   attr_accessor :swimmer
-#  attr_accessor :comlete_name, :year_of_birth
 end
 # -----------------------------------------------------------------------------
 
@@ -21,9 +20,6 @@ describe ICSwimmerInfo do
       year_of_birth: year_of_birth
     )
     dummy
-      # Use conplete_name instead of last_name and first_name
-#      complete_name  = ('FELPATI MICHELE')
-#      year_of_birth = (1904 + (rand * 100).to_i)
   end
 
   before(:each) do
@@ -38,8 +34,6 @@ describe ICSwimmerInfo do
   describe "module-includer class" do
     it "has all required fields" do
       expect( @dummy ).to respond_to( :swimmer )
-#      expect( @dummy ).to respond_to( :complete_name )
-#      expect( @dummy ).to respond_to( :year_of_birth )
     end
 
     it "responds to get_swimmer_name()" do

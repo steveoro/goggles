@@ -24,6 +24,8 @@ class UserTraining < ActiveRecord::Base
                   :user_training_story_attributes
 
   scope :sort_by_description,    order('description')
+# TODO Do something like user_id IN SELECT( friends from users )
+# FIXME  scope :from_friends,          lambda{ |user_id| where(:user_id => user_id) }
 
   # ---------------------------------------------------------------------------
   # Base methods:

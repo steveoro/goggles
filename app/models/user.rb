@@ -15,6 +15,8 @@ class User < ActiveRecord::Base
 
   include Rails.application.routes.url_helpers
 
+  include Amistad::FriendModel                       # For Facebook-like friendship management
+
 #  belongs_to :user                                  # Used by the "updated_by" getter
 
   has_one :swimmer

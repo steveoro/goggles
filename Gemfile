@@ -85,6 +85,7 @@ gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git' # This version ha
 gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
+gem 'amistad'                                       # [Steve] for Facebook-like friendship management
 
 gem 'draper', '~> 1.3'                              # [Steve] For Decorator pattern support
 # Draper usage: "rails generate decorator Article" for existing models,

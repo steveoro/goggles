@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140228230153) do
+ActiveRecord::Schema.define(:version => 20140313183038) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -718,6 +718,15 @@ ActiveRecord::Schema.define(:version => 20140228230153) do
   end
 
   add_index "federation_types", ["code"], :name => "index_federation_types_on_code", :unique => true
+
+  create_table "friendships", :force => true do |t|
+    t.integer "friendable_id"
+    t.integer "friend_id"
+    t.integer "blocker_id"
+    t.boolean "pending",       :default => true
+  end
+
+  add_index "friendships", ["friendable_id", "friend_id"], :name => "index_friendships_on_friendable_id_and_friend_id", :unique => true
 
   create_table "gender_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0

@@ -12,7 +12,7 @@ FactoryGirl.define do
   # TODO define factory for user_training_row
 
   factory :user_training do
-    description "Full Anaerobic workout"
+    sequence( :description )  { |n| "Full Anaerobic workout n.#{n}" }
     user
 
     # TODO nest define factory for user_training_with_rows
@@ -25,7 +25,7 @@ FactoryGirl.define do
     user
     user_training
     swimming_pool
-    swimmer_level_type
+    swimmer_level_type_id { ((rand * 100) % 15).to_i }
   end
   # ---------------------------------------------------------------------------
 

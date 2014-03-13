@@ -15,12 +15,12 @@ class UserTrainingsController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
-  # AJAX-only action to retrieve a filtered row list.
+  # AJAX-only action to retrieve a filtered row list or a single instance.
   #
   # TODO [Steve, 20140122] [Future DEV] Move this action to an API-dedicated controller.
   #
   # == Params:
-  # - <tt>:exercise_id</tt> => filter bypass to retrieve a single Exercise instance
+  # - <tt>:id</tt> => filter bypass, used to retrieve the specified single row instance identified by its id
   # - <tt>:training_step_type_id</tt> => when present, it is used as a filtering parameter for the result data set.
   # - <tt>:limit</tt> => to limit the array of results; the default top limit is set to 1000 for performance reasons (but it can be overridden by this parameter).
   # - <tt>:query</tt> => a string match for the verbose description; when equal to '%', the parameter is ignored.
@@ -28,74 +28,57 @@ class UserTrainingsController < ApplicationController
   # == Returns:
   # A JSON array of Hash instances having the structure:
   # <tt>{
-  #       :label => row.get_full_name, :value => row.id,
+  #       :label => row.get_full_name,
+  #       :value => row.id,
   #       :tot_distance => row.compute_total_distance(),
   #       :tot_secs => row.compute_total_seconds(),
-  #       :is_arm_aux_allowed => row.is_arm_aux_allowed(),
-  #       :is_kick_aux_allowed => row.is_kick_aux_allowed(),
-  #       :is_body_aux_allowed => row.is_body_aux_allowed(),
-  #       :is_breath_aux_allowed => row.is_breath_aux_allowed(),
+  #       :user_name: => row.get_user_name(),
+  #       :swimmer_level_type_description: => row.get_swimmer_level_type( :i18n_description ),
+  #       :swimmer_level_type_explanation => row.get_swimmer_level_type( :i18n_explanation )
   #     }</tt>. 
   #
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one
 # DEBUG
-#      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#      logger.debug "PARAMS: #{params.inspect}"
-      if params[:exercise_id].to_i > 0              # Set up and check parameters:
-        result_row = Exercise.find_by_id(params[:exercise_id].to_i)
+      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+      logger.debug "PARAMS: #{params.inspect}"
+      if params[:id].to_i > 0                       # Set up and check parameters:
+        result_row = UserTraining.find_by_id( params[:id].to_i )
         render(
           :json => {
-            label: result_row.get_full_name(
-              0,
-              Exercise.get_default_verbosity_for_label_symbol(),
-              current_user.get_preferred_swimmer_level_id()
-            ),
+            label: result_row.get_full_name(),
             value: result_row.id,
             tot_distance: result_row.compute_total_distance(),
             tot_secs: result_row.compute_total_seconds(),
-            is_arm_aux_allowed: result_row.is_arm_aux_allowed(),
-            is_kick_aux_allowed: result_row.is_kick_aux_allowed(),
-            is_body_aux_allowed: result_row.is_body_aux_allowed(),
-            is_breath_aux_allowed: result_row.is_breath_aux_allowed()
+            user_name: result_row.get_user_name(),
+            swimmer_level_type_description: result_row.get_swimmer_level_type( :i18n_description ),
+            swimmer_level_type_explanation: result_row.get_swimmer_level_type( :i18n_explanation )
           }
         ) and return
       end
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
-      if params[:training_step_type_id].to_i > 0    # Filter by :training_step_type_id when specified:
-        training_step_čode = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
-        result = Exercise.belongs_to_training_step_code( training_step_čode )
-      else
-        result = Exercise.all
-      end
+# FIXME / TODO MUST RETURN ONLY UserTraining rows belonging to friends of the current_user
+# TODO ADD friend filtering scope on UserTraining
+      result = UserTraining.where( :user_id => current_user.id )
                                                     # Get the results and filter them even more using the query chars:
       if params[:query] && ( params[:query].to_s != QUERY_WILDCHAR )
 # DEBUG
 #        logger.debug "result (before filtering): #{result.inspect}"
         result = result.find_all { |row|
-          row.get_full_name(
-            0,
-            Exercise.get_default_verbosity_for_label_symbol(),
-            current_user.get_preferred_swimmer_level_id()
-          ) =~ Regexp.new( params[:query], true )
+          row.get_full_name() =~ Regexp.new( params[:query], true )
         }
       end
                                                     # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
-      if result.instance_of?( Array )
+      if result.respond_to?( :map ) && result.respond_to?( :sort_by )
         result_array = result.map{ |row|
           {
-            label: row.get_full_name(
-              0,
-              Exercise.get_default_verbosity_for_label_symbol(),
-              current_user.get_preferred_swimmer_level_id()
-            ),
+            label: row.get_full_name(),
             value: row.id,
             tot_distance: row.compute_total_distance(),
             tot_secs: row.compute_total_seconds(),
-            is_arm_aux_allowed: row.is_arm_aux_allowed(),
-            is_kick_aux_allowed: row.is_kick_aux_allowed(),
-            is_body_aux_allowed: row.is_body_aux_allowed(),
-            is_breath_aux_allowed: row.is_breath_aux_allowed()
+            user_name: row.get_user_name(),
+            swimmer_level_type_description: row.get_swimmer_level_type( :i18n_description ),
+            swimmer_level_type_explanation: row.get_swimmer_level_type( :i18n_explanation )
           }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else

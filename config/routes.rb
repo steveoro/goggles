@@ -59,14 +59,21 @@ Goggles::Application.routes.draw do
       end
       resources :user_trainings do
         member do
+          get 'json_list'
           get 'printout'
           post 'duplicate'
           post 'create_user_story'
+        end
+        collection do
+          get 'json_list'
         end
       end
       resources :user_training_stories
 
       resources :exercises do
+        member do
+          get 'json_list'
+        end
         collection do
           get 'json_list'
         end

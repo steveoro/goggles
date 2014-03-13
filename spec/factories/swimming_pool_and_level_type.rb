@@ -15,11 +15,6 @@ FactoryGirl.define do
     has_gym_area true
     has_children_area true
   end
-
-  factory :swimmer_level_type do
-    code  "MAS"
-    level 100
-  end
   # ---------------------------------------------------------------------------
 
 end

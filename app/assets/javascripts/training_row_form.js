@@ -374,7 +374,7 @@ function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
     {
       url: exerciseAutocompleteURL, // This URL (using a single ID parameter) will return a single JSON object
       dataType: "json",
-      data: { exercise_id: exerciseId }
+      data: { id: exerciseId }
     }
   ).done(
     function( data ) {
