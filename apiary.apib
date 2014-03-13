@@ -7,15 +7,15 @@ of [http://steveoro.github.io/goggles]. Some of the actions may require authenti
 
 # Goggles Front-End
 
-## User-Training list or single row [/user_trainings/json_list{/user_training_id}{&limit}{&query}]
+## User-Training list or single row [/user_trainings/json_list{/id}{&limit}{&query}]
 ### Retrieve User-Training details or list all available User-Training [GET]
 Retrieves User Training data.
 Currently this resource works only via AJAX request, behind user authentication.
 Future versions will introduce OAuth/Facebook/Google+ user authorization.
 
 + Parameters
-    - user_training_id(optional)
-        Filter bypass to retrieve a single UserTraining instance. When present, all other parameters are ignored.
+    - id(optional)
+        Filter bypass, used to retrieve the row instance having the specified id. When present, all other parameters are ignored.
     - limit(optional)
         Used to limit the array of results; the default top limit is set to 1000 for performance reasons (but it can be overridden by this parameter).
     - query(optional)
@@ -28,20 +28,23 @@ Future versions will introduce OAuth/Facebook/Google+ user authorization.
          "value": row.id,
          "tot_distance": row.compute_total_distance(),
          "tot_secs": row.compute_total_seconds()
+         "user_name": row.get_user_name(),
+         "swimmer_level_type_description": row.get_swimmer_level_type( :i18n_description ),
+         "swimmer_level_type_explanation": row.get_swimmer_level_type( :i18n_explanation )
         }, {
          ...
         }]
 
 
-## Exercise list or single row [/exercises/json_list{/exercise_id}{?training_step_type_id}{&limit}{&query}]
+## Exercise list or single row [/exercises/json_list{/id}{?training_step_type_id}{&limit}{&query}]
 ### Retrieve exercise details or list exercises based on "training step type" [GET]
 Retrieves Exercise data.
 Currently this resource works only via AJAX request, behind user authentication.
 Future versions will introduce OAuth/Facebook/Google+ user authorization.
 
 + Parameters
-    - exercise_id(optional)
-        Filter bypass to retrieve a single Exercise instance. When present, all other parameters are ignored.
+    - id(optional)
+        Filter bypass, used to retrieve the row instance having the specified id. When present, all other parameters are ignored.
     - training_step_type_id(optional)
         When present, it is used as a filtering parameter for the result data set.
     - limit(optional)
