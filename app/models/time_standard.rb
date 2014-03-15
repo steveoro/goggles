@@ -75,7 +75,7 @@ class TimeStandard < ActiveRecord::Base
 
   # Retrieves the localized Gender Type single-char code
   def get_gender_type_code
-    self.gender_type ? self.gender_type.i18n_gender_type : '?'
+    self.gender_type ? self.gender_type.i18n_alternate : '?'
   end
 
   # Retrieves the localized Pool Type code

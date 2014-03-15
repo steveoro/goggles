@@ -14,11 +14,11 @@ describe ICTimingFields do
 
   # Init dummy class instance to test instance methods
   def setup_dummy_instance
-    Dummy.new() do
-      minutes  = ((rand * 100).to_i % 60)
-      seconds  = ((rand * 100).to_i % 60)
-      hundreds = ((rand * 100).to_i % 60)
-    end
+    dummy = Dummy.new()
+    dummy.minutes  = ((rand * 100).to_i % 60)
+    dummy.seconds  = ((rand * 100).to_i % 60)
+    dummy.hundreds = ((rand * 100).to_i % 60)
+    dummy
   end
 
   before(:each) do

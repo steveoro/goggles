@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'extensions/roman_numeral'
-
 
 class Meeting < ActiveRecord::Base
 
@@ -111,6 +109,15 @@ class Meeting < ActiveRecord::Base
   def get_verbose_name
     "#{get_full_name} (#{get_season_type}, #{header_year})"
   end
+  # ----------------------------------------------------------------------------
+
+  # Label symbol corresponding to either a column name or a model method to be used
+  # mainly in generating DropDown option lists.
+  #
+  def self.get_label_symbol
+    :get_short_name
+  end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the user name associated with this instance
   def user_name

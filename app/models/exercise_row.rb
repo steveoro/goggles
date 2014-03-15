@@ -234,7 +234,7 @@ class ExerciseRow < ActiveRecord::Base
     if verbose_level.to_sym == :short
       training_mode_type.i18n_short
     else
-      training_mode_type.i18n_execution
+      training_mode_type.i18n_alternate
     end
   end
   # ----------------------------------------------------------------------------

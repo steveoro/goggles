@@ -5,6 +5,7 @@ require 'date'
 # Dummy class holder for the fields used by the module
 class Dummy
   include ICSwimmerInfo
+
   attr_accessor :swimmer
 end
 # -----------------------------------------------------------------------------
@@ -54,7 +55,7 @@ describe ICSwimmerInfo do
   end
   # ---------------------------------------------------------------------------
 
-  # Should retreives the complete athlete name (last name + ' ' + first_name)
+  # Should retrieve the complete athlete name (last name + ' ' + first_name)
   #
   describe "get_swimmer_name" do
     it "returns always a non-empty string" do
@@ -65,7 +66,7 @@ describe ICSwimmerInfo do
   end
   # ---------------------------------------------------------------------------
 
-  # Should retreives the year of birth of the swimmer
+  # Should retrieve the year of birth of the swimmer
   #
   describe "get_year_of_birth" do
     it "returns always a valid year" do
@@ -76,7 +77,7 @@ describe ICSwimmerInfo do
   end
   # ---------------------------------------------------------------------------
 
-  # Should retrieve the calculate swimmer age
+  # Should retrieve the computed swimmer age
   #
   describe "get_swimmer_age" do
     it "returns always a value between 8 and 120" do

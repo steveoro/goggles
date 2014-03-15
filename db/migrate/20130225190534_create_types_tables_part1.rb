@@ -8,7 +8,6 @@ class CreateTypesTablesPart1 < ActiveRecord::Migration
       # Virtual fields that need to use locales + i18n translation:
 #      t.string :i18n_short = "i18n_short_#{ code }"
 #      t.string :i18n_description = "i18n_description_#{ code }"
-#      t.string :i18n_gender_type = "i18n_gender_type_#{ code }"
 
       t.timestamps
     end

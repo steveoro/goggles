@@ -37,8 +37,8 @@ class GenderType < ActiveRecord::Base
   end
 
   # Computes a displayable "code" for the value/code associated with this data
-  def i18n_gender_type
-    I18n.t( "i18n_gender_type_#{ self.code }".to_sym, {:scope=>[:gender_types]} )
+  def i18n_alternate
+    I18n.t( "i18n_alternate_#{ self.code }".to_sym, {:scope=>[:gender_types]} )
   end
   # ----------------------------------------------------------------------------
 
