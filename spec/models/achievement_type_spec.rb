@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ArmAuxType do
+describe AchievementType do
   shared_examples "active_record_extension"
   shared_examples "shared_ic_i18n_examples"
 
