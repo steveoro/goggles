@@ -20,15 +20,15 @@ it:
     code: "Cod."
     i18n_short_M: "MAS"
     i18n_description_M: "MASCHILE"
-    i18n_alternate_M: "MASCHI""
+    i18n_alternate_M: "MASCHI"
     i18n_sex_M: "UOMINI"
     i18n_short_F: "FEM"
     i18n_description_F: "FEMMINILE"
-    i18n_alternate_F: "FEMMINE""
+    i18n_alternate_F: "FEMMINE"
     i18n_sex_F: "DONNE"
     i18n_short_X: "MIX"
     i18n_description_X: "MISTO"
-    i18n_alternate_X: "MISTI""
+    i18n_alternate_X: "MISTI"
     i18n_sex_X: "MISTI"
 
   stroke_types:
