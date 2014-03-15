@@ -1,3 +1,5 @@
+require 'ic_i18n'
+
 class ArmAuxType < ActiveRecord::Base
   include ICI18n
 

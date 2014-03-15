@@ -1,6 +1,11 @@
 
 class ActiveRecord::Base
 
+  # Alias method for self.class
+  def klass
+    self.class
+  end 
+
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   # For ActiveRecord::Base defaults to :i18n_short. To be overridden in siblings that

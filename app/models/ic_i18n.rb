@@ -14,17 +14,20 @@ module ICI18n
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
-    I18n.t( "i18n_short_#{ code }".to_sym, {:scope=>[table_name.to_sym]} )
+    # FIXME table_name is defined on the class not on the instances
+    I18n.t( "i18n_short_#{ code }".to_sym, {:scope=>[klass.table_name.to_sym]} )
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description
-    I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[table_name.to_sym]} )
+    # FIXME table_name is defined on the class not on the instances
+    I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[klass.table_name.to_sym]} )
   end
   
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_alternate
-    I18n.t( "i18n_alternate_#{ code }".to_sym, {:scope=>[table_name.to_sym]} )
+    # FIXME table_name is defined on the class not on the instances
+    I18n.t( "i18n_alternate_#{ code }".to_sym, {:scope=>[klass.table_name.to_sym]} )
   end
   # ----------------------------------------------------------------------------
 

@@ -6,5 +6,5 @@ describe TrainingModeType do
 
   it_should_behave_like "ActiveRecord extension"
   it_should_behave_like "ICI18n"
-
+  
 end

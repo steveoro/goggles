@@ -4,7 +4,15 @@ require 'spec_helper'
 # Dummy class holder for the fields used by the module
 class Dummy
   include ICI18n
-  attr_accessor :code, :table_name
+  attr_accessor :code
+
+  def Dummy.table_name
+    'stroke_types'
+  end
+
+  def klass
+    Dummy
+  end
 end
 # -----------------------------------------------------------------------------
 
@@ -15,7 +23,6 @@ describe ICI18n do
   def setup_dummy_instance
     dummy = Dummy.new()
     dummy.code = 'SL'
-    dummy.table_name = 'stroke_types' 
     dummy
   end
 
