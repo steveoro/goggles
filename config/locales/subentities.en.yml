@@ -20,15 +20,15 @@ en:
     code: "code"
     i18n_short_M: "MAL"
     i18n_description_M: "MALE"
-    i18n_alternate_M: "MALE""
+    i18n_alternate_M: "MALE"
     i18n_sex_M: "MEN"
     i18n_short_F: "FEM"
     i18n_description_F: "FEMALE"
-    i18n_alternate_F: "FEMALE""
+    i18n_alternate_F: "FEMALE"
     i18n_sex_F: "WOMEN"
     i18n_short_X: "MIX"
     i18n_description_X: "MIXED"
-    i18n_alternate_X: "MIXED""
+    i18n_alternate_X: "MIXED"
     i18n_sex_X: "MIXED"
 
   stroke_types:
