@@ -1,4 +1,7 @@
+require 'ic_i18n'
+
 class DisqualificationCodeType < ActiveRecord::Base
+  include ICI18n
 
   validates_presence_of   :code
   validates_length_of     :code, :within => 1..4, :allow_nil => false
@@ -15,17 +18,5 @@ class DisqualificationCodeType < ActiveRecord::Base
   # Shortcut-unique ID for commonly used disqualification codes 
   DSQ_RETIRED_ID        = 11                        # NOTE: check migration AddDisqualificationCodeTypes for confirmation of this ID
   DSQ_RETIRED_CODE      = 'GK'
-  # ----------------------------------------------------------------------------
-
-
-  # Computes a localized shorter description for the value/code associated with this data
-  def i18n_short
-    I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:disqualification_code_types]} )
-  end
-
-  # Computes a localized description for the value/code associated with this data
-  def i18n_description
-    I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:disqualification_code_types]} )
-  end
   # ----------------------------------------------------------------------------
 end
