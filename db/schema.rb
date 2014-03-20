@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140313183038) do
+ActiveRecord::Schema.define(:version => 20140320223319) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -723,7 +723,10 @@ ActiveRecord::Schema.define(:version => 20140313183038) do
     t.integer "friendable_id"
     t.integer "friend_id"
     t.integer "blocker_id"
-    t.boolean "pending",       :default => true
+    t.boolean "pending",          :default => true
+    t.boolean "shares_passages",  :default => false, :null => false
+    t.boolean "shares_trainings", :default => false, :null => false
+    t.boolean "shares_calendars", :default => false, :null => false
   end
 
   add_index "friendships", ["friendable_id", "friend_id"], :name => "index_friendships_on_friendable_id_and_friend_id", :unique => true
@@ -1359,6 +1362,23 @@ ActiveRecord::Schema.define(:version => 20140313183038) do
   add_index "team_affiliations", ["number"], :name => "index_team_affiliations_on_number"
   add_index "team_affiliations", ["season_id", "team_id"], :name => "uk_team_affiliations_seasons_teams", :unique => true
   add_index "team_affiliations", ["team_id"], :name => "fk_team_affiliations_teams"
+
+  create_table "team_passage_templates", :force => true do |t|
+    t.integer  "lock_version",            :default => 0
+    t.boolean  "has_subtotal",            :default => false, :null => false
+    t.boolean  "has_cycle_count",         :default => false, :null => false
+    t.boolean  "has_breath_count",        :default => false, :null => false
+    t.boolean  "has_non_swam_part",       :default => false, :null => false
+    t.boolean  "has_non_swam_kick_count", :default => false, :null => false
+    t.boolean  "has_passage_position",    :default => false, :null => false
+    t.integer  "team_id"
+    t.integer  "event_type_id"
+    t.integer  "pool_type_id"
+    t.integer  "passage_type_id"
+    t.integer  "user_id"
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+  end
 
   create_table "teams", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
