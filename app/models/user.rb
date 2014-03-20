@@ -40,7 +40,6 @@ class User < ActiveRecord::Base
   # column to manage upload of user avatar image
   # 
 
-
   # validates_presence_of :hashed_pwd
   # validates_length_of   :hashed_pwd, :within => 1..128
 # 
@@ -59,9 +58,6 @@ class User < ActiveRecord::Base
   # receives the "netzke_attribute" configuration way before the current locale is actually defined.
   # So, it is way better to keep column configuration directly inside Netzke components or in the
   # view definition using the netzke helper.
-
-# XXX [Steve, 20100211] Firm entity not used here:
-#  scope :sort_user_by_firm,             lambda { |dir| order("firms.name #{dir.to_s}, le_users.name #{dir.to_s}") }
 
 
   #-----------------------------------------------------------------------------
@@ -91,24 +87,6 @@ class User < ActiveRecord::Base
   #
   def self.get_label_symbol
     :name
-  end
-
-  # Returns an Array of 2-items Arrays, in which each item is the ID of the record
-  # and the other is assumed to be its label
-  #
-  # == Parameters:
-  #
-  # - where_condition: an ActiveRecord::Relation WHERE-clause; defaults to +nil+ (returns all records)
-  # - key_sym: the key symbol/column name (defaults to :id)
-  # - label_sym: the key symbol/column name (defaults to self.get_label_symbol())
-  #
-  # == Returns:
-  # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
-  #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
-    self.where( where_condition ).map{ |row|
-      [row.send(label_sym), row.send(key_sym)]
-    }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
 

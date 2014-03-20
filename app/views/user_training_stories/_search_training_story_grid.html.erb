@@ -16,8 +16,7 @@
 
 	g.column(
 		name: I18n.t(:user, {:scope=>[:activerecord, :models]}),
-		model: User,
-		attribute: 'id',
+		attribute: 'user_id',
 		custom_filter: User.to_dropdown,
 	) do |user_training_story|
 		user_training_story.get_user_name

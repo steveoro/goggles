@@ -1,0 +1,38 @@
+.carousel.slide#jumboTron
+  %ol.carousel-indicators
+    %li.active{'data-target'=>'#jumboTron', 'data-slide-to'=>'0'}
+    %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'1'}
+    %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'2'}
+    %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'3'}
+
+  - # JumboTron items:
+  .carousel-inner
+    .item.thumbnail.active
+      = image_tag( "jumbotron/breastroke.png", :size => '800x440', :class => 'img-rounded' )
+      .carousel-caption
+        %h4= I18n.t('jumbotron.title_breast')
+        %p= I18n.t('jumbotron.text_breast')
+    .item.thumbnail
+      = image_tag( "jumbotron/empty-lanes.png", :size => '800x440', :class => 'img-rounded' )
+      .carousel-caption
+        %h4= I18n.t('jumbotron.title_emptylanes')
+        %p= I18n.t('jumbotron.text_emptylanes')
+    .item.thumbnail
+      = image_tag( "jumbotron/freestyle.png", :size => '800x440', :class => 'img-rounded' )
+      .carousel-caption
+        %h4= I18n.t('jumbotron.title_freestyle')
+        %p= I18n.t('jumbotron.text_freestyle')
+    .item.thumbnail
+      = image_tag( "jumbotron/timertable.png", :size => '800x440', :class => 'img-rounded' )
+      .carousel-caption
+        %h4= I18n.t('jumbotron.title_timertable')
+        %p= I18n.t('jumbotron.text_timertable')
+
+  - # JumboTron nav:
+  %a.carousel-control.left{:href=>'#jumboTron', 'data-slide'=>'prev'}
+    &lsaquo;
+  %a.carousel-control.right{:href=>'#jumboTron', 'data-slide'=>'next'}
+    &rsaquo;
+
+%script
+  $('.carousel').carousel({ interval: 10000 });

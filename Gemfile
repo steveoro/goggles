@@ -80,12 +80,12 @@ gem "fuzzy-string-match_pure"                       # [Steve, 20131106] Used for
 gem "wice_grid", '~> 3.3'
 gem 'daemons'
 gem 'delayed_job_active_record'
-gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git' # This version has more verbose exception reporting instead of YAML trace
+gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git'    # This version has more verbose exception reporting instead of YAML trace
+gem 'amistad', :git => 'https://github.com/fasar-sw/amistad.git'  # [Steve] Customized version. For Facebook-like friendship management
 
 gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
-gem 'amistad'                                       # [Steve] for Facebook-like friendship management
 
 gem 'draper', '~> 1.3'                              # [Steve] For Decorator pattern support
 # Draper usage: "rails generate decorator Article" for existing models,

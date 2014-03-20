@@ -358,10 +358,11 @@ class RecordsController < ApplicationController
 #    logger.debug "\r\nresult_hash_matrix.class.name: #{result_hash_matrix.class.name}"
     event_types_array.each do |event_type|
       result_hash_matrix.merge!({ event_type.id => {} })
+
       category_type_ids_or_codes_list.each do |category_type_id_or_code|
         result_hash_matrix[ event_type.id ].merge!(
           {
-            category_code => MeetingIndividualResult.get_records_for(
+            category_type_id_or_code => MeetingIndividualResult.get_records_for(
               event_type.code,
               category_type_id_or_code,
               gender_type_id,

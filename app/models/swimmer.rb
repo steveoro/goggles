@@ -179,8 +179,8 @@ class Swimmer < ActiveRecord::Base
   # Returns the total meters swam by this swimmer
   #
   def get_total_meters_swam
-    relay_lengths = self.meeting_relay_swimmers.includes(:event_type).collect{ |mrs| mrs.event_type.phase_length_in_meters }
-    ind_lengths   = self.meeting_individual_results.includes(:event_type).collect{ |mir| mir.event_type.length_in_meters }
+    relay_lengths = self.meeting_relay_swimmers.includes(:event_type).collect{ |mrs| mrs.event_type ? mrs.event_type.phase_length_in_meters : 0 }
+    ind_lengths   = self.meeting_individual_results.includes(:event_type).collect{ |mir| mir.event_type ? mir.event_type.length_in_meters : 0 }
     ( relay_lengths + ind_lengths ).inject{ |sum, lenght| sum + lenght }
   end
 

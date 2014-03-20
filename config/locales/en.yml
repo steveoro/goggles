@@ -625,6 +625,16 @@ en:
     story_updated: "User Training Story successfully updated!"
     story_deleted: "User Training Story successfully deleted!"
 
+  jumbotron:
+    title_breast: "Goggles can store all your trainings!"
+    text_breast: "Build up your personalized archive of all your favourite swimming trainings or check out the ones used by your friends! Print out a reference sheet and start your workout!"
+    title_emptylanes: "Goggles helps you keep track of your swimming life!"
+    text_emptylanes: "With Goggles you can store your training data, review your meeting competition results and record even hand-taken data such as mid-lap passages or non-official results. You can even add swimming-pool reviews to let everybody know how are the sporting venues where you've been at. Share what you want with your registered friends. Swimming won't ever be the same!"
+    title_freestyle: "Goggles can help you keep track of your progress!"
+    text_freestyle: "'Ever wondered what you did some years ago in that particular competition that you hardly remember when compared to your last heat results? Now you can!"
+    title_timertable: "Goggles displays your official Meeting results!"
+    text_timertable: "After each Meeting from any of the acknowledged Federations, Goggles can automatically import the results data. Check out your personal swimming competition results and get a handful of stats! Or follow the achievements your friends or your swimming buddies!"
+
 
   agex_action:
     main: Main

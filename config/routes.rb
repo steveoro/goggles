@@ -79,6 +79,19 @@ Goggles::Application.routes.draw do
         end
       end
 
+      resources :social do
+        member do
+          get  'invite'
+          post 'invite'
+          get  'accept'
+          post 'accept'
+          get  'block'
+          post 'block'
+          get  'unblock'
+          post 'unblock'
+        end
+      end
+
       match "meeting_calendars",        :controller => 'meeting_calendars', :action => 'index'
       match "records_for_everything",   :controller => 'records', :action => 'for_everything'
       match "records_for_season_type",  :controller => 'records', :action => 'for_season_type'
