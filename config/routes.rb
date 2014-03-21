@@ -84,11 +84,13 @@ Goggles::Application.routes.draw do
           get  'invite'
           post 'invite'
           get  'accept'
-          post 'accept'
+          put 'accept'
           get  'block'
-          post 'block'
+          put 'block'
           get  'unblock'
-          post 'unblock'
+          put 'unblock'
+          get  'remove_friendship'
+          delete 'remove_friendship'
         end
       end
 

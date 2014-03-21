@@ -92,6 +92,8 @@ GEM
       celluloid (>= 0.15.0)
       nio4r (>= 0.5.0)
     cocoon (1.2.5)
+    codeclimate-test-reporter (0.3.0)
+      simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -376,6 +378,7 @@ DEPENDENCIES
   capybara
   carrierwave
   cocoon
+  codeclimate-test-reporter
   coffee-rails (~> 3.2)
   country_select
   daemons

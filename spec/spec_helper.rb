@@ -1,3 +1,8 @@
+# [Steve] Test coverage integrated on CodeClimate:
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
+# [Steve] Test coverage with local HTML-file reports (excluded from git repo):
 require 'simplecov'
 SimpleCov.start 'rails'
 puts "simplecov required and started."
