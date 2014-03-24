@@ -3,6 +3,8 @@ class CreateTeamPassageTemplates < ActiveRecord::Migration
     create_table :team_passage_templates do |t|
       t.integer :lock_version, :default => 0
 
+      t.integer :part_order, :limit => 3, :null => false, :default => 0, :comment => "Overall order for this passage"
+
       t.boolean :has_subtotal, :null => false, :default => false, :comment => 'TRUE when the passage type has also subtotal timing'
       t.boolean :has_cycle_count, :null => false, :default => false, :comment => 'TRUE when the passage type has also cycle count'
       t.boolean :has_breath_count, :null => false, :default => false, :comment => 'TRUE when the passage type has also breath count'
