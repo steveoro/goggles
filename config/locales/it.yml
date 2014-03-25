@@ -637,6 +637,31 @@ it:
     title_timertable: "Goggles mostra i tuoi risultati ufficiali!"
     text_timertable: "Dopo ogni Meeting di ciascuna delle Federazioni riconosciute, Goggles puo' importare automaticamente i dati. Controlla i tuoi risultati personali di nuoto e consulta le statistiche! Oppure segui gli sviluppi dei tuoi amici o dei tuoi compagni di corsia!"
 
+  social:
+    invite_title: "Opzioni Amicizia ('Swimming Buddy') / Condivisione"
+    warning_swimmer_is_not_a_goggler: "{SWIMMER_NAME} non e' ancora un goggler! (Non esiste nessun utente associato a questo atleta)"
+    swimming_buddy_options: "Opzioni di condivisione per l'amicizia con {SWIMMER_NAME}"
+    shares_passages: "Condividi i passaggi"
+    shares_passages_hint: "Permette di consultare i passaggi gara o i tempi intermedi (se l'atleta li ha) solo se entrambi siete d'accordo. Se uno dei due ha gia' disabilitato questa opzione, apparira' disabilitata."
+    shares_trainings: "Condividi gli allenamenti"
+    shares_trainings_hint: "Permette di consultare gli allenamenti creati o usati da questo atleta se entrambi siete d'accordo. Se uno dei due ha gia' disabilitato questa opzione, apparira' disabilitata."
+    shares_calendars: "Condividi i calendari"
+    shares_calendars_hint: "Permette di consultare e seguire i calendari gara di questo atleta se entrambi siete d'accordo. Se uno dei due ha gia' disabilitato questa opzione, apparira' disabilitata."
+    pending_invite: "Invito in attesa"
+    block_unblock: "Blocca / Sblocca"
+    remove_friendship: "Elimina amicizia"
+
+    request_swimming_buddy: "Vorrei diventare amico di {SWIMMER_NAME}"
+    message_title: "Messaggio dell'invito"
+    default_message: "Ciao {SWIMMER_NAME}, vorrei poterti seguire meglio nei tuoi progressi."
+    request_to_shares_passages: "Vorrei condividere i passaggi con te"
+    request_to_shares_trainings: "Vorrei condividere gli allenamenti con te"
+    request_to_shares_calendars: "Vorrei condividere i calendari gara con te"
+    send: "Invia"
+    ok: "Ok"
+    cancel: "Annulla"
+
+
   agex_action:
     main: Principale
     home: "Home"

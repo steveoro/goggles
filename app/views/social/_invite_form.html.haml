@@ -1,0 +1,17 @@
+.row-fluid.span12
+
+= simple_form_for @friendship, :html => { :class => 'form-horizontal' } do |f|
+  .row-fluid.span11
+    = I18n.t('social.request_swimming_buddy').gsub( "{SWIMMER_NAME}", @swimming_buddy.get_full_name )
+  .row-fluid.span11
+    = f.input :text_message, label: I18n.t('social.message_title'), default: I18n.t('social.default_message')
+  .row-fluid.span11
+    = f.input :shares_passages, label: I18n.t('social.request_to_shares_passages'), hint: I18n.t('social.shares_passages_hint')
+  .row-fluid.span11
+    = f.input :shares_trainings, label: I18n.t('social.request_to_shares_trainings'), hint: I18n.t('social.shares_trainings_hint')
+  .row-fluid.span11
+    = f.input :shares_calendars, label: I18n.t('social.request_to_shares_calendars'), hint: I18n.t('social.shares_calendars_hint')
+
+  .row-fluid.span11
+    = f.button :submit, I18n.t('social.send')
+    = f.button :cancel, I18n.t('social.cancel')

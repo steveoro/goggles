@@ -635,6 +635,30 @@ en:
     title_timertable: "Goggles displays your official Meeting results!"
     text_timertable: "After each Meeting from any of the acknowledged Federations, Goggles can automatically import the results data. Check out your personal swimming competition results and get a handful of stats! Or follow the achievements your friends or your swimming buddies!"
 
+  social:
+    invite_title: "'Swimming Buddy' Invite / Sharing options"
+    warning_swimmer_is_not_a_goggler: "{SWIMMER_NAME} is not yet a goggler! (It doesn't seem to be a user associated with this swimmer.)"
+    swimming_buddy_options: "Sharing options for the friendship with {SWIMMER_NAME}"
+    shares_passages: "Shares race/training passages"
+    shares_passages_hint: "Allows to share and browse competition passages or lap-times (where available), but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out."
+    shares_trainings: "Shares trainings"
+    shares_trainings_hint: "Allows to share and browse the user trainings or their models, but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out." 
+    shares_calendars: "Shares Meeting calendars"
+    shares_calendars_hint: "Allows to share and browse the Meeting calendars for the user's Teams, but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out."
+    pending_invite: "Pending invite"
+    block_unblock: "Block / unblock"
+    remove_friendship: "Remove friendship"
+
+    request_swimming_buddy: "I'd like to become a 'swimming buddy' of {SWIMMER_NAME}"
+    message_title: "Invite Message"
+    default_message: "Hi {SWIMMER_NAME}, I'd like to follow your progress better."
+    request_to_shares_passages: "I'd like to shares race/training passages with You"
+    request_to_shares_trainings: "I'd like to shares trainings with You"
+    request_to_shares_calendars: "I'd like to shares Meeting calendars with You"
+    send: "Send"
+    ok: "Ok"
+    cancel: "Cancel"
+
 
   agex_action:
     main: Main
