@@ -122,6 +122,7 @@ end
 
 # Deploy with Capistrano
 gem 'capistrano'
+
 gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
 
 # gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
