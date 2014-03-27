@@ -21,18 +21,15 @@
 /vendor/cache/*
 
 # Ignore ExtJS library and other directories:
-/public/extjs/*
 /public/output/*
 /public/uploads/*
 
 # Ignore password-containing files and sensitive directories:
-/config/database.yml
 /config/deploy.rb
 /config/deploy/*
 
 # Ignore auto-generated files:
 /db/schema.rb
-db/schema.rb
 db/schema.rb
 
 # Ignore code coverage report directory:

@@ -1,7 +1,14 @@
+
+require File.join(Rails.root,'lib','openshift_secret_generator.rb')
 # Be sure to restart your server when you modify this file.
 
 # Your secret key for verifying the integrity of signed cookies.
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Goggles::Application.config.secret_token = '86504c3d3b8df1f79a509cc33b5fee951e39538ee24c12245747e88fd95ae5e954d64bf520649a54d0b5e968c8001907af2ce87531d6c48c0c71d6945a2dbfaf'
+
+# Set token based on intialize_secret function (defined in initializers/secret_generator.rb)
+Goggles::Application.config.secret_token = initialize_secret(
+  :token,
+  '335a4e365ef2daeea969640d74e18f0e3cd9fae1abd8f4125691a880774ea6d456a29c0831aa6921bf86a710fe555e916f0673f5657619ec9df22e0409bec345'
+)
