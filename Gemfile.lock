@@ -420,7 +420,7 @@ DEPENDENCIES
   netzke-basepack (~> 0.7.7)
   netzke-core (~> 0.7.7)
   prawn (~> 0.14)
-  rails (~> 3.2.12)
+  rails (~> 3.2.16)
   rails_admin
   rest-client
   rhc
