@@ -30,7 +30,7 @@ GIT
       pdf-writer (= 1.1.8)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     Ascii85 (1.0.2)
     actionmailer (3.2.16)
@@ -63,6 +63,7 @@ GEM
     acts_as_reportable (1.1.1)
       ruport (>= 1.6.0)
     afm (0.2.0)
+    archive-tar-minitar (0.5.2)
     arel (3.0.3)
     atomic (1.1.14)
     bcrypt-ruby (3.1.2)
@@ -103,6 +104,8 @@ GEM
       execjs
     coffee-script-source (1.6.3)
     color (1.4.2)
+    commander (4.1.6)
+      highline (~> 1.6.11)
     country_select (1.2.0)
     daemons (1.1.9)
     delayed_job (4.0.0)
@@ -155,6 +158,7 @@ GEM
     hike (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
+    httpclient (2.3.4.1)
     i18n (0.6.9)
     journey (1.0.4)
     jquery-rails (3.0.4)
@@ -202,6 +206,9 @@ GEM
     net-ssh (2.7.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
+    net-ssh-multi (1.2.0)
+      net-ssh (>= 2.6.5)
+      net-ssh-gateway (>= 1.2.0)
     netzke-basepack (0.7.7)
       netzke-core (~> 0.7.7)
     netzke-core (0.7.7)
@@ -212,6 +219,7 @@ GEM
     nokogiri (1.6.0-x86-mingw32)
       mini_portile (~> 0.5.0)
     ntlm-http (0.1.1)
+    open4 (1.3.3)
     orm_adapter (0.5.0)
     pdf-reader (1.3.3)
       Ascii85 (~> 1.0.0)
@@ -289,6 +297,15 @@ GEM
     request_store (1.0.5)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    rhc (1.21.3)
+      archive-tar-minitar
+      commander (>= 4.0)
+      highline (~> 1.6.11)
+      httpclient (>= 2.2)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.0.11)
+      net-ssh-multi (>= 1.2.0)
+      open4
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -403,9 +420,10 @@ DEPENDENCIES
   netzke-basepack (~> 0.7.7)
   netzke-core (~> 0.7.7)
   prawn (~> 0.14)
-  rails (~> 3.2.12)
+  rails (~> 3.2.16)
   rails_admin
   rest-client
+  rhc
   rspec
   rspec-rails
   rubyzip

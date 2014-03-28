@@ -1,12 +1,11 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.12'
+gem 'rails', '~> 3.2.16'
 
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
-
 gem 'json'
 
 # Gems used only for assets and not required
@@ -122,6 +121,9 @@ end
 
 # Deploy with Capistrano
 gem 'capistrano'
+
+gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
+
 # gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
 gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 

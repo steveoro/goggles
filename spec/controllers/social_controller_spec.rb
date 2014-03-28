@@ -5,7 +5,7 @@ describe SocialController do
   # Login checker for GET actions only.
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
-    expect(response).to redirect_to '/users/sign_in'
+    expect(response).to redirect_to '/users/session/sign_in'
     expect(response.status).to eq( 302 )            # must redirect to the login page
   end
   # ===========================================================================
@@ -23,12 +23,34 @@ describe SocialController do
     context "logged-in user" do
       login_user()
 
+      before :each do
+        @friend_user = create( :user )
+      end
+
+
       it "handles successfully the request" do
-        pending "WIP"
+        get :invite, id: @friend_user.id
+        expect( response.status ).to eq(200)
+        expect( assigns(:title) ).not_to be_nil 
+        expect( assigns(:swimming_buddy) ).not_to be_nil 
       end
 
       it "renders the template" do
-        pending "WIP"
+        get :invite, id: @friend_user.id
+        expect( controller.params[:id].to_i == @friend_user.id ).to be_true 
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:invite)
+      end
+
+      it "redirects to root_path for a non-yet existing goggler" do
+        get :invite, id: 0
+        expect(response).to redirect_to root_path()
+      end
+
+      it "redirects to [GET] #edit for an existing friendship" do
+        @friend_user.invite( @user )
+        get :invite, id: @friend_user.id
+        expect(response).to redirect_to accept_social_path()
       end
     end
   end
