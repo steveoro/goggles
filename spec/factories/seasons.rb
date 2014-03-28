@@ -2,15 +2,15 @@
 
 FactoryGirl.define do
   factory :federation_type do
-    code "FIN"
-    descrition "FEDERAZIONE ITALIANA NUOTO"
-    short_name "FIN"
+    sequence( :code )  { |n| "FN #{n}" }
+    description "FEDERAZIONE REGGIANA NUOTO"
+    short_name "FRN"
   end
 
   factory :season_type do
-    code "MASFIN"
-    descrition "CIRCUITO ITALIANO MASTER FIN"
-    short_name "MASTER FIN"
+    sequence( :code )  { |n| "MASFN #{n}" }
+    description "CIRCUITO REGGIANO MASTER FRN"
+    short_name "MASTER FRN"
     federation_type
   end
 

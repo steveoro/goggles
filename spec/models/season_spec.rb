@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Season do
 
-  before(:each) do
-    @season1 = Factory(:season)
+  before( :each ) do
+    @season1 = FactoryGirl.create( :season )
   end
 
   context "season details" do
@@ -18,8 +18,8 @@ describe Season do
     end
     
     it "is_season_ended should evaluate dates" do 
-      @season1.is_season_ended(20201231).should true
-      @season1.is_season_ended(20100101).should false
+      @season1.is_season_ended( 20201231 ).should false
+      @season1.is_season_ended( 20100101 ).should true
     end
 
     it "has a method to return season type" do
@@ -27,7 +27,9 @@ describe Season do
     end
     
     it "get_season_tpe should return correct season type" do
-      expect( @season1.get_season_type ).to eq( "MASFIN" )
+      expect( @season1.get_season_type ).to be_an_instance_of( String )
+      expect( @season1.get_season_type ).not_to eq( '' )
+      expect( @season1.get_season_type ).not_to eq( '?' )
     end
 
     it "has a method to return federation type" do
@@ -35,7 +37,9 @@ describe Season do
     end
     
     it "get_federation_tpe should return correct fedeation type" do
-      expect( @season1.get_season_type ).to eq( "FIN" )
+      expect( @season1.get_federation_type ).to be_an_instance_of( String )
+      expect( @season1.get_federation_type ).not_to eq( '' )
+      expect( @season1.get_federation_type ).not_to eq( '?' )
     end
   end
   
