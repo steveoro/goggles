@@ -1364,20 +1364,21 @@ ActiveRecord::Schema.define(:version => 20140320223319) do
   add_index "team_affiliations", ["team_id"], :name => "fk_team_affiliations_teams"
 
   create_table "team_passage_templates", :force => true do |t|
-    t.integer  "lock_version",            :default => 0
-    t.boolean  "has_subtotal",            :default => false, :null => false
-    t.boolean  "has_cycle_count",         :default => false, :null => false
-    t.boolean  "has_breath_count",        :default => false, :null => false
-    t.boolean  "has_non_swam_part",       :default => false, :null => false
-    t.boolean  "has_non_swam_kick_count", :default => false, :null => false
-    t.boolean  "has_passage_position",    :default => false, :null => false
+    t.integer  "lock_version",                         :default => 0
+    t.integer  "part_order",              :limit => 3, :default => 0,     :null => false
+    t.boolean  "has_subtotal",                         :default => false, :null => false
+    t.boolean  "has_cycle_count",                      :default => false, :null => false
+    t.boolean  "has_breath_count",                     :default => false, :null => false
+    t.boolean  "has_non_swam_part",                    :default => false, :null => false
+    t.boolean  "has_non_swam_kick_count",              :default => false, :null => false
+    t.boolean  "has_passage_position",                 :default => false, :null => false
     t.integer  "team_id"
     t.integer  "event_type_id"
     t.integer  "pool_type_id"
     t.integer  "passage_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+    t.datetime "created_at",                                              :null => false
+    t.datetime "updated_at",                                              :null => false
   end
 
   create_table "teams", :force => true do |t|
