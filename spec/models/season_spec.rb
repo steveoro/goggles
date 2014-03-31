@@ -14,13 +14,13 @@ describe Season do
       expect( @season1.federation_type ).to be_a( FederationType )
     end
     
-    it "has a method to return if a season is ended" do
+    it "has a method to return if a season is ended at a certain date" do
       expect( @season1 ).to respond_to( :is_season_ended_at )
     end
 
     it "is_season_ended_at should evaluate dates" do 
-      expect( @season1.is_season_ended_at(Date.parse('2020-12-31')) ).to be_true
-      expect( @season1.is_season_ended_at(Date.parse('2010-01-01')) ).to be_false
+      expect( @season1.is_season_ended_at(Date.parse('2025-12-31')) ).to be_true
+      expect( @season1.is_season_ended_at(Date.parse('1999-01-01')) ).to be_false
     end
 
     it "has a method to return the season type" do
@@ -45,8 +45,16 @@ describe Season do
   end
   
   context "season results" do
-    it "has a method to return the meeting list"
+    it "has a method to return the meeting list" do
+      expect( @season1 ).to respond_to( :get_season_meetings )
+    end
 
+    it "get_season_meetings should return a collection of meetings" do
+      @meeting1 = FactoryGirl.create( :meeting )
+      @meeting2 = FactoryGirl.create( :meeting )
+      expect( @season1.get_season_type ).to be_a_collection_of( Meeting )
+    end
+    
     it "has a method to determine the season ranking"
     
     it "has a method to determine the season team charts"
