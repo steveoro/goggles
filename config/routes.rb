@@ -17,6 +17,7 @@ Goggles::Application.routes.draw do
 
   scope "/" do
     scope "(:locale)", :locale => /en|it/ do
+      match 'sign_in' => 'sessions#new'
       match "wip",        :controller => 'home', :action => 'wip',          :as => :wip
       match "about",      :controller => 'home', :action => 'about',        :as => :about
       match "contact_us", :controller => 'home', :action => 'contact_us',   :as => :contact_us
@@ -81,16 +82,19 @@ Goggles::Application.routes.draw do
 
       resources :social do
         member do
+          get  'show_all'
           get  'invite'
           post 'invite'
-          get  'accept'
-          put  'accept'
+          get  'approve'
+          put  'approve'
           get  'block'
           put  'block'
           get  'unblock'
           put  'unblock'
           get    'remove_friendship'
           delete 'remove_friendship'
+          get    'edit'
+          post   'edit'
         end
       end
 

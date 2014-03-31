@@ -556,6 +556,12 @@ it:
     best_2nd_female_score: "2° miglior Punteggio femmine"
     best_3rd_female_score: "3° miglior Punteggio femmine"
 
+  relay_types:
+    relay: "Staffetta"
+    mixed_relay: "Mistaffetta"
+    relay_short: "Staff."
+    mixed_relay_short: "Mistaff."
+
   radiography:
     radio_tab: "Radiografia"
     radio_tab_tooltip: "Vai alla 'Radiografia' per questo Atleta"
@@ -639,8 +645,16 @@ it:
 
   social:
     invite_title: "Opzioni Amicizia ('Swimming Buddy') / Condivisione"
+    current_friends: "Amici correnti"
+    pending_invited_friends: "Invitati & in attesa"
+    invited_friends: "Invitati"
+    blocked_friends: "Bloccati"
     warning_swimmer_is_not_a_goggler: "{SWIMMER_NAME} non e' ancora un goggler! (Non esiste nessun utente associato a questo atleta)"
     swimming_buddy_options: "Opzioni di condivisione per l'amicizia con {SWIMMER_NAME}"
+    shares: "condivide"
+    passages: "Passaggi"
+    trainings: "Allenamenti"
+    calendars: "Calendari"
     shares_passages: "Condividi i passaggi"
     shares_passages_hint: "Permette di consultare i passaggi gara o i tempi intermedi (se l'atleta li ha) solo se entrambi siete d'accordo. Se uno dei due ha gia' disabilitato questa opzione, apparira' disabilitata."
     shares_trainings: "Condividi gli allenamenti"
@@ -650,6 +664,8 @@ it:
     pending_invite: "Invito in attesa"
     block_unblock: "Blocca / Sblocca"
     remove_friendship: "Elimina amicizia"
+    invite_successful: "Invito inviato con successo."
+    invite_error: "Errore durante l'invio dell'invito."
 
     request_swimming_buddy: "Vorrei diventare amico di {SWIMMER_NAME}"
     message_title: "Messaggio dell'invito"

@@ -20,30 +20,6 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery_datepicker'
 
-
-# Mini HOW-TO:
-# ============
-# The following (needed by Rake and Rails local execution) is not compatible when
-# deploying to CloudFoundry.
-# So do this:
-#
-# - sudo gem install activerecord-mysql2-adapter
-# - sudo gem install execjs 
-# - sudo gem install therubyrhino
-# - bundle package
-# - bundle install
-#
-# - Normally develop locally the application
-#
-# - When gold status is reached, toggle in production.rb: (if using CloudFoundry or not an Apache server)
-#     config.serve_static_assets = true
-#
-# - Pre-compile all assets with:
-#    $> bundle exec rake assets:precompile
-#
-# - When ready, re-comment the following line and push/update the app
-#   to CloudFoundry using vmc (after a "bundle package" + "bundle install")
-
 gem 'therubyracer', :platforms => :ruby
 # gem 'therubyrhino'
 
@@ -97,20 +73,17 @@ gem "mechanize"                                     # [Steve, 20140306] For web-
 gem "rest-client"
 
 
-group :development do
+group :development, :test do
   gem "rspec"
   gem "rspec-rails"
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   gem "factory_girl_rails"
   gem 'guard'
   gem 'guard-rspec'
-end
-
-group :test do
-  gem "rspec"
-  gem "rspec-rails"
-  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
-  gem "factory_girl_rails"
+                                                    # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
+  gem 'simplecov', '~> 0.7.1', require: false, group: :test
+  gem "codeclimate-test-reporter", group: :test, require: nil # [Steve, 20140321] CI/Test coverage via local test run
+# gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
 end
 
 # To use ActiveModel has_secure_password
@@ -126,11 +99,6 @@ gem 'rhc'                                           # [Steve, 20140426] For depl
 
 # gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
 gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
-
-                                                    # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
-gem 'simplecov', '~> 0.7.1', require: false, group: :test
-gem "codeclimate-test-reporter", group: :test, require: nil # [Steve, 20140321] CI/Test coverage via local test run
-# gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
 
 # To use debugger
 #gem 'ruby-debug'

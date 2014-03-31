@@ -1,0 +1,36 @@
+%h3= @title
+
+- if admin_signed_in?
+  .row-fluid
+    .span2
+      = 'ID:'
+    .span10
+      = current_user.id
+
+.row-fluid.span12
+  = I18n.t('social.current_friends')
+- @friendships.each do |friendship|
+  .row-fluid
+    .span12
+      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+
+.row-fluid.span12
+  = I18n.t('social.pending_invited_friends')
+- @pending_invited.each do |friendship|
+  .row-fluid
+    .span12
+      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+
+.row-fluid.span12
+  = I18n.t('social.invited_friends')
+- @invited.each do |friendship|
+  .row-fluid
+    .span12
+      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+
+.row-fluid.span12
+  = I18n.t('social.blocked_friends')
+- @blocked_friendships.each do |friendship|
+  .row-fluid
+    .span12
+      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
