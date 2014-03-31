@@ -17,18 +17,20 @@ FactoryGirl.define do
   end
 
   factory :season do
-    sequence( :description )  { |n| "2013-2014 Farloque season #{n}" }
-    begin_date  Date.parse("2013-09-01")
-    end_date    Date.parse("2014-06-15")
-    header_year 2014
-    season_type
-  end
-
-  factory :random_season do
-    sequence( :description )  { |n| "Random Farloque season #{n}" }
+    sequence( :description )  { |n| "Farloque season #{n}" }
     begin_date  { Date.parse("#{ 2000 + ((rand * 100) % 15).to_i }-09-01") }
     end_date    { Date.parse("#{ begin_date.year + 1 }-06-15") }
     header_year { end_date.year }
     season_type
+  end
+  
+  factory :meeting do
+    sequence( :description )  { |n| "Farloque meeting #{n}" }
+    sequence( :code )  { |n| "farloque#{n}" }
+    edition {((rand * 100) % 40).to_i }
+    season
+    header_year 2014
+    timing_type_id 1
+    edition_type_id 1
   end
 end

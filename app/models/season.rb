@@ -117,6 +117,14 @@ class Season < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
+  # Returns the list of the season's meeting
+  #
+  def get_season_meetings
+    Meeting.includes(:season).joins(:season).where( :id => season_id )
+  end
+  # ----------------------------------------------------------------------------
+
+
   # Returns the last defined season for a specific SeasonType code
   #
   def self.get_last_season_by_type( season_type_code )
