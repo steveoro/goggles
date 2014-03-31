@@ -97,23 +97,19 @@ class Season < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
-  # Returns if the season is ended ata a certain date
+  # Returns if the season is ended at a certain date
   #
   # == Parameters:
   #
-  # - evauation_date: the date in which should verify if the seasons is terminate
+  # - evauation_date: the date in which should verify if the seasons is terminated
   #
   # == Returns:
-  # - TRUE if season is ended at the date
+  # - TRUE if season is ended at the specified date
   # - FALSE if season is not ended at the date or there is no season end defined
   #
-  def self.is_season_ended( evaluation_date = Date.today )
+  def is_season_ended_at( evaluation_date = Date.today )
     if self.end_date
-      if ( self.end_date < evaluation_date )
-        true
-      else
-        false
-      end
+      ( self.end_date < evaluation_date ) ? true : false
     else
       false
     end
