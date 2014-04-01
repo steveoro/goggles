@@ -4,15 +4,15 @@ require 'date'
 
 FactoryGirl.define do
   factory :federation_type do
-    sequence( :code )  { |n| "FN #{n}" }
+    sequence( :code )  { |n| "FN#{n}" }
     description "FEDERAZIONE REGGIANA NUOTO"
     short_name "FRN"
   end
 
   factory :season_type do
-    sequence( :code )  { |n| "MASFN #{n}" }
-    description "CIRCUITO REGGIANO MASTER FRN"
-    short_name "MASTER FRN"
+    sequence( :code ) { |n| "MAS_#(n)" }
+    description { "CIRCUITO REGGIANO MASTER #(federation_type.code)" }
+    short_name { "MASTER #(federation_type.code)" }
     federation_type
   end
 
@@ -29,8 +29,9 @@ FactoryGirl.define do
     sequence( :code )  { |n| "farloque#{n}" }
     edition {((rand * 100) % 40).to_i }
     season
-    header_year 2014
+    header_year { 2000 + ((rand * 100) % 15).to_i }
     timing_type_id 1
     edition_type_id 1
+    user_id 1
   end
 end

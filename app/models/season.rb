@@ -109,7 +109,7 @@ class Season < ActiveRecord::Base
   #
   def is_season_ended_at( evaluation_date = Date.today )
     if self.end_date
-      ( self.end_date < evaluation_date ) ? true : false
+      ( self.end_date <= evaluation_date ) ? true : false
     else
       false
     end
@@ -117,10 +117,18 @@ class Season < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
-  # Returns the list of the season's meeting
+  # Returns if the season is started at a certain date
   #
-  def get_season_meetings
-    Meeting.includes(:season).joins(:season).where( :id => season_id )
+  # == Parameters:
+  #
+  # - evauation_date: the date in which should verify if the seasons is started
+  #
+  # == Returns:
+  # - TRUE if season is started at the specified date
+  # - FALSE if season is not started at the specified date
+  #
+  def is_season_started_at( evaluation_date = Date.today )
+    ( self.begin_date >= evaluation_date ) ? true : false
   end
   # ----------------------------------------------------------------------------
 
