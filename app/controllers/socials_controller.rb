@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class SocialController < ApplicationController
+class SocialsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_user!
@@ -47,13 +47,13 @@ class SocialController < ApplicationController
       else
         flash[:error] = I18n.t('social.invite_error')
       end
-      redirect_to( show_all_social_path() ) and return
+      redirect_to( show_all_socials_path() ) and return
                                                     # === GET: ===
     else
       @swimming_buddy = User.find_by_id( params[:id] )
       unless ( @swimming_buddy )                    # Check swimming buddy existance
         flash[:error] = I18n.t(:invalid_action_request)
-        redirect_to( show_all_social_path() ) and return
+        redirect_to( show_all_socials_path() ) and return
       end
                                                     # Check that the friendship is a new one:
       if ( current_user.find_any_friendship_with(@swimming_buddy).nil? )
@@ -62,7 +62,7 @@ class SocialController < ApplicationController
       else
         # If friendship exists:
         flash[:warning] = I18n.t('social.warning_friendship_invite_already_sent_edit_options')
-        redirect_to( show_all_social_path() ) and return
+        redirect_to( show_all_socials_path() ) and return
       end
     end
   end

@@ -50,15 +50,17 @@ describe Season do
     end
 
     it "get_season_meetings should return a collection of meetings" do
-      @meeting1 = FactoryGirl.create( :meeting )
-      @meeting2 = FactoryGirl.create( :meeting )
-      expect( @season1.get_season_type ).to be_a_collection_of( Meeting )
+      @meeting1 = FactoryGirl.create( :meeting, season_id: @season1.id )
+      @meeting2 = FactoryGirl.create( :meeting, season_id: @season1.id )
+      collection = @season1.get_season_meetings
+      expect( collection ).to include( @meeting1 )
+      expect( collection ).to include( @meeting2 )
     end
-    
+
     it "has a method to determine the season ranking"
-    
+
     it "has a method to determine the season team charts"
-    
+
     it "has a method to determine the season athlete charts"
   end
 

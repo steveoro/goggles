@@ -117,10 +117,10 @@ class Season < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
-  # Returns the list of the season's meeting
+  # Returns the list of the season's meetings for this instance
   #
   def get_season_meetings
-    Meeting.includes(:season).joins(:season).where( :id => season_id )
+    self.meetings
   end
   # ----------------------------------------------------------------------------
 
