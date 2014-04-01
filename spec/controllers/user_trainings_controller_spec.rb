@@ -6,7 +6,7 @@ require 'common/format'
 
 describe UserTrainingsController do
 
-  describe '[AJAX json_list]' do
+  describe '[AJAX] json_list' do
     context "unlogged user" do
       it "displays always the Login page" do
         xhr :get, :json_list
@@ -33,10 +33,9 @@ describe UserTrainingsController do
         expect( response.body ).not_to be_nil
         # FIXME this does not check that the response contains an actual JSON array of rows
         expect( response.body ).to include( 'label', 'value', 'tot_distance', 'tot_secs' )
-        expect( response.body ).to include(
-          'user_name', 'swimmer_level_type_description',
-          'swimmer_level_type_explanation'
-        )
+        expect( response.body ).to include( 'user_name' )
+        expect( response.body ).to include( 'swimmer_level_type_description' )
+        expect( response.body ).to include( 'swimmer_level_type_alternate' )
       end
 
       it "retrieves a single row with details" do
@@ -44,10 +43,9 @@ describe UserTrainingsController do
         expect( response.body ).not_to be_nil
         # FIXME this does not check that the response contains just a JSONified row
         expect( response.body ).to include( 'label', 'value', 'tot_distance', 'tot_secs' )
-        expect( response.body ).to include(
-          'user_name', 'swimmer_level_type_description',
-          'swimmer_level_type_explanation'
-        )
+        expect( response.body ).to include( 'user_name' )
+        expect( response.body ).to include( 'swimmer_level_type_description' )
+        expect( response.body ).to include( 'swimmer_level_type_alternate' )
       end
     end
   end
@@ -57,13 +55,13 @@ describe UserTrainingsController do
   # Login checker for GET actions only.
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
-    expect(response).to redirect_to '/users/sign_in'
+    expect(response).to redirect_to '/users/session/sign_in'
     expect(response.status).to eq( 302 )            # must redirect to the login page
   end
   # ---------------------------------------------------------------------------
 
 
-  describe '[GET #index]' do
+  describe 'GET #index' do
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :index )
@@ -90,7 +88,7 @@ describe UserTrainingsController do
   # ===========================================================================
 
 
-  describe '[GET #show]' do
+  describe 'GET #show' do
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :show, 1 )
@@ -119,7 +117,7 @@ describe UserTrainingsController do
   # ===========================================================================
 
 
-  describe '[GET #new]' do
+  describe 'GET #new' do
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :new )
@@ -145,7 +143,7 @@ describe UserTrainingsController do
   # ===========================================================================
 
 
-  describe '[GET #edit]' do
+  describe 'GET #edit' do
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :edit, 1 )
@@ -174,7 +172,7 @@ describe UserTrainingsController do
   # ===========================================================================
 
 
-  describe '[POST create]' do
+  describe 'POST create' do
     context "unlogged user" do
       it "doesn't create a new row" do 
         entity_attrs = attributes_for( :user_training )
@@ -218,7 +216,7 @@ describe UserTrainingsController do
   # ===========================================================================
 
 
-  describe '[PUT update]' do
+  describe 'PUT update' do
     context "unlogged user" do
       it "fails the update" do
         entity_on_db = UserTraining.find(1)    # Retrieve an actual DB row: (existing, from the seeds file)
@@ -276,7 +274,7 @@ describe UserTrainingsController do
   # ===========================================================================
 
 
-  describe '[DELETE]' do
+  describe 'DELETE' do
     before :each do
       @user_training = create( :user_training )
     end

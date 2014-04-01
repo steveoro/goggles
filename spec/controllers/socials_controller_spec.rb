@@ -1,21 +1,21 @@
 require 'spec_helper'
 
-describe SocialController do
+
+describe SocialsController do
 
   # Login checker for GET actions only.
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
-    expect(response).to redirect_to '/users/sign_in'
+    expect(response).to redirect_to '/users/session/sign_in' # new_user_session_path() => '/users/session/sign_in?locale=XX'
     expect(response.status).to eq( 302 )            # must redirect to the login page
   end
   # ===========================================================================
 
 
-  describe '[GET #invite]' do
+  describe 'GET #show_all' do
     context "unlogged user" do
       it "displays always the Login page" do
-        pending "WIP"
-        get_action_and_check_if_its_the_login_page_for( :invite )
+        get_action_and_check_if_its_the_login_page_for( :show_all )
       end
     end
     # -------------------------------------------------------------------------
@@ -23,10 +23,48 @@ describe SocialController do
     context "logged-in user" do
       login_user()
 
-      before :each do
-        @friend_user = create( :user )
+      it "handles successfully the request" do
+        get :show_all
+        expect( response.status ).to eq(200)
+        expect( assigns(:title) ).not_to be_nil 
+        expect( assigns(:friendships) ).not_to be_nil 
+        expect( assigns(:pending_invited) ).not_to be_nil 
+        expect( assigns(:invited) ).not_to be_nil 
+        expect( assigns(:blocked_friendships) ).not_to be_nil 
       end
 
+      it "renders the template" do
+        get :show_all
+        expect(response.status).to eq(200)
+        expect(response).to render_template(:show_all)
+      end
+
+      it "page includes a freshly invited friend" do
+        @friend_user = create( :user )
+        @user.invite( @friend_user )
+        get :show_all
+        expect(response.status).to eq(200)
+        expect( assigns(:pending_invited).first.name == @friend_user.name ).to be_true
+      end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  describe 'GET #invite' do
+    before :each do
+      @friend_user = create( :user )
+    end
+
+    context "unlogged user" do
+      it "displays always the Login page" do
+        get_action_and_check_if_its_the_login_page_for( :invite, @friend_user.id )
+      end
+    end
+    # -------------------------------------------------------------------------
+
+    context "logged-in user" do
+      login_user()
 
       it "handles successfully the request" do
         get :invite, id: @friend_user.id
@@ -42,33 +80,31 @@ describe SocialController do
         expect(response).to render_template(:invite)
       end
 
-      it "redirects to root_path for a non-yet existing goggler" do
+      it "redirects to show_all_socials_path for a non-yet existing goggler" do
         get :invite, id: 0
-        expect(response).to redirect_to root_path()
+        expect(response).to redirect_to show_all_socials_path()
       end
 
-      it "redirects to [GET] #edit for an existing friendship" do
+      it "redirects to show_all_socials_path for an existing friendship" do
         @friend_user.invite( @user )
         get :invite, id: @friend_user.id
-        expect(response).to redirect_to accept_social_path()
+        expect(response).to redirect_to show_all_socials_path()
       end
     end
   end
   # ---------------------------------------------------------------------------
 
 
-  describe '[POST #invite]' do
-
+  describe 'POST #invite' do
     before :each do
       @friend_user = create( :user )
     end
 
     context "unlogged user" do
       it "doesn't create a new row" do 
-        pending "WIP"
         expect {
           post :invite, id: @friend_user.id
-        }.not_to change(@user.pending_invited, :count) 
+        }.not_to change(@friend_user.invited_by, :count) 
       end
     end
     # -------------------------------------------------------------------------
@@ -77,22 +113,29 @@ describe SocialController do
       login_user()
 
       it "handles successfully the request" do
-        pending "WIP"
+        expect {
+          post :invite, id: @friend_user.id
+        }.to change(@user.pending_invited, :count).by(1) 
       end
 
-      it "renders the template" do
-        pending "WIP"
+      it "renders successfully the template" do
+        post :invite, id: @friend_user.id 
+        expect(response).to redirect_to show_all_socials_path()
+        expect( flash[:info] ).to include( I18n.t('social.invite_successful') )
       end
     end
   end
   # ===========================================================================
 
 
-  describe '[GET #accept]' do
+  describe 'GET #approve' do
+    before :each do
+      @friend_user = create( :user )
+    end
+
     context "unlogged user" do
       it "displays always the Login page" do
-        pending "WIP"
-        get_action_and_check_if_its_the_login_page_for( :accept )
+        get_action_and_check_if_its_the_login_page_for( :approve, @friend_user.id )
       end
     end
     # -------------------------------------------------------------------------
@@ -111,8 +154,7 @@ describe SocialController do
   end
 
 
-  describe '[PUT #accept]' do
-
+  describe 'PUT #approve' do
     before :each do
       @friend_user = create( :user )
     end
@@ -121,7 +163,7 @@ describe SocialController do
       it "doesn't update an existing row" do 
         pending "WIP"
         expect {
-          put :accept, id: @friend_user.id
+          put :approve, id: @friend_user.id
         }.not_to change(@user.pending_invited, :count) 
       end
     end
@@ -142,7 +184,7 @@ describe SocialController do
   # ===========================================================================
 
 
-  describe '[GET #block]' do
+  describe 'GET #block' do
     context "unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
@@ -165,7 +207,7 @@ describe SocialController do
   end
 
 
-  describe '[PUT #block]' do
+  describe 'PUT #block' do
 
     before :each do
       @friend_user = create( :user )
@@ -196,7 +238,7 @@ describe SocialController do
   # ===========================================================================
 
 
-  describe '[GET #unblock]' do
+  describe 'GET #unblock' do
     context "unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
@@ -219,7 +261,7 @@ describe SocialController do
   end
 
 
-  describe '[PUT #unblock]' do
+  describe 'PUT #unblock' do
 
     before :each do
       @friend_user = create( :user )
@@ -250,7 +292,7 @@ describe SocialController do
   # ===========================================================================
 
 
-  describe '[GET #remove_friendship]' do
+  describe 'GET #remove_friendship' do
     context "unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
@@ -273,7 +315,7 @@ describe SocialController do
   end
 
 
-  describe '[DELETE #remove_friendship]' do
+  describe 'DELETE #remove_friendship' do
 
     before :each do
       @friend_user = create( :user )

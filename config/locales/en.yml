@@ -554,6 +554,12 @@ en:
     best_2nd_female_score: "2nd-best female Score"
     best_3rd_female_score: "3rd-best female Score"
 
+  relay_types:
+    relay: "Relay"
+    mixed_relay: "Mixed Relay"
+    relay_short: "Rel."
+    mixed_relay_short: "Mix.Rel."
+
   radiography:
     radio_tab: "Radiography"
     radio_tab_tooltip: "Go to this Athlete 'Radiography' page"
@@ -637,8 +643,16 @@ en:
 
   social:
     invite_title: "'Swimming Buddy' Invite / Sharing options"
+    current_friends: "Current Friends"
+    pending_invited_friends: "Invited & pending"
+    invited_friends: "Invited"
+    blocked_friends: "Blocked"
     warning_swimmer_is_not_a_goggler: "{SWIMMER_NAME} is not yet a goggler! (It doesn't seem to be a user associated with this swimmer.)"
     swimming_buddy_options: "Sharing options for the friendship with {SWIMMER_NAME}"
+    shares: "shares"
+    passages: "Passages"
+    trainings: "Trainings"
+    calendars: "Calendars"
     shares_passages: "Shares race/training passages"
     shares_passages_hint: "Allows to share and browse competition passages or lap-times (where available), but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out."
     shares_trainings: "Shares trainings"
@@ -648,6 +662,8 @@ en:
     pending_invite: "Pending invite"
     block_unblock: "Block / unblock"
     remove_friendship: "Remove friendship"
+    invite_successful: "Invite successfully sent."
+    invite_error: "Error: unable to send invite."
 
     request_swimming_buddy: "I'd like to become a 'swimming buddy' of {SWIMMER_NAME}"
     message_title: "Invite Message"

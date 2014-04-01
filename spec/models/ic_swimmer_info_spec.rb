@@ -71,7 +71,6 @@ describe ICSwimmerInfo do
   describe "get_year_of_birth" do
     it "returns always a valid year" do
       expect( @dummy.get_year_of_birth ).to be > 1900
-      
       expect( @dummy.get_year_of_birth ).to be < (Date.today.year - 8)
     end
   end

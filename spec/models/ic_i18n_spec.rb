@@ -6,13 +6,9 @@ class Dummy
   include ICI18n
   attr_accessor :code
 
-  def Dummy.table_name
-    'stroke_types'
-  end
-
-  def klass
-    Dummy
-  end
+  def self.table_name;  'stroke_types'; end
+  def table_name;       'stroke_types'; end
+  def klass;            Dummy;          end
 end
 # -----------------------------------------------------------------------------
 

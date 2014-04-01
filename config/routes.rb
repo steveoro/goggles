@@ -1,18 +1,19 @@
 Goggles::Application.routes.draw do
 
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
+
+  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
   devise_for :admins
+  devise_for :users
+
   mount RailsAdmin::Engine => '/goggles_dashboard', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.
   mount DjMon::Engine => 'goggles_dj_mon'
 
-  devise_for :users
-
-  netzke
+  netzke                                            # [Steve] Netzke routes are used just by the Goggles-admin sub-app
 
   # [Steve, 20130716] Root's route required by Devise:
   root :to => "home#index", :locale => /en|it/
-
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
 
 
   scope "/" do
@@ -47,7 +48,6 @@ Goggles::Application.routes.draw do
       resources :meeting_programs
       resources :rankings
       resources :results
-
       resources :swimming_pools
       
       resources :trainings do
@@ -79,18 +79,23 @@ Goggles::Application.routes.draw do
         end
       end
 
-      resources :social do
+      resources :socials do
+        collection do
+          get  'show_all'
+        end
         member do
           get  'invite'
           post 'invite'
-          get  'accept'
-          put  'accept'
+          get  'approve'
+          put  'approve'
           get  'block'
           put  'block'
           get  'unblock'
           put  'unblock'
           get    'remove_friendship'
           delete 'remove_friendship'
+          get    'edit'
+          post   'edit'
         end
       end
 

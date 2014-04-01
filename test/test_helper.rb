@@ -12,7 +12,7 @@ class ActiveSupport::TestCase
   #
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
-  
+
 # [Steve, 20130806] We do not require all fixtures!
 #  fixtures :all
 

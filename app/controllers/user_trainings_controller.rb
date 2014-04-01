@@ -34,7 +34,7 @@ class UserTrainingsController < ApplicationController
   #       :tot_secs => row.compute_total_seconds(),
   #       :user_name: => row.get_user_name(),
   #       :swimmer_level_type_description: => row.get_swimmer_level_type( :i18n_description ),
-  #       :swimmer_level_type_explanation => row.get_swimmer_level_type( :i18n_explanation )
+  #       :swimmer_level_type_alternate => row.get_swimmer_level_type( :i18n_alternate )
   #     }</tt>. 
   #
   def json_list
@@ -52,7 +52,7 @@ class UserTrainingsController < ApplicationController
             tot_secs: result_row.compute_total_seconds(),
             user_name: result_row.get_user_name(),
             swimmer_level_type_description: result_row.get_swimmer_level_type( :i18n_description ),
-            swimmer_level_type_explanation: result_row.get_swimmer_level_type( :i18n_explanation )
+            swimmer_level_type_alternate: result_row.get_swimmer_level_type( :i18n_alternate )
           }
         ) and return
       end
@@ -78,7 +78,7 @@ class UserTrainingsController < ApplicationController
             tot_secs: row.compute_total_seconds(),
             user_name: row.get_user_name(),
             swimmer_level_type_description: row.get_swimmer_level_type( :i18n_description ),
-            swimmer_level_type_explanation: row.get_swimmer_level_type( :i18n_explanation )
+            swimmer_level_type_alternate: row.get_swimmer_level_type( :i18n_alternate )
           }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else

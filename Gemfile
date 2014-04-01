@@ -1,31 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 3.2.16'
-gem 'rack', '~> 1.4.5'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 group :production, :mysql do
   gem 'mysql2'
-end
-
-group :production, :postgresql do
-  gem 'pg'
-end
-
-group :development, :test do
-  gem 'sqlite3'
-  gem 'minitest'
-  gem 'thor', '= 0.14.6'
-
-  gem "rspec"
-  gem "rspec-rails"
-  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
-  gem "factory_girl_rails"
-  gem 'guard'
-  gem 'guard-rspec'
-  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
 end
 
 # Gems used only for assets and not required
@@ -35,6 +16,7 @@ group :assets do
   gem 'coffee-rails'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby
+# gem 'therubyrhino'
   gem 'uglifier', '>= 1.0.3'
 end
 
@@ -60,8 +42,8 @@ gem 'generator'
 # To use uploads:
 gem 'carrierwave'
 
-gem 'rubyzip', :require => 'zip/zip'
 gem 'zip'
+gem 'rubyzip', :require => 'zip/zip'
                                                     # [Steve, 20130715] Goggles-specific:
 gem 'devise'
 gem 'devise-i18n'
@@ -91,3 +73,38 @@ gem 'draper', '~> 1.3'                              # [Steve] For Decorator patt
 
 gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
 gem "rest-client"
+
+
+group :test do
+  gem 'sqlite3'
+  gem 'minitest'
+  gem 'thor', '= 0.14.6'
+
+  gem "rspec"
+  gem "rspec-rails"
+  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
+  gem "factory_girl_rails"
+  gem 'guard'
+  gem 'guard-rspec'
+                                                    # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
+  gem 'simplecov', '~> 0.7.1', require: false
+  gem "codeclimate-test-reporter", require: nil # [Steve, 20140321] CI/Test coverage via local test run
+# gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
+end
+
+# To use ActiveModel has_secure_password
+# gem 'bcrypt-ruby', '~> 3.0.0'
+
+# Use unicorn as the web server
+# gem 'unicorn'
+
+# Deploy with Capistrano
+gem 'capistrano'
+
+gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
+
+# gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
+gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
+
+# To use debugger
+#gem 'ruby-debug'

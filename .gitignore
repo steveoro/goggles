@@ -23,8 +23,10 @@
 # Ignore ExtJS library and other directories:
 /public/output/*
 /public/uploads/*
+/public/assets/*
 
 # Ignore password-containing files and sensitive directories:
+/config/*.yml
 /config/deploy.rb
 /config/deploy/*
 

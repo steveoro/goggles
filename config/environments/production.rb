@@ -10,8 +10,8 @@ Goggles::Application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  # false = Disable Rails's static asset server (false for Apache or nginx that will already do this)
+  #config.serve_static_assets = false                # [Steve, 20131125] Run demo production on Apache2 server (Webrick for development only)
 
   # Compress JavaScripts and CSS
   config.assets.compress = true

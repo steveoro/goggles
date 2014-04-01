@@ -1,3 +1,5 @@
+require 'date'
+
 class Season < ActiveRecord::Base
 
   belongs_to :user
@@ -10,6 +12,8 @@ class Season < ActiveRecord::Base
   validates_associated :season_type
   validates_associated :edition_type
   validates_associated :timing_type
+
+  has_one  :federation_type, :through => :season_type
 
   has_many :meetings
 
@@ -57,6 +61,12 @@ class Season < ActiveRecord::Base
     self.season_type ? self.season_type.short_name :  '?'
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the Federation Type short name
+  def get_federation_type
+    self.federation_type ? self.federation_type.short_name :  '?'
+  end
+  # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
 
@@ -85,12 +95,47 @@ class Season < ActiveRecord::Base
     }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
+
+
+  # Returns if the season is ended at a certain date
+  #
+  # == Parameters:
+  #
+  # - evauation_date: the date in which should verify if the seasons is terminated
+  #
+  # == Returns:
+  # - TRUE if season is ended at the specified date
+  # - FALSE if season is not ended at the date or there is no season end defined
+  #
+  def is_season_ended_at( evaluation_date = Date.today )
+    if self.end_date
+      ( self.end_date <= evaluation_date ) ? true : false
+    else
+      false
+    end
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Returns if the season is started at a certain date
+  #
+  # == Parameters:
+  #
+  # - evauation_date: the date in which should verify if the seasons is started
+  #
+  # == Returns:
+  # - TRUE if season is started at the specified date
+  # - FALSE if season is not started at the specified date
+  #
+  def is_season_started_at( evaluation_date = Date.today )
+    ( self.begin_date >= evaluation_date ) ? true : false
+  end
   # ----------------------------------------------------------------------------
 
 
   # Returns the last defined season for a specific SeasonType code
   #
-  def self.get_last_season_by_type( season_type_code )
+  def get_last_season_by_type( season_type_code )
     Season.joins(:season_type).where(['season_types.code = ?', season_type_code]).last
   end
   # ----------------------------------------------------------------------------
