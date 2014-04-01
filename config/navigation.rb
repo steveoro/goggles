@@ -101,7 +101,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item(
       :key_user_login,
       content_tag(:span, t(:login), class:"label label-important" ),
-      sign_in_path(), #new_user_session_path(),
+      new_user_session_path(),
       :unless => Proc.new { user_signed_in? }
     )
     primary.item(

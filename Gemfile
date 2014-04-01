@@ -40,8 +40,8 @@ gem 'generator'
 # To use uploads:
 gem 'carrierwave'
 
-gem 'rubyzip', :require => 'zip/zip'
 gem 'zip'
+gem 'rubyzip', :require => 'zip/zip'
                                                     # [Steve, 20130715] Goggles-specific:
 gem 'devise'
 gem 'devise-i18n'
@@ -73,7 +73,7 @@ gem "mechanize"                                     # [Steve, 20140306] For web-
 gem "rest-client"
 
 
-group :development, :test do
+group :test do
   gem "rspec"
   gem "rspec-rails"
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
@@ -81,8 +81,8 @@ group :development, :test do
   gem 'guard'
   gem 'guard-rspec'
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
-  gem 'simplecov', '~> 0.7.1', require: false, group: :test
-  gem "codeclimate-test-reporter", group: :test, require: nil # [Steve, 20140321] CI/Test coverage via local test run
+  gem 'simplecov', '~> 0.7.1', require: false
+  gem "codeclimate-test-reporter", require: nil # [Steve, 20140321] CI/Test coverage via local test run
 # gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
 end
 

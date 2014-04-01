@@ -6,7 +6,7 @@ FactoryGirl.define do
   factory :federation_type do
     sequence( :code )  { |n| "FN#{n}" }
     description "FEDERAZIONE REGGIANA NUOTO"
-    short_name "FRN"
+    short_name  "FRN"
   end
 
   factory :season_type do
@@ -23,7 +23,7 @@ FactoryGirl.define do
     header_year { end_date.year }
     season_type
   end
-  
+
   factory :meeting do
     sequence( :description )  { |n| "Farloque meeting #{n}" }
     sequence( :code )  { |n| "farloque#{n}" }
