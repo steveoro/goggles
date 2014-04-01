@@ -61,7 +61,7 @@ describe Season do
         expect( @season1 ).to respond_to( :get_season_type )
       end
   
-      it "get_season_tpe should return correct season type" do
+      it "get_season_type should return correct season type" do
         expect( @season1.get_season_type ).to be_an_instance_of( String )
         expect( @season1.get_season_type ).not_to eq( '' )
         expect( @season1.get_season_type ).not_to eq( '?' )
@@ -71,10 +71,21 @@ describe Season do
         expect( @season1 ).to respond_to( :get_federation_type )
       end
       
-      it "get_federation_tpe should return the correct fedeation type" do
+      it "get_federation_type should return the correct fedeation type" do
         expect( @season1.get_federation_type ).to be_an_instance_of( String )
         expect( @season1.get_federation_type ).not_to eq( '' )
         expect( @season1.get_federation_type ).not_to eq( '?' )
+      end
+
+      it "has a method to return the last season for a certain season type" do
+        expect( @season1 ).to respond_to( :get_last_season_by_type )
+      end
+
+      it "get_last_season_by_type returns a season, that shuld be the last one for the season_type" do
+        expect( @season1.get_last_season_by_type( @season1.season_type.code ) ).to be_a( Season )
+        @seasonolder = FactoryGirl.create( :season, description: "Older season", edition: @season1.edition - 1, begin_date: @season1.begin_date - 365, end_date: @season1.end_date - 365, season_type: @season1.season_type )
+        @seasonnewer = FactoryGirl.create( :season, description: "Newer season", edition: @season1.edition + 1, begin_date: @season1.begin_date + 365, end_date: @season1.end_date + 365, season_type: @season1.season_type )
+        expect( @season1.get_last_season_by_type( @season1.season_type.code ) ).to eq( @seasonnewer )
       end
     end
     
