@@ -11,8 +11,8 @@ FactoryGirl.define do
 
   factory :season_type do
     sequence( :code ) { |n| "MAS_#(n)" }
-    description { "CIRCUITO REGGIANO MASTER #(federation_type.code)" }
-    short_name { "MASTER #(federation_type.code)" }
+    description { "CIRCUITO REGGIANO MASTER #{federation_type.code}" }
+    short_name { "MASTER #{federation_type.code}" }
     federation_type
   end
 

@@ -42,12 +42,13 @@ class Season < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'} #{get_season_type}"
+    #"#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'} #{get_season_type}"
+    "#{description} #{header_year} - #{get_federation_type}"
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "(#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'}) #{description}"
+    "#{edition} #{description} #{header_year} - #{get_federation_type} - (#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'}) "
   end
 
   # Retrieves the user name associated with this instance

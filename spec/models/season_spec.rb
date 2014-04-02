@@ -12,11 +12,20 @@ describe Season do
       FactoryGirl.build( :season, header_year: nil ).should_not be_valid
     end    
 
+    it "not a valid season with incorrect header_year" do
+      FactoryGirl.build( :season, header_year: "More_than_9_char_string" ).should_not be_valid
+    end    
+
     it "not a valid season without edition" do
       FactoryGirl.build( :season, edition: nil ).should_not be_valid
     end    
 
+    it "not a valid season with incorrect edition" do
+      FactoryGirl.build( :season, edition: 1234567890 ).should_not be_valid
+    end    
+
     it "not a valid season without begin_date" do
+      # Should pass end_date and header_year, calculated from begin_date
       FactoryGirl.build( :season, begin_date: nil, end_date: Date.parse('2014-06-15'), header_year: 2014 ).should_not be_valid
     end    
   end
@@ -35,6 +44,26 @@ describe Season do
     end
     
     context "season general methods" do
+      it "has a method to return full description of the season" do
+        expect( @season1 ).to respond_to( :get_full_name )
+      end
+  
+      it "get_full_name should return correct full description" do
+        expect( @season1.get_full_name ).to be_an_instance_of( String )
+        expect( @season1.get_full_name ).not_to eq( '' )
+        expect( @season1.get_full_name ).not_to eq( '?' )
+      end
+  
+      it "has a method to return verbose description of the season" do
+        expect( @season1 ).to respond_to( :get_verbose_name )
+      end
+  
+      it "get_verbose_name should return correct verbose description" do
+        expect( @season1.get_verbose_name ).to be_an_instance_of( String )
+        expect( @season1.get_verbose_name ).not_to eq( '' )
+        expect( @season1.get_verbose_name ).not_to eq( '?' )
+      end
+  
       it "has a method to return if a season is ended at a certain date" do
         expect( @season1 ).to respond_to( :is_season_ended_at )
       end
@@ -47,7 +76,7 @@ describe Season do
         expect( @season1.is_season_ended_at(Date.parse('1999-01-01')) ).to be_false       
         expect( @season1.is_season_ended_at() ).to be_false       
       end
-  
+      
       it "has a method to return if a season is started at a certain date" do
         expect( @season1 ).to respond_to( :is_season_started_at )
       end
