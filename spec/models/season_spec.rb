@@ -69,8 +69,17 @@ describe Season do
       end
   
       it "is_season_ended_at should evaluate dates" do 
-        expect( @season1.is_season_ended_at(Date.parse('2025-12-31')) ).to be_true
-        expect( @season1.is_season_ended_at(Date.parse('1999-01-01')) ).to be_false       
+        expect( @season1.is_season_ended_at( @season1.end_date + 365 ) ).to be_true
+        expect( @season1.is_season_ended_at( @season1.end_date - 365 ) ).to be_false       
+        
+        @season1.begin_date = Date.today - 465
+        @season1.end_date = Date.today - 100
+        expect( @season1.is_season_ended_at() ).to be_true       
+        
+        @season1.begin_date = Date.today - 265
+        @season1.end_date = Date.today + 100
+        expect( @season1.is_season_ended_at() ).to be_false       
+        
         @season1.end_date = nil
         expect( @season1.is_season_ended_at(Date.parse('2025-12-31')) ).to be_false       
         expect( @season1.is_season_ended_at(Date.parse('1999-01-01')) ).to be_false       
@@ -82,8 +91,14 @@ describe Season do
       end
   
       it "is_season_started_at should evaluate dates" do 
-        expect( @season1.is_season_started_at(Date.parse('2025-12-31')) ).to be_false
-        expect( @season1.is_season_started_at(Date.parse('1999-01-01')) ).to be_true       
+        expect( @season1.is_season_started_at( @season1.begin_date + 365 ) ).to be_true
+        expect( @season1.is_season_started_at( @season1.begin_date - 365 ) ).to be_false
+
+        @season1.begin_date = Date.today - 200
+        expect( @season1.is_season_started_at() ).to be_true       
+        
+        @season1.begin_date = Date.today + 100
+        expect( @season1.is_season_started_at() ).to be_false       
       end
   
       it "has a method to return the season type" do
@@ -112,6 +127,7 @@ describe Season do
 
       it "get_last_season_by_type returns a season, that shuld be the last one for the season_type" do
         expect( @season1.get_last_season_by_type( @season1.season_type.code ) ).to be_a( Season )
+        
         @seasonolder = FactoryGirl.create( :season, description: "Older season", edition: @season1.edition - 1, begin_date: @season1.begin_date - 365, end_date: @season1.end_date - 365, season_type: @season1.season_type )
         @seasonnewer = FactoryGirl.create( :season, description: "Newer season", edition: @season1.edition + 1, begin_date: @season1.begin_date + 365, end_date: @season1.end_date + 365, season_type: @season1.season_type )
         expect( @season1.get_last_season_by_type( @season1.season_type.code ) ).to eq( @seasonnewer )

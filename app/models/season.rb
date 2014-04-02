@@ -129,7 +129,7 @@ class Season < ActiveRecord::Base
   # - FALSE if season is not started at the specified date
   #
   def is_season_started_at( evaluation_date = Date.today )
-    ( self.begin_date >= evaluation_date ) ? true : false
+    ( self.begin_date <= evaluation_date ) ? true : false
   end
   # ----------------------------------------------------------------------------
 
