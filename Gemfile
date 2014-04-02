@@ -78,7 +78,7 @@ gem "rest-client"
 group :test do
   gem 'sqlite3'
   gem 'minitest'
-  gem 'thor', '= 0.14.6'
+  gem 'thor'      #, '= 0.14.6'
 
   gem "rspec"
   gem "rspec-rails"
