@@ -1,6 +1,7 @@
 require 'date'
 
 class Season < ActiveRecord::Base
+  include ICUser
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
@@ -49,11 +50,6 @@ class Season < ActiveRecord::Base
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
     "#{edition} #{description} #{header_year} - #{get_federation_type} - (#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'}) "
-  end
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
 

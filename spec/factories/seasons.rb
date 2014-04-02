@@ -34,6 +34,6 @@ FactoryGirl.define do
     header_year { season.header_year }
     timing_type_id 1
     edition_type_id 1
-    user_id 1
+    user_id user
   end
 end
