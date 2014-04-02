@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 3.2.16'
+gem 'rack', '~> 1.4.5'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -40,7 +41,7 @@ gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
 gem 'generator'
 
 # To use uploads:
-gem 'carrierwave'
+#gem 'carrierwave'
 
 gem 'zip'
 gem 'rubyzip', :require => 'zip/zip'
