@@ -1,0 +1,22 @@
+mysql: &mysql
+  adapter: mysql2
+  database: "goggles"
+  username: "<%=ENV['RDS_DB_USERNAME']%>"
+  password: "<%=ENV['RDS_DB_PASSWORD']%>"
+  host:     <%=ENV['RDS_DB_HOST']%>
+  port:     <%=ENV['RDS_DB_PORT']%>
+
+defaults: &defaults
+#  pool: 5
+#  timeout: 5000
+  encoding: utf8
+  <<: *mysql
+
+development:
+  <<: *defaults
+
+test: &test
+  <<: *defaults
+
+production:
+  <<: *defaults

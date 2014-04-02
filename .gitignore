@@ -26,7 +26,6 @@
 /public/assets/*
 
 # Ignore password-containing files and sensitive directories:
-/config/*.yml
 /config/deploy.rb
 /config/deploy/*
 
