@@ -3,8 +3,8 @@ module Version
   # ** DO NOT CHANGE THE FOLLOWING UNLESS YOU KNOW WHAT YOU'RE DOING!! **
   CORE    = 'core-six'
   MAJOR   = '4.00'
-  MINOR   = '210'
-  BUILD   = '20140402'
+  MINOR   = '211'
+  BUILD   = '20140407'
 
   # Internal constant used to discriminate between all the existing and
   # running versions of the AgeX framework.
@@ -14,5 +14,5 @@ module Version
   COMPACT = "#{MAJOR.gsub('.','')}#{MINOR}"
 
   # Current internal DB version (indipendent from migrations and framework release)
-  DB      = "1.16.08"
+  DB      = "1.16.09"
 end

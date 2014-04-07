@@ -6,7 +6,7 @@ require 'common/format'
 
 describe ExercisesController do
 
-  describe '[AJAX json_list]' do
+  describe '[AJAX #json_list]' do
     context "unlogged user" do
       it "displays always the Login page" do
         xhr :get, :json_list
@@ -180,7 +180,7 @@ describe ExercisesController do
   # ===========================================================================
 
 
-  describe '[POST create]' do
+  describe '[POST #create]' do
     context "unlogged user" do
       it "doesn't create a new row" do 
         pending "CRUD still WIP"
@@ -229,7 +229,7 @@ describe ExercisesController do
   # ===========================================================================
 
 
-  describe '[PUT update]' do
+  describe '[PUT #update]' do
     context "unlogged user" do
       it "fails the update" do
         pending "CRUD still WIP"

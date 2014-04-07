@@ -12,7 +12,7 @@ describe SocialsController do
   # ===========================================================================
 
 
-  describe 'GET #show_all' do
+  describe '[GET #show_all]' do
     context "unlogged user" do
       it "displays always the Login page" do
         get_action_and_check_if_its_the_login_page_for( :show_all )
@@ -51,7 +51,7 @@ describe SocialsController do
   # ---------------------------------------------------------------------------
 
 
-  describe 'GET #invite' do
+  describe '[GET #invite]' do
     before :each do
       @friend_user = create( :user )
     end
@@ -95,7 +95,7 @@ describe SocialsController do
   # ---------------------------------------------------------------------------
 
 
-  describe 'POST #invite' do
+  describe '[POST #invite]' do
     before :each do
       @friend_user = create( :user )
     end
@@ -128,7 +128,7 @@ describe SocialsController do
   # ===========================================================================
 
 
-  describe 'GET #approve' do
+  describe '[GET #approve]' do
     before :each do
       @friend_user = create( :user )
     end
@@ -154,7 +154,7 @@ describe SocialsController do
   end
 
 
-  describe 'PUT #approve' do
+  describe '[PUT #approve]' do
     before :each do
       @friend_user = create( :user )
     end
@@ -184,7 +184,7 @@ describe SocialsController do
   # ===========================================================================
 
 
-  describe 'GET #block' do
+  describe '[GET #block]' do
     context "unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
@@ -207,7 +207,7 @@ describe SocialsController do
   end
 
 
-  describe 'PUT #block' do
+  describe '[PUT #block]' do
 
     before :each do
       @friend_user = create( :user )
@@ -238,7 +238,7 @@ describe SocialsController do
   # ===========================================================================
 
 
-  describe 'GET #unblock' do
+  describe '[GET #unblock]' do
     context "unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
@@ -261,7 +261,7 @@ describe SocialsController do
   end
 
 
-  describe 'PUT #unblock' do
+  describe '[PUT #unblock]' do
 
     before :each do
       @friend_user = create( :user )
@@ -292,7 +292,7 @@ describe SocialsController do
   # ===========================================================================
 
 
-  describe 'GET #remove_friendship' do
+  describe '[GET #remove_friendship]' do
     context "unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
@@ -315,7 +315,7 @@ describe SocialsController do
   end
 
 
-  describe 'DELETE #remove_friendship' do
+  describe '[DELETE #remove_friendship]' do
 
     before :each do
       @friend_user = create( :user )

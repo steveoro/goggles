@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140320223319) do
+ActiveRecord::Schema.define(:version => 20140407120828) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -120,7 +120,7 @@ ActiveRecord::Schema.define(:version => 20140320223319) do
   create_table "articles", :force => true do |t|
     t.integer  "lock_version",               :default => 0
     t.string   "title",        :limit => 80,                    :null => false
-    t.text     "entry_text",                                    :null => false
+    t.text     "body",                                          :null => false
     t.boolean  "is_sticky",                  :default => false, :null => false
     t.integer  "user_id"
     t.datetime "created_at",                                    :null => false
@@ -1066,6 +1066,18 @@ ActiveRecord::Schema.define(:version => 20140320223319) do
 
   add_index "movement_types", ["code"], :name => "index_movement_types_on_code", :unique => true
 
+  create_table "news_feeds", :force => true do |t|
+    t.string   "title"
+    t.text     "body"
+    t.boolean  "is_read"
+    t.boolean  "is_friend_activity"
+    t.boolean  "is_achievement"
+    t.integer  "user_id"
+    t.integer  "friend_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "passage_types", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
     t.string   "code",             :limit => 6,                :null => false
@@ -1587,18 +1599,18 @@ ActiveRecord::Schema.define(:version => 20140320223319) do
   add_index "user_trainings", ["user_id", "description"], :name => "index_user_trainings_on_user_id_and_description"
 
   create_table "users", :force => true do |t|
-    t.integer  "lock_version",                                 :default => 0
-    t.string   "name",                                                           :null => false
-    t.string   "description",                   :limit => 50
+    t.integer  "lock_version",                                   :default => 0
+    t.string   "name",                                                             :null => false
+    t.string   "description",                     :limit => 50
     t.integer  "swimmer_id"
-    t.datetime "created_at",                                                     :null => false
-    t.datetime "updated_at",                                                     :null => false
-    t.string   "email",                                        :default => "",   :null => false
-    t.string   "encrypted_password",                           :default => "",   :null => false
+    t.datetime "created_at",                                                       :null => false
+    t.datetime "updated_at",                                                       :null => false
+    t.string   "email",                                          :default => "",   :null => false
+    t.string   "encrypted_password",                             :default => "",   :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                :default => 0
+    t.integer  "sign_in_count",                                  :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -1607,18 +1619,22 @@ ActiveRecord::Schema.define(:version => 20140320223319) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.integer  "failed_attempts",                              :default => 0
+    t.integer  "failed_attempts",                                :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
-    t.boolean  "use_email_data_updates_notify",                :default => true, :null => false
-    t.boolean  "use_email_achievements_notify",                :default => true, :null => false
-    t.boolean  "use_email_newsletter_notify",                  :default => true, :null => false
-    t.boolean  "use_email_community_notify",                   :default => true, :null => false
-    t.string   "avatar_resource_filename",      :limit => 250
+    t.boolean  "use_email_data_updates_notify",                  :default => true, :null => false
+    t.boolean  "use_email_achievements_notify",                  :default => true, :null => false
+    t.boolean  "use_email_newsletter_notify",                    :default => true, :null => false
+    t.boolean  "use_email_community_notify",                     :default => true, :null => false
+    t.string   "avatar_resource_filename",        :limit => 250
     t.integer  "swimmer_level_type_id"
     t.integer  "coach_level_type_id"
+    t.string   "api_authentication_token"
+    t.integer  "outstanding_goggle_score_bias",                  :default => 800,  :null => false
+    t.integer  "outstanding_standard_score_bias",                :default => 800,  :null => false
   end
 
+  add_index "users", ["api_authentication_token"], :name => "index_users_on_api_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["name"], :name => "index_users_on_name", :unique => true

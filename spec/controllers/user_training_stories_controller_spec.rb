@@ -126,7 +126,7 @@ describe UserTrainingStoriesController do
   # ===========================================================================
 
 
-  describe '[POST create]' do
+  describe '[POST #create]' do
     context "unlogged user" do
       it "doesn't create a new row" do 
         entity_attrs = attributes_for( :user_training_story )
@@ -170,7 +170,7 @@ describe UserTrainingStoriesController do
   # ===========================================================================
 
 
-  describe '[PUT update]' do
+  describe '[PUT #update]' do
     context "unlogged user" do
       it "fails the update" do
         entity_on_db = UserTrainingStory.find(1)    # Retrieve an actual DB row: (existing, from the seeds file)

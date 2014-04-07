@@ -11,7 +11,7 @@ class CreateMeetingEntries < ActiveRecord::Migration
       t.integer :lane_number, :limit => 2, :null => true
       t.integer :heat_number, :limit => 4, :null => true
       t.integer :heat_arrival_order, :limit => 2, :null => true
-      
+
       t.references :meeting_program
       t.references :swimmer
       t.references :team

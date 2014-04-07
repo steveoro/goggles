@@ -7,6 +7,10 @@ Goggles::Application.routes.draw do
   devise_for :admins
   devise_for :users
 
+  namespace :api, defaults: { format: "json" } do
+#    devise_for :users
+  end
+
   mount RailsAdmin::Engine => '/goggles_dashboard', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.
   mount DjMon::Engine => 'goggles_dj_mon'
 

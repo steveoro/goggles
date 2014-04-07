@@ -33,6 +33,9 @@ class User < ActiveRecord::Base
   validates_length_of   :description, :maximum => 50
 
   attr_accessible :name, :email, :description, :password, :password_confirmation,
+                  :api_authentication_token,
+                  :outstanding_goggle_score_bias,
+                  :outstanding_standard_score_bias,
                   :coach_level_type, :swimmer_level_type
 
   # TODO ADD:
@@ -58,6 +61,18 @@ class User < ActiveRecord::Base
   # receives the "netzke_attribute" configuration way before the current locale is actually defined.
   # So, it is way better to keep column configuration directly inside Netzke components or in the
   # view definition using the netzke helper.
+
+
+
+  before_save :ensure_api_authentication_token
+
+  # This will make sure that any freshly created User will also have a
+  # pre-approved API user-login authenticated.
+  def ensure_api_authentication_token
+    if api_authentication_token.blank?
+      self.api_authentication_token = generate_api_authentication_token
+    end
+  end
 
 
   #-----------------------------------------------------------------------------
@@ -213,33 +228,17 @@ class User < ActiveRecord::Base
   # def validate
     # errors.add_to_base( t(:password_missing) ) if hashed_pwd.blank?
   # end
-# 
-# 
-  # def self.authenticate(user_name, user_password)
-    # user = self.find_by_name(user_name)
-    # if user
-      # user_password = '' if user_password.nil?      # Avoid nil parameters
-      # expected_pwd = encrypted_password( user_password, user.salt )
-      # if user.hashed_pwd != expected_pwd
-        # user = nil
-      # end
-    # end
-    # user
-  # end
-  # # ----------------------------------------------------------------------------
-# 
-# 
-  # private
-# 
-# 
-  # def self.encrypted_password( user_password, salt )
-    # string_to_hash = user_password + "giggidi-giggidi-gi" + salt
-    # Digest::SHA1.hexdigest( string_to_hash )
-  # end
-# 
-# 
-  # def create_new_salt
-    # self.salt = self.object_id.to_s + rand.to_s
-  # end
+  # ----------------------------------------------------------------------------
+
+
+private
+
+
+  def generate_api_authentication_token
+    loop do                                         # Search for a unique (not already used) auth token
+      token = Devise.friendly_token
+      break token unless User.find_by(api_authentication_token: token)
+    end
+  end
   # ----------------------------------------------------------------------------
 end

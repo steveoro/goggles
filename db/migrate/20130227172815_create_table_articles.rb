@@ -3,7 +3,7 @@ class CreateTableArticles < ActiveRecord::Migration
     create_table :articles do |t|
       t.integer :lock_version, :default => 0
       t.string :title, :limit => 80, :null => false
-      t.text :entry_text, :null => false
+      t.text :body, :null => false
       t.boolean :is_sticky, :default => false, :null => false
 
       t.references :user
