@@ -766,6 +766,11 @@ it:
   please_select: "-- Scegli --"
   please_wait: "Attendi..."
   drag_and_drop_to_sort_rows: "Clicca negli spazi fra le celle e trascina le righe per riordinarle."
+  invalid_token: "Token non valido!"
+  log_in_successful: "Log-in eseguito con successo."
+  log_out_successful: "Log-out eseguito con successo."
+  api_request_must_be_json: "La richiesta deve essere JSON."
+  api_request_must_contain_user_and_password: "La richiesta deve contenere email & password utente."
 
   id: Id
   name: Nome

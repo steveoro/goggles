@@ -6,6 +6,9 @@ require 'i18n'
 
 
 class User < ActiveRecord::Base
+
+  acts_as_token_authenticatable
+
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
@@ -16,8 +19,6 @@ class User < ActiveRecord::Base
   include Rails.application.routes.url_helpers
 
   include Amistad::FriendModel                       # For Facebook-like friendship management
-
-#  belongs_to :user                                  # Used by the "updated_by" getter
 
   has_one :swimmer
 
@@ -37,42 +38,6 @@ class User < ActiveRecord::Base
                   :outstanding_goggle_score_bias,
                   :outstanding_standard_score_bias,
                   :coach_level_type, :swimmer_level_type
-
-  # TODO ADD:
-  # :outstanding_score_bias (default = 800)
-  # column to manage upload of user avatar image
-  # 
-
-  # validates_presence_of :hashed_pwd
-  # validates_length_of   :hashed_pwd, :within => 1..128
-# 
-  # validates_presence_of :salt
-  # validates_length_of   :salt, :within => 1..128
-# 
-  # validates_numericality_of :authorization_level, :with => /[0123456789]/, :message => :must_be_a_number_from_0_to_9
-# 
-  # validates :password, :confirmation => true
-  # validates_presence_of :password, :password_confirmation
-                                                    # # Virtual attributes:
-  # attr_accessor :password_confirmation
-
-  # [Steve, 20120212] Using "netzke_attribute" helper to define in the model the configuration
-  # of each column/attribute makes localization of the label unusable, since the model class is
-  # receives the "netzke_attribute" configuration way before the current locale is actually defined.
-  # So, it is way better to keep column configuration directly inside Netzke components or in the
-  # view definition using the netzke helper.
-
-
-
-  before_save :ensure_api_authentication_token
-
-  # This will make sure that any freshly created User will also have a
-  # pre-approved API user-login authenticated.
-  def ensure_api_authentication_token
-    if api_authentication_token.blank?
-      self.api_authentication_token = generate_api_authentication_token
-    end
-  end
 
 
   #-----------------------------------------------------------------------------
@@ -230,15 +195,4 @@ class User < ActiveRecord::Base
   # end
   # ----------------------------------------------------------------------------
 
-
-private
-
-
-  def generate_api_authentication_token
-    loop do                                         # Search for a unique (not already used) auth token
-      token = Devise.friendly_token
-      break token unless User.find_by(api_authentication_token: token)
-    end
-  end
-  # ----------------------------------------------------------------------------
 end

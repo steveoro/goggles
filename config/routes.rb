@@ -8,7 +8,22 @@ Goggles::Application.routes.draw do
   devise_for :users
 
   namespace :api, defaults: { format: "json" } do
-#    devise_for :users
+    namespace :v1 do
+      devise_scope :user do
+        get "sessions/create"
+        get "sessions/destroy"
+
+        # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
+        # resources :exercises do
+          # member do
+            # get 'json_list', controller: :exercises, action: :json_list
+          # end
+          # collection do
+            # get 'json_list', controller: :exercises, action: :json_list
+          # end
+        # end
+      end
+    end
   end
 
   mount RailsAdmin::Engine => '/goggles_dashboard', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.

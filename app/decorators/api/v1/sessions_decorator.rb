@@ -1,4 +1,4 @@
-class Api::RegistrationDecorator < Draper::Decorator
+class Api::V1::SessionsDecorator < Draper::Decorator
   delegate_all
 
   # Define presentation-specific methods here. Helpers are accessed through

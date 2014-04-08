@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_locale
 
+  acts_as_token_authentication_handler_for User
+
 
   # Set the default URL options:
   def default_url_options( options={} )

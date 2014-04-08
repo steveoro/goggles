@@ -10,7 +10,8 @@ class ExercisesController < ApplicationController
   QUERY_WILDCHAR = '%'
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user!
+# FIXME NO MORE NEEDED, SINCE IT'S IN APPLICATION_CONTROLLER:
+#  before_filter :authenticate_user!                 # Devise "standard" HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 
@@ -38,7 +39,7 @@ class ExercisesController < ApplicationController
   #     }</tt>. 
   #
   def json_list
-    if request.xhr?                                 # Make sure the request is an AJAX one
+    if request.xhr? || request.format.json?         # Make sure the request is an AJAX one
 # DEBUG
 #      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #      logger.debug "PARAMS: #{params.inspect}"

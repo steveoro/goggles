@@ -7,7 +7,8 @@ require 'training_printout_layout'
 class TrainingsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user!
+# FIXME NO MORE NEEDED, SINCE IT'S IN APPLICATION_CONTROLLER:
+#  before_filter :authenticate_user!
   # ---------------------------------------------------------------------------
 
 

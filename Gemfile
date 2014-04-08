@@ -45,6 +45,7 @@ gem 'rubyzip', :require => 'zip/zip'
                                                     # [Steve, 20130715] Goggles-specific:
 gem 'devise'
 gem 'devise-i18n'
+gem 'simple_token_authentication'
 gem 'rails_admin'
                                                     # [Steve, 20130801] Navigation gems for rendering menus & breadcrumbs:
 gem "simple-navigation"

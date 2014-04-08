@@ -1629,12 +1629,12 @@ ActiveRecord::Schema.define(:version => 20140407120828) do
     t.string   "avatar_resource_filename",        :limit => 250
     t.integer  "swimmer_level_type_id"
     t.integer  "coach_level_type_id"
-    t.string   "api_authentication_token"
+    t.string   "authentication_token"
     t.integer  "outstanding_goggle_score_bias",                  :default => 800,  :null => false
     t.integer  "outstanding_standard_score_bias",                :default => 800,  :null => false
   end
 
-  add_index "users", ["api_authentication_token"], :name => "index_users_on_api_authentication_token", :unique => true
+  add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["name"], :name => "index_users_on_name", :unique => true

@@ -132,8 +132,14 @@ class Season < ActiveRecord::Base
 
   # Returns the last defined season for a specific SeasonType code
   #
-  def get_last_season_by_type( season_type_code )
+  def self.get_last_season_by_type( season_type_code )
     Season.joins(:season_type).where(['season_types.code = ?', season_type_code]).last
+  end
+
+  # Returns the last defined season for a specific SeasonType code
+  #
+  def get_last_season_by_type( season_type_code )
+    Season.get_last_season_by_type( season_type_code )
   end
   # ----------------------------------------------------------------------------
 end
