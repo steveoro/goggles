@@ -3,7 +3,8 @@
 class SocialsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user!
+  before_filter :authenticate_entity_from_token!
+  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 

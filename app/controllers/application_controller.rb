@@ -6,6 +6,10 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
 
   acts_as_token_authentication_handler_for User
+  # [Steve, 20140409] Disabling the auth filters by default will allow us to choose
+  # with increased granularity which controllers must be protected:
+  skip_before_filter :authenticate_entity_from_token!
+  skip_before_filter :authenticate_entity!
 
 
   # Set the default URL options:

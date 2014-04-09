@@ -37,17 +37,16 @@ class Api::V1::SessionsController < Devise::SessionsController
   #           "http://localhost:3000/exercises/json_list?id=1&user_email=steve.alloro@whatever.com&user_token=whatever_the_token_is"
   #
   def create
-    # Fetch params
-    email = params[:user_email]
-    password = params[:user_password]
-
-    user = User.where(email: email).first if email.presence
-
     # Validations
     if request.format != :json
       render( status: 406, json: {success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
+
+    # Fetch params
+    email = params[:user_email]
+    password = params[:user_password]
+    user = User.find_for_database_authentication( email: email ) if email.presence
 
     if email.nil? or password.nil?
       render( status: 400, json: { success: false, message: I18n.t(:api_request_must_contain_user_and_password) } )
@@ -60,7 +59,7 @@ class Api::V1::SessionsController < Devise::SessionsController
         user.reset_authentication_token!
         sign_in( user )
         render(
-          status: :ok,
+          status: :ok,    # 200 status code
           json: {
             success:    true,
             user_name:  user.name,
@@ -90,8 +89,14 @@ class Api::V1::SessionsController < Devise::SessionsController
   # - :message    => a log-out or error message.
   #
   def destroy
+    # Validations
+    if request.format != :json
+      render( status: 406, json: {success: false, message: I18n.t(:api_request_must_be_json) } )
+      return
+    end
+
     # Fetch params
-    user = User.where( authentication_token: params[:user_token] ).first
+    user = User.find_for_database_authentication( authentication_token: params[:user_token] )
    
     if user.nil?
       render( status: 404, json: { success: false, message: I18n.t(:invalid_token) } )

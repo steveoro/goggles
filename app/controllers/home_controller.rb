@@ -1,11 +1,6 @@
 class HomeController < ApplicationController
-#  include Info::UsersInfo
 
   require 'common/format'
-
-  # Require authorization before invoking any of this controller's actions:
-#  before_filter :authenticate_user!
-#  before_filter :authorize, :except => [ :about, :contact_us, :wip ]
 
 
   def index

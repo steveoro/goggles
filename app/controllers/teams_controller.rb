@@ -5,7 +5,8 @@ require 'common/format'
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-#  before_filter :authenticate_admin!
+  before_filter :authenticate_entity_from_token!
+  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 

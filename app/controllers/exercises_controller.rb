@@ -10,8 +10,8 @@ class ExercisesController < ApplicationController
   QUERY_WILDCHAR = '%'
 
   # Require authorization before invoking any of this controller's actions:
-# FIXME NO MORE NEEDED, SINCE IT'S IN APPLICATION_CONTROLLER:
-#  before_filter :authenticate_user!                 # Devise "standard" HTTP log-in strategy
+  before_filter :authenticate_entity_from_token!
+  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 
