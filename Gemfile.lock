@@ -322,6 +322,8 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
+    rspec_api_blueprint (0.0.8)
+      rspec-rails
     ruby-rc4 (0.1.5)
     rubyzip (1.1.0)
     safe_yaml (0.9.7)
@@ -430,6 +432,7 @@ DEPENDENCIES
   rhc
   rspec
   rspec-rails
+  rspec_api_blueprint
   rubyzip
   ruport!
   sass-rails (~> 3.2)

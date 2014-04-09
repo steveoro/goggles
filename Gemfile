@@ -81,6 +81,7 @@ group :test do
   gem "factory_girl_rails"
   gem 'guard'
   gem 'guard-rspec'
+  gem 'rspec_api_blueprint', require: false
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', '~> 0.7.1', require: false
   gem "codeclimate-test-reporter", require: nil # [Steve, 20140321] CI/Test coverage via local test run

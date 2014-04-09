@@ -13,6 +13,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
+require 'rspec_api_blueprint'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -20,9 +21,10 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   # [Steve, 20140226] Add helpers to get Devise working with RSpec
-  config.include Devise::TestHelpers, :type => :controller
+  config.include Devise::TestHelpers,     :type => :controller
   # [Steve, 20140226] Add other custom helpers
-  config.extend ControllerMacros, :type => :controller
+  config.extend ControllerMacros,         :type => :controller
+  config.extend CustomMatchers::Routing,  :type => :controller
   # [Steve, 20140226] Configure FactoryGirl to work with RSpec
   config.include FactoryGirl::Syntax::Methods
 

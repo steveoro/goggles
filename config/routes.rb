@@ -13,6 +13,18 @@ Goggles::Application.routes.draw do
         get "sessions/create"
         get "sessions/destroy"
 
+        resource :team do
+          member do
+            get 'count_meetings'
+            get 'count_results'
+            get 'count_details'
+          end
+        end
+        resources :exercises              #, only: 'json_list'
+        resources :trainings              #, only: 'json_list'
+        resources :user_trainings         #, only: 'json_list'
+        resources :user_training_stories
+
         # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
         # resources :exercises do
           # member do

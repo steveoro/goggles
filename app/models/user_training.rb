@@ -43,6 +43,7 @@ class UserTraining < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
+
   # Retrieves the User short name (the owner of this Training)
   def get_user_name
     user ? user.name : ''

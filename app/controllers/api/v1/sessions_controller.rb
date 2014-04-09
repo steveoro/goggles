@@ -1,5 +1,8 @@
 class Api::V1::SessionsController < Devise::SessionsController
 
+  respond_to :json
+
+
   # Log-in parameter retrieval & log-in for an API session.
   #
   # After a successful login, all protected requests must pass the user e-mail and

@@ -39,26 +39,26 @@ class ExercisesController < ApplicationController
   #     }</tt>. 
   #
   def json_list
-    if request.xhr? || request.format.json?         # Make sure the request is an AJAX one
+    if request.xhr? || request.format.json?         # Make sure the request is an AJAX or JSON one
 # DEBUG
 #      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #      logger.debug "PARAMS: #{params.inspect}"
       if params[:id].to_i > 0                       # Set up and check parameters:
         result_row = Exercise.find_by_id( params[:id].to_i )
         render(
-          :json => {
-            label: result_row.get_full_name(
+          json: {
+            label:                  result_row.get_full_name(
               0,
               Exercise.get_default_verbosity_for_label_symbol(),
               current_user.get_preferred_swimmer_level_id()
             ),
-            value: result_row.id,
-            tot_distance: result_row.compute_total_distance(),
-            tot_secs: result_row.compute_total_seconds(),
-            is_arm_aux_allowed: result_row.is_arm_aux_allowed(),
-            is_kick_aux_allowed: result_row.is_kick_aux_allowed(),
-            is_body_aux_allowed: result_row.is_body_aux_allowed(),
-            is_breath_aux_allowed: result_row.is_breath_aux_allowed()
+            value:                  result_row.id,
+            tot_distance:           result_row.compute_total_distance(),
+            tot_secs:               result_row.compute_total_seconds(),
+            is_arm_aux_allowed:     result_row.is_arm_aux_allowed(),
+            is_kick_aux_allowed:    result_row.is_kick_aux_allowed(),
+            is_body_aux_allowed:    result_row.is_body_aux_allowed(),
+            is_breath_aux_allowed:  result_row.is_breath_aux_allowed()
           }
         ) and return
       end
@@ -85,18 +85,18 @@ class ExercisesController < ApplicationController
       if result.respond_to?( :map ) && result.respond_to?( :sort_by )
         result_array = result.map{ |row|
           {
-            label: row.get_full_name(
+            label:                  row.get_full_name(
               0,
               Exercise.get_default_verbosity_for_label_symbol(),
               current_user.get_preferred_swimmer_level_id()
             ),
-            value: row.id,
-            tot_distance: row.compute_total_distance(),
-            tot_secs: row.compute_total_seconds(),
-            is_arm_aux_allowed: row.is_arm_aux_allowed(),
-            is_kick_aux_allowed: row.is_kick_aux_allowed(),
-            is_body_aux_allowed: row.is_body_aux_allowed(),
-            is_breath_aux_allowed: row.is_breath_aux_allowed()
+            value:                  row.id,
+            tot_distance:           row.compute_total_distance(),
+            tot_secs:               row.compute_total_seconds(),
+            is_arm_aux_allowed:     row.is_arm_aux_allowed(),
+            is_kick_aux_allowed:    row.is_kick_aux_allowed(),
+            is_body_aux_allowed:    row.is_body_aux_allowed(),
+            is_breath_aux_allowed:  row.is_breath_aux_allowed()
           }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else
@@ -105,7 +105,7 @@ class ExercisesController < ApplicationController
                                                     # Limit the result array, if necessary:
       result_array = result_array[0 .. limit-1] if result_array.size > limit
                                                     # Finally, render the result array as JSON:
-      render( :json => result_array )
+      render( json: result_array )
     else
       flash[:notice] = I18n.t(:invalid_action_request)
       redirect_to( exercises_path() ) and return
