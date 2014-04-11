@@ -1,9 +1,5 @@
 class DataImportBadge < ActiveRecord::Base
-
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :data_import_session
   validates_associated  :data_import_session
 
@@ -25,10 +21,9 @@ class DataImportBadge < ActiveRecord::Base
   validates_associated :category_type
   validates_associated :entry_time_type
 
-  validates_presence_of :number
-  validates_length_of :number, :maximum =>  40
+  validates_presence_of :number, length: { maximum: 40 }, allow_nil: true 
 
-
+  # TODO Refactor these removing the entity name from the method:
   scope :sort_data_import_badge_by_conflicting_rows_id,     lambda { |dir| order("conflicting_badge_id #{dir.to_s}") }
   scope :sort_data_import_badge_by_user,                    lambda { |dir| order("users.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
   scope :sort_data_import_badge_by_season,                  lambda { |dir| order("seasons.begin_date #{dir.to_s}, data_import_badges.number #{dir.to_s}") }

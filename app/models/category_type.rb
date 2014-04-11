@@ -1,28 +1,38 @@
 # encoding: utf-8
 require 'date'
 
+
 class CategoryType < ActiveRecord::Base
 
-  validates_presence_of   :code
-  validates_length_of     :code, :within => 1..7, :allow_nil => false
+  validates_presence_of :code, length: { within: 1..7 }, allow_nil: false
 
-  validates_length_of     :federation_code, :within => 1..2
-  validates_length_of     :description, :maximum => 100
-  validates_length_of     :short_name, :maximum => 50
-  validates_length_of     :group_name, :maximum => 50
+  validates_length_of   :federation_code, within: 1..2
+  validates_length_of   :description,     maximum: 100
+  validates_length_of   :short_name,      maximum: 50
+  validates_length_of   :group_name,      maximum: 50
 
-  validates_length_of     :age_begin, :maximum => 3
-  validates_length_of     :age_end, :maximum => 3
+  validates_length_of   :age_begin,       maximum: 3
+  validates_length_of   :age_end,         maximum: 3
 
   belongs_to :season
   validates_presence_of :season                     # (must be not null)
-  validates_associated :season                      # (foreign key integrity)
+  validates_associated  :season                     # (foreign key integrity)
 
   has_one :season_type, :through => :season
 
+  scope :only_relays,     -> { where(:is_a_relay => true) }
+  scope :are_not_relays,  -> { where(:is_a_relay => false) }
+  # ----------------------------------------------------------------------------
 
-  scope :only_relays,     where(:is_a_relay => true)    # (Keep in mind that categories include also relays!)
-  scope :are_not_relays,  where(:is_a_relay => false)
+
+  # Label symbol corresponding to either a column name or a model method to be used
+  # mainly in generating DropDown option lists.
+  #
+  # @overload ActiveRecord::Base.get_label_symbol (see lib/extensions/active_record.rb)
+  #
+  def self.get_label_symbol
+    :code
+  end
   # ----------------------------------------------------------------------------
 
 
@@ -83,15 +93,6 @@ class CategoryType < ActiveRecord::Base
       [ '(season_id = ?) AND (category_types.code = ?)', season_id, result_code ]
     ).first
     category_type ? category_type.id : 0
-  end
-  # ----------------------------------------------------------------------------
-
-
-  # Label symbol corresponding to either a column name or a model method to be used
-  # mainly in generating DropDown option lists.
-  #
-  def self.get_label_symbol
-    :code
   end
   # ----------------------------------------------------------------------------
 end

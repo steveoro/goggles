@@ -8,5 +8,6 @@ class UpdateDbTo11608 < ActiveRecord::Migration
   end
 
   def down
-    raise ActiveRecord::IrreversibleMigration  end
+    raise ActiveRecord::IrreversibleMigration
+  end
 end

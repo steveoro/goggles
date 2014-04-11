@@ -1,9 +1,5 @@
 class DataImportCity < ActiveRecord::Base
-
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :data_import_session
   validates_associated  :data_import_session
 
@@ -11,14 +7,12 @@ class DataImportCity < ActiveRecord::Base
 
   validates_presence_of :import_text
 
-  validates_presence_of   :name
-  validates_length_of     :name, :within => 1..50
-  validates_uniqueness_of :name, :scope => :zip, :message => :already_exists
-
-  validates_length_of     :zip, :maximum => 6
-  validates_length_of     :area, :maximum => 50
-  validates_length_of     :country, :maximum => 50
-  validates_length_of     :country_code, :maximum => 10
+  validates_presence_of   :name, length: { within: 1..50 }, allow_nil: false
+  validates_uniqueness_of :name, scope: :zip, message: :already_exists
+  validates_length_of     :zip,  maximum: 6
+  validates_presence_of   :area, length: { within: 1..50 }, allow_nil: false
+  validates_presence_of   :country, length: { within: 1..50 }, allow_nil: false
+  validates_presence_of   :country_code, length: { within: 1..10 }, allow_nil: false
   # ----------------------------------------------------------------------------
 
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-shared_examples "ICI18n" do
+shared_examples_for "Interfaced Concern I18n" do
 
   before(:each) do
     @instance = described_class.new()

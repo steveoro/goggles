@@ -132,7 +132,7 @@ class SocialsController < ApplicationController
   # === UPDATE:
   #     Update the changes (news feed generated only for new sharings).
   def edit
-    # TODO
+    # TODO FUTURE DEV.
   end
   # ---------------------------------------------------------------------------
 

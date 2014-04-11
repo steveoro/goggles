@@ -1,7 +1,7 @@
 class CreateNewsFeeds < ActiveRecord::Migration
   def change
     create_table :news_feeds do |t|
-      t.string :title
+      t.string :title, :limit => 150, :null => false
       t.text :body
       t.boolean :is_read
       t.boolean :is_friend_activity

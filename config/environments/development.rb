@@ -35,4 +35,11 @@ Goggles::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+  
+  # Allow 'better_errors' gem to output stack-trace on TRUSTED_IP (beyond localhost),
+  # launching the Rails server as:
+  #
+  # > TRUSTED_IP=192.168.0.xyz rails s
+  #
+  BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP'] if ENV['TRUSTED_IP']
 end

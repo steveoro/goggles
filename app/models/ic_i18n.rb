@@ -2,7 +2,7 @@
   
 = ICI18n
 
-  - version:  4.00.199.20140314
+  - version:  4.00.215.20140411
   - author:   Steve A.
 
   Concrete Interface for I18n helper methods.
@@ -23,7 +23,7 @@ module ICI18n
     # FIXME table_name is defined on the class not on the instances
     I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[klass.table_name.to_sym]} )
   end
-  
+
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_alternate
     # FIXME table_name is defined on the class not on the instances

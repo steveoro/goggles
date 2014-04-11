@@ -2,7 +2,7 @@
   
 = AppParameter
 
-  - version:  3.02.34.20130214
+  - version:  4.00.215.20140411
   - author:   Steve A.
 
   Common app_parameter base model for the Agex5 framework.
@@ -36,9 +36,6 @@ class AppParameter < ActiveRecord::Base
   validates_numericality_of :code_type_3, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
   validates_numericality_of :code_type_4, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
 
-  # FIXME all these boolean validation are wrong since Rails 2.5:
-#  validates_format_of :is_a_post_before_type_cast, :with => /[01]/, :message=> I18n.t('must be 0 or 1')
-#  validates_format_of :a_bool_before_type_cast, :with => /[01]/, :message=> I18n.t('must be 0 or 1')
 
                                 # Param ID codes:
                                 #################
