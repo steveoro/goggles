@@ -1,8 +1,8 @@
-require 'ic_i18n'
+require 'localizable'
 
 
 class BaseMovement < ActiveRecord::Base
-  include ICI18n
+  include Localizable
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :movement_type

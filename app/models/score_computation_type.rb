@@ -1,10 +1,10 @@
 require 'drop_down_listable'
-require 'ic_i18n'
+require 'localizable'
 
 
 class ScoreComputationType < ActiveRecord::Base
   include DropDownListable
-  include ICI18n
+  include Localizable
 
   has_many :score_computation_type_rows
 

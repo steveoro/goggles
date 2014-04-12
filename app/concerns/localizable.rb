@@ -2,9 +2,9 @@ require 'active_support'
 
 =begin
   
-= ICI18n
+= Localizable
 
-  - version:  4.00.215.20140412
+  - version:  4.00.217.20140412
   - author:   Steve A.
 
   Concrete Interface for I18n helper methods.
@@ -12,7 +12,7 @@ require 'active_support'
   and it must have a #code field.
 
 =end
-module ICI18n
+module Localizable
   extend ActiveSupport::Concern
 
 # TODO Make sure includee responds_to base_class.table_name
@@ -21,20 +21,17 @@ module ICI18n
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
-    # FIXME table_name is defined on the class not on the instances
-    I18n.t( "i18n_short_#{ code }".to_sym, {:scope=>[self.get_scope_sym]} )
+    I18n.t( "i18n_short_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description
-    # FIXME table_name is defined on the class not on the instances
-    I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[self.get_scope_sym]} )
+    I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
   end
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_alternate
-    # FIXME table_name is defined on the class not on the instances
-    I18n.t( "i18n_alternate_#{ code }".to_sym, {:scope=>[self.get_scope_sym]} )
+    I18n.t( "i18n_alternate_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
   end
   # ----------------------------------------------------------------------------
 

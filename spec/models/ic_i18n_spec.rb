@@ -3,7 +3,7 @@ require 'spec_helper'
 
 # Dummy class holder for the fields used by the module
 class Dummy
-  include ICI18n
+  include Localizable
   attr_accessor :code
 
   def self.table_name;  'stroke_types'; end
@@ -13,7 +13,7 @@ end
 # -----------------------------------------------------------------------------
 
 
-describe ICI18n do
+describe Localizable do
 
   # Init dummy class instance to test instance methods
   def setup_dummy_instance

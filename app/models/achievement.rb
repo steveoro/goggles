@@ -1,8 +1,8 @@
-require 'ic_i18n'
+require 'localizable'
 
 
 class Achievement < ActiveRecord::Base
-  include ICI18n
+  include Localizable
 
   belongs_to :user
 

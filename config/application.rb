@@ -22,7 +22,6 @@ module Goggles
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{config.root}/app/reports)
                                                     # [Steve, 20140314] Required custom extension
-#    require File.join( config.root, 'lib/extensions/active_record.rb' )
     require File.join( config.root, 'lib/extensions/roman_numeral.rb' )
 
     # Only load the plugins named here, in the order given (default is alphabetical).

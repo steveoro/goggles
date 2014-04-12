@@ -1,10 +1,10 @@
 require 'drop_down_listable'
-require 'ic_i18n'
+require 'localizable'
 
 
 class MovementScopeType < ActiveRecord::Base
   include DropDownListable
-  include ICI18n
+  include Localizable
 
   # Commodity reference to a specific code stored in the DB; make sure this value is always correct
   CODE_GENERIC = 'N'                                # If it's full or generic we may want to discriminate. (This code allows to avoid printing generic-type movement scopes in some methods.)
