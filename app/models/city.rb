@@ -1,4 +1,9 @@
+require 'drop_down_listable'
+
+
 class City < ActiveRecord::Base
+  include DropDownListable
+
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   validates_presence_of   :name, length: { within: 1..50 }, allow_nil: false
@@ -31,7 +36,7 @@ class City < ActiveRecord::Base
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
-  # @overload ActiveRecord::Base.get_label_symbol (see lib/extensions/active_record.rb)
+  # @overload inherited from DropDownListable
   #
   def self.get_label_symbol
     :get_full_name

@@ -8,7 +8,7 @@ FactoryGirl.define do
     name                    { "#{ Faker::Address.street_name } pool" }
     nick_name               { Faker::Address.street_name.downcase.gsub(' ', '') }
     address                 { Faker::Address.street_address }
-    zip                     { Faker::Address.zip_code }
+    zip                     { Faker::AddressUS.zip_code }
     lanes_number            { 6 + 2 * ((rand * 10) % 3).to_i }
     has_multiple_pools      { (rand * 100).to_i.even? }
     has_open_area           { (rand * 100).to_i.even? }

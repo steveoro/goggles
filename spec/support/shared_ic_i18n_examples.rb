@@ -29,4 +29,15 @@ shared_examples_for "Interfaced Concern I18n" do
     end
   end
   # ---------------------------------------------------------------------------
+
+  # Describes the required functionalities of this method
+  # of the interface.
+  #
+  describe "i18n_alternate()" do
+    it "returns always a non-empty string" do
+      expect( @instance.i18n_alternate ).not_to eq( '' )
+      expect( @instance.i18n_alternate.size ).to be > 0
+    end
+  end
+  # ---------------------------------------------------------------------------
 end

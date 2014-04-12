@@ -1,11 +1,15 @@
 require 'digest/sha1'
 require 'common/format'
 
+require 'drop_down_listable'
 require 'framework/naming_tools'
 require 'i18n'
 
 
 class User < ActiveRecord::Base
+  include DropDownListable
+  include Amistad::FriendModel                       # For Facebook-like friendship management
+  include Rails.application.routes.url_helpers
 
   acts_as_token_authenticatable
 
@@ -16,10 +20,6 @@ class User < ActiveRecord::Base
          :confirmable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  include Rails.application.routes.url_helpers
-
-  include Amistad::FriendModel                       # For Facebook-like friendship management
-
   has_one :swimmer
 
   belongs_to :swimmer_level_type
@@ -28,10 +28,9 @@ class User < ActiveRecord::Base
   validates_associated :swimmer_level_type
 
   validates_presence_of   :name
-  validates_length_of     :name, :within => 1..20
-  validates_uniqueness_of :name, :message => :already_exists
+  validates_uniqueness_of :name, message: :already_exists
 
-  validates_length_of   :description, :maximum => 50
+  validates_length_of     :description, maximum: 50
 
   attr_accessible :name, :email, :description, :password, :password_confirmation,
                   :api_authentication_token,
@@ -64,6 +63,8 @@ class User < ActiveRecord::Base
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
+  #
+  # @overload inherited from DropDownListable
   #
   def self.get_label_symbol
     :name

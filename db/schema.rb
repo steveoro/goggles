@@ -1067,15 +1067,15 @@ ActiveRecord::Schema.define(:version => 20140407120828) do
   add_index "movement_types", ["code"], :name => "index_movement_types_on_code", :unique => true
 
   create_table "news_feeds", :force => true do |t|
-    t.string   "title"
+    t.string   "title",              :limit => 150, :null => false
     t.text     "body"
     t.boolean  "is_read"
     t.boolean  "is_friend_activity"
     t.boolean  "is_achievement"
     t.integer  "user_id"
     t.integer  "friend_id"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
   end
 
   create_table "passage_types", :force => true do |t|

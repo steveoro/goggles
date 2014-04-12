@@ -1,11 +1,11 @@
+require 'drop_down_listable'
 require 'wrappers/timing'
 
 
 class Swimmer < ActiveRecord::Base
+  include DropDownListable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   # This will be used to discriminate the actual user associated with this data
   # (the "associated_user_id") and the user_id which has created/updated/modified
@@ -83,7 +83,8 @@ class Swimmer < ActiveRecord::Base
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
-  # (Override)
+  #
+  # @overload inherited from DropDownListable
   #
   def self.get_label_symbol
     :get_full_name

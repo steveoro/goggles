@@ -1,12 +1,13 @@
+require 'drop_down_listable'
 require 'ic_i18n'
 
+
 class HeatType < ActiveRecord::Base
+  include DropDownListable
   include ICI18n
 
-  validates_presence_of   :code
-  validates_length_of     :code, :within => 1..10, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
-
+  validates_presence_of   :code, length: { within: 1..10 }, allow_nil: false
+  validates_uniqueness_of :code, message: :already_exists
 
   # Unique IDs used inside the DB, the description will be retrieved using I18n.t() 
   HEAT_ID   = 1

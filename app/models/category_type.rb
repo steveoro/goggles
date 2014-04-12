@@ -1,8 +1,10 @@
 # encoding: utf-8
+require 'drop_down_listable'
 require 'date'
 
 
 class CategoryType < ActiveRecord::Base
+  include DropDownListable
 
   validates_presence_of :code, length: { within: 1..7 }, allow_nil: false
 
@@ -28,7 +30,7 @@ class CategoryType < ActiveRecord::Base
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
-  # @overload ActiveRecord::Base.get_label_symbol (see lib/extensions/active_record.rb)
+  # @overload inherited from DropDownListable
   #
   def self.get_label_symbol
     :code
