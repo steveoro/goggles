@@ -60,8 +60,8 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
         lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
       end
-      lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), search_swimmer_meetings_path(), :highlights_on => %r(search_swimmer|prefilter_swimmer)
-      lev2_nav.item :key_meetings_search_team, t('meeting.search_by_team'), search_team_meetings_path(), :highlights_on => %r(search_team|prefilter_team)
+      lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), :highlights_on => %r(search_swimmer|prefilter_swimmer)
+      lev2_nav.item :key_meetings_search_team, t('meeting.search_by_team'), meetings_search_team_path(), :highlights_on => %r(search_team|prefilter_team)
     end
 
     primary.item( :key_rankings,      t('rankings'), '#' ) do |lev2_nav|
@@ -89,10 +89,18 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()
       lev2_nav.item :key_user_tr_stories,       t('misc_main_menu.user_training_stories'),  user_training_stories_path()
+      lev2_nav.item :key_separator2_0,          content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_social_index,          t('social.menu_social_index'), socials_show_all_path() do |lev3_nav|
+        lev3_nav.item :key_social_invite,       t('social.menu_social_invite'),   socials_invite_path(), :class => 'disabled'
+        lev3_nav.item :key_social_approve,      t('social.menu_social_approve'),  socials_approve_path(), :class => 'disabled'
+        lev3_nav.item :key_social_block,        t('social.menu_social_block'),    socials_block_path(), :class => 'disabled'
+        lev3_nav.item :key_social_remove,       t('social.menu_social_remove'),   socials_remove_path(), :class => 'disabled'
+        lev3_nav.item :key_social_edit,         t('social.menu_social_edit'),     socials_edit_path(), :class => 'disabled'
+      end
     end
 
     primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'
-#    primary.item :key_separator1,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { user_signed_in? }
+
     primary.item(
       :key_user_who_is_it,
       content_tag(:span, t('who_are_you') ), '#', :class => 'disabled',
