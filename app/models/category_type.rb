@@ -16,7 +16,7 @@ class CategoryType < ActiveRecord::Base
   validates_length_of   :age_begin,       maximum: 3
   validates_length_of   :age_end,         maximum: 3
 
-  belongs_to :season
+  belongs_to            :season
   validates_presence_of :season                     # (must be not null)
   validates_associated  :season                     # (foreign key integrity)
 

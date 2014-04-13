@@ -30,9 +30,9 @@ class Season < ActiveRecord::Base
   validates_presence_of :begin_date
 #  validates_presence_of :end_date
 
-  scope :sort_season_by_begin_date,  lambda { |dir| order("seasons.begin_date #{dir.to_s}") }
-  scope :sort_season_by_season_type, lambda { |dir| order("season_types.code #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
-  scope :sort_season_by_user,        lambda { |dir| order("users.name #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
+  scope :sort_season_by_begin_date,  ->(dir) { order("seasons.begin_date #{dir.to_s}") }
+  scope :sort_season_by_season_type, ->(dir) { order("season_types.code #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
+  scope :sort_season_by_user,        ->(dir) { order("users.name #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

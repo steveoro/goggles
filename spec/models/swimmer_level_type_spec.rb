@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe SwimmerLevelType do
   shared_examples "shared_drop_down_listable_examples"
-  shared_examples "shared_ic_i18n_examples"
+  shared_examples "shared_localizable_examples"
 
   it_behaves_like "DropDownListable concern"
-  it_behaves_like "Interfaced Concern I18n"
+  it_behaves_like "Localizable"
 end

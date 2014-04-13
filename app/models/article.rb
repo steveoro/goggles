@@ -11,7 +11,7 @@ class Article < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -21,26 +21,6 @@ class Article < ActiveRecord::Base
   # Retrieves the user name associated with this article
   def user_name
     name = self.user.nil? ? '' : self.user.name
-  end
-  # ----------------------------------------------------------------------------
-  #++
-
-  # Checks and sets unset fields to default values.
-  #
-  # === Parameters:
-  # - +params_hash+ => Hash of additional parameter values for attribute defaults override.
-  #
-  def preset_default_values( params_hash = {} )
-    unless self.user || params_hash[:user_id].blank?  # Set current user only if not set
-      begin
-        if params_hash[:user_id]
-          self.user_id = params_hash[:user_id].to_i
-        end
-      rescue
-        self.user_id = nil
-      end
-    end
-    self
   end
   # ----------------------------------------------------------------------------
 end

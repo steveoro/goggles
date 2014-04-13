@@ -12,11 +12,11 @@ class Swimmer < ActiveRecord::Base
   # the data itself (usually a user with a higher grant) 
   has_one :associated_user,  :class_name  => "User", 
                              :foreign_key => "associated_user_id"
-  belongs_to :gender_type
-  validates_associated :gender_type
+  belongs_to            :gender_type
+  validates_associated  :gender_type
 
   has_many :badges
-  has_many :teams, :through => :badges
+  has_many :teams,          :through => :badges
   has_many :category_types, :through => :badges
 
   has_many :meeting_individual_results
@@ -43,15 +43,15 @@ class Swimmer < ActiveRecord::Base
   validates_length_of :nickname,      :maximum => 25
 
 
-  scope :sort_swimmer_by_user,        lambda { |dir| order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
-  scope :sort_swimmer_by_name,        lambda { |dir| order("complete_name #{dir.to_s}") }
-  scope :sort_swimmer_by_gender_type, lambda { |dir| order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_name,        ->(dir) { order("complete_name #{dir.to_s}") }
+  scope :sort_by_gender_type, ->(dir) { order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

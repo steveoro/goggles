@@ -1,11 +1,13 @@
 require 'wrappers/timing'
+require 'timing_gettable'
+require 'timing_validatable'
 
 
 class UserResult < ActiveRecord::Base
+  include TimingGettable
+  include TimingValidatable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :swimmer
   belongs_to :category_type
@@ -36,36 +38,16 @@ class UserResult < ActiveRecord::Base
 
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
-  validates_presence_of     :minutes
-  validates_length_of       :minutes, :within => 1..3, :allow_nil => false
-  validates_numericality_of :minutes
-  validates_presence_of     :seconds
-  validates_length_of       :seconds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :seconds
-  validates_presence_of     :hundreds
-  validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :hundreds
 
-
-  scope :sort_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meetings.description #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_meeting_individual_result_by_category_type, lambda { |dir| order("category_types.code #{dir.to_s},swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_meeting_individual_result_by_swimmer,       lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
+  scope :sort_by_user,          ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_category_type, ->(dir) { order("category_types.code #{dir.to_s},swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_swimmer,       ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
 
-  # Returns just the formatted timing information
-  def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
-  end
-
-  # Returns a new Timing class instance initialized with the timing data from this row
-  def get_timing_instance
-    Timing.new( hundreds, seconds, minutes )
-  end
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

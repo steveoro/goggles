@@ -7,7 +7,6 @@ class EventsByPoolType < ActiveRecord::Base
   belongs_to :event_type
   validates_presence_of :event_type                 # (must be not null)
   validates_associated :event_type                  # (foreign key integrity)
-
   # ----------------------------------------------------------------------------
-  #++
+
 end

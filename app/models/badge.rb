@@ -34,7 +34,7 @@ class Badge < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -51,6 +51,5 @@ class Badge < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
-  #++
 
 end

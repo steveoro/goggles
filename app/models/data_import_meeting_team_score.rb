@@ -1,8 +1,10 @@
-class DataImportMeetingTeamScore < ActiveRecord::Base
+require 'data_importable'
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
+
+class DataImportMeetingTeamScore < ActiveRecord::Base
+  include DataImportable
+
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_team_score, :foreign_key => "conflicting_meeting_team_score_id"
 
@@ -40,21 +42,6 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
   # Base methods:
   # ----------------------------------------------------------------------------
 
-
-  # Computes a verbose or formal description for the row data "conflicting" with the current import data row
-  def get_verbose_conflicting_row
-    if ( self.conflicting_meeting_team_score_id.to_i > 0 )
-      begin
-        conflicting_row = MeetingTeamScore.find( conflicting_meeting_team_score_id )
-        "(ID:#{conflicting_meeting_team_score_id}) #{conflicting_row.get_verbose_name}"
-      rescue
-        "(ID:#{conflicting_meeting_team_score_id}) <#{I18n.t(:unable_to_retrieve_row_data, :scope =>[:activerecord, :errors] )}>"
-      end
-    else
-      ''
-    end
-  end
-  # ---------------------------------------------------------------------------
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

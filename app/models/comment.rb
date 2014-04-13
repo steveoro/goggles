@@ -11,7 +11,6 @@ class Comment < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
 
 
   # Retrieves the user name associated with this instance

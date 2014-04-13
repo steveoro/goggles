@@ -15,8 +15,11 @@ require 'active_support'
 module Localizable
   extend ActiveSupport::Concern
 
-# TODO Make sure includee responds_to base_class.table_name
-# TODO Make sure includee responds_to #code
+# TODO Make sure includee either:
+#      1) responds_to (super).table_name; or
+#      2) throw an exception if includee is not a sibling of ActiveRecord::Base; or
+#      3) add a failback in the worst case scenario.
+# TODO Make sure includee responds_to #code or follow the list above
 
 
   # Computes a localized shorter description for the value/code associated with this data
@@ -29,8 +32,10 @@ module Localizable
     I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
   end
 
-  # Computes a localized shorter description for the value/code associated with this data
+  # Computes an alternate localized shorter description for the value/code associated with this data.
+  # Note that this may not always be defined inside the locale files.
   def i18n_alternate
+    # TODO Add existance check for I18n.t result; when not found, return default i18n_short result.
     I18n.t( "i18n_alternate_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
   end
   # ----------------------------------------------------------------------------

@@ -1,7 +1,10 @@
+require 'data_importable'
+
+
 class DataImportBadge < ActiveRecord::Base
+  include DataImportable
+
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
-  belongs_to :data_import_session
-  validates_associated  :data_import_session
 
   belongs_to :badge, :foreign_key => "conflicting_badge_id"
 
@@ -23,29 +26,12 @@ class DataImportBadge < ActiveRecord::Base
 
   validates_presence_of :number, length: { maximum: 40 }, allow_nil: true 
 
-  # TODO Refactor these removing the entity name from the method:
-  scope :sort_data_import_badge_by_conflicting_rows_id,     lambda { |dir| order("conflicting_badge_id #{dir.to_s}") }
-  scope :sort_data_import_badge_by_user,                    lambda { |dir| order("users.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
-  scope :sort_data_import_badge_by_season,                  lambda { |dir| order("seasons.begin_date #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
-  scope :sort_data_import_badge_by_team,                    lambda { |dir| order("teams.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
-  scope :sort_data_import_badge_by_swimmer,                 lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_data_import_badge_by_category_type,           lambda { |dir| order("category_types.code #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
+  scope :sort_by_conflicting_rows_id,     ->(dir) { order("conflicting_badge_id #{dir.to_s}") }
+  scope :sort_by_user,                    ->(dir) { order("users.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
+  scope :sort_by_season,                  ->(dir) { order("seasons.begin_date #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
+  scope :sort_by_team,                    ->(dir) { order("teams.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
+  scope :sort_by_swimmer,                 ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_category_type,           ->(dir) { order("category_types.code #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
   # ----------------------------------------------------------------------------
-
-
-  # Computes a verbose or formal description for the row data "conflicting" with the current import data row
-  def get_verbose_conflicting_row
-    if ( self.conflicting_badge_id.to_i > 0 )
-      begin
-        conflicting_row = Badge.find( conflicting_badge_id )
-        "(ID:#{conflicting_badge_id}) #{conflicting_row.get_verbose_name}"
-      rescue
-        "(ID:#{conflicting_badge_id}) <#{I18n.t(:unable_to_retrieve_row_data, :scope =>[:activerecord, :errors] )}>"
-      end
-    else
-      ''
-    end
-  end
-  # ---------------------------------------------------------------------------
 
 end

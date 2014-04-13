@@ -27,8 +27,8 @@ class Team < ActiveRecord::Base
   validates_length_of :e_mail,        :maximum => 100
   validates_length_of :contact_name,  :maximum => 100
 
-  scope :sort_team_by_user, lambda { |dir| order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
-  scope :sort_team_by_city, lambda { |dir| order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }
+  scope :sort_team_by_user, ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
+  scope :sort_team_by_city, ->(dir) { order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

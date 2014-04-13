@@ -29,9 +29,9 @@ class MeetingSession < ActiveRecord::Base
   validates_length_of :description, :maximum => 100, :allow_nil => false
 
 
-  scope :sort_meeting_session_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
-  scope :sort_meeting_session_by_meeting,       lambda { |dir| order("meetings.description #{dir.to_s}, meeting_sessions.session_order #{dir.to_s}") }
-  scope :sort_meeting_session_by_swimming_pool, lambda { |dir| order("swimming_pools.nick_name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
+  scope :sort_meeting_session_by_user,          ->(dir) { order("users.name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
+  scope :sort_meeting_session_by_meeting,       ->(dir) { order("meetings.description #{dir.to_s}, meeting_sessions.session_order #{dir.to_s}") }
+  scope :sort_meeting_session_by_swimming_pool, ->(dir) { order("swimming_pools.nick_name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
