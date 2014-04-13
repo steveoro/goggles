@@ -36,10 +36,13 @@ class SocialsController < ApplicationController
   #     :shares_calendars => set to '1' to enable, anything else to disable
   #
   def invite
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.invite() -----"
+    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('social.invite_title')
+    @swimming_buddy = User.find_by_id( params[:id] )
 
     if request.post?                                # === POST: ===
-      @swimming_buddy = User.find_by_id( params[:id] )
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
@@ -48,22 +51,23 @@ class SocialsController < ApplicationController
       else
         flash[:error] = I18n.t('social.invite_error')
       end
-      redirect_to( show_all_socials_path() ) and return
+      redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      @swimming_buddy = User.find_by_id( params[:id] )
       unless ( @swimming_buddy )                    # Check swimming buddy existance
         flash[:error] = I18n.t(:invalid_action_request)
-        redirect_to( show_all_socials_path() ) and return
+        redirect_to( socials_show_all_path() ) and return
       end
+      @submit_title = I18n.t('social.send')
                                                     # Check that the friendship is a new one:
       if ( current_user.find_any_friendship_with(@swimming_buddy).nil? )
         # friendship must not exist for a new invite to be spawn:
         @friendship = Amistad.friendship_class.new( friendable_id: current_user.id, friend_id: @swimming_buddy.id )
       else
         # If friendship exists:
-        flash[:warning] = I18n.t('social.warning_friendship_invite_already_sent_edit_options')
-        redirect_to( show_all_socials_path() ) and return
+        flash[:warning] = I18n.t( 'social.warning_friendship_invite_already_sent_edit_options' )
+          .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+        redirect_to( socials_show_all_path() ) and return
       end
     end
   end
@@ -80,7 +84,38 @@ class SocialsController < ApplicationController
   #     Updates friendship row with the accepted status (creates also a personalized
   #     news feed article).
   def approve
-    # TODO
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.invite() -----"
+    logger.debug "PARAMS: #{params.inspect}"
+    @title = I18n.t('social.approve_title')
+    @swimming_buddy = User.find_by_id( params[:id] )
+
+    if request.post?                                # === POST: ===
+      shares_passages  = (params[:shares_passages].to_i > 0)
+      shares_trainings = (params[:shares_trainings].to_i > 0)
+      shares_calendars = (params[:shares_calendars].to_i > 0)
+      if current_user.approve( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+        flash[:info] = I18n.t('social.approve_successful')
+      else
+        flash[:error] = I18n.t('social.approve_error')
+      end
+      redirect_to( socials_show_all_path() ) and return
+                                                    # === GET: ===
+    else
+      unless @swimming_buddy                        # Check swimming buddy existance
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( socials_show_all_path() ) and return
+      end
+      @submit_title = I18n.t('social.approve')
+      @friendship = current_user.find_any_friendship_with(@swimming_buddy)
+                                                    # Check that the friendship is a valid one:
+      unless @friendship && @friendship.pending? &&
+             @swimming_buddy.invited?(current_user)
+        flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
+          .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+        redirect_to( socials_show_all_path() ) and return
+      end
+    end
   end
   # ---------------------------------------------------------------------------
 

@@ -21,7 +21,7 @@
         - @meetings.each do |meeting|
           %tr
             %td.span2.goggles-td
-              = link_to(meeting.description, show_full_meeting_path(meeting))
+              = link_to(meeting.description, meetings_show_full_path(meeting))
             %td.span1.goggles-td
               - meeting.meeting_sessions.each do |ms|
                 = ms.scheduled_date.instance_of?(Date) ? Format.a_date( ms.scheduled_date ) : '?'

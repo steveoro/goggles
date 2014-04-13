@@ -1,12 +1,12 @@
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to( t('radiography.radio_tab'), radio_swimmer_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.radio_tab'), swimmers_radio_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.medals_tab'), medals_swimmer_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.medals_tab'), swimmers_medals_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.best_timings_tab'), best_timings_swimmer_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.best_timings_tab'), swimmers_best_timings_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.all_races_tab'), all_races_swimmer_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.all_races_tab'), swimmers_all_races_path(:id=>@swimmer.id) )
   %li.active
     = link_to( t('radiography.misc'), '#' )
 
