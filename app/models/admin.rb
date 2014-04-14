@@ -35,7 +35,7 @@ class Admin < ActiveRecord::Base
 
   # to_s() override for debugging purposes:
   def to_s
-    "[User: '#{get_full_name}']"
+    "[Admin: '#{get_full_name}']"
   end
   # ----------------------------------------------------------------------------
 
