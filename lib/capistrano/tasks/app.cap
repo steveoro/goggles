@@ -159,17 +159,15 @@ namespace :app do
     task :public_dirs do
       on roles(:app) do |host|
         # Make a link also for the added common output folder:
-        run <<-CMD
+        execute <<-CMD
           rm -rf #{latest_release}/public/output &&
           ln -s #{shared_path}/output #{latest_release}/public/output &&
           rm -rf #{latest_release}/public/uploads &&
           ln -s #{shared_path}/uploads #{latest_release}/public/uploads
         CMD
 
-        execute :chown, "-R wwwrun:www #{shared_path}/log"
-      # TODO Missing check on log existance; if log is missing rake should be invoked to create it
+        execute :chown, "-R #{fetch(:runner)}:www #{shared_path}/log"
         execute "if test -e #{shared_path}/log/production.log ; then chmod -R 0666 #{shared_path}/log/production.log ; fi"
-
         extjs_dir = File.join(shared_path, "extjs")
         puts "Recreating ExtJS symlink inside release path '#{release_path}'..."
         execute :ln, "-nfs #{extjs_dir} #{release_path}/public/extjs ; chown -R #{fetch(:runner)}:www #{latest_release}/public"

@@ -90,7 +90,7 @@ EOF
     # Erases the remote Apache2 vhost configuration file
     #
     desc "Erases the remote Apache2 vhost configuration file."
-    task :vhost_erase, :role => [:db] do
+    task :vhost_erase do
       on roles(:web) do
         execute :rm, "/etc/apache2/vhosts.d/ip-based_vhosts.conf"
       end
