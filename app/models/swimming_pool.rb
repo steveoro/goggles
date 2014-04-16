@@ -35,12 +35,12 @@ class SwimmingPool < ActiveRecord::Base
   # validates :has_gym_area,            :inclusion => { :in => [true, false] }
   # validates :has_children_area,       :inclusion => { :in => [true, false] }
 
-  scope :sort_swimming_pool_by_user,                lambda { |dir| order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
-  scope :sort_swimming_pool_by_city,                lambda { |dir| order("cities.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
-  scope :sort_swimming_pool_by_pool_type,           lambda { |dir| order("pool_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
-  scope :sort_swimming_pool_by_shower_type,         lambda { |dir| order("shower_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
-  scope :sort_swimming_pool_by_hair_dryer_type,     lambda { |dir| order("hair_dryer_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
-  scope :sort_swimming_pool_by_locker_cabinet_type, lambda { |dir| order("locker_cabinet_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_user,                ->(dir) { order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_city,                ->(dir) { order("cities.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_pool_type,           ->(dir) { order("pool_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_shower_type,         ->(dir) { order("shower_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_hair_dryer_type,     ->(dir) { order("hair_dryer_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_locker_cabinet_type, ->(dir) { order("locker_cabinet_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

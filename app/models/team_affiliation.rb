@@ -20,9 +20,9 @@ class TeamAffiliation < ActiveRecord::Base
   validates_length_of   :number, :maximum => 20
 
 
-  scope :sort_team_affiliation_by_user,    lambda { |dir| order("users.name #{dir.to_s}") }
-  scope :sort_team_affiliation_by_team,    lambda { |dir| order("teams.name #{dir.to_s}") }
-  scope :sort_team_affiliation_by_season,  lambda { |dir| order("seasons.begin_date #{dir.to_s}, team_affiliations.name #{dir.to_s}") }
+  scope :sort_team_affiliation_by_user,    ->(dir) { order("users.name #{dir.to_s}") }
+  scope :sort_team_affiliation_by_team,    ->(dir) { order("teams.name #{dir.to_s}") }
+  scope :sort_team_affiliation_by_season,  ->(dir) { order("seasons.begin_date #{dir.to_s}, team_affiliations.name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

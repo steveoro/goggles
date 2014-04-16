@@ -1,13 +1,17 @@
 require 'wrappers/timing'
+require 'swimmer_relatable'
+require 'timing_gettable'
+require 'timing_validatable'
+
 
 class MeetingIndividualResult < ActiveRecord::Base
-  include ICTimingFields
-  include ICSwimmerInfo
+  include SwimmerRelatable
+  include TimingGettable
+  include TimingValidatable
+
   include ICEventTypeInfo
   
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_program
   validates_associated :meeting_program
@@ -23,13 +27,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   has_one  :category_type,  :through => :meeting_program
   has_one  :gender_type,    :through => :meeting_program
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
-  belongs_to :swimmer
   belongs_to :team
   belongs_to :team_affiliation
   belongs_to :badge
   belongs_to :disqualification_code_type
 
-  validates_associated :swimmer
   validates_associated :team
   validates_associated :team_affiliation
   validates_associated :badge
@@ -50,24 +52,15 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
-  validates_presence_of     :minutes
-  validates_length_of       :minutes, :within => 1..3, :allow_nil => false
-  validates_numericality_of :minutes
-  validates_presence_of     :seconds
-  validates_length_of       :seconds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :seconds
-  validates_presence_of     :hundreds
-  validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :hundreds
 
 
   scope :is_valid, -> { where(is_out_of_race: false, is_disqualified: false) }
 
-  scope :sort_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_meeting_individual_result_by_meeting,       lambda { |dir| order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_meeting_individual_result_by_swimmer,       lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
-  scope :sort_meeting_individual_result_by_team,          lambda { |dir| order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_meeting_individual_result_by_badge,         lambda { |dir| order("badges.number #{dir.to_s}") }
+  scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_meeting,   ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_swimmer,   ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
+  scope :sort_by_team,      ->(dir) { order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_badge,     ->(dir) { order("badges.number #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

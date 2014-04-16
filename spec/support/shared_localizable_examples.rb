@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-shared_examples "ICI18n" do
+shared_examples_for "Localizable" do
 
   before(:each) do
     @instance = described_class.new()
@@ -26,6 +26,17 @@ shared_examples "ICI18n" do
     it "returns always a non-empty string" do
       expect( @instance.i18n_description ).not_to eq( '' )
       expect( @instance.i18n_description.size ).to be > 0
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  # Describes the required functionalities of this method
+  # of the interface.
+  #
+  describe "i18n_alternate()" do
+    it "returns always a non-empty string" do
+      expect( @instance.i18n_alternate ).not_to eq( '' )
+      expect( @instance.i18n_alternate.size ).to be > 0
     end
   end
   # ---------------------------------------------------------------------------

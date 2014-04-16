@@ -49,107 +49,126 @@ Goggles::Application.routes.draw do
 
   scope "/" do
     scope "(:locale)", :locale => /en|it/ do
-      match "wip",        :controller => 'home', :action => 'wip',          :as => :wip
-      match "about",      :controller => 'home', :action => 'about',        :as => :about
-      match "contact_us", :controller => 'home', :action => 'contact_us',   :as => :contact_us
+      match "wip"         => "home#wip"
+      match "about"       => "home#about"
+      match "contact_us"  => "home#contact_us"
 
-      resources :meetings do
-        collection do
-          get 'index'
-          get 'search_swimmer'
-          get 'search_team'
-        end
-        member do
-          get 'show_full'
-          get 'show_ranking'
-          get 'show_stats'
-          get 'show_team_results'
-          get 'show_swimmer_results'
-        end
-      end
+      resources :meetings # do
+        # collection do
+          # get 'index'
+          # get 'search_swimmer'
+          # get 'search_team'
+        # end
+        # member do
+          # get 'show_full'
+          # get 'show_ranking'
+          # get 'show_stats'
+          # get 'show_team_results'
+          # get 'show_swimmer_results'
+        # end
+      # end
+      match "meetings/search_swimmer"       => "meetings#search_swimmer"
+      match "meetings/search_team"          => "meetings#search_team"
+      match "meetings/show_full"            => "meetings#show_full"
+      match "meetings/show_ranking"         => "meetings#show_ranking"
+      match "meetings/show_stats"           => "meetings#show_stats"
+      match "meetings/show_team_results"    => "meetings#show_team_results"
+      match "meetings/show_swimmer_results" => "meetings#show_swimmer_results"
 
-      resources :teams do
-        member do
-          get 'count_meetings'
-          get 'count_results'
-          get 'count_details'
-        end
-      end
+      resources :teams # do
+        # member do
+          # get 'count_meetings'
+          # get 'count_results'
+          # get 'count_details'
+        # end
+      # end
+      match "teams/count_meetings" => "teams#count_meetings"
+      match "teams/count_results"  => "teams#count_results"
+      match "teams/count_details"  => "teams#count_details"
 
       resources :meeting_programs
       resources :rankings
       resources :results
       resources :swimming_pools
-      
-      resources :trainings do
-        member do
-          get 'printout'
-          post 'duplicate'
-          post 'create_user_training'
-        end
-      end
-      resources :user_trainings do
-        member do
-          get 'json_list'
-          get 'printout'
-          post 'duplicate'
-          post 'create_user_story'
-        end
-        collection do
-          get 'json_list'
-        end
-      end
+
+      resources :trainings # do
+        # member do
+          # get 'printout'
+          # post 'duplicate'
+          # post 'create_user_training'
+        # end
+#      end
+      match "trainings/printout"  => "trainings#printout"
+      post  "trainings/duplicate" => "trainings#duplicate"
+      post  "trainings/create_user_training" => "trainings#create_user_training"
+
+      resources :user_trainings # do
+        # member do
+# #          get 'json_list'
+          # get 'printout'
+          # post 'duplicate'
+          # post 'create_user_story'
+        # end
+# #        collection do
+# #          get 'json_list'
+# #        end
+      # end
+      match "user_trainings/json_list" => "user_trainings#json_list"
+      match "user_trainings/printout"  => "user_trainings#printout"
+      post  "user_trainings/duplicate" => "user_trainings#duplicate"
+      post  "user_trainings/create_user_training" => "user_trainings#create_user_training"
+
       resources :user_training_stories
 
-      resources :exercises do
-        member do
-          get 'json_list'
-        end
-        collection do
-          get 'json_list'
-        end
-      end
+      resources :exercises # do
+        # member do
+          # get 'json_list'
+        # end
+        # collection do
+          # get 'json_list'
+        # end
+      # end
+      match "exercises/json_list"     => "exercises#json_list"
 
-      resources :socials do
-        collection do
-          get  'show_all'
-        end
-        member do
-          get  'invite'
-          post 'invite'
-          get  'approve'
-          put  'approve'
-          get  'block'
-          put  'block'
-          get  'unblock'
-          put  'unblock'
-          get    'remove_friendship'
-          delete 'remove_friendship'
-          get    'edit'
-          post   'edit'
-        end
-      end
+      match "socials/show_all"        => "socials#show_all"
+      match "socials/invite"          => "socials#invite"
+      post  "socials/invite"          => "socials#invite"
+      match "socials/approve"         => "socials#approve"
+      post  "socials/approve"         => "socials#approve"
+      match "socials/block"           => "socials#block"
+      post  "socials/block"           => "socials#block"
+      match "socials/remove"          => "socials#remove_friendship"
+      post  "socials/remove"          => "socials#remove_friendship"
+      match "socials/edit"            => "socials#edit"
+      post  "socials/edit"            => "socials#edit"
 
-      match "meeting_calendars",        :controller => 'meeting_calendars', :action => 'index'
-      match "records_for_everything",   :controller => 'records', :action => 'for_everything'
-      match "records_for_season_type",  :controller => 'records', :action => 'for_season_type'
-      match "records_for_swimmer",      :controller => 'records', :action => 'for_swimmer'
-      match "records_for_team",         :controller => 'records', :action => 'for_team'
-      match "records_show_for_team",    :controller => 'records', :action => 'show_for_team'
+      match "meeting_calendars"       => "meeting_calendars#index"
 
-      resources :swimmers do
-        member do
-          get 'radio'
-          get 'medals'
-          get 'best_timings'
-          get 'all_races'
-          get 'misc'
-        end
-      end
+      match "records/for_everything"  => "records#for_everything"
+      match "records/for_season_type" => "records#for_season_type"
+      match "records/for_swimmer"     => "records#for_swimmer"
+      match "records/for_team"        => "records#for_team"
+      match "records/show_for_team"   => "records#show_for_team"
+
+      resources :swimmers # do
+        # member do
+          # get 'radio'
+          # get 'medals'
+          # get 'best_timings'
+          # get 'all_races'
+          # get 'misc'
+        # end
+      # end
+      match "swimmers/radio"        => "swimmers#radio"
+      match "swimmers/medals"       => "swimmers#medals"
+      match "swimmers/best_timings" => "swimmers#best_timings"
+      match "swimmers/all_races"    => "swimmers#all_races"
+      match "swimmers/misc"         => "swimmers#misc"
     end
   end
 
 
+# TODO Rewrite all the following routes using the above format:
   scope "goggles_data_import" do
     scope "(:locale)", :locale => /en|it/ do
       match "get_step_progress",      :controller => 'admin_import', :action => 'get_step_progress',      :as => :goggles_di_get_step_progress

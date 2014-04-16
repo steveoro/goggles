@@ -1,14 +1,15 @@
-require 'ic_i18n'
+require 'drop_down_listable'
+require 'localizable'
+
 
 class PresenceType < ActiveRecord::Base
-  include ICI18n
+  include DropDownListable
+  include Localizable
 
-  validates_presence_of   :code
-  validates_length_of     :code, :maximum => 1, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
+  validates_presence_of   :code, length: { maximum: 1 }, allow_nil: false
+  validates_uniqueness_of :code, message: :already_exists
 
-  validates_length_of     :value, :maximum => 3
-
+  validates_length_of     :value, maximum: 3
 
   # Unique IDs used inside the DB, the description will be retrieved using I18n.t() 
   PRESENT_ID    = 1

@@ -1,11 +1,13 @@
 require 'wrappers/timing'
+require 'timing_gettable'
+require 'timing_validatable'
 
 
 class MeetingRelaySwimmer < ActiveRecord::Base
+  include TimingGettable
+  include TimingValidatable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_relay_result
   belongs_to :swimmer
@@ -30,37 +32,17 @@ class MeetingRelaySwimmer < ActiveRecord::Base
 
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
-  validates_presence_of     :minutes
-  validates_length_of       :minutes, :within => 1..3, :allow_nil => false
-  validates_numericality_of :minutes
-  validates_presence_of     :seconds
-  validates_length_of       :seconds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :seconds
-  validates_presence_of     :hundreds
-  validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :hundreds
 
-
-  scope :sort_meeting_relay_swimmer_by_user,            lambda { |dir| order("users.name #{dir.to_s}") }
-  scope :sort_meeting_relay_swimmer_by_swimmer_name,    lambda { |dir| order("swimmer.last_name #{dir.to_s}, swimmer.first_name #{dir.to_s}") }
-  scope :sort_meeting_relay_swimmer_by_badge,           lambda { |dir| order("badge.number #{dir.to_s}") }
-  scope :sort_meeting_relay_swimmer_by_stroke_type,     lambda { |dir| order("stroke_type.code #{dir.to_s}") }
+  scope :sort_by_user,            ->(dir) { order("users.name #{dir.to_s}") }
+  scope :sort_by_swimmer_name,    ->(dir) { order("swimmer.last_name #{dir.to_s}, swimmer.first_name #{dir.to_s}") }
+  scope :sort_by_badge,           ->(dir) { order("badge.number #{dir.to_s}") }
+  scope :sort_by_stroke_type,     ->(dir) { order("stroke_type.code #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
 
-  # Returns just the formatted timing information
-  def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
-  end
-
-  # Returns a new Timing class instance initialized with the timing data from this row
-  def get_timing_instance
-    Timing.new( hundreds, seconds, minutes )
-  end
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

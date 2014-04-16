@@ -1,11 +1,13 @@
-require 'ic_i18n'
+require 'drop_down_listable'
+require 'localizable'
+
 
 class TimingType < ActiveRecord::Base
-  include ICI18n
+  include DropDownListable
+  include Localizable
 
-  validates_presence_of   :code
-  validates_length_of     :code, :maximum => 1, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
+  validates_presence_of     :code, length: { maximum: 1 }, allow_nil: false
+  validates_uniqueness_of   :code, message: :already_exists
   # ----------------------------------------------------------------------------
 
   # Unique code used inside the DB to address the "MANUAL"-type row 

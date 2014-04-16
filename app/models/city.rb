@@ -1,22 +1,17 @@
+require 'drop_down_listable'
+
+
 class City < ActiveRecord::Base
+  include DropDownListable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  validates_presence_of   :name
-  validates_length_of     :name, :within => 1..50
-  validates_uniqueness_of :name, :scope => :zip, :message => :already_exists
-
-  validates_length_of     :zip, :maximum => 6
-
-  validates_presence_of   :area
-  validates_length_of     :area, :within => 1..50
-
-  validates_presence_of   :country
-  validates_length_of     :country, :within => 1..50
-
-  validates_presence_of   :country_code
-  validates_length_of     :country_code, :within => 1..10
+  validates_presence_of   :name, length: { within: 1..50 }, allow_nil: false
+  validates_uniqueness_of :name, scope: :zip, message: :already_exists
+  validates_length_of     :zip,  maximum: 6
+  validates_presence_of   :area, length: { within: 1..50 }, allow_nil: false
+  validates_presence_of   :country, length: { within: 1..50 }, allow_nil: false
+  validates_presence_of   :country_code, length: { within: 1..10 }, allow_nil: false
   # ----------------------------------------------------------------------------
 
 
@@ -41,26 +36,10 @@ class City < ActiveRecord::Base
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
+  # @overload inherited from DropDownListable
+  #
   def self.get_label_symbol
     :get_full_name
-  end
-
-  # Returns an Array of 2-items Arrays, in which each item is the ID of the record
-  # and the other is assumed to be its label
-  #
-  # == Parameters:
-  #
-  # - where_condition: an ActiveRecord::Relation WHERE-clause; defaults to +nil+ (returns all records)
-  # - key_sym: the key symbol/column name (defaults to :id)
-  # - label_sym: the key symbol/column name (defaults to self.get_label_symbol())
-  #
-  # == Returns:
-  # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
-  #
-  def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol() )
-    self.where( where_condition ).map{ |row|
-      [row.send(label_sym), row.send(key_sym)]
-    }.sort_by{ |ar| ar[0] }
   end
   # ----------------------------------------------------------------------------
 end

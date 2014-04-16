@@ -1,12 +1,11 @@
 # encoding: utf-8
+require 'drop_down_listable'
 
 
 class Meeting < ActiveRecord::Base
+  include DropDownListable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :season
   belongs_to :edition_type
   belongs_to :timing_type
@@ -46,30 +45,20 @@ class Meeting < ActiveRecord::Base
 
   # TODO Add other has_many relationships only when needed
 
-  validates_presence_of :code
-  validates_length_of   :code, :within => 1..20, :allow_nil => false
+  validates_presence_of :code,        length: { within: 1..20 }, allow_nil: false
+  validates_presence_of :header_year, length: { within: 1..9 }, allow_nil: false
+  validates_presence_of :edition,     length: { maximum: 3 }, allow_nil: false
+  validates_presence_of :description, length: { maximum: 100 }, allow_nil: false
 
-  validates_presence_of :header_year
-  validates_length_of :header_year, :within => 1..9, :allow_nil => false
+  validates_length_of :reference_phone, maximum: 40
+  validates_length_of :reference_e_mail, maximum: 50
+  validates_length_of :reference_name, maximum: 50
+  validates_length_of :configuration_file, maximum: 255
+  validates_length_of :max_individual_events, maximum: 1
+  validates_length_of :max_individual_events_per_session, maximum: 1
 
-  validates_presence_of :edition
-  validates_length_of   :edition, :maximum => 3, :allow_nil => false
-
-  validates_presence_of :description
-  validates_length_of :description, :maximum => 100
-
-  validates_length_of :reference_phone, :maximum => 40
-  validates_length_of :reference_e_mail, :maximum => 50
-  validates_length_of :reference_name, :maximum => 50
-
-  validates_length_of :configuration_file, :maximum => 255
-
-  validates_length_of :max_individual_events, :maximum => 1
-  validates_length_of :max_individual_events_per_session, :maximum => 1
-
-
-  scope :sort_meeting_by_user,                    lambda { |dir| order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }
-  scope :sort_meeting_by_season,                  lambda { |dir| order("seasons.begin_date #{dir.to_s}, meetings.description #{dir.to_s}") }
+  scope :sort_meeting_by_user,   ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }
+  scope :sort_meeting_by_season, ->(dir) { order("seasons.begin_date #{dir.to_s}, meetings.description #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
@@ -113,6 +102,8 @@ class Meeting < ActiveRecord::Base
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
+  #
+  # @overload inherited from DropDownListable
   #
   def self.get_label_symbol
     :get_short_name

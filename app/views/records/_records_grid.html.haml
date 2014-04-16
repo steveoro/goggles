@@ -22,10 +22,10 @@
                   %p
                     %b= ind_result.get_timing
                   %p
-                    %a{'id'=>"swimmer#{ind_result.swimmer_id}", 'href'=>"#{ radio_swimmer_path(:id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
+                    %a{'id'=>"swimmer#{ind_result.swimmer_id}", 'href'=>"#{ swimmers_radio_path(:id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
                       = ind_result.get_swimmer_name
                   - if (sched_date = ind_result.get_scheduled_date).kind_of?(Date)
-                    %a{'id'=>"rec#{ind_result.id}", 'href'=>"#{ show_full_meeting_path(:id=>ind_result.meeting.id, :swimmer_id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{ind_result.meeting.description})"}
+                    %a{'id'=>"rec#{ind_result.id}", 'href'=>"#{ meetings_show_full_path(:id=>ind_result.meeting.id, :swimmer_id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{ind_result.meeting.description})"}
                       %p= Format.a_date(ind_result.get_scheduled_date)
                   - else
                     %p= '-'

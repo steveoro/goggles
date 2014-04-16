@@ -1,20 +1,13 @@
 require 'wrappers/timing'
 require 'spec_helper'
+require 'timing_gettable'
 
 
-# Dummy class holder for the fields used by the module
-class Dummy
-  include ICTimingFields
-  attr_accessor :minutes, :seconds, :hundreds
-end
-# -----------------------------------------------------------------------------
-
-
-describe ICTimingFields do
+describe TimingGettable do
 
   # Init dummy class instance to test instance methods
   def setup_dummy_instance
-    dummy = Dummy.new()
+    dummy = UserResult.new()
     dummy.minutes  = ((rand * 100).to_i % 60)
     dummy.seconds  = ((rand * 100).to_i % 60)
     dummy.hundreds = ((rand * 100).to_i % 60)

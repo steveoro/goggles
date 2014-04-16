@@ -1,12 +1,12 @@
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to(t(:results), show_full_meeting_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
+    = link_to(t(:results), meetings_show_full_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
   %li.active
     = link_to(t(:ranking), '#')
   %li
-    = link_to(t(:stats), show_stats_meeting_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
+    = link_to(t(:stats), meetings_show_stats_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
   %li{ :class => (@preselected_team_id ? '' : 'disabled') }
-    = link_to(t(:team_results), (@preselected_team_id ? show_team_results_meeting_path(:id=>@meeting.id, :team_id=>@preselected_team_id) : '#'))
+    = link_to(t(:team_results), (@preselected_team_id ? meetings_show_team_results_path(:id=>@meeting.id, :team_id=>@preselected_team_id) : '#'))
   %li.disabled
     = link_to(t(:swimmer_results), '#')
 

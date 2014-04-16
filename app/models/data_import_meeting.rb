@@ -1,11 +1,10 @@
+require 'data_importable'
+
+
 class DataImportMeeting < ActiveRecord::Base
+  include DataImportable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
-  belongs_to :data_import_session
-  validates_associated  :data_import_session
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting, :foreign_key => "conflicting_meeting_id"
 
@@ -49,7 +48,6 @@ class DataImportMeeting < ActiveRecord::Base
 
   has_many :meeting_relay_results, :through => :meeting_programs
   has_many :data_import_meeting_relay_results, :through => :data_import_meeting_programs
-  # TODO Add other has_many relationships only when needed
 
   validates_presence_of :code
   validates_length_of   :code, :within => 1..20, :allow_nil => false
@@ -68,16 +66,14 @@ class DataImportMeeting < ActiveRecord::Base
   validates_length_of :max_individual_events_per_session, :maximum => 1
   validates_length_of :edition, :maximum => 3, :allow_nil => false
 
-
-  scope :sort_data_import_meeting_by_user,    lambda { |dir| order("users.name #{dir.to_s}, data_import_meetings.description #{dir.to_s}") }
-  scope :sort_data_import_meeting_by_season,  lambda { |dir| order("seasons.begin_date #{dir.to_s}, data_import_meetings.description #{dir.to_s}") }
-  # ----------------------------------------------------------------------------
+  scope :sort_by_user,    ->(dir) { order("users.name #{dir.to_s}, data_import_meetings.description #{dir.to_s}") }
+  scope :sort_by_season,  ->(dir) { order("seasons.begin_date #{dir.to_s}, data_import_meetings.description #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes the shortest possible description for the name associated with this data
   def get_short_name
@@ -112,21 +108,5 @@ class DataImportMeeting < ActiveRecord::Base
     self.season ? self.season.get_season_type() : (self.data_import_season ?  self.data_import_season.get_season_type() : '?')
   end
   # ----------------------------------------------------------------------------
-
-
-  # Computes a verbose or formal description for the row data "conflicting" with the current import data row
-  def get_verbose_conflicting_row
-    if ( self.conflicting_meeting_id.to_i > 0 )
-      begin
-        conflicting_row = Meeting.find( conflicting_meeting_id )
-        "(ID:#{conflicting_meeting_id}) #{conflicting_row.get_verbose_name}"
-      rescue
-        "(ID:#{conflicting_meeting_id}) <#{I18n.t(:unable_to_retrieve_row_data, :scope =>[:activerecord, :errors] )}>"
-      end
-    else
-      ''
-    end
-  end
-  # ---------------------------------------------------------------------------
 
 end

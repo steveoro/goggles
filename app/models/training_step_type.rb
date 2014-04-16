@@ -1,17 +1,17 @@
-require 'ic_i18n'
+require 'drop_down_listable'
+require 'localizable'
+
 
 class TrainingStepType < ActiveRecord::Base
-  include ICI18n
+  include DropDownListable
+  include Localizable
 
-  validates_presence_of     :step_order
-  validates_length_of       :step_order, :within => 1..3, :allow_nil => false
+  validates_presence_of     :step_order, length: { within: 1..3 }, allow_nil: false
   validates_numericality_of :step_order
+  validates_presence_of     :code, length: { maximum: 1 }, allow_nil: false
+  validates_uniqueness_of   :code, message: :already_exists
 
-  validates_presence_of   :code
-  validates_length_of     :code, :maximum => 1, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
-
-  scope :sort_by_step_order, order('step_order')
+  scope :sort_by_step_order, -> { order('step_order') }
   # ----------------------------------------------------------------------------
 
   # [Steve, 20140127] Update: since we want to force ordering according to the step order,

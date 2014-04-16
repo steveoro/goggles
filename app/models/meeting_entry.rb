@@ -1,8 +1,12 @@
 require 'wrappers/timing'
+require 'swimmer_relatable'
+require 'timing_gettable'
+
 
 class MeetingEntry < ActiveRecord::Base
-  include ICTimingFields
-  include ICSwimmerInfo
+  include SwimmerRelatable
+
+  include TimingGettable
   include ICEventTypeInfo
 
   belongs_to :user
@@ -23,11 +27,9 @@ class MeetingEntry < ActiveRecord::Base
   has_one  :category_type,  :through => :meeting_program
   has_one  :gender_type,    :through => :meeting_program
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
-  belongs_to :swimmer
   belongs_to :team
   belongs_to :team_affiliation
   belongs_to :badge
-  validates_associated :swimmer
   validates_associated :team
   validates_associated :team_affiliation
   validates_associated :badge

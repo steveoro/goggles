@@ -20,8 +20,8 @@ class GoggleCup < ActiveRecord::Base
   validates_numericality_of :max_points
 
 
-  scope :sort_goggle_cup_by_user,  lambda { |dir| order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.year #{dir.to_s}") }
-  scope :sort_goggle_cup_by_team,  lambda { |dir| order("teams.name #{dir.to_s}, goggle_cups.year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_user,  ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_team,  ->(dir) { order("teams.name #{dir.to_s}, goggle_cups.year #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

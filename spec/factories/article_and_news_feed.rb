@@ -1,21 +1,22 @@
 require 'date'
+require 'ffaker'
 
 
 FactoryGirl.define do
 
   factory :article do
-    sequence( :title )    { |n| "Great article title n.#{n}" }
-    sequence( :body )     { |n| "Lorem Ipso Decto Facto Suckio Tanto #{n} Voltam." }
-    is_sticky             false
+    sequence( :title )    { |n| "Great dummy article title n.#{n}" }
+    body                  { "#{Faker::Lorem.paragraph}\r\n#{Faker::Lorem.paragraph}" }
+    is_sticky             { (rand * 100).to_i.even? }
     user
   end
 
   factory :news_feed do
     sequence( :title )    { |n| "Something happened n.#{n}" }
     body                  { "Something happened! #{ (rand * 100).to_i } friends got interested in you, but then cancelled their requests!" }
-    is_read               false
-    is_friend_activity    true
-    is_achievement        false
+    is_read               { (rand * 100).to_i.even? }
+    is_friend_activity    { (rand * 100).to_i.even? }
+    is_achievement        { (rand * 100).to_i.even? }
     user
     friend_id             { user }
   end

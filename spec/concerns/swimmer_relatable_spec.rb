@@ -1,21 +1,14 @@
 require 'spec_helper'
 require 'date'
 
-
-# Dummy class holder for the fields used by the module
-class Dummy
-  include ICSwimmerInfo
-
-  attr_accessor :swimmer
-end
-# -----------------------------------------------------------------------------
+require 'swimmer_relatable'
 
 
-describe ICSwimmerInfo do
+describe SwimmerRelatable do
 
   # Init dummy class instance to test instance methods
   def setup_dummy_instance( full_name, year_of_birth )
-    dummy = Dummy.new()
+    dummy = MeetingEntry.new()                      # (Any SwimmerRelatable includee will fit)
     dummy.swimmer = Swimmer.new(
       complete_name: full_name,
       year_of_birth: year_of_birth

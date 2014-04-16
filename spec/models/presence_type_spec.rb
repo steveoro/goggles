@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe PresenceType do
-  shared_examples "active_record_extension"
-  shared_examples "shared_ic_i18n_examples"
+  shared_examples "shared_drop_down_listable_examples"
+  shared_examples "shared_localizable_examples"
 
-  it_should_behave_like "ActiveRecord extension"
-  it_should_behave_like "ICI18n"
-
+  it_behaves_like "DropDownListable concern"
+  it_behaves_like "Localizable"
 end

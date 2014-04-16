@@ -14,7 +14,7 @@
 		name: I18n.t(:athlete_name, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
 		attribute: 'athlete_name'
 	) do |individual_result|
-		# TODO show_swimmer_path( individual_result.swimmer_id ) if individual_result.swimmer
+		# TODO swimmer_path( individual_result.swimmer_id ) if individual_result.swimmer
 		# TODO otherwise: display plain text
 		link_to( individual_result.athlete_name, wip_path() )
 	end

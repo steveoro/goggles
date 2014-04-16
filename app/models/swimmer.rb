@@ -1,22 +1,22 @@
+require 'drop_down_listable'
 require 'wrappers/timing'
 
 
 class Swimmer < ActiveRecord::Base
+  include DropDownListable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   # This will be used to discriminate the actual user associated with this data
   # (the "associated_user_id") and the user_id which has created/updated/modified
   # the data itself (usually a user with a higher grant) 
   has_one :associated_user,  :class_name  => "User", 
                              :foreign_key => "associated_user_id"
-  belongs_to :gender_type
-  validates_associated :gender_type
+  belongs_to            :gender_type
+  validates_associated  :gender_type
 
   has_many :badges
-  has_many :teams, :through => :badges
+  has_many :teams,          :through => :badges
   has_many :category_types, :through => :badges
 
   has_many :meeting_individual_results
@@ -43,15 +43,15 @@ class Swimmer < ActiveRecord::Base
   validates_length_of :nickname,      :maximum => 25
 
 
-  scope :sort_swimmer_by_user,        lambda { |dir| order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
-  scope :sort_swimmer_by_name,        lambda { |dir| order("complete_name #{dir.to_s}") }
-  scope :sort_swimmer_by_gender_type, lambda { |dir| order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_name,        ->(dir) { order("complete_name #{dir.to_s}") }
+  scope :sort_by_gender_type, ->(dir) { order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -83,7 +83,8 @@ class Swimmer < ActiveRecord::Base
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
-  # (Override)
+  #
+  # @overload inherited from DropDownListable
   #
   def self.get_label_symbol
     :get_full_name

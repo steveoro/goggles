@@ -8,6 +8,10 @@ gem 'rails', '~> 3.2.16'
 gem 'mysql2'
 gem 'json'
 
+# [Steve] Before enabling the following, most of the migrations must be revised
+#         since they are still using legacy inline SQL code for foreign key generation:
+# gem 'schema_plus'                                 # Adds automatic foreign-key support to ActiveRecord DSL
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -20,8 +24,8 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery_datepicker'
 
-gem 'therubyracer', :platforms => :ruby
-# gem 'therubyrhino'
+gem 'execjs'                                        # This requires a local (package) install of node.js
+# gem 'therubyrhino', :platforms => :ruby
 
                                                     # [Steve, 20111216] Netzke:
 gem 'netzke-core', '~> 0.7.7'			      #, :git => "git://github.com/skozlov/netzke-core.git"
@@ -66,12 +70,23 @@ gem "cocoon"
 gem 'draper', '~> 1.3'                              # [Steve] For Decorator pattern support
 # Draper usage: "rails generate decorator Article" for existing models,
 # or "rails generate resource Article" to scaffold a new resource;
-# Single instance => Article.first.decorate
-# Indirect => ArticleDecorator.decorate( OtherCompatibleModel.first )
-# Collection => ArticleDecorator.decorate_collection( Article.all )
+#   Single instance => Article.first.decorate
+#   Indirect        => ArticleDecorator.decorate( OtherCompatibleModel.first )
+#   Collection      => ArticleDecorator.decorate_collection( Article.all )
 
 gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
 gem "rest-client"
+gem 'capistrano',  '~> 3.1'                         # Deploy with Capistrano
+
+
+group :development do
+  gem 'capistrano-rvm'
+  gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-rails', '~> 1.1'
+  gem "better_errors"
+  gem "binding_of_caller"
+  gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
+end
 
 
 group :test do
@@ -84,9 +99,12 @@ group :test do
   gem 'rspec_api_blueprint', require: false
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', '~> 0.7.1', require: false
-  gem "codeclimate-test-reporter", require: nil # [Steve, 20140321] CI/Test coverage via local test run
+  gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
 # gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
+  # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
+  gem 'ffaker', require: false                      # Adds dummy names & fixture generator 
 end
+
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
@@ -94,13 +112,7 @@ end
 # Use unicorn as the web server
 # gem 'unicorn'
 
-# Deploy with Capistrano
-gem 'capistrano'
-
 gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
-
-# gem 'rvm-capistrano'                              # [Steve, 20140113] DO NOT INSTALL rvm as root! It messes up production config!!
-gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
 # To use debugger
 #gem 'ruby-debug'

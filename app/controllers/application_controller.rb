@@ -11,6 +11,11 @@ class ApplicationController < ActionController::Base
   skip_before_filter :authenticate_entity_from_token!
   skip_before_filter :authenticate_entity!
 
+  rescue_from Exception, :with => :handle_exception
+
+  # Set this to true to enable double logging (both the logger variable and stdout will be used).
+  DEBUG_VERBOSE_ON_CONSOLE = false unless defined?(DEBUG_VERBOSE_ON_CONSOLE)
+
 
   # Set the default URL options:
   def default_url_options( options={} )
@@ -19,13 +24,10 @@ class ApplicationController < ActionController::Base
   end
 
 
-  # ###########################################################################
-  # -- Error/Mailing management tools --
-  # 
-
-
-  # Set this to true to enable double logging (both the logger variable and stdout will be used).
-  DEBUG_VERBOSE_ON_CONSOLE = false unless defined?(DEBUG_VERBOSE_ON_CONSOLE)
+  # Invoked for any 404/not found request: 
+#  def not_found
+#    render :template => "404", :status => 404
+#  end
 
 
   # Just logs the specified output message using either WARN or ERROR level logging,
@@ -34,15 +36,18 @@ class ApplicationController < ActionController::Base
   # When an exception has been intercepted and the variable $! has been set,
   # the level will be set to ERROR (defaults to WARN).
   #
-  def log_error( output_message, verbose_trace = true )
-    if $!.nil?                                      # When there's no exception, just use the INFO level:
-      msg = "[W!]-- #{output_message}"
+  def log_error( exception_or_text_msg, verbose_trace = true )
+    if exception_or_text_msg.instance_of?( String )
+      msg = "[W!]-- #{exception_or_text_msg}"
       puts( msg ) if DEBUG_VERBOSE_ON_CONSOLE       # (When no logging facility is enabled, this flag will generate an output on console)
       logger.warn( msg )
     else
+      output_message = exception_or_text_msg.respond_to?( :message ) ? exception_or_text_msg.message : exception_or_text_msg.to_s
       msg = "[E!]-- ERROR INTERCEPTED: #{output_message}"
       error_description = $!
-      error_trace = $@.join("\r\n")
+      error_trace = exception_or_text_msg.respond_to?( :backtrace ) ? exception_or_text_msg.backtrace : '(backtrace not available)'
+      admin = current_admin()
+      admin = admin ? admin.get_full_name : '(admin not logged in yet)'
       user = current_user()
       user = user ? user.get_full_name : '(user not logged in yet)'
 
@@ -54,7 +59,7 @@ class ApplicationController < ActionController::Base
       logger.error( error_description )
                                                     # Send a message to the developers anyway:
       begin
-        AgexMailer.exception_mail( user, error_description, error_trace ).deliver
+        AgexMailer.exception_mail( admin, user, error_description, error_trace ).deliver
         logger.info("[*I*]- e-mail error report allegedly sent.")
       rescue
         logger.warn( '[W!]-- Unable to send out notification e-mail message, Mailer not responding or not configured properly yet.' )
@@ -86,7 +91,7 @@ class ApplicationController < ActionController::Base
   # ---------------------------------------------------------------------------
 
 
-  # ###########################################################################
+  # TODO Refactor these:
   # -- Misc (controller-related) utility methods: --
   # 
 
@@ -121,7 +126,7 @@ class ApplicationController < ActionController::Base
     }
   end
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Retrieves default firm id; mainly used as a filtering parameter or for defaults.
   # Current user will be checked for a default firm id; if not found, a default id will be searched
@@ -136,7 +141,6 @@ class ApplicationController < ActionController::Base
     end
   end
   # ----------------------------------------------------------------------------
-  #++
 
 
   protected
@@ -176,6 +180,18 @@ class ApplicationController < ActionController::Base
 
 
   private
+
+
+  def handle_exception( exception )
+    log_error( exception, verbose_trace = true )
+#    case exception
+#    when ActiveRecord::RecordNotFound
+#      not_found                                    # Render custom 404 page
+#    else
+#      TODO call other_method                       # Do something else for all other errors
+#    end
+  end
+  # ----------------------------------------------------------------------------
 
 
   # Set current locale either from URL +locale+ parameter or from the default I18n value

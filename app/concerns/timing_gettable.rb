@@ -3,26 +3,28 @@ require 'wrappers/timing'
 
 =begin
   
-= ICTimingFields
+= TimingGettable
 
-  - version:  4.00.195.20140228
+- version:  4.00.219.20140413
   - author:   Steve A.
 
   Container module for interfacing common "timing-related" fields
   and method functions.
 
-  *ASSUMES existance of the fields:*
-  - hundreds
-  - seconds
-  - minutes
-
 =end
-module ICTimingFields
+module TimingGettable
+  extend ActiveSupport::Concern
+
+  included do
+    belongs_to :swimmer
+    validates_associated :swimmer
+  end
+
 
   # Returns the formatted timing information in String format.
   #
-  def get_timing
-    ( minutes.to_i > 0 ? "#{minutes.to_i}'" : '' ) +
+  def get_timing( show_minutes_even_if_zero = false )
+    ( show_minutes_even_if_zero || minutes.to_i > 0 ? "#{minutes.to_i}'" : '' ) +
     sprintf("%02.0f\"", seconds.to_i) +
     sprintf("%02.0f", hundreds.to_i)
   end

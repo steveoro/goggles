@@ -18,10 +18,11 @@ class AgexMailer < ActionMailer::Base
 
   # "Exception intercepted" message.
   #
-  def exception_mail( user_name, error_description, error_backtrace )
+  def exception_mail( admin_name, user_name, error_description, error_backtrace )
     @description = error_description
     @backtrace   = error_backtrace
     @user_name   = user_name
+    @admin_name  = admin_name
 
     mail(
       :to => AGEX_ADMIN_EMAIL,

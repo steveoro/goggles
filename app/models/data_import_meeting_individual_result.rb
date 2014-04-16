@@ -1,14 +1,15 @@
 require 'wrappers/timing'
+require 'timing_gettable'
+require 'timing_validatable'
+require 'data_importable'
 
 
 class DataImportMeetingIndividualResult < ActiveRecord::Base
+  include TimingGettable
+  include TimingValidatable
+  include DataImportable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
-  belongs_to :data_import_session
-  validates_associated  :data_import_session
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_individual_result, :foreign_key => "conflicting_meeting_individual_result_id"
 
@@ -20,6 +21,7 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   belongs_to :data_import_swimmer
   belongs_to :data_import_team
   belongs_to :data_import_badge
+
   belongs_to :swimmer
   belongs_to :team
   belongs_to :team_affiliation
@@ -55,54 +57,18 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
 
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
-  validates_presence_of     :minutes
-  validates_length_of       :minutes, :within => 1..3, :allow_nil => false
-  validates_numericality_of :minutes
-  validates_presence_of     :seconds
-  validates_length_of       :seconds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :seconds
-  validates_presence_of     :hundreds
-  validates_length_of       :hundreds, :within => 1..2, :allow_nil => false
-  validates_numericality_of :hundreds
 
-  scope :sort_data_import_meeting_individual_result_by_user,          lambda { |dir| order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_data_import_meeting_individual_result_by_meeting,       lambda { |dir| order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_data_import_meeting_individual_result_by_swimmer,       lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, data_import_meeting_individual_results.rank #{dir.to_s}") }
-  scope :sort_data_import_meeting_individual_result_by_team,          lambda { |dir| order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_data_import_meeting_individual_result_by_badge,         lambda { |dir| order("badges.number #{dir.to_s}") }
-  # ---------------------------------------------------------------------------
+  scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_meeting,   ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_swimmer,   ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, data_import_meeting_individual_results.rank #{dir.to_s}") }
+  scope :sort_by_team,      ->(dir) { order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_badge,     ->(dir) { order("badges.number #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
 
-
-  # Computes a verbose or formal description for the row data "conflicting" with the current import data row
-  def get_verbose_conflicting_row
-    if ( self.conflicting_meeting_individual_result_id.to_i > 0 )
-      begin
-        conflicting_row = MeetingIndividualResult.find( conflicting_meeting_individual_result_id )
-        "(ID:#{conflicting_meeting_individual_result_id}) #{conflicting_row.get_verbose_name}"
-      rescue
-        "(ID:#{conflicting_meeting_individual_result_id}) <#{I18n.t(:unable_to_retrieve_row_data, :scope =>[:activerecord, :errors] )}>"
-      end
-    else
-      ''
-    end
-  end
-  # ---------------------------------------------------------------------------
-
-
-  # Returns just the formatted timing information
-  def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
-  end
-
-  # Returns a new Timing class instance initialized with the timing data from this row
-  def get_timing_instance
-    Timing.new( hundreds, seconds, minutes )
-  end
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

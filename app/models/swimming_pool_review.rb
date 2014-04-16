@@ -12,8 +12,8 @@ class SwimmingPoolReview < ActiveRecord::Base
 
   validates_presence_of :entry_text
 
-  scope :sort_swimming_pool_by_user,          lambda { |dir| order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
-  scope :sort_swimming_pool_by_swimming_pool, lambda { |dir| order("swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_user,          ->(dir) { order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
+  scope :sort_swimming_pool_by_swimming_pool, ->(dir) { order("swimming_pools.name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

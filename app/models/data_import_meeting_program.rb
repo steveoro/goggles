@@ -1,14 +1,13 @@
 require 'wrappers/timing'
+require 'timing_gettable'
+require 'data_importable'
 
 
 class DataImportMeetingProgram < ActiveRecord::Base
+  include TimingGettable                            # (Base timing may not be available)
+  include DataImportable
 
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
-  belongs_to :data_import_session
-  validates_associated  :data_import_session
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_program, :foreign_key => "conflicting_meeting_program_id"
 
@@ -35,61 +34,26 @@ class DataImportMeetingProgram < ActiveRecord::Base
 
   has_many :meeting_relay_swimmers
   has_many :data_import_meeting_relay_swimmers
-  # TODO Add other has_many relationships only when needed
 
   # The following helper is used only by data_importer_test:
   has_one  :data_import_meeting,  :through => :data_import_meeting_session
 
   validates_presence_of :event_order
   validates_length_of   :event_order, :within => 1..3, :allow_nil => false
-                                                    # Base timing (may not be available)
-  validates_length_of       :minutes, :maximum => 3
-  validates_numericality_of :minutes
-  validates_length_of       :seconds, :maximum => 2
-  validates_numericality_of :seconds
-  validates_length_of       :hundreds, :maximum => 2
-  validates_numericality_of :hundreds
 
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)
 
-  scope :sort_data_import_meeting_program_by_user,            lambda { |dir| order("users.name #{dir.to_s}") }
-  scope :sort_data_import_meeting_program_by_event_type,      lambda { |dir| order("event_types.code #{dir.to_s}") }
-  scope :sort_data_import_meeting_program_by_category_type,   lambda { |dir| order("category_types.code #{dir.to_s}") }
-  scope :sort_data_import_meeting_program_by_gender_type,     lambda { |dir| order("gender_type.code #{dir.to_s}") }
-  # ---------------------------------------------------------------------------
+  scope :sort_by_user,            ->(dir) { order("users.name #{dir.to_s}") }
+  scope :sort_by_event_type,      ->(dir) { order("event_types.code #{dir.to_s}") }
+  scope :sort_by_category_type,   ->(dir) { order("category_types.code #{dir.to_s}") }
+  scope :sort_by_gender_type,     ->(dir) { order("gender_type.code #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
 
-
-  # Computes a verbose or formal description for the row data "conflicting" with the current import data row
-  def get_verbose_conflicting_row
-    if ( self.conflicting_meeting_program_id.to_i > 0 )
-      begin
-        conflicting_row = MeetingProgram.find( conflicting_meeting_program_id )
-        "(ID:#{conflicting_meeting_program_id}) #{conflicting_row.get_verbose_name}"
-      rescue
-        "(ID:#{conflicting_meeting_program_id}) <#{I18n.t(:unable_to_retrieve_row_data, :scope =>[:activerecord, :errors] )}>"
-      end
-    else
-      ''
-    end
-  end
-  # ---------------------------------------------------------------------------
-
-
-  # Returns just the formatted timing information
-  def get_timing
-    "#{minutes}'" + sprintf("%02.0f", seconds) + "\"" + sprintf("%02.0f", hundreds)
-  end
-
-  # Returns a new Timing class instance initialized with the timing data from this row
-  def get_timing_instance
-    Timing.new( hundreds, seconds, minutes )
-  end
 
   # Computes a short description of just the event name for this row, without dates.
   def get_event_name

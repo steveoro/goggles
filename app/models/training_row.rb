@@ -1,5 +1,4 @@
 # encoding: utf-8
-
 require 'wrappers/timing'
 
 
@@ -141,8 +140,7 @@ class TrainingRow < ActiveRecord::Base
 
 
   # Label symbol corresponding to either a column name or a model method to be used
-  # mainly in generating DropDown option lists.
-  #
+  # mainly in generating verbose lists.
   def self.get_label_symbol
     :get_full_name
   end

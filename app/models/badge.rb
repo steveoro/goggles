@@ -1,9 +1,5 @@
 class Badge < ActiveRecord::Base
-
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                       # (Do not enable this for User)
-
+  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :season
   belongs_to :swimmer
   belongs_to :team
@@ -26,21 +22,19 @@ class Badge < ActiveRecord::Base
   has_many :passages
   has_many :goggle_cup_standards
 
-  validates_presence_of :number
-  validates_length_of :number, :within => 1..40, :allow_nil => false
+  validates_presence_of   :number, length: { within: 1..40 }, allow_nil: false
 
-
-  scope :sort_badge_by_user,                    lambda { |dir| order("users.name #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_badge_by_season,                  lambda { |dir| order("seasons.begin_date #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_badge_by_team,                    lambda { |dir| order("teams.name #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_badge_by_swimmer,                 lambda { |dir| order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_badge_by_category_type,           lambda { |dir| order("category_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
+  scope :sort_by_user,          ->(dir)  { order("users.name #{dir.to_s}, badges.number #{dir.to_s}") }
+  scope :sort_by_season,        ->(dir)  { order("seasons.begin_date #{dir.to_s}, badges.number #{dir.to_s}") }
+  scope :sort_by_team,          ->(dir)  { order("teams.name #{dir.to_s}, badges.number #{dir.to_s}") }
+  scope :sort_by_swimmer,       ->(dir)  { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_category_type, ->(dir)  { order("category_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -57,6 +51,5 @@ class Badge < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
-  #++
 
 end

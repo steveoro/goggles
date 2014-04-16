@@ -1,21 +1,23 @@
 require 'spec_helper'
 
 
-shared_examples "ActiveRecord extension" do
+shared_examples "DropDownListable concern" do
 
   before(:each) do
     @instance = described_class.new()
   end
   # ---------------------------------------------------------------------------
 
-
-  # Describes the requistes of the including class
+  # Describes the requisites of the including class
   # and the outcome of the module inclusion.
   #
-  describe "Interface" do
+  describe "including instance" do
     it "has all required fields" do
-      expect( @instance.class ).to respond_to( :get_label_symbol )
       expect( @instance ).to respond_to( :id )
+    end
+
+    it "responds to self.get_label_symbol()" do
+      expect( @instance.class ).to respond_to( :get_label_symbol )
     end
 
     it "responds to self.to_dropdown()" do
@@ -24,8 +26,6 @@ shared_examples "ActiveRecord extension" do
   end
   # ---------------------------------------------------------------------------
 
-  # Should retreives the complete athlete name (last name + ' ' + first_name)
-  #
   describe "#get_label_symbol()" do
     it "always returns a Symbol" do
       expect( @instance.class.get_label_symbol() ).to be_an_instance_of( Symbol )
@@ -38,8 +38,7 @@ shared_examples "ActiveRecord extension" do
   end
   # ---------------------------------------------------------------------------
 
-  # Should retreives the complete athlete name (last name + ' ' + first_name)
-  #
+
   describe "#to_dropdown()" do
     it "always returns an array" do
       result = @instance.class.to_dropdown()

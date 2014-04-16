@@ -1,15 +1,17 @@
+require 'drop_down_listable'
+
+
 class Exercise < ActiveRecord::Base
+  include DropDownListable
 
   has_many :exercise_rows
   has_many :trainings, :through => :training_rows
   has_many :base_movements, :through => :exercise_rows
 
-  validates_length_of   :training_step_type_codes, :maximum => 50, :allow_nil => true
+  validates_length_of     :training_step_type_codes, maximum: 50, allow_nil: true
 
-  validates_presence_of   :code
-  validates_length_of     :code, :within => 1..6, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
-
+  validates_presence_of   :code, length: { within: 1..6 }, allow_nil: false
+  validates_uniqueness_of :code, message: :already_exists
 
   # Custom scope to detect all Exercises that may be used during a specified training_step_code
   scope :belongs_to_training_step_code, lambda{ |training_step_code|
@@ -45,6 +47,8 @@ class Exercise < ActiveRecord::Base
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
+  # @overload inherited from DropDownListable
+  #
   def self.get_label_symbol
     :get_full_name
   end
@@ -68,6 +72,8 @@ class Exercise < ActiveRecord::Base
   #
   # == Returns:
   # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
+  #
+  # @overload inherited from DropDownListable
   #
   def self.to_dropdown( where_condition = nil, key_sym = :id, label_sym = self.get_label_symbol(),
                         verbose_level_for_label_method = self.get_default_verbosity_for_label_symbol() )
