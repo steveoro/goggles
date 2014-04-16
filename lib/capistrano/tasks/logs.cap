@@ -1,0 +1,30 @@
+
+namespace :logs do
+
+  # Remote Tail log tool.
+  desc <<-DESC
+    Tails/follows a specified log file in the shared path or the production.log,
+    if none is given.
+    Press CTRL-C to stop following the file.
+  
+    Basic usage:
+    > cap logs:tail
+    To tail the production.log (choosen by the deployment environment name)
+  
+    Or:
+    > cap logs:tail[access]
+    To tail the access.log file (or anything specified between brackets)
+    
+    Remember that if you use zsh you'll need to format it with single quotes as:
+    > cap 'logs:tail[logfile]'
+
+  DESC
+  task :tail, :file do |t, args|
+    base_filename = args[:file] || fetch(:rails_env) || 'production'
+    on roles(:app) do
+      execute :tail, "-f -n50 #{shared_path}/log/#{base_filename}.log"
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+end

@@ -1,0 +1,182 @@
+# == Capistrano helper tasks ==
+#
+# - author: Steve A.
+# - vers. : 4.00.223.20140416
+#
+# This requires Capistrano v. >= 3.1
+require "erb"
+
+
+namespace :app do
+
+  namespace :setup do
+    desc <<-DESC
+      Creates a custom production environment file in shared path.
+
+      This task searches and uses a template called 'production.rb.erb' that must
+      be found inside the /config/deploy folder.
+
+      If the template is found, the current /config/environments/production.rb is
+      replaced with the result from the template (which is filled according to the
+      internal parameters).
+
+      Mail delivery method for current stage: #{fetch(:mail_delivery_method)}
+    DESC
+    task :prod_env do
+      on roles(:app) do |host|
+        use_sendfile_header_for_apache = true
+        serve_static_assets  = false
+        debug_assets         = false
+        mail_delivery_method = fetch(:mail_delivery_method)
+        perform_deliveries   = true
+        if ( mail_delivery_method == 'smtp' )
+          agex_development_email = fetch( :agex_development_email )
+          smtp_setting_tls       = fetch( :smtp_setting_tls )
+          smtp_setting_address   = fetch( :smtp_setting_address )
+          smtp_setting_port      = fetch( :smtp_setting_port )
+          smtp_setting_domain    = fetch( :smtp_setting_domain )
+          smtp_setting_auth      = fetch( :smtp_setting_auth )
+          smtp_setting_user      = fetch( :smtp_setting_user )
+          smtp_setting_pwd       = fetch( :smtp_setting_pwd )
+          smtp_setting_starttls  = fetch( :smtp_setting_starttls )
+        else                                        # Using local sendmail:
+          agex_development_email = "<steve@#{host}>"
+        end
+
+        puts "setup_prod_env -- current internal parameters:"
+        puts "=============================================="
+        puts "- perform_deliveries             = #{perform_deliveries}"
+        puts "- delivery_method                = #{mail_delivery_method}"
+        puts "- serve_static_assets            = #{serve_static_assets}"
+        puts "- debug_assets                   = #{debug_assets}"
+        puts "- use_sendfile_header_for_apache = #{use_sendfile_header_for_apache}"
+        puts ""
+        puts "- agex_development_email         = #{agex_development_email}"
+        if ( mail_delivery_method == 'smtp' )
+          puts "- smtp_setting_tls               = #{smtp_setting_tls}"
+          puts "- smtp_setting_address           = #{smtp_setting_address}"
+          puts "- smtp_setting_port              = #{smtp_setting_port}"
+          puts "- smtp_setting_domain            = #{smtp_setting_domain}"
+          puts "- smtp_setting_auth              = #{smtp_setting_auth}"
+          puts "- smtp_setting_user              = #{smtp_setting_user}"
+          puts "- smtp_setting_pwd               = #{smtp_setting_pwd}"
+          puts "- smtp_setting_starttls          = #{smtp_setting_starttls}"
+        end
+        puts ""
+
+        location = 'config/deploy/production.rb.erb'
+        if ( File.file?(location) )                 # Do nothing unless the template file is found
+          template = File.read(location)
+          config = ERB.new(template)
+          within shared_path do
+            execute "mkdir -p config; mkdir -p config/environments"
+          end
+          put config.result(binding), "#{shared_path}/config/environments/production.rb"
+        else
+          info "Environment template file not found locally: skipping ':setup_prod_env'."
+        end
+      end
+    end
+    # -------------------------------------------------------------------------
+
+
+    desc <<-DESC
+      Recreates the symlink for production.rb file for the newly deployed release.
+    DESC
+    task :symlink_for_prod_env do
+      on roles(:app) do
+        execute :ln, "-nfs #{shared_path}/config/environments/production.rb #{release_path}/config/environments/production.rb"
+      end
+    end
+    # -------------------------------------------------------------------------
+
+
+    desc <<-DESC
+      Checks and adds shared ExtJS lib files to the deployment tree
+      (only when these are not found).
+    
+      It is safe to run this task on servers that have already been set up; it
+      will not destroy any deployed revisions or data.
+    DESC
+    task :shared_extjs do
+      on roles(:app) do |host|
+        lib_dir = File.join(shared_path, "extjs")
+        puts "Checking '#{lib_dir}' existance..."
+  
+        if test("$(ls -A \"$#{lib_dir}\")") #  test("[ -d #{lib_dir} ]")
+          info "Directory #{lib_dir} found."
+        else
+          info "Directory #{lib_dir} is missing on #{host}: safely (re)creating directory before adding missing contents..."
+          execute :mkdir, "-p #{lib_dir}"
+          info "Uploading directory contents..."
+          use_pem_certificate = (ssh_options[:keys].first =~ /\.pem$/)
+
+          run_locally do
+            if use_pem_certificate
+              execute :scp, "-i #{ssh_options[:keys].first} -Cpr public/extjs/* root@#{host}:#{lib_dir}"
+            else
+              execute :scp, "-Cpr public/extjs/* root@#{host}:#{lib_dir}"
+            end
+          end
+        end
+        puts "Done."
+      end
+    end
+    # -------------------------------------------------------------------------
+
+
+    desc <<-DESC
+      Checks and adds other shared directories to the deployment tree
+      (only when these are not found).
+
+      It is safe to run this task on servers that have already been set up; it
+      will not destroy any deployed revisions or data.
+    DESC
+    task :common_output do
+      on roles(:app) do |host|
+        # mkdir -p is making sure that the directories are there for some SCM's that don't
+        # save empty folders:
+        output_dir = File.join(shared_path, "output")
+        execute :mkdir, "-p #{output_dir} && chmod -R 0775 #{output_dir} && chown -R #{fetch(:runner)}:www #{output_dir}"
+        output_dir = File.join(shared_path, "uploads")
+        execute :mkdir, "-p #{output_dir} && chmod -R 0775 #{output_dir} && chown -R #{fetch(:runner)}:www #{output_dir}"
+      end
+    end
+    # -------------------------------------------------------------------------
+
+
+    desc <<-DESC
+      Changes ownership for some of the released code.
+      It is called after finalize_update and before the deployment finishes.
+    
+      It assumes a Rails project was deployed, so if you are deploying
+      something else, you may want to override this task with your own
+      environment's requirements.
+    
+      This task will set the ownage of the public (Document) dir and some of its
+      subfolders.
+    DESC
+    task :public_dirs do
+      on roles(:app) do |host|
+        # Make a link also for the added common output folder:
+        run <<-CMD
+          rm -rf #{latest_release}/public/output &&
+          ln -s #{shared_path}/output #{latest_release}/public/output &&
+          rm -rf #{latest_release}/public/uploads &&
+          ln -s #{shared_path}/uploads #{latest_release}/public/uploads
+        CMD
+
+        execute :chown, "-R wwwrun:www #{shared_path}/log"
+      # TODO Missing check on log existance; if log is missing rake should be invoked to create it
+        execute "if test -e #{shared_path}/log/production.log ; then chmod -R 0666 #{shared_path}/log/production.log ; fi"
+
+        extjs_dir = File.join(shared_path, "extjs")
+        puts "Recreating ExtJS symlink inside release path '#{release_path}'..."
+        execute :ln, "-nfs #{extjs_dir} #{release_path}/public/extjs ; chown -R #{fetch(:runner)}:www #{latest_release}/public"
+      end
+    end
+    # -------------------------------------------------------------------------
+  end
+
+
+end
