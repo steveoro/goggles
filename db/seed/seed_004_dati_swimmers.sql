@@ -2,6 +2,7 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION; 
 
 -- Ripulisco i risultati del CSI
+-- DELETE FROM meeting_team_scores;
 -- DELETE FROM meeting_relay_results;
 -- DELETE FROM meeting_individual_results;
 -- DELETE FROM meeting_programs;
@@ -14,6 +15,7 @@ START TRANSACTION;
 -- Dump dei dati per la tabella swimmers
 -- 
 INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1869,'ACERBI MONICA',1988,'ACERBI','MONICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1692,'ADANI SIMONE',1984,'ADANI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (177,'AFRAGOLI CLAUDIO',1966,'AFRAGOLI','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1488,'AGNESINI ALESSANDRO',1993,'AGNESINI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -23,6 +25,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (153,'AIELLO SERGIO',1960,'AIELLO','SERGIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (415,'ALAN COSTI',1970,'ALAN','COSTI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1774,'ALBARELLI MARCO',1962,'ALBARELLI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1877,'ALBERGHI GIACOMO',1963,'ALBERGHI','GIACOMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (190,'ALBERGHINI ALESSANDRA',1972,'ALBERGHINI','ALESSANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (848,'ALBERGHINI ALICE',1986,'ALBERGHINI','ALICE',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (179,'ALBERGHINI ENRICO',1968,'ALBERGHINI','ENRICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -100,6 +103,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (961,'BALBONI TANIA',1989,'BALBONI','TANIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1379,'BALDI DANIELE',1982,'BALDI','DANIELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1351,'BALDISSERRI ANDREA',1966,'BALDISSERRI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1863,'BALESTRIERI LUCA',1990,'BALESTRIERI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1718,'BALISTRERI CLAUDIO',1992,'BALISTRERI','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (460,'BANDIERI CLAUDIO',1962,'BANDIERI','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1013,'BANDINI RAFFAELLA',1971,'BANDINI','RAFFAELLA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -110,12 +114,12 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (330,'BARBANTI SALVATORE',1978,'BARBANTI','SALVATORE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1001,'BARBERINI ALESSANDRA',1968,'BARBERINI','ALESSANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (524,'BARBIERI ALESSANDRO',1957,'BARBIERI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1323,'BARBIERI FEDERICO',1979,'BARBIERI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1618,'BARBIERI GIOVANNA',1964,'BARBIERI','GIOVANNA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(1805,'BARBIERI LUDOVICA',1995,'BARBIERI','LUDOVICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(1804,'BARBIERI MARIA CHIARA',1996,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+(1323,'BARBIERI FEDERICO',1979,'BARBIERI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
 
 INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1618,'BARBIERI GIOVANNA',1964,'BARBIERI','GIOVANNA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1805,'BARBIERI LUDOVICA',1995,'BARBIERI','LUDOVICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1804,'BARBIERI MARIA CHIARA',1996,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (951,'BARBIERI MATTEO',1979,'BARBIERI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (166,'BARBIERI SIMONE',1978,'BARBIERI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1000,'BARBONI FABIO',1975,'BARBONI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -165,6 +169,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1419,'BELLI LUCA',1975,'BELLI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1050,'BELLINI IVAN',1971,'BELLINI','IVAN',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1383,'BELTRAMI DANIELA',1985,'BELTRAMI','DANIELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1871,'BELTRAMI DAVIDE',1989,'BELTRAMI','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (522,'BELTRAMI DAVIDE',1967,'BELTRAMI','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (503,'BENASSI DANTE',1978,'BENASSI','DANTE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1544,'BENASSI SARA',1985,'BENASSI','SARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -174,6 +179,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1010,'BENEDETTI VALENTINA',1982,'BENEDETTI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (669,'BENETTI MATTEO',1987,'BENETTI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (232,'BENETTI RITA',1951,'BENETTI','RITA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1878,'BENEVENTI MARINO',1963,'BENEVENTI','MARINO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (552,'BENFENATI ANDREA',1977,'BENFENATI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1098,'BENGHI VALENTINA',1985,'BENGHI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (345,'BERETTA ANNALISA',1981,'BERETTA','ANNALISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -210,14 +216,14 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (561,'BERTOCCO STEFANO',1946,'BERTOCCO','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1835,'BERTOLANI CRISTIAN',1969,'BERTOLANI','CRISTIAN',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (904,'BERTOLI AMBRA',1989,'BERTOLI','AMBRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(431,'BERTOLINI MANUELA',1976,'BERTOLINI','MANUELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(431,'BERTOLINI MANUELA',1976,'BERTOLINI','MANUELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (574,'BERTONI LAURA',1968,'BERTONI','LAURA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (811,'BERTONI STEFANO',1962,'BERTONI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1241,'BERTOZZI ALESSANDRO',1992,'BERTOZZI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1233,'BERTOZZI ORLANDO',1968,'BERTOZZI','ORLANDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(737,'BERTUCCI LORENZO',1957,'BERTUCCI','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(737,'BERTUCCI LORENZO',1957,'BERTUCCI','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (748,'BERTUZZI GIANLUCA',1970,'BERTUZZI','GIANLUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (42,'BERZUINI STEFANO',1975,'BERZUINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (664,'BETTANCINI PATRICK',1969,'BETTANCINI','PATRICK',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -312,14 +318,14 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1811,'BOTTONI SIMONE',1984,'BOTTONI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (122,'BOVINA DARIO',1980,'BOVINA','DARIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (157,'BOVINA FLAVIA',1981,'BOVINA','FLAVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(241,'BOZZANI MICHELE',1975,'BOZZANI','MICHELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(241,'BOZZANI MICHELE',1975,'BOZZANI','MICHELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (49,'BOZZOLIN ROBERTO',1969,'BOZZOLIN','ROBERTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1495,'BRACHI CLAUDIO',1979,'BRACHI','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1569,'BRAGHINI GIANLUCA',1977,'BRAGHINI','GIANLUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (884,'BRAGLIA ANDREA',1974,'BRAGLIA','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(852,'BRAGLIA FRANCESCO',1984,'BRAGLIA','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(852,'BRAGLIA FRANCESCO',1984,'BRAGLIA','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (31,'BRAGLIA LUCA',1979,'BRAGLIA','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (276,'BRAMBILLA EDOARDO',1982,'BRAMBILLA','EDOARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1487,'BRAMBILLA MARCO',1994,'BRAMBILLA','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -334,6 +340,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1686,'BRUNI CLAUDIO',1969,'BRUNI','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1812,'BRUNI SIMONE',1978,'BRUNI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1530,'BRUSCHI ILARIA',1983,'BRUSCHI','ILARIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1850,'BUDASSI VALENTINA',1990,'BUDASSI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1839,'BULGARELLI ALESSANDRO',1985,'BULGARELLI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (754,'BULGARELLI LUCA',1975,'BULGARELLI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1359,'BURANI ALICE',1982,'BURANI','ALICE',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -342,6 +349,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (708,'BURAZZI RITA',1977,'BURAZZI','RITA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1715,'BURZIO FEDERICA',1991,'BURZIO','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (307,'BUSCHE CORD CRISTIAN',1976,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1852,'BUSETTA GIOVANNI',1981,'BUSETTA','GIOVANNI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (774,'BUSI FILIPPO',1965,'BUSI','FILIPPO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (59,'BUSI SIMONE',1972,'BUSI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (496,'BUSSEI GIORGIA',1978,'BUSSEI','GIORGIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -365,6 +373,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (74,'CALZOLARI FABRIZIO',1972,'CALZOLARI','FABRIZIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (40,'CALZOLARI MARCO',1975,'CALZOLARI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (744,'CALZOLARI MICHELA',1976,'CALZOLARI','MICHELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1873,'CALZONI FRANCESCO',1987,'CALZONI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1506,'CAMELLINI CECILIA',1992,'CAMELLINI','CECILIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (73,'CAMI RICCARDO',1973,'CAMI','RICCARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (764,'CAMPANI SAMUEL',1976,'CAMPANI','SAMUEL',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -383,7 +392,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1561,'CANTI SIMONA',1989,'CANTI','SIMONA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (386,'CANTONI DANIELA',1970,'CANTONI','DANIELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1724,'CANTONI LORENZO',1995,'CANTONI','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1815,'CANZIAN LUCA',1968,'CANZIAN','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1815,'CANZIAN LUCA',1969,'CANZIAN','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (577,'CAOBELLI MARCO',1959,'CAOBELLI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (569,'CAPELLI MICHELA',1980,'CAPELLI','MICHELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (711,'CAPOMASSI CLAUDIO',1973,'CAPOMASSI','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -408,9 +417,12 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (586,'CARLETTI REBECCA',1972,'CARLETTI','REBECCA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (793,'CARLETTI SIMONA',1986,'CARLETTI','SIMONA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1375,'CARLINO SIMONE',1991,'CARLINO','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1847,'CARLOTTI GAIA',2001,'CARLOTTI','GAIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (967,'CAROLI STEFANO',1982,'CAROLI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1536,'CAROSO FRANCESCO',1995,'CAROSO','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1712,'CARPANELLI GIULIA',1992,'CARPANELLI','GIULIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1712,'CARPANELLI GIULIA',1992,'CARPANELLI','GIULIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (743,'CARPEGGIANI SAMANTA',1975,'CARPEGGIANI','SAMANTA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (116,'CARPI WALTER',1948,'CARPI','WALTER',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1713,'CARPNELLI SARA',1992,'CARPNELLI','SARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -419,9 +431,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (348,'CARRETTI STEFANO',1977,'CARRETTI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (101,'CARRI LISA',1972,'CARRI','LISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (38,'CASADEI RICCARDO',1975,'CASADEI','RICCARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(940,'CASADIO ENRICO',1981,'CASADIO','ENRICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(940,'CASADIO ENRICO',1981,'CASADIO','ENRICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1746,'CASADIO MARINA',1991,'CASADIO','MARINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1467,'CASADIO PIETRO',1989,'CASADIO','PIETRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1264,'CASALGRANDI EMANUELE',1991,'CASALGRANDI','EMANUELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -429,8 +439,8 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1628,'CASANOVA FEDERICA',1995,'CASANOVA','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (575,'CASANOVA LUCA',1966,'CASANOVA','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1134,'CASARI ALESSANDRA',1991,'CASARI','ALESSANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(491,'CASARINI STEFANO',1980,'CASARINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (223,'CASARINI STEFANO',1969,'CASARINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(491,'CASARINI STEFANO',1980,'CASARINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (229,'CASAROSA PAOLA',1962,'CASAROSA','PAOLA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1762,'CASELLA CESARE',1967,'CASELLA','CESARE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1504,'CASOLARI LORENZO',1993,'CASOLARI','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -450,6 +460,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (564,'CATELLANI LUCA',1983,'CATELLANI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (643,'CATELLANI MAURA',1976,'CATELLANI','MAURA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (690,'CATELLANI SERENA',1984,'CATELLANI','SERENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1860,'CATTABRIGA ENRICO',1987,'CATTABRIGA','ENRICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (583,'CATTABRIGA MONIA',1975,'CATTABRIGA','MONIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (560,'CATTANI ALESSANDRA',1963,'CATTANI','ALESSANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (261,'CATTANI FEDERICA',1973,'CATTANI','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -476,6 +487,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1290,'CESARI ANNA CHIARA',1990,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1090,'CESARI MIRKO',1987,'CESARI','MIRKO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (316,'CESARO ANDREA',1970,'CESARO','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1859,'CHELOTTI SILVIA',1968,'CHELOTTI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (185,'CHIARABELLI ELISABETTA',1977,'CHIARABELLI','ELISABETTA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (39,'CHIARELLO CRISTIAN',1975,'CHIARELLO','CRISTIAN',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (978,'CHIARI SILVIA',1982,'CHIARI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -510,7 +522,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1666,'COIRO FEDERICO',1981,'COIRO','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1278,'COLAMUSSI CECILIA',1986,'COLAMUSSI','CECILIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1758,'COLANICCHIA ANNALISA',1990,'COLANICCHIA','ANNALISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(1261,'COLLI ANNA ELENA',1991,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1261,'COLLI ANNA ELENA',1991,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1516,'COLLI VALERIO',1979,'COLLI','VALERIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (607,'COLLINA CARMEN',1952,'COLLINA','CARMEN',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (930,'COLO'' LUCA',1989,'COLO''','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -521,9 +535,8 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (187,'COMPAGNONI VITTORIO',1975,'COMPAGNONI','VITTORIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1449,'CONDORELLI GIOVANNI',1933,'CONDORELLI','GIOVANNI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (346,'CONSOLI MASSIMO',1981,'CONSOLI','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(28,'CONTEGNO TOMMASO',1954,'CONTEGNO','TOMMASO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(28,'CONTEGNO TOMMASO',1954,'CONTEGNO','TOMMASO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1876,'CONTI CLAUDIA',1965,'CONTI','CLAUDIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1742,'CONTI FEDERICO',1988,'CONTI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (228,'CONTI FRANCESCO',1967,'CONTI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (389,'CONTI MARCO',1969,'CONTI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -533,6 +546,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (828,'CORONA MARTINA',1987,'CORONA','MARTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (844,'CORONA RENATO',1959,'CORONA','RENATO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (308,'COROTTI ALESSANDRO',1969,'COROTTI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1865,'CORRADINI MARIO',1961,'CORRADINI','MARIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (869,'CORTELLONI MARCO',1986,'CORTELLONI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (662,'CORTI MASSIMO',1970,'CORTI','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1259,'COSTA STEFANO',1972,'COSTA','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -554,6 +568,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (81,'CUOGHI CARLO',1965,'CUOGHI','CARLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1709,'CURCIO ACHILLE',1994,'CURCIO','ACHILLE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (45,'CUSANO MARIO',1970,'CUSANO','MARIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1861,'D''AGOSTA FRANCESCO',1990,'D''AGOSTA','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1747,'D''AMBROSIO MARCO',1966,'D''AMBROSIO','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (750,'D''AMBROSIO MARCO ALESSANDRO',1966,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1830,'D''AMICO TERESA',1994,'D''AMICO','TERESA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -577,8 +592,8 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1394,'DASI GHENNADI',1987,'DASI','GHENNADI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (410,'DAVOLI CLAUDIA',1962,'DAVOLI','CLAUDIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1452,'DAVOLI DAVIDE',1991,'DAVOLI','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1704,'DAVOLIO FEDERICO',1992,'DAVOLIO','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (790,'DAVOLIO FEDERICO',1984,'DAVOLIO','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1704,'DAVOLIO FEDERICO',1992,'DAVOLIO','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1799,'DAVOLIO MARIA GRAZIA',1962,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (629,'DAVOLIO MASSIMO',1970,'DAVOLIO','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (802,'DE BIASIO SILVIA',1969,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -609,7 +624,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1076,'DI FOGGIA ANNA',1962,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1605,'DI LALLO CARMEN',1988,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (562,'DI MAIO SARA',1980,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(510,'DI PALMA ANNA',1969,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(510,'DI PALMA ANNA',1969,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1679,'DI PASQUALE PIERO',1958,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (123,'DI PIETRO LUCA',1980,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (170,'DIANI PAOLA',1969,'DIANI','PAOLA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -623,9 +640,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (390,'DONATI STEFANO',1971,'DONATI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (500,'DONDI MARCO',1975,'DONDI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (120,'DOTTI DANIELA',1982,'DOTTI','DANIELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(1609,'DOTTI FABIO',1967,'DOTTI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1609,'DOTTI FABIO',1967,'DOTTI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1179,'DOTTI FEDERICO',1990,'DOTTI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (107,'DRAGHETTI LEONARDO',1965,'DRAGHETTI','LEONARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (279,'DRAGHETTI SERGIO',1971,'DRAGHETTI','SERGIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -658,7 +673,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1803,'FANTINI VALENTINA',1992,'FANTINI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (360,'FANTOZZI ROMOLO',1974,'FANTOZZI','ROMOLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (663,'FANTUZZI EROS',1967,'FANTUZZI','EROS',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(897,'FARAG• CATERINA',1973,'FARAG•','CATERINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(897,'FARAGþ CATERINA',1973,'FARAGþ','CATERINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (269,'FARINELLI DARIO',1972,'FARINELLI','DARIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (214,'FAUSTINI ANDREA',1979,'FAUSTINI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (242,'FAUSTINI MATTEO',1977,'FAUSTINI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -700,6 +715,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (539,'FERRETTI ANDREA',1971,'FERRETTI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (423,'FERRETTI ELISA',1981,'FERRETTI','ELISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (706,'FERRETTI FULVIO',1986,'FERRETTI','FULVIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1872,'FERRETTI MASSIMILIANO',1987,'FERRETTI','MASSIMILIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (941,'FERRI ALESSANDRO',1978,'FERRI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (206,'FERRI PIERO',1963,'FERRI','PIERO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1367,'FERRI STEFANIA',1966,'FERRI','STEFANIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -710,7 +726,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1772,'FICARELLI LIA',1977,'FICARELLI','LIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1354,'FILIPPI RENZA',1952,'FILIPPI','RENZA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (922,'FILIPPINI ELISA',1989,'FILIPPINI','ELISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(72,'FILIPPINI LEONARDO',1974,'FILIPPINI','LEONARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(72,'FILIPPINI LEONARDO',1974,'FILIPPINI','LEONARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (892,'FILIPPONE PATRIZIO',1986,'FILIPPONE','PATRIZIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1122,'FINI STEFANO',1966,'FINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (972,'FIOCCHI SHARON',1986,'FIOCCHI','SHARON',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -725,9 +743,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (603,'FIUMI FULVIA',1979,'FIUMI','FULVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (8,'FLORIDI SIMONE',1972,'FLORIDI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (682,'FOGANTE SIMONE',1970,'FOGANTE','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1612,'FONTANA ERNESTO',1996,'FONTANA','ERNESTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1612,'FONTANA ERNESTO',1996,'FONTANA','ERNESTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1371,'FONTANA GIANNI',1964,'FONTANA','GIANNI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1429,'FONTANESI MATTEO',1982,'FONTANESI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (986,'FORGHIERI PAOLO',1966,'FORGHIERI','PAOLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -784,6 +800,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (429,'GAITI GIULIANA',1975,'GAITI','GIULIANA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (645,'GALAFASSI DAVID',1976,'GALAFASSI','DAVID',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (361,'GALEOTTI ALESSANDRO',1976,'GALEOTTI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1870,'GALIANO DAVIDE',1988,'GALIANO','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (944,'GALIMBERTI MATTEO',1976,'GALIMBERTI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (234,'GALIOTTO LORENZO',1984,'GALIOTTO','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1255,'GALLI ANDREA',1980,'GALLI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -811,7 +828,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (147,'GARUTI ALESSANDRO',1973,'GARUTI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1196,'GARUTI NICOLA',1980,'GARUTI','NICOLA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (79,'GASPARINI LUISITA',1965,'GASPARINI','LUISITA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(1330,'GASPARINI SANDRA',1972,'GASPARINI','SANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1330,'GASPARINI SANDRA',1972,'GASPARINI','SANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (437,'GASPARINI VALERIO',1971,'GASPARINI','VALERIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1277,'GASPARON DAVIDE',1993,'GASPARON','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (911,'GATTI GIULIA',1971,'GATTI','GIULIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -821,15 +840,14 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1095,'GAZZA GI0RGIA',1993,'GAZZA','GI0RGIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1813,'GAZZINI SILVIA',1972,'GAZZINI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1319,'GE'' ANDREA',1993,'GE''','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1862,'GEI LORENZO',1981,'GEI','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1736,'GELATI ALESSANDRA',1967,'GELATI','ALESSANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (549,'GEMMA FEDERICA',1979,'GEMMA','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1514,'GENITONI ROBERTA',1982,'GENITONI','ROBERTA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (421,'GENNARI GIANMARCO',1965,'GENNARI','GIANMARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1242,'GENNARI GIANMARIA',1991,'GENNARI','GIANMARIA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1358,'GERBI LUCA',1989,'GERBI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(676,'GERBINO LUIGI',1983,'GERBINO','LUIGI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(676,'GERBINO LUIGI',1983,'GERBINO','LUIGI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (988,'GHEDINI GIULIA',1990,'GHEDINI','GIULIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (14,'GHIDONI FABIO',1974,'GHIDONI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1346,'GHIDONI FRANCESCO',1986,'GHIDONI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -882,6 +900,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (260,'GOZZI ELISABETTA',1976,'GOZZI','ELISABETTA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1699,'GOZZI EMILY',1996,'GOZZI','EMILY',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1202,'GOZZI FABIO',1990,'GOZZI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1846,'GOZZI FABRIZIO',1984,'GOZZI','FABRIZIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (181,'GOZZI MASSIMO',1958,'GOZZI','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1284,'GOZZI SIMONE',1984,'GOZZI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1764,'GRADELLINI MATTEO',1975,'GRADELLINI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -891,6 +910,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1208,'GRANVILLANO LUCIA',1992,'GRANVILLANO','LUCIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1512,'GRASSELLI ERICA',1989,'GRASSELLI','ERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (96,'GRASSI STEFANO',1976,'GRASSI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1851,'GRASSO ANDREA',1997,'GRASSO','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1190,'GRAVILI DANIELE',1965,'GRAVILI','DANIELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (519,'GRAZIOLI GABRIELE',1980,'GRAZIOLI','GABRIELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (596,'GRIGGIO VALERIO',1957,'GRIGGIO','VALERIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -910,7 +930,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (648,'GUALERZI MARCO',1976,'GUALERZI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (887,'GUALTIERI ELISA',1986,'GUALTIERI','ELISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (169,'GUALTIERI FABIO',1978,'GUALTIERI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1207,'GUALTIERI GRAZIA',1967,'GUALTIERI','GRAZIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1207,'GUALTIERI GRAZIA',1967,'GUALTIERI','GRAZIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1617,'GUANCIA GIANLUCA',1973,'GUANCIA','GIANLUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1696,'GUANCIA GIANLUIGI',1973,'GUANCIA','GIANLUIGI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1251,'GUARESCHI ELEONORA VICTORIA',1991,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -918,6 +940,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1393,'GUARINO MATTEO',1988,'GUARINO','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1776,'GUARISE ELENA',2000,'GUARISE','ELENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1167,'GUASINA GIACOMO',1990,'GUASINA','GIACOMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1864,'GUASTALLA FEDERICA',1989,'GUASTALLA','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (856,'GUASTALLA MARCO',1980,'GUASTALLA','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (999,'GUERRA MONIA',1979,'GUERRA','MONIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (65,'GUGLIELMI MIRA',1952,'GUGLIELMI','MIRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -929,9 +952,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1677,'GULINO SAVERIO',1975,'GULINO','SAVERIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1564,'HANOZ DENISE',1992,'HANOZ','DENISE',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1417,'HATHAWAY TRACY',1979,'HATHAWAY','TRACY',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(945,'IACONE MASSIMO',1969,'IACONE','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(945,'IACONE MASSIMO',1969,'IACONE','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1271,'IANNELLI STEFANO',1993,'IANNELLI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1239,'IBATICI ALESSANDRO',1992,'IBATICI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1117,'IBATTICI ANDREA',1984,'IBATTICI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -984,6 +1005,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1380,'LASORTE ANNIKA',1991,'LASORTE','ANNIKA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1378,'LASORTE KAROLINA',1995,'LASORTE','KAROLINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (935,'LATI SILVIA',1986,'LATI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1849,'LAZZARI VANESSA',1993,'LAZZARI','VANESSA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (173,'LAZZARONI ORESTE',1969,'LAZZARONI','ORESTE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1214,'LEGGIERI LUCA',1991,'LEGGIERI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1556,'LEIS LARA',1993,'LEIS','LARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1010,7 +1032,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1109,'LODI MASSIMILIANO',1970,'LODI','MASSIMILIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (291,'LODI SAMUELE',1970,'LODI','SAMUELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (807,'LODI VINCENZO',1967,'LODI','VINCENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1055,'LOMBARDI ANTONIO',1989,'LOMBARDI','ANTONIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1055,'LOMBARDI ANTONIO',1989,'LOMBARDI','ANTONIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (210,'LOMBARDI JOSE',1968,'LOMBARDI','JOSE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (325,'LOMBARDO LUCIA',1977,'LOMBARDO','LUCIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1635,'LONGARI GIULIA',1988,'LONGARI','GIULIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1031,9 +1055,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1486,'LUGLI SIMONE',1993,'LUGLI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1480,'LUGLI VALENTINA',1974,'LUGLI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (528,'LUI EMILIANO',1981,'LUI','EMILIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(697,'LUI MATTIA',1987,'LUI','MATTIA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(697,'LUI MATTIA',1987,'LUI','MATTIA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1258,'LUI MIRKO',1974,'LUI','MIRKO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (56,'LUPI SAMUELE',1974,'LUPI','SAMUELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1672,'LUPICA CAPRA MARIKA',1984,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1112,7 +1134,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (130,'MARCHINI ANDREA',1974,'MARCHINI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1372,'MARCHINI MASSIMO',1960,'MARCHINI','MASSIMO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1300,'MARCO BOLOGNESI',1962,'MARCO','BOLOGNESI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1276,'MARCONI MARCO',1969,'MARCONI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1276,'MARCONI MARCO',1969,'MARCONI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1267,'MARI ALESSANDRO',1993,'MARI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1153,'MARI FRANCESCO',1986,'MARI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1727,'MARI LUCA',1994,'MARI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1133,9 +1157,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (968,'MASINI MARZIO',1980,'MASINI','MARZIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (422,'MASINI MASSIMILIANO',1949,'MASINI','MASSIMILIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (46,'MASSA MASSIMILIANO',1967,'MASSA','MASSIMILIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(286,'MASSARENTI BARBARA',1969,'MASSARENTI','BARBARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(286,'MASSARENTI BARBARA',1969,'MASSARENTI','BARBARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1014,'MASSARI CRISTINA',1973,'MASSARI','CRISTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1003,'MASSIMO GOZZI',1958,'MASSIMO','GOZZI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (581,'MASTRANGELO LAURA',1975,'MASTRANGELO','LAURA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1214,7 +1236,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1049,'MISELLI FRANCESCO',1977,'MISELLI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (171,'MODENESE GIOVANNA',1969,'MODENESE','GIOVANNA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (244,'MODENESI GIOVANNA',1973,'MODENESI','GIOVANNA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(1843,'MODIANO SARA',1982,'MODIANO','SARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1843,'MODIANO SARA',1982,'MODIANO','SARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1431,'MOLINARICH NORMA',1974,'MOLINARICH','NORMA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (99,'MOLNAR VERONICA',1971,'MOLNAR','VERONICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (217,'MONACO MARCO',1978,'MONACO','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1235,9 +1259,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1484,'MORA FEDERICA',1995,'MORA','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (511,'MORANDI MAURO',1960,'MORANDI','MAURO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1468,'MORANI FRANCESCO',1984,'MORANI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(618,'MORARA MATTEO',1984,'MORARA','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(618,'MORARA MATTEO',1984,'MORARA','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (617,'MORELLI SILVIA',1983,'MORELLI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (726,'MORI ALESSANDRO',1979,'MORI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (740,'MORIGI MARCO',1978,'MORIGI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1249,6 +1271,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1344,'MORSELLI MARTINA',1993,'MORSELLI','MARTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1315,'MORSIANI FEDERICO',1994,'MORSIANI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1325,'MORSIANI MAURIZIO',1969,'MORSIANI','MAURIZIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1854,'MOSCATELLI CAMILLA',1992,'MOSCATELLI','CAMILLA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1085,'MOTOLIERE ANDREA',1976,'MOTOLIERE','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1519,'MOZZINI PAOLO',1975,'MOZZINI','PAOLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (921,'MURINO CINZIA',1965,'MURINO','CINZIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1280,6 +1303,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (251,'NICOLA ANDREA',1974,'NICOLA','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1357,'NICOLINI FEDERICO',1987,'NICOLINI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1471,'NICOLOSI SONIA',1969,'NICOLOSI','SONIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1867,'NICOSIA PAOLO GUGLIELMO',1984,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (563,'NIGRELLI ANTONIO',1984,'NIGRELLI','ANTONIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (651,'NIKOLAK TATJANA',1973,'NIKOLAK','TATJANA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (61,'NIRO MARCO',1967,'NIRO','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1314,7 +1338,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (772,'PAGANINI VANIA',1975,'PAGANINI','VANIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1032,'PALA GIANNI',1980,'PALA','GIANNI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (186,'PALANTRANI ANDREA',1975,'PALANTRANI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1664,'PALESTINI STEFANO',1979,'PALESTINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1664,'PALESTINI STEFANO',1979,'PALESTINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (492,'PALICELLI ANDREA',1984,'PALICELLI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (452,'PALLICELLI ELENA',1968,'PALLICELLI','ELENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (616,'PALMIERI LETIZIA',1974,'PALMIERI','LETIZIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1337,9 +1363,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (380,'PAOLI FRANCESCO',1977,'PAOLI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (912,'PAOLO FESTI',1970,'PAOLO','FESTI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (409,'PAOLO SCARMAGNANI',1966,'PAOLO','SCARMAGNANI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(209,'PAOLUZZI ILENIA',1982,'PAOLUZZI','ILENIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(209,'PAOLUZZI ILENIA',1982,'PAOLUZZI','ILENIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (355,'PARIGI SILVIA',1972,'PARIGI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (759,'PARISI CANDIDA',1979,'PARISI','CANDIDA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (490,'PARISI LORENZO',1982,'PARISI','LORENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1349,6 +1373,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1445,'PARMIGIANI MATTEO',1994,'PARMIGIANI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1180,'PARMIGIANI SILVIA',1989,'PARMIGIANI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (299,'PAROCCHI SILVIA',1966,'PAROCCHI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1858,'PASELLO SIMONE',1976,'PASELLO','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1786,'PASETTI ANDREA',1994,'PASETTI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (980,'PASI FILIPPO',1978,'PASI','FILIPPO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (293,'PASQUALINI EMI',1978,'PASQUALINI','EMI',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1362,6 +1387,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1387,'PATRONCINI ANDREA',1969,'PATRONCINI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1043,'PECCI FILIPPO',1988,'PECCI','FILIPPO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (75,'PECORARI LUCA',1970,'PECORARI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1855,'PEDENZANI GIULIA',1993,'PEDENZANI','GIULIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1018,'PEDERZANI ANNALISA',1980,'PEDERZANI','ANNALISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1294,'PEDRAZZOLI SERENA',1990,'PEDRAZZOLI','SERENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1797,'PEDRETTI ERICA',1984,'PEDRETTI','ERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1381,6 +1407,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (845,'PERINI FRANCESCA',1991,'PERINI','FRANCESCA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (344,'PERUZZI ELENA',1979,'PERUZZI','ELENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (374,'PERUZZI IRENE',1977,'PERUZZI','IRENE',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1848,'PESARE REBECCA',1995,'PESARE','REBECCA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (144,'PESARIN CIPRIANO',1970,'PESARIN','CIPRIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1389,'PESCATORE FRANCESCA',1992,'PESCATORE','FRANCESCA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1773,'PESCI MAURIZIO',1976,'PESCI','MAURIZIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1413,7 +1440,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1646,'PINTORI LAURA',1992,'PINTORI','LAURA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1637,'PIOLI ALICE',1986,'PIOLI','ALICE',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (795,'PIRANI ALESSANDRO',1987,'PIRANI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(950,'PIRAZZINI ELIA',1983,'PIRAZZINI','ELIA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(950,'PIRAZZINI ELIA',1983,'PIRAZZINI','ELIA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1102,'PIRAZZINI ISACCO',1985,'PIRAZZINI','ISACCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (997,'PIRAZZOLI FEDERICA',1984,'PIRAZZOLI','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (347,'PISCOPO VINCENZO',1979,'PISCOPO','VINCENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1437,11 +1466,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1171,'POZZATO ANNA',1979,'POZZATO','ANNA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1305,'POZZI ANDREA',1988,'POZZI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1236,'POZZI CARLOS ALB.',1956,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(874,'POZZI FEDERICO',1991,'POZZI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1316,'POZZI FEDERICO',1992,'POZZI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(847,'POZZI FRANCESCO',1991,'POZZI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(874,'POZZI FEDERICO',1991,'POZZI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(847,'POZZI FRANCESCO',1991,'POZZI','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (484,'POZZI GIORGIA',1986,'POZZI','GIORGIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1293,'POZZI SARA',1987,'POZZI','SARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (400,'PRAMPOLINI ANDREA',1964,'PRAMPOLINI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1515,7 +1542,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (111,'RIOS FIDEL',1961,'RIOS','FIDEL',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1342,'RIVALINI CORRADO',1969,'RIVALINI','CORRADO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1800,'RIZZIELLO FERNANDO',1943,'RIZZIELLO','FERNANDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1737,'ROBUSTINI ILARIA',1992,'ROBUSTINI','ILARIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1737,'ROBUSTINI ILARIA',1992,'ROBUSTINI','ILARIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (16,'RODA MIRANDA',1967,'RODA','MIRANDA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1499,'RODOLFI SIMONE',1992,'RODOLFI','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1546,'ROLFINI FEDERICO',1983,'ROLFINI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1541,9 +1570,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (751,'RUBBIANI ELISA',1987,'RUBBIANI','ELISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (767,'RUBBINI ANDREA',1972,'RUBBINI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (532,'RUBERTI MARCO',1976,'RUBERTI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(881,'RUBINI FEDERICA',1980,'RUBINI','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(881,'RUBINI FEDERICA',1980,'RUBINI','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (515,'RUGGERO VINCENZO',1987,'RUGGERO','VINCENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1768,'RUGGI FEDERICO',1995,'RUGGI','FEDERICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1662,'RUGGI GABRIELE',1991,'RUGGI','GABRIELE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1552,6 +1579,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (163,'RUINI VINCENZO',1979,'RUINI','VINCENZO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (342,'RUOTI RICCARDO',1947,'RUOTI','RICCARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (684,'RUOZI LUCA',1969,'RUOZI','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1868,'SABATINI PATRIZIA',1960,'SABATINI','PATRIZIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (696,'SABBADINI INGRID',1988,'SABBADINI','INGRID',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (970,'SABBATINI ALESSANDRA',1978,'SABBATINI','ALESSANDRA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1687,'SABBI FABIO',1972,'SABBI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1580,12 +1608,14 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (686,'SALVATORE MARA',1980,'SALVATORE','MARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1574,'SALVI YVONNE',1995,'SALVI','YVONNE',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1690,'SALZILLO FRANCESCO',1993,'SALZILLO','FRANCESCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1866,'SAMBUCHI ELENA',1994,'SAMBUCHI','ELENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1771,'SANDONA'' CLAUDIO',1982,'SANDONA''','CLAUDIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (778,'SANDRI TOMMASO',1989,'SANDRI','TOMMASO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (612,'SANGHEZ VALENTINA',1981,'SANGHEZ','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1075,'SANGIORGI STEFANO',1964,'SANGIORGI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1391,'SANGUETTOLI FILIPPO',1993,'SANGUETTOLI','FILIPPO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (3,'SANMARCHI MILENA',1979,'SANMARCHI','MILENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1853,'SANNA CRISTIAN',1982,'SANNA','CRISTIAN',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (298,'SANNINI ANTONIO',1971,'SANNINI','ANTONIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (962,'SANTACHIARA DEBORA',1990,'SANTACHIARA','DEBORA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1832,'SANTI FEDERICA',1980,'SANTI','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1614,7 +1644,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (284,'SEGALA LISA',1975,'SEGALA','LISA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (156,'SEIDENARI ROBERTO',1953,'SEIDENARI','ROBERTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (399,'SELAMA BILAL',1966,'SELAMA','BILAL',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1580,'SELENICA GENTI',1986,'SELENICA','GENTI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1580,'SELENICA GENTI',1986,'SELENICA','GENTI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (871,'SEMI MARIA',1981,'SEMI','MARIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1149,'SERMENGHI SILVERIO',1961,'SERMENGHI','SILVERIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1689,'SERPIERI VALENTINA',1992,'SERPIERI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1643,9 +1675,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (273,'SIMEONE LUCA',1970,'SIMEONE','LUCA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1444,'SIMONAZZI ERIKA',1994,'SIMONAZZI','ERIKA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1518,'SIMONELLI DAVIDE',1974,'SIMONELLI','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1594,'SIMONINI MICHAEL',1990,'SIMONINI','MICHAEL',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1594,'SIMONINI MICHAEL',1990,'SIMONINI','MICHAEL',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1168,'SIMONINI RITA',1939,'SIMONINI','RITA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (863,'SIMONINI STEFANO',1965,'SIMONINI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1436,'SIRAGUSA ROBERTO',1958,'SIRAGUSA','ROBERTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1709,13 +1739,16 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (493,'TARABINI CHIARA',1975,'TARABINI','CHIARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (468,'TARABINI MATTIA',1984,'TARABINI','MATTIA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1165,'TARABINI RICCARDO',1972,'TARABINI','RICCARDO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1857,'TARTARI CATERINA',1993,'TARTARI','CATERINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1593,'TARTARI FEDERICA',1991,'TARTARI','FEDERICA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1415,'TARTARI STEFANO',1987,'TARTARI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1295,'TASSARA CRISTINA',1984,'TASSARA','CRISTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1340,'TASSELLI SIMONA',1979,'TASSELLI','SIMONA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (430,'TASSELLI SONIA',1976,'TASSELLI','SONIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (931,'TASSI MARCO',1988,'TASSI','MARCO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(729,'TASSINARI ALESSANDRO',1981,'TASSINARI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(729,'TASSINARI ALESSANDRO',1981,'TASSINARI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (309,'TASSINARI FABIO',1965,'TASSINARI','FABIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (762,'TASSINARI MATTEO',1982,'TASSINARI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (512,'TCHERKES ZADE DARRIEL',1956,'','',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1745,9 +1778,8 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (957,'TONINI SIMONA',1960,'TONINI','SIMONA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1311,'TORBOLI LORENA',1968,'TORBOLI','LORENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1845,'TORELLI ROBERTO',1972,'TORELLI','ROBERTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(888,'TORNESE DAVIDE',1986,'TORNESE','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1875,'TORELLI STEFANO',1988,'TORELLI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(888,'TORNESE DAVIDE',1986,'TORNESE','DAVIDE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1558,'TORREGGIANI ROBERTO',1995,'TORREGGIANI','ROBERTO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1426,'TORRI ANDREA',1993,'TORRI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (707,'TOSATI SARA',1981,'TOSATI','SARA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1756,6 +1788,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (70,'TOSELLI ANDREA',1976,'TOSELLI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (282,'TOSELLI GIANNI',1965,'TOSELLI','GIANNI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1061,'TOSELLI SIMONA',1978,'TOSELLI','SIMONA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1856,'TOSETTI GIOVANNI',1990,'TOSETTI','GIOVANNI',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (824,'TOSI ANDREA',1956,'TOSI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1008,'TOSI ELENA',1985,'TOSI','ELENA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (1057,'TOSI GIORGIA',1988,'TOSI','GIORGIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1815,7 +1848,9 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (52,'VERNIA GIORDANO',1960,'VERNIA','GIORDANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (786,'VERNIZZI MASSIMILIANO',1973,'VERNIZZI','MASSIMILIANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (589,'VERONA SIMONE',1974,'VERONA','SIMONE',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1534,'VERONESI VALENTINA',1995,'VERONESI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(1534,'VERONESI VALENTINA',1995,'VERONESI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
 (1051,'VERONI STEFANO',1972,'VERONI','STEFANO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1244,'VERONI VITTORIO',1987,'VERONI','VITTORIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1338,'VERTELLESI SONIA',1967,'VERTELLESI','SONIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
@@ -1847,9 +1882,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1215,'VIOLI MARGHERITA',1986,'VIOLI','MARGHERITA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (356,'VIRGILIO ANDREA',1973,'VIRGILIO','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (646,'VITALE FILIPPO',1976,'VITALE','FILIPPO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1355,'VITALE MARIA PIA',1947,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
-
-INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(1355,'VITALE MARIA PIA',1947,'','',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (628,'VITALI ANGELA',1969,'VITALI','ANGELA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (168,'VITTORIO D''AMICO',1974,'VITTORIO','D''AMICO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1458,'VIVIAN MAICOL',1995,'VIVIAN','MAICOL',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -1894,7 +1927,8 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (225,'ZUCCHINI SILVIA',1968,'ZUCCHINI','SILVIA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (701,'ZUFFI ANDREA',1974,'ZUFFI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1503,'ZULIANI MATTEO',1992,'ZULIANI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(174,'ZULIANI PAOLO',1970,'ZULIANI','PAOLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+(174,'ZULIANI PAOLO',1970,'ZULIANI','PAOLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1874,'ZYGMUNT KATARZYNA',1991,'ZYGMUNT','KATARZYNA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella teams
@@ -6710,13 +6744,13 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4451,121,1,1778,'AT04233926',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 121),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 121),0,CURDATE(),CURDATE()),
 (4452,121,1,1779,'AT04233925',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 121),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 121),0,CURDATE(),CURDATE()),
 (4453,131,1,1503,'AT04211106',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4454,131,28,1376,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4454,131,28,1376,'AT04404280',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4455,131,11,1780,'AT04015209',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4456,131,32,1540,'AT04226069',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4457,131,1,1030,'AT04207991',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4458,131,17,1455,'AT17501197',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4459,131,32,1619,'AT04226073',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4460,131,35,1781,'?',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4460,131,35,1781,'AT04227642',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4461,131,11,1692,'AT04013021',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4462,131,5,699,'?',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4463,131,35,1416,'AT04225437',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
@@ -6730,7 +6764,7 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4471,131,11,1687,'AT04013041',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4472,131,17,756,'AT17503098',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4473,131,11,1782,'AT04015211',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4474,131,28,1311,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4474,131,28,1311,'AT04404290',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4475,131,5,1342,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4476,131,5,986,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4477,131,5,1173,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
@@ -6743,10 +6777,10 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4484,131,28,1786,'AT04404285',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4485,131,1,1437,'AT04207439',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4486,131,14,1212,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4487,131,28,1478,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4487,131,28,1478,'AT04404284',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4488,131,35,1513,'AT04225442',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4489,131,3,1787,'AT04206398',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 3 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4490,131,28,1788,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4490,131,28,1788,'AT04404287',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4491,131,3,1789,'AT04218514',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 3 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4492,131,5,1751,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4493,131,3,1790,'AT04215586',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 3 and ta.season_id = 131),0,CURDATE(),CURDATE()),
@@ -6755,11 +6789,11 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4496,131,5,1253,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4497,131,10,1586,'AT04214538',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 10 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4498,131,3,1792,'AT04215609',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 3 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4499,131,28,1068,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4499,131,28,1068,'AT04404283',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4500,131,28,1793,'AT04404281',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE());
 
 INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type_id,entry_time_type_id,team_affiliation_id,lock_version,created_at,updated_at) VALUES 
-(4501,131,28,1729,'?',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4501,131,28,1729,'AT04404279',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4502,131,25,971,'AT04009539',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 25 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4503,131,32,1198,'AT04226076',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4504,131,35,989,'AT04227645',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
@@ -6853,10 +6887,10 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4592,131,14,116,'?',2,(select t.id from category_types t where t.code = 'OVER' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4593,131,1,788,'AT04201583',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4594,131,32,1247,'AT04226078',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4595,131,11,1666,'?',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4595,131,11,1666,'AT04013031',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4596,131,5,753,'?',2,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4597,131,5,92,'?',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4598,131,32,1310,'?',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4598,131,32,1310,'AT04226079',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4599,131,11,1686,'AT04013026',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4600,131,14,1802,'?',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE());
 
@@ -6908,9 +6942,9 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4645,131,39,1678,'AT04402917',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4646,131,5,1110,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4647,131,14,1233,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4648,131,18,1815,'AT04315347',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 18 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4648,131,18,1815,'AT04314347',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 18 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4649,131,5,26,'?',2,(select t.id from category_types t where t.code = 'OVER' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4650,131,39,1679,'?',2,(select t.id from category_types t where t.code = 'OVER' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4650,131,39,1679,'AT04405607',2,(select t.id from category_types t where t.code = 'OVER' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4651,131,39,1602,'AT04402923',2,(select t.id from category_types t where t.code = 'SEN' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4652,131,39,1614,'AT04403153',2,(select t.id from category_types t where t.code = 'SEN' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4653,131,39,1555,'AT04402935',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
@@ -7016,6 +7050,101 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (4751,131,14,1844,'?',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4752,131,18,1845,'AT04315353',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 18 and ta.season_id = 131),0,CURDATE(),CURDATE()),
 (4753,131,32,1275,'?',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
-(4754,131,14,864,'?',2,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE());
+(4754,131,14,864,'?',2,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4755,131,17,1760,'AT17501177',3,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4756,131,28,1737,'AT04404347',4,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4757,131,17,1646,'?',5,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4758,131,28,1199,'AT04411233',6,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4759,131,39,1756,'AT04402918',7,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4760,131,17,1107,'AT17503115',8,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4761,131,14,1846,'?',9,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4762,131,11,95,'AT04009979',10,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4763,131,1,1523,'AT04236191',11,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4764,131,39,1847,'AT04403143',12,(select t.id from category_types t where t.code = 'SEN' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4765,131,1,1848,'AT04231698',13,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4766,131,28,1849,'AT04411232',14,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4767,131,1,1850,'AT04235108',15,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4768,131,39,1575,'AT04403156',16,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4769,131,39,1613,'AT04402941',17,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4770,131,17,1851,'AT17502842',18,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4771,131,17,1606,'AT17503107',19,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4772,131,5,830,'?',20,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4773,131,5,1439,'?',21,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4774,131,17,1467,'AT17503094',22,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4775,131,35,1852,'?',23,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4776,131,25,1853,'AT04009560',24,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 25 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4777,131,5,1695,'?',25,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4778,131,17,774,'AT17503091',26,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4779,131,39,1763,'AT04402942',27,(select t.id from category_types t where t.code = 'SEN' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4780,131,35,1854,'AT12345678',28,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4781,131,39,1855,'AT04410515',29,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4782,131,17,965,'AT17501178',30,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4783,131,28,1162,'AT04404276',31,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4784,131,35,709,'AT04225452',32,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4785,131,5,901,'?',33,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4786,131,5,1669,'?',34,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4787,131,39,1856,'AT04403210',35,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4788,131,17,870,'?',36,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4789,131,17,584,'AT17501190',37,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4790,131,17,1469,'AT12345678',38,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4791,131,28,1857,'AT04404288',39,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4792,131,39,1858,'AT04410516',40,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4793,131,35,1706,'AT04219969',41,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4794,131,5,1755,'?',42,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4795,131,1,1859,'AT04237405',43,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4796,131,32,1502,'?',44,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4797,131,28,1562,'AT04404275',45,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4798,131,39,1759,'AT04402931',46,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4799,131,5,1860,'?',47,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4800,131,17,649,'?',48,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE());
+
+INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type_id,entry_time_type_id,team_affiliation_id,lock_version,created_at,updated_at) VALUES 
+(4801,131,39,1600,'AT04402914',49,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4802,131,25,1861,'AT04009556',50,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 25 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4803,131,32,1612,'AT04220665',51,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4804,131,17,1151,'AT17501187',52,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4805,131,11,1563,'AT04009978',53,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 11 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4806,131,35,1459,'AT04225443',54,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4807,131,25,1146,'AT04009541',55,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 25 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4808,131,5,1862,'?',56,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 5 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4809,131,17,1443,'AT17503099',57,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 17 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4810,131,39,1734,'AT04402914',58,(select t.id from category_types t where t.code = 'SEN' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 39 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4811,131,25,1588,'AT04009553',59,(select t.id from category_types t where t.code = 'OVER' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 25 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4812,131,10,1584,'AT04214134',60,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 10 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4813,131,1,1779,'AT04238249',61,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4814,131,35,1863,'AT04235412',62,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 35 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4815,131,1,1864,'AT04238227',63,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4816,131,1,1128,'AT04226626',64,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4817,131,14,410,'?',65,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4818,131,14,1865,'?',66,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4819,131,10,1681,'AT04214557',67,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 10 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4820,131,1,1866,'AT04238234',68,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4821,131,1,1647,'AT04238229',69,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4822,131,18,1867,'AT04322261',70,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 18 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4823,131,1,1365,'AT04238226',71,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4824,131,1,257,'AT04201578',72,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4825,131,32,1868,'?',73,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4826,131,14,1774,'?',74,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4827,131,28,1593,'?',75,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 28 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4828,131,1,1412,'AT04220865',76,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4829,131,32,1869,'?',77,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 32 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4830,131,1,1769,'AT04201587',78,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4831,131,18,1870,'AT04322260',79,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 18 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4832,131,1,1871,'AT04238233',80,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4833,131,1,1872,'AT04238232',81,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4834,131,18,1873,'AT04322259',82,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 18 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4835,131,14,766,'?',83,(select t.id from category_types t where t.code = 'M30' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4836,131,1,263,'AT04201602',84,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4837,131,1,1481,'?',85,(select t.id from category_types t where t.code = 'M40' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4838,131,1,1640,'AT04238230',86,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4839,131,1,1874,'AT04238235',87,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4840,131,14,1214,'?',88,(select t.id from category_types t where t.code = 'M20' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4841,131,1,1875,'?',89,(select t.id from category_types t where t.code = 'M25' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4842,131,1,1187,'AT04238236',90,(select t.id from category_types t where t.code = 'M35' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4843,131,14,1876,'?',91,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4844,131,1,457,'?',92,(select t.id from category_types t where t.code = 'M45' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4845,131,1,1369,'AT04238228',93,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4846,131,1,1877,'?',94,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'O'),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 131),0,CURDATE(),CURDATE()),
+(4847,131,14,1878,'?',95,(select t.id from category_types t where t.code = 'M50' and t.season_id = 131),(select t.id from entry_time_types t where t.code = 'M'),(select ta.id from team_affiliations ta where ta.team_id = 14 and ta.season_id = 131),0,CURDATE(),CURDATE());
 
 COMMIT;
