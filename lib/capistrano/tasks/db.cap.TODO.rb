@@ -32,61 +32,63 @@ namespace :db do
 
       The user for the db connection can be configured accordingly by editing this deploy recipe.
     DESC
-    task :setup, :role => [:app], :except => { :no_release => true } do
-      pwd_prompt = "Enter MySQL database password for '#{mysql_user}': "
+    task :setup do
+      on roles(:app) do |host|
+        pwd_prompt = "Enter MySQL database password for '#{mysql_user}': "
+        default_template = <<-EOF
+base: &base
+  adapter: mysql2
+  encoding: utf8
+  host: #{production_db_name}
+  port: 3306
+  username: #{mysql_user}
+  password: #{ask(pwd_prompt)}
+#  pool: 5
+#  timeout: 5000
+#  socket: #{socket_path}/mysql/mysql.sock
 
-      default_template = <<-EOF
-      base: &base
-        adapter: mysql2
-        encoding: utf8
-        host: #{production_db_name}
-        port: 3306
-        username: #{mysql_user}
-        password: #{Capistrano::CLI.ui.ask(pwd_prompt)}
-#        pool: 5
-#        timeout: 5000
-#        socket: #{socket_path}/mysql/mysql.sock
+development:
+  database: #{application}_development
+  <<: *base
 
-      development:
-        database: #{application}_development
-        <<: *base
+test:
+  database: #{application}_test
+  <<: *base
 
-      test:
-        database: #{application}_test
-        <<: *base
+production:
+  database: #{application}
+<<: *base
+EOF
 
-      production:
-        database: #{application}
-        <<: *base
-      EOF
-
-      location = fetch(:template_dir, "config/deploy") + '/database.yml.erb'
-      template = File.file?(location) ? File.read(location) : default_template
-
-      config = ERB.new(template)
-
-      run "mkdir -p #{shared_path}/db"
-      run "mkdir -p #{shared_path}/config"
-      put config.result(binding), "#{shared_path}/config/database.yml"
+        location = fetch(:template_dir, "config/deploy") + '/database.yml.erb'
+        template = File.file?(location) ? File.read(location) : default_template
+        config = ERB.new(template)
+        execute :mkdir, "-p #{shared_path}/db"
+        execute :mkdir, "-p #{shared_path}/config"
+        put config.result(binding), "#{shared_path}/config/database.yml"
+      end
     end
+    # --------------------------------------------------------------------------
 
 
-    desc <<-DESC
-      [internal] Recreates the symlink for database.yml file to the just deployed release.
-    DESC
-    task :create_symlink, :except => { :no_release => true } do
-      run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+    desc "Recreates the symlink for database.yml file to the just deployed release."
+    task :create_symlink do
+      on roles(:app) do
+        execute :ln, "-nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+      end
     end
+    # --------------------------------------------------------------------------
 
 
-    # Remote DB schema creation tool.
-    #
-    desc <<-DESC
-      Invokes rake db:schema:load into the remote app server.
-    DESC
-    task :schema_load, :role => [:app] do
-      run "cd #{deploy_to}/current && rake db:schema:load"
+    desc "Invokes rake db:schema:load into the remote app server."
+    task :schema_load do
+      on roles(:app) do
+        within release_path do
+          rake "db:schema:load"
+        end
+      end
     end
+    # --------------------------------------------------------------------------
 
 
     # Remote Production DB data upload tool.
@@ -105,13 +107,17 @@ namespace :db do
       If the script already contains a specific "create database" statement, use the task :sql_exec
       instead, since the latter does not specify the target database.
     DESC
-    task :sql_upload, :role => [:db] do
+    task :sql_upload do
       pwd_prompt = "Enter MySQL database password for '#{user}': "
-      local_file_path = Capistrano::CLI.ui.ask("Enter the local path to the SQL file to be executed remotely: ")
-
+      local_file_path = ask("Enter the local path to the SQL file to be executed remotely: ")
       put File.read(local_file_path), "/tmp/db_upload.sql"
-      run "mysql --database=#{application} --user=#{user} -p#{Capistrano::CLI.ui.ask(pwd_prompt)} -e \"\\. /tmp/db_upload.sql\""
+      on roles(:app) do
+        within release_path do
+          execute :mysql, "--database=#{application} --user=#{user} -p#{ask(pwd_prompt)} -e \"\\. /tmp/db_upload.sql\""
+        end
+      end
     end
+    # --------------------------------------------------------------------------
 
 
     # Remote *generic* DB SQL execution tool.
@@ -123,13 +129,17 @@ namespace :db do
       This is actually useful to re-create from scratch any database using a previously
       prepared SQL dump that will be executed with this task on the Database server.
     DESC
-    task :sql_exec, :role => [:db] do
+    task :sql_exec do
       pwd_prompt = "Enter MySQL database password for '#{user}': "
-      local_file_path = Capistrano::CLI.ui.ask("Enter the local path to the SQL file to be executed remotely: ")
-
+      local_file_path = ask("Enter the local path to the SQL file to be executed remotely: ")
       put File.read(local_file_path), "/tmp/db_upload.sql"
-      run "mysql --user=#{user} -p#{Capistrano::CLI.ui.ask(pwd_prompt)} -e \"\\. /tmp/db_upload.sql\""
+      on roles(:app) do
+        within release_path do
+          execute :mysql, "--user=#{user} -p#{ask(pwd_prompt)} -e \"\\. /tmp/db_upload.sql\""
+        end
+      end
     end
+    # --------------------------------------------------------------------------
 
 
     # Remote DB dump & retrieval tool.
@@ -140,7 +150,7 @@ namespace :db do
       The dump is executed remotely, archived temporarely as a bzipped SQL file,
       retrieved and saved locally in a prompted directory.
     DESC
-    task :sql_dump, :role => [:db] do
+    task :sql_dump do
       pwd_prompt = "Enter MySQL database password for '#{user}': "
       zip_pipe = ' | bzip2 -c'
       file_name = "#{application}-SQL_dump.sql.bz2"
@@ -156,7 +166,7 @@ namespace :db do
       run "#{try_sudo} rm /tmp/#{file_name}"
       puts "Done."
     end
-
+    # --------------------------------------------------------------------------
   end
   # ---------------------------------------------------------------------------
 end

@@ -1,6 +1,7 @@
+require 'pp'
+
 
 namespace :utils do
-
   desc "Checks if we can access the deployment directory as the deploy user."
   task :check_write_permissions do
     on roles(:app, :web) do |host|
@@ -33,4 +34,31 @@ namespace :utils do
   end
   # ---------------------------------------------------------------------------
 
+
+
+  desc "Dumps the current environment variables."
+  task :env_dump do
+    puts "---------------------8<------------------"
+    puts "## Capistrano env ##"
+    pp env
+    puts "---------------------8<------------------"
+    puts "## primary(:app) ##"
+    pp primary(:app)
+    puts "## primary(:web) ##"
+    pp primary(:web)
+    puts "## primary(:db) ##"
+    pp primary(:db)
+    puts "---------------------8<------------------"
+    puts "- deploy_to:          #{deploy_to}"
+    puts "- deploy_path:        #{deploy_path}"
+    puts "- deploy_config_path: #{deploy_config_path}"
+    puts "- stage_config_path:  #{stage_config_path}"
+    puts "- release_path:       #{release_path}"
+    puts "- current_path:       #{current_path}"
+    puts "- shared_path:        #{shared_path}"
+    puts "- repo_path:          #{repo_path}"
+    puts "- repo_url:           #{repo_url}"
+    puts "---------------------8<------------------\r\n"
+  end
+  # ---------------------------------------------------------------------------
 end
