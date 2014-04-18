@@ -1,14 +1,13 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.223.20140418
+# - vers. : 4.00.225.20140418
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
 
 
 namespace :web do
-
   namespace :setup do
     desc <<-DESC
       Appends a new Virtual Host definition to the Apache2 configuration for this app.
@@ -26,6 +25,7 @@ namespace :web do
       'cap <servername> deploy:web:[enable|disable]' commands.
     DESC
     task :vhost_add do
+      puts "      > Setup remote /etc/apache2/vhosts.d/ip-based_vhosts.conf..."
       on roles(:web) do |host|
         default_template = <<-EOF
   ### #{fetch(:application)} ###

@@ -38,7 +38,7 @@ namespace :utils do
 
   desc "Dumps the current environment variables."
   task :env_dump do
-    puts "---------------------8<------------------"
+    puts "\r\n---------------------8<------------------"
     puts "## Capistrano env ##"
     pp env
     puts "---------------------8<------------------"

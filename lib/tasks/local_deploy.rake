@@ -3,7 +3,7 @@ require 'rubygems'
 require 'find'
 require 'fileutils'
 
-require 'rails/all'
+# require 'rails/all'
 require File.join( Rails.root.to_s, 'config/environment' )
 
 
@@ -16,7 +16,7 @@ require File.join( Rails.root.to_s, 'config/environment' )
 
 
 # Script revision number
-SCRIPT_VERSION = '4.10.20140403'
+SCRIPT_VERSION = '4.225.20140418'
 
 # Gives current application name
 APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]

@@ -1,12 +1,13 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.223.20140416
+# - vers. : 4.00.225.20140416
 #
 # This requires Capistrano v. >= 3.1
 
 
 namespace :remote do
+  set :param_prompt, ask("\r\nEnter ALL parameters for the remote invocation (besides the command itself): ", nil)
 
   desc "Returns webserver uptime." 
   task :uptime do
@@ -27,7 +28,6 @@ namespace :remote do
   task :rake do
     on roles(:app) do
       within release_path do
-        set :param_prompt, ask("Enter ALL parameters for the remote Rake invocation (besides the 'rake' command itself): ", nil)
         rake "#{fetch(:param_prompt)}"
       end
     end
@@ -44,7 +44,6 @@ namespace :remote do
   task :bundle do
     on roles(:app) do
       within release_path do
-        set :param_prompt, ask("Enter ALL parameters for the remote Bundler invocation (besides the 'bundle' command itself): ", nil)
         bundle "#{fetch(:param_prompt)}"
       end
     end
