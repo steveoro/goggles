@@ -673,7 +673,7 @@ INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_i
 (1803,'FANTINI VALENTINA',1992,'FANTINI','VALENTINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (360,'FANTOZZI ROMOLO',1974,'FANTOZZI','ROMOLO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (663,'FANTUZZI EROS',1967,'FANTUZZI','EROS',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(897,'FARAGþ CATERINA',1973,'FARAGþ','CATERINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(897,'FARAGO'' CATERINA',1973,'FARAGO''','CATERINA',2,(select t.id from gender_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
 (269,'FARINELLI DARIO',1972,'FARINELLI','DARIO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (214,'FAUSTINI ANDREA',1979,'FAUSTINI','ANDREA',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (242,'FAUSTINI MATTEO',1977,'FAUSTINI','MATTEO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
