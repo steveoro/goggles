@@ -24,7 +24,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery_datepicker'
 
-gem 'therubyracer'                                  # This seems to be the only one feasible on the EC2 micro instance
+gem 'therubyracer', :platform => :ruby               # This seems to be the only one feasible on the EC2 micro instance
 #gem 'execjs'                                        # This requires a local (package) install of node.js
 #gem 'therubyrhino', :platforms => :ruby
 
