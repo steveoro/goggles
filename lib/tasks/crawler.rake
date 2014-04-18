@@ -4,9 +4,6 @@ require 'rubygems'
 require 'fileutils'
 require 'mechanize'
 
-# require 'rails/all'
-require File.join( Rails.root.to_s, 'config/environment' )
-
 require 'framework/console_logger'
 require 'parsers/data_importer'
 
@@ -15,12 +12,15 @@ require 'parsers/data_importer'
 
 = Web-Crawling Helper tasks
 
-  - Goggles framework vers.:  4.00.197.20140306
+  - Goggles framework vers.:  4.00.225.20140418
   - author: Steve A.
 
+  (ASSUMES TO BE rakeD inside Rails.root)
+
 =end
-UPLOADS_DIR   = File.join( Rails.root, 'public/uploads' ) unless defined? UPLOADS_DIR
-LOG_DIR       = File.join( Rails.root, 'log' ) unless defined? LOG_DIR
+
+UPLOADS_DIR   = File.join( Dir.pwd, 'public/uploads' ) unless defined? UPLOADS_DIR
+LOG_DIR       = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 SEARCH_URL    = 'http://google.com/'
 # -----------------------------------------------------------------------------
 

@@ -3,9 +3,7 @@ require 'date'
 require 'rubygems'
 require 'fileutils'
 require 'mechanize'
-
-# require 'rails/all'
-require File.join( Rails.root.to_s, 'config/environment' )
+require File.join( Dir.pwd.to_s, 'config/environment' )
 
 require 'framework/console_logger'
 require 'parsers/data_importer'
@@ -15,8 +13,10 @@ require 'parsers/data_importer'
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.221.20140414
+  - Goggles framework vers.:  4.00.225.20140414
   - author: Steve A.
+
+  (ASSUMES TO BE rakeD inside Rails.root)
 
 =end
 # -----------------------------------------------------------------------------
