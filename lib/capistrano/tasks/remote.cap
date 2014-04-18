@@ -29,7 +29,6 @@ namespace :remote do
       within release_path do
         set :param_prompt, ask("Enter ALL parameters for the remote Rake invocation (besides the 'rake' command itself): ", nil)
         rake "#{fetch(:param_prompt)}"
-#          execute :rake, "#{Capistrano::CLI.ui.ask(param_prompt)}"
       end
     end
   end
@@ -47,7 +46,6 @@ namespace :remote do
       within release_path do
         set :param_prompt, ask("Enter ALL parameters for the remote Bundler invocation (besides the 'bundle' command itself): ", nil)
         bundle "#{fetch(:param_prompt)}"
-#          execute :bundle, "#{Capistrano::CLI.ui.ask(param_prompt)}"
       end
     end
   end
@@ -60,7 +58,6 @@ namespace :remote do
       within release_path do
         with rails_env: :production do
           bundle "exec rake assets:precompile"
-#            execute :bundle, "exec rake assets:precompile"
         end
       end
     end

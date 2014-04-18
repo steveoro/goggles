@@ -1,7 +1,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.223.20140415
+# - vers. : 4.00.223.20140418
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
@@ -12,7 +12,7 @@ namespace :web do
   namespace :setup do
     desc <<-DESC
       Appends a new Virtual Host definition to the Apache2 configuration for this app.
-  
+
       This should be executed just once, upon setup of the web server.
       Apache2 must be already installed and configured, otherwise the task will fail.
 
@@ -33,16 +33,16 @@ namespace :web do
   <VirtualHost *:#{fetch(:web_server_port)}>
     ServerName      #{host}
     ServerAdmin     #{fetch(:deploy_user)}@#{host}
-    DocumentRoot    #{fetch(:deploy_to)}/current/public
-    ErrorLog        #{fetch(:deploy_to)}/current/log/error.log
-    CustomLog       #{fetch(:deploy_to)}/current/log/access.log combined
+    DocumentRoot    #{shared_path}/public
+    ErrorLog        #{shared_path}/log/error.log
+    CustomLog       #{shared_path}/log/access.log combined
     RewriteEngine   On
     RewriteCond     %{DOCUMENT_ROOT}/system/maintenance.html -f
     RewriteCond     %{SCRIPT_FILENAME} !maintenance.html
     RewriteRule     ^.*$ /system/maintenance.html [R]
 
     # This hides the release root folder from being readable:
-    <Directory #{fetch(:deploy_to)}>
+    <Directory #{release_path}>
       AllowOverride None
       Options FollowSymLinks
       Order deny,allow
@@ -55,7 +55,7 @@ namespace :web do
     XSendFilePath /
 
     # The actual web app. public root folder:
-    <Directory #{fetch(:deploy_to)}/current/public>
+    <Directory #{shared_path}/public>
       PassengerEnabled on
       PassengerResolveSymlinksInDocumentRoot on
       Allow from all
@@ -76,12 +76,25 @@ namespace :web do
 
 
 EOF
-        location = fetch(:template_dir, "config/deploy") + '/vhost.erb'
-        template = File.file?(location) ? File.read(location) : default_template
-        config = ERB.new(template)
-        put config.result(binding), "/tmp/yast2_vhosts.conf"
-        execute :cat, "/tmp/yast2_vhosts.conf >> /etc/apache2/vhosts.d/ip-based_vhosts.conf"
-        execute :rm, "/tmp/yast2_vhosts.conf"
+        # FIXME To allow actual ADD of a new vhost: (since there's no more 'put append' in Cap3)
+        # TODO - test existance of remote ip-based_vhosts.config
+        # TODO - if existing, copy to local temp file and append rendered template to it
+        # TODO (then proceed as below)
+
+        run_locally do                              # Render the template to a temp file:
+          location = fetch(:template_dir, "config/deploy") + '/vhost.erb'
+          template = File.file?(location) ? File.read(location) : default_template
+          config = ERB.new(template)
+          File.open('/tmp/yast2_vhosts.conf', 'w') do |file|
+            file.puts config.result(binding)
+          end
+        end
+
+        upload! '/tmp/yast2_vhosts.conf', '/etc/apache2/vhosts.d/ip-based_vhosts.conf'
+
+        run_locally do                              # Remove the local temp file:
+          execute :rm, "/tmp/yast2_vhosts.conf"
+        end
       end
     end
     # -------------------------------------------------------------------------

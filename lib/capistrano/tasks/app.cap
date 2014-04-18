@@ -1,7 +1,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.223.20140416
+# - vers. : 4.00.223.20140418
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
@@ -68,10 +68,20 @@ namespace :app do
         if ( File.file?(location) )                 # Do nothing unless the template file is found
           template = File.read(location)
           config = ERB.new(template)
+          run_locally do                            # Render the template to a temp file:
+            File.open('/tmp/production.rb', 'w') do |file|
+              file.puts config.result(binding)
+            end
+          end
+
           within shared_path do
             execute "mkdir -p config; mkdir -p config/environments"
           end
-          put config.result(binding), "#{shared_path}/config/environments/production.rb"
+          upload! '/tmp/production.rb', "#{shared_path}/config/environments/production.rb"
+
+          run_locally do                            # Remove the local temp file:
+            execute :rm, "/tmp/production.rb"
+          end
         else
           info "Environment template file not found locally: skipping ':setup_prod_env'."
         end
@@ -80,6 +90,7 @@ namespace :app do
     # -------------------------------------------------------------------------
 
 
+# @deprecated:
     desc <<-DESC
       Recreates the symlink for production.rb file for the newly deployed release.
     DESC
@@ -94,7 +105,7 @@ namespace :app do
     desc <<-DESC
       Checks and adds shared ExtJS lib files to the deployment tree
       (only when these are not found).
-    
+
       It is safe to run this task on servers that have already been set up; it
       will not destroy any deployed revisions or data.
     DESC
@@ -106,7 +117,8 @@ namespace :app do
         if test("$(ls -A \"$#{lib_dir}\")") #  test("[ -d #{lib_dir} ]")
           info "Directory #{lib_dir} found."
         else
-          info "Directory #{lib_dir} is missing on #{host}: safely (re)creating directory before adding missing contents..."
+          info "Directory #{lib_dir} is missing on #{host}."
+          info "Safely (re)creating directory before adding missing contents..."
           execute :mkdir, "-p #{lib_dir}"
           info "Uploading directory contents..."
           use_pem_certificate = (fetch(:ssh_keys).first =~ /\.pem$/)
@@ -125,6 +137,7 @@ namespace :app do
     # -------------------------------------------------------------------------
 
 
+# @deprecated:
     desc <<-DESC
       Checks and adds other shared directories to the deployment tree
       (only when these are not found).

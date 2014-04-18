@@ -1,14 +1,14 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.223.20140415
+# - vers. : 4.00.223.20140418
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
 
 
 namespace :db do
-  namespace :remote do
+  namespace :setup do
 
     # Allows creation of a custom database.yml file, specific for each deployment,
     # asking the specific MySQL password before file creation.
@@ -19,58 +19,70 @@ namespace :db do
     desc <<-DESC
       Creates the database.yml configuration file in shared path.
 
-      By default, this task uses a template unless a template \
-      called database.yml.erb is found either inside :template_dir \
-      or /config/deploy folders. The default template matches \
+      By default, this task uses a template unless a template
+      called database.yml.erb is found either inside :template_dir
+      or /config/deploy folders. The default template matches
       the template for config/database.yml file shipped with Rails.
 
       This task is automatically invoked after a deploy:setup, unless the
       :skip_db_setup variable is set to true.
 
       The internal template used to build the database configuration file can be
-      overridden placing a 'database.yml.erb' file inside the 'config/deploy' subfolder.
+      overridden placing a 'database.yml.erb' file inside the 'config/deploy'
+      subfolder.
 
-      The user for the db connection can be configured accordingly by editing this deploy recipe.
+      The user for the db connection can be configured accordingly by editing this
+      deploy recipe.
     DESC
-    task :setup do
+    task :config do
       on roles(:app) do |host|
-        pwd_prompt = "Enter MySQL database password for '#{mysql_user}': "
         default_template = <<-EOF
 base: &base
   adapter: mysql2
   encoding: utf8
-  host: #{production_db_name}
+  host: #{primary(:db)}
   port: 3306
-  username: #{mysql_user}
-  password: #{ask(pwd_prompt)}
+  username: #{fetch(:db_user)}
+  password: #{fetch(:db_password)}
 #  pool: 5
 #  timeout: 5000
-#  socket: #{socket_path}/mysql/mysql.sock
+#  socket: #{fetch(:socket_path)}/mysql/mysql.sock
 
 development:
-  database: #{application}_development
+  database: #{fetch(:application)}_development
   <<: *base
 
 test:
-  database: #{application}_test
+  database: #{fetch(:application)}_test
   <<: *base
 
 production:
-  database: #{application}
+  database: #{fetch(:application)}
 <<: *base
 EOF
-
         location = fetch(:template_dir, "config/deploy") + '/database.yml.erb'
         template = File.file?(location) ? File.read(location) : default_template
         config = ERB.new(template)
-        execute :mkdir, "-p #{shared_path}/db"
-        execute :mkdir, "-p #{shared_path}/config"
-        put config.result(binding), "#{shared_path}/config/database.yml"
+        run_locally do                              # Render the template to a temp file:
+          File.open('/tmp/database.yml', 'w') do |file|
+            file.puts config.result(binding)
+          end
+        end
+                                                    # Make sure directory exists and upload the file
+        within shared_path do
+          execute :mkdir, "-p config"
+        end
+        upload! '/tmp/database.yml', "#{shared_path}/config/database.yml"
+
+        run_locally do                              # Remove the local temp file:
+          execute :rm, "/tmp/database.yml"
+        end
       end
     end
     # --------------------------------------------------------------------------
 
 
+# @deprecated
     desc "Recreates the symlink for database.yml file to the just deployed release."
     task :create_symlink do
       on roles(:app) do
@@ -79,6 +91,11 @@ EOF
     end
     # --------------------------------------------------------------------------
 
+  end
+  # ----------------------------------------------------------------------------
+
+
+  namespace :remote do
 
     desc "Invokes rake db:schema:load into the remote app server."
     task :schema_load do
@@ -104,17 +121,17 @@ EOF
       (This is possible on the remote app server only if the cofingured application's database
       user has enough privileges to create a whole new database from scratch.)
 
-      If the script already contains a specific "create database" statement, use the task :sql_exec
-      instead, since the latter does not specify the target database.
+      If the script already contains a specific "create database" statement, use
+      the task :sql_exec instead, since the latter does not specify the target database.
     DESC
     task :sql_upload do
-      pwd_prompt = "Enter MySQL database password for '#{user}': "
-      local_file_path = ask("Enter the local path to the SQL file to be executed remotely: ")
-      put File.read(local_file_path), "/tmp/db_upload.sql"
+      local_file_path = ask("Enter the local path to the SQL file to be executed remotely: ", nil)
       on roles(:app) do
+        upload! File.read(local_file_path), "/tmp/db_upload.sql"
         within release_path do
-          execute :mysql, "--database=#{application} --user=#{user} -p#{ask(pwd_prompt)} -e \"\\. /tmp/db_upload.sql\""
+          execute :mysql, "--database=#{fetch(:application)} --user=#{fetch(:db_user)} -p#{fetch(:db_password)} -e \"\\. /tmp/db_upload.sql\""
         end
+        # FIXME after execution remove temp file on dest host
       end
     end
     # --------------------------------------------------------------------------
@@ -130,13 +147,13 @@ EOF
       prepared SQL dump that will be executed with this task on the Database server.
     DESC
     task :sql_exec do
-      pwd_prompt = "Enter MySQL database password for '#{user}': "
       local_file_path = ask("Enter the local path to the SQL file to be executed remotely: ")
-      put File.read(local_file_path), "/tmp/db_upload.sql"
       on roles(:app) do
+        upload! File.read(local_file_path), "/tmp/db_upload.sql"
         within release_path do
-          execute :mysql, "--user=#{user} -p#{ask(pwd_prompt)} -e \"\\. /tmp/db_upload.sql\""
+          execute :mysql, "--user=#{fetch(:db_user)} -p#{fetch(:db_password)} -e \"\\. /tmp/db_upload.sql\""
         end
+        # FIXME after execution remove temp file on dest host
       end
     end
     # --------------------------------------------------------------------------
@@ -151,19 +168,18 @@ EOF
       retrieved and saved locally in a prompted directory.
     DESC
     task :sql_dump do
-      pwd_prompt = "Enter MySQL database password for '#{user}': "
       zip_pipe = ' | bzip2 -c'
-      file_name = "#{application}-SQL_dump.sql.bz2"
-      local_file_path = Capistrano::CLI.ui.ask("Enter the destination path (no filename) for the SQL dump file: ") || "."
+      file_name = "#{fetch(:application)}-SQL_dump.sql.bz2"
+      local_file_path = ask("Enter the destination path (no filename) for the SQL dump file: ") || "."
 
       puts "Executing the SQL dump..."
-      run "mysqldump -u #{user} -p#{Capistrano::CLI.ui.ask(pwd_prompt)} --add-drop-database --add-drop-table --triggers --routines --comments -c -i --no-autocommit --single-transaction -B #{application} #{zip_pipe} > /tmp/#{file_name}"
+      execute :mysqldump, "-u #{fetch(:db_user)} -p#{fetch(:db_password)} --add-drop-database --add-drop-table --triggers --routines --comments -c -i --no-autocommit --single-transaction -B #{fetch(:application)} #{zip_pipe} > /tmp/#{file_name}"
 
       puts "Retrieving the file..."
-      get "/tmp/#{file_name}", File.join(local_file_path, file_name)
+      download "/tmp/#{file_name}", File.join(local_file_path, file_name)
 
       puts "Removing remote temp file..."
-      run "#{try_sudo} rm /tmp/#{file_name}"
+      execute :rm, "/tmp/#{file_name}"
       puts "Done."
     end
     # --------------------------------------------------------------------------
