@@ -22,6 +22,12 @@ select, input[type="file"] {
     line-height: 20px;
 }
 
+.hero-unit {
+    height: 100px;
+    padding: 20px 30px;
+    margin-bottom: 15px;
+}
+
 .ui-autocomplete {
 	max-height: 218px;
 	max-width: 400px;

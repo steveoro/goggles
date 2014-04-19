@@ -42,3 +42,5 @@ db/schema.rb
 coverage/*
 coverage/assets/*
 coverage/index.html
+/api_docs/*
+api_docs/*
