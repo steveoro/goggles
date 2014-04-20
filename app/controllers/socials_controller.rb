@@ -153,18 +153,18 @@ class SocialsController < ApplicationController
   #
   # === DELETE:
   #     Removes the friendship row (adding also a news feed article TODO?).
-  def remove_friendship
+  def remove
     # TODO
   end
   # ---------------------------------------------------------------------------
 
 
-  # Edit friendship action.
+  # Edit a single friendship.
   #
   # === GET:
   #     Renderes the edit form.
   #
-  # === UPDATE:
+  # === PUT:
   #     Update the changes (news feed generated only for new sharings).
   def edit
     # TODO FUTURE DEV.

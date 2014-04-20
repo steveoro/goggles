@@ -348,11 +348,11 @@ describe SocialsController do
   # ===========================================================================
 
 
-  describe '[GET #remove_friendship]' do
+  describe '[GET #remove]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
         pending "WIP"
-        get_action_and_check_if_its_the_login_page_for( :remove_friendship )
+        get_action_and_check_if_its_the_login_page_for( :remove )
       end
     end
     # -------------------------------------------------------------------------
@@ -371,7 +371,7 @@ describe SocialsController do
   end
 
 
-  describe '[DELETE #remove_friendship]' do
+  describe '[DELETE #remove]' do
 
     before :each do
       @friend_user = create( :user )
@@ -381,7 +381,7 @@ describe SocialsController do
       it "doesn't delete an existing row" do 
         pending "WIP"
         expect {
-          delete :remove_friendship, friend_id: @friend_user.id
+          delete :remove, friend_id: @friend_user.id
         }.not_to change(@user.friendships, :count) 
       end
     end

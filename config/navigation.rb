@@ -90,13 +90,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()
       lev2_nav.item :key_user_tr_stories,       t('misc_main_menu.user_training_stories'),  user_training_stories_path()
       lev2_nav.item :key_separator2_0,          content_tag(:span, '' ), :class => 'divider'
-      lev2_nav.item :key_social_index,          t('social.menu_social_index'), socials_show_all_path() do |lev3_nav|
-        lev3_nav.item :key_social_invite,       t('social.menu_social_invite'),   socials_invite_path(), :class => 'disabled'
-        lev3_nav.item :key_social_approve,      t('social.menu_social_approve'),  socials_approve_path(), :class => 'disabled'
-        lev3_nav.item :key_social_block,        t('social.menu_social_block'),    socials_block_path(), :class => 'disabled'
-        lev3_nav.item :key_social_remove,       t('social.menu_social_remove'),   socials_remove_path(), :class => 'disabled'
-        lev3_nav.item :key_social_edit,         t('social.menu_social_edit'),     socials_edit_path(), :class => 'disabled'
-      end
+      lev2_nav.item :key_social_index,          t('social.menu_social_index'),              socials_show_all_path()
     end
 
     primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'

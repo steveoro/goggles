@@ -35,7 +35,7 @@
 		[
 			link_to(
 					I18n.t('trainings.create_user_training'),
-					create_user_training_training_path(training),
+					training_create_user_training_path(training),
 					:method => :post,
 					:confirm => I18n.t('trainings.create_user_training_ask_confirm')
 	 		),
@@ -54,7 +54,7 @@
 
 	g.column do |training|
 		[
-			link_to( printout_training_path(training) ) do
+			link_to( training_printout_path(training) ) do
 				image_tag('page_white_acrobat.png') << " PDF"
 			end,
 	 		{ :class => 'goggles-centeralign' }
@@ -77,7 +77,7 @@
 		[
 			link_to(
 					I18n.t(:duplicate),
-					duplicate_training_path(training),
+					training_duplicate_path(training),
 					:method => :post,
 					:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
 	 		),

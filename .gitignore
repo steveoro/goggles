@@ -25,7 +25,9 @@
 /public/extjs/*
 /public/output/*
 /public/uploads/*
-/public/assets/*
+
+# Include or exclude precompiled assets into repository (to avoid precompiling on production/staging)
+#/public/assets/*
 
 # Ignore password-containing files and sensitive directories:
 /config/*.yml
