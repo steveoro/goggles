@@ -138,7 +138,28 @@ class Meeting < ActiveRecord::Base
   # 
   def get_short_events
     events = self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
-    events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
+    
+    # If events count = 0 give 'to be defined' description
+    if events.count > 0
+      events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
+    else
+      'To be defined...'
+    end
+  end
+
+  # Computes the complete list of all the meeting events
+  # with session informations.
+  # 
+  def get_complete_events
+    sessions = self.meeting_sessions.includes(:day_part_type).joins(:day_part_type).collect{ |row| row.day_part_type.i18n_short }
+    
+    # If events count = 0 give 'to be defined' description
+    if sessions.count > 0
+      # Create description for each session
+      sessions.join('--').gsub(' ','').gsub('--', ', ')
+    else
+      'To be defined...'
+    end
   end
   # ----------------------------------------------------------------------------
 
