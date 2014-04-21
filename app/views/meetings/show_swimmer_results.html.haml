@@ -2,13 +2,13 @@
 - team_name = @individual_result_list.first.team.get_full_name
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to(t(:results), meetings_show_full_path(:id=>@meeting.id, :team_id=>team_id))
+    = link_to(t(:results), meeting_show_full_path(:id=>@meeting.id, :team_id=>team_id))
   %li
-    = link_to(t(:ranking), meetings_show_ranking_path(:id=>@meeting.id, :team_id=>team_id))
+    = link_to(t(:ranking), meeting_show_ranking_path(:id=>@meeting.id, :team_id=>team_id))
   %li
-    = link_to(t(:stats), meetings_show_stats_path(:id=>@meeting.id, :team_id=>team_id))
+    = link_to(t(:stats), meeting_show_stats_path(:id=>@meeting.id, :team_id=>team_id))
   %li
-    = link_to(t(:team_results), meetings_show_team_results_path(:id=>@meeting.id, :team_id=>team_id))
+    = link_to(t(:team_results), meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id))
   %li.active
     = link_to(t(:swimmer_results), '#')
 
@@ -19,7 +19,7 @@
   - season_name = @meeting.season.get_full_name
   .span3.alert.alert-success
     %h4
-      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ swimmers_radio_path(:id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
+      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ swimmer_radio_path(:id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
         = @swimmer.get_full_name
   .span1
     %h4= @swimmer.year_of_birth
@@ -31,7 +31,7 @@
     %i= season_name
   .span5
     %h4
-      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ meetings_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+      %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
         = team_name
 
 .row-fluid
@@ -95,19 +95,19 @@
               - personal_bests = MeetingIndividualResult.get_records_for( event_type_code, nil, gender_type_id, pool_type_id, nil, @swimmer.id )
               - if personal_bests.size > 0
                 %p
-                  %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ meetings_show_full_path(:id=>personal_bests.first.meeting.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{personal_bests.first.meeting.get_full_name})"}
+                  %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ meeting_show_full_path(:id=>personal_bests.first.meeting.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{personal_bests.first.meeting.get_full_name})"}
                     = personal_bests.first.get_timing
               - else
                 = ''
             %td.goggles-centeralign
               - seasonal_bests = MeetingIndividualResult.get_records_for( event_type_code, category_type_id, gender_type_id, pool_type_id, nil, @swimmer.id )
               - seasonal_bests.sort.each do |mir_best|
-                %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ meetings_show_full_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{mir_best.meeting.get_full_name})"}
+                %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ meeting_show_full_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{mir_best.meeting.get_full_name})"}
                   %p= mir_best.get_timing
             - if false
               %td.goggles-centeralign
                 - meeting_bests  = MeetingIndividualResult.get_records_for( event_type_code, category_type_code, gender_type_id, nil, meeting_id )
                 %p= (meeting_bests.size > 0 ? meeting_bests.first.get_timing : '')
                 - meeting_bests.sort.each do |mir_best|
-                  %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ meetings_show_full_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{mir_best.meeting.get_full_name})"}
+                  %a{'id'=>"rec#{mir_best.id}", 'href'=>"#{ meeting_show_full_path(:id=>mir_best.meeting.id, :swimmer_id=>mir_best.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{mir_best.meeting.get_full_name})"}
                     %p= mir_best.get_swimmer_name

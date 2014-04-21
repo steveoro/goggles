@@ -58,7 +58,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item( :key_meetings,      t('meetings'), '#' ) do |lev2_nav|
 
       lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
-        lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
+        lev3_nav.item :key_meeting_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
       end
       lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), :highlights_on => %r(search_swimmer|prefilter_swimmer)
       lev2_nav.item :key_meetings_search_team, t('meeting.search_by_team'), meetings_search_team_path(), :highlights_on => %r(search_team|prefilter_team)

@@ -12,7 +12,7 @@
 	) do |meeting|
 		link_to(
 			meeting.description,
-			meetings_show_full_path( :id=>meeting.id, :team_id=>@preselected_team_id, :swimmer_id=>@preselected_swimmer_id )
+			meeting_show_full_path( :id=>meeting.id, :team_id=>@preselected_team_id, :swimmer_id=>@preselected_swimmer_id )
 		)
 	end
 

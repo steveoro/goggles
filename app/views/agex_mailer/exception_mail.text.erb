@@ -7,6 +7,10 @@ User:  <%= @user_name %>
 
 Trace:
 
-<%= @backtrace %>
+----8<----
+<% @backtrace.each do |trace_row| %>
+<%= trace_row %>
+<% end %>
+----8<----
 
 Please check the log files.

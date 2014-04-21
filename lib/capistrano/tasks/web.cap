@@ -33,16 +33,16 @@ namespace :web do
   <VirtualHost *:#{fetch(:web_server_port)}>
     ServerName      #{host}
     ServerAdmin     #{fetch(:deploy_user)}@#{host}
-    DocumentRoot    #{shared_path}/public
-    ErrorLog        #{shared_path}/log/error.log
-    CustomLog       #{shared_path}/log/access.log combined
+    DocumentRoot    #{current_path}/public
+    ErrorLog        #{current_path}/log/error.log
+    CustomLog       #{current_path}/log/access.log combined
     RewriteEngine   On
     RewriteCond     %{DOCUMENT_ROOT}/system/maintenance.html -f
     RewriteCond     %{SCRIPT_FILENAME} !maintenance.html
     RewriteRule     ^.*$ /system/maintenance.html [R]
 
     # This hides the release root folder from being readable:
-    <Directory #{release_path}>
+    <Directory #{deploy_path}>
       AllowOverride None
       Options FollowSymLinks
       Order deny,allow
@@ -50,12 +50,12 @@ namespace :web do
     </Directory>
 
     # Enable mod_x_sendfile for downloading output files from rails app
-    RequestHeader Set X-Sendfile-Type X-Sendfile
-    XSendFile on
-    XSendFilePath /
+#    RequestHeader Set X-Sendfile-Type X-Sendfile
+#    XSendFile on
+#    XSendFilePath /
 
     # The actual web app. public root folder:
-    <Directory #{shared_path}/public>
+    <Directory #{current_path}/public>
       PassengerEnabled on
       PassengerResolveSymlinksInDocumentRoot on
       Allow from all

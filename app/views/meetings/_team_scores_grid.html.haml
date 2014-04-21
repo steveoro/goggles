@@ -22,7 +22,7 @@
           %td.goggles-rightalign
             = team_score.rank
           %td{'colspan'=>'3'}
-            %a{'id'=>"team#{team_score.id}", 'href'=>"#{ meetings_show_team_results_path(:id=>@meeting.id, :team_id=>team_score.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+            %a{'id'=>"team#{team_score.id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_score.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
               = team_score.get_team_name
           %td.goggles-rightalign
             - tot_swimmers += (swimmers_count = Team.get_swimmer_ids_for(team_score.team_id, @meeting.id).size)
