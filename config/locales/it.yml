@@ -695,6 +695,12 @@ it:
     ok: "Ok"
     cancel: "Annulla"
 
+  home:
+    upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
+    you_are_not_linked_to_a_swimmer_yet: "Non sei ancora associato a nessuno degli atleti Nuotatori presenti nel database."
+    link_yourself_to_an_existing_swimmer: "Associati ad un nuotatore!"
+    possible_swimmers: "Nuotatori che sembrano avere a che fare con la tua descrizione:"
+
 
   agex_action:
     main: Principale
@@ -766,6 +772,7 @@ it:
   user_created: Utente creato con successo.
   user_deleted: Utente eliminato con successo.
   req_functionality_under_development: "La funzionalita' richiesta non e' attualmente disponibile perche' e' stata sottoposta a revisione o ci sono lavori di manutenzione in corso."
+  or_you_tried_something_wrong: "...Oppure hai provato a fare qualcosa di TREMENDAMENTE SBAGLIATO! (Vergognati. ;-) )"
   coming_soon: "Coming soon!!"
   copy_of: "Copia di"
 

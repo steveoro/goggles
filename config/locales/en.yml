@@ -693,6 +693,12 @@ en:
     ok: "Ok"
     cancel: "Cancel"
 
+  home:
+    upgrade_your_experience: "Take a leap forward with your Goggles experience!"
+    you_are_not_linked_to_a_swimmer_yet: "You are not linked to any of the existing Swimmer athletes."
+    link_yourself_to_an_existing_swimmer: "Link yourself to a Swimmer!"
+    possible_swimmers: "Possible swimmer matching your description:"
+
 
   agex_action:
     main: Main
@@ -763,6 +769,7 @@ en:
   user_created: User successfully created.
   user_deleted: User successfully deleted.
   req_functionality_under_development: "The requested functionality is not currently available due to revisions or maintenance."
+  or_you_tried_something_wrong: "...Or you just tried something that is awfully WRONG! (Be ashamed of yourself. ;-) )"
   coming_soon: "Coming soon!!"
   copy_of: "Copy of"
 

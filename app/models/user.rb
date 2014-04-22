@@ -61,6 +61,13 @@ class User < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
+  # Returns true if this user has a swimmer_id already associated to him/her.
+  def has_associated_swimmer?
+    ! swimmer.nil?
+  end
+  # ----------------------------------------------------------------------------
+
+
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #
@@ -91,109 +98,6 @@ class User < ActiveRecord::Base
     end
   end
   # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-
-
-  # Checks if a specified +ctrl_name+ is included in the list of accessible controllers
-  # for this user instance access level (defined in +authorization_level+).
-  #
-  # def can_access( ctrl_name )
-    # rows = AppParameter.where( "code >= #{AppParameter::PARAM_ACCESS_LEVEL_START} and code <= #{AppParameter::PARAM_ACCESS_LEVEL_START + self.authorization_level}" )
-                                                    # # Collect all accessible controller names up to this user level:
-    # arr = rows.collect { |row| row.free_text_1 }
-    # arr.delete('')
-    # accessible_ctrl_names = arr.join(',').gsub(' ','').split(',').compact
-    # return accessible_ctrl_names.include?( ctrl_name.to_s )
-  # end
-# 
-# 
-  # # Checks if this LeUser instance can perform the specified controller, action combination
-  # # according to its authorization level.
-  # #
-  # def can_perform( ctrl_name, action_name )
-    # row = AppParameter.where( "code >= #{AppParameter::PARAM_BLACKLIST_ACCESS_START} and code <= #{AppParameter::PARAM_BLACKLIST_ACCESS_END} and controller_name='#{ctrl_name}' and action_name='#{action_name}'" ).first
-    # if ( row )
-# # DEBUG
-# #      puts "=> [#{self.name}] can_perform( #{ctrl_name}, #{action_name} )? #{(self.authorization_level >= row.a_integer)}.\r\n"
-      # return ( self.authorization_level >= row.a_integer )
-    # else
-# # DEBUG
-# #      puts "=> [#{self.name}] can_perform( #{ctrl_name}, #{action_name} )? No restrictions found.\r\n"
-      # return true
-    # end
-  # end
-# 
-# 
-  # # Verifies that a specific user id can perform a specific action.
-  # # Returns false otherwise.
-  # #
-  # # Works exactly as LeUser::can_do(), but for row instances, thus sparing a query to retrieve the data, in case the row as already been read.
-  # #
-  # # +action_name+ = the name of the action to be executed
-  # # +ctrl_name+ = the controller name.
-  # #
-  # def can_do( ctrl_name, action_name = 'index' )
-# # DEBUG
-# #    puts "\r\n=> [#{self.name}] can_do( #{ctrl_name}, #{action_name} )?"
-    # if can_access( ctrl_name.to_s )
-# # DEBUG
-# #      puts "-- can_access: ok. Checking performing restrictions..."
-      # return can_perform( ctrl_name.to_s, action_name.to_s )
-    # else                                            # Controller access refused!
-# # DEBUG
-# #      puts "-- access denied!"
-      # false
-    # end
-  # end
-# 
-# 
-  # # Verifies that a specific user id can perform a specific action.
-  # # Returns false otherwise.
-  # #
-  # # +id+ = the id of the User
-  # # +action_name+ = the name of the action to be executed
-  # # +ctrl_name+ = the controller name.
-  # #
-  # def self.can_do( id, ctrl_name, action_name = 'index' )
-    # if id && user = User.find_by_id( id )
-      # user && user.can_do( ctrl_name, action_name )
-    # else
-      # false
-    # end
-  # end
-  # # ----------------------------------------------------------------------------
-# 
-# 
-  # # Read accessor override for virtual attribute
-  # def password
-    # @password
-  # end
-# 
-  # # Write accessor override for virtual attribute
-  # def password=(pwd)
-    # @password = pwd
-    # create_new_salt
-    # self.hashed_pwd = User.encrypted_password( self.password, self.salt )
-  # end
-# 
-  # # Safe way to delete a user
-  # def safe_delete
-    # transaction do
-      # destroy
-      # if User.count.zero?
-        # raise t("The deletion of the last user is not allowed.")
-      # end
-    # end
-  # end
-  # # ----------------------------------------------------------------------------
-# 
-# 
-  # protected
-# 
-# 
-  # def validate
-    # errors.add_to_base( t(:password_missing) ) if hashed_pwd.blank?
-  # end
   # ----------------------------------------------------------------------------
 
 end

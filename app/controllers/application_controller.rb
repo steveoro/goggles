@@ -12,6 +12,8 @@ class ApplicationController < ActionController::Base
   skip_before_filter :authenticate_entity!
 
   rescue_from Exception, :with => :handle_exception
+  rescue_from ActionController::RoutingError, :with => :render_not_found
+
 
   # Set this to true to enable double logging (both the logger variable and stdout will be used).
   DEBUG_VERBOSE_ON_CONSOLE = false unless defined?(DEBUG_VERBOSE_ON_CONSOLE)
@@ -24,10 +26,11 @@ class ApplicationController < ActionController::Base
   end
 
 
-  # Invoked for any 404/not found request: 
-#  def not_found
-#    render :template => "404", :status => 404
-#  end
+  # Invoked for any 404/not found request: throws a custom exception
+  # (catchable by this controller)
+  def routing_error
+    raise ActionController::RoutingError.new(params[:path])
+  end
 
 
   # Just logs the specified output message using either WARN or ERROR level logging,
@@ -181,6 +184,12 @@ class ApplicationController < ActionController::Base
 
   private
 
+
+  # Render a custom 404 message for a not-found route.
+  def render_not_found
+    redirect_to wip_path()
+#    render :template => "404"
+  end
 
   def handle_exception( exception )
     log_error( exception, verbose_trace = true )

@@ -18,6 +18,16 @@ namespace :remote do
   end
   # ---------------------------------------------------------------------------
 
+  desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory." 
+  task :sql_backup do
+    on roles(:app) do |host|
+      within release_path do
+        rake "RAILS_ENV=production sql:dump"
+      end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
 
   # Remote Rake invocation tool.
   desc <<-DESC

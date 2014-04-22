@@ -1,6 +1,13 @@
+# encoding: utf-8
+require 'common/format'
+
+
 class HomeController < ApplicationController
 
-  require 'common/format'
+  # Require authorization before invoking any of this controller's actions:
+  before_filter :authenticate_entity_from_token!, only: [:associate]
+  before_filter :authenticate_entity!, only: [:associate] # Devise HTTP log-in strategy
+  # ---------------------------------------------------------------------------
 
 
   def index
@@ -11,7 +18,7 @@ class HomeController < ApplicationController
     )
   end
   # ----------------------------------------------------------------------------
-  #++
+
 
   def about
     @versioning = AppParameter.find_by_code( AppParameter::PARAM_VERSIONING_CODE )
@@ -27,19 +34,25 @@ class HomeController < ApplicationController
   end
 
 
-  # Action used to allow the current user to edit its profile 
-#  def edit_current_user
-#  end
+  # Associate action for a logged-in user. Handles both GET + POST
+  def associate
+    if request.post?                                # === POST: ===
+      # TODO Save associated swimmer_id & update swimmer.associated_user_id (both ways)
+      # TODO Set a flash message or a news_feed update
+      redirect_to( root_path() ) and return
+                                                    # === GET: ===
+    else
+      first_name_part  = '%' + current_user.description.upcase.split(' ')[0] + '%'
+      second_name_part = '%' + current_user.description.upcase.split(' ')[1] + '%'
+      first_list  = Swimmer.where( ["complete_name LIKE ?", first_name_part] )
+      second_list = Swimmer.where( ["complete_name LIKE ?", second_name_part] )
+                                                    # Choose only the list with less results:
+      @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
+    end
+  end
 
 
-  # "Who's online" command
-  #
-#  def whos_online
-#    @online_users = Info::UsersInfo.retrieve_online_users( true ) # (retrieve also full description)
-#  end
-
-
-  # "Work In Progress" indicator
+  # "Work In Progress"/"Routing error" action rendering
   def wip
   end
   # ----------------------------------------------------------------------------

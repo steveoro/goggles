@@ -6,7 +6,7 @@ require 'common/format'
 class SwimmersController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!
+  before_filter :authenticate_entity_from_token!, :verify_parameter
   before_filter :authenticate_entity!, :verify_parameter # Devise HTTP log-in strategy
   # ---------------------------------------------------------------------------
 

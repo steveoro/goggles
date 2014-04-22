@@ -49,9 +49,11 @@ Goggles::Application.routes.draw do
 
   scope "/" do
     scope "(:locale)", :locale => /en|it/ do
-      match "wip"         => "home#wip"
-      match "about"       => "home#about"
-      match "contact_us"  => "home#contact_us"
+      match "wip",        to: "home#wip"
+      match "about",      to: "home#about"
+      match "contact_us", to: "home#contact_us"
+      match "associate",  to: "home#associate", via: [:get, :post]
+#      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
 
 #      resources :meetings # do
         # collection do
@@ -284,4 +286,12 @@ Goggles::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
+
+  # ----------------------------------------------------------------------------
+
+
+  # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
+  # RoutingError from hitting ApplicationController::rescue_action).
+  # In other words, this wildcard route will catch all the other cases:
+  match "*path", :to => "application#routing_error"
 end
