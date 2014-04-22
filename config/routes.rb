@@ -71,7 +71,7 @@ Goggles::Application.routes.draw do
 #      get 'photos/:id', to: 'photos#show'
 #      get 'exit', to: 'sessions#destroy', as: :logout
 
-      get "meetings/index",                     as: "meetings"
+      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
       get "meetings/search_swimmer",            to: "meetings#search_swimmer"
       get "meetings/search_team",               to: "meetings#search_team"
       get "meeting/show_full/:id",              to: "meetings#show_full",               as: "meeting_show_full"
