@@ -37,8 +37,8 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :name, message: :already_exists
 
   validates_length_of     :description,   maximum: 100  # Same as Swimmer#complete_name
-  validates_length_of     :last_name,     maximum: 50
   validates_length_of     :first_name,    maximum: 50
+  validates_length_of     :last_name,     maximum: 50
   validates_length_of     :year_of_birth, maximum: 4
 
   attr_accessible :name, :email, :description, :password, :password_confirmation,
@@ -61,12 +61,26 @@ class User < ActiveRecord::Base
 
   # Computes a descriptive name associated with this data
   def get_full_name
-    "#{self.name} (desc.: #{self.description})"
+    "#{name} (desc.: #{description})"
   end
 
   # to_s() override for debugging purposes:
   def to_s
     "[User: '#{get_full_name}']"
+  end
+  # ----------------------------------------------------------------------------
+
+  # Returns the an array containing the first and the last name of this
+  # user. When empty or nil the names are obtained from the description.
+  def get_first_and_last_name
+    if first_name && last_name
+      [ first_name, last_name ]
+    else
+      [
+        description.split(' ')[0],
+        description.split(' ')[1]
+      ]
+    end
   end
   # ----------------------------------------------------------------------------
 

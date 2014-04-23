@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'ffaker'
+
 
 describe User do
   shared_examples "shared_drop_down_listable_examples"
@@ -22,6 +24,10 @@ describe User do
       expect( @user ).to respond_to( :to_s )
     end
 
+    it "has a method to get the first and last name as an array" do
+      expect( @user ).to respond_to( :get_first_and_last_name )
+    end
+
     it "has a method to get the preferred (default) swimmer level ID" do
       expect( @user ).to respond_to( :get_preferred_swimmer_level_id )
     end
@@ -40,6 +46,27 @@ describe User do
 
     it "has an helper to check if it has any swimmer confirmations for a specific user" do
       expect( @user ).to respond_to( :find_any_confirmation_given_to )
+    end
+    # --------------------------------------------------------------------------
+
+    it "#get_first_and_last_name returns an array with 2 elements" do
+      result = @user.get_first_and_last_name
+      expect( result ).to be_an_instance_of( Array )
+      expect( result.size ).to eq(2)
+    end
+
+    it "#get_first_and_last_name returns names extracted from the description" do
+      result = @user.get_first_and_last_name
+      expect( Regexp.new(result[0]) ).to match( @user.description )
+      expect( Regexp.new(result[1]) ).to match( @user.description )
+    end
+
+    it "#get_first_and_last_name returns names extracted from the dedicated fields, when present" do
+      @user.first_name = Faker::Name.first_name
+      @user.last_name  = Faker::Name.last_name
+      result = @user.get_first_and_last_name
+      expect( Regexp.new(result[0]) ).to match( @user.first_name )
+      expect( Regexp.new(result[1]) ).to match( @user.last_name )
     end
     # --------------------------------------------------------------------------
 

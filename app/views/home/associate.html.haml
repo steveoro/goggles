@@ -12,7 +12,7 @@
 - @possible_swimmers.each do |swimmer|
   .row-fluid
     .span12
-      = swimmer.get_verbose_name
+      = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post }, { confirm: I18n.t(:please_wait), disable_with: I18n.t(:please_wait) } )
 
 .row-fluid.span12
   TODO FORM TO MANUAL SELECT AMONG THE FILTERED SWIMMERS

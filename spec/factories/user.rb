@@ -7,8 +7,7 @@ FactoryGirl.define do
   factory :user do
     name                      { Faker::Internet.user_name }
     email                     { Faker::Internet.email }
-    sequence( :description )  { |n| "Randomly-generated registered user n.#{n}" }
-
+    description               { "#{name.camelcase} #{Faker::Name.last_name}" }
     password                  "password"
     password_confirmation     "password"
     confirmed_at              { DateTime.now }

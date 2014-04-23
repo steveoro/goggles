@@ -43,19 +43,18 @@ class HomeController < ApplicationController
       redirect_to( root_path() ) and return
                                                     # === GET: ===
     else                                            # Scompose the description in tokens:
-      # TODO check for current_user.first_name && current_user.ast_name, which must have precedence
-      # TODO check also for current_user.year_of_birth
-      # TODO use current_user.description only if above search is inconclusive
-      
-      first_name_part  = current_user.description.upcase.split(' ')[0]
-      second_name_part = current_user.description.upcase.split(' ')[1]
-      first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name_part}%"] )
-      second_list = Swimmer.where( ["complete_name LIKE ?", "%#{second_name_part}%"] )
+      first_name, last_name = current_user.get_first_and_last_name()
+      first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name.upcase}%"] )
+      second_list = Swimmer.where( ["complete_name LIKE ?", "%#{last_name.upcase}%"] )
+      if current_user.year_of_birth
+        first_list.where( :year_of_birth => current_user.year_of_birth )
+        second_list.where( :year_of_birth => current_user.year_of_birth )
+      end
                                                     # Choose only the list with less results:
       @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
       @possible_swimmers.delete_if { |swimmer|      # Filter out the worst results:
-        (swimmer.complete_name =~ Regexp.new(first_name_part)).nil? || 
-        (swimmer.complete_name =~ Regexp.new(second_name_part)).nil?
+        (swimmer.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
+        (swimmer.complete_name =~ Regexp.new(last_name.upcase)).nil?
       }
       # TODO in view: enlist all possible swimmers and create links for auto-association (via POST to this same action)
     end
