@@ -1,4 +1,4 @@
-%h3= t('home.link_yourself_to_an_existing_swimmer')
+%h3= I18n.t('home_controller.link_yourself_to_an_existing_swimmer')
 
 - if admin_signed_in?
   .row-fluid
@@ -8,7 +8,7 @@
       = current_user.id
 
 .row-fluid.span12
-  = I18n.t('home.possible_swimmers')
+  = I18n.t('home_controller.possible_swimmers')
 - @possible_swimmers.each do |swimmer|
   .row-fluid
     .span12

@@ -643,6 +643,16 @@ it:
     title_timertable: "Goggles mostra i tuoi risultati ufficiali!"
     text_timertable: "Dopo ogni Meeting di ciascuna delle Federazioni riconosciute, Goggles puo' importare automaticamente i dati. Controlla i tuoi risultati personali di nuoto e consulta le statistiche! Oppure segui gli sviluppi dei tuoi amici o dei tuoi compagni di corsia!"
 
+  home_controller:
+    upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
+    you_are_not_linked_to_a_swimmer_yet: "Non sei ancora associato a nessuno degli atleti Nuotatori presenti nel database:"
+    link_yourself_to_an_existing_swimmer: "Associati ad un nuotatore!"
+    possible_swimmers: "Nuotatori che sembrano avere a che fare con la tua descrizione:"
+    you_are: "Tu sei"
+    you_are_or_you_said_it: "Tu sei (o hai detto di essere)"
+    self_assessed: "(Auto-affermato/non confermato)"
+    confirmed_by: "Confermato da"
+
   social:
     menu_social_index: "'Swimming Buddies'"
     menu_social_show: "Mostra"
@@ -694,12 +704,6 @@ it:
     send: "Invia"
     ok: "Ok"
     cancel: "Annulla"
-
-  home:
-    upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
-    you_are_not_linked_to_a_swimmer_yet: "Non sei ancora associato a nessuno degli atleti Nuotatori presenti nel database."
-    link_yourself_to_an_existing_swimmer: "Associati ad un nuotatore!"
-    possible_swimmers: "Nuotatori che sembrano avere a che fare con la tua descrizione:"
 
 
   agex_action:

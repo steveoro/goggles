@@ -22,6 +22,12 @@ class User < ActiveRecord::Base
 
   has_one :swimmer
 
+  has_many :user_swimmer_confirmations                  # These are confirmation endorsed by others (user is passive subject)
+  has_many :confirmators, through: :user_swimmer_confirmations
+  has_many :given_confirmations,
+    :class_name => "UserSwimmerConfirmation",           # These are confirmation given to others (user is active subject, a "confirmator")
+    :foreign_key => "confirmator_id"
+
   belongs_to :swimmer_level_type
   belongs_to :coach_level_type
 
@@ -30,9 +36,13 @@ class User < ActiveRecord::Base
   validates_presence_of   :name
   validates_uniqueness_of :name, message: :already_exists
 
-  validates_length_of     :description, maximum: 50
+  validates_length_of     :description,   maximum: 100  # Same as Swimmer#complete_name
+  validates_length_of     :last_name,     maximum: 50
+  validates_length_of     :first_name,    maximum: 50
+  validates_length_of     :year_of_birth, maximum: 4
 
   attr_accessible :name, :email, :description, :password, :password_confirmation,
+                  :last_name, :first_name, :year_of_birth,
                   :api_authentication_token,
                   :outstanding_goggle_score_bias,
                   :outstanding_standard_score_bias,
@@ -64,6 +74,17 @@ class User < ActiveRecord::Base
   # Returns true if this user has a swimmer_id already associated to him/her.
   def has_associated_swimmer?
     ! swimmer.nil?
+  end
+
+  # Returns true if this user has at least some UserSwimmerConfirmation defined
+  def has_swimmer_confirmations?
+    user_swimmer_confirmations ? user_swimmer_confirmations.count > 0 : false
+  end
+
+  # Returns the first swimmer-association confirmation found given to the specified user
+  # or nil when not found.
+  def find_any_confirmation_given_to( user )
+    UserSwimmerConfirmation.where( :confirmator_id => self.id, :user_id => user.id ).first
   end
   # ----------------------------------------------------------------------------
 

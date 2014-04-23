@@ -39,15 +39,25 @@ class HomeController < ApplicationController
     if request.post?                                # === POST: ===
       # TODO Save associated swimmer_id & update swimmer.associated_user_id (both ways)
       # TODO Set a flash message or a news_feed update
+      # TODO (Auto-association does not create a user-swimmer confirmation)
       redirect_to( root_path() ) and return
                                                     # === GET: ===
-    else
-      first_name_part  = '%' + current_user.description.upcase.split(' ')[0] + '%'
-      second_name_part = '%' + current_user.description.upcase.split(' ')[1] + '%'
-      first_list  = Swimmer.where( ["complete_name LIKE ?", first_name_part] )
-      second_list = Swimmer.where( ["complete_name LIKE ?", second_name_part] )
+    else                                            # Scompose the description in tokens:
+      # TODO check for current_user.first_name && current_user.ast_name, which must have precedence
+      # TODO check also for current_user.year_of_birth
+      # TODO use current_user.description only if above search is inconclusive
+      
+      first_name_part  = current_user.description.upcase.split(' ')[0]
+      second_name_part = current_user.description.upcase.split(' ')[1]
+      first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name_part}%"] )
+      second_list = Swimmer.where( ["complete_name LIKE ?", "%#{second_name_part}%"] )
                                                     # Choose only the list with less results:
       @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
+      @possible_swimmers.delete_if { |swimmer|      # Filter out the worst results:
+        (swimmer.complete_name =~ Regexp.new(first_name_part)).nil? || 
+        (swimmer.complete_name =~ Regexp.new(second_name_part)).nil?
+      }
+      # TODO in view: enlist all possible swimmers and create links for auto-association (via POST to this same action)
     end
   end
 

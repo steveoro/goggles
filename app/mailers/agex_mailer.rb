@@ -19,14 +19,15 @@ class AgexMailer < ActionMailer::Base
   # "Exception intercepted" message.
   #
   def exception_mail( admin_name, user_name, error_description, error_backtrace )
+    @admin_name  = admin_name
+    @user_name   = user_name
     @description = error_description
     @backtrace   = error_backtrace
-    @user_name   = user_name
-    @admin_name  = admin_name
+    @host = ENV['HOSTNAME']
 
     mail(
       :to => AGEX_ADMIN_EMAIL,
-      :subject => "[#{AGEX_APP_NAME}@#{ENV['HOSTNAME']}] AgexMailer EXCEPTION: '#{error_description}'.",
+      :subject => "[#{AGEX_APP_NAME}@#{@host}] AgexMailer EXCEPTION: '#{error_description}'.",
       :date => Time.now
     )
   end
@@ -36,13 +37,14 @@ class AgexMailer < ActionMailer::Base
   # Action notify message.
   #
   def action_notify_mail( user_name, action_name, action_description )
-    @name = action_name
-    @description = action_description
     @user_name = user_name
+    @action_name = action_name
+    @description = action_description
+    @host = ENV['HOSTNAME']
 
     mail(
       :to => AGEX_ADMIN_EMAIL,
-      :subject => "[#{AGEX_APP_NAME}@#{ENV['HOSTNAME']}] AgexMailer action '#{action_name}'",
+      :subject => "[#{AGEX_APP_NAME}@#{@host}] AgexMailer action '#{action_name}'",
       :date => Time.now
     )
   end

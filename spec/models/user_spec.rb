@@ -22,10 +22,6 @@ describe User do
       expect( @user ).to respond_to( :to_s )
     end
 
-    it "has an helper to check if it has an associated swimmer" do
-      expect( @user ).to respond_to( :has_associated_swimmer? )
-    end
-
     it "has a method to get the preferred (default) swimmer level ID" do
       expect( @user ).to respond_to( :get_preferred_swimmer_level_id )
     end
@@ -33,7 +29,20 @@ describe User do
     it "has a method to get the current swimmer level type description" do
       expect( @user ).to respond_to( :get_swimmer_level_type )
     end
+
+    it "has an helper to check if it has an associated swimmer" do
+      expect( @user ).to respond_to( :has_associated_swimmer? )
+    end
+
+    it "has an helper to check if it has any swimmer confirmations" do
+      expect( @user ).to respond_to( :has_swimmer_confirmations? )
+    end
+
+    it "has an helper to check if it has any swimmer confirmations for a specific user" do
+      expect( @user ).to respond_to( :find_any_confirmation_given_to )
+    end
     # --------------------------------------------------------------------------
+
 
     it "#has_associated_swimmer? returns true if it has an associated swimmer" do
       @user.swimmer = create(:swimmer) 
@@ -44,6 +53,40 @@ describe User do
       @user.swimmer = nil 
       expect( @user.has_associated_swimmer? ).to be_false
     end
+    # --------------------------------------------------------------------------
+
+    it "#has_swimmer_confirmations? returns true if the association is confirmed" do
+      confirmation = create( :user_swimmer_confirmation )
+      user = confirmation.user
+      expect( user.has_swimmer_confirmations? ).to be_true
+    end
+
+    it "#has_swimmer_confirmations? returns false if the association is not confirmed" do
+      @user.swimmer = create(:swimmer) 
+      expect( @user.has_swimmer_confirmations? ).to be_false
+    end
+    # --------------------------------------------------------------------------
+
+
+    it "#find_any_confirmation_given_to returns nil when no confirmations are found" do
+      another_user = create(:user)
+      expect( @user.find_any_confirmation_given_to(another_user) ).to be_nil
+    end
+
+    it "#find_any_confirmation_given_to returns the first confirmation row found for a user" do
+      confirmation = create( :user_swimmer_confirmation, confirmator: @user )
+      expect( @user.find_any_confirmation_given_to(confirmation.user) ).to be_an_instance_of( UserSwimmerConfirmation )
+    end
+    # --------------------------------------------------------------------------
+
+
+    it "#given_confirmations lists all the confirmations given by the user" do
+      confirmation1 = create( :user_swimmer_confirmation, confirmator: @user )
+      confirmation2 = create( :user_swimmer_confirmation, confirmator: @user )
+      confirmation3 = create( :user_swimmer_confirmation, confirmator: @user )
+      expect( @user.given_confirmations.size == 3 ).to be_true
+    end
+    # --------------------------------------------------------------------------
   end
   # ----------------------------------------------------------------------------
 

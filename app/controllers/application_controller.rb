@@ -33,6 +33,9 @@ class ApplicationController < ActionController::Base
   end
 
 
+  protected
+
+
   # Just logs the specified output message using either WARN or ERROR level logging,
   # with no subsequent redirection being made.
   #
@@ -144,9 +147,6 @@ class ApplicationController < ActionController::Base
     end
   end
   # ----------------------------------------------------------------------------
-
-
-  protected
 
 
   # Removes older (automatically generated) files from the public output directory

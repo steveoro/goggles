@@ -46,12 +46,38 @@
 		</div>
 	</div>
 
+    <div class="control-group">
+        <%= f.label( :first_name, :for => :user_first_name, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field :first_name %>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <%= f.label( :last_name, :for => :user_last_name, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field :last_name %>
+        </div>
+    </div>
+
 	<div class="control-group">
 		<%= f.label( :description, :for => :user_description, :class => 'control-label' ) %>
 		<div class="controls">
 			<%= f.text_field :description %>
 		</div>
 	</div>
+
+    <div class="control-group">
+        <%= f.label( :year_of_birth, :for => :user_year_of_birth, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field( :year_of_birth,
+                :class => 'input-mini', :autocomplete => 'off',
+                'data-provide' => 'typeahead',
+                'data-source' => (1900 .. Date.today.year+1).to_a.collect{|e|e.to_s}.to_s,
+                :placeholder => Date.today.year - 50
+            ) %>
+        </div>
+    </div>
 
 	<div class="control-group">
 		<div class="controls">
@@ -60,15 +86,50 @@
 	</div>
 <% end %>
 
-<hr />
+<script>
+    function updateDescription() {
+        var new1st = $( '#user_first_name' ).val();
+        var cur2nd = $( '#user_last_name' ).val();
+        $('#user_description').val( new1st + ' ' + cur2nd );
+    };
 
-<h3><%= t('devise.edit_user_cancel_account_title') %></h3>
+    $('#user_first_name').change( function(){ updateDescription(); } );
+    $('#user_last_name').change( function(){ updateDescription(); } );
+</script>
 
-<div class="control-group">
-	<%= t('devise.edit_user_unregister_title') %>
-	<div class="controls">
-		<%= button_to( t('devise.edit_user_unregister_submit'), registration_path(resource_name), :data => { :confirm => t('devise.edit_user_unregister_confirmation') }, :method => :delete ) %>
-	</div>
+<div class="row-fluid span12"><hr /></div>
+<!-- Association request link: -->
+<% unless current_user.has_associated_swimmer? -%>
+    <%= render( :partial => 'goggles/associate_to_a_swimmer' ) %>
+<% else -%>
+<div class="row-fluid span12">
+    <h3><%= current_user.has_swimmer_confirmations? ? t('home_controller.you_are') : t('home_controller.you_are_or_you_said_it') %>:</h3>
+    <%= link_to(
+        current_user.swimmer.get_verbose_name, swimmer_radio_path( current_user.swimmer ),
+        { :id => "swimmer#{current_user.swimmer_id}", 'data-toggle' => 'tooltip', :title => I18n.t('radiography.radio_tab_tooltip') }
+    ) %>
+    <p>
+    <% if current_user.has_swimmer_confirmations? -%>
+        <%= t('home_controller.confirmed_by') %>:
+        <% current_user.confirmators.each do |confirmer| -%>
+            <%= confirmer.get_full_name %>:
+        <% end -%>
+    <% else -%>
+        <%= t('home_controller.self_assessed') %>
+    <% end -%>
+    </p>
+</div>
+<% end -%>
+
+<div class="row-fluid span12"><hr /></div>
+<div class="row-fluid span12">
+    <h3><%= t('devise.edit_user_cancel_account_title') %></h3>
+    <div class="control-group">
+    	<%= t('devise.edit_user_unregister_title') %>
+    	<div class="controls">
+    		<%= button_to( t('devise.edit_user_unregister_submit'), registration_path(resource_name), :data => { :confirm => t('devise.edit_user_unregister_confirmation') }, :method => :delete ) %>
+    	</div>
+    </div>
 </div>
 
 <%= link_to( t('devise.edit_user_link_to_back_title'), :back ) %>

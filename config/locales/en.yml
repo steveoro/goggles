@@ -641,6 +641,16 @@ en:
     title_timertable: "Goggles displays your official Meeting results!"
     text_timertable: "After each Meeting from any of the acknowledged Federations, Goggles can automatically import the results data. Check out your personal swimming competition results and get a handful of stats! Or follow the achievements your friends or your swimming buddies!"
 
+  home_controller:
+    upgrade_your_experience: "Take a leap forward with your Goggles experience!"
+    you_are_not_linked_to_a_swimmer_yet: "You are not linked to any of the existing Swimmer athletes:"
+    link_yourself_to_an_existing_swimmer: "Link yourself to a Swimmer!"
+    possible_swimmers: "Possible swimmer matching your description:"
+    you_are: "You are"
+    you_are_or_you_said_it: "You are (or You said You are)"
+    self_assessed: "(Self-assessed/Unconfirmed)"
+    confirmed_by: "Confirmed by"
+
   social:
     menu_social_index: "Swimming Buddies"
     menu_social_show: "Show"
@@ -692,12 +702,6 @@ en:
     send: "Send"
     ok: "Ok"
     cancel: "Cancel"
-
-  home:
-    upgrade_your_experience: "Take a leap forward with your Goggles experience!"
-    you_are_not_linked_to_a_swimmer_yet: "You are not linked to any of the existing Swimmer athletes."
-    link_yourself_to_an_existing_swimmer: "Link yourself to a Swimmer!"
-    possible_swimmers: "Possible swimmer matching your description:"
 
 
   agex_action:
