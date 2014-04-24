@@ -650,6 +650,10 @@ en:
     you_are_or_you_said_it: "You are (or You said You are)"
     self_assessed: "(Self-assessed/Unconfirmed)"
     confirmed_by: "Confirmed by"
+    association_successful: "Association successful!"
+    unlink_yourself_from_this_swimmer: "Dissociate yourself from this swimmer"
+    dissociation_successful: "Dissociation successful."
+    something_went_wrong_try_later: "Something went wrong, try later."
 
   social:
     menu_social_index: "Swimming Buddies"

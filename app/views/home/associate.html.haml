@@ -12,10 +12,8 @@
 - @possible_swimmers.each do |swimmer|
   .row-fluid
     .span12
-      = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post }, { confirm: I18n.t(:please_wait), disable_with: I18n.t(:please_wait) } )
+      = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
 
 .row-fluid.span12
-  TODO FORM TO MANUAL SELECT AMONG THE FILTERED SWIMMERS
-
-.row-fluid.span12
-  TODO ADD ALSO ANOTHER FORM TO MANUAL SELECT AN OVERRIDE SWIMMER
+  %i
+    TODO ADD ALSO POST LINK TO MANUAL SELECT AN OVERRIDE SWIMMER ("Aren't you among these?")

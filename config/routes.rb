@@ -53,6 +53,7 @@ Goggles::Application.routes.draw do
       match "about",      to: "home#about"
       match "contact_us", to: "home#contact_us"
       match "associate",  to: "home#associate", via: [:get, :post]
+      match "dissociate", to: "home#dissociate", via: :post
 #      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
 
 #      resources :meetings # do

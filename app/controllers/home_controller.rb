@@ -5,8 +5,8 @@ require 'common/format'
 class HomeController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!, only: [:associate]
-  before_filter :authenticate_entity!, only: [:associate] # Devise HTTP log-in strategy
+  before_filter :authenticate_entity_from_token!, only: [:associate, :dissociate]
+  before_filter :authenticate_entity!, only: [:associate, :dissociate] # Devise HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 
@@ -37,9 +37,12 @@ class HomeController < ApplicationController
   # Associate action for a logged-in user. Handles both GET + POST
   def associate
     if request.post?                                # === POST: ===
-      # TODO Save associated swimmer_id & update swimmer.associated_user_id (both ways)
-      # TODO Set a flash message or a news_feed update
-      # TODO (Auto-association does not create a user-swimmer confirmation)
+      if params[:id]                                # Save the association both ways:
+        current_user.update_attribute( :swimmer_id, params[:id].to_i )
+        Swimmer.where( id: params[:id].to_i ).update_all( associated_user_id: current_user.id )
+        current_user.reload
+        flash[:notice] = I18n.t('home_controller.association_successful')
+      end
       redirect_to( root_path() ) and return
                                                     # === GET: ===
     else                                            # Scompose the description in tokens:
@@ -52,13 +55,25 @@ class HomeController < ApplicationController
       end
                                                     # Choose only the list with less results:
       @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
-      @possible_swimmers.delete_if { |swimmer|      # Filter out the worst results:
-        (swimmer.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
-        (swimmer.complete_name =~ Regexp.new(last_name.upcase)).nil?
+      @possible_swimmers.delete_if { |swimmer_row|  # Filter out the worst results:
+        (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
+        (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?
       }
-      # TODO in view: enlist all possible swimmers and create links for auto-association (via POST to this same action)
     end
   end
+
+
+  # POST-only action that removes an association to a swimmer for the current user.
+  def dissociate
+    if request.post?                                # === POST: ===
+      Swimmer.where( id: current_user.swimmer_id ).update_all( associated_user_id: nil ) if current_user.swimmer_id
+      current_user.update_attribute( :swimmer_id, nil )
+      current_user.reload
+      flash[:notice] = I18n.t('home_controller.dissociation_successful')
+    end
+    redirect_to( root_path() ) and return
+  end
+  # ----------------------------------------------------------------------------
 
 
   # "Work In Progress"/"Routing error" action rendering

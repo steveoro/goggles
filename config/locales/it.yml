@@ -652,6 +652,10 @@ it:
     you_are_or_you_said_it: "Tu sei (o hai detto di essere)"
     self_assessed: "(Auto-affermato/non confermato)"
     confirmed_by: "Confermato da"
+    association_successful: "Associazione eseguita!"
+    unlink_yourself_from_this_swimmer: "Disassociati da questo nuotatore"
+    dissociation_successful: "Disassociazione eseguita."
+    something_went_wrong_try_later: "Qualcosa e' andato storto, riprova piu' tardi."
 
   social:
     menu_social_index: "'Swimming Buddies'"

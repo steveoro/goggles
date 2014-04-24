@@ -106,17 +106,30 @@
     <h3><%= current_user.has_swimmer_confirmations? ? t('home_controller.you_are') : t('home_controller.you_are_or_you_said_it') %>:</h3>
     <%= link_to(
         current_user.swimmer.get_verbose_name, swimmer_radio_path( current_user.swimmer ),
-        { :id => "swimmer#{current_user.swimmer_id}", 'data-toggle' => 'tooltip', :title => I18n.t('radiography.radio_tab_tooltip') }
+        { :id => "swimmer#{current_user.swimmer_id}",
+          'data-toggle' => 'tooltip', :title => I18n.t('radiography.radio_tab_tooltip')
+        }
     ) %>
     <p>
-    <% if current_user.has_swimmer_confirmations? -%>
-        <%= t('home_controller.confirmed_by') %>:
-        <% current_user.confirmators.each do |confirmer| -%>
-            <%= confirmer.get_full_name %>:
-        <% end -%>
-    <% else -%>
-        <%= t('home_controller.self_assessed') %>
-    <% end -%>
+	    <% if current_user.has_swimmer_confirmations? -%>
+	        <%= t('home_controller.confirmed_by') %>:
+	        <% current_user.confirmators.each do |confirmer| -%>
+	            <%= confirmer.get_full_name %>:
+	        <% end -%>
+	    <% else -%>
+	        <%= t('home_controller.self_assessed') %>
+	    <% end -%>
+    </p>
+	    <%= link_to(
+	    	I18n.t('home_controller.unlink_yourself_from_this_swimmer'),
+	    	dissociate_path(),
+	    	{ method: :post,
+	    	  confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'),
+	    	  disable_with: I18n.t(:please_wait), class: 'disabled'
+	    	} 
+	    ) %>
+    <p>
+    	
     </p>
 </div>
 <% end -%>

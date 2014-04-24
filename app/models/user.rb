@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
          :confirmable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_one :swimmer
+  belongs_to :swimmer
 
   has_many :user_swimmer_confirmations                  # These are confirmation endorsed by others (user is passive subject)
   has_many :confirmators, through: :user_swimmer_confirmations
@@ -87,7 +87,7 @@ class User < ActiveRecord::Base
 
   # Returns true if this user has a swimmer_id already associated to him/her.
   def has_associated_swimmer?
-    ! swimmer.nil?
+    ! (swimmer.nil?)
   end
 
   # Returns true if this user has at least some UserSwimmerConfirmation defined
