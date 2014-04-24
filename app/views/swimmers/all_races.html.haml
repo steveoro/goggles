@@ -2,7 +2,7 @@
   %li
     = link_to( t('radiography.radio_tab'), swimmer_radio_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.medals_tab'), swimmer_radio_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.medals_tab'), swimmer_medals_path(:id=>@swimmer.id) )
   %li
     = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(:id=>@swimmer.id) )
   %li.active

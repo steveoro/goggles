@@ -120,6 +120,8 @@ en:
     total_team_records: "Tot. Team Records holding"
     total_disqualifications: "Total Disqualifications"
     no_disqualifications: "None !!"
+    swimmers: "Swimmers"
+    search_swimmers: "Search Swimmers"
 
   base_movements:
     code: "code"
@@ -640,6 +642,8 @@ en:
     text_freestyle: "'Ever wondered what you did some years ago in that particular competition that you hardly remember when compared to your last heat results? Now you can!"
     title_timertable: "Goggles displays your official Meeting results!"
     text_timertable: "After each Meeting from any of the acknowledged Federations, Goggles can automatically import the results data. Check out your personal swimming competition results and get a handful of stats! Or follow the achievements your friends or your swimming buddies!"
+    title_happy: "Follow the results of your swimming buddies with Goggles!"
+    text_happy: "Link yourself to a registered swimmer on the results database and follow your progress as well as your friends'!"
 
   home_controller:
     upgrade_your_experience: "Take a leap forward with your Goggles experience!"
@@ -654,15 +658,23 @@ en:
     unlink_yourself_from_this_swimmer: "Dissociate yourself from this swimmer"
     dissociation_successful: "Dissociation successful."
     something_went_wrong_try_later: "Something went wrong, try later."
+    privacy_disclaimer_1: "Goggles will never give, lease or sell Your personal data to third parties."
+    privacy_disclaimer_2: "At any time, by clicking on the 'Cancel my account' button on the user edit page, you can delete all your private data regarding your user account. All the Meeting results are of public domain and will remain untouched. Swimming pools reviews, training models and other personal contributions will be unlinked and will result as belonging to a 'deleted account' and may be purged periodically from time to time. You may request an immediate 'full data purge' directly to the System Admins by sending them an e-mail (see the addresses on the 'Contact us' page)."
+    ask_a_registered_friend_to_confirm_you: "Ask an already registered friend to confirm your identity! Or send directly a message to one of the System Admins:"
+    please_confirm_my_identity: "Please, confirm my identity."
+    i_am: "I am"
 
   social:
     menu_social_index: "Swimming Buddies"
     menu_social_show: "Show"
     menu_social_invite: "Invite"
+    invite_request_tooltip: "Click to invite {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else."
     menu_social_approve: "Approve"
     menu_social_block_unblock: "Block / Unblock"
     menu_social_remove: "Remove"
     menu_social_edit: "Edit"
+    menu_social_confirm: "Confirm"
+    confirm_request_tooltip: "The user associated with this swimmer is waiting for identity endorsement. Click if you know {USER_NAME} and you think that you can confirm that he/she is indeed {SWIMMER_NAME}."
     invite_title: "'Swimming Buddy' Invite / Sharing options"
     current_friends: "Current Friends"
     pending_invited_friends: "Invited & pending"
@@ -780,6 +792,7 @@ en:
   or_you_tried_something_wrong: "...Or you just tried something that is awfully WRONG! (Be ashamed of yourself. ;-) )"
   coming_soon: "Coming soon!!"
   copy_of: "Copy of"
+  language: "Language"
 
   no_new_articles: No new articles
   select_file: "Select a file"
@@ -842,7 +855,6 @@ en:
   edit: Edit
   delete: Delete
   duplicate: Copy
-  user: User
   manage_details: Manage details
   manage_details_tooltip: "Manage the details of the selected record [also: SPACE or ENTER just after row selection]"
   row_added: "Row successfully added."
@@ -921,6 +933,7 @@ en:
   ranking: "Ranking"
   rankings: "Rankings"
   results: "Results"
+  results_and_rankings: "Results/Rankings"
   stats: "Statistics"
   team_results: "Team Results"
   team_stats: "Team Stats"

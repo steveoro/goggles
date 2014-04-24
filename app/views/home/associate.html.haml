@@ -7,13 +7,13 @@
     .span10
       = current_user.id
 
-.row-fluid.span12
+.row-fluid
   = I18n.t('home_controller.possible_swimmers')
 - @possible_swimmers.each do |swimmer|
   .row-fluid
     .span12
       = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
 
-.row-fluid.span12
+.row-fluid
   %i
     TODO ADD ALSO POST LINK TO MANUAL SELECT AN OVERRIDE SWIMMER ("Aren't you among these?")

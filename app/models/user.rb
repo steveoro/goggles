@@ -7,9 +7,9 @@ require 'i18n'
 
 
 class User < ActiveRecord::Base
+  include Rails.application.routes.url_helpers
   include DropDownListable
   include Amistad::FriendModel                       # For Facebook-like friendship management
-  include Rails.application.routes.url_helpers
 
   acts_as_token_authenticatable
 

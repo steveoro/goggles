@@ -120,6 +120,8 @@ it:
     total_team_records: "Record societari"
     total_disqualifications: "Squalifiche subite"
     no_disqualifications: "Nessuna !!"
+    swimmers: "Nuotatori"
+    search_swimmers: "Cerca Nuotatori"
 
   base_movements:
     code: "Cod."
@@ -642,6 +644,8 @@ it:
     text_freestyle: "Ti e' mai capitato di chiederti cosa avevi fatto in quella offuscata gara di tanti anni fa, che ricordi a malapena, per volerlo confrontare con gli ultimi risultati dell'ultima batteria in cui hai gareggiato? Ora puoi!"
     title_timertable: "Goggles mostra i tuoi risultati ufficiali!"
     text_timertable: "Dopo ogni Meeting di ciascuna delle Federazioni riconosciute, Goggles puo' importare automaticamente i dati. Controlla i tuoi risultati personali di nuoto e consulta le statistiche! Oppure segui gli sviluppi dei tuoi amici o dei tuoi compagni di corsia!"
+    title_happy: "Segui con Goggles i risultati dei tuoi compagni di nuotate!"
+    text_happy: "Associati ad un nuotatore registrato nei risultati su database e segui i tuoi progressi e quelli dei tuoi amici!"
 
   home_controller:
     upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
@@ -656,15 +660,23 @@ it:
     unlink_yourself_from_this_swimmer: "Disassociati da questo nuotatore"
     dissociation_successful: "Disassociazione eseguita."
     something_went_wrong_try_later: "Qualcosa e' andato storto, riprova piu' tardi."
+    privacy_disclaimer_1: "Goggles non cedera', non dara' o non vendera' mai a terze parti i Tuoi dati personali."
+    privacy_disclaimer_2: "In ogni momento, cliccando sul pulsante 'Elimina il mio account' nella pagina di modifica utente, potrai eliminare tutti i tuoi dati personali riguardanti il tuo account utente. I risultati dei Meeting sono di pubblico dominio e rimarranno intoccati. Le recensioni delle Piscine, i modelli di Allenamento e altri contributi personali diverranno dissociati a risulteranno appartenenti ad un 'account eliminato' e potrebbero essere rimossi periodicamente di tanto in tanto. Puoi richiedere una 'pulizia totale dei dati' direttamente agli Amministratori di Sistema mandando loro una e-mail (vedi gli indirizzi che sono sulla pagina 'Contattaci')."
+    ask_a_registered_friend_to_confirm_you: "Chiedi ad un tuo amico gia' registrato di confermare la tua identita'! Oppure manda un messaggio direttamente agli Admin di sistema:"
+    please_confirm_my_identity: "Per favore, puoi confermare la mia identita'?"
+    i_am: "Io sono"
 
   social:
     menu_social_index: "'Swimming Buddies'"
     menu_social_show: "Mostra"
     menu_social_invite: "Invita"
+    invite_request_tooltip: "Clicca per invitare {SWIMMER_NAME} a diventare tuo amico ('swimming buddy') o per condividere risultati, allenamenti o altro."
     menu_social_approve: "Approva"
     menu_social_block_unblock: "Blocca / Sblocca"
     menu_social_remove: "Rimuovi"
     menu_social_edit: "Modifica"
+    menu_social_confirm: "Conferma"
+    confirm_request_tooltip: "L'utente associato a questo nuotatore e' in attesa di conferma per l'identificazione. Clicca se conosci {USER_NAME} e pensi di poter confermare che e' davvero {SWIMMER_NAME}."
     invite_title: "Opzioni richiesta Amicizia ('Swimming Buddy') / Condivisione"
     current_friends: "Amici correnti"
     pending_invited_friends: "Invitati & in attesa"
@@ -783,6 +795,7 @@ it:
   or_you_tried_something_wrong: "...Oppure hai provato a fare qualcosa di TREMENDAMENTE SBAGLIATO! (Vergognati. ;-) )"
   coming_soon: "Coming soon!!"
   copy_of: "Copia di"
+  language: "Lingua"
 
   no_new_articles: Nessun nuovo articolo
   select_file: "Scegli un file"
@@ -845,7 +858,6 @@ it:
   edit: Modifica
   delete: Elimina
   duplicate: Copia
-  user: Utente
   manage_details: Gestisci dettagli
   manage_details_tooltip: "Gestisci nei dettagli l'elemento selezionato [anche: SPAZIO o INVIO dopo aver selezionato la riga]"
   row_added: "Riga aggiunta con successo."
@@ -923,6 +935,7 @@ it:
   ranking: "Classifica"
   rankings: "Classifiche"
   results: "Risultati"
+  results_and_rankings: "Risultati/Classifiche"
   stats: "Statistiche"
   team_results: "Risultati di Squadra"
   team_stats: "Statistiche di Squadra"

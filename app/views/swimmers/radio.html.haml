@@ -2,7 +2,7 @@
   %li.active#firstTab
     = link_to( t('radiography.radio_tab'), '#' )
   %li
-    = link_to( t('radiography.medals_tab'), swimmer_radio_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.medals_tab'), swimmer_medals_path(:id=>@swimmer.id) )
   %li
     = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(:id=>@swimmer.id) )
   %li
@@ -21,9 +21,13 @@
       .row-fluid
         .span3
           = I18n.t(:name) +':'
-        .span6
+        .span4
           %b= @swimmer.get_full_name_with_nickname
           = admin_signed_in? ? " (id=#{@swimmer.id})" : ''
+        .span1
+          = ask_friendship_link( @swimmer )
+        .span1
+          = ask_confirm_link( @swimmer )
       .row-fluid
         .span3
           = I18n.t('swimmers.affiliated_in_teams') +':'

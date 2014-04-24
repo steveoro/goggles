@@ -6,12 +6,29 @@ require 'common/format'
 class SwimmersController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!, :verify_parameter
-  before_filter :authenticate_entity!, :verify_parameter # Devise HTTP log-in strategy
+  before_filter :authenticate_entity_from_token!, except: [:index, :radio]
+  before_filter :authenticate_entity!, except: [:index, :radio] # Devise HTTP log-in strategy
+  # Parse parameters:
+  before_filter :verify_parameter, except: [:index]
+  before_filter :verify_parameter, except: [:index]
   # ---------------------------------------------------------------------------
 
 
-  # Radiography for a specified swimmer id: main "Radiography" tab rendering
+  # Index/Search action
+  #
+  def index
+    @title = I18n.t('swimmers.search_swimmers')
+    @swimmers_grid = initialize_grid(
+      Swimmer,
+      :order => 'swimmers.complete_name',
+      :order_direction => 'asc',
+      :per_page => 20
+    )
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Radiography for a specified swimmer id: main ID card "Radiography" tab rendering.
   #
   # == Params:
   # :id => the swimmer id to be processed

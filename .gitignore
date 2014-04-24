@@ -37,9 +37,7 @@
 # Ignore auto-generated files:
 /db/schema.rb
 db/schema.rb
-db/schema.rb
-
-# Ignore code coverage report directory:
+db/schema.*
 /coverage/*
 coverage/*
 coverage/assets/*
@@ -48,4 +46,3 @@ coverage/index.html
 api_docs/*
 api_docs
 api_docs/sessions.txt
-db/schema.rb

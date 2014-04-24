@@ -1,4 +1,5 @@
 <h2><%= t('devise.new_user_title') %></h2>
+<%= render( :partial => 'goggles/privacy_disclaimer' ) %>
 
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {:class => 'form-horizontal'}) do |f| %>
 	<%= devise_error_messages! %>
@@ -77,7 +78,6 @@
         var cur2nd = $( '#user_last_name' ).val();
         $('#user_description').val( new1st + ' ' + cur2nd );
     };
-
     $('#user_first_name').change( function(){ updateDescription(); } );
     $('#user_last_name').change( function(){ updateDescription(); } );
 </script>

@@ -1,5 +1,8 @@
 Goggles::Application.routes.draw do
 
+  resources :swimmers
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -179,6 +182,7 @@ Goggles::Application.routes.draw do
           # get 'misc'
         # end
       # end
+      get  "swimmers/index",                    as: "swimmers"
       get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"

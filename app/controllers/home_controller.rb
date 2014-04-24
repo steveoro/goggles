@@ -40,6 +40,12 @@ class HomeController < ApplicationController
       if params[:id]                                # Save the association both ways:
         current_user.update_attribute( :swimmer_id, params[:id].to_i )
         Swimmer.where( id: params[:id].to_i ).update_all( associated_user_id: current_user.id )
+        swimmer = Swimmer.find_by_id( params[:id].to_i )
+        if swimmer
+          current_user.update_attribute( :year_of_birth, swimmer.year_of_birth )
+          current_user.update_attribute( :first_name, swimmer.first_name.titleize ) unless swimmer.first_name.empty?
+          current_user.update_attribute( :last_name, swimmer.last_name.titleize ) unless swimmer.last_name.empty?
+        end
         current_user.reload
         flash[:notice] = I18n.t('home_controller.association_successful')
       end
