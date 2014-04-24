@@ -21,13 +21,18 @@
       .row-fluid
         .span3
           = I18n.t(:name) +':'
-        .span4
+        .span6
           %b= @swimmer.get_full_name_with_nickname
           = admin_signed_in? ? " (id=#{@swimmer.id})" : ''
-        .span1
-          = ask_friendship_link( @swimmer )
-        .span1
+      .row-fluid
+        .span3
+        .span6
           = ask_confirm_link( @swimmer )
+          = ask_friendship_link( @swimmer )
+          = approve_friendship_link( @swimmer )
+          = block_friendship_link( @swimmer )
+          = remove_friendship_link( @swimmer )
+          = edit_friendship_link( @swimmer )
       .row-fluid
         .span3
           = I18n.t('swimmers.affiliated_in_teams') +':'

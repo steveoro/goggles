@@ -154,6 +154,8 @@ Goggles::Application.routes.draw do
       get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 
       get  "socials/show_all",                  to: "socials#show_all"
+      post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
+      post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"
       get  "social/invite/:id",                 to: "socials#invite",                   as: "social_invite"
       post "social/invite/:id",                 to: "socials#invite"
       get  "social/approve/:id",                to: "socials#approve",                  as: "social_approve"

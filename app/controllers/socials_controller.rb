@@ -5,6 +5,9 @@ class SocialsController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
+  # Parse parameters:
+  before_filter :verify_parameter, except: [:show_all]
+  before_filter :verify_parameter, except: [:show_all]
   # ---------------------------------------------------------------------------
 
 
@@ -15,6 +18,22 @@ class SocialsController < ApplicationController
     @pending_invited = current_user.pending_invited
     @invited = current_user.invited
     @blocked_friendships = current_user.blocked_friendships
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Endorse/confirm user association with a swimmer (POST only).
+  #
+  def association_confirm
+    toggle_confirmation( true )
+    redirect_to(:back) and return
+  end
+
+  # Remove endorsement/unconfirm user association with a swimmer (POST only).
+  #
+  def association_unconfirm
+    toggle_confirmation( false )
+    redirect_to(:back) and return
   end
   # ---------------------------------------------------------------------------
 
@@ -37,11 +56,9 @@ class SocialsController < ApplicationController
   #
   def invite
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}.invite() -----"
-    logger.debug "PARAMS: #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.invite() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('social.invite_title')
-    @swimming_buddy = User.find_by_id( params[:id] )
-
     if request.post?                                # === POST: ===
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
@@ -54,12 +71,7 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      unless ( @swimming_buddy )                    # Check swimming buddy existance
-        flash[:error] = I18n.t(:invalid_action_request)
-        redirect_to( socials_show_all_path() ) and return
-      end
-      @submit_title = I18n.t('social.send')
-                                                    # Check that the friendship is a new one:
+      @submit_title = I18n.t('social.send')         # Check that the friendship is a new one:
       if ( current_user.find_any_friendship_with(@swimming_buddy).nil? )
         # friendship must not exist for a new invite to be spawn:
         @friendship = Amistad.friendship_class.new( friendable_id: current_user.id, friend_id: @swimming_buddy.id )
@@ -85,8 +97,8 @@ class SocialsController < ApplicationController
   #     news feed article).
   def approve
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}.invite() -----"
-    logger.debug "PARAMS: #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.approve() -----"
+#    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('social.approve_title')
     @swimming_buddy = User.find_by_id( params[:id] )
 
@@ -102,10 +114,6 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      unless @swimming_buddy                        # Check swimming buddy existance
-        flash[:error] = I18n.t(:invalid_action_request)
-        redirect_to( socials_show_all_path() ) and return
-      end
       @submit_title = I18n.t('social.approve')
       @friendship = current_user.find_any_friendship_with(@swimming_buddy)
                                                     # Check that the friendship is a valid one:
@@ -171,4 +179,44 @@ class SocialsController < ApplicationController
   end
   # ---------------------------------------------------------------------------
 
+
+  private
+
+
+  # Verifies that a user id is provided as parameter; otherwise
+  # redirects to the home page.
+  # Assigns the @swimming_buddy instance when successful.
+  #
+  # == Params:
+  # :id => the user id to be processed by most of the methods (see before filter above)
+  #
+  def verify_parameter
+    user_id = params[:id].to_i
+    @swimming_buddy = ( user_id > 0 ) ? User.find_by_id( user_id ) : nil
+    unless ( @swimming_buddy )                      # Check swimming buddy existance
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Implementation of the confirm / unconfirm action.
+  def toggle_confirmation( is_confirming )
+    if request.post?                                # === POST: ===
+      if is_confirming
+        is_ok = UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
+      else
+        is_ok = UserSwimmerConfirmation.unconfirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
+      end
+      if is_ok
+        flash[:info] = I18n.t( is_confirming ? 'social.confirm_successful' : 'social.unconfirm_successful' )
+      else
+        flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')
+      end
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+    end
+  end
+  # ---------------------------------------------------------------------------
 end

@@ -697,6 +697,8 @@ en:
     pending_invite: "Pending invite"
     block_unblock: "Block / unblock"
     remove_friendship: "Remove friendship"
+    confirm_successful: "Swimmer-user association set as confirmed (by you). Thanks."
+    unconfirm_successful: "Swimmer-user association set as 'unconfirmed' (by you)."
     invite_successful: "Invite successfully sent."
     invite_error: "Error: unable to send invite."
     approve_successful: "Approval successful."

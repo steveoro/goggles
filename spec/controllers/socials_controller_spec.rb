@@ -50,7 +50,48 @@ describe SocialsController do
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  # ===========================================================================
+
+
+  describe '[POST #association_confirm]' do
+    before :each do
+      @swimmer = create( :swimmer, associated_user: create(:user) )
+      @friend_user = @swimmer.associated_user
+      @friend_user.swimmer = @swimmer
+    end
+
+    context "as an unlogged user" do
+      xit "doesn't confirm another user (unconfirmed) swimmer association" do 
+        expect {
+          post :association_confirm, id: @friend_user.id
+        }.not_to change(@friend_user.invited_by, :count) 
+      end
+    end
+
+
+    context "as a logged-in user" do
+      login_user()
+
+      xit "handles successfully the request" do
+        expect {
+          post :invite, id: @friend_user.id
+        }.to change(@user.pending_invited, :count).by(1) 
+      end
+
+      xit "assigns the required variables" do
+        get :invite, id: @friend_user.id
+        expect( assigns(:title) ).not_to be_nil 
+        expect( assigns(:swimming_buddy) ).not_to be_nil 
+      end
+
+      xit "renders successfully the template" do
+        post :invite, id: @friend_user.id 
+        expect(response).to redirect_to socials_show_all_path()
+        expect( flash[:info] ).to include( I18n.t('social.invite_successful') )
+      end
+    end
+  end
+  # ===========================================================================
 
 
   describe '[GET #invite]' do
@@ -88,7 +129,7 @@ describe SocialsController do
 
       it "redirects to socials_show_all_path for a non-yet existing goggler" do
         get :invite, id: 0
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
 
       it "redirects to socials_show_all_path for an existing friendship" do
@@ -178,7 +219,7 @@ describe SocialsController do
 
       it "redirects to socials_show_all_path for an invalid friendable" do
         get :approve, id: 0
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
 
       it "redirects to socials_show_all_path for an already approved friendship" do

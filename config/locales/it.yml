@@ -699,6 +699,8 @@ it:
     pending_invite: "Invito in attesa"
     block_unblock: "Blocca / Sblocca"
     remove_friendship: "Elimina amicizia"
+    confirm_successful: "Associazione utente-nuotatore impostata come confermata (da te). Grazie."
+    unconfirm_successful: "Associazione utente-nuotatore impostata come NON confermata (da te)."
     invite_successful: "Invito inviato con successo."
     invite_error: "Errore durante l'invio dell'invito."
     approve_successful: "Amicizia accettata con successo."
