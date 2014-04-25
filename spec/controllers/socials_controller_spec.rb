@@ -55,16 +55,21 @@ describe SocialsController do
 
   describe '[POST #association_confirm]' do
     before :each do
-      @swimmer = create( :swimmer, associated_user: create(:user) )
-      @friend_user = @swimmer.associated_user
-      @friend_user.swimmer = @swimmer
+      @friend_user = create(:user)
+      @swimmer = create(:swimmer)
+      @friend_user.set_associated_swimmer(@swimmer)
     end
 
     context "as an unlogged user" do
-      xit "doesn't confirm another user (unconfirmed) swimmer association" do 
+      it "doesn't add a confirmation" do
         expect {
           post :association_confirm, id: @friend_user.id
-        }.not_to change(@friend_user.invited_by, :count) 
+        }.not_to change{ @friend_user.confirmators.count } 
+      end
+
+      it "results in a redirect" do 
+        post :association_confirm, id: @friend_user.id
+        expect(response.status).to eq( 302 )
       end
     end
 
@@ -72,22 +77,73 @@ describe SocialsController do
     context "as a logged-in user" do
       login_user()
 
-      xit "handles successfully the request" do
+      it "handles successfully the request by increasing the total confirmators" do
         expect {
-          post :invite, id: @friend_user.id
-        }.to change(@user.pending_invited, :count).by(1) 
+          post :association_confirm, id: @friend_user.id
+        }.to change{ @friend_user.confirmators.count }.by(1) 
       end
 
-      xit "assigns the required variables" do
-        get :invite, id: @friend_user.id
-        expect( assigns(:title) ).not_to be_nil 
-        expect( assigns(:swimming_buddy) ).not_to be_nil 
+      it "handles successfully the request by adding a confirmation row" do
+        expect {
+          post :association_confirm, id: @friend_user.id
+        }.to change{ UserSwimmerConfirmation.count }.by(1) 
       end
 
-      xit "renders successfully the template" do
-        post :invite, id: @friend_user.id 
-        expect(response).to redirect_to socials_show_all_path()
-        expect( flash[:info] ).to include( I18n.t('social.invite_successful') )
+      it "results in a redirect" do 
+        post :association_confirm, id: @friend_user.id
+        expect(response.status).to eq( 302 )
+      end
+
+      it "displays a flash session info message" do 
+        post :association_confirm, id: @friend_user.id
+        expect( flash[:info] ).to include( I18n.t('social.confirm_successful') )
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[POST #association_unconfirm]' do
+    before :each do
+      @friend_user = create(:user)
+      @swimmer = create(:swimmer)
+      @friend_user.set_associated_swimmer(@swimmer)
+    end
+
+    context "as an unlogged user" do
+      it "results in a redirect" do 
+        post :association_unconfirm, id: @friend_user.id
+        expect(response.status).to eq( 302 )
+      end
+    end
+
+
+    context "as a logged-in user" do
+      login_user()
+      before :each do
+        UserSwimmerConfirmation.confirm_for( @friend_user, @swimmer, @user )
+      end
+
+      it "handles successfully the request by decreasing the total confirmators" do
+        expect {
+          post :association_unconfirm, id: @friend_user.id
+        }.to change{ @friend_user.confirmators.count }.by(-1) 
+      end
+
+      it "handles successfully the request by removing a confirmation row" do
+        expect {
+          post :association_unconfirm, id: @friend_user.id
+        }.to change{ UserSwimmerConfirmation.count }.by(-1) 
+      end
+
+      it "results in a redirect" do 
+        post :association_unconfirm, id: @friend_user.id
+        expect(response.status).to eq( 302 )
+      end
+
+      it "displays a flash session info message" do 
+        post :association_unconfirm, id: @friend_user.id
+        expect( flash[:info] ).to include( I18n.t('social.unconfirm_successful') )
       end
     end
   end

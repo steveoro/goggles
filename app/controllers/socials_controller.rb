@@ -205,11 +205,11 @@ class SocialsController < ApplicationController
   def toggle_confirmation( is_confirming )
     if request.post?                                # === POST: ===
       if is_confirming
-        is_ok = UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
+        result = UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
       else
-        is_ok = UserSwimmerConfirmation.unconfirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
+        result = UserSwimmerConfirmation.unconfirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
       end
-      if is_ok
+      if result
         flash[:info] = I18n.t( is_confirming ? 'social.confirm_successful' : 'social.unconfirm_successful' )
       else
         flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')

@@ -140,7 +140,7 @@ class User < ActiveRecord::Base
   # Returns the first swimmer-association confirmation found given to the specified user
   # or nil when not found.
   def find_any_confirmation_given_to( user )
-    UserSwimmerConfirmation.where( :confirmator_id => self.id, :user_id => user.id ).first
+    UserSwimmerConfirmation.find_any_between( user, self ).first
   end
   # ----------------------------------------------------------------------------
 
