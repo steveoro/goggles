@@ -162,6 +162,8 @@ Goggles::Application.routes.draw do
       post "social/approve/:id",                to: "socials#approve"
       get  "social/block/:id",                  to: "socials#block",                    as: "social_block"
       post "social/block/:id",                  to: "socials#block"
+      get  "social/unblock/:id",                to: "socials#unblock",                  as: "social_unblock"
+      post "social/unblock/:id",                to: "socials#unblock"
       get  "social/remove/:id",                 to: "socials#remove",                   as: "social_remove"
       post "social/remove/:id",                 to: "socials#remove"
       get  "social/edit/:id",                   to: "socials#edit",                     as: "social_edit"

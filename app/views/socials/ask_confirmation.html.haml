@@ -1,0 +1,8 @@
+%h3= @title
+
+.row-fluid.span12
+  = I18n.t('social.swimming_buddy_options').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+.row-fluid.span12
+  = FriendshipDecorator.decorate( @friendship ).to_verbose_sharing
+
+= render partial: 'goggles/ask_confirmation_post_button'
