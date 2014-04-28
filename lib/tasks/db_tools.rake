@@ -13,7 +13,7 @@ require 'parsers/data_importer'
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.245.20140424
+  - Goggles framework vers.:  4.00.247.20140424
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -53,7 +53,8 @@ namespace :db do
     puts "\r\n---------------- 8< -------------------"
     errors_found = 0
     prev_error_at = 0
-    klass.all.each_with_index do |row, index|
+    index = 0 
+    klass.find_each(batch_size: 250) do |row|
       if row.invalid?
         puts "" unless prev_error_at == index-1
         puts "ID: #{row.id} => #{row.errors().messages.to_json}"
@@ -62,6 +63,7 @@ namespace :db do
       else
         putc '.'
       end
+      index += 1
     end
     puts "\r\n---------------- 8< -------------------"
     puts "\r\nTotal validation errors found: #{errors_found > 0 ? errors_found : 'NONE found! ...Yeay! Rejoyce and dance! :)'}"

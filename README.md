@@ -2,6 +2,7 @@
 ### Swimming Results Browser & "Swimming Life-style" enhancer
 
 [![Code Climate](https://codeclimate.com/github/steveoro/goggles.png)](https://codeclimate.com/github/steveoro/goggles)
+
 [![Coverage Status](https://coveralls.io/repos/steveoro/goggles/badge.png)](https://coveralls.io/r/steveoro/goggles)
 
 Goggles is a Rails application developed to manage the storage of the results from any official

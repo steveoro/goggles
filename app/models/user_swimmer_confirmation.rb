@@ -1,5 +1,4 @@
 class UserSwimmerConfirmation < ActiveRecord::Base
-#  attr_accessible :confirmator_id, :swimmer, :user
   belongs_to :user
   belongs_to :swimmer
   validates_associated :swimmer
@@ -7,6 +6,10 @@ class UserSwimmerConfirmation < ActiveRecord::Base
   belongs_to :confirmator,
     :class_name => User,
     :foreign_key => "confirmator_id"
+
+  scope :find_for_user,         ->(user) { where( user_id: user.id ) }
+  scope :find_for_confirmator,  ->(confirmator) { where( confirmator_id: confirmator.id ) }
+  scope :find_any_between,      ->(user, confirmator) { where( confirmator_id: confirmator.id, user_id: user.id ) }
   # ---------------------------------------------------------------------------
 
 
@@ -14,20 +17,19 @@ class UserSwimmerConfirmation < ActiveRecord::Base
   # user that acts as a "confirmator".
   #
   # The parameters can either be model instances or simple IDs.
+  # Returns the confirmation row on success, +nil+ otherwise.
   # 
   def self.confirm_for( user, swimmer, confirmator )
     user_id, swimmer_id, confirmator_id = self.parse_parameters( user, swimmer, confirmator )
-    return false unless self.validate_parameters( user_id, swimmer_id, confirmator_id )
-
+    return nil unless self.validate_parameters( user_id, swimmer_id, confirmator_id )
     begin
       UserSwimmerConfirmation.create!(
         user_id: user_id,
         swimmer_id: swimmer_id,
         confirmator_id: confirmator_id
       )
-      true
     rescue
-      false
+      nil
     end
   end
   # ---------------------------------------------------------------------------
@@ -40,6 +42,7 @@ class UserSwimmerConfirmation < ActiveRecord::Base
   # as the specified parameters will be removed.
   #
   # The parameters can either be model instances or simple IDs (Fixnum).
+  # Returns +true+ on success, +false+ otherwise.
   # 
   def self.unconfirm_for( user, swimmer, confirmator )
     user_id, swimmer_id, confirmator_id = self.parse_parameters( user, swimmer, confirmator )

@@ -136,14 +136,14 @@ class SwimmersController < ApplicationController
   # Assigns the @swimmer instance when successful.
   #
   # == Params:
-  # :id => the swimmer id to be processed
+  # :id => the swimmer id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter
     swimmer_id = params[:id].to_i
     @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( root_path() ) and return
+      redirect_to(:back) and return
     end
   end
   # ---------------------------------------------------------------------------

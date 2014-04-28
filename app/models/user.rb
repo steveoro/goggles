@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
 
   # Computes a descriptive name associated with this data
   def get_full_name
-    "#{name} (desc.: #{description})"
+    "#{name} (#{description})"
   end
 
   # to_s() override for debugging purposes:
@@ -85,6 +85,48 @@ class User < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
 
+  # Updates both this user and a Swimmer instance for "association" (identity match).
+  #
+  # If the user is already associated to another swimmer, both the old swimmer and the
+  # new one will be updated (the old will have associated_user nulled while the new
+  # one will receive the user id).
+  #
+  # If the specified +swimmer+ is nil and there is already an association this works
+  # as a "dissociate" action, clearing both the user and the associated swimmer.
+  #
+  # === Returns:
+  # - +true+ when successful.
+  # - +false+ in case of error, or when the specified swimmer is not available for association (is already "taken").
+  # 
+  def set_associated_swimmer( new_swimmer = nil )
+    if new_swimmer.instance_of?( Swimmer )          # === Set a new association:
+      return false if (new_swimmer.associated_user_id.to_i != 0) && (new_swimmer.associated_user_id.to_i != self.id)
+      # TODO We could/should check here if we have a user.swimmer link that does NOT correspond to a swimmer.associated_user link
+      if swimmer                                    # Already associated? Clear first the old swimmer:
+        swimmer.associated_user_id = nil
+        swimmer.save!
+      end
+      self.swimmer_id = new_swimmer.id              # Update this user:
+      self.year_of_birth = new_swimmer.year_of_birth
+      self.first_name = new_swimmer.first_name.titleize unless new_swimmer.first_name.empty?
+      self.last_name  = new_swimmer.last_name.titleize unless new_swimmer.last_name.empty?
+      save!
+      new_swimmer.associated_user_id = self.id      # Update the swimmer
+      new_swimmer.save!
+
+    elsif new_swimmer.nil?                          # === Clear (dissociate) existing association:
+      if swimmer
+        swimmer.associated_user_id = nil
+        swimmer.save!
+      end
+      self.swimmer_id = nil
+      save!
+    end
+    reload
+  end
+  # ----------------------------------------------------------------------------
+
+
   # Returns true if this user has a swimmer_id already associated to him/her.
   def has_associated_swimmer?
     ! (swimmer.nil?)
@@ -98,7 +140,7 @@ class User < ActiveRecord::Base
   # Returns the first swimmer-association confirmation found given to the specified user
   # or nil when not found.
   def find_any_confirmation_given_to( user )
-    UserSwimmerConfirmation.where( :confirmator_id => self.id, :user_id => user.id ).first
+    UserSwimmerConfirmation.find_any_between( user, self ).first
   end
   # ----------------------------------------------------------------------------
 

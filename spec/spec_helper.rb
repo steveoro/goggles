@@ -12,8 +12,8 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 SimpleCov.start 'rails'
 puts "SimpleCov required and started."
 
-#Coveralls.wear!
-#puts "Coveralls required and started."
+Coveralls.wear!
+puts "Coveralls required and started."
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'

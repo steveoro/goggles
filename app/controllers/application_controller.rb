@@ -11,7 +11,8 @@ class ApplicationController < ActionController::Base
   skip_before_filter :authenticate_entity_from_token!
   skip_before_filter :authenticate_entity!
 
-  rescue_from Exception, :with => :handle_exception
+# WIP
+#  rescue_from Exception, :with => :handle_exception
   rescue_from ActionController::RoutingError, :with => :render_not_found
 
 

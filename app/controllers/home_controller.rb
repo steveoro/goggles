@@ -32,22 +32,19 @@ class HomeController < ApplicationController
 
   def contact_us
   end
+  # ----------------------------------------------------------------------------
 
 
   # Associate action for a logged-in user. Handles both GET + POST
   def associate
     if request.post?                                # === POST: ===
       if params[:id]                                # Save the association both ways:
-        current_user.update_attribute( :swimmer_id, params[:id].to_i )
-        Swimmer.where( id: params[:id].to_i ).update_all( associated_user_id: current_user.id )
         swimmer = Swimmer.find_by_id( params[:id].to_i )
-        if swimmer
-          current_user.update_attribute( :year_of_birth, swimmer.year_of_birth )
-          current_user.update_attribute( :first_name, swimmer.first_name.titleize ) unless swimmer.first_name.empty?
-          current_user.update_attribute( :last_name, swimmer.last_name.titleize ) unless swimmer.last_name.empty?
+        if current_user.set_associated_swimmer( swimmer )
+          flash[:notice] = I18n.t('home_controller.association_successful')
+        else
+          flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')
         end
-        current_user.reload
-        flash[:notice] = I18n.t('home_controller.association_successful')
       end
       redirect_to( root_path() ) and return
                                                     # === GET: ===
@@ -72,10 +69,11 @@ class HomeController < ApplicationController
   # POST-only action that removes an association to a swimmer for the current user.
   def dissociate
     if request.post?                                # === POST: ===
-      Swimmer.where( id: current_user.swimmer_id ).update_all( associated_user_id: nil ) if current_user.swimmer_id
-      current_user.update_attribute( :swimmer_id, nil )
-      current_user.reload
-      flash[:notice] = I18n.t('home_controller.dissociation_successful')
+      if current_user.set_associated_swimmer()
+        flash[:notice] = I18n.t('home_controller.dissociation_successful')
+      else
+        flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')
+      end
     end
     redirect_to( root_path() ) and return
   end
@@ -86,5 +84,4 @@ class HomeController < ApplicationController
   def wip
   end
   # ----------------------------------------------------------------------------
-  #++
 end
