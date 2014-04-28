@@ -1,17 +1,25 @@
-.row-fluid.span12
-
-= simple_form_for @friendship, :html => { :class => 'form-horizontal' } do |f|
-  .row-fluid.span11
-    = I18n.t('social.request_swimming_buddy').gsub( "{SWIMMER_NAME}", @swimming_buddy.get_full_name )
-  .row-fluid.span11
-    = f.input :text_message, label: I18n.t('social.message_title'), default: I18n.t('social.default_message')
-  .row-fluid.span11
-    = f.input :shares_passages, label: I18n.t('social.request_to_shares_passages'), hint: I18n.t('social.shares_passages_hint')
-  .row-fluid.span11
-    = f.input :shares_trainings, label: I18n.t('social.request_to_shares_trainings'), hint: I18n.t('social.shares_trainings_hint')
-  .row-fluid.span11
-    = f.input :shares_calendars, label: I18n.t('social.request_to_shares_calendars'), hint: I18n.t('social.shares_calendars_hint')
-
-  .row-fluid.span11
-    = f.button :submit, @submit_title
-    = f.button :cancel, I18n.t('social.cancel')
+  .row-fluid
+    .control-group.span3
+      = label_tag( :text_message, I18n.t('social.message_title') +':', :for => :text_message, :class => 'control-label' )
+      .controls
+        = text_area_tag( :text_message, I18n.t('social.default_message').gsub("{SWIMMER_NAME}", @swimming_buddy.name), class: 'input-xxlarge' )
+  .row-fluid
+    %label.checkbox
+      = I18n.t('social.request_to_shares_passages')
+      = f.check_box( :shares_passages, id: "spanSharePass#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_passages_hint') )
+  .row-fluid
+    %label.checkbox
+      = f.check_box( :shares_trainings, id: "spanShareTrain#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_trainings_hint') )
+      = I18n.t('social.request_to_shares_trainings')
+  .row-fluid
+    %label.checkbox
+      = f.check_box( :shares_calendars, id: "spanShareCal#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_calendars_hint') )
+      = I18n.t('social.request_to_shares_calendars')
+  .row-fluid
+    %hr
+  .row-fluid
+    .control-group
+      .controls
+        = f.submit( @submit_title, :id => 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+        %span(id='loadingIndicator' hidden='true')
+          = image_tag( 'indicator.gif' )
