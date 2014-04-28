@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
 
   # Computes a descriptive name associated with this data
   def get_full_name
-    "#{name} (desc.: #{description})"
+    "#{name} (#{description})"
   end
 
   # to_s() override for debugging purposes:

@@ -692,6 +692,7 @@ it:
     current_friends: "Amici correnti"
     pending_invited_friends: "Invitati & in attesa"
     invited_friends: "Invitati"
+    to_be_accepted_friends: "In attesa di una tua conferma"
     blocked_friends: "Bloccati"
     warning_swimmer_is_not_a_goggler: "{SWIMMER_NAME} non e' ancora un goggler! (Non esiste nessun utente associato a questo atleta)"
     warning_friendship_invite_already_sent_edit_options: "Esiste gia' una richiesta di amicizia (in corso) verso {SWIMMER_NAME}."
@@ -1164,11 +1165,15 @@ it:
     attributes:
       user:
         created_on: Creato il
+        email: "e-mail"
         updated_on: Ultima modifica
-        name: Nome
+        name: Nome utente
         hashed_pwd: Password codificata
         password_confirmation: Conferma password
         description: "Descrizione / nome completo"
+        first_name: "Nome"
+        last_name: "Cognome"
+        year_of_birth: "Anno di nascita"
         enable_blog: "Blogger?"
         enable_edit: "Puo' modificare?"
         enable_delete: "Puo' eliminare?"

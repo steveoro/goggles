@@ -8,29 +8,32 @@
       = current_user.id
 
 .row-fluid.span12
-  = I18n.t('social.current_friends')
-- @friendships.each do |friendship|
-  .row-fluid
-    .span12
-      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+  %h4= I18n.t('social.current_friends')
+  %ul
+    - @friendships.each do |friendship|
+      %li= FriendshipDecorator.decorate( friendship ).to_verbose_sharing
 
 .row-fluid.span12
-  = I18n.t('social.pending_invited_friends')
-- @pending_invited.each do |friendship|
-  .row-fluid
-    .span12
-      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+  %h4= I18n.t('social.pending_invited_friends')
+  %ul
+    - @pending_invited.each do |user|
+      %li= user.get_full_name
 
 .row-fluid.span12
-  = I18n.t('social.invited_friends')
-- @invited.each do |friendship|
-  .row-fluid
-    .span12
-      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+  %h4= I18n.t('social.to_be_accepted_friends')
+  %ul
+    - @pending_invited_by.each do |user|
+      %li= user.get_full_name
+        TODO (add link to accept here)
 
 .row-fluid.span12
-  = I18n.t('social.blocked_friends')
-- @blocked_friendships.each do |friendship|
-  .row-fluid
-    .span12
-      = FriendshipDecorator.decorate( friendship ).to_verbose_sharing
+  %h4= I18n.t('social.invited_friends')
+  %ul
+    - @invited.each do |user|
+      %li= user.get_full_name
+
+.row-fluid.span12
+  %h4= I18n.t('social.blocked_friends')
+  %ul
+    - @blocked_friendships.each do |friendship|
+      %li= FriendshipDecorator.decorate( friendship ).to_verbose_sharing

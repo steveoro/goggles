@@ -16,6 +16,7 @@ class SocialsController < ApplicationController
     @title = I18n.t('social.invite_title')
     @friendships = current_user.friendships
     @pending_invited = current_user.pending_invited
+    @pending_invited_by = current_user.pending_invited_by
     @invited = current_user.invited
     @blocked_friendships = current_user.blocked_friendships
   end
@@ -78,14 +79,13 @@ class SocialsController < ApplicationController
       @submit_title = I18n.t('social.send')         # Check that the friendship is a new one:
       if ( current_user.find_any_friendship_with(@swimming_buddy).nil? )
         # friendship must not exist for a new invite to be spawn:
-        @friendship = Amistad.friendship_class.new( friendable_id: current_user.id, friend_id: @swimming_buddy.id )
+        @friendship   = Amistad.friendship_class.new( friendable_id: current_user.id, friend_id: @swimming_buddy.id )
       else
         # If friendship exists:
         flash[:warning] = I18n.t( 'social.warning_friendship_invite_already_sent_edit_options' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( socials_show_all_path() ) and return
       end
-      render :edit
     end
   end
   # ---------------------------------------------------------------------------
@@ -136,7 +136,6 @@ class SocialsController < ApplicationController
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( socials_show_all_path() ) and return
       end
-      render :edit
     end
   end
   # ---------------------------------------------------------------------------

@@ -156,8 +156,8 @@ Goggles::Application.routes.draw do
       get  "socials/show_all",                  to: "socials#show_all"
       post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
       post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"
-      get  "social/invite/:id",                 to: "socials#invite",                   as: "social_invite"
-      post "social/invite/:id",                 to: "socials#invite"
+      match "social/invite/:id",                to: "socials#invite",                   as: "social_invite", via: [:get, :post]
+#      post "social/invite/:id",                 to: "socials#invite"
       get  "social/approve/:id",                to: "socials#approve",                  as: "social_approve"
       post "social/approve/:id",                to: "socials#approve"
       get  "social/block/:id",                  to: "socials#block",                    as: "social_block"
@@ -302,5 +302,5 @@ Goggles::Application.routes.draw do
   # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
   # RoutingError from hitting ApplicationController::rescue_action).
   # In other words, this wildcard route will catch all the other cases:
-  match "*path", :to => "application#routing_error"
+#  match "*path", :to => "application#routing_error"
 end

@@ -23,7 +23,7 @@ module SwimmersHelper
       path      = social_association_confirm_path( id: swimmer.associated_user_id )
     end
 
-    build_link_result( "invite#{swimmer.id}", label_txt, "label", tooltip, path )
+    build_link_result( "invite#{swimmer.id}", label_txt, "label", tooltip, path, :post )
   end
 
 
@@ -136,11 +136,18 @@ module SwimmersHelper
   private
 
 
-  def build_link_result( span_id, label_text, label_css_class, tooltip_text, path )
+  # Builds a custom link_to HTML text.
+  def build_link_result( span_id, label_text, label_css_class, tooltip_text,
+                         path_to_destination, http_method = :get )
     link_to(
       content_tag( :span, label_text, class: label_css_class ),
-      path,
-      { :id => span_id, 'data-toggle' => 'tooltip', :title => tooltip_text }
+      url: path_to_destination,
+      method: http_method,
+      html: {
+        id: span_id,
+        'data-toggle' => 'tooltip',
+        title: tooltip_text
+      }
     )
   end
 end
