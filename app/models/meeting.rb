@@ -54,7 +54,7 @@ class Meeting < ActiveRecord::Base
   validates_length_of :reference_e_mail, maximum: 50
   validates_length_of :reference_name, maximum: 50
   validates_length_of :configuration_file, maximum: 255
-  validates_length_of :max_individual_events, maximum: 1
+  validates_length_of :max_individual_events, maximum: 2
   validates_length_of :max_individual_events_per_session, maximum: 1
 
   scope :sort_meeting_by_user,   ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }
@@ -151,12 +151,15 @@ class Meeting < ActiveRecord::Base
   # with session informations.
   # 
   def get_complete_events
-    sessions = self.meeting_sessions.includes(:day_part_type).joins(:day_part_type).collect{ |row| row.day_part_type.i18n_short }
+    ms = self.meeting_sessions.includes(:day_part_type).joins(:day_part_type).collect{ |row| row.day_part_type.i18n_short }
     
     # If events count = 0 give 'to be defined' description
-    if sessions.count > 0
-      # Create description for each session
-      sessions.join('--').gsub(' ','').gsub('--', ', ')
+    if ms.count > 0
+      ms.each { |session| 
+        # Create description for each session
+        events = session.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
+        "#{session.join('--').gsub(' ','').gsub('--', ', ')}: #{events.join('--').gsub(' ','').gsub('--', ', ')}"
+      }
     else
       'To be defined...'
     end
