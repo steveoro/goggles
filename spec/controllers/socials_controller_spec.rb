@@ -31,7 +31,7 @@ describe SocialsController do
       it "assigns the required variables" do
         get :show_all
         expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:friendships) ).not_to be_nil 
+        expect( assigns(:friends) ).not_to be_nil 
         expect( assigns(:pending_invited) ).not_to be_nil 
         expect( assigns(:pending_invited_by) ).not_to be_nil 
         expect( assigns(:invited) ).not_to be_nil 

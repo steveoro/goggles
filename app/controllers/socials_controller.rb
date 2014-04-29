@@ -14,7 +14,7 @@ class SocialsController < ApplicationController
   # Show all friendships action.
   def show_all
     @title = I18n.t('social.invite_title')
-    @friendships = current_user.friendships
+    @friends = current_user.friends
     @pending_invited = current_user.pending_invited
     @pending_invited_by = current_user.pending_invited_by
     @invited = current_user.invited
@@ -121,6 +121,22 @@ class SocialsController < ApplicationController
       shares_calendars = (params[:shares_calendars].to_i > 0)
       if current_user.approve( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
         flash[:info] = I18n.t('social.approve_successful')
+        # TODO Create also achievement
+        # TODO Refactor this shit into something better:
+        NewsFeed.create!(
+          user: @swimming_buddy,
+          friend: current_user,
+          is_friend_activity: true,
+          title: I18n.t('newsfeed.approve_title'),
+          body: I18n.t('newsfeed.approve_body').gsub("{SWIMMER_NAME}", current_user.get_first_and_last_name)
+        )
+        NewsFeed.create!(
+          user: current_user,
+          friend: @swimming_buddy,
+          is_friend_activity: true,
+          title: I18n.t('newsfeed.approve_title'),
+          body: I18n.t('newsfeed.approve_body').gsub("{SWIMMER_NAME}", @swimming_buddy.get_first_and_last_name)
+        )
       else
         flash[:error] = I18n.t('social.approve_error')
       end
@@ -269,11 +285,16 @@ class SocialsController < ApplicationController
     @title = I18n.t('social.edit_title')
     @swimming_buddy = User.find_by_id( params[:id] )
     @friendship = current_user.find_any_friendship_with(@swimming_buddy)
+    if @friendship.nil?                             # Check that the friendship exists:
+      flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
+        .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+      redirect_to( socials_show_all_path() ) and return
+    end
 
     if request.post?                                # === POST: ===
-      @friendship.shares_passages  = friendship.shares_passages  && (params[:shares_passages].to_i > 0)
-      @friendship.shares_trainings = friendship.shares_trainings && (params[:shares_trainings].to_i > 0)
-      @friendship.shares_calendars = friendship.shares_calendars && (params[:shares_calendars].to_i > 0)
+      @friendship.shares_passages  = @friendship.shares_passages  && (params[:shares_passages].to_i > 0)
+      @friendship.shares_trainings = @friendship.shares_trainings && (params[:shares_trainings].to_i > 0)
+      @friendship.shares_calendars = @friendship.shares_calendars && (params[:shares_calendars].to_i > 0)
       if @friendship.save
         flash[:info] = I18n.t('social.changes_saved')
       else
@@ -283,11 +304,6 @@ class SocialsController < ApplicationController
                                                     # === GET: ===
     else
       @submit_title = I18n.t('social.ok')
-      unless @friendship                            # Check that the friendship exists:
-        flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
-          .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( socials_show_all_path() ) and return
-      end
     end
   end
   # ---------------------------------------------------------------------------

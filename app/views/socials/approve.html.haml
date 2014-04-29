@@ -2,5 +2,5 @@
 
 .row-fluid
 
-= form_for( :approve, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();" ) do |f|
-  = render partial: 'form_fields'
+= form_for( :approve, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();" ) do |form|
+  = render partial: 'form_fields', locals: {f: form, message_body: I18n.t('social.default_accept_message').gsub("{SWIMMER_NAME}", @swimming_buddy.name)}

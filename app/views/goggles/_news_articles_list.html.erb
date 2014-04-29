@@ -16,3 +16,14 @@
 </p>
 <% end -%>
 <p/>
+<hr/>
+
+<% for feed in @news_feed -%>
+  <div>
+    <%= content_tag( :h4, feed.title, class:'text-info' ) %>
+    <blockquote>
+        <%= content_tag( :p, feed.body ) %>
+        <%= content_tag( :small, "#{Format.a_datetime( feed.updated_at )}" ) %>
+    </blockquote>
+  </div>
+<% end -%>

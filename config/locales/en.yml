@@ -733,8 +733,9 @@ en:
 
     approve_title: "'Swimming Buddy' approval / Sharing options"
     request_swimming_buddy: "I'd like to become a 'swimming buddy' of {SWIMMER_NAME}"
-    message_title: "Invite Message"
+    message_title: "Personalized message"
     default_message: "Hi {SWIMMER_NAME}, I'd like to follow your progress better."
+    default_accept_message: "Hi there, {SWIMMER_NAME}! Ok!"
     request_to_shares_passages: "I'd like to shares race/training passages with You"
     request_to_shares_trainings: "I'd like to shares trainings with You"
     request_to_shares_calendars: "I'd like to shares Meeting calendars with You"
@@ -742,6 +743,17 @@ en:
     send: "Send"
     ok: "Ok"
     cancel: "Cancel"
+
+  newsfeed:
+    approve_title: "You have a new 'Swimming Buddy'!"
+    approve_body: "You & {SWIMMER_NAME} are now friends."
+    confirm_title: "You have been confirmed by a friend of yours!"
+    confirm_body: "{SWIMMER_NAME} has confirmed that you are indeed the athlete that you said you are."
+
+  achievement:
+    generic_title: "Achievement unlocked!"
+    approve_body: "Receive approval from #{N} Swimming Buddy(/ies)."
+    confirm_body: "Receive confirm from #{N} Swimming Buddy(/ies)."
 
 
   agex_action:

@@ -735,8 +735,9 @@ it:
 
     approve_title: "Opzioni accettazione Amicizia ('Swimming Buddy') / Condivisione"
     request_swimming_buddy: "Vorrei diventare amico di {SWIMMER_NAME}"
-    message_title: "Messaggio dell'invito"
+    message_title: "Messaggio personalizzato"
     default_message: "Ciao {SWIMMER_NAME}, vorrei poterti seguire meglio nei tuoi progressi."
+    default_accept_message: "Heila', {SWIMMER_NAME}! Ok!"
     request_to_shares_passages: "Vorrei condividere i passaggi con te"
     request_to_shares_trainings: "Vorrei condividere gli allenamenti con te"
     request_to_shares_calendars: "Vorrei condividere i calendari gara con te"
@@ -745,6 +746,16 @@ it:
     ok: "Ok"
     cancel: "Annulla"
 
+  newsfeed:
+    approve_title: "Hai un nuovo 'Swimming Buddy'!"
+    approve_body: "Tu e {SWIMMER_NAME} siete ora amici."
+    confirm_title: "You have been confirmed by a friend of yours!"
+    confirm_body: "{SWIMMER_NAME} ha confermato che tu sei l'atleta che hai detto di essere."
+
+  achievement:
+    generic_title: "Trofeo sbloccato!"
+    approve_body: "Ricevi accettazione da #{N} Swimming Buddy(/ies)."
+    confirm_body: "Ricevi conferma da #{N} Swimming Buddy(/ies)."
 
   agex_action:
     main: Principale

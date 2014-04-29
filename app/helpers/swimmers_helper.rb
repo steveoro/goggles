@@ -141,9 +141,9 @@ module SwimmersHelper
                          path_to_destination, http_method = :get )
     link_to(
       content_tag( :span, label_text, class: label_css_class ),
-      url: path_to_destination,
-      method: http_method,
-      html: {
+      path_to_destination,
+      {
+        method: http_method,
         id: span_id,
         'data-toggle' => 'tooltip',
         title: tooltip_text
