@@ -121,22 +121,8 @@ class SocialsController < ApplicationController
       shares_calendars = (params[:shares_calendars].to_i > 0)
       if current_user.approve( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
         flash[:info] = I18n.t('social.approve_successful')
+        NewsFeed.create_social_approve_feed( current_user, @swimming_buddy )
         # TODO Create also achievement
-        # TODO Refactor this shit into something better:
-        NewsFeed.create!(
-          user: @swimming_buddy,
-          friend: current_user,
-          is_friend_activity: true,
-          title: I18n.t('newsfeed.approve_title'),
-          body: I18n.t('newsfeed.approve_body').gsub("{SWIMMER_NAME}", current_user.get_first_and_last_name)
-        )
-        NewsFeed.create!(
-          user: current_user,
-          friend: @swimming_buddy,
-          is_friend_activity: true,
-          title: I18n.t('newsfeed.approve_title'),
-          body: I18n.t('newsfeed.approve_body').gsub("{SWIMMER_NAME}", @swimming_buddy.get_first_and_last_name)
-        )
       else
         flash[:error] = I18n.t('social.approve_error')
       end

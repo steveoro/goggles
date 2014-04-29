@@ -171,10 +171,10 @@ describe UserSwimmerConfirmation do
 
     it "is a valid istance" do
       confirmation = create( :user_swimmer_confirmation )
-      confirmation.should be_valid
-      confirmation.user.should be_valid
-      confirmation.swimmer.should be_valid
-      confirmation.confirmator.should be_valid
+      expect( confirmation ).to be_valid
+      expect( confirmation.user ).to be_valid
+      expect( confirmation.swimmer ).to be_valid
+      expect( confirmation.confirmator ).to be_valid
     end
   end
   # ----------------------------------------------------------------------------

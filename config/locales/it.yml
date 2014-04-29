@@ -749,12 +749,14 @@ it:
   newsfeed:
     approve_title: "Hai un nuovo 'Swimming Buddy'!"
     approve_body: "Tu e {SWIMMER_NAME} siete ora amici."
+    remove_title: "'Swimming Buddy' rimosso."
+    remove_body: "Tu e {SWIMMER_NAME} non siete piu' amici."
     confirm_title: "You have been confirmed by a friend of yours!"
     confirm_body: "{SWIMMER_NAME} ha confermato che tu sei l'atleta che hai detto di essere."
 
   achievement:
     generic_title: "Trofeo sbloccato!"
-    approve_body: "Ricevi accettazione da #{N} Swimming Buddy(/ies)."
+    approve_body: "Stabilisci amicizia con #{N} Swimming Buddy(/ies)."
     confirm_body: "Ricevi conferma da #{N} Swimming Buddy(/ies)."
 
   agex_action:

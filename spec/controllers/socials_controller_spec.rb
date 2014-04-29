@@ -181,10 +181,11 @@ describe SocialsController do
       it "renders the template" do
         get :invite, id: @friend_user.id
         expect( controller.params[:id].to_i == @friend_user.id ).to be_true 
-        expect(response).to render_template(:edit)
+        expect(response).to render_template(:invite)
       end
 
       it "redirects to the referrer for a non-yet existing goggler" do
+        request.env["HTTP_REFERER"] = root_path()
         get :invite, id: 0
         expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
@@ -271,10 +272,11 @@ describe SocialsController do
         @friend_user.invite( @user )
         get :approve, id: @friend_user.id
         expect( controller.params[:id].to_i == @friend_user.id ).to be_true 
-        expect(response).to render_template(:edit)
+        expect(response).to render_template(:approve)
       end
 
       it "redirects to the referrer for an invalid friendable" do
+        request.env["HTTP_REFERER"] = root_path()
         get :approve, id: 0
         expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
@@ -380,6 +382,7 @@ describe SocialsController do
       end
 
       it "redirects to the referrer for an invalid friendable" do
+        request.env["HTTP_REFERER"] = root_path()
         get :block, id: 0
         expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
@@ -484,6 +487,7 @@ describe SocialsController do
       end
 
       it "redirects to the referrer for an invalid friendable" do
+        request.env["HTTP_REFERER"] = root_path()
         get :unblock, id: 0
         expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
@@ -589,6 +593,7 @@ describe SocialsController do
       end
 
       it "redirects to the referrer for an invalid friendable" do
+        request.env["HTTP_REFERER"] = root_path()
         get :remove, id: 0
         expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end
@@ -691,6 +696,7 @@ describe SocialsController do
       end
 
       it "redirects to the referrer for an invalid friendable" do
+        request.env["HTTP_REFERER"] = root_path()
         get :edit, id: 0
         expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
       end

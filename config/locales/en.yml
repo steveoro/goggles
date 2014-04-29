@@ -747,12 +747,14 @@ en:
   newsfeed:
     approve_title: "You have a new 'Swimming Buddy'!"
     approve_body: "You & {SWIMMER_NAME} are now friends."
+    remove_title: "'Swimming Buddy' removed."
+    remove_body: "You & {SWIMMER_NAME} are no longer friends."
     confirm_title: "You have been confirmed by a friend of yours!"
     confirm_body: "{SWIMMER_NAME} has confirmed that you are indeed the athlete that you said you are."
 
   achievement:
     generic_title: "Achievement unlocked!"
-    approve_body: "Receive approval from #{N} Swimming Buddy(/ies)."
+    approve_body: "Establish friendship with #{N} Swimming Buddy(/ies)."
     confirm_body: "Receive confirm from #{N} Swimming Buddy(/ies)."
 
 
