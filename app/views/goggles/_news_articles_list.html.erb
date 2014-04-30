@@ -16,3 +16,13 @@
 </p>
 <% end -%>
 <p/>
+<hr/>
+
+<% for feed in @news_feed -%>
+    <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= content_tag( :h4, feed.title, class:'text-info' ) %>
+        <%= content_tag( :p, feed.body ) %>
+        <%= content_tag( :small, "#{Format.a_datetime( feed.updated_at )}" ) %>
+    </div>
+<% end -%>

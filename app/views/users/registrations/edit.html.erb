@@ -1,4 +1,5 @@
 <h2><%= t('devise.edit_user_title') %> <%= t(resource_name).humanize %></h2>
+<%= render( :partial => 'goggles/privacy_disclaimer' ) %>
 
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put, :class => 'form-horizontal' }) do |f| %>
 	<%= devise_error_messages! %>
@@ -46,12 +47,38 @@
 		</div>
 	</div>
 
+    <div class="control-group">
+        <%= f.label( :first_name, :for => :user_first_name, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field :first_name %>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <%= f.label( :last_name, :for => :user_last_name, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field :last_name %>
+        </div>
+    </div>
+
 	<div class="control-group">
 		<%= f.label( :description, :for => :user_description, :class => 'control-label' ) %>
 		<div class="controls">
 			<%= f.text_field :description %>
 		</div>
 	</div>
+
+    <div class="control-group">
+        <%= f.label( :year_of_birth, :for => :user_year_of_birth, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field( :year_of_birth,
+                :class => 'input-mini', :autocomplete => 'off',
+                'data-provide' => 'typeahead',
+                'data-source' => (1900 .. Date.today.year+1).to_a.collect{|e|e.to_s}.to_s,
+                :placeholder => Date.today.year - 50
+            ) %>
+        </div>
+    </div>
 
 	<div class="control-group">
 		<div class="controls">
@@ -60,15 +87,34 @@
 	</div>
 <% end %>
 
-<hr />
+<script>
+    function updateDescription() {
+        var new1st = $( '#user_first_name' ).val();
+        var cur2nd = $( '#user_last_name' ).val();
+        $('#user_description').val( new1st + ' ' + cur2nd );
+    };
+    $('#user_first_name').change( function(){ updateDescription(); } );
+    $('#user_last_name').change( function(){ updateDescription(); } );
+</script>
 
-<h3><%= t('devise.edit_user_cancel_account_title') %></h3>
+<div class="row-fluid"><hr /></div>
+<!-- Association request link: -->
+<% unless current_user.has_associated_swimmer? -%>
+    <%= render( :partial => 'goggles/associate_to_a_swimmer' ) %>
+<% else -%>
+    <%= render( :partial => 'goggles/associated_to_a_swimmer' ) %>
+    <%= render( :partial => 'goggles/dissociate_from_a_swimmer' ) %>
+<% end -%>
 
-<div class="control-group">
-	<%= t('devise.edit_user_unregister_title') %>
-	<div class="controls">
-		<%= button_to( t('devise.edit_user_unregister_submit'), registration_path(resource_name), :data => { :confirm => t('devise.edit_user_unregister_confirmation') }, :method => :delete ) %>
-	</div>
+<div class="row-fluid"><hr /></div>
+<div class="row-fluid">
+    <h3><%= t('devise.edit_user_cancel_account_title') %></h3>
+    <div class="control-group">
+    	<%= t('devise.edit_user_unregister_title') %>
+    	<div class="controls">
+    		<%= button_to( t('devise.edit_user_unregister_submit'), registration_path(resource_name), :data => { :confirm => t('devise.edit_user_unregister_confirmation') }, :method => :delete ) %>
+    	</div>
+    </div>
 </div>
 
 <%= link_to( t('devise.edit_user_link_to_back_title'), :back ) %>

@@ -3,9 +3,7 @@ require 'date'
 require 'rubygems'
 require 'fileutils'
 require 'mechanize'
-
-# require 'rails/all'
-require File.join( Rails.root.to_s, 'config/environment' )
+require File.join( Dir.pwd.to_s, 'config/environment' )
 
 require 'framework/console_logger'
 require 'parsers/data_importer'
@@ -15,8 +13,10 @@ require 'parsers/data_importer'
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.221.20140414
+  - Goggles framework vers.:  4.00.247.20140424
   - author: Steve A.
+
+  (ASSUMES TO BE rakeD inside Rails.root)
 
 =end
 # -----------------------------------------------------------------------------
@@ -49,11 +49,24 @@ namespace :db do
     puts "DB name: #{db_name}"
     puts "DB user: #{db_user}"
     puts "\r\nChecking validations for '#{klass.name}'..."
+    puts "Total rows to be processed: #{klass.count}"
     puts "\r\n---------------- 8< -------------------"
-    klass.all.each do |row|
-      puts "ID: #{row.id} => #{row.errors().messages.to_json}" if row.invalid?
+    errors_found = 0
+    prev_error_at = 0
+    index = 0 
+    klass.find_each(batch_size: 250) do |row|
+      if row.invalid?
+        puts "" unless prev_error_at == index-1
+        puts "ID: #{row.id} => #{row.errors().messages.to_json}"
+        errors_found += 1
+        prev_error_at = index
+      else
+        putc '.'
+      end
+      index += 1
     end
     puts "\r\n---------------- 8< -------------------"
+    puts "\r\nTotal validation errors found: #{errors_found > 0 ? errors_found : 'NONE found! ...Yeay! Rejoyce and dance! :)'}"
     puts "\r\nDone."
   end
   # ---------------------------------------------------------------------------

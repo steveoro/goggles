@@ -10,8 +10,12 @@ class Swimmer < ActiveRecord::Base
   # This will be used to discriminate the actual user associated with this data
   # (the "associated_user_id") and the user_id which has created/updated/modified
   # the data itself (usually a user with a higher grant) 
-  has_one :associated_user,  :class_name  => "User", 
-                             :foreign_key => "associated_user_id"
+  belongs_to :associated_user, :class_name  => "User", 
+             :foreign_key => "associated_user_id"
+
+  has_many :user_swimmer_confirmations
+  has_many :confirmators, through: :user_swimmer_confirmations
+
   belongs_to            :gender_type
   validates_associated  :gender_type
 

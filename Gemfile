@@ -24,8 +24,9 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery_datepicker'
 
-gem 'execjs'                                        # This requires a local (package) install of node.js
-# gem 'therubyrhino', :platforms => :ruby
+#gem 'execjs'                                        # This requires a local (package) install of node.js
+#gem 'therubyracer', :platform => :ruby               # This seems to be the only one feasible on the EC2 micro instance
+gem 'therubyrhino', :platforms => :ruby
 
                                                     # [Steve, 20111216] Netzke:
 gem 'netzke-core', '~> 0.7.7'			      #, :git => "git://github.com/skozlov/netzke-core.git"
@@ -100,7 +101,8 @@ group :test do
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', '~> 0.7.1', require: false
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
-# gem 'coveralls', require: false                   # [Steve, 20140312] Continuous Integration not avaible for Goggles, since the DB is still W.I.P. and requires running the dedicated task rake db:rebuild_from_scratch
+  gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
+
   # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
   gem 'ffaker', require: false                      # Adds dummy names & fixture generator 
 end

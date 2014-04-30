@@ -4,7 +4,7 @@
       = image_tag('page_find.png')
       = I18n.t(:back_to_index_view)
   .span2
-    = link_to( printout_training_path(@training.id) ) do
+    = link_to( training_printout_path(@training.id) ) do
       = image_tag('page_white_acrobat.png')
       = I18n.t('agex_action.download_pdf')
   .span2
@@ -13,7 +13,7 @@
         = image_tag('page_edit.png')
         = I18n.t(:edit)
   .span2
-    = link_to( duplicate_training_path(@training.id), :method => :post, :confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel]) ) do
+    = link_to( training_duplicate_path(@training.id), :method => :post, :confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel]) ) do
       = I18n.t(:duplicate)
 
 .accordion

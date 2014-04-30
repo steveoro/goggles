@@ -1,10 +1,10 @@
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to(t(:results), meetings_show_full_path(:id=>@meeting.id, :team_id=>@team_id))
+    = link_to(t(:results), meeting_show_full_path(:id=>@meeting.id, :team_id=>@team_id))
   %li
-    = link_to(t(:ranking), meetings_show_ranking_path(:id=>@meeting.id, :team_id=>@team_id))
+    = link_to(t(:ranking), meeting_show_ranking_path(:id=>@meeting.id, :team_id=>@team_id))
   %li
-    = link_to(t(:stats), meetings_show_stats_path(:id=>@meeting.id, :team_id=>@team_id))
+    = link_to(t(:stats), meeting_show_stats_path(:id=>@meeting.id, :team_id=>@team_id))
   %li.active
     = link_to(t(:team_results), '#')
   %li.disabled

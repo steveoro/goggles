@@ -35,7 +35,10 @@ Goggles::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
+
+  # Use a different path for precompiling development assets:
+  config.assets.prefix = "/dev-assets"
+
   # Allow 'better_errors' gem to output stack-trace on TRUSTED_IP (beyond localhost),
   # launching the Rails server as:
   #

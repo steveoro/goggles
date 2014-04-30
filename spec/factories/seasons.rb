@@ -34,4 +34,11 @@ FactoryGirl.define do
     edition_type_id           1
     user_id                   user
   end
+
+  factory :meeting_session do
+    description               { "FINALE" }
+    session_order             { ((rand * 100) % 4).to_i }
+    meeting
+    user
+  end
 end

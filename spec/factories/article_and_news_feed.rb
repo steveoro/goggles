@@ -18,7 +18,7 @@ FactoryGirl.define do
     is_friend_activity    { (rand * 100).to_i.even? }
     is_achievement        { (rand * 100).to_i.even? }
     user
-    friend_id             { user }
+    friend                { user }
   end
   # ---------------------------------------------------------------------------
 

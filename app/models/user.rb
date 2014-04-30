@@ -7,9 +7,9 @@ require 'i18n'
 
 
 class User < ActiveRecord::Base
+  include Rails.application.routes.url_helpers
   include DropDownListable
   include Amistad::FriendModel                       # For Facebook-like friendship management
-  include Rails.application.routes.url_helpers
 
   acts_as_token_authenticatable
 
@@ -20,7 +20,13 @@ class User < ActiveRecord::Base
          :confirmable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_one :swimmer
+  belongs_to :swimmer
+
+  has_many :user_swimmer_confirmations                  # These are confirmation endorsed by others (user is passive subject)
+  has_many :confirmators, through: :user_swimmer_confirmations
+  has_many :given_confirmations,
+    :class_name => "UserSwimmerConfirmation",           # These are confirmation given to others (user is active subject, a "confirmator")
+    :foreign_key => "confirmator_id"
 
   belongs_to :swimmer_level_type
   belongs_to :coach_level_type
@@ -30,9 +36,13 @@ class User < ActiveRecord::Base
   validates_presence_of   :name
   validates_uniqueness_of :name, message: :already_exists
 
-  validates_length_of     :description, maximum: 50
+  validates_length_of     :description,   maximum: 100  # Same as Swimmer#complete_name
+  validates_length_of     :first_name,    maximum: 50
+  validates_length_of     :last_name,     maximum: 50
+  validates_length_of     :year_of_birth, maximum: 4
 
   attr_accessible :name, :email, :description, :password, :password_confirmation,
+                  :last_name, :first_name, :year_of_birth,
                   :api_authentication_token,
                   :outstanding_goggle_score_bias,
                   :outstanding_standard_score_bias,
@@ -51,12 +61,86 @@ class User < ActiveRecord::Base
 
   # Computes a descriptive name associated with this data
   def get_full_name
-    "#{self.name} (desc.: #{self.description})"
+    "#{name} (#{description})"
   end
 
   # to_s() override for debugging purposes:
   def to_s
     "[User: '#{get_full_name}']"
+  end
+  # ----------------------------------------------------------------------------
+
+  # Returns the an array containing the first and the last name of this
+  # user. When empty or nil the names are obtained from the description.
+  def get_first_and_last_name
+    if first_name && last_name
+      [ first_name, last_name ]
+    else
+      [
+        description.split(' ')[0],
+        description.split(' ')[1]
+      ]
+    end
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Updates both this user and a Swimmer instance for "association" (identity match).
+  #
+  # If the user is already associated to another swimmer, both the old swimmer and the
+  # new one will be updated (the old will have associated_user nulled while the new
+  # one will receive the user id).
+  #
+  # If the specified +swimmer+ is nil and there is already an association this works
+  # as a "dissociate" action, clearing both the user and the associated swimmer.
+  #
+  # === Returns:
+  # - +true+ when successful.
+  # - +false+ in case of error, or when the specified swimmer is not available for association (is already "taken").
+  # 
+  def set_associated_swimmer( new_swimmer = nil )
+    if new_swimmer.instance_of?( Swimmer )          # === Set a new association:
+      return false if (new_swimmer.associated_user_id.to_i != 0) && (new_swimmer.associated_user_id.to_i != self.id)
+      # TODO We could/should check here if we have a user.swimmer link that does NOT correspond to a swimmer.associated_user link
+      if swimmer                                    # Already associated? Clear first the old swimmer:
+        swimmer.associated_user_id = nil
+        swimmer.save!
+      end
+      self.swimmer_id = new_swimmer.id              # Update this user:
+      self.year_of_birth = new_swimmer.year_of_birth
+      self.first_name = new_swimmer.first_name.titleize unless new_swimmer.first_name.empty?
+      self.last_name  = new_swimmer.last_name.titleize unless new_swimmer.last_name.empty?
+      save!
+      new_swimmer.associated_user_id = self.id      # Update the swimmer
+      new_swimmer.save!
+
+    elsif new_swimmer.nil?                          # === Clear (dissociate) existing association:
+      if swimmer
+        swimmer.associated_user_id = nil
+        swimmer.save!
+      end
+      self.swimmer_id = nil
+      save!
+    end
+    reload
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Returns true if this user has a swimmer_id already associated to him/her.
+  def has_associated_swimmer?
+    ! (swimmer.nil?)
+  end
+
+  # Returns true if this user has at least some UserSwimmerConfirmation defined
+  def has_swimmer_confirmations?
+    user_swimmer_confirmations ? user_swimmer_confirmations.count > 0 : false
+  end
+
+  # Returns the first swimmer-association confirmation found given to the specified user
+  # or nil when not found.
+  def find_any_confirmation_given_to( user )
+    UserSwimmerConfirmation.find_any_between( user, self ).first
   end
   # ----------------------------------------------------------------------------
 
@@ -91,109 +175,6 @@ class User < ActiveRecord::Base
     end
   end
   # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-
-
-  # Checks if a specified +ctrl_name+ is included in the list of accessible controllers
-  # for this user instance access level (defined in +authorization_level+).
-  #
-  # def can_access( ctrl_name )
-    # rows = AppParameter.where( "code >= #{AppParameter::PARAM_ACCESS_LEVEL_START} and code <= #{AppParameter::PARAM_ACCESS_LEVEL_START + self.authorization_level}" )
-                                                    # # Collect all accessible controller names up to this user level:
-    # arr = rows.collect { |row| row.free_text_1 }
-    # arr.delete('')
-    # accessible_ctrl_names = arr.join(',').gsub(' ','').split(',').compact
-    # return accessible_ctrl_names.include?( ctrl_name.to_s )
-  # end
-# 
-# 
-  # # Checks if this LeUser instance can perform the specified controller, action combination
-  # # according to its authorization level.
-  # #
-  # def can_perform( ctrl_name, action_name )
-    # row = AppParameter.where( "code >= #{AppParameter::PARAM_BLACKLIST_ACCESS_START} and code <= #{AppParameter::PARAM_BLACKLIST_ACCESS_END} and controller_name='#{ctrl_name}' and action_name='#{action_name}'" ).first
-    # if ( row )
-# # DEBUG
-# #      puts "=> [#{self.name}] can_perform( #{ctrl_name}, #{action_name} )? #{(self.authorization_level >= row.a_integer)}.\r\n"
-      # return ( self.authorization_level >= row.a_integer )
-    # else
-# # DEBUG
-# #      puts "=> [#{self.name}] can_perform( #{ctrl_name}, #{action_name} )? No restrictions found.\r\n"
-      # return true
-    # end
-  # end
-# 
-# 
-  # # Verifies that a specific user id can perform a specific action.
-  # # Returns false otherwise.
-  # #
-  # # Works exactly as LeUser::can_do(), but for row instances, thus sparing a query to retrieve the data, in case the row as already been read.
-  # #
-  # # +action_name+ = the name of the action to be executed
-  # # +ctrl_name+ = the controller name.
-  # #
-  # def can_do( ctrl_name, action_name = 'index' )
-# # DEBUG
-# #    puts "\r\n=> [#{self.name}] can_do( #{ctrl_name}, #{action_name} )?"
-    # if can_access( ctrl_name.to_s )
-# # DEBUG
-# #      puts "-- can_access: ok. Checking performing restrictions..."
-      # return can_perform( ctrl_name.to_s, action_name.to_s )
-    # else                                            # Controller access refused!
-# # DEBUG
-# #      puts "-- access denied!"
-      # false
-    # end
-  # end
-# 
-# 
-  # # Verifies that a specific user id can perform a specific action.
-  # # Returns false otherwise.
-  # #
-  # # +id+ = the id of the User
-  # # +action_name+ = the name of the action to be executed
-  # # +ctrl_name+ = the controller name.
-  # #
-  # def self.can_do( id, ctrl_name, action_name = 'index' )
-    # if id && user = User.find_by_id( id )
-      # user && user.can_do( ctrl_name, action_name )
-    # else
-      # false
-    # end
-  # end
-  # # ----------------------------------------------------------------------------
-# 
-# 
-  # # Read accessor override for virtual attribute
-  # def password
-    # @password
-  # end
-# 
-  # # Write accessor override for virtual attribute
-  # def password=(pwd)
-    # @password = pwd
-    # create_new_salt
-    # self.hashed_pwd = User.encrypted_password( self.password, self.salt )
-  # end
-# 
-  # # Safe way to delete a user
-  # def safe_delete
-    # transaction do
-      # destroy
-      # if User.count.zero?
-        # raise t("The deletion of the last user is not allowed.")
-      # end
-    # end
-  # end
-  # # ----------------------------------------------------------------------------
-# 
-# 
-  # protected
-# 
-# 
-  # def validate
-    # errors.add_to_base( t(:password_missing) ) if hashed_pwd.blank?
-  # end
   # ----------------------------------------------------------------------------
 
 end

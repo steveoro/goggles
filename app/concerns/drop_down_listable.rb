@@ -22,6 +22,9 @@ module DropDownListable
 # TODO ADD support for verbosity level as in exercise_row.rb & exercise.rb
 # (& remove overrides from those methods)
 
+# Leega: TODO Manage support for multiple drop down order. 
+# I saw 'sort_by' predicate but don't understand how to use it to modify order-
+# I mean sorting should be independent from the filed returned
 
     # Returns an Array of 2-items Arrays, in which each item is the ID of the record
     # and the other is assumed to be its label

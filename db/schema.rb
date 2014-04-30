@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140407120828) do
+ActiveRecord::Schema.define(:version => 20140423141510) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1548,6 +1548,18 @@ ActiveRecord::Schema.define(:version => 20140407120828) do
   add_index "user_results", ["pool_type_id"], :name => "fk_user_results_pool_types"
   add_index "user_results", ["swimmer_id"], :name => "fk_user_results_swimmers"
 
+  create_table "user_swimmer_confirmations", :force => true do |t|
+    t.integer  "lock_version",   :default => 0
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.integer  "swimmer_id"
+    t.integer  "user_id"
+    t.integer  "confirmator_id"
+  end
+
+  add_index "user_swimmer_confirmations", ["confirmator_id"], :name => "index_user_swimmer_confirmations_on_confirmator_id"
+  add_index "user_swimmer_confirmations", ["user_id", "swimmer_id", "confirmator_id"], :name => "user_swimmer_confirmator", :unique => true
+
   create_table "user_training_rows", :force => true do |t|
     t.integer  "lock_version",                       :default => 0
     t.datetime "created_at",                                        :null => false
@@ -1601,7 +1613,7 @@ ActiveRecord::Schema.define(:version => 20140407120828) do
   create_table "users", :force => true do |t|
     t.integer  "lock_version",                                   :default => 0
     t.string   "name",                                                             :null => false
-    t.string   "description",                     :limit => 50
+    t.string   "description",                     :limit => 100
     t.integer  "swimmer_id"
     t.datetime "created_at",                                                       :null => false
     t.datetime "updated_at",                                                       :null => false
@@ -1632,11 +1644,15 @@ ActiveRecord::Schema.define(:version => 20140407120828) do
     t.string   "authentication_token"
     t.integer  "outstanding_goggle_score_bias",                  :default => 800,  :null => false
     t.integer  "outstanding_standard_score_bias",                :default => 800,  :null => false
+    t.string   "last_name",                       :limit => 50
+    t.string   "first_name",                      :limit => 50
+    t.integer  "year_of_birth",                                  :default => 1900
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["last_name", "first_name", "year_of_birth"], :name => "full_name"
   add_index "users", ["name"], :name => "index_users_on_name", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true

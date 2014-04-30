@@ -1,0 +1,19 @@
+%h3= I18n.t('home_controller.link_yourself_to_an_existing_swimmer')
+
+- if admin_signed_in?
+  .row-fluid
+    .span2
+      = 'ID:'
+    .span10
+      = current_user.id
+
+.row-fluid
+  = I18n.t('home_controller.possible_swimmers')
+- @possible_swimmers.each do |swimmer|
+  .row-fluid
+    .span12
+      = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
+
+.row-fluid
+  %i
+    TODO ADD ALSO POST LINK TO MANUAL SELECT AN OVERRIDE SWIMMER ("Aren't you among these?")

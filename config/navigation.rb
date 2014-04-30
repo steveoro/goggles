@@ -58,19 +58,17 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item( :key_meetings,      t('meetings'), '#' ) do |lev2_nav|
 
       lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
-        lev3_nav.item :key_meetings_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
+        lev3_nav.item :key_meeting_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
       end
       lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), :highlights_on => %r(search_swimmer|prefilter_swimmer)
       lev2_nav.item :key_meetings_search_team, t('meeting.search_by_team'), meetings_search_team_path(), :highlights_on => %r(search_team|prefilter_team)
     end
 
-    primary.item( :key_rankings,      t('rankings'), '#' ) do |lev2_nav|
+    primary.item( :key_results_rankings, t('results_and_rankings'), '#' ) do |lev2_nav|
       lev2_nav.item :key_rankings_index, t('search_rankings'), rankings_path(), :highlights_on => %r(/rankings) do |lev3_nav|
         lev3_nav.item :key_rankings_show_full, t('show_details'), '#', :highlights_on => %r(/rankings/\d/show_full)
       end
-    end
-
-    primary.item( :key_results,       t('results'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_separator_rankings, content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_results_index, t('search_results'), results_path(), :highlights_on => %r(/results) do |lev3_nav|
         lev3_nav.item :key_results_show_full, t('show_details'), '#', :highlights_on => %r(/results/\d/show_full)
       end
@@ -83,6 +81,12 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_records_team,          t('records.menu_by_team'),        records_for_team_path()
     end
 
+    primary.item( :key_swimmers,      t('swimmers.swimmers'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_swimmers_index, t('swimmers.search_swimmers'), swimmers_path(), :highlights_on => %r(/swimmers) do |lev3_nav|
+        lev3_nav.item :key_swimmers_id, t('radiography.id_card'), '#', :highlights_on => %r(/swimmers/\d/radio)
+      end
+    end
+
     primary.item( :key_misc,  t('misc_main_menu.title'), '#' ) do |lev2_nav|
       lev2_nav.item :key_calendar,              t('meeting_calendar.navigation'),           meeting_calendars_path()
       lev2_nav.item :key_pools,                 t('swimming_pool.pools'),                   swimming_pools_path()
@@ -90,13 +94,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()
       lev2_nav.item :key_user_tr_stories,       t('misc_main_menu.user_training_stories'),  user_training_stories_path()
       lev2_nav.item :key_separator2_0,          content_tag(:span, '' ), :class => 'divider'
-      lev2_nav.item :key_social_index,          t('social.menu_social_index'), socials_show_all_path() do |lev3_nav|
-        lev3_nav.item :key_social_invite,       t('social.menu_social_invite'),   socials_invite_path(), :class => 'disabled'
-        lev3_nav.item :key_social_approve,      t('social.menu_social_approve'),  socials_approve_path(), :class => 'disabled'
-        lev3_nav.item :key_social_block,        t('social.menu_social_block'),    socials_block_path(), :class => 'disabled'
-        lev3_nav.item :key_social_remove,       t('social.menu_social_remove'),   socials_remove_path(), :class => 'disabled'
-        lev3_nav.item :key_social_edit,         t('social.menu_social_edit'),     socials_edit_path(), :class => 'disabled'
-      end
+      lev2_nav.item :key_social_index,          t('social.menu_social_index'),              socials_show_all_path()
     end
 
     primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'
@@ -139,6 +137,13 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor', class:"text-error" ), dj_mon_path()
       lev2_nav.item :key_separator22,        content_tag(:span, '' ), :class => 'divider'
       lev2_nav.item :key_edit_admin,         (current_admin.nil? ? '?' : current_admin.email), '#', :class => 'disabled'
+    end
+
+    primary.item :key_separator3,     '&nbsp;', '#', :class => 'disabled'
+    primary.item( :key_locale,         content_tag(:span, t('language') ), '#'
+    ) do |lev2_nav|
+      lev2_nav.item :key_locale_it,    image_tag('it.png'), root_path(locale: 'it')
+      lev2_nav.item :key_locale_en,    image_tag('us.png'), root_path(locale: 'en')
     end
 
     # you can also specify a css id or class to attach to this particular level

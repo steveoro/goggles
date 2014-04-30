@@ -27,6 +27,11 @@
       .carousel-caption
         %h4= I18n.t('jumbotron.title_timertable')
         %p= I18n.t('jumbotron.text_timertable')
+    .item.thumbnail
+      = image_tag( "jumbotron/happy-BaMo.png", :size => '800x440', :class => 'img-rounded' )
+      .carousel-caption
+        %h4= I18n.t('jumbotron.title_happy')
+        %p= I18n.t('jumbotron.text_happy')
 
   - # JumboTron nav:
   %a.carousel-control.left{:href=>'#jumboTron', 'data-slide'=>'prev'}

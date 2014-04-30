@@ -1,4 +1,5 @@
 <h2><%= t('devise.new_user_title') %></h2>
+<%= render( :partial => 'goggles/privacy_disclaimer' ) %>
 
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {:class => 'form-horizontal'}) do |f| %>
 	<%= devise_error_messages! %>
@@ -31,6 +32,20 @@
 		</div>
 	</div>
 
+    <div class="control-group">
+        <%= f.label( :first_name, :for => :user_first_name, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field :first_name %>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <%= f.label( :last_name, :for => :user_last_name, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field :last_name %>
+        </div>
+    </div>
+
 	<div class="control-group">
 		<%= f.label( :description, :for => :user_description, :class => 'control-label' ) %>
 		<div class="controls">
@@ -38,11 +53,33 @@
 		</div>
 	</div>
 
+    <div class="control-group">
+        <%= f.label( :year_of_birth, :for => :user_year_of_birth, :class => 'control-label' ) %>
+        <div class="controls">
+            <%= f.text_field( :year_of_birth,
+                :class => 'input-mini', :autocomplete => 'off',
+                'data-provide' => 'typeahead',
+                'data-source' => (1900 .. Date.today.year+1).to_a.collect{|e|e.to_s}.to_s,
+                :placeholder => Date.today.year - 50
+            ) %>
+        </div>
+    </div>
+
 	<div class="control-group">
 		<div class="controls">
 			<%= f.submit( t('devise.new_user_submit') ) %>
 		</div>
 	</div>
 <% end %>
+
+<script>
+    function updateDescription() {
+        var new1st = $( '#user_first_name' ).val();
+        var cur2nd = $( '#user_last_name' ).val();
+        $('#user_description').val( new1st + ' ' + cur2nd );
+    };
+    $('#user_first_name').change( function(){ updateDescription(); } );
+    $('#user_last_name').change( function(){ updateDescription(); } );
+</script>
 
 <%= render "users/shared/links" %>

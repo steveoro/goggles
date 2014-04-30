@@ -1,5 +1,7 @@
 An error was caught while running <%= AGEX_APP_NAME %>.
 Internal framework vers.: <%= AGEX_FRAMEWORK_VERSION %>
+
+Server: <%= @host %>
 Admin: <%= @admin_name %>
 User:  <%= @user_name %>
 
@@ -7,6 +9,10 @@ User:  <%= @user_name %>
 
 Trace:
 
-<%= @backtrace %>
+----8<----
+<% @backtrace.each do |trace_row| %>
+<%= trace_row %>
+<% end %>
+----8<----
 
 Please check the log files.

@@ -64,7 +64,7 @@ class Training < ActiveRecord::Base
   end
   # ---------------------------------------------------------------------------
 
-  # Computes the total distance in metres for this training.
+  # Computes the total distance in meters for this training.
   #
   def compute_total_distance
     group_list = build_group_list_hash()

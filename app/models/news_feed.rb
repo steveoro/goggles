@@ -10,13 +10,19 @@ class NewsFeed < ActiveRecord::Base
 
   scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, news_feeds.created_at #{dir.to_s}") }
 
-  attr_accessible :body, :is_achievement, :is_friend_activity, :is_read, :title
+  attr_accessible :body, :user_id, :friend_id, :is_achievement, :is_friend_activity, :is_read, :title
+
+  after_initialize do
+    set_default_bool_value( :is_read )
+    set_default_bool_value( :is_friend_activity )
+    set_default_bool_value( :is_achievement )
+  end
 
 
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -33,4 +39,91 @@ class NewsFeed < ActiveRecord::Base
     name = self.friend.nil? ? '' : self.friend.name
   end
   # ----------------------------------------------------------------------------
+
+
+  # Creates a the social/approve News-Feed entry for both the user and the friend.
+  def self.create_social_approve_feed( user, friend )
+    self.create_social_feed(
+      user.id,
+      friend.id,
+      I18n.t('newsfeed.approve_title'),
+      I18n.t('newsfeed.approve_body').gsub("{SWIMMER_NAME}", friend.get_full_name)
+    )
+    self.create_social_feed(
+      friend.id,
+      user.id,
+      I18n.t('newsfeed.approve_title'),
+      I18n.t('newsfeed.approve_body').gsub("{SWIMMER_NAME}", user.get_full_name)
+    )
+  end
+
+  # Creates a the social/remove News-Feed entry for only the user.
+  def self.create_social_remove_feed( user, friend )
+    self.create_social_feed(
+      user.id,
+      friend.id,
+      I18n.t('newsfeed.remove_title'),
+      I18n.t('newsfeed.remove_body').gsub("{SWIMMER_NAME}", friend.get_full_name)
+    )
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Utility method for creating a new social feed row.
+  def self.create_social_feed( user_id, friend_id, title, body )
+    NewsFeed.create!(
+      user_id: user_id,
+      friend_id: friend_id,
+      is_friend_activity: true,
+      title: title,
+      body: body
+    )
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Creates a the achievement/confirm News-Feed entry for only the user.
+  # The bias_value is the achievement unlock bias.
+  def self.create_achievement_approve_feed( user, friend, bias_value )
+    self.create_achievement_feed(
+      user.id,
+      friend.id,
+      I18n.t('achievement.generic_title'),
+      I18n.t('achievement.approve_body').gsub("{N}", bias_value.to_s)
+    )
+  end
+
+  # Creates a the achievement/confirm News-Feed entry for only the user.
+  # The bias_value is the achievement unlock bias.
+  def self.create_achievement_confirm_feed( user, friend, bias_value )
+    self.create_achievement_feed(
+      user.id,
+      friend.id,
+      I18n.t('achievement.generic_title'),
+      I18n.t('achievement.confirm_body').gsub("{N}", bias_value.to_s)
+    )
+  end
+  # ----------------------------------------------------------------------------
+
+  # Utility method for creating a new achievement feed row.
+  def self.create_achievement_feed( user_id, friend_id, title, body )
+    NewsFeed.create!(
+      user_id: user_id,
+      friend_id: friend_id,
+      is_achievement: true,
+      title: title,
+      body: body
+    )
+  end
+  # ----------------------------------------------------------------------------
+
+
+  private
+
+
+  def set_default_bool_value( field_name_sym, default_value = false )
+    if send( field_name_sym.to_sym ).blank?
+      send( "#{field_name_sym}=".to_sym, default_value )
+    end
+  end
 end

@@ -36,4 +36,10 @@ module TimingGettable
   end
   #-----------------------------------------------------------------------------
 
+  # Returns the hundreds value of a given time
+  #
+  def get_timing_to_hundreds
+    hundreds + (seconds * 100) + (minutes * 6000) 
+  end
+  #-----------------------------------------------------------------------------
 end

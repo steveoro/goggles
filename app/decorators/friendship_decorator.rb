@@ -13,11 +13,11 @@ class FriendshipDecorator < Draper::Decorator
 
   # Renders the sharing options for verbose display.
   def to_verbose_sharing
-    "#{object.friend.get_full_name} #{ I18n.t('social.shares') }: " <<
+    "#{friend.get_full_name} #{ I18n.t('social.shares') }: " <<
     [
-      ( object.shares_passages  ? "#{ I18n.t('social.passages') }"  : '' ),
-      ( object.shares_trainings ? "#{ I18n.t('social.trainings') }" : '' ),
-      ( object.shares_calendars ? "#{ I18n.t('social.calendars') }" : '' )
+      ( shares_passages  ? "#{ I18n.t('social.passages') }"  : '' ),
+      ( shares_trainings ? "#{ I18n.t('social.trainings') }" : '' ),
+      ( shares_calendars ? "#{ I18n.t('social.calendars') }" : '' )
     ].join(', ')
   end
 

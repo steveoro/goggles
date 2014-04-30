@@ -37,6 +37,10 @@ describe TimingGettable do
     it "responds to get_timing_instance()" do
       expect( @dummy ).to respond_to( :get_timing_instance )
     end
+
+    it "responds to get_timing_to_hundreds()" do
+      expect( @dummy ).to respond_to( :get_timing_to_hundreds )
+    end
   end
   # ---------------------------------------------------------------------------
 
@@ -57,6 +61,16 @@ describe TimingGettable do
   describe "get_timing_instance" do
     it "returns always a Timing instance" do
       expect( @dummy.get_timing_instance ).to be_an_instance_of( Timing )
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  # Describes the required functionalities of this method
+  # of the interface.
+  #
+  describe "get_timing_to_hundreds" do
+    it "returns always a number" do
+      expect( @dummy.get_timing.size ).to be >= 0
     end
   end
   # ---------------------------------------------------------------------------

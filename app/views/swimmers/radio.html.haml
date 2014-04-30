@@ -2,13 +2,13 @@
   %li.active#firstTab
     = link_to( t('radiography.radio_tab'), '#' )
   %li
-    = link_to( t('radiography.medals_tab'), swimmers_medals_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.medals_tab'), swimmer_medals_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.best_timings_tab'), swimmers_best_timings_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.all_races_tab'), swimmers_all_races_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.all_races_tab'), swimmer_all_races_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.misc'), swimmers_misc_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.misc'), swimmer_misc_path(:id=>@swimmer.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
@@ -24,6 +24,15 @@
         .span6
           %b= @swimmer.get_full_name_with_nickname
           = admin_signed_in? ? " (id=#{@swimmer.id})" : ''
+      .row-fluid
+        .span3
+        .span6
+          = ask_confirm_link( @swimmer )
+          = ask_friendship_link( @swimmer )
+          = approve_friendship_link( @swimmer )
+          = block_friendship_link( @swimmer )
+          = remove_friendship_link( @swimmer )
+          = edit_friendship_link( @swimmer )
       .row-fluid
         .span3
           = I18n.t('swimmers.affiliated_in_teams') +':'
@@ -80,10 +89,10 @@
         .span6
           - m = @swimmer.get_first_meeting
           - if m
-            %a{'id'=>"firstSwim#{m.id}", 'href'=>"#{ meetings_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+            %a{'id'=>"firstSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
               = m.get_scheduled_date
             = ', '
-            %a{'id'=>"firstMeet#{m.id}", 'href'=>"#{ meetings_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+            %a{'id'=>"firstMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
               = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -91,10 +100,10 @@
         .span6
           - m = @swimmer.get_last_meeting
           - if m
-            %a{'id'=>"lastSwim#{m.id}", 'href'=>"#{ meetings_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+            %a{'id'=>"lastSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
               = m.get_scheduled_date
             = ', '
-            %a{'id'=>"lastMeet#{m.id}", 'href'=>"#{ meetings_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+            %a{'id'=>"lastMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
               = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -109,10 +118,10 @@
               = show_tag( mir.standard_points>800, "asterisk_orange.png", '' )
               = ', '
               - if m
-                %a{'id'=>"bestSwim#{m.id}", 'href'=>"#{ meetings_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+                %a{'id'=>"bestSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
                   = m.get_scheduled_date
                 = ', '
-                %a{'id'=>"bestMeet#{m.id}", 'href'=>"#{ meetings_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+                %a{'id'=>"bestMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
                   = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -127,10 +136,10 @@
               = show_tag( mir.standard_points>800, "asterisk_orange.png", '' )
               = ', '
               - if m
-                %a{'id'=>"wrstSwim#{m.id}", 'href'=>"#{ meetings_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+                %a{'id'=>"wrstSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
                   = m.get_scheduled_date
                 = ', '
-                %a{'id'=>"wrstMeet#{m.id}", 'href'=>"#{ meetings_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+                %a{'id'=>"wrstMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
                   = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3

@@ -54,7 +54,7 @@ class Meeting < ActiveRecord::Base
   validates_length_of :reference_e_mail, maximum: 50
   validates_length_of :reference_name, maximum: 50
   validates_length_of :configuration_file, maximum: 255
-  validates_length_of :max_individual_events, maximum: 1
+  validates_length_of :max_individual_events, maximum: 2
   validates_length_of :max_individual_events_per_session, maximum: 1
 
   scope :sort_meeting_by_user,   ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }
@@ -138,7 +138,39 @@ class Meeting < ActiveRecord::Base
   # 
   def get_short_events
     events = self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
-    events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
+    
+    # If events count = 0 give 'to be defined' description
+    if events.count > 0
+      events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
+    else
+      'To be defined...'
+    end
+  end
+
+  # Computes the complete list of all the meeting events
+  # with session informations.
+  # 
+  def get_complete_events
+    ms = self.meeting_sessions
+    complete_desc = ""
+    
+    # If sessions = 0 give 'to be defined' description
+    # If sessions = 1 give the short description of events
+    # If sessions > 1 create complete description for each session
+    if ms.count > 1
+      ms.each { |session| 
+        # Create description for each session
+        complete_desc += "#{session.day_part_type.i18n_short}: #{session.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }.join('-').gsub(' ','')}\r\n"
+      }
+      
+      complete_desc
+    else 
+      if ms.count == 1
+        self.get_short_events
+      else
+        'To be defined...'
+      end
+    end
   end
   # ----------------------------------------------------------------------------
 

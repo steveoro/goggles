@@ -3,7 +3,7 @@ class CreateUserAchievements < ActiveRecord::Migration
     create_table :user_achievements do |t|
       t.integer :lock_version, :default => 0
       t.timestamps
-      
+
       t.references :user
       t.references :achievement
     end

@@ -1,65 +1,75 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.223.20140415
+# - vers. : 4.00.225.20140416
 #
 # This requires Capistrano v. >= 3.1
 
 
 namespace :remote do
+  set :param_prompt, ask("\r\nEnter ALL parameters for the remote invocation (besides the command itself): ", nil)
 
-    # Remote Rake invocation tool.
-    desc <<-DESC
-      Invokes any rake command inside the remote app server directory (for the current
-      release). This will also ask directly on the command line which parameters must
-      be passed to the remote rake command.
-    DESC
-    task :rake do
-      on roles(:app) do
-        within release_path do
-          param_prompt = "Enter ALL parameters for the remote Rake invocation (besides the 'rake' command itself): "
-          execute :rake, "#{Capistrano::CLI.ui.ask(param_prompt)}"
+  desc "Returns webserver uptime." 
+  task :uptime do
+    on roles(:web) do |host|
+      uptime = capture('uptime')
+      info "Your webserver #{host} has uptime: #{uptime}"
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory." 
+  task :sql_backup do
+    on roles(:app) do |host|
+      within release_path do
+        rake "RAILS_ENV=production sql:dump"
+      end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Remote Rake invocation tool.
+  desc <<-DESC
+    Invokes any rake command inside the remote app server directory (for the current
+    release). This will also ask directly on the command line which parameters must
+    be passed to the remote rake command.
+  DESC
+  task :rake do
+    on roles(:app) do
+      within release_path do
+        rake "#{fetch(:param_prompt)}"
+      end
+    end
+  end
+
+
+  # Remote Bundle invocation tool.
+  desc <<-DESC
+    Invokes bundler inside the remote app server directory (for the current
+    release). This will also ask directly on the command line which parameters must
+    be passed to the remote rake command.
+    (For instance, something like  'exec rake assets:precompile' or 'install')
+  DESC
+  task :bundle do
+    on roles(:app) do
+      within release_path do
+        bundle "#{fetch(:param_prompt)}"
+      end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  desc "Invokes bundler+rake inside the remote app server directory to execute assets precompile." 
+  task :assets_precompile do
+    on roles(:app) do
+      within release_path do
+        with rails_env: :production do
+          bundle "exec rake assets:precompile"
         end
       end
     end
-
-
-    # Remote Bundle invocation tool.
-    desc <<-DESC
-      Invokes bundler inside the remote app server directory (for the current
-      release). This will also ask directly on the command line which parameters must
-      be passed to the remote rake command.
-      (For instance, something like  'exec rake assets:precompile' or 'install')
-    DESC
-    task :bundle do
-      on roles(:app) do
-        within release_path do
-          param_prompt = "Enter ALL parameters for the remote Bundler invocation (besides the 'bundle' command itself): "
-          execute :bundle, "#{Capistrano::CLI.ui.ask(param_prompt)}"
-        end
-      end
-    end
-
-
-    desc "Invokes bundler+rake inside the remote app server directory to execute assets precompile." 
-    task :assets_precompile do
-      on roles(:app) do
-        within release_path do
-          execute :bundle, "exec rake RAILS_ENV=production assets:precompile"
-        end
-      end
-    end
-
-
-    desc "Starts the streaming (using 'tail') of the remote production log."
-    task :tail_log do
-      on roles(:app) do
-        within release_path do
-# TODO stream output
-          execute :tail, "-f -n50 #{deploy_to}/current/log/production.log"
-        end
-#        stream( "tail -f -n50  #{deploy_to}/current/log/production.log" )
-      end
-    end
+  end
   # ---------------------------------------------------------------------------
 end

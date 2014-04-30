@@ -1,5 +1,8 @@
 Goggles::Application.routes.draw do
 
+  resources :swimmers
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -49,11 +52,14 @@ Goggles::Application.routes.draw do
 
   scope "/" do
     scope "(:locale)", :locale => /en|it/ do
-      match "wip"         => "home#wip"
-      match "about"       => "home#about"
-      match "contact_us"  => "home#contact_us"
+      match "wip",        to: "home#wip"
+      match "about",      to: "home#about"
+      match "contact_us", to: "home#contact_us"
+      match "associate",  to: "home#associate", via: [:get, :post]
+      match "dissociate", to: "home#dissociate", via: :post
+#      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
 
-      resources :meetings # do
+#      resources :meetings # do
         # collection do
           # get 'index'
           # get 'search_swimmer'
@@ -67,29 +73,44 @@ Goggles::Application.routes.draw do
           # get 'show_swimmer_results'
         # end
       # end
-      match "meetings/search_swimmer"       => "meetings#search_swimmer"
-      match "meetings/search_team"          => "meetings#search_team"
-      match "meetings/show_full"            => "meetings#show_full"
-      match "meetings/show_ranking"         => "meetings#show_ranking"
-      match "meetings/show_stats"           => "meetings#show_stats"
-      match "meetings/show_team_results"    => "meetings#show_team_results"
-      match "meetings/show_swimmer_results" => "meetings#show_swimmer_results"
 
-      resources :teams # do
+#      get 'photos/:id', to: 'photos#show'
+#      get 'exit', to: 'sessions#destroy', as: :logout
+
+      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
+      get "meetings/search_swimmer",            to: "meetings#search_swimmer"
+      get "meetings/search_team",               to: "meetings#search_team"
+      get "meeting/show_full/:id",              to: "meetings#show_full",               as: "meeting_show_full"
+      get "meeting/show_ranking/:id",           to: "meetings#show_ranking",            as: "meeting_show_ranking"
+      get "meeting/show_stats/:id",             to: "meetings#show_stats",              as: "meeting_show_stats"
+      get "meeting/show_team_results/:id",      to: "meetings#show_team_results",       as: "meeting_show_team_results"
+      get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
+
+#      resources :teams # do
         # member do
           # get 'count_meetings'
           # get 'count_results'
           # get 'count_details'
         # end
       # end
-      match "teams/count_meetings" => "teams#count_meetings"
-      match "teams/count_results"  => "teams#count_results"
-      match "teams/count_details"  => "teams#count_details"
+      get "teams/count_meetings/:id",           to: "teams#count_meetings",             as: "team_count_meetings"
+      get "teams/count_results/:id",            to: "teams#count_results",              as: "team_count_results"
+      get "teams/count_details/:id",            to: "teams#count_details",              as: "team_count_results"
 
-      resources :meeting_programs
-      resources :rankings
-      resources :results
-      resources :swimming_pools
+#      resources :meeting_programs
+      get "meeting_programs/index",             as: "meeting_programs"
+
+#      resources :rankings
+      get "rankings/index",                     as: "rankings"
+      get "ranking/:id",                        to: "rankings#show",                    as: "ranking"
+
+#      resources :results
+      get "results/index",                      as: "results"
+      get "result/:id",                         to: "results#show",                     as: "result"
+
+#      resources :swimming_pools
+      get "swimming_pools/index",               as: "swimming_pools"
+      get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
 
       resources :trainings # do
         # member do
@@ -98,9 +119,9 @@ Goggles::Application.routes.draw do
           # post 'create_user_training'
         # end
 #      end
-      match "trainings/printout"  => "trainings#printout"
-      post  "trainings/duplicate" => "trainings#duplicate"
-      post  "trainings/create_user_training" => "trainings#create_user_training"
+      get  "training/printout/:id",             to: "trainings#printout",               as: "training_printout"
+      post "training/duplicate/:id",            to: "trainings#duplicate",              as: "training_duplicate"
+      post "training/create_user_training/:id", to: "trainings#create_user_training",   as: "training_create_user_training"
 
       resources :user_trainings # do
         # member do
@@ -113,10 +134,11 @@ Goggles::Application.routes.draw do
 # #          get 'json_list'
 # #        end
       # end
-      match "user_trainings/json_list" => "user_trainings#json_list"
-      match "user_trainings/printout"  => "user_trainings#printout"
-      post  "user_trainings/duplicate" => "user_trainings#duplicate"
-      post  "user_trainings/create_user_training" => "user_trainings#create_user_training"
+      get  "user_trainings/json_list",          to: "user_trainings#json_list"
+      get  "user_training/json_list/:id",       to: "user_trainings#json_list",           as: "user_training_json_list"
+      get  "user_training/printout/:id",        to: "user_trainings#printout",            as: "user_training_printout"
+      post "user_training/duplicate/:id",       to: "user_trainings#duplicate",           as: "user_training_duplicate"
+      post "user_training/create_user_story/:id", to: "user_trainings#create_user_story", as: "user_training_create_user_story"
 
       resources :user_training_stories
 
@@ -128,29 +150,34 @@ Goggles::Application.routes.draw do
           # get 'json_list'
         # end
       # end
-      match "exercises/json_list"     => "exercises#json_list"
+      get  "exercises/json_list",               to: "exercises#json_list"
+      get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 
-      match "socials/show_all"        => "socials#show_all"
-      match "socials/invite"          => "socials#invite"
-      post  "socials/invite"          => "socials#invite"
-      match "socials/approve"         => "socials#approve"
-      post  "socials/approve"         => "socials#approve"
-      match "socials/block"           => "socials#block"
-      post  "socials/block"           => "socials#block"
-      match "socials/remove"          => "socials#remove_friendship"
-      post  "socials/remove"          => "socials#remove_friendship"
-      match "socials/edit"            => "socials#edit"
-      post  "socials/edit"            => "socials#edit"
+      get  "socials/show_all",                  to: "socials#show_all"
+      post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
+      post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"
+      match "social/invite/:id",                to: "socials#invite",                   as: "social_invite", via: [:get, :post]
+#      post "social/invite/:id",                 to: "socials#invite"
+      get  "social/approve/:id",                to: "socials#approve",                  as: "social_approve"
+      post "social/approve/:id",                to: "socials#approve"
+      get  "social/block/:id",                  to: "socials#block",                    as: "social_block"
+      post "social/block/:id",                  to: "socials#block"
+      get  "social/unblock/:id",                to: "socials#unblock",                  as: "social_unblock"
+      post "social/unblock/:id",                to: "socials#unblock"
+      get  "social/remove/:id",                 to: "socials#remove",                   as: "social_remove"
+      post "social/remove/:id",                 to: "socials#remove"
+      get  "social/edit/:id",                   to: "socials#edit",                     as: "social_edit"
+      post "social/edit/:id",                   to: "socials#edit"
 
-      match "meeting_calendars"       => "meeting_calendars#index"
+      get  "meeting_calendars/index",           as: "meeting_calendars"
 
-      match "records/for_everything"  => "records#for_everything"
-      match "records/for_season_type" => "records#for_season_type"
-      match "records/for_swimmer"     => "records#for_swimmer"
-      match "records/for_team"        => "records#for_team"
-      match "records/show_for_team"   => "records#show_for_team"
+      get  "records/for_everything",            to: "records#for_everything"
+      get  "records/for_season_type",           to: "records#for_season_type"
+      get  "records/for_swimmer",               to: "records#for_swimmer"
+      get  "records/for_team",                  to: "records#for_team"
+      get  "records/show_for_team",             to: "records#show_for_team"
 
-      resources :swimmers # do
+#      resources :swimmers # do
         # member do
           # get 'radio'
           # get 'medals'
@@ -159,11 +186,12 @@ Goggles::Application.routes.draw do
           # get 'misc'
         # end
       # end
-      match "swimmers/radio"        => "swimmers#radio"
-      match "swimmers/medals"       => "swimmers#medals"
-      match "swimmers/best_timings" => "swimmers#best_timings"
-      match "swimmers/all_races"    => "swimmers#all_races"
-      match "swimmers/misc"         => "swimmers#misc"
+      get  "swimmers/index",                    as: "swimmers"
+      get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
+      get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
+      get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
+      get  "swimmer/all_races/:id",             to: "swimmers#all_races",               as: "swimmer_all_races"
+      get  "swimmer/misc/:id",                  to: "swimmers#misc",                    as: "swimmer_misc"
     end
   end
 
@@ -267,4 +295,12 @@ Goggles::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
+
+  # ----------------------------------------------------------------------------
+
+
+  # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
+  # RoutingError from hitting ApplicationController::rescue_action).
+  # In other words, this wildcard route will catch all the other cases:
+#  match "*path", :to => "application#routing_error"
 end

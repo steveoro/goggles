@@ -1,0 +1,16 @@
+.row-fluid
+  %h3
+    = (current_user.has_swimmer_confirmations? ? t('home_controller.you_are') : t('home_controller.you_are_or_you_said_it')) + ':'
+  %p
+    = link_to( current_user.swimmer.get_verbose_name, swimmer_radio_path( current_user.swimmer ), {:id => "swimmer#{current_user.swimmer_id}", 'data-toggle' => 'tooltip', :title => I18n.t('radiography.radio_tab_tooltip')} )
+  %p
+    - if current_user.has_swimmer_confirmations?
+      = t('home_controller.confirmed_by') + ':'
+      - current_user.confirmators.each do |confirmer|
+        = confirmer.get_full_name
+    - else
+      = t('home_controller.self_assessed')
+      = t('home_controller.ask_a_registered_friend_to_confirm_you')
+      = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{AGEX_APP_NAME}] #{t('home_controller.please_confirm_my_identity')}", body: "#{t('home_controller.i_am')} '#{current_user.swimmer.get_verbose_name}'.\r\n#{t('user')}: #{current_user.name} (ID: #{current_user.id})", encode: "javascript" )
+      = ', '
+      = mail_to( "fasar.software@email.it" , "Steve" , subject: "[#{AGEX_APP_NAME}] #{t('home_controller.please_confirm_my_identity')}", body: "#{t('home_controller.i_am')} '#{current_user.swimmer.get_verbose_name}'.\r\n#{t('user')}: #{current_user.name} (ID: #{current_user.id})", encode: "javascript" )

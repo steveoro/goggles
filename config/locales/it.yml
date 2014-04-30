@@ -120,6 +120,8 @@ it:
     total_team_records: "Record societari"
     total_disqualifications: "Squalifiche subite"
     no_disqualifications: "Nessuna !!"
+    swimmers: "Nuotatori"
+    search_swimmers: "Cerca Nuotatori"
 
   base_movements:
     code: "Cod."
@@ -642,23 +644,60 @@ it:
     text_freestyle: "Ti e' mai capitato di chiederti cosa avevi fatto in quella offuscata gara di tanti anni fa, che ricordi a malapena, per volerlo confrontare con gli ultimi risultati dell'ultima batteria in cui hai gareggiato? Ora puoi!"
     title_timertable: "Goggles mostra i tuoi risultati ufficiali!"
     text_timertable: "Dopo ogni Meeting di ciascuna delle Federazioni riconosciute, Goggles puo' importare automaticamente i dati. Controlla i tuoi risultati personali di nuoto e consulta le statistiche! Oppure segui gli sviluppi dei tuoi amici o dei tuoi compagni di corsia!"
+    title_happy: "Segui con Goggles i risultati dei tuoi compagni di nuotate!"
+    text_happy: "Associati ad un nuotatore registrato nei risultati su database e segui i tuoi progressi e quelli dei tuoi amici!"
+
+  home_controller:
+    upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
+    you_are_not_linked_to_a_swimmer_yet: "Non sei ancora associato a nessuno degli atleti Nuotatori presenti nel database:"
+    link_yourself_to_an_existing_swimmer: "Associati ad un nuotatore!"
+    possible_swimmers: "Nuotatori che sembrano avere a che fare con la tua descrizione:"
+    you_are: "Tu sei"
+    you_are_or_you_said_it: "Tu sei (o hai detto di essere)"
+    self_assessed: "(Auto-affermato/non confermato)"
+    confirmed_by: "Confermato da"
+    association_successful: "Associazione eseguita!"
+    unlink_yourself_from_this_swimmer: "Disassociati da questo nuotatore"
+    dissociation_successful: "Disassociazione eseguita."
+    something_went_wrong_try_later: "Qualcosa e' andato storto, riprova piu' tardi."
+    privacy_disclaimer_1: "Goggles non cedera', non dara' o non vendera' mai a terze parti i Tuoi dati personali."
+    privacy_disclaimer_2: "In ogni momento, cliccando sul pulsante 'Elimina il mio account' nella pagina di modifica utente, potrai eliminare tutti i tuoi dati personali riguardanti il tuo account utente. I risultati dei Meeting sono di pubblico dominio e rimarranno intoccati. Le recensioni delle Piscine, i modelli di Allenamento e altri contributi personali diverranno dissociati a risulteranno appartenenti ad un 'account eliminato' e potrebbero essere rimossi periodicamente di tanto in tanto. Puoi richiedere una 'pulizia totale dei dati' direttamente agli Amministratori di Sistema mandando loro una e-mail (vedi gli indirizzi che sono sulla pagina 'Contattaci')."
+    ask_a_registered_friend_to_confirm_you: "Chiedi ad un tuo amico gia' registrato di confermare la tua identita'! Oppure manda un messaggio direttamente agli Admin di sistema:"
+    please_confirm_my_identity: "Per favore, puoi confermare la mia identita'?"
+    i_am: "Io sono"
 
   social:
     menu_social_index: "'Swimming Buddies'"
     menu_social_show: "Mostra"
     menu_social_invite: "Invita"
+    invite_request_tooltip: "Clicca per invitare {SWIMMER_NAME} a diventare tuo amico ('swimming buddy') o per condividere risultati, allenamenti o altro."
     menu_social_approve: "Approva"
+    approve_request_tooltip: "Clicca per accettare la richiesta di {SWIMMER_NAME} a diventare tuo amico ('swimming buddy') o per condividere risultati, allenamenti o altro."
+    menu_social_block: "Blocca"
+    block_request_tooltip: "Clicca per bloccare l'amicizia con {SWIMMER_NAME}."
+    menu_social_unblock: "Sblocca"
+    unblock_request_tooltip: "Clicca per sbloccare l'amicizia con {SWIMMER_NAME}."
     menu_social_block_unblock: "Blocca / Sblocca"
     menu_social_remove: "Rimuovi"
+    remove_request_tooltip: "Clicca per ELIMINARE l'amicizia con {SWIMMER_NAME}."
     menu_social_edit: "Modifica"
+    edit_request_tooltip: "Clicca per modificare i dettagli di amicizia verso {SWIMMER_NAME}."
+
+    menu_social_confirm: "Conferma"
+    menu_social_unconfirm: "De-conferma"
+    confirm_request_tooltip: "L'utente associato a questo nuotatore e' in attesa di conferma per l'identificazione. Clicca se conosci {USER_NAME} e pensi di poter confermare che e' davvero {SWIMMER_NAME}."
+    unconfirm_request_tooltip: "Hai gia' dato conferma dell'identita' dell'utente associato a questo nuotatore. Clicca se vuoi togliere la tua conferma alla identita' di {USER_NAME} come {SWIMMER_NAME}."
+
     invite_title: "Opzioni richiesta Amicizia ('Swimming Buddy') / Condivisione"
     current_friends: "Amici correnti"
     pending_invited_friends: "Invitati & in attesa"
     invited_friends: "Invitati"
+    to_be_accepted_friends: "In attesa di una tua conferma"
     blocked_friends: "Bloccati"
     warning_swimmer_is_not_a_goggler: "{SWIMMER_NAME} non e' ancora un goggler! (Non esiste nessun utente associato a questo atleta)"
     warning_friendship_invite_already_sent_edit_options: "Esiste gia' una richiesta di amicizia (in corso) verso {SWIMMER_NAME}."
     warning_could_not_find_valid_or_pending_friendship: "Non ho trovato nessuna amicizia in attesa o valida verso {SWIMMER_NAME}."
+    warning_generic_not_a_valid_friendship: "Il tipo di amicizia stipulato con {SWIMMER_NAME} non permette questo tipo di operazione."
     swimming_buddy_options: "Opzioni di condivisione per l'amicizia con {SWIMMER_NAME}"
     shares: "condivide"
     passages: "Passaggi"
@@ -672,21 +711,33 @@ it:
     shares_calendars_hint: "Permette di consultare e seguire i calendari gara di questo atleta se entrambi siete d'accordo. Se uno dei due ha gia' disabilitato questa opzione, apparira' disabilitata."
     pending_invite: "Invito in attesa"
     block_unblock: "Blocca / Sblocca"
-    remove_friendship: "Elimina amicizia"
+    confirm_successful: "Associazione utente-nuotatore impostata come confermata (da te). Grazie."
+    unconfirm_successful: "Associazione utente-nuotatore impostata come NON confermata (da te)."
     invite_successful: "Invito inviato con successo."
     invite_error: "Errore durante l'invio dell'invito."
     approve_successful: "Amicizia accettata con successo."
     approve_error: "Errore durante l'accettazione dell'amicizia."
+    block_title: "Blocca Amicizia"
+    block_label: "Blocca Amicizia con {SWIMMER_NAME}"
     block_successful: "Blocco riuscito."
     block_error: "Errore durante il blocco dell'amicizia."
+    unblock_title: "Sblocca Amicizia"
+    unblock_label: "Sblocca Amicizia con {SWIMMER_NAME}"
+    unblock_successful: "Sblocca riuscito."
+    unblock_error: "Errore durante lo sblocco dell'amicizia."
+    remove_friendship: "Elimina amicizia"
+    remove_label: "Elimina amicizia con {SWIMMER_NAME}"
     remove_successful: "Eliminazione riuscita."
     remove_error: "Errore durante l'eliminazione dell'amicizia."
+    edit_title: "Opzioni Amicizia ('Swimming Buddy') / Condivisione"
     changes_saved: "Cambiamenti salvati."
+    edit_error: "Errore durante il salvataggio dei cambiamenti."
 
     approve_title: "Opzioni accettazione Amicizia ('Swimming Buddy') / Condivisione"
     request_swimming_buddy: "Vorrei diventare amico di {SWIMMER_NAME}"
-    message_title: "Messaggio dell'invito"
+    message_title: "Messaggio personalizzato"
     default_message: "Ciao {SWIMMER_NAME}, vorrei poterti seguire meglio nei tuoi progressi."
+    default_accept_message: "Heila', {SWIMMER_NAME}! Ok!"
     request_to_shares_passages: "Vorrei condividere i passaggi con te"
     request_to_shares_trainings: "Vorrei condividere gli allenamenti con te"
     request_to_shares_calendars: "Vorrei condividere i calendari gara con te"
@@ -695,6 +746,18 @@ it:
     ok: "Ok"
     cancel: "Annulla"
 
+  newsfeed:
+    approve_title: "Hai un nuovo 'Swimming Buddy'!"
+    approve_body: "Tu e {SWIMMER_NAME} siete ora amici."
+    remove_title: "'Swimming Buddy' rimosso."
+    remove_body: "Tu e {SWIMMER_NAME} non siete piu' amici."
+    confirm_title: "You have been confirmed by a friend of yours!"
+    confirm_body: "{SWIMMER_NAME} ha confermato che tu sei l'atleta che hai detto di essere."
+
+  achievement:
+    generic_title: "Trofeo sbloccato!"
+    approve_body: "Stabilisci amicizia con #{N} Swimming Buddy(/ies)."
+    confirm_body: "Ricevi conferma da #{N} Swimming Buddy(/ies)."
 
   agex_action:
     main: Principale
@@ -766,8 +829,10 @@ it:
   user_created: Utente creato con successo.
   user_deleted: Utente eliminato con successo.
   req_functionality_under_development: "La funzionalita' richiesta non e' attualmente disponibile perche' e' stata sottoposta a revisione o ci sono lavori di manutenzione in corso."
+  or_you_tried_something_wrong: "...Oppure hai provato a fare qualcosa di TREMENDAMENTE SBAGLIATO! (Vergognati. ;-) )"
   coming_soon: "Coming soon!!"
   copy_of: "Copia di"
+  language: "Lingua"
 
   no_new_articles: Nessun nuovo articolo
   select_file: "Scegli un file"
@@ -830,7 +895,6 @@ it:
   edit: Modifica
   delete: Elimina
   duplicate: Copia
-  user: Utente
   manage_details: Gestisci dettagli
   manage_details_tooltip: "Gestisci nei dettagli l'elemento selezionato [anche: SPAZIO o INVIO dopo aver selezionato la riga]"
   row_added: "Riga aggiunta con successo."
@@ -908,6 +972,7 @@ it:
   ranking: "Classifica"
   rankings: "Classifiche"
   results: "Risultati"
+  results_and_rankings: "Risultati/Classifiche"
   stats: "Statistiche"
   team_results: "Risultati di Squadra"
   team_stats: "Statistiche di Squadra"
@@ -1113,11 +1178,15 @@ it:
     attributes:
       user:
         created_on: Creato il
+        email: "e-mail"
         updated_on: Ultima modifica
-        name: Nome
+        name: Nome utente
         hashed_pwd: Password codificata
         password_confirmation: Conferma password
         description: "Descrizione / nome completo"
+        first_name: "Nome"
+        last_name: "Cognome"
+        year_of_birth: "Anno di nascita"
         enable_blog: "Blogger?"
         enable_edit: "Puo' modificare?"
         enable_delete: "Puo' eliminare?"

@@ -1,0 +1,40 @@
+<%= define_grid(@swimmers_grid, hide_submit_button: true, hide_reset_button: true) do |g|
+	g.blank_slate do
+		content_tag( :div, t(:no_data_found), class: 'well' )
+	end
+
+	g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
+
+	g.column(
+		name: I18n.t(:complete_name, {:scope=>[:swimmers]}),
+		attribute: 'complete_name',
+		detach_with_id: :flt_swimmer_complete_name
+	) do |swimmer|
+		meeting_ids = swimmer.meetings.collect{|row| row.id}.uniq
+        link_to(
+            swimmer.get_verbose_name, swimmer_radio_path( swimmer ),
+            { :id => "swimmer#{swimmer.id}",
+              'data-toggle' => 'tooltip', :title => I18n.t('radiography.radio_tab_tooltip')
+            }
+        )
+	end
+
+	g.column(
+		name: I18n.t(:team, {:scope=>[:activerecord, :models]}),
+	) do |swimmer|
+		swimmer.get_team_names.titleize
+	end
+
+	g.column(
+		name: I18n.t(:total_attended_meetings, {:scope=>[:meeting]}),
+	) do |swimmer|
+		meeting_ids = swimmer.meetings.collect{|row| row.id}.uniq
+		meeting_ids.size
+	end
+
+	g.column(
+		name: I18n.t(:total_results, {:scope=>[:meeting]}),
+	) do |swimmer|
+		swimmer.meeting_individual_results.count
+	end
+end -%>

@@ -2,34 +2,36 @@ require 'date'
 require 'rubygems'
 require 'find'
 require 'fileutils'
-
-require 'rails/all'
-require File.join( Rails.root.to_s, 'config/environment' )
+require File.join( Dir.pwd.to_s, 'config/environment' )
 
 
-# ###################################
-# ## Local Deployment helper tasks ##
-# ###################################
-#
-# FASAR Software 2007-2014
-# ==> TO BE RakeD inside app root <==
+=begin
 
+= Local Deployment helper tasks
+
+  - (p) FASAR Software 2007-2014
+  - Goggles framework vers.:  4.00.225.20140418
+  - author: Steve A.
+
+  (ASSUMES TO BE rakeD inside Rails.root)
+
+=end
 
 # Script revision number
-SCRIPT_VERSION = '4.10.20140403'
+SCRIPT_VERSION = '4.225.20140418'
 
 # Gives current application name
-APP_NAME = Rails.root.to_s.split( File::SEPARATOR ).reverse[0]
+APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
 
 MAX_BACKUP_KEPT = 30
-DB_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.db' )
-TAR_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.src' )
-LOG_BACKUP_DIR = File.join( "#{Rails.root}.docs", 'backup.log' )
+DB_BACKUP_DIR = File.join( "#{Dir.pwd}.docs", 'backup.db' )
+TAR_BACKUP_DIR = File.join( "#{Dir.pwd}.docs", 'backup.src' )
+LOG_BACKUP_DIR = File.join( "#{Dir.pwd}.docs", 'backup.log' )
 
-DB_SEED_DIR = File.join( Rails.root, 'db/seed' ) unless defined? DB_SEED_DIR
-UPLOADS_DIR = File.join( Rails.root, 'public/uploads' ) unless defined? UPLOADS_DIR
+DB_SEED_DIR = File.join( Dir.pwd, 'db/seed' ) unless defined? DB_SEED_DIR
+UPLOADS_DIR = File.join( Dir.pwd, 'public/uploads' ) unless defined? UPLOADS_DIR
 # The following is used only for clearing temp file
-ODT_OUTPUT_DIR = File.join( Rails.root, 'public/output' ) unless defined? ODT_OUTPUT_DIR
+ODT_OUTPUT_DIR = File.join( Dir.pwd, 'public/output' ) unless defined? ODT_OUTPUT_DIR
 
 NEEDED_DIRS = [DB_BACKUP_DIR, DB_SEED_DIR, UPLOADS_DIR, TAR_BACKUP_DIR, LOG_BACKUP_DIR]
 
@@ -42,10 +44,10 @@ puts "- Script version  : #{SCRIPT_VERSION}"
 
 # Returns the full path of a directory with respect to current Application root dir, terminated
 # with a trailing slash.
-# Current working directory will also be set to Rails.root (application root dir) anyways.
+# Current working directory will also be set to Dir.pwd (application root dir) anyways.
 #
 def get_full_path( sub_path )
-  File.join( Rails.root, sub_path )
+  File.join( Dir.pwd, sub_path )
 end
 # ---------------------------------------------------------------------------
 # ===========================================================================
@@ -82,7 +84,6 @@ Rake.application.remove_task 'db:test:prepare'
 
 
 namespace :db do
-
   namespace :test do 
     task :prepare do |t|
       # rewrite the task to not do anything you don't want
@@ -306,7 +307,7 @@ DESC
         sh "tar --bzip2 -cf #{File.basename(log_filename, '.log') + time_signature + '.log.tar.bz2'} #{log_filename}"
       end
     end
-    Dir.chdir( Rails.root.to_s )
+    Dir.chdir( Dir.pwd.to_s )
     puts "Truncating all current log files..."
     Rake::Task['log:clear'].invoke
     Rake::Task['utils:clear_output'].invoke
@@ -339,8 +340,8 @@ DESC
 
     puts "Creating #{file_name} under #{backup_folder}."
     Dir.chdir( backup_folder )
-    sh "tar --bzip2 -cf #{file_name} #{Rails.root}"
-    Dir.chdir( Rails.root.to_s )
+    sh "tar --bzip2 -cf #{file_name} #{Dir.pwd}"
+    Dir.chdir( Dir.pwd.to_s )
 
     puts "Done.\r\n"
   end
