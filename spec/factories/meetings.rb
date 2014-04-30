@@ -23,7 +23,7 @@ FactoryGirl.define do
   end
 
   factory :meeting_session do
-    description               { "FINALE" }
+    description               "FINALS"
     session_order             { ((rand * 100) % 4).to_i }
     meeting
     scheduled_date            { Date.today } 
