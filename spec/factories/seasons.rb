@@ -23,22 +23,4 @@ FactoryGirl.define do
     header_year               { end_date.year }
     season_type
   end
-
-  factory :meeting do
-    sequence( :code )         { |n| "farloque#(n)" }
-    description               { "#{Faker::Name.suffix} #{Faker::Address.city} Meeting" }
-    edition                   { ((rand * 100) % 40).to_i }
-    season
-    header_year               { season.header_year }
-    timing_type_id            1
-    edition_type_id           1
-    user_id                   user
-  end
-
-  factory :meeting_session do
-    description               { "FINALE" }
-    session_order             { ((rand * 100) % 4).to_i }
-    meeting
-    user
-  end
 end
