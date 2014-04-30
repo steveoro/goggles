@@ -1,24 +1,39 @@
 require 'spec_helper'
 
 
-shared_examples_for "generic create news-feed row creation" do
-  it "raises ActiveRecord::RecordNotSaved when the parameters are not valid" do
-    expect( NewsFeed.send(@class_method_to_call, nil, 1, 'title', 'body') ).to raise_exception
-    expect( NewsFeed.send(@class_method_to_call, 1, nil, 'title', 'body') ).to raise_exception
-    expect( NewsFeed.send(@class_method_to_call, 1, 1, nil, 'body') ).to raise_exception
-    expect( NewsFeed.send(@class_method_to_call, 1, 1, 'title', nil) ).to raise_exception
+shared_examples_for "generic news-feed row creation" do
+  it "raises an exception when the user_id is nil" do
+    expect{ subject.class.send(@class_method_to_call, nil, 1, 'title', 'body') }.to raise_exception
+  end
+  it "raises an exception when the title is nil" do
+    expect{ subject.class.send(@class_method_to_call, 1, 1, nil, 'body') }.to raise_exception
   end
 
   it "adds a row when successful" do
     expect{
-      NewsFeed.send(@class_method_to_call, 1, 1, 'title', 'body' )
-    }.to change{ NewsFeed.count }.by(1)
+      subject.class.send(@class_method_to_call, 1, 1, 'title 1', 'body' )
+    }.to change{ subject.class.count }.by(1)
+  end
+  it "adds a row with a nil friend_id" do
+    expect{
+      subject.class.send(@class_method_to_call, 1, nil, 'title 2', 'body' )
+    }.to change{ subject.class.count }.by(1)
+  end
+  it "adds a row with an empty body" do
+    expect{
+      subject.class.send(@class_method_to_call, 1, nil, 'title 3', '' )
+    }.to change{ subject.class.count }.by(1)
+  end
+  it "adds a row with an nil body" do
+    expect{
+      subject.class.send(@class_method_to_call, 1, nil, 'title 3', nil )
+    }.to change{ subject.class.count }.by(1)
   end
 end
 # -----------------------------------------------------------------------------
 
 
-shared_examples_for "generic achievement news-feed creation" do
+shared_examples_for "achievement news-feed creation" do
   before( :each ) do
     @user = create(:user)
     @friend = create(:user)
@@ -26,8 +41,8 @@ shared_examples_for "generic achievement news-feed creation" do
 
   it "adds a row when successful" do
     expect{
-      NewsFeed.send(@class_method_to_call, @user, @friend, 1 )
-    }.to change{ NewsFeed.count }.by(1)
+      subject.class.send(@class_method_to_call, @user, @friend, 1 )
+    }.to change{ subject.class.count }.by(1)
   end
 end
 # -----------------------------------------------------------------------------
@@ -36,35 +51,35 @@ end
 describe NewsFeed do
   context "[class]" do
     it "has a method to create a generic social feed" do
-      expect( NewsFeed ).to respond_to( :create_social_feed )
+      expect( subject.class ).to respond_to( :create_social_feed )
     end
 
     it "has a method to create a social/approve feed" do
-      expect( NewsFeed ).to respond_to( :create_social_approve_feed )
+      expect( subject.class ).to respond_to( :create_social_approve_feed )
     end
 
     it "has a method to create a social/remove feed" do
-      expect( NewsFeed ).to respond_to( :create_social_remove_feed )
+      expect( subject.class ).to respond_to( :create_social_remove_feed )
     end
 
 
     it "has a method to create a generic achievement feed" do
-      expect( NewsFeed ).to respond_to( :create_achievement_feed )
+      expect( subject.class ).to respond_to( :create_achievement_feed )
     end
 
     it "has a method to create an achievement/approve feed" do
-      expect( NewsFeed ).to respond_to( :create_achievement_approve_feed )
+      expect( subject.class ).to respond_to( :create_achievement_approve_feed )
     end
 
     it "has a method to create an achievement/confirm feed" do
-      expect( NewsFeed ).to respond_to( :create_achievement_confirm_feed )
+      expect( subject.class ).to respond_to( :create_achievement_confirm_feed )
     end
     # -------------------------------------------------------------------------
 
 
     describe "self.create_social_feed()" do
       before( :each ) { @class_method_to_call = :create_social_feed }
-      it_behaves_like "generic create news-feed row creation"
+      it_behaves_like "generic news-feed row creation"
     end
 
     describe "self.create_social_approve_feed()" do
@@ -74,8 +89,8 @@ describe NewsFeed do
       end
       it "adds 2 rows when successful" do
         expect{
-          NewsFeed.send(:create_social_approve_feed, @user, @friend )
-        }.to change{ NewsFeed.count }.by(2)
+          subject.class.send(:create_social_approve_feed, @user, @friend )
+        }.to change{ subject.class.count }.by(2)
       end
     end
 
@@ -86,25 +101,25 @@ describe NewsFeed do
       end
       it "adds 1 row when successful" do
         expect{
-          NewsFeed.send(:create_social_remove_feed, @user, @friend )
-        }.to change{ NewsFeed.count }.by(1)
+          subject.class.send(:create_social_remove_feed, @user, @friend )
+        }.to change{ subject.class.count }.by(1)
       end
     end
 
 
     describe "self.create_achievement_feed()" do
       before( :each ) { @class_method_to_call = :create_achievement_feed }
-      it_behaves_like "generic create news-feed row creation"
+      it_behaves_like "generic news-feed row creation"
     end
 
     describe "self.create_achievement_approve_feed()" do
       before( :each ) { @class_method_to_call = :create_achievement_approve_feed }
-      it_behaves_like "generic achievement news-feed creation"
+      it_behaves_like "achievement news-feed creation"
     end
 
     describe "self.create_achievement_confirm_feed()" do
       before( :each ) { @class_method_to_call = :create_achievement_confirm_feed }
-      it_behaves_like "generic achievement news-feed creation"
+      it_behaves_like "achievement news-feed creation"
     end
     # -------------------------------------------------------------------------
   end

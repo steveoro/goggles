@@ -13,7 +13,7 @@ describe User do
     end
 
     it "is a valid istance" do
-      @user.should be_valid
+      expect( @user ).to be_valid
     end
 
     it "has a method to return the full description" do

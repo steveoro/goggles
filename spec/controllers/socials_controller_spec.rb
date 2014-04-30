@@ -1,6 +1,66 @@
 require 'spec_helper'
 
 
+shared_examples_for "[POST #edit] successful request, resetting share settings" do |user, friend_user|
+  before :each do
+    @user.approve( @friend_user, true, true )
+    # user changes idea on sharing trainings and edits:
+    post :edit, id: friend_user.id, shares_passages: 1, shares_trainings: 0
+  end
+
+  it "redirects to socials_show_all_path when done" do
+    expect(response).to redirect_to socials_show_all_path()
+  end
+
+  it "doesn't reset the pending status of an already approved friendship" do
+    friendship = user.find_any_friendship_with(friend_user)
+    expect( friendship.pending? ).to be_false
+  end
+
+  it "handles successfully the request" do
+    expect( user.is_sharing_passages_with?(friend_user) ).to be_true
+    expect( user.is_sharing_trainings_with?(friend_user) ).to be_false
+    expect( user.is_sharing_calendars_with?(friend_user) ).to be_false
+  end
+
+  it "renders successfully the template" do
+    expect(response).to redirect_to socials_show_all_path()
+    expect( flash[:info] ).to include( I18n.t('social.changes_saved') )
+  end
+end
+# -----------------------------------------------------------------------------
+
+
+shared_examples_for "[POST #edit] successful request, setting NEW share settings" do |user, friend_user|
+  before :each do
+    @user.approve( @friend_user, true, false, true )
+    # user changes idea on NOT sharing trainings and edits: (will issue another accept request)
+    post :edit, id: friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
+  end
+
+  it "redirects to socials_show_all_path when done" do
+    expect(response).to redirect_to socials_show_all_path()
+  end
+
+  it "does set the pending status back on" do
+    friendship = user.find_any_friendship_with(friend_user)
+    expect( friendship.pending? ).to be_true
+  end
+
+  it "handles successfully the request" do
+    expect( user.is_sharing_passages_with?(friend_user) ).to be_true
+    expect( user.is_sharing_trainings_with?(friend_user) ).to be_true
+    expect( user.is_sharing_calendars_with?(friend_user) ).to be_true
+  end
+
+  it "renders successfully the template" do
+    expect(response).to redirect_to socials_show_all_path()
+    expect( flash[:info] ).to include( I18n.t('social.changes_saved') )
+  end
+end
+# ==============================================================================
+
+
 describe SocialsController do
 
   # Login checker for GET actions only.
@@ -696,9 +756,8 @@ describe SocialsController do
       end
 
       it "redirects to the referrer for an invalid friendable" do
-        request.env["HTTP_REFERER"] = root_path()
         get :edit, id: 0
-        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
+        expect(response).to redirect_to socials_show_all_path()
       end
     end
   end
@@ -730,46 +789,40 @@ describe SocialsController do
         @friend_user.invite( @user, true, true, true )
       end
 
-      it "redirects to socials_show_all_path when done" do
-        post :edit, id: @friend_user.id, shares_passages: 1
-        expect(response).to redirect_to socials_show_all_path()
+      context "for a pending friendship, when editing commonly-agreed share flags" do
+        before :each do
+          post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1
+        end
+        it "redirects to socials_show_all_path when done" do
+          expect(response).to redirect_to socials_show_all_path()
+        end
+        it "handles successfully the request" do
+          expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
+          expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
+          expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_false
+        end
+        it "doesn't change the pending status of an already pending friendship" do
+          friendship = @user.find_any_friendship_with(@friend_user)
+          expect( friendship.pending? ).to be_true
+        end
       end
 
-      it "handles successfully the request for a pending friendship" do
-        post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1
-        expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
-        expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
+      context "for an approved friendship, when resetting share flags" do
+        it_behaves_like "[POST #edit] successful request, resetting share settings", @user, @friend_user
       end
 
-      it "handles successfully the request for an approved friendship" do
-        @user.approve( @friend_user )                # Default options: do not share trainings, passages and calendars
-        post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1
-        expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
-        expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
+      context "for a blocked friendship, when resetting share flags" do
+        before(:each) { @user.block(@friend_user) }
+        it_behaves_like "[POST #edit] successful request, resetting share settings", @user, @friend_user
       end
 
-      it "handles successfully the request for a blocked friendship" do
-        @user.approve( @friend_user )                # Default options: do not share trainings, passages and calendars
-        @user.block( @friend_user )
-        post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1
-        expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
-        expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
+      context "for an approved friendship, when adding new share flags" do
+        it_behaves_like "[POST #edit] successful request, setting NEW share settings", @user, @friend_user
       end
 
-      it "renders successfully the template for an existing friendship" do
-        post :edit, id: @friend_user.id 
-        expect(response).to redirect_to socials_show_all_path()
-        expect( flash[:info] ).to include( I18n.t('social.changes_saved') )
-      end
-
-      it "does not edit friendship permissions that were not set during the approve phase" do
-        @user.approve( @friend_user, true )         # share only trainings
-        # Change idea & edit:
-        post :edit, id: @friend_user.id, shares_passages: 0, shares_trainings: 1, shares_calendars: 1
-        expect( @user.is_sharing_passages_with?(@friend_user) ).to be_false
-        expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
-        # Cannot share this if the friend didn't want it from start
-        expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_false
+      context "for a blocked friendship, when adding new share flags" do
+        before(:each) { @user.block(@friend_user) }
+        it_behaves_like "[POST #edit] successful request, setting NEW share settings", @user, @friend_user
       end
     end
   end

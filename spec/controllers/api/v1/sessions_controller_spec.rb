@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'json'
 
 
 describe Api::V1::SessionsController do

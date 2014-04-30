@@ -28,6 +28,10 @@ Goggles::Application.routes.draw do
         resources :user_trainings         #, only: 'json_list'
         resources :user_training_stories
 
+        get    "news_feed/for_user/:id",        to: "news_feeds#for_user",  as: "news_feed_for_user"
+        post   "news_feed/create/:news_feed",   to: "news_feeds#create",    as: "news_feed_create"
+        delete "news_feed/delete/:id",          to: "news_feeds#delete",    as: "news_feed_delete"
+
         # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
         # resources :exercises do
           # member do

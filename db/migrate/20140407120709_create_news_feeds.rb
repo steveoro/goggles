@@ -7,8 +7,8 @@ class CreateNewsFeeds < ActiveRecord::Migration
       t.boolean :is_friend_activity, default: false, null: false
       t.boolean :is_achievement, default: false, null: false
 
-      t.references :user, :comment => 'Owner of this news feed'
-      t.references :friend, :class_name => "User", :foreign_key => "friend_id"
+      t.references :user, comment: 'Owner of this news feed', null: false
+      t.references :friend, class_name: "User", foreign_key: "friend_id"
 
       t.timestamps
     end

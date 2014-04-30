@@ -265,8 +265,12 @@ class SocialsController < ApplicationController
   # === GET:
   #     Renderes the edit form.
   #
-  # === PUT:
+  # === POST:
   #     Update the changes (news feed generated only for new sharings).
+  #
+  #     Changing an already "agreed" share (setting to true something that
+  #     was already set as false) will re-set to ON the pending status of
+  #     the friendship.
   def edit
     @title = I18n.t('social.edit_title')
     @swimming_buddy = User.find_by_id( params[:id] )
@@ -278,9 +282,15 @@ class SocialsController < ApplicationController
     end
 
     if request.post?                                # === POST: ===
-      @friendship.shares_passages  = @friendship.shares_passages  && (params[:shares_passages].to_i > 0)
-      @friendship.shares_trainings = @friendship.shares_trainings && (params[:shares_trainings].to_i > 0)
-      @friendship.shares_calendars = @friendship.shares_calendars && (params[:shares_calendars].to_i > 0)
+      shares_passages  = (params[:shares_passages].to_i > 0)
+      shares_trainings = (params[:shares_trainings].to_i > 0)
+      shares_calendars = (params[:shares_calendars].to_i > 0)
+      must_reset_pending_status = ( !@friendship.shares_passages  && shares_passages ) ||
+                                  ( !@friendship.shares_trainings && shares_trainings ) ||
+                                  ( !@friendship.shares_calendars && shares_calendars )
+      @friendship.shares_passages  = shares_passages
+      @friendship.shares_trainings = shares_trainings
+      @friendship.shares_calendars = shares_calendars
       if @friendship.save
         flash[:info] = I18n.t('social.changes_saved')
       else
