@@ -3,7 +3,7 @@ require 'spec_helper'
 
 shared_examples_for "[POST #edit] successful request, resetting share settings" do |user, friend_user|
   before :each do
-    @user.approve( @friend_user, true, true )
+    user.approve( friend_user, true, true )
     # user changes idea on sharing trainings and edits:
     post :edit, id: friend_user.id, shares_passages: 1, shares_trainings: 0
   end
@@ -33,7 +33,7 @@ end
 
 shared_examples_for "[POST #edit] successful request, setting NEW share settings" do |user, friend_user|
   before :each do
-    @user.approve( @friend_user, true, false, true )
+    user.approve( friend_user, true, false, true )
     # user changes idea on NOT sharing trainings and edits: (will issue another accept request)
     post :edit, id: friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
   end
