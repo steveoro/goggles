@@ -35,11 +35,4 @@ module TimingGettable
     Timing.new( hundreds.to_i, seconds.to_i, minutes.to_i )
   end
   #-----------------------------------------------------------------------------
-
-  # Returns the hundreds value of a given time
-  #
-  def get_timing_to_hundreds
-    hundreds + (seconds * 100) + (minutes * 6000) 
-  end
-  #-----------------------------------------------------------------------------
 end

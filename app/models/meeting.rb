@@ -42,6 +42,8 @@ class Meeting < ActiveRecord::Base
 
   has_many :swimming_pools, :through => :meeting_sessions
   has_many :pool_types,     :through => :meeting_sessions
+  has_many :swimmers,       :through => :meeting_individual_results
+  has_many :teams,          :through => :meeting_individual_results
 
   # TODO Add other has_many relationships only when needed
 
@@ -174,4 +176,10 @@ class Meeting < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Computes the complete list of all the meeting events
+  # with session informations.
+  # 
+  def get_athletes_count_by_gender
+  end
+  # ----------------------------------------------------------------------------
 end

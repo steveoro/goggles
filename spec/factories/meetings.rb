@@ -24,7 +24,7 @@ FactoryGirl.define do
 
   factory :meeting_session do
     description               "FINALS"
-    session_order             { ((rand * 100) % 4).to_i }
+    session_order             { ((rand * 100) % 4).to_i + 1}
     meeting
     scheduled_date            { Date.today } 
     day_part_type             { ((rand * 100) % 4).to_i } # ASSERT: at least 4 timing types

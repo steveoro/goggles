@@ -64,14 +64,4 @@ describe TimingGettable do
     end
   end
   # ---------------------------------------------------------------------------
-
-  # Describes the required functionalities of this method
-  # of the interface.
-  #
-  describe "get_timing_to_hundreds" do
-    it "returns always a number" do
-      expect( @dummy.get_timing.size ).to be >= 0
-    end
-  end
-  # ---------------------------------------------------------------------------
 end
