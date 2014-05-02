@@ -5,9 +5,9 @@ require 'ffaker'
 FactoryGirl.define do
 
   factory :user do
-    name                      { Faker::Name.first_name.downcase }
+    name                      { "#{Faker::Internet.user_name}-#{(rand * 1000).to_i}" }
     email                     { Faker::Internet.email }
-    description               { "#{name.camelcase} #{Faker::Name.last_name}" }
+    description               { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
     password                  "password"
     password_confirmation     "password"
     confirmed_at              { DateTime.now }
