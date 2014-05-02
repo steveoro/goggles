@@ -13,7 +13,7 @@ FactoryGirl.define do
     confirmed_at              { DateTime.now }
     created_at                { DateTime.now }
     updated_at                { DateTime.now }
-    swimmer_level_type_id     { ((rand * 100) % 15).to_i } # ASSERT: there exists at least 14 rows for this entity in test DB
+    swimmer_level_type_id     { ((rand * 100) % 15).to_i + 1} # ASSERT: there exists at least 14 rows for this entity in test DB
 
     factory :admin do
       # Admin obj will have only these changed attributes:
