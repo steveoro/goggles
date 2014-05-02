@@ -21,11 +21,11 @@ class MeetingIndividualResult < ActiveRecord::Base
   has_one  :meeting,          :through => :meeting_program
   has_one  :season,           :through => :meeting_program
 
-  has_one  :pool_type,      :through => :meeting_program
-  has_one  :season_type,    :through => :meeting_program
-  has_one  :event_type,     :through => :meeting_program
-  has_one  :category_type,  :through => :meeting_program
-  has_one  :gender_type,    :through => :meeting_program
+  has_one  :pool_type,        :through => :meeting_program
+  has_one  :season_type,      :through => :meeting_program
+  has_one  :event_type,       :through => :meeting_program
+  has_one  :category_type,    :through => :meeting_program
+  has_one  :gender_type,      :through => :meeting_program
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :team
   belongs_to :team_affiliation
@@ -54,7 +54,9 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_numericality_of :reaction_time
 
 
-  scope :is_valid, -> { where(is_out_of_race: false, is_disqualified: false) }
+  scope :is_valid,          -> { where(is_out_of_race: false, is_disqualified: false) }
+  scope :is_male,           -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
+  scope :is_female,         -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
   scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_meeting,   ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }

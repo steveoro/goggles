@@ -77,8 +77,6 @@ describe Meeting do
     end
     
     context "[meeting result methods]" do      
-      it "has a method to determine whether the results are acquired"
-
       it "has a method to determine how many male and female athletes swam"
 
       it "has a method to determine how many male and female athletes/programs swam"
