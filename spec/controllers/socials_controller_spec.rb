@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 
-shared_examples_for "[POST #edit] successful request, resetting share settings" do |user, friend_user|
+shared_examples_for "[POST #edit successful request] clearing share settings" do
   before :each do
-    user.approve( friend_user, true, true )
+    @user.approve( @friend_user, true, true )
     # user changes idea on sharing trainings and edits:
-    post :edit, id: friend_user.id, shares_passages: 1, shares_trainings: 0
+    post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 0
   end
 
   it "redirects to socials_show_all_path when done" do
@@ -13,14 +13,14 @@ shared_examples_for "[POST #edit] successful request, resetting share settings" 
   end
 
   it "doesn't reset the pending status of an already approved friendship" do
-    friendship = user.find_any_friendship_with(friend_user)
+    friendship = @user.find_any_friendship_with(@friend_user)
     expect( friendship.pending? ).to be_false
   end
 
   it "handles successfully the request" do
-    expect( user.is_sharing_passages_with?(friend_user) ).to be_true
-    expect( user.is_sharing_trainings_with?(friend_user) ).to be_false
-    expect( user.is_sharing_calendars_with?(friend_user) ).to be_false
+    expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
+    expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_false
+    expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_false
   end
 
   it "renders successfully the template" do
@@ -31,11 +31,11 @@ end
 # -----------------------------------------------------------------------------
 
 
-shared_examples_for "[POST #edit] successful request, setting NEW share settings" do |user, friend_user|
+shared_examples_for "[POST #edit successful request] setting NEW share settings" do
   before :each do
-    user.approve( friend_user, true, false, true )
+    @user.approve( @friend_user, true, false, true )
     # user changes idea on NOT sharing trainings and edits: (will issue another accept request)
-    post :edit, id: friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
+    post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
   end
 
   it "redirects to socials_show_all_path when done" do
@@ -43,14 +43,14 @@ shared_examples_for "[POST #edit] successful request, setting NEW share settings
   end
 
   it "does set the pending status back on" do
-    friendship = user.find_any_friendship_with(friend_user)
+    friendship = @user.find_any_friendship_with(@friend_user)
     expect( friendship.pending? ).to be_true
   end
 
   it "handles successfully the request" do
-    expect( user.is_sharing_passages_with?(friend_user) ).to be_true
-    expect( user.is_sharing_trainings_with?(friend_user) ).to be_true
-    expect( user.is_sharing_calendars_with?(friend_user) ).to be_true
+    expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
+    expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
+    expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_true
   end
 
   it "renders successfully the template" do
@@ -244,13 +244,12 @@ describe SocialsController do
         expect(response).to render_template(:invite)
       end
 
-      it "redirects to the referrer for a non-yet existing goggler" do
-        request.env["HTTP_REFERER"] = root_path()
+      it "redirects to :show_all for a non-yet existing goggler" do
         get :invite, id: 0
-        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
+        expect(response).to redirect_to socials_show_all_path()
       end
 
-      it "redirects to socials_show_all_path for an existing friendship" do
+      it "redirects to :show_all for an existing friendship" do
         @friend_user.invite( @user )
         get :invite, id: @friend_user.id
         expect(response).to redirect_to socials_show_all_path()
@@ -335,20 +334,19 @@ describe SocialsController do
         expect(response).to render_template(:approve)
       end
 
-      it "redirects to the referrer for an invalid friendable" do
-        request.env["HTTP_REFERER"] = root_path()
+      it "redirects to :show_all for an invalid friendable" do
         get :approve, id: 0
-        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
+        expect(response).to redirect_to socials_show_all_path()
       end
 
-      it "redirects to socials_show_all_path for an already approved friendship" do
+      it "redirects to :show_all for an already approved friendship" do
         @friend_user.invite( @user )
         @user.approve( @friend_user )
         get :approve, id: @friend_user.id
         expect(response).to redirect_to socials_show_all_path()
       end
 
-      it "redirects to socials_show_all_path for a pending friendship requested by the user himself" do
+      it "redirects to :show_all for a pending friendship requested by the user himself" do
         @user.invite( @friend_user )
         get :approve, id: @friend_user.id
         expect(response).to redirect_to socials_show_all_path()
@@ -441,13 +439,12 @@ describe SocialsController do
         expect(response).to render_template( :ask_confirmation )
       end
 
-      it "redirects to the referrer for an invalid friendable" do
-        request.env["HTTP_REFERER"] = root_path()
+      it "redirects to :show_all for an invalid friendable" do
         get :block, id: 0
-        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
+        expect(response).to redirect_to socials_show_all_path()
       end
 
-      it "redirects to socials_show_all_path for a pending friendship" do
+      it "redirects to :show_all for a pending friendship" do
         get :block, id: @friend_user.id
         expect(response).to redirect_to socials_show_all_path()
       end
@@ -546,18 +543,17 @@ describe SocialsController do
         expect(response).to render_template( :ask_confirmation )
       end
 
-      it "redirects to the referrer for an invalid friendable" do
-        request.env["HTTP_REFERER"] = root_path()
+      it "redirects to :show_all for an invalid friendable" do
         get :unblock, id: 0
-        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
+        expect(response).to redirect_to socials_show_all_path()
       end
 
-      it "redirects to socials_show_all_path for a pending friendship" do
+      it "redirects to :show_all for a pending friendship" do
         get :unblock, id: @friend_user.id
         expect(response).to redirect_to socials_show_all_path()
       end
 
-      it "redirects to socials_show_all_path for a non-blocked friendship" do
+      it "redirects to :show_all for a non-blocked friendship" do
         @user.approve( @friend_user )
         get :unblock, id: @friend_user.id
         expect(response).to redirect_to socials_show_all_path()
@@ -652,10 +648,9 @@ describe SocialsController do
         expect(response).to render_template( :ask_confirmation )
       end
 
-      it "redirects to the referrer for an invalid friendable" do
-        request.env["HTTP_REFERER"] = root_path()
+      it "redirects to :show_all for an invalid friendable" do
         get :remove, id: 0
-        expect(response).to redirect_to request.env["HTTP_REFERER"] # => :back
+        expect(response).to redirect_to socials_show_all_path()
       end
     end
   end
@@ -755,7 +750,7 @@ describe SocialsController do
         expect(response).to render_template(:edit)
       end
 
-      it "redirects to the referrer for an invalid friendable" do
+      it "redirects to :show_all for an invalid friendable" do
         get :edit, id: 0
         expect(response).to redirect_to socials_show_all_path()
       end
@@ -808,21 +803,21 @@ describe SocialsController do
       end
 
       context "for an approved friendship, when resetting share flags" do
-        it_behaves_like "[POST #edit] successful request, resetting share settings", @user, @friend_user
+        it_behaves_like "[POST #edit successful request] clearing share settings"
       end
 
       context "for a blocked friendship, when resetting share flags" do
         before(:each) { @user.block(@friend_user) }
-        it_behaves_like "[POST #edit] successful request, resetting share settings", @user, @friend_user
+        it_behaves_like "[POST #edit successful request] clearing share settings"
       end
 
       context "for an approved friendship, when adding new share flags" do
-        it_behaves_like "[POST #edit] successful request, setting NEW share settings", @user, @friend_user
+        it_behaves_like "[POST #edit successful request] setting NEW share settings"
       end
 
       context "for a blocked friendship, when adding new share flags" do
         before(:each) { @user.block(@friend_user) }
-        it_behaves_like "[POST #edit] successful request, setting NEW share settings", @user, @friend_user
+        it_behaves_like "[POST #edit successful request] setting NEW share settings"
       end
     end
   end

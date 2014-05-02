@@ -5,7 +5,7 @@ require 'ffaker'
 FactoryGirl.define do
 
   factory :user do
-    name                      { Faker::Internet.user_name }
+    name                      { Faker::Name.first_name.downcase }
     email                     { Faker::Internet.email }
     description               { "#{name.camelcase} #{Faker::Name.last_name}" }
     password                  "password"

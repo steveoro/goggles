@@ -29,7 +29,7 @@ class SocialsController < ApplicationController
   #
   def association_confirm
     toggle_confirmation( true )
-    redirect_to(:back) and return
+    redirect_to( socials_show_all_path() ) and return
   end
 
   # Remove endorsement/unconfirm user association with a goggler (POST only).
@@ -38,7 +38,7 @@ class SocialsController < ApplicationController
   #
   def association_unconfirm
     toggle_confirmation( false )
-    redirect_to(:back) and return
+    redirect_to( socials_show_all_path() ) and return
   end
   # ---------------------------------------------------------------------------
 
@@ -285,12 +285,16 @@ class SocialsController < ApplicationController
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
+      # If the user changes to true some share that is currently set to false for
+      # the friendship, this will issue a new approval request (by setting the
+      # friendship pending status back to true)
       must_reset_pending_status = ( !@friendship.shares_passages  && shares_passages ) ||
                                   ( !@friendship.shares_trainings && shares_trainings ) ||
                                   ( !@friendship.shares_calendars && shares_calendars )
       @friendship.shares_passages  = shares_passages
       @friendship.shares_trainings = shares_trainings
       @friendship.shares_calendars = shares_calendars
+      @friendship.pending = true if must_reset_pending_status
       if @friendship.save
         flash[:info] = I18n.t('social.changes_saved')
       else
@@ -320,7 +324,8 @@ class SocialsController < ApplicationController
     @swimming_buddy = ( user_id > 0 ) ? User.find_by_id( user_id ) : nil
     unless ( @swimming_buddy )                      # Check swimming buddy existance
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_to( socials_show_all_path() ) and return
+#      redirect_to(:back) and return
     end
   end
   # ---------------------------------------------------------------------------
