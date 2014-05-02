@@ -1,0 +1,7 @@
+.row-fluid
+  .alert
+    %button{type: 'button', 'data-dismiss': 'alert'}.close
+      &times;
+    %h4.text-info= review.title
+    %p= review.entry_text
+    %small= "#{Format.a_datetime( review.updated_at )}"

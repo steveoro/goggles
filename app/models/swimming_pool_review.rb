@@ -19,7 +19,7 @@ class SwimmingPoolReview < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
-  #++
+
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -37,6 +37,5 @@ class SwimmingPoolReview < ActiveRecord::Base
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
-  #++
 
 end

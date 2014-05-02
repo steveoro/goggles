@@ -58,6 +58,25 @@ class Api::V1::NewsFeedsController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
+  # Toggles as read a specific news-feed row.
+  # (JSON format) PUT-only action.
+  #
+  # === Params:
+  # - :id => the NewsFeed.id to be deleted.
+  #
+  def read
+    news_feed = NewsFeed.find_by_id( params[:id] )
+    if news_feed
+      news_feed.is_read = true
+      if news_feed.save
+        render( status: :ok, json: { success: true } ) and return
+      end
+    end
+    render( status: 422, json: { success: false } )
+  end
+  # ---------------------------------------------------------------------------
+
+
   protected
 
 

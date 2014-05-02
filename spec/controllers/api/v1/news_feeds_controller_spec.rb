@@ -103,6 +103,59 @@ describe Api::V1::NewsFeedsController do
   # ---------------------------------------------------------------------------
 
 
+  describe '[PUT read/:id]' do
+    before :each do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = create( :user )
+      @news_feed = create( :news_feed, user_id: @user.id )
+    end
+
+    context "with a non-JSON request" do
+      it "refuses the request" do
+        put :read, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
+        expect(response.status).to eq( 406 )
+      end
+      it "doesn't set as read the news feed" do
+        expect {
+          put :read, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
+          @news_feed.reload
+        }.not_to change{ @news_feed.is_read } 
+      end
+    end
+
+    context "with a not existing id and valid credentials" do
+      it "handles the request with 'unprocessable entity' error result (422)" do
+        put :read, format: :json, id: 0, user_email: @user.email, user_token: @user.authentication_token
+        expect(response.status).to eq( 422 )
+      end
+      it "returns a JSON result of 'success' as false" do
+        put :read, format: :json, id: 0, user_email: @user.email, user_token: @user.authentication_token
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( false )
+      end
+    end
+
+    context "with an existing id and valid credentials" do
+      it "handles successfully the request" do
+        put :read, format: :json, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true" do
+        put :read, format: :json, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( true )
+      end
+      it "updates the specified news-feed row" do
+        expect {
+          put :read, format: :json, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
+          @news_feed.reload
+        }.to change{ @news_feed.is_read }.to( true )
+      end
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
   describe '[DELETE destroy/:id]' do
     before :each do
       @request.env["devise.mapping"] = Devise.mappings[:user]

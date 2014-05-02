@@ -30,6 +30,7 @@ Goggles::Application.routes.draw do
 
         get    "news_feed/for_user/:id",        to: "news_feeds#for_user",  as: "news_feed_for_user"
         post   "news_feed/create/:news_feed",   to: "news_feeds#create",    as: "news_feed_create"
+        put    "news_feed/read/:id",            to: "news_feeds#read",      as: "news_feed_read"
         delete "news_feed/destroy/:id",         to: "news_feeds#destroy",   as: "news_feed_destroy"
 
         # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
@@ -196,6 +197,13 @@ Goggles::Application.routes.draw do
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/all_races/:id",             to: "swimmers#all_races",               as: "swimmer_all_races"
       get  "swimmer/misc/:id",                  to: "swimmers#misc",                    as: "swimmer_misc"
+
+      resources :swimming_pool_reviews do
+        collection do
+          get 'for_swimming_pool/:id',          to: "swimming_pool_reviews#for_swimming_pool"
+          get 'for_user/:id',                   to: "swimming_pool_reviews#for_user"
+        end
+      end
     end
   end
 
