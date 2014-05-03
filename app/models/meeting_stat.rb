@@ -21,12 +21,12 @@
 =end
 class MeetingStat
 
-  attr_accessor :swimmer_male_count,      :swimmer_female_count, 
-                :result_male_count,       :result_female_count,
-                :disqualified_male_count, :disqualified_female_count, 
-                :best_male_scores,        :best_female_scores, 
-                :worst_male_scores,       :worst_female_scores,
-                :oldest_male_swimmers,    :oldest_female_swimmers   
+  attr_accessor :swimmer_male_count,         :swimmer_female_count, 
+                :result_male_count,          :result_female_count,
+                :disqualified_male_count,    :disqualified_female_count, 
+                :oldest_male_swimmers,       :oldest_female_swimmers,   
+                :best_standard_male_scores,  :best_standard_female_scores, 
+                :worst_standard_male_scores, :worst_standard_female_scores
 
   # Creates a new instance.
   # Note the ascending precision of the parameters, which allows to skip
@@ -49,9 +49,10 @@ class MeetingStat
     self.disqualified_female_count = 0
     self.oldest_male_swimmers = []
     self.oldest_female_swimmers = []
-    self.best_male_scores = []
-    self.best_female_scores = []
-    self.worst_male_scores = []    
+    self.best_standard_male_scores = []
+    self.best_standard_female_scores = []
+    self.worst_standard_male_scores = []    
+    self.worst_standard_female_scores = []    
     self
   end
   # ---------------------------------------------------------------------------
@@ -68,12 +69,12 @@ class MeetingStat
       self.disqualified_female_count = self.class.get_disqualified_count(meeting, :is_female)
       self.oldest_male_swimmers = self.class.get_oldest_swimmers(meeting, :is_male, 3)
       self.oldest_female_swimmers = self.class.get_oldest_swimmers(meeting, :is_female, 3)
+      self.best_standard_male_scores = self.class.get_best_standard_scores(meeting, :is_male, 3)
+      self.best_standard_female_scores = self.class.get_best_standard_scores(meeting, :is_female, 3)
+      self.worst_standard_male_scores = self.class.get_worst_standard_scores(meeting, :is_male, 3)
+      self.worst_standard_female_scores = self.class.get_worst_standard_scores(meeting, :is_female, 3)
       
       #TODO Complete field calc
-      self.best_male_scores = []
-      self.best_female_scores = []
-      self.worst_male_scores = []
-      self.worst_female_scores = []
     else
       # The meeting does not exist. Clear all fields
       clear
@@ -117,6 +118,25 @@ class MeetingStat
   end
   # ---------------------------------------------------------------------------
 
+  # Statistic calculation of the best results swam in the meeting
+  # Best results are intended evaluating the standard (FIN) points
+  # Assumes the standard (FIN) pints are always calculated
+  #
+  def self.get_best_standard_scores( meeting, scope_name = :is_male, score_num = 3 )
+    #TODO sort results in descending order by standard_points. Should create scope in model?
+    meeting.meeting_individual_results.send(scope_name.to_sym).order(:standard_points).limit(score_num)
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation of the worst results swam in the meeting
+  # Worst results are intended evaluating the standard (FIN) points
+  # Assumes the standard (FIN) pints are always calculated
+  #
+  def self.get_worst_standard_scores( meeting, scope_name = :is_male, score_num = 3 )
+    meeting.meeting_individual_results.send(scope_name.to_sym).order(:standard_points).limit(score_num)
+  end
+  # ---------------------------------------------------------------------------
+
   # Sum male and female swimmer count
   #
   def swimmer_count
@@ -130,7 +150,7 @@ class MeetingStat
     result_male_count + result_female_count
   end  
   
-  # Sum male and female result count
+  # Sum male and female disqualified count
   #
   def disqualified_count
     disqualified_male_count + disqualified_female_count

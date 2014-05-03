@@ -13,18 +13,6 @@ shared_examples_for "(existance of meeting stats array field/method)" do |method
   end
 end
 
-shared_examples_for "(existance of meeting stats numerical field/method)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
-    end
-    
-    it "returns a number" do
-      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
-    end
-  end
-end
-
 shared_examples_for "(existance of meeting stats relation of swimmers)" do |method_name_array|
   method_name_array.each do |method_name|
     it "responds to ##{method_name}" do
@@ -35,6 +23,32 @@ shared_examples_for "(existance of meeting stats relation of swimmers)" do |meth
       subject.send(method_name.to_sym).each do |item|
         expect(item).to be_an_instance_of( Swimmer )
       end
+    end
+  end
+end
+
+shared_examples_for "(existance of meeting stats relation of meeting individual results)" do |method_name_array|
+  method_name_array.each do |method_name|
+    it "responds to ##{method_name}" do
+      expect( subject ).to respond_to( method_name )
+    end
+    
+    it "returns a list of swimmer instances" do
+      subject.send(method_name.to_sym).each do |item|
+        expect(item).to be_an_instance_of( MeetingIndividualResult )
+      end
+    end
+  end
+end
+
+shared_examples_for "(existance of meeting stats numerical field/method)" do |method_name_array|
+  method_name_array.each do |method_name|
+    it "responds to ##{method_name}" do
+      expect( subject ).to respond_to( method_name )
+    end
+    
+    it "returns a number" do
+      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
     end
   end
 end
@@ -72,12 +86,12 @@ describe MeetingStat do
       :oldest_female_swimmers
    ])
     
-    it_should_behave_like( "(existance of meeting stats array field/method)", [ 
+    it_should_behave_like( "(existance of meeting stats relation of meeting individual results)", [ 
       # Methods
-      :best_male_scores, 
-      :worst_male_scores,
-      :best_female_scores, 
-      :worst_female_scores
+      :best_standard_male_scores, 
+      :worst_standard_male_scores,
+      :best_standard_female_scores, 
+      :worst_standard_female_scores
    ])
     
     it "has a valid meeting instance" do
@@ -143,6 +157,70 @@ describe MeetingStat do
       subject.oldest_female_swimmers.each do |item|
         expect(item.year_of_birth).to be >= current_item_year
         current_item_year = item.year_of_birth 
+      end      
+    end
+  end
+
+  context "#best_standard_male_scores" do
+    it "returns only not disqualified results" do
+      subject.best_standard_male_scores.each do |item|
+        expect(item.is_disqualified).to be_false
+      end      
+    end
+    
+    it "returns a list sorted by standard points descending" do
+      current_item_score = subject.best_standard_male_scores.first.standard_points
+      subject.best_standard_male_scores.each do |item|
+        expect(item.standard_points).to be <= current_item_score
+        current_item_score = item.standard_points 
+      end      
+    end
+  end
+
+  context "#best_standard_female_scores" do
+    it "returns only not disqualified results" do
+      subject.best_standard_female_scores.each do |item|
+        expect(item.is_disqualified).to be_false
+      end      
+    end
+    
+    it "returns a list sorted by standard points descending" do
+      current_item_score = subject.best_standard_female_scores.first.standard_points
+      subject.best_standard_female_scores.each do |item|
+        expect(item.standard_points).to be <= current_item_score
+        current_item_score = item.standard_points 
+      end      
+    end
+  end
+
+  context "#worst_standard_male_scores" do
+    it "returns only not disqualified results" do
+      subject.worst_standard_male_scores.each do |item|
+        expect(item.is_disqualified).to be_false
+      end      
+    end
+    
+    it "returns a list sorted by standard points" do
+      current_item_score = subject.worst_standard_male_scores.first.standard_points
+      subject.worst_standard_male_scores.each do |item|
+        expect(item.standard_points).to be >= current_item_score
+        current_item_score = item.standard_points 
+      end      
+    end
+  end
+
+  context "#worst_standard_female_scores" do
+    it "returns only not disqualified results" do
+      subject.worst_standard_female_scores.each do |item|
+        expect(item.is_disqualified).to be_false
+      end      
+    end
+    
+    it "returns a list sorted by standard points" do
+      current_item_score = subject.worst_standard_female_scores.first.standard_points
+      subject.worst_standard_female_scores.each do |item|
+        expect(item.standard_points).to be >= current_item_score
+        current_item_score = item.standard_points 
       end      
     end
   end
