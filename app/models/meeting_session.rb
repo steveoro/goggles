@@ -39,36 +39,66 @@ class MeetingSession < ActiveRecord::Base
   # ----------------------------------------------------------------------------
   #++
 
-  # Computes a shorter description for the name associated with this data
+  # Computes a short description for the meeting session comprehensive of short day part and event list
+  # Eg MNG: 200SL, 100FA, 50DO, 4x50MX
+  #
+  def get_short_name
+    "#{self.day_part_type.i18n_short}: #{self.get_short_events}"
+  end
+
+  # Computes a full description for the meeting session comprehensive of date, day part and event list
+  # Eg 25/05/2014 MORINING: 200SL, 100FA, 50DO, 4x50MX
+  #
   def get_full_name
-    "#{get_meeting_name} (#{Format.a_date( self.scheduled_date )})"
+    "#{Format.a_date( self.scheduled_date )} #{self.day_part_type.i18n_description}: #{self.get_short_events}"
   end
 
-  # Computes a verbose or formal description for the name associated with this data
+  # Computes a full description for the meeting session comprehensive of date, day part, time schedule and event list
+  # Eg 25/05/2014 MORINING (8.30) 9.30: 200SL, 100FA, 50DO, 4x50MX
+  #
   def get_verbose_name
-    "#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
+    #"#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
+    "#{Format.a_date( self.scheduled_date )} #{self.day_part_type.i18n_description} (#{Format.a_time( self.warm_up_time)}) #{Format.a_time( self.begin_time )}: #{self.get_short_events}"    
   end
+  # ----------------------------------------------------------------------------
 
   # Computes a shorter description for the name associated with this data
+  # Used by import steps to identify session
+  #
   def get_order_with_date
     "n.#{self.session_order} (#{Format.a_date( self.scheduled_date )})"
   end
   # ----------------------------------------------------------------------------
 
   # Retrieves the user name associated with this instance
+  #
   def user_name
     self.user ? self.user.name : ''
   end
   # ----------------------------------------------------------------------------
 
   # Retrieves the Meeting short name
+  # Used by import steps to identify session
+  #
   def get_meeting_name
     self.meeting ? self.meeting.get_short_name() : '?'
   end
 
   # Retrieves the Meeting verbose name
+  # Used by import steps to identify session
+  #
   def get_meeting_verbose_name
     self.meeting ? self.meeting.get_verbose_name() : '?'
   end
   # ----------------------------------------------------------------------------
+  
+  # Retrieves the meeting event list, comma separated
+  # Eg 200SL, 100FA, 50DO, 4x50MX
+  #
+  def get_short_events
+    #self.meeting_events.count > 0 ? self.meeting_events.event_types.i18n_short.join('--').gsub(' ','').gsub('--', ', ') : 'To be defined...'
+    self.meeting_events.count > 0 ? self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }.join('--').gsub(' ','').gsub('--', ', ') : 'To be defined...'
+  end
+  # ----------------------------------------------------------------------------
+  
 end

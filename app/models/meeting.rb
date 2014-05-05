@@ -138,6 +138,7 @@ class Meeting < ActiveRecord::Base
   # Computes the shortest possible description for the list of all the events created
   # for this meeting.
   # 
+  #TODO substitute with meeting_sessions appropriate methods
   def get_short_events
     events = self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
     
@@ -152,6 +153,7 @@ class Meeting < ActiveRecord::Base
   # Computes the complete list of all the meeting events
   # with session informations.
   # 
+  #TODO substitute with meeting_sessions appropriate methods
   def get_complete_events
     ms = self.meeting_sessions
     complete_desc = ""

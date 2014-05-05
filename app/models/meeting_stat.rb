@@ -119,21 +119,20 @@ class MeetingStat
   # ---------------------------------------------------------------------------
 
   # Statistic calculation of the best results swam in the meeting
-  # Best results are intended evaluating the standard (FIN) points
+  # Best results are intended evaluating the standard (FIN) points not 0
   # Assumes the standard (FIN) pints are always calculated
   #
   def self.get_best_standard_scores( meeting, scope_name = :is_male, score_num = 3 )
-    #TODO sort results in descending order by standard_points. Should create scope in model?
-    meeting.meeting_individual_results.send(scope_name.to_sym).order(:standard_points).limit(score_num).reverse
+    meeting.meeting_individual_results.send(scope_name.to_sym).where(:standard_points => "> 0").order(:standard_points).last(score_num).reverse
   end
   # ---------------------------------------------------------------------------
 
   # Statistic calculation of the worst results swam in the meeting
-  # Worst results are intended evaluating the standard (FIN) points
+  # Worst results are intended evaluating the standard (FIN) points not 0
   # Assumes the standard (FIN) pints are always calculated
   #
   def self.get_worst_standard_scores( meeting, scope_name = :is_male, score_num = 3 )
-    meeting.meeting_individual_results.send(scope_name.to_sym).order(:standard_points).limit(score_num)
+    meeting.meeting_individual_results.send(scope_name.to_sym).where(:standard_points => "> 0").order(:standard_points).limit(score_num)
   end
   # ---------------------------------------------------------------------------
 
