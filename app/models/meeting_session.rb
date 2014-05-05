@@ -44,15 +44,16 @@ class MeetingSession < ActiveRecord::Base
     "#{get_meeting_name} (#{Format.a_date( self.scheduled_date )})"
   end
 
-  # Computes a shorter description for the name associated with this data
-  def get_order_with_date
-    "n.#{self.session_order} (#{Format.a_date( self.scheduled_date )})"
-  end
-
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
     "#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
   end
+
+  # Computes a shorter description for the name associated with this data
+  def get_order_with_date
+    "n.#{self.session_order} (#{Format.a_date( self.scheduled_date )})"
+  end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the user name associated with this instance
   def user_name
@@ -70,5 +71,4 @@ class MeetingSession < ActiveRecord::Base
     self.meeting ? self.meeting.get_verbose_name() : '?'
   end
   # ----------------------------------------------------------------------------
-
 end
