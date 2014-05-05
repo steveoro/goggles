@@ -124,7 +124,7 @@ class MeetingStat
   #
   def self.get_best_standard_scores( meeting, scope_name = :is_male, score_num = 3 )
     #TODO sort results in descending order by standard_points. Should create scope in model?
-    meeting.meeting_individual_results.send(scope_name.to_sym).order(:standard_points).limit(score_num)
+    meeting.meeting_individual_results.send(scope_name.to_sym).order(:standard_points).limit(score_num).reverse
   end
   # ---------------------------------------------------------------------------
 
