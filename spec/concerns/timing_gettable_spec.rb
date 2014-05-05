@@ -37,10 +37,6 @@ describe TimingGettable do
     it "responds to get_timing_instance()" do
       expect( @dummy ).to respond_to( :get_timing_instance )
     end
-
-    it "responds to get_timing_to_hundreds()" do
-      expect( @dummy ).to respond_to( :get_timing_to_hundreds )
-    end
   end
   # ---------------------------------------------------------------------------
 
