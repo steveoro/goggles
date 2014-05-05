@@ -5,6 +5,7 @@ require 'common/format'
 
 
 describe UserTrainingsController do
+  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   describe '[AJAX #json_list]' do
     context "unlogged user" do
@@ -50,15 +51,6 @@ describe UserTrainingsController do
     end
   end
   # ===========================================================================
-
-
-  # Login checker for GET actions only.
-  def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
-    get action_sym, id: id
-    expect(response).to redirect_to '/users/session/sign_in'
-    expect(response.status).to eq( 302 )            # must redirect to the login page
-  end
-  # ---------------------------------------------------------------------------
 
 
   describe '[GET #index]' do

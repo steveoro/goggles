@@ -63,4 +63,15 @@ module ControllerMacros
   end
   # ---------------------------------------------------------------------------
 
+
+  # Login checker for GET actions only.
+  #
+  # GETs the specified <tt>action_sym</tt> (/:id) and
+  # expects the response to redirect to the sign-in session page.
+  def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
+    get action_sym, id: id
+    expect(response).to redirect_to '/users/session/sign_in' # new_user_session_path() => '/users/session/sign_in?locale=XX'
+    expect(response.status).to eq( 302 )            # must redirect to the login page
+  end
+  # ---------------------------------------------------------------------------
 end

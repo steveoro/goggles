@@ -1,0 +1,16 @@
+.row-fluid.span12
+
+= simple_form_for review do |f|
+  .row-fluid.span11
+    = f.input_field :user_id, as: :hidden
+    = f.association :user, disabled: (review.user_id > 0), label: I18n.t('activerecord.models.user'), collection: User.all, prompt: I18n.t('please_select')
+  .row-fluid.span11
+    = f.input :title, input_html: { class: 'span8' }
+  .row-fluid.span11
+    = f.input_field :swimming_pool_id, as: :hidden
+    = f.association :swimming_pool, disabled: (review.swimming_pool_id > 0), label: I18n.t('activerecord.models.swimming_pool'), collection: SwimmingPool.all, prompt: I18n.t('please_select')
+  .row-fluid.span11
+    = f.input :entry_text, input_html: { rows: 3, class: 'span10' }
+
+  .row-fluid.span11
+    = f.button :submit, I18n.t(:save)

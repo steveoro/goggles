@@ -1,7 +1,9 @@
 .row-fluid
   .alert
-    %button{type: 'button', 'data-dismiss': 'alert'}.close
-      &times;
-    %h4.text-info= review.title
-    %p= review.entry_text
-    %small= "#{Format.a_datetime( review.updated_at )}"
+    .span11
+      %h4.text-info= review.title
+    .span1
+      %a.btn.btn-mini(href="#{wip_path(swimming_pool_id: review.id)}")= t('swimming_pool_review.report_as_abuse')
+    .span12
+      %p= review.entry_text
+    %small= "#{review.user_name}, #{Format.a_datetime( review.updated_at )}"

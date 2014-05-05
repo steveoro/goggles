@@ -5,8 +5,8 @@
 %ul.nav.nav-tabs#topOfPage
   %li.active
     = link_to(t('swimming_pool.details'), '#')
-  %li.disabled
-    = link_to(t('swimming_pool.reviews'), '#')
+  %li
+    = link_to(t('swimming_pool.reviews'), for_pool_swimming_pool_reviews_path(@pool.id))
 
 .accordion
   .accordion-group

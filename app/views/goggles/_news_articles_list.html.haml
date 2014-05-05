@@ -1,0 +1,20 @@
+- if @articles
+  - for a in @articles
+    = content_tag( :h4, a.title, class:( a.is_sticky ? 'text-warning' : 'text-info') )
+    %blockquote
+      %p= a.entry_text
+      %small= "#{a.user_name}, #{Format.a_datetime( a.updated_at )}"
+
+- if @articles.nil? || (@articles && @articles.length == 0)
+  %p{style: "text-align: center"}
+    %i= t(:no_new_articles)
+
+%p
+  %hr
+
+- for feed in @news_feed
+  .alert.alert-info
+    %button{:type=>'button', 'data-dismiss'=>'alert', :class=>'close'} &times;
+    %h4.text-info= feed.title
+    %p= feed.body
+    %small= "#{Format.a_datetime( review.updated_at )}"

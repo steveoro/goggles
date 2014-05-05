@@ -12,6 +12,9 @@ class SwimmingPoolReview < ActiveRecord::Base
 
   validates_presence_of :entry_text
 
+  attr_accessible :title, :entry_text, :user_id, :swimming_pool_id
+
+
   scope :sort_swimming_pool_by_user,          ->(dir) { order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
   scope :sort_swimming_pool_by_swimming_pool, ->(dir) { order("swimming_pools.name #{dir.to_s}") }
 
@@ -34,7 +37,7 @@ class SwimmingPoolReview < ActiveRecord::Base
 
   # Retrieves the user name associated with this instance
   def user_name
-    self.user ? self.user.name : ''
+    self.user ? self.user.name : '?'
   end
   # ----------------------------------------------------------------------------
 

@@ -759,6 +759,17 @@ it:
     approve_body: "Stabilisci amicizia con #{N} Swimming Buddy(/ies)."
     confirm_body: "Ricevi conferma da #{N} Swimming Buddy(/ies)."
 
+  swimming_pool_review:
+    title_index: "Recensioni Piscine"
+    title_show: "Recensione Piscina"
+    add_new_review: "Fai una nuova Recensione!"
+    create_successful: "Recensione creata."
+    update_successful: "Recensione aggiornata."
+    delete_successful: "Recensione eliminata con successo."
+    no_reviews: "(...Sembra che qui non sia stato recensito ancora niente...)"
+    report_as_abuse: "Segnala"
+
+
   agex_action:
     main: Principale
     home: "Home"

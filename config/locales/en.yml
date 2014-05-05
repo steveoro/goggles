@@ -757,6 +757,16 @@ en:
     approve_body: "Establish friendship with #{N} Swimming Buddy(/ies)."
     confirm_body: "Receive confirm from #{N} Swimming Buddy(/ies)."
 
+  swimming_pool_review:
+    title_index: "Swimming-pools Reviews"
+    title_show: "Swimming-pool Review"
+    add_new_review: "Add a new Review!"
+    create_successful: "Review created."
+    update_successful: "Review updated."
+    delete_successful: "Review deletion successful."
+    no_reviews: "(...It looks like there's nothing here yet...)"
+    report_as_abuse: "Report"
+
 
   agex_action:
     main: Main

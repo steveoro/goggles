@@ -23,7 +23,8 @@ class UserTrainingStory < ActiveRecord::Base
 
   attr_accessible :swam_date, :total_training_time, :notes,
                   :user_training_id, :swimming_pool_id, :swimmer_level_type_id 
-  
+
+
   scope :sort_by_date,        order('swam_date')
   scope :sort_by_duration,    order('total_training_time')  
   # ---------------------------------------------------------------------------

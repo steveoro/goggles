@@ -200,8 +200,8 @@ Goggles::Application.routes.draw do
 
       resources :swimming_pool_reviews do
         collection do
-          get 'for_swimming_pool/:id',          to: "swimming_pool_reviews#for_swimming_pool"
-          get 'for_user/:id',                   to: "swimming_pool_reviews#for_user"
+          get 'for_swimming_pool/:id',          to: "swimming_pool_reviews#for_swimming_pool",  as: "for_pool"
+          get 'for_user/:id',                   to: "swimming_pool_reviews#for_user",           as: "for_user"
         end
       end
     end

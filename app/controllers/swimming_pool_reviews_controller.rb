@@ -5,15 +5,13 @@ class SwimmingPoolReviewsController < ApplicationController
   respond_to :html, :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!, except: [:index, :for_swimming_pool, :for_user]
-  before_filter :authenticate_entity!, except: [:index, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
-  # Parse parameters:
-#  before_filter :verify_parameter, except: [:show_all]
-#  before_filter :verify_parameter, except: [:show_all]
+  before_filter :authenticate_entity_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
+  before_filter :authenticate_entity!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 
   def index
+    @title = I18n.t('swimming_pool_review.title_index')
     respond_with( @reviews = SwimmingPoolReview.all )
   end
   # ---------------------------------------------------------------------------
@@ -24,8 +22,29 @@ class SwimmingPoolReviewsController < ApplicationController
   # === Params:
   # - :id => the SwimmingPool.id
   #
+  def show
+    @review = SwimmingPoolReview.find_by_id(params[:id])
+    if @review.nil?
+      if request.format.json?
+        render( status: 406, json: {success: false} ) and return
+      else
+        redirect_to( swimming_pool_reviews_path() ) and return
+      end
+    end
+    @title = I18n.t('swimming_pool_review.title_show')
+    respond_with( @review )
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Returns the reviews found for a specific swimmin_pool id.
+  #
+  # === Params:
+  # - :id => the SwimmingPool.id
+  #
   def for_swimming_pool
-    respond_with( @reviews = SwimmingPoolReview.where( swimming_pool_id: params[:id] ) )
+    @swimming_pool_id = params[:id]
+    respond_with( @reviews = SwimmingPoolReview.where( swimming_pool_id: @swimming_pool_id ) )
   end
   # ----------------------------------------------------------------------------
 
@@ -36,63 +55,86 @@ class SwimmingPoolReviewsController < ApplicationController
   # - :id => the User.id
   #
   def for_user
-    respond_with( @reviews = SwimmingPoolReview.where( user_id: params[:id] ) )
+    @user_id = params[:id]
+    respond_with( @reviews = SwimmingPoolReview.where( user_id: @user_id ) )
   end
   # ----------------------------------------------------------------------------
 
 
+  # Prepares the form for the creation of a new Review.
+  #
+  # === Params:
+  # - :swimming_pool_id (not required) => it will pre-set the swimming-pool id when present
+  #
   def new
-#    respond_with( @review = SwimmingPoolReview.new )
+    render( status: 406, json: {success: false} ) and return if request.format.json?
+    @review = SwimmingPoolReview.new
+    @review.user_id = current_user.id
+    @review.swimming_pool_id = params[:swimming_pool_id]
+    @title = I18n.t('swimming_pool_review.title_show')
+    respond_with( @review )
   end
   # ---------------------------------------------------------------------------
 
 
+  # Creates a new Review.
+  #
+  # === Params:
+  # - :swimming_pool_review => the hash of attributes for the creation
+  #
   def create
-#    respond_with( @review = SwimmingPoolReview.create(params[:swimming_pool_review]) )
+    @review = SwimmingPoolReview.create(params[:swimming_pool_review])
+    @review.user_id = current_user.id
+    respond_with( @review )
   end
   # ---------------------------------------------------------------------------
 
 
+  # Prepares the form for the editing of a new Review.
+  #
+  # === Params:
+  # - :id => the SwimmingPoolReview.id
+  #
   def edit
-#    respond_with( @review = SwimmingPoolReview.find(params[:id]) )
+    render( status: 406, json: {success: false} ) and return if request.format.json?
+    @review = SwimmingPoolReview.find_by_id(params[:id])
+    redirect_to( swimming_pool_reviews_path() ) and return if @review.nil?
+    @title = I18n.t('swimming_pool_review.title_show')
+    respond_with( @review )
   end
   # ---------------------------------------------------------------------------
 
 
+  # Updates an existing Review.
+  #
+  # === Params:
+  # - :id => the SwimmingPoolReview.id
+  # - :swimming_pool_review => the hash of attributes for the update
+  #
   def update
-#    @review = SwimmingPoolReview.find(params[:id])
-#    @review.update_attributes(params[:swimming_pool_review])
-#    respond_with( @review )
+    @review = SwimmingPoolReview.find_by_id(params[:id])
+    redirect_to( swimming_pool_reviews_path() ) and return if @review.nil?
+    @review.update_attributes(params[:swimming_pool_review])
+    respond_with( @review )
   end
   # ---------------------------------------------------------------------------
 
 
+  # Deletes an existing Review.
+  #
+  # === Params:
+  # - :id => the SwimmingPoolReview.id
+  #
   def destroy
-    # TODO ?
+    @review = SwimmingPoolReview.find_by_id(params[:id])
+    if @review
+      if @review.destroy
+        flash[:info] = I18n.t('swimming_pool_review.delete_successful')
+      end
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+    end
+    redirect_to( swimming_pool_reviews_path() ) and return
   end
-  # ---------------------------------------------------------------------------
-
-
-
-
-  private
-
-
-  # TODO
-  # Verifies that a user id is provided as parameter; otherwise
-  # redirects to the home page.
-  # Assigns the @swimming_buddy instance when successful.
-  #
-  # == Params:
-  # :user_id => 
-  #
-  # def verify_parameter
-    # user_id = params[:id].to_i
-    # @user = ( user_id > 0 ) ? User.find_by_id( user_id ) : nil
-    # unless ( @swimming_buddy )                      # Check swimming buddy existance
-      # flash[:error] = I18n.t(:invalid_action_request)
-      # redirect_to( swimming_pool_reviews_path() ) and return
-    # end
-  # end
   # ---------------------------------------------------------------------------
 end
