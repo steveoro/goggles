@@ -1,0 +1,49 @@
+<%= define_grid(@reviews_grid) do |g|
+	g.blank_slate do
+		content_tag( :div, t(:no_data_found), class: 'well' )
+	end
+
+	g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
+
+	g.column(
+		name: I18n.t('activerecord.attributes.swimming_pool_review.title'),
+		attribute: 'title',
+		detach_with_id: :flt_review_title,
+	) do |review|
+        link_to( review.title, swimming_pool_review_path(review) )
+	end
+
+	g.column(
+		name: I18n.t('activerecord.models.swimming_pool'),
+		model: SwimmingPool,
+		attribute: 'id',
+		custom_filter: SwimmingPool.to_dropdown,
+		detach_with_id: :flt_swimming_pool_id,
+	) do |review|
+	    if review.swimming_pool
+          link_to( review.swimming_pool_name(:get_full_name), for_pool_swimming_pool_reviews_path(review.swimming_pool_id) ) +
+          ", #{review.swimming_pool_name(:get_full_address)}"
+	    end
+	end
+
+	g.column(
+		name: I18n.t('swimming_pool_review.review_by'),
+		model: User,
+		attribute: 'id',
+		custom_filter: User.to_dropdown
+	) do |review|
+		review.user_name
+	end
+
+	g.column(
+		name: I18n.t('swimming_pool_review.upvotes'),
+	) do |review|
+        review.votes_for.up.count
+    end
+
+    g.column(
+        name: I18n.t('swimming_pool_review.downvotes'),
+    ) do |review|
+        review.votes_for.down.count
+    end
+end -%>

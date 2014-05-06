@@ -11,8 +11,18 @@ class SwimmingPoolReviewsController < ApplicationController
 
 
   def index
-    @title = I18n.t('swimming_pool_review.title_index')
-    respond_with( @reviews = SwimmingPoolReview.all )
+    if request.format.json?
+      respond_with( @reviews = SwimmingPoolReview.all )
+    else
+      @title = I18n.t('swimming_pool_review.title_index')
+      @reviews_grid = initialize_grid(
+        SwimmingPoolReview,
+        :include => [:user, :swimming_pool],
+        :order => 'swimming_pool_reviews.title',
+        :order_direction => 'asc',
+        :per_page => 20
+      )
+    end
   end
   # ---------------------------------------------------------------------------
 
@@ -44,7 +54,9 @@ class SwimmingPoolReviewsController < ApplicationController
   #
   def for_swimming_pool
     @swimming_pool_id = params[:id]
-    respond_with( @reviews = SwimmingPoolReview.where( swimming_pool_id: @swimming_pool_id ) )
+    @reviews = SwimmingPoolReview.where( swimming_pool_id: @swimming_pool_id )
+    @reviews.sort!{ |a,b| (a.votes_for.down.count - a.votes_for.up.count) <=> (b.votes_for.down.count - b.votes_for.up.count) }
+    respond_with( @reviews )
   end
   # ----------------------------------------------------------------------------
 
@@ -62,6 +74,8 @@ class SwimmingPoolReviewsController < ApplicationController
 
 
   # Sends an e-mail abuse report for a specific SwimmingPoolReview id.
+  #
+  # TODO FUTUREDEV: add support for xhr request in this action
   #
   # === Params:
   # - :id => the SwimmingPoolReview.id
@@ -81,6 +95,8 @@ class SwimmingPoolReviewsController < ApplicationController
 
   # Casts a vote (either up or down) for the specified review id.
   #
+  # TODO FUTUREDEV: add support for xhr request in this action
+  #
   # === Params:
   # - :id   => the SwimmingPoolReview.id
   # - :vote => any value cast to a positive integer equals a single upvote; anything
@@ -89,6 +105,9 @@ class SwimmingPoolReviewsController < ApplicationController
     @review = SwimmingPoolReview.find_by_id(params[:id])
     if @review
       (params[:vote].to_i > 0) ? @review.liked_by(current_user) : @review.downvote_from(current_user)
+      flash[:info] = I18n.t('swimming_pool_review.thanks_for_the_vote')
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
     end
     redirect_to(root_path) and return
   end

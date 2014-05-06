@@ -1,4 +1,5 @@
 class SwimmingPool < ActiveRecord::Base
+  include DropDownListable
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
@@ -57,6 +58,9 @@ class SwimmingPool < ActiveRecord::Base
   def get_verbose_name
     "'#{name}', #{get_full_address}"
   end
+
+  alias_method :i18n_short, :get_full_name
+  alias_method :i18n_description, :get_verbose_name
 
 
   # Retrieves the user name associated with this instance

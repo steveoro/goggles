@@ -769,6 +769,12 @@ en:
     report_as_abuse: "Report"
     are_you_sure_to_report_as_abuse: "By reporting this review as 'abuse' you assume the responsibility of saying that this user also used unappropriate or offensive language. Are you sure you want to proceed with the report?"
     thanks_for_the_report: "Thank you for your report. An e-mail has been sent to the System Administrators with all the required details."
+    upvote_tooltip: "Click this to cast your upvote for this review!"
+    downvote_tooltip: "Click this to cast your downvote for this review!"
+    thanks_for_the_vote: "Thanks for your vote!"
+    review_by: "Review by"
+    upvotes: "Upvotes"
+    downvotes: "Downvotes"
 
 
   agex_action:

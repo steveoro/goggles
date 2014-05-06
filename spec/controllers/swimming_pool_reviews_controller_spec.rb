@@ -27,7 +27,7 @@ describe SwimmingPoolReviewsController do
       it "assigns the required variables" do
         get :index
         expect( assigns(:title) ).to be_an_instance_of( String ) 
-        expect( assigns(:reviews) ).to respond_to( :each ) 
+        expect( assigns(:reviews_grid) ).not_to be_nil 
       end
       it "renders the template" do
         get :index

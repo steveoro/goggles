@@ -1,11 +1,25 @@
 .row-fluid
   .alert
-    .span9
+    .span7
       %h4.text-info= review.title
     .span1
-      = link_to_if( current_user.id == review.user_id, t(:edit), edit_swimming_pool_review_path(id: review.id), {class: "btn btn-mini"} )
+      = image_tag('thumb_up.png')
+      %small= review.votes_for.up.count
+      - unless current_user.voted_up_on?( review )
+        .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool_review.upvote_tooltip') }
+          = link_to( image_tag('arrow_up.png'), vote_swimming_pool_review_path(id: review.id, vote: 1), {method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), class: "btn btn-mini"} )
     .span1
-      = link_to_if( (current_user.id == review.user_id) || admin_signed_in?, t(:delete), destroy_swimming_pool_review_path(id: review.id), {method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: "btn btn-mini"} )
+      = image_tag('thumb_down.png')
+      %small= review.votes_for.down.count
+      - unless current_user.voted_down_on?( review )
+        .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool_review.downvote_tooltip') }
+          = link_to( image_tag('arrow_down.png'), vote_swimming_pool_review_path(id: review.id, vote: -1), {method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), class: "btn btn-mini"} )
+    .span1
+      - if current_user.id == review.user_id
+        = link_to( t(:edit), edit_swimming_pool_review_path(id: review.id), {class: "btn btn-mini"} )
+    .span1
+      - if (current_user.id == review.user_id) || admin_signed_in?
+        = link_to( t(:delete), destroy_swimming_pool_review_path(id: review.id), {method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: "btn btn-mini"} )
     .span1
       = link_to( t('swimming_pool_review.report_as_abuse'), report_abuse_swimming_pool_review_path(id: review.id), {method: :post, confirm: I18n.t('swimming_pool_review.are_you_sure_to_report_as_abuse'), disable_with: I18n.t(:please_wait), class: "btn btn-mini"} )
     .span12
