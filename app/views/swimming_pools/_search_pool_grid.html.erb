@@ -1,4 +1,4 @@
-<%= define_grid(@pools_grid, hide_submit_button: true, hide_reset_button: true) do |g|
+<%= define_grid(@pools_grid) do |g|
 	g.blank_slate do
 		content_tag( :div, t(:no_data_found), class: 'well' )
 	end

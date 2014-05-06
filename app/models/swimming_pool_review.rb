@@ -40,6 +40,11 @@ class SwimmingPoolReview < ActiveRecord::Base
   def user_name
     self.user ? self.user.name : '?'
   end
+
+  # Safe getter for swimming pool name
+  def swimming_pool_name( method_sym = :get_verbose_name )
+    self.swimming_pool ? self.swimming_pool.send(method_sym.to_sym) : '?'
+  end
   # ----------------------------------------------------------------------------
 
 end

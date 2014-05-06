@@ -11,7 +11,7 @@ class RegistrationsController < Devise::RegistrationsController
   def log_sign_up
     if request.post?                                # === POST: ===
       log_action(
-        "signed-up a new User",
+        "signed-up as a new User",
         "Params: #{params.inspect}\r\n\r\nUpdated users total: #{User.count}\r\n\r\nCurrent user instance: #{current_user.inspect}"
       )
     end
