@@ -78,6 +78,20 @@ class MeetingSession < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Retrieves the Meeting session swimming pool full description
+  # Eg Comunale Reggio Emilia (8x50)
+  #
+  def get_swimming_pool_type
+    self.swimming_pool.pool_type ? self.swimming_pool.pool_type.code : '?'
+  end
+
+  # Retrieves the Meeting session swimming pool full description
+  # Eg Comunale Reggio Emilia (8x50)
+  #
+  def get_full_swimming_pool_description
+    self.swimming_pool ? "#{self.swimming_pool.name} #{self.swimming_pool.city.name} (#{self.swimming_pool.lanes_number}x#{self.swimming_pool.pool_type.code})" : 'To be defined...'
+  end
+
   # Computes a shorter description for the name associated with this data
   # Used by import steps to identify session
   #

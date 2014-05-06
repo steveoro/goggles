@@ -59,6 +59,7 @@ describe MeetingSession do
         :get_short_events,
         :get_warm_up_time,
         :get_begin_time,
+        :get_full_swimming_pool_description,
         :get_order_with_date,
         :get_meeting_name,
         :get_meeting_verbose_name
@@ -86,13 +87,11 @@ describe MeetingSession do
       
       it "#get_begin_time returns a time or nd"     
       
-      it "has a method to return swimming pool short description"     
-      
-      it "has a method to return swimming pool full description with city"     
-      
       it "has a method to return swimming pool type short description"     
       
       it "has a method to return swimming pool lane number"     
+      
+      it "#get_full_swimming_pool_description returns swimming pool full description with city, lanes and type"     
       
       it "has a method to return session events start list"     
     end
