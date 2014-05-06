@@ -10,18 +10,12 @@ describe SwimmingPoolReviewsController do
         get :index, format: :json
         expect(response.status).to eq( 200 )
       end
-      it "returns a JSON array (empty when there are no rows)" do
-        get :index, format: :json
-        result = JSON.parse(response.body)
-        expect( result ).to be_an_instance_of(Array)
-        expect( result.size ).to eq(0)
-      end
-      it "returns a non-empty result when there are rows" do
+      it "returns a non-empty result (when there are rows)" do
         create( :swimming_pool_review )
         get :index, format: :json
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Array)
-        expect( result.size ).to eq(1)
+        expect( result.size >= 1 ).to be_true
       end
     end
 
@@ -123,7 +117,7 @@ describe SwimmingPoolReviewsController do
         expect( result ).to be_an_instance_of(Array)
         expect( result.size ).to eq(0)
       end
-      it "returns a non-empty result when there are rows" do
+      it "returns a non-empty result (when there are rows)" do
         review1 = create( :swimming_pool_review, swimming_pool: @pool1 )
         review2 = create( :swimming_pool_review, swimming_pool: @pool1 )
         get :for_swimming_pool, format: :json, id: @pool1.id
@@ -172,7 +166,7 @@ describe SwimmingPoolReviewsController do
         expect( result ).to be_an_instance_of(Array)
         expect( result.size ).to eq(0)
       end
-      it "returns a non-empty result when there are rows" do
+      it "returns a non-empty result (when there are rows)" do
         review1 = create( :swimming_pool_review, user: @user )
         review2 = create( :swimming_pool_review, user: @user )
         get :for_user, format: :json, id: @user.id
@@ -199,6 +193,124 @@ describe SwimmingPoolReviewsController do
       it "renders the template" do
         get :for_user, id: @user.id
         expect(response).to render_template(:for_user)
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[POST #report_abuse/:id]' do
+    before :each do
+      @review = create( :swimming_pool_review )
+    end
+
+    context "as an unlogged user" do
+      it "doesn't send an abuse report with an HTML request" do
+        expect {
+          post :report_abuse, id: @review.id
+        }.not_to change{ ActionMailer::Base.deliveries.count } 
+      end
+      it "doesn't send an abuse report with with a JSON request" do 
+        expect {
+          post :report_abuse, format: :json, id: @review.id
+        }.not_to change{ ActionMailer::Base.deliveries.count } 
+      end
+    end
+
+    context "as a logged-in user" do
+      login_user()
+      before :each do
+        @review.user_id = @user.id
+      end
+
+      it "send an abuse report with an HTML request" do
+        expect {
+          post :report_abuse, id: @review.id
+        }.to change{ ActionMailer::Base.deliveries.count }.by(1)
+      end
+      it "send an abuse report with a JSON request" do
+        expect {
+          post :report_abuse, format: :json, id: @review.id
+        }.to change{ ActionMailer::Base.deliveries.count }.by(1)
+      end
+      it "redirects to root path after an HTML request" do
+        post :report_abuse, id: @review.id
+        expect( response ).to redirect_to( root_path ) 
+      end
+      it "redirects to root path after a JSON request" do
+        post :report_abuse, format: :json, id: @review.id
+        expect( response ).to redirect_to( root_path ) 
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[POST #vote/:id]' do
+    before :each do
+      @review = create( :swimming_pool_review )
+    end
+
+    context "as an unlogged user" do
+      it "doesn't cast an upvote with an HTML request" do
+        expect {
+          post :vote, id: @review.id, vote: 1
+          @review.reload
+        }.not_to change{ @review.votes_for.size } 
+      end
+      it "doesn't cast a downvote with an HTML request" do
+        expect {
+          post :vote, id: @review.id, vote: -1
+          @review.reload
+        }.not_to change{ @review.votes_for.size } 
+      end
+      it "doesn't cast an upvote with a JSON request" do
+        expect {
+          post :vote, format: :json, id: @review.id, vote: 1
+          @review.reload
+        }.not_to change{ @review.votes_for.size } 
+      end
+      it "doesn't cast a downvote with a JSON request" do
+        expect {
+          post :vote, format: :json, id: @review.id, vote: -1
+          @review.reload
+        }.not_to change{ @review.votes_for.size } 
+      end
+    end
+
+    context "as a logged-in user" do
+      login_user()
+      before :each do
+        @review.user_id = @user.id
+      end
+
+      it "casts an upvote with an HTML request" do
+        expect {
+          post :vote, id: @review.id, vote: 1
+        }.to change{ @review.get_upvotes.size }.by(1)
+      end
+      it "casts a downvote with an HTML request" do
+        expect {
+          post :vote, id: @review.id, vote: -1
+        }.to change{ @review.get_downvotes.size }.by(1)
+      end
+      it "casts an upvote with a JSON request" do
+        expect {
+          post :vote, format: :json, id: @review.id, vote: 1
+        }.to change{ @review.get_upvotes.size }.by(1)
+      end
+      it "casts a downvote with a JSON request" do
+        expect {
+          post :vote, format: :json, id: @review.id, vote: -1
+        }.to change{ @review.get_downvotes.size }.by(1)
+      end
+      it "redirects to root path after an HTML request" do
+        post :vote, id: @review.id, vote: 1
+        expect( response ).to redirect_to( root_path ) 
+      end
+      it "redirects to root path after a JSON request" do
+        post :vote, format: :json, id: @review.id, vote: 1
+        expect( response ).to redirect_to( root_path ) 
       end
     end
   end

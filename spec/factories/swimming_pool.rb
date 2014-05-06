@@ -15,7 +15,10 @@ FactoryGirl.define do
     has_gym_area            { (rand * 100).to_i.even? }
     has_children_area       { (rand * 100).to_i.even? }
     pool_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: 25 and 50 meters type should exists
-    city_id                 { ((rand * 100) % 40).to_i + 1 } # ASSERT: at least 40 cities
+
+    city
+    # This will use the seeded values: (uncomment/use only with certified & *valid* data)
+#    city_id                 { ((rand * 100) % 40).to_i + 1 } # ASSERT: at least 40 cities
     user
   end
   # ---------------------------------------------------------------------------

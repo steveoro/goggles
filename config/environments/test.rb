@@ -31,7 +31,7 @@ Goggles::Application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-  config.action_mailer.perform_deliveries = false
+#  config.action_mailer.perform_deliveries = false
   # Use this to disable delivery errors, and bad email addresses will be ignored:
   config.action_mailer.raise_delivery_errors = false
 

@@ -86,7 +86,7 @@ class ApplicationController < ActionController::Base
   def log_action( action_performed, action_description )
     user = current_user()
     user = user ? user.get_full_name : '(user not logged in yet)'
-    logger.info("[*I*]- ACTION: '#{action_performed}' by #{user}: #{action_description}.")
+    logger.info("[*I*]- ACTION: '#{action_performed}', current user: #{user} => #{action_description}.")
                                                   # Send a message to the developers anyway:
     begin
       AgexMailer.action_notify_mail( user, action_performed, action_description ).deliver

@@ -61,6 +61,40 @@ class SwimmingPoolReviewsController < ApplicationController
   # ----------------------------------------------------------------------------
 
 
+  # Sends an e-mail abuse report for a specific SwimmingPoolReview id.
+  #
+  # === Params:
+  # - :id => the SwimmingPoolReview.id
+  #
+  def report_abuse
+    @review = SwimmingPoolReview.find_by_id(params[:id])
+    if @review
+      AgexMailer.report_abuse_mail( current_user, @review.user, 'SwimmingPoolReview', @review.id, @review.title ).deliver
+      flash[:info] = I18n.t('swimming_pool_review.thanks_for_the_report')
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+    end
+    redirect_to(root_path) and return
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Casts a vote (either up or down) for the specified review id.
+  #
+  # === Params:
+  # - :id   => the SwimmingPoolReview.id
+  # - :vote => any value cast to a positive integer equals a single upvote; anything
+  #            else (even nil) is a downvote.
+  def vote
+    @review = SwimmingPoolReview.find_by_id(params[:id])
+    if @review
+      (params[:vote].to_i > 0) ? @review.liked_by(current_user) : @review.downvote_from(current_user)
+    end
+    redirect_to(root_path) and return
+  end
+  # ----------------------------------------------------------------------------
+
+
   # Prepares the form for the creation of a new Review.
   #
   # === Params:

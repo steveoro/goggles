@@ -48,5 +48,24 @@ class AgexMailer < ActionMailer::Base
       :date => Time.now
     )
   end
+# -----------------------------------------------------------------------------
+
+
+  # Report abuse message.
+  #
+  def report_abuse_mail( user_sender, user_involved, entity_name, entity_id, entity_title )
+    @user_sender = user_sender
+    @user_involved = user_involved
+    @entity_name = entity_name
+    @entity_id = entity_id
+    @entity_title = entity_title
+    @host = ENV['HOSTNAME']
+
+    mail(
+      :to => AGEX_ADMIN_EMAIL,
+      :subject => "[#{AGEX_APP_NAME}@#{@host}] Abuse report for '#{entity_name}', ID:#{entity_id}",
+      :date => Time.now
+    )
+  end
 end
 # -----------------------------------------------------------------------------

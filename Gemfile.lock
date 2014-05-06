@@ -61,6 +61,7 @@ GEM
       multi_json (~> 1.0)
     acts_as_reportable (1.1.1)
       ruport (>= 1.6.0)
+    acts_as_votable (0.9.0)
     archive-tar-minitar (0.5.2)
     arel (3.0.3)
     bcrypt (3.1.7)
@@ -412,6 +413,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_reportable
+  acts_as_votable (~> 0.9.0)
   amistad!
   better_errors
   binding_of_caller

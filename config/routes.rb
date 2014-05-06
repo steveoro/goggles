@@ -199,6 +199,11 @@ Goggles::Application.routes.draw do
       get  "swimmer/misc/:id",                  to: "swimmers#misc",                    as: "swimmer_misc"
 
       resources :swimming_pool_reviews do
+        member do
+          delete 'destroy',                     to: "swimming_pool_reviews#destroy",            as: "destroy"
+          post 'report_abuse',                  to: "swimming_pool_reviews#report_abuse",       as: "report_abuse"
+          post 'vote',                          to: "swimming_pool_reviews#vote",               as: "vote"
+        end
         collection do
           get 'for_swimming_pool/:id',          to: "swimming_pool_reviews#for_swimming_pool",  as: "for_pool"
           get 'for_user/:id',                   to: "swimming_pool_reviews#for_user",           as: "for_user"

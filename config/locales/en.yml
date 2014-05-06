@@ -760,12 +760,15 @@ en:
   swimming_pool_review:
     title_index: "Swimming-pools Reviews"
     title_show: "Swimming-pool Review"
+    regarding: "regarding"
     add_new_review: "Add a new Review!"
     create_successful: "Review created."
     update_successful: "Review updated."
     delete_successful: "Review deletion successful."
     no_reviews: "(...It looks like there's nothing here yet...)"
     report_as_abuse: "Report"
+    are_you_sure_to_report_as_abuse: "By reporting this review as 'abuse' you assume the responsibility of saying that this user also used unappropriate or offensive language. Are you sure you want to proceed with the report?"
+    thanks_for_the_report: "Thank you for your report. An e-mail has been sent to the System Administrators with all the required details."
 
 
   agex_action:

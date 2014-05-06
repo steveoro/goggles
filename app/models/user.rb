@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   include Amistad::FriendModel                       # For Facebook-like friendship management
 
   acts_as_token_authenticatable
+  acts_as_voter
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
@@ -62,6 +63,11 @@ class User < ActiveRecord::Base
   # Computes a descriptive name associated with this data
   def get_full_name
     "#{name} (#{description})"
+  end
+
+  # Computes a 'full debug data dump' associated with this data
+  def get_verbose_name
+    "'#{name}' (#{description}), e-mail: #{email}, class: #{year_of_birth}, swimmer ID: #{swimmer_id}"
   end
 
   # to_s() override for debugging purposes:
