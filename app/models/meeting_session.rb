@@ -50,7 +50,7 @@ class MeetingSession < ActiveRecord::Base
   # Eg 25/05/2014 MORINING: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_full_name
-    "#{Format.a_date( self.scheduled_date )} #{self.day_part_type.i18n_description}: #{self.get_short_events}"
+    "#{Format.a_date( self.scheduled_date )} #{self.day_part_type.i18n_description}: #{self.get_short_events} #{self.description}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part, time schedule and event list
@@ -58,7 +58,23 @@ class MeetingSession < ActiveRecord::Base
   #
   def get_verbose_name
     #"#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
-    "#{Format.a_date( self.scheduled_date )} #{self.day_part_type.i18n_description} (#{Format.a_time( self.warm_up_time)}) #{Format.a_time( self.begin_time )}: #{self.get_short_events}"    
+    "#{Format.a_date( self.scheduled_date )} #{self.day_part_type.i18n_description} (#{Format.a_time( self.warm_up_time)}) #{Format.a_time( self.begin_time )}: #{self.get_short_events} #{self.description}"    
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieve the warm_up time for the session, if any
+  # If no warm_up time defined returns international 'nd'
+  #
+  def get_warm_up_time
+    self.warm_up_time ? Format.a_time(self.warm_up_time) : 'nd'
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieve the warm_up time for the session, if any
+  # If no warm_up time defined returns international 'nd'
+  #
+  def get_begin_time
+    self.begin_time ? Format.a_time(self.begin_time) : 'nd'
   end
   # ----------------------------------------------------------------------------
 
