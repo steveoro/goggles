@@ -4944,7 +4944,6 @@ INSERT INTO meeting_sessions (id,session_order,scheduled_date,meeting_id,swimmin
 (21,1,'2004-05-02',22,2,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
 (22,1,'2004-05-23',23,45,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
 (23,1,'2004-06-01',24,22,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
-(24,1,'2004-11-21',25,1,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
 (25,1,'2004-12-05',26,6,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE());
 
 INSERT INTO meeting_sessions (id,session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
@@ -4975,7 +4974,6 @@ INSERT INTO meeting_sessions (id,session_order,scheduled_date,meeting_id,swimmin
 (50,1,'2006-03-04',53,19,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE());
 
 INSERT INTO meeting_sessions (id,session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
-(51,1,'2006-03-19',54,2,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
 (52,1,'2006-04-09',55,2,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
 (53,1,'2006-04-22',56,26,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
 (54,1,'2006-05-06',57,2,'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'NULL'),0,CURDATE(),CURDATE()),
