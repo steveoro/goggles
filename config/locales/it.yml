@@ -672,7 +672,7 @@ it:
     menu_social_invite: "Invita"
     invite_request_tooltip: "Clicca per invitare {SWIMMER_NAME} a diventare tuo amico ('swimming buddy') o per condividere risultati, allenamenti o altro."
     menu_social_approve: "Approva"
-    approve_request_tooltip: "Clicca per accettare la richiesta di {SWIMMER_NAME} a diventare tuo amico ('swimming buddy') o per condividere risultati, allenamenti o altro."
+    approve_request_tooltip: "Clicca per approvare la richiesta di {SWIMMER_NAME} a diventare tuo amico ('swimming buddy') o per condividere risultati, allenamenti o altro. Se ricompare 'approva' per un amicizia gia' accettata, significa che uno dei due ha cambiato le opzioni di condivisione e devi approvarle di nuovo."
     menu_social_block: "Blocca"
     block_request_tooltip: "Clicca per bloccare l'amicizia con {SWIMMER_NAME}."
     menu_social_unblock: "Sblocca"
@@ -753,6 +753,7 @@ it:
     remove_body: "Tu e {SWIMMER_NAME} non siete piu' amici."
     confirm_title: "You have been confirmed by a friend of yours!"
     confirm_body: "{SWIMMER_NAME} ha confermato che tu sei l'atleta che hai detto di essere."
+    go_to_friend: "Puoi vedere la sua carta d'identità qui:"
 
   achievement:
     generic_title: "Trofeo sbloccato!"

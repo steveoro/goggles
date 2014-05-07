@@ -58,9 +58,9 @@ describe SwimmersHelper do
       expect( result ).to include( social_invite_path(id: @swimming_buddy.id) )
     end
 
-    it "renders a static badge for an already (pending) invited associated swimmer (valid goggler)" do
+    it "renders a static 'pending' badge for an already invited associated swimmer (from the perspective of the user/friendable that invited browsing a valid goggler invited)" do
       @swimming_buddy.set_associated_swimmer( @swimmer )
-      @swimming_buddy.invite( @user )
+      @user.invite( @swimming_buddy )
       result = helper.ask_friendship_link( @swimmer )
       expect( result ).to include( I18n.t('social.pending_invite') )
       expect( result ).not_to include( social_invite_path(id: @swimming_buddy.id) )
