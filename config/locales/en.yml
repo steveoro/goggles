@@ -670,7 +670,7 @@ en:
     menu_social_invite: "Invite"
     invite_request_tooltip: "Click to invite {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else."
     menu_social_approve: "Approve"
-    approve_request_tooltip: "Click to approve the invite from {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else."
+    approve_request_tooltip: "Click to approve the invite from {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else. If 'approve' shows up again for an already approved friendship, it means that either one of you has edited the sharing options and you have to approve them again."
     menu_social_block: "Block"
     block_request_tooltip: "Click to block the friendship with {SWIMMER_NAME}."
     menu_social_unblock: "Unblock"
@@ -751,6 +751,7 @@ en:
     remove_body: "You & {SWIMMER_NAME} are no longer friends."
     confirm_title: "You have been confirmed by a friend of yours!"
     confirm_body: "{SWIMMER_NAME} has confirmed that you are indeed the athlete that you said you are."
+    go_to_friend: "You can check out this buddy ID-card here:"
 
   achievement:
     generic_title: "Achievement unlocked!"

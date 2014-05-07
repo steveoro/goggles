@@ -285,12 +285,18 @@ class SocialsController < ApplicationController
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
-      # If the user changes to true some share that is currently set to false for
-      # the friendship, this will issue a new approval request (by setting the
+      # If the friendable changes to true some share that is currently set to false for
+      # the friendship, this will issue a new approval request for the friend (by setting the
       # friendship pending status back to true)
-      must_reset_pending_status = ( !@friendship.shares_passages  && shares_passages ) ||
-                                  ( !@friendship.shares_trainings && shares_trainings ) ||
-                                  ( !@friendship.shares_calendars && shares_calendars )
+      #
+      # In other words, this friendship will be pending only if the "friendable" is actually
+      # the one making the edit request. If it is the friend who received the original invite
+      # (thus the one accepting it), it won't matter and the editing will be "plain & simple":
+      must_reset_pending_status = (@friendship.friendable_id == current_user.id) && (
+                                    (!@friendship.shares_passages  && shares_passages) ||
+                                    (!@friendship.shares_trainings && shares_trainings) ||
+                                    (!@friendship.shares_calendars && shares_calendars)
+                                  )
       @friendship.shares_passages  = shares_passages
       @friendship.shares_trainings = shares_trainings
       @friendship.shares_calendars = shares_calendars

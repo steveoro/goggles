@@ -1,61 +1,60 @@
 require 'spec_helper'
 
 
-shared_examples_for "[POST #edit successful request] clearing share settings" do
-  before :each do
-    @user.approve( @friend_user, true, true )
-    # user changes idea on sharing trainings and edits:
-    post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 0
-  end
-
+shared_examples_for "(POST #edit ok) pending friendship editing shares:" do
   it "redirects to socials_show_all_path when done" do
     expect(response).to redirect_to socials_show_all_path()
   end
-
-  it "doesn't reset the pending status of an already approved friendship" do
-    friendship = @user.find_any_friendship_with(@friend_user)
-    expect( friendship.pending? ).to be_false
-  end
-
   it "handles successfully the request" do
-    expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
-    expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_false
-    expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_false
+    expect( @shared_friendable.is_sharing_passages_with?(@shared_friend) ).to be_true
+    expect( @shared_friendable.is_sharing_trainings_with?(@shared_friend) ).to be_true
+    expect( @shared_friendable.is_sharing_calendars_with?(@shared_friend) ).to be_false
   end
-
-  it "renders successfully the template" do
-    expect(response).to redirect_to socials_show_all_path()
-    expect( flash[:info] ).to include( I18n.t('social.changes_saved') )
+  it "doesn't change the pending status of an already pending friendship" do
+    friendship = @shared_friendable.find_any_friendship_with(@shared_friend)
+    expect( friendship.pending? ).to be_true
   end
 end
 # -----------------------------------------------------------------------------
 
 
-shared_examples_for "[POST #edit successful request] setting NEW share settings" do
-  before :each do
-    @user.approve( @friend_user, true, false, true )
-    # user changes idea on NOT sharing trainings and edits: (will issue another accept request)
-    post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
-  end
-
+shared_examples_for "(POST #edit ok) existing friendship editing shares:" do
   it "redirects to socials_show_all_path when done" do
     expect(response).to redirect_to socials_show_all_path()
   end
-
-  it "does set the pending status back on" do
-    friendship = @user.find_any_friendship_with(@friend_user)
-    expect( friendship.pending? ).to be_true
-  end
-
-  it "handles successfully the request" do
-    expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
-    expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
-    expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_true
-  end
-
   it "renders successfully the template" do
     expect(response).to redirect_to socials_show_all_path()
     expect( flash[:info] ).to include( I18n.t('social.changes_saved') )
+  end
+end
+
+
+shared_examples_for "(POST #edit ok) existing friendship CLEARING shares:" do
+  it "doesn't change the pending status" do
+    friendship = @shared_friendable.find_any_friendship_with(@shared_friend)
+    expect( friendship.pending? ).to be_false
+  end
+  it "handles successfully the request" do
+    expect( @shared_friendable.is_sharing_passages_with?(@shared_friend) ).to be_true
+    expect( @shared_friendable.is_sharing_trainings_with?(@shared_friend) ).to be_false
+    expect( @shared_friendable.is_sharing_calendars_with?(@shared_friend) ).to be_false
+  end
+end
+
+
+shared_examples_for "(POST #edit ok) existing friendship SETTING shares:" do
+  it "sets ON the pending status of an already approved friendship only if the friendable/editor was the user" do
+    friendship = @shared_friend.find_any_friendship_with(@shared_friendable)
+    # This will be pending only if the "friendable" in the friendship is actually the
+    # one making the edit request. If it is the friend who received the original invite
+    # (thus the one accepting it), the editing won't have changed the pending status.
+    must_be_pending = (friendship.friendable_id == @user.id)
+    expect( friendship.pending? ).to eq(must_be_pending)
+  end
+  it "handles successfully the request" do
+    expect( @shared_friendable.is_sharing_passages_with?(@shared_friend) ).to be_true
+    expect( @shared_friendable.is_sharing_trainings_with?(@shared_friend) ).to be_true
+    expect( @shared_friendable.is_sharing_calendars_with?(@shared_friend) ).to be_true
   end
 end
 # ==============================================================================
@@ -774,42 +773,128 @@ describe SocialsController do
 
       before :each do
         @friend_user.invite( @user, true, true, true )
+        @friendable_user = create( :user )
+        @user.invite( @friendable_user, true, false, true )
       end
 
       context "for a pending friendship, when editing commonly-agreed share flags" do
-        before :each do
+        before(:each) {
           post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1
-        end
-        it "redirects to socials_show_all_path when done" do
-          expect(response).to redirect_to socials_show_all_path()
-        end
-        it "handles successfully the request" do
-          expect( @user.is_sharing_passages_with?(@friend_user) ).to be_true
-          expect( @user.is_sharing_trainings_with?(@friend_user) ).to be_true
-          expect( @user.is_sharing_calendars_with?(@friend_user) ).to be_false
-        end
-        it "doesn't change the pending status of an already pending friendship" do
-          friendship = @user.find_any_friendship_with(@friend_user)
-          expect( friendship.pending? ).to be_true
-        end
+          @shared_friendable = @user
+          @shared_friend = @friend_user
+        }
+        it_behaves_like "(POST #edit ok) pending friendship editing shares:"
       end
 
-      context "for an approved friendship, when resetting share flags" do
-        it_behaves_like "[POST #edit successful request] clearing share settings"
+      context "for an inverse-pending friendship, when editing commonly-agreed share flags" do
+        before(:each) {
+          post :edit, id: @friendable_user.id, shares_passages: 1, shares_trainings: 1
+          @shared_friendable = @friendable_user
+          @shared_friend = @user
+        }
+        it_behaves_like "(POST #edit ok) pending friendship editing shares:"
+      end
+      # -----------------------------------------------------------------------
+
+      context "for an approved friendship, when clearing shares" do
+        before(:each) {
+          @user.approve( @friend_user, true, true )
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 0
+          @shared_friendable = @user
+          @shared_friend = @friend_user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
 
-      context "for a blocked friendship, when resetting share flags" do
-        before(:each) { @user.block(@friend_user) }
-        it_behaves_like "[POST #edit successful request] clearing share settings"
+      context "for a blocked friendship, when clearing shares" do
+        before(:each) {
+          @user.approve( @friend_user, true, true )
+          @user.block(@friend_user)
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 0
+          @shared_friendable = @user
+          @shared_friend = @friend_user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
 
-      context "for an approved friendship, when adding new share flags" do
-        it_behaves_like "[POST #edit successful request] setting NEW share settings"
+      context "for an approved inverse-friendship, when clearing shares" do
+        before(:each) {
+          @friendable_user.approve( @user, true, true )
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friendable_user.id, shares_passages: 1, shares_trainings: 0
+          @shared_friendable = @friendable_user
+          @shared_friend = @user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
 
-      context "for a blocked friendship, when adding new share flags" do
-        before(:each) { @user.block(@friend_user) }
-        it_behaves_like "[POST #edit successful request] setting NEW share settings"
+      context "for a blocked inverse-friendship, when clearing shares" do
+        before(:each) {
+          @friendable_user.approve( @user, true, true )
+          @friendable_user.block(@user)
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friendable_user.id, shares_passages: 1, shares_trainings: 0
+          @shared_friendable = @friendable_user
+          @shared_friend = @user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
+      end
+      # -----------------------------------------------------------------------
+
+      context "for an approved friendship, when adding new shares" do
+        before(:each) {
+          @user.approve( @friend_user, true, false, true )
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
+          @shared_friendable = @user
+          @shared_friend = @friend_user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
+      end
+
+      context "for a blocked friendship, when adding new shares" do
+        before(:each) {
+          @user.approve( @friend_user, true, false, true )
+          @user.block(@friend_user)
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friend_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
+          @shared_friendable = @user
+          @shared_friend = @friend_user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
+      end
+
+      context "for an approved inverse-friendship, when adding new shares" do
+        before(:each) {
+          @friendable_user.approve( @user, true, false, true )
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friendable_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
+          @shared_friendable = @friendable_user
+          @shared_friend = @user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
+      end
+
+      context "for a blocked inverse-friendship, when adding new shares" do
+        before(:each) {
+          @friendable_user.approve( @user, true, false, true )
+          @friendable_user.block(@user)
+          # friendable changes idea on sharing trainings and edits:
+          post :edit, id: @friendable_user.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
+          @shared_friendable = @friendable_user
+          @shared_friend = @user
+        }
+        it_behaves_like "(POST #edit ok) existing friendship editing shares:"
+        it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
       end
     end
   end
