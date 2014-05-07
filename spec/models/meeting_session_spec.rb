@@ -57,6 +57,7 @@ describe MeetingSession do
         :get_full_name,
         :get_verbose_name,
         :get_short_events,
+        :get_scheduled_date,
         :get_warm_up_time,
         :get_begin_time,
         :get_full_swimming_pool_description,
@@ -83,6 +84,8 @@ describe MeetingSession do
         #TODO Contains parenthesis
       end
 
+      it "#get_scheduled_date returns a date or 'To be defined'"
+      
       it "#get_warm_up_time returns a time or nd"
       
       it "#get_begin_time returns a time or nd"     
