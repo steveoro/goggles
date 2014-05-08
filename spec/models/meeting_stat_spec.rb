@@ -7,7 +7,7 @@ shared_examples_for "(existance of meeting stats array field/method)" do |method
       expect( subject ).to respond_to( method_name )
     end
     
-    it "returns a list" do
+    it "#{method_name} returns a list" do
       expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Enumerable )
     end
   end
@@ -19,7 +19,7 @@ shared_examples_for "(existance of meeting stats relation of swimmers)" do |meth
       expect( subject ).to respond_to( method_name )
     end
     
-    it "returns a list of swimmer instances" do
+    it "#{method_name} returns a list of swimmer instances" do
       subject.send(method_name.to_sym).each do |item|
         expect(item).to be_an_instance_of( Swimmer )
       end
@@ -33,7 +33,7 @@ shared_examples_for "(existance of meeting stats relation of meeting individual 
       expect( subject ).to respond_to( method_name )
     end
     
-    it "returns a list of swimmer instances" do
+    it "#{method_name} returns a list of swimmer instances" do
       subject.send(method_name.to_sym).each do |item|
         expect(item).to be_an_instance_of( MeetingIndividualResult )
       end
@@ -47,7 +47,7 @@ shared_examples_for "(existance of meeting stats numerical field/method)" do |me
       expect( subject ).to respond_to( method_name )
     end
     
-    it "returns a number" do
+    it "#{method_name} returns a number" do
       expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
     end
   end

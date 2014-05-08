@@ -1014,6 +1014,9 @@ en:
   title_wrong_meeting_result: "There's something wrong with some results of a certain Meeting..."
   title_feature_request: "'Feature request': I think you should really add this..."
 
+  to_be_defined: "To be defined..."
+  not_disponible: "nd"
+
 
   activerecord:
     models:

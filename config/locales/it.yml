@@ -1017,6 +1017,9 @@ it:
   title_wrong_meeting_result: "C'e' qualcosa che non mi torna coi risultati di un certo Meeting..."
   title_feature_request: "'Nuova Feature': credo che dobbiate assolutamente aggiungere..."
 
+  to_be_defined: "Da definire..."
+  not_disponible: "nd"
+
   netzke:
     basepack:
       grid_panel:

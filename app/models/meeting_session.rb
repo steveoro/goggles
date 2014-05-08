@@ -66,39 +66,58 @@ class MeetingSession < ActiveRecord::Base
   # If no scheduled date defined returns international 'To be defined'
   #
   def get_scheduled_date
-    self.scheduled_date ? Format.a_date(self.scheduled_date) : 'To be defined'
+    self.scheduled_date ? Format.a_date(self.scheduled_date) : I18n.t( :to_be_defined )
   end
-  # ----------------------------------------------------------------------------
 
   # Retrieve the warm_up time for the session, if any
   # If no warm_up time defined returns international 'nd'
   #
   def get_warm_up_time
-    self.warm_up_time ? Format.a_time(self.warm_up_time) : 'nd'
+    self.warm_up_time ? Format.a_time(self.warm_up_time) : I18n.t( :not_disponible )
   end
-  # ----------------------------------------------------------------------------
 
   # Retrieve the begin time for the session, if any
   # If no begin time defined returns international 'nd'
   #
   def get_begin_time
-    self.begin_time ? Format.a_time(self.begin_time) : 'nd'
+    self.begin_time ? Format.a_time(self.begin_time) : I18n.t( :not_disponible )
   end
   # ----------------------------------------------------------------------------
 
-  # Retrieves the Meeting session swimming pool full description
-  # Eg Comunale Reggio Emilia (8x50)
+  # ----------------------------------------------------------------------------
+  # Leega. TODO
+  # Those methods refferd to the pool should probably moved into swimming pool model
+  # ----------------------------------------------------------------------------
+  
+  # Retrieves the Meeting session swimming pool distance in meters, or 0 if any
+  # Eg 50
   #
-  def get_swimming_pool_type
-    self.swimming_pool.pool_type ? self.swimming_pool.pool_type.code : '?'
+  def get_pool_distance_in_meters
+    self.swimming_pool ? self.swimming_pool.pool_type.distance_in_meters : 0
+  end
+
+  # Retrieves the Meeting session swimming pool lane number, or 0 if any
+  # Eg 8
+  #
+  def get_pool_lane_number
+    self.swimming_pool ? self.swimming_pool.lane_number : 0
+  end
+
+  # Compose the swimming pool attributes (lanes_numebr x distance_in_meters)
+  # If not set returns (?)
+  # Eg (8x50)
+  #
+  def get_pool_attributes
+    self.swimming_pool ? "(#{self.get_pool_lane_number}x#{self.get_pool_distance_in_meters})" : '(?)'
   end
 
   # Retrieves the Meeting session swimming pool full description
   # Eg Comunale Reggio Emilia (8x50)
   #
-  def get_full_swimming_pool_description
-    self.swimming_pool ? "#{self.swimming_pool.name} #{self.swimming_pool.city.name} (#{self.swimming_pool.lanes_number}x#{self.swimming_pool.pool_type.code})" : 'To be defined...'
+  def get_pool_full_description
+    self.swimming_pool ? "#{self.swimming_pool.name} #{self.swimming_pool.city.name} #{self.get_pool_attributes}" : I18n.t( :to_be_defined )
   end
+  # ----------------------------------------------------------------------------
 
   # Computes a shorter description for the name associated with this data
   # Used by import steps to identify session

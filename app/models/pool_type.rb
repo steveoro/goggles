@@ -6,7 +6,8 @@ class PoolType < ActiveRecord::Base
   validates_length_of     :code, :within => 1..3, :allow_nil => false
   validates_uniqueness_of :code, :message => :already_exists
 
-  validates_length_of     :length_in_meters, :maximum => 3
+  validates_presence_of   :length_in_meters
+  validates_length_of     :length_in_meters, :maximum => 3, :allow_nil => false
 
 
   # Unique ID used inside the DB to address a 25 mt. PoolType instance 

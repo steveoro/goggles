@@ -15,6 +15,18 @@ shared_examples_for "(existance of method that returns non empty strings)" do |m
   end
 end
 
+shared_examples_for "(existance of method that returns numeric values)" do |method_name_array|
+  method_name_array.each do |method_name|
+    it "responds to ##{method_name}" do
+      expect( subject ).to respond_to( method_name )
+    end
+    
+    it "##{method_name} returns a numeric value" do
+      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
+    end
+  end
+end
+
 describe MeetingSession do
   
   describe "not valid istance of meeting session" do
@@ -38,7 +50,6 @@ describe MeetingSession do
     subject {
       FactoryGirl.create( :meeting_session )
     }
-
   
     context "[well formed meeting session instance]" do
       it "is a valid istance" do
@@ -60,10 +71,16 @@ describe MeetingSession do
         :get_scheduled_date,
         :get_warm_up_time,
         :get_begin_time,
-        :get_full_swimming_pool_description,
+        :get_pool_attributs,
+        :get_pool_full_description,
         :get_order_with_date,
         :get_meeting_name,
         :get_meeting_verbose_name
+      ])
+
+      it_should_behave_like( "(existance of method that returns numeric values)", [ 
+        :get_pool_distance_in_meters,
+        :get_pool_lane_number
       ])
 
       it "#get_short_name should return correct short description: short day part and event list" do
@@ -84,17 +101,21 @@ describe MeetingSession do
         #TODO Contains parenthesis
       end
 
-      it "#get_scheduled_date returns a date or 'To be defined'"
+      it "#get_pool_distance_in_meters returns a number between 0 and 50" do
+        expect( subject.get_pool_distance_in_meters ).to be >= 0
+        expect( subject.get_pool_distance_in_meters ).to be <= 50                
+      end    
       
-      it "#get_warm_up_time returns a time or nd"
+      it "#get_pool_lane_number returns a number betweeen 0 and 10" do
+        expect( subject.get_pool_lane_number ).to be >= 0
+        expect( subject.get_pool_lane_number ).to be <= 10        
+      end     
       
-      it "#get_begin_time returns a time or nd"     
+      it "#get_scheduled_date returns a date or 'To be defined...'"
       
-      it "has a method to return swimming pool type short description"     
+      it "#get_warm_up_time returns a time or 'nd'"
       
-      it "has a method to return swimming pool lane number"     
-      
-      it "#get_full_swimming_pool_description returns swimming pool full description with city, lanes and type"     
+      it "#get_begin_time returns a time or 'nd'"     
       
       it "has a method to return session events start list"     
     end
