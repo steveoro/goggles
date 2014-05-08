@@ -71,7 +71,7 @@ describe MeetingSession do
         :get_scheduled_date,
         :get_warm_up_time,
         :get_begin_time,
-        :get_pool_attributs,
+        :get_pool_attributes,
         :get_pool_full_description,
         :get_order_with_date,
         :get_meeting_name,
@@ -79,8 +79,8 @@ describe MeetingSession do
       ])
 
       it_should_behave_like( "(existance of method that returns numeric values)", [ 
-        :get_pool_distance_in_meters,
-        :get_pool_lane_number
+        :get_pool_length_in_meters,
+        :get_pool_lanes_number
       ])
 
       it "#get_short_name should return correct short description: short day part and event list" do
@@ -101,14 +101,14 @@ describe MeetingSession do
         #TODO Contains parenthesis
       end
 
-      it "#get_pool_distance_in_meters returns a number between 0 and 50" do
-        expect( subject.get_pool_distance_in_meters ).to be >= 0
-        expect( subject.get_pool_distance_in_meters ).to be <= 50                
+      it "#get_pool_length_in_meters returns a number between 0 and 50" do
+        expect( subject.get_pool_length_in_meters ).to be >= 0
+        expect( subject.get_pool_length_in_meters ).to be <= 50                
       end    
       
-      it "#get_pool_lane_number returns a number betweeen 0 and 10" do
-        expect( subject.get_pool_lane_number ).to be >= 0
-        expect( subject.get_pool_lane_number ).to be <= 10        
+      it "#get_pool_lanes_number returns a number betweeen 0 and 10" do
+        expect( subject.get_pool_lanes_number ).to be >= 0
+        expect( subject.get_pool_lanes_number ).to be <= 10        
       end     
       
       it "#get_scheduled_date returns a date or 'To be defined...'"

@@ -89,26 +89,26 @@ class MeetingSession < ActiveRecord::Base
   # Those methods refferd to the pool should probably moved into swimming pool model
   # ----------------------------------------------------------------------------
   
-  # Retrieves the Meeting session swimming pool distance in meters, or 0 if any
+  # Retrieves the Meeting session swimming pool length in meters, or 0 if any
   # Eg 50
   #
-  def get_pool_distance_in_meters
-    self.swimming_pool ? self.swimming_pool.pool_type.distance_in_meters : 0
+  def get_pool_length_in_meters
+    self.swimming_pool ? self.swimming_pool.pool_type.length_in_meters : 0
   end
 
   # Retrieves the Meeting session swimming pool lane number, or 0 if any
   # Eg 8
   #
-  def get_pool_lane_number
-    self.swimming_pool ? self.swimming_pool.lane_number : 0
+  def get_pool_lanes_number
+    self.swimming_pool ? self.swimming_pool.lanes_number : 0
   end
 
-  # Compose the swimming pool attributes (lanes_numebr x distance_in_meters)
+  # Compose the swimming pool attributes (lanes_numebr x length_in_meters)
   # If not set returns (?)
   # Eg (8x50)
   #
   def get_pool_attributes
-    self.swimming_pool ? "(#{self.get_pool_lane_number}x#{self.get_pool_distance_in_meters})" : '(?)'
+    self.swimming_pool ? "(#{self.get_pool_lanes_number}x#{self.get_pool_length_in_meters})" : '(?)'
   end
 
   # Retrieves the Meeting session swimming pool full description
