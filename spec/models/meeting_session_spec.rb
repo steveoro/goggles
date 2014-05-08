@@ -2,6 +2,14 @@ require 'spec_helper'
 require 'date'
 
 
+shared_examples_for "(not a valid istance of meeting session without values)" do |attribute_name_array|
+  attribute_name_array.each do |attribute_name|
+    it "not a valid instance without ##{attribute_name}" do
+      FactoryGirl.build( :meeting_session, attribute_name.to_sym=>nil ).should_not be_valid
+    end    
+  end
+end
+
 shared_examples_for "(existance of method that returns non empty strings)" do |method_name_array|
   method_name_array.each do |method_name|
     it "responds to ##{method_name}" do
@@ -30,17 +38,11 @@ end
 describe MeetingSession do
   
   describe "not valid istance of meeting session" do
-    it "not a valid meeting without description" do
-      FactoryGirl.build( :meeting_session, description: nil ).should_not be_valid
-    end    
-
-    it "not a valid meeting without session order" do
-      FactoryGirl.build( :meeting_session, session_order: nil ).should_not be_valid
-    end    
-
-    it "not a valid meeting without scheduled date" do
-      FactoryGirl.build( :meeting_session, scheduled_date: nil ).should_not be_valid
-    end    
+    it_should_behave_like( "(not a valid istance of meeting session without values)", [ 
+      :description,
+      :session_order,
+      :scheduled_date
+    ])    
   end
 
   describe "well formed meeting session" do
@@ -62,7 +64,7 @@ describe MeetingSession do
       end
     end
     
-    context "[meeting general methods]" do
+    context "[meeting session general methods]" do
       it_should_behave_like( "(existance of method that returns non empty strings)", [ 
         :get_short_name,
         :get_full_name,
@@ -106,7 +108,7 @@ describe MeetingSession do
         expect( subject.get_pool_length_in_meters ).to be <= 50                
       end    
       
-      it "#get_pool_lanes_number returns a number betweeen 0 and 10" do
+      it "#get_pool_lanes_number returns a number between 0 and 10" do
         expect( subject.get_pool_lanes_number ).to be >= 0
         expect( subject.get_pool_lanes_number ).to be <= 10        
       end     
