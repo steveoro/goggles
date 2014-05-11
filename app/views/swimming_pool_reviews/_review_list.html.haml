@@ -4,5 +4,7 @@
 - if @reviews.size == 0
   .row-fluid.span12
     %i= I18n.t('swimming_pool_review.no_reviews')
-%p
-  %a.btn.btn-primary(href="#{new_swimming_pool_review_path(swimming_pool_id: @swimming_pool_id)}")= t('swimming_pool_review.add_new_review')
+
+- if current_user && current_user.has_swimmer_confirmations?
+  %p
+    %a.btn.btn-primary(href="#{new_swimming_pool_review_path(swimming_pool_id: @swimming_pool_id)}")= t('swimming_pool_review.add_new_review')

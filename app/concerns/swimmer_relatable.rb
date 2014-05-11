@@ -23,6 +23,11 @@ module SwimmerRelatable
     swimmer ? self.swimmer.get_full_name() : '?'
   end
 
+#  # Checks domain validity for the Swimmer full name
+#  def is_swimmer_name_valid?
+#    # TODO
+#  end
+
   # Retrieves the associated Swimmer's year_of_birth
   def get_year_of_birth
     swimmer ? self.swimmer.year_of_birth : 0
@@ -33,6 +38,11 @@ module SwimmerRelatable
   def get_swimmer_age
     swimmer ? Date.today.year - swimmer.year_of_birth : 0 # this will fail the tests if association in not defined
   end
+
+#  # Checks domain validity for the Swimmer age
+#  def is_swimmer_age_valid?
+#    # TODO
+#  end
 
   # Retrieves all the current category type codes for the swimmer association of this interface.
   # Returns an empty array when none is found or the association is missing.
@@ -49,4 +59,9 @@ module SwimmerRelatable
     # but it would also assume the badges association as valid.
     swimmer ? get_swimmer_current_category_type_codes.last : nil
   end
+
+#  # Checks domain validity for the Swimmer current category
+#  def is_swimmer_current_category_valid?
+#    # TODO
+#  end
 end

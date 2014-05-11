@@ -5,7 +5,7 @@ require 'wrappers/timing'
   
 = TimingGettable
 
-- version:  4.00.219.20140413
+- version:  4.00.275.20140511
   - author:   Steve A.
 
   Container module for interfacing common "timing-related" fields
@@ -15,9 +15,14 @@ require 'wrappers/timing'
 module TimingGettable
   extend ActiveSupport::Concern
 
-  included do
-    belongs_to :swimmer
-    validates_associated :swimmer
+  # This will raise an exception if the includee does not already have defined the required fields:
+  def self.included( model )
+    base_instance = model.new
+    unless base_instance.respond_to?(:hundreds) &&
+           base_instance.respond_to?(:seconds) &&
+           base_instance.respond_to?(:minutes)
+      raise ArgumentError.new("Includee #{model} must have the attributes #hundreds, #seconds & #minutes.")
+    end
   end
 
 

@@ -115,12 +115,14 @@ class SwimmingPoolReviewsController < ApplicationController
 
 
   # Prepares the form for the creation of a new Review.
+  # Only "confirmed" swimmer-user can do this.
   #
   # === Params:
   # - :swimming_pool_id (not required) => it will pre-set the swimming-pool id when present
   #
   def new
     render( status: 406, json: {success: false} ) and return if request.format.json?
+    redirect_to(root_path) and return if current_user_does_not_have_enough_confirmations?
     @review = SwimmingPoolReview.new
     @review.user_id = current_user.id
     @review.swimming_pool_id = params[:swimming_pool_id]
@@ -131,11 +133,13 @@ class SwimmingPoolReviewsController < ApplicationController
 
 
   # Creates a new Review.
+  # Only "confirmed" swimmer-user can do this.
   #
   # === Params:
   # - :swimming_pool_review => the hash of attributes for the creation
   #
   def create
+    redirect_to(root_path) and return if current_user_does_not_have_enough_confirmations?
     @review = SwimmingPoolReview.create(params[:swimming_pool_review])
     @review.user_id = current_user.id
     respond_with( @review )
@@ -190,4 +194,21 @@ class SwimmingPoolReviewsController < ApplicationController
     redirect_to( swimming_pool_reviews_path() ) and return
   end
   # ---------------------------------------------------------------------------
+
+
+  private
+
+
+  # Returns true if the user doesn't meet the
+  # criteria for creating a Review or false otherwise.
+  #
+  def current_user_does_not_have_enough_confirmations?
+    # Only a confirmed swimmer-user can start the creation of a swimming-pool review:
+    if current_user.has_swimmer_confirmations?
+      false
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      true
+    end
+  end
 end

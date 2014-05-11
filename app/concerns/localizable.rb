@@ -15,12 +15,12 @@ require 'active_support'
 module Localizable
   extend ActiveSupport::Concern
 
-# TODO Make sure includee either:
-#      1) responds_to (super).table_name; or
-#      2) throw an exception if includee is not a sibling of ActiveRecord::Base; or
-#      3) add a failback in the worst case scenario.
-# TODO Make sure includee responds_to #code or follow the list above
-
+  # This will raise an exception if the includee does not already have defined the required fields:
+  def self.included( model )
+    unless model.new.respond_to?(:code) && model.respond_to?(:table_name)
+      raise ArgumentError.new("Includee #{model} must have both the #code attribute and the self.table_name() class method.")
+    end
+  end
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short

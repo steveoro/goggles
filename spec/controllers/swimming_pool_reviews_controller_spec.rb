@@ -325,8 +325,42 @@ describe SwimmingPoolReviewsController do
     end
     # -------------------------------------------------------------------------
 
-    context "logged-in user" do
+    context "as a logged-in user who's NOT a confirmed goggler" do
       login_user()
+
+      context "with a JSON request," do
+        it "refuses the request" do
+          get :new, format: :json
+          expect(response.status).to eq( 406 )
+        end
+      end
+
+      context "with an HTML request," do
+        it "refuses the request and redirects to app root" do
+          get :new
+          expect( response ).to redirect_to( root_path ) 
+        end
+      end
+
+      context "with an HTML request and a preset swimming_pool_id parameter," do
+        before :each do
+          @pool = create(:swimming_pool)
+          get :new, swimming_pool_id: @pool.id
+        end
+        it "refuses the request and redirects to app root" do
+          expect( response ).to redirect_to( root_path ) 
+        end
+      end
+    end
+    # -------------------------------------------------------------------------
+
+    context "as a logged-in user who is a confirmed goggler" do
+      login_user()
+      before :each do
+        @user.swimmer = create(:swimmer)
+        another_goggler_confirmator = create(:user)
+        UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, another_goggler_confirmator )
+      end
 
       context "with a JSON request" do
         it "refuses the request" do
@@ -377,6 +411,9 @@ describe SwimmingPoolReviewsController do
 
   describe '[POST #create]' do
     before :each do
+      # This will create a sample review fixture not assigned to the current user,
+      # while the test examples below will create another, but associated to the current user
+      # simply using its attributes.
       @review = create( :swimming_pool_review )
     end
 
@@ -392,11 +429,36 @@ describe SwimmingPoolReviewsController do
         }.not_to change( SwimmingPoolReview, :count ) 
       end
     end
+    # -------------------------------------------------------------------------
 
-
-    context "as a logged-in user" do
+    context "as a logged-in user who's NOT a confirmed goggler" do
       login_user()
       before :each do
+        @review.user_id = @user.id
+      end
+      it "doesn't create a new row with an HTML request" do 
+        expect {
+          post :create, swimming_pool_review: @review.attributes
+        }.not_to change( SwimmingPoolReview, :count ) 
+      end
+      it "doesn't create a new row with a JSON request" do 
+        expect {
+          post :create, format: :json, swimming_pool_review: @review.attributes
+        }.not_to change( SwimmingPoolReview, :count ) 
+      end
+      it "refuses the request and redirects to app root after an HTML request" do
+        post :create, swimming_pool_review: @review.attributes
+        expect( response ).to redirect_to( root_path ) 
+      end
+    end
+    # -------------------------------------------------------------------------
+
+    context "as a logged-in user who is a confirmed goggler" do
+      login_user()
+      before :each do
+        @user.swimmer = create(:swimmer)
+        another_goggler_confirmator = create(:user)
+        UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, another_goggler_confirmator )
         @review.user_id = @user.id
       end
 

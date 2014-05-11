@@ -9,34 +9,12 @@ shared_examples_for "(not a valid istance of meeting session without values)" do
     end    
   end
 end
+# -----------------------------------------------------------------------------
 
-shared_examples_for "(existance of method that returns non empty strings)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
-    end
-    
-    it "##{method_name} returns a non empty string" do
-      expect( subject.send(method_name.to_sym) ).to be_an_instance_of( String )
-      expect( subject.send(method_name.to_sym) ).not_to eq( '' )
-    end
-  end
-end
-
-shared_examples_for "(existance of method that returns numeric values)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
-    end
-    
-    it "##{method_name} returns a numeric value" do
-      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
-    end
-  end
-end
 
 describe MeetingSession do
-  
+  shared_examples "shared_method_existance_examples"
+
   describe "not valid istance of meeting session" do
     it_should_behave_like( "(not a valid istance of meeting session without values)", [ 
       :description,
@@ -63,9 +41,9 @@ describe MeetingSession do
         expect( subject.meeting ).to be_a( Meeting )
       end
     end
-    
+
     context "[meeting session general methods]" do
-      it_should_behave_like( "(existance of method that returns non empty strings)", [ 
+      it_should_behave_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,
         :get_verbose_name,
@@ -80,7 +58,7 @@ describe MeetingSession do
         :get_meeting_verbose_name
       ])
 
-      it_should_behave_like( "(existance of method that returns numeric values)", [ 
+      it_should_behave_like( "(the existance of a method returning numeric values)", [ 
         :get_pool_length_in_meters,
         :get_pool_lanes_number
       ])
