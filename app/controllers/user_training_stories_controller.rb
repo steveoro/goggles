@@ -66,7 +66,7 @@ class UserTrainingStoriesController < ApplicationController
       @user_training_story.user_id = current_user.id
 
       if @user_training_story.save
-        flash[:notice] = I18n.t('user_training_stories.story_created')
+        flash[:info] = I18n.t('user_training_stories.story_created')
         redirect_to( user_training_story_path(@user_training_story) )
       else
         render :action => :edit
@@ -108,7 +108,7 @@ class UserTrainingStoriesController < ApplicationController
       redirect_to( user_training_stories_path() ) and return
     end
     if @user_training_story.update_attributes( params[:user_training_story] )
-      flash[:notice] = I18n.t('user_training_stories.story_updated')
+      flash[:info] = I18n.t('user_training_stories.story_updated')
       redirect_to( user_training_story_path(@user_training_story) )
     else
       render :action => 'edit'

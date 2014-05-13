@@ -10,7 +10,6 @@
 		attribute: 'complete_name',
 		detach_with_id: :flt_swimmer_complete_name
 	) do |swimmer|
-		meeting_ids = swimmer.meetings.collect{|row| row.id}.uniq
         link_to(
             swimmer.get_verbose_name, swimmer_radio_path( swimmer ),
             { :id => "swimmer#{swimmer.id}",

@@ -69,7 +69,7 @@ class TrainingsController < ApplicationController
       @training.training_rows.each{|row| row.user_id = current_user.id }
 
       if @training.save
-        flash[:notice] = I18n.t('trainings.training_created')
+        flash[:info] = I18n.t('trainings.training_created')
         redirect_to( training_path(@training) )
       else
         render :action => :edit
@@ -112,7 +112,7 @@ class TrainingsController < ApplicationController
       redirect_to( trainings_path() ) and return
     end
     if @training.update_attributes( params[:training] )
-      flash[:notice] = I18n.t('trainings.training_updated')
+      flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( training_path(@training) )
     else
       render :action => 'edit'
@@ -208,7 +208,7 @@ class TrainingsController < ApplicationController
             new_row.training_id = new_training.id
             new_row.save!
           }
-          flash[:notice] = I18n.t('trainings.training_created')
+          flash[:info] = I18n.t('trainings.training_created')
           redirect_to( edit_training_path(new_training) ) and return
         end
       rescue
@@ -256,7 +256,7 @@ class TrainingsController < ApplicationController
             user_training_row.user_training_id = user_training.id
             user_training_row.save!
           }
-          flash[:notice] = I18n.t('user_trainings.training_created')
+          flash[:info] = I18n.t('user_trainings.training_created')
           redirect_to( edit_user_training_path(user_training) ) and return
         end
       rescue

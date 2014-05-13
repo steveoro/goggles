@@ -14,6 +14,17 @@
     .span12
       = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
 
+
 .row-fluid
-  %i
-    TODO ADD ALSO POST LINK TO MANUAL SELECT AN OVERRIDE SWIMMER ("Aren't you among these?")
+  %hr
+.row-fluid
+  %i= link_to_function( t('social.arent_you_among_these'), "$('#manualOverride').toggle();" )
+.row-fluid
+  %p
+.row-fluid#manualOverride(hidden='true')
+  = form_tag( associate_path(), :class => 'form-horizontal', :onsubmit => "$('#loadingIndicator').show();") do
+    .row-fluid
+      = select( :swimmer, :swimmer_id, Swimmer.to_dropdown(), { prompt: I18n.t(:please_select) }, { class: 'input-xlarge' } )
+      = submit_tag( I18n.t(:submit), data: {disable_with: I18n.t(:please_wait), class: 'btn'} )
+      %span(id='loadingIndicator' hidden='true')
+        = image_tag( 'indicator.gif' )

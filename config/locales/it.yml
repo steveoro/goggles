@@ -745,6 +745,7 @@ it:
     send: "Invia"
     ok: "Ok"
     cancel: "Annulla"
+    arent_you_among_these: "Non sei fra questi? Scegline tu qualcun altro manualmente..."
 
   newsfeed:
     approve_title: "Hai un nuovo 'Swimming Buddy'!"

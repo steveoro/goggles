@@ -12,7 +12,7 @@
   %ul
     - @friends.each do |user|
       %li= link_to( user.get_full_name, swimmer_radio_path( user.swimmer ), {id: "pending#{user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
-    
+
 .row-fluid.span12
   %h4= I18n.t('social.pending_invited_friends')
   %ul

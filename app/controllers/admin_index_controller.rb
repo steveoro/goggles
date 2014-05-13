@@ -61,7 +61,7 @@ class AdminIndexController < ApplicationController
         when '.sql'
           zip_pipe = nil
         else
-          flash[:notice] = I18n.t(:unsupported_file_format, {:scope=>[:admin_index]})
+          flash[:info] = I18n.t(:unsupported_file_format, {:scope=>[:admin_index]})
           redirect_to( goggles_admin_index_path() ) and return
         end
 
@@ -91,7 +91,7 @@ class AdminIndexController < ApplicationController
         logger.info( "Deleting '#{@filename_to_be_run}'...\r\n" )
         FileUtils.rm( @filename_to_be_run ) if File.exists?( @filename_to_be_run )
       else
-        flash[:notice] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
+        flash[:info] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
         redirect_to( goggles_admin_index_path() ) and return
       end
     end
@@ -133,7 +133,7 @@ class AdminIndexController < ApplicationController
         when '.sql'
           zip_pipe = nil
         else
-          flash[:notice] = I18n.t(:unsupported_file_format, {:scope=>[:admin_index]})
+          flash[:info] = I18n.t(:unsupported_file_format, {:scope=>[:admin_index]})
           redirect_to( goggles_admin_index_path() ) and return
         end
 
@@ -168,7 +168,7 @@ class AdminIndexController < ApplicationController
           FileUtils.rm( @filename_to_be_run ) if File.exists?( @filename_to_be_run )
         end
       else
-        flash[:notice] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
+        flash[:info] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
         redirect_to( goggles_admin_index_path() ) and return
       end
     end

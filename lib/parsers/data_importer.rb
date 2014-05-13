@@ -672,12 +672,12 @@ class DataImporter
   #
   def commit( data_import_session, do_consume_residual_file = true )
     unless ( data_import_session && data_import_session.id.to_i > 0 )
-      flash[:notice] = I18n.t(:missing_session_parameter, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:missing_session_parameter, {:scope=>[:admin_import]})
       return false
     end
     season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
     if ( season_id.to_i < 1 )
-      flash[:notice] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
       return false
     end
     data_import_session_id = data_import_session.id

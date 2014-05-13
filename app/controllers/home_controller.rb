@@ -37,12 +37,14 @@ class HomeController < ApplicationController
 
 
   # Associate action for a logged-in user. Handles both GET + POST
+  # === Params:
+  # :id || :swimmer[:swimmer_id] => both are interpreted as the swimmer id for the association
   def associate
     if request.post?                                # === POST: ===
-      if params[:id]                                # Save the association both ways:
-        swimmer = Swimmer.find_by_id( params[:id].to_i )
-        if current_user.set_associated_swimmer( swimmer )
-          flash[:notice] = I18n.t('home_controller.association_successful')
+      if params[:id] || params[:swimmer][:swimmer_id] # Save the association both ways:
+        swimmer_id = ( params[:id] || params[:swimmer][:swimmer_id] ).to_i
+        if current_user.set_associated_swimmer( Swimmer.find_by_id(swimmer_id) )
+          flash[:info] = I18n.t('home_controller.association_successful')
         else
           flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')
         end
@@ -71,7 +73,7 @@ class HomeController < ApplicationController
   def dissociate
     if request.post?                                # === POST: ===
       if current_user.set_associated_swimmer()
-        flash[:notice] = I18n.t('home_controller.dissociation_successful')
+        flash[:info] = I18n.t('home_controller.dissociation_successful')
       else
         flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')
       end

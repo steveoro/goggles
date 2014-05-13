@@ -743,6 +743,7 @@ en:
     send: "Send"
     ok: "Ok"
     cancel: "Cancel"
+    arent_you_among_these: "Aren't you among these? Choose someone else yourself manually..."
 
   newsfeed:
     approve_title: "You have a new 'Swimming Buddy'!"

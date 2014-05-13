@@ -107,7 +107,7 @@ class ExercisesController < ApplicationController
                                                     # Finally, render the result array as JSON:
       render( json: result_array )
     else
-      flash[:notice] = I18n.t(:invalid_action_request)
+      flash[:info] = I18n.t(:invalid_action_request)
       redirect_to( exercises_path() ) and return
     end
   end

@@ -90,7 +90,7 @@ class UserTrainingsController < ApplicationController
                                                     # Finally, render the result array as JSON:
       render( :json => result_array )
     else
-      flash[:notice] = I18n.t(:invalid_action_request)
+      flash[:info] = I18n.t(:invalid_action_request)
       redirect_to( exercises_path() ) and return
     end
   end
@@ -155,7 +155,7 @@ class UserTrainingsController < ApplicationController
       @user_training.user_training_rows.each{|row| row.user_id = current_user.id }
 
       if @user_training.save
-        flash[:notice] = I18n.t('trainings.training_created')
+        flash[:info] = I18n.t('trainings.training_created')
         redirect_to( user_training_path(@user_training) )
       else
         render :action => :edit
@@ -198,7 +198,7 @@ class UserTrainingsController < ApplicationController
       redirect_to( user_trainings_path() ) and return
     end
     if @user_training.update_attributes( params[:user_training] )
-      flash[:notice] = I18n.t('trainings.training_updated')
+      flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( user_training_path(@user_training) )
     else
       render :action => 'edit'
@@ -294,7 +294,7 @@ class UserTrainingsController < ApplicationController
             new_row.user_training_id = new_user_training.id
             new_row.save!
           }
-          flash[:notice] = I18n.t('trainings.training_created')
+          flash[:info] = I18n.t('trainings.training_created')
           redirect_to( edit_user_training_path(new_user_training) ) and return
         end
       rescue
@@ -345,7 +345,7 @@ class UserTrainingsController < ApplicationController
             # user_training_row.user_training_id = user_training.id
             # user_training_row.save!
           # }
-          # flash[:notice] = I18n.t('user_trainings.training_created')
+          # flash[:info] = I18n.t('user_trainings.training_created')
           # redirect_to( edit_user_training_path(user_training) ) and return
         # end
       # rescue

@@ -65,7 +65,7 @@ class AdminImportController < ApplicationController
       render( :text => "<span class=\"label label-info\">#{curr_label}</span><div class=\"bar\" style=\"width: #{percent}%;\"></div>" )
 
     else
-      flash[:notice] = I18n.t(:invalid_action_request)
+      flash[:info] = I18n.t(:invalid_action_request)
       redirect_to( goggles_di_step1_status_path() ) and return
     end
   end
@@ -127,7 +127,7 @@ class AdminImportController < ApplicationController
 #      logger.debug "SEASON.....: ID=#{season_id}"
 #      logger.debug "!! ---------------------------\r\n\r\n"
       if ( season_id.to_i < 1 )
-        flash[:notice] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
+        flash[:info] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
         redirect_to( goggles_di_step1_status_path() ) and return
       end
       begin
@@ -156,7 +156,7 @@ class AdminImportController < ApplicationController
 
                                                     # === CASE ELSE: form not-fully completed
     else
-      flash[:notice] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
@@ -360,7 +360,7 @@ class AdminImportController < ApplicationController
       end
       team_analysis_ext  += '.ok'
       equivalent_sql_ext += '.ok'
-      flash[:notice] = I18n.t('admin_import.team_analysis_completed')
+      flash[:info] = I18n.t('admin_import.team_analysis_completed')
     end
                                                     # Write the log files, if there's any content:
     DataImporter.to_analysis_logfile( log_filename, team_analysis_log, team_analysis_ext )
@@ -394,7 +394,7 @@ class AdminImportController < ApplicationController
                                                     # Retrieve data_import_session ID from parameters
     data_import_session_id = params[:data_import_session_id]
     unless ( data_import_session_id.to_i > 0 )
-      flash[:notice] = I18n.t(:missing_session_parameter, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:missing_session_parameter, {:scope=>[:admin_import]})
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
@@ -402,7 +402,7 @@ class AdminImportController < ApplicationController
     # ASSERT: assert_not_nil( data_import_session )
     season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
     if ( season_id.to_i < 1 )
-      flash[:notice] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
