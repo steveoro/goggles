@@ -748,12 +748,16 @@ it:
     arent_you_among_these: "Non sei fra questi? Scegline tu qualcun altro manualmente..."
 
   newsfeed:
+    invite_title: "Hai una nuova richiesta di amicizia."
+    invite_body: "{SWIMMER_NAME} vorrebbe diventare uno dei tuoi 'Swimming Buddies'."
     approve_title: "Hai un nuovo 'Swimming Buddy'!"
     approve_body: "Tu e {SWIMMER_NAME} siete ora amici."
     remove_title: "'Swimming Buddy' rimosso."
     remove_body: "Tu e {SWIMMER_NAME} non siete piu' amici."
     confirm_title: "You have been confirmed by a friend of yours!"
     confirm_body: "{SWIMMER_NAME} ha confermato che tu sei l'atleta che hai detto di essere."
+    unconfirm_title: "Sei stato catalogato come 'non confermato' da qualcun altro!"
+    unconfirm_body: "Sfortunatamente, l'associazione del tuo utente con {SWIMMER_NAME} non e' piu 'certificata' quanto prima. Dovresti chiedere a qualcun altro di confermare la tua identita'."
     go_to_friend: "Puoi vedere la sua carta d'identità qui:"
 
   achievement:

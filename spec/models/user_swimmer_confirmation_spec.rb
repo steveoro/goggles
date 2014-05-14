@@ -11,7 +11,6 @@ describe UserSwimmerConfirmation do
     it "has a method to confirm a swimmer association for a user" do
       expect( UserSwimmerConfirmation ).to respond_to( :confirm_for )
     end
-
     it "has a method to unconfirm a swimmer association for a user" do
       expect( UserSwimmerConfirmation ).to respond_to( :unconfirm_for )
     end
@@ -19,11 +18,9 @@ describe UserSwimmerConfirmation do
     it "has a :find_for_user scope" do
       expect( UserSwimmerConfirmation ).to respond_to( :find_for_user )
     end
-
     it "has a :find_for_confirmator scope" do
       expect( UserSwimmerConfirmation ).to respond_to( :find_for_confirmator )
     end
-
     it "has a :find_any_between scope" do
       expect( UserSwimmerConfirmation ).to respond_to( :find_any_between )
     end
@@ -38,6 +35,11 @@ describe UserSwimmerConfirmation do
         expect{
           UserSwimmerConfirmation.confirm_for( @user, @swimmer, @confirmator )
         }.to change{ UserSwimmerConfirmation.count }.by(1)
+      end
+      it "updates also the news-feed when successful" do
+        expect{
+          UserSwimmerConfirmation.confirm_for( @user, @swimmer, @confirmator )
+        }.to change{ NewsFeed.count }.by(1)
       end
 
       it "returns the added row when successful" do
@@ -77,6 +79,12 @@ describe UserSwimmerConfirmation do
         expect{
           UserSwimmerConfirmation.unconfirm_for(confirmation.user, confirmation.swimmer, confirmation.confirmator)
         }.to change{ UserSwimmerConfirmation.count }.by(-1)
+      end
+      it "updates also the news-feed when successful" do
+        confirmation = create( :user_swimmer_confirmation )
+        expect{
+          UserSwimmerConfirmation.unconfirm_for(confirmation.user, confirmation.swimmer, confirmation.confirmator)
+        }.to change{ NewsFeed.count }.by(1)
       end
 
       it "returns false when the association does not exist" do

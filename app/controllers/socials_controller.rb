@@ -68,7 +68,7 @@ class SocialsController < ApplicationController
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
-      if current_user.invite( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+      if current_user.invite_with_notify( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
         flash[:info] = I18n.t('social.invite_successful')
       else
         flash[:error] = I18n.t('social.invite_error')
@@ -119,10 +119,8 @@ class SocialsController < ApplicationController
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
-      if current_user.approve( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+      if current_user.approve_with_notify( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
         flash[:info] = I18n.t('social.approve_successful')
-        NewsFeed.create_social_approve_feed( current_user, @swimming_buddy )
-        # TODO Create also achievement
       else
         flash[:error] = I18n.t('social.approve_error')
       end
@@ -234,7 +232,7 @@ class SocialsController < ApplicationController
     @swimming_buddy = User.find_by_id( params[:id] )
 
     if request.post?                                # === POST: ===
-      if current_user.remove_friendship( @swimming_buddy )
+      if current_user.remove_with_notify( @swimming_buddy )
         flash[:info] = I18n.t('social.remove_successful')
       else
         flash[:error] = I18n.t('social.remove_error')

@@ -15,11 +15,9 @@ describe User do
     it "is a valid istance" do
       expect( @user ).to be_valid
     end
-
     it "has a method to return the full description" do
       expect( @user ).to respond_to( :get_full_name )
     end
-
     it "has a method to convert the instance to a string" do
       expect( @user ).to respond_to( :to_s )
     end
@@ -27,11 +25,9 @@ describe User do
     it "has a method to get the first and last name as an array" do
       expect( @user ).to respond_to( :get_first_and_last_name )
     end
-
     it "has a method to get the preferred (default) swimmer level ID" do
       expect( @user ).to respond_to( :get_preferred_swimmer_level_id )
     end
-
     it "has a method to get the current swimmer level type description" do
       expect( @user ).to respond_to( :get_swimmer_level_type )
     end
@@ -39,17 +35,24 @@ describe User do
     it "has a method to set the associated swimmer" do
       expect( @user ).to respond_to( :set_associated_swimmer )
     end
-
     it "has an helper to check if it has an associated swimmer" do
       expect( @user ).to respond_to( :has_associated_swimmer? )
     end
-
     it "has an helper to check if it has any swimmer confirmations" do
       expect( @user ).to respond_to( :has_swimmer_confirmations? )
     end
-
     it "has an helper to check if it has any swimmer confirmations for a specific user" do
       expect( @user ).to respond_to( :find_any_confirmation_given_to )
+    end
+
+    it "has an a method to approve a friendship while updating the news feed" do
+      expect( @user ).to respond_to( :approve_with_notify )
+    end
+    it "has an a method to invite to a friendship while updating the news feed" do
+      expect( @user ).to respond_to( :invite_with_notify )
+    end
+    it "has an a method to remove a friendship while updating the news feed" do
+      expect( @user ).to respond_to( :remove_with_notify )
     end
     # --------------------------------------------------------------------------
 
@@ -195,6 +198,60 @@ describe User do
         confirmation2 = create( :user_swimmer_confirmation, confirmator: @user )
         confirmation3 = create( :user_swimmer_confirmation, confirmator: @user )
         expect( @user.given_confirmations.size == 3 ).to be_true
+      end
+    end
+    # --------------------------------------------------------------------------
+
+
+    describe "#approve_with_notify" do
+      it "updates the news-feed when successful" do
+        swimming_buddy = create( :user )
+        swimming_buddy.invite( @user )
+        expect{
+          @user.approve_with_notify( swimming_buddy )
+        }.to change{ NewsFeed.friend_activities.count }.by(2)
+      end
+      it "does not update the news-feed when it fails" do
+        swimming_buddy = create( :user )
+        expect{
+          @user.approve_with_notify( swimming_buddy )
+        }.not_to change{ NewsFeed.friend_activities.count }
+      end
+    end
+
+
+    describe "#invite_with_notify" do
+      it "updates the news-feed when successful" do
+        swimming_buddy = create( :user )
+        expect{
+          swimming_buddy.invite_with_notify( @user )
+        }.to change{ NewsFeed.friend_activities.count }.by(1)
+      end
+      it "does not update the news-feed when it fails (when called on an existing friendship)" do
+        swimming_buddy = create( :user )
+        swimming_buddy.invite( @user )
+        expect{
+          swimming_buddy.invite_with_notify( @user )
+        }.not_to change{ NewsFeed.friend_activities.count }
+      end
+    end
+    # --------------------------------------------------------------------------
+
+
+    describe "#remove_with_notify" do
+      it "updates the news-feed when successful" do
+        swimming_buddy = create( :user )
+        swimming_buddy.invite( @user )
+        @user.approve( swimming_buddy )
+        expect{
+          @user.remove_with_notify( swimming_buddy )
+        }.to change{ NewsFeed.friend_activities.count }.by(1)
+      end
+      it "does not update the news-feed when it fails (when called on a inexistent friendship)" do
+        swimming_buddy = create( :user )
+        expect{
+          @user.remove_with_notify( swimming_buddy )
+        }.not_to change{ NewsFeed.friend_activities.count }
       end
     end
     # --------------------------------------------------------------------------

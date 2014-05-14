@@ -181,6 +181,62 @@ class User < ActiveRecord::Base
     end
   end
   # ----------------------------------------------------------------------------
+
+
+  # Suggest a user to become a friend. If the operation succeeds, the method returns true, else false.
+  #
+  # Same as #invite() but updates also the news feed for the recipient (the
+  # invited friend).
+  #
+  # The "requestee" friendable can also set the requested sharing attributes which
+  # will then either be confirmed (set to true) or denied (set to false) during the approval process.
+  #
+  def invite_with_notify( swimming_buddy, shares_passages = false, shares_trainings = false, shares_calendars = false )
+    if invite( swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+      NewsFeed.create_social_feed(
+        swimming_buddy.id,
+        self.id,
+        I18n.t('newsfeed.invite_title'),
+        I18n.t('newsfeed.invite_body').gsub("{SWIMMER_NAME}", get_full_name)
+      )
+      # TODO Create also achievement accordingly
+    end
+  end
+
+  # Approves a friendship invitation. If the operation succeeds, the method returns true, else false.
+  #
+  # Same as #approve() but updates also the news feed for both the recipient (the
+  # approved friend) and the sender (the user accepting the request).
+  #
+  # The friend approving a friendship request can only set sharing attributes
+  # to true if the "requestee" friendable asked for it, setting them previously
+  # with an invite request.
+  # Otherwise, set the sharing attributes using their dedicated setter methods.
+  # (#set_share_passages_with, #set_share_trainings_with, #set_share_calendar_with)
+  #
+  def approve_with_notify( swimming_buddy, shares_passages = false, shares_trainings = false, shares_calendars = false )
+    if approve( swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+      NewsFeed.create_social_approve_feed( self, swimming_buddy )
+      # TODO Create also achievement accordingly
+    end
+  end
+
+  # Same as #remove_friendship() but updates also the news feed for the sender (the
+  # user casting the deletion on the friendship, to get something like
+  # "you are no longer a swimming buddy of ...").
+  #
+  def remove_with_notify( swimming_buddy )
+    if remove_friendship( swimming_buddy )
+      NewsFeed.create_social_feed(
+        self.id,
+        swimming_buddy.id,
+        I18n.t('newsfeed.remove_title'),
+        I18n.t('newsfeed.remove_body').gsub("{SWIMMER_NAME}", swimming_buddy.get_full_name)
+      )
+      # TODO Create also achievement accordingly
+    end
+  end
+  # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
 
 end

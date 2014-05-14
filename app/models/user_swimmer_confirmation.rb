@@ -23,11 +23,21 @@ class UserSwimmerConfirmation < ActiveRecord::Base
     user_id, swimmer_id, confirmator_id = self.parse_parameters( user, swimmer, confirmator )
     return nil unless self.validate_parameters( user_id, swimmer_id, confirmator_id )
     begin
-      UserSwimmerConfirmation.create!(
+      confirm_row = UserSwimmerConfirmation.create!(
         user_id: user_id,
         swimmer_id: swimmer_id,
         confirmator_id: confirmator_id
       )
+      if confirm_row
+        NewsFeed.create_social_feed(
+          user_id,
+          confirmator_id,
+          I18n.t('newsfeed.confirm_title'),
+          I18n.t('newsfeed.confirm_body').gsub("{SWIMMER_NAME}", confirmator.get_full_name)
+        )
+        # TODO Create also achievement accordingly
+      end
+      confirm_row
     rescue
       nil
     end
@@ -56,7 +66,14 @@ class UserSwimmerConfirmation < ActiveRecord::Base
 
     if unconfirmable_row
       begin
-        unconfirmable_row.destroy()
+        if unconfirmable_row.destroy()
+          NewsFeed.create_social_feed(
+            user_id,
+            confirmator_id,
+            I18n.t('newsfeed.unconfirm_title'),
+            I18n.t('newsfeed.unconfirm_body').gsub("{SWIMMER_NAME}", swimmer.get_full_name)
+          )
+        end
         true
       rescue
         false
