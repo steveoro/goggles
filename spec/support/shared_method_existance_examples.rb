@@ -11,6 +11,15 @@ shared_examples_for "(not a valid istance without required values)" do |attribut
 end
 # -----------------------------------------------------------------------------
 
+shared_examples_for "(valid istance if belongs to required classes)" do |attribute_name_array|
+  attribute_name_array.each do |attribute_name|
+    it "it belongs to ##{attribute_name.class}" do
+      expect( subject.send(attribute_name.to_sym) ).to be_a( attribute_name.class )
+    end    
+  end
+end
+# -----------------------------------------------------------------------------
+
 shared_examples_for "(the existance of a method returning non-empty strings)" do |method_name_array|
   method_name_array.each do |method_name|
     it "responds to ##{method_name}" do

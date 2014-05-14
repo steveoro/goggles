@@ -31,6 +31,7 @@ end
 
 
 describe MeetingStat do
+  shared_examples "shared_method_existance_examples"
 
   subject {
     # Pre-loaded seeded last two years CSI season

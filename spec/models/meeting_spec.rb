@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'date'
 
 describe Meeting do
+  shared_examples "shared_method_existance_examples"
   
   describe "not valid istance of meeting" do
     it_should_behave_like( "(not a valid istance without required values)", [ 

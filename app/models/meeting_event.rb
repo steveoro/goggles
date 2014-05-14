@@ -39,6 +39,7 @@ class MeetingEvent < ActiveRecord::Base
   def get_verbose_name
     "#{get_meeting_session_verbose_name} (#{event_order} @ #{get_scheduled_date})"
   end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the user name associated with this instance
   def user_name
@@ -50,6 +51,7 @@ class MeetingEvent < ActiveRecord::Base
   def get_scheduled_date
     self.meeting_session ? self.meeting_session.scheduled_date : '?'
   end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the Meeting Session short name (includes Meeting name)
   def get_meeting_session_name

@@ -41,16 +41,6 @@ class MeetingProgram < ActiveRecord::Base
   # Base methods:
   # ----------------------------------------------------------------------------
 
-  # Computes a short description of just the event name for this row, without dates.
-  def get_event_name
-    "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.i18n_short}"
-  end
-
-  # Computes a verbose description of just the event name for this row, without dates.
-  def get_verbose_event_name
-    "(#{I18n.t(:event)} #{event_order}) #{event_type.i18n_description} #{get_category_type_name} #{gender_type.i18n_description}"
-  end
-
   # Computes the shortest description for the name associated with this data
   def get_short_name
     "(#{get_scheduled_date}, #{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.i18n_short}"
@@ -65,6 +55,18 @@ class MeetingProgram < ActiveRecord::Base
   def get_verbose_name
     "#{get_meeting_session_verbose_name} #{get_event_name}"
   end
+  # ----------------------------------------------------------------------------
+
+  # Computes a short description of just the event name for this row, without dates.
+  def get_event_name
+    "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.i18n_short}"
+  end
+
+  # Computes a verbose description of just the event name for this row, without dates.
+  def get_verbose_event_name
+    "(#{I18n.t(:event)} #{event_order}) #{event_type.i18n_description} #{get_category_type_name} #{gender_type.i18n_description}"
+  end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the user name associated with this instance
   def user_name
@@ -91,11 +93,13 @@ class MeetingProgram < ActiveRecord::Base
   def get_category_type_name
     self.category_type ? self.category_type.short_name : '?'
   end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the Meeting Session scheduled_date
   def get_scheduled_date
     self.meeting_session ? self.meeting_session.scheduled_date : '?'
   end
+  # ----------------------------------------------------------------------------
 
   # Retrieves the Meeting Session short name (includes Meeting name)
   def get_meeting_session_name
