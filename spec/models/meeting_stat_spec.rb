@@ -1,18 +1,6 @@
 require 'spec_helper'
 
 
-shared_examples_for "(existance of meeting stats array field/method)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
-    end
-    
-    it "#{method_name} returns a list" do
-      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Enumerable )
-    end
-  end
-end
-
 shared_examples_for "(existance of meeting stats relation of swimmers)" do |method_name_array|
   method_name_array.each do |method_name|
     it "responds to ##{method_name}" do
@@ -41,31 +29,17 @@ shared_examples_for "(existance of meeting stats relation of meeting individual 
   end
 end
 
-shared_examples_for "(existance of meeting stats numerical field/method)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
-    end
-    
-    it "#{method_name} returns a number" do
-      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
-    end
-  end
-end
-
 
 describe MeetingStat do
 
   subject {
     # Pre-loaded seeded last two years CSI season
-    #seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105]
-    #MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % 10).to_i) ))
-    seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101]
-    MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % 6).to_i) ))
+    seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105]
+    MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % 10).to_i) ))
   }
 
   describe "well formed meeting stats" do
-    it_should_behave_like( "(existance of meeting stats numerical field/method)", [ 
+    it_should_behave_like( "(the existance of a method returning numeric values)", [ 
       # Fields
       :swimmer_male_count, 
       :result_male_count, 
@@ -100,30 +74,18 @@ describe MeetingStat do
   end
   
   context "#swimmer_count" do
-    it "returns a number" do
-      expect(subject.swimmer_count).to be_a_kind_of( Integer )
-    end
-    
     it "returns sum of male and female swimmers count" do
       expect(subject.swimmer_count).to eq(subject.swimmer_male_count + subject.swimmer_female_count)
     end    
   end
 
   context "#result_count" do
-    it "returns a number" do
-      expect(subject.result_count).to be_a_kind_of( Integer )
-    end
-    
     it "returns sum of male and female results count" do
       expect(subject.result_count).to eq(subject.result_male_count + subject.result_female_count)
     end            
   end
 
   context "#disqualified_count" do
-    it "returns a number" do
-      expect(subject.disqualified_count).to be_a_kind_of( Integer )
-    end
-    
     it "returns sum of male and female results count" do
       expect(subject.disqualified_count).to eq(subject.disqualified_male_count + subject.disqualified_female_count)
     end            

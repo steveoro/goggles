@@ -1,21 +1,11 @@
 require 'spec_helper'
 
 
-shared_examples_for "(not a valid istance of swimming pool without values)" do |attribute_name_array|
-  attribute_name_array.each do |attribute_name|
-    it "not a valid instance without ##{attribute_name}" do
-      FactoryGirl.build( :swimming_pool, attribute_name.to_sym=>nil ).should_not be_valid
-    end    
-  end
-end
-# -----------------------------------------------------------------------------
-
-
 describe SwimmingPool do
   shared_examples "shared_method_existance_examples"
 
   describe "not valid istance of swimming pool" do
-    it_should_behave_like( "(not a valid istance of swimming pool without values)", [ 
+    it_should_behave_like( "(not a valid istance without required values)", [ 
       :name,
       :nick_name,
       :lanes_number
@@ -46,6 +36,7 @@ describe SwimmingPool do
         :get_full_name,
         :get_verbose_name,
         :get_full_address,
+        :get_pool_attributes,
         :get_pool_type,
         :get_city_name,
         :get_locker_cabinet_type,
@@ -53,20 +44,20 @@ describe SwimmingPool do
         :get_hair_dryer_type
       ])
 
-      #it_should_behave_like( "(the existance of a method returning numeric values)", [ 
-      #  :get_pool_length_in_meters,
-      #  :get_pool_lanes_number
-      #])
+      it_should_behave_like( "(the existance of a method returning numeric values)", [ 
+        :get_pool_length_in_meters,
+        :get_pool_lanes_number
+      ])
 
-      #it "#get_pool_length_in_meters returns a number between 0 and 50" do
-      #  expect( subject.get_pool_length_in_meters ).to be >= 0
-      #  expect( subject.get_pool_length_in_meters ).to be <= 50                
-      #end    
+      it "#get_pool_length_in_meters returns a number between 0 and 50" do
+        expect( subject.get_pool_length_in_meters ).to be >= 0
+        expect( subject.get_pool_length_in_meters ).to be <= 50                
+      end    
       
-      #it "#get_pool_lanes_number returns a number between 0 and 10" do
-      #  expect( subject.get_pool_lanes_number ).to be >= 0
-      #  expect( subject.get_pool_lanes_number ).to be <= 10        
-      #end     
+      it "#get_pool_lanes_number returns a number between 0 and 10" do
+        expect( subject.get_pool_lanes_number ).to be >= 0
+        expect( subject.get_pool_lanes_number ).to be <= 10        
+      end     
       
       it "#get_maps_url returns a URL or nil"
       

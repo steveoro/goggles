@@ -93,6 +93,29 @@ class SwimmingPool < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Retrieves the swimming pool length in meters, or 0 if any
+  # Eg 50
+  #
+  def get_pool_length_in_meters
+    self.pool_type ? self.pool_type.length_in_meters : 0
+  end
+
+  # Retrieves the swimming pool lane number, or 0 if any
+  # Eg 8
+  #
+  def get_pool_lanes_number
+    self.lanes_number ? self.lanes_number : 0
+  end
+
+  # Compose the swimming pool attributes (lanes_numebr x length_in_meters)
+  # Eg (8x50)
+  #
+  def get_pool_attributes
+    self.pool_type ? "(#{self.get_pool_lanes_number}x#{self.get_pool_length_in_meters})" : '(?)'
+  end
+  # ----------------------------------------------------------------------------
+
+
   # Retrieves the Pool Type short name
   def get_pool_type
     self.pool_type ? self.pool_type.i18n_short : '?'
