@@ -24,9 +24,9 @@ describe Meeting do
         subject.should be_valid
       end
       
-      it "it belongs to a valid session" do
-        expect( subject.season ).to be_a( Season )
-      end
+      it_behaves_like( "(valid istance if belongs to required classes)", [ 
+        :season
+      ])    
     end
     
     context "[meeting general methods]" do

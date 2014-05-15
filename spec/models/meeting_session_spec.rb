@@ -19,22 +19,18 @@ describe MeetingSession do
   end
 
   describe "well formed meeting session" do
-    #before( :each ) do
-    #  @meeting_session1 = FactoryGirl.create( :meeting_session )
-    #end
     subject {
       FactoryGirl.create( :meeting_session )
     }
   
     context "[well formed meeting session instance]" do
       it "is a valid istance" do
-        #@meeting_session1.should be_valid
         subject.should be_valid
       end
 
-      it "it belongs to a valid meeting" do
-        expect( subject.meeting ).to be_a( Meeting )
-      end
+      it_behaves_like( "(valid istance if belongs to required classes)", [ 
+        :meeting
+      ])    
     end
 
     context "[meeting session general methods]" do
