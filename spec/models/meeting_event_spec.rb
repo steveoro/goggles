@@ -37,10 +37,12 @@ describe MeetingEvent do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_full_name,
         :get_verbose_name,
-# FIXME this one returns a date instance:
-#        :get_scheduled_date,
         :get_meeting_session_name,
         :get_meeting_session_verbose_name
+      ])
+
+      it_behaves_like( "(the existance of a method returning a date)", [ 
+        :get_scheduled_date
       ])
 
       xit "REFACTOR THIS USING MeetingAccountable CONCERN" do

@@ -73,3 +73,17 @@ shared_examples_for "(existance of method returning array)" do |method_name_arra
   end
 end
 # -----------------------------------------------------------------------------
+
+shared_examples_for "(the existance of a method returning a date)" do |method_name_array|
+  method_name_array.each do |method_name|
+    it "responds to ##{method_name}" do
+      expect( subject ).to respond_to( method_name )
+    end
+    
+    it "##{method_name} returns a date" do
+      expect( subject.send(method_name.to_sym) ).to be_an_instance_of( Date )
+    end
+  end
+end
+# -----------------------------------------------------------------------------
+
