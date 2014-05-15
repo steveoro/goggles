@@ -4,9 +4,14 @@ require 'date'
 
 describe MeetingProgram do
   shared_examples "shared_method_existance_examples"
+  shared_examples "shared_meeting_accountable_examples"
+
+# FIXME
+#  it_behaves_like "MeetingAccountable"
+
 
   describe "not valid istance of meeting program" do
-    it_should_behave_like( "(not a valid istance without required values)", [ 
+    it_behaves_like( "(not a valid istance without required values)", [ 
       :event_order
     ])    
   end
@@ -35,22 +40,25 @@ describe MeetingProgram do
     end
 
     context "[meeting session general methods]" do
-      it_should_behave_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,
         :get_verbose_name,
         :get_event_name,
         :get_verbose_event_name,
-        :get_scheduled_date,
+# FIXME this one returns a date instance:
+#        :get_scheduled_date,
         :get_category_and_gender_short
       ])
       # Leega. TODO
       # More methods to check and classify
 
-      it_should_behave_like( "(the existance of a method returning numeric values)", [ 
-        :get_entries_count,
-        :get_results_count
-      ])
+      xit "REFACTOR THIS USING MeetingAccountable CONCERN" do
+        it_behaves_like( "(the existance of a method returning numeric values)", [ 
+          :get_entries_count,
+          :get_results_count
+        ])
+      end
     end
   end
 end

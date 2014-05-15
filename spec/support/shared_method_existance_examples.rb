@@ -13,8 +13,8 @@ end
 
 shared_examples_for "(valid istance if belongs to required classes)" do |attribute_name_array|
   attribute_name_array.each do |attribute_name|
-    it "it belongs to ##{attribute_name.class}" do
-      expect( subject.send(attribute_name.to_sym) ).to be_a( attribute_name.class )
+    it "it belongs to ##{attribute_name}" do
+      expect( subject.send(attribute_name.to_sym) ).to be_a( eval(attribute_name.to_s.camelize) )
     end    
   end
 end

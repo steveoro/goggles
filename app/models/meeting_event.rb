@@ -1,4 +1,5 @@
 class MeetingEvent < ActiveRecord::Base
+  include MeetingAccountable
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)

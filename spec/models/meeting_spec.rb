@@ -5,7 +5,7 @@ describe Meeting do
   shared_examples "shared_method_existance_examples"
   
   describe "not valid istance of meeting" do
-    it_should_behave_like( "(not a valid istance without required values)", [ 
+    it_behaves_like( "(not a valid istance without required values)", [ 
       :description,
       :code
     ])    
@@ -30,13 +30,13 @@ describe Meeting do
     end
     
     context "[meeting general methods]" do
-      it_should_behave_like( "(the existance of a method returning non-empty and non-? strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty and non-? strings)", [ 
         :get_short_name,
         :get_full_name,
         :get_verbose_name
       ])
       
-      it_should_behave_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_events,
         :get_complete_events
       ])

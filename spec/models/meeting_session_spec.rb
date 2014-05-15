@@ -4,9 +4,14 @@ require 'date'
 
 describe MeetingSession do
   shared_examples "shared_method_existance_examples"
+  shared_examples "shared_meeting_accountable_examples"
+
+# FIXME
+#  it_behaves_like "MeetingAccountable"
+
 
   describe "not valid istance of meeting session" do
-    it_should_behave_like( "(not a valid istance without required values)", [ 
+    it_behaves_like( "(not a valid istance without required values)", [ 
       :description,
       :session_order,
       :scheduled_date
@@ -33,7 +38,7 @@ describe MeetingSession do
     end
 
     context "[meeting session general methods]" do
-      it_should_behave_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,
         :get_verbose_name,
@@ -48,7 +53,7 @@ describe MeetingSession do
         :get_meeting_verbose_name
       ])
 
-      it_should_behave_like( "(the existance of a method returning numeric values)", [ 
+      it_behaves_like( "(the existance of a method returning numeric values)", [ 
         :get_pool_length_in_meters,
         :get_pool_lanes_number
       ])

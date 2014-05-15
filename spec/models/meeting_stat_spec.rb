@@ -40,7 +40,7 @@ describe MeetingStat do
   }
 
   describe "well formed meeting stats" do
-    it_should_behave_like( "(the existance of a method returning numeric values)", [ 
+    it_behaves_like( "(the existance of a method returning numeric values)", [ 
       # Fields
       :swimmer_male_count, 
       :result_male_count, 
@@ -55,13 +55,13 @@ describe MeetingStat do
       :disqualified_count
     ])
     
-    it_should_behave_like( "(existance of meeting stats relation of swimmers)", [ 
+    it_behaves_like( "(existance of meeting stats relation of swimmers)", [ 
       # Methods
       :oldest_male_swimmers, 
       :oldest_female_swimmers
    ])
     
-    it_should_behave_like( "(existance of meeting stats relation of meeting individual results)", [ 
+    it_behaves_like( "(existance of meeting stats relation of meeting individual results)", [ 
       # Methods
       :best_standard_male_scores, 
       :worst_standard_male_scores,

@@ -4,7 +4,7 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :federation_type do
-    sequence( :code )         { |n| "SF#{n}" }
+    sequence( :code )         { |n| n.to_s }
     description               { "#{ Faker::Lorem.word.camelcase } Swimming Federation" }
     short_name                "SFX"
   end

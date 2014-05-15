@@ -5,7 +5,7 @@ describe SwimmingPool do
   shared_examples "shared_method_existance_examples"
 
   describe "not valid istance of swimming pool" do
-    it_should_behave_like( "(not a valid istance without required values)", [ 
+    it_behaves_like( "(not a valid istance without required values)", [ 
       :name,
       :nick_name,
       :lanes_number
@@ -32,7 +32,7 @@ describe SwimmingPool do
     end
     
     context "[swimming pool general methods]" do
-      it_should_behave_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_full_name,
         :get_verbose_name,
         :get_full_address,
@@ -44,7 +44,7 @@ describe SwimmingPool do
         :get_hair_dryer_type
       ])
 
-      it_should_behave_like( "(the existance of a method returning numeric values)", [ 
+      it_behaves_like( "(the existance of a method returning numeric values)", [ 
         :get_pool_length_in_meters,
         :get_pool_lanes_number
       ])
