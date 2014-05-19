@@ -86,32 +86,31 @@ class MeetingSession < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Retrieves the Meeting session swimming pool length in meters, or 0 if any
-  # Eg 50
+  # E.g.: 50
   #
   def get_pool_length_in_meters
-    self.swimming_pool ? self.swimming_pool.get_pool_length_in_meters : 0
+    SwimmingPoolDecorator.decorate(swimming_pool).get_pool_length_in_meters
   end
 
   # Retrieves the Meeting session swimming pool lane number, or 0 if any
-  # Eg 8
+  # E.g.: 8
   #
   def get_pool_lanes_number
-    self.swimming_pool ? self.swimming_pool.get_pool_lanes_number : 0
+    SwimmingPoolDecorator.decorate(swimming_pool).get_pool_lanes_number
   end
 
-  # Compose the swimming pool attributes (lanes_numebr x length_in_meters)
-  # If not set returns (?)
-  # Eg (8x50)
+  # Compose the swimming pool attributes (lanes_number x length_in_meters)
+  # E.g.: "(8x50)"
   #
   def get_pool_attributes
-    self.swimming_pool ? self.swimming_pool.get_pool_attributes : '(?)'
+    SwimmingPoolDecorator.decorate(swimming_pool).get_pool_attributes
   end
 
   # Retrieves the Meeting session swimming pool full description
-  # Eg Comunale Reggio Emilia (8x50)
+  # E.g.: "Comunale Reggio Emilia (8x50)"
   #
   def get_pool_full_description
-    self.swimming_pool ? "#{self.swimming_pool.name} #{self.swimming_pool.city.name} #{self.get_pool_attributes}" : I18n.t( :to_be_defined )
+    SwimmingPoolDecorator.decorate(swimming_pool).get_full_address
   end
   # ----------------------------------------------------------------------------
 

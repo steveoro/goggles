@@ -130,7 +130,6 @@ describe MeetingStat do
         expect(item.is_disqualified).to be_false
       end      
     end
-    
     it "returns a list sorted by standard points descending" do
       current_item_score = subject.best_standard_male_scores.first.standard_points
       subject.best_standard_male_scores.each do |item|
@@ -146,7 +145,6 @@ describe MeetingStat do
         expect(item.is_disqualified).to be_false
       end      
     end
-    
     it "returns a list sorted by standard points descending" do
       current_item_score = subject.best_standard_female_scores.first.standard_points
       subject.best_standard_female_scores.each do |item|
@@ -162,7 +160,6 @@ describe MeetingStat do
         expect(item.is_disqualified).to be_false
       end      
     end
-    
     it "returns a list sorted by standard points" do
       current_item_score = subject.worst_standard_male_scores.first.standard_points
       subject.worst_standard_male_scores.each do |item|
@@ -178,7 +175,6 @@ describe MeetingStat do
         expect(item.is_disqualified).to be_false
       end      
     end
-    
     it "returns a list sorted by standard points" do
       current_item_score = subject.worst_standard_female_scores.first.standard_points
       subject.worst_standard_female_scores.each do |item|
