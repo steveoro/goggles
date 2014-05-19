@@ -39,4 +39,17 @@ FactoryGirl.define do
     gender_type_id            { ((rand * 100) % 2).to_i + 1} # ASSERT: at least 2 gender types
     user
   end
+
+  factory :meeting_individual_result do
+    meeting_program
+    rank                      { ((rand * 100) % 25).to_i + 1}
+    standard_points           { (rand * 1000).to_i}
+    meeting_points            { standard_points }
+    team_points               { ((rand * 10) % 10).to_i + 1}
+    google_cup_points         { (rand * 1000).to_i}
+    reaction_time             { rand } # FIXME set to 2 decimals
+    team
+    badge
+    user
+  end
 end
