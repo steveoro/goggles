@@ -20,8 +20,7 @@ module SwimmersHelper
       tooltip   = I18n.t('social.confirm_request_tooltip').gsub('{USER_NAME}', swimmer.associated_user.name).gsub('{SWIMMER_NAME}', swimmer.get_full_name)
       path      = social_association_confirm_path( id: swimmer.associated_user_id )
     end
-
-    build_link_result( "invite#{swimmer.id}", label_txt, "label", tooltip, path, :post )
+    build_link_result( "confirm#{swimmer.id}", label_txt, "label", tooltip, path, :post )
   end
 
 
@@ -35,12 +34,10 @@ module SwimmersHelper
 
     if existing_friendship && existing_friendship.pending? && (existing_friendship.friendable_id == current_user.id)
       content_tag( :span, I18n.t('social.pending_invite'), class:"label" )
-
     elsif existing_friendship.nil?
       label_txt = I18n.t('social.menu_social_invite')
       tooltip   = I18n.t('social.invite_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
       path      = social_invite_path( id: swimmer.associated_user_id )
-
       build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path )
     end
   end
@@ -59,8 +56,7 @@ module SwimmersHelper
       label_txt = I18n.t('social.menu_social_approve')
       tooltip   = I18n.t('social.approve_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
       path      = social_approve_path( id: swimmer.associated_user_id )
-
-      build_link_result( "invite#{swimmer.id}", label_txt, "label label-success", tooltip, path )
+      build_link_result( "approve#{swimmer.id}", label_txt, "label label-success", tooltip, path )
     end
   end
 
@@ -73,19 +69,17 @@ module SwimmersHelper
     return unless is_swimmer_associated_to_a_different_user?( swimmer )
     existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
 
-    if existing_friendship && existing_friendship.approved? && existing_friendship.blocked?
-      label_txt = I18n.t('social.menu_social_unblock')
-      tooltip   = I18n.t('social.unblock_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
-      path      = social_unblock_path( id: swimmer.associated_user_id )
-
-      build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path )
-
-    elsif existing_friendship && existing_friendship.approved?
-      label_txt = I18n.t('social.menu_social_block')
-      tooltip   = I18n.t('social.block_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
-      path      = social_block_path( id: swimmer.associated_user_id )
-
-      build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path )
+    if existing_friendship
+      if existing_friendship.approved? && existing_friendship.blocked?
+        label_txt = I18n.t('social.menu_social_unblock')
+        tooltip   = I18n.t('social.unblock_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
+        path      = social_unblock_path( id: swimmer.associated_user_id )
+      elsif existing_friendship.approved?
+        label_txt = I18n.t('social.menu_social_block')
+        tooltip   = I18n.t('social.block_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
+        path      = social_block_path( id: swimmer.associated_user_id )
+      end
+      build_link_result( "block#{swimmer.id}", label_txt, "label label-info", tooltip, path )
     end
   end
 
@@ -102,7 +96,6 @@ module SwimmersHelper
       label_txt = I18n.t('social.menu_social_remove')
       tooltip   = I18n.t('social.remove_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
       path      = social_remove_path( id: swimmer.associated_user_id )
-
       build_link_result( "invite#{swimmer.id}", label_txt, "label label-important", tooltip, path )
     end
   end
@@ -120,7 +113,6 @@ module SwimmersHelper
       label_txt = I18n.t('social.menu_social_edit')
       tooltip   = I18n.t('social.edit_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
       path      = social_edit_path( id: swimmer.associated_user_id )
-
       build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path )
     end
   end

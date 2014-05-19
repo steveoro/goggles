@@ -1,8 +1,19 @@
-class SwimmersDecorator < Draper::Decorator
-  delegate_all
-  
-  # TODO REFACTOR USING SwimmerUserStrategy.new( object ) for action enable !!
+#
+# == SwimmerUserStrategy
+#
+# Strategy Pattern implementation for Swimmer-User relations and action-enable
+# policy.
+#
+# @author   Steve A.
+# @version  4.00.285
+#
+class SwimmerUserStrategy
 
+  def intialize( swimmer )
+    @swimmer = swimmer
+  end
+  #-- --------------------------------------------------------------------------
+  #++
 
   # Returns true if this swimmer instance can support the "social/confirm"
   # action links or buttons. False otherwise.
@@ -10,7 +21,7 @@ class SwimmersDecorator < Draper::Decorator
   def is_confirmable_by( another_user )
     !!(
       is_associated_to_somebody_else_than( another_user ) &&
-      another_user.find_any_confirmation_given_to( object.associated_user ).nil?
+      another_user.find_any_confirmation_given_to( @swimmer.associated_user ).nil?
     )
   end
 
@@ -20,7 +31,7 @@ class SwimmersDecorator < Draper::Decorator
   def is_unconfirmable_by( another_user )
     !!(
       is_associated_to_somebody_else_than( another_user ) &&
-      !another_user.find_any_confirmation_given_to( object.associated_user ).nil?
+      !another_user.find_any_confirmation_given_to( @swimmer.associated_user ).nil?
     )
   end
   #-- --------------------------------------------------------------------------
@@ -33,7 +44,7 @@ class SwimmersDecorator < Draper::Decorator
   def is_invitable_by( another_user )
     !!(
       is_associated_to_somebody_else_than( another_user ) &&
-      object.associated_user.find_any_friendship_with( another_user ).nil?
+      @swimmer.associated_user.find_any_friendship_with( another_user ).nil?
     )
   end
 
@@ -46,11 +57,11 @@ class SwimmersDecorator < Draper::Decorator
   #
   def is_pending_by( another_user )
     return false unless is_associated_to_somebody_else_than( another_user )
-    existing_friendship = object.associated_user.find_any_friendship_with( another_user )
+    existing_friendship = @swimmer.associated_user.find_any_friendship_with( another_user )
     !!(
       existing_friendship &&
       existing_friendship.pending? &&
-      (existing_friendship.friendable_id == object.associated_user_id)
+      (existing_friendship.friendable_id == @swimmer.associated_user_id)
     )
   end
   #-- --------------------------------------------------------------------------
@@ -62,7 +73,7 @@ class SwimmersDecorator < Draper::Decorator
   #
   def is_blockable_by( another_user )
     return false unless is_associated_to_somebody_else_than( another_user )
-    existing_friendship = object.associated_user.find_any_friendship_with( another_user )
+    existing_friendship = @swimmer.associated_user.find_any_friendship_with( another_user )
     !!(
       existing_friendship &&
       existing_friendship.can_block?( another_user )
@@ -75,7 +86,7 @@ class SwimmersDecorator < Draper::Decorator
   #
   def is_unblockable_by( another_user )
     return false unless is_associated_to_somebody_else_than( another_user )
-    existing_friendship = object.associated_user.find_any_friendship_with( another_user )
+    existing_friendship = @swimmer.associated_user.find_any_friendship_with( another_user )
     !!(
       existing_friendship &&
       existing_friendship.can_unblock?( another_user )
@@ -89,7 +100,7 @@ class SwimmersDecorator < Draper::Decorator
   def is_editable_by( another_user )
     !!(
       is_associated_to_somebody_else_than( another_user ) &&
-      !object.associated_user.find_any_friendship_with( another_user ).nil?
+      !@swimmer.associated_user.find_any_friendship_with( another_user ).nil?
     )
   end
   #-- --------------------------------------------------------------------------
@@ -102,9 +113,9 @@ class SwimmersDecorator < Draper::Decorator
   def is_associated_to_somebody_else_than( another_user )
     !!(
       another_user &&
-      object &&
-      object.associated_user &&
-      ( object.associated_user_id != another_user.id )
+      @swimmer &&
+      @swimmer.associated_user &&
+      ( @swimmer.associated_user_id != another_user.id )
     )
   end
   #-- --------------------------------------------------------------------------

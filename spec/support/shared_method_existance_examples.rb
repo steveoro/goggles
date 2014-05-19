@@ -50,6 +50,21 @@ shared_examples_for "(the existance of a method returning non-empty and non-? st
 end
 # -----------------------------------------------------------------------------
 
+shared_examples_for "(the existance of a method returning boolean values)" do |method_name_array, parameter|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    it "##{method_name} returns a boolean value" do
+      result = subject.send(method_name.to_sym, parameter)
+      if result
+        expect( result == true ).to be_true
+      else
+        expect( result == false ).to be_true
+      end
+    end
+  end
+end
+# -----------------------------------------------------------------------------
+
 shared_examples_for "(the existance of a method returning numeric values)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
