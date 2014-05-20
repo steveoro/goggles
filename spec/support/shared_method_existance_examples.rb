@@ -11,6 +11,7 @@ shared_examples_for "(not a valid istance without required values)" do |attribut
 end
 # -----------------------------------------------------------------------------
 
+
 shared_examples_for "(valid istance if belongs to required classes)" do |attribute_name_array|
   attribute_name_array.each do |attribute_name|
     it "it belongs to ##{attribute_name}" do
@@ -20,6 +21,7 @@ shared_examples_for "(valid istance if belongs to required classes)" do |attribu
 end
 # -----------------------------------------------------------------------------
 
+
 shared_examples_for "(the existance of a method)" do |method_name_array|
   method_name_array.each do |method_name|
     it "responds to ##{method_name}" do
@@ -27,6 +29,7 @@ shared_examples_for "(the existance of a method)" do |method_name_array|
     end
   end
 end
+
 
 shared_examples_for "(the existance of a method returning non-empty strings)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array
@@ -38,6 +41,7 @@ shared_examples_for "(the existance of a method returning non-empty strings)" do
   end
 end
 
+
 shared_examples_for "(the existance of a method returning non-empty and non-? strings)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
@@ -48,7 +52,23 @@ shared_examples_for "(the existance of a method returning non-empty and non-? st
     end
   end
 end
+
+
+shared_examples_for "(the existance of a method returning either String or nil)" do |method_name_array, parameter|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    it "##{method_name} returns a boolean value" do
+      result = subject.send(method_name.to_sym, parameter)
+      if result
+        expect( result ).to be_an_instance_of( String )
+      else
+        expect( result ).to be_nil
+      end
+    end
+  end
+end
 # -----------------------------------------------------------------------------
+
 
 shared_examples_for "(the existance of a method returning boolean values)" do |method_name_array, parameter|
   it_behaves_like "(the existance of a method)", method_name_array
@@ -64,6 +84,7 @@ shared_examples_for "(the existance of a method returning boolean values)" do |m
   end
 end
 # -----------------------------------------------------------------------------
+
 
 shared_examples_for "(the existance of a method returning numeric values)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array

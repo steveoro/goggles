@@ -1,26 +1,20 @@
 module SwimmersHelper
 
-  # Creates a toggle link between confirm/unconfirm for valid swimmers.
+# TODO REFACTOR THIS USING SwimmerDecorator.decorate(swimmer)
+
+  # Creates a toggle link for #confirm/#unconfirm actions for valid swimmers.
   #
   # Renders the "ask association confirm/unconfirm link" for a swimmer
   # associated to a user but only if if also the current user can actually
   # click on it.
   # (Otherwise nothing is rendered)
   #
-  def ask_confirm_link( swimmer )
-    return unless is_swimmer_associated_to_a_different_user?( swimmer )
-    is_confirmed_by_curr_user = ! current_user.find_any_confirmation_given_to( swimmer.associated_user ).nil?
-                                                    # Can unconfirm this swimmer?
-    if is_confirmed_by_curr_user
-      label_txt = I18n.t('social.menu_social_unconfirm')
-      tooltip   = I18n.t('social.unconfirm_request_tooltip').gsub('{USER_NAME}', swimmer.associated_user.name).gsub('{SWIMMER_NAME}', swimmer.get_full_name)
-      path      = social_association_unconfirm_path( id: swimmer.associated_user_id )
-    else                                            # Can confirm this swimmer?
-      label_txt = I18n.t('social.menu_social_confirm')
-      tooltip   = I18n.t('social.confirm_request_tooltip').gsub('{USER_NAME}', swimmer.associated_user.name).gsub('{SWIMMER_NAME}', swimmer.get_full_name)
-      path      = social_association_confirm_path( id: swimmer.associated_user_id )
-    end
-    build_link_result( "confirm#{swimmer.id}", label_txt, "label", tooltip, path, :post )
+  def social_confirm_badge( swimmer )
+    decorated_swimmer = SwimmerDecorator.decorate(swimmer)
+    label_txt = decorated_swimmer.get_confirm_label_text_for( current_user )
+    tooltip   = decorated_swimmer.get_confirm_tooltip_text_for( current_user )
+    path      = decorated_swimmer.get_confirm_path_for( current_user )
+    build_link_result( "confirm#{swimmer.id}", label_txt, "label", tooltip, path, :post ) if path
   end
 
 
@@ -28,18 +22,24 @@ module SwimmersHelper
   # only if also the current user can actually click on it.
   # (Otherwise nothing is rendered)
   #
-  def ask_friendship_link( swimmer )
-    return unless is_swimmer_associated_to_a_different_user?( swimmer )
-    existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
+  def social_invite_badge( swimmer )
+    decorated_swimmer = SwimmerDecorator.decorate(swimmer)
+    label_txt = decorated_swimmer.get_invite_label_text_for( current_user )
+    tooltip   = decorated_swimmer.get_invite_tooltip_text_for( current_user )
+    path      = decorated_swimmer.get_invite_path_for( current_user )
+    build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path ) if path
 
-    if existing_friendship && existing_friendship.pending? && (existing_friendship.friendable_id == current_user.id)
-      content_tag( :span, I18n.t('social.pending_invite'), class:"label" )
-    elsif existing_friendship.nil?
-      label_txt = I18n.t('social.menu_social_invite')
-      tooltip   = I18n.t('social.invite_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
-      path      = social_invite_path( id: swimmer.associated_user_id )
-      build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path )
-    end
+    # return unless is_swimmer_associated_to_a_different_user?( swimmer )
+    # existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
+# 
+    # if existing_friendship && existing_friendship.pending? && (existing_friendship.friendable_id == current_user.id)
+      # content_tag( :span, I18n.t('social.pending_invite'), class:"label" )
+    # elsif existing_friendship.nil?
+      # label_txt = I18n.t('social.menu_social_invite')
+      # tooltip   = I18n.t('social.invite_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
+      # path      = social_invite_path( id: swimmer.associated_user_id )
+      # build_link_result( "invite#{swimmer.id}", label_txt, "label label-info", tooltip, path )
+    # end
   end
 
 
@@ -47,25 +47,25 @@ module SwimmersHelper
   # only if also the current user can actually click on it.
   # (Otherwise nothing is rendered)
   #
-  def approve_friendship_link( swimmer )
-    return unless is_swimmer_associated_to_a_different_user?( swimmer )
-    existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
-
-    # Show the approve tag only if the current_user was invited (an not the friendable who sent the invite):
-    if existing_friendship && existing_friendship.pending? && (existing_friendship.friend_id == current_user.id)  
-      label_txt = I18n.t('social.menu_social_approve')
-      tooltip   = I18n.t('social.approve_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
-      path      = social_approve_path( id: swimmer.associated_user_id )
-      build_link_result( "approve#{swimmer.id}", label_txt, "label label-success", tooltip, path )
-    end
-  end
+  # def approve_friendship_link( swimmer )
+    # return unless is_swimmer_associated_to_a_different_user?( swimmer )
+    # existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
+# 
+    # # Show the approve tag only if the current_user was invited (an not the friendable who sent the invite):
+    # if existing_friendship && existing_friendship.pending? && (existing_friendship.friend_id == current_user.id)  
+      # label_txt = I18n.t('social.menu_social_approve')
+      # tooltip   = I18n.t('social.approve_request_tooltip').gsub('{SWIMMER_NAME}', swimmer.get_full_name)
+      # path      = social_approve_path( id: swimmer.associated_user_id )
+      # build_link_result( "approve#{swimmer.id}", label_txt, "label label-success", tooltip, path )
+    # end
+  # end
 
 
   # Renders the "block/unblock friendship link" for a swimmer associated to a user but
   # only if also the current user can actually click on it.
   # (Otherwise nothing is rendered)
   #
-  def block_friendship_link( swimmer )
+  def social_block_badge( swimmer )
     return unless is_swimmer_associated_to_a_different_user?( swimmer )
     existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
 
@@ -88,7 +88,7 @@ module SwimmersHelper
   # only if also the current user can actually click on it.
   # (Otherwise nothing is rendered)
   #
-  def remove_friendship_link( swimmer )
+  def social_remove_badge( swimmer )
     return unless is_swimmer_associated_to_a_different_user?( swimmer )
     existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
 
@@ -105,7 +105,7 @@ module SwimmersHelper
   # only if also the current user can actually click on it.
   # (Otherwise nothing is rendered)
   #
-  def edit_friendship_link( swimmer )
+  def social_edit_badge( swimmer )
     return unless is_swimmer_associated_to_a_different_user?( swimmer )
     existing_friendship = swimmer.associated_user.find_any_friendship_with( current_user )
 

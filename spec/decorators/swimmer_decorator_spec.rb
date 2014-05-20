@@ -1,232 +1,298 @@
 require 'spec_helper'
 
-describe SwimmersDecorator do
+
+describe SwimmerDecorator do
   before :each do
     @user = create( :user )
     @user2 = create( :user )
+    @user_not_associated = create( :user )
     @swimmer = create( :swimmer )
     @user.set_associated_swimmer( @swimmer )
     @swimmer2 = create( :swimmer )
     @user2.set_associated_swimmer( @swimmer2 )
-    @decorated_swimmer = SwimmersDecorator.decorate( @swimmer )
+    @decorated_swimmer = SwimmerDecorator.decorate( @swimmer )
   end
 
   subject { @decorated_swimmer }
 
   context "[implemented methods]" do
-    it_behaves_like "(the existance of a method returning boolean values)", [
-      :is_associated_to_somebody_else_than, 
-      :is_confirmable_by,
-      :is_unconfirmable_by,
-      :is_invitable_by,
-      :is_pending_by,
-      :is_blockable_by,
-      :is_unblockable_by,
-      :is_editable_by
+    it_behaves_like "(the existance of a method returning either String or nil)", [
+      :get_confirm_label_text_for, 
+      :get_confirm_tooltip_text_for,
+      :get_confirm_path_for,
+      :get_invite_label_text_for, 
+      :get_invite_tooltip_text_for,
+      :get_invite_path_for,
+      :get_block_label_text_for, 
+      :get_block_tooltip_text_for,
+      :get_block_path_for,
+      :get_remove_label_text_for, 
+      :get_remove_tooltip_text_for,
+      :get_remove_path_for,
+      :get_edit_label_text_for, 
+      :get_edit_tooltip_text_for,
+      :get_edit_path_for
     ],
-    @user
+    @user2
   end
+  # ---------------------------------------------------------------------------
 
 
-  describe "#is_associated_to_somebody_else_than" do
-    context "(for a different user)," do
-      it "returns true" do
-        expect( subject.is_associated_to_somebody_else_than(@user2) ).to be_true
+  shared_examples_for "(an action allowed only to associated and different users, that always returns nil)" do |method_name_array|
+    method_name_array.each do |method_name|
+      context "(the same current user)," do
+        it "returns nil for a confirmable swimmer" do
+          expect( subject.send(method_name.to_sym, @user) ).to be_nil
+        end
+        it "returns a nil for an unconfirmable swimmer" do
+          UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, @user2 )
+          expect( subject.send(method_name.to_sym, @user) ).to be_nil
+        end
       end
-    end
-    context "(for the same user)," do
-      it "returns false" do
-        expect( subject.is_associated_to_somebody_else_than(@user) ).to be_false
+  
+      context "(an unassociated user)," do
+        it "returns nil for a confirmable swimmer" do
+          expect( subject.send(method_name.to_sym, @user_not_associated) ).to be_nil
+        end
+        it "returns a nil for an unconfirmable swimmer" do
+          @user_not_associated.set_associated_swimmer( create(:swimmer) )
+          UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, @user_not_associated )
+          # If the User-not-associated becomes unassociated again,
+          # then he should not be able to de-confirm an already confirmed swimmer:
+          @user_not_associated.set_associated_swimmer(nil)
+          expect( subject.send(method_name.to_sym, @user_not_associated) ).to be_nil
+        end
       end
     end
   end
   # ---------------------------------------------------------------------------
 
 
-  describe "#is_confirmable_by" do
-    context "as a different user," do
-      it "returns true for an unconfirmed swimmer" do
-        expect( subject.is_confirmable_by(@user2) ).to be_true
+  describe "#get_confirm_label_text_for" do
+    context "(a different user)," do
+      it "returns a String for a confirmable swimmer" do
+        expect( subject.get_confirm_label_text_for(@user2) ).to be_an_instance_of(String)
       end
-      it "returns false for an already confirmed swimmer" do
+      it "returns a String for an unconfirmable swimmer" do
         UserSwimmerConfirmation.confirm_for( @user, @swimmer, @user2 )
-        expect( subject.is_confirmable_by(@user2) ).to be_false
+        expect( subject.get_confirm_label_text_for(@user2) ).to be_an_instance_of(String)
       end
     end
-    context "as the same current user," do
-      it "returns false for an unconfirmed swimmer" do
-        expect( subject.is_confirmable_by(@user) ).to be_false
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_confirm_label_text_for]
+    )
+  end
+
+
+  describe "#get_confirm_tooltip_text_for" do
+    context "(a different user)," do
+      it "returns a String for a confirmable swimmer" do
+        expect( subject.get_confirm_tooltip_text_for(@user2) ).to be_an_instance_of(String)
       end
-      it "returns false for an already confirmed swimmer" do
+      it "returns a String for an unconfirmable swimmer" do
         UserSwimmerConfirmation.confirm_for( @user, @swimmer, @user2 )
-        expect( subject.is_confirmable_by(@user) ).to be_false
+        expect( subject.get_confirm_tooltip_text_for(@user2) ).to be_an_instance_of(String)
       end
     end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_confirm_tooltip_text_for]
+    )
+  end
+
+
+  describe "#get_confirm_path_for" do
+    context "(a different user)," do
+      it "returns a String for a confirmable swimmer" do
+        expect( subject.get_confirm_path_for(@user2) ).to be_an_instance_of(String)
+      end
+      it "returns a String for an unconfirmable swimmer" do
+        UserSwimmerConfirmation.confirm_for( @user, @swimmer, @user2 )
+        expect( subject.get_confirm_path_for(@user2) ).to be_an_instance_of(String)
+      end
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_confirm_path_for]
+    )
   end
   # ---------------------------------------------------------------------------
 
 
-  describe "#is_unconfirmable_by" do
-    context "as a different user," do
-      it "returns false for an unconfirmed swimmer" do
-        expect( subject.is_unconfirmable_by(@user2) ).to be_false
+  describe "#get_invite_label_text_for" do
+    context "(a different user)," do
+      it "returns a String for a new friendable swimmer" do
+        expect( subject.get_invite_label_text_for(@user2) ).to be_an_instance_of(String)
       end
-      it "returns true for an already confirmed swimmer" do
-        UserSwimmerConfirmation.confirm_for( @user, @swimmer, @user2 )
-        expect( subject.is_unconfirmable_by(@user2) ).to be_true
-      end
-    end
-    context "as the same current user," do
-      it "returns false for an unconfirmed swimmer" do
-        expect( subject.is_unconfirmable_by(@user) ).to be_false
-      end
-      it "returns false for an already confirmed swimmer" do
-        UserSwimmerConfirmation.confirm_for( @user, @swimmer, @user2 )
-        expect( subject.is_unconfirmable_by(@user) ).to be_false
-      end
-    end
-  end
-  # ---------------------------------------------------------------------------
-
-
-  describe "#is_invitable_by" do
-    context "as a different user," do
-      it "returns true for a new friendable swimmer" do
-        expect( subject.is_invitable_by(@user2) ).to be_true
-      end
-      it "returns false for a pending invited swimmer" do
+      it "returns a String for a pending invited swimmer" do
         @user2.invite( @user )
-        expect( subject.is_invitable_by(@user2) ).to be_false
+        expect( subject.get_invite_label_text_for(@user2) ).to be_an_instance_of(String)
       end
-      it "returns false for an approved friend swimmer" do
-        @user2.invite( @user )
-        @user.approve( @user2 )
-        expect( subject.is_invitable_by(@user2) ).to be_false
-      end
-    end
-    context "as the same current user," do
-      it "returns false for the same associated swimmer" do
-        expect( subject.is_invitable_by(@user) ).to be_false
-      end
-    end
-  end
-  # ---------------------------------------------------------------------------
-
-
-  describe "#is_pending_by" do
-    context "as a different user," do
-      it "returns false for a new friendable swimmer" do
-        expect( subject.is_pending_by(@user2) ).to be_false
-      end
-      it "returns true for a pending invited swimmer" do
+      it "returns a String for an approvable friendship" do
         @user.invite( @user2 )
-        expect( subject.is_pending_by(@user2) ).to be_true
+        expect( subject.get_invite_label_text_for(@user2) ).to be_an_instance_of(String)
       end
-      it "returns false for a received pending invite from another user" do
-        @user2.invite( @user )
-        expect( subject.is_pending_by(@user2) ).to be_false
-      end
-      it "returns false for an approved friend swimmer" do
-        @user2.invite( @user )
-        @user.approve( @user2 )
-        expect( subject.is_pending_by(@user2) ).to be_false
-      end
-    end
-    context "as the same current user," do
-      it "returns false for the same associated swimmer" do
-        expect( subject.is_pending_by(@user) ).to be_false
-      end
-    end
-  end
-  # ---------------------------------------------------------------------------
-
-
-  describe "#is_blockable_by" do
-    context "as a different user," do
-      it "returns false for a un-associated swimmer (non-valid goggler)" do
-        expect( subject.is_blockable_by(create(:user)) ).to be_false
-      end
-      it "returns false for a valid goggler who's not a friend yet" do
-        expect( subject.is_blockable_by(@user2) ).to be_false
-      end
-      it "returns true for a swimmer with a pending friendship" do
+      it "returns nil for an approved friend swimmer" do
         @user.invite( @user2 )
-        expect( subject.is_blockable_by(@user2) ).to be_true
-      end
-      it "returns true for an approved friendship with a valid goggler" do
-        @user2.invite( @user )
-        @user.approve( @user2 )
-        expect( subject.is_blockable_by(@user2) ).to be_true
+        @user2.approve( @user )
+        expect( subject.get_invite_label_text_for(@user2) ).to be_nil
       end
     end
-    context "as the same current user," do
-      it "returns false for the same associated swimmer" do
-        expect( subject.is_blockable_by(@user) ).to be_false
-      end
-    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_invite_label_text_for]
+    )
   end
-  # ---------------------------------------------------------------------------
 
 
-  describe "#is_unblockable_by" do
-    context "as a different user," do
-      it "returns false for a un-associated swimmer (non-valid goggler)" do
-        expect( subject.is_unblockable_by(create(:user)) ).to be_false
+  shared_examples_for "(inviting a valid swimmer)" do |method_name_array|
+    method_name_array.each do |method_name|
+      it "returns a String for a new friendable swimmer (non-existing friendship)" do
+        expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
       end
-      it "returns false for a valid goggler who's not a friend yet" do
-        expect( subject.is_unblockable_by(@user2) ).to be_false
+      it "returns nil for a pending invited swimmer (friendship invite sent)" do
+        @user2.invite( @user )
+        expect( subject.send(method_name.to_sym, @user2) ).to be_nil
       end
-      it "returns false for a swimmer with a pending friendship" do
+      it "returns a String for an approvable friendship (friendship invite received)" do
         @user.invite( @user2 )
-        expect( subject.is_unblockable_by(@user2) ).to be_false
+        expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
       end
-      it "returns false for an approved friendship with a valid goggler" do
-        @user2.invite( @user )
-        @user.approve( @user2 )
-        expect( subject.is_unblockable_by(@user2) ).to be_false
-      end
-      it "returns true for the blocker of blocked friendship (with a valid goggler)" do
-        @user2.invite( @user )
-        @user.approve( @user2 ) # user approves
-        @user2.block( @user )   # the other user changes idea
-        expect( subject.is_unblockable_by(@user2) ).to be_true
-      end
-      it "returns false for the blocked friend of blocked friendship" do
-        @user2.invite( @user )
-        @user.approve( @user2 ) # user approves
-        @user2.block( @user )   # the other user changes idea
-        expect( subject.is_unblockable_by(@user) ).to be_false
+      it "returns nil for an approved friend swimmer" do
+        @user.invite( @user2 )
+        @user2.approve( @user )
+        expect( subject.send(method_name.to_sym, @user2) ).to be_nil
       end
     end
-    context "as the same current user," do
-      it "returns false for the same associated swimmer" do
-        expect( subject.is_unblockable_by(@user) ).to be_false
-      end
+  end
+
+  describe "#get_invite_tooltip_text_for" do
+    context "(a different user)," do
+      it_behaves_like "(inviting a valid swimmer)", [:get_invite_tooltip_text_for]
     end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_invite_tooltip_text_for]
+    )
+  end
+
+  describe "#get_invite_path_for" do
+    context "(a different user)," do
+      it_behaves_like "(inviting a valid swimmer)", [:get_invite_path_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_invite_path_for]
+    )
   end
   # ---------------------------------------------------------------------------
 
 
-  describe "#is_editable_by" do
-    context "as a different user," do
-      it "returns false for a non-existing frienship" do
-        expect( subject.is_editable_by(@user2) ).to be_false
+  shared_examples_for "(blocking a valid swimmer)" do |method_name_array|
+    method_name_array.each do |method_name|
+      it "returns nil for a new friendable swimmer (non-existing friendship)" do
+        expect( subject.send(method_name.to_sym, @user2) ).to be_nil
       end
-      it "returns true for a pending friendship request" do
+      it "returns nil for a pending invited swimmer (friendship invite sent)" do
         @user2.invite( @user )
-        expect( subject.is_editable_by(@user2) ).to be_true
+        expect( subject.send(method_name.to_sym, @user2) ).to be_nil
       end
-      it "returns true for an approved friendship" do
-        @user2.invite( @user )
-        @user.approve( @user2 )
-        expect( subject.is_editable_by(@user2) ).to be_true
+      it "returns a String for an approvable friendship (friendship invite received)" do
+        @user.invite( @user2 )
+        expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
+      end
+      it "returns a String for an approved (blockable) friend swimmer" do
+        @user.invite( @user2 )
+        @user2.approve( @user )
+        expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
       end
     end
-    context "as the same current user," do
-      it "returns false for the same associated swimmer" do
-        expect( subject.is_editable_by(@user) ).to be_false
+  end
+
+  describe "#get_block_label_text_for" do
+    context "(a different user)," do
+      it_behaves_like "(blocking a valid swimmer)", [:get_block_label_text_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_block_label_text_for]
+    )
+  end
+
+  describe "#get_block_tooltip_text_for" do
+    context "(a different user)," do
+      it_behaves_like "(blocking a valid swimmer)", [:get_block_tooltip_text_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_block_tooltip_text_for]
+    )
+  end
+
+  describe "#get_block_path_for" do
+    context "(a different user)," do
+      it_behaves_like "(blocking a valid swimmer)", [:get_block_path_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_block_path_for]
+    )
+  end
+  # ---------------------------------------------------------------------------
+
+
+  shared_examples_for "(editing a valid friend)" do |method_name_array|
+    method_name_array.each do |method_name|
+      describe "##{method_name}" do
+        it "returns nil for a new friendable swimmer (non-existing friendship)" do
+          expect( subject.send(method_name.to_sym, @user2) ).to be_nil
+        end
+        it "returns a String for a pending invited swimmer (friendship invite sent)" do
+          @user2.invite( @user )
+          expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
+        end
+        it "returns a String for an approvable friendship (friendship invite received)" do
+          @user.invite( @user2 )
+          expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
+        end
+        it "returns a String for an approved (blockable) friend swimmer" do
+          @user.invite( @user2 )
+          @user2.approve( @user )
+          expect( subject.send(method_name.to_sym, @user2) ).to be_an_instance_of(String)
+        end
       end
     end
+  end
+
+  describe "[Friendship editing]" do
+    context "(a different user)," do
+      it_behaves_like "(editing a valid friend)", [:get_remove_label_text_for, :get_edit_label_text_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_remove_label_text_for, :get_edit_label_text_for]
+    )
+  end
+
+  describe "#get_remove_tooltip_text_for" do
+    context "(a different user)," do
+      it_behaves_like "(editing a valid friend)", [:get_remove_tooltip_text_for, :get_edit_tooltip_text_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_remove_tooltip_text_for, :get_edit_tooltip_text_for]
+    )
+  end
+
+  describe "#get_remove_path_for" do
+    context "(a different user)," do
+      it_behaves_like "(editing a valid friend)", [:get_remove_path_for, :get_edit_path_for]
+    end
+    it_behaves_like(
+      "(an action allowed only to associated and different users, that always returns nil)",
+      [:get_remove_path_for, :get_edit_path_for]
+    )
   end
   # ---------------------------------------------------------------------------
 end

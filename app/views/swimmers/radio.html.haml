@@ -27,12 +27,11 @@
       .row-fluid
         .span3
         .span6
-          = ask_confirm_link( @swimmer )
-          = ask_friendship_link( @swimmer )
-          = approve_friendship_link( @swimmer )
-          = block_friendship_link( @swimmer )
-          = remove_friendship_link( @swimmer )
-          = edit_friendship_link( @swimmer )
+          = social_confirm_badge( @swimmer )
+          = social_invite_badge( @swimmer )
+          = social_block_badge( @swimmer )
+          = social_remove_badge( @swimmer )
+          = social_edit_badge( @swimmer )
       .row-fluid
         .span3
           = I18n.t('swimmers.affiliated_in_teams') +':'
