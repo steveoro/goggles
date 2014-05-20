@@ -21,4 +21,20 @@ class FederationType < ActiveRecord::Base
     :short_name
   end
   # ----------------------------------------------------------------------------
+  
+  # ----------------------------------------------------------------------------
+  # Base methods:
+  # ----------------------------------------------------------------------------
+  #++
+
+  # Computes the shortest possible description for the name associated with this data
+  def get_short_name
+    self.short_name
+  end
+  
+  # Computes the shortest possible description for the name associated with this data
+  def get_full_name
+    self.description
+  end
+  # ----------------------------------------------------------------------------
 end

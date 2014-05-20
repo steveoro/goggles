@@ -33,7 +33,7 @@ describe MeetingProgram do
       ])    
     end
 
-    context "[meeting session general methods]" do
+    context "[meeting program general methods]" do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,

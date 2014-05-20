@@ -23,4 +23,15 @@ FactoryGirl.define do
     header_year               { end_date.year }
     season_type
   end
+
+  factory :category_type do
+    age_begin                 { ((((rand * 100) % 15).to_i * 5) + 25) }
+    age_end                   { age_begin ? age_begin + 5 : 99 }
+    code                      { "M#{age_begin ? age_begin : 25}" }
+    description               { "MASTER #{age_begin ? age_begin : 25}" }
+    short_name                { code }
+    #group_name
+    federation_code           { (rand * 100).to_i.to_s }
+    season
+  end
 end

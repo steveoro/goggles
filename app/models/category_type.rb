@@ -21,6 +21,7 @@ class CategoryType < ActiveRecord::Base
   validates_associated  :season                     # (foreign key integrity)
 
   has_one :season_type, :through => :season
+  has_one :federation_type, :through => :season_type
 
   scope :only_relays,     -> { where(:is_a_relay => true) }
   scope :are_not_relays,  -> { where(:is_a_relay => false) }
@@ -37,7 +38,35 @@ class CategoryType < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # ----------------------------------------------------------------------------
+  # Base methods:
+  # ----------------------------------------------------------------------------
+  #++
 
+  # Computes the shortest possible description for the name associated with this data
+  def get_short_name
+    self.short_name
+  end
+  
+  # Computes the shortest possible description for the name associated with this data
+  def get_full_name
+    self.description
+  end
+  
+  # Computes the shortest possible description for the name associated with this data
+  def get_verbose_name
+    "#{self.federation_type.get_short_name} #{self.description} (#{self.age_begin}-#{self.age_end})"
+  end
+  # ----------------------------------------------------------------------------
+  
+  # Check if a given age is in the category range
+  # True if the age is >= age_begin and <= age_end 
+  #
+  def is_age_in_category( age_to_check )
+    (age_to_check >= self.age_begin and age_to_check <= self.age_end) 
+  end  
+  # ----------------------------------------------------------------------------
+  
   # Returns the corresponding id given season type id, year of birth and
   # chosen year for the result; 0 on error/not found.
   #
