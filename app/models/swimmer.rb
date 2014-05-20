@@ -181,6 +181,14 @@ class Swimmer < ActiveRecord::Base
     curr_csi_category = last_csi_season ? CategoryType.get_category_from( last_csi_season.id, self.year_of_birth ) : nil
     [ curr_fin_category, curr_csi_category ].compact.collect{ |category| category.code }.uniq
   end
+
+  # Get the category type id
+  # computed from the two most common season types (MASFIN & MASCSI).
+  # Returns an array with the unique category type codes found.
+  #
+  def get_category_type_for_season( season_id )
+    season_id ? CategoryType.get_category_from( season_id, self.year_of_birth ) : nil
+  end
   # ----------------------------------------------------------------------------
 
   # Returns the total meters swam by this swimmer

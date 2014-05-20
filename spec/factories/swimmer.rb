@@ -32,6 +32,18 @@ FactoryGirl.define do
     number                    { "#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}" }
     team
     swimmer
+    season_id                 { team_affiliation.season_id }
+    team_affiliation
+    entry_time_type_id        { ((rand * 10) % 5).to_i + 1} # ASSERT: at least 5 entry time types
+    category_type_id          { swimmer.get_category_type_for_season( season_id ).id }
+    user
+  end
+
+  factory :team_affiliation do
+    name                      { team.name }
+    number                    { "#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}#{((rand * 10).to_i)}" }
+    team
+    season_id                 132  # FIXME Randomize season
     user
   end
 
