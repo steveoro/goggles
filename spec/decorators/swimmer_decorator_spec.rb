@@ -38,7 +38,7 @@ describe SwimmerDecorator do
   # ---------------------------------------------------------------------------
 
 
-  shared_examples_for "(an action allowed only to associated and different users, that always returns nil)" do |method_name_array|
+  shared_examples_for "(an action not-allowed for unassociated or same-users, that always returns nil)" do |method_name_array|
     method_name_array.each do |method_name|
       context "(the same current user)," do
         it "returns nil for a confirmable swimmer" do
@@ -54,7 +54,7 @@ describe SwimmerDecorator do
         it "returns nil for a confirmable swimmer" do
           expect( subject.send(method_name.to_sym, @user_not_associated) ).to be_nil
         end
-        it "returns a nil for an unconfirmable swimmer" do
+        it "returns nil for an unconfirmable swimmer" do
           @user_not_associated.set_associated_swimmer( create(:swimmer) )
           UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, @user_not_associated )
           # If the User-not-associated becomes unassociated again,
@@ -79,7 +79,7 @@ describe SwimmerDecorator do
       end
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_confirm_label_text_for]
     )
   end
@@ -96,7 +96,7 @@ describe SwimmerDecorator do
       end
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_confirm_tooltip_text_for]
     )
   end
@@ -113,7 +113,7 @@ describe SwimmerDecorator do
       end
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_confirm_path_for]
     )
   end
@@ -140,7 +140,7 @@ describe SwimmerDecorator do
       end
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_invite_label_text_for]
     )
   end
@@ -172,7 +172,7 @@ describe SwimmerDecorator do
       it_behaves_like "(inviting a valid swimmer)", [:get_invite_tooltip_text_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_invite_tooltip_text_for]
     )
   end
@@ -182,7 +182,7 @@ describe SwimmerDecorator do
       it_behaves_like "(inviting a valid swimmer)", [:get_invite_path_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_invite_path_for]
     )
   end
@@ -215,7 +215,7 @@ describe SwimmerDecorator do
       it_behaves_like "(blocking a valid swimmer)", [:get_block_label_text_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_block_label_text_for]
     )
   end
@@ -225,7 +225,7 @@ describe SwimmerDecorator do
       it_behaves_like "(blocking a valid swimmer)", [:get_block_tooltip_text_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_block_tooltip_text_for]
     )
   end
@@ -235,7 +235,7 @@ describe SwimmerDecorator do
       it_behaves_like "(blocking a valid swimmer)", [:get_block_path_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_block_path_for]
     )
   end
@@ -265,12 +265,12 @@ describe SwimmerDecorator do
     end
   end
 
-  describe "[Friendship editing]" do
+  describe "[Friendship removing/editing]" do
     context "(a different user)," do
       it_behaves_like "(editing a valid friend)", [:get_remove_label_text_for, :get_edit_label_text_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_remove_label_text_for, :get_edit_label_text_for]
     )
   end
@@ -280,7 +280,7 @@ describe SwimmerDecorator do
       it_behaves_like "(editing a valid friend)", [:get_remove_tooltip_text_for, :get_edit_tooltip_text_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_remove_tooltip_text_for, :get_edit_tooltip_text_for]
     )
   end
@@ -290,7 +290,7 @@ describe SwimmerDecorator do
       it_behaves_like "(editing a valid friend)", [:get_remove_path_for, :get_edit_path_for]
     end
     it_behaves_like(
-      "(an action allowed only to associated and different users, that always returns nil)",
+      "(an action not-allowed for unassociated or same-users, that always returns nil)",
       [:get_remove_path_for, :get_edit_path_for]
     )
   end
