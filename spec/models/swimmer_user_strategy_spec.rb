@@ -28,18 +28,20 @@ describe SwimmerUserStrategy do
   subject { @swimmer_user_strategy }
 
   context "[implemented methods]" do
-    it_behaves_like "(the existance of a method returning boolean values)", [
-      :is_associated_to_somebody_else_than, 
-      :is_confirmable_by,
-      :is_unconfirmable_by,
-      :is_invitable_by,
-      :is_pending_for,
-      :is_approvable_by,
-      :is_blockable_by,
-      :is_unblockable_by,
-      :is_editable_by
-    ],
-    @user
+    it_behaves_like( "(the existance of a method returning boolean values)",
+      [
+        :is_associated_to_somebody_else_than, 
+        :is_confirmable_by,
+        :is_unconfirmable_by,
+        :is_invitable_by,
+        :is_pending_for,
+        :is_approvable_by,
+        :is_blockable_by,
+        :is_unblockable_by,
+        :is_editable_by
+      ],
+      @user
+    )
   end
 
 

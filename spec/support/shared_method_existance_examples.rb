@@ -71,7 +71,7 @@ end
 
 
 shared_examples_for "(the existance of a method returning boolean values)" do |method_name_array, parameter|
-  it_behaves_like "(the existance of a method)", method_name_array
+  it_behaves_like( "(the existance of a method)", method_name_array )
   method_name_array.each do |method_name|
     it "##{method_name} returns a boolean value" do
       result = subject.send(method_name.to_sym, parameter)

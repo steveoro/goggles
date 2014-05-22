@@ -11,16 +11,51 @@ class SocialsController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
-  # Show all friendships action.
-  def show_all
-    @title = I18n.t('social.invite_title')
-    @friends = current_user.friends
-    @pending_invited = current_user.pending_invited
-    @pending_invited_by = current_user.pending_invited_by
-    @invited = current_user.invited
-    @blocked_friendships = current_user.blocked_friendships
+  # Associate action for a logged-in user. Handles both GET + POST
+  # === Params:
+  # :id || :swimmer[:swimmer_id] => both are interpreted as the swimmer id for the association
+  def associate
+    if request.post?                                # === POST: ===
+      if params[:id] || params[:swimmer][:swimmer_id] # Save the association both ways:
+        swimmer_id = ( params[:id] || params[:swimmer][:swimmer_id] ).to_i
+        if current_user.set_associated_swimmer( Swimmer.find_by_id(swimmer_id) )
+          flash[:info] = I18n.t('user_association.association_successful')
+        else
+          flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
+        end
+      end
+      redirect_to( root_path() ) and return
+                                                    # === GET: ===
+    else                                            # Scompose the description in tokens:
+      first_name, last_name = current_user.get_first_and_last_name()
+      first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name.upcase}%"] )
+      second_list = Swimmer.where( ["complete_name LIKE ?", "%#{last_name.upcase}%"] )
+      if current_user.year_of_birth
+        first_list.where( :year_of_birth => current_user.year_of_birth )
+        second_list.where( :year_of_birth => current_user.year_of_birth )
+      end
+                                                    # Choose only the list with less results:
+      @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
+      @possible_swimmers.delete_if { |swimmer_row|  # Filter out the worst results:
+        (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
+        (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?
+      }
+    end
   end
-  # ---------------------------------------------------------------------------
+
+
+  # POST-only action that removes an association to a swimmer for the current user.
+  def dissociate
+    if request.post?                                # === POST: ===
+      if current_user.set_associated_swimmer()
+        flash[:info] = I18n.t('user_association.dissociation_successful')
+      else
+        flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
+      end
+    end
+    redirect_to( root_path() ) and return
+  end
+  # ----------------------------------------------------------------------------
 
 
   # Endorse/confirm user association with a goggler (POST only).
@@ -39,6 +74,18 @@ class SocialsController < ApplicationController
   def association_unconfirm
     toggle_confirmation( false )
     redirect_to( socials_show_all_path() ) and return
+  end
+  # ---------------------------------------------------------------------------
+
+
+  # Show all friendships action.
+  def show_all
+    @title = I18n.t('social.invite_title')
+    @friends = current_user.friends
+    @pending_invited = current_user.pending_invited
+    @pending_invited_by = current_user.pending_invited_by
+    @invited = current_user.invited
+    @blocked_friendships = current_user.blocked_friendships
   end
   # ---------------------------------------------------------------------------
 
@@ -68,7 +115,7 @@ class SocialsController < ApplicationController
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
-      if current_user.invite_with_notify( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+      if UserSocializer.new(current_user).invite_with_notify( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
         flash[:info] = I18n.t('social.invite_successful')
       else
         flash[:error] = I18n.t('social.invite_error')
@@ -76,10 +123,10 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      @submit_title = I18n.t('social.send')         # Check that the friendship is a new one:
-      if ( current_user.find_any_friendship_with(@swimming_buddy).nil? )
-        # friendship must not exist for a new invite to be spawn:
-        @friendship   = Amistad.friendship_class.new( friendable_id: current_user.id, friend_id: @swimming_buddy.id )
+      if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_invitable_by( current_user )
+        @submit_title = I18n.t('social.send')
+        # Let's create an empty instance that will store the form fields before POST:
+        @friendship = Amistad.friendship_class.new( friendable_id: current_user.id, friend_id: @swimming_buddy.id )
       else
         # If friendship exists:
         flash[:warning] = I18n.t( 'social.warning_friendship_invite_already_sent_edit_options' )
@@ -119,7 +166,7 @@ class SocialsController < ApplicationController
       shares_passages  = (params[:shares_passages].to_i > 0)
       shares_trainings = (params[:shares_trainings].to_i > 0)
       shares_calendars = (params[:shares_calendars].to_i > 0)
-      if current_user.approve_with_notify( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
+      if UserSocializer.new(current_user).approve_with_notify( @swimming_buddy, shares_passages, shares_trainings, shares_calendars )
         flash[:info] = I18n.t('social.approve_successful')
       else
         flash[:error] = I18n.t('social.approve_error')
@@ -127,11 +174,10 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      @submit_title = I18n.t('social.approve')
-      @friendship = current_user.find_any_friendship_with(@swimming_buddy)
-                                                    # Check that the friendship is a valid one:
-      unless @friendship && @friendship.pending? &&
-             @swimming_buddy.invited?(current_user)
+      if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_approvable_by( current_user )
+        @submit_title = I18n.t('social.approve')
+        @friendship = current_user.find_any_friendship_with(@swimming_buddy)
+      else 
         flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( socials_show_all_path() ) and return
@@ -164,11 +210,11 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      @submit_title = I18n.t('social.block_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-      @friendship = current_user.find_any_friendship_with(@swimming_buddy)
-      @destination_path = social_block_path( id: @swimming_buddy.id )
-                                                    # Check that the friendship is a valid one:
-      unless @friendship && @friendship.approved?
+      if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_blockable_by( current_user )
+        @submit_title = I18n.t('social.block_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+        @friendship = current_user.find_any_friendship_with(@swimming_buddy)
+        @destination_path = social_block_path( id: @swimming_buddy.id )
+      else 
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( socials_show_all_path() ) and return
@@ -202,11 +248,11 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      @submit_title = I18n.t('social.unblock_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-      @friendship = current_user.find_any_friendship_with(@swimming_buddy)
-      @destination_path = social_unblock_path( id: @swimming_buddy.id )
-                                                    # Check that the friendship is a valid one:
-      unless @friendship && @friendship.blocked?
+      if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_unblockable_by( current_user )
+        @submit_title = I18n.t('social.unblock_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+        @friendship = current_user.find_any_friendship_with(@swimming_buddy)
+        @destination_path = social_unblock_path( id: @swimming_buddy.id )
+      else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( socials_show_all_path() ) and return
@@ -232,7 +278,7 @@ class SocialsController < ApplicationController
     @swimming_buddy = User.find_by_id( params[:id] )
 
     if request.post?                                # === POST: ===
-      if current_user.remove_with_notify( @swimming_buddy )
+      if UserSocializer.new(current_user).remove_with_notify( @swimming_buddy )
         flash[:info] = I18n.t('social.remove_successful')
       else
         flash[:error] = I18n.t('social.remove_error')
@@ -240,11 +286,11 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
                                                     # === GET: ===
     else
-      @submit_title = I18n.t('social.remove_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-      @friendship = current_user.find_any_friendship_with(@swimming_buddy)
-      @destination_path = social_remove_path( id: @swimming_buddy.id )
-                                                    # Check that the friendship is a valid one:
-      unless @friendship
+      if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_editable_by( current_user )
+        @submit_title = I18n.t('social.remove_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
+        @friendship   = current_user.find_any_friendship_with(@swimming_buddy)
+        @destination_path = social_remove_path( id: @swimming_buddy.id )
+      else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( socials_show_all_path() ) and return
@@ -270,14 +316,15 @@ class SocialsController < ApplicationController
   #     was already set as false) will re-set to ON the pending status of
   #     the friendship.
   def edit
-    @title = I18n.t('social.edit_title')
-    @swimming_buddy = User.find_by_id( params[:id] )
-    @friendship = current_user.find_any_friendship_with(@swimming_buddy)
-    if @friendship.nil?                             # Check that the friendship exists:
+    unless SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_editable_by( current_user )
       flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
         .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
       redirect_to( socials_show_all_path() ) and return
     end
+                                                    # === GET: (shared assigns with POST) ===
+    @title = I18n.t('social.edit_title')
+    @submit_title = I18n.t('social.ok')
+    @friendship = current_user.find_any_friendship_with(@swimming_buddy)
 
     if request.post?                                # === POST: ===
       shares_passages  = (params[:shares_passages].to_i > 0)
@@ -290,7 +337,8 @@ class SocialsController < ApplicationController
       # In other words, this friendship will be pending only if the "friendable" is actually
       # the one making the edit request. If it is the friend who received the original invite
       # (thus the one accepting it), it won't matter and the editing will be "plain & simple":
-      must_reset_pending_status = (@friendship.friendable_id == current_user.id) && (
+      must_reset_pending_status = (@friendship.friendable_id == current_user.id) &&
+                                  (
                                     (!@friendship.shares_passages  && shares_passages) ||
                                     (!@friendship.shares_trainings && shares_trainings) ||
                                     (!@friendship.shares_calendars && shares_calendars)
@@ -305,9 +353,6 @@ class SocialsController < ApplicationController
         flash[:error] = I18n.t('social.edit_error')
       end
       redirect_to( socials_show_all_path() ) and return
-                                                    # === GET: ===
-    else
-      @submit_title = I18n.t('social.ok')
     end
   end
   # ---------------------------------------------------------------------------
@@ -346,7 +391,7 @@ class SocialsController < ApplicationController
       if result
         flash[:info] = I18n.t( is_confirming ? 'social.confirm_successful' : 'social.unconfirm_successful' )
       else
-        flash[:error] = I18n.t('home_controller.something_went_wrong_try_later')
+        flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)

@@ -645,7 +645,7 @@ en:
     title_happy: "Follow the results of your swimming buddies with Goggles!"
     text_happy: "Link yourself to a registered swimmer on the results database and follow your progress as well as your friends'!"
 
-  home_controller:
+  user_association:
     upgrade_your_experience: "Take a leap forward with your Goggles experience!"
     you_are_not_linked_to_a_swimmer_yet: "You are not linked to any of the existing Swimmer athletes:"
     link_yourself_to_an_existing_swimmer: "Link yourself to a Swimmer!"
@@ -756,6 +756,8 @@ en:
     confirm_body: "{SWIMMER_NAME} has confirmed that you are indeed the athlete that you said you are."
     unconfirm_title: "You have been tagged as 'unconfirmed' by somebody else!"
     unconfirm_body: "Unfortunately, your user association with {SWIMMER_NAME} is no longer 'certified'. You should ask somebody else to confirm your identity."
+    done_confirm_title: "You have confirmed someone else's identity."
+    done_confirm_body: "You have given your endorsement to '{BUDDY_NAME}' as {SWIMMER_NAME}."
     go_to_friend: "You can check out this buddy ID-card here:"
 
   achievement:

@@ -36,11 +36,6 @@ describe UserSwimmerConfirmation do
           UserSwimmerConfirmation.confirm_for( @user, @swimmer, @confirmator )
         }.to change{ UserSwimmerConfirmation.count }.by(1)
       end
-      it "updates also the news-feed when successful" do
-        expect{
-          UserSwimmerConfirmation.confirm_for( @user, @swimmer, @confirmator )
-        }.to change{ NewsFeed.count }.by(1)
-      end
 
       it "returns the added row when successful" do
         result = UserSwimmerConfirmation.confirm_for(@user, @swimmer, @confirmator)
@@ -79,12 +74,6 @@ describe UserSwimmerConfirmation do
         expect{
           UserSwimmerConfirmation.unconfirm_for(confirmation.user, confirmation.swimmer, confirmation.confirmator)
         }.to change{ UserSwimmerConfirmation.count }.by(-1)
-      end
-      it "updates also the news-feed when successful" do
-        confirmation = create( :user_swimmer_confirmation )
-        expect{
-          UserSwimmerConfirmation.unconfirm_for(confirmation.user, confirmation.swimmer, confirmation.confirmator)
-        }.to change{ NewsFeed.count }.by(1)
       end
 
       it "returns false when the association does not exist" do

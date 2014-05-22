@@ -46,121 +46,33 @@ Goggles::Application.routes.draw do
     end
   end
 
-  mount RailsAdmin::Engine => '/goggles_dashboard', :as => 'rails_admin' # Feel free to change '/admin' to any namespace you need.
+  mount RailsAdmin::Engine => '/goggles_dashboard', as: 'rails_admin' # Feel free to change '/admin' to any namespace you need.
   mount DjMon::Engine => 'goggles_dj_mon'
 
   netzke                                            # [Steve] Netzke routes are used just by the Goggles-admin sub-app
 
   # [Steve, 20130716] Root's route required by Devise:
-  root :to => "home#index", :locale => /en|it/
+  root :to => "home#index", locale: /en|it/
 
 
   scope "/" do
-    scope "(:locale)", :locale => /en|it/ do
+    scope "(:locale)", locale: /en|it/ do
+      # === Home ===
       match "wip",        to: "home#wip"
       match "about",      to: "home#about"
       match "contact_us", to: "home#contact_us"
-      match "associate",  to: "home#associate", via: [:get, :post]
-      match "dissociate", to: "home#dissociate", via: :post
-#      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
 
-#      resources :meetings # do
-        # collection do
-          # get 'index'
-          # get 'search_swimmer'
-          # get 'search_team'
-        # end
-        # member do
-          # get 'show_full'
-          # get 'show_ranking'
-          # get 'show_stats'
-          # get 'show_team_results'
-          # get 'show_swimmer_results'
-        # end
-      # end
+      # === Socials ===
+      # A user associates himself/herself with a swimmer:
+      match "associate",                        to: "socials#associate",  via: [:get, :post]
+      match "dissociate",                       to: "socials#dissociate", via: :post
 
-#      get 'photos/:id', to: 'photos#show'
-#      get 'exit', to: 'sessions#destroy', as: :logout
-
-      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
-      get "meetings/search_swimmer",            to: "meetings#search_swimmer"
-      get "meetings/search_team",               to: "meetings#search_team"
-      get "meeting/show_full/:id",              to: "meetings#show_full",               as: "meeting_show_full"
-      get "meeting/show_ranking/:id",           to: "meetings#show_ranking",            as: "meeting_show_ranking"
-      get "meeting/show_stats/:id",             to: "meetings#show_stats",              as: "meeting_show_stats"
-      get "meeting/show_team_results/:id",      to: "meetings#show_team_results",       as: "meeting_show_team_results"
-      get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
-
-#      resources :teams # do
-        # member do
-          # get 'count_meetings'
-          # get 'count_results'
-          # get 'count_details'
-        # end
-      # end
-      get "teams/count_meetings/:id",           to: "teams#count_meetings",             as: "team_count_meetings"
-      get "teams/count_results/:id",            to: "teams#count_results",              as: "team_count_results"
-      get "teams/count_details/:id",            to: "teams#count_details",              as: "team_count_results"
-
-#      resources :meeting_programs
-      get "meeting_programs/index",             as: "meeting_programs"
-
-#      resources :rankings
-      get "rankings/index",                     as: "rankings"
-      get "ranking/:id",                        to: "rankings#show",                    as: "ranking"
-
-#      resources :results
-      get "results/index",                      as: "results"
-      get "result/:id",                         to: "results#show",                     as: "result"
-
-#      resources :swimming_pools
-      get "swimming_pools/index",               as: "swimming_pools"
-      get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
-
-      resources :trainings # do
-        # member do
-          # get 'printout'
-          # post 'duplicate'
-          # post 'create_user_training'
-        # end
-#      end
-      get  "training/printout/:id",             to: "trainings#printout",               as: "training_printout"
-      post "training/duplicate/:id",            to: "trainings#duplicate",              as: "training_duplicate"
-      post "training/create_user_training/:id", to: "trainings#create_user_training",   as: "training_create_user_training"
-
-      resources :user_trainings # do
-        # member do
-# #          get 'json_list'
-          # get 'printout'
-          # post 'duplicate'
-          # post 'create_user_story'
-        # end
-# #        collection do
-# #          get 'json_list'
-# #        end
-      # end
-      get  "user_trainings/json_list",          to: "user_trainings#json_list"
-      get  "user_training/json_list/:id",       to: "user_trainings#json_list",           as: "user_training_json_list"
-      get  "user_training/printout/:id",        to: "user_trainings#printout",            as: "user_training_printout"
-      post "user_training/duplicate/:id",       to: "user_trainings#duplicate",           as: "user_training_duplicate"
-      post "user_training/create_user_story/:id", to: "user_trainings#create_user_story", as: "user_training_create_user_story"
-
-      resources :user_training_stories
-
-      resources :exercises # do
-        # member do
-          # get 'json_list'
-        # end
-        # collection do
-          # get 'json_list'
-        # end
-      # end
-      get  "exercises/json_list",               to: "exercises#json_list"
-      get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
-
-      get  "socials/show_all",                  to: "socials#show_all"
+      # A user confirms or unconfirms another user's association with a swimmer:
       post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
       post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"
+
+      # Any user can manage his/her swimming buddies:
+      get  "socials/show_all",                  to: "socials#show_all"
       match "social/invite/:id",                to: "socials#invite",                   as: "social_invite", via: [:get, :post]
 #      post "social/invite/:id",                 to: "socials#invite"
       get  "social/approve/:id",                to: "socials#approve",                  as: "social_approve"
@@ -174,23 +86,40 @@ Goggles::Application.routes.draw do
       get  "social/edit/:id",                   to: "socials#edit",                     as: "social_edit"
       post "social/edit/:id",                   to: "socials#edit"
 
+      # === Meetings ===
+      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
+      get "meetings/search_swimmer",            to: "meetings#search_swimmer"
+      get "meetings/search_team",               to: "meetings#search_team"
+      get "meeting/show_full/:id",              to: "meetings#show_full",               as: "meeting_show_full"
+      get "meeting/show_ranking/:id",           to: "meetings#show_ranking",            as: "meeting_show_ranking"
+      get "meeting/show_stats/:id",             to: "meetings#show_stats",              as: "meeting_show_stats"
+      get "meeting/show_team_results/:id",      to: "meetings#show_team_results",       as: "meeting_show_team_results"
+      get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
+
+      # === Exercises ===
+      resources :exercises
+      get  "exercises/json_list",               to: "exercises#json_list"
+      get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
+
+      # === Meeting Calendars ===
       get  "meeting_calendars/index",           as: "meeting_calendars"
 
+      # === Rankings ===
+      get "rankings/index",                     as: "rankings"
+      get "ranking/:id",                        to: "rankings#show",                    as: "ranking"
+
+      # === Records ===
       get  "records/for_everything",            to: "records#for_everything"
       get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_swimmer",               to: "records#for_swimmer"
       get  "records/for_team",                  to: "records#for_team"
       get  "records/show_for_team",             to: "records#show_for_team"
 
-#      resources :swimmers # do
-        # member do
-          # get 'radio'
-          # get 'medals'
-          # get 'best_timings'
-          # get 'all_races'
-          # get 'misc'
-        # end
-      # end
+      # === Results ===
+      get "results/index",                      as: "results"
+      get "result/:id",                         to: "results#show",                     as: "result"
+
+      # === Swimmers ===
       get  "swimmers/index",                    as: "swimmers"
       get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
@@ -198,6 +127,11 @@ Goggles::Application.routes.draw do
       get  "swimmer/all_races/:id",             to: "swimmers#all_races",               as: "swimmer_all_races"
       get  "swimmer/misc/:id",                  to: "swimmers#misc",                    as: "swimmer_misc"
 
+      # === Swimming Pools ===
+      get "swimming_pools/index",               as: "swimming_pools"
+      get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
+
+      # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do
         member do
           delete 'destroy',                     to: "swimming_pool_reviews#destroy",            as: "destroy"
@@ -209,62 +143,86 @@ Goggles::Application.routes.draw do
           get 'for_user/:id',                   to: "swimming_pool_reviews#for_user",           as: "for_user"
         end
       end
+
+      # === Teams ===
+      get "teams/count_meetings/:id",           to: "teams#count_meetings",             as: "team_count_meetings"
+      get "teams/count_results/:id",            to: "teams#count_results",              as: "team_count_results"
+      get "teams/count_details/:id",            to: "teams#count_details",              as: "team_count_results"
+
+      # === Trainings ===
+      resources :trainings
+      get  "training/printout/:id",             to: "trainings#printout",               as: "training_printout"
+      post "training/duplicate/:id",            to: "trainings#duplicate",              as: "training_duplicate"
+      post "training/create_user_training/:id", to: "trainings#create_user_training",   as: "training_create_user_training"
+
+      # === User Trainings ===
+      resources :user_trainings
+      get  "user_trainings/json_list",          to: "user_trainings#json_list"
+      get  "user_training/json_list/:id",       to: "user_trainings#json_list",           as: "user_training_json_list"
+      get  "user_training/printout/:id",        to: "user_trainings#printout",            as: "user_training_printout"
+      post "user_training/duplicate/:id",       to: "user_trainings#duplicate",           as: "user_training_duplicate"
+      post "user_training/create_user_story/:id", to: "user_trainings#create_user_story", as: "user_training_create_user_story"
+
+      # === User Training Stories: ===
+      resources :user_training_stories
     end
   end
 
 
-# TODO Rewrite all the following routes using the above format:
+  # === Admin Interface / Data Import: ===
   scope "goggles_data_import" do
-    scope "(:locale)", :locale => /en|it/ do
-      match "get_step_progress",      :controller => 'admin_import', :action => 'get_step_progress',      :as => :goggles_di_get_step_progress
-      match "step1_status",           :controller => 'admin_import', :action => 'step1_status',           :as => :goggles_di_step1_status
-      match "step2_checkout",         :controller => 'admin_import', :action => 'step2_checkout',         :as => :goggles_di_step2_checkout
-      match "step3_commit",           :controller => 'admin_import', :action => 'step3_commit',           :as => :goggles_di_step3_commit
-      match "kill_import_session",    :controller => 'admin_import', :action => 'kill_import_session',    :as => :goggles_di_kill_import_session, :method => :post
+    scope "(:locale)", locale: /en|it/ do
+      match "get_step_progress",      controller: 'admin_import', action: 'get_step_progress',      as: :goggles_di_get_step_progress
+      match "step1_status",           controller: 'admin_import', action: 'step1_status',           as: :goggles_di_step1_status
+      match "step2_checkout",         controller: 'admin_import', action: 'step2_checkout',         as: :goggles_di_step2_checkout
+      match "step3_commit",           controller: 'admin_import', action: 'step3_commit',           as: :goggles_di_step3_commit
+      match "kill_import_session",    controller: 'admin_import', action: 'kill_import_session',    as: :goggles_di_kill_import_session, method: :post
 
-      match "step2_analysis",         :controller => 'admin_import', :action => 'step2_analysis',         :as => :goggles_di_step2_analysis
-      match "step3_analysis_commit",  :controller => 'admin_import', :action => 'step3_analysis_commit',  :as => :goggles_di_step3_analysis_commit, :method => :post
+      match "step2_analysis",         controller: 'admin_import', action: 'step2_analysis',         as: :goggles_di_step2_analysis
+      match "step3_analysis_commit",  controller: 'admin_import', action: 'step3_analysis_commit',  as: :goggles_di_step3_analysis_commit, method: :post
     end
   end
 
+  # === Admin Interface / commands: ===
   scope "goggles_admin" do
-    scope "(:locale)", :locale => /en|it/ do
-      match "/",                      :controller => 'admin_index', :action => 'index',             :as => :goggles_admin_index
-      match "index",                  :controller => 'admin_index', :action => 'index',             :as => :goggles_admin_index
+    scope "(:locale)", locale: /en|it/ do
+      match "/",                      controller: 'admin_index', action: 'index',             as: :goggles_admin_index
+      match "index",                  controller: 'admin_index', action: 'index',             as: :goggles_admin_index
 
-      match "db_structure",           :controller => 'admin_index', :action => 'db_structure'
-      match "db_reset",               :controller => 'admin_index', :action => 'db_reset',          :via => :post
-      match "run_db_migrations",      :controller => 'admin_index', :action => 'run_db_migrations', :via => :post
-      match "run_sql_exec",           :controller => 'admin_index', :action => 'run_sql_exec',      :via => :post
+      match "db_structure",           controller: 'admin_index', action: 'db_structure'
+      match "db_reset",               controller: 'admin_index', action: 'db_reset',          via: :post
+      match "run_db_migrations",      controller: 'admin_index', action: 'run_db_migrations', via: :post
+      match "run_sql_exec",           controller: 'admin_index', action: 'run_sql_exec',      via: :post
 
-      match "select_meeting",         :controller => 'admin_index', :action => 'select_meeting'
-      match "delete_meeting",         :controller => 'admin_index', :action => 'delete_meeting',    :via => :post
-      match "select_teams",           :controller => 'admin_index', :action => 'select_teams'
+      match "select_meeting",         controller: 'admin_index', action: 'select_meeting'
+      match "delete_meeting",         controller: 'admin_index', action: 'delete_meeting',    via: :post
+      match "select_teams",           controller: 'admin_index', action: 'select_teams'
 
-      match "run_rake",               :controller => 'admin_index', :action => 'run_rake',          :via => [:get, :post]
-      match "run_bundle",             :controller => 'admin_index', :action => 'run_bundle',        :via => [:get, :post]
-      match "run_sudo_command",       :controller => 'admin_index', :action => 'run_sudo_command',  :via => [:get, :post]
-      match "restart_apache",         :controller => 'admin_index', :action => 'restart_apache',    :via => [:get, :post]
+      match "run_rake",               controller: 'admin_index', action: 'run_rake',          via: [:get, :post]
+      match "run_bundle",             controller: 'admin_index', action: 'run_bundle',        via: [:get, :post]
+      match "run_sudo_command",       controller: 'admin_index', action: 'run_sudo_command',  via: [:get, :post]
+      match "restart_apache",         controller: 'admin_index', action: 'restart_apache',    via: [:get, :post]
 
-      match "run_src_upgrade",        :controller => 'admin_index', :action => 'run_src_upgrade',   :via => [:get, :post]
+      match "run_src_upgrade",        controller: 'admin_index', action: 'run_src_upgrade',   via: [:get, :post]
 
-      match "upload_db_dump",         :controller => 'admin_index', :action => 'upload_db_dump',    :via => [:get, :post]
-      match "upload_db_seed",         :controller => 'admin_index', :action => 'upload_db_seed',    :via => [:get, :post]
+      match "upload_db_dump",         controller: 'admin_index', action: 'upload_db_dump',    via: [:get, :post]
+      match "upload_db_seed",         controller: 'admin_index', action: 'upload_db_seed',    via: [:get, :post]
 
-      match "download_db_dump",       :controller => 'admin_index', :action => 'download_db_dump'
-      match "download_team_dump",     :controller => 'admin_index', :action => 'download_team_dump'
-      match "download_swimmer_dump",  :controller => 'admin_index', :action => 'download_swimmer_dump'
-      match "download_user_dump",     :controller => 'admin_index', :action => 'download_user_dump'
-      match "cleanup_output_dir",     :controller => 'admin_index', :action => 'cleanup_output_dir'
+      match "download_db_dump",       controller: 'admin_index', action: 'download_db_dump'
+      match "download_team_dump",     controller: 'admin_index', action: 'download_team_dump'
+      match "download_swimmer_dump",  controller: 'admin_index', action: 'download_swimmer_dump'
+      match "download_user_dump",     controller: 'admin_index', action: 'download_user_dump'
+      match "cleanup_output_dir",     controller: 'admin_index', action: 'cleanup_output_dir'
     end
   end
+
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
 
   # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
+  #   match 'products/:id/purchase' => 'catalog#purchase', as: :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):

@@ -647,7 +647,7 @@ it:
     title_happy: "Segui con Goggles i risultati dei tuoi compagni di nuotate!"
     text_happy: "Associati ad un nuotatore registrato nei risultati su database e segui i tuoi progressi e quelli dei tuoi amici!"
 
-  home_controller:
+  user_association:
     upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
     you_are_not_linked_to_a_swimmer_yet: "Non sei ancora associato a nessuno degli atleti Nuotatori presenti nel database:"
     link_yourself_to_an_existing_swimmer: "Associati ad un nuotatore!"
@@ -758,6 +758,8 @@ it:
     confirm_body: "{SWIMMER_NAME} ha confermato che tu sei l'atleta che hai detto di essere."
     unconfirm_title: "Sei stato catalogato come 'non confermato' da qualcun altro!"
     unconfirm_body: "Sfortunatamente, l'associazione del tuo utente con {SWIMMER_NAME} non e' piu 'certificata' quanto prima. Dovresti chiedere a qualcun altro di confermare la tua identita'."
+    done_confirm_title: "Hai confermato l'identita' di qualcun altro."
+    done_confirm_body: "Hai dato la tua conferma all'identita' di '{BUDDY_NAME}' come {SWIMMER_NAME}."
     go_to_friend: "Puoi vedere la sua carta d'identità qui:"
 
   achievement:
