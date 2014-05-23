@@ -50,9 +50,9 @@ class User < ActiveRecord::Base
                   :coach_level_type, :swimmer_level_type
 
 
-  #-----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   # Base methods:
-  #-----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
 
   # Utility method to retrieve the controller base route directly from an instance of the model
@@ -74,7 +74,8 @@ class User < ActiveRecord::Base
   def to_s
     "[User: '#{get_full_name}']"
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the an array containing the first and the last name of this
   # user. When empty or nil the names are obtained from the description.

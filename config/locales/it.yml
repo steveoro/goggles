@@ -1376,35 +1376,35 @@ it:
               blank: "non puo' essere vuoto (minimo 1 carattere)"
             entry_text:
               blank: "non puo' essere vuoto (minimo 1 carattere)"
-      category_type:
-        attributes:
-          code:
-            already_exists: "esiste gia'"
-      city:
-        attributes:
-          name:
-            already_exists: "esiste gia'"
-      data_import_city:
-        attributes:
-          name:
-            already_exists: "esiste gia'"
-      training:
-        attributes:
-          title:
-            blank: "non puo' essere vuoto"
-          description:
-            blank: "non puo' essere vuoto"
-          min_swimmer_level:
-            blank: "non puo' essere vuoto"
-          max_swimmer_level:
-            blank: "non puo' essere vuoto"
-      user_training_story:
-        attributes:
-          swimming_pool:
-            invalid: "fallisce le validazioni o possiede attributi che non sono validi"
-          swam_date:
-            blank: "non puo' essere vuota"
-      user:
-        attributes:
-          current_password:
-            blank: "non puo' essere vuota"
+        category_type:
+          attributes:
+            code:
+              already_exists: "esiste gia'"
+        city:
+          attributes:
+            name:
+              already_exists: "esiste gia'"
+        data_import_city:
+          attributes:
+            name:
+              already_exists: "esiste gia'"
+        training:
+          attributes:
+            title:
+              blank: "non puo' essere vuoto"
+            description:
+              blank: "non puo' essere vuoto"
+            min_swimmer_level:
+              blank: "non puo' essere vuoto"
+            max_swimmer_level:
+              blank: "non puo' essere vuoto"
+        user_training_story:
+          attributes:
+            swimming_pool:
+              invalid: "fallisce le validazioni o possiede attributi che non sono validi"
+            swam_date:
+              blank: "non puo' essere vuota"
+        user:
+          attributes:
+            current_password:
+              blank: "non puo' essere vuota"

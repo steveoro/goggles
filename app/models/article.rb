@@ -20,7 +20,7 @@ class Article < ActiveRecord::Base
 
   # Retrieves the user name associated with this article
   def user_name
-    name = self.user.nil? ? '' : self.user.name
+    self.user.nil? ? '' : self.user.name
   end
   # ----------------------------------------------------------------------------
 end

@@ -10,8 +10,8 @@ describe AgexMailer do
     let(:exception_mail)  { AgexMailer.exception_mail(nil, user.name, description, backtrace) }
 
     it 'renders the receiver email' do
-      # Default string constant is longer before email address parsing, thus we expect
-      # the un-parsed value to include the parsed one:
+      # The default string constant is longer than the email address after parsing.
+      # Thus we expect the un-parsed value to include the parsed one:
       expect(AgexMailer::AGEX_ADMIN_EMAIL).to include( exception_mail.to.first )
     end
 
