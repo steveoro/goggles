@@ -6,10 +6,10 @@
 #
 class EntityGrid < Netzke::Basepack::GridPanel
 
-  action :row_counter,      :text => I18n.t(:click_on_the_grid), :disabled => true
+  action :row_counter,      text: I18n.t(:click_on_the_grid), disabled: true
   
-  action :show_details,     :text => I18n.t(:show_details), :tooltip => I18n.t(:show_details_tooltip),
-                            :icon =>"/images/icons/magnifier.png", :disabled => true
+  action :show_details,     text: I18n.t(:show_details), tooltip: I18n.t(:show_details_tooltip),
+                            icon: "/images/icons/magnifier.png", disabled: true
   # ---------------------------------------------------------------------------
 
 
@@ -28,10 +28,10 @@ class EntityGrid < Netzke::Basepack::GridPanel
       # [20120809] FIXME Somehow, toggling off the pagination gets ignored when sorting the columns,
       # and the default scope always gets a limit of 30 rows (the default)...
       # [20120828] FIXME For AgeX5, enabling pagination messes up the reporting procedures!
-      :enable_pagination => true,
+      enable_pagination: true,
       # [Steve, 20120914] It seems that the LIMIT parameter used during column sort can't be toggled off even when pagination is false, so we put an arbitrary 10Tera row count limit per page to get all the rows: 
-      :rows_per_page => 25,
-      :features => [{ :ftype => 'summary' }]
+      rows_per_page: 25,
+      features: [{ ftype: 'summary' }]
     )
   end
 
@@ -47,9 +47,9 @@ class EntityGrid < Netzke::Basepack::GridPanel
      :apply.action,
      "-",
      {
-        :menu => [:add_in_form.action, :edit_in_form.action],
-        :text => I18n.t(:edit_in_form),
-        :icon => "/images/icons/application_form.png"
+        menu: [:add_in_form.action, :edit_in_form.action],
+        text: I18n.t(:edit_in_form),
+        icon:  "/images/icons/application_form.png"
      },
      "-",
      :row_counter.action
@@ -72,9 +72,9 @@ class EntityGrid < Netzke::Basepack::GridPanel
        :apply.action,
        "-",
        {
-          :menu => [:add_in_form.action, :edit_in_form.action],
-          :text => I18n.t(:edit_in_form),
-          :icon => "/images/icons/application_form.png"
+          menu: [:add_in_form.action, :edit_in_form.action],
+          text: I18n.t(:edit_in_form),
+          icon:  "/images/icons/application_form.png"
        }
     ]
   end
@@ -167,7 +167,7 @@ class EntityGrid < Netzke::Basepack::GridPanel
                                            # Retrieve display ordering:
     if ( params[:order] )
       order = params[:order].split(',') # .collect! { |e| e.to_sym }
-#      logger.debug "params / order: #{params[:order]} => #{order.inspect}"
+#      logger.debug "params / order: #{params[:order] } => #{order.inspect}"
     else
       order = params[:record_hash].keys             # Otherwise, use the (pseudo-random) hash ordering
     end
@@ -178,7 +178,7 @@ class EntityGrid < Netzke::Basepack::GridPanel
 
       if ( value )                                  # Do some formatting for the values:
         if ( ['true', 'false'].include?(value.to_s.downcase) )
-          html << "</tr><td><b>#{ scope_sym ? I18n.t(key, {:scope => [scope_sym]}) : I18n.t(key) }</b>:&nbsp</td><td>#{ value.to_s.downcase =~ /true/i ? img_tag_true : '---' }</td></tr>"
+          html << "</tr><td><b>#{ scope_sym ? I18n.t(key, { scope: [scope_sym] }) : I18n.t(key) }</b>:&nbsp</td><td>#{ value.to_s.downcase =~ /true/i ? img_tag_true : '---' }</td></tr>"
         else                                        # Use standard format for date-times:
           if ( value =~ /\d\d\d\d-\d\d-\d\dT\d\d:\d\d/ )
             begin
@@ -186,14 +186,14 @@ class EntityGrid < Netzke::Basepack::GridPanel
             rescue
             end
           end
-          html << "</tr><td><b>#{ scope_sym ? I18n.t(key, {:scope => [scope_sym]}) : I18n.t(key) }</b>:&nbsp</td><td>#{value}</td></tr>"
+          html << "</tr><td><b>#{ scope_sym ? I18n.t(key, { scope: [scope_sym] }) : I18n.t(key) }</b>:&nbsp</td><td>#{value}</td></tr>"
         end
       end
     }
     html << "</tbody></table>"
 #    logger.debug "---------------------------------"
     
-    { :display_popup_details => html }
+    { display_popup_details:  html }
   end
   # ---------------------------------------------------------------------------
 end

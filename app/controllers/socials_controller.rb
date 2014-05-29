@@ -31,8 +31,8 @@ class SocialsController < ApplicationController
       first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name.upcase}%"] )
       second_list = Swimmer.where( ["complete_name LIKE ?", "%#{last_name.upcase}%"] )
       if current_user.year_of_birth
-        first_list.where( :year_of_birth => current_user.year_of_birth )
-        second_list.where( :year_of_birth => current_user.year_of_birth )
+        first_list.where( year_of_birth: current_user.year_of_birth )
+        second_list.where( year_of_birth: current_user.year_of_birth )
       end
                                                     # Choose only the list with less results:
       @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
@@ -95,13 +95,13 @@ class SocialsController < ApplicationController
   # === GET:
   #     Renderes the landing page with the invite form.
   # ==== Params:
-  #     :id => the id of the swimming buddy (user) to be invited by the current user
+  #     id: the id of the swimming buddy (user) to be invited by the current user
   #
   # === POST:
   #     Creates the friendship row with pending status (pending invites will be
   #     automatically shown to a user on its personalized news-feed).
   # ==== Params:
-  #     :id => the id of the swimming buddy to be invited by the current user
+  #     id: the id of the swimming buddy to be invited by the current user
   #     :shares_passages  => set to '1' to enable, anything else to disable
   #     :shares_trainings => set to '1' to enable, anything else to disable
   #     :shares_calendars => set to '1' to enable, anything else to disable
@@ -144,13 +144,13 @@ class SocialsController < ApplicationController
   #     Renderes the landing page with the accept form for editing friendship
   #     parameters.
   # ==== Params:
-  #     :id => the id of the swimming buddy (user) to be accepted by the current user
+  #     id: the id of the swimming buddy (user) to be accepted by the current user
   #
   # === PUT:
   #     Updates friendship row with the accepted status (creates also a personalized
   #     news feed article).
   # ==== Params:
-  #     :id => the id of the swimming buddy to be accepted by the current user
+  #     id: the id of the swimming buddy to be accepted by the current user
   #     :shares_passages  => set to '1' to enable, anything else to disable
   #     :shares_trainings => set to '1' to enable, anything else to disable
   #     :shares_calendars => set to '1' to enable, anything else to disable
@@ -190,7 +190,7 @@ class SocialsController < ApplicationController
   # Block friends action.
   #
   # === Params:
-  #     :id => the id of the swimming buddy (user) to be blocked by the current user
+  #     id: the id of the swimming buddy (user) to be blocked by the current user
   #
   # === GET:
   #     Renderes the landing page with the confirmation form.
@@ -228,7 +228,7 @@ class SocialsController < ApplicationController
   # Un-block friends action.
   #
   # === Params:
-  #     :id => the id of the swimming buddy (user) to be unblocked by the current user
+  #     id: the id of the swimming buddy (user) to be unblocked by the current user
   #
   # === GET:
   #     Renderes the landing page with the confirmation form.
@@ -266,7 +266,7 @@ class SocialsController < ApplicationController
   # Remove friendship action.
   #
   # === Params:
-  #     :id => the id of the swimming buddy (user) to be removed from the friends of the current user
+  #     id: the id of the swimming buddy (user) to be removed from the friends of the current user
   #
   # === GET:
   #     Renderes the landing page with the confirmation form.
@@ -304,7 +304,7 @@ class SocialsController < ApplicationController
   # Edit a single friendship.
   #
   # === Params:
-  #     :id => the id of the swimming buddy (user) to be edited.
+  #     id: the id of the swimming buddy (user) to be edited.
   #
   # === GET:
   #     Renderes the edit form.
@@ -366,7 +366,7 @@ class SocialsController < ApplicationController
   # Assigns the @swimming_buddy instance when successful.
   #
   # == Params:
-  # :id => the user id to be processed by most of the methods (see before filter above)
+  # id: the user id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter
     user_id = params[:id].to_i

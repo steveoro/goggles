@@ -7,38 +7,38 @@
       .accordion-inner
         .row-fluid
           .span2
-            = I18n.t(:team_total_events, {:scope=>[:meeting]}) +':'
+            = I18n.t(:team_total_events, { scope: [:meeting] }) +':'
           .span2.goggles-div-rightalign
             = "#{@team_tot_events} / #{@meeting.meeting_events.count} #{I18n.t(:tot_events)}"
         .row-fluid
           .span3
-            = I18n.t(:team_total_gold_medals, {:scope=>[:meeting]}) +':'
+            = I18n.t(:team_total_gold_medals, { scope: [:meeting] }) +':'
           .span1.goggles-div-rightalign
             = @team_ranks_1
           .span1
             = show_tag( @team_ranks_1>0, "medal_gold_3.png" )
         .row-fluid
           .span3
-            = I18n.t(:team_total_silver_medals, {:scope=>[:meeting]}) +':'
+            = I18n.t(:team_total_silver_medals, { scope: [:meeting] }) +':'
           .span1.goggles-div-rightalign
             = @team_ranks_2
           .span1
             = show_tag( @team_ranks_2>0, "medal_silver_3.png" )
         .row-fluid
           .span3
-            = I18n.t(:team_total_bronze_medals, {:scope=>[:meeting]}) +':'
+            = I18n.t(:team_total_bronze_medals, { scope: [:meeting] }) +':'
           .span1.goggles-div-rightalign
             = @team_ranks_3
           .span1
             = show_tag( @team_ranks_3>0, "medal_bronze_3.png" )
         .row-fluid
           .span3.right-align
-            = I18n.t(:team_total_wooden_medals, {:scope=>[:meeting]}) +':'
+            = I18n.t(:team_total_wooden_medals, { scope: [:meeting] }) +':'
           .span1.goggles-div-rightalign
             = @team_ranks_4
         .row-fluid
           .span3
-            = I18n.t(:team_total_outstanding_scores, {:scope=>[:meeting]}) +" (> #{ 800 }):"
+            = I18n.t(:team_total_outstanding_scores, { scope: [:meeting] }) +" (> #{ 800 }):"
           .span1.goggles-div-rightalign
             = @team_outstanding_scores
 
@@ -48,7 +48,7 @@
             %tbody
               %tr
                 %td{'colspan'=>'2'}
-                  %i= I18n.t(:team_total_athletes, {:scope=>[:meeting]}) + ": #{ @meeting_team_swimmers.size }"
+                  %i= I18n.t(:team_total_athletes, { scope: [:meeting] }) + ": #{ @meeting_team_swimmers.size }"
               - @meeting_team_swimmers.each do |swimmer|
                 %tr
                   %td{'colspan'=>'1'}

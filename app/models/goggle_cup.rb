@@ -10,13 +10,13 @@ class GoggleCup < ActiveRecord::Base
   has_many :goggle_cup_standards
 
   validates_presence_of     :description
-  validates_length_of       :description, :within => 1..60, :allow_nil => false
+  validates_length_of       :description, within: 1..60, allow_nil: false
 
   validates_presence_of     :year
-  validates_length_of       :year, :within => 2..4, :allow_nil => false
+  validates_length_of       :year, within: 2..4, allow_nil: false
   validates_numericality_of :year
   validates_presence_of     :max_points
-  validates_length_of       :max_points, :within => 1..9, :allow_nil => false
+  validates_length_of       :max_points, within: 1..9, allow_nil: false
   validates_numericality_of :max_points
 
 

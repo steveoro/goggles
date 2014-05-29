@@ -10,23 +10,23 @@
 #
 class DataImportBadgeGrid < Netzke::Basepack::GridPanel
 
-  action :row_counter,  :text => I18n.t(:click_on_the_grid), :disabled => true
+  action :row_counter,  text: I18n.t(:click_on_the_grid), disabled: true
   # ---------------------------------------------------------------------------
 
-  action :commit_rows,  :text => I18n.t(:commit_rows),
-                        :tooltip => I18n.t(:commit_rows_tooltip),
-                        :icon =>"/images/icons/database_save.png"
+  action :commit_rows,  text: I18n.t(:commit_rows),
+                        tooltip: I18n.t(:commit_rows_tooltip),
+                        icon: "/images/icons/database_save.png"
   # ---------------------------------------------------------------------------
 
   model 'DataImportBadge'
 
   js_properties(
-    :prevent_header => true
+    prevent_header: true
   )
 
 
-  add_form_window_config  :width => 500, :height => 600, :title => "#{I18n.t(:add_account_row)}"
-  edit_form_window_config :width => 500, :height => 600, :title => "#{I18n.t(:edit_account_row)}"
+  add_form_window_config  width: 500, height: 600, title: "#{I18n.t(:add_account_row)}"
+  edit_form_window_config width: 500, height: 600, title: "#{I18n.t(:edit_account_row)}"
 
 
   # Override for default bottom bar:
@@ -38,9 +38,9 @@ class DataImportBadgeGrid < Netzke::Basepack::GridPanel
      :search.action,
      "-",                                           # Adds a separator
      {
-        :menu => [:add_in_form.action, :edit_in_form.action],
-        :text => I18n.t(:edit_in_form),
-        :icon => "/images/icons/application_form.png"
+        menu: [:add_in_form.action, :edit_in_form.action],
+        text: I18n.t(:edit_in_form),
+        icon:  "/images/icons/application_form.png"
      },
      :commit_rows.action,
      "-",                                           # Adds a separator
@@ -68,69 +68,69 @@ class DataImportBadgeGrid < Netzke::Basepack::GridPanel
       # [Steve, 20120131]
       # FIXME The Netzke endpoint, once configured, ignores any subsequent request to turn off or resize the pagination
       # TODO Either wait for a new Netzke release that changes this behaviour, or rewrite from scratch the endpoint implementation for the service of grid data retrieval
-      :enable_pagination => false,
+      enable_pagination: false,
       # [Steve, 20120914] It seems that the LIMIT parameter used during column sort can't be toggled off, so we put an arbitrary 10Tera row count limit per page to get all the rows: 
-      :rows_per_page => 1000000000000,
-      :min_width => 750,
+      rows_per_page: 1000000000000,
+      min_width: 750,
 
-      :columns => [
-          { :name => :num, :label => '#', :xtype => 'rownumberer', :read_only => true },
-          { :name => :user__name, :label => I18n.t(:user), :width => 70, :default_value => Netzke::Core.current_user.id,
+      columns: [
+          { name: :num, label: '#', xtype: 'rownumberer', read_only: true },
+          { name: :user__name, label: I18n.t(:user), width: 70, default_value: Netzke::Core.current_user.id,
             # [20121121] For the combo-boxes to have a working query after the 4th char is entered in the edit widget,
             # a lambda statement must be used. Using a pre-computed scope from the Model class prevents Netzke
             # (as of this version) to append the correct WHERE clause to the scope itself (with an inline lambda, instead, it works).
-            :scope => lambda { |rel| rel.order("name ASC") },
-            :sorting_scope => :netzke_sort_data_import_users_row_by_name
+            scope: ->(rel) { rel.order("name ASC") },
+            sorting_scope: :netzke_sort_data_import_users_row_by_name
           },
-          { :name => :account__name, :label => I18n.t(:account, {:scope=>[:activerecord,:models]}),
+          { name: :account__name, label: I18n.t(:account, { scope: [:activerecord,:models] }),
             # [20121121] See note above for the sorted combo boxes.
-            :scope => lambda { |rel| rel.order("name ASC, address ASC") }
+            scope: ->(rel) { rel.order("name ASC, address ASC") }
            },
-          { :name => :date_entry, :label => I18n.t(:date_entry, {:scope=>[:account_row]}), :width => 80,
-            :format => 'Y-m-d', :default_value => DateTime.now },
+          { name: :date_entry, label: I18n.t(:date_entry, { scope: [:account_row] }), width: 80,
+            format: 'Y-m-d', default_value: DateTime.now },
 
-          { :name => :entry_value,     :label => I18n.t(:entry_value, {:scope=>[:account_row]}), :width => 60,
-            :xtype => 'numbercolumn', :align => 'right', :format => '0.00'},
-          { :name => :le_currency__display_symbol,    :label => I18n.t(:le_currency, {:scope=>[:activerecord, :models]}), :width => 40,
-            :default_value => super[:default_currency_id],
+          { name: :entry_value,     label: I18n.t(:entry_value, { scope: [:account_row] }), width: 60,
+            xtype: 'numbercolumn', align: 'right', format: '0.00'},
+          { name: :le_currency__display_symbol,    label: I18n.t(:le_currency, { scope: [:activerecord, :models] }), width: 40,
+            default_value: super[:default_currency_id],
             # [20121121] See note above for the sorted combo boxes.
-            :scope => lambda { |rel| rel.order("display_symbol ASC") },
-            :sorting_scope => :netzke_sort_data_import_currencies_by_display_symbol
-          },
-
-          { :name => :parent_le_account_row_type__get_full_name, :label => I18n.t(:parent_le_account_row_type__get_full_name, {:scope=>[:account_row]}),
-            # [20121121] See note above for the sorted combo boxes.
-            :scope => lambda { |rel| rel.where(:is_a_parent => true).order("name ASC") },
-            :sorting_scope => :netzke_sort_data_import_parent_row_types_by_name
-          },
-          { :name => :le_account_row_type__get_full_name, :label => I18n.t(:le_account_row_type__get_full_name, {:scope=>[:account_row]}),
-            # [20121121] See note above for the sorted combo boxes.
-            :scope => lambda { |rel| rel.where(:is_a_parent => false).order("name ASC") },
-            :sorting_scope => :netzke_sort_data_import_row_types_by_name
-          },
-          { :name => :le_account_payment_type__get_full_name, :label => I18n.t(:le_account_payment_type__get_full_name, {:scope=>[:account_row]}),
-            # [20121121] See note above for the sorted combo boxes.
-            :scope => lambda { |rel| rel.order("name ASC") },
-            :sorting_scope => :netzke_sort_data_import_payment_types_by_name
-          },
-          { :name => :recipient_firm__get_full_name, :label => I18n.t(:recipient_firm__get_full_name, {:scope=>[:account_row]}),
-            # [20121121] See note above for the sorted combo boxes.
-            :scope => lambda { |rel| rel.order("name ASC, address ASC") },
-            :sorting_scope => :netzke_sort_data_import_recipient_firm_by_name
+            scope: ->(rel) { rel.order("display_symbol ASC") },
+            sorting_scope: :netzke_sort_data_import_currencies_by_display_symbol
           },
 
-          { :name => :description, :label => I18n.t(:description), :width => 280 },
-
-          { :name => :get_verbose_conflicting_account_row, :label => I18n.t(:data_import_conflicting_account_row, {:scope=>[:account_row]}),
-            :width => 280,
-            :sorting_scope => :netzke_sort_data_import_conflicting_rows_id
+          { name: :parent_le_account_row_type__get_full_name, label: I18n.t(:parent_le_account_row_type__get_full_name, { scope: [:account_row] }),
+            # [20121121] See note above for the sorted combo boxes.
+            scope: ->(rel) { rel.where(:is_a_parent => true).order("name ASC") },
+            sorting_scope: :netzke_sort_data_import_parent_row_types_by_name
           },
-          { :name => :text_1, :label => I18n.t(:data_import_source_text_1, {:scope=>[:account_row]}),
-            :width => 450
+          { name: :le_account_row_type__get_full_name, label: I18n.t(:le_account_row_type__get_full_name, { scope: [:account_row] }),
+            # [20121121] See note above for the sorted combo boxes.
+            scope: ->(rel) { rel.where(:is_a_parent => false).order("name ASC") },
+            sorting_scope: :netzke_sort_data_import_row_types_by_name
+          },
+          { name: :le_account_payment_type__get_full_name, label: I18n.t(:le_account_payment_type__get_full_name, { scope: [:account_row] }),
+            # [20121121] See note above for the sorted combo boxes.
+            scope: ->(rel) { rel.order("name ASC") },
+            sorting_scope: :netzke_sort_data_import_payment_types_by_name
+          },
+          { name: :recipient_firm__get_full_name, label: I18n.t(:recipient_firm__get_full_name, { scope: [:account_row] }),
+            # [20121121] See note above for the sorted combo boxes.
+            scope: ->(rel) { rel.order("name ASC, address ASC") },
+            sorting_scope: :netzke_sort_data_import_recipient_firm_by_name
           },
 
-          { :name => :check_number, :label => I18n.t(:check_number, {:scope=>[:account_row]}) },
-          { :name => :notes, :label => I18n.t(:notes), :flex => 1 }
+          { name: :description, label: I18n.t(:description), width: 280 },
+
+          { name: :get_verbose_conflicting_account_row, label: I18n.t(:data_import_conflicting_account_row, { scope: [:account_row] }),
+            width: 280,
+            sorting_scope: :netzke_sort_data_import_conflicting_rows_id
+          },
+          { name: :text_1, label: I18n.t(:data_import_source_text_1, { scope: [:account_row] }),
+            width: 450
+          },
+
+          { name: :check_number, label: I18n.t(:check_number, { scope: [:account_row] }) },
+          { name: :notes, label: I18n.t(:notes), flex: 1 }
       ]
     )
   end

@@ -2,6 +2,7 @@ Goggles::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
+# FIXME
   devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
   devise_for :admins
   devise_for :users
@@ -219,7 +220,7 @@ Goggles::Application.routes.draw do
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
+  # This route can be invoked with purchase_url(id: product.id)
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products

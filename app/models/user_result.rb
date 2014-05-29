@@ -23,7 +23,7 @@ class UserResult < ActiveRecord::Base
   belongs_to :disqualification_code_type
                                                     # Duplicate (shortcut) reference that may be filled-in at a later stage:
   validates_presence_of     :description
-  validates_length_of       :description, :within => 1..60, :allow_nil => false
+  validates_length_of       :description, within: 1..60, allow_nil: false
 
   validates_presence_of     :standard_points
   validates_numericality_of :standard_points
@@ -31,7 +31,7 @@ class UserResult < ActiveRecord::Base
   validates_numericality_of :meeting_points
 
   validates_presence_of     :rank
-  validates_length_of       :rank, :within => 1..5, :allow_nil => false
+  validates_length_of       :rank, within: 1..5, allow_nil: false
   validates_numericality_of :rank
 
   validates_presence_of     :is_disqualified

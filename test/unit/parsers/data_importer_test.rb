@@ -49,9 +49,9 @@ class DataImporterTest < ActiveSupport::TestCase
 
   test "import sample data files" do
     [
-      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20111203riccione-sample.txt'),  :season_id => 112},
-      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20121112bologna-sample.txt'),   :season_id => 122},
-      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20120114ravenna-sample.txt'),   :season_id => 112}
+      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20111203riccione-sample.txt'),  season_id: 112},
+      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20121112bologna-sample.txt'),   season_id: 122},
+      {:filename => File.join(Rails.root, 'test/fixtures/samples/ris20120114ravenna-sample.txt'),   season_id: 112}
     ].each_with_index do | hash_params, file_idx |
       full_pathname = hash_params[:filename]
       season_id     = hash_params[:season_id]
@@ -81,7 +81,7 @@ class DataImporterTest < ActiveSupport::TestCase
       # Check size of destination entity tables before the test transaction
       # rollback destroys the committed data:
       puts "\r\n\r\n\t*** #{full_pathname} ***\r\n"
-      m = DataImportMeeting.where( :data_import_session_id => data_import_session.id ).first
+      m = DataImportMeeting.where( data_import_session_id: data_import_session.id ).first
       assert_not_nil( m, "Cannot find DataImportMeeting with :data_import_session_id ID=#{data_import_session.id}!" )
       assert( m.instance_of?(DataImportMeeting) )
       assert( m.id.to_i > 0 )
@@ -89,28 +89,28 @@ class DataImporterTest < ActiveSupport::TestCase
       header_date = m.header_date
       description = m.description
 
-      ms = DataImportMeetingSession.where( :data_import_session_id => data_import_session.id ).first
+      ms = DataImportMeetingSession.where( data_import_session_id: data_import_session.id ).first
       assert_not_nil( ms, "Cannot find the meeting session having meeting ID=#{m.id}!" )
       assert( ms.instance_of?(DataImportMeetingSession) )
       assert( ms.id.to_i > 0 )
 
 #      mp = DataImportMeetingProgram.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] )
-      mp = DataImportMeetingProgram.where( :data_import_session_id => data_import_session.id ).count
+      mp = DataImportMeetingProgram.where( data_import_session_id: data_import_session.id ).count
       total_programs = expected_values[:category_header].to_i + expected_values[:relay_header].to_i
       puts "==> DataImportMeetingProgram............count=#{mp} vs. expected=#{total_programs})"
       assert_equal( total_programs, mp )
 
       mir = DataImportMeetingIndividualResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] ).count
-      puts "==> DataImportMeetingIndividualResult...count=#{mir} vs. expected=#{expected_values[:result_row]})"
+      puts "==> DataImportMeetingIndividualResult...count=#{mir} vs. expected=#{expected_values[:result_row] })"
       assert_equal( expected_values[:result_row], mir )
 
       mrr = DataImportMeetingRelayResult.includes(:data_import_meeting).where( ['data_import_meetings.id = ?', m.id] ).count
-      puts "==> DataImportMeetingRelayResult........count=#{mrr} vs. expected=#{expected_values[:relay_row]})"
+      puts "==> DataImportMeetingRelayResult........count=#{mrr} vs. expected=#{expected_values[:relay_row] })"
       assert_equal( expected_values[:relay_row], mrr )
 
-#      mts = DataImportMeetingTeamScore.where( :data_import_meeting_id => m.id )
-      mts = DataImportMeetingTeamScore.where( :data_import_session_id => data_import_session.id ).count
-      puts "==> DataImportMeetingTeamScore..........count=#{mts} vs. expected=#{expected_values[:ranking_row]})"
+#      mts = DataImportMeetingTeamScore.where( data_import_meeting_id: m.id )
+      mts = DataImportMeetingTeamScore.where( data_import_session_id: data_import_session.id ).count
+      puts "==> DataImportMeetingTeamScore..........count=#{mts} vs. expected=#{expected_values[:ranking_row] })"
       assert_equal( expected_values[:ranking_row], mts )
 
                                                     # === TEST PHASE 3:
@@ -134,7 +134,7 @@ class DataImporterTest < ActiveSupport::TestCase
       assert( m.id.to_i > 0 )
       assert_equal( season.id, m.season_id )
 
-      ms = MeetingSession.where( :meeting_id => m.id ).first
+      ms = MeetingSession.where( meeting_id: m.id ).first
       assert_not_nil( ms, "Cannot find the meeting session having meeting ID=#{m.id}!" )
       assert( ms.instance_of?(MeetingSession) )
       assert( ms.id.to_i > 0 )
@@ -145,15 +145,15 @@ class DataImporterTest < ActiveSupport::TestCase
       assert_equal( total_programs, mp )
 
       mir = MeetingIndividualResult.includes(:meeting).where( ['meetings.id = ?', m.id] ).count
-      puts "==> MeetingIndividualResult...count=#{mir} vs. expected=#{expected_values[:result_row]})"
+      puts "==> MeetingIndividualResult...count=#{mir} vs. expected=#{expected_values[:result_row] })"
       assert_equal( expected_values[:result_row], mir )
 
       mrr = MeetingRelayResult.includes(:meeting).where( ['meetings.id = ?', m.id] ).count
-      puts "==> MeetingRelayResult........count=#{mrr} vs. expected=#{expected_values[:relay_row]})"
+      puts "==> MeetingRelayResult........count=#{mrr} vs. expected=#{expected_values[:relay_row] })"
       assert_equal( expected_values[:relay_row], mrr )
 
-      mts = MeetingTeamScore.where( :meeting_id => m.id ).count
-      puts "==> MeetingTeamScore..........count=#{mts} vs. expected=#{expected_values[:ranking_row]})"
+      mts = MeetingTeamScore.where( meeting_id: m.id ).count
+      puts "==> MeetingTeamScore..........count=#{mts} vs. expected=#{expected_values[:ranking_row] })"
       assert_equal( expected_values[:ranking_row], mts )
     end                                             # -- end of loop on file names --
   end
@@ -182,7 +182,7 @@ class DataImporterTest < ActiveSupport::TestCase
       expected_values = {
         :meeting_header     => 1,
         :category_header    => 6,   :result_row             => 144,
-        :relay_header       => 0,   :relay_row              => 0,
+        relay_header: 0,   :relay_row              => 0,
         :team_ranking       => 1,   :ranking_row            => 134,
         :stats              => 0,
         :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
@@ -209,7 +209,7 @@ class DataImporterTest < ActiveSupport::TestCase
       expected_values = {
         :meeting_header     => 1,
         :category_header    => 15,  :result_row             => 127,
-        :relay_header       => 5,   :relay_row              => 26,
+        relay_header: 5,   :relay_row              => 26,
         :team_ranking       => 1,   :ranking_row            => 56,
         :stats              => 0,
         :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
@@ -235,7 +235,7 @@ class DataImporterTest < ActiveSupport::TestCase
       expected_values = { 
         :meeting_header     => 1,
         :category_header    => 11,  :result_row             => 75,
-        :relay_header       => 0,   :relay_row              => 0,
+        relay_header: 0,   :relay_row              => 0,
         :team_ranking       => 1,   :ranking_row            => 88,
         :stats              => 1,
         :stats_teams_tot    => 1,   :stats_teams_presence   => 1,

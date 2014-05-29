@@ -16,6 +16,6 @@ class CreateTableIndividualAccreditations < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :individual_accreditations, [:meeting_program_id, :badge_id], :name => 'accreditations_x_badges'
+    add_index :individual_accreditations, [:meeting_program_id, :badge_id], name: 'accreditations_x_badges'
   end
 end

@@ -9,24 +9,24 @@ class Training < ActiveRecord::Base
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
 #  validates_associated :user                       # (Do not enable this for User)
 
-  has_many :training_rows, :dependent => :delete_all
+  has_many :training_rows, dependent: :delete_all
   accepts_nested_attributes_for :training_rows, :allow_destroy => true
 
-  has_many :exercises, :through => :training_rows
-  has_many :training_step_types, :through => :training_rows
+  has_many :exercises, through: :training_rows
+  has_many :training_step_types, through: :training_rows
 
 
   validates_presence_of :title
-  validates_length_of   :title, :within => 1..100, :allow_nil => false
+  validates_length_of   :title, within: 1..100, allow_nil: false
 
   validates_presence_of :description
 
   validates_presence_of     :min_swimmer_level
-  validates_length_of       :min_swimmer_level, :within => 1..3
+  validates_length_of       :min_swimmer_level, within: 1..3
   validates_numericality_of :min_swimmer_level
 
   validates_presence_of     :max_swimmer_level
-  validates_length_of       :max_swimmer_level, :within => 1..3
+  validates_length_of       :max_swimmer_level, within: 1..3
   validates_numericality_of :max_swimmer_level
 
 

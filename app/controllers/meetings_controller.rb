@@ -8,16 +8,16 @@ class MeetingsController < ApplicationController
   # Supports the optional parameters:
   # - :preselected_ids, to obtain an array of IDs with which pre-filter the grid results.
   # - :prefilter_swimmer, a text to be displayed for additional info regarding the pre-filtering process
-  # - :swimmer_id => Swimmer id, defined only when prefiltered from previous search actions.
+  # - swimmer_id: Swimmer id, defined only when prefiltered from previous search actions.
   # - :prefilter_team, a text to be displayed for additional info regarding the pre-filtering process
-  # - :team_id => Team id, defined only when prefiltered from previous search actions.
+  # - team_id: Team id, defined only when prefiltered from previous search actions.
   #
   def index
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     prefilter = [ params[:prefilter_swimmer], params[:prefilter_team] ].compact.join(', ')
-    @title = I18n.t(:index_title, {:scope=>[:meeting]}) +
+    @title = I18n.t(:index_title, { scope: [:meeting] }) +
              (prefilter.size > 0 ? " (#{prefilter})" : '')
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
@@ -27,7 +27,7 @@ class MeetingsController < ApplicationController
     logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
     @meetings_grid = initialize_grid(
-      (preselected_ids ? Meeting.where(:id => preselected_ids) : Meeting),
+      (preselected_ids ? Meeting.where(id: preselected_ids) : Meeting),
       :include => [:season, :season_type],
       :order => 'meetings.header_date',
       :order_direction => 'asc',
@@ -40,8 +40,8 @@ class MeetingsController < ApplicationController
   # Assumes params[:id] refers to a specific Meeting row.
   #
   # Supports the optional parameters:
-  # - :swimmer_id => Swimmer id to be highlighted, defined only when prefiltered from previous search actions.
-  # - :team_id => Team id to be highlighted, defined only when prefiltered from previous search actions.
+  # - swimmer_id: Swimmer id to be highlighted, defined only when prefiltered from previous search actions.
+  # - team_id: Team id to be highlighted, defined only when prefiltered from previous search actions.
   #
   def show_full
     meeting_id = params[:id].to_i
@@ -94,14 +94,14 @@ class MeetingsController < ApplicationController
       mrr = @meeting.meeting_relay_results.is_valid
                                                     # Sum all individual scores into each team score row:
       mir.each { |ind_result|
-        team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( :team_id => ind_result.team_id, :meeting_id => meeting_id )
+        team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( team_id: ind_result.team_id, meeting_id: meeting_id )
         team_score.meeting_individual_points += ind_result.standard_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ ind_result.team_id ] = team_score
       }
                                                     # Sum all relay scores into each team score row:
       mrr.each { |relay_result|
-        team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( :team_id => relay_result.team_id, :meeting_id => meeting_id )
+        team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( team_id: relay_result.team_id, meeting_id: meeting_id )
         team_score.meeting_relay_points += relay_result.standard_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ relay_result.team_id ] = team_score
@@ -131,8 +131,8 @@ class MeetingsController < ApplicationController
   # Computes and shows all the statistics regarding the whole Meeting.
   #
   # === Params:
-  # - :id => Meeting row id.
-  # - :team_id => (facultative) used as a pass-throught parameter in the tabbed links,
+  # - id: Meeting row id.
+  # - team_id: (facultative) used as a pass-throught parameter in the tabbed links,
   #               just to highlight a specific team
   #
   def show_stats
@@ -144,7 +144,7 @@ class MeetingsController < ApplicationController
     end
     @preselected_team_id = params[:team_id]
 # DEBUG
-#    logger.debug "@preselected_team_id : #{params[:team_id]}"
+#    logger.debug "@preselected_team_id : #{params[:team_id] }"
 
     teams_hash = {}
     # Stores, for each Team id as key:
@@ -294,8 +294,8 @@ class MeetingsController < ApplicationController
   # Show all details regarding a single Team for the whole Meeting.
   #
   # === Params:
-  # - :id => Meeting row id.
-  # - :team_id => Team id.
+  # - id: Meeting row id.
+  # - team_id: Team id.
   #
   def show_team_results
     @team_id = params[:team_id].to_i
@@ -341,7 +341,7 @@ class MeetingsController < ApplicationController
     ).collect{ |row| row.meeting_event.id }.uniq
     event_ids = (ind_event_ids + rel_event_ids).uniq.sort
     @team_tot_events = event_ids.size
-    @meeting_events_list = MeetingEvent.where( :id => event_ids ).includes(
+    @meeting_events_list = MeetingEvent.where( id: event_ids ).includes(
       :event_type, :stroke_type
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
@@ -363,7 +363,7 @@ class MeetingsController < ApplicationController
         meeting_id, @team_id ]
     ).collect{ |row| row.meeting_program_id }.uniq
     prg_ids = (ind_prg_ids + rel_prg_ids).uniq.sort
-    @meeting_programs_list = MeetingProgram.where( :id => prg_ids ).includes(
+    @meeting_programs_list = MeetingProgram.where( id: prg_ids ).includes(
       :event_type, :stroke_type
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
@@ -375,8 +375,8 @@ class MeetingsController < ApplicationController
 
   # Show all details regarding a single Swimmer for the whole Meeting
   # === Params:
-  # - :id => Meeting row id.
-  # - :swimmer_id => Swimmer id.
+  # - id: Meeting row id.
+  # - swimmer_id: Swimmer id.
   #
   def show_swimmer_results
     swimmer_id = params[:swimmer_id].to_i
@@ -411,7 +411,7 @@ class MeetingsController < ApplicationController
   # Search meeting results for a specific swimmer
   #
   def search_swimmer
-    @title = I18n.t(:search_by_swimmer, {:scope=>[:meeting]})
+    @title = I18n.t(:search_by_swimmer, { scope: [:meeting] })
     @swimmers_grid = initialize_grid(
       Swimmer,
       :order => 'swimmers.complete_name',
@@ -425,7 +425,7 @@ class MeetingsController < ApplicationController
   # Search meeting results for a specific team
   #
   def search_team
-    @title = I18n.t(:search_by_team, {:scope=>[:meeting]})
+    @title = I18n.t(:search_by_team, { scope: [:meeting] })
     @teams_grid = initialize_grid(
       Team,
       :order => 'teams.name',

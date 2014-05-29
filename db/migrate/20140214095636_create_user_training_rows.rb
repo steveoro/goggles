@@ -20,7 +20,7 @@ class CreateUserTrainingRows < ActiveRecord::Migration
       t.references :training_step_type
     end
 
-    add_index :user_training_rows, [:user_training_id, :part_order], :name => :idx_user_training_rows_part_order
+    add_index :user_training_rows, [:user_training_id, :part_order], name: :idx_user_training_rows_part_order
     add_index :user_training_rows, [:group_id, :part_order]
         
   end

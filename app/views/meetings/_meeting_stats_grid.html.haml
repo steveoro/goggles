@@ -219,7 +219,7 @@
           - if @specials_hash[ key ].standard_points > 0
             %tr
               %td.span3
-                = I18n.t( key, :scope =>[:meeting_stats] )
+                = I18n.t( key, scope: [:meeting_stats] )
               %td.span1.goggles-rightalign
                 = sprintf( "%02.2f", @specials_hash[ key ].standard_points )
               %td.span3
@@ -245,7 +245,7 @@
           - if @specials_hash[ key ].standard_points > 0
             %tr
               %td.span3
-                = I18n.t( key, :scope =>[:meeting_stats] )
+                = I18n.t( key, scope: [:meeting_stats] )
               %td.span1.goggles-rightalign
                 = sprintf( "%02.2f", @specials_hash[ key ].standard_points )
               %td.span3

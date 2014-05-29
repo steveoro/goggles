@@ -21,6 +21,6 @@
 .row-fluid
   .control-group
     .controls
-      = f.submit( @submit_title, :id => 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+      = f.submit( @submit_title, id: 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
       %span(id='loadingIndicator' hidden='true')
         = image_tag( 'indicator.gif' )

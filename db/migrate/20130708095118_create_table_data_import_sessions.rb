@@ -18,6 +18,6 @@ class CreateTableDataImportSessions < ActiveRecord::Migration
       t.integer :user_id
     end
 
-    add_index :data_import_sessions, ["user_id"], :name => "user_id"
+    add_index :data_import_sessions, ["user_id"], name: "user_id"
   end
 end

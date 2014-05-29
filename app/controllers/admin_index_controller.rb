@@ -61,7 +61,7 @@ class AdminIndexController < ApplicationController
         when '.sql'
           zip_pipe = nil
         else
-          flash[:info] = I18n.t(:unsupported_file_format, {:scope=>[:admin_index]})
+          flash[:info] = I18n.t(:unsupported_file_format, { scope: [:admin_index] })
           redirect_to( goggles_admin_index_path() ) and return
         end
 
@@ -91,7 +91,7 @@ class AdminIndexController < ApplicationController
         logger.info( "Deleting '#{@filename_to_be_run}'...\r\n" )
         FileUtils.rm( @filename_to_be_run ) if File.exists?( @filename_to_be_run )
       else
-        flash[:info] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
+        flash[:info] = I18n.t(:nothing_to_do_upload_something, { scope: [:admin_import] })
         redirect_to( goggles_admin_index_path() ) and return
       end
     end
@@ -133,7 +133,7 @@ class AdminIndexController < ApplicationController
         when '.sql'
           zip_pipe = nil
         else
-          flash[:info] = I18n.t(:unsupported_file_format, {:scope=>[:admin_index]})
+          flash[:info] = I18n.t(:unsupported_file_format, { scope: [:admin_index] })
           redirect_to( goggles_admin_index_path() ) and return
         end
 
@@ -168,7 +168,7 @@ class AdminIndexController < ApplicationController
           FileUtils.rm( @filename_to_be_run ) if File.exists?( @filename_to_be_run )
         end
       else
-        flash[:info] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
+        flash[:info] = I18n.t(:nothing_to_do_upload_something, { scope: [:admin_import] })
         redirect_to( goggles_admin_index_path() ) and return
       end
     end
@@ -344,15 +344,15 @@ class AdminIndexController < ApplicationController
     deleted_rel_res = rows.size
     rows = MeetingRelaySwimmer.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
     deleted_rel_swi = rows.size
-    MeetingTeamScore.delete_all( :meeting_id => meeting_id )
+    MeetingTeamScore.delete_all( meeting_id: meeting_id )
     rows = Passage.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
     deleted_pass = rows.size
     rows = MeetingProgram.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
     deleted_progs = rows.size
     rows = MeetingEvent.joins(:meeting).where(['meetings.id = ?', meeting_id]).destroy_all
     deleted_events = rows.size
-    MeetingSession.delete_all( :meeting_id => meeting_id )
-    Meeting.delete_all( :id => meeting_id )
+    MeetingSession.delete_all( meeting_id: meeting_id )
+    Meeting.delete_all( id: meeting_id )
 
     output = "Full Meeting delete, ID #{meeting_id}:" +
              "MeetingIndividualResult rows deleted: #{deleted_ind_res}\r\n" +
@@ -486,7 +486,7 @@ class AdminIndexController < ApplicationController
     command_line = "mysqldump -u #{db_user} -p#{db_pwd} --no-autocommit --single-transaction --extended-insert --triggers --routines --comments "
     if table_names.instance_of?(Array) && (table_names.size > 0)
       command_line << "--tables #{db_name} #{table_names.join(' ')}"
-      file_name << "_#{table_names[0]}"
+      file_name << "_#{table_names[0] }"
     else
       command_line << "--add-drop-database -B #{db_name}"
     end
@@ -594,12 +594,12 @@ class AdminIndexController < ApplicationController
     #     => MeetingTeamScore and update them (:team_id, :team_affiliation_id)
 
                                                     # --- TeamAffiliation ---
-    dest_taffs = TeamAffiliation.where( :team_id => dest_id )
+    dest_taffs = TeamAffiliation.where( team_id: dest_id )
     dest_season_ids = dest_taffs.collect{ |row| row.season_id }
                                                     # Separate duplicates from new (updatable) rows:
-    duplicates_src_taffs = TeamAffiliation.where( :team_id => src_id, :season_id => dest_season_ids )
+    duplicates_src_taffs = TeamAffiliation.where( team_id: src_id, season_id: dest_season_ids )
     duplicates_src_taffs_ids = duplicates_src_taffs.collect{ |row| row.id }
-    src_taffs = TeamAffiliation.where( :team_id => src_id )
+    src_taffs = TeamAffiliation.where( team_id: src_id )
     src_taffs_ids = src_taffs.collect{ |row| row.id }
     nonduplicates_src_taffs_ids = src_taffs_ids.reject{ |id| duplicates_src_taffs_ids.member?(id) }
     nonduplicates_src_taffs = src_taffs.reject{ |row| duplicates_src_taffs_ids.member?(row.id) }
@@ -613,8 +613,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( TeamAffiliation, :name, duplicates_src_taffs, nonduplicates_src_taffs )
 
                                                     # --- Badge ---
-    src_badges  = Badge.where( :team_id => src_id )
-    dest_badges = Badge.where( :team_id => dest_id )
+    src_badges  = Badge.where( team_id: src_id )
+    dest_badges = Badge.where( team_id: dest_id )
                                                     # Separate future non-duplicate, updatable rows from the duplicate ones:
     nonduplicates_src_badges = src_badges.reject{ |src_row|
       dest_badges.any?{ |dest_row|
@@ -640,8 +640,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( Badge, :get_full_name, duplicates_src_badges, nonduplicates_src_badges )
 
                                                     # --- DataImportTeamAlias (:team_id) ---
-    src_di_tals  = DataImportTeamAlias.where( :team_id => src_id )
-    dest_di_tals = DataImportTeamAlias.where( :team_id => dest_id )
+    src_di_tals  = DataImportTeamAlias.where( team_id: src_id )
+    dest_di_tals = DataImportTeamAlias.where( team_id: dest_id )
     nonduplicates_src_di_tals = src_di_tals.reject{ |src_row|
       dest_di_tals.any?{ |dest_row| dest_row.name == src_row.name }
     }
@@ -651,8 +651,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( DataImportTeamAlias, :name, duplicates_src_di_tals, nonduplicates_src_di_tals )
 
                                                     # --- GoggleCup (:team_id) ---
-    src_gcups  = GoggleCup.where( :team_id => src_id )
-    dest_gcups = GoggleCup.where( :team_id => dest_id )
+    src_gcups  = GoggleCup.where( team_id: src_id )
+    dest_gcups = GoggleCup.where( team_id: dest_id )
     nonduplicates_src_gcups = src_gcups.reject{ |src_row|
       dest_gcups.any?{ |dest_row| dest_row.year == src_row.year }
     }
@@ -673,8 +673,8 @@ class AdminIndexController < ApplicationController
     # them for possible duplicate after update; if the row will result in a duplicate, it must be
     # deleted.
                                                     # --- MeetingIndividualResult (:badge_id, :team_id, :team_affiliation_id) ---
-    src_mirs  = MeetingIndividualResult.where( :team_id => src_id )
-    dest_mirs = MeetingIndividualResult.where( :team_id => dest_id )
+    src_mirs  = MeetingIndividualResult.where( team_id: src_id )
+    dest_mirs = MeetingIndividualResult.where( team_id: dest_id )
     nonduplicates_src_mirs = src_mirs.reject{ |src_row|
       dest_mirs.any?{ |dest_row|
         (dest_row.meeting_program_id == src_row.meeting_program_id) &&
@@ -687,8 +687,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( MeetingIndividualResult, :get_full_name, duplicates_src_mirs, nonduplicates_src_mirs )
 
                                                     # --- MeetingRelayResult (:team_id, :team_affiliation_id) ---
-    src_mrrs  = MeetingRelayResult.where( :team_id => src_id )
-    dest_mrrs = MeetingRelayResult.where( :team_id => dest_id )
+    src_mrrs  = MeetingRelayResult.where( team_id: src_id )
+    dest_mrrs = MeetingRelayResult.where( team_id: dest_id )
     nonduplicates_src_mrrs = src_mrrs.reject{ |src_row|
       dest_mrrs.any?{ |dest_row|
         (dest_row.meeting_program_id == src_row.meeting_program_id)
@@ -700,8 +700,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( MeetingRelayResult, :get_full_name, duplicates_src_mrrs, nonduplicates_src_mrrs )
 
                                                     # --- MeetingTeamScore (:team_id, :team_affiliation_id) ---
-    src_mtss  = MeetingTeamScore.where( :team_id => src_id )
-    dest_mtss = MeetingTeamScore.where( :team_id => dest_id )
+    src_mtss  = MeetingTeamScore.where( team_id: src_id )
+    dest_mtss = MeetingTeamScore.where( team_id: dest_id )
     nonduplicates_src_mtss = src_mtss.reject{ |src_row|
       dest_mtss.any?{ |dest_row|
         (dest_row.meeting_id == src_row.meeting_id)
@@ -713,8 +713,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( MeetingTeamScore, :get_full_name, duplicates_src_mtss, nonduplicates_src_mtss )
 
                                                     # --- MeetingRelaySwimmer (:badge_id) ---
-    src_mrss  = MeetingRelaySwimmer.includes(:badge).where( :badge_id => src_badges_ids )
-    dest_mrss = MeetingRelaySwimmer.includes(:badge).where( :badge_id => dest_badges_ids )
+    src_mrss  = MeetingRelaySwimmer.includes(:badge).where( badge_id: src_badges_ids )
+    dest_mrss = MeetingRelaySwimmer.includes(:badge).where( badge_id: dest_badges_ids )
     nonduplicates_src_mrss = src_mrss.reject{ |src_row|
       dest_mrss.any?{ |dest_row|
         (dest_row.meeting_relay_result_id == src_row.meeting_relay_result_id) &&
@@ -727,8 +727,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( MeetingRelaySwimmer, :get_full_name, duplicates_src_mrss, nonduplicates_src_mrss )
 
                                                     # --- Passage (:badge_id) ---
-    src_pass  = Passage.includes(:badge).where( :badge_id => src_badges_ids )
-    dest_pass = Passage.includes(:badge).where( :badge_id => dest_badges_ids )
+    src_pass  = Passage.includes(:badge).where( badge_id: src_badges_ids )
+    dest_pass = Passage.includes(:badge).where( badge_id: dest_badges_ids )
     nonduplicates_src_pass = src_pass.reject{ |src_row|
       dest_pass.any?{ |dest_row|
         (dest_row.meeting_program_id == src_row.meeting_program_id) &&

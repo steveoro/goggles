@@ -10,8 +10,8 @@ class Swimmer < ActiveRecord::Base
   # This will be used to discriminate the actual user associated with this data
   # (the "associated_user_id") and the user_id which has created/updated/modified
   # the data itself (usually a user with a higher grant) 
-  belongs_to :associated_user, :class_name  => "User", 
-             :foreign_key => "associated_user_id"
+  belongs_to :associated_user, class_name: "User", 
+             foreign_key: "associated_user_id"
 
   has_many :user_swimmer_confirmations
   has_many :confirmators, through: :user_swimmer_confirmations
@@ -20,31 +20,31 @@ class Swimmer < ActiveRecord::Base
   validates_associated  :gender_type
 
   has_many :badges
-  has_many :teams,          :through => :badges
-  has_many :category_types, :through => :badges
+  has_many :teams,          through: :badges
+  has_many :category_types, through: :badges
 
   has_many :meeting_individual_results
   has_many :meeting_relay_swimmers
-  has_many :meeting_relay_results,  :through => :meeting_relay_swimmers
+  has_many :meeting_relay_results,  through: :meeting_relay_swimmers
 
-  has_many :meeting_sessions,       :through => :meeting_individual_results
-  has_many :meetings,               :through => :meeting_individual_results
+  has_many :meeting_sessions,       through: :meeting_individual_results
+  has_many :meetings,               through: :meeting_individual_results
 
   has_many :swimmer_results
 
   validates_presence_of :complete_name
-  validates_length_of   :complete_name, :within => 1..100, :allow_nil => false
+  validates_length_of   :complete_name, within: 1..100, allow_nil: false
 
-  validates_length_of   :last_name, :maximum => 50
-  validates_length_of   :first_name, :maximum => 50
+  validates_length_of   :last_name, maximum: 50
+  validates_length_of   :first_name, maximum: 50
 
   validates_presence_of :year_of_birth
-  validates_length_of   :year_of_birth, :within => 2..4, :allow_nil => false
+  validates_length_of   :year_of_birth, within: 2..4, allow_nil: false
 
-  validates_length_of :phone_mobile,  :maximum =>  40
-  validates_length_of :phone_number,  :maximum =>  40
-  validates_length_of :e_mail,        :maximum => 100
-  validates_length_of :nickname,      :maximum => 25
+  validates_length_of :phone_mobile,  maximum:  40
+  validates_length_of :phone_number,  maximum:  40
+  validates_length_of :e_mail,        maximum: 100
+  validates_length_of :nickname,      maximum: 25
 
   scope :is_male,             -> { where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,           -> { where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
@@ -135,7 +135,7 @@ class Swimmer < ActiveRecord::Base
   # Returns +nil+ when not found.
   #
   def get_badge_for( season_id, team_id )
-     self.badges.includes(:season, :team).where( :season_id => season_id, :team_id => team_id ).first
+     self.badges.includes(:season, :team).where( season_id: season_id, team_id: team_id ).first
   end
 
   # Returns an +Array+ of Badge row instances linked to this Swimmer,
@@ -143,7 +143,7 @@ class Swimmer < ActiveRecord::Base
   #
   def get_badges_array( season_id = nil )
      all_badges = self.badges.includes(:season, :team)
-     all_badges = all_badges.where( :season_id => season_id ) if season_id
+     all_badges = all_badges.where( season_id: season_id ) if season_id
      all_badges
   end
 
@@ -238,8 +238,8 @@ class Swimmer < ActiveRecord::Base
 
   # Returns the total count of registered disqualifications
   def get_disqualifications_count
-    ( self.meeting_individual_results.where(:is_disqualified => true).count +
-      self.meeting_relay_results.where(:is_disqualified => true).count )
+    ( self.meeting_individual_results.where(is_disqualified: true).count +
+      self.meeting_relay_results.where(is_disqualified: true).count )
   end
   # ----------------------------------------------------------------------------
 end

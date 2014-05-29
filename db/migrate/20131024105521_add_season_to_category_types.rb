@@ -5,7 +5,7 @@ class AddSeasonToCategoryTypes < ActiveRecord::Migration
       ALTER TABLE category_types
         DROP FOREIGN KEY fk_category_types_season_types
     SQL
-    remove_index :category_types, :name => :season_type_and_code
+    remove_index :category_types, name: :season_type_and_code
 
     change_table(:category_types) do |t|
       t.remove_references( :season_type )
@@ -13,7 +13,7 @@ class AddSeasonToCategoryTypes < ActiveRecord::Migration
       t.references :season
     end
 
-    add_index :category_types, [:season_id, :is_a_relay, :code], :name => :season_and_code, :unique => true
+    add_index :category_types, [:season_id, :is_a_relay, :code], name: :season_and_code, :unique => true
 
     execute <<-SQL
       ALTER TABLE category_types

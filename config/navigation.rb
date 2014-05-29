@@ -121,12 +121,12 @@ SimpleNavigation::Configuration.run do |navigation|
       :key_user_logout,
       content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ),
       destroy_user_session_path(),
-      :method => Devise.sign_out_via,
+      method: Devise.sign_out_via,
       :if => Proc.new { user_signed_in? }
     )
 
 #    primary.item :key_edit_user,      (current_user.nil? ? '' : current_user.email), edit_user_registration_path(), :if => Proc.new { user_signed_in? }
-    #primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_user_session_path(), :method => Devise.sign_out_via, :if => Proc.new { user_signed_in? }
+    #primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_user_session_path(), method: Devise.sign_out_via, :if => Proc.new { user_signed_in? }
 
     primary.item :key_separator2,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
     primary.item( :key_admin,         content_tag(:span, t('admin.back_to_admin'), class:"text-error" ), '#', :if => Proc.new { admin_signed_in? }

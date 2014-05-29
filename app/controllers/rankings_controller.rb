@@ -34,7 +34,7 @@ class RankingsController < ApplicationController
 # 
     # @individual_results_grid = initialize_grid(
       # MeetingIndividualResult,
-      # :conditions => {:meeting_program_id => @meeting_program.id},
+      # :conditions => {meeting_program_id: @meeting_program.id},
       # :include => [
           # :meeting_program, :result_type,
           # :swimmer, :team,
@@ -46,7 +46,7 @@ class RankingsController < ApplicationController
 # 
     # @relay_results_grid = initialize_grid(
       # MeetingRelayResult,
-      # :conditions => {:meeting_program_id => @meeting_program.id},
+      # :conditions => {meeting_program_id: @meeting_program.id},
       # :include => [
           # :meeting_program, :result_type,
           # :team, :disqualification_code_type

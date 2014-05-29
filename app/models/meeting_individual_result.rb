@@ -13,16 +13,16 @@ class MeetingIndividualResult < ActiveRecord::Base
   belongs_to :meeting_program
   validates_associated :meeting_program
 
-  has_one  :meeting_event,    :through => :meeting_program
-  has_one  :meeting_session,  :through => :meeting_program
-  has_one  :meeting,          :through => :meeting_program
-  has_one  :season,           :through => :meeting_program
+  has_one  :meeting_event,    through: :meeting_program
+  has_one  :meeting_session,  through: :meeting_program
+  has_one  :meeting,          through: :meeting_program
+  has_one  :season,           through: :meeting_program
 
-  has_one  :pool_type,        :through => :meeting_program
-  has_one  :season_type,      :through => :meeting_program
-  has_one  :event_type,       :through => :meeting_program
-  has_one  :category_type,    :through => :meeting_program
-  has_one  :gender_type,      :through => :meeting_program
+  has_one  :pool_type,        through: :meeting_program
+  has_one  :season_type,      through: :meeting_program
+  has_one  :event_type,       through: :meeting_program
+  has_one  :category_type,    through: :meeting_program
+  has_one  :gender_type,      through: :meeting_program
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :team
   belongs_to :team_affiliation
@@ -35,7 +35,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_associated :disqualification_code_type
 
   validates_presence_of     :rank
-  validates_length_of       :rank, :within => 1..4, :allow_nil => false
+  validates_length_of       :rank, within: 1..4, allow_nil: false
   validates_numericality_of :rank
 
   validates_presence_of     :standard_points

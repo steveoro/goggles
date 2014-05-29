@@ -1,58 +1,58 @@
 <h5><%= t(:individual_results) %></h5>
 
 <%= grid(@individual_results_grid, show_filters: :when_filtered) do |g|
-	g.blank_slate do
-		content_tag( :div, t(:no_data_found), class: 'well' )
-	end
+    g.blank_slate do
+        content_tag( :div, t(:no_data_found), class: 'well' )
+    end
 
-	g.column(
-		name: I18n.t(:rank, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		attribute: 'rank'
-	)
+    g.column(
+        name: I18n.t(:rank, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+        attribute: 'rank'
+    )
 
-	g.column(
-		name: I18n.t(:athlete_name, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		attribute: 'athlete_name'
-	) do |individual_result|
-		# TODO swimmer_path( individual_result.swimmer_id ) if individual_result.swimmer
-		# TODO otherwise: display plain text
-		link_to( individual_result.athlete_name, wip_path() )
-	end
+    g.column(
+        name: I18n.t(:athlete_name, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+        attribute: 'athlete_name'
+    ) do |individual_result|
+        # TODO swimmer_path( individual_result.swimmer_id ) if individual_result.swimmer
+        # TODO otherwise: display plain text
+        link_to( individual_result.athlete_name, wip_path() )
+    end
 
-	g.column(
-		name: I18n.t(:team_name, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		attribute: 'team_id',
-		custom_filter: Team.to_dropdown
-	) do |individual_result|
-		# TODO show_team_path( individual_result.team_id ) if individual_result.team
-		# TODO otherwise: display plain text
-		link_to( individual_result.get_team_name, wip_path() )
-	end
+    g.column(
+        name: I18n.t(:team_name, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+        attribute: 'team_id',
+        custom_filter: Team.to_dropdown
+    ) do |individual_result|
+        # TODO show_team_path( individual_result.team_id ) if individual_result.team
+        # TODO otherwise: display plain text
+        link_to( individual_result.get_team_name, wip_path() )
+    end
 
 
-	g.column(
-		name: I18n.t(:year_of_birth, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-	) do |individual_result|
-		individual_result.get_year_of_birth
-	end
+    g.column(
+        name: I18n.t(:year_of_birth, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+    ) do |individual_result|
+        individual_result.get_year_of_birth
+    end
 
-	g.column(
-		name: I18n.t(:timing, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		filter: false
-	) do |individual_result|
-		individual_result.get_timing
-	end
+    g.column(
+        name: I18n.t(:timing, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+        filter: false
+    ) do |individual_result|
+        individual_result.get_timing
+    end
 
-	g.column(
-		name: I18n.t(:meeting_points, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		attribute: 'meeting_points',
-		filter: false
-	)
+    g.column(
+        name: I18n.t(:meeting_points, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+        attribute: 'meeting_points',
+        filter: false
+    )
 
-	g.column(
-		name: I18n.t(:standard_points, {:scope=>[:activerecord, :attributes, :meeting_individual_result]}),
-		attribute: 'standard_points',
-		filter: false
-	)
+    g.column(
+        name: I18n.t(:standard_points, { scope: [:activerecord, :attributes, :meeting_individual_result] }),
+        attribute: 'standard_points',
+        filter: false
+    )
 
 end -%>

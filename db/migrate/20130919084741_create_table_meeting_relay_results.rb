@@ -29,6 +29,6 @@ class CreateTableMeetingRelayResults < ActiveRecord::Migration
       t.references :user
     end
 
-    add_index :meeting_relay_results, [:meeting_relay_id, :rank], :name => 'results_x_relay'
+    add_index :meeting_relay_results, [:meeting_relay_id, :rank], name: 'results_x_relay'
   end
 end

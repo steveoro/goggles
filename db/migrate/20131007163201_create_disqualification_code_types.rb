@@ -17,7 +17,7 @@ class CreateDisqualificationCodeTypes < ActiveRecord::Migration
       t.references :stroke_type
     end
 
-    add_index :disqualification_code_types, [:is_a_relay, :code], :name => :code, :unique => true
+    add_index :disqualification_code_types, [:is_a_relay, :code], name: :code, :unique => true
     add_index :disqualification_code_types, :is_a_relay
   end
   # ---------------------------------------------------------------------------

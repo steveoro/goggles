@@ -12,7 +12,7 @@
             = @meeting.id if @meeting
         .row-fluid
           .span2
-            = I18n.t(:season, {:scope=>[:activerecord, :models]}) +':'
+            = I18n.t(:season, { scope: [:activerecord, :models] }) +':'
           .span10
             = @meeting.season.get_full_name
             = admin_signed_in? ? " (season.id=#{@meeting.season_id})" : ''
@@ -23,7 +23,7 @@
             = @meeting.header_date
         .row-fluid
           .span2
-            = I18n.t(:edition, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:edition, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = @meeting.edition
         .row-fluid
@@ -35,42 +35,42 @@
               = admin_signed_in? ? " (swimming_pools.id=#{pool.id})" : ''
         .row-fluid
           .span2
-            = I18n.t(:has_warm_up_pool, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:has_warm_up_pool, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = show_tag( @meeting.has_warm_up_pool )
         .row-fluid
           .span2
-            = I18n.t(:is_under_25_admitted, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:is_under_25_admitted, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = show_tag( @meeting.is_under_25_admitted )
         .row-fluid
           .span2
-            = I18n.t(:has_invitation, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:has_invitation, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = show_tag( @meeting.has_invitation )
         .row-fluid
           .span2
-            = I18n.t(:has_start_list, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:has_start_list, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = show_tag( @meeting.has_start_list )
         .row-fluid
           .span2
-            = I18n.t(:max_individual_events, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:max_individual_events, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = @meeting.max_individual_events
         .row-fluid
           .span2
-            = I18n.t(:reference_phone, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:reference_phone, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = @meeting.reference_phone
         .row-fluid
           .span2
-            = I18n.t(:reference_e_mail, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:reference_e_mail, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = @meeting.reference_e_mail
         .row-fluid
           .span2
-            = I18n.t(:reference_name, {:scope=>[:activerecord, :attributes, :meeting]}) +':'
+            = I18n.t(:reference_name, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = @meeting.reference_name
         .row-fluid

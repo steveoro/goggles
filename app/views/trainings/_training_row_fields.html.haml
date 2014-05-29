@@ -28,7 +28,7 @@
       .span1.g-w50
         = f.input :distance, label: false, wrapper: false
       .span4.g-w320
-        = f.input :exercise_id, label: false, wrapper: false, input_html: {class: 'exercise_id', :type=>:hidden}
+        = f.input :exercise_id, label: false, wrapper: false, input_html: {class: 'exercise_id', type: hidden}
         = text_field_tag( :exercise_desc, nil, class: 'exercise-autocomplete', placeholder: I18n.t('trainings.type_something') )
       .span1.g-w80
         = f.input :start_and_rest, label: false, wrapper: false do
@@ -39,7 +39,7 @@
       .span1.g-w50
         .ungrouped-row-controls
           .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.delete_row_tooltip') }
-            = link_to_remove_association( image_tag('delete.png'), f, :confirm => I18n.t('netzke.basepack.grid_panel.are_you_sure') )
+            = link_to_remove_association( image_tag('delete.png'), f, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure') )
 
       .row-fluid.control-row
         .offset5.span1.g-w80

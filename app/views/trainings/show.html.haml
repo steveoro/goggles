@@ -13,7 +13,7 @@
         = image_tag('page_edit.png')
         = I18n.t(:edit)
   .span2
-    = link_to( training_duplicate_path(@training.id), :method => :post, :confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel]) ) do
+    = link_to( training_duplicate_path(@training.id), method: :post, confirm: I18n.t(:are_you_sure, scope: [:netzke,:basepack,:grid_panel]) ) do
       = I18n.t(:duplicate)
 
 .accordion
@@ -81,9 +81,9 @@
           - tot_group_timing = Timing.to_minute_string( tot_group_secs )
           .row-fluid
             .span2.goggles-training
-              %pre= "#{fields[0]} #{fields[1]} (#{ tot_group_timing })"
+              %pre= "#{fields[0] } #{fields[1] } (#{ tot_group_timing })"
             .span1.goggles-training
-              %pre= "#{group_hash[:times]}x"
+              %pre= "#{group_hash[:times] }x"
             - group_pause = group_hash[:pause].to_i
             - group_s_r   = group_hash[:start_and_rest].to_i
             - if ( group_pause > 0 || group_s_r > 0 )
@@ -91,13 +91,13 @@
                 %pre= "#{ Timing.to_formatted_start_and_rest( group_s_r ) } #{ Timing.to_formatted_pause( group_pause ) }"
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= "(+) #{fields[3]}"
+              %pre= "(+) #{fields[3] }"
             .span9.goggles-training
               %pre= fields[4]
         - else                                      # Same old group?
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= "(+) #{fields[3]}"
+              %pre= "(+) #{fields[3] }"
             .span9.goggles-training
               %pre= fields[4]
       - else                                        # Not in a group?
@@ -105,7 +105,7 @@
         .row-fluid
           .span2.goggles-training
             %pre
-              = "#{fields[0]} #{fields[1]} (#{ Timing.to_minute_string(fields[2]) })"
+              = "#{fields[0] } #{fields[1] } (#{ Timing.to_minute_string(fields[2]) })"
           .span1.goggles-div-rightalign.goggles-training
             %pre= fields[3]
           .span9.goggles-training

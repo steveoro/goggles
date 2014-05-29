@@ -9,7 +9,7 @@ class SwimmingPoolReview < ActiveRecord::Base
   validates_associated :swimming_pool
 
   validates_presence_of :title
-  validates_length_of   :title, :within => 1..100, :allow_nil => false
+  validates_length_of   :title, within: 1..100, allow_nil: false
 
   validates_presence_of :entry_text
 

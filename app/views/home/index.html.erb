@@ -1,12 +1,12 @@
 <% if user_signed_in? -%>
     <!-- Association request link: -->
     <% unless current_user.has_associated_swimmer? -%>
-        <%= render( :partial => 'goggles/associate_to_a_swimmer' ) %>
+        <%= render( partial: 'goggles/associate_to_a_swimmer' ) %>
     <% end -%>
-	<!-- Articles/News flash list: -->
-	<%= render( :partial => 'goggles/news_articles_list' ) %>
+    <!-- Articles/News flash list: -->
+    <%= render( partial: 'goggles/news_articles_list' ) %>
 <% else -%>
-	<!-- Not-logged-in welcome part: -->
-	<%= render( :partial => 'jumbotron' ) %>
-	<%= render( :partial => 'goggles/not_logged_in' ) %>
+    <!-- Not-logged-in welcome part: -->
+    <%= render( partial: 'jumbotron' ) %>
+    <%= render( partial: 'goggles/not_logged_in' ) %>
 <% end -%>

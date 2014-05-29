@@ -1,7 +1,7 @@
 class ChangeTeamAffiliations < ActiveRecord::Migration
   def up                                            # remove the "unique=true" versions of the index:
-    remove_index :team_affiliations, :name => :index_team_affiliations_on_number
-    add_index :team_affiliations, [:number], :name => :index_team_affiliations_on_number
+    remove_index :team_affiliations, name: :index_team_affiliations_on_number
+    add_index :team_affiliations, [:number], name: :index_team_affiliations_on_number
 
     change_table(:team_affiliations) do |t|         # number can be null when auto-filled by data-import
       t.change  :number, :string, :limit => 20, :null => true

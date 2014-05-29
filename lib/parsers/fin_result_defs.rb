@@ -69,7 +69,7 @@ class FinResultDefs
         ],
         logger
       ),
-      :relay_header => ContextDetector.new(
+      relay_header: ContextDetector.new(
         :relay_header,
         [
           '',
@@ -242,7 +242,7 @@ class FinResultDefs
       ],
 
       # -- Fields to be extracted: :type, :distance, :style, :gender (can be nil), :category_group, :base_time
-      :relay_header => [
+      relay_header: [
         nil,
         [
           TokenExtractor.new(
@@ -449,7 +449,7 @@ class FinResultDefs
         [ :distance, :style, :gender, :category_group, :base_time ],
         nil
       ],
-      :relay_header => [
+      relay_header: [
         nil,
         [ :type, :distance, :style, :gender, :category_group, :base_time ],
         nil
@@ -498,7 +498,7 @@ class FinResultDefs
     @context_keys = {
       :meeting_header =>  [:title],
       :category_header => [:distance, :style, :gender, :category_group],
-      :relay_header =>    [:type, :category_group]  # (type includes also the gender token)
+      relay_header:    [:type, :category_group]  # (type includes also the gender token)
     }
                                                     # === Internal structure integrity checks: ===
                                                     # Pre-check format type definition:

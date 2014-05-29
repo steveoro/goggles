@@ -106,7 +106,7 @@ module InterfaceDataExport
     result = export_syms.dup
     values = to_a_s( export_syms )
     result.each_with_index { |sym, idx|
-      result[idx] = "#{I18n.t( sym, {:scope => self.class.table_name.singularize.to_sym} )}#{field_separator}#{values[idx]}"
+      result[idx] = "#{I18n.t( sym, { scope: self.class.table_name.singularize.to_sym} )}#{field_separator}#{values[idx] }"
     }
     result.join( line_separator )
   end

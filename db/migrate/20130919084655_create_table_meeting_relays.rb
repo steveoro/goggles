@@ -20,6 +20,6 @@ class CreateTableMeetingRelays < ActiveRecord::Migration
       t.references :user
     end
 
-    add_index :meeting_relays, [:meeting_program_id, :relay_type_id], :name => 'relays_x_meeting'
+    add_index :meeting_relays, [:meeting_program_id, :relay_type_id], name: 'relays_x_meeting'
   end
 end

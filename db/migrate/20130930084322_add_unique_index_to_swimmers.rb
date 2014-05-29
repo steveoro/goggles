@@ -1,7 +1,7 @@
 class AddUniqueIndexToSwimmers < ActiveRecord::Migration
   def up
-    remove_index :swimmers, :name => :name_and_nick
-    add_index :swimmers, [:complete_name, :year_of_birth], :name => :name_and_year, :unique => true
+    remove_index :swimmers, name: :name_and_nick
+    add_index :swimmers, [:complete_name, :year_of_birth], name: :name_and_year, :unique => true
 
     AppParameter.update(
       AppParameter::PARAM_VERSIONING_CODE,

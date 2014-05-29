@@ -2,8 +2,8 @@ class Tag < ActiveRecord::Base
   include Rails.application.routes.url_helpers
 
   validates_presence_of :name
-  validates_length_of :name, :within => 1..40
-  validates_uniqueness_of :name, :message => :already_exists
+  validates_length_of :name, within: 1..40
+  validates_uniqueness_of :name, message: :already_exists
 
   belongs_to :user
   # [Steve, 20120212] Validating user fails always because of validation requirements inside User (password & salt)

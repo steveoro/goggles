@@ -15,18 +15,18 @@ class SwimmingPool < ActiveRecord::Base
   validates_associated :pool_type
 
   validates_presence_of :name
-  validates_length_of   :name, :within => 1..100, :allow_nil => false
+  validates_length_of   :name, within: 1..100, allow_nil: false
   validates_presence_of :nick_name
-  validates_length_of   :nick_name, :within => 1..100, :allow_nil => false
+  validates_length_of   :nick_name, within: 1..100, allow_nil: false
 
-  validates_length_of :address,       :maximum => 100
-  validates_length_of :phone_number,  :maximum =>  40
-  validates_length_of :fax_number,    :maximum =>  40
-  validates_length_of :e_mail,        :maximum => 100
-  validates_length_of :contact_name,  :maximum => 100
+  validates_length_of :address,       maximum: 100
+  validates_length_of :phone_number,  maximum:  40
+  validates_length_of :fax_number,    maximum:  40
+  validates_length_of :e_mail,        maximum: 100
+  validates_length_of :contact_name,  maximum: 100
 
   validates_presence_of     :lanes_number
-  validates_length_of       :lanes_number, :within => 1..2, :allow_nil => false
+  validates_length_of       :lanes_number, within: 1..2, allow_nil: false
   validates_numericality_of :lanes_number
 
   # validates :has_multiple_pools,      :inclusion => { :in => [true, false] }

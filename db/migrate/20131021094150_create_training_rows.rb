@@ -16,7 +16,7 @@ class CreateTrainingRows < ActiveRecord::Migration
       t.references :user
     end
 
-    add_index :training_rows, [:training_id, :part_order], :name => :idx_training_rows_part_order
+    add_index :training_rows, [:training_id, :part_order], name: :idx_training_rows_part_order
 
     # [Steve, 20131023] ER-SQL source:
     # CREATE TABLE `training_rows` (

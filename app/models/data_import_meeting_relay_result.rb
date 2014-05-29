@@ -11,7 +11,7 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting_relay_result, :foreign_key => "conflicting_meeting_relay_result_id"
+  belongs_to :meeting_relay_result, foreign_key: "conflicting_meeting_relay_result_id"
 
   validates_presence_of :import_text
 
@@ -26,15 +26,15 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   belongs_to :entry_time_type
 
   # The following helper is used only by data_importer_test:
-  has_one  :data_import_meeting,  :through => :data_import_meeting_program
+  has_one  :data_import_meeting,  through: :data_import_meeting_program
 
   validates_associated :entry_time_type
 
   validates_presence_of     :relay_header
-  validates_length_of       :relay_header, :within => 1..60, :allow_nil => false
+  validates_length_of       :relay_header, within: 1..60, allow_nil: false
 
   validates_presence_of     :rank
-  validates_length_of       :rank, :within => 1..4, :allow_nil => false
+  validates_length_of       :rank, within: 1..4, allow_nil: false
   validates_numericality_of :rank
 
   validates_presence_of     :standard_points

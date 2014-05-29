@@ -47,7 +47,7 @@ class CreateTableDataImportTeamsAndCities < ActiveRecord::Migration
     end
 
     add_index :data_import_teams, :name
-    add_index :data_import_teams, :city_id, :name => :city_id
-    add_index :data_import_teams, :data_import_city_id, :name => :data_import_city_id
+    add_index :data_import_teams, :city_id, name: :city_id
+    add_index :data_import_teams, :data_import_city_id, name: :data_import_city_id
   end
 end

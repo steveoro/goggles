@@ -29,7 +29,7 @@ module DataImportable
         verbose_desc = ( conflicting_row.respond_to?(:get_verbose_name) ? conflicting_row.get_verbose_name : conflicting_row.inspect )
         "(ID:#{conflicting_id}) #{verbose_desc}"
       rescue
-        "(ID:#{conflicting_id}) <#{I18n.t(:unable_to_retrieve_row_data, :scope =>[:activerecord, :errors] )}>"
+        "(ID:#{conflicting_id}) <#{I18n.t(:unable_to_retrieve_row_data, scope: [:activerecord, :errors] )}>"
       end
     else
       ''

@@ -18,37 +18,37 @@ class TrainingRow < ActiveRecord::Base
   validates_associated :body_aux_type
   validates_associated :breath_aux_type
 
-  has_many :exercise_rows,      :through => :exercise
-  has_many :base_movements,     :through => :exercise_rows
-  has_many :training_mode_type, :through => :exercise_rows
+  has_many :exercise_rows,      through: :exercise
+  has_many :base_movements,     through: :exercise_rows
+  has_many :training_mode_type, through: :exercise_rows
 
   validates_presence_of     :group_id
-  validates_length_of       :group_id, :within => 1..3, :allow_nil => false
+  validates_length_of       :group_id, within: 1..3, allow_nil: false
   validates_numericality_of :group_id
   validates_presence_of     :group_times
-  validates_length_of       :group_times, :within => 1..3, :allow_nil => false
+  validates_length_of       :group_times, within: 1..3, allow_nil: false
   validates_numericality_of :group_times
   validates_presence_of     :group_start_and_rest
-  validates_length_of       :group_start_and_rest, :within => 1..4, :allow_nil => false
+  validates_length_of       :group_start_and_rest, within: 1..4, allow_nil: false
   validates_numericality_of :group_start_and_rest
   validates_presence_of     :group_pause
-  validates_length_of       :group_pause, :within => 1..4, :allow_nil => false
+  validates_length_of       :group_pause, within: 1..4, allow_nil: false
   validates_numericality_of :group_pause
 
   validates_presence_of     :part_order
-  validates_length_of       :part_order, :within => 1..3, :allow_nil => false
+  validates_length_of       :part_order, within: 1..3, allow_nil: false
   validates_numericality_of :part_order
   validates_presence_of     :times
-  validates_length_of       :times, :within => 1..3, :allow_nil => false
+  validates_length_of       :times, within: 1..3, allow_nil: false
   validates_numericality_of :times
   validates_presence_of     :distance
-  validates_length_of       :distance, :within => 1..4, :allow_nil => false
+  validates_length_of       :distance, within: 1..4, allow_nil: false
   validates_numericality_of :distance
   validates_presence_of     :start_and_rest
-  validates_length_of       :start_and_rest, :within => 1..4, :allow_nil => false
+  validates_length_of       :start_and_rest, within: 1..4, allow_nil: false
   validates_numericality_of :start_and_rest
   validates_presence_of     :pause
-  validates_length_of       :pause, :within => 1..4, :allow_nil => false
+  validates_length_of       :pause, within: 1..4, allow_nil: false
   validates_numericality_of :pause
 
   attr_accessible :part_order, 

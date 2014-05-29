@@ -6,7 +6,7 @@ class DataImportMeeting < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting, :foreign_key => "conflicting_meeting_id"
+  belongs_to :meeting, foreign_key: "conflicting_meeting_id"
 
   validates_presence_of :import_text
 
@@ -19,52 +19,52 @@ class DataImportMeeting < ActiveRecord::Base
   validates_associated :timing_type
 
   belongs_to( :individual_score_computation_type,
-              :class_name  => "ScoreComputationType", 
-              :foreign_key => "individual_score_computation_type_id"
+              class_name: "ScoreComputationType", 
+              foreign_key: "individual_score_computation_type_id"
   )
   belongs_to( :relay_score_computation_type,
-              :class_name  => "ScoreComputationType", 
-              :foreign_key => "relay_score_computation_type_id"
+              class_name: "ScoreComputationType", 
+              foreign_key: "relay_score_computation_type_id"
   )
   belongs_to( :team_score_computation_type,
-              :class_name  => "ScoreComputationType", 
-              :foreign_key => "team_score_computation_type_id"
+              class_name: "ScoreComputationType", 
+              foreign_key: "team_score_computation_type_id"
   )
   belongs_to( :meeting_score_computation_type,
-              :class_name  => "ScoreComputationType", 
-              :foreign_key => "meeting_score_computation_type_id"
+              class_name: "ScoreComputationType", 
+              foreign_key: "meeting_score_computation_type_id"
   )
 
-  has_one  :season_type, :through => :season
+  has_one  :season_type, through: :season
 
   has_many :meeting_sessions
   has_many :data_import_meeting_sessions
 
-  has_many :meeting_programs, :through => :meeting_sessions
-  has_many :data_import_meeting_programs, :through => :data_import_meeting_sessions
+  has_many :meeting_programs, through: :meeting_sessions
+  has_many :data_import_meeting_programs, through: :data_import_meeting_sessions
 
-  has_many :meeting_individual_results, :through => :meeting_programs
-  has_many :data_import_meeting_individual_results, :through => :data_import_meeting_programs
+  has_many :meeting_individual_results, through: :meeting_programs
+  has_many :data_import_meeting_individual_results, through: :data_import_meeting_programs
 
-  has_many :meeting_relay_results, :through => :meeting_programs
-  has_many :data_import_meeting_relay_results, :through => :data_import_meeting_programs
+  has_many :meeting_relay_results, through: :meeting_programs
+  has_many :data_import_meeting_relay_results, through: :data_import_meeting_programs
 
   validates_presence_of :code
-  validates_length_of   :code, :within => 1..20, :allow_nil => false
+  validates_length_of   :code, within: 1..20, allow_nil: false
 
   validates_presence_of :description
-  validates_length_of :description, :maximum => 100
+  validates_length_of :description, maximum: 100
 
-  validates_length_of :reference_phone, :maximum => 40
-  validates_length_of :reference_e_mail, :maximum => 50
-  validates_length_of :reference_name, :maximum => 50
+  validates_length_of :reference_phone, maximum: 40
+  validates_length_of :reference_e_mail, maximum: 50
+  validates_length_of :reference_name, maximum: 50
 
-  validates_length_of :header_year, :maximum => 9
-  validates_length_of :configuration_file, :maximum => 255
+  validates_length_of :header_year, maximum: 9
+  validates_length_of :configuration_file, maximum: 255
 
-  validates_length_of :max_individual_events, :maximum => 1
-  validates_length_of :max_individual_events_per_session, :maximum => 1
-  validates_length_of :edition, :maximum => 3, :allow_nil => false
+  validates_length_of :max_individual_events, maximum: 1
+  validates_length_of :max_individual_events_per_session, maximum: 1
+  validates_length_of :edition, maximum: 3, allow_nil: false
 
   scope :sort_by_user,    ->(dir) { order("users.name #{dir.to_s}, data_import_meetings.description #{dir.to_s}") }
   scope :sort_by_season,  ->(dir) { order("seasons.begin_date #{dir.to_s}, data_import_meetings.description #{dir.to_s}") }

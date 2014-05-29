@@ -10,7 +10,7 @@ class MeetingCalendarsController < ApplicationController
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-    @title = I18n.t(:index_title, {:scope=>[:meeting_calendar]})
+    @title = I18n.t(:index_title, { scope: [:meeting_calendar] })
     @meetings = []
 
     if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve season range:
@@ -25,7 +25,7 @@ class MeetingCalendarsController < ApplicationController
       logger.debug "season_id: #{season_id}, team_id: #{team_id}, year: #{year}, a_date: #{a_date}"
 
       if (season_id > 0)
-        @meetings = Meeting.includes(:season).joins(:season).where( :id => season_id )
+        @meetings = Meeting.includes(:season).joins(:season).where( id: season_id )
       elsif (team_id > 0)
         team = Team.find_by_id( team_id )
         @meetings = team ? team.meetings.includes(:season).joins(:season) : []

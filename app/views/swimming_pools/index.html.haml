@@ -22,7 +22,7 @@
             = grid_filter @pools_grid, :flt_pool_nick_name
         .row-fluid
           .span2
-            = I18n.t(:city, {:scope=>[:activerecord, :models]})
+            = I18n.t(:city, { scope: [:activerecord, :models] })
           .span10
             = grid_filter @pools_grid, :flt_pool_city_id
 

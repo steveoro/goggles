@@ -69,7 +69,7 @@ class FinResultDefsTest < ActiveSupport::TestCase
         :team_code        => nil,
         :swimmer_name     => [10,40],
         :swimmer_year     => [41,46],
-        :team_name        => [48,70],
+        team_name: [48,70],
         :result_time      => [75,85],
         :result_score     => [86,95]
     }
@@ -88,7 +88,7 @@ class FinResultDefsTest < ActiveSupport::TestCase
         :team_code        => [4,14],
         :swimmer_name     => [20,45],
         :swimmer_year     => [15,19],
-        :team_name        => [50,73],
+        team_name: [50,73],
         :result_time      => [75,86],
         :result_score     => [87,95]
     }

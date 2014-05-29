@@ -6,7 +6,7 @@ class DataImportTeam < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :team, :foreign_key => "conflicting_team_id"
+  belongs_to :team, foreign_key: "conflicting_team_id"
 
   validates_presence_of :import_text
 

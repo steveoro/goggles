@@ -21,7 +21,7 @@ class CreateExerciseRows < ActiveRecord::Migration
     end
 
     add_index :exercise_rows, :code, :unique => true
-    add_index :exercise_rows, [:exercise_id, :part_order], :name => :idx_exercise_rows_part_order
+    add_index :exercise_rows, [:exercise_id, :part_order], name: :idx_exercise_rows_part_order
 
     # [Steve, 20131023] ER-SQL source:
     # CREATE TABLE `exercise_rows` (

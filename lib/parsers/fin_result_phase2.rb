@@ -106,7 +106,7 @@ module FinResultPhase2
         is_ok = false
       end
                                                     # Update progress on current session:
-      DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "TEAM-CHECK:#{idx+1}/#{team_names.size}" )
+      DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "TEAM-CHECK:#{idx+1}/#{team_names.size}" )
     }
     is_ok
   end
@@ -135,11 +135,11 @@ module FinResultPhase2
 
                                                     # -- MEETING PROGRAM (digest part) --                                                    
       gender_type_id   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
-      raise "Unrecognized GenderType in category headers! (token='#{header_row[:fields][:gender]}')" if gender_type_id == 0
+      raise "Unrecognized GenderType in category headers! (token='#{header_row[:fields][:gender] }')" if gender_type_id == 0
       category_type_id = CategoryType.parse_category_type_from_import_text( season_id, header_row[:fields][:category_group] )
-      raise "Unrecognized CategoryType in category headers! (season_id=#{season_id}, token='#{header_row[:fields][:category_group]}')" if category_type_id == 0
+      raise "Unrecognized CategoryType in category headers! (season_id=#{season_id}, token='#{header_row[:fields][:category_group] }')" if category_type_id == 0
       stroke_type_id   = StrokeType.parse_stroke_type_from_import_text( header_row[:fields][:style] )
-      raise "Unrecognized StrokeType in category headers! (token='#{header_row[:fields][:style]}')" if stroke_type_id == 0
+      raise "Unrecognized StrokeType in category headers! (token='#{header_row[:fields][:style] }')" if stroke_type_id == 0
       length_in_meters = header_row[:fields][:distance].to_i
 # DEBUG
       logger.debug( "CATEGORY HEADER: Current header_row: #{header_row.inspect}\r\nResulting category_type_id=#{category_type_id}, gender_type_id=#{gender_type_id}, stroke_type_id=#{stroke_type_id}, data_import_session ID=#{data_import_session_id}" )
@@ -168,7 +168,7 @@ module FinResultPhase2
         return unless is_ok
       }                                             # **** (END of DETAIL) ****
                                                     # Update current header count into "progress counter column"
-      DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "CAT.1:#{header_index+1}/#{category_headers_ids.size}" )
+      DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "CAT.1:#{header_index+1}/#{category_headers_ids.size}" )
     }                                               # **** (END of HEADER) ****
     is_ok
   end
@@ -195,11 +195,11 @@ module FinResultPhase2
 
                                                     # -- MEETING PROGRAM (digest part) -- (add also a Program entry for each found Relay)
       gender_type_id   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
-      raise "Unrecognized GenderType in relay headers! (token='#{header_row[:fields][:gender]}')" if gender_type_id == 0
+      raise "Unrecognized GenderType in relay headers! (token='#{header_row[:fields][:gender] }')" if gender_type_id == 0
       category_type_id = CategoryType.parse_category_type_from_import_text( season_id, header_row[:fields][:category_group] )
-      raise "Unrecognized CategoryType in relay headers! (season_id=#{season_id}, token='#{header_row[:fields][:category_group]}')" if category_type_id == 0
+      raise "Unrecognized CategoryType in relay headers! (season_id=#{season_id}, token='#{header_row[:fields][:category_group] }')" if category_type_id == 0
       stroke_type_id   = StrokeType.parse_stroke_type_from_import_text( header_row[:fields][:style] )
-      raise "Unrecognized StrokeType in relay headers! (token='#{header_row[:fields][:style]}')" if stroke_type_id == 0
+      raise "Unrecognized StrokeType in relay headers! (token='#{header_row[:fields][:style] }')" if stroke_type_id == 0
       phases           = header_row[:fields][:distance][0].to_i     # "NxMMM " |=> "N".to_i
       phase_length     = header_row[:fields][:distance][2..4].to_i  # "NxMM " |=> "MM ".to_i
       length_in_meters = phases * phase_length
@@ -228,7 +228,7 @@ module FinResultPhase2
         return unless is_ok
       }                                             # **** (END of DETAIL) ****
                                                     # Update current header count into "progress counter column"
-      DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "REL.2:#{header_index+1}/#{relay_headers_ids.size}" )
+      DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "REL.2:#{header_index+1}/#{relay_headers_ids.size}" )
     }                                               # **** (END of HEADER) ****
     is_ok
   end
@@ -264,7 +264,7 @@ module FinResultPhase2
         is_ok = is_ok && (result_id != 0)
       }                                             # **** (END of DETAIL) ****
                                                     # Update current header count into "progress counter column"
-      DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "RNK.3:#{header_index+1}/#{ranking_headers_ids.size}" )
+      DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "RNK.3:#{header_index+1}/#{ranking_headers_ids.size}" )
     }                                               # **** (END of HEADER) ****
     is_ok
   end
@@ -288,7 +288,7 @@ module FinResultPhase2
     result_row = nil
     not_found = true
                                                     # --- FIELD SETUP: Extract field values before the search:
-    description = I18n.t(:missing_data_warning, {:scope=>[:admin_import]})
+    description = I18n.t(:missing_data_warning, { scope: [:admin_import] })
     begin_date  = Date.parse( "#{Date.today.year - 1}-09-01" )
     end_date    = Date.parse( "#{Date.today.year}-06-30" )
     season_type_id = SeasonType.first.id            # FIXME ASSERT: season type is always "MASFIN"
@@ -300,13 +300,13 @@ module FinResultPhase2
       begin                                         # --- BEGIN transaction ---
         DataImportSeason.transaction do
           result_row = DataImportSeason.new(
-            :data_import_session_id => session_id,
-            :import_text  => '-',
-            :description  => description,
-            :begin_date   => begin_date,
-            :end_date     => end_date,
-            :must_use_time_standards => must_use_time_standards,
-            :season_type_id => season_type_id
+            data_import_session_id: session_id,
+            import_text: '-',
+            description: description,
+            begin_date: begin_date,
+            end_date: end_date,
+            must_use_time_standards: must_use_time_standards,
+            season_type_id: season_type_id
           )
           result_row.save!                          # raise automatically an exception if save is not successful
         end
@@ -353,7 +353,7 @@ module FinResultPhase2
       notes = (meeting_dates ? "#{meeting_dates}\r\n" : '') +
               (organization ? "#{organization}" : '')
     end
-    description = ( title ? title : "#{header_fields[:code]} (#{Format.a_date(scheduled_date)})" )
+    description = ( title ? title : "#{header_fields[:code] } (#{Format.a_date(scheduled_date)})" )
 # DEBUG
     logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
     @phase_1_log << "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n"
@@ -402,27 +402,27 @@ module FinResultPhase2
       begin                                         # --- BEGIN transaction ---
         DataImportMeeting.transaction do
           result_row = DataImportMeeting.new(
-            :data_import_session_id => session_id,
-            :import_text      => meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
-            :description      => description,
+            data_import_session_id: session_id,
+            import_text: meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
+            description: description,
             # [Steve, 20131025] No default value for this one:
-#            :entry_deadline   => scheduled_date - 14, # (This is just a guess)
-            :are_results_acquired => true,
-            :is_under_25_admitted => true, # (This is just a guess)
-            :configuration_file   => full_pathname,
-            :header_date      => scheduled_date,
-            :code             => header_fields[:code],
-            :header_year      => header_fields[:header_year],
-            :edition          => header_fields[:edition], # (This is just a guess)
-            :edition_type_id  => header_fields[:edition_type_id],
-            :timing_type_id   => header_fields[:timing_type_id],
+#            entry_deadline: scheduled_date - 14, # (This is just a guess)
+            are_results_acquired: true,
+            is_under_25_admitted: true, # (This is just a guess)
+            configuration_file: full_pathname,
+            header_date: scheduled_date,
+            code: header_fields[:code],
+            header_year: header_fields[:header_year],
+            edition: header_fields[:edition], # (This is just a guess)
+            edition_type_id: header_fields[:edition_type_id],
+            timing_type_id: header_fields[:timing_type_id],
             # TODO/FUTURE DEV:
-#            :individual_score_computation_type_id => 0,
-#            :relay_score_computation_type_id      => 0,
-#            :team_score_computation_type_id       => 0,
-            :notes          => notes,
-            :season_id      => season_id,
-            :user_id        => @current_admin_id
+#            individual_score_computation_type_id: 0,
+#            relay_score_computation_type_id: 0,
+#            team_score_computation_type_id: 0,
+            notes: notes,
+            season_id: season_id,
+            user_id: @current_admin_id
           )
           result_row.save!                          # raise automatically an exception if save is not successful
         end
@@ -465,7 +465,7 @@ module FinResultPhase2
     result_row = nil
     not_found = true
                                                     # --- FIELD SETUP: Extract field values before the search:
-    description = "#{I18n.t(:meeting_session, {:scope=>[:activerecord, :models]})} #1"
+    description = "#{I18n.t(:meeting_session, { scope: [:activerecord, :models] })} #1"
     warm_up_time  = Time.utc(
       scheduled_date.year, scheduled_date.month, scheduled_date.day,
       7, 30                                         # (UTC time)
@@ -512,24 +512,24 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found                                    # (the following is an educated guess)
-      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields[:code]}%" ]).first
+      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields[:code] }%" ]).first
 
       begin                                         # --- BEGIN transaction ---
         field_hash = {
-          :data_import_session_id => session_id,
-          :import_text  => ( meeting_dates.instance_of?(String) && meeting_dates.size > 0 ? meeting_dates : '-' ),
-          :scheduled_date => scheduled_date,
-          :warm_up_time => warm_up_time,
-          :begin_time => begin_time,
-          :description => description,
-          :session_order  => 1,                     # (since we are processing just 1 meeting session at a time; but is far from correct)
-          :user_id => @current_admin_id,
-          :swimming_pool_id => ( swimming_pool ? swimming_pool.id : nil ),
-          :day_part_type_id => DayPartType::MORNING_ID
+          data_import_session_id: session_id,
+          import_text: ( meeting_dates.instance_of?(String) && meeting_dates.size > 0 ? meeting_dates : '-' ),
+          scheduled_date: scheduled_date,
+          warm_up_time: warm_up_time,
+          begin_time: begin_time,
+          description: description,
+          session_order: 1,                     # (since we are processing just 1 meeting session at a time; but is far from correct)
+          user_id: @current_admin_id,
+          swimming_pool_id: ( swimming_pool ? swimming_pool.id : nil ),
+          day_part_type_id: DayPartType::MORNING_ID
 
           # TODO :notes is not used!
         }.merge(
-          meeting_id.to_i < 0 ?  { :meeting_id => -meeting_id } : { :data_import_meeting_id => meeting_id }
+          meeting_id.to_i < 0 ?  { meeting_id: -meeting_id } : { data_import_meeting_id: meeting_id }
         )
 
         DataImportMeetingSession.transaction do
@@ -573,13 +573,13 @@ module FinResultPhase2
                                                    mins, secs, hds )
     result_id = 0
     result_row = TimeStandard.where(
-      :event_type_id => event_type_id,
-      :category_type_id => category_type_id,
-      :gender_type_id => gender_type_id,
-      :pool_type_id => pool_type_id,
-      :minutes => mins,
-      :seconds => secs,
-      :hundreds => hds
+      event_type_id: event_type_id,
+      category_type_id: category_type_id,
+      gender_type_id: gender_type_id,
+      pool_type_id: pool_type_id,
+      minutes: mins,
+      seconds: secs,
+      hundreds: hds
     ).first
 
     if result_row
@@ -589,14 +589,14 @@ module FinResultPhase2
       logger.debug( "Adding new TimeStandard having:  #{mins}'#{secs}\".#{hds} @ season_id=#{season_id}, event_type_id=#{event_type_id}, :category_type_id=#{category_type_id}, pool_type_id=#{pool_type_id}, gender_type_id=#{gender_type_id}..." )
       begin                                         # --- BEGIN transaction ---
         field_hash = {
-          :season_id => season_id,
-          :gender_type_id => gender_type_id,
-          :pool_type_id => pool_type_id,
-          :event_type_id => event_type_id,
-          :category_type_id => category_type_id,
-          :minutes => mins,
-          :seconds => secs,
-          :hundreds => hds
+          season_id: season_id,
+          gender_type_id: gender_type_id,
+          pool_type_id: pool_type_id,
+          event_type_id: event_type_id,
+          category_type_id: category_type_id,
+          minutes: mins,
+          seconds: secs,
+          hundreds: hds
         }
         TimeStandard.transaction do
           result_row = TimeStandard.new( field_hash )
@@ -668,9 +668,9 @@ module FinResultPhase2
 #    @phase_1_log << "begin_time=#{begin_time}\r\n"
 #    logger.debug( "Searching EventType where length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type_id}..." )
     event_type_id  = EventType.where(
-      :length_in_meters => length_in_meters,
-      :stroke_type_id   => stroke_type_id,
-      :is_a_relay       => is_a_relay
+      length_in_meters: length_in_meters,
+      stroke_type_id: stroke_type_id,
+      is_a_relay: is_a_relay
     ).first.id                                      # |=> 'MASTER FIN'.id
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
@@ -752,22 +752,22 @@ module FinResultPhase2
 # DEBUG
 #        logger.debug( "Adding new DataImportMeetingProgram with: event_type_id=#{event_type_id}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type_id}, category_type_id=#{category_type_id}..." )
         field_hash = {
-          :data_import_session_id => session_id,
-          :import_text => import_text,
-          :event_order => event_order,
-          :begin_time  => begin_time,
-          :event_type_id => event_type_id,
-          :category_type_id => category_type_id,
-          :gender_type_id => gender_type_id,
-          :minutes  => mins,
-          :seconds  => secs,
-          :hundreds => hds,
-          :is_out_of_race   => false,               # FIXME This is not parsed at all
-          :heat_type_id     => HeatType::FINALS_ID, # (This is just a guess, since this is the phase-2 processing of a "fin-result" type file)
-          :time_standard_id => time_standard_id,
-          :user_id => @current_admin_id
+          data_import_session_id: session_id,
+          import_text: import_text,
+          event_order: event_order,
+          begin_time: begin_time,
+          event_type_id: event_type_id,
+          category_type_id: category_type_id,
+          gender_type_id: gender_type_id,
+          minutes: mins,
+          seconds: secs,
+          hundreds: hds,
+          is_out_of_race: false,                    # FIXME This is not parsed at all
+          heat_type_id: HeatType::FINALS_ID,        # (This is just a guess, since this is the phase-2 processing of a "fin-result" type file)
+          time_standard_id: time_standard_id,
+          user_id: @current_admin_id
         }.merge(
-          meeting_session_id.to_i < 0 ?  { :meeting_session_id => -meeting_session_id } : { :data_import_meeting_session_id => meeting_session_id }
+          meeting_session_id.to_i < 0 ?  { meeting_session_id: -meeting_session_id } : { data_import_meeting_session_id: meeting_session_id }
         )
 
         DataImportMeetingProgram.transaction do
@@ -861,7 +861,7 @@ module FinResultPhase2
         category_type_id, EntryTimeType::LAST_RACE_ID
     )
                                                 # Retrieve team_badge_number from team_affiliation, but only if the team name was found in Team: (team_affiliations require an existing team)
-    ta = TeamAffiliation.where(:team_id => -team_id, :season_id => season_id).first if (team_id.to_i < 0)
+    ta = TeamAffiliation.where(team_id: -team_id, season_id: season_id).first if (team_id.to_i < 0)
     team_badge_number = ta ? ta.number : nil
 
     rank              = detail_row[:fields][:result_position]
@@ -956,37 +956,37 @@ module FinResultPhase2
         end
 
         field_hash = {
-          :data_import_session_id => session_id,
-          :import_text  => import_text,
-          :athlete_name => swimmer_name,
-          :team_name    => team_name,
-          :athlete_badge_number => athlete_badge,
-          :team_badge_number    => team_badge_number,
-          :year_of_birth => swimmer_year,
-          :rank => rank.to_i,                       # Note that 'Fuori gara'.to_i = 0
-          :is_play_off      => is_play_off,
-          :is_out_of_race   => is_out_of_race,      # From ranking only ('Fuori gara')
-          :is_disqualified  => is_disqualified,     # any DSQ possible code
-          :disqualification_code_type_id => dsq_code_type_id,
-          :standard_points  => standard_points,
-          :meeting_individual_points => meeting_points,
-          :team_points      => 0,                   # FIXME TODO
-          :goggle_cup_points=> 0,
-          :minutes  => mins,
-          :seconds  => secs,
-          :hundreds => hds,
-          :reaction_time => 0,
+          data_import_session_id: session_id,
+          import_text: import_text,
+          athlete_name: swimmer_name,
+          team_name: team_name,
+          athlete_badge_number: athlete_badge,
+          team_badge_number: team_badge_number,
+          year_of_birth: swimmer_year,
+          rank: rank.to_i,                       # Note that 'Fuori gara'.to_i = 0
+          is_play_off: is_play_off,
+          is_out_of_race: is_out_of_race,      # From ranking only ('Fuori gara')
+          is_disqualified: is_disqualified,     # any DSQ possible code
+          disqualification_code_type_id: dsq_code_type_id,
+          standard_points: standard_points,
+          meeting_individual_points: meeting_points,
+          team_points: 0,                   # FIXME TODO
+          goggle_cup_points: 0,
+          minutes: mins,
+          seconds: secs,
+          hundreds: hds,
+          reaction_time: 0,
           # TODO FUTURE DEV:
-#          :entry_time_type_id => nil,
-          :user_id => @current_admin_id
+#          entry_time_type_id: nil,
+          user_id: @current_admin_id
         }.merge(
-          meeting_program_id < 0 ? { :meeting_program_id => -meeting_program_id } : { :data_import_meeting_program_id => meeting_program_id }
+          meeting_program_id < 0 ? { meeting_program_id: -meeting_program_id } : { data_import_meeting_program_id: meeting_program_id }
         ).merge(
-          swimmer_id.to_i < 0 ?  { :swimmer_id => -swimmer_id } : { :data_import_swimmer_id => swimmer_id }
+          swimmer_id.to_i < 0 ?  { swimmer_id: -swimmer_id } : { data_import_swimmer_id: swimmer_id }
         ).merge(
-          team_id.to_i < 0 ?     { :team_id => -team_id } : { :data_import_team_id => team_id }
+          team_id.to_i < 0 ?     { team_id: -team_id } : { data_import_team_id: team_id }
         ).merge(
-          badge_id.to_i < 0 ?    { :badge_id => -badge_id } : { :data_import_badge_id => badge_id }
+          badge_id.to_i < 0 ?    { badge_id: -badge_id } : { data_import_badge_id: badge_id }
         )
 # DEBUG
 #        logger.debug( "\r\nDataImportMeetingIndividualResult before save:\r\n#{field_hash.inspect}" )
@@ -1133,27 +1133,27 @@ module FinResultPhase2
         end
 
         field_hash = {
-          :data_import_session_id => session_id,
-          :import_text      => import_text,
-          :is_play_off      => is_play_off,
-          :is_out_of_race   => is_out_of_race,
-          :is_disqualified  => is_disqualified,
-          :disqualification_code_type_id => dsq_code_type_id,
-          :standard_points  => standard_points,
-          :meeting_points   => meeting_points,
-          :rank     => rank,
-          :minutes  => mins,
-          :seconds  => secs,
-          :hundreds => hds,
-          :relay_header => team_name,
-          :reaction_time => 0,
+          data_import_session_id: session_id,
+          import_text: import_text,
+          is_play_off: is_play_off,
+          is_out_of_race: is_out_of_race,
+          is_disqualified: is_disqualified,
+          disqualification_code_type_id: dsq_code_type_id,
+          standard_points: standard_points,
+          meeting_points: meeting_points,
+          rank: rank,
+          minutes: mins,
+          seconds: secs,
+          hundreds: hds,
+          relay_header: team_name,
+          reaction_time: 0,
           # TODO FUTURE DEV:
-#          :entry_time_type_id => nil,
-          :user_id => @current_admin_id
+#          entry_time_type_id: nil,
+          user_id: @current_admin_id
         }.merge(
-          meeting_program_id.to_i < 0 ? { :meeting_program_id => -meeting_program_id } : { :data_import_meeting_program_id => meeting_program_id }
+          meeting_program_id.to_i < 0 ? { meeting_program_id: -meeting_program_id } : { data_import_meeting_program_id: meeting_program_id }
         ).merge(
-          team_id.to_i < 0 ? { :team_id => -team_id } : { :data_import_team_id => team_id }
+          team_id.to_i < 0 ? { team_id: -team_id } : { data_import_team_id: team_id }
         )
 
         DataImportMeetingRelayResult.transaction do
@@ -1224,11 +1224,11 @@ module FinResultPhase2
     # enough to get the seeked results:
     #
     #     relay_results = meeting.meeting_relay_results.where(
-    #         :team_id => -team_id, 
-    #         :is_out_of_race => false, :is_disqualified => false
+    #         team_id: -team_id, 
+    #         is_out_of_race: false, is_disqualified: false
     #     )
                                                     # Collect ALL meeting_sessions IDs:
-    meeting_ss    = ( meeting_id < 0 ? MeetingSession.where( :meeting_id => -meeting_id ) : [] )
+    meeting_ss    = ( meeting_id < 0 ? MeetingSession.where( meeting_id: -meeting_id ) : [] )
     di_meeting_ss = DataImportMeetingSession.where(
       [ "(data_import_session_id = ?) AND (#{meeting_id < 0 ? '' : 'data_import_'}meeting_id = ?)",
         session_id,
@@ -1249,8 +1249,8 @@ module FinResultPhase2
     di_meeting_prgs_ids = di_meeting_prgs.collect{ |row| row.id }
                                                     # Collect ALL relay results:
     relay_results += MeetingRelayResult.is_valid.where(
-      :meeting_program_id => meeting_prgs_ids,
-      :team_id => -team_id
+      meeting_program_id: meeting_prgs_ids,
+      team_id: -team_id
     ) if ( team_id < 0 )
 
     relay_results += DataImportMeetingRelayResult.is_valid.where(
@@ -1344,10 +1344,10 @@ module FinResultPhase2
         end
 
         field_hash = {
-          :data_import_session_id   => session_id,
-          :import_text              => import_text,
-          :sum_individual_points    => result_score,
-          :sum_relay_points         => total_relay_points.to_f,
+          data_import_session_id: session_id,
+          import_text: import_text,
+          sum_individual_points: result_score,
+          sum_relay_points: total_relay_points.to_f,
           # :sum_team_points          => TODO
           # :meeting_individual_points=> TODO
           # :meeting_relay_points     => TODO
@@ -1356,13 +1356,13 @@ module FinResultPhase2
           # :season_relay_points      => TODO
           # :season_team_points       => TODO
           # team_affiliation_id will be updated upon Team/TeamAffiliation commit
-          :rank                     => rank.to_i,
-          :season_id                => season_id,
-          :user_id                  => @current_admin_id
+          rank: rank.to_i,
+          season_id: season_id,
+          user_id: @current_admin_id
         }.merge(
-          meeting_id.to_i < 0 ? { :meeting_id => -meeting_id } : { :data_import_meeting_id => meeting_id }
+          meeting_id.to_i < 0 ? { meeting_id: -meeting_id } : { data_import_meeting_id: meeting_id }
         ).merge(
-          team_id.to_i < 0 ? { :team_id => -team_id } : { :data_import_team_id => team_id }
+          team_id.to_i < 0 ? { team_id: -team_id } : { data_import_team_id: team_id }
         )
 
         DataImportMeetingTeamScore.transaction do
@@ -1426,7 +1426,7 @@ module FinResultPhase2
 # [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
 #    result_row = FinResultParserTools.find_best_fuzzy_match(
 #      team_name,
-#      Swimmer.where(:year_of_birth => swimmer_year),
+#      Swimmer.where(year_of_birth: swimmer_year),
 #      :complete_name
 #    ) unless result_row
     result_row = Swimmer.where(
@@ -1444,7 +1444,7 @@ module FinResultPhase2
 # [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
 #    result_row = FinResultParserTools.find_best_fuzzy_match(
 #      team_name,
-#      DataImportSwimmer.where(:data_import_session_id => session_id, :year_of_birth => swimmer_year),
+#      DataImportSwimmer.where(data_import_session_id: session_id, year_of_birth: swimmer_year),
 #      :complete_name
 #    ) unless result_row
       result_row = DataImportSwimmer.where(
@@ -1466,14 +1466,14 @@ module FinResultPhase2
 #        logger.debug( "Swimmer not found: creating new DataImportSwimmer row..." )
         DataImportSwimmer.transaction do
           result_row = DataImportSwimmer.new(
-            :data_import_session_id => session_id,
-            :import_text    => "#{swimmer_name}, #{swimmer_year}",
-            :last_name      => last_name,
-            :first_name     => first_name,
-            :complete_name  => complete_name,
-            :year_of_birth  => swimmer_year,
-            :gender_type_id => gender_type_id,
-            :user_id => @current_admin_id
+            data_import_session_id: session_id,
+            import_text: "#{swimmer_name}, #{swimmer_year}",
+            last_name: last_name,
+            first_name: first_name,
+            complete_name: complete_name,
+            year_of_birth: swimmer_year,
+            gender_type_id: gender_type_id,
+            user_id: @current_admin_id
           )
           result_row.save!                          # raise automatically an exception if save is not successful
         end
@@ -1606,20 +1606,20 @@ module FinResultPhase2
 
     if result_id < 0                                # Do we have an actual Team? => INTEGRITY Check on TeamAffiliation     
       team_affiliation = TeamAffiliation.where(     # Check if there is (& there must be) a corresponding TeamAffiliation for THIS season: if missing, add it.
-        :team_id    => - result_id,
-        :season_id  => season_id
+        team_id: - result_id,
+        season_id: season_id
       ).first
                                                     # Always add any MISSING TeamAffiliation
       unless team_affiliation                       # (since the allegedly linked Team was found)
         begin                
           TeamAffiliation.transaction do
             team_affiliation = TeamAffiliation.new(
-              :name       => team_name,             # Use the actual provided (and searched) name instead of the result_row.name
-              :team_id    => - result_id,
-              :season_id  => season_id,
-              :is_autofilled => true,               # signal that we have guessed some of the values
-              :must_calculate_goggle_cup => false,
-              :user_id    => @current_admin_id
+              name: team_name,             # Use the actual provided (and searched) name instead of the result_row.name
+              team_id: -result_id,
+              season_id: season_id,
+              is_autofilled: true,               # signal that we have guessed some of the values
+              must_calculate_goggle_cup: false,
+              user_id: @current_admin_id
               # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
             )
             # (ASSERT: assuming TeamAffiliation DOES NOT exist if the Team row is missing)
@@ -1648,9 +1648,9 @@ module FinResultPhase2
       begin                                         # Make sure we haven't already inserted an analysis result like this:
         DataImportTeamAnalysisResult.transaction do
           if ( DataImportTeamAnalysisResult.where(
-                  :data_import_session_id => result.data_import_session_id,
-                  :searched_team_name     => result.searched_team_name,
-                  :desired_season_id      => result.desired_season_id
+                  data_import_session_id: result.data_import_session_id,
+                  searched_team_name: result.searched_team_name,
+                  desired_season_id: result.desired_season_id
                ).none? )
             result.save!
           end
@@ -1676,12 +1676,12 @@ module FinResultPhase2
 # DEBUG
 #        logger.debug( "Team not found: creating new DataImportTeam row..." )
         field_hash = {
-          :data_import_session_id => session_id,
-          :import_text => team_name,
-          :name => team_name,
-          :user_id => @current_admin_id
+          data_import_session_id: session_id,
+          import_text: team_name,
+          name: team_name,
+          user_id: @current_admin_id
         }.merge(
-          city_id.to_i < 0 ? { :city_id => -city_id } : { :data_import_city_id => city_id }
+          city_id.to_i < 0 ? { city_id: -city_id } : { data_import_city_id: city_id }
         )
 
         DataImportTeam.transaction do
@@ -1752,17 +1752,17 @@ module FinResultPhase2
 # DEBUG
 #        logger.debug( "Badge not found: creating new DataImportBadge row..." )
         field_hash = {
-          :data_import_session_id => session_id,
-          :import_text => badge_code,
-          :number => badge_code,
-          :category_type_id => category_type_id,
-          :entry_time_type_id => entry_time_type_id,
-          :season_id => season_id,
-          :user_id => @current_admin_id
+          data_import_session_id: session_id,
+          import_text: badge_code,
+          number: badge_code,
+          category_type_id: category_type_id,
+          entry_time_type_id: entry_time_type_id,
+          season_id: season_id,
+          user_id: @current_admin_id
         }.merge(
-          swimmer_id.to_i < 0 ? { :swimmer_id => -swimmer_id } : { :data_import_swimmer_id => swimmer_id }
+          swimmer_id.to_i < 0 ? { swimmer_id: -swimmer_id } : { data_import_swimmer_id: swimmer_id }
         ).merge(
-          team_id.to_i < 0 ?    { :team_id => -team_id } : { :data_import_team_id => team_id }
+          team_id.to_i < 0 ?    { team_id: -team_id } : { data_import_team_id: team_id }
         )
 
         DataImportBadge.transaction do
@@ -1865,14 +1865,14 @@ module FinResultPhase2
         logger.debug( "City not found: creating new DataImportCity row..." )
         DataImportCity.transaction do
           result_row = DataImportCity.new(
-            :data_import_session_id => session_id,
-            :import_text => city_name,
-            :name => name,
-            :zip => zip,
-            :area => area,
-            :country => country,
-            :country_code => country_code,
-            :user_id => @current_admin_id
+            data_import_session_id: session_id,
+            import_text: city_name,
+            name: name,
+            zip: zip,
+            area: area,
+            country: country,
+            country_code: country_code,
+            user_id: @current_admin_id
           )
           result_row.save!                          # raise automatically an exception if save is not successful
         end

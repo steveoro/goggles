@@ -13,10 +13,10 @@ class Api::V1::TeamsController < ApplicationController
 
 
   # Return the number of meetings attended by a Team instance
-  # Usage: count_meetings_team_path( :id => team_id_to_be_searched )
+  # Usage: count_meetings_team_path( id: team_id_to_be_searched )
   #
   # === Params:
-  # - :id => the Team.id
+  # - id: the Team.id
   #
   def count_meetings
     team = Team.find_by_id( params[:id] )
@@ -28,10 +28,10 @@ class Api::V1::TeamsController < ApplicationController
   end
 
   # Return the number of individual + relay results obtained by a Team instance
-  # Usage: count_results_team_path( :id => team_id_to_be_searched )
+  # Usage: count_results_team_path( id: team_id_to_be_searched )
   #
   # === Params:
-  # - :id => the Team.id
+  # - id: the Team.id
   #
   def count_results
     team = Team.find_by_id( params[:id] )
@@ -44,10 +44,10 @@ class Api::V1::TeamsController < ApplicationController
 
 
   # Combines both methods above to return a composed string
-  # Usage: count_details_team_path( :id => team_id_to_be_searched )
+  # Usage: count_details_team_path( id: team_id_to_be_searched )
   #
   # === Params:
-  # - :id => the Team.id
+  # - id: the Team.id
   #
   def count_details
     team = Team.find_by_id( params[:id] )

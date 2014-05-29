@@ -29,7 +29,7 @@ class AdminImportController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ admin_import::step1_status -----"
 #    logger.debug "current_admin: #{current_admin.inspect}"
-    @existing_import_sessions = DataImportSession.where( :user_id => current_admin.id )
+    @existing_import_sessions = DataImportSession.where( user_id: current_admin.id )
   end
   # ---------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ class AdminImportController < ApplicationController
         end
         percent = ( (curr_value.to_i.to_f / curr_total.to_i.to_f) * 100 ).to_i
       end
-      render( :text => "<span class=\"label label-info\">#{curr_label}</span><div class=\"bar\" style=\"width: #{percent}%;\"></div>" )
+      render( text: "<span class=\"label label-info\">#{curr_label}</span><div class=\"bar\" style=\"width: #{percent}%;\"></div>" )
 
     else
       flash[:info] = I18n.t(:invalid_action_request)
@@ -84,7 +84,7 @@ class AdminImportController < ApplicationController
     @force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
     if ( params[:id].to_i > 0 )
       @data_import_session_id = params[:id].to_i
-      @analysis_results = DataImportTeamAnalysisResult.where( :data_import_session_id => @data_import_session_id )
+      @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session_id )
     else
       @data_import_session_id = 0
       @analysis_results = []
@@ -109,7 +109,7 @@ class AdminImportController < ApplicationController
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
 #    logger.debug "PARAMS: #{params.inspect}"
-#    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile]}"
+#    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile] }"
     filename_to_be_parsed = nil
     data_import_session   = nil
     data_importer         = nil
@@ -127,7 +127,7 @@ class AdminImportController < ApplicationController
 #      logger.debug "SEASON.....: ID=#{season_id}"
 #      logger.debug "!! ---------------------------\r\n\r\n"
       if ( season_id.to_i < 1 )
-        flash[:info] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
+        flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] })
         redirect_to( goggles_di_step1_status_path() ) and return
       end
       begin
@@ -156,7 +156,7 @@ class AdminImportController < ApplicationController
 
                                                     # === CASE ELSE: form not-fully completed
     else
-      flash[:info] = I18n.t(:nothing_to_do_upload_something, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:nothing_to_do_upload_something, { scope: [:admin_import] })
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
@@ -178,7 +178,7 @@ class AdminImportController < ApplicationController
           @season_description = data_importer.season.description
         end
         DataImportSession.where(
-            :id => data_importer.get_created_data_import_session_id
+            id: data_importer.get_created_data_import_session_id
         ).update_all( :phase_1_log => data_importer.get_phase_1_log() )
         data_importer.clear_team_analysis_and_sql_log()
         data_importer.to_logfile()                  # Update the additional file-based logs
@@ -187,7 +187,7 @@ class AdminImportController < ApplicationController
           flash[:info] = I18n.t('admin_import.team_analysis_needed')
           redirect_to(
               goggles_di_step2_analysis_path(
-                  :id => data_importer.get_created_data_import_session_id,
+                  id: data_importer.get_created_data_import_session_id,
                   :force_meeting_creation => force_missing_meeting_creation ? '1' : nil,
                   :force_team_creation => force_missing_team_creation ? '1' : nil
               )
@@ -249,7 +249,7 @@ class AdminImportController < ApplicationController
       (File.basename(data_import_session.file_name).split('.')[0])
     )
                                                     # retrieve results from dedicated table:
-    @all_results = DataImportTeamAnalysisResult.where( :data_import_session_id => data_import_session_id )
+    @all_results = DataImportTeamAnalysisResult.where( data_import_session_id: data_import_session_id )
     @all_results.each { |result|                    # For each confirmed result, do the suggested actions:
       is_confirmed = confirmed_actions_ids.include?( result.id )
 # DEBUG
@@ -268,12 +268,12 @@ class AdminImportController < ApplicationController
       if ( (! is_confirmed) || result.can_insert_team )
         begin                
           Team.transaction do                       # Let's make sure other threads have not already done what we want to do:
-            if ( Team.where(:name => team_name).none? )
+            if ( Team.where(name: team_name).none? )
               committed_row = Team.new(
-                :name             => team_name,
+                name: team_name,
                 :editable_name    => team_name,     # (let's initialize this with the data-import name)
                 :name_variations  => team_name,
-                :user_id => current_admin.id
+                user_id: current_admin.id
                 # XXX Unable to guess city id (not filled-in, to be added by hand)
               )
               committed_row.save!                   # raise automatically an exception if save is not successful
@@ -293,10 +293,10 @@ class AdminImportController < ApplicationController
       if ( is_confirmed && result.can_insert_alias )
         begin                
           DataImportTeamAlias.transaction do       # Let's make sure other threads have not already done what we want to do:
-            if ( DataImportTeamAlias.where(:name => team_name, :team_id  => team_id).none? )
+            if ( DataImportTeamAlias.where(name: team_name, team_id: team_id).none? )
               committed_row = DataImportTeamAlias.new(
-                :name     => team_name,
-                :team_id  => team_id
+                name: team_name,
+                team_id: team_id
               )
               committed_row.save!                   # raise automatically an exception if save is not successful
             else
@@ -315,16 +315,16 @@ class AdminImportController < ApplicationController
         begin                
           TeamAffiliation.transaction do            # Let's make sure other threads have not already done what we want to do:
             if ( TeamAffiliation.where(
-                    :team_id => team_id,
-                    :season_id  => season_id
+                    team_id: team_id,
+                    season_id: season_id
                  ).none? )
               committed_row = TeamAffiliation.new(
-                :name       => team_name,           # Use the actual provided (and searched) name instead of the result_row.name
-                :team_id    => team_id,
-                :season_id  => season_id,
-                :is_autofilled => true,             # signal that we have guessed some of the values
-                :must_calculate_goggle_cup => false,
-                :user_id    => current_admin.id
+                name: team_name,           # Use the actual provided (and searched) name instead of the result_row.name
+                team_id: team_id,
+                season_id: season_id,
+                is_autofilled: true,             # signal that we have guessed some of the values
+                must_calculate_goggle_cup: false,
+                user_id: current_admin.id
                 # XXX Unable to guess team affiliation number (not filled-in, to be added by hand)
               )
               committed_row.save!                   # raise automatically an exception if save is not successful
@@ -354,9 +354,9 @@ class AdminImportController < ApplicationController
 
     if is_ok
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
-        DataImporter.destroy_data_import_session( :data_import_session_id => data_import_session_id ) 
+        DataImporter.destroy_data_import_session( data_import_session_id: data_import_session_id ) 
       else                                          # Clear just the results from the session if everything is ok:
-        DataImportTeamAnalysisResult.delete_all( :data_import_session_id => data_import_session_id )
+        DataImportTeamAnalysisResult.delete_all( data_import_session_id: data_import_session_id )
       end
       team_analysis_ext  += '.ok'
       equivalent_sql_ext += '.ok'
@@ -368,7 +368,7 @@ class AdminImportController < ApplicationController
                                                     # Either, go on with data-import or go back to the status page:
     if is_ok && (! must_go_back_on_commit)
       redirect_to( goggles_di_step2_checkout_path(
-          :id => data_import_session_id,
+          id: data_import_session_id,
           :force_meeting_creation => force_missing_meeting_creation ? '1' : '0',
           :force_team_creation    => force_missing_team_creation ? '1' : '0'
       ) ) and return
@@ -394,7 +394,7 @@ class AdminImportController < ApplicationController
                                                     # Retrieve data_import_session ID from parameters
     data_import_session_id = params[:data_import_session_id]
     unless ( data_import_session_id.to_i > 0 )
-      flash[:info] = I18n.t(:missing_session_parameter, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:missing_session_parameter, { scope: [:admin_import] })
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
@@ -402,7 +402,7 @@ class AdminImportController < ApplicationController
     # ASSERT: assert_not_nil( data_import_session )
     season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
     if ( season_id.to_i < 1 )
-      flash[:info] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] })
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 

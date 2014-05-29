@@ -1,8 +1,8 @@
 class StrokeType < ActiveRecord::Base
 
   validates_presence_of   :code
-  validates_length_of     :code, :within => 1..2, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
+  validates_length_of     :code, within: 1..2, allow_nil: false
+  validates_uniqueness_of :code, message: :already_exists
 
 
   # Unique ID used inside the DB to address the Freestyle (Crawl) StrokeType instance 
@@ -37,18 +37,18 @@ class StrokeType < ActiveRecord::Base
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short( is_a_relay = false )
     if ( is_a_relay && code == TYPES_HASH[MIXED_ID] ) # Handle special cases:
-      I18n.t( :i18n_short_M, {:scope=>[:stroke_types]} )
+      I18n.t( :i18n_short_M, { scope: [:stroke_types] } )
     else
-      I18n.t( "i18n_short_#{ self.code }".to_sym, {:scope=>[:stroke_types]} )
+      I18n.t( "i18n_short_#{ self.code }".to_sym, { scope: [:stroke_types] } )
     end
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description( is_a_relay = false )
     if ( is_a_relay && code == TYPES_HASH[MIXED_ID] ) # Handle special cases:
-      I18n.t( :i18n_description_M, {:scope=>[:stroke_types]} )
+      I18n.t( :i18n_description_M, { scope: [:stroke_types] } )
     else
-      I18n.t( "i18n_description_#{ self.code }".to_sym, {:scope=>[:stroke_types]} )
+      I18n.t( "i18n_description_#{ self.code }".to_sym, { scope: [:stroke_types] } )
     end
   end
   # ----------------------------------------------------------------------------

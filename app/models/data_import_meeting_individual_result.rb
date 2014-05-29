@@ -11,7 +11,7 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting_individual_result, :foreign_key => "conflicting_meeting_individual_result_id"
+  belongs_to :meeting_individual_result, foreign_key: "conflicting_meeting_individual_result_id"
 
   validates_presence_of :import_text
 
@@ -29,21 +29,21 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   belongs_to :disqualification_code_type
 
   # The following helper is used only by data_importer_test:
-  has_one  :data_import_meeting,  :through => :data_import_meeting_program
+  has_one  :data_import_meeting,  through: :data_import_meeting_program
 
   validates_presence_of :athlete_name
-  validates_length_of   :athlete_name, :within => 1..100, :allow_nil => false
+  validates_length_of   :athlete_name, within: 1..100, allow_nil: false
   validates_presence_of :team_name
-  validates_length_of   :team_name, :within => 1..50, :allow_nil => false
+  validates_length_of   :team_name, within: 1..50, allow_nil: false
 
-  validates_length_of   :athlete_badge_number, :maximum => 40
-  validates_length_of   :team_badge_number, :maximum => 40
+  validates_length_of   :athlete_badge_number, maximum: 40
+  validates_length_of   :team_badge_number, maximum: 40
 
   validates_presence_of     :year_of_birth
-  validates_length_of       :year_of_birth, :within => 2..4, :allow_nil => false
+  validates_length_of       :year_of_birth, within: 2..4, allow_nil: false
   validates_numericality_of :year_of_birth
   validates_presence_of     :rank
-  validates_length_of       :rank, :within => 1..4, :allow_nil => false
+  validates_length_of       :rank, within: 1..4, allow_nil: false
   validates_numericality_of :rank
 
   validates_presence_of     :standard_points

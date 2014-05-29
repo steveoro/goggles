@@ -31,7 +31,7 @@ class SwimmersController < ApplicationController
   # Radiography for a specified swimmer id: main ID card "Radiography" tab rendering.
   #
   # == Params:
-  # :id => the swimmer id to be processed
+  # id: the swimmer id to be processed
   #
   def radio
     # --- "Radiography" tab: ---
@@ -58,7 +58,7 @@ class SwimmersController < ApplicationController
   # Radiography for a specified swimmer id: "Medals" tab rendering
   #
   # == Params:
-  # :id => the swimmer id to be processed
+  # id: the swimmer id to be processed
   #
   def medals
     # --- "Medals" tab: ---
@@ -90,7 +90,7 @@ class SwimmersController < ApplicationController
   # Radiography for a specified swimmer id: "Best timings" tab rendering
   #
   # == Params:
-  # :id => the swimmer id to be processed
+  # id: the swimmer id to be processed
   #
   def best_timings
     # --- "Best timings" tab: ---
@@ -102,11 +102,11 @@ class SwimmersController < ApplicationController
   # Radiography for a specified swimmer id: "All the races" tab rendering
   #
   # == Params:
-  # :id => the swimmer id to be processed
+  # id: the swimmer id to be processed
   #
   def all_races
     # --- "All the races" tab: ---                  # Collect all the races swam for each style, divided for each pool type:
-    swimmer_mirs = MeetingIndividualResult.is_valid.where( :swimmer_id => @swimmer.id )
+    swimmer_mirs = MeetingIndividualResult.is_valid.where( swimmer_id: @swimmer.id )
     @mirs_in_25mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT25_ID])
     @mirs_in_50mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT50_ID])
 
@@ -118,7 +118,7 @@ class SwimmersController < ApplicationController
   # Radiography for a specified swimmer id: "Misc" tab rendering
   #
   # == Params:
-  # :id => the swimmer id to be processed
+  # id: the swimmer id to be processed
   #
   def misc
     # --- "Misc" tab: ---
@@ -136,7 +136,7 @@ class SwimmersController < ApplicationController
   # Assigns the @swimmer instance when successful.
   #
   # == Params:
-  # :id => the swimmer id to be processed by most of the methods (see before filter above)
+  # id: the swimmer id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter
     swimmer_id = params[:id].to_i

@@ -4,8 +4,8 @@ class UserSwimmerConfirmation < ActiveRecord::Base
   validates_associated :swimmer
 
   belongs_to :confirmator,
-    :class_name => User,
-    :foreign_key => "confirmator_id"
+    class_name: User,
+    foreign_key: "confirmator_id"
 
   scope :find_for_user,         ->(user) { where( user_id: user.id ) }
   scope :find_for_confirmator,  ->(confirmator) { where( confirmator_id: confirmator.id ) }

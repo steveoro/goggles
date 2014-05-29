@@ -5,7 +5,7 @@ class AlterTableScoreComputationTypeRows < ActiveRecord::Migration
       t.integer :position_limit, :limit => 4, :default => 0, :null => false
     end
 
-    add_index :score_computation_type_rows, [:computation_order], :name => :idx_score_computation_type_rows_computation_order
+    add_index :score_computation_type_rows, [:computation_order], name: :idx_score_computation_type_rows_computation_order
     # -------------------------------------------------------------------------
   end
 end

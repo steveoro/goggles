@@ -30,7 +30,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # Returns the reviews found for a specific swimmin_pool id.
   #
   # === Params:
-  # - :id => the SwimmingPool.id
+  # - id: the SwimmingPool.id
   #
   def show
     @review = SwimmingPoolReview.find_by_id(params[:id])
@@ -50,7 +50,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # Returns the reviews found for a specific swimmin_pool id.
   #
   # === Params:
-  # - :id => the SwimmingPool.id
+  # - id: the SwimmingPool.id
   #
   def for_swimming_pool
     @swimming_pool_id = params[:id]
@@ -64,7 +64,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # Returns the reviews found for a specific user id.
   #
   # === Params:
-  # - :id => the User.id
+  # - id: the User.id
   #
   def for_user
     @user_id = params[:id]
@@ -78,7 +78,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # TODO FUTUREDEV: add support for xhr request in this action
   #
   # === Params:
-  # - :id => the SwimmingPoolReview.id
+  # - id: the SwimmingPoolReview.id
   #
   def report_abuse
     @review = SwimmingPoolReview.find_by_id(params[:id])
@@ -150,7 +150,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # Prepares the form for the editing of a new Review.
   #
   # === Params:
-  # - :id => the SwimmingPoolReview.id
+  # - id: the SwimmingPoolReview.id
   #
   def edit
     render( status: 406, json: {success: false} ) and return if request.format.json?
@@ -165,7 +165,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # Updates an existing Review.
   #
   # === Params:
-  # - :id => the SwimmingPoolReview.id
+  # - id: the SwimmingPoolReview.id
   # - :swimming_pool_review => the hash of attributes for the update
   #
   def update
@@ -180,7 +180,7 @@ class SwimmingPoolReviewsController < ApplicationController
   # Deletes an existing Review.
   #
   # === Params:
-  # - :id => the SwimmingPoolReview.id
+  # - id: the SwimmingPoolReview.id
   #
   def destroy
     @review = SwimmingPoolReview.find_by_id(params[:id])

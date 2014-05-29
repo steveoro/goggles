@@ -26,8 +26,8 @@ class User < ActiveRecord::Base
   has_many :user_swimmer_confirmations                  # These are confirmation endorsed by others (user is passive subject)
   has_many :confirmators, through: :user_swimmer_confirmations
   has_many :given_confirmations,
-    :class_name => "UserSwimmerConfirmation",           # These are confirmation given to others (user is active subject, a "confirmator")
-    :foreign_key => "confirmator_id"
+    class_name: "UserSwimmerConfirmation",           # These are confirmation given to others (user is active subject, a "confirmator")
+    foreign_key: "confirmator_id"
 
   belongs_to :swimmer_level_type
   belongs_to :coach_level_type

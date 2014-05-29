@@ -20,11 +20,11 @@ class CategoryType < ActiveRecord::Base
   validates_presence_of :season                     # (must be not null)
   validates_associated  :season                     # (foreign key integrity)
 
-  has_one :season_type, :through => :season
-  has_one :federation_type, :through => :season_type
+  has_one :season_type, through: :season
+  has_one :federation_type, through: :season_type
 
-  scope :only_relays,     -> { where(:is_a_relay => true) }
-  scope :are_not_relays,  -> { where(:is_a_relay => false) }
+  scope :only_relays,     -> { where(is_a_relay: true) }
+  scope :are_not_relays,  -> { where(is_a_relay: false) }
   # ----------------------------------------------------------------------------
 
 

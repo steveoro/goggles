@@ -11,10 +11,10 @@ class TeamsController < ApplicationController
 
 
   # Return the number of meetings attended by a Team instance
-  # Usage: count_meetings_team_path( :id => team_id_to_be_searched )
+  # Usage: count_meetings_team_path( id: team_id_to_be_searched )
   #
   # === Params:
-  # - :id => the Team.id
+  # - id: the Team.id
   #
   def count_meetings
     # TODO respond with xml, only if valid session, otherwise return nil
@@ -27,10 +27,10 @@ class TeamsController < ApplicationController
   end
 
   # Return the number of individual + relay results obtained by a Team instance
-  # Usage: count_results_team_path( :id => team_id_to_be_searched )
+  # Usage: count_results_team_path( id: team_id_to_be_searched )
   #
   # === Params:
-  # - :id => the Team.id
+  # - id: the Team.id
   #
   def count_results
     # TODO respond with xml, only if valid session, otherwise return nil
@@ -44,10 +44,10 @@ class TeamsController < ApplicationController
 
 
   # Combines both methods above to return a composed string
-  # Usage: count_details_team_path( :id => team_id_to_be_searched )
+  # Usage: count_details_team_path( id: team_id_to_be_searched )
   #
   # === Params:
-  # - :id => the Team.id
+  # - id: the Team.id
   #
   def count_details
     # TODO respond with xml, only if valid session, otherwise return nil

@@ -18,24 +18,24 @@ class MeetingRelayResult < ActiveRecord::Base
   validates_associated :team_affiliation
   validates_associated :entry_time_type
 
-  has_one  :meeting_event,    :through => :meeting_program
-  has_one  :meeting_session,  :through => :meeting_program
-  has_one  :meeting,          :through => :meeting_program
-  has_one  :season,           :through => :meeting_program
+  has_one  :meeting_event,    through: :meeting_program
+  has_one  :meeting_session,  through: :meeting_program
+  has_one  :meeting,          through: :meeting_program
+  has_one  :season,           through: :meeting_program
 
-  has_one  :pool_type,      :through => :meeting_program
-  has_one  :season_type,    :through => :meeting_program
-  has_one  :event_type,     :through => :meeting_program
-  has_one  :category_type,  :through => :meeting_program
-  has_one  :gender_type,    :through => :meeting_program
+  has_one  :pool_type,      through: :meeting_program
+  has_one  :season_type,    through: :meeting_program
+  has_one  :event_type,     through: :meeting_program
+  has_one  :category_type,  through: :meeting_program
+  has_one  :gender_type,    through: :meeting_program
 
-  has_many :meeting_relay_swimmers, :dependent => :delete_all
+  has_many :meeting_relay_swimmers, dependent: :delete_all
 
   validates_presence_of     :relay_header
-  validates_length_of       :relay_header, :within => 1..60, :allow_nil => false
+  validates_length_of       :relay_header, within: 1..60, allow_nil: false
 
   validates_presence_of     :rank
-  validates_length_of       :rank, :within => 1..4, :allow_nil => false
+  validates_length_of       :rank, within: 1..4, allow_nil: false
   validates_numericality_of :rank
 
   validates_presence_of     :standard_points

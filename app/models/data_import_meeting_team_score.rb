@@ -6,7 +6,7 @@ class DataImportMeetingTeamScore < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting_team_score, :foreign_key => "conflicting_meeting_team_score_id"
+  belongs_to :meeting_team_score, foreign_key: "conflicting_meeting_team_score_id"
 
   belongs_to :data_import_team
   belongs_to :team

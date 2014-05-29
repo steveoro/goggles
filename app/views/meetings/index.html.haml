@@ -17,12 +17,12 @@
             = grid_filter @meetings_grid, :flt_description
         .row-fluid
           .span2
-            = I18n.t(:season_type, {:scope=>[:activerecord, :models]})
+            = I18n.t(:season_type, { scope: [:activerecord, :models] })
           .span10
             = grid_filter @meetings_grid, :flt_season_type_id
         .row-fluid
           .span2
-            = I18n.t(:season, {:scope=>[:activerecord, :models]})
+            = I18n.t(:season, { scope: [:activerecord, :models] })
           .span10
             = grid_filter @meetings_grid, :flt_season_id
         .row-fluid
@@ -32,7 +32,7 @@
             = grid_filter @meetings_grid, :flt_entry_header_date
         .row-fluid
           .span2
-            = I18n.t(:are_results_acquired, {:scope=>[:activerecord, :attributes, :meeting]})
+            = I18n.t(:are_results_acquired, { scope: [:activerecord, :attributes, :meeting] })
           .span10
             = grid_filter @meetings_grid, :flt_are_results_acquired
         .row-fluid

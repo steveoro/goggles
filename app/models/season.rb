@@ -14,18 +14,18 @@ class Season < ActiveRecord::Base
   validates_associated :edition_type
   validates_associated :timing_type
 
-  has_one  :federation_type, :through => :season_type
+  has_one  :federation_type, through: :season_type
 
   has_many :meetings
 
   validates_presence_of :header_year
-  validates_length_of   :header_year, :within => 1..9, :allow_nil => false
+  validates_length_of   :header_year, within: 1..9, allow_nil: false
 
   validates_presence_of :edition
-  validates_length_of   :edition, :within => 1..3, :allow_nil => false
+  validates_length_of   :edition, within: 1..3, allow_nil: false
 
   validates_presence_of :description
-  validates_length_of   :description, :within => 1..100, :allow_nil => false
+  validates_length_of   :description, within: 1..100, allow_nil: false
 
   validates_presence_of :begin_date
 #  validates_presence_of :end_date

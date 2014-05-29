@@ -13,7 +13,7 @@ class AlterTableResultTypes < ActiveRecord::Migration
         DROP FOREIGN KEY fk_meeting_relay_results_result_types
     SQL
 
-    remove_index :result_types, :name => :index_result_types_on_code
+    remove_index :result_types, name: :index_result_types_on_code
     rename_table :result_types, :heat_types
 
     remove_column :heat_types, :default_value
@@ -21,7 +21,7 @@ class AlterTableResultTypes < ActiveRecord::Migration
     change_table(:heat_types) do |t|
       t.boolean :is_default_value, :default => false, :null => false, :comment => "Set to true only for what must be used as default value for the data-import parser"
     end
-    add_index :heat_types, [:code], :name => :idx_heat_types_code, :unique => true
+    add_index :heat_types, [:code], name: :idx_heat_types_code, :unique => true
 
     # CREATE TABLE `heat_types` (
         # `id` INTEGER(11) UNSIGNED NOT NULL AUTO_INCREMENT,

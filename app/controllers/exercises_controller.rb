@@ -28,7 +28,7 @@ class ExercisesController < ApplicationController
   # == Returns:
   # A JSON array of Hash instances having the structure:
   # <tt>{
-  #       :label => row.get_full_name,
+  #       label: row.get_full_name,
   #       :value => row.id,
   #       :tot_distance => row.compute_total_distance(),
   #       :tot_secs => row.compute_total_seconds(),

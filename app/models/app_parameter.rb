@@ -15,26 +15,26 @@ require 'framework/naming_tools'
 
 class AppParameter < ActiveRecord::Base
 
-  validates_length_of :controller_name, :maximum => 255, :allow_nil => true
-  validates_length_of :action_name, :maximum => 255, :allow_nil => true
-  validates_length_of :confirmation_text, :maximum => 255, :allow_nil => true
+  validates_length_of :controller_name, maximum: 255, allow_nil: true
+  validates_length_of :action_name, maximum: 255, allow_nil: true
+  validates_length_of :confirmation_text, maximum: 255, allow_nil: true
 
-  validates_length_of :a_string, :maximum => 255, :allow_nil => true
+  validates_length_of :a_string, maximum: 255, allow_nil: true
 
-  validates_numericality_of :a_integer, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
-  validates_numericality_of :a_decimal, :allow_nil => true, :message => I18n.t('is not a valid number')
-  validates_numericality_of :range_x, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
-  validates_numericality_of :range_y, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
+  validates_numericality_of :a_integer, allow_nil: true, only_integer: true
+  validates_numericality_of :a_decimal, allow_nil: true
+  validates_numericality_of :range_x, allow_nil: true, only_integer: true
+  validates_numericality_of :range_y, allow_nil: true, only_integer: true
 
-  validates_length_of :a_name, :maximum => 255, :allow_nil => true
-  validates_length_of :a_filename, :maximum => 255, :allow_nil => true
+  validates_length_of :a_name, maximum: 255, allow_nil: true
+  validates_length_of :a_filename, maximum: 255, allow_nil: true
 
-  validates_length_of :tooltip_text, :maximum => 255, :allow_nil => true
+  validates_length_of :tooltip_text, maximum: 255, allow_nil: true
 
-  validates_numericality_of :code_type_1, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
-  validates_numericality_of :code_type_2, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
-  validates_numericality_of :code_type_3, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
-  validates_numericality_of :code_type_4, :allow_nil => true, :only_integer => true, :message => I18n.t('is not a valid integer number')
+  validates_numericality_of :code_type_1, allow_nil: true, only_integer: true
+  validates_numericality_of :code_type_2, allow_nil: true, only_integer: true
+  validates_numericality_of :code_type_3, allow_nil: true, only_integer: true
+  validates_numericality_of :code_type_4, allow_nil: true, only_integer: true
 
 
                                 # Param ID codes:

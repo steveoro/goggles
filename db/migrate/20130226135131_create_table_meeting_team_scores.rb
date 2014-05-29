@@ -17,6 +17,6 @@ class CreateTableMeetingTeamScores < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :meeting_team_scores, [:meeting_id, :team_id], :name => 'teams_x_meeting'
+    add_index :meeting_team_scores, [:meeting_id, :team_id], name: 'teams_x_meeting'
   end
 end

@@ -10,22 +10,22 @@ class AddRequiredParameters < ActiveRecord::Migration
     AppParameter.transaction do                     # -- START TRANSACTION --
       AppParameter.create([                         # Create the versioning parameter
           {
-            :code => AppParameter::PARAM_VERSIONING_CODE, :a_string => Version::DB,
+            code: AppParameter::PARAM_VERSIONING_CODE, :a_string => Version::DB,
             :a_bool => false, :a_integer => 1, :a_name => Version::FULL + ' (core-six)', :code_type_1 => 0,
-            :description => "a_string: DB struct version\r\na_name:   Framework & source version\r\na_integer: default user firm_id\r\ncode_type_1: default currency override (from current firm_id)"
+            description: "a_string: DB struct version\r\na_name:   Framework & source version\r\na_integer: default user firm_id\r\ncode_type_1: default currency override (from current firm_id)"
           }
       ])
 
       NamingTools::PARAM_CTRL_SYMS.each { |ctrl_sym|
         code = get_code_for_ctrl( ctrl_sym )
         common_attr_hash = {                        # Prepare the hash of attributes that surely will go into the parameter row:
-            :code => code,
+            code: code,
             AppParameter::CTRL_NAME_FIELD.to_sym => ctrl_sym.to_s,
             AppParameter::PAGINATION_ENABLE_FIELD.to_sym => false,
             AppParameter::PAGINATION_ROWS_FIELD.to_sym => 20,
             AppParameter::FILTERING_RADIUS_FIELD.to_sym => 180,
             AppParameter::FILTERING_STRFTIME_FIELD.to_sym => '%Y-1-1',
-            :description => "Dedicated parameter row for controller defaults.\r\n\r\n" +
+            description: "Dedicated parameter row for controller defaults.\r\n\r\n" +
                             "- controller_name: name of the controller which uses this row\r\n" +
                             "- range_x: default pagination backwards range in days (applied from current date)\r\n" +
                             "- range_y: max pagination rows\r\n" +
@@ -67,9 +67,9 @@ class AddRequiredParameters < ActiveRecord::Migration
     NamingTools::PARAM_CTRL_SYMS.each { |ctrl_sym|
       code = get_code_for_ctrl( ctrl_sym )
       say "deleting param. row for controller #{ctrl_sym} w/ code #{code}"
-      AppParameter.where( :code => code ).delete_all
+      AppParameter.where( code: code ).delete_all
     }
-    AppParameter.where( :code => AppParameter::PARAM_VERSIONING_CODE ).delete_all
+    AppParameter.where( code: AppParameter::PARAM_VERSIONING_CODE ).delete_all
     say 'done.'
   end
 

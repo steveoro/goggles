@@ -101,7 +101,7 @@ class CreateTypesTablesPart1 < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :event_types, [:is_a_relay, :code], :name => :code, :unique => true
+    add_index :event_types, [:is_a_relay, :code], name: :code, :unique => true
     add_index :event_types, :is_a_relay
 
     execute <<-SQL
@@ -128,8 +128,8 @@ class CreateTypesTablesPart1 < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :category_types, [:season_type_id, :is_a_relay, :code], :name => :season_type_and_code, :unique => true
-    add_index :category_types, [:federation_code, :is_a_relay], :name => :federation_code
+    add_index :category_types, [:season_type_id, :is_a_relay, :code], name: :season_type_and_code, :unique => true
+    add_index :category_types, [:federation_code, :is_a_relay], name: :federation_code
 
     execute <<-SQL
       ALTER TABLE category_types

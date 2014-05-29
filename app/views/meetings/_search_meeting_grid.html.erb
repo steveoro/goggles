@@ -1,64 +1,64 @@
 <%= define_grid(@meetings_grid, hide_submit_button: true, hide_reset_button: true) do |g|
-	g.blank_slate do
-		content_tag( :div, t(:no_data_found), class: 'well' )
-	end
+    g.blank_slate do
+        content_tag( :div, t(:no_data_found), class: 'well' )
+    end
 
-	g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
+    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
 
-	g.column(
-		name: I18n.t(:description),
-		attribute: 'description',
-		detach_with_id: :flt_description
-	) do |meeting|
-		link_to(
-			meeting.description,
-			meeting_show_full_path( :id=>meeting.id, :team_id=>@preselected_team_id, :swimmer_id=>@preselected_swimmer_id )
-		)
-	end
+    g.column(
+        name: I18n.t(:description),
+        attribute: 'description',
+        detach_with_id: :flt_description
+    ) do |meeting|
+        link_to(
+            meeting.description,
+            meeting_show_full_path( :id=>meeting.id, :team_id=>@preselected_team_id, :swimmer_id=>@preselected_swimmer_id )
+        )
+    end
 
-	g.column(
-		name: I18n.t(:season_type, {:scope=>[:activerecord, :models]}),
-		model: Season,
-		attribute: 'season_type_id',
-		custom_filter: SeasonType.to_dropdown,
-		detach_with_id: :flt_season_type_id,
-	) do |meeting|
-		meeting.season.get_season_type if meeting.season
-	end
+    g.column(
+        name: I18n.t(:season_type, { scope: [:activerecord, :models] }),
+        model: Season,
+        attribute: 'season_type_id',
+        custom_filter: SeasonType.to_dropdown,
+        detach_with_id: :flt_season_type_id,
+    ) do |meeting|
+        meeting.season.get_season_type if meeting.season
+    end
 
-	g.column(
-		name: I18n.t(:season, {:scope=>[:activerecord, :models]}),
-		attribute: 'season_id',
-		custom_filter: Season.to_dropdown,
-		detach_with_id: :flt_season_id
-	) do |meeting|
-		meeting.season.get_full_name if meeting.season
-	end
+    g.column(
+        name: I18n.t(:season, { scope: [:activerecord, :models] }),
+        attribute: 'season_id',
+        custom_filter: Season.to_dropdown,
+        detach_with_id: :flt_season_id
+    ) do |meeting|
+        meeting.season.get_full_name if meeting.season
+    end
 
-	g.column(
-		name: I18n.t(:any_date),
-		attribute: 'header_date',
-		detach_with_id: :flt_entry_header_date
-	) do |meeting|
-		meeting.header_date
-	end
+    g.column(
+        name: I18n.t(:any_date),
+        attribute: 'header_date',
+        detach_with_id: :flt_entry_header_date
+    ) do |meeting|
+        meeting.header_date
+    end
 
-	g.column(
-		name: I18n.t('meeting.ind_results_short'),
-	) do |meeting|
-		meeting.meeting_individual_results.count
-	end
-	g.column(
-		name: I18n.t('meeting.rel_results_short'),
-	) do |meeting|
-		meeting.meeting_relay_results.count
-	end
+    g.column(
+        name: I18n.t('meeting.ind_results_short'),
+    ) do |meeting|
+        meeting.meeting_individual_results.count
+    end
+    g.column(
+        name: I18n.t('meeting.rel_results_short'),
+    ) do |meeting|
+        meeting.meeting_relay_results.count
+    end
 
-	g.column(
-		name: I18n.t(:are_results_acquired, {:scope=>[:activerecord, :attributes, :meeting]}),
-		attribute: 'are_results_acquired',
-		detach_with_id: :flt_are_results_acquired
-	) do |meeting|
-		meeting.are_results_acquired? ? I18n.t(:ok) : '--'
-	end
+    g.column(
+        name: I18n.t(:are_results_acquired, { scope: [:activerecord, :attributes, :meeting] }),
+        attribute: 'are_results_acquired',
+        detach_with_id: :flt_are_results_acquired
+    ) do |meeting|
+        meeting.are_results_acquired? ? I18n.t(:ok) : '--'
+    end
 end -%>

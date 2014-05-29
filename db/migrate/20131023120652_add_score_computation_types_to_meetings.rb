@@ -3,16 +3,16 @@ class AddScoreComputationTypesToMeetings < ActiveRecord::Migration
     # ----------------- MEETINGS ----------------------------------------------
     change_table(:meetings) do |t|
       t.belongs_to( :individual_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "individual_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "individual_score_computation_type_id"
       )
       t.belongs_to( :relay_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "relay_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "relay_score_computation_type_id"
       )
       t.belongs_to( :team_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "team_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "team_score_computation_type_id"
       )
     end
 
@@ -38,16 +38,16 @@ class AddScoreComputationTypesToMeetings < ActiveRecord::Migration
     # ----------------- DATA IMPORT MEETINGS ----------------------------------
     change_table(:data_import_meetings) do |t|
       t.belongs_to( :individual_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "individual_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "individual_score_computation_type_id"
       )
       t.belongs_to( :relay_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "relay_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "relay_score_computation_type_id"
       )
       t.belongs_to( :team_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "team_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "team_score_computation_type_id"
       )
     end
   end

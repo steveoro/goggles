@@ -8,16 +8,16 @@ class UserTraining < ActiveRecord::Base
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
   #  validates_associated :user                       # (Do not enable this for User)
 
-  has_many :user_training_rows, :dependent => :delete_all
+  has_many :user_training_rows, dependent: :delete_all
   accepts_nested_attributes_for :user_training_rows, :allow_destroy => true
 
-  has_many :user_training_stories, :dependent => :delete_all
+  has_many :user_training_stories, dependent: :delete_all
 
-  has_many :exercises, :through => :user_training_rows
-  has_many :training_step_types, :through => :user_training_rows
+  has_many :exercises, through: :user_training_rows
+  has_many :training_step_types, through: :user_training_rows
 
   validates_presence_of :description
-  validates_length_of   :description, :within => 1..250, :allow_nil => false
+  validates_length_of   :description, within: 1..250, allow_nil: false
 
   attr_accessible :description, 
                   :user_id, :user_training_rows_attributes, # (Needed by the nested_form gem)
@@ -25,7 +25,7 @@ class UserTraining < ActiveRecord::Base
 
   scope :sort_by_description,    order('description')
 # TODO Do something like user_id IN SELECT( friends from users )
-# FIXME  scope :from_friends,          lambda{ |user_id| where(:user_id => user_id) }
+# FIXME  scope :from_friends,          ->(user_id) { where(user_id: user_id) }
 
   # ---------------------------------------------------------------------------
   # Base methods:

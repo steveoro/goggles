@@ -5,8 +5,8 @@ class Exercise < ActiveRecord::Base
   include DropDownListable
 
   has_many :exercise_rows
-  has_many :trainings, :through => :training_rows
-  has_many :base_movements, :through => :exercise_rows
+  has_many :trainings, through: :training_rows
+  has_many :base_movements, through: :exercise_rows
 
   validates_length_of     :training_step_type_codes, maximum: 50, allow_nil: true
 
@@ -14,7 +14,7 @@ class Exercise < ActiveRecord::Base
   validates_uniqueness_of :code, message: :already_exists
 
   # Custom scope to detect all Exercises that may be used during a specified training_step_code
-  scope :belongs_to_training_step_code, lambda{ |training_step_code|
+  scope :belongs_to_training_step_code, ->(training_step_code) {
     all.find_all{ |row|
       ( training_step_code.nil? ||
         row.training_step_type_codes.nil? ||

@@ -1,6 +1,6 @@
 class NewsFeed < ActiveRecord::Base
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
-  belongs_to :friend, :class_name  => "User", :foreign_key => "friend_id"
+  belongs_to :friend, class_name: "User", foreign_key: "friend_id"
 
   validates_presence_of :user_id
   validates_presence_of :title, length: { within: 1..150 }, allow_nil: false

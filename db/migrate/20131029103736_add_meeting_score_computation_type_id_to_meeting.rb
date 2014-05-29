@@ -32,8 +32,8 @@ class AddMeetingScoreComputationTypeIdToMeeting < ActiveRecord::Migration
     # ----------------- MEETINGS ----------------------------------------------
     change_table(:meetings) do |t|
       t.belongs_to( :meeting_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "meeting_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "meeting_score_computation_type_id"
       )
     end
 
@@ -47,8 +47,8 @@ class AddMeetingScoreComputationTypeIdToMeeting < ActiveRecord::Migration
     # ----------------- DATA IMPORT MEETINGS ----------------------------------
     change_table(:data_import_meetings) do |t|
       t.belongs_to( :meeting_score_computation_type,
-                  :class_name  => "ScoreComputationType", 
-                  :foreign_key => "meeting_score_computation_type_id"
+                  class_name: "ScoreComputationType", 
+                  foreign_key: "meeting_score_computation_type_id"
       )
     end
   end

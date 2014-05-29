@@ -15,8 +15,8 @@ class ChangeMeetings < ActiveRecord::Migration
     end
 
     change_column( :meetings, :edition, :integer, :limit => 3, :null => false, :default => 0, :comment => 'Progressive edition of the same meeting (usually 1 each year)' )
-    add_index :meetings, :header_date, :name => :idx_meetings_header_date
-    add_index :meetings, [:code, :edition], :name => :idx_meetings_code
+    add_index :meetings, :header_date, name: :idx_meetings_header_date
+    add_index :meetings, [:code, :edition], name: :idx_meetings_code
 
     execute <<-SQL
       ALTER TABLE meetings
@@ -93,8 +93,8 @@ class ChangeMeetings < ActiveRecord::Migration
     end
 
     change_column( :data_import_meetings, :edition, :integer, :limit => 3, :null => false, :default => 0, :comment => 'Progressive edition of the same meeting (usually 1 each year)' )
-    add_index :data_import_meetings, :header_date, :name => :idx_di_meetings_header_date
-    add_index :data_import_meetings, [:code, :edition], :name => :idx_di_meetings_code
+    add_index :data_import_meetings, :header_date, name: :idx_di_meetings_header_date
+    add_index :data_import_meetings, [:code, :edition], name: :idx_di_meetings_code
 
     # CREATE TABLE `data_import_meetings` (
         # `id` INTEGER(11) UNSIGNED NOT NULL AUTO_INCREMENT,

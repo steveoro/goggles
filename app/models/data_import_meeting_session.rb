@@ -6,7 +6,7 @@ class DataImportMeetingSession < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting_session, :foreign_key => "conflicting_meeting_session_id"
+  belongs_to :meeting_session, foreign_key: "conflicting_meeting_session_id"
 
   validates_presence_of :import_text
 
@@ -20,16 +20,16 @@ class DataImportMeetingSession < ActiveRecord::Base
   has_many :meeting_programs
   has_many :data_import_meeting_programs
 
-  has_many :meeting_individual_results,             :through => :meeting_programs
-  has_many :data_import_meeting_individual_results, :through => :data_import_meeting_programs
+  has_many :meeting_individual_results,             through: :meeting_programs
+  has_many :data_import_meeting_individual_results, through: :data_import_meeting_programs
 
   validates_presence_of :session_order
-  validates_length_of   :session_order, :within => 1..2, :allow_nil => false
+  validates_length_of   :session_order, within: 1..2, allow_nil: false
 
   validates_presence_of :scheduled_date
 
   validates_presence_of :description
-  validates_length_of :description, :maximum => 100, :allow_nil => false
+  validates_length_of :description, maximum: 100, allow_nil: false
 
 
   scope :sort_by_user,          ->(dir) { order("users.name #{dir.to_s}, data_import_meeting_sessions.scheduled_date #{dir.to_s}") }

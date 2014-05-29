@@ -39,9 +39,9 @@ module FinResultParserTools
   # An Hash with the format:
   #
   #    {
-  #       :prefix => prefix string,
-  #       :header_date => Date instance parsed from date_ISO,
-  #       :code => code string
+  #       prefix: prefix string,
+  #       header_date: Date instance parsed from date_ISO,
+  #       code: code string
   #    }
   #
   def self.parse_filename_fields( full_pathname )
@@ -52,8 +52,8 @@ module FinResultParserTools
     header_date = Date.parse( name[date_start_idx .. code_start_idx-1] )
     {
       :prefix       => name[ 0 .. date_start_idx-1 ],
-      :header_date  => header_date,
-      :code         => name[ code_start_idx .. name.size ]
+      header_date: header_date,
+      code: name[ code_start_idx .. name.size ]
     }
   end
   # ---------------------------------------------------------------------------
@@ -425,8 +425,8 @@ module FinResultParserTools
 
     if team_id.to_i > 0                             # Let's be sure that there aren't really no affiliations with these parameters:     
       team_affiliation = TeamAffiliation.where(
-        :team_id    => team_id,
-        :season_id  => desired_season_id
+        team_id: team_id,
+        season_id: desired_season_id
       ).first
       if team_affiliation
         best_match = team_affiliation
@@ -506,7 +506,7 @@ module FinResultParserTools
   #                            +nil+ when no existing team was found in the results or linked
   #                            to them.
   #
-  #      :team_id           => commodity id from the row above or from affiliation's team
+  #      team_id: commodity id from the row above or from affiliation's team
   #                            (may, in fact, not be the same, depending on the "best match").
   #                            +nil+ when no existing team was found in the results.
   #
@@ -587,7 +587,7 @@ module FinResultParserTools
     analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id
     {
       :analysis   => analysis_text_log,
-      :team_id    => team_id,
+      team_id: team_id,
       :team_match => team_match,
       :affiliation_match => affiliation_match,
       :hiscoring_match   => hiscoring_match,

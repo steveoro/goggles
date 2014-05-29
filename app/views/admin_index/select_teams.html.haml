@@ -21,7 +21,7 @@
       %i(id='labelDest')
   .row-fluid
     .offset3.span2
-      %p= f.submit( I18n.t('admin_index.merge_teams'), :id => 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+      %p= f.submit( I18n.t('admin_index.merge_teams'), id: 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
     .span2
       %span(id='loadingIndicator' hidden='true')
         = image_tag( 'indicator.gif' )

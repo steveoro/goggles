@@ -16,5 +16,5 @@ class DataImportSession < ActiveRecord::Base
   validates_associated :season
 
   validates_presence_of :user_id
-  belongs_to :admin, :foreign_key => 'user_id'
+  belongs_to :admin, foreign_key: 'user_id'
 end

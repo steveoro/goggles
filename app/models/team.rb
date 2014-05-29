@@ -10,22 +10,22 @@ class Team < ActiveRecord::Base
 
   has_many :badges
   has_many :meeting_individual_results
-  has_many :meetings, :through => :meeting_individual_results
-  has_many :seasons, :through => :meetings
+  has_many :meetings, through: :meeting_individual_results
+  has_many :seasons, through: :meetings
   has_many :meeting_relay_results
 
   validates_presence_of :name
-  validates_length_of :name, :within => 1..60, :allow_nil => false
+  validates_length_of :name, within: 1..60, allow_nil: false
 
   validates_presence_of :editable_name
-  validates_length_of :editable_name, :within => 1..60, :allow_nil => false
+  validates_length_of :editable_name, within: 1..60, allow_nil: false
 
-  validates_length_of :address,       :maximum => 100
-  validates_length_of :phone_mobile,  :maximum =>  40
-  validates_length_of :phone_number,  :maximum =>  40
-  validates_length_of :fax_number,    :maximum =>  40
-  validates_length_of :e_mail,        :maximum => 100
-  validates_length_of :contact_name,  :maximum => 100
+  validates_length_of :address,       maximum: 100
+  validates_length_of :phone_mobile,  maximum:  40
+  validates_length_of :phone_number,  maximum:  40
+  validates_length_of :fax_number,    maximum:  40
+  validates_length_of :e_mail,        maximum: 100
+  validates_length_of :contact_name,  maximum: 100
 
   scope :sort_team_by_user, ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
   scope :sort_team_by_city, ->(dir) { order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }

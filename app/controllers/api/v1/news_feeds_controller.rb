@@ -15,7 +15,7 @@ class Api::V1::NewsFeedsController < ApplicationController
   # Returns the unread news feed for a specific user.
   #
   # === Params:
-  # - :id => the User.id
+  # - id: the User.id
   #
   def for_user
     news_feed = NewsFeed.unread.where( user_id: params[:id] )
@@ -45,7 +45,7 @@ class Api::V1::NewsFeedsController < ApplicationController
   # (JSON format) DELETE-only action.
   #
   # === Params:
-  # - :id => the NewsFeed.id to be deleted.
+  # - id: the NewsFeed.id to be deleted.
   #
   def destroy
     news_feed = NewsFeed.find_by_id( params[:id] )
@@ -62,7 +62,7 @@ class Api::V1::NewsFeedsController < ApplicationController
   # (JSON format) PUT-only action.
   #
   # === Params:
-  # - :id => the NewsFeed.id to be deleted.
+  # - id: the NewsFeed.id to be deleted.
   #
   def read
     news_feed = NewsFeed.find_by_id( params[:id] )

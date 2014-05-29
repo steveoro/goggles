@@ -9,7 +9,7 @@ class DataImportMeetingProgram < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting_program, :foreign_key => "conflicting_meeting_program_id"
+  belongs_to :meeting_program, foreign_key: "conflicting_meeting_program_id"
 
   validates_presence_of :import_text
 
@@ -36,10 +36,10 @@ class DataImportMeetingProgram < ActiveRecord::Base
   has_many :data_import_meeting_relay_swimmers
 
   # The following helper is used only by data_importer_test:
-  has_one  :data_import_meeting,  :through => :data_import_meeting_session
+  has_one  :data_import_meeting,  through: :data_import_meeting_session
 
   validates_presence_of :event_order
-  validates_length_of   :event_order, :within => 1..3, :allow_nil => false
+  validates_length_of   :event_order, within: 1..3, allow_nil: false
 
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)

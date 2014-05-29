@@ -184,9 +184,9 @@ class DataImporter
       :source_data => full_text_file_contents,
       :total_data_rows => total_data_rows,
       :file_format => file_format,
-      :season_id => season_id,
-      :phase_3_log => '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers") 
-      :user_id => current_admin_id
+      season_id: season_id,
+      phase_3_log: '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers") 
+      user_id: current_admin_id
     )
   end
 
@@ -202,19 +202,19 @@ class DataImporter
         logger.info( "-- destroy_data_import_session(#{session_id}): the import file wasn't consumed properly after phase-1. Erasing it..." ) if logger
         FileUtils.rm( full_pathname )
       end
-                                                    # For all data_import_... tables, delete rows where :data_import_session_id => session_id
-      DataImportMeetingIndividualResult.delete_all( :data_import_session_id => session_id )
-      DataImportMeetingProgram.delete_all( :data_import_session_id => session_id )
-      DataImportMeetingRelayResult.delete_all( :data_import_session_id => session_id )
-      DataImportMeetingSession.delete_all( :data_import_session_id => session_id )
-      DataImportMeetingTeamScore.delete_all( :data_import_session_id => session_id )
-      DataImportMeeting.delete_all( :data_import_session_id => session_id )
-      DataImportSeason.delete_all( :data_import_session_id => session_id )
-      DataImportSwimmer.delete_all( :data_import_session_id => session_id )
-      DataImportTeam.delete_all( :data_import_session_id => session_id )
-      DataImportBadge.delete_all( :data_import_session_id => session_id )
-      DataImportCity.delete_all( :data_import_session_id => session_id )
-      DataImportTeamAnalysisResult.delete_all( :data_import_session_id => session_id )
+                                                    # For all data_import_... tables, delete rows where data_import_session_id: session_id
+      DataImportMeetingIndividualResult.delete_all( data_import_session_id: session_id )
+      DataImportMeetingProgram.delete_all( data_import_session_id: session_id )
+      DataImportMeetingRelayResult.delete_all( data_import_session_id: session_id )
+      DataImportMeetingSession.delete_all( data_import_session_id: session_id )
+      DataImportMeetingTeamScore.delete_all( data_import_session_id: session_id )
+      DataImportMeeting.delete_all( data_import_session_id: session_id )
+      DataImportSeason.delete_all( data_import_session_id: session_id )
+      DataImportSwimmer.delete_all( data_import_session_id: session_id )
+      DataImportTeam.delete_all( data_import_session_id: session_id )
+      DataImportBadge.delete_all( data_import_session_id: session_id )
+      DataImportCity.delete_all( data_import_session_id: session_id )
+      DataImportTeamAnalysisResult.delete_all( data_import_session_id: session_id )
       DataImportSession.delete( session_id )
       logger.info( "-- destroy_data_import_session(#{session_id}): data-import session clean-up done.\r\n" ) if logger
     else
@@ -316,7 +316,7 @@ class DataImporter
   def to_logfile( log_filename = get_log_filename() )
     DataImporter.to_logfile(
       log_filename, get_import_log,
-      ( flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error]}\r\n-----------------------------------------------------------\r\n" : '' )
+      ( flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : '' )
     )
     DataImporter.to_analysis_logfile( log_filename, @team_analysis_log )
     DataImporter.to_sql_executable_logfile( log_filename, @sql_executable_log )
@@ -420,7 +420,7 @@ class DataImporter
         season_id = (container_dir_parts[1]).to_i
         season = Season.find_by_id( season_id )
         unless ( season && season.id.to_i > 0 )
-          flash[:error] = "#{I18n.t(:season_not_found, {:scope=>[:admin_import]})} (FORCED season_id=#{season_id})"
+          flash[:error] = "#{I18n.t(:season_not_found, { scope: [:admin_import] })} (FORCED season_id=#{season_id})"
           return nil
         end
         logger.info( "   Detected forced season ID=#{season_id} from container folder name. Parsing file..." )
@@ -429,7 +429,7 @@ class DataImporter
         seek_date = header_fields[:header_date]
         mas_fin_season_type = SeasonType.find_by_code('MASFIN')
         unless ( mas_fin_season_type && mas_fin_season_type.id.to_i > 0 )
-          flash[:error] = "#{I18n.t(:season_type_not_found, {:scope=>[:admin_import]})} (code='MASFIN'))"
+          flash[:error] = "#{I18n.t(:season_type_not_found, { scope: [:admin_import] })} (code='MASFIN'))"
           return nil
         end
         season = Season.where([
@@ -437,7 +437,7 @@ class DataImporter
           seek_date, seek_date, mas_fin_season_type.id
         ]).first
         unless ( season && season.id.to_i > 0 )
-          flash[:error] = "#{I18n.t(:season_not_found, {:scope=>[:admin_import]})} (DETECTED season_id=#{season_id})"
+          flash[:error] = "#{I18n.t(:season_not_found, { scope: [:admin_import] })} (DETECTED season_id=#{season_id})"
           return nil
         end
         season_id = season.id
@@ -466,13 +466,13 @@ class DataImporter
     #     {
     #       :parse_result => {
     #         :category_header => [
-    #           { :id => <category_header_id>, :fields => <hash_of_category_header_fields_with_values>,
-    #             :import_text => last_line_of_text_used_to_extract_all_fields }
+    #           { id: <category_header_id>, :fields => <hash_of_category_header_fields_with_values>,
+    #             import_text: last_line_of_text_used_to_extract_all_fields }
     #           ... (one Hash for each <category_header_id>)
     #         ],
     #         :result_row      => [
-    #           { :id => <category_header_id>, :fields => <hash_of_result_row_fields_with_values>,
-    #             :import_text => last_line_of_text_used_to_extract_all_fields }
+    #           { id: <category_header_id>, :fields => <hash_of_result_row_fields_with_values>,
+    #             import_text: last_line_of_text_used_to_extract_all_fields }
     #           ... (one or more Hash for each <category_header_id>, which acts as a "context page index")
     #         ],
     #         ...
@@ -640,7 +640,7 @@ class DataImporter
       end
                                                     # Update current phase indicator & log:
       data_import_session.phase = 1
-      @phase_1_log << "\r\nFile '#{File.basename( full_pathname )}', created session ID: #{data_import_session.id}\r\nTotal file lines ....... : #{line_count}\r\nTotal data headers ..... : #{result_hash[:total_data_rows]}\r\nActual stored rows ..... : #{@stored_data_rows}\r\nFile processed.\r\n"
+      @phase_1_log << "\r\nFile '#{File.basename( full_pathname )}', created session ID: #{data_import_session.id}\r\nTotal file lines ....... : #{line_count}\r\nTotal data headers ..... : #{result_hash[:total_data_rows] }\r\nActual stored rows ..... : #{@stored_data_rows}\r\nFile processed.\r\n"
       @phase_1_log << "data-import PHASE #1 DONE.\r\n"
       data_import_session.phase_1_log = @phase_1_log
       data_import_session.save
@@ -672,12 +672,12 @@ class DataImporter
   #
   def commit( data_import_session, do_consume_residual_file = true )
     unless ( data_import_session && data_import_session.id.to_i > 0 )
-      flash[:info] = I18n.t(:missing_session_parameter, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:missing_session_parameter, { scope: [:admin_import] })
       return false
     end
     season_id = data_import_session.season_id if ( data_import_session && data_import_session.respond_to?( :season_id ) )
     if ( season_id.to_i < 1 )
-      flash[:info] = I18n.t(:season_not_saved_in_session, {:scope=>[:admin_import]})
+      flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] })
       return false
     end
     data_import_session_id = data_import_session.id
@@ -686,34 +686,34 @@ class DataImporter
     @committed_data_rows = 0
 
     is_ok = commit_data_import_meeting( data_import_session_id )
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:1/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:1/10" )
 
     is_ok = commit_data_import_meeting_session( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:2/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:2/10" )
 
     is_ok = commit_data_import_meeting_program( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:3/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:3/10" )
 
     is_ok = commit_data_import_cities( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:4/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:4/10" )
 
     is_ok = commit_data_import_teams( data_import_session_id, season_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:5/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:5/10" )
 
     is_ok = commit_data_import_swimmers( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:6/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:6/10" )
 
     is_ok = commit_data_import_badges( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:7/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:7/10" )
 
     is_ok = commit_data_import_meeting_individual_results( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:8/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:8/10" )
 
     is_ok = commit_data_import_meeting_relay_results( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:9/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:9/10" )
 
     is_ok = commit_data_import_meeting_team_score( data_import_session_id ) if is_ok
-    DataImportSession.where( :id => data_import_session_id ).update_all( :phase_3_log => "COMMIT:10/10" )
+    DataImportSession.where( id: data_import_session_id ).update_all( phase_3_log: "COMMIT:10/10" )
 
     if ( is_ok )
       DataImporter.destroy_data_import_session( data_import_session_id, logger, do_consume_residual_file )

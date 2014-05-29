@@ -24,19 +24,19 @@ module Localizable
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
-    I18n.t( "i18n_short_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
+    I18n.t( "i18n_short_#{ code }".to_sym, { scope: [self.class.get_scope_sym] } )
   end
 
   # Computes a localized description for the value/code associated with this data
   def i18n_description
-    I18n.t( "i18n_description_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
+    I18n.t( "i18n_description_#{ code }".to_sym, { scope: [self.class.get_scope_sym] } )
   end
 
   # Computes an alternate localized shorter description for the value/code associated with this data.
   # Note that this may not always be defined inside the locale files.
   def i18n_alternate
     # TODO Add existance check for I18n.t result; when not found, return default i18n_short result.
-    I18n.t( "i18n_alternate_#{ code }".to_sym, {:scope=>[self.class.get_scope_sym]} )
+    I18n.t( "i18n_alternate_#{ code }".to_sym, { scope: [self.class.get_scope_sym] } )
   end
   # ----------------------------------------------------------------------------
 

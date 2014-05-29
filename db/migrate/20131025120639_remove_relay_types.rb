@@ -1,6 +1,6 @@
 class RemoveRelayTypes < ActiveRecord::Migration
   def up
-    remove_index :relay_types, :name => :index_relay_types_on_code
+    remove_index :relay_types, name: :index_relay_types_on_code
 
     execute <<-SQL
       ALTER TABLE relay_types

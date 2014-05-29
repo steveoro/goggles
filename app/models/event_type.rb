@@ -5,28 +5,28 @@ class EventType < ActiveRecord::Base
   validates_associated :stroke_type                 # (foreign key integrity)
 
   validates_presence_of   :code
-  validates_length_of     :code, :within => 1..10, :allow_nil => false
-  validates_uniqueness_of :code, :message => :already_exists
+  validates_length_of     :code, within: 1..10, allow_nil: false
+  validates_uniqueness_of :code, message: :already_exists
 
-  validates_length_of     :length_in_meters, :maximum => 12
-  validates_length_of     :partecipants, :maximum => 5
-  validates_length_of     :phases, :maximum => 5
-  validates_length_of     :phase_length_in_meters, :maximum => 8
+  validates_length_of     :length_in_meters, maximum: 12
+  validates_length_of     :partecipants, maximum: 5
+  validates_length_of     :phases, maximum: 5
+  validates_length_of     :phase_length_in_meters, maximum: 8
 
   validates_presence_of     :style_order
-  validates_length_of       :style_order, :within => 1..3, :allow_nil => false
+  validates_length_of       :style_order, within: 1..3, allow_nil: false
   validates_numericality_of :style_order
 
 
-  scope :only_relays,     where(:is_a_relay => true)
-  scope :are_not_relays,  where(:is_a_relay => false)
+  scope :only_relays,     where(is_a_relay: true)
+  scope :are_not_relays,  where(is_a_relay: false)
   # ----------------------------------------------------------------------------
 
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
     if self.is_a_relay
-      relay_name = I18n.t( (self.is_mixed_gender ? :mixed_relay_short : :relay_short), {:scope=>[:relay_types]} )
+      relay_name = I18n.t( (self.is_mixed_gender ? :mixed_relay_short : :relay_short), { scope: [:relay_types] } )
       "#{ self.phases }x#{ self.phase_length_in_meters } #{ self.stroke_type.i18n_short(true) } " +
       ( self.partecipants != self.phases ? "(#{relay_name}/#{self.partecipants})" : "(#{relay_name})" )
     else
@@ -37,7 +37,7 @@ class EventType < ActiveRecord::Base
   # Computes a localized description for the value/code associated with this data
   def i18n_description
     if self.is_a_relay
-      relay_name = I18n.t( (self.is_mixed_gender ? :mixed_relay : :relay), {:scope=>[:relay_types]} )
+      relay_name = I18n.t( (self.is_mixed_gender ? :mixed_relay : :relay), { scope: [:relay_types] } )
       "#{ self.phases }x#{ self.phase_length_in_meters } #{ self.stroke_type.i18n_description(true) } " +
       ( self.partecipants != self.phases ? "(#{relay_name} #{self.partecipants} #{I18n.t(:athletes)})" : "(#{relay_name})" )
     else

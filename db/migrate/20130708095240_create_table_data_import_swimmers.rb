@@ -20,6 +20,6 @@ class CreateTableDataImportSwimmers < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :data_import_swimmers, [:last_name, :first_name], :name => :full_name
+    add_index :data_import_swimmers, [:last_name, :first_name], name: :full_name
   end
 end

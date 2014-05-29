@@ -19,8 +19,8 @@ class CreateTableSwimmers < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :swimmers, [:last_name, :first_name, :nickname], :name => :name_and_nick, :unique => true
-    add_index :swimmers, [:last_name, :first_name], :name => :full_name
+    add_index :swimmers, [:last_name, :first_name, :nickname], name: :name_and_nick, :unique => true
+    add_index :swimmers, [:last_name, :first_name], name: :full_name
     add_index :swimmers, :nickname
     add_index :swimmers, :associated_user_id
   end

@@ -4,7 +4,7 @@
       %span &nbsp;
       = AGEX_APP_NAME
       = image_tag( AGEX_APP_LOGO )
-    = render_navigation( :level => 1..2, :expand_all => true, :renderer => :bootstrap )
+    = render_navigation( level: 1..2, expand_all: true, renderer: :bootstrap )
 
 .goggles-breadcrumb
-  = render_navigation( :renderer => :breadcrumbs, :prefix => "#{I18n.t(:you_are_here)}&nbsp;", :join_with => " &gt; " )
+  = render_navigation( renderer: :breadcrumbs, prefix: "#{I18n.t(:you_are_here)}&nbsp;", join_with: " &gt; " )

@@ -6,7 +6,7 @@ class DataImportSeason < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :season, :foreign_key => "conflicting_season_id"
+  belongs_to :season, foreign_key: "conflicting_season_id"
 
   validates_presence_of :import_text
 
@@ -18,18 +18,18 @@ class DataImportSeason < ActiveRecord::Base
   validates_associated :timing_type
 
   validates_presence_of :header_year
-  validates_length_of   :header_year, :within => 1..9, :allow_nil => false
+  validates_length_of   :header_year, within: 1..9, allow_nil: false
 
   validates_presence_of :edition
-  validates_length_of   :edition, :within => 1..3, :allow_nil => false
+  validates_length_of   :edition, within: 1..3, allow_nil: false
 
-  validates_length_of :description, :within => 1..100, :allow_nil => false
+  validates_length_of :description, within: 1..100, allow_nil: false
 
   validates_presence_of :begin_date
   # [Steve, 20130710] validate also :end_date ?
   validates_presence_of :must_use_time_standards
 
-  validates_length_of :max_points, :maximum => 9, :allow_nil => false
+  validates_length_of :max_points, maximum: 9, allow_nil: false
   validates_numericality_of :max_points
 
   scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_season_id #{dir.to_s}") }

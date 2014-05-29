@@ -47,7 +47,7 @@ class FinResultParserTest < ActiveSupport::TestCase
         expected_values = {
           :meeting_header     => 1,
           :category_header    => 6,   :result_row             => 144,
-          :relay_header       => 0,   :relay_row              => 0,
+          relay_header: 0,   :relay_row              => 0,
           :team_ranking       => 1,   :ranking_row            => 134,
           :stats              => 0,
           :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
@@ -74,7 +74,7 @@ class FinResultParserTest < ActiveSupport::TestCase
         expected_values = {
           :meeting_header     => 1,
           :category_header    => 15,  :result_row             => 127,
-          :relay_header       => 5,   :relay_row              => 26,
+          relay_header: 5,   :relay_row              => 26,
           :team_ranking       => 1,   :ranking_row            => 56,
           :stats              => 0,
           :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
@@ -100,7 +100,7 @@ class FinResultParserTest < ActiveSupport::TestCase
         expected_values = { 
           :meeting_header     => 1,
           :category_header    => 11,  :result_row             => 75,
-          :relay_header       => 0,   :relay_row              => 0,
+          relay_header: 0,   :relay_row              => 0,
           :team_ranking       => 1,   :ranking_row            => 88,
           :stats              => 1,
           :stats_teams_tot    => 1,   :stats_teams_presence   => 1,
@@ -114,7 +114,7 @@ class FinResultParserTest < ActiveSupport::TestCase
         assert result_hash.has_key?(key), "result hash doesn't have the '#{key}' key!"
       end
                                                     # Test file length:
-      assert( result_hash[:line_count] == expected_values[:line_count], "Found file line_count == #{result_hash[:line_count]} instead of #{expected_values[:line_count]}!" )
+      assert( result_hash[:line_count] == expected_values[:line_count], "Found file line_count == #{result_hash[:line_count] } instead of #{expected_values[:line_count] }!" )
 
       parse_result = result_hash[:parse_result]
       assert( parse_result.instance_of?( Hash ), "parse_result is not an Hash!" )
@@ -148,7 +148,7 @@ class FinResultParserTest < ActiveSupport::TestCase
           end
         }
                                                     # Check the results also for each context_key:
-        assert( context_data_pages.size == expected_values[context_key], "Found parse_result[:#{context_key}].size == #{context_data_pages.size} instead of #{expected_values[context_key]}!" )
+        assert( context_data_pages.size == expected_values[context_key], "Found parse_result[:#{context_key}].size == #{context_data_pages.size} instead of #{expected_values[context_key] }!" )
       }                                             # -- end of loop on context keys --
     end                                             # -- end of loop on file names --
   end

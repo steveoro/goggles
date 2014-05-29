@@ -14,7 +14,7 @@
 
 - for feed in @news_feed
   .alert.alert-info
-    %button{:type=>'button', 'data-dismiss'=>'alert', :class=>'close'} &times;
+    %button{type:'button', 'data-dismiss'=>'alert', :class=>'close'} &times;
     %h4.text-info= feed.title
     %p= feed.body
     %small= "#{Format.a_datetime( feed.updated_at )}"

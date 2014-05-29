@@ -16,9 +16,9 @@ class CreateTableMeetingPrograms < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :meeting_programs, [:meeting_session_id, :event_order], :name => 'meeting_order', :unique => true
-    add_index :meeting_programs, [:meeting_session_id, :event_type_id], :name => 'meeting_event_type'
-    add_index :meeting_programs, [:meeting_session_id, :category_type_id], :name => 'meeting_category_type'
-    add_index :meeting_programs, [:meeting_session_id, :gender_type_id],    :name => 'meeting_gender_type'
+    add_index :meeting_programs, [:meeting_session_id, :event_order], name: 'meeting_order', :unique => true
+    add_index :meeting_programs, [:meeting_session_id, :event_type_id], name: 'meeting_event_type'
+    add_index :meeting_programs, [:meeting_session_id, :category_type_id], name: 'meeting_category_type'
+    add_index :meeting_programs, [:meeting_session_id, :gender_type_id],    name: 'meeting_gender_type'
   end
 end

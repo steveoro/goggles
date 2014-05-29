@@ -13,5 +13,5 @@ class TeamPassageTemplate < ActiveRecord::Base
   validates_associated :pool_type
   validates_associated :passage_type
 
-  has_one  :stroke_type,    :through => :event_type
+  has_one  :stroke_type,    through: :event_type
 end

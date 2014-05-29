@@ -21,6 +21,6 @@ class CreateTableMeetingRelaySwimmers < ActiveRecord::Migration
       t.references :user
     end
 
-    add_index :meeting_relay_swimmers, [:meeting_relay_id, :relay_order], :name => 'relay_order'
+    add_index :meeting_relay_swimmers, [:meeting_relay_id, :relay_order], name: 'relay_order'
   end
 end

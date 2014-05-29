@@ -22,7 +22,7 @@ class RenameTableOberCups < ActiveRecord::Migration
       t.rename :year, :season_year
     end
     # [Steve, 20131021] We now allow a team to define more than 1 "goggle cup" per season/year:
-    add_index :goggle_cups, [ :season_year ], :name => :idx_season_year
+    add_index :goggle_cups, [ :season_year ], name: :idx_season_year
 
     # [Steve, 20131021] ER-SQL source:
     # CREATE TABLE `goggle_cups` (

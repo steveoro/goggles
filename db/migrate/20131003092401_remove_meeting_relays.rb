@@ -14,7 +14,7 @@ class RemoveMeetingRelays < ActiveRecord::Migration
         DROP FOREIGN KEY fk_meeting_relays_accreditation_time_types
     SQL
 
-    remove_index :meeting_relays, :name => :relays_x_meeting
+    remove_index :meeting_relays, name: :relays_x_meeting
 
     # ----------------- FK & IDX: MEETING RELAY RESULTS
     execute <<-SQL
@@ -22,7 +22,7 @@ class RemoveMeetingRelays < ActiveRecord::Migration
         DROP FOREIGN KEY fk_meeting_relay_results_meeting_relays
     SQL
 
-    remove_index :meeting_relay_results, :name => :results_x_relay
+    remove_index :meeting_relay_results, name: :results_x_relay
 
     remove_column :data_import_meeting_relay_results, :data_import_meeting_relay_id
     remove_column :data_import_meeting_relay_results, :meeting_relay_id
@@ -34,7 +34,7 @@ class RemoveMeetingRelays < ActiveRecord::Migration
         DROP FOREIGN KEY fk_meeting_relay_swimmers_meeting_relays
     SQL
 
-    remove_index :meeting_relay_swimmers, :name => :relay_order
+    remove_index :meeting_relay_swimmers, name: :relay_order
 
     remove_column :meeting_relay_swimmers, :meeting_relay_id
 
@@ -56,7 +56,7 @@ class RemoveMeetingRelays < ActiveRecord::Migration
     change_table(:meeting_relay_results) do |t|
       t.references :meeting_program
     end
-    add_index :meeting_relay_results, [:meeting_program_id, :rank], :name => 'results_x_relay'
+    add_index :meeting_relay_results, [:meeting_program_id, :rank], name: 'results_x_relay'
 
     change_table(:data_import_meeting_relay_results) do |t|
       t.references :data_import_meeting_program
@@ -74,7 +74,7 @@ class RemoveMeetingRelays < ActiveRecord::Migration
     change_table(:meeting_relay_swimmers) do |t|
       t.references :meeting_program
     end
-    add_index :meeting_relay_swimmers, [:meeting_program_id, :relay_order], :name => 'relay_order'
+    add_index :meeting_relay_swimmers, [:meeting_program_id, :relay_order], name: 'relay_order'
 
     execute <<-SQL
       ALTER TABLE meeting_relay_swimmers

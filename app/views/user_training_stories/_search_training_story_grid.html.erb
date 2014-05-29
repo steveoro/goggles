@@ -1,55 +1,55 @@
 <%= define_grid(@user_training_stories_grid) do |g|
-	g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
+    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
 
-	g.column(
-		name: I18n.t('user_training_stories.swam_date'),
-		attribute: 'swam_date',
-	)
+    g.column(
+        name: I18n.t('user_training_stories.swam_date'),
+        attribute: 'swam_date',
+    )
 
-	g.column(
-		name: I18n.t( 'user_training_stories.notes' ),
-		attribute: 'notes',
-	) do |user_training_story|
-		@can_edit = (user_training_story.user_id == current_user.id) || admin_signed_in?
-		link_to( user_training_story.notes, user_training_story_path(user_training_story) )
-	end
+    g.column(
+        name: I18n.t( 'user_training_stories.notes' ),
+        attribute: 'notes',
+    ) do |user_training_story|
+        @can_edit = (user_training_story.user_id == current_user.id) || admin_signed_in?
+        link_to( user_training_story.notes, user_training_story_path(user_training_story) )
+    end
 
-	g.column(
-		name: I18n.t(:user, {:scope=>[:activerecord, :models]}),
-		attribute: 'user_id',
-		custom_filter: User.to_dropdown,
-	) do |user_training_story|
-		user_training_story.get_user_name
-	end
+    g.column(
+        name: I18n.t(:user, { scope: [:activerecord, :models] }),
+        attribute: 'user_id',
+        custom_filter: User.to_dropdown,
+    ) do |user_training_story|
+        user_training_story.get_user_name
+    end
 
-	g.column(
-		name: I18n.t( 'activerecord.models.user_training' ),
-		attribute: 'user_training_id',
-	) do |user_training_story|
-		link_to(
-		    user_training_story.get_user_training_name,
-		    user_training_path( user_training_story.user_training_id )
-		) if user_training_story.user_training_id
-	end
+    g.column(
+        name: I18n.t( 'activerecord.models.user_training' ),
+        attribute: 'user_training_id',
+    ) do |user_training_story|
+        link_to(
+            user_training_story.get_user_training_name,
+            user_training_path( user_training_story.user_training_id )
+        ) if user_training_story.user_training_id
+    end
 
-	g.column do |user_training_story|				# Enable edit action link, but only if the current user is the owner:
-		[
-			link_to( edit_user_training_story_path(user_training_story) ) do
-				image_tag('page_edit.png') << " #{I18n.t(:edit)}"
-			end,
-	 		{ :class => 'goggles-centeralign' }
-		]
-	end if @can_edit
+    g.column do |user_training_story|                # Enable edit action link, but only if the current user is the owner:
+        [
+            link_to( edit_user_training_story_path(user_training_story) ) do
+                image_tag('page_edit.png') << " #{I18n.t(:edit)}"
+            end,
+             { class: 'goggles-centeralign' }
+        ]
+    end if @can_edit
 
-	g.column do |user_training_story|				# Enable delete action link, but only if the current user is the owner:
-		[
-			link_to(
-					I18n.t(:delete),
-					user_training_story_path(user_training_story),
-					:method => :delete,
-					:confirm => I18n.t(:are_you_sure, :scope => [:netzke,:basepack,:grid_panel])
-	 		),
-	 		{ :class => 'goggles-centeralign' }
-		]
-	end if @can_edit
+    g.column do |user_training_story|                # Enable delete action link, but only if the current user is the owner:
+        [
+            link_to(
+                    I18n.t(:delete),
+                    user_training_story_path(user_training_story),
+                    method: :delete,
+                    confirm: I18n.t(:are_you_sure, scope: [:netzke,:basepack,:grid_panel])
+             ),
+             { class: 'goggles-centeralign' }
+        ]
+    end if @can_edit
 end -%>

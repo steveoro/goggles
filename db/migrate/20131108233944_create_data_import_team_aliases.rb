@@ -10,6 +10,6 @@ class CreateDataImportTeamAliases < ActiveRecord::Migration
       t.references :team
     end
 
-    add_index :data_import_team_aliases, [:team_id, :name], :name => :idx_team_id_name, :unique => true
+    add_index :data_import_team_aliases, [:team_id, :name], name: :idx_team_id_name, :unique => true
   end
 end

@@ -11,7 +11,7 @@ class RecordsController < ApplicationController
   def for_everything
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.everything() -----"
-    @title = I18n.t( :everything_title, {:scope=>[:records]} )
+    @title = I18n.t( :everything_title, { scope: [:records] } )
 
     if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
       prepare_events_and_category_variables()

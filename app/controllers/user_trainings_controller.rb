@@ -29,7 +29,7 @@ class UserTrainingsController < ApplicationController
   # == Returns:
   # A JSON array of Hash instances having the structure:
   # <tt>{
-  #       :label => row.get_full_name,
+  #       label: row.get_full_name,
   #       :value => row.id,
   #       :tot_distance => row.compute_total_distance(),
   #       :tot_secs => row.compute_total_seconds(),
@@ -60,7 +60,7 @@ class UserTrainingsController < ApplicationController
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
 # FIXME / TODO MUST RETURN ONLY UserTraining rows belonging to friends of the current_user
 # TODO ADD friend filtering scope on UserTraining
-      result = UserTraining.where( :user_id => current_user.id )
+      result = UserTraining.where( user_id: current_user.id )
                                                     # Get the results and filter them even more using the query chars:
       if params[:query] && ( params[:query].to_s != QUERY_WILDCHAR )
 # DEBUG

@@ -14,6 +14,6 @@ class CreateTablePassages < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :passages, [:meeting_program_id, :badge_id], :name => 'passages_x_badges'
+    add_index :passages, [:meeting_program_id, :badge_id], name: 'passages_x_badges'
   end
 end

@@ -6,7 +6,7 @@ class DataImportCity < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :city, :foreign_key => "conflicting_city_id"
+  belongs_to :city, foreign_key: "conflicting_city_id"
 
   validates_presence_of :import_text
 

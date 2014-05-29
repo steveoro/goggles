@@ -270,7 +270,7 @@ class FinResultParserToolsTest < ActiveSupport::TestCase
     result_list.each { |result|
       if show_even_1_result || (result_list.size > 1)
         if show_report
-          puts "- '#{result[:row].name}'\t=> score: #{result[:score]}"
+          puts "- '#{result[:row].name}'\t=> score: #{result[:score] }"
         else
           putc "."
         end

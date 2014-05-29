@@ -18,7 +18,7 @@ class UserTrainingStory < ActiveRecord::Base
   validates_presence_of :swam_date
 
   validates_presence_of     :total_training_time
-  validates_length_of       :total_training_time, :within => 1..6, :allow_nil => false
+  validates_length_of       :total_training_time, within: 1..6, allow_nil: false
   validates_numericality_of :total_training_time
 
   attr_accessible :swam_date, :total_training_time, :notes,

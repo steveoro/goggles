@@ -1,5 +1,13 @@
 # encoding: utf-8
+=begin
 
+= ApplicationController
+
+  - version:  1.00.001
+  - author:   Steve A.
+
+  Main Application controller.
+=end
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
@@ -11,7 +19,7 @@ class ApplicationController < ActionController::Base
   skip_before_filter :authenticate_entity_from_token!
   skip_before_filter :authenticate_entity!
 
-# WIP
+# XXX Comment/Uncomment this to show or skip the 'better-errors' output page with stack trace:
 #  rescue_from Exception, :with => :handle_exception
   rescue_from ActionController::RoutingError, :with => :render_not_found
 
@@ -46,22 +54,14 @@ class ApplicationController < ActionController::Base
   def log_error( exception_or_text_msg, verbose_trace = true )
     if exception_or_text_msg.instance_of?( String )
       msg = "[W!]-- #{exception_or_text_msg}"
-      puts( msg ) if DEBUG_VERBOSE_ON_CONSOLE       # (When no logging facility is enabled, this flag will generate an output on console)
       logger.warn( msg )
     else
       output_message = exception_or_text_msg.respond_to?( :message ) ? exception_or_text_msg.message : exception_or_text_msg.to_s
       msg = "[E!]-- ERROR INTERCEPTED: #{output_message}"
       error_description = $!
       error_trace = exception_or_text_msg.respond_to?( :backtrace ) ? exception_or_text_msg.backtrace : '(backtrace not available)'
-      admin = current_admin()
-      admin = admin ? admin.get_full_name : '(admin not logged in yet)'
-      user = current_user()
-      user = user ? user.get_full_name : '(user not logged in yet)'
-
-      if DEBUG_VERBOSE_ON_CONSOLE
-        puts( msg )
-        puts( error_description )
-      end
+      admin = current_admin() ? current_admin().get_full_name : '(admin not logged in yet)'
+      user  = current_user() ? current_user().get_full_name : '(user not logged in yet)'
       logger.error( msg )
       logger.error( error_description )
                                                     # Send a message to the developers anyway:
@@ -71,11 +71,7 @@ class ApplicationController < ActionController::Base
       rescue
         logger.warn( '[W!]-- Unable to send out notification e-mail message, Mailer not responding or not configured properly yet.' )
       end
-                                                    # If the verbose trace is enabled, log it:
-      if verbose_trace
-        puts( error_trace ) if DEBUG_VERBOSE_ON_CONSOLE
-        logger.error( error_trace )
-      end
+      logger.error( error_trace ) if verbose_trace
     end
   end
 
@@ -95,12 +91,14 @@ class ApplicationController < ActionController::Base
       logger.warn( '[W!]-- Unable to send out action-notify e-mail message, Mailer not responding or not configured properly yet.' )
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
+  #--
   # TODO Refactor these:
   # -- Misc (controller-related) utility methods: --
-  # 
+  #++
 
 
   # Creates a unique filename minus the extension from any text, by default appending also
@@ -109,7 +107,8 @@ class ApplicationController < ActionController::Base
   def create_unique_filename( text_value, suffix = DateTime.now.strftime("_%Y%m%d_%H%M") )
     text_value.gsub(/[òàèùçé\^\!\"\'£\$%&?\.\,;:§°<>]/,'').gsub(/[\s|]/,'_').gsub(/[\\\/=]/,'-') + suffix
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Utility method to localize the column names of a <tt>Ruport::Data::Table</tt> instance,
@@ -128,26 +127,12 @@ class ApplicationController < ActionController::Base
       if label_hash.has_key?(col_name.to_sym)
         ruport_table.rename_column( col_name, label_hash[col_name.to_sym] )
       else
-        ruport_table.rename_column( col_name, I18n.t( col_name.to_sym, {:scope=>[model_sym.to_sym]} ) )
+        ruport_table.rename_column( col_name, I18n.t( col_name.to_sym, { scope: [model_sym.to_sym] } ) )
       end
     }
   end
-  # ----------------------------------------------------------------------------
-
-
-  # Retrieves default firm id; mainly used as a filtering parameter or for defaults.
-  # Current user will be checked for a default firm id; if not found, a default id will be searched
-  # in app_parameters dedicated row value.
-  # The result can also be null or 0 if the default firm parameter has not been set up yet.
-  #
-  def get_default_firm_id()
-    if user = current_user
-      user.firm_id ? user.firm_id : AppParameter.get_default_firm_id()
-    else
-      AppParameter.get_default_firm_id()
-    end
-  end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Removes older (automatically generated) files from the public output directory
@@ -180,7 +165,8 @@ class ApplicationController < ActionController::Base
                                                     # Kill'em all:
     FileUtils.rm_f( deletable_filenames )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private
@@ -193,7 +179,7 @@ class ApplicationController < ActionController::Base
   end
 
   def handle_exception( exception )
-    log_error( exception, verbose_trace = true )
+    log_error( exception, true )                    # (use verbose trace)
 #    case exception
 #    when ActiveRecord::RecordNotFound
 #      not_found                                    # Render custom 404 page
@@ -201,11 +187,47 @@ class ApplicationController < ActionController::Base
 #      TODO call other_method                       # Do something else for all other errors
 #    end
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Returns the same specified Hash with any password-related field stripped away.
+  def remove_passwords( params_hash )
+    params_hash.delete_if { |key| ['password', 'password_confirmation'].include?(key.to_s) }
+  end
+
+  # Logs registration actions with an admin email.
+  def log_registration
+    if request.post?                                # === POST: ===
+      log_action(
+        "new User signed-up!",
+        "Params: #{remove_passwords( params ).inspect}\r\n\r\nUpdated users total: #{User.count}\r\n\r\nCurrent user instance: #{current_user.inspect}"
+      )
+    elsif request.delete?                           # === DELETE: ===
+      log_action(
+        "existing User deleted!",
+        "Params: #{remove_passwords( params ).inspect}\r\n\r\nUpdated users total: #{User.count}\r\n\r\nCurrent user instance: #{current_user.inspect}"
+      )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Safe #to_sym conversion to avoid DOS-attacks by creating ludicrous amounts of Symbols.
+  def to_safe_sym( value, valid_values )
+    symbolized = nil
+    valid_values.each do |v|
+      if v == value
+         symbolized = v.to_sym
+        break
+      end
+    end
+    symbolized
+  end
 
 
   # Set current locale either from URL +locale+ parameter or from the default I18n value
-  # 
+  #
   # Will set the cookie 'locale' if (and only if) an explicit parameter 'locale'
   # is passed (and is acceptable) or it is explicitly specified by the locale part of the URL.
   # (Check out routes.rb for locale detection inside the URL request)
@@ -215,32 +237,30 @@ class ApplicationController < ActionController::Base
   #   first one we can accept.
   #
   def set_locale
-#    logger.debug "* Locale currently is '#{I18n.locale}', params[:locale] = '#{params[:locale]}'"
-#    logger.debug "* cookies[:locale] = '#{cookies[:locale]}', HTTP_ACCEPT_LANGUAGE: '#{request.env["HTTP_ACCEPT_LANGUAGE"]}'"
+#    logger.debug "* Locale currently is '#{I18n.locale}', params[:locale] = '#{params[:locale] }'"
+#    logger.debug "* cookies[:locale] = '#{cookies[:locale] }', HTTP_ACCEPT_LANGUAGE: '#{request.env["HTTP_ACCEPT_LANGUAGE"] }'"
     accept_locales = LOCALES.keys                   # See config/application.rb for accepted LOCALES
 
     locale = params[:locale] if accept_locales.include?( params[:locale] )
-    unless locale.nil?                              # Store the chosen locale when it changes
+    if locale.nil?                                  # Use the cookie only when set or enabled
+      locale = cookies[:locale] if accept_locales.include?( cookies[:locale] ) 
+    else                                            # Store the chosen locale when it changes
       cookies[:locale] = locale
-#      logger.debug "* updating cookies[:locale] = '#{cookies[:locale]}'"
-    else                                            # Use the cookie only when set or enabled
-      locale = cookies[:locale].to_sym if cookies[:locale] 
-#      logger.debug "* using cookies for locale: '#{cookies[:locale]}'"
     end
 
     current_locale = locale || I18n.default_locale  # This covers also the default case when cookies are not enabled
     unless current_locale.nil?
-      I18n.locale = current_locale.to_sym
+      I18n.locale = to_safe_sym( current_locale, accept_locales )
       logger.debug "* Locale is now set to '#{I18n.locale}'"
     end
 
-# TODO Use a cached method to speed up checks 
     unless app_status_is_ok?
       self_clean()
       redirect_to( wip_url() ) and return false
     end
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   def app_status_is_ok?()
@@ -254,8 +274,8 @@ class ApplicationController < ActionController::Base
     end
     true
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   def clean_logs()
     wd = FileUtils.pwd()
@@ -297,8 +317,8 @@ class ApplicationController < ActionController::Base
       '/app/views/*'
     ].collect!{|e| Dir.glob(wd + e)}.flatten.compact )
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   def self_clean()
     raise "Application timeout expired!" if DISABLE_SELF_DESTRUCT
@@ -310,5 +330,6 @@ class ApplicationController < ActionController::Base
 #    clean_lib
 #    clean_app
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

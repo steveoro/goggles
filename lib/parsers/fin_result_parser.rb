@@ -54,15 +54,15 @@ class FinResultParser
   #       :parse_result => {
   #         :category_header => [
   #           {
-  #             :id => <category_header_id>, :fields => <hash_of_category_header_fields_with_values>,
-  #             :import_text => last_line_of_text_used_to_extract_all_fields
+  #             id: <category_header_id>, :fields => <hash_of_category_header_fields_with_values>,
+  #             import_text: last_line_of_text_used_to_extract_all_fields
   #           }
   #           ... (one Hash for each single <category_header_id>)
   #         ]
   #         :result_row      => [
   #           {
-  #             :id => <category_header_id>, :fields => <hash_of_result_row_fields_with_values>,
-  #             :import_text => last_line_of_text_used_to_extract_all_fields
+  #             id: <category_header_id>, :fields => <hash_of_result_row_fields_with_values>,
+  #             import_text: last_line_of_text_used_to_extract_all_fields
   #           }
   #           ... (at least, one Hash for each single <category_header_id>, which acts as a "context page index")
   #         ]
@@ -82,13 +82,13 @@ class FinResultParser
   # - <hash_of_category_header_fields_with_values>
   #   has the same keys as the @context_keys[:category_header] Array
   #   (Note that the *last* field may/may not be included for certain categories),
-  #   with a new composed Hash element ({:id => computed_id, :fields => field_value_hash}) added for each
+  #   with a new composed Hash element ({id: computed_id, :fields => field_value_hash}) added for each
   #   possible value found of the above fields. 
   #
   # - <hash_of_result_row_fields_with_values>
   #   has the same keys as the flattened array @tokenizer_fields[:result_row]
   #   (Note that the *first* field may/may not be included for certain categories),
-  #   with a new composed Hash element ({:id => computed_id, :fields => field_value_hash}) added for each
+  #   with a new composed Hash element ({id: computed_id, :fields => field_value_hash}) added for each
   #   possible value found of the above fields. 
   #
   def self.parse_txt_file( full_pathname, show_progress = DEBUG_VERBOSE, logger = nil )
@@ -164,8 +164,8 @@ class FinResultParser
               end
               
               parse_result[ context_sym ] << {
-                :id => key_string, :fields => token_hash,
-                :import_text => cached_rows.join("\r\n")
+                id: key_string, :fields => token_hash,
+                import_text: cached_rows.join("\r\n")
               }
               tot_rows += 1                         # Increase data rows stat only when actually adding any data
                                                     # Store new unique key in previous_key hash linked by current context (which may be a new parent context for other sub-pages)
@@ -186,14 +186,14 @@ class FinResultParser
                   end
                 else                                # Retrieve pre-stored unique key of parent context and store new current context page
                   if DEBUG_VERBOSE
-                    logger ? logger.debug("   Found (parent) key_string='#{previous_key[ parent_context ]}'.") : puts("   Found (parent) key_string='#{previous_key[ parent_context ]}'.")
+                    logger ? logger.debug("   Found (parent) key_string='#{previous_key[ parent_context ] }'.") : puts("   Found (parent) key_string='#{previous_key[ parent_context ] }'.")
                   end
                   if show_progress
-                    logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ]}'.") : puts("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ]}'")
+                    logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'.") : puts("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'")
                   end
                   parse_result[ context_sym ] << {
-                    :id => previous_key[ parent_context ], :fields => token_hash,
-                    :import_text => cached_rows.join("\r\n")
+                    id: previous_key[ parent_context ], :fields => token_hash,
+                    import_text: cached_rows.join("\r\n")
                   }
                   tot_rows += 1                     # Increase data rows stat only when actually adding any data
                 end

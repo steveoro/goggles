@@ -15,9 +15,9 @@ class TeamAffiliation < ActiveRecord::Base
   validates_associated :season
 
   validates_presence_of :name
-  validates_length_of   :name, :within => 1..100, :allow_nil => false
+  validates_length_of   :name, within: 1..100, allow_nil: false
 
-  validates_length_of   :number, :maximum => 20
+  validates_length_of   :number, maximum: 20
 
 
   scope :sort_team_affiliation_by_user,    ->(dir) { order("users.name #{dir.to_s}") }

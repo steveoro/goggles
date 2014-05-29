@@ -18,10 +18,10 @@ class Passage < ActiveRecord::Base
   validates_associated :team
   validates_associated :passage_type
 
-  has_one :meeting,         :through => :meeting_entry
-  has_one :meeting_program, :through => :meeting_entry
-  has_one :badge,           :through => :meeting_entry
-  has_one :event_type,      :through => :meeting_entry
+  has_one :meeting,         through: :meeting_entry
+  has_one :meeting_program, through: :meeting_entry
+  has_one :badge,           through: :meeting_entry
+  has_one :event_type,      through: :meeting_entry
 
   scope :sort_by_user,       ->(dir) { order("users.name #{dir.to_s}, swimmer_id #{dir.to_s}") }
 #  scope :sort_by_program,    ->(dir) { order("meeting_programs.begin_time #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
@@ -69,7 +69,7 @@ class Passage < ActiveRecord::Base
   def get_scheduled_date                            # The following ActiveRecord chain is granted in existence by validation assertions: (even the first check could be avoided)
     self.meeting_program ? self.meeting_program.meeting_session.scheduled_date : '?'
     # [Steve, 20130710]
-    # Provided the "has_one :meeting_session, :through => :meeting_program" above, this should also work:
+    # Provided the "has_one :meeting_session, through: :meeting_program" above, this should also work:
     # => return meeting_session.scheduled_date
   end
 

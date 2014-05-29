@@ -6,4 +6,4 @@
 
 <p><%= t('devise.confirm_email_text') %></p>
 
-<p><%= link_to( t('devise.confirm_email_submit'), confirmation_url(@resource, :confirmation_token => @token) ) %></p>
+<p><%= link_to( t('devise.confirm_email_submit'), confirmation_url(@resource, confirmation_token: @token) ) %></p>

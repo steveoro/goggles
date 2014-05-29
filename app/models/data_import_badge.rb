@@ -6,7 +6,7 @@ class DataImportBadge < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :badge, :foreign_key => "conflicting_badge_id"
+  belongs_to :badge, foreign_key: "conflicting_badge_id"
 
   validates_presence_of :import_text
 

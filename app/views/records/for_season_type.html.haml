@@ -13,7 +13,7 @@
         = form_tag( :records_for_season_type, :remote => true, :class => 'form-horizontal', :onsubmit => "$('#loadingIndicator').show();") do
           .row-fluid
             .control-group
-              = label_tag( :season_type_id, I18n.t(:season_type, {:scope=>[:activerecord, :models]}), :for => :season_type, :class => 'control-label' )
+              = label_tag( :season_type_id, I18n.t(:season_type, { scope: [:activerecord, :models] }), :for => :season_type, :class => 'control-label' )
               .controls
                 = select( :season_type, :season_type_id, SeasonType.to_dropdown(), { :prompt => I18n.t(:please_select) }, { :class => 'input-xlarge' } )
           .row-fluid

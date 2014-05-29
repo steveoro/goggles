@@ -12,7 +12,7 @@
       .accordion-inner
         .row-fluid
           .span2
-            = I18n.t(:complete_name, {:scope=>[:swimmers]})
+            = I18n.t(:complete_name, { scope: [:swimmers] })
           .span10
             = grid_filter @swimmers_grid, :flt_swimmer_complete_name
         .row-fluid

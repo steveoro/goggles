@@ -16,7 +16,7 @@ class AlterTableAccreditationTimeTypes < ActiveRecord::Migration
     end
 
     rename_table :accreditation_time_types, :entry_time_types
-    add_index :entry_time_types, [:code], :name => :idx_entry_time_types_code, :unique => true
+    add_index :entry_time_types, [:code], name: :idx_entry_time_types_code, :unique => true
 
     change_table(:badges) do |t|
       t.references :entry_time_type

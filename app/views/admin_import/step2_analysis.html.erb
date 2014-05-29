@@ -1,90 +1,90 @@
 <ul class="nav nav-tabs">
-	<%= content_tag( :li, link_to(t('admin_import.step_1'), goggles_di_step1_status_path()), 	:class => 'active' ) %>
-	<%= content_tag( :li, link_to(t('admin_import.step_1_1'), '#'),	:class => 'active' ) %>
-	<%= content_tag( :li, link_to(t('admin_import.step_2'), '#'),	:class => 'disabled' ) %>
-	<%= content_tag( :li, link_to(t('admin_import.step_3'), '#'), 	:class => 'disabled' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_1'), goggles_di_step1_status_path()),     class: 'active' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_1_1'), '#'),    class: 'active' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_2'), '#'),    class: 'disabled' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_3'), '#'),     class: 'disabled' ) %>
 </ul>
 
 
 <p class="text-center lead">
-	<%= I18n.t('admin_import.import_event_results_title') %>:
-	<%= I18n.t('admin_import.team_analysis_results') %>
-	(<%= I18n.t('admin_import.session') %>: <%= @data_import_session_id %>)
+    <%= I18n.t('admin_import.import_event_results_title') %>:
+    <%= I18n.t('admin_import.team_analysis_results') %>
+    (<%= I18n.t('admin_import.session') %>: <%= @data_import_session_id %>)
 </p>
 
 <div class="alert">
-	<button type="button" class="close" data-dismiss="alert">&times;</button>
-	<%= I18n.t('admin_import.unconfirmed_results_will_be_added') %>
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <%= I18n.t('admin_import.unconfirmed_results_will_be_added') %>
 </div>
 
 <div class="span12">
 <%= form_tag( 'step3_analysis_commit',
-		:multipart => true, :class => 'form',
-		:onsubmit => "$('#loadingIndicator').show(); "
-	) do -%>
-	<%= hidden_field_tag( :data_import_session_id, 	@data_import_session_id ) %>
-	<%= hidden_field_tag( :force_meeting_creation, 	@force_missing_meeting_creation ? '1' : '0' ) %>
-	<%= hidden_field_tag( :force_team_creation, 	@force_missing_team_creation ? '1' : '0' ) %>
-	<div class="row span11">
-		<div class="span3 control-label goggles-div-centeralign"><%= I18n.t('admin_import.searched_team') %></div>
-		<div class="span4 control-label goggles-div-centeralign"><%= I18n.t('admin_import.team_match_name') %></div>
-		<div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.add_alias') %></div>
-		<div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.add_team') %></div>
-		<div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.add_affiliation') %></div>
-		<div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.is_ok') %></div>
-	</div>
+        :multipart => true, class: 'form',
+        :onsubmit => "$('#loadingIndicator').show(); "
+    ) do -%>
+    <%= hidden_field_tag( :data_import_session_id,     @data_import_session_id ) %>
+    <%= hidden_field_tag( :force_meeting_creation,     @force_missing_meeting_creation ? '1' : '0' ) %>
+    <%= hidden_field_tag( :force_team_creation,     @force_missing_team_creation ? '1' : '0' ) %>
+    <div class="row span11">
+        <div class="span3 control-label goggles-div-centeralign"><%= I18n.t('admin_import.searched_team') %></div>
+        <div class="span4 control-label goggles-div-centeralign"><%= I18n.t('admin_import.team_match_name') %></div>
+        <div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.add_alias') %></div>
+        <div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.add_team') %></div>
+        <div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.add_affiliation') %></div>
+        <div class="span1 control-label goggles-div-centeralign"><%= I18n.t('admin_import.is_ok') %></div>
+    </div>
 
-	<% @analysis_results.each_with_index do |result_row, idx| -%>
-		<% do_insert_alias = result_row.can_insert_alias -%>
-		<% do_insert_team = result_row.can_insert_team -%>
-		<% do_insert_affiliation = result_row.can_insert_affiliation -%>
-		<div class="row span11 <%= (idx%2 == 0) ? 'goggles-divlist-even' : 'goggles-divlist-odd' %>">
-			<div class="control-group">
-				<div class="span3">
-					<b>"<%= result_row.searched_team_name %>"</b>						
-				</div>
-				<div class="span4">
-					<% if result_row.chosen_team_id -%>
-						<%= select( :alias_ids, result_row.id, Team.to_dropdown(),
-									{ :prompt => I18n.t(:please_select), :selected => result_row.chosen_team_id },	# select options
-									{ :class => 'input-xlarge' } )	# html options
-						%>
-					<% end -%>
-				</div>
-				<div class="span1">
-					<%= show_tag( do_insert_alias ) %>
-				</div>
-				<div class="span1">
-					<%= show_tag( do_insert_team ) %>
-				</div>
-				<div class="span1">
-					<%= show_tag( do_insert_affiliation ) %>
-				</div>
-				<div class="span1">
-					<%= check_box_tag( "id_#{result_row.id}", '1', do_insert_team ) %>
-				</div>
-			</div>
-		</div>
-	<% end -%>
+    <% @analysis_results.each_with_index do |result_row, idx| -%>
+        <% do_insert_alias = result_row.can_insert_alias -%>
+        <% do_insert_team = result_row.can_insert_team -%>
+        <% do_insert_affiliation = result_row.can_insert_affiliation -%>
+        <div class="row span11 <%= (idx%2 == 0) ? 'goggles-divlist-even' : 'goggles-divlist-odd' %>">
+            <div class="control-group">
+                <div class="span3">
+                    <b>"<%= result_row.searched_team_name %>"</b>                        
+                </div>
+                <div class="span4">
+                    <% if result_row.chosen_team_id -%>
+                        <%= select( :alias_ids, result_row.id, Team.to_dropdown(),
+                                    { :prompt => I18n.t(:please_select), :selected => result_row.chosen_team_id },    # select options
+                                    { class: 'input-xlarge' } )    # html options
+                        %>
+                    <% end -%>
+                </div>
+                <div class="span1">
+                    <%= show_tag( do_insert_alias ) %>
+                </div>
+                <div class="span1">
+                    <%= show_tag( do_insert_team ) %>
+                </div>
+                <div class="span1">
+                    <%= show_tag( do_insert_affiliation ) %>
+                </div>
+                <div class="span1">
+                    <%= check_box_tag( "id_#{result_row.id}", '1', do_insert_team ) %>
+                </div>
+            </div>
+        </div>
+    <% end -%>
 
-	<div class="row span11">
-	</div>
-	<div class="row span11">
-		<div class="control-group">
-			<div class="span4 control-label" for="must_go_back"><%= I18n.t('admin_import.on_commit_go_back_to_step1') %></div>
-			<div class="span1">
-				<%= check_box_tag( "must_go_back" ) %>
-			</div>
-			<div class="span1">
-			  	<%= submit_tag( I18n.t('admin_import.confirm'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' ) %>
-			</div>
-		</div>
-	</div>
-	<div class="row span11">
-	  	<span id='loadingIndicator' hidden='true'>
-	  		<%= image_tag( 'indicator.gif' ) %>
-	  	</span>
-		<div id="divProgress" hidden='true' class="progress progress-striped active"></div>
-	</div>
+    <div class="row span11">
+    </div>
+    <div class="row span11">
+        <div class="control-group">
+            <div class="span4 control-label" for="must_go_back"><%= I18n.t('admin_import.on_commit_go_back_to_step1') %></div>
+            <div class="span1">
+                <%= check_box_tag( "must_go_back" ) %>
+            </div>
+            <div class="span1">
+                  <%= submit_tag( I18n.t('admin_import.confirm'), data: {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' ) %>
+            </div>
+        </div>
+    </div>
+    <div class="row span11">
+          <span id='loadingIndicator' hidden='true'>
+              <%= image_tag( 'indicator.gif' ) %>
+          </span>
+        <div id="divProgress" hidden='true' class="progress progress-striped active"></div>
+    </div>
 <% end -%>
 </div>

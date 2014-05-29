@@ -13,18 +13,18 @@ class MeetingEvent < ActiveRecord::Base
   validates_associated :heat_type
 
   validates_presence_of :event_order
-  validates_length_of   :event_order, :within => 1..3, :allow_nil => false
+  validates_length_of   :event_order, within: 1..3, allow_nil: false
 
-  has_one  :meeting,      :through => :meeting_session
-  has_one  :season,       :through => :meeting_session
-  has_one  :season_type,  :through => :meeting_session
-  has_one  :stroke_type,  :through => :event_type
+  has_one  :meeting,      through: :meeting_session
+  has_one  :season,       through: :meeting_session
+  has_one  :season_type,  through: :meeting_session
+  has_one  :stroke_type,  through: :event_type
 
-  has_many :meeting_programs, :dependent => :delete_all
-  has_many :meeting_individual_results, :through => :meeting_programs, :dependent => :delete_all
-  has_many :meeting_relay_results, :through => :meeting_programs, :dependent => :delete_all
+  has_many :meeting_programs, dependent: :delete_all
+  has_many :meeting_individual_results, through: :meeting_programs, dependent: :delete_all
+  has_many :meeting_relay_results, through: :meeting_programs, dependent: :delete_all
 
-  has_many :category_types, :through => :meeting_programs
+  has_many :category_types, through: :meeting_programs
 
 
   # ----------------------------------------------------------------------------

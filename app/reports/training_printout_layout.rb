@@ -72,7 +72,7 @@ class TrainingPrintoutLayout
   def self.build_page_header( pdf, options )
     pdf.repeat( :all ) do
       pdf.move_cursor_to( pdf.bounds.top() )
-      pdf.text( "<i>#{AUTHOR_STRING}</i>", :align => :center, :size => 6, :inline_format => true )
+      pdf.text( "<i>#{AUTHOR_STRING}</i>", align: :center, :size => 6, :inline_format => true )
       pdf.move_cursor_to( pdf.bounds.top() - 10 )
       pdf.stroke_horizontal_rule()
     end
@@ -90,9 +90,9 @@ class TrainingPrintoutLayout
         Format.a_short_datetime( DateTime.now ),
         :size => 6,
         :at => [50, 2],
-        :width => pdf.bounds.width - 100,
-        :height => 6,
-        :align => :center
+        width: pdf.bounds.width - 100,
+        height: 6,
+        align: :center
       )
       pdf.move_cursor_to( pdf.bounds.bottom() - 6 )
       pdf.stroke_horizontal_rule()
@@ -142,7 +142,7 @@ class TrainingPrintoutLayout
             fields[1],                              # training_step_type description
             "(#{tot_group_timing})",                # esteemed tot. duration in secs
                                                     # grouping multiplier + intervals:
-            "#{group_hash[:times]}x #{group_pause} #{group_s_r}"
+            "#{group_hash[:times] }x #{group_pause} #{group_s_r}"
           ]
           group_subtable_array << [ fields[3], fields[4] ]
         else                                        # Same old group?
@@ -177,35 +177,35 @@ class TrainingPrintoutLayout
     }
 
     pdf.bounding_box( [0, pdf.bounds.height - 40],
-                      :width => pdf.bounds.width,
-                      :height => pdf.bounds.height-80 ) do
+                      width: pdf.bounds.width,
+                      height: pdf.bounds.height-80 ) do
                                                     # -- Report title and header:
       pdf.text(
-        "<u><b>#{options[:report_title]}</b></u>",
-        { :align => :left, :size => 9, :inline_format => true } 
+        "<u><b>#{options[:report_title] }</b></u>",
+        { align: :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
         "<i>#{I18n.t('activerecord.attributes.training.user')}:</i> #{training.get_user_name}",
-        { :align => :left, :size => 9, :inline_format => true } 
+        { align: :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
         "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type(:i18n_description)}",
-        { :align => :left, :size => 9, :inline_format => true } 
+        { align: :left, :size => 9, :inline_format => true } 
       )
       pdf.text(
         training.description,
-        { :align => :left, :size => 9, :inline_format => true } 
+        { align: :left, :size => 9, :inline_format => true } 
       )
       pdf.move_down( 10 )
 
       pdf.text(
         "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
-        { :align => :left, :size => 8, :inline_format => true } 
+        { align: :left, :size => 8, :inline_format => true } 
       )
       tot_secs = training.compute_total_seconds()
       pdf.text(
         "<i>#{I18n.t('trainings.esteemed_timing')}:</i> #{Timing.to_hour_string(tot_secs)}",
-        { :align => :left, :size => 8, :inline_format => true } 
+        { align: :left, :size => 8, :inline_format => true } 
       )
       pdf.move_down( 10 )
                                                     # -- Main data table:
@@ -264,8 +264,8 @@ class TrainingPrintoutLayout
     page_num_text = "Pag. <page>/<total>"
     numbering_options = {
       :at => [pdf.bounds.right - 150, 2],
-      :width => 150,
-      :align => :right,
+      width: 150,
+      align: :right,
       :size => 6
     }
     pdf.number_pages( page_num_text, numbering_options )

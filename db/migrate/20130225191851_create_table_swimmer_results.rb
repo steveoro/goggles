@@ -28,6 +28,6 @@ class CreateTableSwimmerResults < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :swimmer_results, [:meeting_individual_result_id, :meeting_program_id, :rank], :name => 'meeting_id_rank'
+    add_index :swimmer_results, [:meeting_individual_result_id, :meeting_program_id, :rank], name: 'meeting_id_rank'
   end
 end
