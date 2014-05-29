@@ -16,7 +16,7 @@ class AdminIndexController < ApplicationController
   # Allows the display of the parameter :console_output, when defined and not empty
   #
   # === Params:
-  # - :console_output => when not nil can be a string text to be displayed,
+  # - console_output: when not nil can be a string text to be displayed,
   #   containing the captured console output from the previous command execution
   #   (that has then redirected the server here).
   #
@@ -33,7 +33,7 @@ class AdminIndexController < ApplicationController
   #
   # === Params:
   # - :datafile => the uploaded file (mandatory on POST)
-  # - :console_output => when not nil can be a string text to be displayed,
+  # - console_output: when not nil can be a string text to be displayed,
   #   containing the captured console output from the previous command execution
   #   (that has then redirected the server here).
   #
@@ -105,7 +105,7 @@ class AdminIndexController < ApplicationController
   #
   # === Params:
   # - :datafile => the uploaded file (mandatory on POST)
-  # - :console_output => when not nil can be a string text to be displayed,
+  # - console_output: when not nil can be a string text to be displayed,
   #   containing the captured console output from the previous command execution
   #   (that has then redirected the server here).
   #
@@ -208,7 +208,7 @@ class AdminIndexController < ApplicationController
   # to execute pre-build rake tasks.
   #
   # === Params:
-  # - :console_output => when not nil can be a string text to be displayed,
+  # - console_output: when not nil can be a string text to be displayed,
   #   containing the captured console output from the previous command execution
   #   (that has then redirected the server here).
   #
@@ -249,7 +249,7 @@ class AdminIndexController < ApplicationController
       end
       @console_output = output                      # Cannot use full console output because it's too big!
     end
-    redirect_to db_structure_path( :console_output => @console_output )
+    redirect_to db_structure_path( console_output: @console_output )
   end
 
 
@@ -267,7 +267,7 @@ class AdminIndexController < ApplicationController
       end
       @console_output = output                      # Cannot use full console output because it's too big!
     end
-    redirect_to db_structure_path( :console_output => @console_output )
+    redirect_to db_structure_path( console_output: @console_output )
   end
 
 
@@ -278,7 +278,7 @@ class AdminIndexController < ApplicationController
       logger.info( "#{current_admin.name} is executing all DB seeds in db/seeds...\r\n" )
       execute_cmd( 'rake', 'sql:exec' )
     end
-    redirect_to db_structure_path( :console_output => @console_output )
+    redirect_to db_structure_path( console_output: @console_output )
   end
   # ---------------------------------------------------------------------------
 
@@ -320,10 +320,10 @@ class AdminIndexController < ApplicationController
     @title = I18n.t('admin_index.select_meeting_to_be_deleted')
     @meetings_grid = initialize_grid(
       Meeting,
-      :include => [:season, :season_type],
-      :order => 'meetings.header_date',
-      :order_direction => 'asc',
-      :per_page => 20
+      include: [:season, :season_type],
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
     )
   end
 
@@ -362,7 +362,7 @@ class AdminIndexController < ApplicationController
              "MeetingProgram rows deleted: #{deleted_progs}\r\n" +
              "MeetingEvent rows deleted: #{deleted_events}\r\n" +
              "+ all associated MeetingTeamScore & MeetingSession rows.\r\n" 
-    redirect_to goggles_admin_index_path( :console_output => output )
+    redirect_to goggles_admin_index_path( console_output: output )
   end
   # ---------------------------------------------------------------------------
 
@@ -509,7 +509,7 @@ class AdminIndexController < ApplicationController
       send_file( file_name )
     else
       flash[:error] = I18n.t(:file_not_created_for_some_reason)
-      redirect_to goggles_admin_index_path( :console_output => output )
+      redirect_to goggles_admin_index_path( console_output: output )
     end
   end
   # ---------------------------------------------------------------------------
@@ -742,8 +742,8 @@ class AdminIndexController < ApplicationController
     log_row_sizes( Passage, :get_full_name, duplicates_src_pass, nonduplicates_src_pass )
 
                                                     # --- GoggleCupStandard (:badge_id) ---
-    src_gcstds  = GoggleCupStandard.includes(:goggle_cup).where( :goggle_cup_id => src_gcups_ids )
-    dest_gcstds = GoggleCupStandard.includes(:goggle_cup).where( :goggle_cup_id => dest_gcups_ids )
+    src_gcstds  = GoggleCupStandard.includes(:goggle_cup).where( goggle_cup_id: src_gcups_ids )
+    dest_gcstds = GoggleCupStandard.includes(:goggle_cup).where( goggle_cup_id: dest_gcups_ids )
     nonduplicates_src_gcstds = src_gcstds.reject{ |src_row|
       dest_gcstds.any?{ |dest_row|
         (dest_row.goggle_cup.year == src_row.goggle_cup.year) &&

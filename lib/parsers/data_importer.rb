@@ -182,7 +182,7 @@ class DataImporter
     DataImportSession.create(
       :file_name => full_pathname,
       :source_data => full_text_file_contents,
-      :total_data_rows => total_data_rows,
+      total_data_rows: total_data_rows,
       :file_format => file_format,
       season_id: season_id,
       phase_3_log: '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers") 
@@ -464,22 +464,22 @@ class DataImporter
     result_hash = FinResultParser.parse_txt_file( full_pathname, false, logger ) # (=> show_progress = false)
     # NOTE: result_hash has the following structure:
     #     {
-    #       :parse_result => {
+    #       parse_result: {
     #         :category_header => [
-    #           { id: <category_header_id>, :fields => <hash_of_category_header_fields_with_values>,
+    #           { id: <category_header_id>, fields: <hash_of_category_header_fields_with_values>,
     #             import_text: last_line_of_text_used_to_extract_all_fields }
     #           ... (one Hash for each <category_header_id>)
     #         ],
     #         :result_row      => [
-    #           { id: <category_header_id>, :fields => <hash_of_result_row_fields_with_values>,
+    #           { id: <category_header_id>, fields: <hash_of_result_row_fields_with_values>,
     #             import_text: last_line_of_text_used_to_extract_all_fields }
     #           ... (one or more Hash for each <category_header_id>, which acts as a "context page index")
     #         ],
     #         ...
     #       },
-    #       :line_count               => tot_file_lines_read,
-    #       :total_data_rows          => sum_of_data_pages_sizes,
-    #       :full_text_file_contents  => full_text_file_contents
+    #       line_count: tot_file_lines_read,
+    #       total_data_rows: sum_of_data_pages_sizes,
+    #       full_text_file_contents: full_text_file_contents
     #     }
     #
     # FinResultParser.get_field_list_for( context_sym )

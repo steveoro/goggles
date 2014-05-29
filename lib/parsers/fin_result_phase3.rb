@@ -58,29 +58,31 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           Meeting.transaction do
             committed_row = Meeting.new(
-              description: di_row.description,
-              entry_deadline: di_row.entry_deadline,
-              is_autofilled: true,              # signal that we have guessed some of the values (for instance, the begin/scheduled times)
-              are_results_acquired: di_row.are_results_acquired,
-              configuration_file: di_row.configuration_file,
+              description:            di_row.description,
+              entry_deadline:         di_row.entry_deadline,
+              is_autofilled:          true,         # signal that we have guessed some of the values (for instance, the begin/scheduled times)
+              are_results_acquired:   di_row.are_results_acquired,
+              configuration_file:     di_row.configuration_file,
 
-              is_under_25_admitted: di_row.is_under_25_admitted,
-              max_individual_events: di_row.max_individual_events,
+              is_under_25_admitted:   di_row.is_under_25_admitted,
+              max_individual_events:  di_row.max_individual_events,
               max_individual_events_per_session: di_row.max_individual_events_per_session,
 
-              code: di_row.code,
-              edition: di_row.edition,
-              header_date: di_row.header_date,
-              header_year: di_row.header_year,
-              is_out_of_season: di_row.is_out_of_season,
-              notes: di_row.notes,
-              season_id: di_row.season_id,
-              edition_type_id: di_row.edition_type_id,
-              timing_type_id: di_row.timing_type_id,
+              code:                   di_row.code,
+              edition:                di_row.edition,
+              header_date:            di_row.header_date,
+              header_year:            di_row.header_year,
+              is_out_of_season:       di_row.is_out_of_season,
+              notes:                  di_row.notes,
+              season_id:              di_row.season_id,
+              edition_type_id:        di_row.edition_type_id,
+              timing_type_id:         di_row.timing_type_id,
+
               individual_score_computation_type_id: di_row.individual_score_computation_type_id,
-              relay_score_computation_type_id: di_row.relay_score_computation_type_id,
-              team_score_computation_type_id: di_row.team_score_computation_type_id,
-              user_id: di_row.user_id
+              relay_score_computation_type_id:      di_row.relay_score_computation_type_id,
+              team_score_computation_type_id:       di_row.team_score_computation_type_id,
+
+              user_id:                di_row.user_id
               # TODO FUTURE DEV: di_row.tag is not yet used
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
@@ -137,16 +139,16 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           MeetingSession.transaction do
             committed_row = MeetingSession.new(
-              session_order: di_row.session_order,
-              scheduled_date: di_row.scheduled_date,
-              warm_up_time: di_row.warm_up_time,
-              begin_time: di_row.begin_time,
-              is_autofilled: true,              # signal that we have guessed some of the values (for instance, the begin/scheduled times)
-              description: di_row.description,
-              meeting_id: di_row.meeting_id,
+              session_order:    di_row.session_order,
+              scheduled_date:   di_row.scheduled_date,
+              warm_up_time:     di_row.warm_up_time,
+              begin_time:       di_row.begin_time,
+              is_autofilled:    true,               # signal that we have guessed some of the values (for instance, the begin/scheduled times)
+              description:      di_row.description,
+              meeting_id:       di_row.meeting_id,
               swimming_pool_id: di_row.swimming_pool_id,
               day_part_type_id: di_row.day_part_type_id,
-              user_id: di_row.user_id
+              user_id:          di_row.user_id
               # TODO :notes is not used!
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
@@ -194,8 +196,8 @@ module FinResultPhase3
     result_id = 0
     result_row = MeetingEvent.where(
       meeting_session_id: meeting_session_id,
-      event_type_id: event_type_id,
-      :heat_type_id => heat_type_id
+      event_type_id:      event_type_id,
+      heat_type_id:       heat_type_id
     ).first
 
     if result_row
@@ -206,12 +208,12 @@ module FinResultPhase3
       begin                                         # --- BEGIN transaction ---
         field_hash = {
           meeting_session_id: meeting_session_id,
-          :event_type_id  => event_type_id,
-          :heat_type_id   => heat_type_id,
-          :event_order    => event_order,
-          begin_time: begin_time,
-          is_out_of_race: is_out_of_race,
-          is_autofilled: true
+          event_type_id:      event_type_id,
+          heat_type_id:       heat_type_id,
+          event_order:        event_order,
+          begin_time:         begin_time,
+          is_out_of_race:     is_out_of_race,
+          is_autofilled:      true
           # TODO notes is not used
         }
         MeetingEvent.transaction do
@@ -276,16 +278,16 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           MeetingProgram.transaction do
             committed_row = MeetingProgram.new(
-              event_order: di_row.event_order,
+              event_order:      di_row.event_order,
               category_type_id: di_row.category_type_id,
-              :gender_type_id   => di_row.gender_type_id,
-              :pool_type_id     => ( di_row.meeting_session.swimming_pool ? di_row.meeting_session.swimming_pool.pool_type_id : nil ),
-              :time_standard_id => di_row.time_standard_id,
-              :meeting_event_id => meeting_event_id,
-              begin_time: di_row.begin_time, # (wild guessed)
-              is_out_of_race: di_row.is_out_of_race,
-              is_autofilled: true,            # signal that we have guessed some of the values (for instance, the begin/scheduled times)
-              user_id: di_row.user_id
+              gender_type_id:   di_row.gender_type_id,
+              pool_type_id:     ( di_row.meeting_session.swimming_pool ? di_row.meeting_session.swimming_pool.pool_type_id : nil ),
+              time_standard_id: di_row.time_standard_id,
+              meeting_event_id: meeting_event_id,
+              begin_time:       di_row.begin_time,  # (wild-guessed)
+              is_out_of_race:   di_row.is_out_of_race,
+              is_autofilled:    true,               # signal that we have guessed some of the values (for instance, the begin/scheduled times)
+              user_id:          di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -344,12 +346,12 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           City.transaction do
             committed_row = City.new(
-              name: di_row.name,
-              zip: di_row.zip,
-              area: di_row.area,
-              country: di_row.country,
+              name:         di_row.name,
+              zip:          di_row.zip,
+              area:         di_row.area,
+              country:      di_row.country,
               country_code: di_row.country_code,
-              user_id: di_row.user_id
+              user_id:      di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -401,11 +403,11 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           Team.transaction do
             committed_row = Team.new(
-              name: di_row.name,
-              :editable_name    => di_row.name,     # (let's initialize this with the data-import name)
-              :name_variations  => di_row.name,
-              city_id: di_row.city_id,
-              user_id: di_row.user_id
+              name:             di_row.name,
+              editable_name:    di_row.name,        # (let's initialize this with the data-import name)
+              name_variations:  di_row.name,
+              city_id:          di_row.city_id,
+              user_id:          di_row.user_id
               # TODO notes is not used
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
@@ -428,17 +430,17 @@ module FinResultPhase3
                                                     # Update dependancy: |=> data_import_badges(swimmer, team, category, season)
           DataImportBadge.where(
             data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, :team_affiliation_id => additional_row.id )
+          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
           DataImportMeetingIndividualResult.where(
             data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, :team_affiliation_id => additional_row.id )
+          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
 
           DataImportMeetingRelayResult.where(
             data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, :team_affiliation_id => additional_row.id )
+          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
           DataImportMeetingTeamScore.where(
             data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, :team_affiliation_id => additional_row.id )
+          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
@@ -479,12 +481,12 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           Swimmer.transaction do
             committed_row = Swimmer.new(
-              last_name: di_row.last_name,
-              first_name: di_row.first_name,
-              complete_name: di_row.complete_name,
-              year_of_birth: di_row.year_of_birth,
+              last_name:      di_row.last_name,
+              first_name:     di_row.first_name,
+              complete_name:  di_row.complete_name,
+              year_of_birth:  di_row.year_of_birth,
               gender_type_id: di_row.gender_type_id,
-              user_id: di_row.user_id
+              user_id:        di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -539,14 +541,14 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           Badge.transaction do
             committed_row = Badge.new(
-              number: di_row.number,
-              :category_type_id     => di_row.category_type_id,
-              entry_time_type_id: di_row.entry_time_type_id,
-              :swimmer_id           => di_row.swimmer_id,
-              team_id: di_row.team_id,
-              :team_affiliation_id  => di_row.team_affiliation_id,
-              season_id: di_row.season_id,
-              user_id: di_row.user_id
+              number:               di_row.number,
+              category_type_id:     di_row.category_type_id,
+              entry_time_type_id:   di_row.entry_time_type_id,
+              swimmer_id:           di_row.swimmer_id,
+              team_id:              di_row.team_id,
+              team_affiliation_id:  di_row.team_affiliation_id,
+              season_id:            di_row.season_id,
+              user_id:              di_row.user_id
             )
             # ASSERT: assuming season_id is always positive (chosen by admin during data-import)
             committed_row.save!                     # raise automatically an exception if save is not successful
@@ -599,27 +601,27 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           MeetingIndividualResult.transaction do
             committed_row = MeetingIndividualResult.new(
-              rank: di_row.rank,
-              is_play_off: di_row.is_play_off,
-              is_out_of_race: di_row.is_out_of_race,
-              is_disqualified: di_row.is_disqualified,
-              disqualification_code_type_id: di_row.disqualification_code_type_id,
-              standard_points: di_row.standard_points,
-              meeting_individual_points: di_row.meeting_individual_points,
-              team_points: di_row.team_points,
-              :goggle_cup_points=> di_row.goggle_cup_points,
+              rank:                           di_row.rank,
+              is_play_off:                    di_row.is_play_off,
+              is_out_of_race:                 di_row.is_out_of_race,
+              is_disqualified:                di_row.is_disqualified,
+              disqualification_code_type_id:  di_row.disqualification_code_type_id,
+              standard_points:                di_row.standard_points,
+              meeting_individual_points:      di_row.meeting_individual_points,
+              team_points:                    di_row.team_points,
+              goggle_cup_points:              di_row.goggle_cup_points,
 
-              reaction_time: di_row.reaction_time,
-              :minutes          => di_row.minutes,
-              seconds: di_row.seconds,
-              :hundreds         => di_row.hundreds,
+              reaction_time:        di_row.reaction_time,
+              minutes:              di_row.minutes,
+              seconds:              di_row.seconds,
+              hundreds:             di_row.hundreds,
 
-              meeting_program_id: di_row.meeting_program_id,
-              :swimmer_id         => di_row.swimmer_id,
-              team_id: di_row.team_id,
-              :team_affiliation_id  => di_row.team_affiliation_id,
-              :badge_id           => di_row.badge_id,
-              user_id: di_row.user_id
+              meeting_program_id:   di_row.meeting_program_id,
+              swimmer_id:           di_row.swimmer_id,
+              team_id:              di_row.team_id,
+              team_affiliation_id:  di_row.team_affiliation_id,
+              badge_id:             di_row.badge_id,
+              user_id:              di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -667,25 +669,25 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           MeetingRelayResult.transaction do
             committed_row = MeetingRelayResult.new(
-              meeting_program_id: di_row.meeting_program_id,
+              meeting_program_id:   di_row.meeting_program_id,
 
-              is_play_off: di_row.is_play_off,
-              is_out_of_race: di_row.is_out_of_race,
-              is_disqualified: di_row.is_disqualified,
+              is_play_off:          di_row.is_play_off,
+              is_out_of_race:       di_row.is_out_of_race,
+              is_disqualified:      di_row.is_disqualified,
               disqualification_code_type_id: di_row.disqualification_code_type_id,
-              standard_points: di_row.standard_points,
-              meeting_points: di_row.meeting_points,
+              standard_points:      di_row.standard_points,
+              meeting_points:       di_row.meeting_points,
 
-              team_id: di_row.team_id,
-              :team_affiliation_id => di_row.team_affiliation_id,
-              relay_header: di_row.relay_header,
+              team_id:              di_row.team_id,
+              team_affiliation_id:  di_row.team_affiliation_id,
+              relay_header:         di_row.relay_header,
 
-              reaction_time: di_row.reaction_time,
-              rank: di_row.rank,
-              :minutes          => di_row.minutes,
-              seconds: di_row.seconds,
-              :hundreds         => di_row.hundreds,
-              user_id: di_row.user_id
+              reaction_time:        di_row.reaction_time,
+              rank:                 di_row.rank,
+              minutes:              di_row.minutes,
+              seconds:              di_row.seconds,
+              hundreds:             di_row.hundreds,
+              user_id:              di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end
@@ -733,21 +735,21 @@ module FinResultPhase3
         begin                                       # --- BEGIN transaction ---
           MeetingTeamScore.transaction do
             committed_row = MeetingTeamScore.new(
-              meeting_id: di_row.meeting_id,
-              team_id: di_row.team_id,
-              :team_affiliation_id      => di_row.team_affiliation_id,
-              rank: di_row.rank,
-              sum_individual_points: di_row.sum_individual_points,
-              sum_relay_points: di_row.sum_relay_points,
-              :sum_team_points          => di_row.sum_team_points,
+              meeting_id:             di_row.meeting_id,
+              team_id:                di_row.team_id,
+              team_affiliation_id:    di_row.team_affiliation_id,
+              rank:                   di_row.rank,
+              sum_individual_points:  di_row.sum_individual_points,
+              sum_relay_points:       di_row.sum_relay_points,
+              sum_team_points:        di_row.sum_team_points,
               # :meeting_individual_points=> TODO
               # :meeting_relay_points     => TODO
               # :meeting_team_points      => TODO
               # :season_individual_points => TODO
               # :season_relay_points      => TODO
               # :season_team_points       => TODO
-              season_id: di_row.season_id,
-              user_id: di_row.user_id
+              season_id:              di_row.season_id,
+              user_id:                di_row.user_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
           end

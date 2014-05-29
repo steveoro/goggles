@@ -21,9 +21,9 @@ class Api::V1::TeamsController < ApplicationController
   def count_meetings
     team = Team.find_by_id( params[:id] )
     if team
-      render :json => team.meetings.collect{|row| row.id}.uniq.size
+      render( json: team.meetings.collect{|row| row.id}.uniq.size )
     else
-      render :json => 0
+      render( json: 0 )
     end
   end
 
@@ -36,9 +36,9 @@ class Api::V1::TeamsController < ApplicationController
   def count_results
     team = Team.find_by_id( params[:id] )
     if team
-      render :json => ( team.meeting_individual_results.count + team.meeting_relay_results.count )
+      render( json: ( team.meeting_individual_results.count + team.meeting_relay_results.count ) )
     else
-      render :json => 0
+      render( json: 0 )
     end
   end
 
@@ -52,12 +52,14 @@ class Api::V1::TeamsController < ApplicationController
   def count_details
     team = Team.find_by_id( params[:id] )
     if team
-      render :json => "#{I18n.t('meeting.total_attended_meetings')}: " +
-                      team.meetings.collect{|row| row.id}.uniq.size.to_s +
-                      ", #{I18n.t('meeting.total_results_short')}: " +
-                      ( team.meeting_individual_results.count + team.meeting_relay_results.count ).to_s
+      render(
+        json: "#{I18n.t('meeting.total_attended_meetings')}: " +
+              team.meetings.collect{|row| row.id}.uniq.size.to_s +
+              ", #{I18n.t('meeting.total_results_short')}: " +
+              ( team.meeting_individual_results.count + team.meeting_relay_results.count ).to_s
+      )
     else
-      render :json => ''
+      render( json: '' )
     end
   end
   # ---------------------------------------------------------------------------
@@ -101,7 +103,7 @@ class Api::V1::TeamsController < ApplicationController
   # Makes sure that the format for the request is an accepted one.
   def ensure_format
     unless request.xhr? || request.format.json?
-      render( status: 406, json: {success: false, message: I18n.t(:api_request_must_be_json) } )
+      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
   end

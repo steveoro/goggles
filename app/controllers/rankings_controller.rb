@@ -11,10 +11,10 @@ class RankingsController < ApplicationController
     # @title = I18n.t(:results)
     # @results_grid = initialize_grid(
       # Meeting,
-      # :include => [:season, :season_type],
-      # :order => 'meetings.description',
-      # :order_direction => 'asc',
-      # :per_page => 10
+      # include: [:season, :season_type],
+      # order: 'meetings.description',
+      # order_direction: 'asc',
+      # per_page: 10
     # )
   end
   # ----------------------------------------------------------------------------
@@ -35,24 +35,24 @@ class RankingsController < ApplicationController
     # @individual_results_grid = initialize_grid(
       # MeetingIndividualResult,
       # :conditions => {meeting_program_id: @meeting_program.id},
-      # :include => [
+      # include: [
           # :meeting_program, :result_type,
           # :swimmer, :team,
           # :badge, :disqualification_code_type
       # ],
-      # :order => 'meeting_individual_results.rank',
-      # :per_page => 30
+      # order: 'meeting_individual_results.rank',
+      # per_page: 30
     # )
 # 
     # @relay_results_grid = initialize_grid(
       # MeetingRelayResult,
       # :conditions => {meeting_program_id: @meeting_program.id},
-      # :include => [
+      # include: [
           # :meeting_program, :result_type,
           # :team, :disqualification_code_type
       # ],
-      # :order => 'meeting_relay_results.rank',
-      # :per_page => 30
+      # order: 'meeting_relay_results.rank',
+      # per_page: 30
     # )
   end
   # ----------------------------------------------------------------------------

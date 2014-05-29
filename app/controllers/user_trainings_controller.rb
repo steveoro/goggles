@@ -46,7 +46,7 @@ class UserTrainingsController < ApplicationController
       if params[:id].to_i > 0                       # Set up and check parameters:
         result_row = UserTraining.find_by_id( params[:id].to_i )
         render(
-          :json => {
+          json: {
             label: result_row.get_full_name(),
             value: result_row.id,
             tot_distance: result_row.compute_total_distance(),
@@ -88,7 +88,7 @@ class UserTrainingsController < ApplicationController
                                                     # Limit the result array, if necessary:
       result_array = result_array[0 .. limit-1] if result_array.size > limit
                                                     # Finally, render the result array as JSON:
-      render( :json => result_array )
+      render( json: result_array )
     else
       flash[:info] = I18n.t(:invalid_action_request)
       redirect_to( exercises_path() ) and return
@@ -107,10 +107,10 @@ class UserTrainingsController < ApplicationController
     @title = I18n.t('user_trainings.index_title')
     @user_trainings_grid = initialize_grid(
       UserTraining,
-#      :include => [:swimmer_level_type],
-      :order => :updated_at,
-      :order_direction => 'asc',
-      :per_page => 20
+#      include: [:swimmer_level_type],
+      order: :updated_at,
+      order_direction: 'asc',
+      per_page: 20
     )
   end
 

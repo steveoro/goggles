@@ -19,7 +19,7 @@ class Api::V1::NewsFeedsController < ApplicationController
   #
   def for_user
     news_feed = NewsFeed.unread.where( user_id: params[:id] )
-    render :json => news_feed
+    render json: news_feed
   end
   # ---------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ class Api::V1::NewsFeedsController < ApplicationController
     rescue
       news_feed_attrs = nil
     end
-    render :json => NewsFeed.create(news_feed_attrs).to_json
+    render json: NewsFeed.create(news_feed_attrs).to_json
   end
   # ---------------------------------------------------------------------------
 

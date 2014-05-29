@@ -33,7 +33,7 @@ class TrainingPrintoutLayout
   # - <tt>:detail_rows<\tt> (required) =>
   #   The ActiveRecord Array of detail rows to be processed.
   #
-  def self.render( options = { :label_hash => {} } )
+  def self.render( options = { label_hash: {} } )
     options[:pdf_format] = {
       :page_size      => 'A4',
       :page_layout    => :portrait,
@@ -72,7 +72,7 @@ class TrainingPrintoutLayout
   def self.build_page_header( pdf, options )
     pdf.repeat( :all ) do
       pdf.move_cursor_to( pdf.bounds.top() )
-      pdf.text( "<i>#{AUTHOR_STRING}</i>", align: :center, :size => 6, :inline_format => true )
+      pdf.text( "<i>#{AUTHOR_STRING}</i>", align: :center, size: 6, inline_format: true )
       pdf.move_cursor_to( pdf.bounds.top() - 10 )
       pdf.stroke_horizontal_rule()
     end
@@ -88,8 +88,8 @@ class TrainingPrintoutLayout
       pdf.stroke_horizontal_rule()
       pdf.text_box(
         Format.a_short_datetime( DateTime.now ),
-        :size => 6,
-        :at => [50, 2],
+        size: 6,
+        at: [50, 2],
         width: pdf.bounds.width - 100,
         height: 6,
         align: :center
@@ -151,7 +151,7 @@ class TrainingPrintoutLayout
       else                                          # Not in a group?
         curr_group_id = 0
         if group_array                              # Do we have a group to add to the table data?
-          sub_table = pdf.make_table( group_subtable_array, :cell_style => {:size=>8}, :position => :left ) do
+          sub_table = pdf.make_table( group_subtable_array, :cell_style => {:size=>8}, position: :left ) do
             cells.column(0).align = :right
             cells.column(0).width = column_widths[4]
             cells.column(0).borders = [:top, :bottom, :left]
@@ -182,34 +182,34 @@ class TrainingPrintoutLayout
                                                     # -- Report title and header:
       pdf.text(
         "<u><b>#{options[:report_title] }</b></u>",
-        { align: :left, :size => 9, :inline_format => true } 
+        { align: :left, size: 9, inline_format: true } 
       )
       pdf.text(
         "<i>#{I18n.t('activerecord.attributes.training.user')}:</i> #{training.get_user_name}",
-        { align: :left, :size => 9, :inline_format => true } 
+        { align: :left, size: 9, inline_format: true } 
       )
       pdf.text(
         "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type(:i18n_description)}",
-        { align: :left, :size => 9, :inline_format => true } 
+        { align: :left, size: 9, inline_format: true } 
       )
       pdf.text(
         training.description,
-        { align: :left, :size => 9, :inline_format => true } 
+        { align: :left, size: 9, inline_format: true } 
       )
       pdf.move_down( 10 )
 
       pdf.text(
         "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
-        { align: :left, :size => 8, :inline_format => true } 
+        { align: :left, size: 8, inline_format: true } 
       )
       tot_secs = training.compute_total_seconds()
       pdf.text(
         "<i>#{I18n.t('trainings.esteemed_timing')}:</i> #{Timing.to_hour_string(tot_secs)}",
-        { align: :left, :size => 8, :inline_format => true } 
+        { align: :left, size: 8, inline_format: true } 
       )
       pdf.move_down( 10 )
                                                     # -- Main data table:
-      pdf.table( detail_table_array, :position => :center, :row_colors => ["ffffff", "eeeeee"] ) do
+      pdf.table( detail_table_array, position: :center, row_colors: ["ffffff", "eeeeee"] ) do
         cells.style do |c|                          # Cell is not a subtable and it's empty? Clear it:
           if ( !c.content.instance_of?(Prawn::Table) ) &&
              ( c.content.empty? || c.content.nil? )
@@ -263,10 +263,10 @@ class TrainingPrintoutLayout
   def self.finalize_standard_report( pdf )
     page_num_text = "Pag. <page>/<total>"
     numbering_options = {
-      :at => [pdf.bounds.right - 150, 2],
+      at: [pdf.bounds.right - 150, 2],
       width: 150,
       align: :right,
-      :size => 6
+      size: 6
     }
     pdf.number_pages( page_num_text, numbering_options )
   end

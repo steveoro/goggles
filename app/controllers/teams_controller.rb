@@ -20,9 +20,9 @@ class TeamsController < ApplicationController
     # TODO respond with xml, only if valid session, otherwise return nil
     team = Team.find_by_id( params[:id] )
     if team
-      render :json => team.meetings.collect{|row| row.id}.uniq.size
+      render json: team.meetings.collect{|row| row.id}.uniq.size
     else
-      render :json => 0
+      render json: 0
     end
   end
 
@@ -36,9 +36,9 @@ class TeamsController < ApplicationController
     # TODO respond with xml, only if valid session, otherwise return nil
     team = Team.find_by_id( params[:id] )
     if team
-      render :json => ( team.meeting_individual_results.count + team.meeting_relay_results.count )
+      render json: ( team.meeting_individual_results.count + team.meeting_relay_results.count )
     else
-      render :json => 0
+      render json: 0
     end
   end
 
@@ -53,12 +53,12 @@ class TeamsController < ApplicationController
     # TODO respond with xml, only if valid session, otherwise return nil
     team = Team.find_by_id( params[:id] )
     if team
-      render :json => "#{I18n.t('meeting.total_attended_meetings')}: " +
+      render json: "#{I18n.t('meeting.total_attended_meetings')}: " +
                       team.meetings.collect{|row| row.id}.uniq.size.to_s +
                       ", #{I18n.t('meeting.total_results_short')}: " +
                       ( team.meeting_individual_results.count + team.meeting_relay_results.count ).to_s
     else
-      render :json => ''
+      render json: ''
     end
   end
   # ---------------------------------------------------------------------------

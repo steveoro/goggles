@@ -188,8 +188,8 @@ class AdminImportController < ApplicationController
           redirect_to(
               goggles_di_step2_analysis_path(
                   id: data_importer.get_created_data_import_session_id,
-                  :force_meeting_creation => force_missing_meeting_creation ? '1' : nil,
-                  :force_team_creation => force_missing_team_creation ? '1' : nil
+                  force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
+                  force_team_creation: force_missing_team_creation ? '1' : nil
               )
           ) and return
         end
@@ -271,8 +271,8 @@ class AdminImportController < ApplicationController
             if ( Team.where(name: team_name).none? )
               committed_row = Team.new(
                 name: team_name,
-                :editable_name    => team_name,     # (let's initialize this with the data-import name)
-                :name_variations  => team_name,
+                editable_name: team_name,     # (let's initialize this with the data-import name)
+                name_variations: team_name,
                 user_id: current_admin.id
                 # XXX Unable to guess city id (not filled-in, to be added by hand)
               )
@@ -369,8 +369,8 @@ class AdminImportController < ApplicationController
     if is_ok && (! must_go_back_on_commit)
       redirect_to( goggles_di_step2_checkout_path(
           id: data_import_session_id,
-          :force_meeting_creation => force_missing_meeting_creation ? '1' : '0',
-          :force_team_creation    => force_missing_team_creation ? '1' : '0'
+          force_meeting_creation: force_missing_meeting_creation ? '1' : '0',
+          force_team_creation: force_missing_team_creation ? '1' : '0'
       ) ) and return
     else
       redirect_to( goggles_di_step1_status_path() ) and return

@@ -42,7 +42,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   def create
     # Validations
     if request.format != :json
-      render( status: 406, json: {success: false, message: I18n.t(:api_request_must_be_json) } )
+      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
 
@@ -94,7 +94,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   def destroy
     # Validations
     if request.format != :json
-      render( status: 406, json: {success: false, message: I18n.t(:api_request_must_be_json) } )
+      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
 

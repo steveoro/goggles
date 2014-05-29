@@ -52,7 +52,7 @@ class FinResultParserTest < ActiveSupport::TestCase
           :stats              => 0,
           :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
           :stats_swimmer_tot  => 0,   :stats_swimmer_presence => 0,
-          :line_count         => 308
+          line_count: 308
         }
 
       when 1
@@ -79,7 +79,7 @@ class FinResultParserTest < ActiveSupport::TestCase
           :stats              => 0,
           :stats_teams_tot    => 0,   :stats_teams_presence   => 0,
           :stats_swimmer_tot  => 0,   :stats_swimmer_presence => 0,
-          :line_count         => 399
+          line_count: 399
         }
       when 2
         # File 'ris20120114ravenna-sample.txt':
@@ -105,7 +105,7 @@ class FinResultParserTest < ActiveSupport::TestCase
           :stats              => 1,
           :stats_teams_tot    => 1,   :stats_teams_presence   => 1,
           :stats_swimmer_tot  => 1,   :stats_swimmer_presence => 1,
-          :line_count         => 376
+          line_count: 376
         }
       end
 

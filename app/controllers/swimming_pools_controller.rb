@@ -14,10 +14,10 @@ class SwimmingPoolsController < ApplicationController
     @title = I18n.t('swimming_pool.index_title')
     @pools_grid = initialize_grid(
       SwimmingPool,
-      :include => [:pool_type, :city],
-      :order => 'swimming_pools.name',
-      :order_direction => 'asc',
-      :per_page => 20
+      include: [:pool_type, :city],
+      order: 'swimming_pools.name',
+      order_direction: 'asc',
+      per_page: 20
     )
   end
 

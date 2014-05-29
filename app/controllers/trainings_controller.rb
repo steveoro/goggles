@@ -21,10 +21,10 @@ class TrainingsController < ApplicationController
     @title = I18n.t('trainings.index_title')
     @trainings_grid = initialize_grid(
       Training,
-#      :include => [:swimmer_level_type],
-      :order => :title,
-      :order_direction => 'asc',
-      :per_page => 20
+#      include: [:swimmer_level_type],
+      order: :title,
+      order_direction: 'asc',
+      per_page: 20
     )
   end
 

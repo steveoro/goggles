@@ -28,10 +28,10 @@ class MeetingsController < ApplicationController
 
     @meetings_grid = initialize_grid(
       (preselected_ids ? Meeting.where(id: preselected_ids) : Meeting),
-      :include => [:season, :season_type],
-      :order => 'meetings.header_date',
-      :order_direction => 'asc',
-      :per_page => 20
+      include: [:season, :season_type],
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
     )
   end
   # ----------------------------------------------------------------------------
@@ -414,9 +414,9 @@ class MeetingsController < ApplicationController
     @title = I18n.t(:search_by_swimmer, { scope: [:meeting] })
     @swimmers_grid = initialize_grid(
       Swimmer,
-      :order => 'swimmers.complete_name',
-      :order_direction => 'asc',
-      :per_page => 20
+      order: 'swimmers.complete_name',
+      order_direction: 'asc',
+      per_page: 20
     )
   end
   # ----------------------------------------------------------------------------
@@ -428,9 +428,9 @@ class MeetingsController < ApplicationController
     @title = I18n.t(:search_by_team, { scope: [:meeting] })
     @teams_grid = initialize_grid(
       Team,
-      :order => 'teams.name',
-      :order_direction => 'asc',
-      :per_page => 20
+      order: 'teams.name',
+      order_direction: 'asc',
+      per_page: 20
     )
   end
   # ----------------------------------------------------------------------------

@@ -332,7 +332,7 @@ module FinResultParserTools
   # === Returns
   # An array of Hash having each element as:
   #
-  #  { :score => <match_score>, :row => <match_row_instance> }
+  #  { score: <match_score>, row: <match_row_instance> }
   # 
   # Where the match_row_instance is a match that has scored higher than the bias.
   #
@@ -351,7 +351,7 @@ module FinResultParserTools
       if ( (match_score > score_bias) && (best_score < match_score) )
 # DEBUG
 #        puts( "count_best_fuzzy_matches(): '#{matching_string}' vs. '#{comparison_string}' => score: #{match_score}" )
-        results << { :score => match_score, :row => row }
+        results << { score: match_score, row: row }
       end
     }
     results.sort!{ |x,y| x[:score] <=> y[:score] }
@@ -499,9 +499,9 @@ module FinResultParserTools
   # An hash with the structure:
   #
   #    {
-  #      :analysis          => analysis output text log.
+  #      analysis: analysis output text log.
   #
-  #      :team_match        => match {:row, :score} from teams, for the highest-scoring
+  #      team_match: match {:row, :score} from teams, for the highest-scoring
   #                            match from teams.
   #                            +nil+ when no existing team was found in the results or linked
   #                            to them.
@@ -510,13 +510,13 @@ module FinResultParserTools
   #                            (may, in fact, not be the same, depending on the "best match").
   #                            +nil+ when no existing team was found in the results.
   #
-  #      :affiliation_match => match {:row, :score} from affiliations, will store
+  #      affiliation_match: match {:row, :score} from affiliations, will store
   #                            the highest-scoring match, indipendently from season_id.
   #
-  #      :hiscoring_match   => absolute highest scoring match, either from teams or affilations
+  #      hiscoring_match: absolute highest scoring match, either from teams or affilations
   #                            (indipendently from season_id).
   #
-  #      :best_match        => best match {:row, :score} from affiliations,
+  #      best_match: best match {:row, :score} from affiliations,
   #                            defined only if season_id is equal to the desired value.
   #    }
   #
@@ -555,9 +555,9 @@ module FinResultParserTools
                                                     # Couldn't find a Team in result, but found an affiliation? 
     if (best_match)                                 # (That is: look-alike affiliation name found, but linked to a too-different team name?)
       team_id = best_match[:row].team_id            # Always override the chosen team_id with the best match
-      team_match = { :score => best_match[:score], :row => best_match[:row].team } if team_match.nil?
+      team_match = { score: best_match[:score], row: best_match[:row].team } if team_match.nil?
     elsif (team_match.nil? && best_match.nil? && affiliation_match)
-      team_match = { :score => affiliation_match[:score], :row => affiliation_match[:row].team }
+      team_match = { score: affiliation_match[:score], row: affiliation_match[:row].team }
     end
                                                     # Result team_id not set yet?:
     team_id = team_match[:row].id if team_id.nil? && team_match && team_match[:row]
@@ -586,12 +586,12 @@ module FinResultParserTools
     end
     analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id
     {
-      :analysis   => analysis_text_log,
+      analysis: analysis_text_log,
       team_id: team_id,
-      :team_match => team_match,
-      :affiliation_match => affiliation_match,
-      :hiscoring_match   => hiscoring_match,
-      :best_match => best_match
+      team_match: team_match,
+      affiliation_match: affiliation_match,
+      hiscoring_match: hiscoring_match,
+      best_match: best_match
     }
   end
   # ---------------------------------------------------------------------------
@@ -620,8 +620,8 @@ module FinResultParserTools
       result_list = result_list + result_hash[:result_list]
     end
     {
-      :updated_bias_score => bias_score,
-      :result_list => result_list
+      updated_bias_score: bias_score,
+      result_list: result_list
     }
   end
   # ---------------------------------------------------------------------------

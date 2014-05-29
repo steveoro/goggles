@@ -1348,7 +1348,7 @@ module FinResultPhase2
           import_text: import_text,
           sum_individual_points: result_score,
           sum_relay_points: total_relay_points.to_f,
-          # :sum_team_points          => TODO
+          # sum_team_points: TODO
           # :meeting_individual_points=> TODO
           # :meeting_relay_points     => TODO
           # :meeting_team_points      => TODO

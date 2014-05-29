@@ -20,9 +20,9 @@ class SwimmersController < ApplicationController
     @title = I18n.t('swimmers.search_swimmers')
     @swimmers_grid = initialize_grid(
       Swimmer,
-      :order => 'swimmers.complete_name',
-      :order_direction => 'asc',
-      :per_page => 20
+      order: 'swimmers.complete_name',
+      order_direction: 'asc',
+      per_page: 20
     )
   end
   # ----------------------------------------------------------------------------

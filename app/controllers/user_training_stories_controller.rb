@@ -21,10 +21,10 @@ class UserTrainingStoriesController < ApplicationController
     @title = I18n.t('user_training_stories.index_title')
     @user_training_stories_grid = initialize_grid(
       UserTrainingStory,
-#      :include => [:swimmer_level_type, :user_training, :swimming_pool],
-      :order => :swam_date,
-      :order_direction => 'asc',
-      :per_page => 20
+#      include: [:swimmer_level_type, :user_training, :swimming_pool],
+      order: :swam_date,
+      order_direction: 'asc',
+      per_page: 20
     )
   end
 

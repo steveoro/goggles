@@ -17,10 +17,10 @@ class SwimmingPoolReviewsController < ApplicationController
       @title = I18n.t('swimming_pool_review.title_index')
       @reviews_grid = initialize_grid(
         SwimmingPoolReview,
-        :include => [:user, :swimming_pool],
-        :order => 'swimming_pool_reviews.title',
-        :order_direction => 'asc',
-        :per_page => 20
+        include: [:user, :swimming_pool],
+        order: 'swimming_pool_reviews.title',
+        order_direction: 'asc',
+        per_page: 20
       )
     end
   end

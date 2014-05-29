@@ -24,8 +24,8 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery_datepicker'
 
-#gem 'execjs'                                        # This requires a local (package) install of node.js
-#gem 'therubyracer', :platform => :ruby               # This seems to be the only one feasible on the EC2 micro instance
+# gem 'execjs'                                        # This requires a local (package) install of node.js
+# gem 'therubyracer', :platform => :ruby               # This seems to be the only one feasible on the EC2 micro instance
 gem 'therubyrhino', :platforms => :ruby
 
                                                     # [Steve, 20111216] Netzke:
@@ -115,8 +115,8 @@ end
 # Use unicorn as the web server
 # gem 'unicorn'
 
-gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
+# gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
 
 # To use debugger
-#gem 'ruby-debug'
+# gem 'ruby-debug'
 

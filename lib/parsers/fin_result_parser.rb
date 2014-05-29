@@ -51,25 +51,25 @@ class FinResultParser
   # An Hash having the structure:
   #
   #     {
-  #       :parse_result => {
+  #       parse_result: {
   #         :category_header => [
   #           {
-  #             id: <category_header_id>, :fields => <hash_of_category_header_fields_with_values>,
+  #             id: <category_header_id>, fields: <hash_of_category_header_fields_with_values>,
   #             import_text: last_line_of_text_used_to_extract_all_fields
   #           }
   #           ... (one Hash for each single <category_header_id>)
   #         ]
   #         :result_row      => [
   #           {
-  #             id: <category_header_id>, :fields => <hash_of_result_row_fields_with_values>,
+  #             id: <category_header_id>, fields: <hash_of_result_row_fields_with_values>,
   #             import_text: last_line_of_text_used_to_extract_all_fields
   #           }
   #           ... (at least, one Hash for each single <category_header_id>, which acts as a "context page index")
   #         ]
   #       },
-  #       :line_count               => tot_file_lines_read,
-  #       :total_data_rows          => sum_of_data_pages_sizes,
-  #       :full_text_file_contents  => full_text_file_contents
+  #       line_count: tot_file_lines_read,
+  #       total_data_rows: sum_of_data_pages_sizes,
+  #       full_text_file_contents: full_text_file_contents
   #     }
   #
   #
@@ -82,13 +82,13 @@ class FinResultParser
   # - <hash_of_category_header_fields_with_values>
   #   has the same keys as the @context_keys[:category_header] Array
   #   (Note that the *last* field may/may not be included for certain categories),
-  #   with a new composed Hash element ({id: computed_id, :fields => field_value_hash}) added for each
+  #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each
   #   possible value found of the above fields. 
   #
   # - <hash_of_result_row_fields_with_values>
   #   has the same keys as the flattened array @tokenizer_fields[:result_row]
   #   (Note that the *first* field may/may not be included for certain categories),
-  #   with a new composed Hash element ({id: computed_id, :fields => field_value_hash}) added for each
+  #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each
   #   possible value found of the above fields. 
   #
   def self.parse_txt_file( full_pathname, show_progress = DEBUG_VERBOSE, logger = nil )
@@ -111,9 +111,9 @@ class FinResultParser
         logger.debug( "Reading line #{line_count}...: <<#{curr_line}>>" ) if (logger && DEBUG_VERBOSE)
         if String.method_defined?( :encode )
           if curr_line.force_encoding("ISO-8859-1").valid_encoding?
-            curr_line = curr_line.force_encoding("ISO-8859-1").encode("UTF-8", {:invalid => :replace, :undef => :replace, :replace => '', }).rstrip
+            curr_line = curr_line.force_encoding("ISO-8859-1").encode("UTF-8", { invalid: :replace, undef: :replace, replace: '' }).rstrip
           elsif curr_line.force_encoding("UTF-16").valid_encoding?
-            curr_line = curr_line.force_encoding("UTF-16").encode("UTF-8", {:invalid => :replace, :undef => :replace, :replace => '', }).rstrip
+            curr_line = curr_line.force_encoding("UTF-16").encode("UTF-8", { invalid: :replace, undef: :replace, replace: '' }).rstrip
           end
         else
           ic = Iconv.new('UTF-8', 'UTF-8//IGNORE')
@@ -164,7 +164,7 @@ class FinResultParser
               end
               
               parse_result[ context_sym ] << {
-                id: key_string, :fields => token_hash,
+                id: key_string, fields: token_hash,
                 import_text: cached_rows.join("\r\n")
               }
               tot_rows += 1                         # Increase data rows stat only when actually adding any data
@@ -192,7 +192,8 @@ class FinResultParser
                     logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'.") : puts("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'")
                   end
                   parse_result[ context_sym ] << {
-                    id: previous_key[ parent_context ], :fields => token_hash,
+                    id: previous_key[ parent_context ],
+                    fields: token_hash,
                     import_text: cached_rows.join("\r\n")
                   }
                   tot_rows += 1                     # Increase data rows stat only when actually adding any data
@@ -246,10 +247,10 @@ class FinResultParser
     end 
 
     {
-      :parse_result             => parse_result,
-      :line_count               => line_count,
-      :total_data_rows          => tot_data_rows,
-      :full_text_file_contents  => full_text_file_contents
+      parse_result: parse_result,
+      line_count: line_count,
+      total_data_rows: tot_data_rows,
+      full_text_file_contents: full_text_file_contents
     }
   end
   # ---------------------------------------------------------------------------

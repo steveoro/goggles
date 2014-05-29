@@ -7,7 +7,7 @@ class HomeController < ApplicationController
   def index
     @articles = Article.find(
       :all,
-      :order => "is_sticky DESC, updated_at DESC",
+      order: "is_sticky DESC, updated_at DESC",
       :limit => AppParameter.get_default_pagination_rows_for( :articles )
     )
     @news_feed = user_signed_in? ? NewsFeed.unread.where( user: current_user ) : []
