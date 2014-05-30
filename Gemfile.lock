@@ -441,6 +441,7 @@ DEPENDENCIES
   simple_form
   simple_token_authentication
   simplecov (~> 0.7.1)
+  squeel
   therubyrhino
   uglifier (>= 1.0.3)
   wice_grid (~> 3.3)

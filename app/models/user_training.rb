@@ -23,9 +23,15 @@ class UserTraining < ActiveRecord::Base
                   :user_id, :user_training_rows_attributes, # (Needed by the nested_form gem)
                   :user_training_story_attributes
 
-  scope :sort_by_description,    order('description')
-# TODO Do something like user_id IN SELECT( friends from users )
-# FIXME  scope :from_friends,          ->(user_id) { where(user_id: user_id) }
+  scope :sort_by_description,     order('description')
+#  scope :visible_to_user,         ->(user) {}
+
+# WIP
+
+  def self.visible_to_user( any_user )
+    allowed_user_ids = any_user.friends_sharing_trainings.select{id} << any_user.id
+    where{ user_id.in( allowed_user_ids ) }
+  end
 
   # ---------------------------------------------------------------------------
   # Base methods:

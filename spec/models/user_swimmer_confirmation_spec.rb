@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe UserSwimmerConfirmation do
   context "[class]" do
     before( :each ) do

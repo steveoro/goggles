@@ -11,6 +11,7 @@ gem 'json'
 # [Steve] Before enabling the following, most of the migrations must be revised
 #         since they are still using legacy inline SQL code for foreign key generation:
 # gem 'schema_plus'                                 # Adds automatic foreign-key support to ActiveRecord DSL
+gem 'squeel'                                        # Adds a more advanced querying DSL
 
 # Gems used only for assets and not required
 # in production environments by default.

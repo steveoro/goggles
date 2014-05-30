@@ -47,7 +47,7 @@ FactoryGirl.define do
     meeting_points            { standard_points }
     team_points               { ((rand * 10) % 10).to_i + 1}
     google_cup_points         { (rand * 1000).to_i}
-    reaction_time             { rand } # FIXME set to 2 decimals
+    reaction_time             { rand.round(2) }
     team
     badge
     user
