@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140506113232) do
+ActiveRecord::Schema.define(:version => 20140530173953) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1089,26 +1089,33 @@ ActiveRecord::Schema.define(:version => 20140506113232) do
   add_index "passage_types", ["code"], :name => "index_passage_types_on_code", :unique => true
 
   create_table "passages", :force => true do |t|
-    t.integer  "lock_version",                                                      :default => 0
-    t.integer  "minutes",                :limit => 3,                               :default => 0, :null => false
-    t.integer  "seconds",                :limit => 2,                               :default => 0, :null => false
-    t.integer  "hundreds",               :limit => 2,                               :default => 0, :null => false
+    t.integer  "lock_version",                                                            :default => 0
+    t.integer  "minutes",                      :limit => 3,                               :default => 0,     :null => false
+    t.integer  "seconds",                      :limit => 2,                               :default => 0,     :null => false
+    t.integer  "hundreds",                     :limit => 2,                               :default => 0,     :null => false
+    t.integer  "meeting_program_id"
     t.integer  "passage_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                                                       :null => false
-    t.datetime "updated_at",                                                                       :null => false
-    t.decimal  "reaction_time",                       :precision => 5, :scale => 2
-    t.integer  "stroke_cycles",          :limit => 3
-    t.integer  "not_swam_part_seconds",  :limit => 2
-    t.integer  "not_swam_part_hundreds", :limit => 2
-    t.integer  "not_swam_kick_number",   :limit => 2
-    t.integer  "breath_number",          :limit => 3
-    t.integer  "position",               :limit => 3
+    t.datetime "created_at",                                                                                 :null => false
+    t.datetime "updated_at",                                                                                 :null => false
+    t.decimal  "reaction_time",                             :precision => 5, :scale => 2
+    t.integer  "stroke_cycles",                :limit => 3
+    t.integer  "not_swam_part_seconds",        :limit => 2
+    t.integer  "not_swam_part_hundreds",       :limit => 2
+    t.integer  "not_swam_kick_number",         :limit => 2
+    t.integer  "breath_number",                :limit => 3
+    t.integer  "position",                     :limit => 3
+    t.integer  "minutes_from_start",           :limit => 3
+    t.integer  "seconds_from_start",           :limit => 2
+    t.integer  "hundreds_from_start",          :limit => 2
+    t.boolean  "is_native_from_start",                                                    :default => false, :null => false
+    t.integer  "meeting_indivudual_result_id"
     t.integer  "meeting_entry_id"
     t.integer  "swimmer_id"
     t.integer  "team_id"
   end
 
+  add_index "passages", ["meeting_program_id"], :name => "passages_x_badges"
   add_index "passages", ["passage_type_id"], :name => "fk_passages_passage_types"
 
   create_table "pool_types", :force => true do |t|
