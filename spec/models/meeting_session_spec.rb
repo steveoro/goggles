@@ -3,37 +3,30 @@ require 'date'
 
 
 describe MeetingSession do
-  shared_examples "shared_method_existance_examples"
-  shared_examples "shared_meeting_accountable_examples"
+  it_behaves_like "MeetingAccountable"
 
-# FIXME
-#  it_behaves_like "MeetingAccountable"
-
-
-  describe "not valid istance of meeting session" do
-    it_behaves_like( "(not a valid istance without required values)", [ 
+  describe "[a non-valid instance]" do
+    it_behaves_like( "(missing required values)", [ 
       :description,
       :session_order,
       :scheduled_date
     ])    
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  describe "well formed meeting session" do
-    subject {
-      FactoryGirl.create( :meeting_session )
-    }
-  
-    context "[well formed meeting session instance]" do
-      it "is a valid istance" do
-        subject.should be_valid
-      end
+  describe "[a well formed instance]" do
+    subject { create( :meeting_session ) }
 
-      it_behaves_like( "(valid istance if belongs to required classes)", [ 
-        :meeting
-      ])    
+    it "is a valid istance" do
+      expect( subject ).to be_valid
     end
+    # Validated relations:
+    it_behaves_like( "(belongs_to required models)", [ 
+      :meeting
+    ])    
 
-    context "[meeting session general methods]" do
+    context "[general methods]" do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,
@@ -81,4 +74,6 @@ describe MeetingSession do
       it "has a method to return session events start list"     
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

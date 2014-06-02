@@ -6,7 +6,7 @@ shared_examples_for "(existance of meeting stats relation of swimmers)" do |meth
     it "responds to ##{method_name}" do
       expect( subject ).to respond_to( method_name )
     end
-    
+
     it "#{method_name} returns a list of swimmer instances" do
       subject.send(method_name.to_sym).each do |item|
         expect(item).to be_an_instance_of( Swimmer )
@@ -20,7 +20,7 @@ shared_examples_for "(existance of meeting stats relation of meeting individual 
     it "responds to ##{method_name}" do
       expect( subject ).to respond_to( method_name )
     end
-    
+
     it "#{method_name} returns a list of swimmer instances" do
       subject.send(method_name.to_sym).each do |item|
         expect(item).to be_an_instance_of( MeetingIndividualResult )
@@ -28,18 +28,17 @@ shared_examples_for "(existance of meeting stats relation of meeting individual 
     end
   end
 end
+# =============================================================================
 
 
 describe MeetingStat do
-  shared_examples "shared_method_existance_examples"
-
   subject {
     # Pre-loaded seeded last two years CSI season
     seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105]
     MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % 10).to_i) ))
   }
 
-  describe "well formed meeting stats" do
+  describe "[a well formed instance]" do
     it_behaves_like( "(the existance of a method returning numeric values)", [ 
       # Fields
       :swimmer_male_count, 
@@ -48,19 +47,19 @@ describe MeetingStat do
       :swimmer_female_count, 
       :result_female_count,
       :disqualified_female_count,
-      
+
       # Methods
       :swimmer_count,
       :result_count,
       :disqualified_count
     ])
-    
+
     it_behaves_like( "(existance of meeting stats relation of swimmers)", [ 
       # Methods
       :oldest_male_swimmers, 
       :oldest_female_swimmers
    ])
-    
+
     it_behaves_like( "(existance of meeting stats relation of meeting individual results)", [ 
       # Methods
       :best_standard_male_scores, 
@@ -68,37 +67,38 @@ describe MeetingStat do
       :best_standard_female_scores, 
       :worst_standard_female_scores
    ])
-    
+
     it "has a valid meeting instance" do
       expect(subject.get_meeting).to be_an_instance_of( Meeting )
     end
   end
-  
-  context "#swimmer_count" do
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#swimmer_count" do
     it "returns sum of male and female swimmers count" do
       expect(subject.swimmer_count).to eq(subject.swimmer_male_count + subject.swimmer_female_count)
     end    
   end
 
-  context "#result_count" do
+  describe "#result_count" do
     it "returns sum of male and female results count" do
       expect(subject.result_count).to eq(subject.result_male_count + subject.result_female_count)
     end            
   end
 
-  context "#disqualified_count" do
+  describe "#disqualified_count" do
     it "returns sum of male and female results count" do
       expect(subject.disqualified_count).to eq(subject.disqualified_male_count + subject.disqualified_female_count)
     end            
   end
 
-  context "#oldest_male_athlets" do
+  describe "#oldest_male_athlets" do
     it "returns only male swimmers" do
       subject.oldest_male_swimmers.each do |item|
         expect(item.is_male).to be_true
       end      
     end
-    
     it "returns a list sorted by swimmer year_of_birth" do
       current_item_year = subject.oldest_male_swimmers.first.year_of_birth
       subject.oldest_male_swimmers.each do |item|
@@ -107,14 +107,15 @@ describe MeetingStat do
       end      
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  context "#oldest_female_athlets" do
+  describe "#oldest_female_athlets" do
     it "returns only female swimmers" do
       subject.oldest_female_swimmers.each do |item|
         expect(item.is_female).to be_true
       end      
     end
-    
     it "returns a list sorted by swimmer year_of_birth" do
       current_item_year = subject.oldest_female_swimmers.first.year_of_birth
       subject.oldest_female_swimmers.each do |item|
@@ -123,8 +124,10 @@ describe MeetingStat do
       end      
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  context "#best_standard_male_scores" do
+  describe "#best_standard_male_scores" do
     it "returns only not disqualified results" do
       subject.best_standard_male_scores.each do |item|
         expect(item.is_disqualified).to be_false
@@ -138,8 +141,10 @@ describe MeetingStat do
       end      
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  context "#best_standard_female_scores" do
+  describe "#best_standard_female_scores" do
     it "returns only not disqualified results" do
       subject.best_standard_female_scores.each do |item|
         expect(item.is_disqualified).to be_false
@@ -153,8 +158,10 @@ describe MeetingStat do
       end      
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  context "#worst_standard_male_scores" do
+  describe "#worst_standard_male_scores" do
     it "returns only not disqualified results" do
       subject.worst_standard_male_scores.each do |item|
         expect(item.is_disqualified).to be_false
@@ -168,8 +175,10 @@ describe MeetingStat do
       end      
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  context "#worst_standard_female_scores" do
+  describe "#worst_standard_female_scores" do
     it "returns only not disqualified results" do
       subject.worst_standard_female_scores.each do |item|
         expect(item.is_disqualified).to be_false
@@ -183,4 +192,6 @@ describe MeetingStat do
       end      
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

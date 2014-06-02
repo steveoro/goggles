@@ -2,24 +2,13 @@ require 'spec_helper'
 require 'wrappers/timing'
 
 
-shared_examples_for "(not a valid istance without required values)" do |attribute_name_array|
-  attribute_name_array.each do |attribute_name|
-    it "not a valid instance without ##{attribute_name}" do
-      FactoryGirl.build( subject.class, attribute_name.to_sym=>nil ).should_not be_valid
-    end    
+shared_examples_for "(the existance of a class method)" do |method_name_array|
+  method_name_array.each do |method_name|
+    it "responds to ##{method_name}" do
+      expect( subject.class ).to respond_to( method_name )
+    end
   end
 end
-# -----------------------------------------------------------------------------
-
-
-shared_examples_for "(valid istance if belongs to required classes)" do |attribute_name_array|
-  attribute_name_array.each do |attribute_name|
-    it "it belongs to ##{attribute_name}" do
-      expect( subject.send(attribute_name.to_sym) ).to be_a( eval(attribute_name.to_s.camelize) )
-    end    
-  end
-end
-# -----------------------------------------------------------------------------
 
 
 shared_examples_for "(the existance of a method)" do |method_name_array|
@@ -29,6 +18,7 @@ shared_examples_for "(the existance of a method)" do |method_name_array|
     end
   end
 end
+# -----------------------------------------------------------------------------
 
 
 shared_examples_for "(the existance of a method returning non-empty strings)" do |method_name_array|
@@ -54,10 +44,10 @@ shared_examples_for "(the existance of a method returning non-empty and non-? st
 end
 
 
-shared_examples_for "(the existance of a method returning either String or nil)" do |method_name_array, parameter|
+shared_examples_for "(the existance of a method with parameters, returning String or nil)" do |method_name_array, parameter|
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
-    it "##{method_name} returns a boolean value" do
+    it "##{method_name} returns a String value or nil" do
       result = subject.send(method_name.to_sym, parameter)
       if result
         expect( result ).to be_an_instance_of( String )
@@ -70,7 +60,7 @@ end
 # -----------------------------------------------------------------------------
 
 
-shared_examples_for "(the existance of a method returning boolean values)" do |method_name_array, parameter|
+shared_examples_for "(the existance of a method with parameters, returning boolean values)" do |method_name_array, parameter|
   it_behaves_like( "(the existance of a method)", method_name_array )
   method_name_array.each do |method_name|
     it "##{method_name} returns a boolean value" do
@@ -94,6 +84,15 @@ shared_examples_for "(the existance of a method returning numeric values)" do |m
     end
   end
 end
+
+shared_examples_for "(the existance of a method with parameters, returning numeric values)" do |method_name_array, parameter|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    it "##{method_name} returns a numeric value" do
+      expect( subject.send(method_name.to_sym, parameter) ).to be_a_kind_of( Integer )
+    end
+  end
+end
 # -----------------------------------------------------------------------------
 
 shared_examples_for "(existance of method returning array)" do |method_name_array|
@@ -112,6 +111,25 @@ shared_examples_for "(the existance of a method returning a date)" do |method_na
     it "##{method_name} returns a date" do
       expect( subject.send(method_name.to_sym) ).to be_an_instance_of( Date )
     end
+  end
+end
+# -----------------------------------------------------------------------------
+
+
+shared_examples_for "(missing required values)" do |attribute_name_array|
+  attribute_name_array.each do |attribute_name|
+    it "not a valid instance without ##{attribute_name}" do
+      expect( FactoryGirl.build( subject.class, attribute_name.to_sym => nil ) ).not_to be_valid
+    end    
+  end
+end
+
+
+shared_examples_for "(belongs_to required models)" do |attribute_name_array|
+  attribute_name_array.each do |attribute_name|
+    it "it belongs_to :#{attribute_name}" do
+      expect( subject.send(attribute_name.to_sym) ).to be_a( eval(attribute_name.to_s.camelize) )
+    end    
   end
 end
 # -----------------------------------------------------------------------------

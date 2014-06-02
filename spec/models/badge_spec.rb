@@ -2,39 +2,35 @@ require 'spec_helper'
 
 
 describe Badge do
-  shared_examples "shared_method_existance_examples"
-
-  describe "not valid istance of badge" do
-    it_behaves_like( "(not a valid istance without required values)", [ 
-      :number
-    ])    
+  describe "[a non-valid instance]" do
+    it_behaves_like( "(missing required values)", [ :number ])    
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  describe "well formed badge" do
-    subject {
-      FactoryGirl.create( :badge )
-    }
+  context "[a well formed instance]" do
+    subject { create(:badge) }
   
-    context "[well formed badge instance]" do
-      it "is a valid istance" do
-        subject.should be_valid
-      end
-
-      it_behaves_like( "(valid istance if belongs to required classes)", [ 
-        :team,
-        :season,
-        :swimmer,
-        :team_affiliation,
-        :category_type,
-        :entry_time_type
-      ])    
+    it "is a valid istance" do
+      expect( subject ).to be_valid
     end
+    # Validated relations:
+    it_behaves_like( "(belongs_to required models)", [ 
+      :team,
+      :season,
+      :swimmer,
+      :team_affiliation,
+      :category_type,
+      :entry_time_type
+    ])    
 
-    context "[badge general methods]" do
+    context "[general methods]" do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_full_name,
         :get_verbose_name
       ])
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

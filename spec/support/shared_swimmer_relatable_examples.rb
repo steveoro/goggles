@@ -7,23 +7,18 @@ shared_examples_for "SwimmerRelatable" do
   # and the outcome of the module inclusion.
   #
   context "by including this concern" do
-    it "responds to #swimmer" do
-      expect( subject ).to respond_to( :swimmer )
-    end
-    it "responds to #get_swimmer_name" do
-      expect( subject ).to respond_to( :get_swimmer_name )
-    end
-    it "responds to #get_year_of_birth" do
-      expect( subject ).to respond_to( :get_year_of_birth )
-    end
-    it "responds to #get_swimmer_age" do
-      expect( subject ).to respond_to( :get_swimmer_age )
-    end
-    it "responds to #get_swimmer_current_category" do
-      expect( subject ).to respond_to( :get_swimmer_current_category )
-    end
+    it_behaves_like( "(the existance of a method)",
+      [
+        :swimmer, 
+        :get_swimmer_name,
+        :get_year_of_birth,
+        :get_swimmer_age,
+        :get_swimmer_current_category
+      ]
+    )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Should retrieve the complete athlete name (last name + ' ' + first_name)
   #
@@ -57,7 +52,8 @@ shared_examples_for "SwimmerRelatable" do
 #      expect( subject.get_swimmer_age ).to be < 120
 #    end
 #  end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Should retrieve the array of all recent & available categories for
   # which the swimmer is eligible of association, using only the defined
@@ -98,5 +94,6 @@ shared_examples_for "SwimmerRelatable" do
 #      ).to be_true
 #    end
 #  end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

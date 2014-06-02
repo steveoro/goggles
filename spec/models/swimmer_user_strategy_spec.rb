@@ -10,7 +10,7 @@ shared_examples_for "(an action allowed only to different users)" do |method_nam
     end
   end
 end
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 
 describe SwimmerUserStrategy do
@@ -28,7 +28,7 @@ describe SwimmerUserStrategy do
   subject { @swimmer_user_strategy }
 
   context "[implemented methods]" do
-    it_behaves_like( "(the existance of a method returning boolean values)",
+    it_behaves_like( "(the existance of a method with parameters, returning boolean values)",
       [
         :is_associated_to_somebody_else_than, 
         :is_confirmable_by,

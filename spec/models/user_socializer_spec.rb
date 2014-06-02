@@ -12,8 +12,7 @@ describe UserSocializer do
 
   subject { @user_socializer }
 
-
-  context "[implemented methods]" do
+  context "[general methods]" do
     [
       :confirm_with_notify, :unconfirm_with_notify,
       :invite_with_notify,  :approve_with_notify, :remove_with_notify
@@ -23,7 +22,8 @@ describe UserSocializer do
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe "#confirm_with_notify" do
@@ -42,7 +42,8 @@ describe UserSocializer do
       }.to change{ NewsFeed.friend_activities.count }.by(1)
     end
   end
-  # --------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   describe "#invite_with_notify" do
     it "updates the receiver news-feed when successful" do
@@ -71,7 +72,8 @@ describe UserSocializer do
       }.not_to change{ NewsFeed.friend_activities.count }
     end
   end
-  # --------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   describe "#remove_with_notify" do
     it "updates the sender news-feed when successful" do
@@ -87,5 +89,6 @@ describe UserSocializer do
       }.not_to change{ NewsFeed.friend_activities.count }
     end
   end
-  # --------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

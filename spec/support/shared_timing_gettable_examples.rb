@@ -8,23 +8,18 @@ shared_examples_for "TimingGettable" do
   # and the outcome of the module inclusion.
   #
   context "by including this concern" do
-    it "responds to #get_timing" do
-      expect( subject ).to respond_to( :minutes )
-    end
-    it "responds to #get_timing" do
-      expect( subject ).to respond_to( :seconds )
-    end
-    it "responds to #get_timing" do
-      expect( subject ).to respond_to( :hundreds )
-    end
-    it "responds to #get_timing" do
-      expect( subject ).to respond_to( :get_timing )
-    end
-    it "responds to #get_timing_instance" do
-      expect( subject ).to respond_to( :get_timing_instance )
-    end
+    it_behaves_like( "(the existance of a method)",
+      [
+        :minutes, 
+        :seconds,
+        :hundreds,
+        :get_timing,
+        :get_timing_instance
+      ]
+    )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Describes the required functionalities of this method
   # of the interface.
@@ -35,7 +30,8 @@ shared_examples_for "TimingGettable" do
       expect( subject.get_timing.size ).to be > 0
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Describes the required functionalities of this method
   # of the interface.
@@ -45,5 +41,6 @@ shared_examples_for "TimingGettable" do
       expect( subject.get_timing_instance ).to be_an_instance_of( Timing )
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

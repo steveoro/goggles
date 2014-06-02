@@ -89,8 +89,8 @@ class User < ActiveRecord::Base
       ]
     end
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Updates both this user and a Swimmer instance for "association" (identity match).
   #

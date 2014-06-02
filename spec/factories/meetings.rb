@@ -33,23 +33,27 @@ FactoryGirl.define do
   end
 
   factory :meeting_program do
-    event_order               { ((rand * 100) % 25).to_i + 1}
+    event_order               { ((rand * 100) % 25).to_i + 1 }
     meeting_event
-    category_type_id          { ((rand * 100) % 20).to_i + 1} # ASSERT: at least 20 category types
-    gender_type_id            { ((rand * 100) % 2).to_i + 1} # ASSERT: at least 2 gender types
+    category_type_id          { ((rand * 100) % 20).to_i + 1 } # ASSERT: at least 20 category types
+    gender_type_id            { ((rand * 100) % 2).to_i + 1 } # ASSERT: at least 2 gender types
     user
   end
 
   factory :meeting_individual_result do
     meeting_program
-    rank                      { ((rand * 100) % 25).to_i + 1}
+    rank                      { ((rand * 100) % 25).to_i + 1 }
     standard_points           { (rand * 1000).to_i}
-    meeting_points            { standard_points }
-    team_points               { ((rand * 10) % 10).to_i + 1}
-    google_cup_points         { (rand * 1000).to_i}
+    meeting_individual_points { standard_points }
+    team_points               { ((rand * 10) % 10).to_i + 1 }
+    goggle_cup_points         { (rand * 1000).to_i }
     reaction_time             { rand.round(2) }
-    team
     badge
+    team                      { badge.team }
+    team_affiliation          { badge.team_affiliation }
+    swimmer                   { badge.swimmer }
+    # The following column uses the pre-loaded seed records:
+    disqualification_code_type_id { ((rand * 100) % 60).to_i + 1 }
     user
   end
 end

@@ -30,7 +30,8 @@ shared_examples_for "generic news-feed row creation" do
     }.to change{ subject.class.count }.by(1)
   end
 end
-# -----------------------------------------------------------------------------
+#-- ---------------------------------------------------------------------------
+#++
 
 
 shared_examples_for "achievement news-feed creation" do
@@ -45,37 +46,21 @@ shared_examples_for "achievement news-feed creation" do
     }.to change{ subject.class.count }.by(1)
   end
 end
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 
 describe NewsFeed do
   context "[class]" do
-    it "has a method to create a generic social feed" do
-      expect( subject.class ).to respond_to( :create_social_feed )
-    end
-
-    it "has a method to create a social/approve feed" do
-      expect( subject.class ).to respond_to( :create_social_approve_feed )
-    end
-
-    it "has a method to create a social/remove feed" do
-      expect( subject.class ).to respond_to( :create_social_remove_feed )
-    end
-
-
-    it "has a method to create a generic achievement feed" do
-      expect( subject.class ).to respond_to( :create_achievement_feed )
-    end
-
-    it "has a method to create an achievement/approve feed" do
-      expect( subject.class ).to respond_to( :create_achievement_approve_feed )
-    end
-
-    it "has a method to create an achievement/confirm feed" do
-      expect( subject.class ).to respond_to( :create_achievement_confirm_feed )
-    end
-    # -------------------------------------------------------------------------
-
+    it_behaves_like( "(the existance of a class method)", [
+      :create_social_feed,
+      :create_social_approve_feed,
+      :create_social_remove_feed,
+      :create_achievement_feed,
+      :create_achievement_approve_feed,
+      :create_achievement_confirm_feed
+    ])
+    #-- -----------------------------------------------------------------------
+    #++
 
     describe "self.create_social_feed()" do
       before( :each ) { @class_method_to_call = :create_social_feed }
@@ -111,19 +96,17 @@ describe NewsFeed do
       before( :each ) { @class_method_to_call = :create_achievement_feed }
       it_behaves_like "generic news-feed row creation"
     end
-
     describe "self.create_achievement_approve_feed()" do
       before( :each ) { @class_method_to_call = :create_achievement_approve_feed }
       it_behaves_like "achievement news-feed creation"
     end
-
     describe "self.create_achievement_confirm_feed()" do
       before( :each ) { @class_method_to_call = :create_achievement_confirm_feed }
       it_behaves_like "achievement news-feed creation"
     end
-    # -------------------------------------------------------------------------
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   context "[a well formed instance]" do
@@ -136,6 +119,6 @@ describe NewsFeed do
       expect( news_feed.friend ).to be_valid
     end
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

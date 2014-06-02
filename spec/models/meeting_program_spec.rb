@@ -3,37 +3,35 @@ require 'date'
 
 
 describe MeetingProgram do
-  shared_examples "shared_method_existance_examples"
-  shared_examples "shared_meeting_accountable_examples"
+  it_behaves_like "MeetingAccountable"
 
-# FIXME
-#  it_behaves_like "MeetingAccountable"
-
-
-  describe "not valid istance of meeting program" do
-    it_behaves_like( "(not a valid istance without required values)", [ 
+  describe "[a non-valid instance]" do
+    it_behaves_like( "(missing required values)", [ 
       :event_order
     ])    
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  describe "well formed meeting program" do
-    subject {
-      FactoryGirl.create( :meeting_program )
-    }
-  
-    context "[well formed meeting program instance]" do
-      it "is a valid istance" do
-        subject.should be_valid
-      end
+  describe "[a well formed instance]" do
+    subject { create(:meeting_program) }
 
-      it_behaves_like( "(valid istance if belongs to required classes)", [ 
-        :meeting_event,
-        :gender_type,
-        :category_type
-      ])    
+    it "is a valid istance" do
+      expect( subject ).to be_valid
     end
+    # Validated relations:
+    it_behaves_like( "(belongs_to required models)", [ 
+      :meeting_event,
+      :gender_type,
+      :category_type
+    ])    
+    # Filtering scopes:
+    it_behaves_like( "(the existance of a class method)", [
+      :only_relays,
+      :are_not_relays
+    ])
 
-    context "[meeting program general methods]" do
+    context "[general methods]" do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,
@@ -48,13 +46,8 @@ describe MeetingProgram do
       it_behaves_like( "(the existance of a method returning a date)", [ 
         :get_scheduled_date
       ])
-
-      xit "REFACTOR THIS USING MeetingAccountable CONCERN" do
-        it_behaves_like( "(the existance of a method returning numeric values)", [ 
-          :get_entries_count,
-          :get_results_count
-        ])
-      end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

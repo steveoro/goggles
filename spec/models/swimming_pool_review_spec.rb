@@ -3,20 +3,24 @@ require 'spec_helper'
 describe SwimmingPoolReview do
 
   context "[a well formed instance]" do
+    subject { create(:swimming_pool_review) }
+
     it "is a valid istance" do
-      expect( create( :swimming_pool_review ) ).to be_valid
+      expect( subject ).to be_valid
     end
+    # Validated relations:
+    it_behaves_like( "(belongs_to required models)", [ 
+      :swimming_pool
+    ])    
 
-    it "has a method to return the full description" do
-      expect( subject ).to respond_to( :get_full_name )
-    end
-
-    it "has a method to return the extended description" do
-      expect( subject ).to respond_to( :get_verbose_name )
-    end
-
-    it "has a method to return the user name" do
-      expect( subject ).to respond_to( :user_name )
+    context "[general methods]" do
+      it_behaves_like( "(the existance of a method)", [
+        :get_full_name, 
+        :get_verbose_name,
+        :user_name
+      ])
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 
-describe UserTraining do
+describe UserTrainingStory do
   context "[a well formed instance]" do
-    subject { create(:user_training_with_rows) }
+    subject { create(:user_training_story) }
 
     it_behaves_like "TrainingSharable"
 
@@ -11,16 +11,15 @@ describe UserTraining do
       expect( subject ).to be_valid
     end
 
-    context "[general methods]" do
+    context "[implemented instance methods]" do
       it_behaves_like( "(the existance of a method)",
         [
-          :get_full_name, 
-          :get_verbose_name,
-          :get_user_name,
+          :get_user_name, 
+          :get_user_training_name,
+          :get_user_training_compute_total_distance,
+          :get_user_training_compute_total_seconds,
           :get_swimmer_level_type,
-          :compute_total_distance,
-          :compute_total_seconds,
-          :build_group_list_hash
+          :get_user_swimmer_level_type
         ]
       )
     end

@@ -48,14 +48,14 @@ class MeetingSession < ActiveRecord::Base
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part and event list
-  # Eg 25/05/2014 MORINING: 200SL, 100FA, 50DO, 4x50MX
+  # Eg 25/05/2014 MORNING: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_full_name
     "#{self.get_scheduled_date} #{self.day_part_type.i18n_description}: #{self.get_short_events} #{self.description}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part, time schedule and event list
-  # Eg 25/05/2014 MORINING (8.30) 9.30: 200SL, 100FA, 50DO, 4x50MX
+  # Eg 25/05/2014 MORNING (8.30) 9.30: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_verbose_name
     #"#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
