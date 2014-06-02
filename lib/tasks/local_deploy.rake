@@ -2,7 +2,12 @@ require 'date'
 require 'rubygems'
 require 'find'
 require 'fileutils'
-require File.join( Dir.pwd.to_s, 'config/environment' )
+
+# WIP BEGIN -- was:
+# require File.join( Dir.pwd.to_s, 'config/environment' )
+require 'framework/version'
+require 'framework/application_constants'
+# WIP END
 
 
 =begin
