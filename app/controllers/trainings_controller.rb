@@ -15,9 +15,6 @@ class TrainingsController < ApplicationController
   # Index/Search action.
   #
   def index
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('trainings.index_title')
     @trainings_grid = initialize_grid(
       Training,
@@ -32,9 +29,6 @@ class TrainingsController < ApplicationController
   # Show action.
   #
   def show
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     training_id = params[:id].to_i
     @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
     unless ( @training )
@@ -59,9 +53,6 @@ class TrainingsController < ApplicationController
   # Create action (POST only).
   #
   def create
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.create() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
       @training = Training.new( params[:training] )
                                                     # Set the owner for all the records:
@@ -85,9 +76,6 @@ class TrainingsController < ApplicationController
   # Edit action.
   #
   def edit
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.edit() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     training_id = params[:id].to_i
     @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
     @training_max_part_order = @training.training_rows.maximum(:part_order)
@@ -102,9 +90,6 @@ class TrainingsController < ApplicationController
   # Update action.
   #
   def update
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.update() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     training_id = params[:id].to_i
     @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
     unless ( @training )
@@ -124,9 +109,6 @@ class TrainingsController < ApplicationController
   # Destroy action.
   #
   def destroy
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.destroy() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     training_id = params[:id].to_i
     @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
     unless ( @training )

@@ -71,7 +71,6 @@ Goggles::Application.routes.draw do
       # Any user can manage his/her swimming buddies:
       get  "socials/show_all",                  to: "socials#show_all"
       match "social/invite/:id",                to: "socials#invite",                   as: "social_invite", via: [:get, :post]
-#      post "social/invite/:id",                 to: "socials#invite"
       get  "social/approve/:id",                to: "socials#approve",                  as: "social_approve"
       post "social/approve/:id",                to: "socials#approve"
       get  "social/block/:id",                  to: "socials#block",                    as: "social_block"

@@ -28,6 +28,7 @@ namespace :web do
       puts "      > Setup remote /etc/apache2/vhosts.d/ip-based_vhosts.conf..."
       on roles(:web) do |host|
         default_template = <<-EOF
+
   ### #{fetch(:application)} ###
   #
   <VirtualHost *:#{fetch(:web_server_port)}>
@@ -49,7 +50,8 @@ namespace :web do
       Deny from all
     </Directory>
 
-    # Enable mod_x_sendfile for downloading output files from rails app
+    # -- To use the following as a speed-up, mod_x_sendfile must be precompiled and added manually --
+    # Enable mod_x_sendfile for downloading output files from rails app:
 #    RequestHeader Set X-Sendfile-Type X-Sendfile
 #    XSendFile on
 #    XSendFilePath /

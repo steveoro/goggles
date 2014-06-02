@@ -15,12 +15,9 @@ class UserTrainingStoriesController < ApplicationController
   # Index/Search action.
   #
   def index
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('user_training_stories.index_title')
     @user_training_stories_grid = initialize_grid(
-      UserTrainingStory,
+      UserTrainingStory.visible_to_user( current_user ),
 #      include: [:swimmer_level_type, :user_training, :swimming_pool],
       order: :swam_date,
       order_direction: 'asc',
@@ -32,9 +29,6 @@ class UserTrainingStoriesController < ApplicationController
   # Show action.
   #
   def show
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_story_id = params[:id].to_i
     @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
     unless ( @user_training_story )
@@ -57,9 +51,6 @@ class UserTrainingStoriesController < ApplicationController
   # Create action (POST only).
   #
   def create
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.create() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
       @user_training_story = UserTrainingStory.new( params[:user_training_story] )
                                                     # Set the owner for all the records:
@@ -82,9 +73,6 @@ class UserTrainingStoriesController < ApplicationController
   # Edit action.
   #
   def edit
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.edit() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_story_id = params[:id].to_i
     @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
     unless ( @user_training_story )
@@ -98,9 +86,6 @@ class UserTrainingStoriesController < ApplicationController
   # Update action.
   #
   def update
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.update() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_story_id = params[:id].to_i
     @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
     unless ( @user_training_story )
@@ -120,9 +105,6 @@ class UserTrainingStoriesController < ApplicationController
   # Destroy action.
   #
   def destroy
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.destroy() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_story_id = params[:id].to_i
     @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
     unless ( @user_training_story )

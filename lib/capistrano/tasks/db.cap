@@ -71,16 +71,6 @@ EOF
       end
     end
     # --------------------------------------------------------------------------
-
-
-# @deprecated
-    # desc "Recreates the symlink for database.yml file to the just deployed release."
-    # task :create_symlink do
-      # on roles(:app) do
-        # execute :ln, "-nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-      # end
-    # end
-    # --------------------------------------------------------------------------
   end
   # ============================================================================
 

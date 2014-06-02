@@ -101,12 +101,9 @@ class UserTrainingsController < ApplicationController
   # Index/Search action.
   #
   def index
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('user_trainings.index_title')
     @user_trainings_grid = initialize_grid(
-      UserTraining,
+      UserTraining.visible_to_user( current_user ),
 #      include: [:swimmer_level_type],
       order: :updated_at,
       order_direction: 'asc',
@@ -118,9 +115,6 @@ class UserTrainingsController < ApplicationController
   # Show action.
   #
   def show
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_id = params[:id].to_i
     @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
     unless ( @user_training )
@@ -145,13 +139,9 @@ class UserTrainingsController < ApplicationController
   # Create action (POST only).
   #
   def create
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.create() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
       @user_training = UserTraining.new( params[:user_training] )
-                                                    # Set the owner for all the records:
-      @user_training.user_id = current_user.id
+      @user_training.user_id = current_user.id      # Set the owner for all the records
       @user_training.user_training_rows.each{|row| row.user_id = current_user.id }
 
       if @user_training.save
@@ -171,9 +161,6 @@ class UserTrainingsController < ApplicationController
   # Edit action.
   #
   def edit
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.edit() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_id = params[:id].to_i
     @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
     @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
@@ -188,9 +175,6 @@ class UserTrainingsController < ApplicationController
   # Update action.
   #
   def update
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.update() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_id = params[:id].to_i
     @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
     unless ( @user_training )
@@ -210,9 +194,6 @@ class UserTrainingsController < ApplicationController
   # Destroy action.
   #
   def destroy
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.destroy() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     user_training_id = params[:id].to_i
     @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
     unless ( @user_training )

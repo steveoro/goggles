@@ -6,8 +6,7 @@ class SocialsController < ApplicationController
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:show_all]
-  before_filter :verify_parameter, except: [:show_all]
+  before_filter :verify_parameter, except: [:associate, :show_all]
   # ---------------------------------------------------------------------------
 
 
@@ -374,7 +373,6 @@ class SocialsController < ApplicationController
     unless ( @swimming_buddy )                      # Check swimming buddy existance
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( socials_show_all_path() ) and return
-#      redirect_to(:back) and return
     end
   end
   # ---------------------------------------------------------------------------
