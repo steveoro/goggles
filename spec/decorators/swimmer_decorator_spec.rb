@@ -16,7 +16,7 @@ describe SwimmerDecorator do
   subject { @decorated_swimmer }
 
   context "[implemented methods]" do
-    it_behaves_like "(the existance of a method returning either String or nil)", [
+    it_behaves_like "(the existance of a method with parameters, returning String or nil)", [
       :get_confirm_label_text_for, 
       :get_confirm_tooltip_text_for,
       :get_confirm_path_for,
@@ -49,7 +49,7 @@ describe SwimmerDecorator do
           expect( subject.send(method_name.to_sym, @user) ).to be_nil
         end
       end
-  
+
       context "(an unassociated user)," do
         it "returns nil for a confirmable swimmer" do
           expect( subject.send(method_name.to_sym, @user_not_associated) ).to be_nil

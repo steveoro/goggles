@@ -24,6 +24,5 @@ end
 
 
 describe DummyLocalizableIncludee do
-  shared_examples "shared_localizable_examples"
   it_behaves_like "Localizable"
 end

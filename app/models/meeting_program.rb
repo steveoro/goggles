@@ -14,10 +14,10 @@ class MeetingProgram < ActiveRecord::Base
   validates_associated :category_type
   validates_associated :gender_type
 
+  has_many :meeting_entries, dependent: :delete_all
   has_many :meeting_individual_results, dependent: :delete_all
   has_many :meeting_relay_results, dependent: :delete_all
   has_many :meeting_relay_swimmers, through: :meeting_relay_results, dependent: :delete_all
-  # TODO Add other has_many relationships only when needed
 
   has_one  :meeting,          through: :meeting_event
   has_one  :meeting_session,  through: :meeting_event

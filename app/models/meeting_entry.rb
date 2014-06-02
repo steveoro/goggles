@@ -34,7 +34,11 @@ class MeetingEntry < ActiveRecord::Base
   validates_associated :team_affiliation
   validates_associated :badge
 
+  belongs_to :swimmer
   belongs_to :entry_time_type
+
+  scope :is_male,    -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
+  scope :is_female,  -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
   # ----------------------------------------------------------------------------
   # Base methods:

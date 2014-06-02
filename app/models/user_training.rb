@@ -1,12 +1,9 @@
 # encoding: utf-8
-
 require 'wrappers/timing'   # [Steve 20140311] Used by UserTrainingRow
 
 
 class UserTraining < ActiveRecord::Base
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-  #  validates_associated :user                       # (Do not enable this for User)
+  include TrainingSharable                          # (This adds also a belongs_to :user clause)
 
   has_many :user_training_rows, dependent: :delete_all
   accepts_nested_attributes_for :user_training_rows, :allow_destroy => true
@@ -24,18 +21,9 @@ class UserTraining < ActiveRecord::Base
                   :user_training_story_attributes
 
   scope :sort_by_description,     order('description')
-#  scope :visible_to_user,         ->(user) {}
+  #-- -------------------------------------------------------------------------
+  #++
 
-# WIP
-
-  def self.visible_to_user( any_user )
-    allowed_user_ids = any_user.friends_sharing_trainings.select{id} << any_user.id
-    where{ user_id.in( allowed_user_ids ) }
-  end
-
-  # ---------------------------------------------------------------------------
-  # Base methods:
-  # ---------------------------------------------------------------------------
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -47,7 +35,8 @@ class UserTraining < ActiveRecord::Base
     # Verbose description should show first user_training_story date and pool
     description
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Retrieves the User short name (the owner of this Training)
@@ -63,7 +52,8 @@ class UserTraining < ActiveRecord::Base
   def get_swimmer_level_type( label_method_sym = :i18n_short )
     user ? user.get_swimmer_level_type( label_method_sym ) : ''
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes the total distance in metres for this training.
   #
@@ -80,7 +70,8 @@ class UserTraining < ActiveRecord::Base
       sum + ( row.compute_distance().to_i * row.times )
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes the esteemed total seconds of expected duration for this training
   #
@@ -97,7 +88,8 @@ class UserTraining < ActiveRecord::Base
       sum + row.compute_total_seconds()
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Scans all the training rows with groups and builds up a custom hash containing
@@ -126,6 +118,6 @@ class UserTraining < ActiveRecord::Base
     }
     group_list
   end
-  # ---------------------------------------------------------------------------
-  
+  #-- -------------------------------------------------------------------------
+  #++
 end

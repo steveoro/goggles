@@ -1,12 +1,9 @@
 # encoding: utf-8
-
 require 'wrappers/timing'   # [Steve 20140311] Used by UserTrainingRow
 
 
 class UserTrainingStory < ActiveRecord::Base
-  belongs_to :user
-  # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)
-  #  validates_associated :user                       # (Do not enable this for User)
+  include TrainingSharable                          # (This adds also a belongs_to :user clause)
 
   belongs_to :user_training
   belongs_to :swimmer_level_type
@@ -27,7 +24,9 @@ class UserTrainingStory < ActiveRecord::Base
 
   scope :sort_by_date,        order('swam_date')
   scope :sort_by_duration,    order('total_training_time')  
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Retrieves the User short name (the owner of this UserTrainingStory)
   def get_user_name
@@ -48,7 +47,8 @@ class UserTrainingStory < ActiveRecord::Base
   def get_user_training_compute_total_seconds
     user_training ? user_training.compute_total_seconds : 0
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves the swimmer level typ description, when set.
   # Allows to specify which label method can be used for the output, defaults to
@@ -70,5 +70,6 @@ class UserTrainingStory < ActiveRecord::Base
   def get_user_swimmer_level_type( label_method_sym = :i18n_short )
     user ? user.get_swimmer_level_type( label_method_sym ) : ''
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

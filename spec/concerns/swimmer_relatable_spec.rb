@@ -5,9 +5,9 @@ require 'spec_helper'
 class DummySwimmerRelatableIncludee < MeetingEntry
   include SwimmerRelatable
 end
+# -----------------------------------------------------------------------------
 
 
 describe DummySwimmerRelatableIncludee do
-  shared_examples "shared_swimmer_relatable_examples"
   it_behaves_like "SwimmerRelatable"
 end
