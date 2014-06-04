@@ -27,6 +27,7 @@ class SocialsController < ApplicationController
                                                     # === GET: ===
     else                                            # Scompose the description in tokens:
       first_name, last_name = current_user.get_first_and_last_name()
+      
       first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name.upcase}%"] )
       second_list = Swimmer.where( ["complete_name LIKE ?", "%#{last_name.upcase}%"] )
       if current_user.year_of_birth
@@ -39,6 +40,7 @@ class SocialsController < ApplicationController
         (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
         (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?
       }
+      # TODO sort list by last_name if available
     end
   end
 

@@ -82,11 +82,13 @@ class User < ActiveRecord::Base
   def get_first_and_last_name
     if first_name && last_name
       [ first_name, last_name ]
-    else
+    elsif description
       [
         description.split(' ')[0],
         description.split(' ')[1]
       ]
+    else
+      [ name, '' ]
     end
   end
   #-- -------------------------------------------------------------------------

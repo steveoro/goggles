@@ -30,6 +30,7 @@ namespace :app do
         mail_delivery_method = fetch(:mail_delivery_method)
         perform_deliveries   = true
         application          = fetch(:application)
+        mailer_default_host  = fetch(:mailer_default_host)
         web_server_port      = fetch(:web_server_port)
         agex_development_email = fetch( :agex_development_email )
         if ( mail_delivery_method == 'smtp' )
