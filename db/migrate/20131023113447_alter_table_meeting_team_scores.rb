@@ -29,7 +29,7 @@ class AlterTableMeetingTeamScores < ActiveRecord::Migration
     change_table(:data_import_meeting_team_scores) do |t|
       t.rename :total_individual_points,  :sum_individual_points
       t.rename :total_relay_points,       :sum_relay_points
-      t.rename :conflicting_challenge_score_id, :conflicting_meeting_team_score_id
+      t.rename :conflicting_challenge_score_id, :conflicting_id
 
       t.decimal :sum_team_points,            :precision => 10, :scale => 2, :default => 0.0, :null => false
 

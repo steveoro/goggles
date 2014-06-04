@@ -7,7 +7,7 @@ class CreateTableDataImportTeamsAndCities < ActiveRecord::Migration
                                                     # Adds the current data-import session unique identifier:
       t.references :data_import_session
                                                     # This will have a value != 0 only if a conflicting row id was found during the parsing phase
-      t.integer :conflicting_city_id, :limit => 8, :default => 0
+      t.integer :conflicting_id, :limit => 8, :default => 0
       t.string  :import_text, :null => false
 
       t.string :name,         :limit => 50, :null => false
@@ -31,7 +31,7 @@ class CreateTableDataImportTeamsAndCities < ActiveRecord::Migration
                                                     # Adds the current data-import session unique identifier:
       t.references :data_import_session
                                                     # This will have a value != 0 only if a conflicting row id was found during the parsing phase
-      t.integer :conflicting_team_id,    :limit => 8, :default => 0
+      t.integer :conflicting_id,    :limit => 8, :default => 0
       t.string  :import_text, :null => false
       t.string :name, :limit => 60, :null => false
 

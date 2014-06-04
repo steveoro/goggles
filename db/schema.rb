@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140530173953) do
+ActiveRecord::Schema.define(:version => 20140604102837) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -250,7 +250,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_badge_id",   :limit => 8,  :default => 0
+    t.integer  "conflicting_id",         :limit => 8,  :default => 0
     t.string   "import_text",                                         :null => false
     t.string   "number",                 :limit => 40
     t.integer  "data_import_swimmer_id"
@@ -272,7 +272,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_city_id",    :limit => 8,  :default => 0
+    t.integer  "conflicting_id",         :limit => 8,  :default => 0
     t.string   "import_text",                                         :null => false
     t.string   "name",                   :limit => 50,                :null => false
     t.string   "zip",                    :limit => 6
@@ -286,26 +286,26 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
   add_index "data_import_cities", ["zip"], :name => "index_data_import_cities_on_zip"
 
   create_table "data_import_meeting_individual_results", :force => true do |t|
-    t.integer  "lock_version",                                                                           :default => 0
-    t.datetime "created_at",                                                                                                :null => false
-    t.datetime "updated_at",                                                                                                :null => false
+    t.integer  "lock_version",                                                                 :default => 0
+    t.datetime "created_at",                                                                                      :null => false
+    t.datetime "updated_at",                                                                                      :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_individual_result_id", :limit => 8,                                  :default => 0
-    t.string   "import_text",                                                                                               :null => false
-    t.string   "athlete_name",                             :limit => 100,                                                   :null => false
-    t.string   "team_name",                                :limit => 60,                                                    :null => false
-    t.string   "athlete_badge_number",                     :limit => 40
-    t.string   "team_badge_number",                        :limit => 40
-    t.integer  "year_of_birth",                                                                          :default => 1900,  :null => false
-    t.integer  "rank",                                                                                   :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                            :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                                         :default => false, :null => false
-    t.boolean  "is_disqualified",                                                                        :default => false, :null => false
-    t.decimal  "standard_points",                                         :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_individual_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                                  :limit => 3,                                  :default => 0,     :null => false
-    t.integer  "seconds",                                  :limit => 2,                                  :default => 0,     :null => false
-    t.integer  "hundreds",                                 :limit => 2,                                  :default => 0,     :null => false
+    t.integer  "conflicting_id",                 :limit => 8,                                  :default => 0
+    t.string   "import_text",                                                                                     :null => false
+    t.string   "athlete_name",                   :limit => 100,                                                   :null => false
+    t.string   "team_name",                      :limit => 60,                                                    :null => false
+    t.string   "athlete_badge_number",           :limit => 40
+    t.string   "team_badge_number",              :limit => 40
+    t.integer  "year_of_birth",                                                                :default => 1900,  :null => false
+    t.integer  "rank",                                                                         :default => 0,     :null => false
+    t.boolean  "is_play_off",                                                                  :default => false, :null => false
+    t.boolean  "is_out_of_race",                                                               :default => false, :null => false
+    t.boolean  "is_disqualified",                                                              :default => false, :null => false
+    t.decimal  "standard_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_individual_points",                     :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "minutes",                        :limit => 3,                                  :default => 0,     :null => false
+    t.integer  "seconds",                        :limit => 2,                                  :default => 0,     :null => false
+    t.integer  "hundreds",                       :limit => 2,                                  :default => 0,     :null => false
     t.integer  "data_import_meeting_program_id"
     t.integer  "meeting_program_id"
     t.integer  "data_import_swimmer_id"
@@ -316,9 +316,9 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.integer  "badge_id"
     t.integer  "user_id"
     t.integer  "disqualification_code_type_id"
-    t.decimal  "goggle_cup_points",                                       :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "reaction_time",                                           :precision => 5,  :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "team_points",                                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "goggle_cup_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "reaction_time",                                 :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "team_points",                                   :precision => 10, :scale => 2, :default => 0.0,   :null => false
     t.integer  "team_affiliation_id"
   end
 
@@ -327,7 +327,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                                     :null => false
     t.datetime "updated_at",                                                     :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_program_id", :limit => 8, :default => 0
+    t.integer  "conflicting_id",                 :limit => 8, :default => 0
     t.string   "import_text",                                                    :null => false
     t.integer  "event_order",                    :limit => 3, :default => 0,     :null => false
     t.time     "begin_time"
@@ -351,45 +351,45 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
   add_index "data_import_meeting_programs", ["meeting_session_id", "gender_type_id"], :name => "meeting_gender_type"
 
   create_table "data_import_meeting_relay_results", :force => true do |t|
-    t.integer  "lock_version",                                                                     :default => 0
-    t.datetime "created_at",                                                                                          :null => false
-    t.datetime "updated_at",                                                                                          :null => false
+    t.integer  "lock_version",                                                                :default => 0
+    t.datetime "created_at",                                                                                     :null => false
+    t.datetime "updated_at",                                                                                     :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_relay_result_id", :limit => 8,                                 :default => 0
-    t.string   "import_text",                                                                                         :null => false
-    t.integer  "rank",                                                                             :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                      :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                                   :default => false, :null => false
-    t.boolean  "is_disqualified",                                                                  :default => false, :null => false
-    t.decimal  "standard_points",                                   :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                                    :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                             :limit => 3,                                 :default => 0,     :null => false
-    t.integer  "seconds",                             :limit => 2,                                 :default => 0,     :null => false
-    t.integer  "hundreds",                            :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "conflicting_id",                 :limit => 8,                                 :default => 0
+    t.string   "import_text",                                                                                    :null => false
+    t.integer  "rank",                                                                        :default => 0,     :null => false
+    t.boolean  "is_play_off",                                                                 :default => false, :null => false
+    t.boolean  "is_out_of_race",                                                              :default => false, :null => false
+    t.boolean  "is_disqualified",                                                             :default => false, :null => false
+    t.decimal  "standard_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "meeting_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.integer  "minutes",                        :limit => 3,                                 :default => 0,     :null => false
+    t.integer  "seconds",                        :limit => 2,                                 :default => 0,     :null => false
+    t.integer  "hundreds",                       :limit => 2,                                 :default => 0,     :null => false
     t.integer  "data_import_team_id"
     t.integer  "team_id"
     t.integer  "user_id"
     t.integer  "data_import_meeting_program_id"
     t.integer  "meeting_program_id"
     t.integer  "disqualification_code_type_id"
-    t.string   "relay_header",                        :limit => 60,                                :default => "",    :null => false
-    t.decimal  "reaction_time",                                     :precision => 5,  :scale => 2, :default => 0.0,   :null => false
-    t.integer  "entry_minutes",                       :limit => 3
-    t.integer  "entry_seconds",                       :limit => 2
-    t.integer  "entry_hundreds",                      :limit => 2
+    t.string   "relay_header",                   :limit => 60,                                :default => "",    :null => false
+    t.decimal  "reaction_time",                                :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.integer  "entry_minutes",                  :limit => 3
+    t.integer  "entry_seconds",                  :limit => 2
+    t.integer  "entry_hundreds",                 :limit => 2
     t.integer  "team_affiliation_id"
     t.integer  "entry_time_type_id"
   end
 
   create_table "data_import_meeting_sessions", :force => true do |t|
-    t.integer  "lock_version",                                  :default => 0
-    t.datetime "created_at",                                                   :null => false
-    t.datetime "updated_at",                                                   :null => false
+    t.integer  "lock_version",                          :default => 0
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_session_id", :limit => 8,   :default => 0
-    t.string   "import_text",                                                  :null => false
-    t.integer  "session_order",                  :limit => 2,   :default => 0, :null => false
-    t.date     "scheduled_date",                                               :null => false
+    t.integer  "conflicting_id",         :limit => 8,   :default => 0
+    t.string   "import_text",                                          :null => false
+    t.integer  "session_order",          :limit => 2,   :default => 0, :null => false
+    t.date     "scheduled_date",                                       :null => false
     t.time     "warm_up_time"
     t.time     "begin_time"
     t.text     "notes"
@@ -397,34 +397,34 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.integer  "meeting_id"
     t.integer  "swimming_pool_id"
     t.integer  "user_id"
-    t.string   "description",                    :limit => 100,                :null => false
+    t.string   "description",            :limit => 100,                :null => false
     t.integer  "day_part_type_id"
   end
 
   add_index "data_import_meeting_sessions", ["scheduled_date"], :name => "index_data_import_meeting_sessions_on_scheduled_date"
 
   create_table "data_import_meeting_team_scores", :force => true do |t|
-    t.integer  "lock_version",                                                                  :default => 0
-    t.datetime "created_at",                                                                                     :null => false
-    t.datetime "updated_at",                                                                                     :null => false
+    t.integer  "lock_version",                                                          :default => 0
+    t.datetime "created_at",                                                                             :null => false
+    t.datetime "updated_at",                                                                             :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_team_score_id", :limit => 8,                                :default => 0
-    t.string   "import_text",                                                                                    :null => false
-    t.decimal  "sum_individual_points",                          :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "sum_relay_points",                               :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "conflicting_id",            :limit => 8,                                :default => 0
+    t.string   "import_text",                                                                            :null => false
+    t.decimal  "sum_individual_points",                  :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_relay_points",                       :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "data_import_team_id"
     t.integer  "data_import_meeting_id"
     t.integer  "team_id"
     t.integer  "meeting_id"
-    t.integer  "rank",                                                                          :default => 0,   :null => false
+    t.integer  "rank",                                                                  :default => 0,   :null => false
     t.integer  "user_id"
-    t.decimal  "sum_team_points",                                :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_individual_points",                      :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_relay_points",                           :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_team_points",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_individual_points",                       :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_relay_points",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_team_points",                             :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_team_points",                        :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_individual_points",              :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_relay_points",                   :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "meeting_team_points",                    :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_individual_points",               :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_relay_points",                    :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "season_team_points",                     :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "season_id"
     t.integer  "team_affiliation_id"
   end
@@ -434,7 +434,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                                             :null => false
     t.datetime "updated_at",                                                             :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_meeting_id",               :limit => 8,   :default => 0
+    t.integer  "conflicting_id",                       :limit => 8,   :default => 0
     t.string   "import_text",                                                            :null => false
     t.string   "description",                          :limit => 100
     t.date     "entry_deadline"
@@ -476,7 +476,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                           :null => false
     t.datetime "updated_at",                                           :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_season_id",  :limit => 8,   :default => 0
+    t.integer  "conflicting_id",         :limit => 8,   :default => 0
     t.string   "import_text",                                          :null => false
     t.string   "description",            :limit => 100,                :null => false
     t.date     "begin_date",                                           :null => false
@@ -491,16 +491,15 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
   add_index "data_import_seasons", ["begin_date"], :name => "index_data_import_seasons_on_begin_date"
 
   create_table "data_import_sessions", :force => true do |t|
-    t.datetime "created_at",            :null => false
-    t.datetime "updated_at",            :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "file_name"
-    t.text     "source_data"
+    t.text     "source_data",           :limit => 16777215
     t.integer  "phase"
     t.integer  "total_data_rows"
     t.string   "file_format"
-    t.text     "phase_1_log"
-    t.text     "phase_2_log"
-    t.text     "phase_3_log"
+    t.text     "phase_1_log",           :limit => 16777215
+    t.text     "phase_3_log",           :limit => 16777215
     t.integer  "data_import_season_id"
     t.integer  "season_id"
     t.integer  "user_id"
@@ -513,7 +512,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                              :null => false
     t.datetime "updated_at",                                              :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_swimmer_id", :limit => 8,   :default => 0
+    t.integer  "conflicting_id",         :limit => 8,   :default => 0
     t.string   "import_text",                                             :null => false
     t.string   "last_name"
     t.string   "first_name"
@@ -537,19 +536,19 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
   add_index "data_import_team_aliases", ["team_id", "name"], :name => "idx_team_id_name", :unique => true
 
   create_table "data_import_team_analysis_results", :force => true do |t|
-    t.integer  "lock_version",                                                        :default => 0
-    t.datetime "created_at",                                                                           :null => false
-    t.datetime "updated_at",                                                                           :null => false
+    t.integer  "lock_version",                                                              :default => 0
+    t.datetime "created_at",                                                                                 :null => false
+    t.datetime "updated_at",                                                                                 :null => false
     t.integer  "data_import_session_id"
-    t.text     "analysis_log_text"
+    t.text     "analysis_log_text",      :limit => 16777215
     t.text     "sql_text"
     t.string   "searched_team_name",     :limit => 60
     t.integer  "desired_season_id"
     t.integer  "chosen_team_id"
     t.string   "team_match_name",        :limit => 60
-    t.decimal  "team_match_score",                     :precision => 10, :scale => 4, :default => 0.0
+    t.decimal  "team_match_score",                           :precision => 10, :scale => 4, :default => 0.0
     t.string   "best_match_name",        :limit => 60
-    t.decimal  "best_match_score",                     :precision => 10, :scale => 4, :default => 0.0
+    t.decimal  "best_match_score",                           :precision => 10, :scale => 4, :default => 0.0
   end
 
   add_index "data_import_team_analysis_results", ["data_import_session_id", "searched_team_name", "desired_season_id"], :name => "idx_di_session_name_and_season", :unique => true
@@ -559,7 +558,7 @@ ActiveRecord::Schema.define(:version => 20140530173953) do
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
     t.integer  "data_import_session_id"
-    t.integer  "conflicting_team_id",    :limit => 8,  :default => 0
+    t.integer  "conflicting_id",         :limit => 8,  :default => 0
     t.string   "import_text",                                         :null => false
     t.string   "name",                   :limit => 60,                :null => false
     t.string   "badge_number",           :limit => 40

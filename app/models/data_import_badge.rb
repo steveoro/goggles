@@ -6,7 +6,7 @@ class DataImportBadge < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :badge, foreign_key: "conflicting_badge_id"
+  belongs_to :badge, foreign_key: "conflicting_id"
 
   validates_presence_of :import_text
 
@@ -26,7 +26,7 @@ class DataImportBadge < ActiveRecord::Base
 
   validates_presence_of :number, length: { maximum: 40 }, allow_nil: true 
 
-  scope :sort_by_conflicting_rows_id,     ->(dir) { order("conflicting_badge_id #{dir.to_s}") }
+  scope :sort_by_conflicting_rows_id,     ->(dir) { order("conflicting_id #{dir.to_s}") }
   scope :sort_by_user,                    ->(dir) { order("users.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
   scope :sort_by_season,                  ->(dir) { order("seasons.begin_date #{dir.to_s}, data_import_badges.number #{dir.to_s}") }
   scope :sort_by_team,                    ->(dir) { order("teams.name #{dir.to_s}, data_import_badges.number #{dir.to_s}") }

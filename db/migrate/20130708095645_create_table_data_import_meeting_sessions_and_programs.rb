@@ -7,7 +7,7 @@ class CreateTableDataImportMeetingSessionsAndPrograms < ActiveRecord::Migration
                                                     # Adds the current data-import session unique identifier:
       t.references :data_import_session
                                                     # This will have a value != 0 only if a conflicting row id was found during the parsing phase
-      t.integer :conflicting_meeting_session_id, :limit => 8, :default => 0
+      t.integer :conflicting_id, :limit => 8, :default => 0
       t.string  :import_text, :null => false
 
       t.integer :session_order, :limit => 2, :null => false, :default => 0
@@ -35,7 +35,7 @@ class CreateTableDataImportMeetingSessionsAndPrograms < ActiveRecord::Migration
                                                     # Adds the current data-import session unique identifier:
       t.references :data_import_session
                                                     # This will have a value != 0 only if a conflicting row id was found during the parsing phase
-      t.integer :conflicting_meeting_program_id, :limit => 8, :default => 0
+      t.integer :conflicting_id, :limit => 8, :default => 0
       t.string  :import_text, :null => false
 
       t.integer :event_order, :limit => 3, :null => false, :default => 0

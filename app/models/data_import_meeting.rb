@@ -6,7 +6,7 @@ class DataImportMeeting < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :meeting, foreign_key: "conflicting_meeting_id"
+  belongs_to :meeting, foreign_key: "conflicting_id"
 
   validates_presence_of :import_text
 

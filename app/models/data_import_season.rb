@@ -6,7 +6,7 @@ class DataImportSeason < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :season, foreign_key: "conflicting_season_id"
+  belongs_to :season, foreign_key: "conflicting_id"
 
   validates_presence_of :import_text
 
@@ -32,7 +32,7 @@ class DataImportSeason < ActiveRecord::Base
   validates_length_of :max_points, maximum: 9, allow_nil: false
   validates_numericality_of :max_points
 
-  scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_season_id #{dir.to_s}") }
+  scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_id #{dir.to_s}") }
   scope :sort_by_user,                 ->(dir) { order("users.name #{dir.to_s}, data_import_seasons.begin_date #{dir.to_s}") }
   scope :sort_by_season_type,          ->(dir) { order("season_types.code #{dir.to_s}, data_import_seasons.begin_date #{dir.to_s}") }
 

@@ -99,7 +99,7 @@ class ChangeMeetings < ActiveRecord::Migration
     # CREATE TABLE `data_import_meetings` (
         # `id` INTEGER(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         # `data_import_session_id` INTEGER(11) UNSIGNED DEFAULT 0,
-        # `conflicting_meeting_id` BIGINT(20) DEFAULT 0,
+        # `conflicting_id` BIGINT(20) DEFAULT 0,
         # `import_text` VARCHAR(255) NOT NULL,
         # `description` VARCHAR(100),
         # `entry_deadline` DATE,

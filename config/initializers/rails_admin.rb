@@ -566,7 +566,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_badge_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :number, :string 
   #     configure :data_import_swimmer_id, :integer 
@@ -619,7 +619,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_city_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :name, :string 
   #     configure :zip, :string 
@@ -670,7 +670,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_meeting_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :description, :string 
   #     configure :entry_deadline, :date 
@@ -741,7 +741,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_meeting_individual_result_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :athlete_name, :string 
   #     configure :team_name, :string 
@@ -812,7 +812,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_meeting_program_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :event_order, :integer 
   #     configure :begin_time, :time 
@@ -864,7 +864,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_meeting_session_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :session_order, :integer 
   #     configure :scheduled_date, :date 
@@ -916,7 +916,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_season_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :description, :string 
   #     configure :begin_date, :date 
@@ -1020,7 +1020,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_swimmer_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :last_name, :string 
   #     configure :first_name, :string 
@@ -1068,7 +1068,7 @@ RailsAdmin.config do |config|
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime 
   #     configure :data_import_session_id, :integer         # Hidden 
-  #     configure :conflicting_team_id, :integer         # Hidden 
+  #     configure :conflicting_id, :integer         # Hidden 
   #     configure :import_text, :string 
   #     configure :name, :string 
   #     configure :cities_id, :integer 

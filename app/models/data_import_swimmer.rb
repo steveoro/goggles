@@ -6,7 +6,7 @@ class DataImportSwimmer < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :swimmer, foreign_key: "conflicting_swimmer_id"
+  belongs_to :swimmer, foreign_key: "conflicting_id"
   belongs_to :gender_type
 
   validates_presence_of :import_text
@@ -20,7 +20,7 @@ class DataImportSwimmer < ActiveRecord::Base
   validates_presence_of :year_of_birth
   validates_length_of   :year_of_birth, within: 2..4, allow_nil: false
 
-  scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_swimmer_id #{dir.to_s}") }
+  scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_id #{dir.to_s}") }
   scope :sort_by_user,                 ->(dir) { order("users.name #{dir.to_s}, data_import_swimmers.name #{dir.to_s}") }
   scope :sort_by_gender_type,          ->(dir) { order("gender_types.code #{dir.to_s}, data_import_swimmers.name #{dir.to_s}") }
 

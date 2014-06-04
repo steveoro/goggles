@@ -9,7 +9,7 @@ class CreateTableDataImportSessions < ActiveRecord::Migration
       t.integer :total_data_rows
       t.string :file_format
       t.text :phase_1_log
-      t.text :phase_2_log
+      t.text :phase_1_log
       t.text :phase_3_log
 
       t.references :data_import_season

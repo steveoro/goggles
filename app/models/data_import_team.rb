@@ -6,7 +6,7 @@ class DataImportTeam < ActiveRecord::Base
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
-  belongs_to :team, foreign_key: "conflicting_team_id"
+  belongs_to :team, foreign_key: "conflicting_id"
 
   validates_presence_of :import_text
 
@@ -21,7 +21,7 @@ class DataImportTeam < ActiveRecord::Base
   # skipping the need for a dedicated team_affiliations temp. table:
   validates_length_of :badge_number, maximum: 40
 
-  scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_team_id #{dir.to_s}") }
+  scope :sort_by_conflicting_rows_id,  ->(dir) { order("conflicting_id #{dir.to_s}") }
   scope :sort_by_user,                 ->(dir) { order("users.name #{dir.to_s}, data_import_teams.name #{dir.to_s}") }
   scope :sort_by_city,                 ->(dir) { order("cities.name #{dir.to_s}, data_import_teams.name #{dir.to_s}") }
 
