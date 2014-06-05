@@ -745,7 +745,10 @@ it:
     send: "Invia"
     ok: "Ok"
     cancel: "Annulla"
-    arent_you_among_these: "Non sei fra questi? Scegline tu qualcun altro manualmente..."
+    chose_manually_your_identity: "Scegli manualmente la tua identita'..."
+    totally_missing_swimmer: "Non sei in lista? Mandaci una mail per notificarci chi sei!"
+    totally_missing_swimmer_subject: "La mia indentita' come nuotatore manca dal vostro database!"
+    totally_missing_swimmer_body: "Ciao! Non ho trovato il mio nome in lista!\r\nVi dichiaro che io sono ...<IL TUO NOME QUI>\r\nLa mia Squadra attuale e' ... <IL NOME DELLA TUA SQUADRA QUI>"
 
   newsfeed:
     invite_title: "Hai una nuova richiesta di amicizia."

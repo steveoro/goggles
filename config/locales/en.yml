@@ -743,7 +743,10 @@ en:
     send: "Send"
     ok: "Ok"
     cancel: "Cancel"
-    arent_you_among_these: "Aren't you among these? Choose someone else yourself manually..."
+    chose_manually_your_identity: "Choose manually your identity..."
+    totally_missing_swimmer: "Still haven't found yourself? Send us a mail to notify your identity!"
+    totally_missing_swimmer_subject: "My swimmer identity is missing from the database!"
+    totally_missing_swimmer_body: "Hi! I haven't found myself in your list!\r\nI declare that I am ...<YOUR NAME HERE>\r\nMy current Swimming Team is ... <YOUR TEAM NAME HERE>"
 
   newsfeed:
     invite_title: "You have a 'Swimming Buddy' request!"

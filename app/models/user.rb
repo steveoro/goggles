@@ -80,15 +80,15 @@ class User < ActiveRecord::Base
   # Returns the an array containing the first and the last name of this
   # user. When empty or nil the names are obtained from the description.
   def get_first_and_last_name
-    if first_name && last_name
+    if first_name && last_name && first_name.size > 0 && last_name.size > 0
       [ first_name, last_name ]
-    elsif description
+    elsif description && description.size > 0
       [
         description.split(' ')[0],
         description.split(' ')[1]
       ]
     else
-      [ name, '' ]
+      [ name[0..4], '' ]                            # Return just the first 5 char from the username, just to increase the chances
     end
   end
   #-- -------------------------------------------------------------------------
@@ -119,6 +119,7 @@ class User < ActiveRecord::Base
       self.year_of_birth = new_swimmer.year_of_birth
       self.first_name = new_swimmer.first_name.titleize unless new_swimmer.first_name.empty?
       self.last_name  = new_swimmer.last_name.titleize unless new_swimmer.last_name.empty?
+      self.description = "#{self.first_name} #{self.last_name}"
       save!
       new_swimmer.associated_user_id = self.id      # Update the swimmer
       new_swimmer.save!

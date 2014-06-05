@@ -13,12 +13,14 @@
   .row-fluid
     .span12
       = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
-
+- if @possible_swimmers.length < 1
+  %p{style: "text-align: center"}
+    %i= t(:no_data_found)
 
 .row-fluid
   %hr
 .row-fluid
-  %i= link_to_function( t('social.arent_you_among_these'), "$('#manualOverride').toggle();" )
+  %i= link_to_function( t('social.chose_manually_your_identity'), "$('#manualOverride').toggle();" )
 .row-fluid
   %p
 .row-fluid#manualOverride(hidden='true')
@@ -28,3 +30,10 @@
       = submit_tag( I18n.t(:submit), data: {disable_with: I18n.t(:please_wait), class: 'btn'} )
       %span(id='loadingIndicator' hidden='true')
         = image_tag( 'indicator.gif' )
+
+.row-fluid
+  %hr
+.row-fluid
+  %i
+    = t('social.totally_missing_swimmer')
+    = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{AGEX_APP_NAME}] #{t('social.totally_missing_swimmer_subject')}", body: "#{t('social.totally_missing_swimmer_body')}\r\n\r\n#{t('user_association.i_am')} #{current_user.get_verbose_name}.\r\n(User ID: #{current_user.id})", encode: "javascript" )

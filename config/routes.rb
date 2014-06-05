@@ -273,5 +273,5 @@ Goggles::Application.routes.draw do
   # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
   # RoutingError from hitting ApplicationController::rescue_action).
   # In other words, this wildcard route will catch all the other cases:
-#  match "*path", :to => "application#routing_error"
+#  match "*path", to: "application#routing_error", via: [:get, :post, :put, :delete, :patch]
 end

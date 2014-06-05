@@ -27,20 +27,19 @@ class SocialsController < ApplicationController
                                                     # === GET: ===
     else                                            # Scompose the description in tokens:
       first_name, last_name = current_user.get_first_and_last_name()
-      
       first_list  = Swimmer.where( ["complete_name LIKE ?", "%#{first_name.upcase}%"] )
       second_list = Swimmer.where( ["complete_name LIKE ?", "%#{last_name.upcase}%"] )
       if current_user.year_of_birth
         first_list.where( year_of_birth: current_user.year_of_birth )
         second_list.where( year_of_birth: current_user.year_of_birth )
       end
-                                                    # Choose only the list with less results:
-      @possible_swimmers = first_list.size < second_list.size ? first_list : second_list
+                                                    # Choose a list with results:
+      @possible_swimmers = second_list.size > 0 ? second_list : first_list
       @possible_swimmers.delete_if { |swimmer_row|  # Filter out the worst results:
         (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
         (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?
       }
-      # TODO sort list by last_name if available
+      @possible_swimmers.sort!
     end
   end
 
