@@ -65,34 +65,33 @@ class Api::V1::TeamsController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
+  # Returns a JSON-encoded Array of all the rows.
+  # Each array element is a JSON-encoded hash of a single row.
+  # The keys of the Hash are the attributes as string.
+  #
+  # === Additional params:
+  # - 'name_like': a matching (sub)string for the Team.name
+  #
   def index
-    respond_with( @teams = Team.all )
+    # (This uses Squeel DSL syntax for where clauses)
+    if params[:name_like]
+      filter = "%#{params[:name_like]}%"
+      @teams = Team.where{ name.like filter }.order(:name)
+    else
+      @teams = Team.order(:name).all
+    end
+    respond_with( @teams )
   end
-  # ---------------------------------------------------------------------------
 
 
-  def new
-    respond_with( @team = Team.new )
-  end
-  # ---------------------------------------------------------------------------
-
-
-  def create
-    respond_with( @team = Team.create(params[:team]) )
-  end
-  # ---------------------------------------------------------------------------
-
-
-  def edit
+  # Returns a JSON-encoded hash of the specified row data.
+  # The keys of the Hash are the attributes as string.
+  #
+  # === Params:
+  # - id: the Team.id
+  #
+  def show
     respond_with( @team = Team.find(params[:id]) )
-  end
-  # ---------------------------------------------------------------------------
-
-
-  def update
-    @team = UserTraining.find(params[:id])
-    @team.update_attributes(params[:team])
-    respond_with( @team )
   end
   # ---------------------------------------------------------------------------
 

@@ -12,34 +12,42 @@ Goggles::Application.routes.draw do
       devise_scope :user do
         get "sessions/create"
         get "sessions/destroy"
-
-        resource :team do
-          member do
-            get 'count_meetings'
-            get 'count_results'
-            get 'count_details'
-          end
-        end
-        resources :exercises              #, only: 'json_list'
-        resources :trainings              #, only: 'json_list'
-        resources :user_trainings         #, only: 'json_list'
-        resources :user_training_stories
-
-        get    "news_feed/for_user/:id",        to: "news_feeds#for_user",  as: "news_feed_for_user"
-        post   "news_feed/create/:news_feed",   to: "news_feeds#create",    as: "news_feed_create"
-        put    "news_feed/read/:id",            to: "news_feeds#read",      as: "news_feed_read"
-        delete "news_feed/destroy/:id",         to: "news_feeds#destroy",   as: "news_feed_destroy"
-
-        # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
-        # resources :exercises do
-          # member do
-            # get 'json_list', controller: :exercises, action: :json_list
-          # end
-          # collection do
-            # get 'json_list', controller: :exercises, action: :json_list
-          # end
-        # end
       end
+
+      get    "team/count_meetings",         to: "teams#count_meetings",   as: "team_count_meetings"
+      get    "team/count_results",          to: "teams#count_results",    as: "team_count_results"
+      get    "team/count_details",          to: "teams#count_details",    as: "team_count_details"
+      get    "teams/index",                 to: "teams#index",            as: "teams"
+      get    "teams/show",                  to: "teams#show",             as: "team_show"
+
+      get    "meetings/index",              to: "meetings#index",         as: "meetings"
+      get    "meetings/show",               to: "meetings#show",          as: "meeting_show"
+      
+      # TODO swimmers index+show as in meeting
+      # TODO shared examples for api controllers w/ index & show actions
+
+      # TODO meeting details w/ subentities in dedicated controllers?
+
+      # TODO extract and enlist only the actual routes used:
+      resources :exercises              #, only: 'json_list'
+      resources :trainings              #, only: 'json_list'
+      resources :user_trainings         #, only: 'json_list'
+      resources :user_training_stories
+
+      get    "news_feed/for_user/:id",      to: "news_feeds#for_user",  as: "news_feed_for_user"
+      post   "news_feed/create/:news_feed", to: "news_feeds#create",    as: "news_feed_create"
+      put    "news_feed/read/:id",          to: "news_feeds#read",      as: "news_feed_read"
+      delete "news_feed/destroy/:id",       to: "news_feeds#destroy",   as: "news_feed_destroy"
+
+      # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
+      # resources :exercises do
+        # member do
+          # get 'json_list', controller: :exercises, action: :json_list
+        # end
+        # collection do
+          # get 'json_list', controller: :exercises, action: :json_list
+        # end
+      # end
     end
   end
 
