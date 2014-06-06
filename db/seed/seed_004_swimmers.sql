@@ -2,9 +2,11 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION; 
 
 -- Ripulisco i risultati del CSI
+-- DELETE FROM passages;
 -- DELETE FROM meeting_team_scores;
 -- DELETE FROM meeting_relay_results;
 -- DELETE FROM meeting_individual_results;
+-- DELETE FROM meeting_entries;
 -- DELETE FROM meeting_programs;
 -- DELETE FROM badges;
 -- DELETE FROM team_affiliations;
