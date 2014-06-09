@@ -1,13 +1,10 @@
 #
 # R/O RESTful API controller
 #
-class Api::V1::MeetingsController < ApplicationController
+class Api::V1::SwimmersController < ApplicationController
 
   respond_to :json
 
-  # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!
-  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   before_filter :ensure_format
   # ---------------------------------------------------------------------------
 
@@ -17,22 +14,17 @@ class Api::V1::MeetingsController < ApplicationController
   # The keys of the Hash are the attributes as string.
   #
   # === Additional params:
-  # - 'code_like': a matching (sub)string for the Meeting.code
-  # - 'header_year': the exact Meeting.header_year
+  # - ':complete_name_like':    a matching (sub)string for the Swimmer.complete_name
   #
   def index
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:code_like]                           
-      filter = "%#{params[:code_like]}%"
-      @teams = Meeting.where{ code.like filter }.order(:header_date)
+    if params[:complete_name_like]                           
+      filter = "%#{params[:complete_name_like]}%"
+      @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name)
     else
-      @teams = Meeting.order(:header_date)
+      @swimmers = Swimmer.order(:complete_name)
     end
-    if params[:header_year]
-      filter = params[:header_year].to_i
-      @teams = @teams.where{ header_year == filter }.order(:header_date)
-    end
-    respond_with( @teams )
+    respond_with( @swimmers )
   end
 
 
@@ -40,10 +32,10 @@ class Api::V1::MeetingsController < ApplicationController
   # The keys of the Hash are the attributes as string.
   #
   # === Params:
-  # - id: the Meeting.id
+  # - id: the Swimmer.id
   #
   def show
-    respond_with( @team = Meeting.find(params[:id]) )
+    respond_with( @swimmer = Swimmer.find(params[:id]) )
   end
   # ---------------------------------------------------------------------------
 

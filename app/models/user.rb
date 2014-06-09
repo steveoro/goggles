@@ -49,6 +49,24 @@ class User < ActiveRecord::Base
                   :outstanding_standard_score_bias,
                   :coach_level_type, :swimmer_level_type
 
+  # Clears swimmer association before account removal.
+  before_destroy do |user|
+    if user.has_associated_swimmer?
+      user.set_associated_swimmer( nil )
+    end
+    # TODO Does it really need to clear automatically user_id from:
+    UserTraining.where( user_id: user.id ).update_all( user_id: nil )
+    # - UserTraining
+    # - UserTrainingStory
+    # - UserSwimmerConfirmation
+    # - UserResult
+    # - UserAchievement
+    # - SwimmingPoolReview
+    # - Passage
+    # - Article ?
+    # - Achievement ?
+  end
+
 
   #-- -------------------------------------------------------------------------
   # Base methods:

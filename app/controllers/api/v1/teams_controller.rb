@@ -1,5 +1,5 @@
 #
-# RESTful API controller
+# R/O RESTful API controller
 #
 class Api::V1::TeamsController < ApplicationController
 

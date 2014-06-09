@@ -14,40 +14,35 @@ Goggles::Application.routes.draw do
         get "sessions/destroy"
       end
 
-      get    "team/count_meetings",         to: "teams#count_meetings",   as: "team_count_meetings"
-      get    "team/count_results",          to: "teams#count_results",    as: "team_count_results"
-      get    "team/count_details",          to: "teams#count_details",    as: "team_count_details"
-      get    "teams/index",                 to: "teams#index",            as: "teams"
-      get    "teams/show",                  to: "teams#show",             as: "team_show"
+      get    "exercises/index",             to: "exercises#index",        as: "exercises"
+      get    "exercises/show/:id",          to: "exercises#show",         as: "exercise_show"
+      # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
+      # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
 
       get    "meetings/index",              to: "meetings#index",         as: "meetings"
-      get    "meetings/show",               to: "meetings#show",          as: "meeting_show"
-      
-      # TODO swimmers index+show as in meeting
-      # TODO shared examples for api controllers w/ index & show actions
-
-      # TODO meeting details w/ subentities in dedicated controllers?
-
-      # TODO extract and enlist only the actual routes used:
-      resources :exercises              #, only: 'json_list'
-      resources :trainings              #, only: 'json_list'
-      resources :user_trainings         #, only: 'json_list'
-      resources :user_training_stories
+      get    "meetings/show/:id",           to: "meetings#show",          as: "meeting_show"
+      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
 
       get    "news_feed/for_user/:id",      to: "news_feeds#for_user",  as: "news_feed_for_user"
       post   "news_feed/create/:news_feed", to: "news_feeds#create",    as: "news_feed_create"
       put    "news_feed/read/:id",          to: "news_feeds#read",      as: "news_feed_read"
       delete "news_feed/destroy/:id",       to: "news_feeds#destroy",   as: "news_feed_destroy"
 
-      # TODO Extract/duplicate all API-actions into API-dedicated routes, like this one:
-      # resources :exercises do
-        # member do
-          # get 'json_list', controller: :exercises, action: :json_list
-        # end
-        # collection do
-          # get 'json_list', controller: :exercises, action: :json_list
-        # end
-      # end
+      get    "swimmers/index",              to: "swimmers#index",         as: "swimmers"
+      get    "swimmers/show/:id",           to: "swimmers#show",          as: "swimmer_show"
+
+      get    "team/count_meetings/:id",     to: "teams#count_meetings",   as: "team_count_meetings"
+      get    "team/count_results/:id",      to: "teams#count_results",    as: "team_count_results"
+      get    "team/count_details/:id",      to: "teams#count_details",    as: "team_count_details"
+      get    "teams/index",                 to: "teams#index",            as: "teams"
+      get    "teams/show/:id",              to: "teams#show",             as: "team_show"
+
+      get    "trainings/index",             to: "trainings#index",        as: "trainings"
+      get    "trainings/show/:id",          to: "trainings#show",         as: "trainings_show"
+
+      # TODO extract and enlist only the actual routes used:
+      resources :user_trainings         #, only: 'json_list'
+      resources :user_training_stories
     end
   end
 
@@ -102,7 +97,7 @@ Goggles::Application.routes.draw do
 
       # === Exercises ===
       resources :exercises
-      get  "exercises/json_list",               to: "exercises#json_list"
+      get  "exercises/json_list",               to: "exercises#json_list",              as: "exercises_json_list"
       get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 
       # === Meeting Calendars ===

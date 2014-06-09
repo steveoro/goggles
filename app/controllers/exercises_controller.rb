@@ -64,8 +64,8 @@ class ExercisesController < ApplicationController
       end
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
       if params[:training_step_type_id].to_i > 0    # Filter by :training_step_type_id when specified:
-        training_step_čode = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
-        result = Exercise.belongs_to_training_step_code( training_step_čode )
+        training_step_code = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
+        result = Exercise.belongs_to_training_step_code( training_step_code )
       else
         result = Exercise.all
       end
