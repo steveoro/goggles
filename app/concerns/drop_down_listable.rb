@@ -1,10 +1,18 @@
 require 'active_support'
 
 
-# This module adds the capability to display an "includee" Model as a filtered drop-down
-# list, by adding a method that returns an Array that can be subsequently a& easily
-# decorated as a drop-down list by using a single HTML select statement.
-#
+=begin
+  
+= DropDownListable
+
+  - version:  4.00.111.20140304
+  - author:   Steve A.
+
+  Concern that adds the capability to display an "includee" Model as a filtered drop-down
+  list, by adding a method that returns an Array that can be subsequently a& easily
+  decorated as a drop-down list by using a single HTML select statement.
+
+=end
 module DropDownListable
   extend ActiveSupport::Concern
 
@@ -17,17 +25,34 @@ module DropDownListable
     def get_label_symbol
       :i18n_short
     end
-    # --------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
-# TODO ADD support for verbosity level as in exercise_row.rb & exercise.rb
-# (& remove overrides from those methods)
-
-# Leega: TODO Manage support for multiple drop down order. 
-# I saw 'sort_by' predicate but don't understand how to use it to modify order-
-# I mean sorting should be independent from the filed returned
+# TODO Add support for multiple drop down order. 
+# TODO Add support for custom sort order. 
 
     # Returns an Array of 2-items Arrays, in which each item is the ID of the record
-    # and the other is assumed to be its label
+    # (the key) and the other is assumed to be its displayable label.
+    #
+    # The resulting array has graphically this structure:
+    #
+    #    [
+    #      [ label_1, key_1 ],
+    #      [ label_2, key_2 ],
+    #      [ label_3, key_3 ],
+    #      ...
+    #      [ label_N, key_N ]
+    #    ]
+    #
+    # Each item of the resulting array is itself an array composed of tuples of
+    # (label, key).
+    #
+    # This is perfect to pass as it is as a parameter for the options of a drop-down
+    # html-select helper (hence, the method name).
+    #
+    # The default sorting of the resulting array is based upon the standard
+    # alphanumeric sorting for each label item (which is array element #0
+    # of each item in the resulting array).
     #
     # == Parameters:
     #
@@ -36,7 +61,8 @@ module DropDownListable
     # - label_sym: the key symbol/column name (defaults to self.get_label_symbol())
     #
     # == Returns:
-    # - an Array of arrays having the structure [ [label1, key_value1], [label2, key_value2], ... ]
+    # - an Array of arrays having the structure described above:
+    #      [ [label1, key_value1], [label2, key_value2], ... ]
     #
     def to_dropdown( where_condition = nil, key_sym = :id, label_sym = get_label_symbol() )
       self.where( where_condition ).map{ |row|
@@ -44,5 +70,6 @@ module DropDownListable
       }.sort_by{ |ar| ar[0] }
     end
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

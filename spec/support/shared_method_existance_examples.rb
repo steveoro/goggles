@@ -21,11 +21,20 @@ end
 # -----------------------------------------------------------------------------
 
 
-shared_examples_for "(the existance of a method returning non-empty strings)" do |method_name_array|
+shared_examples_for "(the existance of a method returning strings)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
-    it "##{method_name} returns a non empty string" do
+    it "##{method_name} returns a String" do
       expect( subject.send(method_name.to_sym) ).to be_an_instance_of( String )
+    end
+  end
+end
+
+
+shared_examples_for "(the existance of a method returning non-empty strings)" do |method_name_array|
+  it_behaves_like "(the existance of a method returning strings)", method_name_array
+  method_name_array.each do |method_name|
+    it "##{method_name} returns a non empty string" do
       expect( subject.send(method_name.to_sym) ).not_to eq( '' )
     end
   end
@@ -33,15 +42,44 @@ end
 
 
 shared_examples_for "(the existance of a method returning non-empty and non-? strings)" do |method_name_array|
-  it_behaves_like "(the existance of a method)", method_name_array
+  it_behaves_like "(the existance of a method returning non-empty strings)", method_name_array
   method_name_array.each do |method_name|
-    it "##{method_name} returns a non empty string" do
-      expect( subject.send(method_name.to_sym) ).to be_an_instance_of( String )
-      expect( subject.send(method_name.to_sym) ).not_to eq( '' )
+    it "##{method_name} returns a non-'?' String" do
       expect( subject.send(method_name.to_sym) ).not_to eq( '?' )
     end
   end
 end
+
+
+shared_examples_for "(the existance of a method returning a non-empty Hash)" do |method_name_array|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    it "##{method_name} returns a non empty Hash" do
+      result = subject.send(method_name.to_sym)
+      expect( result ).to be_an_instance_of( Hash )
+      expect( result.keys ).to be_an_instance_of( Array )
+      expect( result.keys.size ).to be > 0
+      expect( result.values ).to be_an_instance_of( Array )
+      expect( result.values.size ).to be > 0
+    end
+  end
+end
+
+
+shared_examples_for "(the existance of a method returning a boolean value)" do |method_name_array|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    it "##{method_name} returns a non empty Hash" do
+      result = subject.send(method_name.to_sym)
+      if result
+        expect( result == true ).to be_true
+      else
+        expect( result == false ).to be_true
+      end
+    end
+  end
+end
+# -----------------------------------------------------------------------------
 
 
 shared_examples_for "(the existance of a method with parameters, returning String or nil)" do |method_name_array, parameter|

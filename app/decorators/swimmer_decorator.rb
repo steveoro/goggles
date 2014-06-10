@@ -1,3 +1,14 @@
+=begin
+
+= SwimmerDecorator
+
+  - version:  4.00.313.20140610
+  - author:   Steve A.
+
+  Decorator for the Swimmer model.
+  Contains all presentation-logic centered methods.
+
+=end
 class SwimmerDecorator < Draper::Decorator
   delegate_all
 

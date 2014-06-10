@@ -96,7 +96,6 @@ Goggles::Application.routes.draw do
       get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
 
       # === Exercises ===
-      resources :exercises
       get  "exercises/json_list",               to: "exercises#json_list",              as: "exercises_json_list"
       get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 

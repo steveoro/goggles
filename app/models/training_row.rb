@@ -67,8 +67,8 @@ class TrainingRow < ActiveRecord::Base
   def initialize( attributes = nil, options = {} )
     super( attributes, options )
     self.part_order = 1 unless self.part_order.to_i != 0
-    self.times = 1 unless self.times.to_i > 0
-    self.distance = 50 unless self.distance.to_i > 0
+    self.times = 1      unless self.times.to_i > 0
+    self.distance = 50  unless self.distance.to_i > 0
   end
 
 
@@ -194,7 +194,7 @@ class TrainingRow < ActiveRecord::Base
   # Retrieves the Exercise full description
   def get_exercise_full( precomputed_distance = 0 )
     precomputed_distance = compute_distance() if ( precomputed_distance == 0)
-    self.exercise ? self.exercise.get_full_name( precomputed_distance ) : ''
+    exercise ? ExerciseDecorator.decorate( exercise ).get_full_name( precomputed_distance ) : ''
   end
   # ----------------------------------------------------------------------------
 
@@ -207,14 +207,14 @@ class TrainingRow < ActiveRecord::Base
   # during ouput formatting or in other parent entities.
   #
   def compute_distance
-    if self.exercise_rows
-      self.exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-        actual_row_distance = row.compute_displayable_distance( self.distance ).to_i
-        actual_row_distance = self.distance if actual_row_distance == 0
+    if exercise_rows
+      exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        actual_row_distance = ExerciseRowDecorator.decorate( row ).compute_displayable_distance( distance ).to_i
+        actual_row_distance = distance if actual_row_distance == 0
         sum + actual_row_distance
       }
     else
-      self.distance
+      distance
     end
   end
   # ---------------------------------------------------------------------------
@@ -235,9 +235,9 @@ class TrainingRow < ActiveRecord::Base
   # during ouput formatting or in other parent entities.
   #
   #
-  def compute_total_seconds
+  def compute_total_seconds                         # Compute row sum excluding row.pause
     exercise_seconds = self.exercise_rows.inject(0){ |sum, row|
-      sum + row.compute_total_seconds()             # Compute row sum excluding row.pause
+      sum + ExerciseRowDecorator.decorate( row ).compute_total_seconds()
     }
     if ( exercise_seconds == 0 )                    # Zero esteemed duration (excluding pause)?
       if ( self.start_and_rest > 0 )

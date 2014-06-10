@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'date'
 require 'common/format'
+require 'json'
 
 
 class ExercisesController < ApplicationController
@@ -12,10 +13,12 @@ class ExercisesController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # AJAX-only action to retrieve a filtered row list or a single instance.
+  # (was: API vers. 0.1)
   #
   # TODO [Steve, 20140122] [Future DEV] Move this action to an API-dedicated controller.
   #
@@ -46,22 +49,10 @@ class ExercisesController < ApplicationController
       if params[:id].to_i > 0                       # Set up and check parameters:
         result_row = Exercise.find_by_id( params[:id].to_i )
         render(
-          json: {
-            label:                  result_row.get_full_name(
-              0,
-              Exercise.get_default_verbosity_for_label_symbol(),
-              current_user.get_preferred_swimmer_level_id()
-            ),
-            value:                  result_row.id,
-            tot_distance:           result_row.compute_total_distance(),
-            tot_secs:               result_row.compute_total_seconds(),
-            is_arm_aux_allowed:     result_row.is_arm_aux_allowed(),
-            is_kick_aux_allowed:    result_row.is_kick_aux_allowed(),
-            is_body_aux_allowed:    result_row.is_body_aux_allowed(),
-            is_breath_aux_allowed:  result_row.is_breath_aux_allowed()
-          }
+          json: ExerciseDecorator.decorate( result_row ).drop_down_attrs( current_user )
         ) and return
       end
+
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
       if params[:training_step_type_id].to_i > 0    # Filter by :training_step_type_id when specified:
         training_step_code = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
@@ -73,31 +64,18 @@ class ExercisesController < ApplicationController
       if params[:query] && ( params[:query].to_s != QUERY_WILDCHAR )
 # DEBUG
 #        logger.debug "result (before filtering): #{result.inspect}"
-        result = result.find_all { |row|
-          row.get_full_name(
+        result = result.find_all { |exercise|
+          ExerciseDecorator.decorate( exercise ).get_full_name(
             0,
             Exercise.get_default_verbosity_for_label_symbol(),
-            current_user.get_preferred_swimmer_level_id()
+            ( current_user ? current_user.get_preferred_swimmer_level_id() : 0 )
           ) =~ Regexp.new( params[:query], true )
         }
       end
                                                     # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
       if result.respond_to?( :map ) && result.respond_to?( :sort_by )
-        result_array = result.map{ |row|
-          {
-            label:                  row.get_full_name(
-              0,
-              Exercise.get_default_verbosity_for_label_symbol(),
-              current_user.get_preferred_swimmer_level_id()
-            ),
-            value:                  row.id,
-            tot_distance:           row.compute_total_distance(),
-            tot_secs:               row.compute_total_seconds(),
-            is_arm_aux_allowed:     row.is_arm_aux_allowed(),
-            is_kick_aux_allowed:    row.is_kick_aux_allowed(),
-            is_body_aux_allowed:    row.is_body_aux_allowed(),
-            is_breath_aux_allowed:  row.is_breath_aux_allowed()
-          }
+        result_array = result.map{ |exercise|
+          ExerciseDecorator.decorate( exercise ).drop_down_attrs( current_user )
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else
         result_array = []
@@ -108,73 +86,9 @@ class ExercisesController < ApplicationController
       render( json: result_array )
     else
       flash[:info] = I18n.t(:invalid_action_request)
-      redirect_to( exercises_path() ) and return
+      redirect_to( root_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
-
-
-  # Index/Search action.
-  #
-  def index
-# DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-  end
-
-
-  # Show action.
-  #
-  def show
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-  end
-  # ---------------------------------------------------------------------------
-
-
-  # New action.
-  #
-  def new
-  end
-
-
-  # Create action (POST only).
-  #
-  def create
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.create() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-  end
-  # ---------------------------------------------------------------------------
-
-
-  # Edit action.
-  #
-  def edit
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.edit() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-  end
-
-
-  # Update action.
-  #
-  def update
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.update() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-  end
-  # ---------------------------------------------------------------------------
-
-
-  # Destroy action.
-  #
-  def destroy
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.destroy() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-  end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

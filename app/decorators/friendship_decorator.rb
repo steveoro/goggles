@@ -1,3 +1,14 @@
+=begin
+
+= FriendshipDecorator
+
+  - version:  4.00.313.20140610
+  - author:   Steve A.
+
+  Decorator for the Friendship model (inherited by Amistad gem).
+  Contains all presentation-logic centered methods.
+
+=end
 class FriendshipDecorator < Draper::Decorator
   delegate_all
 

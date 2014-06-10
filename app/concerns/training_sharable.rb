@@ -1,7 +1,7 @@
 require 'active_support'
 
 =begin
-  
+
 = TrainingSharable
 
   - version:  4.00.297.20140531
