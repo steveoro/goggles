@@ -91,13 +91,13 @@
                 %pre= "#{ Timing.to_formatted_start_and_rest( group_s_r ) } #{ Timing.to_formatted_pause( group_pause ) }"
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= "(+) #{fields[3] }"
+              %pre= "(+)#{ fields[3] }"
             .span9.goggles-training
               %pre= fields[4]
         - else                                      # Same old group?
           .row-fluid
             .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= "(+) #{fields[3] }"
+              %pre= "(+)#{ fields[3] }"
             .span9.goggles-training
               %pre= fields[4]
       - else                                        # Not in a group?

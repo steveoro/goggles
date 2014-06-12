@@ -600,7 +600,7 @@ it:
     chose_min_swimmer_level: "Scegli il liv. min. nuotatore"
     chose_max_swimmer_level: "Scegli il liv. max. nuotatore"
     chose_exercise: "Scegli quale esercizio"
-    type_something: "Digita qualcosa..."
+    type_something: "Digita 'AEROB' oppure <Spazio>+<Maiusc>+<Tasto Giu'>..."
     leave_zero_to_ignore: "Lascia a zero per ignorare questa componente"
     training: "Allenamento"
     total_meters: "Totale mt."

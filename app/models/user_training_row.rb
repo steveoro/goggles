@@ -229,22 +229,22 @@ class UserTrainingRow < ActiveRecord::Base
   #
   #
   def compute_total_seconds
-    exercise_seconds = self.exercise_rows.inject(0){ |sum, row|
-      sum + row.compute_total_seconds()             # Compute row sum excluding row.pause
+    exercise_seconds = exercise_rows.inject(0){ |sum, row|
+      sum + ExerciseRowDecorator.decorate( row ).compute_total_seconds() # (default: exclude pause from sum)
     }
-    if ( exercise_seconds == 0 )                    # Zero esteemed duration (excluding pause)?
-      if ( self.start_and_rest > 0 )
-        self.start_and_rest * self.times + (self.pause * self.times)
-      elsif ( self.distance > 0 )
+    if ( exercise_seconds == 0 )                    # Found zero esteemed duration (excluding pause) ?
+      if ( start_and_rest > 0 )
+        start_and_rest * times + (pause * times)
+      elsif ( distance > 0 )
         # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
-        ( self.pause + (self.distance.to_f * 1.2).to_i ) * self.times
+        ( pause + (distance.to_f * 1.2).to_i ) * times
       else
-        self.pause * self.times
+        pause * times
       end
     else
-      self.exercise_rows.inject(0){ |sum, row|
-        sum + row.compute_total_seconds( true )     # Re-compute row sum including row.pause
-      } * self.times + (self.pause * self.times)
+      exercise_rows.inject(0){ |sum, row|
+        sum + ExerciseRowDecorator.decorate( row ).compute_total_seconds(true) # (include pause)
+      } * times + (pause * times)
     end
   end
   # ---------------------------------------------------------------------------

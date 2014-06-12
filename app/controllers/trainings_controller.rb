@@ -55,9 +55,7 @@ class TrainingsController < ApplicationController
   def create
     if request.post?
       @training = Training.new( params[:training] )
-                                                    # Set the owner for all the records:
-      @training.user_id = current_user.id
-      @training.training_rows.each{|row| row.user_id = current_user.id }
+      @training.user_id = current_user.id           # Set the owner for all the records
 
       if @training.save
         flash[:info] = I18n.t('trainings.training_created')

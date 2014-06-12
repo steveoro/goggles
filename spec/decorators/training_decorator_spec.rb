@@ -5,11 +5,19 @@ describe TrainingDecorator do
   before :each do
     rnd_id = ((rand * 10) % Training.count).to_i + 1
     @random_seed_row = Training.find_by_id( rnd_id )
-    expect( @random_seed_row ).not_to be_nil
     @decorated_instance = TrainingDecorator.decorate( @random_seed_row )
   end
 
   subject { @decorated_instance }
+
+  it "has a not nil source row" do
+    expect( @random_seed_row ).not_to be_nil
+  end
+  it "has a valid source row" do
+    expect( @random_seed_row ).to be_valid
+  end
+
+
 
   # context "[implemented methods]" do
     # it_behaves_like "(the existance of a method returning a non-empty Hash)", [ 

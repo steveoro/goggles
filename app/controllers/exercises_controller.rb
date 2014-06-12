@@ -67,7 +67,7 @@ class ExercisesController < ApplicationController
         result = result.find_all { |exercise|
           ExerciseDecorator.decorate( exercise ).get_full_name(
             0,
-            Exercise.get_default_verbosity_for_label_symbol(),
+            :short,
             ( current_user ? current_user.get_preferred_swimmer_level_id() : 0 )
           ) =~ Regexp.new( params[:query], true )
         }

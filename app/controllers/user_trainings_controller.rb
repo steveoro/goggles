@@ -142,7 +142,6 @@ class UserTrainingsController < ApplicationController
     if request.post?
       @user_training = UserTraining.new( params[:user_training] )
       @user_training.user_id = current_user.id      # Set the owner for all the records
-      @user_training.user_training_rows.each{|row| row.user_id = current_user.id }
 
       if @user_training.save
         flash[:info] = I18n.t('trainings.training_created')
