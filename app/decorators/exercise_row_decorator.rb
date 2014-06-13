@@ -101,8 +101,7 @@ class ExerciseRowDecorator < Draper::Decorator
     if start_and_rest > 0
       start_and_rest
     else                                            # Compute expected duration based on distance:
-      # FIXME Quick'n'dirty esteem: 1.2 mt/sec
-      result = ( distance > 0 ? (distance.to_f * 1.2).to_i : 0 )
+      result = ExerciseRow.esteem_time_in_seconds( distance )
       with_pause ? result + pause : result
     end
   end

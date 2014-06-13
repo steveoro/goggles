@@ -3,12 +3,7 @@ require 'spec_helper'
 
 describe Exercise do
   context "[a well formed instance]" do
-    before :each do
-      rnd_id = ((rand * 500) % Exercise.count).to_i + 1
-      @random_seed_row = Exercise.find_by_id( rnd_id )
-    end
-
-    subject { @random_seed_row }
+    subject { Exercise.find_by_id( ((rand * 500) % Exercise.count).to_i + 1 ) }
 
     it_behaves_like "DropDownListable"
 
@@ -40,12 +35,12 @@ describe Exercise do
   #++
 
   describe "self.belongs_to_training_step_code()" do
-    before :each do
-      let(:result) { subject.class.belongs_to_training_step_code(1) }
-    end
-    it "returns a scoped relation" do
-      expect( result ).to be_an_instance_of( ActiveRecord::Relation )
-    end
+    let(:result) { subject.class.belongs_to_training_step_code(1) }
+
+    it "returns a scoped enumberable of rows" do
+      expect( result ).to be_a_kind_of( Enumerable )
+      result.each { |row| expect( row ).to be_a_kind_of( Exercise ) }
+    end 
   end
   #-- -------------------------------------------------------------------------
   #++

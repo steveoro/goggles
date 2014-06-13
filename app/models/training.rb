@@ -79,7 +79,8 @@ class Training < ActiveRecord::Base
       sum + ( row.compute_distance().to_i * row.times )
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes the esteemed total seconds of expected duration for this training
   #
@@ -96,8 +97,8 @@ class Training < ActiveRecord::Base
       sum + row.compute_total_seconds()
     }
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Scans all the training rows with groups and builds up a custom hash containing
   # as keys the group_id and as value another hash having all group fields as data members,
@@ -125,7 +126,8 @@ class Training < ActiveRecord::Base
     }
     group_list
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private

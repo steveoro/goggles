@@ -29,17 +29,8 @@ class ExercisesController < ApplicationController
   # - <tt>:query</tt> => a string match for the verbose description; when equal to '%', the parameter is ignored.
   #
   # == Returns:
-  # A JSON array of Hash instances having the structure:
-  # <tt>{
-  #       label: row.get_full_name,
-  #       :value => row.id,
-  #       :tot_distance => row.compute_total_distance(),
-  #       :tot_secs => row.compute_total_seconds(),
-  #       :is_arm_aux_allowed => row.is_arm_aux_allowed(),
-  #       :is_kick_aux_allowed => row.is_kick_aux_allowed(),
-  #       :is_body_aux_allowed => row.is_body_aux_allowed(),
-  #       :is_breath_aux_allowed => row.is_breath_aux_allowed(),
-  #     }</tt>. 
+  # A JSON array of Hash instances having the structure returned by
+  # ExerciseDecorator#.drop_down_attrs( current_user )
   #
   def json_list
     if request.xhr? || request.format.json?         # Make sure the request is an AJAX or JSON one

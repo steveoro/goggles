@@ -11,7 +11,7 @@ describe UserTraining do
       expect( subject ).to be_valid
     end
 
-    context "[general methods]" do
+    context "[implemented methods]" do
       it_behaves_like( "(the existance of a method)",
         [
           :get_full_name, 

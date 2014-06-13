@@ -236,8 +236,7 @@ class UserTrainingRow < ActiveRecord::Base
       if ( start_and_rest > 0 )
         start_and_rest * times + (pause * times)
       elsif ( distance > 0 )
-        # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
-        ( pause + (distance.to_f * 1.2).to_i ) * times
+        ( pause + ExerciseRow.esteem_time_in_seconds(distance) ) * times
       else
         pause * times
       end

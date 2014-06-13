@@ -3,12 +3,7 @@ require 'spec_helper'
 
 describe ExerciseRow do
   context "[a well formed instance]" do
-    before :each do
-      rnd_id = ((rand * 500) % ExerciseRow.count).to_i + 1
-      @random_seed_row = ExerciseRow.find_by_id( rnd_id )
-    end
-
-    subject { @random_seed_row }
+    subject { ExerciseRow.find_by_id( ((rand * 500) % ExerciseRow.count).to_i + 1 ) }
 
     it_behaves_like "DropDownListable"
 
@@ -23,8 +18,8 @@ describe ExerciseRow do
     context "[general methods]" do
       it_behaves_like( "(the existance of a class method)",
         [
-          :belongs_to_training_step_code,
-          :get_label_symbol
+          :get_label_symbol,
+          :esteem_time_in_seconds
         ]
       )
       it_behaves_like( "(the existance of a method)",
@@ -35,6 +30,19 @@ describe ExerciseRow do
     end
     #-- -----------------------------------------------------------------------
     #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "self.esteem_time_in_seconds()" do
+    let(:result) { subject.class.esteem_time_in_seconds( (rand * 1000 % 50).to_i * 50 ) }
+
+    it "returns an integer number of seconds" do
+      expect( result ).to be_a_kind_of( Integer )
+    end 
+    it "returns a zero or a positive number of seconds" do
+      expect( result ).to be >= 0
+    end 
   end
   #-- -------------------------------------------------------------------------
   #++

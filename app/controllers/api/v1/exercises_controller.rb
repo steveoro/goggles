@@ -36,7 +36,7 @@ class Api::V1::ExercisesController < ApplicationController
       @exercises = @exercises.find_all do |row|
         row.get_full_name(
           0,
-          Exercise.get_default_verbosity_for_label_symbol(),
+          :short,
           (current_user ? current_user.get_preferred_swimmer_level_id() : 0)
         ) =~ Regexp.new( params[:description_like], true )
       end

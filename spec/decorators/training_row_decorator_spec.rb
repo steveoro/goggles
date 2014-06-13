@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 
-describe TrainingDecorator do
+describe TrainingRowDecorator do
   before :each do
-    @random_seed_row = Training.find_by_id( ((rand * 10) % Training.count).to_i + 1 )
-    @decorated_instance = TrainingDecorator.decorate( @random_seed_row )
+    @random_seed_row = TrainingRow.find_by_id( ((rand * 100) % TrainingRow.count).to_i + 1 )
+    @decorated_instance = TrainingRowDecorator.decorate( @random_seed_row )
   end
 
   subject { @decorated_instance }
@@ -20,10 +20,6 @@ describe TrainingDecorator do
 #  context "[implemented methods]" do
 #    it_behaves_like "(the existance of a method)", [ 
 #      :build_group_list_hash
-#    ]
-#    it_behaves_like "(the existance of a method returning numeric values)", [ 
-#      :compute_total_distance,
-#      :compute_total_seconds
 #    ]
 #  end
   #-- -------------------------------------------------------------------------

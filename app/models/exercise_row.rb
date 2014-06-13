@@ -46,7 +46,7 @@ class ExerciseRow < ActiveRecord::Base
   # - show_also_ordinal_part: true to show also the part_order; defaults to false.
   #
   def get_full_name( total_distance = 0, verbose_level = :short, swimmer_level_type_id = 0, show_also_ordinal_part = false )
-    ExerciseRowDecorator.decorate( self ).get_full_name( total_distance, verbose_level.to_sym, swimmer_level_type_id, separator )
+    ExerciseRowDecorator.decorate( self ).get_full_name( total_distance, verbose_level, swimmer_level_type_id, show_also_ordinal_part )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -59,6 +59,16 @@ class ExerciseRow < ActiveRecord::Base
   #
   def self.get_label_symbol
     :get_full_name
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns the esteemed total seconds of execution for the specified distance
+  # in metres.
+  #
+  def self.esteem_time_in_seconds( distance_in_mt, mt_per_sec = 1.2 )
+    distance_in_mt.to_i > 0 ? (distance_in_mt.to_f * mt_per_sec).to_i : 0
   end
   #-- -------------------------------------------------------------------------
   #++

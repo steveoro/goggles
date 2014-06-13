@@ -12,7 +12,4 @@
 class TrainingDecorator < Draper::Decorator
   delegate_all
 
-
-  #-- -------------------------------------------------------------------------
-  #++
 end

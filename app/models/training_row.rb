@@ -70,11 +70,8 @@ class TrainingRow < ActiveRecord::Base
     self.times = 1      unless self.times.to_i > 0
     self.distance = 50  unless self.distance.to_i > 0
   end
-
-
-  # ---------------------------------------------------------------------------
-  # Base methods:
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Computes a compact description for this data
@@ -96,7 +93,8 @@ class TrainingRow < ActiveRecord::Base
       get_formatted_pause
     ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Similarly to get_full_name, computes the description for the name associated with
   # this row, storing each main group of data as items of a single array result.
@@ -136,7 +134,8 @@ class TrainingRow < ActiveRecord::Base
       ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
     ]
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Label symbol corresponding to either a column name or a model method to be used
@@ -144,7 +143,8 @@ class TrainingRow < ActiveRecord::Base
   def self.get_label_symbol
     :get_full_name
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Getter for the formatted string of the +pause+ value
   def get_formatted_pause
@@ -155,7 +155,8 @@ class TrainingRow < ActiveRecord::Base
   def get_formatted_start_and_rest
     Timing.to_formatted_start_and_rest( start_and_rest)
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Computes a description for the group data fields
@@ -183,7 +184,8 @@ class TrainingRow < ActiveRecord::Base
   def get_formatted_group_start_and_rest
     group_start_and_rest > 0 ? " S-R: #{Timing.to_s(0, group_start_and_rest)}" : ''
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Retrieves the Training step type short name
@@ -196,7 +198,8 @@ class TrainingRow < ActiveRecord::Base
     precomputed_distance = compute_distance() if ( precomputed_distance == 0)
     exercise ? ExerciseDecorator.decorate( exercise ).get_full_name( precomputed_distance ) : ''
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes the value of the total distance in metres for this training row
   # For this method, the result value does *NOT* include the times multiplier.
@@ -217,8 +220,8 @@ class TrainingRow < ActiveRecord::Base
       distance
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes the esteemed total seconds of expected duration for this training row.
   # For this method, the result value *ALREADY* includes the times multiplier.
@@ -243,8 +246,7 @@ class TrainingRow < ActiveRecord::Base
       if ( start_and_rest > 0 )
         start_and_rest * times + (pause * times)
       elsif ( distance > 0 )
-        # FIXME Quick'n'dirty esteem: 1.2 mt/sec; does not report duration in case distance is not set
-        ( pause + (distance.to_f * 1.2).to_i ) * times
+        ( pause + ExerciseRow.esteem_time_in_seconds(distance) ) * times
       else
         pause * times
       end
@@ -254,8 +256,8 @@ class TrainingRow < ActiveRecord::Base
       } * times + (pause * times)
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Generic group-oriented implementation for <tt>compute_total_seconds</tt>
   # for a bunch of TrainingRow instances.
@@ -292,8 +294,8 @@ class TrainingRow < ActiveRecord::Base
       group_secs + (group_pause * group_times)
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
   
   # Leega
   # Aux retrieval. Check for base_movement compatibility demanded to CRUD
@@ -354,4 +356,6 @@ class TrainingRow < ActiveRecord::Base
       breath_aux_type.i18n_description
     end
   end  
+  #-- -------------------------------------------------------------------------
+  #++
 end
