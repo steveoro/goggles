@@ -202,7 +202,7 @@ class UserTrainingRow < ActiveRecord::Base
   def compute_distance
     if exercise_rows
       exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-        actual_row_distance = ExerciseRowDecorator.decorate( row ).compute_displayable_distance( distance ).to_i
+        actual_row_distance = row.compute_displayable_distance( distance ).to_i
         actual_row_distance = distance if actual_row_distance == 0
         sum + actual_row_distance
       }
@@ -230,7 +230,7 @@ class UserTrainingRow < ActiveRecord::Base
   #
   def compute_total_seconds
     exercise_seconds = exercise_rows.inject(0){ |sum, row|
-      sum + ExerciseRowDecorator.decorate( row ).compute_total_seconds() # (default: exclude pause from sum)
+      sum + row.compute_total_seconds()             # (default: exclude pause from sum)
     }
     if ( exercise_seconds == 0 )                    # Found zero esteemed duration (excluding pause) ?
       if ( start_and_rest > 0 )
@@ -242,7 +242,7 @@ class UserTrainingRow < ActiveRecord::Base
       end
     else
       exercise_rows.inject(0){ |sum, row|
-        sum + ExerciseRowDecorator.decorate( row ).compute_total_seconds(true) # (include pause)
+        sum + row.compute_total_seconds(true)       # (include pause)
       } * times + (pause * times)
     end
   end

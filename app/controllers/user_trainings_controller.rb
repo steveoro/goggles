@@ -29,13 +29,13 @@ class UserTrainingsController < ApplicationController
   # == Returns:
   # A JSON array of Hash instances having the structure:
   # <tt>{
-  #       label: row.get_full_name,
+  #       label: #get_full_name(),
   #       :value => row.id,
-  #       :tot_distance => row.compute_total_distance(),
-  #       :tot_secs => row.compute_total_seconds(),
-  #       :user_name: => row.get_user_name(),
-  #       :swimmer_level_type_description: => row.get_swimmer_level_type( :i18n_description ),
-  #       :swimmer_level_type_alternate => row.get_swimmer_level_type( :i18n_alternate )
+  #       :tot_distance => #compute_total_distance(),
+  #       :tot_secs => #compute_total_seconds(),
+  #       :user_name: => #get_user_name(),
+  #       :swimmer_level_type_description: => #get_swimmer_level_type( :i18n_description ),
+  #       :swimmer_level_type_alternate => #get_swimmer_level_type( :i18n_alternate )
   #     }</tt>. 
   #
   def json_list
@@ -52,8 +52,8 @@ class UserTrainingsController < ApplicationController
             tot_distance: result_row.compute_total_distance(),
             tot_secs: result_row.compute_total_seconds(),
             user_name: result_row.get_user_name(),
-            swimmer_level_type_description: result_row.get_swimmer_level_type( :i18n_description ),
-            swimmer_level_type_alternate: result_row.get_swimmer_level_type( :i18n_alternate )
+            swimmer_level_type_description: UserTrainingDecorator.decorate( result_row ).get_swimmer_level_type( :i18n_description ),
+            swimmer_level_type_alternate: UserTrainingDecorator.decorate( result_row ).get_swimmer_level_type( :i18n_alternate )
           }
         ) and return
       end
@@ -78,8 +78,8 @@ class UserTrainingsController < ApplicationController
             tot_distance: row.compute_total_distance(),
             tot_secs: row.compute_total_seconds(),
             user_name: row.get_user_name(),
-            swimmer_level_type_description: row.get_swimmer_level_type( :i18n_description ),
-            swimmer_level_type_alternate: row.get_swimmer_level_type( :i18n_alternate )
+            swimmer_level_type_description: UserTrainingDecorator.decorate( row ).get_swimmer_level_type( :i18n_description ),
+            swimmer_level_type_alternate: UserTrainingDecorator.decorate( row ).get_swimmer_level_type( :i18n_alternate )
           }
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else
@@ -219,25 +219,24 @@ class UserTrainingsController < ApplicationController
 #    logger.debug( "\r\n\r\n---[ #{controller_name()}.printout ] ---" ) if DEBUG_VERBOSE
 #    logger.debug( "Params: #{params.inspect()}" ) if DEBUG_VERBOSE
     user_training_id = params[:id].to_i
-    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
-    unless ( @user_training )
+    user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    unless ( user_training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
     end
-    @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
-    @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
+    user_training_rows = user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
+    title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", user_training.description )
 
                                                     # == OPTIONS setup + RENDERING phase ==
-    filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{@user_training.description}" ) + '.pdf'
+    filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{user_training.description}" ) + '.pdf'
     options = {
-      :report_title         => @title,
+      :report_title         => title,
       :meta_info_subject    => 'training model printout',
-      :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, #{@user_training.description}",
-      :header_row           => @user_training,
-      :detail_rows          => @user_training_rows
+      :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, #{user_training.description}",
+      :header_row           => UserTrainingDecorator.decorate( user_training ),
+      :detail_rows          => UserTrainingRowDecorator.decorate_collection( user_training_rows )
     }
-                                                    # == Render layout & send data:
-    send_data(
+    send_data(                                      # == Render layout & send data:
         TrainingPrintoutLayout.render( options ),
         :type => 'application/pdf',
         :filename => filename

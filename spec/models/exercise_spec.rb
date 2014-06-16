@@ -15,7 +15,7 @@ describe Exercise do
     end
 
 
-    context "[general methods]" do
+    context "[implemented methods]" do
       it_behaves_like( "(the existance of a class method)",
         [
           :belongs_to_training_step_code,
@@ -25,6 +25,20 @@ describe Exercise do
       it_behaves_like( "(the existance of a method)",
         [
           :get_full_name
+        ]
+      )
+      it_behaves_like( "(the existance of a method returning a boolean value)",
+        [
+          :is_arm_aux_allowed,
+          :is_kick_aux_allowed,
+          :is_body_aux_allowed,
+          :is_breath_aux_allowed
+        ]
+      )
+      it_behaves_like( "(the existance of a method returning numeric values)",
+        [ 
+          :compute_total_distance,
+          :compute_total_seconds
         ]
       )
     end
@@ -41,6 +55,20 @@ describe Exercise do
       expect( result ).to be_a_kind_of( Enumerable )
       result.each { |row| expect( row ).to be_a_kind_of( Exercise ) }
     end 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#compute_total_distance" do
+    it "returns 0 or a positive number" do
+      expect( subject.compute_total_distance ).to be >= 0
+    end
+  end
+
+  describe "#compute_total_seconds" do
+    it "returns 0 or a positive number" do
+      expect( subject.compute_total_seconds ).to be >= 0
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

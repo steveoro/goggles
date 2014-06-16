@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.175.20140210
+- version:  4.00.317.20140616
 - author:   Steve A.
 
 =end
@@ -35,22 +35,22 @@ class TrainingPrintoutLayout
   #
   def self.render( options = { label_hash: {} } )
     options[:pdf_format] = {
-      :page_size      => 'A4',
-      :page_layout    => :portrait,
+      page_size:      'A4',
+      page_layout:    :portrait,
                                                     # Document margins (in PS pts):
-      :left_margin    => 30,
-      :right_margin   => 30,
-      :top_margin     => 40,
-      :bottom_margin  => 40,
+      left_margin:    30,
+      right_margin:   30,
+      top_margin:     40,
+      bottom_margin:  40,
                                                     # Metadata:
-      :info => {
-        :Title        => options[ :report_title ],
-        :Author       => AUTHOR_STRING,
-        :Subject      => options[ :meta_info_subject ],
-        :Keywords     => options[ :meta_info_keywords ],
-        :Creator      => AUTHOR_STRING,
-        :Producer     => "Prawn @ AgeX5 framework",
-        :CreationDate => Time.now
+      info: {
+        Title:        options[ :report_title ],
+        Author:       AUTHOR_STRING,
+        Subject:      options[ :meta_info_subject ],
+        Keywords:     options[ :meta_info_keywords ],
+        Creator:      AUTHOR_STRING,
+        Producer:     "Prawn @ AgeX5 framework",
+        CreationDate: Time.now
       }
     }
 
@@ -105,15 +105,15 @@ class TrainingPrintoutLayout
   # page headers and footers.
   #
   def self.build_report_body( pdf, options )
-    training = options[:header_row]                 # Table data & column names adjustments:
-    detail_rows = options[:detail_rows]
+    header_row = options[:header_row]               # (ASSERT: *already* decorated)
+    detail_rows = options[:detail_rows]             # (ASSERT: *already* decorated)
                                                     # We must compose data for the table as an Array of Arrays:
     detail_table_array = []
     group_array = nil
     group_subtable_array = []
     curr_group_id = old_group_id = 0
-    group_list_hash = training.build_group_list_hash()
-    
+    group_list_hash = header_row.build_group_list_hash()
+
     column_widths = [
        20,                                          # part order
        60,                                          # training_step_type description
@@ -123,35 +123,38 @@ class TrainingPrintoutLayout
       330                                           # full exercise description
     ]
 
-    detail_rows.each{ |training_row|
-      fields = training_row.to_array()              # Extract main data chunks from current row
+    detail_rows.each{ |detail_row|
                                                     # Detect if current row belongs to a grouping
-      if (training_row.group_id > 0) &&
-         group_list_hash.has_key?( training_row.group_id )
-        curr_group_id = training_row.group_id       # Store group id for future reference
+      if (detail_row.group_id > 0) &&
+         group_list_hash.has_key?( detail_row.group_id )
+        curr_group_id = detail_row.group_id       # Store group id for future reference
                                                     # For each context, format accordingly:
         if old_group_id != curr_group_id            # Start of new group?
           old_group_id = curr_group_id
-          group_hash = group_list_hash[ training_row.group_id ]
+          group_hash = group_list_hash[ detail_row.group_id ]
+
           tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
           tot_group_timing = Timing.to_minute_string( tot_group_secs )
+
           group_pause = Timing.to_formatted_pause( group_hash[:pause].to_i )
           group_s_r   = Timing.to_formatted_start_and_rest( group_hash[:start_and_rest].to_i )
+          # Prepares an array formattable as a PDF table, containing a single whole group:
           group_array = [
-            fields[0],                              # part order
-            fields[1],                              # training_step_type description
+            detail_row.get_formatted_part_order(),
+            detail_row.get_training_step_type_short(),
             "(#{tot_group_timing})",                # esteemed tot. duration in secs
                                                     # grouping multiplier + intervals:
             "#{group_hash[:times] }x #{group_pause} #{group_s_r}"
           ]
-          group_subtable_array << [ fields[3], fields[4] ]
-        else                                        # Same old group?
-          group_subtable_array << [ fields[3], fields[4] ]
         end
+        group_subtable_array << [
+          detail_row.get_formatted_distance(),
+          detail_row.get_row_description()
+        ]
       else                                          # Not in a group?
         curr_group_id = 0
         if group_array                              # Do we have a group to add to the table data?
-          sub_table = pdf.make_table( group_subtable_array, :cell_style => {:size=>8}, position: :left ) do
+          sub_table = pdf.make_table( group_subtable_array, cell_style: {size: 8}, position: :left ) do
             cells.column(0).align = :right
             cells.column(0).width = column_widths[4]
             cells.column(0).borders = [:top, :bottom, :left]
@@ -159,19 +162,19 @@ class TrainingPrintoutLayout
             cells.column(1).borders = [:top, :bottom, :right]
             cells.column(1).width = column_widths[5]
           end
-          group_array << { :content => sub_table, :colspan => 2 }
+          group_array << { content: sub_table, colspan: 2 }
           detail_table_array << group_array
           group_array = nil                         # Reset the group temp storage
           group_subtable_array = []
         end
                                                     # Proceed adding current data row:
         detail_table_array << [
-          fields[0],
-          fields[1],
-          "(#{ Timing.to_minute_string(fields[2]) })",
+          detail_row.get_formatted_part_order(),
+          detail_row.get_training_step_type_short(),
+          "(#{ Timing.to_minute_string( detail_row.get_formatted_total_seconds() ) })",
           '',
-          fields[3],
-          fields[4]
+          detail_row.get_formatted_distance(),
+          detail_row.get_row_description()
         ]
       end
     }

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 
-describe TrainingDecorator do
+describe UserTrainingDecorator do
   before :each do
-    @random_seed_row = Training.find_by_id( ((rand * 10) % Training.count).to_i + 1 )
-    @decorated_instance = TrainingDecorator.decorate( @random_seed_row )
+    @random_seed_row = UserTraining.find_by_id( ((rand * 10) % UserTraining.count).to_i + 1 )
+    @decorated_instance = UserTrainingDecorator.decorate( @random_seed_row )
   end
 
   subject { @decorated_instance }
@@ -18,7 +18,7 @@ describe TrainingDecorator do
 
 
   context "[implemented methods]" do
-    it_behaves_like( "(the existance of a method returning non-empty strings)",
+    it_behaves_like( "(the existance of a method returning strings)",
       [
         :get_swimmer_level_type
       ]

@@ -35,10 +35,9 @@ class ExerciseDecorator < Draper::Decorator
   def drop_down_attrs( current_user = nil )
     {
       label:                  get_full_name(
-        0,
-        :short,
-        ( current_user ? current_user.get_preferred_swimmer_level_id() : 0 )
-      ),
+                                0, :short,
+                                ( current_user ? current_user.get_preferred_swimmer_level_id() : 0 )
+                              ),
       value:                  id,
       tot_distance:           compute_total_distance(),
       tot_secs:               compute_total_seconds(),
@@ -64,81 +63,6 @@ class ExerciseDecorator < Draper::Decorator
     exercise_rows.sort_by_part_order.collect{ |row|
       ExerciseRowDecorator.decorate( row ).get_full_name( total_distance, verbose_level.to_sym, swimmer_level_type_id )
     }.join(separator)
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Computes the total distance in metres for this exercise.
-  # (May return 0 in most cases.)
-  #
-  def compute_total_distance
-    if exercise_rows
-      exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-        actual_row_distance = ExerciseRowDecorator.decorate( row ).compute_displayable_distance(0).to_i
-        sum + actual_row_distance
-      }
-    else
-      0
-    end
-  end
-
-  # Computes the esteemed total seconds of expected duration for this exercise
-  # (May return 0 in most cases.)
-  #
-  def compute_total_seconds
-    if exercise_rows
-      exercise_rows.sort_by_part_order.inject(0){ |sum, row|
-        sum + ExerciseRowDecorator.decorate( row ).compute_total_seconds()
-      }
-    else
-      0
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # returns true if any of the exercise rows has a base_movement
-  # that allows this aux entity type.
-  #
-  def is_arm_aux_allowed
-    if base_movements
-      base_movements.any?{ |base_movement| base_movement.is_arm_aux_allowed }
-    else
-      false
-    end
-  end
-
-  # returns true if any of the exercise rows has a base_movement
-  # that allows this aux entity type.
-  #
-  def is_kick_aux_allowed
-    if base_movements
-      base_movements.any?{ |base_movement| base_movement.is_kick_aux_allowed }
-    else
-      false
-    end
-  end
-
-  # returns true if any of the exercise rows has a base_movement
-  # that allows this aux entity type.
-  #
-  def is_body_aux_allowed
-    if base_movements
-      base_movements.any?{ |base_movement| base_movement.is_body_aux_allowed }
-    else
-      false
-    end
-  end
-
-  # returns true if any of the exercise rows has a base_movement
-  # that allows this aux entity type.
-  #
-  def is_breath_aux_allowed
-    if base_movements
-      base_movements.any?{ |base_movement| base_movement.is_breath_aux_allowed }
-    else
-      false
-    end
   end
   #-- -------------------------------------------------------------------------
   #++

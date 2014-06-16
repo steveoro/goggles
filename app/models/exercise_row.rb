@@ -72,4 +72,50 @@ class ExerciseRow < ActiveRecord::Base
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Returns a displayable (string) computed distance for this exercise row.
+  # Parameter total_distance is assumed to refer to the external (training row) distance
+  # set by the entity that is referring this exercise row.
+  #
+  # If the total "external" distance is specified but the percentage of this row is 100%,
+  # an empty string is returned, assuming the total_distance will be displayed elsewhere
+  # (since it is externally provided).
+  #
+  # Note that if the member distance is set to this row, it will take
+  # precedence over the computed distance (obtained applying the percentage field
+  # to the "external" total_distance).
+  #
+  def compute_displayable_distance( total_distance = 0 )
+# DEBUG
+#    puts "-- compute_displayable_distance( #{total_distance.inspect} ) called."
+    if ( distance > 0 )
+      distance.to_s
+    else
+      if ( total_distance > 0 )
+        ( percentage < 100 ? "#{sprintf("%02s", total_distance * percentage / 100)}" : '' )
+      else
+        ( percentage < 100 ? "#{sprintf("%02s", self.percentage)}%" : '' )
+      end
+    end
+  end
+
+
+  # Returns the esteemed total seconds of expected duration for this exercise row.
+  #
+  # Field start_and_rest has the precedence on everything else.
+  # When the internal row distance is set, it returns an esteemed duration (based on a slow-pace).
+  #
+  # In case the distance or the start_and_rest member are not set,
+  # returns 0 or the pause member, if with_pause parameter is set to true .
+  #
+  def compute_total_seconds( with_pause = false )
+    if start_and_rest > 0
+      start_and_rest
+    else                                            # Compute expected duration based on distance:
+      result = ExerciseRow.esteem_time_in_seconds( distance )
+      with_pause ? result + pause : result
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -55,4 +55,79 @@ class Exercise < ActiveRecord::Base
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Computes the total distance in metres for this exercise.
+  # (May return 0 in most cases.)
+  #
+  def compute_total_distance
+    if exercise_rows
+      exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        actual_row_distance = row.compute_displayable_distance(0).to_i
+        sum + actual_row_distance
+      }
+    else
+      0
+    end
+  end
+
+  # Computes the esteemed total seconds of expected duration for this exercise
+  # (May return 0 in most cases.)
+  #
+  def compute_total_seconds
+    if exercise_rows
+      exercise_rows.sort_by_part_order.inject(0){ |sum, row|
+        sum + row.compute_total_seconds()
+      }
+    else
+      0
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_arm_aux_allowed
+    if base_movements
+      base_movements.any?{ |base_movement| base_movement.is_arm_aux_allowed }
+    else
+      false
+    end
+  end
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_kick_aux_allowed
+    if base_movements
+      base_movements.any?{ |base_movement| base_movement.is_kick_aux_allowed }
+    else
+      false
+    end
+  end
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_body_aux_allowed
+    if base_movements
+      base_movements.any?{ |base_movement| base_movement.is_body_aux_allowed }
+    else
+      false
+    end
+  end
+
+  # returns true if any of the exercise rows has a base_movement
+  # that allows this aux entity type.
+  #
+  def is_breath_aux_allowed
+    if base_movements
+      base_movements.any?{ |base_movement| base_movement.is_breath_aux_allowed }
+    else
+      false
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

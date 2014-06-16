@@ -16,40 +16,44 @@ describe TrainingRow do
     context "[implemented methods]" do
       it_behaves_like( "(the existance of a class method)",
         [
-# FIXME where it is used?
-          :get_label_symbol,
-# TODO CHECK better:
           :compute_total_seconds
-        ]
-      )
-
-      it_behaves_like( "(the existance of a method)",
-        [
-          :get_full_name,
-# TODO CHECK better:
-          :to_array,
-          :get_formatted_pause,
-          :get_formatted_start_and_rest,
-          :get_training_group_text,
-          :get_formatted_group_pause,
-          :get_formatted_group_start_and_rest,
-          :get_training_step_type_short,
-          :get_exercise_full,
-          :get_arm_aux_type_name,
-          :get_kick_aux_type_name,
-          :get_body_aux_type_name,
-          :get_breath_aux_type_name
         ]
       )
       it_behaves_like( "(the existance of a method returning numeric values)",
         [ 
+          :full_row_distance,
           :compute_distance,
+          :full_row_seconds,
           :compute_total_seconds
         ]
       )
     end
     #-- -----------------------------------------------------------------------
     #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "self.compute_total_seconds()" do
+    it "returns 0 or a positive number" do
+      training_rows = Training.find_by_id( ((rand * 10) % Training.count).to_i + 1 ).training_rows
+      expect( subject.class.compute_total_seconds( training_rows ) ).to be >= 0
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  [ 
+    :full_row_distance,
+    :compute_distance,
+    :full_row_seconds,
+    :compute_total_seconds
+  ].each do |method_name|
+    describe "##{method_name}" do
+      it "returns 0 or a positive number" do
+        expect( subject.send(method_name) ).to be >= 0
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

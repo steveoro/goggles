@@ -19,22 +19,16 @@ describe ExerciseDecorator do
 
 
   context "[implemented methods]" do
-    it_behaves_like "(the existance of a method returning a non-empty Hash)", [ 
-      :drop_down_attrs
-    ]
-    it_behaves_like "(the existance of a method returning non-empty strings)", [ 
-      :get_full_name
-    ]
-    it_behaves_like "(the existance of a method returning a boolean value)", [
-      :is_arm_aux_allowed,
-      :is_kick_aux_allowed,
-      :is_body_aux_allowed,
-      :is_breath_aux_allowed
-    ]
-    it_behaves_like "(the existance of a method returning numeric values)", [ 
-      :compute_total_distance,
-      :compute_total_seconds
-    ]
+    it_behaves_like( "(the existance of a method returning a non-empty Hash)",
+      [ 
+        :drop_down_attrs
+      ]
+    )
+    it_behaves_like( "(the existance of a method returning non-empty strings)",
+      [ 
+        :get_full_name
+      ]
+    )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -46,20 +40,6 @@ describe ExerciseDecorator do
         :label, :value, :tot_distance, :tot_secs, :is_arm_aux_allowed,
         :is_kick_aux_allowed, :is_body_aux_allowed, :is_breath_aux_allowed
       )
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  describe "#compute_total_distance" do
-    it "returns 0 or a positive number" do
-      expect( subject.compute_total_distance ).to be >= 0
-    end
-  end
-
-  describe "#compute_total_seconds" do
-    it "returns 0 or a positive number" do
-      expect( subject.compute_total_seconds ).to be >= 0
     end
   end
   #-- -------------------------------------------------------------------------
