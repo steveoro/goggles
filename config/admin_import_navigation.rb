@@ -39,7 +39,7 @@ SimpleNavigation::Configuration.run do |navigation|
     # options - can be used to specify attributes that will be included in the rendered navigation item (e.g. id, class etc.)
     #           some special options that can be set:
     #           :if - Specifies a proc to call to determine if the item should
-    #                 be rendered (e.g. <tt>:if => Proc.new { current_user.admin? }</tt>). The
+    #                 be rendered (e.g. <tt>if: Proc.new { current_user.admin? }</tt>). The
     #                 proc should evaluate to a true or false value and is evaluated in the context of the view.
     #           :unless - Specifies a proc to call to determine if the item should not
     #                     be rendered (e.g. <tt>:unless => Proc.new { current_user.admin? }</tt>). The
@@ -54,7 +54,7 @@ SimpleNavigation::Configuration.run do |navigation|
     # 'data_import.fin_starting_list'
     # 'data_import.csi_starting_list'
     # 'data_import.csi_results'
-    primary.item :key_separator1,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator1,         '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
 
 
     # Add an item which has a sub navigation (same params, but with block)
@@ -66,23 +66,23 @@ SimpleNavigation::Configuration.run do |navigation|
     # Conditions are part of the options. They are evaluated in the context of the views,
     # thus you can use all the methods and vars you have available in the views.
 
-    primary.item :key_separator1,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item( :key_admin,         content_tag(:span, t('admin_index.sections') ), '#', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator1,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item( :key_admin,         content_tag(:span, t('admin_index.sections') ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
       lev2_nav.item :key_admin_index,        content_tag(:span, t('admin_index.title') ), goggles_admin_index_path()
-      lev2_nav.item :key_separator21,        content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator21,        content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_dashboard,    content_tag(:span, t('admin.actions.dashboard.menu') ), rails_admin_path()
       lev2_nav.item :key_admin_data_import,  content_tag(:span, t('admin_import.menu') ), goggles_di_step1_status_path()
       lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor' ), dj_mon_path()
     end
 
-    primary.item :key_separator2,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator2,         '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
     primary.item :key_home,               t('home'), root_path() #, options
 
-    primary.item :key_separator3,         '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator3,         '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
 
-    primary.item :key_edit_admin,         (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), :if => Proc.new { admin_signed_in? }
-    primary.item :key_log_out,            content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), method: Devise.sign_out_via, :if => Proc.new { admin_signed_in? }
+    primary.item :key_edit_admin,         (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), if: Proc.new { admin_signed_in? }
+    primary.item :key_log_out,            content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), method: Devise.sign_out_via, if: Proc.new { admin_signed_in? }
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

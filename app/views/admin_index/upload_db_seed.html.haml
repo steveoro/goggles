@@ -5,19 +5,19 @@
 .row.span11
 
 .row.span11
-  = form_tag( :upload_db_seed, :multipart => true, :class => 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+  = form_tag( :upload_db_seed, :multipart => true, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
     .control-group
-      = label_tag( :datafile, t('admin_index.upload_db_seed'), :for => :datafile, :class => 'control-label' )
+      = label_tag( :datafile, t('admin_index.upload_db_seed'), :for => :datafile, class: 'control-label' )
       .controls
         = file_field_tag( :datafile )
     .control-group
-      = label_tag( :store_to_seed_dir, t('admin_index.store_to_seed_dir'), :for => :store_to_seed_dir, :class => 'control-label' )
+      = label_tag( :store_to_seed_dir, t('admin_index.store_to_seed_dir'), :for => :store_to_seed_dir, class: 'control-label' )
       .controls
         = check_box_tag( :store_to_seed_dir, '1', true )
 
     .control-group
       .controls
-        = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+        = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
         %span(id='loadingIndicator' hidden='true')
           = image_tag( 'indicator.gif' )
 

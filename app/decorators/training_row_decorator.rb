@@ -5,7 +5,7 @@
   - version:  4.00.317.20140616
   - author:   Steve A.
 
-  Decorator for the TrainingRow model.
+  Decorator usable for both TrainingRow & UserTrainingRow models.
   Contains all presentation-logic centered methods.
 
 =end
@@ -59,16 +59,6 @@ class TrainingRowDecorator < Draper::Decorator
       get_formatted_distance(),
       get_row_description()
     ]
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-# FIXME I don't really think we need a #get_label_symbol override for this model!
-  # Label symbol corresponding to either a column name or a model method to be used
-  # mainly in generating verbose lists.
-  def self.get_label_symbol
-    :get_full_name
   end
   #-- -------------------------------------------------------------------------
   #++

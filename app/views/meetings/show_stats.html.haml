@@ -5,7 +5,7 @@
     = link_to(t(:ranking), meeting_show_ranking_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
   %li.active
     = link_to(t(:stats), '#')
-  %li{ :class => (@preselected_team_id ? '' : 'disabled') }
+  %li{ class: (@preselected_team_id ? '' : 'disabled') }
     = link_to(t(:team_results), meeting_show_team_results_path(:id=>@meeting.id, :team_id=>@preselected_team_id))
   %li.disabled
     = link_to(t(:swimmer_results), '#')

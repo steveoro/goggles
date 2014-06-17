@@ -39,7 +39,7 @@ SimpleNavigation::Configuration.run do |navigation|
     # options - can be used to specify attributes that will be included in the rendered navigation item (e.g. id, class etc.)
     #           some special options that can be set:
     #           :if - Specifies a proc to call to determine if the item should
-    #                 be rendered (e.g. <tt>:if => Proc.new { current_user.admin? }</tt>). The
+    #                 be rendered (e.g. <tt>if: Proc.new { current_user.admin? }</tt>). The
     #                 proc should evaluate to a true or false value and is evaluated in the context of the view.
     #           :unless - Specifies a proc to call to determine if the item should not
     #                     be rendered (e.g. <tt>:unless => Proc.new { current_user.admin? }</tt>). The
@@ -49,27 +49,27 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
-    primary.item :key_separator1,             '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item( :key_sections,              content_tag(:span, t('admin_index.sections') ), '#', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator1,             '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item( :key_sections,              content_tag(:span, t('admin_index.sections') ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
       lev2_nav.item :key_admin_index,         content_tag(:span, t('admin_index.title') ), goggles_admin_index_path()
-      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_dashboard,     content_tag(:span, t('admin.actions.dashboard.menu') ), rails_admin_path()
       lev2_nav.item :key_admin_data_import,   content_tag(:span, t('admin_import.menu') ), goggles_di_step1_status_path()
       lev2_nav.item :key_admin_dj_mon,        content_tag(:span, 'DJ Monitor' ), dj_mon_path()
     end
 
-    primary.item( :key_commands,              content_tag(:span, t('admin_index.commands') ), '#', :if => Proc.new { admin_signed_in? }
+    primary.item( :key_commands,              content_tag(:span, t('admin_index.commands') ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
       lev2_nav.item :key_admin_db_structure,  content_tag(:span, t('admin_index.db_structure') ), db_structure_path()
-      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_delete_meeting,content_tag(:span, t('admin_index.delete_whole_meeting') ), select_meeting_path()
       lev2_nav.item :key_admin_merge_teams,   content_tag(:span, t('admin_index.merge_teams') ), select_teams_path()
-      lev2_nav.item :key_separator22,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator22,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_run_rake,      content_tag(:span, t('admin_index.execute_rake_command') ),   run_rake_path()
       lev2_nav.item :key_admin_run_bundle,    content_tag(:span, t('admin_index.execute_bundle_command') ), run_bundle_path()
       lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ), run_sudo_command_path()
-      lev2_nav.item :key_separator23,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator23,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_run_upgrade,   content_tag(:span, t('admin_index.execute_source_upgrade') ), run_src_upgrade_path()
       lev2_nav.item :key_admin_restart_apache,content_tag(:span, t('admin_index.restart_apache') ), restart_apache_path()
     end
@@ -77,21 +77,21 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :key_updownload,             t('admin_index.up_download'), '#' do |lev2_nav|
       lev2_nav.item :key_upload_db_dump,      t('admin_index.upload_db_dump'), upload_db_dump_path()
       lev2_nav.item :key_upload_db_seed,      t('admin_index.upload_db_seed'), upload_db_seed_path()
-      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_download_db,         t('admin_index.download_db_dump'), download_db_dump_path()
       lev2_nav.item :key_download_teams,      t('admin_index.download_team_dump'), download_team_dump_path()
       lev2_nav.item :key_download_swimmers,   t('admin_index.download_swimmer_dump'), download_swimmer_dump_path()
       lev2_nav.item :key_download_users,      t('admin_index.download_user_dump'), download_user_dump_path()
-      lev2_nav.item :key_separator21,         content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_cleanup_output,      t('admin_index.cleanup_output_dir'), cleanup_output_dir_path()
     end
 
-    primary.item :key_separator3,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
     primary.item :key_home,           t('home'), root_path() #, options
 
-    primary.item :key_separator4,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item :key_edit_admin,     (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), :if => Proc.new { admin_signed_in? }
-    primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), method: Devise.sign_out_via, :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator4,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item :key_edit_admin,     (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), if: Proc.new { admin_signed_in? }
+    primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), method: Devise.sign_out_via, if: Proc.new { admin_signed_in? }
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

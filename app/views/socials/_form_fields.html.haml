@@ -1,7 +1,7 @@
 - unless message_body.nil?
   .row-fluid
     .control-group.span3
-      = label_tag( :text_message, I18n.t('social.message_title') +':', :for => :text_message, :class => 'control-label' )
+      = label_tag( :text_message, I18n.t('social.message_title') +':', :for => :text_message, class: 'control-label' )
       .controls
         = text_area_tag( :text_message, message_body, class: 'input-xxlarge' )
 .row-fluid

@@ -45,42 +45,22 @@ class UserTrainingsController < ApplicationController
       logger.debug "PARAMS: #{params.inspect}"
       if params[:id].to_i > 0                       # Set up and check parameters:
         result_row = UserTraining.find_by_id( params[:id].to_i )
-        render(
-          json: {
-            label: result_row.get_full_name(),
-            value: result_row.id,
-            tot_distance: result_row.compute_total_distance(),
-            tot_secs: result_row.compute_total_seconds(),
-            user_name: result_row.get_user_name(),
-            swimmer_level_type_description: UserTrainingDecorator.decorate( result_row ).get_swimmer_level_type( :i18n_description ),
-            swimmer_level_type_alternate: UserTrainingDecorator.decorate( result_row ).get_swimmer_level_type( :i18n_alternate )
-          }
-        ) and return
+        render( json: TrainingDecorator.decorate( result_row ).drop_down_attrs() ) and return
       end
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
-# FIXME / TODO MUST RETURN ONLY UserTraining rows belonging to friends of the current_user
-# TODO ADD friend filtering scope on UserTraining
-      result = UserTraining.where( user_id: current_user.id )
+      results = UserTraining.visible_to_user( current_user )
                                                     # Get the results and filter them even more using the query chars:
       if params[:query] && ( params[:query].to_s != QUERY_WILDCHAR )
 # DEBUG
-#        logger.debug "result (before filtering): #{result.inspect}"
-        result = result.find_all { |row|
+#        logger.debug "results (before filtering): #{results.inspect}"
+        results = results.find_all { |row|
           row.get_full_name() =~ Regexp.new( params[:query], true )
         }
       end
                                                     # Map the actual results to an array of custom objects (label with values, for drop-down list combo setup):
-      if result.respond_to?( :map ) && result.respond_to?( :sort_by )
-        result_array = result.map{ |row|
-          {
-            label: row.get_full_name(),
-            value: row.id,
-            tot_distance: row.compute_total_distance(),
-            tot_secs: row.compute_total_seconds(),
-            user_name: row.get_user_name(),
-            swimmer_level_type_description: UserTrainingDecorator.decorate( row ).get_swimmer_level_type( :i18n_description ),
-            swimmer_level_type_alternate: UserTrainingDecorator.decorate( row ).get_swimmer_level_type( :i18n_alternate )
-          }
+      if results.respond_to?( :map ) && results.respond_to?( :sort_by )
+        result_array = results.map{ |row|
+          TrainingDecorator.decorate( row ).drop_down_attrs()
         }.sort_by{ |item| item[:label] }            # Sort also the result array by the label itself
       else
         result_array = []
@@ -233,8 +213,8 @@ class UserTrainingsController < ApplicationController
       :report_title         => title,
       :meta_info_subject    => 'training model printout',
       :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, #{user_training.description}",
-      :header_row           => UserTrainingDecorator.decorate( user_training ),
-      :detail_rows          => UserTrainingRowDecorator.decorate_collection( user_training_rows )
+      :header_row           => TrainingDecorator.decorate( user_training ),
+      :detail_rows          => TrainingRowDecorator.decorate_collection( user_training_rows )
     }
     send_data(                                      # == Render layout & send data:
         TrainingPrintoutLayout.render( options ),

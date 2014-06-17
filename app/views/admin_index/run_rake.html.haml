@@ -5,15 +5,15 @@
 .row.span11
 
 .row.span11
-  = form_tag( :run_rake, :class => 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+  = form_tag( :run_rake, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
     .control-group
-      = label_tag( :rake_cmd, t('admin_index.rake_cmd'), :for => :rake_cmd, :class => 'control-label' )
+      = label_tag( :rake_cmd, t('admin_index.rake_cmd'), :for => :rake_cmd, class: 'control-label' )
       .controls
-        = text_field_tag( :rake_cmd, nil, :class => 'input-xxlarge' )
+        = text_field_tag( :rake_cmd, nil, class: 'input-xxlarge' )
   
     .control-group
       .controls
-        = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+        = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
         %span(id='loadingIndicator' hidden='true')
           = image_tag( 'indicator.gif' )
 

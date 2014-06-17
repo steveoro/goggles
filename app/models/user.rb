@@ -55,16 +55,24 @@ class User < ActiveRecord::Base
       user.set_associated_swimmer( nil )
     end
     # TODO Does it really need to clear automatically user_id from:
-    UserTraining.where( user_id: user.id ).update_all( user_id: nil )
     # - UserTraining
     # - UserTrainingStory
-    # - UserSwimmerConfirmation
+    # - UserSwimmerConfirmation ?
     # - UserResult
     # - UserAchievement
     # - SwimmingPoolReview
     # - Passage
     # - Article ?
     # - Achievement ?
+    UserTraining.where( user_id: user.id ).update_all( user_id: nil )
+    UserTrainingStory.where( user_id: user.id ).update_all( user_id: nil )
+    UserSwimmerConfirmation.where( user_id: user.id ).update_all( user_id: nil )
+    UserResult.where( user_id: user.id ).update_all( user_id: nil )
+    UserAchievement.where( user_id: user.id ).update_all( user_id: nil )
+    SwimmingPoolReview.where( user_id: user.id ).update_all( user_id: nil )
+    Passage.where( user_id: user.id ).update_all( user_id: nil )
+    Article.where( user_id: user.id ).update_all( user_id: nil )
+    Achievement.where( user_id: user.id ).update_all( user_id: nil )
   end
 
 

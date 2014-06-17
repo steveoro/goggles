@@ -5,15 +5,15 @@
 .row.span11
 
 .row.span11
-  = form_tag( :restart_apache, :class => 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+  = form_tag( :restart_apache, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
     .control-group
-      = label_tag( :password, t(:password), :for => :password, :class => 'control-label' )
+      = label_tag( :password, t(:password), :for => :password, class: 'control-label' )
       .controls
-        = password_field_tag( :password, nil, :class => 'input-large' )
+        = password_field_tag( :password, nil, class: 'input-large' )
 
     .control-group
       .controls
-        = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), :class => 'btn disabled'}, :class => 'btn' )
+        = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
         %span(id='loadingIndicator' hidden='true')
           = image_tag( 'indicator.gif' )
 

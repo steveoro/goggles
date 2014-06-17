@@ -1,30 +1,15 @@
 require 'spec_helper'
 
 
-describe TrainingRowDecorator do
-  before :each do
-    @random_seed_row = TrainingRow.find_by_id( ((rand * 100) % TrainingRow.count).to_i + 1 )
-    @decorated_instance = TrainingRowDecorator.decorate( @random_seed_row )
-  end
-
-  subject { @decorated_instance }
-
-  it "has a not nil source row" do
-    expect( @random_seed_row ).not_to be_nil
+shared_examples_for "(TrainingRowDecorator usable for both TrainingRow & UserTrainingRow)" do
+  it "has a not nil source row" do                  # (we check for nil to make sure the seed exists in the DB)
+    expect( @fixture ).not_to be_nil
   end
   it "has a valid source row" do
-    expect( @random_seed_row ).to be_valid
+    expect( @fixture ).to be_valid
   end
 
-
   context "[implemented methods]" do
-    it_behaves_like( "(the existance of a class method)",
-      [
-# FIXME where it is used?
-        :get_label_symbol
-      ]
-    )
-
     it_behaves_like( "(the existance of a method)",
       [
         :get_full_name,
@@ -53,6 +38,33 @@ describe TrainingRowDecorator do
       ]
     )
   end
-  #-- -----------------------------------------------------------------------
-  #++
 end
+#-- ---------------------------------------------------------------------------
+#++
+
+
+describe TrainingRowDecorator do
+
+  context "when used with TrainingRow" do
+    before :each do
+      @fixture = TrainingRow.find_by_id( ((rand * 100) % TrainingRow.count).to_i + 1 )
+      @decorated_instance = TrainingRowDecorator.decorate( @fixture )
+    end
+    subject { @decorated_instance }
+
+    it_behaves_like "(TrainingRowDecorator usable for both TrainingRow & UserTrainingRow)"
+  end
+
+
+  context "when used with UserTrainingRow" do
+    before :each do
+      @fixture = create( :user_training_row )
+      @decorated_instance = TrainingRowDecorator.decorate( @fixture )
+    end
+    subject { @decorated_instance }
+
+    it_behaves_like "(TrainingRowDecorator usable for both TrainingRow & UserTrainingRow)"
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++

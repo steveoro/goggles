@@ -17,7 +17,7 @@
               %b= event_type.i18n_short
             - @category_short_names.each do |cat_short_name|
               - ind_result = rec_hash.has_key?(event_type.id) ? rec_hash[ event_type.id ][ cat_short_name ] : nil
-              %td.goggles-td{ :class => (ind_result && (ind_result.swimmer_id == @preselected_swimmer_id) ? 'goggles-bakckground-highlight' : '') }
+              %td.goggles-td{ class: (ind_result && (ind_result.swimmer_id == @preselected_swimmer_id) ? 'goggles-bakckground-highlight' : '') }
                 - if ind_result
                   %p
                     %b= ind_result.get_timing

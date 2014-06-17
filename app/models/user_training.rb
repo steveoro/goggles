@@ -60,7 +60,7 @@ class UserTraining < ActiveRecord::Base
   # Computes the total distance in metres for this training.
   #
   def compute_total_distance
-    group_list = UserTrainingDecorator.decorate( self ).build_group_list_hash()
+    group_list = TrainingDecorator.decorate( self ).build_group_list_hash()
     group_distance = 0
 # FIXME USE NEW MOIZABLE FIELDS W/ IMPLEMENTED:
     group_list.each{ |group_id, group_hash|         # Sum the total distance for each group, scanning all datarows:
@@ -86,7 +86,7 @@ class UserTraining < ActiveRecord::Base
   # Computes the esteemed total seconds of expected duration for this training
   #
   def compute_total_seconds
-    group_list = UserTrainingDecorator.decorate( self ).build_group_list_hash()
+    group_list = TrainingDecorator.decorate( self ).build_group_list_hash()
     group_secs = 0
 # FIXME USE NEW MOIZABLE FIELDS W/ IMPLEMENTED:
     group_list.each{ |group_id, group_hash|         # Sum the total secs for each group:

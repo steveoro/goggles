@@ -5,7 +5,7 @@ describe Training do
   context "[a well formed instance]" do
     subject { Training.find_by_id( ((rand * 10) % Training.count).to_i + 1 ) }
 
-    it "is a not nil" do
+    it "is a not nil" do                            # (we check for nil to make sure the seed exists in the DB)
       expect( subject ).not_to be_nil
     end
     it "is a valid istance" do

@@ -16,7 +16,7 @@
     = link_to( user_training_duplicate_path(@user_training.id), method: :post, confirm: I18n.t(:are_you_sure, scope: [:netzke,:basepack,:grid_panel]) ) do
       = I18n.t(:duplicate)
 
-- decorated_training = UserTrainingDecorator.decorate( @user_training )
+- decorated_training = TrainingDecorator.decorate( @user_training )
 .accordion
   .accordion-group
     .accordion-heading.goggles-accordion-heading
@@ -67,7 +67,7 @@
     - curr_group_id = old_group_id = 0
     - group_list_hash = decorated_training.build_group_list_hash()
     - @user_training_rows.each do |user_training_row|
-      - decorated_user_training_row = UserTrainingRowDecorator.decorate( user_training_row )
+      - decorated_user_training_row = TrainingRowDecorator.decorate( user_training_row )
       - fields = decorated_user_training_row.to_array()
       - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id )
         - curr_group_id = user_training_row.group_id

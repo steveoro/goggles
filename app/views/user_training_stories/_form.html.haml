@@ -1,6 +1,6 @@
 .row-fluid.span12
 
-= simple_form_for @user_training_story, :html => { :class => 'form-horizontal' } do |f|
+= simple_form_for @user_training_story, :html => { class: 'form-horizontal' } do |f|
   .row-fluid.span11
     = f.input :swam_date, as: :string, label: I18n.t('user_training_stories.swam_date'), input_html: { class: 'swam_date input-small' }, placeholder: Date.today, hint: I18n.t('user_training_stories.swam_date_hint')
   .row-fluid.span11

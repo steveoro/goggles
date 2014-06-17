@@ -1,13 +1,10 @@
 require 'spec_helper'
 
 
-describe TrainingRow do
+describe UserTrainingRow do
   context "[a well formed instance]" do
-    subject { TrainingRow.find_by_id( ((rand * 100) % TrainingRow.count).to_i + 1 ) }
+    subject { create(:user_training_row) }
 
-    it "is a not nil" do                            # (we check for nil to make sure the seed exists in the DB)
-      expect( subject ).not_to be_nil
-    end
     it "is a valid istance" do
       expect( subject ).to be_valid
     end

@@ -48,6 +48,10 @@ describe UserTrainingsController do
         expect( response.body ).to include( 'swimmer_level_type_description' )
         expect( response.body ).to include( 'swimmer_level_type_alternate' )
       end
+
+      context "with two swimming-buddies sharing trainings" do
+        xit "returns only trainings available to the current user (TODO)"
+      end
     end
   end
   # ===========================================================================

@@ -39,7 +39,7 @@ SimpleNavigation::Configuration.run do |navigation|
     # options - can be used to specify attributes that will be included in the rendered navigation item (e.g. id, class etc.)
     #           some special options that can be set:
     #           :if - Specifies a proc to call to determine if the item should
-    #                 be rendered (e.g. <tt>:if => Proc.new { current_user.admin? }</tt>). The
+    #                 be rendered (e.g. <tt>if: Proc.new { current_user.admin? }</tt>). The
     #                 proc should evaluate to a true or false value and is evaluated in the context of the view.
     #           :unless - Specifies a proc to call to determine if the item should not
     #                     be rendered (e.g. <tt>:unless => Proc.new { current_user.admin? }</tt>). The
@@ -49,60 +49,60 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
-    primary.item( :key_home,          t('home'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_main,        t('main'),        root_path()
-      lev2_nav.item :key_about,       t('about'),       about_path()
-      lev2_nav.item :key_contact_us,  t('contact_us'),  contact_us_path()
+    primary.item( :key_home,                    t('home'), '#' ) do |lev2_nav|
+      lev2_nav.item( :key_main,                  t('main'),        root_path() )
+      lev2_nav.item( :key_about,                 t('about'),       about_path() )
+      lev2_nav.item( :key_contact_us,            t('contact_us'),  contact_us_path() )
+      lev2_nav.item( :key_separator1_0,         content_tag(:span, '' ), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+      lev2_nav.item( :key_user_radio_id,        t('radiography.id_card'), swimmer_radio_path( current_user.swimmer_id ), if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+      lev2_nav.item( :key_social_index,         t('social.menu_social_index'), socials_show_all_path(), if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
     end
 
-    primary.item( :key_meetings,      t('meetings'), '#' ) do |lev2_nav|
-
-      lev2_nav.item :key_meetings_index, t('search_meetings'), meetings_path(), :highlights_on => /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
-        lev3_nav.item :key_meeting_show_full, t('show_details'), '#', :highlights_on => %r(/meetings/\d/show_full)
+    primary.item( :key_meetings,                t('meetings'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_meetings_index,        t('search_meetings'), meetings_path(), highlights_on: /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
+        lev3_nav.item :key_meeting_show_full,   t('show_details'), '#', highlights_on: %r(/meetings/\d/show_full)
       end
-      lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), :highlights_on => %r(search_swimmer|prefilter_swimmer)
-      lev2_nav.item :key_meetings_search_team, t('meeting.search_by_team'), meetings_search_team_path(), :highlights_on => %r(search_team|prefilter_team)
+      lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), highlights_on: %r(search_swimmer|prefilter_swimmer)
+      lev2_nav.item :key_meetings_search_team,  t('meeting.search_by_team'), meetings_search_team_path(), highlights_on: %r(search_team|prefilter_team)
     end
 
-    primary.item( :key_results_rankings, t('results_and_rankings'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_rankings_index, t('search_rankings'), rankings_path(), :highlights_on => %r(/rankings) do |lev3_nav|
-        lev3_nav.item :key_rankings_show_full, t('show_details'), '#', :highlights_on => %r(/rankings/\d/show_full)
+    primary.item( :key_results_rankings,        t('results_and_rankings'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_rankings_index,        t('search_rankings'), rankings_path(), highlights_on: %r(/rankings) do |lev3_nav|
+        lev3_nav.item :key_rankings_show_full,  t('show_details'), '#', highlights_on: %r(/rankings/\d/show_full)
       end
-      lev2_nav.item :key_separator_rankings, content_tag(:span, '' ), :class => 'divider'
-      lev2_nav.item :key_results_index, t('search_results'), results_path(), :highlights_on => %r(/results) do |lev3_nav|
-        lev3_nav.item :key_results_show_full, t('show_details'), '#', :highlights_on => %r(/results/\d/show_full)
+      lev2_nav.item :key_separator_rankings,    content_tag(:span, '' ), class: 'divider'
+      lev2_nav.item :key_results_index,         t('search_results'), results_path(), highlights_on: %r(/results) do |lev3_nav|
+        lev3_nav.item :key_results_show_full,   t('show_details'), '#', highlights_on: %r(/results/\d/show_full)
       end
     end
 
-    primary.item( :key_records,       t('records.menu_root'), '#' ) do |lev2_nav|
+    primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|
       lev2_nav.item :key_records_everything,    t('records.menu_everything'),     records_for_everything_path()
       lev2_nav.item :key_records_season_type,   t('records.menu_by_season_type'), records_for_season_type_path()
       lev2_nav.item :key_records_swimmer,       t('records.menu_by_swimmer'),     records_for_swimmer_path()
       lev2_nav.item :key_records_team,          t('records.menu_by_team'),        records_for_team_path()
     end
 
-    primary.item( :key_swimmers,      t('swimmers.swimmers'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_swimmers_index, t('swimmers.search_swimmers'), swimmers_path(), :highlights_on => %r(/swimmers) do |lev3_nav|
-        lev3_nav.item :key_swimmers_id, t('radiography.id_card'), '#', :highlights_on => %r(/swimmers/\d/radio)
+    primary.item( :key_swimmers,                t('swimmers.swimmers'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_swimmers_index,        t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) do |lev3_nav|
+        lev3_nav.item :key_swimmers_id,         t('radiography.id_card'), '#', highlights_on: %r(/swimmers/\d/radio)
       end
     end
 
-    primary.item( :key_misc,  t('misc_main_menu.title'), '#' ) do |lev2_nav|
+    primary.item( :key_misc,                    t('misc_main_menu.title'), '#' ) do |lev2_nav|
       lev2_nav.item :key_calendar,              t('meeting_calendar.navigation'),           meeting_calendars_path()
       lev2_nav.item :key_pools,                 t('swimming_pool.pools'),                   swimming_pools_path()
       lev2_nav.item :key_pool_reviews,          t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path()
       lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()
       lev2_nav.item :key_user_tr_stories,       t('misc_main_menu.user_training_stories'),  user_training_stories_path()
-      lev2_nav.item :key_separator2_0,          content_tag(:span, '' ), :class => 'divider'
-      lev2_nav.item :key_social_index,          t('social.menu_social_index'),              socials_show_all_path()
     end
 
-    primary.item :key_separator0,     '&nbsp;', '#', :class => 'disabled'
+    primary.item :key_separator0, '&nbsp;', '#', class: 'disabled'
 
     primary.item(
       :key_user_who_is_it,
-      content_tag(:span, t('who_are_you') ), '#', :class => 'disabled',
+      content_tag(:span, t('who_are_you') ), '#', class: 'disabled',
       :unless => Proc.new { user_signed_in? }
     )
     primary.item(
@@ -115,32 +115,29 @@ SimpleNavigation::Configuration.run do |navigation|
       :key_user_edit,
       (current_user.nil? ? '' : current_user.name),
       edit_user_registration_path(),
-      :if => Proc.new { user_signed_in? }
+      if: Proc.new { user_signed_in? }
     )
     primary.item(
       :key_user_logout,
       content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ),
       destroy_user_session_path(),
       method: Devise.sign_out_via,
-      :if => Proc.new { user_signed_in? }
+      if: Proc.new { user_signed_in? }
     )
 
-#    primary.item :key_edit_user,      (current_user.nil? ? '' : current_user.email), edit_user_registration_path(), :if => Proc.new { user_signed_in? }
-    #primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_user_session_path(), method: Devise.sign_out_via, :if => Proc.new { user_signed_in? }
-
-    primary.item :key_separator2,     '&nbsp;', '#', :class => 'disabled', :if => Proc.new { admin_signed_in? }
-    primary.item( :key_admin,         content_tag(:span, t('admin.back_to_admin'), class:"text-error" ), '#', :if => Proc.new { admin_signed_in? }
+    primary.item :key_separator2,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item( :key_admin,         content_tag(:span, t('admin.back_to_admin'), class:"text-error" ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
       lev2_nav.item :key_admin_index,        content_tag(:span, t('admin_index.title'), class:"text-error" ), goggles_admin_index_path()
-      lev2_nav.item :key_separator21,        content_tag(:span, '' ), :class => 'divider'
+      lev2_nav.item :key_separator21,        content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_dashboard,    content_tag(:span, t('admin.actions.dashboard.menu'), class:"text-error" ), rails_admin_path()
       lev2_nav.item :key_admin_data_import,  content_tag(:span, t('admin_import.menu'), class:"text-error" ), goggles_di_step1_status_path()
       lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor', class:"text-error" ), dj_mon_path()
-      lev2_nav.item :key_separator22,        content_tag(:span, '' ), :class => 'divider'
-      lev2_nav.item :key_edit_admin,         (current_admin.nil? ? '?' : current_admin.email), '#', :class => 'disabled'
+      lev2_nav.item :key_separator22,        content_tag(:span, '' ), class: 'divider'
+      lev2_nav.item :key_edit_admin,         (current_admin.nil? ? '?' : current_admin.email), '#', class: 'disabled'
     end
 
-    primary.item :key_separator3,     '&nbsp;', '#', :class => 'disabled'
+    primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled'
     primary.item( :key_locale,         content_tag(:span, t('language') ), '#'
     ) do |lev2_nav|
       lev2_nav.item :key_locale_it,    image_tag('it.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'it') )

@@ -1,42 +1,86 @@
 require 'spec_helper'
 
 
-describe TrainingDecorator do
-  before :each do
-    @random_seed_row = Training.find_by_id( ((rand * 10) % Training.count).to_i + 1 )
-    @decorated_instance = TrainingDecorator.decorate( @random_seed_row )
-  end
-
-  subject { @decorated_instance }
-
-  it "has a not nil source row" do
-    expect( @random_seed_row ).not_to be_nil
+shared_examples_for "(TrainingDecorator usable for both Training & UserTraining)" do
+  it "has a not nil source row" do                  # (we check for nil to make sure the seed exists in the DB)
+    expect( @fixture ).not_to be_nil
   end
   it "has a valid source row" do
-    expect( @random_seed_row ).to be_valid
+    expect( @fixture ).to be_valid
   end
 
-
   context "[implemented methods]" do
-    it_behaves_like( "(the existance of a method returning non-empty strings)",
+    it_behaves_like( "(the existance of a method returning strings)",
       [
         :get_swimmer_level_type
       ]
     )
+    it_behaves_like( "(the existance of a method returning non-empty strings)",
+      [
+        :get_suggested_swimmer_level_type
+      ]
+    )
     it_behaves_like( "(the existance of a method)",
-      [ 
+      [
+        :drop_down_attrs,
         :build_group_list_hash
       ]
     )
   end
-  #-- -----------------------------------------------------------------------
-  #++
+
+  describe "#drop_down_attrs" do
+    it "returns an Hash" do
+      expect( subject.drop_down_attrs() ).to be_an_instance_of( Hash )
+    end
+    it "has the expected keys" do
+      expect( subject.drop_down_attrs().keys ).to include(
+        :label, :value, :tot_distance, :tot_secs, :user_name,
+        :swimmer_level_type_description, :swimmer_level_type_alternate
+      )
+    end
+  end
 
   describe "#build_group_list_hash" do
     it "returns an Hash" do
       expect( subject.build_group_list_hash() ).to be_an_instance_of( Hash )
     end
+# TODO For these tests to be enabled we will need a Training seed with a group defined in it: 
+    # it "has the expected keys" do
+      # expect( subject.build_group_list_hash().keys ).to include(
+        # :id, :times, :start_and_rest, :pause, :datarows
+      # )
+    # end
+    # it "has the :datarows member Array" do
+      # expect( subject.build_group_list_hash()[:datarows] ).to be_an_instance_of( Array )
+    # end
   end
-  #-- -------------------------------------------------------------------------
-  #++
 end
+#-- ---------------------------------------------------------------------------
+#++
+
+
+describe TrainingDecorator do
+
+  context "when used with Training" do
+    before :each do
+      @fixture = Training.find_by_id( ((rand * 10) % Training.count).to_i + 1 )
+      @decorated_instance = TrainingDecorator.decorate( @fixture )
+    end
+    subject { @decorated_instance }
+
+    it_behaves_like "(TrainingDecorator usable for both Training & UserTraining)"
+  end
+
+
+  context "when used with UserTraining" do
+    before :each do
+      @fixture = create( :user_training_with_rows )
+      @decorated_instance = TrainingDecorator.decorate( @fixture )
+    end
+    subject { @decorated_instance }
+
+    it_behaves_like "(TrainingDecorator usable for both Training & UserTraining)"
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
