@@ -50,6 +50,8 @@ describe UserTrainingStoriesController do
         expect( response.status ).to eq(200)
         expect( assigns(:user_training_story) ).not_to be_nil 
         expect( assigns(:title) ).not_to be_nil 
+        expect( assigns(:user_training_story) ).to be_an_instance_of(UserTrainingStoryDecorator) 
+        expect( assigns(:title) ).to be_an_instance_of(String) 
       end
 
       it "renders the show template" do
@@ -105,6 +107,8 @@ describe UserTrainingStoriesController do
         expect( response.status ).to eq(200)
         expect( assigns(:user_training_story) ).not_to be_nil 
         expect( assigns(:title) ).not_to be_nil 
+        expect( assigns(:user_training_story) ).to be_an_instance_of(UserTrainingStoryDecorator) 
+        expect( assigns(:title) ).to be_an_instance_of(String) 
       end
 
       it "renders the edit template" do
@@ -186,41 +190,33 @@ describe UserTrainingStoriesController do
       end
 
       context "with valid attributes" do
-        it "locates the requested row" do
-          example_date = Date.today
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story, swam_date: example_date, user_training_id: 1, notes: "Meh.")
-          expect( assigns(:user_training_story) == @user_training_story ).to be_true
+        before :each do
+          @example_date = Date.today
+          put :update, id: @user_training_story.id, user_training_story: attributes_for(:user_training_story, swam_date: @example_date, user_training_id: 2, swimmer_level_type_id: 3, notes: "Meh.")
         end
-
         it "changes the row attributes" do
-          example_date = Date.today
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story, swam_date: example_date, user_training_id: 2, notes: "Meh.", swimmer_level_type_id: 3)
           @user_training_story.reload
-
-          expect( @user_training_story.swam_date == example_date ).to be_true
+          expect( @user_training_story.swam_date == @example_date ).to be_true
           expect( @user_training_story.notes == "Meh." ).to be_true
           expect( @user_training_story.user_training_id == 2 ).to be_true
           expect( @user_training_story.swimmer_level_type_id == 3 ).to be_true
         end
-
         it "redirects to the updated row" do
-          put :update, id: @user_training_story, user_training_story: attributes_for(:user_training_story)
           expect(response).to redirect_to( @user_training_story )
         end
       end
 
       context "with invalid attributes" do
+        before :each do
+          put :update, id: @user_training_story.id, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
+        end
         it "doesn't change the row" do
-          put :update, id: @user_training_story, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
-          expect( assigns(:user_training_story) == @user_training_story ).to be_true
           @user_training_story.reload
           expect( @user_training_story.swam_date ).not_to be_nil
           expect( @user_training_story.user_training_id ).not_to be_nil
           expect( @user_training_story.notes ).not_to be_nil
         end
-
         it "renders the edit method" do
-          put :update, id: @user_training_story, user_training_story: attributes_for( :user_training_story, swam_date: nil, user_training_id: nil )
           expect(response).to render_template( :edit )
         end 
       end

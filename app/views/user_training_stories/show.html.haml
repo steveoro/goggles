@@ -57,12 +57,12 @@
           .span2
             = I18n.t('trainings.total_meters') + ':'
           .span10
-            = @user_training_story.get_user_training_compute_total_distance()
+            = @user_training_story.get_user_training_total_distance()
         .row-fluid
           .span2
             = I18n.t('trainings.esteemed_timing') + ':'
           .span10
-            = Timing.to_hour_string( @user_training_story.get_user_training_compute_total_seconds() )
+            = Timing.to_hour_string( @user_training_story.get_user_training_esteemed_total_seconds() )
         .row-fluid
           .span2
             = I18n.t('user_training_stories.total_training_time') + ':'

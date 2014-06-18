@@ -27,16 +27,8 @@ class UserTrainingsController < ApplicationController
   # - <tt>:query</tt> => a string match for the verbose description; when equal to '%', the parameter is ignored.
   #
   # == Returns:
-  # A JSON array of Hash instances having the structure:
-  # <tt>{
-  #       label: #get_full_name(),
-  #       :value => row.id,
-  #       :tot_distance => #compute_total_distance(),
-  #       :tot_secs => #compute_total_seconds(),
-  #       :user_name: => #get_user_name(),
-  #       :swimmer_level_type_description: => #get_swimmer_level_type( :i18n_description ),
-  #       :swimmer_level_type_alternate => #get_swimmer_level_type( :i18n_alternate )
-  #     }</tt>. 
+  # A JSON array of Hash instances having the structure returned by
+  # TrainingDecorator#.drop_down_attrs( current_user )
   #
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one

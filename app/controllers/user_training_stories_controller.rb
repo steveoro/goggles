@@ -29,12 +29,12 @@ class UserTrainingStoriesController < ApplicationController
   # Show action.
   #
   def show
-    user_training_story_id = params[:id].to_i
-    @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
-    unless ( @user_training_story )
+    user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
+    unless ( user_training_story )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_training_stories_path() ) and return
     end
+    @user_training_story = UserTrainingStoryDecorator.decorate(user_training_story)
     @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
   end
   # ---------------------------------------------------------------------------
@@ -53,8 +53,7 @@ class UserTrainingStoriesController < ApplicationController
   def create
     if request.post?
       @user_training_story = UserTrainingStory.new( params[:user_training_story] )
-                                                    # Set the owner for all the records:
-      @user_training_story.user_id = current_user.id
+      @user_training_story.user_id = current_user.id # Set the owner for all the records
 
       if @user_training_story.save
         flash[:info] = I18n.t('user_training_stories.story_created')
@@ -73,12 +72,12 @@ class UserTrainingStoriesController < ApplicationController
   # Edit action.
   #
   def edit
-    user_training_story_id = params[:id].to_i
-    @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
-    unless ( @user_training_story )
+    user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
+    unless ( user_training_story )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_training_stories_path() ) and return
     end
+    @user_training_story = UserTrainingStoryDecorator.decorate(user_training_story)
     @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
   end
 
@@ -86,15 +85,14 @@ class UserTrainingStoriesController < ApplicationController
   # Update action.
   #
   def update
-    user_training_story_id = params[:id].to_i
-    @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
-    unless ( @user_training_story )
+    user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
+    unless ( user_training_story )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_training_stories_path() ) and return
     end
-    if @user_training_story.update_attributes( params[:user_training_story] )
+    if user_training_story.update_attributes( params[:user_training_story] )
       flash[:info] = I18n.t('user_training_stories.story_updated')
-      redirect_to( user_training_story_path(@user_training_story) )
+      redirect_to( user_training_story_path(user_training_story) )
     else
       render :action => 'edit'
     end
