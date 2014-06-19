@@ -4,6 +4,14 @@ require 'common/format'
 require 'json'
 
 
+=begin
+
+= ExercisesController
+
+  - version:  4.00.317.20140616
+  - author:   Steve A., Leega
+
+=end
 class ExercisesController < ApplicationController
 
   # Wildcard string used to signal to the AJAX filtering method #json_list

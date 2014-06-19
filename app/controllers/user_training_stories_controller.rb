@@ -4,6 +4,14 @@ require 'common/format'
 require 'training_printout_layout'
 
 
+=begin
+
+= UserTrainingStoriesController
+
+  - version:  4.00.323.20140619
+  - author:   Steve A., Leega
+
+=end
 class UserTrainingStoriesController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:

@@ -4,8 +4,13 @@ require 'ffaker'
 
 FactoryGirl.define do
 
-  factory :user_training_row do
-    user_training
+  trait :training_header do
+    sequence( :description )  { |n| "#{ Faker::Lorem.word } workout n.#{n}" }
+    user
+  end
+
+
+  trait :training_detail do
     # The following columns use the pre-loaded seed records:
     exercise_id               { ((rand * 1000) % 196).to_i + 1 }
     training_step_type_id     { ((rand * 10) % 5).to_i + 1 }
@@ -24,17 +29,49 @@ FactoryGirl.define do
     start_and_rest            { (((rand * 10) % 5).to_i + 1) * 5 }
     pause                     { (((rand * 10) % 5).to_i + 1) * 5 }
   end
+  # ---------------------------------------------------------------------------
 
 
-  factory :user_training do
-    sequence( :description )  { |n| "#{ Faker::Lorem.word } workout n.#{n}" }
-    user
+  factory :training_row do
+    training_detail
+    training
+  end
+
+
+  factory :training do
+    training_header
     # user_training_with_rows will create detail data after the user_training has been created
-    factory :user_training_with_rows do
+    factory :training_with_rows do
       # the after(:create) yields two values: the row instance itself and the
       # evaluator, which stores all values from the factory, including transient
       # attributes; `create_list`'s second argument is the number of records
       # to create and we make sure the association is set properly to the created instance:
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :training_row,
+          ((rand * 10).to_i + 2),                   # total number or detail rows
+          training: created_instance                # association enforce for each sub-row
+        )
+      end
+    end
+
+    factory :invalid_training do
+      description nil
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+
+  factory :user_training_row do
+    training_detail
+    user_training
+  end
+
+
+  factory :user_training do
+    training_header
+
+    factory :user_training_with_rows do
       after(:create) do |created_instance, evaluator|
         create_list(
           :user_training_row,
@@ -43,7 +80,12 @@ FactoryGirl.define do
         )
       end
     end
+
+    factory :invalid_user_training do
+      description nil
+    end
   end
+  # ---------------------------------------------------------------------------
 
 
   factory :user_training_story do

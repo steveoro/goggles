@@ -1,6 +1,14 @@
 require 'drop_down_listable'
 
 
+=begin
+
+= Exercise model
+
+  - version:  4.00.317.20140616
+  - author:   Steve A., Leega
+
+=end
 class Exercise < ActiveRecord::Base
   include DropDownListable
 

@@ -167,27 +167,29 @@ describe UserTrainingStoriesController do
 
 
   describe '[PUT #update]' do
+    before :each do
+      @user_training_story = create( :user_training_story )
+    end
+
     context "unlogged user" do
       it "fails the update" do
-        entity_on_db = UserTrainingStory.find(1)    # Retrieve an actual DB row: (existing, from the seeds file)
-        entity_attrs = attributes_for( :user_training_story )
+        entity_attrs = attributes_for( :user_training_story, id: @user_training_story.id )
                                                     # Check that we have different attributes, usable for an update:
-        expect( entity_attrs[:user_training_id] != entity_on_db.user_training_id ).to be_true
-        expect( entity_attrs[:notes] != entity_on_db.notes ).to be_true
+        expect( entity_attrs[:user_training_id] != @user_training_story.user_training_id ).to be_true
+        expect( entity_attrs[:notes] != @user_training_story.notes ).to be_true
                                                     # Try the update without logging in:
-        put :update, id: 1, user_training_story: entity_attrs
+        put :update, id: @user_training_story.id, user_training_story: entity_attrs
+        updated_fixture = UserTrainingStory.find(@user_training_story.id)
                                                     # The update should not have persisted:
-        expect( UserTrainingStory.find(1) == entity_on_db ).to be_true
+        expect( updated_fixture.id ).to eq( @user_training_story.id )
+        expect( updated_fixture.notes ).to eq( @user_training_story.notes )
+        expect( updated_fixture.user_training_id ).to eq( @user_training_story.user_training_id )
       end
     end
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
       login_user()
-
-      before :each do
-        @user_training_story = create( :user_training_story )
-      end
 
       context "with valid attributes" do
         before :each do

@@ -4,6 +4,14 @@ require 'common/format'
 require 'training_printout_layout'
 
 
+=begin
+
+= TrainingsController
+
+  - version:  4.00.323.20140619
+  - author:   Steve A., Leega
+
+=end
 class TrainingsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
@@ -29,13 +37,14 @@ class TrainingsController < ApplicationController
   # Show action.
   #
   def show
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    training = Training.find_by_id( params[:id].to_i )
+    unless ( training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
-    @training_rows = @training.training_rows.includes(:exercise, :training_step_type).all
+    @training = TrainingDecorator.decorate( training )
+    training_rows = training.training_rows.includes(:exercise, :training_step_type).all
+    @training_rows = TrainingRowDecorator.decorate_collection( training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
   end
   # ---------------------------------------------------------------------------
@@ -74,13 +83,13 @@ class TrainingsController < ApplicationController
   # Edit action.
   #
   def edit
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    @training_max_part_order = @training.training_rows.maximum(:part_order)
-    unless ( @training )
+    training = Training.find_by_id( params[:id].to_i )
+    unless ( training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
+    @training = TrainingDecorator.decorate( training )
+    @training_max_part_order = training.training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
   end
 
@@ -88,15 +97,14 @@ class TrainingsController < ApplicationController
   # Update action.
   #
   def update
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    training = Training.find_by_id( params[:id].to_i )
+    unless ( training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
-    if @training.update_attributes( params[:training] )
+    if training.update_attributes( params[:training] )
       flash[:info] = I18n.t('trainings.training_updated')
-      redirect_to( training_path(@training) )
+      redirect_to( training_path(training) )
     else
       render :action => 'edit'
     end
@@ -107,13 +115,12 @@ class TrainingsController < ApplicationController
   # Destroy action.
   #
   def destroy
-    training_id = params[:id].to_i
-    @training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
-    unless ( @training )
+    training = Training.find_by_id( params[:id].to_i )
+    unless ( training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end
-    @training.destroy
+    training.destroy
     redirect_to( trainings_path() )
   end
   # ---------------------------------------------------------------------------
@@ -129,8 +136,7 @@ class TrainingsController < ApplicationController
   #   The id of the Training header; all its details will be retrieved also.
   #
   def printout()
-    training_id = params[:id].to_i
-    training = ( training_id > 0 ) ? Training.find_by_id( training_id ) : nil
+    training = Training.find_by_id( params[:id].to_i )
     unless ( training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
@@ -168,10 +174,8 @@ class TrainingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
-      training_id = params[:id].to_i
-      old_training = Training.find_by_id( training_id )
+      old_training = Training.find_by_id( params[:id].to_i )
       old_training_rows = TrainingRow.where(:training_id => old_training.id)
-
       new_training = Training.new( old_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
       new_training.title = "#{I18n.t(:copy_of)} '#{old_training.title}'"
       new_training.user_id = current_user.id
@@ -212,8 +216,7 @@ class TrainingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
-      training_id = params[:id].to_i
-      training = Training.find_by_id( training_id )
+      training = Training.find_by_id( params[:id].to_i )
       training_rows = TrainingRow.where(:training_id => training.id)
 
       user_training = UserTraining.new()

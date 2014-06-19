@@ -16,7 +16,6 @@
     = link_to( training_duplicate_path(@training.id), method: :post, confirm: I18n.t(:are_you_sure, scope: [:netzke,:basepack,:grid_panel]) ) do
       = I18n.t(:duplicate)
 
-- decorated_training = TrainingDecorator.decorate( @training )
 .accordion
   .accordion-group
     .accordion-heading.goggles-accordion-heading
@@ -50,7 +49,7 @@
           .span2
             = I18n.t('activerecord.models.swimmer_level_type') + ':'
           .span10
-            = decorated_training.get_swimmer_level_type(:i18n_description)
+            = @training.get_swimmer_level_type(:i18n_description)
         .row-fluid
           .span2
             %i= I18n.t(:updated_at) + ':'
@@ -70,16 +69,15 @@
 .row-fluid
   .span12
     - curr_group_id = old_group_id = 0
-    - group_list_hash = decorated_training.build_group_list_hash()
+    - group_list_hash = @training.build_group_list_hash()
     - @training_rows.each do |training_row|
-      - decorated_training_row = TrainingRowDecorator.decorate( training_row )
-      - fields = decorated_training_row.to_array()
+      - fields = training_row.to_array()
       - if (training_row.group_id > 0) && group_list_hash.has_key?( training_row.group_id )
         - curr_group_id = training_row.group_id
         - if old_group_id != curr_group_id          # Start of new group?
-          - old_group_id = curr_group_id
-          - group_hash = group_list_hash[ training_row.group_id ]
-          - tot_group_secs = TrainingRow.compute_total_seconds( group_hash[:datarows] )
+          - old_group_id     = curr_group_id
+          - group_hash       = group_list_hash[ training_row.group_id ]
+          - tot_group_secs   = TrainingRow.compute_total_seconds( group_hash[:datarows] )
           - tot_group_timing = Timing.to_minute_string( tot_group_secs )
           .row-fluid
             .span2.goggles-training

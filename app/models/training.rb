@@ -1,11 +1,10 @@
 # encoding: utf-8
-
 require 'wrappers/timing'   # [Steve 20140311] Used by TrainingRow
 
 
 =begin
 
-= Training
+= Training model
 
   - version:  4.00.317.20140616
   - author:   Steve A., Leega

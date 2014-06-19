@@ -4,6 +4,14 @@ require 'common/format'
 require 'training_printout_layout'
 
 
+=begin
+
+= UserTrainingsController
+
+  - version:  4.00.323.20140619
+  - author:   Steve A., Leega
+
+=end
 class UserTrainingsController < ApplicationController
 
   # Wildcard string used to signal to the AJAX filtering method #json_list
@@ -87,13 +95,14 @@ class UserTrainingsController < ApplicationController
   # Show action.
   #
   def show
-    user_training_id = params[:id].to_i
-    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
-    unless ( @user_training )
+    user_training = UserTraining.find_by_id( params[:id].to_i )
+    unless ( user_training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
     end
-    @user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
+    @user_training = TrainingDecorator.decorate( user_training )
+    user_training_rows = user_training.user_training_rows.includes(:exercise, :training_step_type).all
+    @user_training_rows = TrainingRowDecorator.decorate_collection( user_training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
   # ---------------------------------------------------------------------------
@@ -132,13 +141,13 @@ class UserTrainingsController < ApplicationController
   # Edit action.
   #
   def edit
-    user_training_id = params[:id].to_i
-    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
-    @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
-    unless ( @user_training )
+    user_training = UserTraining.find_by_id( params[:id].to_i )
+    unless ( user_training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
     end
+    @user_training = TrainingDecorator.decorate( user_training )
+    @training_max_part_order = user_training.user_training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
 
@@ -146,15 +155,14 @@ class UserTrainingsController < ApplicationController
   # Update action.
   #
   def update
-    user_training_id = params[:id].to_i
-    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
-    unless ( @user_training )
+    user_training = UserTraining.find_by_id( params[:id].to_i )
+    unless ( user_training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
     end
-    if @user_training.update_attributes( params[:user_training] )
+    if user_training.update_attributes( params[:user_training] )
       flash[:info] = I18n.t('trainings.training_updated')
-      redirect_to( user_training_path(@user_training) )
+      redirect_to( user_training_path(user_training) )
     else
       render :action => 'edit'
     end
@@ -165,13 +173,12 @@ class UserTrainingsController < ApplicationController
   # Destroy action.
   #
   def destroy
-    user_training_id = params[:id].to_i
-    @user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
-    unless ( @user_training )
+    user_training = UserTraining.find_by_id( params[:id].to_i )
+    unless ( user_training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
     end
-    @user_training.destroy
+    user_training.destroy
     redirect_to( user_trainings_path() )
   end
   # ---------------------------------------------------------------------------
@@ -190,8 +197,7 @@ class UserTrainingsController < ApplicationController
 # DEBUG
 #    logger.debug( "\r\n\r\n---[ #{controller_name()}.printout ] ---" ) if DEBUG_VERBOSE
 #    logger.debug( "Params: #{params.inspect()}" ) if DEBUG_VERBOSE
-    user_training_id = params[:id].to_i
-    user_training = ( user_training_id > 0 ) ? UserTraining.find_by_id( user_training_id ) : nil
+    user_training = UserTraining.find_by_id( params[:id].to_i )
     unless ( user_training )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_trainings_path() ) and return
@@ -229,10 +235,8 @@ class UserTrainingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
-      user_training_id = params[:id].to_i
-      old_user_training = UserTraining.find_by_id( user_training_id )
+      old_user_training = UserTraining.find_by_id( params[:id].to_i )
       old_user_training_rows = UserTrainingRow.where(:user_training_id => old_user_training.id)
-
       new_user_training = UserTraining.new( old_user_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
       new_user_training.description = "#{I18n.t(:copy_of)} ""#{old_user_training.description}"""
       new_user_training.user_id = current_user.id
