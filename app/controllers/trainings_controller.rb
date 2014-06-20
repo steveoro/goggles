@@ -170,11 +170,12 @@ class TrainingsController < ApplicationController
   #   The id of the Training; all its details will be retrieved also.
   #
   def duplicate
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
       old_training = Training.find_by_id( params[:id].to_i )
+      unless ( old_training )
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( trainings_path() ) and return
+      end
       old_training_rows = TrainingRow.where(:training_id => old_training.id)
       new_training = Training.new( old_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
       new_training.title = "#{I18n.t(:copy_of)} '#{old_training.title}'"
@@ -212,11 +213,12 @@ class TrainingsController < ApplicationController
   #   The id of the Training; all its details will be retrieved also.
   #
   def create_user_training
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     if request.post?
       training = Training.find_by_id( params[:id].to_i )
+      unless ( training )
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( trainings_path() ) and return
+      end
       training_rows = TrainingRow.where(:training_id => training.id)
 
       user_training = UserTraining.new()

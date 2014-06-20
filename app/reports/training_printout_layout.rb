@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.317.20140616
+- version:  4.00.325.20140620
 - author:   Steve A.
 
 =end
@@ -184,30 +184,30 @@ class TrainingPrintoutLayout
                       height: pdf.bounds.height-80 ) do
                                                     # -- Report title and header:
       pdf.text(
-        "<u><b>#{options[:report_title] }</b></u>",
+        "<u><b>#{ options[:report_title] }</b></u>",
         { align: :left, size: 9, inline_format: true } 
       )
       pdf.text(
-        "<i>#{I18n.t('activerecord.attributes.training.user')}:</i> #{training.get_user_name}",
+        "<i>#{ I18n.t('activerecord.attributes.training.user') }:</i> #{ header_row.get_user_name }",
         { align: :left, size: 9, inline_format: true } 
       )
       pdf.text(
-        "<i>#{I18n.t('activerecord.models.swimmer_level_type')}:</i> #{training.get_swimmer_level_type(:i18n_description)}",
+        "<i>#{ I18n.t('activerecord.models.swimmer_level_type') }:</i> #{ header_row.get_swimmer_level_type(:i18n_description) }",
         { align: :left, size: 9, inline_format: true } 
       )
       pdf.text(
-        training.description,
+        header_row.description,
         { align: :left, size: 9, inline_format: true } 
       )
       pdf.move_down( 10 )
 
       pdf.text(
-        "<i>#{I18n.t('trainings.total_meters')}:</i> #{training.compute_total_distance}",
+        "<i>#{ I18n.t('trainings.total_meters') }:</i> #{ header_row.compute_total_distance }",
         { align: :left, size: 8, inline_format: true } 
       )
-      tot_secs = training.compute_total_seconds()
+      tot_secs = header_row.compute_total_seconds()
       pdf.text(
-        "<i>#{I18n.t('trainings.esteemed_timing')}:</i> #{Timing.to_hour_string(tot_secs)}",
+        "<i>#{ I18n.t('trainings.esteemed_timing') }:</i> #{ Timing.to_hour_string(tot_secs) }",
         { align: :left, size: 8, inline_format: true } 
       )
       pdf.move_down( 10 )

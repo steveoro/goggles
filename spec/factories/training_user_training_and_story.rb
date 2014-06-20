@@ -39,6 +39,7 @@ FactoryGirl.define do
 
 
   factory :training do
+    sequence( :title )  { |n| "Workout model n.#{n}" }
     training_header
     # user_training_with_rows will create detail data after the user_training has been created
     factory :training_with_rows do

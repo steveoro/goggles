@@ -252,7 +252,7 @@ describe UserTrainingStoriesController do
 
       it "redirects to #index" do
         delete :destroy, id: @user_training_story
-        expect(response).to redirect_to( user_training_stories_url )
+        expect(response).to redirect_to( user_training_stories_path() )
       end
     end
   end

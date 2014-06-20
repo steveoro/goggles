@@ -8,6 +8,26 @@
   Support module for RSpec for defining utility helpers for controller specs.
 =end
 module ControllerMacros
+  include Rails.application.routes.url_helpers
+
+  # Default #url_for options override.
+  def default_url_options( options = { locale: 'en', only_path: true } )
+    @options = options
+  end
+
+  # Returns the #url_for the specified controller (using only its table name).
+  # and action.
+  #
+  def url_to_action_for( table_name, action_name = 'index' )
+    url_for(
+      controller: table_name,
+      action:     action_name,
+      locale:     default_url_options[:locale],
+      only_path:  default_url_options[:only_path]
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Logs-in an Admin instance created with FactoryGirl
   # before each test of the group when invoked.
