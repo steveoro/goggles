@@ -2,6 +2,69 @@ require 'spec_helper'
 
 
 describe Passage do
+  it_behaves_like "SwimmerRelatable"
   it_behaves_like "TimingGettable"
   # ---------------------------------------------------------------------------
+  
+  context "[a well formed instance]" do
+    #subject { Passage.find_by_id( ((rand * Passage.count) % Passage.count).to_i + 1 ) }
+    subject { create( :passage ) }
+
+    xit "is a not nil" do                            # (we check for nil to make sure the seed exists in the DB)
+      expect( subject ).not_to be_nil
+    end
+    it "is a valid istance" do
+      expect( subject ).to be_valid
+    end
+
+    # Validated relations:
+    it_behaves_like( "(belongs_to required models)", [
+      :meeting_program,
+      :passage_type,
+      :team
+    ])
+    
+    # Filtering scopes:
+    # it_behaves_like( "(the existance of a class method)", [
+    #  :is_valid,
+    #])
+
+    context "[implemented methods]" do
+      it_behaves_like( "(the existance of a method returning strings)",
+        [
+          :get_short_name,
+          :get_full_name,
+          :get_verbose_name,
+          :get_user_name
+        ]
+      )
+      it_behaves_like( "(the existance of a method returning numeric values)",
+        [ 
+          :get_passage_distance
+          #:passages_count,
+          #:compute_distance_swam,
+          #:compute_everage_breathes,
+          #:compute_everage_cycles
+        ]
+      )
+
+      # Methods that return timimg istancies
+      [ 
+        :compute_final_time,
+        :compute_passage_time,
+        :compute_incremental_time
+      ].each do |method_name|
+        describe "##{method_name}" do
+          xit "returns a timing istance" do
+            expect( subject.send(method_name) ).to be_an_instance_of( Timing )
+          end
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
 end

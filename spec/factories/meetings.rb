@@ -52,8 +52,29 @@ FactoryGirl.define do
     team                      { badge.team }
     team_affiliation          { badge.team_affiliation }
     swimmer                   { badge.swimmer }
+    minutes                   0
+    seconds                   { ((rand * 60) % 60).to_i }
+    hundreds                  { ((rand * 100) % 100).to_i }
     # The following column uses the pre-loaded seed records:
     disqualification_code_type_id { ((rand * 100) % 60).to_i + 1 }
     user
+  end
+
+  factory :passage do
+    meeting_program
+    minutes                   0
+    seconds                   { ((rand * 60) % 60).to_i }
+    hundreds                  { ((rand * 100) % 100).to_i }
+    minutes_from_start        1
+    seconds_from_start        { seconds }
+    hundreds_from_start       { hundreds }
+    position                  { ((rand * 10) % 10).to_i + 1 }
+    reaction_time             { rand.round(2) }
+    stroke_cycles             { (rand * 20).to_i }
+    swimmer
+    team
+    user
+    # The following column uses the pre-loaded seed records:
+    passage_type_id           { ((rand * 20) % 20).to_i + 1 }
   end
 end
