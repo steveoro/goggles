@@ -20,7 +20,7 @@ module SwimmerRelatable
 
   # Retrieves the associated Swimmer full name
   def get_swimmer_name
-    swimmer ? self.swimmer.get_full_name() : '?'
+    swimmer ? swimmer.get_full_name() : '?'
   end
 
 #  # Checks domain validity for the Swimmer full name
@@ -30,7 +30,7 @@ module SwimmerRelatable
 
   # Retrieves the associated Swimmer's year_of_birth
   def get_year_of_birth
-    swimmer ? self.swimmer.year_of_birth : 0
+    swimmer ? swimmer.year_of_birth : 0
   end
   #-----------------------------------------------------------------------------
 

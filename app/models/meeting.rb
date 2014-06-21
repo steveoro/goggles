@@ -4,6 +4,7 @@ require 'drop_down_listable'
 
 class Meeting < ActiveRecord::Base
   include DropDownListable
+  include MeetingAccountable
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :season

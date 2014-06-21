@@ -3,9 +3,8 @@ require 'date'
 
 
 describe MeetingProgram do
-  it_behaves_like "MeetingAccountable"
 
-  describe "[a non-valid instance]" do
+  context "[a non-valid instance]" do
     it_behaves_like( "(missing required values)", [ 
       :event_order
     ])    
@@ -13,7 +12,27 @@ describe MeetingProgram do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe "[a well formed instance]" do
+  # This section is separated from the context below because really it's
+  # more of a functional test instead of normal unit test.
+  context "[a valid, pre-existing seeded domain]" do
+    # TODO It uses a just a single predetermined seed to verify the values => Use a factory, forcing how many detail rows will be created instead, and move to the section below.
+    subject { Meeting.find_by_id(13105).meeting_programs.first }
+
+    it_behaves_like( "MeetingAccountable",
+      # These values were hand-verified for Meeting #13105, program #3742:
+      14,   # team_id
+      3,    # tot_male_results
+      0,    # tot_female_results
+      2,    # tot_team_results
+      1,   # tot_male_entries
+      0,   # tot_female_entries
+      0    # tot_team_entries
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "[a well formed instance]" do
     subject { create(:meeting_program) }
 
     it "is a valid istance" do

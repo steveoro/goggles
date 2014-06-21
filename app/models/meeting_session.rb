@@ -18,8 +18,8 @@ class MeetingSession < ActiveRecord::Base
 
   has_many :meeting_events, dependent: :delete_all
   has_many :meeting_programs, through: :meeting_events, dependent: :delete_all
+  has_many :meeting_entries, through: :meeting_events, dependent: :delete_all
   has_many :meeting_individual_results, through: :meeting_programs, dependent: :delete_all
-  # TODO Add other has_many relationships only when needed
 
   validates_presence_of :session_order
   validates_length_of   :session_order, within: 1..2, allow_nil: false

@@ -2,7 +2,8 @@ require 'spec_helper'
 require 'date'
 
 describe Meeting do
-  describe "[a non-valid instance]" do
+
+  context "[a non-valid instance]" do
     it_behaves_like( "(missing required values)", [ 
       :description,
       :code
@@ -11,7 +12,27 @@ describe Meeting do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe "[a well formed instance]" do
+  # This section is separated from the context below because really it's
+  # more of a functional test instead of normal unit test.
+  context "[a valid, pre-existing seeded domain]" do
+    # TODO It uses a just a single predetermined seed to verify the values => Use a factory, forcing how many detail rows will be created instead, and move to the section below.
+    subject { Meeting.find_by_id(13105) }
+
+    it_behaves_like( "MeetingAccountable",
+      # These values were hand-verified for Meeting #13105:
+      1,    # team_id
+      297,  # tot_male_results
+      164,  # tot_female_results
+      92,   # tot_team_results
+      64,   # tot_male_entries
+      34,   # tot_female_entries
+      98    # tot_team_entries
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "[a well formed instance]" do
     subject { create( :meeting ) }
 
     it "is a valid istance" do
