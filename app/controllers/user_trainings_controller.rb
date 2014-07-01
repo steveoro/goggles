@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingsController
 
-  - version:  4.00.323.20140619
+  - version:  4.00.329.20140701
   - author:   Steve A., Leega
 
 =end
@@ -21,7 +21,11 @@ class UserTrainingsController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
-  # ---------------------------------------------------------------------------
+  # Parse parameters:
+  before_filter :verify_ownership, only: [:edit]
+  before_filter :verify_visibility, except: [:index, :edit, :new, :create]
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # AJAX-only action to retrieve a filtered row list or a single instance.
@@ -41,12 +45,13 @@ class UserTrainingsController < ApplicationController
   def json_list
     if request.xhr?                                 # Make sure the request is an AJAX one
 # DEBUG
-      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-      logger.debug "PARAMS: #{params.inspect}"
-      if params[:id].to_i > 0                       # Set up and check parameters:
-        result_row = UserTraining.find_by_id( params[:id].to_i )
-        render( json: TrainingDecorator.decorate( result_row ).drop_down_attrs() ) and return
+#      logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+#      logger.debug "PARAMS: #{params.inspect}"
+                                                    # -- Single id retrieval:
+      if @user_training
+        render( json: TrainingDecorator.decorate( @user_training ).drop_down_attrs() ) and return
       end
+                                                    # -- Result List retrieval:
       limit = ( params[:limit].to_i > 0 ? params[:limit].to_i : 1000 )
       results = UserTraining.visible_to_user( current_user )
                                                     # Get the results and filter them even more using the query chars:
@@ -74,8 +79,8 @@ class UserTrainingsController < ApplicationController
       redirect_to( exercises_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Index/Search action.
@@ -95,17 +100,13 @@ class UserTrainingsController < ApplicationController
   # Show action.
   #
   def show
-    user_training = UserTraining.find_by_id( params[:id].to_i )
-    unless ( user_training )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_trainings_path() ) and return
-    end
-    @user_training = TrainingDecorator.decorate( user_training )
-    user_training_rows = user_training.user_training_rows.includes(:exercise, :training_step_type).all
+    @user_training = TrainingDecorator.decorate( @user_training )
+    user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
     @user_training_rows = TrainingRowDecorator.decorate_collection( user_training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # New action.
@@ -135,53 +136,39 @@ class UserTrainingsController < ApplicationController
       redirect_to( user_trainings_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Edit action.
   #
   def edit
-    user_training = UserTraining.find_by_id( params[:id].to_i )
-    unless ( user_training )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_trainings_path() ) and return
-    end
-    @user_training = TrainingDecorator.decorate( user_training )
-    @training_max_part_order = user_training.user_training_rows.maximum(:part_order)
+    @user_training = TrainingDecorator.decorate( @user_training )
+    @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
   end
-
 
   # Update action.
   #
   def update
-    user_training = UserTraining.find_by_id( params[:id].to_i )
-    unless ( user_training )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_trainings_path() ) and return
-    end
-    if user_training.update_attributes( params[:user_training] )
+    if @user_training.update_attributes( params[:user_training] )
       flash[:info] = I18n.t('trainings.training_updated')
-      redirect_to( user_training_path(user_training) )
+      redirect_to( user_training_path(@user_training) )
     else
       render :action => 'edit'
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Destroy action.
   #
   def destroy
-    user_training = UserTraining.find_by_id( params[:id].to_i )
-    unless ( user_training )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_trainings_path() ) and return
-    end
-    user_training.destroy
+    @user_training.destroy
     redirect_to( user_trainings_path() )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Prepares the selected training data for a PDF print-out.
@@ -194,24 +181,21 @@ class UserTrainingsController < ApplicationController
   #   The id of the Training header; all its details will be retrieved also.
   #
   def printout()
-# DEBUG
-#    logger.debug( "\r\n\r\n---[ #{controller_name()}.printout ] ---" ) if DEBUG_VERBOSE
-#    logger.debug( "Params: #{params.inspect()}" ) if DEBUG_VERBOSE
-    user_training = UserTraining.find_by_id( params[:id].to_i )
-    unless ( user_training )
-      flash[:error] = I18n.t(:invalid_action_request)
+    user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
+    if user_training_rows.size < 1
+      flash[:error] = I18n.t(:no_detail_to_process)
       redirect_to( user_trainings_path() ) and return
     end
-    user_training_rows = user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
-    title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", user_training.description )
+    title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
 
                                                     # == OPTIONS setup + RENDERING phase ==
-    filename = create_unique_filename( "#{I18n.t('trainings.training')}_#{user_training.description}" ) + '.pdf'
+    base_filename = "#{I18n.t('trainings.training')}_#{@user_training.description}" 
+    filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
       :report_title         => title,
       :meta_info_subject    => 'training model printout',
-      :meta_info_keywords   => "Goggles, #{I18n.t('trainings.training')}, #{user_training.description}",
-      :header_row           => TrainingDecorator.decorate( user_training ),
+      :meta_info_keywords   => "Goggles, #{base_filename}",
+      :header_row           => TrainingDecorator.decorate( @user_training ),
       :detail_rows          => TrainingRowDecorator.decorate_collection( user_training_rows )
     }
     send_data(                                      # == Render layout & send data:
@@ -220,7 +204,8 @@ class UserTrainingsController < ApplicationController
         :filename => filename
     )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Ditto a training with all its details (POST only).
@@ -232,30 +217,23 @@ class UserTrainingsController < ApplicationController
   #
   def duplicate
     if request.post?
-      old_user_training = UserTraining.find_by_id( params[:id].to_i )
-      unless ( old_user_training )
-        flash[:error] = I18n.t(:invalid_action_request)
-        redirect_to( user_trainings_path() ) and return
-      end
-      old_user_training_rows = UserTrainingRow.where(:user_training_id => old_user_training.id)
-      new_user_training = UserTraining.new( old_user_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
-      new_user_training.description = "#{I18n.t(:copy_of)} ""#{old_user_training.description}"""
+      old_user_training_rows = UserTrainingRow.where( user_training_id: @user_training.id )
+      new_user_training = UserTraining.new( @user_training.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+      new_user_training.description = "#{I18n.t(:copy_of)} ""#{@user_training.description}"""
       new_user_training.user_id = current_user.id
 
       begin
         if new_user_training.save!
-          created_group_ids = {}                    # Store in a hash which group IDs we have already created
           old_user_training_rows.each { |old_row|
             new_row = UserTrainingRow.new( old_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
             new_row.user_training_id = new_user_training.id
             new_row.save!
           }
-          flash[:info] = I18n.t('trainings.training_created')
+          flash[:info] = I18n.t('user_trainings.training_created')
           redirect_to( edit_user_training_path(new_user_training) ) and return
         end
       rescue
-        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
-                        ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        flash[:error] = "#{I18n.t('something_went_wrong')}" + ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
         redirect_to( user_trainings_path() ) and return
       end
     else
@@ -263,7 +241,8 @@ class UserTrainingsController < ApplicationController
       redirect_to( user_trainings_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Create a new UserTrainingStory using the specified UserTraining id (POST only).
@@ -274,45 +253,90 @@ class UserTrainingsController < ApplicationController
   #   The id of the UserTraining; all its details will be retrieved also.
   #
   def create_user_story
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.duplicate() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-    flash[:error] = "--- WORK IN PROGRESS ---"
-    redirect_to( user_trainings_path() ) and return
-# TODO
-    # if request.post?
-      # training_id = params[:id].to_i
-      # training = Training.find_by_id( training_id )
-      # training_rows = TrainingRow.where(:training_id => training.id)
-# 
-      # user_training = UserTraining.new()
-      # user_training.description = "#{training.title}, #{Format.a_date(Date.today)}"
-      # user_training.user_id = current_user.id
-# 
-      # begin
-        # if user_training.save!
-          # created_group_ids = {}                    # Store in a hash which group IDs we have already created
-          # training_rows.each { |training_row|
-            # user_training_row = UserTrainingRow.new(
-              # training_row.attributes.reject{|e|
-                # ['id','lock_version','created_at','updated_at','training_id'].include?(e)
-              # }
-            # )
-            # user_training_row.user_training_id = user_training.id
-            # user_training_row.save!
-          # }
-          # flash[:info] = I18n.t('user_trainings.training_created')
-          # redirect_to( edit_user_training_path(user_training) ) and return
-        # end
-      # rescue
-        # flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
-                        # ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
-        # redirect_to( trainings_path() ) and return
-      # end
-    # else
-      # flash[:error] = I18n.t(:invalid_action_request)
-      # redirect_to( trainings_path() ) and return
-    # end
+    if request.post?
+      new_user_training_story = UserTrainingStory.new()
+      new_user_training_story.user_id = current_user.id
+      new_user_training_story.total_training_time = @user_training.esteemed_total_seconds
+      new_user_training_story.user_training_id = @user_training.id
+      new_user_training_story.swimmer_level_type_id = current_user.get_preferred_swimmer_level_id
+      new_user_training_story.swam_date = Date.today
+      # TODO get swimming_pool_id from a previously saved, (same-) user story, if available
+
+      begin
+        if new_user_training_story.save!
+          flash[:info] = I18n.t('user_training_stories.story_created')
+          redirect_to( edit_user_training_story_path(new_user_training_story) ) and return
+        end
+      rescue
+        flash[:error] = "#{I18n.t('something_went_wrong')}" + ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        redirect_to( user_trainings_path() ) and return
+      end
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( user_trainings_path() ) and return
+    end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Verifies that the user_training id is provided as a parameter
+  # and that the corresponding training is owned by the current user.
+  # Otherwise, it redirects to the home page.
+  # Assigns the @user_training instance when successful.
+  # (Assumes log in has been enforced elsewhere.)
+  #
+  # == Controller Params:
+  # id: the user_training id to be processed by most of the methods (see before filter above)
+  #
+  def verify_ownership
+    set_user_training
+    if ( @user_training && @user_training.user_id == current_user.id )
+      return
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( user_trainings_path() ) and return
+    end
+  end
+
+
+  # Verifies that a user_training id is provided as a parameter (except for an AJAX request, in which case it may be nil)
+  # and that the corresponding training is *visible* by the current user.
+  # Otherwise, it redirects to the home page.
+  # Assigns the @user_training instance when successful.
+  # (Assumes log in has been enforced elsewhere.)
+  #
+  # == Controller Params:
+  # id: the user_training id to be processed by most of the methods (see before filter above)
+  #
+  def verify_visibility
+    set_user_training
+    if ( @user_training && @user_training.visible_to_user( current_user ) ) ||
+       ( request.xhr? && @user_training.nil? )
+      return
+    else
+      if request.xhr?
+        render( status: 406, json: { success: false, message: I18n.t(:invalid_action_request) } ) and return
+      else
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_to( user_trainings_path() ) and return
+      end
+    end
+  end
+
+
+  # Verifies that a user_training id is provided as a parameter to this controller.
+  # Assigns the @user_training instance when successful.
+  #
+  # == Controller Params:
+  # id: the user_training id to be processed by most of the methods (see before filter above)
+  #
+  def set_user_training
+    @user_training = UserTraining.find_by_id( params[:id].to_i )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

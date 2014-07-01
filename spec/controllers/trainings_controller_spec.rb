@@ -69,6 +69,11 @@ describe TrainingsController do
         get :printout, id: fixture.id
         expect( response.body).to include("%PDF")
       end
+      it "refuses the request for a training with no rows" do
+        fixture = create( :training, user: @user )
+        get :printout, id: fixture.id
+        expect(response).to redirect_to( trainings_path() )
+      end
     end
   end
   #-- -------------------------------------------------------------------------
@@ -94,41 +99,147 @@ describe TrainingsController do
         expect(response.status).to redirect_to( trainings_path() )
       end
 
-      it "handles the request with valid parameters, redirecting to #edit" do
-        fixture = create(:training_with_rows, user: @user)
-        post :duplicate, id: fixture.id
-        expect(response.status).to redirect_to( edit_training_path(Training.last) )
-      end
-      it "adds another header row" do
-        fixture = create(:training_with_rows, user: @user)
-        expect { post :duplicate, id: fixture.id }.to change( Training, :count ).by(1)
-      end
-      it "adds as many detail rows as the source has" do
-        fixture = create(:training_with_rows, user: @user)
-        detail_rows_count = fixture.training_rows.count
-        expect { post :duplicate, id: fixture.id }.to change( TrainingRow, :count ).by(detail_rows_count)
-      end
+      context "(having an accessible training with rows)" do
+        before :each do
+          @fixture = create(:training_with_rows, user: @user)
+          expect( @fixture.training_rows.size > 1 ).to be_true
+          @fixture.training_rows.each do |detail_row|
+            expect( detail_row ).not_to be_nil
+            expect( detail_row.part_order >= 0 ).to be_true
+          end
+        end
 
-      it "creates a copy of the header row" do
-        fixture = create(:training_with_rows, user: @user)
-        post :duplicate, id: fixture.id
-        duplicated_row = Training.last
-        expect( duplicated_row.title ).to             include( fixture.title )
-        expect( duplicated_row.description ).to       eq( fixture.description )
-        expect( duplicated_row.min_swimmer_level ).to eq( fixture.min_swimmer_level )
-        expect( duplicated_row.max_swimmer_level ).to eq( fixture.max_swimmer_level )
-        expect( duplicated_row.user_id ).to           eq( fixture.user_id )
-      end
-      it "links all the copied detail rows to the copied header row" do
-        fixture = create(:training_with_rows, user: @user)
-        post :duplicate, id: fixture.id
-        duplicated_row = Training.last
-        duplicated_row.training_rows.each do |duplicated_detail_row|
-          expect( duplicated_detail_row.training_id ).to eq( duplicated_row.id )
+        it "handles the request with valid parameters, redirecting to #edit" do
+          post :duplicate, id: @fixture.id
+          expect(response.status).to redirect_to( edit_training_path(Training.last) )
+        end
+        it "adds another header row" do
+          expect { post :duplicate, id: @fixture.id }.to change( Training, :count ).by(1)
+        end
+        it "adds as many detail rows as the source has" do
+          detail_rows_count = @fixture.training_rows.count
+          expect { post :duplicate, id: @fixture.id }.to change( TrainingRow, :count ).by(detail_rows_count)
+        end
+
+        it "creates a copy of the header row" do
+          post :duplicate, id: @fixture.id
+          duplicated_row = Training.last
+          expect( duplicated_row.title ).to             include( @fixture.title )
+          expect( duplicated_row.description ).to       eq( @fixture.description )
+          expect( duplicated_row.min_swimmer_level ).to eq( @fixture.min_swimmer_level )
+          expect( duplicated_row.max_swimmer_level ).to eq( @fixture.max_swimmer_level )
+          expect( duplicated_row.user_id ).to           eq( @fixture.user_id )
+        end
+        it "links all the copied detail rows to the copied header row" do
+          post :duplicate, id: @fixture.id
+          duplicated_row = Training.last
+          duplicated_row.training_rows.each do |duplicated_detail_row|
+            expect( duplicated_detail_row.training_id ).to eq( duplicated_row.id )
+          end
+        end
+        it "creates a copy of all the detail rows" do
+          post :duplicate, id: @fixture.id
+          duplicated_row = Training.last
+          # For all duplicated detail rows:
+          duplicated_row.training_rows.each do |duplicated_detail_row|
+            # Extract the hash of comparable duplicated attributes:
+            comparable_dup_attrs = duplicated_detail_row.attributes.reject{ |e| ['id','training_id','lock_version','created_at','updated_at'].include?(e) }
+            # Retrieve the source detail row:
+            part_order = comparable_dup_attrs['part_order']
+            expect( part_order ).not_to be_nil
+            expect( part_order >= 0 ).to be_true
+            source_detail_row = @fixture.training_rows.where( part_order: part_order ).first
+            expect( source_detail_row ).not_to be_nil
+            # Now check each duplicated detail column with its equivalent source attribute:
+            comparable_dup_attrs.each do |key, value|
+# DEBUG
+#              puts "\r\n#{key} => #{value}"
+              expect( value ).to eq( source_detail_row.send(key) )
+            end
+          end
         end
       end
-      it "creates a copy of all the detail rows" do
-        # TODO
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[POST #create_user_training]' do
+    context "unlogged user" do
+      it "displays always the Login page" do
+        fixture = create( :training_with_rows )
+        post :create_user_training, id: fixture.id
+        expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'
+        expect(response.status).to eq( 302 )        # must redirect to the login page
+      end
+    end
+    # -------------------------------------------------------------------------
+
+    context "logged-in user" do
+      login_user()
+
+      it "refuses the request with invalid parameters" do
+        post :create_user_training, id: 0
+        expect(response.status).to redirect_to( trainings_path() )
+      end
+
+      context "(having an accessible training with rows)" do
+        before :each do
+          @fixture = create(:training_with_rows, user: @user)
+          expect( @fixture.training_rows.size > 1 ).to be_true
+          @fixture.training_rows.each do |detail_row|
+            expect( detail_row ).not_to be_nil
+            expect( detail_row.part_order >= 0 ).to be_true
+          end
+        end
+
+        it "handles the request with valid parameters, redirecting to #edit" do
+          post :create_user_training, id: @fixture.id
+          expect(response.status).to redirect_to( edit_user_training_path(UserTraining.last) )
+        end
+        it "adds a UserTraining row" do
+          expect { post :create_user_training, id: @fixture.id }.to change( UserTraining, :count ).by(1)
+        end
+        it "adds as many detail rows as the source has" do
+          detail_rows_count = @fixture.training_rows.count
+          expect { post :create_user_training, id: @fixture.id }.to change( UserTrainingRow, :count ).by(detail_rows_count)
+        end
+
+        it "creates a copy of the header row" do
+          post :create_user_training, id: @fixture.id
+          created_row = UserTraining.last
+          expect( created_row.description ).to include( @fixture.title )
+          expect( created_row.user_id ).to eq( @fixture.user_id )
+        end
+        it "links all the copied detail rows to the copied header row" do
+          post :create_user_training, id: @fixture.id
+          created_row = UserTraining.last
+          created_row.user_training_rows.each do |duplicated_detail_row|
+            expect( duplicated_detail_row.user_training_id ).to eq( created_row.id )
+          end
+        end
+        it "creates a copy of all the detail rows" do
+          post :create_user_training, id: @fixture.id
+          created_row = UserTraining.last
+          # For all duplicated detail rows:
+          created_row.user_training_rows.each do |created_detail_row|
+            # Extract the hash of comparable duplicated attributes:
+            comparable_dup_attrs = created_detail_row.attributes.reject{ |e| ['id','user_training_id','lock_version','created_at','updated_at'].include?(e) }
+            # Retrieve the source detail row:
+            part_order = comparable_dup_attrs['part_order']
+            expect( part_order ).not_to be_nil
+            expect( part_order >= 0 ).to be_true
+            source_detail_row = @fixture.training_rows.where( part_order: part_order ).first
+            expect( source_detail_row ).not_to be_nil
+            # Now check each duplicated detail column with its equivalent source attribute:
+            comparable_dup_attrs.each do |key, value|
+# DEBUG
+#              puts "\r\n#{key} => #{value}"
+              expect( value ).to eq( source_detail_row.send(key) )
+            end
+          end
+        end
       end
     end
   end

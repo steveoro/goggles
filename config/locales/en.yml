@@ -827,6 +827,7 @@ en:
   transaction_cancelled: "Transaction cancelled."
   missing_request_parameter: "Invalid Action: missing a request parameter!"
   invalid_action_request: "Invalid Action requested!"
+  no_detail_to_process: "There aren't any details to process for this element!"
   no_result_to_show: "There aren't any results to show with the specified parameters!"
   file_not_created_for_some_reason: "The file hasn't been created as expected."
   main: 'Main'

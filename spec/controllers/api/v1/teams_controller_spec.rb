@@ -97,7 +97,7 @@ describe Api::V1::TeamsController do
         get :index, name_like: 'OBER', format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
 
-      it_behaves_like( "(success returning an Array of Hash)" )
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
 
       it "returns at least a match with the existing seeds" do
         result = JSON.parse(response.body)

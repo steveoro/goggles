@@ -832,6 +832,7 @@ it:
   missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"
   invalid_action_request: "Azione richiesta non valida!"
   no_result_to_show: "Non ci sono risultati da mostrare per i parametri richiesti!"
+  no_detail_to_process: "Non ci sono dettagli da elaborare per questo elemento!"
   file_not_created_for_some_reason: "Il file non è stato creato per qualche motivo."
   main: 'Principale'
   home: Home

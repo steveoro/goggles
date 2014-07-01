@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.323.20140619
+  - version:  4.00.329.20140630
   - author:   Steve A., Leega
 
 =end
@@ -17,7 +17,8 @@ class UserTrainingStoriesController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Index/Search action.
@@ -45,7 +46,8 @@ class UserTrainingStoriesController < ApplicationController
     @user_training_story = UserTrainingStoryDecorator.decorate(user_training_story)
     @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # New action.
@@ -74,7 +76,8 @@ class UserTrainingStoriesController < ApplicationController
       redirect_to( user_training_stories_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Edit action.
@@ -105,7 +108,8 @@ class UserTrainingStoriesController < ApplicationController
       render :action => 'edit'
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Destroy action.
@@ -120,5 +124,6 @@ class UserTrainingStoriesController < ApplicationController
     @user_training_story.destroy
     redirect_to( user_training_stories_path() )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

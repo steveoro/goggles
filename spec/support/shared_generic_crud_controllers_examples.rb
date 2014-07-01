@@ -14,6 +14,12 @@ require 'spec_helper'
 #   - the #show action will pass a decorated collection for the details to the view
 # - the #edit action will pass a decorated instance to its view
 #
+# Also:
+# - if the model responds to +user+, any fixtures created by factories will be
+#   forced to the +current_user+ ownership, so that any privacy rules may be skipped
+#   here and be tested externally.
+# 
+#
 # === Params:
 # - table_name      => the table name of the model associated with the controller to be tested
 # - decorator_name  => the string name of the Decorator class
@@ -63,9 +69,12 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
     context "logged-in user" do
       login_user()
+      before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
+      end
 
       it "assigns an instance to be shown" do
-        get :show, id: 1
+        get :show, id: @fixture.id
         expect( response.status ).to eq(200)
         expect( assigns( model_name_sym ) ).not_to be_nil 
         expect( assigns( model_name_sym ) ).to be_an_instance_of( decorator_name.constantize )
@@ -79,8 +88,8 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       end
 
       it "renders the show template" do
-        get :show, id: 1
-        expect( controller.params[:id].to_i == 1 ).to be_true 
+        get :show, id: @fixture.id
+        expect( controller.params[:id].to_i == @fixture.id ).to be_true 
         expect(response.status).to eq(200)
         expect(response).to render_template(:show)
       end
@@ -127,9 +136,12 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
     context "logged-in user" do
       login_user()
+      before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
+      end
 
       it "assigns an instance to be edited" do
-        get :edit, id: 1
+        get :edit, id: @fixture.id
         expect( response.status ).to eq(200)
         expect( assigns( model_name_sym ) ).not_to be_nil 
         expect( assigns( model_name_sym ) ).to be_an_instance_of( decorator_name.constantize )
@@ -138,8 +150,8 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       end
 
       it "renders the edit template" do
-        get :edit, id: 1
-        expect( controller.params[:id].to_i == 1 ).to be_true 
+        get :edit, id: @fixture.id
+        expect( controller.params[:id].to_i == @fixture.id ).to be_true 
         expect(response.status).to eq(200)
         expect(response).to render_template(:edit)
       end
@@ -193,17 +205,15 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
 
   describe '[PUT #update]' do
-    before :each do
-      @fixture = create( model_name_sym )
-    end
 
     context "unlogged user" do
       it "fails the update" do                      # Check that we have different attributes, usable for an update:
-        expect( entity_attrs.values != @fixture.attributes.values ).to be_true
+        fixture = create( model_name_sym )
+        expect( entity_attrs.values != fixture.attributes.values ).to be_true
                                                     # Try the update without logging in:
-        put :update, id: @fixture.id, model_name_sym => entity_attrs
-        @fixture.reload                             # The update should not have persisted:
-        fixture_data_values = @fixture.attributes.values.map{ |i| i.to_s }
+        put :update, id: fixture.id, model_name_sym => entity_attrs
+        fixture.reload                             # The update should not have persisted:
+        fixture_data_values = fixture.attributes.values.map{ |i| i.to_s }
         expect(
           entity_attrs.values.all? do |value|       # Checking strings works well with include:
             fixture_data_values.include?( value.to_s )
@@ -215,6 +225,9 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
     context "logged-in user" do
       login_user()
+      before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
+      end
 
       context "with valid attributes" do
         before :each do
@@ -255,14 +268,12 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
 
   describe '[DELETE]' do
-    before :each do
-      @fixture = create( model_name_sym )
-    end
 
     context "unlogged user" do
-      it "doesn't delete the row" do 
+      it "doesn't delete the row" do
+        fixture = create( model_name_sym ) 
         expect {
-          delete :destroy, id: @fixture.id
+          delete :destroy, id: fixture.id
         }.not_to change( model_name.constantize, :count )
       end
     end
@@ -270,6 +281,9 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
     context "logged-in user" do
       login_user()
+      before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
+      end
 
       it "deletes the row" do
         expect {

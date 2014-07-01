@@ -1,7 +1,19 @@
 require 'spec_helper'
 
 
-shared_examples_for "(success returning an Array of Hash)" do
+shared_examples_for "(Ap1-V1-Controllers, success returning an Hash)" do
+  it "handles successfully the request" do
+    expect(response.status).to eq( 200 )
+  end
+  it "returns a JSON-ified Hash instance" do
+    result = JSON.parse(response.body)
+    expect( result ).to be_an_instance_of( Hash )
+  end
+end
+# =============================================================================
+
+
+shared_examples_for "(Ap1-V1-Controllers, success returning an Array of Hash)" do
   it "handles successfully the request" do
     expect(response.status).to eq( 200 )
   end
@@ -37,7 +49,7 @@ shared_examples_for "(Ap1-V1-Controllers, #index & #show actions)" do |controlle
         get :index, format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
 
-      it_behaves_like( "(success returning an Array of Hash)" )
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
     end
   end
   # ---------------------------------------------------------------------------

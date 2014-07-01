@@ -8,7 +8,7 @@ shared_examples_for "TrainingSharable" do
   #
   context "by including this concern" do
     it_behaves_like( "(the existance of a class method)", [ :visible_to_user ] )
-    it_behaves_like( "(the existance of a method)", [ :user ] )
+    it_behaves_like( "(the existance of a method)", [ :user, :visible_to_user ] )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -58,6 +58,43 @@ shared_examples_for "TrainingSharable" do
         result = subject.class.visible_to_user( subject.user )
         result.each do |row|
           expect( [subject.user_id, @subject_instance_2.user_id].include?(row.user_id) ).to be_true
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#visible_to_user" do
+    before(:each) do
+      @subject_instance_2 = create( subject.class.name.underscore.to_sym )
+      @subject_instance_3 = create( subject.class.name.underscore.to_sym, user: @subject_instance_2.user )
+    end
+
+    context "with stored trainings, as a user with no available shared trainings" do
+      it "returns false for a training created by another user" do
+        result = subject.visible_to_user( create(:user) )
+        expect( result ).not_to be_nil
+        expect( result ).to be_false
+      end
+      it "returns true for a training created by the same user" do
+        result = @subject_instance_2.visible_to_user( @subject_instance_2.user )
+        expect( result ).not_to be_nil
+        expect( result ).to be_true
+      end
+    end
+
+    context "with stored trainings, as a user with shared trainings" do
+      before(:each) do
+        @subject_instance_2.user.invite( subject.user, true, true, true )   # he wants to share everything
+        subject.user.approve( @subject_instance_2.user, true, true, true )  # the other one approves
+      end
+
+      it "returns true for any shared training, for both users" do
+        results = subject.class.visible_to_user( subject.user )
+        results.each do |shared_training_row|
+          expect( shared_training_row.visible_to_user( subject.user ) ).to be_true
+          expect( shared_training_row.visible_to_user( @subject_instance_2.user ) ).to be_true
         end
       end
     end
