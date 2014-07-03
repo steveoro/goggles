@@ -4,7 +4,7 @@
 # Assorted helpers for clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.333
+# @version  4.00.335
 #
 module UserTrainingsHelper
 
@@ -127,25 +127,13 @@ module UserTrainingsHelper
   # Checks if the current_user owns the specified user_training
   # Returns +true+ when successful.
   def check_user_training_ownership_for( user_training )
-    (
-      user_training && 
-      ( 
-        admin_signed_in? ||
-        ( current_user && (user_training.user_id == current_user.id) ) 
-      )
-    )
+    UserTrainingAccessibility.new(current_user, user_training, admin_signed_in?).is_owned
   end
 
   # Checks if the current_user can access (R/O) the specified user_training
   # Returns +true+ when successful.
   def check_user_training_visibility_for( user_training )
-    (
-      user_training && 
-      ( 
-        admin_signed_in? ||
-        ( current_user && user_training.visible_to_user(current_user) ) 
-      )
-    )
+    UserTrainingAccessibility.new(current_user, user_training, admin_signed_in?).is_visible
   end
   #-- -------------------------------------------------------------------------
   #++

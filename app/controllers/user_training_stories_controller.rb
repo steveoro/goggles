@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.333.20140703
+  - version:  4.00.335.20140703
   - author:   Steve A., Leega
 
 =end
@@ -124,10 +124,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def verify_ownership
     set_user_training_story
-    if (
-         @user_training_story &&
-         (admin_signed_in? || @user_training_story.user_id == current_user.id)
-       )
+    if UserTrainingStoryAccessibility.new(current_user, @user_training_story, admin_signed_in?).is_owned
       return
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -147,10 +144,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def verify_visibility
     set_user_training_story
-    unless (
-             @user_training_story &&
-             (admin_signed_in? || @user_training_story.visible_to_user( current_user ))
-           )
+    unless UserTrainingStoryAccessibility.new(current_user, @user_training_story, admin_signed_in?).is_visible
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_training_stories_path() ) and return
     end
