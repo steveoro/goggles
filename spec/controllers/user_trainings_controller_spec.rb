@@ -127,12 +127,58 @@ describe UserTrainingsController do
         expect(response).to redirect_to( user_trainings_path() )
       end
 
-      it "assigns a training_max_part_order" do
+      it "assigns a training_max_part_order (for an owned training)" do
         fixture = create( :user_training_with_rows, user: @user )
         get :edit, id: fixture.id
         expect( response.status ).to eq(200)
         expect( assigns(:training_max_part_order) ).not_to be_nil 
         expect( assigns(:training_max_part_order) >= 0 ).to be_true 
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[PUT #update]' do
+    context "logged-in user" do
+      login_user()
+
+      # Expect that a user should not be able to invoke this action on any user_training, but just on its own
+      it "refuses the request for a shared training (not belonging to self)" do
+        fixture = create( :user_training )
+        fixture.user.invite( @user, true, true, true )   # he wants to share everything
+        @user.approve( fixture.user, true, true, true )  # the current user approves
+        put :update, id: fixture.id, training: attributes_for( :user_training )
+        expect(response).to redirect_to( user_trainings_path() )
+      end
+      it "refuses the request for an unshared training" do
+        fixture = create( :user_training )
+        put :update, id: fixture.id, training: attributes_for( :user_training )
+        expect(response).to redirect_to( user_trainings_path() )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[DELETE]' do
+    context "logged-in user" do
+      login_user()
+
+      # Expect that a user should not be able to invoke this action on any user_training, but just on its own
+      it "refuses the request for a shared training (not belonging to self)" do
+        fixture = create( :user_training )
+        fixture.user.invite( @user, true, true, true )   # he wants to share everything
+        @user.approve( fixture.user, true, true, true )  # the current user approves
+        delete :destroy, id: fixture.id
+        expect(response).to redirect_to( user_trainings_path() )
+      end
+      it "refuses the request for an unshared training" do
+        fixture = create( :user_training )
+        delete :destroy, id: fixture.id
+        expect(response).to redirect_to( user_trainings_path() )
       end
     end
   end

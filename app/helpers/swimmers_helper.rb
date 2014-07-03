@@ -1,3 +1,11 @@
+#
+# == SwimmersHelper
+#
+# Assorted helpers for badge-like clickable links rendering.
+#
+# @author   Steve A.
+# @version  4.00.285
+#
 module SwimmersHelper
 
   # Creates a toggle link for #confirm/#unconfirm actions for valid swimmers.

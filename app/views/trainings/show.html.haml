@@ -1,20 +1,12 @@
 .row-fluid
   .span3
-    = link_to( trainings_path() ) do
-      = image_tag('page_find.png')
-      = I18n.t(:back_to_index_view)
+    = link_to_trainings()
   .span2
-    = link_to( training_printout_path(@training.id) ) do
-      = image_tag('page_white_acrobat.png')
-      = I18n.t('agex_action.download_pdf')
+    = link_to_user_training_printout( @training )
   .span2
-    - if (@training.user_id == current_user.id)
-      = link_to( edit_training_path(@training.id) ) do
-        = image_tag('page_edit.png')
-        = I18n.t(:edit)
+    = link_to_user_edit( @user_training )
   .span2
-    = link_to( training_duplicate_path(@training.id), method: :post, confirm: I18n.t(:are_you_sure, scope: [:netzke,:basepack,:grid_panel]) ) do
-      = I18n.t(:duplicate)
+    = link_to_training_duplicate( @user_training )
 
 .accordion
   .accordion-group

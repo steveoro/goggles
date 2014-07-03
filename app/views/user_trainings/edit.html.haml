@@ -1,13 +1,8 @@
 .row-fluid
   .span3
-    = link_to( user_trainings_path() ) do
-      = image_tag('page_find.png')
-      = I18n.t(:back_to_index_view)
+    = link_to_user_trainings()
   .span2
-    - if ( @user_training.id.to_i > 0 )
-      = link_to( user_training_path(@user_training.id) ) do
-        = image_tag('page_go.png')
-        = I18n.t(:show)
+    = link_to_user_training_show( @user_training )
 
 %h3= @title
 

@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.329.20140630
+  - version:  4.00.333.20140703
   - author:   Steve A., Leega
 
 =end
@@ -17,6 +17,9 @@ class UserTrainingStoriesController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
+  # Parse parameters:
+  before_filter :verify_ownership, only: [:edit, :destroy, :update]
+  before_filter :verify_visibility, except: [:index, :edit, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -38,12 +41,7 @@ class UserTrainingStoriesController < ApplicationController
   # Show action.
   #
   def show
-    user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
-    unless ( user_training_story )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_training_stories_path() ) and return
-    end
-    @user_training_story = UserTrainingStoryDecorator.decorate(user_training_story)
+    @user_training_story = UserTrainingStoryDecorator.decorate(@user_training_story)
     @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
   end
   #-- -------------------------------------------------------------------------
@@ -83,12 +81,7 @@ class UserTrainingStoriesController < ApplicationController
   # Edit action.
   #
   def edit
-    user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
-    unless ( user_training_story )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_training_stories_path() ) and return
-    end
-    @user_training_story = UserTrainingStoryDecorator.decorate(user_training_story)
+    @user_training_story = UserTrainingStoryDecorator.decorate(@user_training_story)
     @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
   end
 
@@ -96,14 +89,9 @@ class UserTrainingStoriesController < ApplicationController
   # Update action.
   #
   def update
-    user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
-    unless ( user_training_story )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( user_training_stories_path() ) and return
-    end
-    if user_training_story.update_attributes( params[:user_training_story] )
+    if @user_training_story.update_attributes( params[:user_training_story] )
       flash[:info] = I18n.t('user_training_stories.story_updated')
-      redirect_to( user_training_story_path(user_training_story) )
+      redirect_to( user_training_story_path(@user_training_story) )
     else
       render :action => 'edit'
     end
@@ -115,14 +103,68 @@ class UserTrainingStoriesController < ApplicationController
   # Destroy action.
   #
   def destroy
-    user_training_story_id = params[:id].to_i
-    @user_training_story = ( user_training_story_id > 0 ) ? UserTrainingStory.find_by_id( user_training_story_id ) : nil
-    unless ( @user_training_story )
+    @user_training_story.destroy
+    redirect_to( user_training_stories_path() )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Verifies that the user_training_story id is provided as a parameter
+  # and that the corresponding training is owned by the current user.
+  # Otherwise, it redirects to the home page.
+  # Assigns the @user_training_story instance when successful.
+  # (Assumes log-in has been enforced elsewhere.)
+  #
+  # == Controller Params:
+  # id: the user_training_story id to be processed by most of the methods (see before filter above)
+  #
+  def verify_ownership
+    set_user_training_story
+    if (
+         @user_training_story &&
+         (admin_signed_in? || @user_training_story.user_id == current_user.id)
+       )
+      return
+    else
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_training_stories_path() ) and return
     end
-    @user_training_story.destroy
-    redirect_to( user_training_stories_path() )
+  end
+
+
+  # Verifies that a user_training_story id is provided as a parameter,
+  # and that the corresponding training story is *visible* by the current user.
+  # Otherwise, it redirects to the home page.
+  # Assigns the @user_training_story instance when successful.
+  # (Assumes log-in has been enforced elsewhere.)
+  #
+  # == Controller Params:
+  # id: the user_training_story id to be processed by most of the methods (see before filter above)
+  #
+  def verify_visibility
+    set_user_training_story
+    unless (
+             @user_training_story &&
+             (admin_signed_in? || @user_training_story.visible_to_user( current_user ))
+           )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( user_training_stories_path() ) and return
+    end
+  end
+
+
+  # Verifies that a user_training_story id is provided as a parameter to this controller.
+  # Assigns the @user_training_story instance when successful.
+  #
+  # == Controller Params:
+  # id: the user_training_story id to be processed by most of the methods (see before filter above)
+  #
+  def set_user_training_story
+    @user_training_story = UserTrainingStory.find_by_id( params[:id].to_i )
   end
   #-- -------------------------------------------------------------------------
   #++

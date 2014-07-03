@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = TrainingsController
 
-  - version:  4.00.329.20140701
+  - version:  4.00.333.20140703
   - author:   Steve A., Leega
 
 =end
@@ -18,7 +18,8 @@ class TrainingsController < ApplicationController
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameters, except: [:index, :new, :create]
+  before_filter :verify_ownership, only: [:edit, :destroy, :update]
+  before_filter :verify_visibility, except: [:index, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -233,17 +234,40 @@ class TrainingsController < ApplicationController
   private
 
 
+  # Verifies that the training id is provided as a parameter
+  # and that the corresponding training is owned by the current user.
+  # Otherwise, it redirects to the home page.
+  # Assigns the @training instance when successful.
+  # (Assumes log-in has been enforced elsewhere.)
+  #
+  # == Controller Params:
+  # id: the user_training id to be processed by most of the methods (see before filter above)
+  #
+  def verify_ownership
+    set_training
+    if (
+         @training && 
+         ( admin_signed_in? || (current_user && @training.user_id == current_user.id) )
+       )
+      return
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( trainings_path() ) and return
+    end
+  end
+
+
   # Verifies that a training id is provided as a parameter (except for an AJAX request, in which case it may be nil).
   # Otherwise, it redirects to the home page.
   # Assigns the @training instance when successful.
-  # (Assumes log in has been enforced elsewhere.)
+  # (Assumes log-in has been enforced elsewhere.)
   #
   # == Controller Params:
   # id: the training id to be processed by most of the methods (see before filter above)
   #
-  def verify_parameters
+  def verify_visibility
     set_training
-    unless @training
+    unless @training && ( admin_signed_in? || current_user )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end

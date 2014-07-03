@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingsController
 
-  - version:  4.00.329.20140701
+  - version:  4.00.333.20140703
   - author:   Steve A., Leega
 
 =end
@@ -22,7 +22,7 @@ class UserTrainingsController < ApplicationController
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_ownership, only: [:edit]
+  before_filter :verify_ownership, only: [:edit, :destroy, :update]
   before_filter :verify_visibility, except: [:index, :edit, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
@@ -287,14 +287,17 @@ class UserTrainingsController < ApplicationController
   # and that the corresponding training is owned by the current user.
   # Otherwise, it redirects to the home page.
   # Assigns the @user_training instance when successful.
-  # (Assumes log in has been enforced elsewhere.)
+  # (Assumes log-in has been enforced elsewhere.)
   #
   # == Controller Params:
   # id: the user_training id to be processed by most of the methods (see before filter above)
   #
   def verify_ownership
     set_user_training
-    if ( @user_training && @user_training.user_id == current_user.id )
+    if (
+         @user_training && 
+         ( admin_signed_in? || (current_user && @user_training.user_id == current_user.id) )
+       )
       return
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -307,15 +310,17 @@ class UserTrainingsController < ApplicationController
   # and that the corresponding training is *visible* by the current user.
   # Otherwise, it redirects to the home page.
   # Assigns the @user_training instance when successful.
-  # (Assumes log in has been enforced elsewhere.)
+  # (Assumes log-in has been enforced elsewhere.)
   #
   # == Controller Params:
   # id: the user_training id to be processed by most of the methods (see before filter above)
   #
   def verify_visibility
     set_user_training
-    if ( @user_training && @user_training.visible_to_user( current_user ) ) ||
-       ( request.xhr? && @user_training.nil? )
+    if (
+         @user_training && 
+         ( admin_signed_in? || (current_user && @user_training.visible_to_user(current_user)) )
+       ) || ( request.xhr? && @user_training.nil? )
       return
     else
       if request.xhr?

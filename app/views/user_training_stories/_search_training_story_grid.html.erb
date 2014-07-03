@@ -10,8 +10,7 @@
         name: I18n.t( 'user_training_stories.notes' ),
         attribute: 'notes',
     ) do |user_training_story|
-        @can_edit = (user_training_story.user_id == current_user.id) || admin_signed_in?
-        link_to_user_training_story_show( user_training_story )
+        link_to_user_training_story_show_with_label( user_training_story )
     end
 
     g.column(
@@ -26,7 +25,7 @@
         name: I18n.t( 'activerecord.models.user_training' ),
         attribute: 'user_training_id',
     ) do |user_training_story|
-        link_to_user_training_show( user_training_story )
+        link_to_user_training_from_story( user_training_story )
     end
 
     g.column do |user_training_story|                # Enable edit action link, but only if the current user is the owner:
@@ -34,12 +33,12 @@
             link_to_user_training_story_edit( user_training_story ),
             { class: 'goggles-centeralign' }
         ]
-    end if @can_edit
+    end
 
     g.column do |user_training_story|                # Enable delete action link, but only if the current user is the owner:
         [
             link_to_user_training_story_delete( user_training_story ),
             { class: 'goggles-centeralign' }
         ]
-    end if @can_edit
+    end
 end -%>

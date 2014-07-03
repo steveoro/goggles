@@ -10,7 +10,8 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   Coveralls::SimpleCov::Formatter
 ]
 SimpleCov.start 'rails'
-puts "SimpleCov required and started."
+# DEBUG
+# puts "SimpleCov required and started."
 
 # Since we don't have a Travis server (yet) this is useless:
 #Coveralls.wear!

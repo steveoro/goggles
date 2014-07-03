@@ -1,13 +1,8 @@
 .row-fluid
   .span3
-    = link_to( user_training_stories_path() ) do
-      = image_tag('page_find.png')
-      = I18n.t(:back_to_index_view)
+    = link_to_user_training_stories()
   .span2
-    - if (@user_training_story.user_id == current_user.id)
-      = link_to( edit_user_training_story_path(@user_training_story.id) ) do
-        = image_tag('page_edit.png')
-        = I18n.t(:edit)
+    = link_to_user_training_story_edit( @user_training_story )
 
 .accordion
   .accordion-group

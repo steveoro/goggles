@@ -97,6 +97,10 @@ FactoryGirl.define do
     user_training
     swimming_pool
     swimmer_level_type_id     { ((rand * 100) % 15).to_i }
+
+    factory :invalid_user_training_story do
+      swam_date nil
+    end
   end
   # ---------------------------------------------------------------------------
 
