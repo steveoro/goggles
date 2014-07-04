@@ -50,12 +50,22 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
     #
     primary.item( :key_home,                    t('home'), '#' ) do |lev2_nav|
-      lev2_nav.item( :key_main,                  t('main'),        root_path() )
-      lev2_nav.item( :key_about,                 t('about'),       about_path() )
-      lev2_nav.item( :key_contact_us,            t('contact_us'),  contact_us_path() )
+      lev2_nav.item( :key_main,                 t('main'),        root_path() )
+      lev2_nav.item( :key_about,                t('about'),       about_path() )
+      lev2_nav.item( :key_contact_us,           t('contact_us'),  contact_us_path() )
       lev2_nav.item( :key_separator1_0,         content_tag(:span, '' ), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
-      lev2_nav.item( :key_user_radio_id,        t('radiography.id_card'), swimmer_radio_path( current_user.swimmer_id ), if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
-      lev2_nav.item( :key_social_index,         t('social.menu_social_index'), socials_show_all_path(), if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+      lev2_nav.item(
+        :key_user_radio_id,
+        t('radiography.id_card'),
+        Proc.new { current_user.nil? ? '' : swimmer_radio_path(current_user.swimmer_id) },
+        if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+      )
+      lev2_nav.item(
+        :key_social_index,
+        t('social.menu_social_index'),
+        socials_show_all_path(),
+        if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+      )
     end
 
     primary.item( :key_meetings,                t('meetings'), '#' ) do |lev2_nav|

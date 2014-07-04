@@ -13,11 +13,15 @@
   %hr
 
 - for feed in @news_feed
-  .alert.alert-info
-    %button{type:'button', 'data-dismiss'=>'alert', :class=>'close'} &times;
+  %div{'class'=>"alert alert-info", 'id'=>"feed#{feed.id}"}
+    = link_to( api_v1_news_feed_read_path(id: feed.id), {method: :put, remote: true, success: "alert('Done!');"} ) do
+      - button_tag( type:'button', id: "bntClose#{feed.id}", 'data-dismiss'=>'alert', class: 'close' ) do
+        &times;
     %h4.text-info= feed.title
     %p= feed.body
     %small= "#{Format.a_datetime( feed.updated_at )}"
     %p
       %small= "#{t('newsfeed.go_to_friend')} " if feed.is_friend_activity && feed.friend
       %small= link_to( feed.friend.name, swimmer_radio_path(feed.friend.swimmer_id) ) if feed.is_friend_activity && feed.friend
+    %script
+      $( "#bntClose#{feed.id}" ).click( function(){ $("#feed#{feed.id}").remove(); } );

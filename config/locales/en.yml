@@ -681,8 +681,8 @@ en:
     menu_social_edit: "Edit"
     edit_request_tooltip: "Click to edit the friendship details regarding {SWIMMER_NAME}."
 
-    menu_social_confirm: "Confirm"
-    menu_social_unconfirm: "Un-confirm"
+    menu_social_confirm: "Confirm ID"
+    menu_social_unconfirm: "Un-confirm ID"
     confirm_request_tooltip: "The user associated with this swimmer is waiting for identity endorsement. Click if you know {USER_NAME} and you think that you can confirm that he/she is indeed {SWIMMER_NAME}."
     unconfirm_request_tooltip: "You have already given your confirmation about the identity of the user associated with this swimmer. Click if want to remove your confirmation about {USER_NAME} being indeed {SWIMMER_NAME}."
 
@@ -747,6 +747,7 @@ en:
     totally_missing_swimmer: "Still haven't found yourself? Send us a mail to notify your identity!"
     totally_missing_swimmer_subject: "My swimmer identity is missing from the database!"
     totally_missing_swimmer_body: "Hi! I haven't found myself in your list!\r\nI declare that I am ...<YOUR NAME HERE>\r\nMy current Swimming Team is ... <YOUR TEAM NAME HERE>"
+    nobody_yet: "(nobody yet)"
 
   newsfeed:
     invite_title: "You have a 'Swimming Buddy' request!"

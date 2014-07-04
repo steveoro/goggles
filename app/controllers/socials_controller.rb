@@ -23,7 +23,7 @@ class SocialsController < ApplicationController
           flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
         end
       end
-      redirect_to( root_path() ) and return
+      redirect_to( :back ) and return
                                                     # === GET: ===
     else                                            # Scompose the description in tokens:
       first_name, last_name = current_user.get_first_and_last_name()
@@ -53,7 +53,7 @@ class SocialsController < ApplicationController
         flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
       end
     end
-    redirect_to( root_path() ) and return
+    redirect_to( :back ) and return
   end
   # ----------------------------------------------------------------------------
 
@@ -64,7 +64,8 @@ class SocialsController < ApplicationController
   #
   def association_confirm
     toggle_confirmation( true )
-    redirect_to( socials_show_all_path() ) and return
+    redirect_to( :back ) and return
+#    redirect_to( request.env["HTTP_REFERER"] ) and return
   end
 
   # Remove endorsement/unconfirm user association with a goggler (POST only).
@@ -73,7 +74,8 @@ class SocialsController < ApplicationController
   #
   def association_unconfirm
     toggle_confirmation( false )
-    redirect_to( socials_show_all_path() ) and return
+    redirect_to( :back ) and return
+#    redirect_to( request.env["HTTP_REFERER"] ) and return
   end
   # ---------------------------------------------------------------------------
 
@@ -120,7 +122,7 @@ class SocialsController < ApplicationController
       else
         flash[:error] = I18n.t('social.invite_error')
       end
-      redirect_to( socials_show_all_path() ) and return
+      redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) ) and return
                                                     # === GET: ===
     else
       if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_invitable_by( current_user )
@@ -131,7 +133,7 @@ class SocialsController < ApplicationController
         # If friendship exists:
         flash[:warning] = I18n.t( 'social.warning_friendship_invite_already_sent_edit_options' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( socials_show_all_path() ) and return
+        redirect_to( :back ) and return
       end
     end
   end
@@ -171,7 +173,7 @@ class SocialsController < ApplicationController
       else
         flash[:error] = I18n.t('social.approve_error')
       end
-      redirect_to( socials_show_all_path() ) and return
+      redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) ) and return
                                                     # === GET: ===
     else
       if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_approvable_by( current_user )
@@ -180,7 +182,7 @@ class SocialsController < ApplicationController
       else 
         flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( socials_show_all_path() ) and return
+        redirect_to( :back ) and return
       end
     end
   end
@@ -207,7 +209,7 @@ class SocialsController < ApplicationController
       else
         flash[:error] = I18n.t('social.block_error')
       end
-      redirect_to( socials_show_all_path() ) and return
+      redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) ) and return
                                                     # === GET: ===
     else
       if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_blockable_by( current_user )
@@ -217,7 +219,7 @@ class SocialsController < ApplicationController
       else 
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( socials_show_all_path() ) and return
+        redirect_to( :back ) and return
       end
       render :ask_confirmation
     end
@@ -245,7 +247,7 @@ class SocialsController < ApplicationController
       else
         flash[:error] = I18n.t('social.unblock_error')
       end
-      redirect_to( socials_show_all_path() ) and return
+      redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) ) and return
                                                     # === GET: ===
     else
       if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_unblockable_by( current_user )
@@ -255,7 +257,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( socials_show_all_path() ) and return
+        redirect_to( :back ) and return
       end
       render :ask_confirmation
     end
@@ -283,7 +285,7 @@ class SocialsController < ApplicationController
       else
         flash[:error] = I18n.t('social.remove_error')
       end
-      redirect_to( socials_show_all_path() ) and return
+      redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) ) and return
                                                     # === GET: ===
     else
       if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_editable_by( current_user )
@@ -293,7 +295,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( socials_show_all_path() ) and return
+        redirect_to( :back ) and return
       end
       render :ask_confirmation
     end
@@ -373,7 +375,9 @@ class SocialsController < ApplicationController
     @swimming_buddy = ( user_id > 0 ) ? User.find_by_id( user_id ) : nil
     unless ( @swimming_buddy )                      # Check swimming buddy existance
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( socials_show_all_path() ) and return
+      redirect_to( :back ) and return
+#      redirect_to( request.env["HTTP_REFERER"] ) and return
+#      redirect_to( socials_show_all_path() ) and return
     end
   end
   # ---------------------------------------------------------------------------

@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
 # XXX Comment/Uncomment this to show or skip the 'better-errors' output page with stack trace:
 #  rescue_from Exception, :with => :handle_exception
-  rescue_from ActionController::RoutingError, :with => :render_not_found
+#  rescue_from ActionController::RoutingError, :with => :render_not_found
 
 
   # Set this to true to enable double logging (both the logger variable and stdout will be used).

@@ -683,8 +683,8 @@ it:
     menu_social_edit: "Modifica"
     edit_request_tooltip: "Clicca per modificare i dettagli di amicizia verso {SWIMMER_NAME}."
 
-    menu_social_confirm: "Conferma"
-    menu_social_unconfirm: "De-conferma"
+    menu_social_confirm: "Conferma ID"
+    menu_social_unconfirm: "De-conferma ID"
     confirm_request_tooltip: "L'utente associato a questo nuotatore e' in attesa di conferma per l'identificazione. Clicca se conosci {USER_NAME} e pensi di poter confermare che e' davvero {SWIMMER_NAME}."
     unconfirm_request_tooltip: "Hai gia' dato conferma dell'identita' dell'utente associato a questo nuotatore. Clicca se vuoi togliere la tua conferma alla identita' di {USER_NAME} come {SWIMMER_NAME}."
 
@@ -749,6 +749,7 @@ it:
     totally_missing_swimmer: "Non sei in lista? Mandaci una mail per notificarci chi sei!"
     totally_missing_swimmer_subject: "La mia indentita' come nuotatore manca dal vostro database!"
     totally_missing_swimmer_body: "Ciao! Non ho trovato il mio nome in lista!\r\nVi dichiaro che io sono ...<IL TUO NOME QUI>\r\nLa mia Squadra attuale e' ... <IL NOME DELLA TUA SQUADRA QUI>"
+    nobody_yet: "(nessuno sinora)"
 
   newsfeed:
     invite_title: "Hai una nuova richiesta di amicizia."

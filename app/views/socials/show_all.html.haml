@@ -10,29 +10,44 @@
 .row-fluid.span12
   %h4= I18n.t('social.current_friends')
   %ul
+    - if @friends.size == 0
+      %li
+        %i= I18n.t('social.nobody_yet')
     - @friends.each do |user|
       %li= link_to( user.get_full_name, swimmer_radio_path( user.swimmer ), {id: "pending#{user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
 
 .row-fluid.span12
   %h4= I18n.t('social.pending_invited_friends')
   %ul
+    - if @pending_invited.size == 0
+      %li
+        %i= I18n.t('social.nobody_yet')
     - @pending_invited.each do |user|
       %li= link_to( user.get_full_name, swimmer_radio_path( user.swimmer ), {id: "pending#{user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
 
 .row-fluid.span12
   %h4= I18n.t('social.to_be_accepted_friends')
   %ul
+    - if @pending_invited_by.size == 0
+      %li
+        %i= I18n.t('social.nobody_yet')
     - @pending_invited_by.each do |user|
       %li= link_to( user.get_full_name, swimmer_radio_path( user.swimmer ), {id: "waiting#{user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
 
 .row-fluid.span12
   %h4= I18n.t('social.invited_friends')
   %ul
+    - if @invited.size == 0
+      %li
+        %i= I18n.t('social.nobody_yet')
     - @invited.each do |user|
       %li= link_to( user.get_full_name, swimmer_radio_path( user.swimmer ), {id: "invited#{user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
 
 .row-fluid.span12
   %h4= I18n.t('social.blocked_friends')
   %ul
+    - if @blocked_friendships.size == 0
+      %li
+        %i= I18n.t('social.nobody_yet')
     - @blocked_friendships.each do |friendship|
       %li= FriendshipDecorator.decorate( friendship ).to_verbose_sharing

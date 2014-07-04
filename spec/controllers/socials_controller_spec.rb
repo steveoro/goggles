@@ -52,6 +52,8 @@ describe SocialsController do
     before :each do
       @swimmer = create(:swimmer)
       @swimming_buddy.set_associated_swimmer(@swimmer)
+      # We need to set this to make the redirect_to(:back) pass the tests:
+      request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
     end
 
     context "as an unlogged user" do
@@ -97,6 +99,8 @@ describe SocialsController do
     before :each do
       @swimmer = create(:swimmer)
       @swimming_buddy.set_associated_swimmer(@swimmer)
+      # We need to set this to make the redirect_to(:back) pass the tests:
+      request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
     end
 
     context "as an unlogged user" do
@@ -145,10 +149,12 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request" do
         get :invite, id: @swimming_buddy.id
@@ -165,15 +171,15 @@ describe SocialsController do
         expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
         expect( assigns(:submit_title) ).to be_an_instance_of(String) 
       end
-      it "redirects to :show_all for a non-yet valid goggler" do
+      it "redirects to :back for a non-yet valid goggler" do
         @user.set_associated_swimmer( nil )
         get :invite, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
-      it "redirects to :show_all for an existing friendship" do
+      it "redirects to :back for an existing friendship" do
         @swimming_buddy.invite( @user )
         get :invite, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
     end
   end
@@ -191,6 +197,11 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
+      before(:each) do
+        @swimming_buddy.set_associated_swimmer( create(:swimmer) )
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for a new friendship" do
         expect {
@@ -204,7 +215,7 @@ describe SocialsController do
       end
       it "renders successfully the template for a new friendship" do
         post :invite, id: @swimming_buddy.id 
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.invite_successful') )
       end
     end
@@ -221,10 +232,12 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request" do
         @swimming_buddy.invite( @user )
@@ -244,21 +257,21 @@ describe SocialsController do
         expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
         expect(response).to render_template(:approve)
       end
-      it "redirects to :show_all for a non-yet valid goggler" do
+      it "redirects to :back for a non-yet valid goggler" do
         @user.set_associated_swimmer( nil )
         get :approve, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
-      it "redirects to :show_all for an already approved friendship" do
+      it "redirects to :back for an already approved friendship" do
         @swimming_buddy.invite( @user )
         @user.approve( @swimming_buddy )
         get :approve, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
-      it "redirects to :show_all for a pending friendship requested by the user himself" do
+      it "redirects to :back for a pending friendship requested by the user himself" do
         @user.invite( @swimming_buddy )
         get :approve, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
     end
   end
@@ -279,7 +292,10 @@ describe SocialsController do
     context "as a logged-in user" do
       login_user()
       before :each do
+        @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
       end
 
       it "handles successfully the request for a pending friendship" do
@@ -292,7 +308,7 @@ describe SocialsController do
       end
       it "renders successfully the template for a pending friendship" do
         post :approve, id: @swimming_buddy.id 
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.approve_successful') )
       end
     end
@@ -309,11 +325,13 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for an approved friendship" do
         @user.approve( @swimming_buddy )
@@ -339,16 +357,16 @@ describe SocialsController do
         expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
         expect(response).to render_template( :ask_confirmation )
       end
-      it "redirects to :show_all for an invalid friendable" do
+      it "redirects to :back for an invalid friendable" do
         get :block, id: 0
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
-      it "redirects to :show_all for a requested & pending friendship (invalid action)" do
+      it "redirects to :back for a requested & pending friendship (invalid action)" do
         another_buddy = create(:user)
         another_buddy.set_associated_swimmer( create(:swimmer) )
         @user.invite( another_buddy )
         get :block, id: another_buddy.swimmer_id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
     end
   end
@@ -368,12 +386,14 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
         @user.approve( @swimming_buddy )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for a non-blocked friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
@@ -386,7 +406,7 @@ describe SocialsController do
       end
       it "renders successfully the template for a non-blocked friendship" do
         post :block, id: @swimming_buddy.id 
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.block_successful') )
       end
     end
@@ -403,11 +423,13 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for a blocked friendship" do
         @user.approve( @swimming_buddy )
@@ -432,18 +454,18 @@ describe SocialsController do
         expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
         expect(response).to render_template( :ask_confirmation )
       end
-      it "redirects to :show_all for an invalid friendable" do
+      it "redirects to :back for an invalid friendable" do
         get :unblock, id: 0
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
-      it "redirects to :show_all for a pending friendship" do
+      it "redirects to :back for a pending friendship" do
         get :unblock, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
-      it "redirects to :show_all for a non-blocked friendship" do
+      it "redirects to :back for a non-blocked friendship" do
         @user.approve( @swimming_buddy )
         get :unblock, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
     end
   end
@@ -465,13 +487,15 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
         @user.approve( @swimming_buddy )
         @user.block( @swimming_buddy )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for a blocked friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
@@ -483,7 +507,7 @@ describe SocialsController do
       end
       it "renders successfully the template for a blocked friendship" do
         post :unblock, id: @swimming_buddy.id 
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.unblock_successful') )
       end
     end
@@ -500,11 +524,13 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for an existing friendship" do
         get :remove, id: @swimming_buddy.id
@@ -523,10 +549,10 @@ describe SocialsController do
         expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
         expect(response).to render_template( :ask_confirmation )
       end
-      it "redirects to :show_all for an invalid friendable" do
+      it "redirects to :back for an invalid friendable" do
         @user.set_associated_swimmer(nil)
         get :remove, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to(:back)
       end
     end
   end
@@ -546,11 +572,13 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for a pending friendship" do
         post :remove, id: @swimming_buddy.id
@@ -573,7 +601,7 @@ describe SocialsController do
       end
       it "renders successfully the template for an existing friendship" do
         post :remove, id: @swimming_buddy.id 
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.remove_successful') )
       end
     end
@@ -590,10 +618,12 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       it "handles successfully the request for an existing friendship" do
         @swimming_buddy.invite( @user )
@@ -695,14 +725,16 @@ describe SocialsController do
 
     context "as a logged-in user" do
       login_user()
-      before(:each) {
+      before(:each) do
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user, true, true, true )
         @another_buddy = create( :user )
         @another_buddy.set_associated_swimmer( create(:swimmer) )
         @user.invite( @another_buddy, true, false, true )
-      }
+        # We need to set this to make the redirect_to(:back) pass the tests:
+        request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
+      end
 
       context "for a received pending friendship, when editing commonly-agreed share flags" do
         before(:each) {
