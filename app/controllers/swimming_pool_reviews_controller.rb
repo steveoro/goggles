@@ -1,5 +1,14 @@
 # encoding: utf-8
 
+
+=begin
+
+= SwimmingPoolReviewsController
+
+  - version:  4.00.339.20140707
+  - author:   Steve A.
+
+=end
 class SwimmingPoolReviewsController < ApplicationController
 
   respond_to :html, :json

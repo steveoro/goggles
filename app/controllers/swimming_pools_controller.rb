@@ -3,6 +3,14 @@ require 'date'
 require 'common/format'
 
 
+=begin
+
+= SwimmingPoolsController
+
+  - version:  4.00.339.20140707
+  - author:   Steve A.
+
+=end
 class SwimmingPoolsController < ApplicationController
 
   # Index/Search action.

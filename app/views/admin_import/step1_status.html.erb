@@ -53,6 +53,12 @@
 </p>
 <ul>
     <% @existing_import_sessions.each do |s| %>
+        <div id='<%="spanFullLog#{s.id}"%>' hidden="true" >
+            <%="#{s.phase_1_log}"%>
+                --- *** ---
+            <%="#{s.phase_3_log}"%>
+        </div>
+
         <li>
             <i>(ID: <%= s.id %>)</i>&nbsp;-&nbsp;
             <b><%= h( File.basename( s.file_name ) ) %></b>,&nbsp;
@@ -77,11 +83,6 @@
                 &nbsp;
             <% end %>
 
-<span id='<%="spanFullLog#{s.id}"%>' hidden="true" >
-<%="#{s.phase_1_log}"%>
-    --- *** ---
-<%="#{s.phase_2_log}"%>
-</span>
             <%= link_to( I18n.t(:result_log), "javascript: showLog('spanFullLog#{s.id}')" ) %>
             &nbsp;
 
@@ -116,6 +117,7 @@
 
 
 <br/>
+
 <div class="row">
     <div class="span3 offset1">
         <%= form_tag( 'step2_checkout',
@@ -128,9 +130,6 @@
             ) do -%>
             <div class="control-group">
                 <label class="control-label" for="season[season_id]"><%= I18n.t(:season, { scope: [:activerecord, :models] }) %>:</label>
-                <label class="control-label" for="datafile"><%= I18n.t(:select_file) %>:</label>
-                <label class="control-label" for="force_meeting_creation"><%= I18n.t('admin_import.force_meeting_creation') %>:</label>
-                <label class="control-label" for="force_team_creation"><%= I18n.t('admin_import.force_team_creation') %>:</label>
                 <div class="controls">
                     <%= select( :season, :season_id,
                                 Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] },
@@ -138,16 +137,20 @@
                                 { class: 'input-xxlarge' } )    # html options
                     %>
                 </div>
+                <label class="control-label" for="datafile"><%= I18n.t(:select_file) %>:</label>
                 <div class="controls">
                     <%= file_field_tag( :datafile ) %>
                 </div>
+                <label class="control-label" for="force_meeting_creation"><%= I18n.t('admin_import.force_meeting_creation') %>:</label>
                 <div class="controls">
                     <%= check_box_tag( :force_meeting_creation ) %>
                 </div>
+                <label class="control-label" for="force_team_creation"><%= I18n.t('admin_import.force_team_creation') %>:</label>
                 <div class="controls">
                     <%= check_box_tag( :force_team_creation ) %>
                 </div>
             </div>
+
             <div class="control-group">
                 <div class="controls">
                       <%= submit_tag( I18n.t(:upload), data: {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' ) %>

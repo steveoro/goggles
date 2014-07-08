@@ -18,7 +18,23 @@ shared_examples_for "(the existance of a method)" do |method_name_array|
     end
   end
 end
-# -----------------------------------------------------------------------------
+
+
+shared_examples_for "(the existance of a method returning a valid instance)" do |method_name, instance_const|
+  describe "##{method_name}" do
+    it "responds to ##{method_name}" do
+      expect( subject ).to respond_to( method_name )
+    end
+    it "returns an instance of #{instance_const}" do
+      expect( subject.send(method_name) ).to be_an_instance_of( instance_const )
+    end    
+    it "returns a valid instance" do
+      expect( subject.send(method_name) ).to be_valid
+    end    
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
 
 
 shared_examples_for "(the existance of a method returning strings)" do |method_name_array|
@@ -133,7 +149,7 @@ shared_examples_for "(the existance of a method with parameters, returning numer
 end
 # -----------------------------------------------------------------------------
 
-shared_examples_for "(existance of method returning array)" do |method_name_array|
+shared_examples_for "(the existance of a method returning an array)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
     it "##{method_name} returns a list" do

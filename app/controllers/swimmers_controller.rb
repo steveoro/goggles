@@ -3,6 +3,14 @@ require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 
 
+=begin
+
+= SwimmersController
+
+  - version:  4.00.339.20140707
+  - author:   Steve A.
+
+=end
 class SwimmersController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
@@ -10,8 +18,8 @@ class SwimmersController < ApplicationController
   before_filter :authenticate_entity!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
   before_filter :verify_parameter, except: [:index]
-  before_filter :verify_parameter, except: [:index]
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Index/Search action
@@ -25,7 +33,8 @@ class SwimmersController < ApplicationController
       per_page: 20
     )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Radiography for a specified swimmer id: main ID card "Radiography" tab rendering.
@@ -34,6 +43,8 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def radio
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Radiography" tab: ---
     @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
                                                     # Retrieve all records for the Swimmer Team(s)
@@ -52,7 +63,8 @@ class SwimmersController < ApplicationController
       @tot_team_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Radiography for a specified swimmer id: "Medals" tab rendering
@@ -61,6 +73,8 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def medals
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Medals" tab: ---
     @gold_medals   = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 1 )
     @silver_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 2 )
@@ -84,7 +98,8 @@ class SwimmersController < ApplicationController
 
     # TODO Collect actual Palmares array (displayed on a table)
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Radiography for a specified swimmer id: "Best timings" tab rendering
@@ -93,9 +108,13 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def best_timings
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Best timings" tab: ---
     # TODO Collect all best timings for each swam style, divided for each pool type
   end
+  #-- -------------------------------------------------------------------------
+  #++
   # ---------------------------------------------------------------------------
 
 
@@ -105,6 +124,8 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def all_races
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+###################################################### TODO REFACTOR this using the new Decorator:
     # --- "All the races" tab: ---                  # Collect all the races swam for each style, divided for each pool type:
     swimmer_mirs = MeetingIndividualResult.is_valid.where( swimmer_id: @swimmer.id )
     @mirs_in_25mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT25_ID])
@@ -112,7 +133,8 @@ class SwimmersController < ApplicationController
 
     # TODO get all the partial timings for each race & display them on a grid
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Radiography for a specified swimmer id: "Misc" tab rendering
@@ -121,11 +143,13 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def misc
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Misc" tab: ---
     # TODO
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private
@@ -139,12 +163,23 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter
-    swimmer_id = params[:id].to_i
-    @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
+    set_swimmer
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
     end
   end
-  # ---------------------------------------------------------------------------
+
+
+  # Verifies that a swimmer id is provided as a parameter to this controller.
+  # Assigns the @swimmer instance when successful.
+  #
+  # == Controller Params:
+  # id: the swimmer id to be processed by most of the methods (see before filter above)
+  #
+  def set_swimmer
+    @swimmer = Swimmer.find_by_id( params[:id].to_i )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

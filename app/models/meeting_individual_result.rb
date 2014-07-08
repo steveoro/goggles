@@ -55,6 +55,8 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :is_male,           -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,         -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
+  scope :has_rank,          ->(rank_filter) { where(rank: rank_filter) }
+
   scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_meeting,   ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_swimmer,   ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
@@ -145,45 +147,74 @@ class MeetingIndividualResult < ActiveRecord::Base
   def get_meeting_program_verbose_name
     self.meeting_program ? self.meeting_program.get_verbose_name() : '?'
   end
-  # ----------------------------------------------------------------------------
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Returns +true+ if this instance is associated to the specified PoolType#code.
+  # +false+ otherwise.
+  def has_pool_type_code?( code )
+     pool_type ? pool_type.code == code : false
+  end
+
+  # Returns +true+ if this instance is associated to the specified EventType#code.
+  # +false+ otherwise.
+  def has_event_type_code?( code )
+     event_type ? event_type.code == code : false
+  end
+
+  # Returns +true+ if this instance is associated to the specified CategoryType#code.
+  # +false+ otherwise.
+  def has_category_type_code?( code )
+     category_type ? category_type.code == code : false
+  end
+
+  # Returns +true+ if this instance is associated to the specified GenderType#code.
+  # +false+ otherwise.
+  def has_gender_type_code?( code )
+     gender_type ? gender_type.code == code : false
+  end
+  #-- --------------------------------------------------------------------------
+  #++
 
 
   # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and
   # minimum result score.
   #
   def self.count_team_results_for( meeting_id, team_id, min_meeting_score )
-    self.includes(:meeting).where(
-      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' +
+    self.joins( :meeting ).where(
+      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' <<
         'meeting_individual_results.meeting_individual_points >= ?',
         meeting_id, team_id, min_meeting_score ]
     ).count
   end
 
 
-  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and <tt>rank</tt>.
+  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and <tt>rank_filter</tt>.
+  # <tt>rank_filter</tt> can be also an Array of required ranks.
   #
-  def self.count_team_ranks_for( meeting_id, team_id, rank )
-    self.includes(:meeting).where(
-      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' +
-        'meeting_individual_results.rank = ? AND ' +
+  def self.count_team_ranks_for( meeting_id, team_id, rank_filter )
+    self.joins( :meeting ).has_rank( rank_filter ).where(
+      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' <<
         'meeting_individual_results.meeting_individual_points > 0',
-        meeting_id, team_id, rank ]
+        meeting_id, team_id ]
     ).count
   end
 
 
-  # Counts the query results for a specified <tt>meeting_id</tt> (optional), <tt>swimmer_id</tt> and <tt>rank</tt>.
+  # Counts the query results for a specified <tt>meeting_id</tt> (optional), <tt>swimmer_id</tt> and <tt>rank_filter</tt>.
+  # <tt>rank_filter</tt> can be also an Array of required ranks.
   #
-  def self.count_swimmer_ranks_for( swimmer_id, rank, meeting_id = nil )
-    mir = MeetingIndividualResult.is_valid.where([
-      '(swimmer_id = ?) AND (rank = ?) AND ' +
-      '(meeting_individual_results.meeting_individual_points > 0)',
-      swimmer_id, rank
-    ])
+  def self.count_swimmer_ranks_for( swimmer_id, rank_filter, meeting_id = nil )
+    mir = MeetingIndividualResult.is_valid.has_rank( rank_filter )
+      .where([
+        '(swimmer_id = ?) AND (meeting_individual_results.meeting_individual_points > 0)',
+        swimmer_id
+      ])
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
     mir.count
   end
-  # ----------------------------------------------------------------------------
+  #-- --------------------------------------------------------------------------
+  #++
 
 
   # Returns an array of 1st-rank Meeting result records, scoped from MeetingIndividualResult
@@ -218,10 +249,10 @@ class MeetingIndividualResult < ActiveRecord::Base
   # - <tt>team_id</tt> => when supplied, only the best timing records for the specified team
   # will be collected; when +nil+, the search is extended to all teams.
   #
-  def self.get_records_for( event_type_code, category_type_id_or_code_or_nil, gender_type_id, pool_type_id = nil,
-                            meeting_id = nil, swimmer_id = nil, team_id = nil,
+  def self.get_records_for( event_type_code, category_type_id_or_code_or_nil, gender_type_id,
+                            pool_type_id = nil, meeting_id = nil, swimmer_id = nil, team_id = nil,
                             limit_for_same_ranking_results = 3 )
-    mir = MeetingIndividualResult.is_valid
+    mir = MeetingIndividualResult.is_valid.has_rank(1)
     mir = mir.joins( :pool_type ).where( ['pool_types.id = ?', pool_type_id]) if pool_type_id
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
     mir = mir.where( ['swimmer_id = ?', swimmer_id]) if swimmer_id
@@ -238,10 +269,10 @@ class MeetingIndividualResult < ActiveRecord::Base
       event_type_code, gender_type_id
     ]
 # DEBUG
-#    puts "\r\n---[ #{self.name}.get_records_for() ]---"
-#    puts "- pool_type_id = #{pool_type_id}"
-#    puts "- meeting_id = #{meeting_id}"
-#    puts "- where_cond = #{where_cond.inspect}\r\n"
+    puts "\r\n---[ #{self.name}.get_records_for() ]---"
+    puts "- pool_type_id = #{pool_type_id}"
+    puts "- meeting_id = #{meeting_id}"
+    puts "- where_cond = #{where_cond.inspect}\r\n"
 
     first_recs = mir.includes(
       :meeting_program, :event_type, :category_type, :gender_type
@@ -251,13 +282,13 @@ class MeetingIndividualResult < ActiveRecord::Base
       :minutes, :seconds, :hundreds
     ).limit( limit_for_same_ranking_results )
 # DEBUG
-#    puts "\r\n- first_recs.size = #{first_recs.size}"
+    puts "\r\n- first_recs.size = #{first_recs.size}"
 
     if first_recs.size > 0                          # Compute the first timing result value
       first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
 # DEBUG
-#      puts "- first_timing_value = #{first_timing_value}"
-#      puts "- first_recs.first => #{first_recs.first.get_swimmer_name}, #{first_recs.first.get_meeting_program_verbose_name}\r\n"
+      puts "- first_timing_value = #{first_timing_value}"
+      puts "- first_recs.first => #{first_recs.first.get_swimmer_name}, #{first_recs.first.get_meeting_program_verbose_name}\r\n"
                                                     # Remove from the result all other rows that have a greater timing result (keep same ranking results)
       first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
     end

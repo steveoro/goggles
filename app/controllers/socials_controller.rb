@@ -1,5 +1,14 @@
 # encoding: utf-8
 
+
+=begin
+
+= SocialsController
+
+  - version:  4.00.335.20140703
+  - author:   Steve A.
+
+=end
 class SocialsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:

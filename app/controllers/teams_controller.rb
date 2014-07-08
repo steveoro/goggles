@@ -2,6 +2,14 @@
 require 'common/format'
 
 
+=begin
+
+= TeamsController
+
+  - version:  4.00.339.20140707
+  - author:   Steve A.
+
+=end
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
