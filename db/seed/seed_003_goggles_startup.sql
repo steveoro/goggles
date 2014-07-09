@@ -879,7 +879,7 @@ INSERT INTO category_types (id,code,description,short_name,season_id,federation_
 (617,'360-399','STAFF. M 360-399','360-399',114,'xH','MASTER',360,399,1,0,0,CURDATE(),CURDATE());
 
 INSERT INTO category_types (id,code,description,short_name,season_id,federation_code,group_name,age_begin,age_end,is_a_relay,is_out_of_race,lock_version,created_at,updated_at) VALUES 
-(618,'PROP','PROPAGANDA','PROP',121,'P','MASTER',1,15,0,1,0,CURDATE(),CURDATE()),
+(618,'SEN','SENIORES','SEN',121,'1','MASTER',1,15,0,1,0,CURDATE(),CURDATE()),
 (619,'M20','MASTER 20','M20',121,'2','MASTER',16,24,0,0,0,CURDATE(),CURDATE()),
 (620,'M25','MASTER 25','M25',121,'3','MASTER',25,29,0,0,0,CURDATE(),CURDATE()),
 (621,'M30','MASTER 30','M30',121,'4','MASTER',30,34,0,0,0,CURDATE(),CURDATE()),
@@ -948,7 +948,7 @@ INSERT INTO category_types (id,code,description,short_name,season_id,federation_
 (680,'360-399','STAFF. M 360-399','360-399',123,'xH','MASTER',360,399,1,0,0,CURDATE(),CURDATE());
 
 INSERT INTO category_types (id,code,description,short_name,season_id,federation_code,group_name,age_begin,age_end,is_a_relay,is_out_of_race,lock_version,created_at,updated_at) VALUES 
-(681,'PROP','PROPAGANDA','PROP',131,'P','MASTER',1,15,0,1,0,CURDATE(),CURDATE()),
+(681,'SEN','SENIORES','SEN',131,'1','MASTER',1,15,0,1,0,CURDATE(),CURDATE()),
 (682,'M20','MASTER 20','M20',131,'2','MASTER',16,24,0,0,0,CURDATE(),CURDATE()),
 (683,'M25','MASTER 25','M25',131,'3','MASTER',25,29,0,0,0,CURDATE(),CURDATE()),
 (684,'M30','MASTER 30','M30',131,'4','MASTER',30,34,0,0,0,CURDATE(),CURDATE()),
