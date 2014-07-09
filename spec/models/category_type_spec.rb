@@ -20,7 +20,15 @@ describe CategoryType do
       ])    
     end
 
+    # Filtering scopes:
+    it_behaves_like( "(the existance of a class method)", [
+      :is_valid,
+      :only_relays,
+      :are_not_relays
+    ])
+
     context "[general methods]" do
+
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_name,
         :get_full_name,

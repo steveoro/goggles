@@ -78,7 +78,7 @@ class RecordCollector
   def full_scan()
     pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }
     event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
-    category_type_codes = CategoryType.are_not_relays.select(:code).uniq.map{|row| row.code }
+    category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
     gender_type_codes   = GenderType.select(:code).uniq.map{ |row| row.code }
 
     pool_type_codes.each do |pool_type_code|

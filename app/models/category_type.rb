@@ -23,6 +23,7 @@ class CategoryType < ActiveRecord::Base
   has_one :season_type, through: :season
   has_one :federation_type, through: :season_type
 
+  scope :is_valid,        -> { where(is_out_of_race: false) }
   scope :only_relays,     -> { where(is_a_relay: true) }
   scope :are_not_relays,  -> { where(is_a_relay: false) }
   # ----------------------------------------------------------------------------
