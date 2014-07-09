@@ -18,10 +18,26 @@ FactoryGirl.define do
     description               "FINALS"
     session_order             { ((rand * 100) % 4).to_i + 1}
     meeting
-    scheduled_date            { Date.today } 
     day_part_type_id          { ((rand * 100) % 4).to_i + 1} # ASSERT: at least 4 timing types
+    scheduled_date            { Date.today } 
+    warm_up_time              { Time.now } 
+    begin_time                { Time.now } 
     swimming_pool
     user
+
+    factory :meeting_session_with_rows do
+      # the after(:create) yields two values: the row instance itself and the
+      # evaluator, which stores all values from the factory, including transient
+      # attributes; `create_list`'s second argument is the number of records
+      # to create and we make sure the association is set properly to the created instance:
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_event,
+          ((rand * 10).to_i + 2),                   # total number or detail rows
+          meeting_session: created_instance         # association enforce for each sub-row
+        )
+      end
+    end
   end
 
   factory :meeting_event do
@@ -36,7 +52,7 @@ FactoryGirl.define do
     event_order               { ((rand * 100) % 25).to_i + 1 }
     meeting_event
     category_type_id          { ((rand * 100) % 20).to_i + 1 } # ASSERT: at least 20 category types
-    gender_type_id            { ((rand * 100) % 2).to_i + 1 } # ASSERT: at least 2 gender types
+    gender_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
     user
   end
 

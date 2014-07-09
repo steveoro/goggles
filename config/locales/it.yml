@@ -1030,7 +1030,7 @@ it:
   title_feature_request: "'Nuova Feature': credo che dobbiate assolutamente aggiungere..."
 
   to_be_defined: "Da definire..."
-  not_disponible: "nd"
+  not_available: "N.D."
 
   netzke:
     basepack:

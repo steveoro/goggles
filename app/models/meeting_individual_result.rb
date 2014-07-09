@@ -1,6 +1,14 @@
 require 'wrappers/timing'
 
 
+#
+# == MeetingIndividualResult
+#
+# Model class
+#
+# @author   Steve A.
+# @version  4.00.341
+#
 class MeetingIndividualResult < ActiveRecord::Base
   include SwimmerRelatable
   include TimingGettable

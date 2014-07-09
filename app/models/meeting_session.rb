@@ -1,3 +1,11 @@
+#
+# == MeetingSession
+#
+# Model class
+#
+# @author   Steve A.
+# @version  4.00.341
+#
 class MeetingSession < ActiveRecord::Base
   include MeetingAccountable
 
@@ -44,14 +52,14 @@ class MeetingSession < ActiveRecord::Base
   # Eg MNG: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_short_name
-    "#{self.day_part_type.i18n_short}: #{self.get_short_events}"
+    "#{get_day_part_type(:i18n_short)}: #{get_short_events}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part and event list
   # Eg 25/05/2014 MORNING: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_full_name
-    "#{self.get_scheduled_date} #{self.day_part_type.i18n_description}: #{self.get_short_events} #{self.description}"
+    "#{get_scheduled_date} #{get_day_part_type}: #{get_short_events} #{description}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part, time schedule and event list
@@ -59,31 +67,33 @@ class MeetingSession < ActiveRecord::Base
   #
   def get_verbose_name
     #"#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
-    "#{self.get_scheduled_date} #{self.day_part_type.i18n_description} (#{self.get_warm_up_time}) #{self.get_begin_time}: #{self.get_short_events} #{self.description}"    
+    "#{get_scheduled_date} #{get_day_part_type} (#{get_warm_up_time}) #{get_begin_time}: #{get_short_events} #{description}"    
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
-  # Retrieve the scheduled date for the session, if any
-  # If no scheduled date defined returns international 'To be defined'
+  # Returns the formatted scheduled date for the session.
+  # Scheduled date can't be blank.
   #
   def get_scheduled_date
-    self.scheduled_date ? Format.a_date(self.scheduled_date) : I18n.t( :to_be_defined )
+    Format.a_date(scheduled_date)
   end
 
   # Retrieve the warm_up time for the session, if any
   # If no warm_up time defined returns international 'nd'
   #
   def get_warm_up_time
-    self.warm_up_time ? Format.a_time(self.warm_up_time) : I18n.t( :not_disponible )
+    warm_up_time ? Format.a_time(warm_up_time) : I18n.t( :not_available )
   end
 
   # Retrieve the begin time for the session, if any
   # If no begin time defined returns international 'nd'
   #
   def get_begin_time
-    self.begin_time ? Format.a_time(self.begin_time) : I18n.t( :not_disponible )
+    begin_time ? Format.a_time(begin_time) : I18n.t( :not_available )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves the Meeting session swimming pool length in meters, or 0 if any
   # E.g.: 50
@@ -112,45 +122,63 @@ class MeetingSession < ActiveRecord::Base
   def get_pool_full_description
     SwimmingPoolDecorator.decorate(swimming_pool).get_full_address
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes a shorter description for the name associated with this data
   # Used by import steps to identify session
   #
   def get_order_with_date
-    "n.#{self.session_order} (#{self.get_scheduled_date})"
+    "n.#{session_order} (#{get_scheduled_date})"
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves the user name associated with this instance
   #
   def user_name
-    self.user ? self.user.name : ''
+    user ? user.name : ''
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Safety getter for the DayPartType name
+  #
+  def get_day_part_type( label_method = :i18n_description )
+    day_part_type.respond_to?( label_method ) ? day_part_type.send(label_method) : ''
+  end
 
   # Retrieves the Meeting short name
   # Used by import steps to identify session
   #
   def get_meeting_name
-    self.meeting ? self.meeting.get_short_name() : '?'
+    meeting ? meeting.get_short_name : '?'
   end
 
   # Retrieves the Meeting verbose name
   # Used by import steps to identify session
   #
   def get_meeting_verbose_name
-    self.meeting ? self.meeting.get_verbose_name() : '?'
+    meeting ? meeting.get_verbose_name : '?'
   end
-  # ----------------------------------------------------------------------------
-  
-  # Retrieves the meeting event list, comma separated
-  # Eg 200SL, 100FA, 50DO, 4x50MX
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Retrieves the meeting EventType list as an Array.
+  # E.g.: 200FS, 100BF, 50BS, 4x50IM
+  #
+  def get_event_types
+    meeting_events ? meeting_events.includes(:event_type).joins(:event_type).map{ |row| row.event_type } : []
+  end
+
+  # Retrieves the meeting event list, each as a comma-separated short description.
+  # E.g.: '200FS, 100BF, 50BS, 4x50IM'
+  # Returns an empty string for no event list.
   #
   def get_short_events
-    #self.meeting_events.count > 0 ? self.meeting_events.event_types.i18n_short.join('--').gsub(' ','').gsub('--', ', ') : 'To be defined...'
-    self.meeting_events.count > 0 ? self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }.join('--').gsub(' ','').gsub('--', ', ') : 'To be defined...'
+    get_event_types.map{ |event_type| event_type.i18n_short }.join(', ')
   end
-  # ----------------------------------------------------------------------------
-  
+  #-- -------------------------------------------------------------------------
+  #++
 end

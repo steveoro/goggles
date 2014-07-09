@@ -1,6 +1,14 @@
 require 'wrappers/timing'
 
 
+#
+# == MeetingRelayResult
+#
+# Model class
+#
+# @author   Steve A.
+# @version  4.00.341
+#
 class MeetingRelayResult < ActiveRecord::Base
   include TimingGettable
   include TimingValidatable

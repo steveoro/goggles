@@ -1,3 +1,11 @@
+#
+# == MeetingProgram
+#
+# Model class
+#
+# @author   Steve A.
+# @version  4.00.341
+#
 class MeetingProgram < ActiveRecord::Base
   include MeetingAccountable
 

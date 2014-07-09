@@ -1027,7 +1027,7 @@ en:
   title_feature_request: "'Feature request': I think you should really add this..."
 
   to_be_defined: "To be defined..."
-  not_disponible: "nd"
+  not_available: "N.A."
 
 
   activerecord:
