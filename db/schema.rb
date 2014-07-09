@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140604102837) do
+ActiveRecord::Schema.define(:version => 20140709151837) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -202,6 +202,7 @@ ActiveRecord::Schema.define(:version => 20140604102837) do
     t.datetime "created_at",                                        :null => false
     t.datetime "updated_at",                                        :null => false
     t.integer  "season_id"
+    t.boolean  "is_out_of_race",                 :default => false, :null => false
   end
 
   add_index "category_types", ["federation_code", "is_a_relay"], :name => "federation_code"
@@ -499,6 +500,7 @@ ActiveRecord::Schema.define(:version => 20140604102837) do
     t.integer  "total_data_rows"
     t.string   "file_format"
     t.text     "phase_1_log",           :limit => 16777215
+    t.text     "phase_2_log"
     t.text     "phase_3_log",           :limit => 16777215
     t.integer  "data_import_season_id"
     t.integer  "season_id"
