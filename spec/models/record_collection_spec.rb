@@ -19,7 +19,7 @@ describe RecordCollection do
     create(
       :meeting_individual_result,
       meeting_program: fixture.meeting_program,
-      swimmer: create(:swimmer),
+      swimmer_id: 142,
       minutes:  tie_fixture1.minutes,
       seconds:  tie_fixture1.seconds,
       hundreds: tie_fixture1.hundreds
@@ -84,11 +84,23 @@ describe RecordCollection do
     it "does not add twice the same element to the list" do
       subject.clear
       expect{
+        subject.add( fixture )
+        subject.add( fixture )
+      }.to change{ subject.count }.by(1)
+      expect{
         subject.add( fixture2 )
         subject.add( fixture2 )
       }.to change{ subject.count }.by(1)
     end
+    it "adds correctly 2 different records to the list" do
+      subject.clear
+      expect{
+        subject.add( fixture )
+        subject.add( fixture2 )
+      }.to change{ subject.count }.by(2)
+    end
     it "adds both records having same-ranking results (tie-ins)" do
+      subject.clear
       expect{
         subject.add( tie_fixture1 )
         subject.add( tie_fixture2 )

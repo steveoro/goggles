@@ -53,6 +53,7 @@ FactoryGirl.define do
     meeting_event
     category_type_id          { ((rand * 100) % 20).to_i + 1 } # ASSERT: at least 20 category types
     gender_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
+    pool_type_id              { meeting_event.meeting_session.swimming_pool.pool_type_id }
     user
   end
 

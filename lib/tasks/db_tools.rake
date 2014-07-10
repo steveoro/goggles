@@ -4,11 +4,8 @@ require 'rubygems'
 require 'fileutils'
 require 'mechanize'
 
-# WIP BEGIN -- was:
-# require File.join( Dir.pwd.to_s, 'config/environment' )
 require 'framework/version'
 require 'framework/application_constants'
-# WIP END
 
 require 'framework/console_logger'
 require 'parsers/data_importer'

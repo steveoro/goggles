@@ -21,8 +21,8 @@ describe MeetingEvent do
     it_behaves_like( "MeetingAccountable",
       # These values were hand-verified for Meeting #13105, event #1018:
       1,    # team_id
-      117,  # tot_male_results
-      62,   # tot_female_results
+      118,  # tot_male_results
+      66,   # tot_female_results
       40,   # tot_team_results
       27,   # tot_male_entries
       14,   # tot_female_entries

@@ -4,9 +4,8 @@ require 'drop_down_listable'
 
 class Season < ActiveRecord::Base
   include DropDownListable
-  include ICUser
+  include UserRelatable
 
-  belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :season_type
   belongs_to :edition_type
   belongs_to :timing_type

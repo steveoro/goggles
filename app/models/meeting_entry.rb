@@ -7,7 +7,7 @@ class MeetingEntry < ActiveRecord::Base
   include SwimmerRelatable
 
   include TimingGettable
-  include ICEventTypeInfo
+  include EventTypeRelatable
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)

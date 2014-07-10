@@ -6,19 +6,17 @@ require 'fileutils'
 
 require 'framework/version'
 require 'framework/application_constants'
-
 require 'framework/console_logger'
-require 'parsers/data_importer'
 
 
 =begin
 
-= Data-Import Helper tasks
+= Record Update
 
-  - Goggles framework vers.:  4.00.225.20140414
+  - Goggles framework vers.:  4.00.345.20140710
   - author: Steve A.
 
-  Data-Import rake tasks. 
+  DB Updater for batch collection of Team & Federation Records & Best Individual Results
 
   (ASSUMES TO BE rakeD inside Rails.root)
 
@@ -42,7 +40,7 @@ end
 # -----------------------------------------------------------------------------
 
 
-namespace :dataimport do
+namespace :db do
 
   desc <<-DESC
   Executes the data-import process as a batch, delayed job.
@@ -90,34 +88,26 @@ Options: [exec_path=#{UPLOADS_DIR}] [delete=1|<0>]
               
               The job queue(s) can be monitored using the DJMon web app,
               at http://<server_ip>:<server_port>/dj_mon
-
   DESC
-  task :batch do |t|
-    puts "*** Data-Import batch execution ***"
+  task :update_records do |t|
+    puts "*** db::update_records ***"
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
     db_user         = rails_config.database_configuration[Rails.env]['username']
     db_pwd          = rails_config.database_configuration[Rails.env]['password']
-    exec_path       = ENV.include?("exec_path") ? ENV["exec_path"] : UPLOADS_DIR
     log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
-    force_season_id = ENV.include?("force_season_id") ? ENV["force_season_id"].to_i : 0
-    can_kill_file   = ENV.include?("delete") && (ENV["delete"].to_i > 0)
-    force_meeting   = ENV.include?("force_meeting") && (ENV["force_meeting"].to_i > 0)
-    force_team      = ENV.include?("force_team") && (ENV["force_team"].to_i > 0)
     delayed         = !( ENV.include?("delayed") && (ENV["delayed"].to_i < 1) )
                                                     # Display some info:
     puts "DB name:          #{db_name}"
     puts "DB user:          #{db_user}"
-    puts "force_season_id:  #{force_season_id > 0 ? force_season_id : '(autodetect)'}\r\n"
     puts "log_dir:          #{log_dir}"
     puts "\r\n"
-    puts ">>> DELETE files on success is ON <<<" if can_kill_file
-    puts ">>> FORCE Meeting CREATION is ON  <<<" if force_meeting
-    puts ">>> FORCE Team CREATION is ON     <<<" if force_team
     puts ">>> DELAYED job execution is ON   <<<" if delayed
     puts " "
     logger = ConsoleLogger.new
     flash = {}
+
+    raise "**** W.I.P.!!! *****"
 
     if File.directory?( exec_path )                 # If directory exists, scan it and execute each SQL file found:
       puts "\r\n- Processing directory: '#{exec_path}'..."

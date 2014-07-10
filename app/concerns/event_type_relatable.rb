@@ -2,19 +2,20 @@ require 'wrappers/timing'
 
 =begin
   
-= ICSEventTypeInfo
+= EventTypeRelatable
 
-  - version:  4.00.195.20140228
-  - author:   Leega
+  - version:  4.00.345.20140710
+  - author:   Leega, Steve A.
 
   Container module for interfacing common "event_type-related" info (description, code)
   and method functions.
 
-  *ASSUMES existance of event_type reference and field
-  - code
+  *ASSUMES* the existance of the event_type reference and the validity of its
+  event_type#code field.
 
 =end
-module ICEventTypeInfo
+module EventTypeRelatable
+  extend ActiveSupport::Concern
 
   # Retrieves the localized Event Type ID as it is; returns 0 in case of an invalid record
   def get_event_type_id
@@ -40,5 +41,6 @@ module ICEventTypeInfo
   def get_event_type_stroke
     event_type ? event_type.stroke_type.i18n_short : '?'
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

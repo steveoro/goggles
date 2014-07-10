@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'date'
 
 describe Season do
+  it_behaves_like "DropDownListable"
+  it_behaves_like "UserRelatable"
 
   describe "[a non-valid instance]" do
     it "is not a valid season without description" do

@@ -45,13 +45,14 @@ class RecordCollection
     if meeting_individual_result
       encoded_key = encode_key_from_result( meeting_individual_result )
       existing_record = @list[ encoded_key ]
-      if existing_record &&
-         (existing_record.minutes == meeting_individual_result.minutes) && 
-         (existing_record.seconds == meeting_individual_result.seconds) && 
-         (existing_record.hundreds == meeting_individual_result.hundreds) &&
-         (existing_record.swimmer_id != meeting_individual_result.swimmer_id) 
+      if ( existing_record &&                       # Same record w/ different swimmer?
+           (existing_record.swimmer_id != meeting_individual_result.swimmer_id) && 
+           (existing_record.minutes == meeting_individual_result.minutes) && 
+           (existing_record.seconds == meeting_individual_result.seconds) && 
+           (existing_record.hundreds == meeting_individual_result.hundreds)
+         )                                          # Add a tie-in w/ special key ending in 'b'
         @list[ encoded_key << 'b' ] = meeting_individual_result
-      else
+      else                                          # Add a normal record:
         @list[ encoded_key ] = meeting_individual_result
       end
       encoded_key

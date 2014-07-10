@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140709151837) do
+ActiveRecord::Schema.define(:version => 20140709162307) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -791,6 +791,25 @@ ActiveRecord::Schema.define(:version => 20140709151837) do
   end
 
   add_index "heat_types", ["code"], :name => "idx_heat_types_code", :unique => true
+
+  create_table "individual_records", :force => true do |t|
+    t.integer  "lock_version",                              :default => 0
+    t.datetime "created_at",                                                   :null => false
+    t.datetime "updated_at",                                                   :null => false
+    t.integer  "pool_type_id"
+    t.integer  "event_type_id"
+    t.integer  "category_type_id"
+    t.integer  "gender_type_id"
+    t.integer  "minutes",                      :limit => 3, :default => 0,     :null => false
+    t.integer  "seconds",                      :limit => 2, :default => 0,     :null => false
+    t.integer  "hundreds",                     :limit => 2, :default => 0,     :null => false
+    t.boolean  "is_team_record",                            :default => false, :null => false
+    t.integer  "swimmer_id"
+    t.integer  "team_id"
+    t.integer  "season_id"
+    t.integer  "federation_type_id"
+    t.integer  "meeting_individual_result_id"
+  end
 
   create_table "kick_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0

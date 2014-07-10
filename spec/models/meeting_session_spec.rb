@@ -41,8 +41,8 @@ describe MeetingSession do
     it_behaves_like( "MeetingAccountable",
       # These values were hand-verified for Meeting #13105, sess. #314: (single-session meeting)
       1,    # team_id
-      297,  # tot_male_results
-      164,  # tot_female_results
+      299,  # tot_male_results
+      172,  # tot_female_results
       92,   # tot_team_results
       64,   # tot_male_entries
       34,   # tot_female_entries

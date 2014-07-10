@@ -14,8 +14,8 @@ class MeetingIndividualResult < ActiveRecord::Base
   include TimingGettable
   include TimingValidatable
 
-  include ICEventTypeInfo
-  
+  include EventTypeRelatable
+
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_program
