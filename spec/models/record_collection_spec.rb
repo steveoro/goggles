@@ -122,10 +122,10 @@ describe RecordCollection do
       subject.add(fixture2)
     end
 
-    it "returns an instance of MeetingIndividualResult" do
+    it "returns an instance of IndividualRecord" do
       expect(
         subject.get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
-      ).to be_an_instance_of( MeetingIndividualResult )
+      ).to be_an_instance_of( IndividualRecord )
     end    
     it "returns the corresponding individual result for the specified keys" do
       result = subject.get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
@@ -138,13 +138,13 @@ describe RecordCollection do
       subject.add(tie_fixture1)
       subject.add(tie_fixture2)
       result = subject.get_record_for( tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code, true )
-      expect( result.id ).to eq( tie_fixture2.id )
+      expect( result.meeting_individual_result_id ).to eq( tie_fixture2.id )
     end    
     it "returns the first stored record when requested normally and tie-ins are available" do
       subject.add(tie_fixture1)
       subject.add(tie_fixture2)
       result = subject.get_record_for( tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code )
-      expect( result.id ).to eq( tie_fixture1.id )
+      expect( result.meeting_individual_result_id ).to eq( tie_fixture1.id )
     end    
   end
   #-- -------------------------------------------------------------------------

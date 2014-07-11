@@ -157,6 +157,23 @@ shared_examples_for "(the existance of a method returning an array)" do |method_
     end
   end
 end
+
+shared_examples_for "(the existance of a method returning an Enumerable of non-empty Strings)" do |method_name_array|
+  it_behaves_like "(the existance of a method returning an array)", method_name_array
+  method_name_array.each do |method_name|
+    describe "##{method_name}" do
+      it "returns an Enumerable" do
+        expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Enumerable )
+      end
+      it "returns a list of Strings" do
+        subject.send(method_name.to_sym).each do |element|
+          expect( element ).to be_an_instance_of( String )
+          expect( element.size > 0 ).to be_true
+        end
+      end
+    end
+  end
+end
 # -----------------------------------------------------------------------------
 
 shared_examples_for "(the existance of a method returning a date)" do |method_name_array|

@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.339.20140708
+  - Goggles framework vers.:  4.00.347.20140711
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -17,22 +17,70 @@ class RecordCollector
 
   # Creates a new instance while setting the filtering parameters for the records
   # selection.
-  def initialize( swimmer = nil, team = nil, season = nil, meeting = nil )
+  #
+  # === Supported filtering options:
+  #
+  # When provided, any of these options are combined together and used to filter
+  # out the results during the collection loops.
+  #
+  # - swimmer: a Swimmer instance
+  # - team a Team instance
+  # - federation_type: a FederationType instance
+  # - season: a Season instance
+  # - meeting: a Meeting instance
+  #
+  def initialize( options = {} )
     @collection = RecordCollection.new()
-    @swimmer = swimmer
-    @team = team
-    @season = season
-    @meeting = meeting
+    # Options safety check:
+    @swimmer         = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
+    @team            = options[:team] if options[:team].instance_of?( Team )
+    @federation_type = options[:federation_type] if options[:federation_type].instance_of?( FederationType )
+    @season          = options[:season] if options[:season].instance_of?( Season )
+    @meeting         = options[:meeting] if options[:meeting].instance_of?( Meeting )
+    # Cache the codes lists:
+    @pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }
+    @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
+    @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
+    @gender_type_codes   = GenderType.select(:code).uniq.map{ |row| row.code }
   end
   #-- --------------------------------------------------------------------------
   #++
 
+  # Clears the internal list of records.
+  def clear()
+    @collection.clear()
+  end
+
+  # Saves the internal list of records into the database without clearing the list.
+  #
+  def save()
+    @collection.each { |key, row| row.save }
+  end
+
+  # Saves the internal list of records into the database while removing them from
+  # the list when successful.
+  # Returns true on no errors during serialization.
+  #
+  def commit()
+    @collection.each do |key, row|
+      @collection[key] = nil if row.save
+    end
+    @collection.compact!
+    ( @collection.size == 0 )
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  # TODO collect_from_records_having
+
+
   # Returns the internal RecordCollection instance updated with the records collected using
   # the specified parameters.
   #
-  def collect_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
+  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code )
 # DEBUG
-#    puts "\r\n---[ RecordCollector#collect_for('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
+#    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
 
     mir = MeetingIndividualResult.is_valid
       .has_rank(1).joins( :pool_type, :event_type, :category_type, :gender_type )
@@ -73,19 +121,18 @@ class RecordCollector
   # for each possible combinatory tuple.
   #
   # This will yield a RecordCollection instance filled with all the best results
-  # available for each particular combination of parameters.
+  # available for each particular combination of filtering parameters specified
+  # in the constructor.
+  #
+  # Please, be aware that the unfiltered full scan may take several minutes to
+  # complete (depending on Server speed & power).
   #
   def full_scan()
-    pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }
-    event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
-    category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
-    gender_type_codes   = GenderType.select(:code).uniq.map{ |row| row.code }
-
-    pool_type_codes.each do |pool_type_code|
-      event_type_codes.each do |event_type_code|
-        category_type_codes.each do |category_type_code|
-          gender_type_codes.each do |gender_type_code|
-            collect_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
+    @pool_type_codes.each do |pool_type_code|
+      @event_type_codes.each do |event_type_code|
+        @category_type_codes.each do |category_type_code|
+          @gender_type_codes.each do |gender_type_code|
+            collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code )
           end
         end
       end

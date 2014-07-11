@@ -9,6 +9,9 @@ require 'framework/application_constants'
 require 'framework/console_logger'
 
 
+LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
+
+
 =begin
 
 = Record Update
@@ -21,61 +24,14 @@ require 'framework/console_logger'
   (ASSUMES TO BE rakeD inside Rails.root)
 
 =end
-UPLOADS_DIR = File.join( Dir.pwd, 'public/uploads' ) unless defined? UPLOADS_DIR
-LOG_DIR     = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
-# -----------------------------------------------------------------------------
-
-
-def launch_data_importer( pathname, season, force_meeting, force_team,
-                          do_not_consume_file, log_dir, logger, flash, delayed )
-  data_importer = DataImporter.new( logger, flash, 1 ) # default admin_id=1
-  data_importer.set_batch_parameters(
-      seasonpathname, season, force_meeting, force_team,
-      do_not_consume_file, log_dir
-  )
-  delayed ? data_importer.delay(:queue=>'data-import').batch_import() :
-            data_importer.batch_import()
-end
-# -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
-
 
 namespace :db do
 
   desc <<-DESC
-  Executes the data-import process as a batch, delayed job.
-All files found in the designated directory will be enqued, processed
-and consumed. Resulting log files are stored into '#{LOG_DIR}'.
+Executes the DB update process for records/best-results as a batch, delayed job.
+Resulting log files are stored into '#{LOG_DIR}'.
 
-Options: [exec_path=#{UPLOADS_DIR}] [delete=1|<0>]
-         [force_meeting=1|<0>] [force_team=1|<0>] 
-         [force_season_id=<season_id>]
-         [log_dir=#{LOG_DIR}] [delayed=<1>|0]
-
-- 'exec_path' is either the path where the files are found or the full
-              pathname of the file to be executed.
-              If the path is a directory and it contains any folder named
-              'season.ID', where 'ID' is the integer ID of an existing
-              Season row, each folder will be scanned recursively in search
-              of other data-import text files to be processed; each
-              file found will be set forcibly to belong to the specified
-              season.id.
-
-- 'force_meeting' allows to forcibly create any non-existing meeting for
-              the processed files (defaults to '0', false).
-
-- 'force_team' allows to forcibly create any non-existing team row for
-              the processed files (defaults to '0', false).
-
-- 'force_season_id' allows to specify the season.id which must be assumed
-              for each data-import files processed, except for the ones
-              stored inside any folder named 'season.ID', as explained
-              above (directory naming takes precedence over this parameter,
-              which applies to 'all the other files found').
-
-- 'delete'    allows to kill the executed file after completion;
-              defaults to '0' (false). Deletion applies only to successful
-              data-imports.
+Options: [log_dir=#{LOG_DIR}] [delayed=<1>|0]
 
 - 'log_dir'   allows to override the default log dir destination.
 
@@ -109,47 +65,12 @@ Options: [exec_path=#{UPLOADS_DIR}] [delete=1|<0>]
 
     raise "**** W.I.P.!!! *****"
 
-    if File.directory?( exec_path )                 # If directory exists, scan it and execute each SQL file found:
-      puts "\r\n- Processing directory: '#{exec_path}'..."
-                                                    # For each file match in pathname recursively do "process file":
-      Dir.glob([
-        File.join(exec_path, '*.txt'),
-        File.join(exec_path, '**/season.*')
-      ]).sort.each do |subpathname|                 # Recurse just 1 time into any 'special' directory found
-        if File.directory?( subpathname )           # Season subdir path found? Process each other file:
-          season_id = File.extname( subpathname ).delete('.').to_i
-          puts "\r\n- Processing directory: '#{subpathname}' => season ID:#{season_id}..."
-          Dir.glob( File.join(subpathname, '*.txt'), File::FNM_PATHNAME ).sort.each do |seasonpathname|
-            puts "Processing '#{seasonpathname}' (using season ID:#{season_id})..."
-            season = force_season_id > 0 ? Season.find_by_id( season_id ) : nil
-            launch_data_importer(
-                seasonpathname, season, force_meeting, force_team,
-                !can_kill_file, log_dir,
-                logger, flash, delayed
-            )
-          end
-        else                                        # Result from Dir is a plain text (data) file? Process it: (no other nested loops are necessary)
-          puts "Processing '#{subpathname}'..."
-          season = force_season_id > 0 ? Season.find_by_id( force_season_id ) : nil
-          launch_data_importer(
-              subpathname, season, force_meeting, force_team,
-              !can_kill_file, log_dir,
-              logger, flash, delayed
-          )
-        end
-      end
-                                                    # Suggested exec_path is a filename? (This could contain wildcards, so process each file found:
-    else
-      Dir.glob( exec_path, File::FNM_PATHNAME ).sort.each do |subpathname|
-        puts "Processing '#{subpathname}'..."
-        season = force_season_id > 0 ? Season.find_by_id( force_season_id ) : nil
-        launch_data_importer(
-            subpathname, season, force_meeting, force_team,
-            !can_kill_file, log_dir,
-            logger, flash, delayed
-        )
-      end
-    end
+    updater = DataImporter.new( logger, flash, 1 ) # default admin_id=1
+    updater.set_batch_parameters(
+        seasonpathname, season, force_meeting, force_team,
+        do_not_consume_file, log_dir
+    )
+    delayed ? updater.delay( queue: 'data-import' ).batch_import() : updater.batch_import()
 
     puts "Finished."
   end

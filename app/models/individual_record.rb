@@ -39,10 +39,38 @@ class IndividualRecord < ActiveRecord::Base
   validates_associated :team
   validates_associated :season
   validates_associated :federation_type
+  
+  attr_accessible :minutes, :seconds, :hundreds, :is_team_record,
+                  :meeting_individual_result_id, :pool_type_id, :event_type_id,
+                  :category_type_id, :gender_type_id, :swimmer_id, :team_id,
+                  :season_id, :federation_type_id
 
 
   scope :team_records,        -> { where(is_team_record: true) }
   scope :federation_records,  -> { where(is_team_record: false) }
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Fills the current instance with values from the specified MeetingIndividualResult,
+  # returning self.
+  #
+  def from_individual_result( individual_result, is_team_record = false )
+    raise ArgumentError unless individual_result.instance_of?( MeetingIndividualResult )
+    self.meeting_individual_result_id = individual_result.id
+    self.pool_type_id        = individual_result.pool_type.id
+    self.event_type_id       = individual_result.event_type.id
+    self.category_type_id    = individual_result.category_type.id
+    self.gender_type_id      = individual_result.gender_type.id
+    self.minutes             = individual_result.minutes
+    self.seconds             = individual_result.seconds
+    self.hundreds            = individual_result.hundreds
+    self.swimmer_id          = individual_result.swimmer_id
+    self.team_id             = individual_result.team_id
+    self.season_id           = individual_result.season.id
+    self.federation_type_id  = individual_result.season.federation_type.id
+    self.is_team_record = is_team_record
+    self
+  end
   #-- -------------------------------------------------------------------------
   #++
 end

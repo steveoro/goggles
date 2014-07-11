@@ -76,7 +76,8 @@ gem 'draper', '~> 1.3'                              # [Steve] For Decorator patt
 #   Single instance => Article.first.decorate
 #   Indirect        => ArticleDecorator.decorate( OtherCompatibleModel.first )
 #   Collection      => ArticleDecorator.decorate_collection( Article.all )
-gem 'rubocop', require: false
+
+gem 'rubocop', require: false                       # [Steve] For style checking
 
 gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
 gem "rest-client"

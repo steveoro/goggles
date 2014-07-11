@@ -1,0 +1,6 @@
+# [Steve] I completely disagree with this stupid rule (which is plain wrong for Ruby 2.0):
+Style/Proc:
+  Enabled: false
+
+Style/LineLength:
+  Max: 130

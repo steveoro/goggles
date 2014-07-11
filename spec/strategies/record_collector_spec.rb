@@ -15,21 +15,52 @@ describe RecordCollector do
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method)",
       [
-        :collect_for,
+        :clear,
+        :collect_from_results_having,
+        :save,
+        :commit,
+
+# FIXME This must be refactored:
         :full_scan
       ]
     )
+#    it_behaves_like( "(the existance of a method returning an Enumerable of non-empty Strings)",
+#      [
+#        :pool_type_codes,
+#        :event_type_codes,
+#        :category_type_codes,
+#        :gender_type_codes
+#      ]
+#    )
   end
 
-  describe "#collect_for" do
+  describe "#collect_from_results_having" do
     it "returns an instance of RecordCollection" do
-      expect( subject.collect_for('25', '50FA', 'M35', 'M') ).to be_an_instance_of( RecordCollection )
+      expect( subject.collect_from_results_having('25', '50FA', 'M35', 'M') ).to be_an_instance_of( RecordCollection )
     end
     it "returns collection of no more than 2 records" do
-      result = subject.collect_for('50', '50FA', 'M40', 'M')
+      result = subject.collect_from_results_having('50', '50FA', 'M40', 'M')
       expect( result.count < 3 ).to be_true
     end
   end
+
+
+  describe "#clear" do
+    it "clears the internal list"
+  end
+
+
+  describe "#save" do
+    it "stores the internal list to the database"
+  end
+
+
+  describe "#commit" do
+    it "stores the internal list to the database"
+    it "returns true on no-errors found"
+    it "clears the internal list"
+  end
+
 
   # XXX [Steve, 20140709] ~175" is too much! Disabled because this method is stupid & slow
   # describe "#full_scan" do
