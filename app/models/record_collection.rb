@@ -39,6 +39,23 @@ class RecordCollection
     self
   end
 
+  # Removes from the internal list of records the specified (key: element) pair
+  # using an already existing encoded key.
+  def delete_with_key( encoded_key )
+    @list.delete( encoded_key ) ? true : false
+  end
+
+  # Removes from the internal list of records the specified element.
+  def delete( individual_result_or_record )
+    if individual_result_or_record
+      record_candidate = get_record_candidate( individual_result_or_record )
+      encoded_key = encode_key_from_record( record_candidate )
+      delete_with_key( encoded_key )
+    else
+      false
+    end
+  end
+
   # Adds a new member returning its encoded key.
   #
   # Allows also a second tie-in record to be added with a special key, if the
@@ -47,11 +64,7 @@ class RecordCollection
   #
   def add( individual_result_or_record )
     if individual_result_or_record
-      record_candidate = (
-        individual_result_or_record.instance_of?( MeetingIndividualResult ) ?
-        IndividualRecord.new.from_individual_result( individual_result_or_record ) : 
-        individual_result_or_record
-      )
+      record_candidate = get_record_candidate( individual_result_or_record )
       encoded_key = encode_key_from_record( record_candidate )
       existing_record = @list[ encoded_key ]
       if ( existing_record &&                       # Same record w/ different swimmer?
@@ -71,6 +84,7 @@ class RecordCollection
   end
 
   alias :<< :add
+  alias :size :count
   #-- -------------------------------------------------------------------------
   #++
 
@@ -98,6 +112,14 @@ class RecordCollection
   #-- -------------------------------------------------------------------------
   #++
 
+  # Returns the encoded string key used to store the specified IndividualRecord record.
+  #
+  def encode_key_from_codes( pool_type_code, event_type_code, category_type_code, gender_type_code )
+    "#{pool_type_code}-#{event_type_code}-#{category_type_code}-#{gender_type_code}"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Returns a copy of the internal list of records.
   def to_hash()
     @list.dup
@@ -111,19 +133,24 @@ class RecordCollection
 
   # Returns the encoded string key used to store the specified IndividualRecord record.
   #
-  def encode_key_from_codes( pool_type_code, event_type_code, category_type_code, gender_type_code )
-    "#{pool_type_code}-#{event_type_code}-#{category_type_code}-#{gender_type_code}"
-  end
-
-
-  # Returns the encoded string key used to store the specified IndividualRecord record.
-  #
   def encode_key_from_record( individual_record )
     encode_key_from_codes(
       individual_record.pool_type     ? individual_record.pool_type.code : '?',
       individual_record.event_type    ? individual_record.event_type.code : '?',
       individual_record.category_type ? individual_record.category_type.code : '?',
       individual_record.gender_type   ? individual_record.gender_type.code : '?'
+    )
+  end
+
+
+  # Returns a valid record candidate as an IndividualRecord instance.
+  # It doesn't check for a nil parameter.
+  #
+  def get_record_candidate( individual_result_or_record )
+    (
+      individual_result_or_record.instance_of?( MeetingIndividualResult ) ?
+      IndividualRecord.new.from_individual_result( individual_result_or_record ) : 
+      individual_result_or_record
     )
   end
   #-- -------------------------------------------------------------------------

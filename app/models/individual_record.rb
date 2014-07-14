@@ -39,11 +39,6 @@ class IndividualRecord < ActiveRecord::Base
   validates_associated :team
   validates_associated :season
   validates_associated :federation_type
-  
-  attr_accessible :minutes, :seconds, :hundreds, :is_team_record,
-                  :meeting_individual_result_id, :pool_type_id, :event_type_id,
-                  :category_type_id, :gender_type_id, :swimmer_id, :team_id,
-                  :season_id, :federation_type_id
 
 
   scope :team_records,        -> { where(is_team_record: true) }

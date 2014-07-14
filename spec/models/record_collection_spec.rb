@@ -34,12 +34,16 @@ describe RecordCollection do
       [
         :clear,
         :each,
-        :count,
+        :count,                                     # included with Enumerable
+        :size,                                      # aliased from #count
+        :delete,
+        :delete_with_key,
         :add,
         :<<,
         :get_record_for,
         :has_record_for,
         :has_tie_in_for,
+        :encode_key_from_codes,
         :to_hash
       ]
     )
@@ -51,6 +55,21 @@ describe RecordCollection do
   #-- -----------------------------------------------------------------------
   #++
 
+
+  describe "#encode_key_from_codes" do
+    it "returns a String" do
+      expect( subject.encode_key_from_codes('a', 'b', 'c', 'd') ).to be_an_instance_of( String )
+    end    
+    it "contains all the specifed codes" do
+      result = subject.encode_key_from_codes('a1', 'b2', 'c3', 'd4')
+      expect( result ).to include('a1')
+      expect( result ).to include('b2')
+      expect( result ).to include('c3')
+      expect( result ).to include('d4')
+    end    
+  end
+
+
   describe "#to_hash" do
     it "returns an instance of Hash" do
       expect( subject.to_hash ).to be_an_instance_of( Hash )
@@ -60,11 +79,85 @@ describe RecordCollection do
   #++
 
 
+  describe "#delete" do
+    it "returns true when successful" do
+      subject.clear
+      subject.add(fixture)
+      expect( subject.delete(fixture) ).to be_true
+    end
+    it "returns false when nothing has been done" do
+      subject.clear
+      expect( subject.delete(fixture) ).to be_false
+    end
+    it "deletes successfully the specified element from the internal list" do
+      subject.clear
+      subject.add(fixture)
+      expect( subject.delete(fixture) ).to be_true
+    end
+    it "removes the specified element from the internal list" do
+      subject.delete(fixture)
+      expect(
+        subject.has_record_for(
+          fixture.pool_type.code,
+          fixture.event_type.code,
+          fixture.category_type.code,
+          fixture.gender_type.code
+        )
+      ).to be_false
+    end
+    it "decreases the size of the internal list" do
+      subject.add(fixture)
+      expect{ subject.delete(fixture) }.to change{ subject.count }.by(-1)
+    end    
+  end
+
+
+  describe "#delete_with_key" do
+    let( :encoded_key ) do
+      subject.encode_key_from_codes(
+        fixture.pool_type.code,
+        fixture.event_type.code,
+        fixture.category_type.code,
+        fixture.gender_type.code
+      )
+    end
+    it "returns true when successful" do
+      subject.clear
+      subject.add(fixture)
+      expect( subject.delete_with_key(encoded_key) ).to be_true
+    end
+    it "returns false when nothing has been done" do
+      subject.clear
+      expect( subject.delete_with_key(encoded_key) ).to be_false
+    end
+    it "deletes successfully the specified element from the internal list" do
+      subject.clear
+      subject.add(fixture)
+      expect( subject.delete_with_key(encoded_key) ).to be_true
+    end
+    it "removes the specified element from the internal list" do
+      subject.delete_with_key(encoded_key)
+      expect(
+        subject.has_record_for(
+          fixture.pool_type.code,
+          fixture.event_type.code,
+          fixture.category_type.code,
+          fixture.gender_type.code
+        )
+      ).to be_false
+    end
+    it "decreases the size of the internal list" do
+      subject.add(fixture)
+      expect{ subject.delete_with_key(encoded_key) }.to change{ subject.count }.by(-1)
+    end    
+  end
+
+
   describe "#clear" do
     it "returns this instance" do
       expect( subject.clear ).to be_an_instance_of( RecordCollection )
     end    
-    it "adds another element to the internal list" do
+    it "clears the internal list" do
       subject.add( fixture3 )
       expect{ subject.clear }.to change{ subject.count }.to(0)
     end    
@@ -76,27 +169,29 @@ describe RecordCollection do
       expect( subject.add(nil) ).to be_nil
     end    
     it "returns the string key of the new element" do
+      subject.clear
       expect( subject.add(fixture) ).to be_an_instance_of( String )
     end    
-    it "adds another element to the list" do
+    it "adds an element to the list" do
+      subject.clear
       expect{ subject.add(fixture2) }.to change{ subject.count }.by(1)
     end
     it "does not add twice the same element to the list" do
       subject.clear
       expect{
-        subject.add( fixture )
-        subject.add( fixture )
+        subject.add( fixture2 )
+        subject.add( fixture2 )
       }.to change{ subject.count }.by(1)
       expect{
-        subject.add( fixture2 )
-        subject.add( fixture2 )
+        subject.add( fixture3 )
+        subject.add( fixture3 )
       }.to change{ subject.count }.by(1)
     end
     it "adds correctly 2 different records to the list" do
       subject.clear
       expect{
-        subject.add( fixture )
-        subject.add( fixture2 )
+        subject.add( create(:meeting_individual_result) )
+        subject.add( create(:meeting_individual_result) )
       }.to change{ subject.count }.by(2)
     end
     it "adds both records having same-ranking results (tie-ins)" do
