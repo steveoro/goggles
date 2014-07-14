@@ -22,7 +22,7 @@ class AlterTablePassages < ActiveRecord::Migration
       t.integer :hundreds_from_start, :limit => 2, :null => true, :comment => 'Hundreds from the start'
       t.boolean :is_native_from_start, :null => false, :default => false, :comment => 'TRUE when the passage was kept from the start, FALSE whene the passage has kept from the last turn'
 
-      t.references :meeting_indivudual_result
+      t.references :meeting_individual_result
       t.references :meeting_entry
       t.references :swimmer
       t.references :team
