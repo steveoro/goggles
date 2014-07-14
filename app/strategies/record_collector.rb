@@ -95,6 +95,7 @@ class RecordCollector
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
+    mir = mir.joins( :federation_type ).where( ['federation_types.id = ?', @federation_type.id]) if @federation_type
     update_and_return_collection_with_first_results( mir )
   end
 
@@ -190,24 +191,6 @@ class RecordCollector
   #++
 
 
-  # Interface implementation for DelayedJob.
-  # Performs a batch, full scan of MeetingIndividualResult, while
-  # iterating on each Federation and then on each Team.
-  #
-  # The collected records are either "team records" (when filtered
-  # by the current Team in the loop) or "feration records" (when
-  # filtered upon the current FederationType in the loop).
-  #
-  # The results serialized after each #full_scan invocation (upon
-  # each iteration of one of the two loops).
-  #
-  def perform
-    
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   private
 
 
@@ -232,7 +215,19 @@ class RecordCollector
 #    first_recs.each do |row|
 #      puts "- ID:#{row.id} => #{row.get_full_name}\r\n"
 #    end
-    first_recs.each { |rec| @collection << rec }
+    first_recs.each do |rec|
+# FIXME ******************************** WIP ***********************************
+# XXX THE FOLLOWING WORKS ONLY FOR REBUILDING FROM SCRATCH THE REC ENTITY:
+#      encoded_key = @collection.encode_key_from_record( rec )
+#      existing_rec = @collection.get_record_with_key( encoded_key )
+#      if existing_rec
+        # FIXME While reading existing MIRs & converting them to Recs is fine, to update existing
+        # we must execute a different loop (otherwise the loop inside Collection.save will serialize everything EACH time)
+#        @collection << rec 
+#      else
+        @collection << rec 
+#      end
+    end
     @collection
   end
   #-- -------------------------------------------------------------------------

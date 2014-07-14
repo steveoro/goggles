@@ -44,6 +44,8 @@ describe RecordCollection do
         :has_record_for,
         :has_tie_in_for,
         :encode_key_from_codes,
+        :encode_key_from_record,
+        :get_record_with_key,
         :to_hash
       ]
     )
@@ -56,6 +58,19 @@ describe RecordCollection do
   #++
 
 
+  describe "#get_record_with_key" do
+    it "returns a nil when not found" do
+      expect( subject.get_record_with_key('fake key') ).to be_nil
+    end    
+    it "returns an instance of IndividualRecord when found" do
+      subject.clear
+      subject.add(fixture)
+      key = encode_key_from_record( fixture )
+      expect( subject.get_record_with_key(key) ).to be_an_instance_of( IndividualRecord )
+    end    
+  end
+
+
   describe "#encode_key_from_codes" do
     it "returns a String" do
       expect( subject.encode_key_from_codes('a', 'b', 'c', 'd') ).to be_an_instance_of( String )
@@ -66,6 +81,20 @@ describe RecordCollection do
       expect( result ).to include('b2')
       expect( result ).to include('c3')
       expect( result ).to include('d4')
+    end    
+  end
+
+
+  describe "#encode_key_from_record" do
+    it "returns a String" do
+      expect( subject.encode_key_from_record(fixture) ).to be_an_instance_of( String )
+    end    
+    it "contains all the specifed codes" do
+      result = subject.encode_key_from_record(fixture)
+      expect( result ).to include( fixture.pool_type.code )
+      expect( result ).to include( fixture.event_type.code )
+      expect( result ).to include( fixture.category_type.code )
+      expect( result ).to include( fixture.gender_type.code )
     end    
   end
 

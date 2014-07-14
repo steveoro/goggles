@@ -35,7 +35,7 @@ def launch_data_importer( pathname, season, force_meeting, force_team,
       seasonpathname, season, force_meeting, force_team,
       do_not_consume_file, log_dir
   )
-  delayed ? data_importer.delay(:queue=>'data-import').batch_import() :
+  delayed ? data_importer.delay( queue: 'data-import').batch_import() :
             data_importer.batch_import()
 end
 # -----------------------------------------------------------------------------

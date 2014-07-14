@@ -45,6 +45,9 @@ namespace :db do
     db_user       = rails_config.database_configuration[Rails.env]['username']
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
     db_host       = rails_config.database_configuration[Rails.env]['host']
+    puts "Requiring Rails environment to allow usage of any Model..."
+    require 'rails/all'
+    require File.join( Rails.root.to_s, 'config/environment' )
     klass = eval(entity.camelize)
                                                     # Display some info:
     puts "DB host: #{db_host}"

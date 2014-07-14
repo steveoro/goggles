@@ -22,8 +22,7 @@ describe RecordCollector do
         :collect_from_records_having,
         :save,
         :commit,
-        :full_scan,
-        :perform
+        :full_scan
       ]
     )
     it_behaves_like( "(the existance of a method returning an Enumerable of non-empty Strings)",

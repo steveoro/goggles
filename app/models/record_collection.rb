@@ -98,10 +98,16 @@ class RecordCollection
     @list[ is_tie_in ? encoded_key << 'b' : encoded_key ]   
   end
 
-  # Returns +true+ if there is a record match for the specified parameters or +false+ when not found.
+  # Returns the IndividualRecord for the specified parameters or nil when not found.
   #
   def has_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
     ! get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code ).nil?   
+  end
+
+  # Getter for the IndividualRecord for the specified key. Returns nil when not found.
+  #
+  def get_record_with_key( encoded_key )
+    @list[ encoded_key ]
   end
 
   # Returns +true+ if there is a same-ranking (tie-in) record match for the specified parameters or +false+ when not found.
@@ -117,6 +123,23 @@ class RecordCollection
   def encode_key_from_codes( pool_type_code, event_type_code, category_type_code, gender_type_code )
     "#{pool_type_code}-#{event_type_code}-#{category_type_code}-#{gender_type_code}"
   end
+
+
+  # Returns the encoded string key used to store the specified IndividualRecord record.
+  #
+  def encode_key_from_record( individual_result_or_record )
+    if individual_result_or_record
+      record_candidate = get_record_candidate( individual_result_or_record )
+      encode_key_from_codes(
+        record_candidate.pool_type     ? record_candidate.pool_type.code : '?',
+        record_candidate.event_type    ? record_candidate.event_type.code : '?',
+        record_candidate.category_type ? record_candidate.category_type.code : '?',
+        record_candidate.gender_type   ? record_candidate.gender_type.code : '?'
+      )
+    else
+      nil
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -129,18 +152,6 @@ class RecordCollection
 
 
   private
-
-
-  # Returns the encoded string key used to store the specified IndividualRecord record.
-  #
-  def encode_key_from_record( individual_record )
-    encode_key_from_codes(
-      individual_record.pool_type     ? individual_record.pool_type.code : '?',
-      individual_record.event_type    ? individual_record.event_type.code : '?',
-      individual_record.category_type ? individual_record.category_type.code : '?',
-      individual_record.gender_type   ? individual_record.gender_type.code : '?'
-    )
-  end
 
 
   # Returns a valid record candidate as an IndividualRecord instance.
