@@ -78,7 +78,8 @@ FactoryGirl.define do
   end
 
   factory :passage do
-    meeting_program
+    meeting_individual_result
+    meeting_program           { meeting_individual_result.meeting_program }
     minutes                   0
     seconds                   { ((rand * 60) % 60).to_i }
     hundreds                  { ((rand * 100) % 100).to_i }
@@ -88,8 +89,8 @@ FactoryGirl.define do
     position                  { ((rand * 10) % 10).to_i + 1 }
     reaction_time             { rand.round(2) }
     stroke_cycles             { (rand * 20).to_i }
-    swimmer
-    team
+    swimmer                   { meeting_individual_result.swimmer }
+    team                      { meeting_individual_result.team }
     user
     # The following column uses the pre-loaded seed records:
     passage_type_id           { ((rand * 20) % 20).to_i + 1 }

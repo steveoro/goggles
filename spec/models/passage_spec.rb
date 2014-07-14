@@ -60,6 +60,14 @@ describe Passage do
           end
         end
       end
+      
+      it "return a list of passages for the given result" do
+        subject.get_passage_list.each do |element| 
+          expect( element ).to be_an_instance_of( Passage )
+        end
+      end
+      
+      xit "the returned list of passages is sorted"
     end
     #-- -----------------------------------------------------------------------
     #++
