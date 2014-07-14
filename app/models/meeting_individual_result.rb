@@ -7,7 +7,7 @@ require 'wrappers/timing'
 # Model class
 #
 # @author   Steve A.
-# @version  4.00.341
+# @version  4.00.349
 #
 class MeetingIndividualResult < ActiveRecord::Base
   include SwimmerRelatable
@@ -31,6 +31,9 @@ class MeetingIndividualResult < ActiveRecord::Base
   has_one  :event_type,       through: :meeting_program
   has_one  :category_type,    through: :meeting_program
   has_one  :gender_type,      through: :meeting_program
+  has_one  :federation_type,  through: :season_type
+
+  has_many :passages
                                                     # These reference fields may be filled-in later (thus not validated upon creation):
   belongs_to :team
   belongs_to :team_affiliation
@@ -159,27 +162,33 @@ class MeetingIndividualResult < ActiveRecord::Base
   #++
 
   # Returns +true+ if this instance is associated to the specified PoolType#code.
-  # +false+ otherwise.
+  # +false+ otherwise. Code-equality test (w/ safety) checker.
   def has_pool_type_code?( code )
      pool_type ? pool_type.code == code : false
   end
 
   # Returns +true+ if this instance is associated to the specified EventType#code.
-  # +false+ otherwise.
+  # +false+ otherwise. Code-equality test (w/ safety) checker.
   def has_event_type_code?( code )
      event_type ? event_type.code == code : false
   end
 
   # Returns +true+ if this instance is associated to the specified CategoryType#code.
-  # +false+ otherwise.
+  # +false+ otherwise. Code-equality test (w/ safety) checker.
   def has_category_type_code?( code )
      category_type ? category_type.code == code : false
   end
 
   # Returns +true+ if this instance is associated to the specified GenderType#code.
-  # +false+ otherwise.
+  # +false+ otherwise. Code-equality test (w/ safety) checker.
   def has_gender_type_code?( code )
      gender_type ? gender_type.code == code : false
+  end
+
+  # Returns +true+ if this instance is associated to the specified GenderType#code.
+  # +false+ otherwise. Code-equality test (w/ safety) checker.
+  def has_federation_type_code?( code )
+     federation_type ? federation_type.code == code : false
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -256,6 +265,8 @@ class MeetingIndividualResult < ActiveRecord::Base
   #
   # - <tt>team_id</tt> => when supplied, only the best timing records for the specified team
   # will be collected; when +nil+, the search is extended to all teams.
+  #
+  # @deprecated Use RecordCollection and RecordCollector classes instead.
   #
   def self.get_records_for( event_type_code, category_type_id_or_code_or_nil, gender_type_id,
                             pool_type_id = nil, meeting_id = nil, swimmer_id = nil, team_id = nil,

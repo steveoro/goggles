@@ -42,7 +42,8 @@ describe MeetingIndividualResult do
           :has_pool_type_code?,
           :has_event_type_code?,
           :has_category_type_code?,
-          :has_gender_type_code?
+          :has_gender_type_code?,
+          :has_federation_type_code?
         ],
         'fakecode'
       )
