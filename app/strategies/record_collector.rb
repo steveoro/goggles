@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.347.20140711
+  - Goggles framework vers.:  4.00.353.20140715
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -54,19 +54,60 @@ class RecordCollector
     @collection.clear()
   end
 
-  # Saves the internal list of records into the database without clearing the list.
+  # Shortcut for #commit(false).
+  # Saves/persists the internal list of records into the database as #commit, but
+  # without clearing the list when the save is performed successfully.
   #
   def save()
-    @collection.each { |key, row| row.save }
+    commit(false)
   end
 
-  # Saves the internal list of records into the database while removing them from
-  # the list when successful.
-  # Returns true on no errors during serialization.
+  # Saves/persists the internal list of records into the database while removing
+  # them from the list when successful.
+  # Returns true on no errors during serialization. (The list should be empty afterwards.)
   #
-  def commit()
+  def commit( remove_from_list = true )
     @collection.each do |key, row|
-      @collection.delete_with_key(key) if row.save
+      existing_record = nil
+      is_team_record = false
+      is_ok = false
+      if @team                                      # Team-filtered collection?
+        is_team_record = true
+        existing_record = IndividualRecord.where(
+          pool_type_id:     row.pool_type_id,
+          event_type_id:    row.event_type_id,
+          category_type_id: row.category_type_id,
+          gender_type_id:   row.gender_type_id,
+          team_id:          row.team_id,
+          is_team_record:   true
+        ).first
+      else                                          # (Assuming it is a) FederationType-filtered collection:
+        existing_record = IndividualRecord.where(
+          pool_type_id:       row.pool_type_id,
+          event_type_id:      row.event_type_id,
+          category_type_id:   row.category_type_id,
+          gender_type_id:     row.gender_type_id,
+          federation_type_id: row.federation_type_id,
+          is_team_record:     is_team_record
+        ).first
+      end
+      if existing_record
+        is_ok = existing_record.update_attributes(
+          minutes: row.minutes,
+          seconds: row.seconds,
+          hundreds: row.hundreds,
+          swimmer_id: row.swimmer_id,
+          team_id: row.team_id,
+          season_id: row.season_id,
+          federation_type_id: row.federation_type_id,
+          meeting_individual_result_id: row.meeting_individual_result_id,
+          is_team_record: is_team_record
+        )
+      else
+        row.is_team_record = is_team_record
+        is_ok = row.save
+      end
+      @collection.delete_with_key(key) if remove_from_list && is_ok
     end
     ( @collection.count == 0 )
   end
@@ -215,19 +256,7 @@ class RecordCollector
 #    first_recs.each do |row|
 #      puts "- ID:#{row.id} => #{row.get_full_name}\r\n"
 #    end
-    first_recs.each do |rec|
-# FIXME ******************************** WIP ***********************************
-# XXX THE FOLLOWING WORKS ONLY FOR REBUILDING FROM SCRATCH THE REC ENTITY:
-#      encoded_key = @collection.encode_key_from_record( rec )
-#      existing_rec = @collection.get_record_with_key( encoded_key )
-#      if existing_rec
-        # FIXME While reading existing MIRs & converting them to Recs is fine, to update existing
-        # we must execute a different loop (otherwise the loop inside Collection.save will serialize everything EACH time)
-#        @collection << rec 
-#      else
-        @collection << rec 
-#      end
-    end
+    first_recs.each { |rec| @collection << rec }    # Add the first records to the collection
     @collection
   end
   #-- -------------------------------------------------------------------------
