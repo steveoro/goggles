@@ -25,9 +25,9 @@ describe Passage do
     ])
 
     # Filtering scopes:
-    # it_behaves_like( "(the existance of a class method)", [
-    #  :is_valid,
-    #])
+    it_behaves_like( "(the existance of a class method)", [
+      :sort_by_distance,
+    ])
 
     context "[implemented methods]" do
       it_behaves_like( "(the existance of a method returning strings)",
@@ -35,6 +35,7 @@ describe Passage do
           :get_short_name,
           :get_full_name,
           :get_verbose_name,
+          :get_final_time,
           :get_user_name
         ]
       )
@@ -45,12 +46,17 @@ describe Passage do
           :get_passages_count
         ]
       )
+      it_behaves_like( "(the existance of a method returning a boolean value)",
+        [ 
+          :is_passage_total_correct
+        ]
+      )
 
       # Methods that return timimg istancies
       [ 
         :compute_final_time,
-        #:compute_passage_time,
-        #:compute_incremental_time
+        :compute_incremental_time,
+        :compute_passage_time
       ].each do |method_name|
         describe "##{method_name}" do
           it "returns a timing istance" do

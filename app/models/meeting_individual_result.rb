@@ -1,4 +1,5 @@
 require 'wrappers/timing'
+require 'timing_gettable'
 
 
 #

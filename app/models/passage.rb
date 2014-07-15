@@ -1,6 +1,6 @@
 require 'wrappers/timing'
-#require 'timing_gettable'
-#require 'timing_validatable'
+require 'timing_gettable'
+require 'timing_validatable'
 
 
 class Passage < ActiveRecord::Base
@@ -124,6 +124,12 @@ class Passage < ActiveRecord::Base
   def get_passages_count( mir = self.meeting_individual_result )
     mir.passages.count
   end
+
+  # Get final time from meeting_individual_result
+  # Different from compute_final_time, that calculate final time evaluating each passage
+  def get_final_time
+    self.meeting_individual_result ? self.meeting_individual_result.get_timing : "#{self.compute_final_time} ***"
+  end
   # ----------------------------------------------------------------------------
 
   # Calculate the distance swam for the passage
@@ -136,10 +142,41 @@ class Passage < ActiveRecord::Base
 
   # Calculate the final time starting from the passages for a given result (event)
   # The final time is the sum of single passage times of passages
+  # Assumes passage times are correctly set
   def compute_final_time
     passages_list = self.get_passages_list
     total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 )
     Timing.new( total_hundreds ) 
+  end
+
+  # Calculate the incremental time starting from the beginning of a given result (event)
+  # The incremental time is the sum of single passage times of passages list unitl current passage
+  # Assumes passage times are correctly set
+  def compute_incremental_time
+    passages_list = self.get_passages_list.where('length_in_meters < ?', self.get_passage_distance)
+    total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 ) + self.hundreds + ( self.seconds * 100 ) + ( self.minutes * 6000 )
+    Timing.new( total_hundreds ) 
+  end
+
+  # Calculate the passage time starting from the passages incremental time of a given result (event)
+  # The passage time is the difference between the incremental times of passage and previous passage
+  # Assumes passage times are correctly set
+  def compute_passage_time
+    previous_passage = self.get_passages_list.where('length_in_meters < ?', self.get_passage_distance).last
+    previous_hundreds = previous_passage ? previous_passage.hundreds_from_start + ( previous_passage.seconds_from_start * 100 ) + ( previous_passage.minutes_from_start * 6000 ) : 0
+    current_hundreds = self.hundreds_from_start + ( self.seconds_from_start * 100 ) + ( self.minutes_from_start * 6000 )
+    Timing.new( current_hundreds - previous_hundreds ) 
+  end
+  # ----------------------------------------------------------------------------
+
+  # Check if final time from meeting individual result correponds to calculated final time
+  # If result not present always return true
+  def is_passage_total_correct
+    if self.meeting_individual_result 
+      (self.meeting_individual_result.get_timing_instance == self.compute_final_time) ? true : false
+    else
+      true 
+    end
   end
   # ----------------------------------------------------------------------------
 end
