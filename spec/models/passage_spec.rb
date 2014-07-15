@@ -40,11 +40,11 @@ describe Passage do
       )
       it_behaves_like( "(the existance of a method returning numeric values)",
         [ 
-          :get_passage_distance
-          #:passages_count,
+          :get_passage_distance,
           #:compute_distance_swam,
           #:compute_everage_breathes,
           #:compute_everage_cycles
+          :get_passages_count
         ]
       )
 
@@ -64,14 +64,14 @@ describe Passage do
       
     context "[passage list]" do
       it "return a list of passages for the given result" do
-        subject.get_passage_list.each do |element| 
+        subject.get_passages_list.each do |element| 
           expect( element ).to be_an_instance_of( Passage )
         end
       end
       
       it "the returned list of passages is sorted" do
-        current_item_distance = subject.get_passage_list.first.passage_type.length_in_meters
-        subject.get_passage_list.each do |item|
+        current_item_distance = subject.get_passages_list.first.passage_type.length_in_meters
+        subject.get_passages_list.each do |item|
           expect(item.passage_type.length_in_meters).to be <= current_item_distance
           current_item_distance = item.passage_type.length_in_meters 
         end      

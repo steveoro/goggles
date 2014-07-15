@@ -116,8 +116,13 @@ class Passage < ActiveRecord::Base
   end
 
   # Retrieves the sorted list of passages for the given result (event)
-  def get_passage_list( mir = self.meeting_individual_result )
+  def get_passages_list( mir = self.meeting_individual_result )
     mir.passages.includes(:passage_type).sort_by_distance
+  end
+
+  # Calculate passages count for the given result (event)
+  def get_passages_count( mir = self.meeting_individual_result )
+    mir.passages.count
   end
   # ----------------------------------------------------------------------------
 
