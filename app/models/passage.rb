@@ -55,7 +55,7 @@ class Passage < ActiveRecord::Base
   #validates_numericality_of :not_swam_part_hundreds
 
   scope :sort_by_user,       ->(dir) { order("users.name #{dir.to_s}, swimmer_id #{dir.to_s}") }
-  scope :sort_by_distance,   ->(dir) { order("meeting_individual_result_id #{dir.to_s}, passage_types.length_in_meters #{dir.to_s}") }
+  scope :sort_by_distance,   order('passage_types.length_in_meters')
 #  scope :sort_by_program,    ->(dir) { order("meeting_programs.begin_time #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
 #  scope :sort_by_swimmer,    ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
 #  scope :sort_by_type,       ->(dir) { order("passage_types.code #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
@@ -117,10 +117,7 @@ class Passage < ActiveRecord::Base
 
   # Retrieves the sorted list of passages for the given result (event)
   def get_passage_list( mir = self.meeting_individual_result )
-    #Passage.where(meeting_individual_result_id: mir.id ).order(:sort_by_result)  
-    #mir.passages.order(:length_in_meters)
-    #mir.passages.scope(:sort_by_distance)    
-    mir.passages
+    mir.passages.includes(:passage_type).sort_by_distance
   end
   # ----------------------------------------------------------------------------
 
