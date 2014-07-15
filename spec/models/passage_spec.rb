@@ -41,9 +41,7 @@ describe Passage do
       it_behaves_like( "(the existance of a method returning numeric values)",
         [ 
           :get_passage_distance,
-          #:compute_distance_swam,
-          #:compute_everage_breathes,
-          #:compute_everage_cycles
+          :compute_distance_swam,
           :get_passages_count
         ]
       )
@@ -51,11 +49,11 @@ describe Passage do
       # Methods that return timimg istancies
       [ 
         :compute_final_time,
-        :compute_passage_time,
-        :compute_incremental_time
+        #:compute_passage_time,
+        #:compute_incremental_time
       ].each do |method_name|
         describe "##{method_name}" do
-          xit "returns a timing istance" do
+          it "returns a timing istance" do
             expect( subject.send(method_name) ).to be_an_instance_of( Timing )
           end
         end

@@ -126,4 +126,20 @@ class Passage < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Calculate the distance swam for the passage
+  # The distance swam is the difference between passage length in meters and previous passage length in meters
+  def compute_distance_swam
+    passage_distance = self.get_passage_distance
+    previous_passage = self.get_passages_list.where('length_in_meters < ?', passage_distance).last
+    previous_passage ? passage_distance - previous_passage.get_passage_distance : passage_distance 
+  end
+
+  # Calculate the final time starting from the passages for a given result (event)
+  # The final time is the sum of single passage times of passages
+  def compute_final_time
+    passages_list = self.get_passages_list
+    total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 )
+    Timing.new( total_hundreds ) 
+  end
+  # ----------------------------------------------------------------------------
 end
