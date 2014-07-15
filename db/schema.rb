@@ -1129,7 +1129,7 @@ ActiveRecord::Schema.define(:version => 20140709162307) do
     t.integer  "seconds_from_start",           :limit => 2
     t.integer  "hundreds_from_start",          :limit => 2
     t.boolean  "is_native_from_start",                                                    :default => false, :null => false
-    t.integer  "meeting_indivudual_result_id"
+    t.integer  "meeting_individual_result_id"
     t.integer  "meeting_entry_id"
     t.integer  "swimmer_id"
     t.integer  "team_id"

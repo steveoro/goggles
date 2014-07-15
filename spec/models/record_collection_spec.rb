@@ -65,7 +65,7 @@ describe RecordCollection do
     it "returns an instance of IndividualRecord when found" do
       subject.clear
       subject.add(fixture)
-      key = encode_key_from_record( fixture )
+      key = subject.encode_key_from_record( fixture )
       expect( subject.get_record_with_key(key) ).to be_an_instance_of( IndividualRecord )
     end    
   end
