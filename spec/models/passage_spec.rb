@@ -86,6 +86,10 @@ describe Passage do
         expect( subject.get_passages_list.count > 0 ).to be_true
       end
       
+      it "return a list of passages with the same number of elemnts of get_passages_count " do
+        expect( subject.get_passages_list.count == subject.get_passages_count ).to be_true
+      end
+      
       it "the returned list of passages is sorted" do
         current_item_distance = subject.get_passages_list.first.passage_type.length_in_meters
         subject.get_passages_list.each do |item|
