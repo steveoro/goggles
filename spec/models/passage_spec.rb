@@ -82,6 +82,10 @@ describe Passage do
         end
       end
       
+      it "return a non empty list of passages" do
+        expect( subject.get_passages_list.count > 0 ).to be_true
+      end
+      
       it "the returned list of passages is sorted" do
         current_item_distance = subject.get_passages_list.first.passage_type.length_in_meters
         subject.get_passages_list.each do |item|
