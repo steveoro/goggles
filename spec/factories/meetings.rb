@@ -75,6 +75,16 @@ FactoryGirl.define do
     # The following column uses the pre-loaded seed records:
     disqualification_code_type_id { ((rand * 100) % 60).to_i + 1 }
     user
+    
+    factory :meeting_individual_result_with_passages do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :passage,
+          ((rand * 10).to_i + 2),                     # total number of passages
+          meeting_individual_result: created_instance # association enforce for each sub-row
+        )
+      end
+    end
   end
 
   factory :passage do
@@ -94,5 +104,5 @@ FactoryGirl.define do
     user
     # The following column uses the pre-loaded seed records:
     passage_type_id           { ((rand * 20) % 20).to_i + 1 }
-  end
+  end  
 end
