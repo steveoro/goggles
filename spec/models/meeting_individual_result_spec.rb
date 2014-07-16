@@ -48,6 +48,33 @@ describe MeetingIndividualResult do
         'fakecode'
       )
     end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#get_passages" do
+      it "returns a collection responding to :each" do
+        expect( subject.get_passages ).to respond_to(:each)
+      end
+      it "returns a list of passages for the given result" do
+        subject.get_passages.each do |element| 
+          expect( element ).to be_an_instance_of( Passage )
+        end
+      end
+      it "returns a non-empty list of passages when passages are found" do
+        fixture = create( :meeting_individual_result_with_passages )
+        expect( fixture.get_passages.count ).to be > 0
+      end
+      it "returns a list of sorted passages" do
+        fixture = create( :meeting_individual_result_with_passages )
+        current_item_distance = 0
+        fixture.get_passages.each do |item|
+          expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because the factory can create passages having same distance
+          current_item_distance = item.passage_type.length_in_meters 
+        end      
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
   end
   #-- -------------------------------------------------------------------------
   #++

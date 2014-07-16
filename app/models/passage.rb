@@ -3,6 +3,14 @@ require 'timing_gettable'
 require 'timing_validatable'
 
 
+#
+# == Passage
+#
+# Model class
+#
+# @author   Leega, Steve A.
+# @version  4.00.355
+#
 class Passage < ActiveRecord::Base
   include SwimmerRelatable
   include TimingGettable
@@ -83,13 +91,13 @@ class Passage < ActiveRecord::Base
 
   # Retrieves the user name associated with this instance
   def get_user_name
-    self.user ? self.user.name : ''
+    user ? user.name : ''
   end
   # ----------------------------------------------------------------------------
 
   # Retrieves the associated Swimmer full name
   def get_swimmer_full_name
-    self.swimmer ? self.swimmer.get_full_name : '?'
+    swimmer ? swimmer.get_full_name : '?'
   end
 
   ## Retrieves the associated Badge number
@@ -99,44 +107,43 @@ class Passage < ActiveRecord::Base
 
   # Retrieves the distance swam in the passage
   def get_passage_distance
-    self.passage_type.length_in_meters
+    passage_type.length_in_meters
   end
 
   # Retrieves the localized Event Type code
   def get_event_type
-    self.meeting_program ? self.meeting_program.event_type.i18n_short : '?'
+    meeting_program ? meeting_program.event_type.i18n_short : '?'
   end
 
   # Retrieves the scheduled_date of this result
   def get_scheduled_date                            # The following ActiveRecord chain is granted in existence by validation assertions: (even the first check could be avoided)
-    self.meeting_program ? self.meeting_program.meeting_session.scheduled_date : '?'
+    meeting_program ? meeting_program.meeting_session.scheduled_date : '?'
     # [Steve, 20130710]
     # Provided the "has_one :meeting_session, through: :meeting_program" above, this should also work:
     # => return meeting_session.scheduled_date
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  # Retrieves the sorted list of passages for the given result (event)
-  def get_passages_list( mir = self.meeting_individual_result )
-    mir.passages.sort_by_distance
-  end
-
-  # Calculate passages count for the given result (event)
-  def get_passages_count( mir = self.meeting_individual_result )
-    mir.passages.count
+  # Safe getter for the associated list of passages.
+  # Returns an empty array when none are found.
+  # (User #get_passages.count to get the total number of passages.)
+  #
+  def get_passages
+    meeting_individual_result ? meeting_individual_result.get_passages : []
   end
 
   # Get final time from meeting_individual_result
   # Different from compute_final_time, that calculate final time evaluating each passage
   def get_final_time
-    self.meeting_individual_result ? self.meeting_individual_result.get_timing : "#{self.compute_final_time} ***"
+    meeting_individual_result ? meeting_individual_result.get_timing : "#{compute_final_time} ***"
   end
-  # ----------------------------------------------------------------------------
 
   # Calculate the distance swam for the passage
   # The distance swam is the difference between passage length in meters and previous passage length in meters
   def compute_distance_swam
-    passage_distance = self.get_passage_distance
-    previous_passage = self.get_passages_list.where('length_in_meters < ?', passage_distance).last
+    passage_distance = get_passage_distance
+    previous_passage = get_passages.where('length_in_meters < ?', passage_distance).last
     previous_passage ? passage_distance - previous_passage.get_passage_distance : passage_distance 
   end
 
@@ -144,7 +151,7 @@ class Passage < ActiveRecord::Base
   # The final time is the sum of single passage times of passages
   # Assumes passage times are correctly set
   def compute_final_time
-    passages_list = self.get_passages_list
+    passages_list = get_passages
     total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 )
     Timing.new( total_hundreds ) 
   end
@@ -153,8 +160,8 @@ class Passage < ActiveRecord::Base
   # The incremental time is the sum of single passage times of passages list unitl current passage
   # Assumes passage times are correctly set
   def compute_incremental_time
-    passages_list = self.get_passages_list.where('length_in_meters < ?', self.get_passage_distance)
-    total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 ) + self.hundreds + ( self.seconds * 100 ) + ( self.minutes * 6000 )
+    passages_list = get_passages.where('length_in_meters < ?', get_passage_distance)
+    total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 ) + hundreds + ( seconds * 100 ) + ( minutes * 6000 )
     Timing.new( total_hundreds ) 
   end
 
@@ -162,9 +169,9 @@ class Passage < ActiveRecord::Base
   # The passage time is the difference between the incremental times of passage and previous passage
   # Assumes passage times are correctly set
   def compute_passage_time
-    previous_passage = self.get_passages_list.where('length_in_meters < ?', self.get_passage_distance).last
+    previous_passage = get_passages.where('length_in_meters < ?', get_passage_distance).last
     previous_hundreds = previous_passage ? previous_passage.hundreds_from_start + ( previous_passage.seconds_from_start * 100 ) + ( previous_passage.minutes_from_start * 6000 ) : 0
-    current_hundreds = self.hundreds_from_start + ( self.seconds_from_start * 100 ) + ( self.minutes_from_start * 6000 )
+    current_hundreds = hundreds_from_start + ( seconds_from_start * 100 ) + ( minutes_from_start * 6000 )
     Timing.new( current_hundreds - previous_hundreds ) 
   end
   # ----------------------------------------------------------------------------
@@ -172,8 +179,8 @@ class Passage < ActiveRecord::Base
   # Check if final time from meeting individual result correponds to calculated final time
   # If result not present always return true
   def is_passage_total_correct
-    if self.meeting_individual_result 
-      (self.meeting_individual_result.get_timing_instance == self.compute_final_time) ? true : false
+    if meeting_individual_result 
+      (meeting_individual_result.get_timing_instance == compute_final_time) ? true : false
     else
       true 
     end

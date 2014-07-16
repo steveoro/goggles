@@ -4,8 +4,9 @@ require 'spec_helper'
 describe Passage do
   it_behaves_like "SwimmerRelatable"
   it_behaves_like "TimingGettable"
-  # ---------------------------------------------------------------------------
-  
+  #-- -------------------------------------------------------------------------
+  #++
+
   context "[a well formed instance]" do
     #subject { Passage.find_by_id( ((rand * Passage.count) % Passage.count).to_i + 1 ) }
     #subject { create( :passage ) }
@@ -51,8 +52,7 @@ describe Passage do
       it_behaves_like( "(the existance of a method returning numeric values)",
         [ 
           :get_passage_distance,
-          :compute_distance_swam,
-          :get_passages_count
+          :compute_distance_swam
         ]
       )
       it_behaves_like( "(the existance of a method returning a boolean value)",
@@ -74,26 +74,29 @@ describe Passage do
         end
       end
     end
-      
-    context "[passage list]" do
-      it "return a list of passages for the given result" do
-        subject.get_passages_list.each do |element| 
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#get_passages" do
+      it "returns a collection responding to :each" do
+        expect( subject.get_passages ).to respond_to(:each)
+      end
+      it "returns a list of passages for the given result" do
+        subject.get_passages.each do |element| 
           expect( element ).to be_an_instance_of( Passage )
         end
       end
-      
-      it "return a non empty list of passages" do
-        expect( subject.get_passages_list.count > 0 ).to be_true
+      it "returns a non-empty list of passages when passages are found" do
+        mir = create( :meeting_individual_result_with_passages )
+        fixture = mir.passages.first                # Get the first passage from the linked set
+        expect( fixture.get_passages.count ).to be > 0
       end
-      
-      it "return a list of passages with the same number of elemnts of get_passages_count " do
-        expect( subject.get_passages_list.count == subject.get_passages_count ).to be_true
-      end
-      
-      it "the returned list of passages is sorted" do
-        current_item_distance = subject.get_passages_list.first.passage_type.length_in_meters
-        subject.get_passages_list.each do |item|
-          expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because factory can have passages with same distance
+      it "returns a list of sorted passages" do
+        mir = create( :meeting_individual_result_with_passages )
+        fixture = mir.passages.first                # Get the first passage from the linked set
+        current_item_distance = 0
+        fixture.get_passages.each do |item|
+          expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because the factory can create passages having same distance
           current_item_distance = item.passage_type.length_in_meters 
         end      
       end

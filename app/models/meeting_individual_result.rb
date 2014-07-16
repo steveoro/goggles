@@ -8,7 +8,7 @@ require 'timing_gettable'
 # Model class
 #
 # @author   Steve A.
-# @version  4.00.349
+# @version  4.00.355
 #
 class MeetingIndividualResult < ActiveRecord::Base
   include SwimmerRelatable
@@ -230,6 +230,16 @@ class MeetingIndividualResult < ActiveRecord::Base
       ])
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
     mir.count
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Safe getter to retrieve the associated sorted list of passages.
+  # Returns an empty array when none are found.
+  # (User #get_passages.count to get the total number of passages.)
+  #
+  def get_passages
+    passages ? passages.sort_by_distance : []
   end
   #-- --------------------------------------------------------------------------
   #++
