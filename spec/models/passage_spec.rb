@@ -8,14 +8,23 @@ describe Passage do
   
   context "[a well formed instance]" do
     #subject { Passage.find_by_id( ((rand * Passage.count) % Passage.count).to_i + 1 ) }
-    subject { create( :passage ) }
+    #subject { create( :passage ) }
+    subject { create( :meeting_individual_result_with_passages ).passages.first }
 
-    xit "is a not nil" do                            # (we check for nil to make sure the seed exists in the DB)
+    it "is a not nil" do                            # (we check for nil to make sure the seed exists in the DB)
       expect( subject ).not_to be_nil
     end
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
+
+    # Required values
+    # minutes, second, hundreds too, but already included in TimingGettable 
+    it_behaves_like( "(missing required values)", [
+      :minutes_from_start,
+      :hundreds_from_start,
+      :seconds_from_start
+    ])
 
     # Validated relations:
     it_behaves_like( "(belongs_to required models)", [
@@ -76,7 +85,7 @@ describe Passage do
       it "the returned list of passages is sorted" do
         current_item_distance = subject.get_passages_list.first.passage_type.length_in_meters
         subject.get_passages_list.each do |item|
-          expect(item.passage_type.length_in_meters).to be <= current_item_distance
+          expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because factory can have passages with same distance
           current_item_distance = item.passage_type.length_in_meters 
         end      
       end
