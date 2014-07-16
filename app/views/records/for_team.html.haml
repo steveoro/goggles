@@ -6,16 +6,11 @@
           = I18n.t('records.team_search_title')
         %script
           $('#headerFlt').tooltip({placement:'bottom'});
-          function resetFields() { $('#season_season_id').val(''); $('#team_team_id').val(''); }
+          function resetFields() { $('#team_team_id').val(''); }
 
     .accordion-body.collapse.in#collapseFlt
       .accordion-inner
         = form_tag( :records_for_team, :remote => true, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show();") do
-          .row-fluid
-            .control-group
-              = label_tag( :season_id, I18n.t(:season, { scope: [:activerecord, :models] }), :for => :season, class: 'control-label' )
-              .controls
-                = select( :season, :season_id, Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] }, { :prompt => I18n.t(:please_select) }, { class: 'input-xlarge' } )
           .row-fluid
             .control-group
               = label_tag( :team, I18n.t(:team, { scope: [:activerecord, :models] }), :for => :team, class: 'control-label' )

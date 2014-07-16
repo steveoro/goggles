@@ -14,31 +14,42 @@ Goggles::Application.routes.draw do
         get "sessions/destroy"
       end
 
-      get    "exercises/index",             to: "exercises#index",        as: "exercises"
-      get    "exercises/show/:id",          to: "exercises#show",         as: "exercise_show"
+      # === Exercises ===
+      get    "exercises/index",               to: "exercises#index",        as: "exercises"
+      get    "exercises/show/:id",            to: "exercises#show",         as: "exercise_show"
       # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
       # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
 
-      get    "meetings/index",              to: "meetings#index",         as: "meetings"
-      get    "meetings/show/:id",           to: "meetings#show",          as: "meeting_show"
+      # === Meetings ===
+      get    "meetings/index",                to: "meetings#index",         as: "meetings"
+      get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
       # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
 
-      get    "news_feed/for_user/:id",      to: "news_feeds#for_user",  as: "news_feed_for_user"
-      post   "news_feed/create/:news_feed", to: "news_feeds#create",    as: "news_feed_create"
-      put    "news_feed/read/:id",          to: "news_feeds#read",      as: "news_feed_read"
-      delete "news_feed/destroy/:id",       to: "news_feeds#destroy",   as: "news_feed_destroy"
+      # === News Feeds ===
+      get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"
+      post   "news_feed/create/:news_feed",   to: "news_feeds#create",      as: "news_feed_create"
+      put    "news_feed/read/:id",            to: "news_feeds#read",        as: "news_feed_read"
+      delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
 
-      get    "swimmers/index",              to: "swimmers#index",         as: "swimmers"
-      get    "swimmers/show/:id",           to: "swimmers#show",          as: "swimmer_show"
+      # === Records ===
+      get    "records/for_federation/:id",    to: "records#for_federation"
+      get    "records/for_team/:id",          to: "records#for_team"
+      get    "records/for_swimmer/:id",       to: "records#for_swimmer"
 
-      get    "team/count_meetings/:id",     to: "teams#count_meetings",   as: "team_count_meetings"
-      get    "team/count_results/:id",      to: "teams#count_results",    as: "team_count_results"
-      get    "team/count_details/:id",      to: "teams#count_details",    as: "team_count_details"
-      get    "teams/index",                 to: "teams#index",            as: "teams"
-      get    "teams/show/:id",              to: "teams#show",             as: "team_show"
+      # === Swimmers ===
+      get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
+      get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
 
-      get    "trainings/index",             to: "trainings#index",        as: "trainings"
-      get    "trainings/show/:id",          to: "trainings#show",         as: "trainings_show"
+      # === Teams ===
+      get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
+      get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
+      get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
+      get    "teams/index",                   to: "teams#index",            as: "teams"
+      get    "teams/show/:id",                to: "teams#show",             as: "team_show"
+
+      # === Trainings ===
+      get    "trainings/index",               to: "trainings#index",        as: "trainings"
+      get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
 
       # TODO extract and enlist only the actual routes used:
       resources :user_trainings         #, only: 'json_list'
@@ -107,11 +118,9 @@ Goggles::Application.routes.draw do
       get "ranking/:id",                        to: "rankings#show",                    as: "ranking"
 
       # === Records ===
-      get  "records/for_everything",            to: "records#for_everything"
-      get  "records/for_season_type",           to: "records#for_season_type"
-      get  "records/for_swimmer",               to: "records#for_swimmer"
+      get  "records/for_federation",            to: "records#for_federation"
       get  "records/for_team",                  to: "records#for_team"
-      get  "records/show_for_team",             to: "records#show_for_team"
+      get  "records/for_swimmer",               to: "records#for_swimmer"
 
       # === Results ===
       get "results/index",                      as: "results"

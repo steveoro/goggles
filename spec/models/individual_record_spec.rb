@@ -23,7 +23,10 @@ describe IndividualRecord do
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
       :team_records,
-      :federation_records
+      :federation_records,
+      :for_federation_code,
+      :for_federation,
+      :for_team
     ])
 
     context "[implemented methods]" do

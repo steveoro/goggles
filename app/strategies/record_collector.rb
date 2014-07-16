@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.353.20140715
+  - Goggles framework vers.:  4.00.355.20140716
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -24,8 +24,8 @@ class RecordCollector
   # to filter out the results during the collection loops.
   #
   # - swimmer: a Swimmer instance
-  # - team a Team instance
-  # - federation_type: a FederationType instance
+  # - team: a Team instance (mutually exclusive filter with federation_type)
+  # - federation_type: a FederationType instance (mutually exclusive filter with team, takes precedence over team)
   # - meeting: a Meeting instance (this filter is ignored when looping on IndividualRecords)
   #
   def initialize( options = {} )
@@ -35,6 +35,8 @@ class RecordCollector
     @team            = options[:team] if options[:team].instance_of?( Team )
     @federation_type = options[:federation_type] if options[:federation_type].instance_of?( FederationType )
     @meeting         = options[:meeting] if options[:meeting].instance_of?( Meeting )
+    # Set precedence on filter values:
+    @team = nil if @federation_type
     # Cache the codes lists:
     @pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }.delete_if{ |e| e == '33' }
     @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
@@ -58,15 +60,20 @@ class RecordCollector
   # Saves/persists the internal list of records into the database as #commit, but
   # without clearing the list when the save is performed successfully.
   #
+  # Returns true on no errors during serialization.
+  #
   def save()
-    commit(false)
+    commit( false )
   end
 
   # Saves/persists the internal list of records into the database while removing
   # them from the list when successful.
-  # Returns true on no errors during serialization. (The list should be empty afterwards.)
+  #
+  # Returns true on no errors during serialization.
+  # (The list should be empty afterwards when <tt>remove_from_list</tt> = true.)
   #
   def commit( remove_from_list = true )
+    persisted_ok = 0
     @collection.each do |key, row|
       existing_record = nil
       is_team_record = false
@@ -91,6 +98,7 @@ class RecordCollector
           is_team_record:     is_team_record
         ).first
       end
+                                                    # Persist row:
       if existing_record
         is_ok = existing_record.update_attributes(
           minutes: row.minutes,
@@ -107,9 +115,10 @@ class RecordCollector
         row.is_team_record = is_team_record
         is_ok = row.save
       end
+      persisted_ok += 1 if is_ok
       @collection.delete_with_key(key) if remove_from_list && is_ok
     end
-    ( @collection.count == 0 )
+    remove_from_list ? (@collection.count == 0) : (@collection.count == persisted_ok) 
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -157,9 +166,9 @@ class RecordCollector
         pool_type_code, event_type_code, category_type_code, gender_type_code
       ]
     )
-    ir = ir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
-    ir = ir.where( ['team_id = ?', @team.id]) if @team
-    ir = ir.where( ['federation_type_id = ?', @federation_type.id] ) if @federation_type
+    ir = ir.where( swimmer_id: @swimmer.id ) if @swimmer
+    ir = ir.team_records.where( team_id: @team.id ) if @team
+    ir = ir.federation_records.where( federation_type_id: @federation_type.id ) if @federation_type
     update_and_return_collection_with_first_results( ir )
   end
   #-- -------------------------------------------------------------------------

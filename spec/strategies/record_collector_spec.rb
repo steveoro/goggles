@@ -86,45 +86,39 @@ describe RecordCollector do
 
 
   describe "#save" do
-    before(:each) { subject.collect_from_results_having('25', '50FA', 'M35', 'M') }
+    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M') }
 
-    it "stores the internal list to the database" do
-      expect{ subject.save }.to change{ IndividualRecord.count }.to( subject.count )
+    it "returns true on no-errors found" do
+      expect( subject.save ).to be_true
     end
     it "does not clear the internal list" do
       expect{ subject.save }.not_to change{ subject.count }
     end
     it "doesn't increase the table size when persisting existing records" do
-      before_count = subject.count
-      subject.save  # make the record persist, without clearing the list
+      expect( subject.save ).to be_true  # make the record persist, without clearing the list
       expect{ subject.save }.not_to change{ IndividualRecord.count }
     end
   end
 
 
   describe "#commit" do
-    before(:each) { subject.collect_from_results_having('25', '50FA', 'M35', 'M') }
+    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M') }
 
-    it "stores the internal list to the database" do
-      before_count = subject.count
-      expect{ subject.commit }.to change{ IndividualRecord.count }.to( before_count )
-    end
     it "returns true on no-errors found" do
-      expect{ subject.commit }.to be_true
+      expect( subject.commit ).to be_true
     end
     it "clears the internal list" do
       expect{ subject.commit }.to change{ subject.count }.to(0)
     end
     it "doesn't increase the table size when persisting existing records" do
       before_count = subject.count
-      subject.save  # make the record persist, without clearing the list
+      subject.save  # make sure the record persist, without clearing the list
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
     end
     it "doesn't increase the table size when updating existing records" do
       before_count = subject.count
-      expect{ subject.commit }.to change{ IndividualRecord.count }.to( before_count )
-      expect( subject.count ).to eq(0)
-      # Search again, with same params, to update existing records:
+      expect( subject.commit ).to be_true
+      # Search again, with same params, but from results, to update existing records:
       subject.collect_from_results_having('25', '50FA', 'M35', 'M')
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
     end

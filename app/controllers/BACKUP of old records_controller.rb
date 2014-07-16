@@ -1,60 +1,54 @@
-# encoding: utf-8
-require 'common/format'
-
-
-=begin
-
-= RecordsController
-
-  - version:  4.00.355
-  - author:   Steve A.
-
-=end
 class RecordsController < ApplicationController
 
+  require 'date'
+  require 'common/format'
 
-  # Collect individual records grouped by FederationType.
+
+  # Collect individual records among everything that has been inserted.
+  # This computes an "all-time" best chart for everyone in every event type ever
+  # inserted, according to the latest data available.
   #
-  def for_federation
-    @title = I18n.t('records.menu_by_federation')
+  def for_everything
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}.everything() -----"
+    @title = I18n.t( :everything_title, { scope: [:records] } )
 
-    # AJAX call? Parse parameter and retrieve records range:
-    if request.xhr?
-      render( :partial => 'records_4x_grid' )
-    end
+    if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
+      prepare_events_and_category_variables()
 
-    # Respond according to requested format (GET request => .html, AJAX request => .js)
-    respond_to do |format|
-      format.html
-      format.js
-    end
+      # [Steve, 20131223] => ~0'57" execution on wks-8:
+      @f25mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
+      )
+      @f50mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT50_ID
+      )
+      @m25mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::MALE_ID, PoolType::MT25_ID
+      )
+      @m50mt_rec_hash = fill_hash_with_1_query_per_record_type(
+          @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
+      )
 
-###############################################à
-    # @title = I18n.t( :everything_title, { scope: [:records] } )
-# 
-    # if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
-      # prepare_events_and_category_variables()
-# 
-      # # [Steve, 20131223] => ~0'57" execution on wks-8:
-      # @f25mt_rec_hash = fill_hash_with_1_query_per_record_type(
+      # [Steve, 20131223] Kept here as profiling reference:
+      #                   => ~2'05" execution on wks-8:
+      # @f25mt_rec_hash = fill_hash_with_only_1_query(
           # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
       # )
-      # @f50mt_rec_hash = fill_hash_with_1_query_per_record_type(
+      # @f50mt_rec_hash = fill_hash_with_only_1_query(
           # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT50_ID
       # )
-      # @m25mt_rec_hash = fill_hash_with_1_query_per_record_type(
+      # @m25mt_rec_hash = fill_hash_with_only_1_query(
           # @events, @category_codes, GenderType::MALE_ID, PoolType::MT25_ID
       # )
-      # @m50mt_rec_hash = fill_hash_with_1_query_per_record_type(
+      # @m50mt_rec_hash = fill_hash_with_only_1_query(
           # @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
       # )
-     
 
-#      render( :partial => 'records_4x_grid' )
-#    end
+      render( :partial => 'records_4x_grid' )
+    end
   end
-  #-- -------------------------------------------------------------------------
-  #++
+  # ----------------------------------------------------------------------------
 
 
   # Collect individual records among everything that has been inserted but just
@@ -62,7 +56,7 @@ class RecordsController < ApplicationController
   # This computes an "all-time" best chart for everyone associated to the specified
   # team_id, in every event type ever inserted, according to the latest data available.
   #
-  def OLD_for_season_type
+  def for_season_type
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.for_season_type() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
@@ -114,7 +108,7 @@ class RecordsController < ApplicationController
   # This computes an "all-time" best chart for the specified swimmer_id, in every
   # event type ever inserted, according to the latest data available.
   #
-  def OLD_for_swimmer
+  def for_swimmer
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.for_swimmer() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
@@ -163,7 +157,7 @@ class RecordsController < ApplicationController
   # This computes an "all-time" best chart for everyone associated to the specified
   # team_id, in every event type ever inserted, according to the latest data available.
   #
-  def OLD_for_team
+  def for_team
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.for_team() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
@@ -221,7 +215,7 @@ class RecordsController < ApplicationController
   # - [:team_id] => the team id for the search
   # - [:swimmer_id] => the swimmer id to be highlighted on the grid, if any
   #
-  def OLD_show_for_team
+  def show_for_team
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.show_for_team() -----"
     @team_id = params[:team_id].to_i
@@ -256,8 +250,7 @@ class RecordsController < ApplicationController
       redirect_to( root_path() ) and return
     end
   end
-  #-- -------------------------------------------------------------------------
-  #++
+  # ----------------------------------------------------------------------------
 
 
   private

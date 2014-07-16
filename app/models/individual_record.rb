@@ -41,8 +41,12 @@ class IndividualRecord < ActiveRecord::Base
   validates_associated :federation_type
 
 
-  scope :team_records,        -> { where(is_team_record: true) }
-  scope :federation_records,  -> { where(is_team_record: false) }
+  scope :team_records,          -> { where(is_team_record: true) }
+  scope :federation_records,    -> { where(is_team_record: false) }
+
+  scope :for_federation_code,   ->(code) { federation_records.joins(:federation_type).where(['federation_types.code = ?', code]) }
+  scope :for_federation,        ->(id)   { federation_records.where( federation_type_id: id ) }
+  scope :for_team,              ->(id)   { team_records.where( team_id: id ) }
   #-- -------------------------------------------------------------------------
   #++
 
