@@ -827,6 +827,7 @@ it:
     download_pdf: 'Scarica PDF'
 
 
+  combobox_generic_tooltip: "Scrivi direttamente quello che vuoi cercare o premi il pulsante per mostrare tutte le voci."
   something_went_wrong: "Qualcosa e' andato storto, controllare il file di log."
   requested_entity_missing: "Un entita' fondamentale non e' stata ancora creata"
   transaction_cancelled: "Transazione annullata."
@@ -1183,6 +1184,7 @@ it:
       entry_time_type: "Tipo Tempo Accred."
       heat_type: "Tipo Batteria"
       edition_type: "Tipo Edizione"
+      federation_type: "Federazione"
       timing_type: "Cronometraggio"
       time_standard: "Tempo Base"
       individual_score_computation_type: "Tipo Calcolo Punti Ind."

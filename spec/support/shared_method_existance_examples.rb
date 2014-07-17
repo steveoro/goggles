@@ -160,11 +160,24 @@ shared_examples_for "(the existance of a method with parameters, returning numer
 end
 # -----------------------------------------------------------------------------
 
+shared_examples_for "(the existance of a method returning a collection or an object responding to :each)" do |method_name_array|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    describe "##{method_name}" do
+      it "returns a collection responding to :each" do
+        expect( subject.send(method_name.to_sym) ).to respond_to(:each)
+      end
+    end
+  end
+end
+
 shared_examples_for "(the existance of a method returning an array)" do |method_name_array|
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
-    it "##{method_name} returns a list" do
-      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Enumerable )
+    describe "##{method_name}" do
+      it "returns an Enumerable list" do
+        expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Enumerable )
+      end
     end
   end
 end
@@ -173,13 +186,29 @@ shared_examples_for "(the existance of a method returning an Enumerable of non-e
   it_behaves_like "(the existance of a method returning an array)", method_name_array
   method_name_array.each do |method_name|
     describe "##{method_name}" do
-      it "returns an Enumerable" do
+      it "returns an Enumerable list" do
         expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Enumerable )
       end
-      it "returns a list of Strings" do
+      it "returns a list of non-empty Strings" do
         subject.send(method_name.to_sym).each do |element|
           expect( element ).to be_an_instance_of( String )
           expect( element.size > 0 ).to be_true
+        end
+      end
+    end
+  end
+end
+
+shared_examples_for "(the existance of a method returning a collection of some kind of instances)" do |method_name_array, common_kind|
+  it_behaves_like "(the existance of a method returning an array)", method_name_array
+  method_name_array.each do |method_name|
+    describe "##{method_name}" do
+      it "returns a collection responding to :each" do
+        expect( subject.send(method_name.to_sym) ).to respond_to(:each)
+      end
+      it "returns a list of #{instance_class.name}" do
+        subject.send(method_name.to_sym).each do |element|
+          expect( element ).to be_a_kind_of( common_kind )
         end
       end
     end

@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollection
-  - Goggles framework vers.:  4.00.347.20140711
+  - Goggles framework vers.:  4.00.357.20140717
   - author: Steve A.
 
  Wrapper class to store and manage a collection of individual results from meetings
@@ -19,9 +19,16 @@ class RecordCollection
 
   # Creates a new instance. Adds directly the first member, if given.
   #
+  # The given parameter can either be a single instance or a list (responding to :each)
+  # of MeetingIndividualResult or IndividualRecord rows.
+  #
   def initialize( individual_result_or_record = nil )
     @list = {}
-    add( individual_result_or_record )
+    if individual_result_or_record.respond_to?(:each)
+      individual_result_or_record.each { |row| add(row) }
+    else
+      add( individual_result_or_record )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

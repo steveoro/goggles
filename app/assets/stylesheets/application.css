@@ -272,3 +272,24 @@ li.goggles-sortable div {
 	margin: 2px 0;
 	padding: 4px;
 }
+
+
+/* ----- Custom ComboBox widget styles: ----- */
+.ui-combobox { display: inline-block; margin: 0; margin-right: 1.8em; position: relative; }
+.ui-combobox-input { padding: 0.2em; margin: 0; }
+.ui-combobox-button {
+    position: absolute;
+    width: 1em !important;
+    margin: 0;
+    margin-left: -1px;
+    top: 0;
+    bottom: 0;
+}
+.ui-combobox-button .ui-button-text {
+    padding: 0em;
+}
+.ui-combobox .ui-autocomplete {
+    max-height: 10em;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

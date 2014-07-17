@@ -54,6 +54,29 @@ describe RecordCollection do
   it "implements the Enumerable interface" do
     expect( subject ).to be_a_kind_of( Enumerable )
   end
+
+  describe "#initialize" do
+    it "allows an IndividualRecord instance as a parameter" do
+      result = RecordCollection.new( create(:individual_record) )
+      expect( result ).to be_an_instance_of( RecordCollection )
+      expect( result.count ).to eq(1)
+    end
+    it "allows a MeetingIndividualResult instance as a parameter" do
+      result = RecordCollection.new( create(:meeting_individual_result) )
+      expect( result ).to be_an_instance_of( RecordCollection )
+      expect( result.count ).to eq(1)
+    end
+    it "allows a list of IndividualRecord rows as a parameter" do
+      result = RecordCollection.new( create_list(:individual_record, 5) )
+      expect( result ).to be_an_instance_of( RecordCollection )
+      expect( result.count ).to eq(5)
+    end
+    it "allows a list of MeetingIndividualResult rows as a parameter" do
+      result = RecordCollection.new( create_list(:meeting_individual_result, 5) )
+      expect( result ).to be_an_instance_of( RecordCollection )
+      expect( result.count ).to eq(5)
+    end
+  end
   #-- -----------------------------------------------------------------------
   #++
 

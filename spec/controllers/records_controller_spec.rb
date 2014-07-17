@@ -16,11 +16,49 @@ describe RecordsController do
       it "assigns the required variables" do
         get :for_federation
         expect( assigns(:title) ).to be_an_instance_of( String ) 
-#        expect( assigns(:record_collection) ).to be_an_instance_of( RecordCollection ) 
       end
       it "renders the form template" do
         get :for_federation
         expect(response).to render_template(:for_federation)
+      end
+    end
+
+
+    context "with an AJAX request," do
+      context "without parameters," do
+        before(:each) { xhr :get, :for_federation }
+
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
+        it "assigns the required variables" do
+          expect( assigns(:title) ).to be_an_instance_of( String ) 
+          expect( assigns(:collector) ).to be_an_instance_of( RecordCollector ) 
+        end
+        it "has an empty record list" do
+          expect( assigns(:collector).count ).to eq(0) 
+        end
+        it "renders the form template" do
+          expect(response).to render_template(:for_federation)
+        end
+      end
+
+      context "with a valid parameter," do
+        before(:each) { xhr :get, :for_federation, federation_type: {id: 2} }
+
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
+        it "assigns the required variables" do
+          expect( assigns(:title) ).to be_an_instance_of( String ) 
+          expect( assigns(:collector) ).to be_an_instance_of( RecordCollector ) 
+        end
+        it "has a non-empty record list" do
+          expect( assigns(:collector).count ).to be > 0 
+        end
+        it "renders the form template" do
+          expect(response).to render_template(:for_federation)
+        end
       end
     end
   end

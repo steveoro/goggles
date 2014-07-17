@@ -1,30 +1,20 @@
 .row-fluid#records_4x_grid
   .span12
     %h2= @title
-  -# --- Sub-legend for each category + gender
-  - pool25_desc = PoolType.find_by_id( PoolType::MT25_ID ).i18n_description
-  - pool50_desc = PoolType.find_by_id( PoolType::MT50_ID ).i18n_description
+  -# --- Sub-legend for each gender + pool-type
+  - div_id = ''
   .navbar
-    - if ( @only_gender == GenderType::FEMALE_ID || @only_gender == 0 )
-      %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::FEMALE_ID).i18n_short + ':'
+    - @collector.gender_type_codes_list.each do |gender_code|
+      %a.goggles-small-brand(href='#')= GenderType.find_by_code(gender_code).i18n_short + ':'
       %ul.nav
+      - @collector.pool_type_code_list.each do |pool_code|
+        - div_id = "#{gender_code}#{pool_code}"
         %li
-          %a.goggles-nav-compact(href="#f25")= pool25_desc
-        %li
-          %a.goggles-nav-compact(href="#f50")= pool50_desc
+          %a.goggles-nav-compact(href="##{div_id}")= PoolType.find_by_code(pool_code).i18n_short
       .ghost-divider-vertical
-    - if ( @only_gender == GenderType::MALE_ID || @only_gender == 0 )
-      %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
-      %ul.nav
-        %li
-          %a.goggles-nav-compact(href="#m25")= pool25_desc
-        %li
-          %a.goggles-nav-compact(href="#m50")= pool50_desc
-  - if ( @only_gender == GenderType::FEMALE_ID || @only_gender == 0 )
-    = render( :partial=>'records_grid', :locals => {:div_id=>'f25', :grid_title=>"#{I18n.t('meeting_stats.females')}, #{pool25_desc}", :rec_hash=>@f25mt_rec_hash, :min_pool_length=>25} )
-    = render( :partial=>'records_grid', :locals => {:div_id=>'f50', :grid_title=>"#{I18n.t('meeting_stats.females')}, #{pool50_desc}", :rec_hash=>@f50mt_rec_hash, :min_pool_length=>50} )
-  - if ( @only_gender == GenderType::MALE_ID || @only_gender == 0 )
-    = render( :partial=>'records_grid', :locals => {:div_id=>'m25', :grid_title=>"#{I18n.t('meeting_stats.males')}, #{pool25_desc}", :rec_hash=>@m25mt_rec_hash, :min_pool_length=>25} )
-    = render( :partial=>'records_grid', :locals => {:div_id=>'m50', :grid_title=>"#{I18n.t('meeting_stats.males')}, #{pool50_desc}", :rec_hash=>@m50mt_rec_hash, :min_pool_length=>50} )
-  .row-fluid
-    .span12
+
+  - @collector.gender_type_codes_list.each do |gender_code|
+    - @collector.pool_type_code_list.each do |pool_code|
+      - gender_label = GenderType.find_by_code(gender_code).i18n_short
+      - pool_label   = PoolType.find_by_code(pool_code).i18n_short
+      = render( partial: 'records_grid', locals: { div_id: div_id, gender_code: gender_code, pool_code: pool_code, collection: @collector.collection, grid_title: "#{gender_label}, #{pool_label}" } )

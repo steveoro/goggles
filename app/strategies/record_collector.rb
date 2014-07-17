@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.355.20140716
+  - Goggles framework vers.:  4.00.357.20140717
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -18,8 +18,12 @@ class RecordCollector
   # Creates a new instance while setting the filtering parameters for the records
   # selection.
   #
-  # === Supported filtering options:
+  # === Initialization options:
+  # - list: an object responding to :each, containing a list of row instances to
+  #         be added to the internal collection during initialization.
+  #         (These will be converted to IndividualRecord(s) and indexed by their values)
   #
+  # === Supported filtering options:
   # When provided, any of these options are combined together and will be used
   # to filter out the results during the collection loops.
   #
@@ -29,7 +33,8 @@ class RecordCollector
   # - meeting: a Meeting instance (this filter is ignored when looping on IndividualRecords)
   #
   def initialize( options = {} )
-    @collection = RecordCollection.new()
+    list_of_rows     = options[:list].respond_to?(:each) ? options[:list] : nil
+    @collection = RecordCollection.new( list_of_rows )
     # Options safety check:
     @swimmer         = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
     @team            = options[:team] if options[:team].instance_of?( Team )
@@ -37,7 +42,7 @@ class RecordCollector
     @meeting         = options[:meeting] if options[:meeting].instance_of?( Meeting )
     # Set precedence on filter values:
     @team = nil if @federation_type
-    # Cache the codes lists:
+    # Cache the unique codes lists:
     @pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }.delete_if{ |e| e == '33' }
     @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
     @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
@@ -46,14 +51,19 @@ class RecordCollector
   #-- --------------------------------------------------------------------------
   #++
 
+  # Getter for the internal list.
+  def collection
+    @collection
+  end
+
   # Getter for the internal list #count method.
-  def count()
-    @collection.count()
+  def count
+    @collection.count
   end
 
   # Clears the internal list of records.
-  def clear()
-    @collection.clear()
+  def clear
+    @collection.clear
   end
 
   # Shortcut for #commit(false).
@@ -62,7 +72,7 @@ class RecordCollector
   #
   # Returns true on no errors during serialization.
   #
-  def save()
+  def save
     commit( false )
   end
 

@@ -825,6 +825,7 @@ en:
     download_pdf: 'Download PDF'
 
 
+  combobox_generic_tooltip: "Write directly what you want to search or press the button to show all the items."
   something_went_wrong: "Something went wrong, check the log file."
   requested_entity_missing: "A requested entity has not been created yet"
   transaction_cancelled: "Transaction cancelled."
@@ -1072,6 +1073,7 @@ en:
       entry_time_type: "Entry-Time Type"
       heat_type: "Heat Type"
       edition_type: "Edition Type"
+      federation_type: "Federation Type"
       timing_type: "Timing Type"
       time_standard: "Base Time"
       score_computation_type: "Scoring Type"

@@ -15,7 +15,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.225.20140418
+  - Goggles framework vers.:  4.00.355.20140716
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -23,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.225.20140418'
+SCRIPT_VERSION = '4.355.20140716'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -119,13 +119,25 @@ It actually DROPS the Database, recreates it using a mysql shell command.
   # ---------------------------------------------------------------------------
 
 
-  desc 'Recreates the DB(s) from scratch. Invokes db:reset + db:migrate + sql:exec + db:clone_to_test in one shot.'
+  desc <<-DESC
+  Recreates the current DB from scratch.
+  Invokes the following tasks in in one shot:
+
+  - db:reset           ...to clear the current DB (default: development);
+  - db:migrate         ...to run migrations;
+  - sql:exec           ...to import the base seed files (/db/seed/*.sql);
+  - db:update_records  ...to pre-compute & fill the individual_records table;
   
+  Keep in mind that, when not in production, the test DB must then be updated
+  using the db:clone_to_test dedicated task.
+
+  DESC
   task :rebuild_from_scratch do
-    puts "*** Task: Compound DB RESET + MIGRATE + SQL:EXEC ***"
+    puts "*** Task: Compound DB RESET + MIGRATE + SQL:EXEC + UPDATE_RECORDS ***"
     Rake::Task['db:reset'].invoke
     Rake::Task['db:migrate'].invoke
     Rake::Task['sql:exec'].invoke
+    Rake::Task['db:update_records'].invoke
     puts "Done."
   end
   # ---------------------------------------------------------------------------

@@ -16,42 +16,19 @@ class RecordsController < ApplicationController
   # Collect individual records grouped by FederationType.
   #
   def for_federation
-    @title = I18n.t('records.menu_by_federation')
-
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?
-      render( :partial => 'records_4x_grid' )
+      @title = I18n.t('records.federation_title')
+      records = IndividualRecord.for_federation( params[:federation_type][:id] ) if params[:federation_type] && params[:federation_type][:id]
+      @collector = RecordCollector.new( list: records )
+    else
+      @title = I18n.t('records.federation_search_title')
     end
-
     # Respond according to requested format (GET request => .html, AJAX request => .js)
     respond_to do |format|
       format.html
       format.js
     end
-
-###############################################à
-    # @title = I18n.t( :everything_title, { scope: [:records] } )
-# 
-    # if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve records range:
-      # prepare_events_and_category_variables()
-# 
-      # # [Steve, 20131223] => ~0'57" execution on wks-8:
-      # @f25mt_rec_hash = fill_hash_with_1_query_per_record_type(
-          # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT25_ID
-      # )
-      # @f50mt_rec_hash = fill_hash_with_1_query_per_record_type(
-          # @events, @category_codes, GenderType::FEMALE_ID, PoolType::MT50_ID
-      # )
-      # @m25mt_rec_hash = fill_hash_with_1_query_per_record_type(
-          # @events, @category_codes, GenderType::MALE_ID, PoolType::MT25_ID
-      # )
-      # @m50mt_rec_hash = fill_hash_with_1_query_per_record_type(
-          # @events, @category_codes, GenderType::MALE_ID, PoolType::MT50_ID
-      # )
-     
-
-#      render( :partial => 'records_4x_grid' )
-#    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -208,6 +185,9 @@ class RecordsController < ApplicationController
   # ----------------------------------------------------------------------------
 
 
+# FIXME ***************** THIS IS USED IN swimmers/radio, to pre-filter records by team
+# TODO REFACTOR this:
+
   # Same as action <tt>for_team</tt>, but works only for Ajax requests and
   # without search header.
   #
@@ -221,7 +201,7 @@ class RecordsController < ApplicationController
   # - [:team_id] => the team id for the search
   # - [:swimmer_id] => the swimmer id to be highlighted on the grid, if any
   #
-  def OLD_show_for_team
+  def show_for_team
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}.show_for_team() -----"
     @team_id = params[:team_id].to_i

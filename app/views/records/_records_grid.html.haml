@@ -7,25 +7,25 @@
     %tbody
       %tr{'class'=>'info'}
         %td
-        - @category_short_names.each do |cat_short_name|
+        - @collector.category_type_codes_list.each do |category_code|
           %td.goggles-centeralign
-            %b= cat_short_name
-      - @events.each do |event_type|
-        - unless event_type.length_in_meters < min_pool_length
-          %tr
-            %td.goggles-td.goggles-rightalign
-              %b= event_type.i18n_short
-            - @category_short_names.each do |cat_short_name|
-              - ind_result = rec_hash.has_key?(event_type.id) ? rec_hash[ event_type.id ][ cat_short_name ] : nil
-              %td.goggles-td{ class: (ind_result && (ind_result.swimmer_id == @preselected_swimmer_id) ? 'goggles-bakckground-highlight' : '') }
-                - if ind_result
-                  %p
-                    %b= ind_result.get_timing
-                  %p
-                    %a{'id'=>"swimmer#{ind_result.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
-                      = ind_result.get_swimmer_name
-                  - if (sched_date = ind_result.get_scheduled_date).kind_of?(Date)
-                    %a{'id'=>"rec#{ind_result.id}", 'href'=>"#{ meeting_show_full_path(:id=>ind_result.meeting.id, :swimmer_id=>ind_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{ind_result.meeting.description})"}
-                      %p= Format.a_date(ind_result.get_scheduled_date)
-                  - else
-                    %p= '-'
+            %b= category_code
+
+      - @collector.event_type_codes_list.each do |event_code|
+        %tr
+          %td.goggles-td.goggles-rightalign
+            %b= event_code
+          - @collector.category_type_codes_list.each do |category_code|
+            - record = collection.get_record_for( pool_code, event_code, category_code, gender_code )
+            %td.goggles-td
+              - if record
+                %p
+                  %b= record.get_timing
+                %p
+                  %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+                    = record.get_swimmer_name
+                - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
+                  %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}
+                    %p= Format.a_date( sched_date )
+                - else
+                  %p= '-'

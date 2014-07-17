@@ -16,6 +16,7 @@ describe RecordCollector do
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method)",
       [
+        :collection,
         :count,
         :clear,
         :collect_from_results_having,
@@ -34,9 +35,34 @@ describe RecordCollector do
       ]
     )
   end
+
+
+  describe "#initialize" do
+    it "allows a list of IndividualRecord rows as a parameter" do
+      result = RecordCollector.new( list: create_list(:individual_record, 5) )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.count ).to eq(5)
+    end
+    it "allows a list of MeetingIndividualResult rows as a parameter" do
+      result = RecordCollector.new( list: create_list(:meeting_individual_result, 5) )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.count ).to eq(5)
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
+
+  describe "#collection" do
+    it "returns the collection instance" do
+      expect( subject.collection ).to be_an_instance_of( RecordCollection )
+    end
+    # This is useful if the getter is implemented using #dup or #clone.
+    # [Steve, 20140717] *** Currently: NOT ***    
+    it "returns a collection having the same number of elements of the internal collection" do
+      expect( subject.collection.count ).to eq(subject.count)
+    end    
+  end
 
   describe "#count" do
     it "returns the size of the internal collection" do
