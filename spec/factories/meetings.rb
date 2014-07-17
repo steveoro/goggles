@@ -12,6 +12,27 @@ FactoryGirl.define do
     edition_type_id           { ((rand * 100) % 5).to_i + 1 } # ASSERT: at least 5 edition types (1..5)
     timing_type_id            { ((rand * 100) % 3).to_i + 1 } # ASSERT: at least 3 timing types (1..3)
     user
+    
+    factory :meeting_with_sessions do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_session,
+          ((rand * 3).to_i + 1),               # total number of results
+          meeting: created_instance            # association enforce for each sub-row
+        )
+      end
+    end
+    
+    # Complete meeting, with sessions, events, programs, results and passages
+    factory :meeting_complete do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_session_complete,
+          ((rand * 3).to_i + 1),               # total number of results
+          meeting: created_instance            # association enforce for each sub-row
+        )
+      end
+    end
   end
 
   factory :meeting_session do
@@ -38,6 +59,16 @@ FactoryGirl.define do
         )
       end
     end
+
+    factory :meeting_session_complete do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_event_complete,
+          ((rand * 2).to_i + 2),                   # total number or detail rows
+          meeting_session: created_instance         # association enforce for each sub-row
+        )
+      end
+    end
   end
 
   factory :meeting_event do
@@ -46,6 +77,26 @@ FactoryGirl.define do
     event_type_id             { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types
     heat_type_id              { ((rand * 100) % 3).to_i + 1} # ASSERT: at least 3 heat types
     user
+    
+    factory :meeting_event_with_programs do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_program,
+          ((rand * 10).to_i + 1),              # total number of results
+          meeting_event: created_instance      # association enforce for each sub-row
+        )
+      end
+    end
+    
+    factory :meeting_event_complete do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_program_complete,
+          ((rand * 2).to_i + 1),              # total number of results
+          meeting_event: created_instance      # association enforce for each sub-row
+        )
+      end
+    end
   end
 
   factory :meeting_program do
@@ -55,6 +106,26 @@ FactoryGirl.define do
     gender_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
     pool_type_id              { meeting_event.meeting_session.swimming_pool.pool_type_id }
     user
+    
+    factory :meeting_program_with_results do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_individual_result,
+          ((rand * 30).to_i + 2),              # total number of results
+          meeting_program: created_instance    # association enforce for each sub-row
+        )
+      end
+    end
+    
+    factory :meeting_program_complete do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :meeting_individual_result_with_passages,
+          ((rand * 5).to_i + 2),              # total number of results
+          meeting_program: created_instance    # association enforce for each sub-row
+        )
+      end
+    end
   end
 
   factory :meeting_individual_result do

@@ -33,9 +33,10 @@ end
 
 describe MeetingStat do
   subject {
+    #subject { create( :meeting_complete ) }
     # Pre-loaded seeded last two years CSI season
-    seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105]
-    MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % 10).to_i) ))
+    seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106]
+    MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % seeded_meets.size).to_i) ))
   }
 
   describe "[a well formed instance]" do
