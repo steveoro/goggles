@@ -17,7 +17,7 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 
 = Record Update
 
-  - Goggles framework vers.:  4.00.351.20140714
+  - Goggles framework vers.:  4.00.359.20140718
   - author: Steve A.
 
   DB Updater for batch collection of Team & Federation Records & Best Individual Results
@@ -67,7 +67,7 @@ DESC
 
     records_before = IndividualRecord.count
     puts Benchmark.measure {
-      scan_by_model_for_records( FederationType, :federation_type, logger )
+      scan_by_model_for_records( SeasonType, :season_type, logger )
       scan_by_model_for_records( Team, :team, logger )
       records_after = IndividualRecord.count
       logger.info( "\r\nTotal Records: #{records_before} (before) VS. #{records_after} (after) => added: #{records_after - records_before}" )

@@ -32,7 +32,7 @@ Goggles::Application.routes.draw do
       delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
 
       # === Records ===
-      get    "records/for_federation/:id",    to: "records#for_federation"
+      get    "records/for_season_type/:id",   to: "records#for_season_type"
       get    "records/for_team/:id",          to: "records#for_team"
       get    "records/for_swimmer/:id",       to: "records#for_swimmer"
 
@@ -118,10 +118,11 @@ Goggles::Application.routes.draw do
       get "ranking/:id",                        to: "rankings#show",                    as: "ranking"
 
       # === Records ===
-      get  "records/for_federation",            to: "records#for_federation"
+      get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_team",                  to: "records#for_team"
       get  "records/for_swimmer",               to: "records#for_swimmer"
       # FIXME
+      get  "records/for_federation",            to: "records#for_federation"
       get  "records/show_for_team",             to: "records#show_for_team"
 
       # === Results ===

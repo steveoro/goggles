@@ -6,11 +6,32 @@ require 'common/format'
 
 = RecordsController
 
-  - version:  4.00.355
+  - version:  4.00.359
   - author:   Steve A.
 
 =end
 class RecordsController < ApplicationController
+
+
+  # Collect individual records grouped by SeasonType.
+  #
+  def for_season_type
+    # AJAX call? Parse parameter and retrieve records range:
+    if request.xhr?
+      @title = I18n.t('records.season_type_title')
+      records = IndividualRecord.for_federation( params[:season_type][:id] ) if params[:season_type] && params[:season_type][:id]
+      @collector = RecordCollector.new( list: records )
+    else
+      @title = I18n.t('records.season_type_search_title')
+    end
+    # Respond according to requested format (GET request => .html, AJAX request => .js)
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Collect individual records grouped by FederationType.

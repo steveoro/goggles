@@ -10,17 +10,17 @@ class Api::V1::RecordsController < ApplicationController
 
 
   # Returns a JSON-encoded Array of all the IndividualRecord found, filtered by
-  # FederationType#id.
+  # SeasonType#id.
   # Returned rows will have is_team_record = false.
   #
   # Each array element is a JSON-encoded hash of a single row.
   # The keys of the Hash are the attributes as string.
   #
   # === Required params:
-  # - 'id': the matching IndividualRecord#federation_type_id
+  # - 'id': the matching IndividualRecord#season_type_id
   #
-  def for_federation
-    @records = IndividualRecord.for_federation( params[:id] ) if params[:id]
+  def for_season_type
+    @records = IndividualRecord.for_season_type( params[:id] ) if params[:id]
     respond_with( @records )
   end
   #-- -------------------------------------------------------------------------

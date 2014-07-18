@@ -9,6 +9,11 @@ describe RecordCollector do
   let( :fixture2 ) { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 ) { results.at( ((rand * 1000) % results.size).to_i ) }
 
+  # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
+  # TODO test context for prefiltering with a SeasonType
+  # TODO test context for prefiltering with a Swimmer
+  # TODO test context for prefiltering with a Meeting
+
   # Using a pre-filtered collector on a Team will speed-up the tests:
   subject { RecordCollector.new( team: Team.find_by_id(1) ) }
 
@@ -51,7 +56,6 @@ describe RecordCollector do
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   describe "#collection" do
     it "returns the collection instance" do

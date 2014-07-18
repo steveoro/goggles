@@ -5,7 +5,7 @@
 
 = IndividualRecord model
 
-  - version:  4.00.345.20140710
+  - version:  4.00.359.20140718
   - author:   Steve A.
 
   Stores the current & best individual results (or records) collected from all
@@ -27,7 +27,8 @@ class IndividualRecord < ActiveRecord::Base
 
   belongs_to :team
   belongs_to :season
-  belongs_to :federation_type
+  has_one :season_type, through: :season
+  belongs_to :federation_type                       # [Steve, 20140718] Redundant shortcut to season.season_type.federation_type. Not really used anymore
 
   belongs_to :meeting_individual_result             # (May be null)
 
@@ -40,13 +41,16 @@ class IndividualRecord < ActiveRecord::Base
   validates_associated :season
   validates_associated :federation_type
 
-
+  # Scopes all the results that are computed for a specific Team
   scope :team_records,          -> { where(is_team_record: true) }
-  scope :federation_records,    -> { where(is_team_record: false) }
+  # Scopes all the results that are computed for a specific SeasonType (& Federation)
+  scope :season_type_records,   -> { where(is_team_record: false) }
 
-  scope :for_federation_code,   ->(code) { federation_records.joins(:federation_type).where(['federation_types.code = ?', code]) }
-  scope :for_federation,        ->(id)   { federation_records.where( federation_type_id: id ) }
   scope :for_team,              ->(id)   { team_records.where( team_id: id ) }
+  scope :for_season_type,       ->(id)   { season_type_records.includes(:season_type).joins(:season_type).where(['season_types.id = ?', id]) }
+
+  scope :for_federation,        ->(id)   { season_type_records.where( federation_type_id: id ) }
+  scope :for_federation_code,   ->(code) { season_type_records.includes(:federation_type).joins(:federation_type).where(['federation_types.code = ?', code]) }
   #-- -------------------------------------------------------------------------
   #++
 

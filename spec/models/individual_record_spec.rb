@@ -16,6 +16,7 @@ describe IndividualRecord do
       :gender_type,
       :team,
       :season,
+      :season_type,
       :federation_type,
       :meeting_individual_result
     ])    
@@ -23,10 +24,11 @@ describe IndividualRecord do
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
       :team_records,
-      :federation_records,
-      :for_federation_code,
+      :season_type_records,
+      :for_team,
+      :for_season_type,
       :for_federation,
-      :for_team
+      :for_federation_code
     ])
 
     context "[implemented methods]" do
@@ -35,6 +37,21 @@ describe IndividualRecord do
           :from_individual_result
         ]
       )
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "self.for_team" do
+      it "returns an instance of ActiveRecord::Relation" do
+        expect( subject.class.for_team(1) ).to be_an_instance_of( ActiveRecord::Relation )
+      end
+    end
+
+    describe "self.for_season_type" do
+      it "returns an instance of ActiveRecord::Relation" do
+        # season_type_id: 2 => 'MASCSI'
+        expect( subject.class.for_season_type(2) ).to be_an_instance_of( ActiveRecord::Relation )
+      end
     end
     #-- -----------------------------------------------------------------------
     #++

@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.357.20140717
+  - Goggles framework vers.:  4.00.359.20140718
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -28,20 +28,20 @@ class RecordCollector
   # to filter out the results during the collection loops.
   #
   # - swimmer: a Swimmer instance
-  # - team: a Team instance (mutually exclusive filter with federation_type)
-  # - federation_type: a FederationType instance (mutually exclusive filter with team, takes precedence over team)
+  # - team: a filtering Team instance (mutually exclusive with season_type)
+  # - season_type: a filtering SeasonType instance (mutually exclusive with team, takes precedence over team)
   # - meeting: a Meeting instance (this filter is ignored when looping on IndividualRecords)
   #
   def initialize( options = {} )
-    list_of_rows     = options[:list].respond_to?(:each) ? options[:list] : nil
-    @collection = RecordCollection.new( list_of_rows )
+    list_of_rows  = options[:list].respond_to?(:each) ? options[:list] : nil
+    @collection   = RecordCollection.new( list_of_rows )
     # Options safety check:
-    @swimmer         = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
-    @team            = options[:team] if options[:team].instance_of?( Team )
-    @federation_type = options[:federation_type] if options[:federation_type].instance_of?( FederationType )
-    @meeting         = options[:meeting] if options[:meeting].instance_of?( Meeting )
+    @swimmer      = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
+    @team         = options[:team] if options[:team].instance_of?( Team )
+    @season_type  = options[:season_type] if options[:season_type].instance_of?( SeasonType )
+    @meeting      = options[:meeting] if options[:meeting].instance_of?( Meeting )
     # Set precedence on filter values:
-    @team = nil if @federation_type
+    @team = nil if @season_type
     # Cache the unique codes lists:
     @pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }.delete_if{ |e| e == '33' }
     @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
@@ -98,14 +98,14 @@ class RecordCollector
           team_id:          row.team_id,
           is_team_record:   true
         ).first
-      else                                          # (Assuming it is a) FederationType-filtered collection:
+      else                                          # (Assuming it is a) SeasonType-filtered collection:
         existing_record = IndividualRecord.where(
-          pool_type_id:       row.pool_type_id,
-          event_type_id:      row.event_type_id,
-          category_type_id:   row.category_type_id,
-          gender_type_id:     row.gender_type_id,
-          federation_type_id: row.federation_type_id,
-          is_team_record:     is_team_record
+          pool_type_id:     row.pool_type_id,
+          event_type_id:    row.event_type_id,
+          category_type_id: row.category_type_id,
+          gender_type_id:   row.gender_type_id,
+          season_type_id:   row.season_type_id,
+          is_team_record:   false
         ).first
       end
                                                     # Persist row:
@@ -123,7 +123,6 @@ class RecordCollector
         )
       else
         row.is_team_record = is_team_record
-        is_ok = row.save
       end
       persisted_ok += 1 if is_ok
       @collection.delete_with_key(key) if remove_from_list && is_ok
@@ -155,7 +154,7 @@ class RecordCollector
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
-    mir = mir.joins( :federation_type ).where( ['federation_types.id = ?', @federation_type.id]) if @federation_type
+    mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     update_and_return_collection_with_first_results( mir )
   end
 
@@ -178,7 +177,7 @@ class RecordCollector
     )
     ir = ir.where( swimmer_id: @swimmer.id ) if @swimmer
     ir = ir.team_records.where( team_id: @team.id ) if @team
-    ir = ir.federation_records.where( federation_type_id: @federation_type.id ) if @federation_type
+    ir = ir.season_type_records.where( season_type_id: @season_type.id ) if @season_type
     update_and_return_collection_with_first_results( ir )
   end
   #-- -------------------------------------------------------------------------
