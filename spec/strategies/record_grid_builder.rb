@@ -13,13 +13,14 @@ describe RecordGridBuilder do
         :count
       ]
     )
-    it_behaves_like( "(the existance of a method returning an Enumerable of non-empty Strings)",
+    it_behaves_like( "(the existance of a method returning a collection of some kind of instances)",
       [
-        :pool_type_code_list,
-        :event_type_codes_list,
-        :category_type_codes_list,
-        :gender_type_codes_list
-      ]
+        :pool_types,
+        :event_types,
+        :category_types,
+        :gender_types
+      ],
+      ActiveRecord::Base
     )
   end
 

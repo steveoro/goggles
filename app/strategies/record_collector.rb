@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.359.20140718
+  - Goggles framework vers.:  4.00.361.20140718
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -50,6 +50,26 @@ class RecordCollector
   end
   #-- --------------------------------------------------------------------------
   #++
+
+  # Getter for the internal Swimmer parameter. +nil+ when not defined.
+  def swimmer
+    @swimmer
+  end
+
+  # Getter for the internal Team parameter. +nil+ when not defined.
+  def team
+    @team
+  end
+
+  # Getter for the internal SeasonType parameter. +nil+ when not defined.
+  def season_type
+    @season_type
+  end
+
+  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  def meeting
+    @meeting
+  end
 
   # Getter for the internal list.
   def collection

@@ -206,7 +206,7 @@ shared_examples_for "(the existance of a method returning a collection of some k
       it "returns a collection responding to :each" do
         expect( subject.send(method_name.to_sym) ).to respond_to(:each)
       end
-      it "returns a list of #{instance_class.name}" do
+      it "returns a list of #{common_kind.name}" do
         subject.send(method_name.to_sym).each do |element|
           expect( element ).to be_a_kind_of( common_kind )
         end
@@ -231,6 +231,18 @@ shared_examples_for "(missing required values)" do |attribute_name_array|
   attribute_name_array.each do |attribute_name|
     it "not a valid instance without ##{attribute_name}" do
       expect( FactoryGirl.build( subject.class, attribute_name.to_sym => nil ) ).not_to be_valid
+    end    
+  end
+end
+
+
+shared_examples_for "(it has_one of these required models)" do |attribute_name_array|
+  attribute_name_array.each do |attribute_name|
+    it "responds to :#{attribute_name}" do
+      expect( subject ).to respond_to( attribute_name )
+    end
+    it "returns an instance of #{attribute_name.to_s.camelize}" do
+      expect( subject.send(attribute_name) ).to be_an_instance_of( attribute_name.to_s.camelize.constantize )
     end    
   end
 end

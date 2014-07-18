@@ -3,6 +3,14 @@ require 'drop_down_listable'
 require 'date'
 
 
+=begin
+
+= CategoryType model
+
+  - version:  4.00.359.20140718
+  - author:   Steve A.
+
+=end
 class CategoryType < ActiveRecord::Base
   include DropDownListable
 

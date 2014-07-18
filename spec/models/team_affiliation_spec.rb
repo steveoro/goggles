@@ -19,7 +19,8 @@ describe TeamAffiliation do
     # Validated relations:
     it_behaves_like( "(belongs_to required models)", [ 
       :team,
-      :season
+      :season,
+      :season_type
     ])    
 
     context "[general methods]" do

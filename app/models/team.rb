@@ -1,6 +1,15 @@
+# encoding: utf-8
 require 'drop_down_listable'
 
 
+=begin
+
+= CategoryType model
+
+  - version:  4.00.359.20140718
+  - author:   Steve A.
+
+=end
 class Team < ActiveRecord::Base
   include DropDownListable
 
@@ -11,8 +20,11 @@ class Team < ActiveRecord::Base
   has_many :badges
   has_many :meeting_individual_results
   has_many :meetings, through: :meeting_individual_results
-  has_many :seasons, through: :meetings
+  has_many :seasons,  through: :meetings
   has_many :meeting_relay_results
+  has_many :team_affiliations
+  has_many :seasons,      through: :team_affiliations
+  has_many :season_types, through: :team_affiliations
 
   validates_presence_of :name
   validates_length_of :name, within: 1..60, allow_nil: false

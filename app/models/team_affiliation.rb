@@ -19,6 +19,8 @@ class TeamAffiliation < ActiveRecord::Base
 
   validates_length_of   :number, maximum: 20
 
+  has_one  :season_type, through: :season
+
 
   scope :sort_team_affiliation_by_user,    ->(dir) { order("users.name #{dir.to_s}") }
   scope :sort_team_affiliation_by_team,    ->(dir) { order("teams.name #{dir.to_s}") }

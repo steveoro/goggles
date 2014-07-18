@@ -21,6 +21,10 @@ describe RecordCollector do
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method)",
       [
+        :swimmer,
+        :team,
+        :season_type,
+        :meeting,
         :collection,
         :count,
         :clear,

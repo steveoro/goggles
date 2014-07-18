@@ -20,6 +20,14 @@ describe CategoryType do
       ])    
     end
 
+    # Test the existance of all the required has_one relationships:
+    it_behaves_like( "(it has_one of these required models)",
+      [ 
+        :season_type,
+        :federation_type
+      ]
+    )    
+
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
       :is_valid,
