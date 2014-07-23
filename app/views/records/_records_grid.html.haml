@@ -1,31 +1,34 @@
-.row-fluid.span12.goggles-category-gap{ id: div_id }
-  %h3
-    = grid_title
-    %a{ :href=>"#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+.row-fluid
+  .goggles-category-gap{ 'id' => "#{gender_type.code}#{pool_type.code}" }
+    %h3
+      = "#{gender_type.i18n_short}, #{pool_type.i18n_short}"
+      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
 .row-fluid
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'info'}
         %td
-        - @collector.category_type_codes_list.each do |category_code|
+        - grid_builder.category_types.each do |category_type|
           %td.goggles-centeralign
-            %b= category_code
+            %b= category_type.get_full_name
 
-      - @collector.event_type_codes_list.each do |event_code|
-        %tr
-          %td.goggles-td.goggles-rightalign
-            %b= event_code
-          - @collector.category_type_codes_list.each do |category_code|
-            - record = collection.get_record_for( pool_code, event_code, category_code, gender_code )
-            %td.goggles-td
-              - if record
-                %p
-                  %b= record.get_timing
-                %p
-                  %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
-                    = record.get_swimmer_name
-                - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
-                  %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}
-                    %p= Format.a_date( sched_date )
-                - else
-                  %p= '-'
+      - grid_builder.event_types( pool_type.id ).each do |event_type|
+        - if grid_builder.collection.has_any_record_for( pool_type.code, event_type.code, gender_type.code )
+          %tr
+            %td.goggles-td.goggles-rightalign
+              %b= event_type.i18n_short
+            - grid_builder.category_types.each do |category_type|
+              - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, category_type.code, gender_type.code )
+              %td.goggles-td
+                - if record
+                  %p
+                    %b= record.get_timing
+                  %p
+                    %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+                      = record.get_swimmer_name
+                  - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
+                    %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}
+                      %p= Format.a_date( sched_date )
+                  - else
+                    %p= '-'
+

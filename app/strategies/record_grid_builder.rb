@@ -30,10 +30,12 @@ class RecordGridBuilder
 
     @event_types_by_pool = {} 
     @pool_types.each do |pool_type|
-      @event_types_by_pool[ pool_type.id ] = EventsByPoolType
+      event_by_pool_type_ids = EventsByPoolType
         .where( pool_type_id: pool_type.id )
         .includes( :event_type )
         .where{ event_types.is_a_relay == false }
+        .select( :event_type_id )
+      @event_types_by_pool[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
     end
 
     # TODO Refactor this mess:
@@ -43,13 +45,13 @@ class RecordGridBuilder
     # We may have 3 cases:
     # - filtering by Team (more than 1 SeasonType may be available)
     # - filtering by SeasonType (just 1)
-    # - no filtering => raise an error (IndividualRecords must either be filtered by Team or by SeasonType)
+    # - no filtering (either by list addition or by swimmer filtering => more than 1 SeasonType may be available) 
     season_types = if @collector.season_type
       [ @collector.season_type ]
     elsif @collector.team
       @collector.team.season_types.uniq
     else
-      raise ArgumentError.new("the RecordCollector instance must either be filtered by Team or by SeasonType. Unfiltered CategoryType loops are not supported!")
+      @collector.get_collected_season_types.values
     end
     # Get the list of Ids from all the most recent Season(s), by available SeasonType (uses Squeel DSL syntax):
     season_ids = season_types.map{ |st| Season.where{ season_type_id == st.id }.max.id }
@@ -65,7 +67,13 @@ class RecordGridBuilder
       end
     end
 
-    @gender_types   = GenderType.where{ code != 'X' } # (uses Squeel DSL syntax)
+    # Extract acceptable gender types from the list: if the collector has been filtered
+    # by swimmer, limit the grid genders to only his/hers.
+    @gender_types = if @collector.swimmer
+      [ @collector.swimmer.gender_type ]
+    else
+      GenderType.where{ code != 'X' } # (uses Squeel DSL syntax)
+    end
   end
   #-- --------------------------------------------------------------------------
   #++

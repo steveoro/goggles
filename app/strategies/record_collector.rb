@@ -162,7 +162,7 @@ class RecordCollector
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
-      .has_rank(1).joins( :pool_type, :event_type, :category_type, :gender_type )
+      .joins( :pool_type, :event_type, :category_type, :gender_type )
       .where(
       [
         '(pool_types.code = ?) AND (event_types.code = ?) AND ' +
@@ -201,6 +201,23 @@ class RecordCollector
     update_and_return_collection_with_first_results( ir )
   end
   #-- -------------------------------------------------------------------------
+  #++
+
+  # Getter for the list of all unique SeasonType instances found referenced by the
+  # current collection.
+  #
+  # Returns an Hash with the tuples { season_types.id => SeasonType instance } as
+  # individual elements.
+  #
+  def get_collected_season_types
+    result = {}
+    @collection.each do |collection_key, individual_record|
+      season_type = individual_record.season_type
+      result[ season_type.id ] = season_type unless result.has_key?( season_type.id )
+    end
+    result
+  end
+  #-- --------------------------------------------------------------------------
   #++
 
 

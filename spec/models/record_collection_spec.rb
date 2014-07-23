@@ -8,6 +8,16 @@ describe RecordCollection do
   let( :fixture2 )  { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 )  { results.at( ((rand * 1000) % results.size).to_i ) }
 
+  let( :pool_type_code )      { fixture.pool_type.code }
+  let( :event_type_code )     { fixture.event_type.code }
+  let( :category_type_code )  { fixture.category_type.code }
+  let( :gender_type_code )    { fixture.gender_type.code }
+
+  let( :pool_type_code2 )     { fixture2.pool_type.code }
+  let( :event_type_code2 )    { fixture2.event_type.code }
+  let( :category_type_code2 ) { fixture2.category_type.code }
+  let( :gender_type_code2 )   { fixture2.gender_type.code }
+
   let( :tie_fixture1 ) {
     create(
       :meeting_individual_result,
@@ -42,6 +52,7 @@ describe RecordCollection do
         :<<,
         :get_record_for,
         :has_record_for,
+        :has_any_record_for,
         :has_tie_in_for,
         :encode_key_from_codes,
         :encode_key_from_record,
@@ -231,8 +242,8 @@ describe RecordCollection do
     it "does not add twice the same element to the list" do
       subject.clear
       expect{
-        subject.add( fixture2 )
-        subject.add( fixture2 )
+        subject.add( tie_fixture1 )
+        subject.add( tie_fixture1 )
       }.to change{ subject.count }.by(1)
       expect{
         subject.add( fixture3 )
@@ -259,11 +270,6 @@ describe RecordCollection do
 
 
   describe "#get_record_for" do
-    let( :pool_type_code )      { fixture.pool_type.code }
-    let( :event_type_code )     { fixture.event_type.code }
-    let( :category_type_code )  { fixture.category_type.code }
-    let( :gender_type_code )    { fixture.gender_type.code }
-
     before( :each ) do
       subject.add(fixture)
       subject.add(fixture2)
@@ -299,11 +305,6 @@ describe RecordCollection do
 
 
   describe "#has_record_for" do
-    let( :pool_type_code2 )     { fixture2.pool_type.code }
-    let( :event_type_code2 )    { fixture2.event_type.code }
-    let( :category_type_code2 ) { fixture2.category_type.code }
-    let( :gender_type_code2 )   { fixture2.gender_type.code }
-
     before( :each ) do
       subject.add(fixture)
       subject.add(fixture2)
@@ -317,6 +318,25 @@ describe RecordCollection do
     it "returns false for a non existing record" do
       expect(
         subject.has_record_for( '45', event_type_code2, 'M85', gender_type_code2 )
+      ).to be_false
+    end    
+  end
+
+
+  describe "#has_any_record_for" do
+    before( :each ) do
+      subject.clear()
+      subject.add(fixture2)
+    end
+
+    it "returns true for an existing record" do
+      expect(
+        subject.has_any_record_for( pool_type_code2, event_type_code2, gender_type_code2 )
+      ).to be_true
+    end    
+    it "returns false for a non existing record" do
+      expect(
+        subject.has_any_record_for( '45', event_type_code2, gender_type_code2 )
       ).to be_false
     end    
   end
