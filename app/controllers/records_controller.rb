@@ -6,7 +6,7 @@ require 'common/format'
 
 = RecordsController
 
-  - version:  4.00.359
+  - version:  4.00.363
   - author:   Steve A.
 
 =end
@@ -19,8 +19,12 @@ class RecordsController < ApplicationController
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?
       @title = I18n.t('records.season_type_title')
-      records = IndividualRecord.for_federation( params[:season_type][:id] ) if params[:season_type] && params[:season_type][:id]
-      @collector = RecordCollector.new( list: records )
+      season_type = SeasonType.find_by_id( params[:season_type][:id] ) if params[:season_type] && params[:season_type][:id]
+      records   = IndividualRecord.for_federation( season_type.id ) if season_type
+      # [Steve, 20140723] 'Must always specify the filtering type for the RecordCollector,
+      # especially when we pre-load the list of records: 
+      collector = RecordCollector.new( list: records, season_type: season_type )
+      @grid_builder = RecordGridBuilder.new( collector )
     else
       @title = I18n.t('records.season_type_search_title')
     end

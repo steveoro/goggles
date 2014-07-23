@@ -21,10 +21,10 @@ class RecordGridBuilder
   # - record_collector: an instance of RecordCollector (assumed to have an already full RecordCollection)
   #
   def initialize( record_collector )
-    raise ArgumentError.new("the parameter must be a RecordCollector instance") unless record_collection.instance_of?( RecordCollector )
-    @collector   = record_collector
+    raise ArgumentError.new("the parameter must be a RecordCollector instance") unless record_collector.instance_of?( RecordCollector )
+    @collector  = record_collector
 
-    @pool_types  = PoolType.where{ code != '33' }   # (uses Squeel DSL syntax)
+    @pool_types = PoolType.where{ code != '33' }   # (uses Squeel DSL syntax)
     # This will create an Hash with all the tuples made by (pool_type.id => event_type lists),
     # with each event list built using the distribution of events found inside EventsByPoolType:
 
