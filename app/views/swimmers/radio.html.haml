@@ -142,15 +142,6 @@
                   = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
-          = I18n.t('swimmers.total_team_records') +':'
-        .span6
-          - if @tot_team_records_for_this_swimmer > 0
-            %a{'id'=>"teamRecs#{@swimmer.id}", 'href'=>"#{ records_show_for_team_path(:team_id=>@team_ids.first, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('records.team_title_disclaimer_tooltip')}
-              = @tot_team_records_for_this_swimmer
-          - ( @tot_team_records_for_this_swimmer / 10 ).times do
-            = image_tag('rosette.png')
-      .row-fluid
-        .span3
           = I18n.t('swimmers.total_disqualifications') +':'
         .span6
           - dsq_count = @swimmer.get_disqualifications_count
@@ -161,7 +152,34 @@
           - else
             = I18n.t('swimmers.no_disqualifications')
     .span3
-      = image_tag( 'img_radiography.jpg', :class=>"img-polaroid" ) 
+      = image_tag( 'img_radiography.jpg', :class=>"img-polaroid" )
+
+  .row-fluid
+    .span9
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.total_team_records') +':'
+        .span6
+          - if @tot_team_records_for_this_swimmer > 0
+            %a{ id: "teamRecs#{@swimmer.id}", href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXTeamRecord();", 'data-toggle' => 'tooltip', title: I18n.t('records.team_title_disclaimer_tooltip') }
+              = @tot_team_records_for_this_swimmer
+          - ( @tot_team_records_for_this_swimmer / 10 ).times do
+            = image_tag('rosette.png')
+            %span(id='loadingIndicator' hidden='true')
+              = image_tag( 'indicator.gif' )
+      .row-fluid
+        .offset3.span6
+          %ul
+            - @swimmer.teams.uniq.each do |team|
+              %li= team.get_full_name
+  .row-fluid
+    #records_4x_grid
 
 %script
   $('#firstTab').addClass('active');
+  function loadAJAXTeamRecord() {                                               |
+    $.ajax({                                                                    |
+      url: "#{ records_for_team_path( team: {id: @team_ids.first }, highlight_swimmer_id: @swimmer.id ) }", |
+      dataType: 'script'                                                        |
+    });                                                                         |
+  };                                                                            |

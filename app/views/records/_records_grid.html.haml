@@ -19,13 +19,18 @@
               %b= event_type.i18n_short
             - grid_builder.category_types.each do |category_type|
               - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, category_type.code, gender_type.code )
+              - is_highlighted = ( record && @highlight_swimmer && (record.swimmer_id == @highlight_swimmer.id) )
               %td.goggles-td
                 - if record
                   %p
                     %b= record.get_timing
-                  %p
-                    %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+                  - if is_highlighted
+                    %p.text-warning
                       = record.get_swimmer_name
+                  - else
+                    %p
+                      %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+                        = record.get_swimmer_name
                   - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
                     %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}
                       %p= Format.a_date( sched_date )

@@ -43,25 +43,19 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def radio
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
-###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Radiography" tab: ---
     @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
-                                                    # Retrieve all records for the Swimmer Team(s)
-    all_teams_records = MeetingIndividualResult.includes(
-      :event_type, :category_type, :gender_type, :pool_type
-    ).is_valid.where(
-      [ 'team_id IN (?)', @team_ids ]
-    ).select(
-      'meeting_program_id, team_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    ).group(
-      'team_id, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    )
-                                                    # Count how many Team records are held by this swimmer:
-    @tot_team_records_for_this_swimmer = 0
-    all_teams_records.each{ | mir |
-      @tot_team_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
-    }
+    # Retrieve all records for this Swimmer, indipendently from Team or SeasonType:
+    
+    # TODO This is so slooow: we need to use an AJAX method on a dedicated API to count the Records for this Swimmer
+    collector = RecordCollector.new( swimmer: @swimmer )
+    collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
+      this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
+    end
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+    
+    # TODO show a link instead, with a loading indicator that rolls out the request upon clicking on it
+    @tot_team_records_for_this_swimmer = collector.count
   end
   #-- -------------------------------------------------------------------------
   #++
