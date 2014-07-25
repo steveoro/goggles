@@ -1,4 +1,14 @@
+# encoding: utf-8
 
+
+=begin
+
+= PassagesController
+
+  - version:  4.00.367.20140724
+  - author:   Leega
+
+=end
 class PassagesController < ApplicationController
   respond_to :html
 
@@ -52,6 +62,7 @@ class PassagesController < ApplicationController
   #
   def for_meeting_individual_result
     @passages = MeetingIndividualResult.find_by_id(params[:id]).get_passages
+    @title = I18n.t('passages.title_show')
     respond_with( @passages )
   end
   # ----------------------------------------------------------------------------
@@ -65,7 +76,6 @@ class PassagesController < ApplicationController
   # FIXME (or explain me): meeting_individual_result won't be required?
   # How does it work for swimming pool review?
   def new
-    #redirect_to(root_path) and return if current_user_does_not_have_enough_confirmations?
     @passage = Passage.new
     @passage.user_id = current_user.id
     @passage.swimmer_id = current_user.swimmer_id
@@ -87,9 +97,12 @@ class PassagesController < ApplicationController
   # - :meeting_individual_result => the hash of attributes for the creation
   #
   def create
-    #redirect_to(root_path) and return if current_user_does_not_have_enough_confirmations?
     @passage = Passage.create(params[:passage])
-    @passage.user_id = current_user.id  # Leega: Why it's necessary to assign it again? Isn't this attribute in the hash too?
+    @passage.user_id = current_user.id
+    @passage.swimmer_id = current_user.swimmer_id
+    
+    # Leega
+    # FIXME. Shouldn't be the meeting_individual_result always needed, too?
     respond_with( @passage )
   end
   # ---------------------------------------------------------------------------
