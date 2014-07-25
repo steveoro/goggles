@@ -1,6 +1,15 @@
+# encoding: utf-8
 require 'drop_down_listable'
 
 
+=begin
+
+= FederationType
+
+  - version:  4.00.369
+  - author:   Steve A.
+
+=end
 class FederationType < ActiveRecord::Base
   include DropDownListable
 
@@ -9,7 +18,8 @@ class FederationType < ActiveRecord::Base
 
   validates_length_of     :description, maximum: 100
   validates_length_of     :short_name, maximum: 10
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Label symbol corresponding to either a column name or a model method to be used
@@ -20,11 +30,7 @@ class FederationType < ActiveRecord::Base
   def self.get_label_symbol
     :short_name
   end
-  # ----------------------------------------------------------------------------
-  
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
 
   # Computes the shortest possible description for the name associated with this data
@@ -36,5 +42,6 @@ class FederationType < ActiveRecord::Base
   def get_full_name
     self.description
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

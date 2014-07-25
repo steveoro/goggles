@@ -32,10 +32,10 @@ Goggles::Application.routes.draw do
       delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
 
       # === Records ===
-      get    "records/for_season_type/:id",   to: "records#for_season_type"
-      get    "records/for_team/:id",          to: "records#for_team"
-      get    "records/for_swimmer/:id",       to: "records#for_swimmer"
-      get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer"
+      get    "records/for_season_type/:id",   to: "records#for_season_type",as: "records_for_season_type"
+      get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
+      get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
+      get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer", as: "records_count_records_for_swimmer"
 
       # === Swimmers ===
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
