@@ -100,11 +100,13 @@ class PassagesController < ApplicationController
   #
   def create
     @passage = Passage.create(params[:passage])
-    @passage.user_id = current_user.id
-    @passage.swimmer_id = current_user.swimmer_id
-    
+
     # Leega
     # FIXME. Shouldn't be the meeting_individual_result always needed, too?
+    # Or if isn't, why the assignemento of user adn swimmer already performed in create?
+    #@passage.user_id = current_user.id
+    #@passage.swimmer_id = current_user.swimmer_id
+    
     respond_with( @passage )
   end
   # ---------------------------------------------------------------------------
