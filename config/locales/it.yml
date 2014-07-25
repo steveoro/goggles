@@ -591,6 +591,7 @@ it:
     trainings: "Modelli Allenamento"
     user_trainings: "Allenamenti Utente"
     user_training_stories: "Storico Allenamenti svolti"
+    passages: "Gestione passaggi gara"
 
   trainings:
     index_title: "Ricerca Modelli Allenamento"
@@ -637,6 +638,11 @@ it:
     story_created: "Storia Allenamento Utente creata con successo!"
     story_updated: "Storia Allenamento Utente aggiornata con successo!"
     story_deleted: "Storia Allenamento Utente eliminata!"
+
+  passages:
+    index_title: "Gestione passaggi gara"
+    title_show: "Passaggi gara"
+    passage_deleted: "Passaggio eliminato!"
 
   jumbotron:
     title_breast: "Goggles puo' memorizzare tutti i tuoi allenamenti!"

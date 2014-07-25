@@ -105,6 +105,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()
       lev2_nav.item :key_user_tr_stories,       t('misc_main_menu.user_training_stories'),  user_training_stories_path()
+      lev2_nav.item :key_passages,              t('misc_main_menu.passages'),               passages_path()
     end
 
     primary.item :key_separator0, '&nbsp;', '#', class: 'disabled'

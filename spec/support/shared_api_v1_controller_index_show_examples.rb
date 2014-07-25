@@ -30,6 +30,27 @@ end
 # =============================================================================
 
 
+shared_examples_for "(Ap1-V1-Controllers, actions that requires logged user who's a confirmed swimmer)" do |action_name_array|
+  context "unlogged user" do
+    action_name_array.each do |action_name|
+      it "displays always the Login page" do
+        get_action_and_check_if_its_the_login_page_for( action_name.to_sym )
+      end
+    end
+  end
+  
+  context "as a logged-in user who's NOT a confirmed goggler" do
+    login_user()
+    action_name_array.each do |action_name|
+      it "refuses the request and redirects to app root" do
+        get action_name.to_sym
+        expect( response ).to redirect_to( root_path ) 
+      end
+    end
+  end
+end
+# =============================================================================
+
 
 shared_examples_for "(Ap1-V1-Controllers, #index & #show actions)" do |controller_name|
 
