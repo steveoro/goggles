@@ -17,7 +17,7 @@ class PassagesController < ApplicationController
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   
   # Leega
-  # FIXME
+  # FIXME Check those filters!
   before_filter :current_user_have_enough_confirmations! 
   before_filter :verify_swimmer_ownership, except: [:new, :create]
   #-- -------------------------------------------------------------------------
@@ -82,11 +82,9 @@ class PassagesController < ApplicationController
     @passage = Passage.new
     @passage.user_id = current_user.id
     @passage.swimmer_id = current_user.swimmer_id
-
     @passage.meeting_individual_result_id = @meeting_individual_result.id 
     @passage.meeting_program_id = @meeting_individual_result.meeting_program_id 
     @passage.team_id = @meeting_individual_result.team_id 
-    
     @title = I18n.t('passages.title_show')
     respond_with( @passage )
   end
@@ -94,19 +92,13 @@ class PassagesController < ApplicationController
 
 
   # Creates a new Passage.
+  # Assumes user, swimmer and meeting_individual_result was set by the new action
   #
   # === Params:
   # - :meeting_individual_result => the hash of attributes for the creation
   #
   def create
     @passage = Passage.create(params[:passage])
-
-    # Leega
-    # FIXME. Shouldn't be the meeting_individual_result always needed, too?
-    # Or if isn't, why the assignemento of user adn swimmer already performed in create?
-    #@passage.user_id = current_user.id
-    #@passage.swimmer_id = current_user.swimmer_id
-    
     respond_with( @passage )
   end
   # ---------------------------------------------------------------------------
@@ -162,6 +154,18 @@ class PassagesController < ApplicationController
   
   private
 
+  # Verifies that a passage id is provided as a parameter to this controller.
+  # Assigns the @passage instance when successful.
+  #
+  # == Controller Params:
+  # id: the passage id to be processed by most of the methods (see before filter above)
+  #
+  def set_passage
+    @passage = Passage.find_by_id( params[:id].to_i )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Verifies that the passage id is provided as a parameter
   # and that the corresponding passage is referred to the current swimmer.
   # Otherwise, it redirects to the home page.
@@ -180,6 +184,7 @@ class PassagesController < ApplicationController
       redirect_to( root_path() ) and return
     end
   end
+  # ----------------------------------------------------------------------------
 
   # Leega: FIXME
   # Does that method really needed?
@@ -197,22 +202,11 @@ class PassagesController < ApplicationController
       false
     end
   end
-
-
-  # Verifies that a passage id is provided as a parameter to this controller.
-  # Assigns the @passage instance when successful.
-  #
-  # == Controller Params:
-  # id: the passage id to be processed by most of the methods (see before filter above)
-  #
-  def set_passage
-    @passage = Passage.find_by_id( params[:id].to_i )
-  end
-  #-- -------------------------------------------------------------------------
-  #++
+  # ----------------------------------------------------------------------------
 
   # Leega: FIXME
-  # This method should be globalized. It was now duplicated from swimmng_pool_review
+  # This method should be globalized even if we would check something more or different.
+  # It was now duplicated from swimmng_pool_review
   #  
   # Returns true if the user doesn't meet the
   # criteria for creating a Review or false otherwise.
@@ -227,5 +221,4 @@ class PassagesController < ApplicationController
     end
   end
   # ----------------------------------------------------------------------------
-
 end

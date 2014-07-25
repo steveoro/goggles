@@ -9,7 +9,8 @@ describe PassagesController do
 
   context "authorizated actions" do
     # Leega
-    # FIXME Should check if user is a confirmed swimmer for each method invoked
+    # FIXME Should check if user is a confirmed swimmer for each method invoked.
+    # Suppose before filter is correct using only the index action
     it_behaves_like( "(Ap1-V1-Controllers, get actions that requires logged user who's a confirmed swimmer)", [
       :index,
       #:new,
@@ -33,6 +34,8 @@ describe PassagesController do
       UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, another_goggler_confirmator )
     end
 
+    # Leega
+    # FIXME Shuold verify the private method used by before filter works properly
     #it "has current_user correctly set" do
     #  expect( subject.current_user_have_enough_confirmations! ).to be_true
     #end
@@ -181,11 +184,18 @@ describe PassagesController do
 
 
     describe '[GET #edit/:id]' do
-      before :each do
-        @passage = create( :passage, user: @user, swimmer: @user.swimmer )
+      context "with an HTML request and a non-existing id," do
+        it "redirects to #index" do
+          get :edit, id: 0
+          expect(response).to redirect_to( passages_path() )
+        end
       end
-
+      
       context "with an HTML request and a valid id," do
+        before :each do
+          @passage = create( :passage, user: @user, swimmer: @user.swimmer )
+        end
+  
         it "handles successfully the request" do
           get :edit, id: @passage.id
           expect(response.status).to eq( 200 )
@@ -204,13 +214,6 @@ describe PassagesController do
         it "renders the template" do
           get :edit, id: @passage.id
           expect(response).to render_template(:edit)
-        end
-      end
-
-      context "with an HTML request and a non-existing id," do
-        it "redirects to #index" do
-          get :edit, id: 0
-          expect(response).to redirect_to( passages_path() )
         end
       end
     end
