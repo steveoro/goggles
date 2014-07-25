@@ -36,10 +36,10 @@ class SwimmingPoolReviewsController < ApplicationController
   # ---------------------------------------------------------------------------
 
 
-  # Returns the reviews found for a specific swimmin_pool id.
+  # Returns the review for a specific review id.
   #
   # === Params:
-  # - id: the SwimmingPool.id
+  # - id: the Review.id
   #
   def show
     @review = SwimmingPoolReview.find_by_id(params[:id])

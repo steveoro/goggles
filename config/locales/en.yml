@@ -592,6 +592,7 @@ en:
     trainings: "Trainings Models"
     user_trainings: "User Trainings"
     user_training_stories: "User Trainings History"
+    passages: "User Passages"
 
   trainings:
     index_title: "Search Training Models"
@@ -638,6 +639,11 @@ en:
     story_created: "User Training Story successfully created!"
     story_updated: "User Training Story successfully updated!"
     story_deleted: "User Training Story successfully deleted!"
+
+  passages:
+    index_title: "Swimmer's results passages"
+    title_show: "Result passages"
+    passage_deleted: "Passage successfully deleted!"
 
   jumbotron:
     title_breast: "Goggles can store all your trainings!"

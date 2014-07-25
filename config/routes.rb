@@ -175,6 +175,16 @@ Goggles::Application.routes.draw do
 
       # === User Training Stories: ===
       resources :user_training_stories
+
+      # === User Passages: ===
+      resources :passages do
+        member do
+          delete 'destroy',                     to: "passags#destroy",                    as: "destroy"
+        end
+        collection do
+          get 'for_meeting_individual_result/:id', to: "passages#for_meeting_individual_result", as: "for_meeting_individual_result"
+        end
+      end
     end
   end
 
