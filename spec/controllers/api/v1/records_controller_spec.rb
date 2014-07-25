@@ -126,4 +126,43 @@ describe Api::V1::RecordsController do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe '[GET #count_records_for_swimmer]' do
+    context "with a non-JSON request" do
+      it "refuses the request" do
+        get :count_records_for_swimmer, id: 142 # = Steve A.
+        expect(response.status).to eq( 406 )
+      end
+    end
+
+    context "for JSON request with invalid parameters," do
+      before( :each ) { get :count_records_for_swimmer, id: 0, format: :json }
+
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "returns an empty Array as result" do
+        result = JSON.parse(response.body)
+        expect( result ).to be_an_instance_of(Hash)
+        expect( result['total'] ).to eq(0)
+      end
+    end
+
+    context "for JSON request with valid parameters," do
+      before( :each ) { get :count_records_for_swimmer, id: 142, format: :json }
+
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON array with an Hash as each element (representing each row)" do
+        result = JSON.parse(response.body)
+        expect( result ).to be_an_instance_of(Hash)
+        # There should be at least 6 records/best results for this swimmer
+        # in the preloaded seed files:
+        expect( result['total'] ).to be >= 6
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

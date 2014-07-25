@@ -2,8 +2,10 @@ require 'spec_helper'
 
 
 describe RecordGridBuilder do
+  let(:individual_record_list) { create_list(:individual_record, 5) }
+
   # Using a pre-filled collector will speed-up the tests:
-  subject { RecordGridBuilder.new( RecordCollector.new(list: create_list(:individual_record, 5)) ) }
+  subject { RecordGridBuilder.new( RecordCollector.new(list: individual_record_list) ) }
 
 
   context "[implemented methods]" do

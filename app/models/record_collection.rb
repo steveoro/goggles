@@ -105,10 +105,20 @@ class RecordCollection
     @list[ is_tie_in ? encoded_key << 'b' : encoded_key ]   
   end
 
-  # Returns the IndividualRecord for the specified parameters or nil when not found.
+  # Returns +true+ if there is an IndividualRecord for the specified parameters or +false+ when not found.
   #
   def has_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
     ! get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code ).nil?   
+  end
+
+  # Returns +true+ if there are any IndividualRecord instances for the specified parameters
+  # or +false+ when none are found.
+  #
+  # This is equivalent to test if there's any value in a row of any of the records "4x grid" view
+  # (where each one of the 4 grid enlists categories on columns and events on rows).
+  #
+  def has_any_record_for( pool_type_code, event_type_code, gender_type_code )
+    @list.any? { |key, row| key =~ /#{pool_type_code}\-#{event_type_code}\-.{3,}\-#{gender_type_code}/ }
   end
 
   # Getter for the IndividualRecord for the specified key. Returns nil when not found.

@@ -26,8 +26,15 @@ describe RecordsController do
 
     context "with an AJAX request," do
       context "without parameters," do
-        it "raises an ArgumentError" do
-          expect{ xhr :get, :for_season_type }.to raise_error( ArgumentError )
+        before(:each) { xhr :get, :for_season_type }
+        # [Steve, 20140723] To speed up the example, this long request will be done only
+        # once, with all the test performed at once (even thou it's not a best-practice).
+        it "handles successfully the request but with an empty list" do
+          expect(response.status).to eq( 200 )
+          expect( assigns(:title) ).to be_an_instance_of( String ) 
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect(response).to render_template(:for_season_type)
         end
       end
 
@@ -53,57 +60,108 @@ describe RecordsController do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #for_federation]' do
+  describe '[GET #for_team]' do
     context "with an HTML request," do
       it "handles successfully the request" do
-        get :for_federation
+        get :for_team
         expect(response.status).to eq( 200 )
       end
       it "assigns the required variables" do
-        get :for_federation
+        get :for_team
         expect( assigns(:title) ).to be_an_instance_of( String ) 
       end
       it "renders the form template" do
-        get :for_federation
-        expect(response).to render_template(:for_federation)
+        get :for_team
+        expect(response).to render_template(:for_team)
       end
     end
 
 
     context "with an AJAX request," do
       context "without parameters," do
-        before(:each) { xhr :get, :for_federation }
-
-        it "handles successfully the request" do
+        before(:each) { xhr :get, :for_team }
+        # [Steve, 20140723] To speed up the example, this long request will be done only
+        # once, with all the test performed at once (even thou it's not a best-practice).
+        it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
-        end
-        it "assigns the required variables" do
           expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:collector) ).to be_an_instance_of( RecordCollector ) 
-        end
-        it "has an empty record list" do
-          expect( assigns(:collector).count ).to eq(0) 
-        end
-        it "renders the form template" do
-          expect(response).to render_template(:for_federation)
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect(response).to render_template(:for_team)
         end
       end
 
       context "with a valid parameter," do
-        before(:each) { xhr :get, :for_federation, federation_type: {id: 2} }
+        # (Team.id = 1 => CSI, existing in seeds)
+        before(:each) { xhr :get, :for_team, team: {id: 1} }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
           expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:collector) ).to be_an_instance_of( RecordCollector ) 
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
         end
         it "has a non-empty record list" do
-          expect( assigns(:collector).count ).to be > 0 
+          expect( assigns(:grid_builder).count ).to be > 0 
         end
         it "renders the form template" do
-          expect(response).to render_template(:for_federation)
+          expect(response).to render_template(:for_team)
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe '[GET #for_swimmer]' do
+    context "with an HTML request," do
+      it "handles successfully the request" do
+        get :for_swimmer
+        expect(response.status).to eq( 200 )
+      end
+      it "assigns the required variables" do
+        get :for_swimmer
+        expect( assigns(:title) ).to be_an_instance_of( String ) 
+      end
+      it "renders the form template" do
+        get :for_swimmer
+        expect(response).to render_template(:for_swimmer)
+      end
+    end
+
+
+    context "with an AJAX request," do
+      context "without parameters," do
+        before(:each) { xhr :get, :for_swimmer }
+        # [Steve, 20140723] To speed up the example, this long request will be done only
+        # once, with all the test performed at once (even thou it's not a best-practice).
+        it "handles successfully the request but with an empty list" do
+          expect(response.status).to eq( 200 )
+          expect( assigns(:title) ).to be_an_instance_of( String ) 
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect(response).to render_template(:for_swimmer)
+        end
+      end
+
+      context "with a valid parameter," do
+        # (Team.id = 1 => CSI, existing in seeds)
+        let(:leega_swimmer) { Swimmer.where(complete_name: 'LIGABUE MARCO').first }
+        before(:each) { xhr :get, :for_swimmer, swimmer: {id: leega_swimmer.id} }
+
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
+        it "assigns the required variables" do
+          expect( assigns(:title) ).to be_an_instance_of( String ) 
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+        end
+        it "has a non-empty record list" do
+          expect( assigns(:grid_builder).count ).to be > 0 
+        end
+        it "renders the form template" do
+          expect(response).to render_template(:for_swimmer)
         end
       end
     end

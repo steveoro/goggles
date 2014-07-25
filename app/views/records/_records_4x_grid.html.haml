@@ -1,20 +1,18 @@
 .row-fluid#records_4x_grid
-  .span12
+  .goggles-category-gap#pageTop
     %h2= @title
-  -# --- Sub-legend for each gender + pool-type
-  - div_id = ''
-  .navbar
-    - @collector.gender_type_codes_list.each do |gender_code|
-      %a.goggles-small-brand(href='#')= GenderType.find_by_code(gender_code).i18n_short + ':'
-      %ul.nav
-      - @collector.pool_type_code_list.each do |pool_code|
-        - div_id = "#{gender_code}#{pool_code}"
-        %li
-          %a.goggles-nav-compact(href="##{div_id}")= PoolType.find_by_code(pool_code).i18n_short
-      .ghost-divider-vertical
+    -# --- Sub-legend for each gender + pool-type
+    .navbar
+      - @grid_builder.gender_types.each do |gender_type|
+        %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
+        %ul.nav
+          - @grid_builder.pool_types.each do |pool_type|
+            %li
+              %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
+          .ghost-divider-vertical
 
-  - @collector.gender_type_codes_list.each do |gender_code|
-    - @collector.pool_type_code_list.each do |pool_code|
-      - gender_label = GenderType.find_by_code(gender_code).i18n_short
-      - pool_label   = PoolType.find_by_code(pool_code).i18n_short
-      = render( partial: 'records_grid', locals: { div_id: div_id, gender_code: gender_code, pool_code: pool_code, collection: @collector.collection, grid_title: "#{gender_label}, #{pool_label}" } )
+  - @grid_builder.gender_types.each do |gender_type|
+    - @grid_builder.pool_types.each do |pool_type|
+      = render( partial: 'records_grid', locals: { gender_type: gender_type, pool_type: pool_type, grid_builder: @grid_builder } )
+
+.row-fluid.goggles-category-gap

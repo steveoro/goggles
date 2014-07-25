@@ -30,6 +30,7 @@ describe RecordCollector do
         :clear,
         :collect_from_results_having,
         :collect_from_records_having,
+        :get_collected_season_types,
         :save,
         :commit,
         :full_scan
@@ -113,6 +114,17 @@ describe RecordCollector do
     it "returns collection of no more than 2 records" do
       result = subject.collect_from_records_having('50', '50FA', 'M40', 'M')
       expect( result.count < 3 ).to be_true
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#get_collected_season_types" do
+    it "returns an instance of Hash" do
+      expect( subject.get_collected_season_types ).to be_an_instance_of( Hash )
+    end
+    it "returns at least a number lesser or equal to the total collection count" do
+      expect( subject.get_collected_season_types.count ).to be <= subject.count
     end
   end
   #-- -------------------------------------------------------------------------
