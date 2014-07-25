@@ -19,7 +19,8 @@ describe ApplicationHelper do
         :count_with_star,
         :count_with_red_ribbon,
         :count_with_bomb,
-        :format_score
+        :format_score,
+        :cache_key_from_collection
       ]
     )
   end
@@ -30,8 +31,8 @@ describe ApplicationHelper do
   describe "#format_longtext" do
     let(:long_text)  { Faker::Lorem.paragraph }
 
-    it "returns a String" do
-      expect( subject.format_longtext(long_text) ).to be_an_instance_of(String)
+    it "returns an ActiveSupport::SafeBuffer" do
+      expect( subject.format_longtext(long_text) ).to be_an_instance_of(ActiveSupport::SafeBuffer)
     end
     it "includes the specified text" do
       expect( subject.format_longtext(long_text) ).to include(long_text)
@@ -42,8 +43,8 @@ describe ApplicationHelper do
 
 
   describe "#show_tag" do
-    it "returns a String" do
-      expect( subject.show_tag((rand * 100).to_i.odd?) ).to be_an_instance_of(String)
+    it "returns an ActiveSupport::SafeBuffer" do
+      expect( subject.show_tag((rand * 100).to_i.odd?) ).to be_an_instance_of(ActiveSupport::SafeBuffer)
     end
     it "returns a default 'false' text for a false value" do
       expect( subject.show_tag(false) ).to include('--')
@@ -66,10 +67,10 @@ describe ApplicationHelper do
         end
       end
 
-      it "returns a String" do
-        expect( result ).to be_an_instance_of(String)
+      it "returns an ActiveSupport::SafeBuffer" do
+        expect( result ).to be_an_instance_of(ActiveSupport::SafeBuffer)
       end
-      it "returns a non empty string" do
+      it "returns a non empty text" do
         expect( result.size ).to be >= 1
       end
       it "returns a string containing the undecorated value" do
@@ -151,21 +152,39 @@ describe ApplicationHelper do
     let(:bias)    { 800 }
     let(:result)  { subject.format_score( score, bias ) }
 
+    it "returns an ActiveSupport::SafeBuffer" do
+      expect( result ).to be_an_instance_of(ActiveSupport::SafeBuffer)
+    end
+    it "returns a non empty text" do
+      expect( result.size ).to be >= 1
+    end
+    it "returns a text containing the integer part of the undecorated value" do
+      expect( result ).to include( score.to_i.to_s )
+    end
+    it "returns a text containing the image for the number of steps required" do
+      if score > bias
+        expect( result ).to include('asterisk_orange.png')
+      else
+        expect( result ).not_to include('asterisk_orange.png')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#cache_key_from_collection" do
+    let(:collection)  { create_list(:swimmer, 5) }
+    let(:result)      { subject.cache_key_from_collection( collection ) }
+
     it "returns a String" do
       expect( result ).to be_an_instance_of(String)
     end
     it "returns a non empty string" do
       expect( result.size ).to be >= 1
     end
-    it "returns a string containing the integer part of the undecorated value" do
-      expect( result ).to include( score.to_i.to_s )
-    end
-    it "returns a string containing the image for the number of steps required" do
-      if score > bias
-        expect( result ).to include('asterisk_orange.png')
-      else
-        expect( result ).not_to include('asterisk_orange.png')
-      end
+    it "contains as many numbers as there are IDs in the collection" do
+      expect( result.split('-').count ).to eq(collection.count)
     end
   end
   #-- -------------------------------------------------------------------------

@@ -8,14 +8,13 @@
   %li
     = link_to( t('radiography.all_races_tab'), swimmer_all_races_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.misc'), swimmer_misc_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.misc_tab'), swimmer_misc_path(:id=>@swimmer.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
-    - tab_title = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
     %h4
       = I18n.t('radiography.radio_tab') + ' -- '
-      = tab_title
+      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
   .row-fluid
     .span9
       .row-fluid
@@ -57,26 +56,17 @@
         .span3
           = I18n.t('swimmers.meeting_presence') +':'
         .span6
-          - presence_count = @swimmer.meetings.uniq.count
-          = presence_count
-          - ( presence_count / 100 ).times do
-            = image_tag('award_star_gold_3.png')
+          = count_with_award_star( @swimmer.meetings.uniq.count )
       .row-fluid
         .span3
           = I18n.t('swimmers.events_attended') +':'
         .span6
-          - event_count = (@swimmer.meeting_individual_results.count + @swimmer.meeting_relay_swimmers.count)
-          = event_count
-          - ( event_count / 100 ).times do
-            = image_tag('bullet_star.png')
+          = count_with_small_star( @swimmer.meeting_individual_results.count + @swimmer.meeting_relay_swimmers.count )
       .row-fluid
         .span3
           = I18n.t('swimmers.total_metres_swam') +':'
         .span6
-          - tot_mt = @swimmer.get_total_meters_swam
-          = tot_mt
-          - ( tot_mt / 10000 ).times do
-            = image_tag('star.png')
+          = count_with_star( @swimmer.get_total_meters_swam )
       .row-fluid
         .span3
           = I18n.t('swimmers.total_time_swam') +':'
@@ -112,10 +102,7 @@
           - if mir
             - m = mir.meeting
             %p
-              = sprintf( "%02.2f", mir.standard_points )
-              = (mir.standard_points>800 ? " !" : '' )
-              = show_tag( mir.standard_points>800, "asterisk_orange.png", '' )
-              = ', '
+              = format_score( mir.standard_points ) + ', '
               - if m
                 %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
                   = m.get_scheduled_date
@@ -130,10 +117,7 @@
           - if mir
             - m = mir.meeting
             %p
-              = sprintf( "%02.2f", mir.standard_points )
-              = (mir.standard_points>800 ? " !" : '' )
-              = show_tag( mir.standard_points>800, "asterisk_orange.png", '' )
-              = ', '
+              = format_score( mir.standard_points ) + ', '
               - if m
                 %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
                   = m.get_scheduled_date
@@ -146,9 +130,7 @@
         .span6
           - dsq_count = @swimmer.get_disqualifications_count
           - if dsq_count > 0
-            = dsq_count
-            - ( dsq_count / 10 ).times do
-              = image_tag('bomb.png')
+            = count_with_bomb( dsq_count )
           - else
             = I18n.t('swimmers.no_disqualifications')
     .span3
@@ -171,7 +153,7 @@
           %ul
             - @swimmer.teams.uniq.each do |team|
               %li
-                %a{ href: "#", onclick: "$('#loadingIndicator').show(); $('#records_4x_grid').hide(); loadAJAXTeamRecord();", 'data-toggle' => 'tooltip', title: I18n.t('records.team_load_records_tooltip') }
+                %a{ href: "#", onclick: "$('#loadingIndicator').show(); $('#records_4x_grid').hide(); loadAJAXTeamRecord(#{team.id}, #{@swimmer.id});", 'data-toggle' => 'tooltip', title: I18n.t('records.team_load_records_tooltip') }
                   = team.get_full_name
   .row-fluid
     #records_4x_grid
@@ -182,13 +164,14 @@
     $.ajax({                                                                    |
       url: "#{ api_v1_records_count_records_for_swimmer_path(id: @swimmer.id) }", |
       success: function(data) { $('#loadingIndicator').hide(); $('#totalCount').replaceWith( data['total'] ); }, |
-      dataType: 'json'                                                        |
+      dataType: 'json'                                                          |
     });                                                                         |
   };                                                                            |
-  function loadAJAXTeamRecord() {                                               |
+  function loadAJAXTeamRecord(team_id, swimmer_id) {                            |
     $.ajax({                                                                    |
-     url: "#{ records_for_team_path( team: {id: @team_ids.first }, highlight_swimmer_id: @swimmer.id ) }", |
-      success: function(data) { $('#records_4x_grid').show(); }, |
+      url: "#{ records_for_team_path() }",                                      |
+      data: { team: { id: team_id }, highlight_swimmer_id: swimmer_id },        |
+      success: function(data) { $('#records_4x_grid').show(); },                |
       dataType: 'script'                                                        |
     });                                                                         |
   };                                                                            |

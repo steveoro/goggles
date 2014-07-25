@@ -8,9 +8,13 @@
   %li
     = link_to( t('radiography.all_races_tab'), swimmer_all_races_path(:id=>@swimmer.id) )
   %li.active
-    = link_to( t('radiography.misc'), '#' )
+    = link_to( t('radiography.misc_tab'), '#' )
 
 .container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = I18n.t('radiography.misc_tab') + ' -- '
+      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
   .row-fluid
     .span12
       %p= "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}" 

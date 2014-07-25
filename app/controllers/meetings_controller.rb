@@ -6,7 +6,7 @@ class MeetingsController < ApplicationController
   # Index/Search action.
   #
   # Supports the optional parameters:
-  # - :preselected_ids, to obtain an array of IDs with which pre-filter the grid results.
+  # - :preselect_ids, to obtain an array of IDs with which pre-filter the grid results.
   # - :prefilter_swimmer, a text to be displayed for additional info regarding the pre-filtering process
   # - swimmer_id: Swimmer id, defined only when prefiltered from previous search actions.
   # - :prefilter_team, a text to be displayed for additional info regarding the pre-filtering process
@@ -21,13 +21,22 @@ class MeetingsController < ApplicationController
              (prefilter.size > 0 ? " (#{prefilter})" : '')
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
-    preselected_ids = params[:preselected_ids] ? params[:preselected_ids].collect{|p| p.to_i} : nil
+    preselect_ids = params[:preselect_ids].to_i > 0
 # DEBUG
-    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
-    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
+#    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
+#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
+    meetings = if preselect_ids
+      if @preselected_swimmer_id
+        Meeting.includes(:swimmers).where{ swimmers.id == @preselected_swimmer_id }
+      else
+        Meeting.includes(:teams).where{ teams.id == @preselected_team_id }
+      end
+    else
+      Meeting
+    end
 
     @meetings_grid = initialize_grid(
-      (preselected_ids ? Meeting.where(id: preselected_ids) : Meeting),
+      meetings,
       include: [:season, :season_type],
       order: 'meetings.header_date',
       order_direction: 'asc',

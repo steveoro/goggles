@@ -13,7 +13,9 @@ Goggles::Application.configure do
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  config.action_controller.perform_caching = true
+  # Use a different cache store in production:
+  config.cache_store = :memory_store, { size: 64.megabytes }
 
   config.action_mailer.perform_deliveries = true
   # Use this to disable delivery errors, and bad email addresses will be ignored:

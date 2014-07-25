@@ -8,14 +8,13 @@
   %li
     = link_to( t('radiography.all_races_tab'), swimmer_all_races_path(:id=>@swimmer.id) )
   %li
-    = link_to( t('radiography.misc'), swimmer_misc_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.misc_tab'), swimmer_misc_path(:id=>@swimmer.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
-    - tab_title = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
     %h4
       = I18n.t('radiography.medals_tab') + ' -- '
-      = tab_title
+      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
 
   .row-fluid
     .span9

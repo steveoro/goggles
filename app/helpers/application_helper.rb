@@ -2,7 +2,7 @@ module ApplicationHelper
 
   # Formats a long text as HTML presentation-ready, using paragraph tags and line breaks on line endings.
   def format_longtext( text_value )
-    "<span class='long-text'>" << h( text_value ).gsub( /\[/, "<p/>[" ).gsub( /$/, "<br/>" ) << '</span>'
+    ( "<span class='long-text'>" << h( text_value ).gsub( /\[/, "<p/>[" ).gsub( /$/, "<br/>" ) << '</span>' ).html_safe
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -13,7 +13,7 @@ module ApplicationHelper
   # No path is needed if stored under "public/images".
   #
   def show_tag( bool_value, image_name = "tick.png", false_text = '--' )
-    bool_value ? image_tag(image_name, {:alt => "X"}) : false_text
+    bool_value ? image_tag(image_name, {:alt => "X"}) : false_text.html_safe
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -22,7 +22,7 @@ module ApplicationHelper
   # Returns the HTML code for displaying a total count value, sided by a number
   # of images, one for each step of the total count.
   def count_with_image( count, step, image_name )
-    "#{ count } " + image_tag( image_name ) * ( count / step )
+    "#{ count } #{image_tag(image_name) * (count / step)}".html_safe
   end
 
   # Works by calling #count_with_image using a 100 step value with a "small star"
@@ -60,7 +60,23 @@ module ApplicationHelper
   # Format the specified score with 2 precision decimals and highlights it with an
   # image if it exceeds the specified bias.
   def format_score( score, bias = 800 )
-    sprintf( "%02.2f", score ) + ( score>bias ? "#{image_tag("asterisk_orange.png")} !" : '' )
+    ( sprintf( "%02.2f", score ) + (score>bias ? "#{image_tag("asterisk_orange.png")} !" : '') ).html_safe
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Getter for a string key viable for use as a cache key for fragments involving
+  # the rending of collections of models.
+  #
+  # Assuming the +collection+ responds to #each and has an +id+ for each member, it
+  # returns a string from the concatenation of all IDs of the instances in the collection
+  # (joined with '-'), plus a global time stamp obtained by invoking #max( time_stamp_method )
+  # on the collection itself.
+  #
+  def cache_key_from_collection( collection )
+    return "?" unless collection.respond_to?(:each)
+    collection.map{ |row| row.id }.join('-') +
+    collection.map{ |row| row.updated_at }.max.to_i.to_s
   end
   #-- -------------------------------------------------------------------------
   #++

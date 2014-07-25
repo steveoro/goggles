@@ -81,6 +81,7 @@ class SwimmersController < ApplicationController
     }
 
     # TODO Collect actual Palmares array (displayed on a table)
+    # TODO create a table with all the medals divided by event type / pool type
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -93,13 +94,9 @@ class SwimmersController < ApplicationController
   #
   def best_timings
     @swimmer = SwimmerDecorator.decorate( @swimmer )
-###################################################### TODO REFACTOR this using the new Decorator:
-    # --- "Best timings" tab: ---
-    # TODO Collect all best timings for each swam style, divided for each pool type
   end
   #-- -------------------------------------------------------------------------
   #++
-  # ---------------------------------------------------------------------------
 
 
   # Radiography for a specified swimmer id: "All the races" tab rendering
@@ -111,10 +108,10 @@ class SwimmersController < ApplicationController
     @swimmer = SwimmerDecorator.decorate( @swimmer )
 ###################################################### TODO REFACTOR this using the new Decorator:
     # --- "All the races" tab: ---                  # Collect all the races swam for each style, divided for each pool type:
-    swimmer_mirs = MeetingIndividualResult.is_valid.where( swimmer_id: @swimmer.id )
-    @mirs_in_25mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT25_ID])
-    @mirs_in_50mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT50_ID])
-
+    @swimmer_mir_ids = MeetingIndividualResult.is_valid.where( swimmer_id: @swimmer.id ).map{ |row| row.id }.uniq
+# FIXME unused:
+#    @mirs_in_25mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT25_ID])
+#    @mirs_in_50mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT50_ID])
     # TODO get all the partial timings for each race & display them on a grid
   end
   #-- -------------------------------------------------------------------------

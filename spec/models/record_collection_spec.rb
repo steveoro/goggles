@@ -50,6 +50,7 @@ describe RecordCollection do
         :delete_with_key,
         :add,
         :<<,
+        :cache_key,
         :get_record_for,
         :has_record_for,
         :has_any_record_for,
@@ -86,6 +87,25 @@ describe RecordCollection do
       result = RecordCollection.new( create_list(:meeting_individual_result, 5) )
       expect( result ).to be_an_instance_of( RecordCollection )
       expect( result.count ).to eq(5)
+    end
+  end
+  #-- -----------------------------------------------------------------------
+  #++
+
+
+  describe "#cache_key" do
+    before(:each) do
+      subject.clear
+      subject.add(fixture)
+    end
+    it "returns a String" do
+      expect( subject.cache_key ).to be_an_instance_of(String)
+    end
+    it "returns a non empty string" do
+      expect( subject.cache_key.size ).to be >= 1
+    end
+    it "contains as many numbers as there are elements in the collection" do
+      expect( subject.cache_key.split('-').count ).to eq(subject.count)
     end
   end
   #-- -----------------------------------------------------------------------

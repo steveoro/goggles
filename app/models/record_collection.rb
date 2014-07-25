@@ -24,6 +24,8 @@ class RecordCollection
   #
   def initialize( individual_result_or_record = nil )
     @list = {}
+    @cached_ids = []
+    @max_updated_at = 0
     if individual_result_or_record.respond_to?(:each)
       individual_result_or_record.each { |row| add(row) }
     else
@@ -43,12 +45,17 @@ class RecordCollection
   # Clears the internal list of records.
   def clear()
     @list.clear
+    @cached_ids = []
+    @max_updated_at = 0
     self
   end
 
   # Removes from the internal list of records the specified (key: element) pair
   # using an already existing encoded key.
   def delete_with_key( encoded_key )
+    row = @list[encoded_key]
+    @cached_ids.delete( row.id ) if row && row.id
+    @max_updated_at = 0
     @list.delete( encoded_key ) ? true : false
   end
 
@@ -160,6 +167,13 @@ class RecordCollection
   #-- -------------------------------------------------------------------------
   #++
 
+  # Getter for a string key viable for use as a cache key for fragments involving
+  # the rending of the current rows stored in this collection.
+  #
+  def cache_key()
+    @cached_ids.compact.join('-') + ":#{ @max_updated_at }"
+  end
+
   # Returns a copy of the internal list of records.
   def to_hash()
     @list.dup
@@ -171,15 +185,20 @@ class RecordCollection
   private
 
 
-  # Returns a valid record candidate as an IndividualRecord instance.
+  # Returns a valid record candidate as an IndividualRecord instance, while updating
+  # the internal cache key list.
   # It doesn't check for a nil parameter.
   #
   def get_record_candidate( individual_result_or_record )
-    (
-      individual_result_or_record.instance_of?( MeetingIndividualResult ) ?
-      IndividualRecord.new.from_individual_result( individual_result_or_record ) : 
+    if individual_result_or_record.respond_to?(:id) && individual_result_or_record.respond_to?(:updated_at)
+      @cached_ids << individual_result_or_record.id
+      @max_updated_at = individual_result_or_record.updated_at.to_i if @max_updated_at < individual_result_or_record.updated_at.to_i
+    end
+    if individual_result_or_record.instance_of?( MeetingIndividualResult )
+      IndividualRecord.new.from_individual_result( individual_result_or_record )
+    else
       individual_result_or_record
-    )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
