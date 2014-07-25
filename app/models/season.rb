@@ -1,7 +1,16 @@
+# encoding: utf-8
 require 'date'
 require 'drop_down_listable'
 
 
+=begin
+
+= Season
+
+  - version:  4.00.369
+  - author:   Steve A., Leega
+
+=end
 class Season < ActiveRecord::Base
   include DropDownListable
   include UserRelatable
@@ -27,43 +36,38 @@ class Season < ActiveRecord::Base
   validates_length_of   :description, within: 1..100, allow_nil: false
 
   validates_presence_of :begin_date
-#  validates_presence_of :end_date
 
   scope :sort_season_by_begin_date,  ->(dir) { order("seasons.begin_date #{dir.to_s}") }
   scope :sort_season_by_season_type, ->(dir) { order("season_types.code #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
   scope :sort_season_by_user,        ->(dir) { order("users.name #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
-
-
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    #"#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'} #{get_season_type}"
-    "#{description} #{header_year} - #{get_federation_type}"
+    # [Steve, 20140725] Too long/repetitive: "#{description} #{header_year} - #{get_federation_type}"
+    description
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
+    # [Steve, 20140725] This is surely excessively long/repetitive too: 
     "#{edition} #{description} #{header_year} - #{get_federation_type} - (#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'}) "
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves the Season Type short name
   def get_season_type
     self.season_type ? self.season_type.short_name :  '?'
   end
-  # ----------------------------------------------------------------------------
 
   # Retrieves the Federation Type short name
   def get_federation_type
     self.federation_type ? self.federation_type.short_name :  '?'
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
@@ -73,8 +77,8 @@ class Season < ActiveRecord::Base
   def self.get_label_symbol
     :get_full_name
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns if the season is ended at a certain date
   #
@@ -93,8 +97,6 @@ class Season < ActiveRecord::Base
       false
     end
   end
-  # ----------------------------------------------------------------------------
-
 
   # Returns if the season is started at a certain date
   #
@@ -103,14 +105,14 @@ class Season < ActiveRecord::Base
   # - evauation_date: the date in which should verify if the seasons is started
   #
   # == Returns:
-  # - TRUE if season is started at the specified date
-  # - FALSE if season is not started at the specified date
+  # - +true+ if season is starting at the specified date
+  # - +false+ if season has not started at the specified date
   #
   def is_season_started_at( evaluation_date = Date.today )
     ( self.begin_date <= evaluation_date ) ? true : false
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the last defined season for a specific SeasonType code
   #
@@ -123,5 +125,6 @@ class Season < ActiveRecord::Base
   def get_last_season_by_type( season_type_code )
     Season.get_last_season_by_type( season_type_code )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

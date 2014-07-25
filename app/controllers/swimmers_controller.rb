@@ -7,7 +7,7 @@ require 'common/format'
 
 = SwimmersController
 
-  - version:  4.00.339.20140707
+  - version:  4.00.369
   - author:   Steve A.
 
 =end
@@ -45,17 +45,7 @@ class SwimmersController < ApplicationController
   def radio
     # --- "Radiography" tab: ---
     @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
-    # Retrieve all records for this Swimmer, indipendently from Team or SeasonType:
-    
-    # TODO This is so slooow: we need to use an AJAX method on a dedicated API to count the Records for this Swimmer
-    collector = RecordCollector.new( swimmer: @swimmer )
-    collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-      this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
-    end
     @swimmer = SwimmerDecorator.decorate( @swimmer )
-    
-    # TODO show a link instead, with a loading indicator that rolls out the request upon clicking on it
-    @tot_team_records_for_this_swimmer = collector.count
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -83,15 +83,15 @@ class Api::V1::RecordsController < ApplicationController
   # - 'id': the matching IndividualRecord#swimmer_id
   #
   def count_records_for_swimmer
-    @records = IndividualRecord.where( swimmer_id: params[:id] )
-
-    # if params[:id] && (swimmer = Swimmer.find_by_id(params[:id]))
-      # collector = RecordCollector.new( swimmer: swimmer )
-      # collection = collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-        # this.collect_from_results_having( pool_code, event_code, category_code, gender_code )
-      # end
-    # end
-    respond_with( { total: @records.count } )
+    @total = 0
+    if params[:id] && (swimmer = Swimmer.find_by_id(params[:id]))
+      collector = RecordCollector.new( swimmer: swimmer )
+      collection = collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
+        this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
+      end
+      @total = collection.count
+    end
+    respond_with( { total: @total } )
   end
   #-- -------------------------------------------------------------------------
   #++

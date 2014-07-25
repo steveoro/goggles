@@ -88,10 +88,10 @@
         .span6
           - m = @swimmer.get_first_meeting
           - if m
-            %a{'id'=>"firstSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
               = m.get_scheduled_date
             = ', '
-            %a{'id'=>"firstMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+            %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
               = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -99,10 +99,10 @@
         .span6
           - m = @swimmer.get_last_meeting
           - if m
-            %a{'id'=>"lastSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
               = m.get_scheduled_date
             = ', '
-            %a{'id'=>"lastMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+            %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
               = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -117,10 +117,10 @@
               = show_tag( mir.standard_points>800, "asterisk_orange.png", '' )
               = ', '
               - if m
-                %a{'id'=>"bestSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+                %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
                   = m.get_scheduled_date
                 = ', '
-                %a{'id'=>"bestMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+                %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
                   = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -135,10 +135,10 @@
               = show_tag( mir.standard_points>800, "asterisk_orange.png", '' )
               = ', '
               - if m
-                %a{'id'=>"wrstSwim#{m.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})"}
+                %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
                   = m.get_scheduled_date
                 = ', '
-                %a{'id'=>"wrstMeet#{m.id}", 'href'=>"#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})"}
+                %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
                   = "#{m.get_full_name} (#{m.get_season_type})"
       .row-fluid
         .span3
@@ -159,27 +159,36 @@
       .row-fluid
         .span3
           = I18n.t('swimmers.total_team_records') +':'
-        .span6
-          - if @tot_team_records_for_this_swimmer > 0
-            %a{ id: "teamRecs#{@swimmer.id}", href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXTeamRecord();", 'data-toggle' => 'tooltip', title: I18n.t('records.team_title_disclaimer_tooltip') }
-              = @tot_team_records_for_this_swimmer
-          - ( @tot_team_records_for_this_swimmer / 10 ).times do
-            = image_tag('rosette.png')
-            %span(id='loadingIndicator' hidden='true')
-              = image_tag( 'indicator.gif' )
+        .span1
+          %a#totalCount{ href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXRecordCount();", 'data-toggle' => 'tooltip', title: I18n.t('records.total_count_disclaimer_tooltip') }
+            = I18n.t('records.compute_label')
+        .span5
+          %span(id='loadingIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+
       .row-fluid
         .offset3.span6
           %ul
             - @swimmer.teams.uniq.each do |team|
-              %li= team.get_full_name
+              %li
+                %a{ href: "#", onclick: "$('#loadingIndicator').show(); $('#records_4x_grid').hide(); loadAJAXTeamRecord();", 'data-toggle' => 'tooltip', title: I18n.t('records.team_load_records_tooltip') }
+                  = team.get_full_name
   .row-fluid
     #records_4x_grid
 
 %script
   $('#firstTab').addClass('active');
+  function loadAJAXRecordCount() {                                              |
+    $.ajax({                                                                    |
+      url: "#{ api_v1_records_count_records_for_swimmer_path(id: @swimmer.id) }", |
+      success: function(data) { $('#loadingIndicator').hide(); $('#totalCount').replaceWith( data['total'] ); }, |
+      dataType: 'json'                                                        |
+    });                                                                         |
+  };                                                                            |
   function loadAJAXTeamRecord() {                                               |
     $.ajax({                                                                    |
-      url: "#{ records_for_team_path( team: {id: @team_ids.first }, highlight_swimmer_id: @swimmer.id ) }", |
+     url: "#{ records_for_team_path( team: {id: @team_ids.first }, highlight_swimmer_id: @swimmer.id ) }", |
+      success: function(data) { $('#records_4x_grid').show(); }, |
       dataType: 'script'                                                        |
     });                                                                         |
   };                                                                            |

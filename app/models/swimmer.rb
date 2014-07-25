@@ -1,7 +1,16 @@
+# encoding: utf-8
 require 'drop_down_listable'
 require 'wrappers/timing'
 
 
+=begin
+
+= Swimmer
+
+  - version:  4.00.369
+  - author:   Steve A.
+
+=end
 class Swimmer < ActiveRecord::Base
   include DropDownListable
 
@@ -46,18 +55,15 @@ class Swimmer < ActiveRecord::Base
   validates_length_of :e_mail,        maximum: 100
   validates_length_of :nickname,      maximum: 25
 
+
   scope :is_male,             -> { where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,           -> { where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
   scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
   scope :sort_by_name,        ->(dir) { order("complete_name #{dir.to_s}") }
   scope :sort_by_gender_type, ->(dir) { order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
-
-
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -83,9 +89,8 @@ class Swimmer < ActiveRecord::Base
   def user_name
     self.user ? self.user.name : ''
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
@@ -95,8 +100,8 @@ class Swimmer < ActiveRecord::Base
   def self.get_label_symbol
     :get_full_name
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns true if the current row's gender_type_id is equal to MALE_ID 
   def is_male
@@ -107,8 +112,8 @@ class Swimmer < ActiveRecord::Base
   def is_female
     ( self.gender_type_id == GenderType::FEMALE_ID )
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the array of distinct team names associated to the specified swimmer_id.
   # An empty array when not found.
@@ -120,7 +125,8 @@ class Swimmer < ActiveRecord::Base
     swimmer = Swimmer.find_by_id( swimmer_id )
     swimmer ? swimmer.teams.collect{|row| row.name }.uniq : []    
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves a comma-separated string containing all the distinct team
   # names associated with this instance.
@@ -128,7 +134,8 @@ class Swimmer < ActiveRecord::Base
   def get_team_names
      self.teams.collect{ |row| row.name }.uniq.join(', ')
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the Badge row instance for the affiliation to <tt>team_id</tt> for
   # the specified <tt>season_id</tt>.
@@ -159,8 +166,8 @@ class Swimmer < ActiveRecord::Base
      all_badges = get_badges_array( season_id )
      all_badges.collect{ |row| "#{I18n.t('badge.short')} #{row.number}, #{row.team.editable_name}" }
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Helper getter for the current category type of this swimmer,
   # according to the latest registered badge.
@@ -189,7 +196,8 @@ class Swimmer < ActiveRecord::Base
   def get_category_type_for_season( season_id )
     season_id ? CategoryType.get_category_from( season_id, self.year_of_birth ) : nil
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the total meters swam by this swimmer
   #
@@ -207,7 +215,8 @@ class Swimmer < ActiveRecord::Base
     total_hundreds = ( relay_timings + ind_timings ).inject{ |sum, hundreds| sum + hundreds }
     Timing.new( total_hundreds )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the first meeting registered for this Swimmer; nil when not found.
   def get_first_meeting
@@ -220,20 +229,27 @@ class Swimmer < ActiveRecord::Base
     ms = self.meeting_sessions.includes(:meeting).order(:scheduled_date).last
     ms ? ms.meeting : nil
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the best-ever MeetingIndividualResult according to the not-null standard points registered.
   # +nil+ when not found.
   #
   def get_best_individual_result
-    self.meeting_individual_results.is_valid.where('standard_points > 0').order(:standard_points).last
+    meeting_individual_results.is_valid
+      .where('standard_points > 0 OR meeting_individual_points > 0 OR team_points > 0')
+      .order(:standard_points).order(:meeting_individual_points).order(:team_points)
+      .last
   end
 
   # Returns the worst-ever MeetingIndividualResult according to the not-null standard points registered.
   # +nil+ when not found.
   #
   def get_worst_individual_result
-    self.meeting_individual_results.is_valid.where('standard_points > 0').order(:standard_points).first
+    meeting_individual_results.is_valid
+      .where('standard_points > 0 OR meeting_individual_points > 0 OR team_points > 0')
+      .order(:standard_points).order(:meeting_individual_points).order(:team_points)
+      .first
   end
 
   # Returns the total count of registered disqualifications
@@ -241,5 +257,6 @@ class Swimmer < ActiveRecord::Base
     ( self.meeting_individual_results.where(is_disqualified: true).count +
       self.meeting_relay_results.where(is_disqualified: true).count )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end
