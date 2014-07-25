@@ -16,9 +16,8 @@ class PassagesController < ApplicationController
   before_filter :authenticate_entity_from_token!
   before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
   
-  # Leega
-  # FIXME Check those filters!
-  before_filter :current_user_have_enough_confirmations! 
+  before_filter :verify_user_swimmer_confirmations 
+  # FIXME Steve: must exclude #index from assigning the instance parameter!
   before_filter :verify_swimmer_ownership, except: [:new, :create]
   #-- -------------------------------------------------------------------------
   #++
@@ -186,38 +185,18 @@ class PassagesController < ApplicationController
   end
   # ----------------------------------------------------------------------------
 
-  # Leega: FIXME
-  # Does that method really needed?
-  # This method should be globalized. It was now duplicated from swimmng_pool_review
+  # TODO This method should be globalized as an helper. Copied & adapted from swimmng_pool_review
   #  
-  # Returns true if the user doesn't meet the
-  # criteria for creating a Review or false otherwise.
+  # Returns true if the user meets the criteria for creating a new instance or
+  # false otherwise.
   #
-  def current_user_have_enough_confirmations!
-    # Only a confirmed swimmer-user can start the creation of a swimming-pool review:
+  def verify_user_swimmer_confirmations
+    # Only a confirmed swimmer-user can start issue the creation of a new instance:
     if current_user.has_swimmer_confirmations?
       true
     else
       flash[:error] = I18n.t(:invalid_action_request)
       false
-    end
-  end
-  # ----------------------------------------------------------------------------
-
-  # Leega: FIXME
-  # This method should be globalized even if we would check something more or different.
-  # It was now duplicated from swimmng_pool_review
-  #  
-  # Returns true if the user doesn't meet the
-  # criteria for creating a Review or false otherwise.
-  #
-  def current_user_does_not_have_enough_confirmations?
-    # Only a confirmed swimmer-user can start the creation of a swimming-pool review:
-    if current_user.has_swimmer_confirmations?
-      false
-    else
-      flash[:error] = I18n.t(:invalid_action_request)
-      true
     end
   end
   # ----------------------------------------------------------------------------
