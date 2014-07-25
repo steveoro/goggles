@@ -9,19 +9,19 @@ describe PassagesController do
 
   context "authorizated actions" do
     # Leega
-    # FIXME Should check in user is logged and confirmed swimmer for each method invoked 
-    it_behaves_like( "(Ap1-V1-Controllers, actions that requires logged user who's a confirmed swimmer)", [
+    # FIXME Should check if user is a confirmed swimmer for each method invoked
+    it_behaves_like( "(Ap1-V1-Controllers, get actions that requires logged user who's a confirmed swimmer)", [
       :index,
+      #:new,
+      #:create,
       #:show,
       #:for_meeting_individual_result,
-      #:new,
       #:edit,
-      #:create,
       #:update,
       #:destroy      
     ])
   end
-
+   
   context "as a logged-in user who is a confirmed goggler" do
     # Action performed before next specs
     login_user()
@@ -116,23 +116,14 @@ describe PassagesController do
   
   
     describe '[GET #new]' do
-      # Leega FIXME
-      # Is it correct? Won't the meeting_individual_result be required? 
       context "with an HTML request without meeting_individual_result," do
-        xit "handles successfully the request" do
-          get :new
-          expect(response.status).to eq( 200 )
+        it "handles the request with a redirect" do
+          get :new, meeting_individual_result_id: 0
+          expect(response.status).to eq( 302 )
         end
-        xit "assigns the required variables" do
-          get :new
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:passage) ).to be_an_instance_of( Passage ) 
-          expect( assigns(:passage).user_id ).to eq( @user.id ) 
-          expect( assigns(:passage).swimmer_id ).to eq( @user.swimmer_id ) 
-        end
-        xit "renders the template" do
-          get :new
-          expect(response).to render_template(:new)
+        it "redirects to #index" do
+          get :new, meeting_individual_result_id: 0
+          expect( response ).to redirect_to( passages_path()) 
         end
       end
 
@@ -163,7 +154,10 @@ describe PassagesController do
 
     describe '[POST #create]' do
       before :each do
-        @passage = create( :passage, user: @user, swimmer: @user.swimmer )
+        # Leega
+        # FIXME Shoukld handle meeting_inidividual_result?
+        @meeting_individual_result = create(:meeting_individual_result, user: @user, swimmer: @user.swimmer )
+        @passage = create( :passage, meeting_individual_result: @meeting_individual_result )
       end
 
       it "handles successfully the request with HTML" do

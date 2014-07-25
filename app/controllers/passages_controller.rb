@@ -71,16 +71,18 @@ class PassagesController < ApplicationController
   # Prepares the form for the creation of a new Passage.
   #
   # === Params:
-  # - :meeting_individual_result_id (not required) => it will pre-set the swimming-pool id when present
+  # - :meeting_individual_result_id
   #
-  # FIXME (or explain me): meeting_individual_result won't be required?
-  # How does it work for swimming pool review?
   def new
+    @meeting_individual_result = MeetingIndividualResult.find_by_id(params[:meeting_individual_result_id])
+    if @meeting_individual_result.nil?
+      redirect_to( passages_path() ) and return
+    end
+    
     @passage = Passage.new
     @passage.user_id = current_user.id
     @passage.swimmer_id = current_user.swimmer_id
 
-    @meeting_individual_result = MeetingIndividualResult.find_by_id(params[:meeting_individual_result_id])
     @passage.meeting_individual_result_id = @meeting_individual_result.id 
     @passage.meeting_program_id = @meeting_individual_result.meeting_program_id 
     @passage.team_id = @meeting_individual_result.team_id 
