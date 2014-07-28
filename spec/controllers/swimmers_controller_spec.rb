@@ -174,15 +174,15 @@ describe SwimmersController do
     context "as a logged-in user" do
       login_user()
 
-      xit "assigns a current season" do
+      it "assigns a current season" do
         post :misc, id: create(:swimmer).id
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
       end 
-      xit "assigns a category_type" do
+      it "assigns a category_type" do
         post :misc, id: create(:swimmer).id
         expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
       end
-      xit "assigns a gender_type" do
+      it "assigns a gender_type" do
         post :misc, id: create(:swimmer).id
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
       end

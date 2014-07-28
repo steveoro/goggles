@@ -133,10 +133,11 @@ class SwimmersController < ApplicationController
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
     @swimmer_gender = @swimmer.gender_type
-    @standard_points = -1
 
     if request.post?                                # === POST: ===
-      
+    
+    else                                            # === GET: ===
+      @standard_points = -1      
     end
 
     # Leega: TODO
