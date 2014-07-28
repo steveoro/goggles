@@ -53,12 +53,4 @@
     ) do |meeting|
         meeting.meeting_relay_results.count
     end
-
-    g.column(
-        name: I18n.t(:are_results_acquired, { scope: [:activerecord, :attributes, :meeting] }),
-        attribute: 'are_results_acquired',
-        detach_with_id: :flt_are_results_acquired
-    ) do |meeting|
-        meeting.are_results_acquired? ? I18n.t(:ok) : '--'
-    end
 end -%>

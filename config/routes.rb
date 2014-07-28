@@ -112,7 +112,7 @@ Goggles::Application.routes.draw do
       get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 
       # === Meeting Calendars ===
-      get  "meeting_calendars/index",           as: "meeting_calendars"
+      match "meeting_calendars/index",          to: "meeting_calendars#index",          as: "meeting_calendars", via: [:get, :post]
 
       # === Rankings ===
       get "rankings/index",                     as: "rankings"

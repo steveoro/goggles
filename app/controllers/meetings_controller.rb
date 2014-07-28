@@ -43,7 +43,9 @@ class MeetingsController < ApplicationController
       per_page: 20
     )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Show all details regarding a single Meeting
   # Assumes params[:id] refers to a specific Meeting row.
@@ -70,8 +72,11 @@ class MeetingsController < ApplicationController
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
     )
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Show the ranking regarding a single Meeting
@@ -132,9 +137,11 @@ class MeetingsController < ApplicationController
       team_score.rank = index + 1
       @total_team_bonus += team_score.meeting_team_points
     }
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Computes and shows all the statistics regarding the whole Meeting.
@@ -295,9 +302,11 @@ class MeetingsController < ApplicationController
     @categories_array = categories_hash.keys.sort.collect{ |k| categories_hash[k] }
                                                   # Prepare the event type gender count list and sort it by name:
     @event_types_array = event_types_hash.values.sort{ |a, b|  a[0] <=> b[0] }
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Show all details regarding a single Team for the whole Meeting.
@@ -377,9 +386,11 @@ class MeetingsController < ApplicationController
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
     )
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Show all details regarding a single Swimmer for the whole Meeting
@@ -412,9 +423,11 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_path() ) and return
     end
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Search meeting results for a specific swimmer
@@ -428,7 +441,8 @@ class MeetingsController < ApplicationController
       per_page: 20
     )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Search meeting results for a specific team
@@ -442,5 +456,6 @@ class MeetingsController < ApplicationController
       per_page: 20
     )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

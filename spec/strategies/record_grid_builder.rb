@@ -11,6 +11,7 @@ describe RecordGridBuilder do
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method)",
       [
+        :cache_key,
         :collection,
         :count
       ]
@@ -34,6 +35,21 @@ describe RecordGridBuilder do
     end
   end
   #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#cache_key" do
+    it "returns a String" do
+      expect( subject.cache_key ).to be_an_instance_of(String)
+    end
+    it "returns a non empty string" do
+      expect( subject.cache_key.size ).to be >= 1
+    end
+    it "contains at least as many numbers as there are elements in the collection" do
+      expect( subject.cache_key.split('-').count ).to be >= subject.collection.count
+    end
+  end
+  #-- -----------------------------------------------------------------------
   #++
 
   describe "#collection" do

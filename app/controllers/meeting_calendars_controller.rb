@@ -13,6 +13,15 @@ class MeetingCalendarsController < ApplicationController
     @title = I18n.t(:index_title, { scope: [:meeting_calendar] })
     @meetings = []
 
+######################## FIXME use this:
+# Filter by season_type (e.g. 2) & default year:
+# ml = Meeting.includes(:season_type).where{ (season_types.id == 2) & (header_date >= Date.parse("2012-09-01")) & (header_date <= Date.parse("2013-07-01")) }
+
+# Filter by team, default season_type (e.g. 2) & default year:
+# ml = Meeting.includes(:season_type, :teams).where{ (teams.id == 1) & (season_types.id == 2) & (header_date >= Date.parse("2012-09-01")) & (header_date <= Date.parse("2013-07-01")) }
+
+##################################
+
     if request.xhr?                                 # Was an AJAX call? Parse parameter and retrieve season range:
       season_id = params[:season][:season_id].to_i
       team_id   = params[:team][:team_id].to_i

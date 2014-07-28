@@ -78,6 +78,26 @@ class RecordGridBuilder
   #-- --------------------------------------------------------------------------
   #++
 
+  # Getter for a unique text cache key associated with this instance and its internal collection.
+  #
+  # This will generate a different string from the one returned by #collection.cache_key
+  # if the internal RecordCollector instance has been pre-filtered with a swimmer
+  # instance.
+  #
+  # (This allows the grid builder to be initialized with a special collector created
+  # from an already existing colletion of records, where the swimmer pre-filter is being
+  # used just to highlight his/her results among the others, while having different
+  # cache hits for pages regarding the essential same collection but highlighted in a
+  # different way.)
+  #
+  def cache_key
+    if @collector.swimmer
+      "#{@collector.swimmer.id}:" << @collector.collection.cache_key
+    else
+      @collector.collection.cache_key
+    end
+  end
+
   # Getter for the internal list.
   def collection
     @collector.collection
