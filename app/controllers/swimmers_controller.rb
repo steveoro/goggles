@@ -119,6 +119,7 @@ class SwimmersController < ApplicationController
 
 
   # Radiography for a specified swimmer id: "Misc" tab rendering
+  # FIN standard point calculation
   #
   # == Params:
   # id: the swimmer id to be processed
@@ -128,6 +129,23 @@ class SwimmersController < ApplicationController
 ###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Misc" tab: ---
     # TODO
+    
+    @current_season = Season.get_last_season_by_type( 'MASFIN' )
+    @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
+    @swimmer_gender = @swimmer.gender_type
+    @standard_points = -1
+
+    if request.post?                                # === POST: ===
+      
+    end
+
+    # Leega: TODO
+    # - Acquire event and pool types with given drop_down
+    # - Acquire estimate timing with text-box
+    # - Calculate FIN standard points
+    # - Render the result with verbose cosmetics data such as
+    #   base time, world record holder, national record holder, 
+    #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -17,5 +17,19 @@
       = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
   .row-fluid
     .span12
-      %p= "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}" 
-      %p= I18n.t(:coming_soon)
+      %p= "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}: #{@season.get_full_name}" 
+      %p= "#{@gender_type.get_full_name} #{@category_type.get_full_name}" 
+
+      = form_tag( :misc, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+        .control-group
+          = label_tag( :misc_cmd, t('admin_index.bundle_cmd'), :for => :misc_cmd, class: 'control-label' )
+          .controls
+            = text_field_tag( :minutes, 0, class: 'input-xxlarge' )
+            = text_field_tag( :seconds, 0, class: 'input-xxlarge' )
+            = text_field_tag( :hundreds, 0, class: 'input-xxlarge' )
+      
+        .control-group
+          .controls
+            = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+            %span(id='loadingIndicator' hidden='true')
+              = image_tag( 'indicator.gif' )

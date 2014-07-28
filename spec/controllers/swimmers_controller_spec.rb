@@ -144,6 +144,55 @@ describe SwimmersController do
 
   describe '[GET #misc/:id]' do
     it_behaves_like( "(Swimmers GET action restricted w/ login)", :misc )
+    
+    context "as a logged-in user" do
+      login_user()
+
+      it "assigns a current season" do
+        get :misc, id: create(:swimmer).id
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end 
+      it "assigns a category_type" do
+        get :misc, id: create(:swimmer).id
+        expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
+      end
+      it "assigns a gender_type" do
+        get :misc, id: create(:swimmer).id
+        expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
+      end
+      it "assigns -1 value to standard points" do
+        get :misc, id: create(:swimmer).id
+        expect( assigns(:standard_points) ).to eq( -1 )       
+      end
+    end
+  end
+  # ===========================================================================
+
+  describe '[POST #misc/:id]' do
+    #it_behaves_like( "(Swimmers POST action restricted w/ login)", :misc )
+    
+    context "as a logged-in user" do
+      login_user()
+
+      xit "assigns a current season" do
+        post :misc, id: create(:swimmer).id
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end 
+      xit "assigns a category_type" do
+        post :misc, id: create(:swimmer).id
+        expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
+      end
+      xit "assigns a gender_type" do
+        post :misc, id: create(:swimmer).id
+        expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
+      end
+      xit "assigns pool type"
+      xit "assigns event type"
+      xit "event type is in event_by_pool_type for current season"
+      xit "assigns timing data"
+      xit "timing data inserted is a valid timing"
+      xit "assigns a positive result score"
+    end
   end
   # ===========================================================================
 
