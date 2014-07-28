@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.361.20140718
+  - Goggles framework vers.:  4.00.379
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -124,12 +124,12 @@ class RecordCollector
           event_type_id:    row.event_type_id,
           category_type_id: row.category_type_id,
           gender_type_id:   row.gender_type_id,
-          season_type_id:   row.season_type_id,
+          season_id:        row.season_id,
           is_team_record:   false
         ).first
       end
                                                     # Persist row:
-      if existing_record
+      if existing_record                            # Record found already existing?
         is_ok = existing_record.update_attributes(
           minutes: row.minutes,
           seconds: row.seconds,
@@ -141,8 +141,9 @@ class RecordCollector
           meeting_individual_result_id: row.meeting_individual_result_id,
           is_team_record: is_team_record
         )
-      else
+      else                                          # Record not found?
         row.is_team_record = is_team_record
+        is_ok = row.save 
       end
       persisted_ok += 1 if is_ok
       @collection.delete_with_key(key) if remove_from_list && is_ok
@@ -197,7 +198,7 @@ class RecordCollector
     )
     ir = ir.where( swimmer_id: @swimmer.id ) if @swimmer
     ir = ir.team_records.where( team_id: @team.id ) if @team
-    ir = ir.season_type_records.where( season_type_id: @season_type.id ) if @season_type
+    ir = ir.for_season_type( @season_type.id ) if @season_type
     update_and_return_collection_with_first_results( ir )
   end
   #-- -------------------------------------------------------------------------

@@ -21,6 +21,10 @@ class SeasonType < ActiveRecord::Base
   validates_associated :federation_type             # (foreign key integrity)
   # ----------------------------------------------------------------------------
 
+  # Comodity helper
+  def get_full_name
+    short_name
+  end
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.

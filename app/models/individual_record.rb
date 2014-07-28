@@ -41,6 +41,7 @@ class IndividualRecord < ActiveRecord::Base
   validates_associated :season
   validates_associated :federation_type
 
+  # WARNING: use the dedicated scopes below to filter out specific season_types or teams Ids! (#for_team & #for_season_type)
   # Scopes all the results that are computed for a specific Team
   scope :team_records,          -> { where(is_team_record: true) }
   # Scopes all the results that are computed for a specific SeasonType (& Federation)
