@@ -129,15 +129,6 @@ describe SwimmersController do
 
   describe '[GET #all_races/:id]' do
     it_behaves_like( "(Swimmers GET action restricted w/ login)", :all_races )
-
-    context "as a logged-in user" do
-      login_user()
-
-      it "assigns a collection IDs for all the races" do
-        get :all_races, id: create(:swimmer).id
-        expect( assigns(:swimmer_mir_ids) ).to respond_to(:each) 
-      end
-    end
   end
   # ===========================================================================
 

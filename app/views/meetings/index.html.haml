@@ -31,11 +31,6 @@
           .span10
             = grid_filter @meetings_grid, :flt_entry_header_date
         .row-fluid
-          .span2
-            = I18n.t(:are_results_acquired, { scope: [:activerecord, :attributes, :meeting] })
-          .span10
-            = grid_filter @meetings_grid, :flt_are_results_acquired
-        .row-fluid
           .span12
             .external-buttons
               %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}

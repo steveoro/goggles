@@ -23,7 +23,7 @@
 
 %script
   $.get(                                                                        |
-    "#{ meetings_path( preselect_ids: true, prefilter_swimmer: @swimmer.get_full_name, swimmer_id: @swimmer.id ) }", |
+    "#{ meetings_path( preselect_ids: 1, prefilter_swimmer: @swimmer.get_full_name, swimmer_id: @swimmer.id ) }", |
     function( data ) {                                                          |
       $("#prefilteredMeetings").html( data );                                   |
     }                                                                           |
