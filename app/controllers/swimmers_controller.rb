@@ -106,13 +106,6 @@ class SwimmersController < ApplicationController
   #
   def all_races
     @swimmer = SwimmerDecorator.decorate( @swimmer )
-###################################################### TODO REFACTOR this using the new Decorator:
-    # --- "All the races" tab: ---                  # Collect all the races swam for each style, divided for each pool type:
-    @swimmer_mir_ids = MeetingIndividualResult.is_valid.where( swimmer_id: @swimmer.id ).map{ |row| row.id }.uniq
-# FIXME unused:
-#    @mirs_in_25mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT25_ID])
-#    @mirs_in_50mt = swimmer_mirs.joins( :pool_type ).where( ['pool_types.id = ?', PoolType::MT50_ID])
-    # TODO get all the partial timings for each race & display them on a grid
   end
   #-- -------------------------------------------------------------------------
   #++
