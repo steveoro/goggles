@@ -164,25 +164,35 @@ describe SwimmersController do
     
     context "as a logged-in user" do
       login_user()
-
-      it "assigns a current season" do
-        post :misc, id: create(:swimmer).id
+      before(:each) do
+        @swimmer = create(:swimmer)
+      end
+     
+      it "assigns data from swimmer" do
+        post :misc, id: @swimmer.id
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
-      end 
-      it "assigns a category_type" do
-        post :misc, id: create(:swimmer).id
         expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
-      end
-      it "assigns a gender_type" do
-        post :misc, id: create(:swimmer).id
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
+      end 
+      
+      context "without requested parameters" do
+        
       end
-      xit "assigns pool type"
-      xit "assigns event type"
-      xit "event type is in event_by_pool_type for current season"
-      xit "assigns timing data"
-      xit "timing data inserted is a valid timing"
-      xit "assigns a positive result score"
+      
+      context "with requested parameters" do
+        before(:each) do
+          # Leega
+          # FIXME We need to set requested form parameters to permit calculation
+          request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'misc', id: @swimmer.id, only_path: false )
+        end
+        
+        xit "assigns pool type"
+        xit "assigns event type"
+        xit "event type is in event_by_pool_type for current season"
+        xit "assigns timing data"
+        xit "timing data inserted is a valid timing"
+        xit "assigns a positive result score"
+      end
     end
   end
   # ===========================================================================

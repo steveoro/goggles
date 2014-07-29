@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
+require 'wrappers/timing'
 
 
 =begin
@@ -128,18 +129,37 @@ class SwimmersController < ApplicationController
     @swimmer_gender = @swimmer.gender_type
 
     if request.post?                                # === POST: ===
-    
-    else                                            # === GET: ===
-      @standard_points = -1      
-    end
+      pool_type_id  = params[:pool_type][:pool_type_id].to_i
+      event_type_id = params[:event_type][:event_type_id].to_i
+      unless ( pool_type_id > 0 && event_type_id > 0 )
+        flash[:error] = I18n.t(:missing_request_parameter)
+        
+        # Leega
+        # FIXME How to handle wrong parameters?
+        return
+      end
 
-    # Leega: TODO
-    # - Acquire event and pool types with given drop_down
-    # - Acquire estimate timing with text-box
-    # - Calculate FIN standard points
-    # - Render the result with verbose cosmetics data such as
-    #   base time, world record holder, national record holder, 
-    #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
+      minutes       = params[:minutes].to_i
+      seconds       = params[:seconds].to_i
+      hundreds      = params[:hundreds].to_i
+      @timing = Timing.new( hundreds, seconds, minutes ) 
+      if timing
+        # Leega: TODO
+        # - Calculate FIN standard points
+        # - Render the result with verbose cosmetics data such as
+        #   base time, world record holder, national record holder, 
+        #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
+        
+      else
+        flash[:error] = I18n.t('radiography.wrong_timing')
+        
+        # Leega
+        # FIXME How to handle wrong timing?
+        return
+      end
+    else                                            # === GET: ===
+      @standard_points = -1
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
