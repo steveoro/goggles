@@ -46,3 +46,4 @@ coverage/index.html
 api_docs/*
 api_docs
 api_docs/sessions.txt
+bin
