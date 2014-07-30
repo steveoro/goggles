@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Api::V1::RecordsController do
+describe Api::V1::RecordsController, :type => :controller do
   # ASSERT: individual_records table has been copied from development DB
   # (use always #> rake db:clone_to_test task to prepare the test DB)
 

@@ -4,7 +4,7 @@ require 'date'
 require 'common/format'
 
 
-describe RecordsController do
+describe RecordsController, :type => :controller do
   include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   describe '[GET #for_season_type]' do

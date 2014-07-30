@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'json'
 
 
-describe Api::V1::SessionsController do
+describe Api::V1::SessionsController, :type => :controller do
 
 
   describe '[GET api/v1/sessions/create]' do
@@ -103,7 +103,7 @@ describe Api::V1::SessionsController do
 
       it "refreshes the authorization token" do
         @user.reload
-        expect( @old_auth_token != @user.authentication_token ).to be_true
+        expect( @old_auth_token != @user.authentication_token ).to be true
       end
     end
   end

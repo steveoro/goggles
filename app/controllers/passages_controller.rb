@@ -1,20 +1,18 @@
 # encoding: utf-8
-
-
 =begin
 
 = PassagesController
 
-  - version:  4.00.367.20140724
-  - author:   Leega
+  - version:  4.00.383
+  - author:   Leega, Steve A.
 
 =end
 class PassagesController < ApplicationController
   respond_to :html
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!
-  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
+  before_filter :authenticate_user_from_token!
+  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
   
   before_filter :verify_user_swimmer_confirmations 
   # FIXME Steve: must exclude #index from assigning the instance parameter!

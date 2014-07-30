@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'date'
 
-describe Meeting do
+describe Meeting, :type => :model do
 
   context "[a non-valid instance]" do
     it_behaves_like( "(missing required values)", [ 

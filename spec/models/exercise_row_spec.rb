@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe ExerciseRow do
+describe ExerciseRow, :type => :model do
   context "[a well formed instance]" do
     subject { ExerciseRow.find_by_id( ((rand * 500) % ExerciseRow.count).to_i + 1 ) }
 

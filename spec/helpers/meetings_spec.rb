@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'date'
 
 
-describe MeetingsHelper do
+describe MeetingsHelper, :type => :helper do
   include Devise::TestHelpers
   include ERB::Util
 

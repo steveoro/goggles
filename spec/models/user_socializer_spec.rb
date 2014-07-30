@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserSocializer do
+describe UserSocializer, :type => :model do
   before :each do
     @user = create( :user )
     @swimming_buddy = create( :user )

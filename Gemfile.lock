@@ -64,7 +64,7 @@ GEM
     acts_as_votable (0.9.0)
     arel (3.0.3)
     ast (2.0.0)
-    bcrypt (3.1.7-x86-mingw32)
+    bcrypt (3.1.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -153,7 +153,7 @@ GEM
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
     ffaker (1.24.0)
-    ffi (1.9.3-x86-mingw32)
+    ffi (1.9.3)
     font-awesome-rails (3.2.1.3)
       railties (>= 3.2, < 5.0)
     formatador (0.2.5)
@@ -219,7 +219,7 @@ GEM
       netzke-core (~> 0.7.7)
     netzke-core (0.7.7)
       activesupport (>= 3.1.0)
-    nokogiri (1.6.3.1-x86-mingw32)
+    nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     ntlm-http (0.1.1)
     orm_adapter (0.5.0)
@@ -237,11 +237,10 @@ GEM
     prawn (0.15.0)
       pdf-core (~> 0.1.3)
       ttfunk (~> 1.1.0)
-    pry (0.10.0-x86-mingw32)
+    pry (0.10.0)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-      win32console (~> 1.3)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -291,8 +290,7 @@ GEM
       json (~> 1.4)
     remotipart (1.2.1)
     request_store (1.0.8)
-    rest-client (1.7.2-x86-mingw32)
-      ffi (~> 1.9)
+    rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     rspec (3.0.0)
@@ -326,7 +324,7 @@ GEM
     ruby-progressbar (1.5.1)
     rubyzip (1.1.6)
     safe_yaml (0.9.7)
-    sass (3.3.11)
+    sass (3.3.12)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -364,6 +362,9 @@ GEM
       net-ssh (>= 2.8.0)
     term-ansicolor (1.3.0)
       tins (~> 1.0)
+    therubyrhino (2.0.4)
+      therubyrhino_jar (>= 1.7.3)
+    therubyrhino_jar (1.7.4)
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
@@ -380,19 +381,18 @@ GEM
       json (>= 1.8.0)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.6-x86-mingw32)
+    unf_ext (0.0.6)
     warden (1.2.3)
       rack (>= 1.0)
     webrobots (0.1.1)
     wice_grid (3.4.8)
       kaminari (>= 0.13.0)
-    win32console (1.3.2-x86-mingw32)
     xpath (2.0.0)
       nokogiri (~> 1.3)
     zip (2.0.2)
 
 PLATFORMS
-  x86-mingw32
+  ruby
 
 DEPENDENCIES
   acts_as_reportable
@@ -413,7 +413,7 @@ DEPENDENCIES
   coveralls
   daemons
   delayed_job_active_record
-  devise
+  devise (~> 3.2.4)
   devise-i18n
   dj_mon!
   documatic!
@@ -433,12 +433,12 @@ DEPENDENCIES
   mysql2
   netzke-basepack (~> 0.7.7)
   netzke-core (~> 0.7.7)
-  prawn (~> 0.14)
-  rails (~> 3.2.16)
+  prawn (~> 0.15)
+  rails (= 3.2.19)
   rails_admin
   rest-client
-  rspec
-  rspec-rails
+  rspec (~> 3)
+  rspec-rails (~> 3)
   rspec_api_blueprint
   rubocop
   rubyzip
@@ -453,5 +453,5 @@ DEPENDENCIES
   squeel
   therubyrhino
   uglifier (>= 1.0.3)
-  wice_grid (~> 3.3)
+  wice_grid (~> 3.4)
   zip

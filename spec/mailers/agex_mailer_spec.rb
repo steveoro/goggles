@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe AgexMailer do
+describe AgexMailer, :type => :mailer do
   let(:user) { create(:user) }
 
   context "#exception_mail()" do

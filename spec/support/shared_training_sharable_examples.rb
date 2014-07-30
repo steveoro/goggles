@@ -38,7 +38,7 @@ shared_examples_for "TrainingSharable" do
       it "returns a non-empty list of rows" do
         result = subject.class.visible_to_user( subject.user )
         expect( result ).not_to be_nil
-        expect( result.size > 0 ).to be_true
+        expect( result.size > 0 ).to be true
       end
       it "returns a same.sized list of results for all the sharing friends" do
         result_1 = subject.class.visible_to_user( subject.user )
@@ -51,13 +51,13 @@ shared_examples_for "TrainingSharable" do
         result_1 = subject.class.visible_to_user( subject.user )
         result_2 = subject.class.visible_to_user( @subject_instance_2.user )
         result_1.each do |row|
-          expect( result_2.include?(row) ).to be_true
+          expect( result_2.include?(row) ).to be true
         end
       end
       it "returns only rows that are shared and visibile for both" do
         result = subject.class.visible_to_user( subject.user )
         result.each do |row|
-          expect( [subject.user_id, @subject_instance_2.user_id].include?(row.user_id) ).to be_true
+          expect( [subject.user_id, @subject_instance_2.user_id].include?(row.user_id) ).to be true
         end
       end
     end
@@ -75,12 +75,12 @@ shared_examples_for "TrainingSharable" do
       it "returns false for a training created by another user" do
         result = subject.visible_to_user( create(:user) )
         expect( result ).not_to be_nil
-        expect( result ).to be_false
+        expect( result ).to be false
       end
       it "returns true for a training created by the same user" do
         result = @subject_instance_2.visible_to_user( @subject_instance_2.user )
         expect( result ).not_to be_nil
-        expect( result ).to be_true
+        expect( result ).to be true
       end
     end
 
@@ -93,8 +93,8 @@ shared_examples_for "TrainingSharable" do
       it "returns true for any shared training, for both users" do
         results = subject.class.visible_to_user( subject.user )
         results.each do |shared_training_row|
-          expect( shared_training_row.visible_to_user( subject.user ) ).to be_true
-          expect( shared_training_row.visible_to_user( @subject_instance_2.user ) ).to be_true
+          expect( shared_training_row.visible_to_user( subject.user ) ).to be true
+          expect( shared_training_row.visible_to_user( @subject_instance_2.user ) ).to be true
         end
       end
     end

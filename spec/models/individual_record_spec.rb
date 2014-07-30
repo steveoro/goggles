@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'date'
 
-describe IndividualRecord do
+describe IndividualRecord, :type => :model do
 
   context "[a well formed instance]" do
     subject { create( :individual_record ) }

@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.16'
+gem 'rails', '= 3.2.19'
 
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
@@ -37,7 +37,7 @@ gem 'i18n'                                          # [Steve, 20111216] Internat
 
 gem 'ruport', :git => 'https://github.com/ruport/ruport.git', :branch => 'ruby19-compat'
 gem 'acts_as_reportable'
-gem 'prawn', '~> 0.14'
+gem 'prawn', '~> 0.15'
                                                     # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
 gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
 
@@ -49,7 +49,7 @@ gem 'carrierwave'
 gem 'zip'
 gem 'rubyzip', :require => 'zip/zip'
                                                     # [Steve, 20130715] Goggles-specific:
-gem 'devise'
+gem 'devise', '~> 3.2.4'
 gem 'devise-i18n'
 gem 'simple_token_authentication'
 gem 'rails_admin'
@@ -59,7 +59,7 @@ gem 'simple-navigation-bootstrap'
 
 gem "fuzzy-string-match_pure"                       # [Steve, 20131106] Used for Team/Swimmer names comparison & existence checking
 
-gem "wice_grid", '~> 3.3'
+gem "wice_grid", '~> 3.4'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git'    # This version has more verbose exception reporting instead of YAML trace
@@ -95,8 +95,8 @@ end
 
 
 group :test do
-  gem "rspec"
-  gem "rspec-rails"
+  gem "rspec", '~> 3'
+  gem "rspec-rails", '~> 3'
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   gem "factory_girl_rails"
   gem 'guard'

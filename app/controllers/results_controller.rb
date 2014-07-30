@@ -1,7 +1,16 @@
+# encoding: utf-8
+require 'common/format'
+
+
+=begin
+
+= ResultsController
+
+  - version:  4.00.383
+  - author:   Steve A.
+
+=end
 class ResultsController < ApplicationController
-
-  require 'common/format'
-
 
   # Index/Search action
   #

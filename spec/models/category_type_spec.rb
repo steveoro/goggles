@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe CategoryType do
+describe CategoryType, :type => :model do
   it_behaves_like "DropDownListable"
 
   describe "[a non-valid instance]" do
@@ -51,9 +51,9 @@ describe CategoryType do
 
     context "#is_age_in_category" do
       it "#is_age_in_category correctly evaluates age" do
-        expect( subject.is_age_in_category(subject.age_begin + 1) ).to be_true
-        expect( subject.is_age_in_category(subject.age_begin - 5) ).to be_false
-        expect( subject.is_age_in_category(subject.age_end + 5) ).to be_false
+        expect( subject.is_age_in_category(subject.age_begin + 1) ).to be true
+        expect( subject.is_age_in_category(subject.age_begin - 5) ).to be false
+        expect( subject.is_age_in_category(subject.age_end + 5) ).to be false
       end
     end
 

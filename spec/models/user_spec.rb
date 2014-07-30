@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe User do
+describe User, :type => :model do
   it_behaves_like "DropDownListable"
 
   context "[a well formed instance]" do
@@ -50,9 +50,9 @@ describe User do
     #++
 
     describe "#set_associated_swimmer" do
-      it "returns true when invoked successfully" do
+      it "is truthy when invoked successfully" do
         swimmer = create(:swimmer)
-        expect( subject.set_associated_swimmer(swimmer) ).to be_true
+        expect( subject.set_associated_swimmer(swimmer) ).to be_truthy
       end
 
       it "updates both the user and the swimmer with the corresponding (new) IDs when invoked successfully (if both are available for association)" do
@@ -62,11 +62,11 @@ describe User do
         expect( swimmer.associated_user_id ).to eq( subject.id )
       end
 
-      it "returns false when invoked for an already associated swimmer" do
+      it "is falsey when invoked for an already associated swimmer" do
         swimmer = create(:swimmer)
         another_user = create(:user)
         another_user.set_associated_swimmer(swimmer)
-        expect( subject.set_associated_swimmer(swimmer) ).to be_false
+        expect( subject.set_associated_swimmer(swimmer) ).to be_falsey
       end
 
       it "does nothing when invoked for an already associated swimmer" do
@@ -81,13 +81,13 @@ describe User do
 
       it "returns true when called with nil on an already associated user" do
         subject.set_associated_swimmer(create(:swimmer))
-        expect( subject.set_associated_swimmer() ).to be_true
+        expect( subject.set_associated_swimmer() ).to be_truthy
       end
 
       it "clears both the user and the swimmer when called with nil on an already associated user" do
         swimmer = create(:swimmer)
         subject.set_associated_swimmer(swimmer)
-        expect( subject.set_associated_swimmer() ).to be_true
+        expect( subject.set_associated_swimmer() ).to be_truthy
         subject.reload
         swimmer.reload
         expect( subject.swimmer_id ).to be_nil
@@ -98,7 +98,7 @@ describe User do
         old_swimmer = create(:swimmer)
         subject.set_associated_swimmer(old_swimmer)
         new_swimmer = create(:swimmer)
-        expect( subject.set_associated_swimmer(new_swimmer) ).to be_true
+        expect( subject.set_associated_swimmer(new_swimmer) ).to be_truthy
       end
 
       it "updates correctly the user, an old-swimmer and a new-swimmer when called with a new-swimmer for association and the user already associated to an old-swimmer" do
@@ -120,12 +120,12 @@ describe User do
     describe "#has_associated_swimmer?" do
       it "returns true if it has an associated swimmer" do
         subject.swimmer = create(:swimmer) 
-        expect( subject.has_associated_swimmer? ).to be_true
+        expect( subject.has_associated_swimmer? ).to be true
       end
 
       it "returns false if it has not an associated swimmer" do
         subject.swimmer = nil 
-        expect( subject.has_associated_swimmer? ).to be_false
+        expect( subject.has_associated_swimmer? ).to be false
       end
     end
     #-- -----------------------------------------------------------------------
@@ -135,12 +135,12 @@ describe User do
       it "returns true if the association is confirmed" do
         confirmation = create( :user_swimmer_confirmation )
         user = confirmation.user
-        expect( user.has_swimmer_confirmations? ).to be_true
+        expect( user.has_swimmer_confirmations? ).to be true
       end
 
       it "returns false if the association is not confirmed" do
         subject.swimmer = create(:swimmer) 
-        expect( subject.has_swimmer_confirmations? ).to be_false
+        expect( subject.has_swimmer_confirmations? ).to be false
       end
     end
     #-- -----------------------------------------------------------------------
@@ -165,7 +165,7 @@ describe User do
         confirmation1 = create( :user_swimmer_confirmation, confirmator: subject )
         confirmation2 = create( :user_swimmer_confirmation, confirmator: subject )
         confirmation3 = create( :user_swimmer_confirmation, confirmator: subject )
-        expect( subject.given_confirmations.size == 3 ).to be_true
+        expect( subject.given_confirmations.size == 3 ).to be true
       end
     end
     #-- -----------------------------------------------------------------------

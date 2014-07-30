@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe SwimmersHelper do
+describe SwimmersHelper, :type => :helper do
   include Devise::TestHelpers
 
   before :each do

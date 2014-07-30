@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Api::V1::SwimmersController do
+describe Api::V1::SwimmersController, :type => :controller do
   before :each do
     @request.env["devise.mapping"] = Devise.mappings[:user]
     @user = create( :user )

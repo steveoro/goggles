@@ -31,7 +31,7 @@ end
 # =============================================================================
 
 
-describe MeetingStat do
+describe MeetingStat, :type => :model do
   subject {
     #subject { create( :meeting_complete ) }
     # Pre-loaded seeded last two years CSI season
@@ -97,7 +97,7 @@ describe MeetingStat do
   describe "#oldest_male_athlets" do
     it "returns only male swimmers" do
       subject.oldest_male_swimmers.each do |item|
-        expect(item.is_male).to be_true
+        expect(item.is_male).to be true
       end      
     end
     it "returns a list sorted by swimmer year_of_birth" do
@@ -114,7 +114,7 @@ describe MeetingStat do
   describe "#oldest_female_athlets" do
     it "returns only female swimmers" do
       subject.oldest_female_swimmers.each do |item|
-        expect(item.is_female).to be_true
+        expect(item.is_female).to be true
       end      
     end
     it "returns a list sorted by swimmer year_of_birth" do
@@ -131,7 +131,7 @@ describe MeetingStat do
   describe "#best_standard_male_scores" do
     it "returns only not disqualified results" do
       subject.best_standard_male_scores.each do |item|
-        expect(item.is_disqualified).to be_false
+        expect(item.is_disqualified).to be false
       end      
     end
     it "returns a list sorted by standard points descending" do
@@ -148,7 +148,7 @@ describe MeetingStat do
   describe "#best_standard_female_scores" do
     it "returns only not disqualified results" do
       subject.best_standard_female_scores.each do |item|
-        expect(item.is_disqualified).to be_false
+        expect(item.is_disqualified).to be false
       end      
     end
     it "returns a list sorted by standard points descending" do
@@ -165,7 +165,7 @@ describe MeetingStat do
   describe "#worst_standard_male_scores" do
     it "returns only not disqualified results" do
       subject.worst_standard_male_scores.each do |item|
-        expect(item.is_disqualified).to be_false
+        expect(item.is_disqualified).to be false
       end      
     end
     it "returns a list sorted by standard points" do
@@ -182,7 +182,7 @@ describe MeetingStat do
   describe "#worst_standard_female_scores" do
     it "returns only not disqualified results" do
       subject.worst_standard_female_scores.each do |item|
-        expect(item.is_disqualified).to be_false
+        expect(item.is_disqualified).to be false
       end      
     end
     it "returns a list sorted by standard points" do

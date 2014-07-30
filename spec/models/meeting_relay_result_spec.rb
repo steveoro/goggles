@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe MeetingRelayResult do
+describe MeetingRelayResult, :type => :model do
   it_behaves_like "TimingGettable"
   #-- -------------------------------------------------------------------------
   #++

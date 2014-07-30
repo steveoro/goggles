@@ -4,6 +4,14 @@ require 'open3'                                     # Used to capture & send STD
 require 'common/format'
 
 
+=begin
+
+= AdminIndexController
+
+  - version:  4.00.383
+  - author:   Steve A.
+
+=end
 class AdminIndexController < ApplicationController
 
   layout 'admin_index'

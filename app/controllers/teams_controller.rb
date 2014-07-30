@@ -6,16 +6,17 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  4.00.339.20140707
+  - version:  4.00.383
   - author:   Steve A.
 
 =end
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!
-  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
-  # ---------------------------------------------------------------------------
+  before_filter :authenticate_user_from_token!
+  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Return the number of meetings attended by a Team instance
@@ -69,5 +70,6 @@ class TeamsController < ApplicationController
       render json: ''
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -7,7 +7,7 @@ require 'common/format'
 
 = SwimmingPoolsController
 
-  - version:  4.00.339.20140707
+  - version:  4.00.383
   - author:   Steve A.
 
 =end
@@ -16,9 +16,6 @@ class SwimmingPoolsController < ApplicationController
   # Index/Search action.
   #
   def index
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     @title = I18n.t('swimming_pool.index_title')
     @pools_grid = initialize_grid(
       SwimmingPool,
@@ -33,9 +30,6 @@ class SwimmingPoolsController < ApplicationController
   # Show action.
   #
   def show
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.show() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
     pool_id = params[:id].to_i
     @pool = ( pool_id > 0 ) ? SwimmingPool.find_by_id( pool_id ) : nil
     unless ( @pool )

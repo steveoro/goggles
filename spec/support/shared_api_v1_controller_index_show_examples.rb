@@ -20,7 +20,7 @@ shared_examples_for "(Ap1-V1-Controllers, success returning an Array of Hash)" d
   it "returns a JSON array" do
     result = JSON.parse(response.body)
     expect( result ).to be_an_instance_of(Array)
-    expect( result.size > 0 ).to be_true
+    expect( result.size > 0 ).to be true
   end
   it "returns an Hash instance as the first element of the result" do
     result = JSON.parse(response.body)
@@ -40,7 +40,8 @@ shared_examples_for "(Ap1-V1-Controllers, get actions that requires logged user 
   end
 
   context "as a logged-in user who's NOT a confirmed goggler" do
-    login_user()
+    before(:each) { login_user() }
+
     action_name_array.each do |action_name|
       it '[GET #{action_name}] refuses the request and redirects to app root' do
         get action_name.to_sym

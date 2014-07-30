@@ -80,7 +80,7 @@ describe RecordCollector do
     end    
     it "clears the internal list" do
       subject.collect_from_results_having('25', '50FA', 'M35', 'M')
-      expect{ subject.count > 0 }.to be_true
+      expect( subject.count ).to be > 0
     end
   end
 
@@ -103,7 +103,7 @@ describe RecordCollector do
     end
     it "returns collection of no more than 2 records" do
       result = subject.collect_from_results_having('50', '50FA', 'M40', 'M')
-      expect( result.count < 3 ).to be_true
+      expect( result.count ).to be < 3
     end
   end
 
@@ -113,7 +113,7 @@ describe RecordCollector do
     end
     it "returns collection of no more than 2 records" do
       result = subject.collect_from_records_having('50', '50FA', 'M40', 'M')
-      expect( result.count < 3 ).to be_true
+      expect( result.count ).to be < 3
     end
   end
   #-- -------------------------------------------------------------------------
@@ -135,13 +135,13 @@ describe RecordCollector do
     before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M') }
 
     it "returns true on no-errors found" do
-      expect( subject.save ).to be_true
+      expect( subject.save ).to be true
     end
     it "does not clear the internal list" do
       expect{ subject.save }.not_to change{ subject.count }
     end
     it "doesn't increase the table size when persisting existing records" do
-      expect( subject.save ).to be_true  # make the record persist, without clearing the list
+      expect( subject.save ).to be true  # make the record persist, without clearing the list
       expect{ subject.save }.not_to change{ IndividualRecord.count }
     end
   end
@@ -151,7 +151,7 @@ describe RecordCollector do
     before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M') }
 
     it "returns true on no-errors found" do
-      expect( subject.commit ).to be_true
+      expect( subject.commit ).to be true
     end
     it "clears the internal list" do
       expect{ subject.commit }.to change{ subject.count }.to(0)
@@ -163,7 +163,7 @@ describe RecordCollector do
     end
     it "doesn't increase the table size when updating existing records" do
       before_count = subject.count
-      expect( subject.commit ).to be_true
+      expect( subject.commit ).to be true
       # Search again, with same params, but from results, to update existing records:
       subject.collect_from_results_having('25', '50FA', 'M35', 'M')
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
