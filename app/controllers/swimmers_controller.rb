@@ -129,8 +129,8 @@ class SwimmersController < ApplicationController
     @swimmer_gender = @swimmer.gender_type
 
     if request.post?                                # === POST: ===
-      pool_type_id  = params[:pool_type][:pool_type_id].to_i
-      event_type_id = params[:event_type][:event_type_id].to_i
+      pool_type_id  = params[:pool_type] && params[:pool_type][:id] ? params[:pool_type][:id].to_i : 0
+      event_type_id = params[:event_type] && params[:event_type][:id] ? params[:event_type][:id].to_i : 0
       unless ( pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
         
@@ -139,11 +139,11 @@ class SwimmersController < ApplicationController
         return
       end
 
-      minutes       = params[:minutes].to_i
-      seconds       = params[:seconds].to_i
-      hundreds      = params[:hundreds].to_i
+      minutes  = params[:minutes] ? params[:minutes].to_i : -1
+      seconds  = params[:seconds] ? params[:seconds].to_i : -1
+      hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
       @timing = Timing.new( hundreds, seconds, minutes ) 
-      if timing
+      if @timing
         # Leega: TODO
         # - Calculate FIN standard points
         # - Render the result with verbose cosmetics data such as

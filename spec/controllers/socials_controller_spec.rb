@@ -206,7 +206,7 @@ describe SocialsController, :type => :controller do
         }.to change(@user.pending_invited, :count).by(1) 
       end
       it "assigns the required variables for a new friendship" do
-        get :invite, id: @swimming_buddy.id
+        post :invite, id: @swimming_buddy.id
         expect( assigns(:title) ).to be_an_instance_of(String) 
         expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
       end

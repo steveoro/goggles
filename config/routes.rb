@@ -135,7 +135,7 @@ Goggles::Application.routes.draw do
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/all_races/:id",             to: "swimmers#all_races",               as: "swimmer_all_races"
-      get  "swimmer/misc/:id",                  to: "swimmers#misc",                    as: "swimmer_misc",         via: [:get, :post]
+      match "swimmer/misc/:id",                 to: "swimmers#misc",                    as: "swimmer_misc",         via: [:get, :post]
 
       # === Swimming Pools ===
       get "swimming_pools/index",               as: "swimming_pools"

@@ -82,27 +82,26 @@ describe SwimmersController, :type => :controller do
       before(:each) { login_user() }
 
       context "with an HTML request for a non-existing id," do
+        before(:each) { get action_sym, id: 0 }
+        
         it "handles the request with a redirect" do
-          get action_sym, id: 0
           expect(response.status).to eq( 302 )
         end
         it "redirects to #index" do
-          get action_sym, id: 0
           expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
         end
       end
 
       context "with an HTML request for a valid id," do
+        before(:each) { get action_sym, id: @fixture.id }
+
         it "handles successfully the request" do
-          get action_sym, id: @fixture.id
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
-          get action_sym, id: @fixture.id
           expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator ) 
         end
         it "renders the template" do
-          get action_sym, id: @fixture.id
           expect(response).to render_template(action_sym)
         end
       end
@@ -134,23 +133,23 @@ describe SwimmersController, :type => :controller do
   describe '[GET #misc/:id]' do
     it_behaves_like( "(Swimmers GET action restricted w/ login)", :misc )
     
-    context "as a logged-in user" do
-      before(:each) { login_user() }
-
+    context "as a logged-in user with an existing swimmer id" do
+      before(:each) do 
+        login_user()
+        @swimmer = create(:swimmer)
+        get :misc, id: @swimmer.id
+      end
+      
       it "assigns a current season" do
-        get :misc, id: create(:swimmer).id
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
       end 
       it "assigns a category_type" do
-        get :misc, id: create(:swimmer).id
         expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
       end
       it "assigns a gender_type" do
-        get :misc, id: create(:swimmer).id
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
       end
       it "assigns -1 value to standard points" do
-        get :misc, id: create(:swimmer).id
         expect( assigns(:standard_points) ).to eq( -1 )       
       end
     end
@@ -159,30 +158,55 @@ describe SwimmersController, :type => :controller do
 
   describe '[POST #misc/:id]' do
     #it_behaves_like( "(Swimmers POST action restricted w/ login)", :misc )
-    
-    context "as a logged-in user" do
+
+    context "as a logged-in user with a non existing swimmer id" do
       before(:each) do
         login_user()
-        @swimmer = create(:swimmer)
+        request.env["HTTP_REFERER"] = swimmers_path()
+        post :misc, id: 0
       end
-     
-      it "assigns data from swimmer" do
+        
+      it "handles the request with a redirect" do
+        expect(response.status).to eq( 302 )
+      end
+      it "redirects to #index" do
+        expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
+      end
+    end
+
+    context "as a logged-in user with an existing swimmer id" do
+      before(:each) do
+        login_user()
+        request.env["HTTP_REFERER"] = swimmers_path()
+        @swimmer = create(:swimmer)
         post :misc, id: @swimmer.id
+      end
+
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "assigns the required variables" do
+        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator ) 
+      end
+      it "renders the template" do
+        expect(response).to render_template(:misc)
+      end
+
+      it "assigns a current season" do
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end 
+      it "assigns a category_type" do
         expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
+      end
+      it "assigns a gender_type" do
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
       end 
       
-      context "without requested parameters" do
-        
-      end
-      
       context "with requested parameters" do
-        before(:each) do
+        #before(:each) do
           # Leega
           # FIXME We need to set requested form parameters to permit calculation
-          request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'misc', id: @swimmer.id, only_path: false )
-        end
+        #end
         
         xit "assigns pool type"
         xit "assigns event type"
