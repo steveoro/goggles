@@ -46,4 +46,9 @@
               = submit_tag( I18n.t('radiography.compute'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
               %span(id='loadingIndicator' hidden='true')
                 = image_tag( 'indicator.gif' )
-  
+  .row-fluid
+    - if @standard_points.to_i >= 0
+      = @standard_points
+      = "...Cool, man! :-)"
+
+      

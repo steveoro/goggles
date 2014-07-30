@@ -8,8 +8,8 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  4.00.383
-  - author:   Steve A.
+  - version:  4.00.385
+  - author:   Steve A., Leega
 
 =end
 class SwimmersController < ApplicationController
@@ -21,7 +21,6 @@ class SwimmersController < ApplicationController
   before_filter :verify_parameter, except: [:index]
   #-- -------------------------------------------------------------------------
   #++
-
 
   # Index/Search action
   #
@@ -36,7 +35,6 @@ class SwimmersController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   # Radiography for a specified swimmer id: main ID card "Radiography" tab rendering.
   #
@@ -100,13 +98,13 @@ class SwimmersController < ApplicationController
   #++
 
 
-  # Radiography for a specified swimmer id: "All the races" tab rendering
+  # Radiography for a specified swimmer id: "All the races" tab rendering.
   #
   # == Params:
   # id: the swimmer id to be processed
   #
   def all_races
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
+    redirect_to meetings_path( preselect_ids: 1, prefilter_swimmer: @swimmer.get_full_name, swimmer_id: @swimmer.id )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -120,45 +118,35 @@ class SwimmersController < ApplicationController
   #
   def misc
     @swimmer = SwimmerDecorator.decorate( @swimmer )
-###################################################### TODO REFACTOR this using the new Decorator:
     # --- "Misc" tab: ---
-    # TODO
-    
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
     @swimmer_gender = @swimmer.gender_type
+    @standard_points = -1                           # Init score with a non-displayable value
 
     if request.post?                                # === POST: ===
       pool_type_id  = params[:pool_type] && params[:pool_type][:id] ? params[:pool_type][:id].to_i : 0
       event_type_id = params[:event_type] && params[:event_type][:id] ? params[:event_type][:id].to_i : 0
       unless ( pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
-        
-        # Leega
-        # FIXME How to handle wrong parameters?
-        return
+        redirect_to( swimmer_misc_path(@swimmer) ) and return
       end
-
       minutes  = params[:minutes] ? params[:minutes].to_i : -1
       seconds  = params[:seconds] ? params[:seconds].to_i : -1
       hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
       @timing = Timing.new( hundreds, seconds, minutes ) 
+
       if @timing
         # Leega: TODO
         # - Calculate FIN standard points
         # - Render the result with verbose cosmetics data such as
         #   base time, world record holder, national record holder, 
         #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
-        
+        @standard_points = @timing.to_hundreds / 10  # [Steve] This is just a test to see a result, because... Results are nice :-)
       else
         flash[:error] = I18n.t('radiography.wrong_timing')
-        
-        # Leega
-        # FIXME How to handle wrong timing?
-        return
+        redirect_to( swimmer_misc_path(@swimmer) ) and return
       end
-    else                                            # === GET: ===
-      @standard_points = -1
     end
   end
   #-- -------------------------------------------------------------------------
@@ -182,7 +170,6 @@ class SwimmersController < ApplicationController
       redirect_to(:back) and return
     end
   end
-
 
   # Verifies that a swimmer id is provided as a parameter to this controller.
   # Assigns the @swimmer instance when successful.
