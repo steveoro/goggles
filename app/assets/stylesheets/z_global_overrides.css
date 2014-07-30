@@ -64,12 +64,11 @@ span.ui-spinner .ui-icon {
     left: 0px;
 }
 
-/* [Steve, 20140120] WIP: tested only with Trainings edit form: */
-/*
-.row-fluid [class*="span"] {
-    margin-left: 0px;
+
+/* ----- WiceGrid styles overrides & additions ----- */
+.wice-grid td {
+    line-height: 10px;
+    font-size: 12px;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
-.row-fluid .controls-row [class*="span"] + [class*="span"] {
-    margin-left: 0px;
-}
-*/

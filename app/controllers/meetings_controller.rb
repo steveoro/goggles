@@ -26,43 +26,30 @@ class MeetingsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     prefilter = [ params[:prefilter_swimmer], params[:prefilter_team] ].compact.join(', ')
-    @title = I18n.t(:index_title, { scope: [:meeting] }) +
+    @title = I18n.t('meeting.index_title') +
              (prefilter.size > 0 ? " (#{prefilter})" : '')
-    @preselected_swimmer_id = params[:swimmer_id].to_i if @preselected_swimmer_id
-    @preselected_team_id    = params[:team_id].to_i if @preselected_team_id
-    @meetings_grid = if params[:preselect_ids].to_i > 0
+    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
+    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    ids = nil
+    # Prepare pre-selection parameters:
+    if params[:preselect_ids].to_i > 0
       if @preselected_swimmer_id
-#        swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
-#        swimmer.meetings.includes(:season, :season_type).uniq if swimmer
-        initialize_grid(
-              Meeting,
-              include: [:season, :season_type, :swimmers],
-              conditions: { :'swimmers.id' => @preselected_swimmer_id },
-              order: 'meetings.header_date',
-              order_direction: 'asc',
-              per_page: 20
-        )        
+        swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
+        ids = swimmer.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
       else
-#        team = Team.find_by_id( @preselected_team_id )
-#        team.meetings.includes(:season, :season_type).uniq if team
-        initialize_grid(
-              Meeting,
-              include: [:season, :season_type, :teams],
-              conditions: { :'teams.id' => @preselected_team_id },
-              order: 'meetings.header_date',
-              order_direction: 'asc',
-              per_page: 20
-        )        
+        team = Team.find_by_id( @preselected_team_id )
+        ids = team.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
       end
-    else
-      initialize_grid(
-            Meeting,
-            include: [:season, :season_type],
-            order: 'meetings.header_date',
-            order_direction: 'asc',
-            per_page: 20
-      )        
     end
+    # Initialize the grid according to parameters:
+    @meetings_grid = initialize_grid(
+      Meeting,
+      include: [:season, :season_type],
+      conditions: ids ? { id: ids } : nil,
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
+    )        
   end
   #-- -------------------------------------------------------------------------
   #++
