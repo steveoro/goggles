@@ -33,12 +33,12 @@ describe UserTrainingAccessibility do
 
     describe "#is_owned()" do
       it "returns false" do
-        expect( subject.is_owned() ).to be_false
+        expect( subject.is_owned() ).to be false
       end
     end
     describe "#is_visible()" do
       it "returns true" do
-        expect( subject.is_visible() ).to be_false
+        expect( subject.is_visible() ).to be false
       end
     end
   end
@@ -51,12 +51,12 @@ describe UserTrainingAccessibility do
 
     describe "#is_owned()" do
       it "returns true" do
-        expect( subject.is_owned() ).to be_true
+        expect( subject.is_owned() ).to be true
       end
     end
     describe "#is_visible()" do
       it "returns true" do
-        expect( subject.is_visible() ).to be_true
+        expect( subject.is_visible() ).to be true
       end
     end
   end
@@ -69,12 +69,12 @@ describe UserTrainingAccessibility do
 
     describe "#is_owned()" do
       it "returns true" do
-        expect( subject.is_owned() ).to be_false
+        expect( subject.is_owned() ).to be false
       end
     end
     describe "#is_visible()" do
       it "returns true" do
-        expect( subject.is_visible() ).to be_true
+        expect( subject.is_visible() ).to be true
       end
     end
   end

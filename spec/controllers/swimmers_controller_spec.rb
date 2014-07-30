@@ -2,10 +2,8 @@ require 'spec_helper'
 
 
 describe SwimmersController do
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   describe '[GET #index]' do
-
     context "with an HTML request," do
       it "handles successfully the request" do
         get :index
@@ -81,7 +79,7 @@ describe SwimmersController do
     #++
 
     context "as a logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       context "with an HTML request for a non-existing id," do
         it "handles the request with a redirect" do
@@ -137,7 +135,7 @@ describe SwimmersController do
     it_behaves_like( "(Swimmers GET action restricted w/ login)", :misc )
     
     context "as a logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "assigns a current season" do
         get :misc, id: create(:swimmer).id
@@ -163,7 +161,7 @@ describe SwimmersController do
     #it_behaves_like( "(Swimmers POST action restricted w/ login)", :misc )
     
     context "as a logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "assigns a current season" do
         post :misc, id: create(:swimmer).id

@@ -47,55 +47,6 @@ en:
     collapse: Collapse
 
 
-it:
-  date:
-    order:
-      - :anno
-      - :mese
-      - :giorno
-  wice_grid:
-    show_filter_tooltip: Mostra filtro
-    hide_filter_tooltip: Nascondi filtro
-    csv_export_tooltip: Esporta CSV
-    filter_tooltip: Filtro
-    reset_filter_tooltip: Reset
-    boolean_filter_true_label: "sì"
-    boolean_filter_false_label: "no"
-    previous_label: «
-    next_label: »
-    # Title of the icon clicking on which will show the calendar to set the FROM date.
-    date_selector_tooltip_from: Da
-    # Title of the icon clicking on which will show the calendar to set the TO date.
-    date_selector_tooltip_to: A
-    # The title of the checkox to turn on negation
-    negation_checkbox_title: Escludi
-    # link to switch to show all records
-    show_all_records_label: mostra tutti
-    # tooltip for the link to switch to show all records
-    show_all_records_tooltip: Mostra tutti i record
-    # Warning message shown when the user wants to switch to all-records mode
-    all_queries_warning: Sicuri di voler mostrare tutti i record?
-    # link to paginated view
-    switch_back_to_paginated_mode_label: torna alla vista paginata
-    # tooltip for the link to paginated view
-    switch_back_to_paginated_mode_tooltip: "Torna alla vista suddivisa in più pagine"
-    # Title of the date string.
-    date_string_tooltip: Clicca per cancellare
-    saved_query_panel_title: Ricerche salvate
-    save_query_button_label: Salva lo stato di tutti i filtri
-    saved_query_deletion_confirmation: Sicuri di voler continuare?
-    saved_query_deletion_link_title: Elimina Ricerca
-    saved_query_link_title: Carica Ricerca
-    validates_uniqueness_error: "Una Ricerca con questo stesso nome esiste già"
-    validates_presence_error: "Per favore, inserisci il nome di questa Ricerca"
-    query_deleted_message: Ricerca salvata cancella.
-    query_saved_message: Ricerca salvata.
-    select_all: Seleziona tutto
-    deselect_all: Rimuovi la selezione
-    expand: Espandi
-    collapse: Collassa
-
-
 is:
   date:
     order:

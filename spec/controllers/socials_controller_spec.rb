@@ -2,8 +2,6 @@ require 'spec_helper'
 
 
 describe SocialsController do
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
-
   before :each do
     @swimming_buddy = create( :user )
     @unlogged_user = create( :user )
@@ -16,9 +14,8 @@ describe SocialsController do
       end
     end
 
-
     context "as a logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "handles successfully the request" do
         get :show_all
@@ -41,7 +38,7 @@ describe SocialsController do
         friend_user = create( :user )
         @user.invite( friend_user )
         get :show_all
-        expect( assigns(:pending_invited).first.name == friend_user.name ).to be_true
+        expect( assigns(:pending_invited).first.name == friend_user.name ).to be true
       end
     end
   end
@@ -70,7 +67,7 @@ describe SocialsController do
 
 
     context "as a logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "handles successfully the request by increasing the total confirmators" do
         expect {
@@ -112,8 +109,8 @@ describe SocialsController do
 
 
     context "as a logged-in user" do
-      login_user()
-      before :each do
+      before(:each) do
+        login_user()
         UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimmer, @user )
       end
 
@@ -148,8 +145,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         # We need to set this to make the redirect_to(:back) pass the tests:
@@ -162,7 +159,7 @@ describe SocialsController do
       end
       it "renders the template" do
         get :invite, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
         expect(response).to render_template(:invite)
       end
       it "assigns the required variables" do
@@ -196,8 +193,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         # We need to set this to make the redirect_to(:back) pass the tests:
         request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'swimmers', action: 'radio', id: @swimming_buddy.swimmer_id, only_path: false )
@@ -231,8 +228,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         # We need to set this to make the redirect_to(:back) pass the tests:
@@ -254,7 +251,7 @@ describe SocialsController do
       it "renders the template" do
         @swimming_buddy.invite( @user )
         get :approve, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
         expect(response).to render_template(:approve)
       end
       it "redirects to :back for a non-yet valid goggler" do
@@ -290,8 +287,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before :each do
+        login_user()
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
         # We need to set this to make the redirect_to(:back) pass the tests:
@@ -300,7 +297,7 @@ describe SocialsController do
 
       it "handles successfully the request for a pending friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.pending? ).to be_true 
+        expect( friendship.pending? ).to be true 
         expect {
           post :approve, id: @swimming_buddy.id
           friendship.reload
@@ -324,8 +321,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
@@ -354,7 +351,7 @@ describe SocialsController do
       it "renders the template for an approved friendship" do
         @user.approve( @swimming_buddy )
         get :block, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
         expect(response).to render_template( :ask_confirmation )
       end
       it "redirects to :back for an invalid friendable" do
@@ -385,8 +382,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
@@ -397,8 +394,8 @@ describe SocialsController do
 
       it "handles successfully the request for a non-blocked friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.approved? ).to be_true 
-        expect( friendship.active? ).to be_true 
+        expect( friendship.approved? ).to be true 
+        expect( friendship.active? ).to be true 
         expect {
           post :block, id: @swimming_buddy.id
           @user.reload
@@ -422,8 +419,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
@@ -451,7 +448,7 @@ describe SocialsController do
         @user.approve( @swimming_buddy )
         @user.block( @swimming_buddy )
         get :unblock, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
         expect(response).to render_template( :ask_confirmation )
       end
       it "redirects to :back for an invalid friendable" do
@@ -486,8 +483,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
@@ -499,7 +496,7 @@ describe SocialsController do
 
       it "handles successfully the request for a blocked friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.blocked? ).to be_true 
+        expect( friendship.blocked? ).to be true 
         expect {
           post :unblock, id: @swimming_buddy.id
           @user.reload
@@ -523,8 +520,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
@@ -546,7 +543,7 @@ describe SocialsController do
       end
       it "renders the template for an existing friendship" do
         get :remove, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
         expect(response).to render_template( :ask_confirmation )
       end
       it "redirects to :back for an invalid friendable" do
@@ -571,8 +568,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user )
@@ -587,7 +584,7 @@ describe SocialsController do
       it "handles successfully the request for an accepted friendship" do
         @user.approve( @swimming_buddy )
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.approved? ).to be_true
+        expect( friendship.approved? ).to be true
         expect {
           post :remove, id: @swimming_buddy.id
           @user.reload
@@ -617,8 +614,8 @@ describe SocialsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         # We need to set this to make the redirect_to(:back) pass the tests:
@@ -641,7 +638,7 @@ describe SocialsController do
       it "renders the template for an existing friendship" do
         @swimming_buddy.invite( @user )
         get :edit, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be_true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
         expect(response).to render_template(:edit)
       end
       it "redirects to :show_all for an invalid friendable" do
@@ -660,13 +657,13 @@ describe SocialsController do
       expect(response).to redirect_to socials_show_all_path()
     end
     it "handles successfully the request" do
-      expect( @editor.is_sharing_passages_with?(@friend) ).to be_true
-      expect( @editor.is_sharing_trainings_with?(@friend) ).to be_true
-      expect( @editor.is_sharing_calendars_with?(@friend) ).to be_false
+      expect( @editor.is_sharing_passages_with?(@friend) ).to be true
+      expect( @editor.is_sharing_trainings_with?(@friend) ).to be true
+      expect( @editor.is_sharing_calendars_with?(@friend) ).to be false
     end
     it "doesn't change the pending status of an already pending friendship" do
       friendship = @editor.find_any_friendship_with(@friend)
-      expect( friendship.pending? ).to be_true
+      expect( friendship.pending? ).to be true
     end
   end
 
@@ -683,12 +680,12 @@ describe SocialsController do
   shared_examples_for "(POST #edit ok) existing friendship CLEARING shares:" do
     it "doesn't change the pending status" do
       friendship = @editor.find_any_friendship_with(@friend)
-      expect( friendship.pending? ).to be_false
+      expect( friendship.pending? ).to be false
     end
     it "handles successfully the request" do
-      expect( @editor.is_sharing_passages_with?(@friend) ).to be_true
-      expect( @editor.is_sharing_trainings_with?(@friend) ).to be_false
-      expect( @editor.is_sharing_calendars_with?(@friend) ).to be_false
+      expect( @editor.is_sharing_passages_with?(@friend) ).to be true
+      expect( @editor.is_sharing_trainings_with?(@friend) ).to be false
+      expect( @editor.is_sharing_calendars_with?(@friend) ).to be false
     end
   end
 
@@ -702,9 +699,9 @@ describe SocialsController do
       expect( friendship.pending? ).to eq(must_be_pending)
     end
     it "handles successfully the request" do
-      expect( @editor.is_sharing_passages_with?(@friend) ).to be_true
-      expect( @editor.is_sharing_trainings_with?(@friend) ).to be_true
-      expect( @editor.is_sharing_calendars_with?(@friend) ).to be_true
+      expect( @editor.is_sharing_passages_with?(@friend) ).to be true
+      expect( @editor.is_sharing_trainings_with?(@friend) ).to be true
+      expect( @editor.is_sharing_calendars_with?(@friend) ).to be true
     end
   end
   # ---------------------------------------------------------------------------
@@ -718,14 +715,14 @@ describe SocialsController do
         @swimming_buddy.invite( @unlogged_user, true, true, true )
         @unlogged_user.approve( @swimming_buddy )
         post :edit, id: @swimming_buddy.id, shares_passages: 1, shares_trainings: 1
-        expect( @unlogged_user.is_sharing_passages_with?(@swimming_buddy) ).to be_false
-        expect( @unlogged_user.is_sharing_trainings_with?(@swimming_buddy) ).to be_false
+        expect( @unlogged_user.is_sharing_passages_with?(@swimming_buddy) ).to be false
+        expect( @unlogged_user.is_sharing_trainings_with?(@swimming_buddy) ).to be false
       end
     end
 
     context "as a logged-in user" do
-      login_user()
       before(:each) do
+        login_user()
         @user.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.set_associated_swimmer( create(:swimmer) )
         @swimming_buddy.invite( @user, true, true, true )
@@ -737,115 +734,115 @@ describe SocialsController do
       end
 
       context "for a received pending friendship, when editing commonly-agreed share flags" do
-        before(:each) {
+        before(:each) do
           post :edit, id: @swimming_buddy.id, shares_passages: 1, shares_trainings: 1
           @editor = @user
           @friend = @swimming_buddy
-        }
+        end
         
         it_behaves_like "(POST #edit ok) pending friendship editing shares:"
       end
       context "for an  requested pending friendship, when editing commonly-agreed share flags" do
-        before(:each) {
+        before(:each) do
           post :edit, id: @another_buddy.id, shares_passages: 1, shares_trainings: 1
           @editor = @user
           @friend = @another_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) pending friendship editing shares:"
       end
       # -----------------------------------------------------------------------
 
       context "for an approved friendship, when clearing shares" do
-        before(:each) {
+        before(:each) do
           @user.approve( @swimming_buddy, true, true )
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @swimming_buddy.id, shares_passages: 1, shares_trainings: 0
           @editor = @user
           @friend = @swimming_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
       context "for a blocked friendship, when clearing shares" do
-        before(:each) {
+        before(:each) do
           @user.approve( @swimming_buddy, true, true )
           @user.block(@swimming_buddy)
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @swimming_buddy.id, shares_passages: 1, shares_trainings: 0
           @editor = @user
           @friend = @swimming_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
       context "for a requested friendship, when clearing shares" do
-        before(:each) {
+        before(:each) do
           @another_buddy.approve( @user, true, true )
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @another_buddy.id, shares_passages: 1, shares_trainings: 0
           @editor = @user
           @friend = @another_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
       context "for a requested blocked friendship, when clearing shares" do
-        before(:each) {
+        before(:each) do
           @another_buddy.approve( @user, true, true )
           @another_buddy.block(@user)
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @another_buddy.id, shares_passages: 1, shares_trainings: 0
           @editor = @user
           @friend = @another_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship CLEARING shares:"
       end
       # -----------------------------------------------------------------------
 
       context "for an approved friendship, when adding new shares" do
-        before(:each) {
+        before(:each) do
           @user.approve( @swimming_buddy, true, false, true )
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @swimming_buddy.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
           @editor = @user
           @friend = @swimming_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
       end
       context "for a blocked friendship, when adding new shares" do
-        before(:each) {
+        before(:each) do
           @user.approve( @swimming_buddy, true, false, true )
           @user.block(@swimming_buddy)
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @swimming_buddy.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
           @editor = @user
           @friend = @swimming_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
       end
       context "for a requested & approved friendship, when adding new shares" do
-        before(:each) {
+        before(:each) do
           @another_buddy.approve( @user, true, false, true )
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @another_buddy.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
           @editor = @user
           @friend = @another_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
       end
       context "for a requested & blocked friendship, when adding new shares" do
-        before(:each) {
+        before(:each) do
           @another_buddy.approve( @user, true, false, true )
           @another_buddy.block(@user)
           # friendable changes idea on sharing trainings and edits:
           post :edit, id: @another_buddy.id, shares_passages: 1, shares_trainings: 1, shares_calendars: 1
           @editor = @user
           @friend = @another_buddy
-        }
+        end
         it_behaves_like "(POST #edit ok) existing friendship editing shares:"
         it_behaves_like "(POST #edit ok) existing friendship SETTING shares:"
       end

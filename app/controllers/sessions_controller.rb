@@ -1,11 +1,9 @@
 # encoding: utf-8
-
-
 =begin
 
 = SessionsController
 
-  - version:  4.00.339.20140707
+  - version:  4.00.383
   - author:   Steve A.
 
 =end

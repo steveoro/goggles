@@ -1,7 +1,16 @@
+# encoding: utf-8
+require 'common/format'
+
+
+=begin
+
+= MeetingsController
+
+  - version:  4.00.383
+  - author:   Steve A.
+
+=end
 class MeetingsController < ApplicationController
-
-  require 'common/format'
-
 
   # Index/Search action.
   #
@@ -14,34 +23,46 @@ class MeetingsController < ApplicationController
   #
   def index
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     prefilter = [ params[:prefilter_swimmer], params[:prefilter_team] ].compact.join(', ')
     @title = I18n.t(:index_title, { scope: [:meeting] }) +
              (prefilter.size > 0 ? " (#{prefilter})" : '')
     @preselected_swimmer_id = params[:swimmer_id].to_i if @preselected_swimmer_id
     @preselected_team_id    = params[:team_id].to_i if @preselected_team_id
-    meetings = if params[:preselect_ids].to_i > 0
+    @meetings_grid = if params[:preselect_ids].to_i > 0
       if @preselected_swimmer_id
-        swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
-        swimmer.meetings.includes(:season, :season_type).uniq if swimmer
+#        swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
+#        swimmer.meetings.includes(:season, :season_type).uniq if swimmer
+        initialize_grid(
+              Meeting,
+              include: [:season, :season_type, :swimmers],
+              conditions: { :'swimmers.id' => @preselected_swimmer_id },
+              order: 'meetings.header_date',
+              order_direction: 'asc',
+              per_page: 20
+        )        
       else
-        team = Team.find_by_id( @preselected_team_id )
-        team.meetings.includes(:season, :season_type).uniq if team
+#        team = Team.find_by_id( @preselected_team_id )
+#        team.meetings.includes(:season, :season_type).uniq if team
+        initialize_grid(
+              Meeting,
+              include: [:season, :season_type, :teams],
+              conditions: { :'teams.id' => @preselected_team_id },
+              order: 'meetings.header_date',
+              order_direction: 'asc',
+              per_page: 20
+        )        
       end
     else
-      Meeting
+      initialize_grid(
+            Meeting,
+            include: [:season, :season_type],
+            order: 'meetings.header_date',
+            order_direction: 'asc',
+            per_page: 20
+      )        
     end
-
-# FIXME WiceGrid wines about meetings not being a direct sibling of ActiveRecord::Base (is a relation)
-
-    @meetings_grid = initialize_grid(
-      meetings,
-#      include: [:season, :season_type],
-      order: 'meetings.header_date',
-      order_direction: 'asc',
-      per_page: 20
-    )
   end
   #-- -------------------------------------------------------------------------
   #++

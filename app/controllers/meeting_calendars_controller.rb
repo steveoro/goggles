@@ -1,3 +1,12 @@
+# encoding: utf-8
+=begin
+
+= MeetingCalendarsController
+
+  - version:  4.00.383
+  - author:   Steve A.
+
+=end
 class MeetingCalendarsController < ApplicationController
 
   require 'date'

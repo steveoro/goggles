@@ -8,15 +8,15 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.335.20140703
-  - author:   Steve A., Leega
+  - version:  4.00.383
+  - author:   Steve A.
 
 =end
 class UserTrainingStoriesController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_entity_from_token!
-  before_filter :authenticate_entity!                # Devise "standard" HTTP log-in strategy
+  before_filter :authenticate_user_from_token!
+  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
   before_filter :verify_ownership, only: [:edit, :destroy, :update]
   before_filter :verify_visibility, except: [:index, :edit, :new, :create]

@@ -32,13 +32,13 @@ describe TrainingAccessibility do
     subject { TrainingAccessibility.new( @user, @non_shared_fixture, false ) }
 
     describe "#is_owned()" do
-      it "returns false" do
-        expect( subject.is_owned() ).to be_false
+      it "is false" do
+        expect( subject.is_owned() ).to be false
       end
     end
     describe "#is_visible()" do
-      it "returns true" do
-        expect( subject.is_visible() ).to be_true
+      it "is true" do
+        expect( subject.is_visible() ).to be true
       end
     end
   end
@@ -50,13 +50,13 @@ describe TrainingAccessibility do
     subject { TrainingAccessibility.new( @user, @owned_fixture, false ) }
 
     describe "#is_owned()" do
-      it "returns true" do
-        expect( subject.is_owned() ).to be_true
+      it "is true" do
+        expect( subject.is_owned() ).to be true
       end
     end
     describe "#is_visible()" do
-      it "returns true" do
-        expect( subject.is_visible() ).to be_true
+      it "is true" do
+        expect( subject.is_visible() ).to be true
       end
     end
   end
@@ -68,13 +68,13 @@ describe TrainingAccessibility do
     subject { TrainingAccessibility.new( @user, @shared_fixture, false ) }
 
     describe "#is_owned()" do
-      it "returns true" do
-        expect( subject.is_owned() ).to be_false
+      it "is false" do
+        expect( subject.is_owned() ).to be false
       end
     end
     describe "#is_visible()" do
-      it "returns true" do
-        expect( subject.is_visible() ).to be_true
+      it "is true" do
+        expect( subject.is_visible() ).to be true
       end
     end
   end

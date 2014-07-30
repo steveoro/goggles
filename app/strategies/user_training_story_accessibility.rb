@@ -5,7 +5,7 @@
 # policy.
 #
 # @author   Steve A.
-# @version  4.00.335
+# @version  4.00.383
 #
 class UserTrainingStoryAccessibility
 
@@ -23,7 +23,7 @@ class UserTrainingStoryAccessibility
   # Returns +true+ when successful.
   #
   def is_owned()
-    (
+    !!(
       @user_training_story && 
       ( 
         @is_admin_logged_in ||
@@ -36,7 +36,7 @@ class UserTrainingStoryAccessibility
   # Returns +true+ when successful.
   #
   def is_visible()
-    (
+    !!(
       @user_training_story && 
       ( 
         @is_admin_logged_in ||

@@ -110,7 +110,7 @@ describe TrainingsHelper do
           expect( helper.send(method_name.to_sym, non_shared_fixture) ).not_to be_nil
         end
         it "returns always a non-empty text" do
-          expect( helper.send(method_name.to_sym, non_shared_fixture).size > 0 ).to be_true
+          expect( helper.send(method_name.to_sym, non_shared_fixture).size > 0 ).to be true
         end
       end
     end
@@ -140,7 +140,7 @@ describe TrainingsHelper do
           expect( helper.send(method_name.to_sym, owned_fixture) ).not_to be_nil
         end
         it "returns always a non-empty text" do
-          expect( helper.send(method_name.to_sym, owned_fixture).size > 0 ).to be_true
+          expect( helper.send(method_name.to_sym, owned_fixture).size > 0 ).to be true
         end
       end
     end

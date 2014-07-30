@@ -154,7 +154,7 @@ describe MeetingSession do
         it "returns a comma-separated list of event descriptions" do
           result = subject.get_short_events.split(',')
           expect( result ).to be_an_instance_of( Array )
-          expect( result.size > 0 ).to be_true
+          expect( result.size > 0 ).to be true
           result.each do |short_desc|
             expect( short_desc ).to be_an_instance_of( String )
           end

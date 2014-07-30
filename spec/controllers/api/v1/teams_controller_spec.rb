@@ -27,7 +27,7 @@ describe Api::V1::TeamsController do
       end
       it "returns a positive integer for a team with meetings" do
         result_count = response.body.to_i 
-        expect( result_count > 0 ).to be_true
+        expect( result_count > 0 ).to be true
       end
     end
   end
@@ -54,7 +54,7 @@ describe Api::V1::TeamsController do
       end
       it "returns a positive integer for a team with results" do
         result_count = response.body.to_i 
-        expect( result_count > 0 ).to be_true
+        expect( result_count > 0 ).to be true
       end
     end
   end

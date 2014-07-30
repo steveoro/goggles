@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 # Leega
-# Probably good idea to generalize some testa as the method failure due to a non logged user
+# Probably good idea to generalize some tests as the method failure due to a non logged user
 # or non confimred swimmer
 
 describe PassagesController do
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   context "authorizated actions" do
     # Leega
@@ -25,9 +24,8 @@ describe PassagesController do
    
   context "as a logged-in user who is a confirmed goggler" do
     # Action performed before next specs
-    login_user()
     before :each do
-      #@user.swimmer = create(:swimmer)
+      login_user()
       @swimmer = create(:swimmer)
       @user.set_associated_swimmer( @swimmer )
       another_goggler_confirmator = create(:user)
@@ -35,9 +33,9 @@ describe PassagesController do
     end
 
     # Leega
-    # FIXME Shuold verify the private method used by before filter works properly
+    # FIXME Should verify the private method used by before filter works properly
     #it "has current_user correctly set" do
-    #  expect( subject.current_user_have_enough_confirmations! ).to be_true
+    #  expect( subject.current_user_have_enough_confirmations! ).to be true
     #end
     
     describe '[GET #index]' do

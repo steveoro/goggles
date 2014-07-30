@@ -166,16 +166,16 @@ describe RecordCollection do
     it "returns true when successful" do
       subject.clear
       subject.add(fixture)
-      expect( subject.delete(fixture) ).to be_true
+      expect( subject.delete(fixture) ).to be true
     end
     it "returns false when nothing has been done" do
       subject.clear
-      expect( subject.delete(fixture) ).to be_false
+      expect( subject.delete(fixture) ).to be false
     end
     it "deletes successfully the specified element from the internal list" do
       subject.clear
       subject.add(fixture)
-      expect( subject.delete(fixture) ).to be_true
+      expect( subject.delete(fixture) ).to be true
     end
     it "removes the specified element from the internal list" do
       subject.delete(fixture)
@@ -186,7 +186,7 @@ describe RecordCollection do
           fixture.category_type.code,
           fixture.gender_type.code
         )
-      ).to be_false
+      ).to be false
     end
     it "decreases the size of the internal list" do
       subject.add(fixture)
@@ -207,16 +207,16 @@ describe RecordCollection do
     it "returns true when successful" do
       subject.clear
       subject.add(fixture)
-      expect( subject.delete_with_key(encoded_key) ).to be_true
+      expect( subject.delete_with_key(encoded_key) ).to be true
     end
     it "returns false when nothing has been done" do
       subject.clear
-      expect( subject.delete_with_key(encoded_key) ).to be_false
+      expect( subject.delete_with_key(encoded_key) ).to be false
     end
     it "deletes successfully the specified element from the internal list" do
       subject.clear
       subject.add(fixture)
-      expect( subject.delete_with_key(encoded_key) ).to be_true
+      expect( subject.delete_with_key(encoded_key) ).to be true
     end
     it "removes the specified element from the internal list" do
       subject.delete_with_key(encoded_key)
@@ -227,7 +227,7 @@ describe RecordCollection do
           fixture.category_type.code,
           fixture.gender_type.code
         )
-      ).to be_false
+      ).to be false
     end
     it "decreases the size of the internal list" do
       subject.add(fixture)
@@ -333,12 +333,12 @@ describe RecordCollection do
     it "returns true for an existing record" do
       expect(
         subject.has_record_for( pool_type_code2, event_type_code2, category_type_code2, gender_type_code2 )
-      ).to be_true
+      ).to be true
     end    
     it "returns false for a non existing record" do
       expect(
         subject.has_record_for( '45', event_type_code2, 'M85', gender_type_code2 )
-      ).to be_false
+      ).to be false
     end    
   end
 
@@ -352,12 +352,12 @@ describe RecordCollection do
     it "returns true for an existing record" do
       expect(
         subject.has_any_record_for( pool_type_code2, event_type_code2, gender_type_code2 )
-      ).to be_true
+      ).to be true
     end    
     it "returns false for a non existing record" do
       expect(
         subject.has_any_record_for( '45', event_type_code2, gender_type_code2 )
-      ).to be_false
+      ).to be false
     end    
   end
 
@@ -369,14 +369,14 @@ describe RecordCollection do
       subject.add(tie_fixture2)
       expect(
         subject.has_tie_in_for( tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code )
-      ).to be_true
+      ).to be true
     end    
     it "returns false for a record w/o tie-ins" do
       subject.clear()
       subject.add(fixture)
       expect(
         subject.has_tie_in_for( fixture.pool_type.code, fixture.event_type.code, fixture.category_type.code, fixture.gender_type.code )
-      ).to be_false
+      ).to be false
     end    
   end
   #-- -------------------------------------------------------------------------

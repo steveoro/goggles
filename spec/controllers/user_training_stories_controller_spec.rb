@@ -5,15 +5,12 @@ require 'common/format'
 
 
 describe UserTrainingStoriesController do
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   it_behaves_like( "(generic CRUD controller actions)", "user_training_stories", "UserTrainingStoryDecorator" )
 
-
   describe '[GET #show]' do
-
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "accepts the request for a shared story" do
         fixture = create( :user_training_story )
@@ -34,9 +31,8 @@ describe UserTrainingStoriesController do
 
 
   describe '[GET #edit]' do
-
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       # Expect that a user should not be able to invoke this action on any user_training, but just on its own
       it "refuses the request for a shared story (not belonging to self)" do
@@ -59,7 +55,7 @@ describe UserTrainingStoriesController do
 
   describe '[PUT #update]' do
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       # Expect that a user should not be able to invoke this action on any user_training, but just on its own
       it "refuses the request for a shared training (not belonging to self)" do
@@ -82,7 +78,7 @@ describe UserTrainingStoriesController do
 
   describe '[DELETE]' do
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       # Expect that a user should not be able to invoke this action on any user_training, but just on its own
       it "refuses the request for a shared training (not belonging to self)" do

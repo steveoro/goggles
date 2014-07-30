@@ -25,7 +25,6 @@ require 'spec_helper'
 # - decorator_name  => the string name of the Decorator class
 # 
 shared_examples_for "(generic CRUD controller actions)" do |table_name, decorator_name|
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   let( :model_name )              { table_name.classify }
   let( :model_name_sym )          { table_name.classify.underscore.to_sym }
@@ -41,7 +40,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "populates the search grid" do
         get :index
@@ -68,8 +67,8 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
       before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        login_user()
         @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
       end
 
@@ -89,7 +88,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       it "renders the show template" do
         get :show, id: @fixture.id
-        expect( controller.params[:id].to_i == @fixture.id ).to be_true 
+        expect( controller.params[:id].to_i == @fixture.id ).to be true 
         expect(response.status).to eq(200)
         expect(response).to render_template(:show)
       end
@@ -108,7 +107,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "assigns an instance with default values" do
         get :new
@@ -135,8 +134,8 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
       before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        login_user()
         @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
       end
 
@@ -151,7 +150,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       it "renders the edit template" do
         get :edit, id: @fixture.id
-        expect( controller.params[:id].to_i == @fixture.id ).to be_true 
+        expect( controller.params[:id].to_i == @fixture.id ).to be true 
         expect(response.status).to eq(200)
         expect(response).to render_template(:edit)
       end
@@ -172,7 +171,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       context "with valid attributes" do
         it "creates a new row" do
@@ -209,7 +208,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     context "unlogged user" do
       it "fails the update" do                      # Check that we have different attributes, usable for an update:
         fixture = create( model_name_sym )
-        expect( entity_attrs.values != fixture.attributes.values ).to be_true
+        expect( entity_attrs.values != fixture.attributes.values ).to be true
                                                     # Try the update without logging in:
         put :update, id: fixture.id, model_name_sym => entity_attrs
         fixture.reload                             # The update should not have persisted:
@@ -218,14 +217,14 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
           entity_attrs.values.all? do |value|       # Checking strings works well with include:
             fixture_data_values.include?( value.to_s )
           end
-        ).to be_false                               # (At least a field should be different)
+        ).to be_falsey                              # (At least a field should be different)
       end
     end
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
       before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        login_user()
         @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
       end
 
@@ -280,8 +279,8 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
       before :each do                               # Skip social privacy issues by checking only content available to the current user:
+        login_user()
         @fixture = ( model_name.constantize.instance_methods.include?(:user=) ? create(model_name_sym, user: @user) : create(model_name_sym) )
       end
 

@@ -5,14 +5,12 @@ require 'common/format'
 
 
 describe TrainingsController do
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   it_behaves_like( "(generic CRUD controller actions)", "trainings", "TrainingDecorator" )
 
-
   describe '[GET #show]' do
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "assigns a decorator for the details to be shown" do
         fixture = create( :training_with_rows )
@@ -28,7 +26,7 @@ describe TrainingsController do
 
   describe '[GET #edit]' do
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       # Expect that a user should not be able to invoke this action on any user_training, but just on its own
       it "refuses the request for a shared training (not belonging to self)" do
@@ -49,7 +47,7 @@ describe TrainingsController do
         get :edit, id: fixture.id
         expect( response.status ).to eq(200)
         expect( assigns(:training_max_part_order) ).not_to be_nil 
-        expect( assigns(:training_max_part_order) >= 0 ).to be_true 
+        expect( assigns(:training_max_part_order) >= 0 ).to be true 
       end
     end
   end
@@ -59,7 +57,7 @@ describe TrainingsController do
 
   describe '[PUT #update]' do
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       # Expect that a user should not be able to invoke this action on any user_training, but just on its own
       it "refuses the request for a shared training (not belonging to self)" do
@@ -82,7 +80,7 @@ describe TrainingsController do
 
   describe '[DELETE]' do
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       # Expect that a user should not be able to invoke this action on any user_training, but just on its own
       it "refuses the request for a shared training (not belonging to self)" do
@@ -113,7 +111,7 @@ describe TrainingsController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
         get :printout, id: 0
@@ -152,7 +150,7 @@ describe TrainingsController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
         post :duplicate, id: 0
@@ -162,10 +160,10 @@ describe TrainingsController do
       context "(having an accessible training with rows)" do
         before :each do
           @fixture = create(:training_with_rows, user: @user)
-          expect( @fixture.training_rows.size > 1 ).to be_true
+          expect( @fixture.training_rows.size > 1 ).to be true
           @fixture.training_rows.each do |detail_row|
             expect( detail_row ).not_to be_nil
-            expect( detail_row.part_order >= 0 ).to be_true
+            expect( detail_row.part_order >= 0 ).to be true
           end
         end
 
@@ -207,7 +205,7 @@ describe TrainingsController do
             # Retrieve the source detail row:
             part_order = comparable_dup_attrs['part_order']
             expect( part_order ).not_to be_nil
-            expect( part_order >= 0 ).to be_true
+            expect( part_order >= 0 ).to be true
             source_detail_row = @fixture.training_rows.where( part_order: part_order ).first
             expect( source_detail_row ).not_to be_nil
             # Now check each duplicated detail column with its equivalent source attribute:
@@ -237,7 +235,7 @@ describe TrainingsController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
         post :create_user_training, id: 0
@@ -247,10 +245,10 @@ describe TrainingsController do
       context "(having an accessible training with rows)" do
         before :each do
           @fixture = create(:training_with_rows, user: @user)
-          expect( @fixture.training_rows.size > 1 ).to be_true
+          expect( @fixture.training_rows.size > 1 ).to be true
           @fixture.training_rows.each do |detail_row|
             expect( detail_row ).not_to be_nil
-            expect( detail_row.part_order >= 0 ).to be_true
+            expect( detail_row.part_order >= 0 ).to be true
           end
         end
 
@@ -289,7 +287,7 @@ describe TrainingsController do
             # Retrieve the source detail row:
             part_order = comparable_dup_attrs['part_order']
             expect( part_order ).not_to be_nil
-            expect( part_order >= 0 ).to be_true
+            expect( part_order >= 0 ).to be true
             source_detail_row = @fixture.training_rows.where( part_order: part_order ).first
             expect( source_detail_row ).not_to be_nil
             # Now check each duplicated detail column with its equivalent source attribute:

@@ -91,7 +91,7 @@ describe Api::V1::NewsFeedsController do
         post :create, format: :json, news_feed: @news_feed, user_email: @user.email, user_token: @user.authentication_token
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
-        expect( result['id'] > 0 ).to be_true
+        expect( result['id'] > 0 ).to be true
       end
       it "adds a news-feed row" do
         expect {

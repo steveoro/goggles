@@ -91,7 +91,7 @@ shared_examples_for "SwimmerRelatable" do
 #        CategoryType.select(:code).all.uniq.any?{ |row| 
 #          row.code == subject.get_swimmer_current_category
 #        }
-#      ).to be_true
+#      ).to be true
 #    end
 #  end
   #-- -------------------------------------------------------------------------

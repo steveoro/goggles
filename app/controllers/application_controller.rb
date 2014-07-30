@@ -3,7 +3,7 @@
 
 = ApplicationController
 
-  - version:  1.00.001
+  - version:  4.00.383
   - author:   Steve A.
 
   Main Application controller.
@@ -16,8 +16,8 @@ class ApplicationController < ActionController::Base
   acts_as_token_authentication_handler_for User
   # [Steve, 20140409] Disabling the auth filters by default will allow us to choose
   # with increased granularity which controllers must be protected:
-  skip_before_filter :authenticate_entity_from_token!
-  skip_before_filter :authenticate_entity!
+  skip_before_filter :authenticate_user_from_token!
+  skip_before_filter :authenticate_user!
 
 # XXX Comment/Uncomment this to show or skip the 'better-errors' output page with stack trace:
 #  rescue_from Exception, :with => :handle_exception

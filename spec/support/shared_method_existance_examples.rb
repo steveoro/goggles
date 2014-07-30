@@ -99,9 +99,9 @@ shared_examples_for "(the existance of a method returning a boolean value)" do |
     it "##{method_name} returns a boolean" do
       result = subject.send(method_name.to_sym)
       if result
-        expect( result == true ).to be_true
+        expect( result == true ).to be true
       else
-        expect( result == false ).to be_true
+        expect( result == false ).to be true
       end
     end
   end
@@ -131,9 +131,9 @@ shared_examples_for "(the existance of a method with parameters, returning boole
     it "##{method_name} returns a boolean value" do
       result = subject.send(method_name.to_sym, parameter)
       if result
-        expect( result == true ).to be_true
+        expect( result == true ).to be true
       else
-        expect( result == false ).to be_true
+        expect( result == false ).to be true
       end
     end
   end
@@ -192,7 +192,7 @@ shared_examples_for "(the existance of a method returning an Enumerable of non-e
       it "returns a list of non-empty Strings" do
         subject.send(method_name.to_sym).each do |element|
           expect( element ).to be_an_instance_of( String )
-          expect( element.size > 0 ).to be_true
+          expect( element.size > 0 ).to be true
         end
       end
     end

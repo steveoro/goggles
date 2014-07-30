@@ -23,7 +23,7 @@ class TrainingAccessibility
   # Returns +true+ when successful.
   #
   def is_owned()
-    (
+    !!(
       @training && 
       ( 
         @is_admin_logged_in || ( @current_user && (@training.user_id == @current_user.id) ) 
@@ -35,7 +35,7 @@ class TrainingAccessibility
   # Returns +true+ when successful.
   #
   def is_visible()
-    @training && ( @is_admin_logged_in || @current_user )
+    !!( @training && ( @is_admin_logged_in || @current_user ) )
   end
   #-- --------------------------------------------------------------------------
   #++

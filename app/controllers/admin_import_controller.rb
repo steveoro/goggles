@@ -4,6 +4,14 @@ require 'common/format'
 require 'parsers/data_importer'
 
 
+=begin
+
+= AdminImportController
+
+  - version:  4.00.383
+  - author:   Steve A.
+
+=end
 class AdminImportController < ApplicationController
 
   layout 'admin_import'

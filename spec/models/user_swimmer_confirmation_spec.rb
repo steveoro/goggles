@@ -60,9 +60,11 @@ describe UserSwimmerConfirmation do
     #++
 
     describe "self.unconfirm_for()" do
-      it "returns true when the association exists" do
+      it "is truthy when the association exists" do
         confirmation = create( :user_swimmer_confirmation )
-        expect( subject.class.unconfirm_for(confirmation.user, confirmation.swimmer, confirmation.confirmator) ).to be_true
+        expect(
+          subject.class.unconfirm_for(confirmation.user, confirmation.swimmer, confirmation.confirmator)
+        ).to be_truthy
       end
 
       it "removes a row when successful" do
@@ -72,15 +74,15 @@ describe UserSwimmerConfirmation do
         }.to change{ subject.class.count }.by(-1)
       end
 
-      it "returns false when the association does not exist" do
-        expect( subject.class.unconfirm_for(@user, @swimmer, @confirmator) ).to be_false
+      it "is falsey when the association does not exist" do
+        expect( subject.class.unconfirm_for(@user, @swimmer, @confirmator) ).to be_falsey
       end
 
-      it "returns false on parameter error" do
+      it "is falsey on parameter error" do
         confirmation = create( :user_swimmer_confirmation )
-        expect( subject.class.unconfirm_for(nil, confirmation.swimmer, confirmation.confirmator) ).to be_false
-        expect( subject.class.unconfirm_for(confirmation.user, nil, confirmation.confirmator) ).to be_false
-        expect( subject.class.unconfirm_for(confirmation.user, confirmation.swimmer, nil) ).to be_false
+        expect( subject.class.unconfirm_for(nil, confirmation.swimmer, confirmation.confirmator) ).to be_falsey
+        expect( subject.class.unconfirm_for(confirmation.user, nil, confirmation.confirmator) ).to be_falsey
+        expect( subject.class.unconfirm_for(confirmation.user, confirmation.swimmer, nil) ).to be_falsey
       end
     end
     #-- -----------------------------------------------------------------------

@@ -16,15 +16,15 @@ describe ExercisesController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
+      before(:each) { login_user() }
 
       it "handles successfully the request" do
-        xhr :get, :json_list
+        xhr( :get, :json_list )
         expect(response.status).to eq(200)     # 302 (redirect) means the user is not logged in
       end
 
       it "retrieves a list of rows" do
-        xhr :get, :json_list
+        xhr( :get, :json_list )
         expect( response.body ).not_to be_nil
         # FIXME this does not check that the response contains an actual JSON array of rows
         expect( response.body ).to include( 'label', 'value', 'tot_distance', 'tot_secs' )
@@ -35,7 +35,7 @@ describe ExercisesController do
       end
 
       it "retrieves a single row with details" do
-        xhr :get, :json_list, id: 1
+        xhr( :get, :json_list, id: 1 )
         expect( response.body ).not_to be_nil
         # FIXME this does not check that the response contains just a JSONified row
         expect( response.body ).to include( 'label', 'value', 'tot_distance', 'tot_secs' )

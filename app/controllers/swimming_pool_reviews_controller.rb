@@ -1,11 +1,9 @@
 # encoding: utf-8
-
-
 =begin
 
 = SwimmingPoolReviewsController
 
-  - version:  4.00.339.20140707
+  - version:  4.00.383
   - author:   Steve A.
 
 =end
@@ -14,8 +12,8 @@ class SwimmingPoolReviewsController < ApplicationController
   respond_to :html, :json
 
   # Require authorization before invoking some of this controller's actions:
-  before_filter :authenticate_entity_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
-  before_filter :authenticate_entity!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
+  before_filter :authenticate_user_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
+  before_filter :authenticate_user!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 

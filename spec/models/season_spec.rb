@@ -58,21 +58,21 @@ describe Season do
     end
 
     it "#is_season_ended_at should evaluate dates" do 
-      expect( subject.is_season_ended_at( subject.end_date + 365 ) ).to be_true
-      expect( subject.is_season_ended_at( subject.end_date - 365 ) ).to be_false       
+      expect( subject.is_season_ended_at( subject.end_date + 365 ) ).to be true
+      expect( subject.is_season_ended_at( subject.end_date - 365 ) ).to be false       
 
       subject.begin_date = Date.today - 465
       subject.end_date = Date.today - 100
-      expect( subject.is_season_ended_at() ).to be_true       
+      expect( subject.is_season_ended_at() ).to be true       
 
       subject.begin_date = Date.today - 265
       subject.end_date = Date.today + 100
-      expect( subject.is_season_ended_at() ).to be_false       
+      expect( subject.is_season_ended_at() ).to be false       
 
       subject.end_date = nil
-      expect( subject.is_season_ended_at(Date.parse('2025-12-31')) ).to be_false       
-      expect( subject.is_season_ended_at(Date.parse('1999-01-01')) ).to be_false       
-      expect( subject.is_season_ended_at() ).to be_false       
+      expect( subject.is_season_ended_at(Date.parse('2025-12-31')) ).to be false       
+      expect( subject.is_season_ended_at(Date.parse('1999-01-01')) ).to be false       
+      expect( subject.is_season_ended_at() ).to be false       
     end
     
     it "has a method to return if a season is started at a certain date" do
@@ -80,14 +80,14 @@ describe Season do
     end
 
     it "#is_season_started_at should evaluate dates" do 
-      expect( subject.is_season_started_at( subject.begin_date + 365 ) ).to be_true
-      expect( subject.is_season_started_at( subject.begin_date - 365 ) ).to be_false
+      expect( subject.is_season_started_at( subject.begin_date + 365 ) ).to be true
+      expect( subject.is_season_started_at( subject.begin_date - 365 ) ).to be false
 
       subject.begin_date = Date.today - 200
-      expect( subject.is_season_started_at() ).to be_true       
+      expect( subject.is_season_started_at() ).to be true       
 
       subject.begin_date = Date.today + 100
-      expect( subject.is_season_started_at() ).to be_false       
+      expect( subject.is_season_started_at() ).to be false       
     end
 
     it "has a method to return the season type" do

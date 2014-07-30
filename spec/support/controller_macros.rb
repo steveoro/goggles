@@ -2,10 +2,16 @@
 
 = ControllerMacros
 
-  - version:  1.00.001
+  - version:  1.02.000
   - author:   Steve A.
 
   Support module for RSpec for defining utility helpers for controller specs.
+  
+  Note that all the methods contained here are meant to be used at the instance
+  level (that is inside a spec example or a block, like a before-hook body).
+  This implies that this module must be included in RSpec configuration using
+  #include (and not #extend).
+
 =end
 module ControllerMacros
   include Rails.application.routes.url_helpers
@@ -33,12 +39,12 @@ module ControllerMacros
   # before each test of the group when invoked.
   # Default RSpec version.
   #
+  # Assigns an @admin User instance with the currently logged-in admin.
+  #
   def login_admin
-    before(:each) do
-      @request.env["devise.mapping"] = :admin
-      @admin = create(:admin)
-      sign_in @admin
-    end
+    @request.env["devise.mapping"] = :admin
+    @admin = create(:admin)
+    sign_in @admin
   end
 
 
@@ -46,16 +52,16 @@ module ControllerMacros
   # before each test of the group when invoked.
   # This version uses the Capybara stack for feature tests.
   #
+  # Assigns an @admin User instance with the currently logged-in admin.
+  #
   def login_admin_with_capybara
-    before(:each) do
-      admin = create(:admin)
-      visit new_admin_session_path()
-      fill_in "user_email", with: @admin.email
-      fill_in "user_password", with: @admin.password
-      click_button I18n.t('devise.new_session_submit')
-      expect(response.status).to eq(200)
-      controller.stub current_user: @admin
-    end
+    admin = create(:admin)
+    visit new_admin_session_path()
+    fill_in "user_email", with: @admin.email
+    fill_in "user_password", with: @admin.password
+    click_button I18n.t('devise.new_session_submit')
+    expect(response.status).to eq(200)
+    controller.stub current_user: @admin
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -65,12 +71,12 @@ module ControllerMacros
   # before each test of the group when invoked.
   # Default RSpec version with Devise-only authentication.
   #
+  # Assigns an @user User instance with the currently logged-in user.
+  #
   def login_user()
-    before(:each) do
-      @request.env["devise.mapping"] = :user
-      @user = create(:user)
-      sign_in @user
-    end
+    @request.env["devise.mapping"] = :user
+    @user = create(:user)
+    sign_in @user
   end
 
 
@@ -78,18 +84,17 @@ module ControllerMacros
   # before each test of the group when invoked.
   # This version uses the Capybara stack for feature tests.
   #
+  # Assigns an @user User instance with the currently logged-in user.
+  #
   def login_user_with_capybara
-    before(:each) do
-      @user = create(:user)
-# Not really required right now:
-#      @request.env["devise.mapping"] = Devise.mappings[:user]
-      visit new_user_session_path()
-      fill_in "user_email", with: @user.email
-      fill_in "user_password", with: @user.password
-      click_button I18n.t('devise.new_session_submit')
-      expect(response.status).to eq(200)
-      controller.stub current_user: @user
-    end
+    @user = create(:user)
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    visit new_user_session_path()
+    fill_in "user_email", with: @user.email
+    fill_in "user_password", with: @user.password
+    click_button I18n.t('devise.new_session_submit')
+    expect(response.status).to eq(200)
+    controller.stub current_user: @user
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -99,6 +104,7 @@ module ControllerMacros
   #
   # GETs the specified <tt>action_sym</tt> (/:id) and
   # expects the response to redirect to the sign-in session page.
+  #
   def get_action_and_check_if_its_the_login_page_for( action_sym, id = nil )
     get action_sym, id: id
     expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'

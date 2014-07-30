@@ -70,7 +70,7 @@ describe RecordGridBuilder do
     end    
     it "clears the internal list" do
       subject.collect_from_results_having('25', '50FA', 'M35', 'M')
-      expect{ subject.count > 0 }.to be_true
+      expect{ subject.count > 0 }.to be true
     end
   end
   #-- -------------------------------------------------------------------------

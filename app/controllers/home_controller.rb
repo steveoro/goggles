@@ -2,6 +2,14 @@
 require 'common/format'
 
 
+=begin
+
+= HomeController
+
+  - version:  4.00.383
+  - author:   Steve A.
+
+=end
 class HomeController < ApplicationController
 
   def index

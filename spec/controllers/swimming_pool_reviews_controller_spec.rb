@@ -2,7 +2,6 @@ require 'spec_helper'
 
 
 describe SwimmingPoolReviewsController do
-  include ControllerMacros                          # ??? This should not be necessary since there's already the extension in the spec_helper!
 
   describe '[GET #index]' do
     context "with a JSON request," do
@@ -15,7 +14,7 @@ describe SwimmingPoolReviewsController do
         get :index, format: :json
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Array)
-        expect( result.size >= 1 ).to be_true
+        expect( result.size >= 1 ).to be true
       end
     end
 
@@ -48,7 +47,7 @@ describe SwimmingPoolReviewsController do
         get :show, format: :json, id: 0
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
-        expect( result['success'] ).to be_false
+        expect( result['success'] ).to be false
       end
     end
     context "with a JSON request and an existing id," do
@@ -218,8 +217,8 @@ describe SwimmingPoolReviewsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before :each do
+        login_user()
         @review.user_id = @user.id
       end
 
@@ -279,8 +278,8 @@ describe SwimmingPoolReviewsController do
     end
 
     context "as a logged-in user" do
-      login_user()
       before :each do
+        login_user()
         @review.user_id = @user.id
       end
 
@@ -326,7 +325,7 @@ describe SwimmingPoolReviewsController do
     # -------------------------------------------------------------------------
 
     context "as a logged-in user who's NOT a confirmed goggler" do
-      login_user()
+      before(:each) { login_user() }
 
       context "with a JSON request," do
         it "refuses the request" do
@@ -355,8 +354,8 @@ describe SwimmingPoolReviewsController do
     # -------------------------------------------------------------------------
 
     context "as a logged-in user who is a confirmed goggler" do
-      login_user()
       before :each do
+        login_user()
         @user.swimmer = create(:swimmer)
         another_goggler_confirmator = create(:user)
         UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, another_goggler_confirmator )
@@ -432,8 +431,8 @@ describe SwimmingPoolReviewsController do
     # -------------------------------------------------------------------------
 
     context "as a logged-in user who's NOT a confirmed goggler" do
-      login_user()
       before :each do
+        login_user()
         @review.user_id = @user.id
       end
       it "doesn't create a new row with an HTML request" do 
@@ -454,8 +453,8 @@ describe SwimmingPoolReviewsController do
     # -------------------------------------------------------------------------
 
     context "as a logged-in user who is a confirmed goggler" do
-      login_user()
       before :each do
+        login_user()
         @user.swimmer = create(:swimmer)
         another_goggler_confirmator = create(:user)
         UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, another_goggler_confirmator )
@@ -496,9 +495,8 @@ describe SwimmingPoolReviewsController do
     # -------------------------------------------------------------------------
 
     context "logged-in user" do
-      login_user()
-
       before :each do
+        login_user()
         @review = create( :swimming_pool_review, user: @user )
       end
 
@@ -564,8 +562,8 @@ describe SwimmingPoolReviewsController do
 
 
     context "as a logged-in user" do
-      login_user()
       before :each do
+        login_user()
         @review.user_id = @user.id
       end
 
@@ -622,8 +620,8 @@ describe SwimmingPoolReviewsController do
 
 
     context "as a logged-in user" do
-      login_user()
       before :each do
+        login_user()
         @review.user_id = @user.id
       end
 
