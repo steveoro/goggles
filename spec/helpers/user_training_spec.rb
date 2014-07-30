@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserTrainingsHelper do
+describe UserTrainingsHelper, :type => :helper do
   include Devise::TestHelpers
   include ERB::Util
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserTrainingStoriesHelper do
+describe UserTrainingStoriesHelper, :type => :helper do
   include Devise::TestHelpers
 
   before :each do

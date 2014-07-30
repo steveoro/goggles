@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserSwimmerConfirmation do
+describe UserSwimmerConfirmation, :type => :model do
   context "[class]" do
     before( :each ) do
       @swimmer = create( :swimmer )

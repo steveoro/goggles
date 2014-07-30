@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe DataImportMeetingProgram do
+describe DataImportMeetingProgram, :type => :model do
   it_behaves_like "TimingGettable"
   # ---------------------------------------------------------------------------
 end

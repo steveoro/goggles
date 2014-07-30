@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Team do
+describe Team, :type => :model do
   describe "[a non-valid instance]" do
     it_behaves_like( "(missing required values)", [ 
       :name, :editable_name

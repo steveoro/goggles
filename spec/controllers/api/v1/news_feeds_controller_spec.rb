@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'json'
 
 
-describe Api::V1::NewsFeedsController do
+describe Api::V1::NewsFeedsController, :type => :controller do
 
   describe '[GET for_user/:id]' do
     before :each do

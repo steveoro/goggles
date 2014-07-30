@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TeamPassageTemplate do
+describe TeamPassageTemplate, :type => :model do
   context "association vs event_type" do
     it "has a method to return id"
 

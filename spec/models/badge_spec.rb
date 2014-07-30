@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Badge do
+describe Badge, :type => :model do
   describe "[a non-valid instance]" do
     it_behaves_like( "(missing required values)", [ :number ])    
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe MeetingEntry do
+describe MeetingEntry, :type => :model do
   it_behaves_like "SwimmerRelatable"
   it_behaves_like "TimingGettable"
   #-- -------------------------------------------------------------------------

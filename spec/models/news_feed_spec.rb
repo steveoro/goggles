@@ -49,7 +49,7 @@ end
 # =============================================================================
 
 
-describe NewsFeed do
+describe NewsFeed, :type => :model do
   context "[class]" do
     it_behaves_like( "(the existance of a class method)", [
       :create_social_feed,

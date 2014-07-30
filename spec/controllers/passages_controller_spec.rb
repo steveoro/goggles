@@ -4,7 +4,7 @@ require 'spec_helper'
 # Probably good idea to generalize some tests as the method failure due to a non logged user
 # or non confimred swimmer
 
-describe PassagesController do
+describe PassagesController, :type => :controller do
 
   context "authorizated actions" do
     # Leega

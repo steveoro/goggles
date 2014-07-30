@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe SwimmersController do
+describe SwimmersController, :type => :controller do
 
   describe '[GET #index]' do
     context "with an HTML request," do
@@ -34,7 +34,7 @@ describe SwimmersController do
       end
       it "redirects to #index" do
         get :radio, id: 0
-        expect( response ).to redirect_to( redirect_to(request.env["HTTP_REFERER"]) ) 
+        expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
       end
     end
 
@@ -88,7 +88,7 @@ describe SwimmersController do
         end
         it "redirects to #index" do
           get action_sym, id: 0
-          expect( response ).to redirect_to( redirect_to(request.env["HTTP_REFERER"]) ) 
+          expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
         end
       end
 

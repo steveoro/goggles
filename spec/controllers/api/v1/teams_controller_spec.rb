@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Api::V1::TeamsController do
+describe Api::V1::TeamsController, :type => :controller do
   before :each do
     @request.env["devise.mapping"] = Devise.mappings[:user]
     @user = create( :user )

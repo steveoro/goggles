@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'json'
 
 
-describe Api::V1::SessionsController do
+describe Api::V1::SessionsController, :type => :controller do
 
 
   describe '[GET api/v1/sessions/create]' do

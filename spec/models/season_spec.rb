@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'date'
 
-describe Season do
+describe Season, :type => :model do
   it_behaves_like "DropDownListable"
   it_behaves_like "UserRelatable"
 

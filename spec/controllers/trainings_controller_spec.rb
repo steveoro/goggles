@@ -4,7 +4,7 @@ require 'date'
 require 'common/format'
 
 
-describe TrainingsController do
+describe TrainingsController, :type => :controller do
 
   it_behaves_like( "(generic CRUD controller actions)", "trainings", "TrainingDecorator" )
 

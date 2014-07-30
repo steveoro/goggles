@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe SwimmingPoolReviewsController do
+describe SwimmingPoolReviewsController, :type => :controller do
 
   describe '[GET #index]' do
     context "with a JSON request," do

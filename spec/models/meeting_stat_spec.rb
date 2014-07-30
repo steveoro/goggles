@@ -31,7 +31,7 @@ end
 # =============================================================================
 
 
-describe MeetingStat do
+describe MeetingStat, :type => :model do
   subject {
     #subject { create( :meeting_complete ) }
     # Pre-loaded seeded last two years CSI season

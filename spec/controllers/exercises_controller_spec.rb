@@ -4,7 +4,7 @@ require 'date'
 require 'common/format'
 
 
-describe ExercisesController do
+describe ExercisesController, :type => :controller do
 
   describe '[AJAX #json_list]' do
     context "unlogged user" do

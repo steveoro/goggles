@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe CategoryType do
+describe CategoryType, :type => :model do
   it_behaves_like "DropDownListable"
 
   describe "[a non-valid instance]" do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SwimmingPoolReview do
+describe SwimmingPoolReview, :type => :model do
 
   context "[a well formed instance]" do
     subject { create(:swimming_pool_review) }

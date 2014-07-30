@@ -9,7 +9,7 @@ end
 
 # This will auto-generate API-blueprint docs under /api_docs/sessions.txt:
 #
-describe 'Sessions Requests' do
+describe 'Sessions Requests', :type => :request do
   before :each do
     @user = create( :user )
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserTrainingStory do
+describe UserTrainingStory, :type => :model do
   context "[a well formed instance]" do
     subject { create(:user_training_story) }
 

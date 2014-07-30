@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Exercise do
+describe Exercise, :type => :model do
   context "[a well formed instance]" do
     subject { Exercise.find_by_id( ((rand * 500) % Exercise.count).to_i + 1 ) }
 

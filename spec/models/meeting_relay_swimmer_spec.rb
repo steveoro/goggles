@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe MeetingRelaySwimmer do
+describe MeetingRelaySwimmer, :type => :model do
   it_behaves_like "TimingGettable"
   #-- -------------------------------------------------------------------------
   #++

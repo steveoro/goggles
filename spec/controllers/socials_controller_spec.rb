@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe SocialsController do
+describe SocialsController, :type => :controller do
   before :each do
     @swimming_buddy = create( :user )
     @unlogged_user = create( :user )

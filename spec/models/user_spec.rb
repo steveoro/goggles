@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe User do
+describe User, :type => :model do
   it_behaves_like "DropDownListable"
 
   context "[a well formed instance]" do

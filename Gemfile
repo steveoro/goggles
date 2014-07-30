@@ -95,8 +95,8 @@ end
 
 
 group :test do
-  gem "rspec", '~> 2.99'
-  gem "rspec-rails"
+  gem "rspec", '~> 3'
+  gem "rspec-rails", '~> 3'
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   gem "factory_girl_rails"
   gem 'guard'

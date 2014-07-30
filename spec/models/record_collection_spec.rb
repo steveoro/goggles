@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe RecordCollection do
+describe RecordCollection, :type => :model do
   # Use pre-loaded seeds:
   let( :results )   { MeetingIndividualResult.where( swimmer_id: 142 ) }
   let( :fixture )   { results.at( ((rand * 1000) % results.size).to_i ) }
