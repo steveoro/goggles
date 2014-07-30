@@ -17,19 +17,33 @@
       = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
   .row-fluid
     .span12
-      %p= "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}: #{@season.get_full_name}" 
-      %p= "#{@gender_type.get_full_name} #{@category_type.get_full_name}" 
+      %p= "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}: #{@current_season.get_full_name}" 
+      %p= I18n.t('activerecord.models.gender_type') + ": #{@swimmer_gender.i18n_description}" 
+      %p= I18n.t('activerecord.models.category_type') + ": #{@swimmer_category.get_short_name}" 
 
-      = form_tag( :misc, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
-        .control-group
-          = label_tag( :misc_cmd, t('admin_index.bundle_cmd'), :for => :misc_cmd, class: 'control-label' )
-          .controls
-            = text_field_tag( :minutes, 0, class: 'input-xxlarge' )
-            = text_field_tag( :seconds, 0, class: 'input-xxlarge' )
-            = text_field_tag( :hundreds, 0, class: 'input-xxlarge' )
-      
-        .control-group
-          .controls
-            = submit_tag( I18n.t('admin_index.go'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
-            %span(id='loadingIndicator' hidden='true')
-              = image_tag( 'indicator.gif' )
+  .row-fluid
+    .span12
+      = form_tag( :swimmer_misc, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+        .row-fluid
+          .control-group
+            = label_tag( :pool_type, I18n.t('activerecord.models.pool_type'), :for => :pool_type, class: 'control-label' )
+            .controls
+              = select( :pool_type, :id, PoolType.to_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
+          .control-group
+            = label_tag( :event_type, I18n.t('activerecord.models.event_type'), :for => :event_type, class: 'control-label' )
+            .controls
+              = select( :event_type, :id, EventType.to_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
+        .row-fluid
+          .control-group
+            = label_tag( :timing, t('radiography.timing'), :for => :timing, class: 'control-label' )
+            .controls
+              = text_field_tag( :minutes, 0, class: 'input-small' )
+              = text_field_tag( :seconds, 0, class: 'input-small' )
+              = text_field_tag( :hundreds, 0, class: 'input-small' )
+        .row-fluid
+          .control-group
+            .controls
+              = submit_tag( I18n.t('radiography.compute'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+              %span(id='loadingIndicator' hidden='true')
+                = image_tag( 'indicator.gif' )
+  

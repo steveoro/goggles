@@ -584,6 +584,9 @@ en:
     total_wooden_medals: "Wood Medals tot. [:-)]"
     total_season_records: "Season Records held"
     palmares: "Palmares"
+    compute: "Compute"
+    timing: "Timing"
+    wrong_timing: "Wrong timing. Please review timing inserted"
 
   misc_main_menu:
     title: "Misc"

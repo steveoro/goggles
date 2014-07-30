@@ -1,4 +1,7 @@
+require 'drop_down_listable'
+
 class EventType < ActiveRecord::Base
+  include DropDownListable
 
   belongs_to :stroke_type
   validates_presence_of :stroke_type                # (must be not null)

@@ -585,6 +585,9 @@ it:
     total_wooden_medals: "Tot. Medaglie Legno [:-)]"
     total_season_records: "Record Stagionali detenuti"
     palmares: "Palmares"
+    compute: "Calcola"
+    timing: "Tempo di gara"
+    wrong_timing: "Tempo non ammissimbile. Verifica il tempo immesso"
 
   misc_main_menu:
     title: "Varie"
