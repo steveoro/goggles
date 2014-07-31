@@ -22,18 +22,17 @@
                 = text_field_tag( :year, nil, :class=>'input-mini', :autocomplete => 'off', 'data-provide' => 'typeahead', 'data-source'=>(2000 .. Date.today.year+1).to_a.collect{|e|e.to_s}.to_s, :placeholder=>Date.today.year )
               %script
                 $('.typeahead').typeahead();
+
           .row-fluid
             .control-group
-              = label_tag( :team, I18n.t(:team, { scope: [:activerecord, :models] }), :for => :team, class: 'control-label' )
+              #tooltipLabel= label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
               .controls
-                = select( :team, :team_id, Team.to_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-xlarge' } )
-          .row-fluid
-            .control-group
-              = label_tag( :a_date, I18n.t('any_date'), :for => :a_date, class: 'control-label' )
-              .controls
-                = text_field_tag( :a_date, nil, :class=>'input-small', :placeholder=>Date.today )
+                .ui-widget
+                  = select( :team, :id, Team.to_dropdown(), { class: 'input-xxlarge' } )
               %script
-                $('#a_date').datepicker({changeMonth: true, changeYear: true});
+                $('#team_id').combobox();
+                $('#tooltipLabel').tooltip();
+
           .row-fluid
             .control-group
               .controls

@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = Swimmer
 
-  - version:  4.00.369
+  - version:  4.00.389
   - author:   Steve A.
 
 =end
@@ -235,21 +235,15 @@ class Swimmer < ActiveRecord::Base
   # Returns the best-ever MeetingIndividualResult according to the not-null standard points registered.
   # +nil+ when not found.
   #
-  def get_best_individual_result
-    meeting_individual_results.is_valid
-      .where('standard_points > 0 OR meeting_individual_points > 0 OR team_points > 0')
-      .order(:standard_points).order(:meeting_individual_points).order(:team_points)
-      .last
+  def get_best_individual_result( score_method_sym = :standard_points )
+    meeting_individual_results.is_valid.order( score_method_sym ).last
   end
 
   # Returns the worst-ever MeetingIndividualResult according to the not-null standard points registered.
   # +nil+ when not found.
   #
-  def get_worst_individual_result
-    meeting_individual_results.is_valid
-      .where('standard_points > 0 OR meeting_individual_points > 0 OR team_points > 0')
-      .order(:standard_points).order(:meeting_individual_points).order(:team_points)
-      .first
+  def get_worst_individual_result( score_method_sym = :standard_points )
+    meeting_individual_results.is_valid.order( score_method_sym ).first
   end
 
   # Returns the total count of registered disqualifications
