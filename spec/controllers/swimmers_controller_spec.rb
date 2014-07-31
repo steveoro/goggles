@@ -217,9 +217,9 @@ describe SwimmersController, :type => :controller do
     context "as a logged-in user, " do
       let(:event_type_id) { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types in the seeds
       let(:pool_type_id)  { ((rand * 100) % 2).to_i + 1 } # ASSERT: 25 and 50 meters type should exists
-      #let(:minutes)  { ((rand * 2) % 2).to_i + 1 }
-      #let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
-      #let(:hundreds)  { ((rand * 99) % 99).to_i + 1 }
+      let(:minutes)  { ((rand * 2) % 2).to_i + 1 }
+      let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
+      let(:hundreds)  { ((rand * 99) % 99).to_i + 1 }
 
       before(:each) do
         login_user()
@@ -233,7 +233,10 @@ describe SwimmersController, :type => :controller do
             :misc,
             id: @swimmer.id,
             event_type: {id: 0},
-            pool_type:  {id: pool_type_id}
+            pool_type:  {id: pool_type_id},
+            minutes: minutes,
+            seconds: seconds,
+            hundreds: hundreds
           )
         end
         it "handles the request with a redirect" do
@@ -277,9 +280,9 @@ describe SwimmersController, :type => :controller do
             id: @swimmer.id,
             event_type: {id: event_type_id},
             pool_type:  {id: pool_type_id},
-            minutes: 0,
-            seconds: 31,                              # Force valid timing
-            hundreds: 42
+            minutes: minutes,
+            seconds: seconds,
+            hundreds: hundreds
           )
         end
         it "handles successfully the request" do
@@ -300,10 +303,18 @@ describe SwimmersController, :type => :controller do
         it "assigns a gender_type" do
           expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
         end 
+        
         it "event type is in event_by_pool_type for current season"
-        it "assigns timing data"
-        it "timing data inserted is a valid timing"
-        it "assigns a positive result score"
+        
+        it "assigns timing data" do
+          expect( assigns(:timing) ).to be_an_instance_of( Timing )        
+        end 
+        it "timing data inserted is a valid timing" do
+          expect( assigns(:timing).to_hundreds ).to be > 0        
+        end 
+        it "assigns a positive result score" do
+          expect( assigns(:standard_points) ).to be >= 0        
+        end 
       end
     end
   end
