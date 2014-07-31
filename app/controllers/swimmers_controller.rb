@@ -136,7 +136,7 @@ class SwimmersController < ApplicationController
       hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
       @timing = Timing.new( hundreds, seconds, minutes ) 
 
-      if @timing
+      if @timing && @timing.to_hundreds > 0
         # Leega: TODO
         # - Calculate FIN standard points
         # - Render the result with verbose cosmetics data such as

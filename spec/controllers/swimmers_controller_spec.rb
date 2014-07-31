@@ -217,6 +217,9 @@ describe SwimmersController, :type => :controller do
     context "as a logged-in user, " do
       let(:event_type_id) { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types in the seeds
       let(:pool_type_id)  { ((rand * 100) % 2).to_i + 1 } # ASSERT: 25 and 50 meters type should exists
+      #let(:minutes)  { ((rand * 2) % 2).to_i + 1 }
+      #let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
+      #let(:hundreds)  { ((rand * 99) % 99).to_i + 1 }
 
       before(:each) do
         login_user()
@@ -243,6 +246,29 @@ describe SwimmersController, :type => :controller do
           expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) ) 
         end
       end
+      
+      context "with an invalid timing" do
+        before(:each) do
+          post(
+            :misc,
+            id: @swimmer.id,
+            event_type: {id: event_type_id},
+            pool_type:  {id: pool_type_id},
+            minutes: -3,
+            seconds: -2,                              # Force invalid timing
+            hundreds: -1
+          )
+        end
+        it "handles the request with a redirect" do
+          expect(response.status).to eq( 302 )
+        end
+        it "redirects to #misc" do
+          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) ) 
+        end
+        it "displays the flash error message" do
+          expect( flash[:error] ).to include( I18n.t('radiography.wrong_timing') ) 
+        end        
+      end
 
       context "with a correct request" do
         before(:each) do
@@ -250,7 +276,10 @@ describe SwimmersController, :type => :controller do
             :misc,
             id: @swimmer.id,
             event_type: {id: event_type_id},
-            pool_type:  {id: pool_type_id}
+            pool_type:  {id: pool_type_id},
+            minutes: 0,
+            seconds: 31,                              # Force valid timing
+            hundreds: 42
           )
         end
         it "handles successfully the request" do
@@ -271,8 +300,6 @@ describe SwimmersController, :type => :controller do
         it "assigns a gender_type" do
           expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
         end 
-        it "assigns pool type"
-        it "assigns event type"
         it "event type is in event_by_pool_type for current season"
         it "assigns timing data"
         it "timing data inserted is a valid timing"
