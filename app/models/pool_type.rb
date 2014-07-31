@@ -9,6 +9,9 @@ class PoolType < ActiveRecord::Base
   validates_presence_of   :length_in_meters
   validates_length_of     :length_in_meters, maximum: 3, allow_nil: false
 
+  has_many :events_by_pool_types
+
+  scope :only_for_meetings, where(is_suitable_for_meetings: true)
 
   # Unique ID used inside the DB to address a 25 mt. PoolType instance 
   MT25_ID = 1
