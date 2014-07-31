@@ -131,18 +131,40 @@ class SwimmersController < ApplicationController
         flash[:error] = I18n.t(:missing_request_parameter)
         redirect_to( swimmer_misc_path(@swimmer) ) and return
       end
+      @current_pool = PoolType.find_by_id( pool_type_id )
+      @current_event = EventType.find_by_id( event_type_id )
       minutes  = params[:minutes] ? params[:minutes].to_i : -1
       seconds  = params[:seconds] ? params[:seconds].to_i : -1
       hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
       @timing = Timing.new( hundreds, seconds, minutes ) 
 
       if @timing && @timing.to_hundreds > 0
-        # Leega: TODO
-        # - Calculate FIN standard points
-        # - Render the result with verbose cosmetics data such as
-        #   base time, world record holder, national record holder, 
-        #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
-        @standard_points = @timing.to_hundreds / 10  # [Steve] This is just a test to see a result, because... Results are nice :-)
+        # Verify event is ammissible for pool type
+        if @current_event.events_by_pool_types.where(pool_type_id: pool_type_id).count > 0
+          # Find standard time for given data
+          @current_time_standard = TimeStandard.where(
+            season_id:        @current_season.id,
+            gender_type_id:   @swimmer_gender.id, 
+            category_type_id: @swimmer_category.id,
+            pool_type_id:     pool_type_id,
+            event_type_id:    event_type_id
+          ).first
+          if @current_time_standard && @current_time_standard.get_timing_instance.to_hundreds > 0
+            # Leega: TODO
+            # - Calculate FIN standard points
+            # - Render the result with verbose cosmetics data such as
+            #   base time, world record holder, national record holder, 
+            #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
+            
+            @standard_points = @timing.to_hundreds / 10  # [Steve] This is just a test to see a result, because... Results are nice :-)          
+          else
+            # No standard time present. The timing will be the record!
+            @standard_points = 1000                      
+          end
+        else
+          flash[:error] = I18n.t('radiography.wrong_event_or_pool')
+          redirect_to( swimmer_misc_path(@swimmer) ) and return
+        end
       else
         flash[:error] = I18n.t('radiography.wrong_timing')
         redirect_to( swimmer_misc_path(@swimmer) ) and return

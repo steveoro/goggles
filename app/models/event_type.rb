@@ -20,6 +20,7 @@ class EventType < ActiveRecord::Base
   validates_length_of       :style_order, within: 1..3, allow_nil: false
   validates_numericality_of :style_order
 
+  has_many :events_by_pool_types
 
   scope :only_relays,     where(is_a_relay: true)
   scope :are_not_relays,  where(is_a_relay: false)

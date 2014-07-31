@@ -212,31 +212,32 @@ describe SwimmersController, :type => :controller do
         expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
       end
     end
+    # -------------------------------------------------------------------------
 
 
     context "as a logged-in user, " do
-      let(:event_type_id) { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types in the seeds
-      let(:pool_type_id)  { ((rand * 100) % 2).to_i + 1 } # ASSERT: 25 and 50 meters type should exists
-      let(:minutes)  { ((rand * 2) % 2).to_i + 1 }
+      let(:minutes)  { ((rand * 10) % 10).to_i + 1 }
       let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
-      let(:hundreds)  { ((rand * 99) % 99).to_i + 1 }
+      let(:hundreds) { ((rand * 99) % 99).to_i + 1 }
 
       before(:each) do
         login_user()
         request.env["HTTP_REFERER"] = swimmers_path()
         @swimmer = create(:swimmer)
+        # FIXME Create factories with events and pool types not for relays
+        @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
       end
 
-      context "with a partially incorrect request" do
+      context "without pool type or event type" do
         before(:each) do
           post(
             :misc,
-            id: @swimmer.id,
-            event_type: {id: 0},
-            pool_type:  {id: pool_type_id},
-            minutes: minutes,
-            seconds: seconds,
-            hundreds: hundreds
+            id:         @swimmer.id,
+            event_type: {id: 0},  # Force invalid event type and pool type
+            pool_type:  {id: 0},
+            minutes:    minutes,
+            seconds:    seconds,
+            hundreds:   hundreds
           )
         end
         it "handles the request with a redirect" do
@@ -248,18 +249,22 @@ describe SwimmersController, :type => :controller do
         it "displays the flash error message" do
           expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) ) 
         end
+        it "assigns -1 value to standard points" do
+          expect( assigns(:standard_points) ).to eq( -1 )       
+        end
       end
+      # -----------------------------------------------------------------------
       
       context "with an invalid timing" do
         before(:each) do
           post(
             :misc,
-            id: @swimmer.id,
-            event_type: {id: event_type_id},
-            pool_type:  {id: pool_type_id},
-            minutes: -3,
-            seconds: -2,                              # Force invalid timing
-            hundreds: -1
+            id:         @swimmer.id,
+            event_type: {id: @fixture_events_by_pool_type.event_type_id},
+            pool_type:  {id: @fixture_events_by_pool_type.pool_type_id},
+            minutes:    -3,  # Force invalid timing
+            seconds:    -2,
+            hundreds:   -1
           )
         end
         it "handles the request with a redirect" do
@@ -271,18 +276,49 @@ describe SwimmersController, :type => :controller do
         it "displays the flash error message" do
           expect( flash[:error] ).to include( I18n.t('radiography.wrong_timing') ) 
         end        
+        it "assigns -1 value to standard points" do
+          expect( assigns(:standard_points) ).to eq( -1 )       
+        end
       end
+      # -----------------------------------------------------------------------
+
+      context "with not allowed pool type and event type parameters" do
+        before(:each) do
+          post(
+            :misc,
+            id:         @swimmer.id,
+            event_type: {id: EventType.where(code: '100MI').first.id},
+            pool_type:  {id: PoolType.where(code: '50').first.id},
+            minutes:    minutes,
+            seconds:    seconds,
+            hundreds:   hundreds
+          )
+        end
+        it "handles the request with a redirect" do
+          expect(response.status).to eq( 302 )
+        end
+        it "redirects to #misc" do
+          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) ) 
+        end
+        it "displays the flash error message" do
+          expect( flash[:error] ).to include( I18n.t('radiography.wrong_event_or_pool') ) 
+        end        
+        it "assigns -1 value to standard points" do
+          expect( assigns(:standard_points) ).to eq( -1 )       
+        end
+      end
+      # -----------------------------------------------------------------------
 
       context "with a correct request" do
         before(:each) do
           post(
             :misc,
-            id: @swimmer.id,
-            event_type: {id: event_type_id},
-            pool_type:  {id: pool_type_id},
-            minutes: minutes,
-            seconds: seconds,
-            hundreds: hundreds
+            id:         @swimmer.id,
+            event_type: {id: @fixture_events_by_pool_type.event_type_id},
+            pool_type:  {id: @fixture_events_by_pool_type.pool_type_id},
+            minutes:    minutes,
+            seconds:    seconds,
+            hundreds:   hundreds
           )
         end
         it "handles successfully the request" do
@@ -303,19 +339,76 @@ describe SwimmersController, :type => :controller do
         it "assigns a gender_type" do
           expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
         end 
-        
-        it "event type is in event_by_pool_type for current season"
-        
+        it "assigns a pool_type" do
+          expect( assigns(:current_pool) ).to be_an_instance_of( PoolType )        
+        end 
+        it "assigns a event_type" do
+          expect( assigns(:current_event) ).to be_an_instance_of( EventType )        
+        end 
+        it "event type is in event_by_pool_type for current season" do
+          expect( assigns(:current_event).events_by_pool_types.where(pool_type_id: @fixture_events_by_pool_type.pool_type_id).count ).to be > 0 
+        end
         it "assigns timing data" do
           expect( assigns(:timing) ).to be_an_instance_of( Timing )        
         end 
         it "timing data inserted is a valid timing" do
           expect( assigns(:timing).to_hundreds ).to be > 0        
         end 
+      end
+      # -----------------------------------------------------------------------
+        
+      context "without an existing time standard" do
+        before(:each) do
+          post(
+            :misc,
+            id:         @swimmer.id,
+            event_type: {id: @fixture_events_by_pool_type.event_type_id},
+            pool_type:  {id: @fixture_events_by_pool_type.pool_type_id},
+            minutes:    minutes,
+            seconds:    seconds,
+            hundreds:   hundreds
+          )
+        end
+        xit "assigns a 1000 result score" do
+          expect( assigns(:standard_points) ).to be = 1000       
+        end                     
+      end
+      # -----------------------------------------------------------------------
+      
+      context "with an existing time standard" do
+        before(:each) do
+          fixture_current_season = Season.get_last_season_by_type( 'MASFIN' )
+          fixture_time_standard = create(:time_standard,
+            season_id:        fixture_current_season.id,
+            gender_type_id:   @swimmer.gender_type,
+            category_type_id: @swimmer.get_category_type_for_season( fixture_current_season.id ),
+            event_type_id:    @fixture_events_by_pool_type.event_type_id, 
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id
+          )
+          #puts "\r\n - swimmer: #{ @swimmer.inspect }"
+          #puts "- fixture_time_standard: #{ fixture_time_standard.inspect }"
+          #puts "- fixture_events_by_pool_type: #{ @fixture_events_by_pool_type.inspect }"
+          post(
+            :misc,
+            id:         @swimmer.id,
+            event_type: {id: @fixture_events_by_pool_type.event_type_id},
+            pool_type:  {id: @fixture_events_by_pool_type.pool_type_id},
+            minutes:    minutes,
+            seconds:    seconds,
+            hundreds:   hundreds
+          )
+        end
+        it "retreives the standard time" do
+          expect( assigns(:current_time_standard) ).to be_an_instance_of( TimeStandard )        
+        end
+        it "the standard time is valid" do
+          expect( assigns(:current_time_standard).get_timing_instance.to_hundreds ).to be > 0        
+        end
         it "assigns a positive result score" do
           expect( assigns(:standard_points) ).to be >= 0        
-        end 
+        end           
       end
+      # -----------------------------------------------------------------------
     end
   end
   # ===========================================================================

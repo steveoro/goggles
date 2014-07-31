@@ -588,6 +588,7 @@ it:
     compute: "Calcola"
     timing: "Tempo di gara"
     wrong_timing: "Tempo non ammissimbile. Verifica il tempo immesso"
+    wrong_event_or_pool: "Oh, no! La specialità non può essere noutata in questo tipo di vasca"
 
   misc_main_menu:
     title: "Varie"

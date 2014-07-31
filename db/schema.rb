@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140709162307) do
+ActiveRecord::Schema.define(:version => 20140731184807) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1139,11 +1139,12 @@ ActiveRecord::Schema.define(:version => 20140709162307) do
   add_index "passages", ["passage_type_id"], :name => "fk_passages_passage_types"
 
   create_table "pool_types", :force => true do |t|
-    t.integer  "lock_version",                  :default => 0
-    t.string   "code",             :limit => 3,                :null => false
-    t.integer  "length_in_meters", :limit => 3
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.integer  "lock_version",                          :default => 0
+    t.string   "code",                     :limit => 3,                   :null => false
+    t.integer  "length_in_meters",         :limit => 3
+    t.datetime "created_at",                                              :null => false
+    t.datetime "updated_at",                                              :null => false
+    t.boolean  "is_suitable_for_meetings",              :default => true, :null => false
   end
 
   add_index "pool_types", ["code"], :name => "index_pool_types_on_code", :unique => true
