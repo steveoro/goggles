@@ -120,9 +120,9 @@ class SwimmersController < ApplicationController
     @swimmer = SwimmerDecorator.decorate( @swimmer )
     # --- "Misc" tab: ---
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
+    @standard_points = -1                           # Init score with a non-displayable value
     @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
     @swimmer_gender = @swimmer.gender_type
-    @standard_points = -1                           # Init score with a non-displayable value
 
     if request.post?                                # === POST: ===
       pool_type_id  = params[:pool_type] && params[:pool_type][:id] ? params[:pool_type][:id].to_i : 0
@@ -141,26 +141,12 @@ class SwimmersController < ApplicationController
       if @timing && @timing.to_hundreds > 0
         # Verify event is ammissible for pool type
         if @current_event.events_by_pool_types.where(pool_type_id: pool_type_id).count > 0
-          # Find standard time for given data
-          @current_time_standard = TimeStandard.where(
-            season_id:        @current_season.id,
-            gender_type_id:   @swimmer_gender.id, 
-            category_type_id: @swimmer_category.id,
-            pool_type_id:     pool_type_id,
-            event_type_id:    event_type_id
-          ).first
-          if @current_time_standard && @current_time_standard.get_timing_instance.to_hundreds > 0
-            # Leega: TODO
-            # - Calculate FIN standard points
-            # - Render the result with verbose cosmetics data such as
-            #   base time, world record holder, national record holder, 
-            #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
-            
-            @standard_points = @timing.to_hundreds / 10  # [Steve] This is just a test to see a result, because... Results are nice :-)          
-          else
-            # No standard time present. The timing will be the record!
-            @standard_points = 1000                      
-          end
+          @standard_points = ScoreCalculator.new( @swimmer, @current_season, @current_pool, @current_event ).get_fin_score( @timing )          
+
+          # Leega: TODO
+          # - Render the result with verbose cosmetics data such as
+          #   base time, world record holder, national record holder, 
+          #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')
           redirect_to( swimmer_misc_path(@swimmer) ) and return
