@@ -587,7 +587,7 @@ en:
     compute: "Compute"
     timing: "Timing"
     wrong_timing: "Wrong timing. Please review timing inserted"
-    wrong_event_or_pool: "Oh, no! Not possible to swim that event in that kind of pool!"
+    wrong_event_or_pool: "Oh, no! It's not possible to swim that event in that kind of pool!"
 
   misc_main_menu:
     title: "Misc"
