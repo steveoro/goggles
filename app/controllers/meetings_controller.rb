@@ -6,7 +6,7 @@ require 'common/format'
 
 = MeetingsController
 
-  - version:  4.00.383
+  - version:  4.00.397
   - author:   Steve A.
 
 =end
@@ -14,8 +14,10 @@ class MeetingsController < ApplicationController
 
   # Index/Search action.
   #
+  # @deprecated
+  #
   # Supports the optional parameters:
-  # - :preselect_ids, to obtain an array of IDs with which pre-filter the grid results.
+  # - :preselect_ids, set it to 1 to obtain an array of IDs with which pre-filter the grid results.
   # - :prefilter_swimmer, a text to be displayed for additional info regarding the pre-filtering process
   # - swimmer_id: Swimmer id, defined only when prefiltered from previous search actions.
   # - :prefilter_team, a text to be displayed for additional info regarding the pre-filtering process
@@ -46,6 +48,97 @@ class MeetingsController < ApplicationController
       Meeting,
       include: [:season, :season_type],
       conditions: ids ? { id: ids } : nil,
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
+    )        
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Index of the meetings for the current academic/sport year.
+  #
+  # Supports these optional parameters:
+  # - title:      a text title override;
+  # - swimmer_id: a Swimmer id to be highlighted among the results;
+  # - team_id:    a Team id to be highlighted among the results.
+  #
+  def current
+    @title = if params[:title]
+      I18n.t('meeting.index_title') + " #{ params[:title] }"
+    else
+      I18n.t('meeting.index_title')
+    end
+    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
+    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    @start_date, @end_date = if Date.today.month < 10
+      [ "#{Date.today.year-1}-10-01", "#{Date.today.year}-09-30" ]
+    else
+      [ "#{Date.today.year}-10-01", "#{Date.today.year+1}-09-30" ]
+    end
+    # Initialize the grid:
+    @meetings_grid = initialize_grid(
+      Meeting,
+      include: [:season, :season_type],
+      conditions: "(header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')",
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
+    )        
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Meetings index with full search customization support.
+  #
+  # Supports these optional parameters:
+  # - title:      a text title override;
+  # - swimmer_id: a Swimmer id to be highlighted among the results;
+  # - team_id:    a Team id to be highlighted among the results.
+  #
+  def custom_search
+    @title = if params[:title]
+      I18n.t('meeting.index_title') + " #{ params[:title] }"
+    else
+      I18n.t('meeting.index_title')
+    end
+    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
+    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    # Initialize the grid:
+    @meetings_grid = initialize_grid(
+      Meeting,
+      include: [:season, :season_type],
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
+    )        
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Meetings search index with a simple text input which searches among
+  # all the descriptions and the results texts to extract the search results. 
+  #
+  # Supports these optional parameters:
+  # - title:      a text title override;
+  # - swimmer_id: a Swimmer id to be highlighted among the results;
+  # - team_id:    a Team id to be highlighted among the results.
+  #
+  def simple_search
+    @title = if params[:title]
+      I18n.t('meeting.index_title') + " #{ params[:title] }"
+    else
+      I18n.t('meeting.index_title')
+    end
+    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
+    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    # Initialize the grid:
+    @meetings_grid = initialize_grid(
+      Meeting,
+      include: [:season, :season_type],
       order: 'meetings.header_date',
       order_direction: 'asc',
       per_page: 20

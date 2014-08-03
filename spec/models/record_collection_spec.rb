@@ -265,9 +265,10 @@ describe RecordCollection, :type => :model do
         subject.add( tie_fixture1 )
         subject.add( tie_fixture1 )
       }.to change{ subject.count }.by(1)
+      generated_fixture = create( :meeting_individual_result )
       expect{
-        subject.add( fixture3 )
-        subject.add( fixture3 )
+        subject.add( generated_fixture )
+        subject.add( generated_fixture )
       }.to change{ subject.count }.by(1)
     end
     it "adds correctly 2 different records to the list" do
