@@ -433,6 +433,8 @@ en:
 
   team:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'teams'!"
+    title: "Teams"
+    search_title: "Search Teams"
 
   badge:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'badges'!"
@@ -446,7 +448,12 @@ en:
 
   meeting:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
-    index_title: "Meetings - search"
+    index_title: "Meetings - custom search"
+    simple_title: "Meetings - simple search"
+    current_title: "Search among current Meetings"
+    index_menu: "Custom search"
+    simple_menu: "Simple search"
+    current_menu: "All current meetings"
     show_results_tooltip: "Click to show all the results for this Meeting"
     show_swimmer_results_tooltip: "Click to show all the results for this swimmer at this Meeting"
     show_team_results_tooltip: "Click to show all the results for this team at this Meeting"
@@ -470,6 +477,11 @@ en:
     rank: "Rank"
     standard: "Std."
     meeting: "Meeting"
+    events_list: "Events"
+    planned_events: "Planned Events"
+    text_to_be_searched: "Text to be searched"
+    simple_search_tooltip: "Type the text to be searched among all meetings and their results (descriptions, names, ...)"
+    no_records_matching_search_text: "(No records were found matching the search text.)"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -719,7 +731,7 @@ en:
     shares_passages: "Shares race/training passages"
     shares_passages_hint: "Allows to share and browse competition passages or lap-times (where available), but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out."
     shares_trainings: "Shares trainings"
-    shares_trainings_hint: "Allows to share and browse the user trainings or their models, but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out." 
+    shares_trainings_hint: "Allows to share and browse the user trainings or their models, but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out."
     shares_calendars: "Shares Meeting calendars"
     shares_calendars_hint: "Allows to share and browse the Meeting calendars for the user's Teams, but only if both parties agree. If one of the two has disabled this option, it will appear greyed-out."
     pending_invite: "Invite pending"
@@ -1173,7 +1185,7 @@ en:
         begin_time: "Begins at"
         is_autofilled: "Auto-filled?"
       meeting_program:
-        event_order: "Event ord." 
+        event_order: "Event ord."
         begin_time: "Begins at"
         minutes: "Min."
         seconds: "Sec."
@@ -1186,7 +1198,7 @@ en:
         team_badge_number: "Team badge #"
         year_of_birth: "Birth date"
         rank: "Rank"
-        is_play_off: "Finals?" 
+        is_play_off: "Finals?"
         is_out_of_race: "Out of race?"
         is_disqualified: "Disqualified?"
         standard_points: "Std. points"
@@ -1212,15 +1224,15 @@ en:
         phone_mobile: "Mobile #"
         phone_number: "Phone #"
         e_mail: "e-mail"
-        fax_number: "FAX #" 
-        contact_name: "Contact name" 
+        fax_number: "FAX #"
+        contact_name: "Contact name"
         badge_number: "Badge #"
         zip: ZIP
       badge:
         number: "Badge #"
       meeting_relay_result:
         rank: "Rank"
-        is_play_off: "Finals?" 
+        is_play_off: "Finals?"
         is_out_of_race: "Out of race?"
         is_disqualified: "Disqualified?"
         standard_points: "Std. points"

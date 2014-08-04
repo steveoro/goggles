@@ -1,11 +1,14 @@
-#
-# == MeetingSession
-#
-# Model class
-#
-# @author   Steve A.
-# @version  4.00.341
-#
+# encoding: utf-8
+
+
+=begin
+
+= MeetingSession
+
+  - version:  4.00.399
+  - author:   Steve A., Leega
+
+=end
 class MeetingSession < ActiveRecord::Base
   include MeetingAccountable
 
@@ -67,7 +70,7 @@ class MeetingSession < ActiveRecord::Base
   #
   def get_verbose_name
     #"#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
-    "#{get_scheduled_date} #{get_day_part_type} (#{get_warm_up_time}) #{get_begin_time}: #{get_short_events} #{description}"    
+    "#{get_scheduled_date} #{get_day_part_type} (#{get_warm_up_time}) #{get_begin_time}: #{get_short_events} #{description}"
   end
   #-- -------------------------------------------------------------------------
   #++

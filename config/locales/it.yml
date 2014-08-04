@@ -94,7 +94,7 @@ it:
     is_ok: "Va bene?"
     confirm: Confermo
     on_commit_go_back_to_step1: "Su commit, salva modifiche ma torna al 'Passo 1' (utile per importare solo i nuovi Team)"
-    unconfirmed_results_will_be_added: "NOTA: Ricorda che tutti i risultati non confermati saranno trattati come 'non-riconosciuti' o MANCANTI e perciò saranno aggiunti come NUOVI TEAM." 
+    unconfirmed_results_will_be_added: "NOTA: Ricorda che tutti i risultati non confermati saranno trattati come 'non-riconosciuti' o MANCANTI e perciò saranno aggiunti come NUOVI TEAM."
     team_analysis_completed: "Analisi dei Team completata. Azioni suggerite eseguite con sucesso."
 
   swimmers:
@@ -433,6 +433,8 @@ it:
 
   team:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Squadre! (tab: 'teams')"
+    title: "Squadre"
+    search_title: "Cerca Squadra"
 
   badge:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Cartellini! (tab: 'badges')"
@@ -446,7 +448,12 @@ it:
 
   meeting:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
-    index_title: "Gare - ricerca"
+    index_title: "Gare - ricerca personalizzata"
+    simple_title: "Gare - ricerca semplice"
+    current_title: "Cerca fra le gare correnti"
+    index_menu: "Ricerca personalizzata"
+    simple_menu: "Ricerca semplice"
+    current_menu: "Tutte le gare correnti"
     show_results_tooltip: "Clicca per mostrare tutti i risultati di questo Meeting"
     show_swimmer_results_tooltip: "Clicca per mostrare tutti i risultati di questo atleta a questo Meeting"
     show_team_results_tooltip: "Clicca per mostrare tutti i risultati di questa squadra a questo Meeting"
@@ -471,6 +478,11 @@ it:
     timing: "Tempo"
     standard: "Std."
     meeting: "Meeting"
+    events_list: "Eventi"
+    planned_events: "Eventi in programma"
+    text_to_be_searched: "Testo da cercare"
+    simple_search_tooltip: "Inserisci direttamente il testo da ricercare all'interno delle gare e dei risultati (descrizioni, nomi, ...)"
+    no_records_matching_search_text: "(Nessuna riga dati trovata contenente il testo di ricerca.)"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -866,7 +878,7 @@ it:
   setup: 'Setup:'
   user: Utente
   user_name: Nome utente
-  login_to_proceed: "Per continuare e' necessario fare Log-in." 
+  login_to_proceed: "Per continuare e' necessario fare Log-in."
   login_tooltip: Accedi
   password: Password
   user_not_authenticated: 'Utente non registrato'
@@ -1282,7 +1294,7 @@ it:
       meeting_individual_result:
         athlete_name: "Nome Atleta"
         team_name: "Nome Squadra"
-        athlete_badge_number: "Cartellino #" 
+        athlete_badge_number: "Cartellino #"
         team_badge_number: "Cod. squadra"
         year_of_birth: "Data nascita"
         rank: "Posizione"
@@ -1315,7 +1327,7 @@ it:
       season:
         begin_date: "Inizia il"
         end_date: "Finisce il"
-        must_use_time_standards: "Usa tempi std?" 
+        must_use_time_standards: "Usa tempi std?"
         max_points: "Max punti"
       swimmer:
         last_name: "Cognome"
@@ -1349,7 +1361,7 @@ it:
         phone_mobile: "Cellulare"
         phone_number: "Telefono"
         e_mail: "e-mail"
-        fax_number: "FAX" 
+        fax_number: "FAX"
         contact_name: "Contatto"
         badge_number: "N.Cartellino"
         zip: CAP

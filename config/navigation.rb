@@ -53,7 +53,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item( :key_main,                 t('main'),        root_path() )
       lev2_nav.item( :key_about,                t('about'),       about_path() )
       lev2_nav.item( :key_contact_us,           t('contact_us'),  contact_us_path() )
-      lev2_nav.item( :key_separator1_0,         content_tag(:span, '' ), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+      lev2_nav.item( :key_separator1_0,         content_tag(:span, ''), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
       lev2_nav.item(
         :key_user_radio_id,
         t('radiography.id_card'),
@@ -69,21 +69,12 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item( :key_meetings,                t('meetings'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_meetings_index,        t('search_meetings'), meetings_path(), highlights_on: /meetings(?!\?prefilter|\/search)/ do |lev3_nav|
+      lev2_nav.item :key_meetings_current,      t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ do |lev3_nav|
         lev3_nav.item :key_meeting_show_full,   t('show_details'), '#', highlights_on: %r(/meetings/\d/show_full)
       end
-      lev2_nav.item :key_meetings_search_swimmer, t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), highlights_on: %r(search_swimmer|prefilter_swimmer)
-      lev2_nav.item :key_meetings_search_team,  t('meeting.search_by_team'), meetings_search_team_path(), highlights_on: %r(search_team|prefilter_team)
-    end
-
-    primary.item( :key_results_rankings,        t('results_and_rankings'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_rankings_index,        t('search_rankings'), rankings_path(), highlights_on: %r(/rankings) do |lev3_nav|
-        lev3_nav.item :key_rankings_show_full,  t('show_details'), '#', highlights_on: %r(/rankings/\d/show_full)
-      end
-      lev2_nav.item :key_separator_rankings,    content_tag(:span, '' ), class: 'divider'
-      lev2_nav.item :key_results_index,         t('search_results'), results_path(), highlights_on: %r(/results) do |lev3_nav|
-        lev3_nav.item :key_results_show_full,   t('show_details'), '#', highlights_on: %r(/results/\d/show_full)
-      end
+      lev2_nav.item( :key_separator2_0,         content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_meetings_simple,      t('meeting.simple_menu'), meetings_simple_search_path(), highlights_on: %r(simple_search) )
+      lev2_nav.item( :key_meetings_custom,      t('meeting.index_menu'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
     end
 
     primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|
@@ -98,8 +89,13 @@ SimpleNavigation::Configuration.run do |navigation|
       end
     end
 
+    primary.item( :key_teams,                   t('team.title'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_teams_index,           t('team.search_title'), teams_path(), highlights_on: %r(/teams) do |lev3_nav|
+        lev3_nav.item :key_swimmers_id,         t('radiography.id_card'), '#', highlights_on: %r(/teams/\d/radio)
+      end
+    end
+
     primary.item( :key_misc,                    t('misc_main_menu.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_calendar,              t('meeting_calendar.navigation'),           meeting_calendars_path()
       lev2_nav.item :key_pools,                 t('swimming_pool.pools'),                   swimming_pools_path()
       lev2_nav.item :key_pool_reviews,          t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path()
       lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()

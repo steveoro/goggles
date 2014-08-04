@@ -1,7 +1,7 @@
 /*!
   === Custom ComboBox Widget implementation ===
 
-  - app. ver.: 4.00.357
+  - app. ver.: 4.00.399
 
 
   ==== Usage:
@@ -11,7 +11,7 @@
 
    $( "#combo_id" ).combobox();
 
-  
+
   ==== Custom styles (overridable):
 
   Check out application.css
@@ -89,7 +89,7 @@
              appendTo: wrapper,
              source: $.proxy( this, "_linkSelectList" ),
              select: function(event, ui) {
-               //var selectedObj = ui.item;              
+               //var selectedObj = ui.item;
                $(this).attr('title', ui.item.value);
            }
           });
@@ -110,23 +110,19 @@
          // Our items have HTML tags.  The default rendering uses text()
          // to set the content of the <a> tag.  We need html().
          input.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-
-               return $( "<li>" )
-                           .attr('class', item.option.className)
-                           .append( $( "<a>" ).html( item.label ) )
-                           .appendTo( ul );
-
-            };
-
+           return $( "<li>" )
+             .attr('class', item.option.className)
+             .append( $( "<a>" ).html( item.label ) )
+             .appendTo( ul );
+         };
          this._on( this._events );
-
       },
 
 
       _linkSelectList: function( request, response ) {
          var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), 'i' );
          //response( this.element.children('option').map(function() {
-         response( this.element.children('option:not([style*="display: none"])').map(function() {           
+         response( this.element.children('option:not([style*="display: none"])').map(function() {
                   var text = $( this ).text();
 
                   if ( this.value && ( !request.term || matcher.test(text) ) ) {
@@ -193,7 +189,8 @@
                       $el.data('ui-autocomplete').term = t2;
                       this.element.prop('selectedIndex', iSelected);
                       // console.log("Found single match with '" + t2 + "'");
-                   } else {
+                   }
+                   else {
                       // remove invalid value, as it didn't match anything
                       $el.val( '' );
 
@@ -207,22 +204,21 @@
             }
 
             this._trigger( "change", event, {
-                  item: changedOption
-                });
+              item: changedOption
+            });
 
          },
 
          "autocompleteselect input": function( event, ui ) {
             ui.item.option.selected = true;
             this._trigger( "select", event, {
-                  item: ui.item.option
-               });
-
+              item: ui.item.option
+            });
          },
 
          "autocompleteopen input": function ( event, ui ) {
             this.uiCombo.children('.ui-autocomplete')
-               .outerWidth(this.uiCombo.outerWidth(true));
+              .outerWidth(this.uiCombo.outerWidth(true));
          },
 
          "mousedown .ui-combobox-button" : function ( event ) {
@@ -233,12 +229,10 @@
             this.uiInput.focus();
             // close if already visible
             if (this._wasOpen)
-               return;
+              return;
             // pass empty string as value to search for, displaying all results
             this.uiInput.autocomplete("search", "");
-
          }
-
       },
 
       value: function ( newVal ) {

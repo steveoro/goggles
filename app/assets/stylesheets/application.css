@@ -3,7 +3,7 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require_self
- *= require_tree . 
+ *= require_tree .
  */
 
 /* ----- Navbar & Titlebar ----- */
@@ -275,11 +275,19 @@ li.goggles-sortable div {
 
 
 /* ----- Custom ComboBox widget styles: ----- */
-.ui-combobox { display: inline-block; margin: 0; margin-right: 1.8em; position: relative; }
-.ui-combobox-input { padding: 0.2em; margin: 0; }
+.ui-combobox {
+    display: inline-block;
+    margin: 0;
+    margin-right: 1em;
+    margin-left: 0.5em;
+    position: relative;
+}
+.ui-combobox-input {
+    padding: 0.1em; margin: 0;
+}
 .ui-combobox-button {
     position: absolute;
-    width: 1em !important;
+    width: 0.8em !important;
     margin: 0;
     margin-left: -1px;
     top: 0;
@@ -289,7 +297,7 @@ li.goggles-sortable div {
     padding: 0em;
 }
 .ui-combobox .ui-autocomplete {
-    max-height: 10em;
+    max-height: 20em;
     overflow-y: auto;
     overflow-x: hidden;
 }

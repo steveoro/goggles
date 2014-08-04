@@ -1,45 +1,23 @@
-= render partial: 'search_meeting_grid'
-
 .accordion#accordionFlt
   .accordion-group
-    .accordion-heading
-      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionFlt', :href => '#collapseFlt'}
-        %h3#headerFlt{'data-toggle' => 'tooltip', 'title' => I18n.t(:search_tooltip)}= @title
-    .accordion-body.collapse.in#collapseFlt
+    .accordion-inner
+      .accordion-heading
+        %h3= @title
+    .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
-            = I18n.t(:description)
-          .span10
-            = grid_filter @meetings_grid, :flt_description
-        .row-fluid
-          .span2
-            = I18n.t(:season_type, { scope: [:activerecord, :models] })
-          .span10
-            = grid_filter @meetings_grid, :flt_season_type_id
-        .row-fluid
-          .span2
-            = I18n.t(:season, { scope: [:activerecord, :models] })
-          .span10
+        = form_tag( :meetings_simple_search, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
+          .row-fluid
+            .control-group
+              .control-label#tooltipLabel
+                = label_tag( :search_text, I18n.t('meeting.text_to_be_searched'), for: :search_text, 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.simple_search_tooltip') )
+              .controls
+                = text_field_tag( :search_text, nil, { class: 'input-xxlarge' } )
+              %script
+                $('#tooltipLabel').tooltip();
+          .row-fluid
             .controls
-              .ui-widget
-                = grid_filter @meetings_grid, :flt_season_id
-        .row-fluid
-          .span2
-            = I18n.t(:date_from_to)
-          .span10
-            = grid_filter @meetings_grid, :flt_entry_header_date
-        .row-fluid
-          .span12
-            .external-buttons
-              %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
-                = I18n.t(:submit)
-              %button.btn.wg-external-reset-button{'data-grid-name' => 'grid'}
-                = I18n.t(:reset)
-.row-fluid
-  .span12
-    = render_grid( @meetings_grid )
-
-%script
-  $('#headerFlt').tooltip({ placement: 'bottom' });
-  $('#grid_f_season_id').combobox();
+              = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
+              %span(id='loadingIndicator' hidden='true')
+                = image_tag( 'indicator.gif' )
+#meetingGrid
+  =render(partial: 'meeting_grid')

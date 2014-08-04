@@ -156,9 +156,9 @@ describe SwimmersController, :type => :controller do
         it "handles the request with a redirect" do
           expect(response.status).to eq( 302 )
         end
-        it "redirects to meetings_path( prefiltered )" do
+        it "redirects to meetings_current_path( prefiltered )" do
           expect( response ).to redirect_to(
-            meetings_path( preselect_ids: 1, prefilter_swimmer: @fixture.get_full_name, swimmer_id: @fixture.id )
+            meetings_current_path( preselect_ids: 1, prefilter_swimmer: @fixture.get_full_name, swimmer_id: @fixture.id )
           ) 
         end
       end

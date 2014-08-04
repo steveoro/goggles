@@ -9,8 +9,8 @@ describe MeetingsController, :type => :controller do
       expect(response.status).to eq( 200 )
     end
     it "assigns the required variables" do
-      expect( assigns(:title) ).to be_an_instance_of( String ) 
-      expect( assigns(:meetings_grid) ).not_to be_nil 
+      expect( assigns(:title) ).to be_an_instance_of( String )
+      expect( assigns(:meetings_grid) ).to be_an_instance_of( WiceGrid )
     end
     it "renders the search template" do
       expect(response).to render_template( action_sym )
@@ -32,7 +32,7 @@ describe MeetingsController, :type => :controller do
     it_behaves_like( "(GET ok with index grid rendering)", action_sym )
 
     it "assigns a :preselected_swimmer_id" do
-      expect( assigns(:preselected_swimmer_id) ).to eq( @swimmer.id ) 
+      expect( assigns(:preselected_swimmer_id) ).to eq( @swimmer.id )
     end
   end
 
@@ -45,7 +45,7 @@ describe MeetingsController, :type => :controller do
     it_behaves_like( "(GET ok with index grid rendering)", action_sym )
 
     it "assigns a :preselected_team_id" do
-      expect( assigns(:preselected_team_id) ).to eq( @team.id ) 
+      expect( assigns(:preselected_team_id) ).to eq( @team.id )
     end
   end
 
@@ -58,7 +58,7 @@ describe MeetingsController, :type => :controller do
     it_behaves_like( "(GET ok with index grid rendering)", action_sym )
 
     it "has a title text containing the specified sentence" do
-      expect( assigns(:title) ).to include( @title ) 
+      expect( assigns(:title) ).to include( @title )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -66,7 +66,7 @@ describe MeetingsController, :type => :controller do
 
 
   describe '[GET #current]' do
-    context "with no parameters," do
+    context "without parameters," do
       it_behaves_like( "(GET search index with no parameters)", :current )
       it_behaves_like( "(GET search index with a preselected swimmer_id)", :current )
       it_behaves_like( "(GET search index with a preselected team_id)", :current )
@@ -76,23 +76,61 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #custom_search]' do
-    context "with no parameters," do
-      it_behaves_like( "(GET search index with no parameters)", :custom_search )
-      it_behaves_like( "(GET search index with a preselected swimmer_id)", :custom_search )
-      it_behaves_like( "(GET search index with a preselected team_id)", :custom_search )
-      it_behaves_like( "(GET search index with an override title)", :custom_search )
+
+  describe '[GET #simple_search]' do
+    context "with an HTML request," do
+      context "without parameters," do
+        it_behaves_like( "(GET search index with no parameters)", :simple_search )
+        it_behaves_like( "(GET search index with a preselected swimmer_id)", :simple_search )
+        it_behaves_like( "(GET search index with a preselected team_id)", :simple_search )
+        it_behaves_like( "(GET search index with an override title)", :simple_search )
+      end
+    end
+
+    context "with an AJAX request," do
+      context "without parameters," do
+        before(:each) { xhr :get, :simple_search }
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
+        it "assigns the required variables" do
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:meetings_grid) ).to be_an_instance_of( WiceGrid )
+        end
+        it "renders the search template" do
+          expect(response).to render_template( :simple_search )
+        end
+      end
+
+      context "with valid parameters," do
+        before(:each) { xhr :get, :simple_search, search_text: "FERRARI" }
+
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
+        it "assigns the required variables" do
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:meetings_grid) ).to be_an_instance_of( WiceGrid )
+        end
+        it "renders the search template" do
+          expect(response).to render_template( :simple_search )
+        end
+        it "renders the detail partial" do
+          expect(response).to render_partial(:meeting_grid)
+        end
+      end
     end
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #simple_search]' do
-    context "with no parameters," do
-      it_behaves_like( "(GET search index with no parameters)", :simple_search )
-      it_behaves_like( "(GET search index with a preselected swimmer_id)", :simple_search )
-      it_behaves_like( "(GET search index with a preselected team_id)", :simple_search )
-      it_behaves_like( "(GET search index with an override title)", :simple_search )
+
+  describe '[GET #custom_search]' do
+    context "without parameters," do
+      it_behaves_like( "(GET search index with no parameters)", :custom_search )
+      it_behaves_like( "(GET search index with a preselected swimmer_id)", :custom_search )
+      it_behaves_like( "(GET search index with a preselected team_id)", :custom_search )
+      it_behaves_like( "(GET search index with an override title)", :custom_search )
     end
   end
   #-- =========================================================================

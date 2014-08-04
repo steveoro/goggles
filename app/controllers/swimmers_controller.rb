@@ -104,7 +104,7 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def all_races
-    redirect_to meetings_path( preselect_ids: 1, prefilter_swimmer: @swimmer.get_full_name, swimmer_id: @swimmer.id )
+    redirect_to meetings_current_path( preselect_ids: 1, prefilter_swimmer: @swimmer.get_full_name, swimmer_id: @swimmer.id )
   end
   #-- -------------------------------------------------------------------------
   #++

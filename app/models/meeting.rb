@@ -2,6 +2,14 @@
 require 'drop_down_listable'
 
 
+=begin
+
+= Season
+
+  - version:  4.00.399
+  - author:   Steve A., Leega
+
+=end
 class Meeting < ActiveRecord::Base
   include DropDownListable
   include MeetingAccountable
@@ -15,19 +23,19 @@ class Meeting < ActiveRecord::Base
   validates_associated :timing_type
 
   belongs_to( :individual_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "individual_score_computation_type_id"
   )
   belongs_to( :relay_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "relay_score_computation_type_id"
   )
   belongs_to( :team_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "team_score_computation_type_id"
   )
   belongs_to( :meeting_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "meeting_score_computation_type_id"
   )
 
@@ -46,6 +54,7 @@ class Meeting < ActiveRecord::Base
   has_many :pool_types,     through: :meeting_sessions
   has_many :swimmers,       through: :meeting_individual_results
   has_many :teams,          through: :meeting_individual_results
+  has_many :event_types,    through: :meeting_events
 
   validates_presence_of :code,        length: { within: 1..20 }, allow_nil: false
   validates_presence_of :header_year, length: { within: 1..9 }, allow_nil: false
@@ -118,7 +127,7 @@ class Meeting < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Retrieves the first scheduled date for this meeting; nil when not found 
+  # Retrieves the first scheduled date for this meeting; nil when not found
   def get_scheduled_date
     ms = self.meeting_sessions.first
     ms ? Format.a_date( ms.scheduled_date ) : nil
@@ -137,11 +146,11 @@ class Meeting < ActiveRecord::Base
 
   # Computes the shortest possible description for the list of all the events created
   # for this meeting.
-  # 
+  #
   #TODO substitute with meeting_sessions appropriate methods
   def get_short_events
     events = self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
-    
+
     # If events count = 0 give 'to be defined' description
     if events.count > 0
       events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
@@ -152,23 +161,27 @@ class Meeting < ActiveRecord::Base
 
   # Computes the complete list of all the meeting events
   # with session informations.
-  # 
+  #
   #TODO substitute with meeting_sessions appropriate methods
   def get_complete_events
     ms = self.meeting_sessions
     complete_desc = ""
-    
-    # If sessions = 0 give 'to be defined' description
-    # If sessions = 1 give the short description of events
-    # If sessions > 1 create complete description for each session
+    # If sessions = 0 return 'to be defined'
+    # If sessions = 1 return a short description of events
+    # If sessions > 1 return a complete description for each session
     if ms.count > 1
-      ms.each { |session| 
-        # Create description for each session
-        complete_desc += "#{session.day_part_type.i18n_short}: #{session.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }.join('-').gsub(' ','')}\r\n"
+      ms.each { |session|
+        # Create a description for each session
+        event_list_desc = session.meeting_events.includes(:event_type)
+          .joins(:event_type)
+          .collect{ |row|
+            row.event_type.i18n_short if row.event_type
+        }.join('-').gsub(' ','')
+        complete_desc += "#{ session.day_part_type.i18n_short }: " if session.day_part_type
+        complete_desc += "#{ event_list_desc }\r\n"
       }
-      
       complete_desc
-    else 
+    else
       if ms.count == 1
         self.get_short_events
       else
@@ -180,7 +193,7 @@ class Meeting < ActiveRecord::Base
 
   # Computes the complete list of all the meeting events
   # with session informations.
-  # 
+  #
   def get_athletes_count_by_gender
   end
   # ----------------------------------------------------------------------------

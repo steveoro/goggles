@@ -36,6 +36,7 @@ class Season < ActiveRecord::Base
   validates_length_of   :description, within: 1..100, allow_nil: false
 
   validates_presence_of :begin_date
+  validates_presence_of :end_date
 
   scope :sort_season_by_begin_date,  ->(dir) { order("seasons.begin_date #{dir.to_s}") }
   scope :sort_season_by_season_type, ->(dir) { order("season_types.code #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
@@ -51,7 +52,7 @@ class Season < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    # [Steve, 20140725] This is surely excessively long/repetitive too: 
+    # [Steve, 20140725] This is surely excessively long/repetitive too:
     "#{edition} #{description} #{header_year} - #{get_federation_type} - (#{begin_date ? begin_date.strftime('%Y') : '?'}/#{end_date ? end_date.strftime('%y') : '?'}) "
   end
   #-- -------------------------------------------------------------------------

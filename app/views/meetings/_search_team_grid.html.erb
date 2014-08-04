@@ -12,7 +12,7 @@
     ) do |team|
         meeting_ids = team.meetings.collect{|row| row.id}.uniq
         link_to(team.get_full_name,
-                meetings_path( preselect_ids: true, prefilter_team: team.get_full_name, team_id: team.id )
+                meetings_current_path( preselect_ids: true, prefilter_team: team.get_full_name, team_id: team.id )
         )
     end
 

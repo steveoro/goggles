@@ -63,6 +63,9 @@ en:
     i18n_short_MX: "MX"
     i18n_description_MX: "MIXED"
     i18n_alternate_MX: "MR"
+    i18n_short_M: "M"
+    i18n_description_M: "MIXED"
+    i18n_alternate_M: "M"
 
   presence_types:
     code: "code"
@@ -601,7 +604,7 @@ en:
     i18n_short_IMB: ""
     i18n_description_IMB: "Not swum in right order "
     i18n_short_IMC: ""
-    i18n_description_IMC: "Stroke infraction – use stroke codes "
+    i18n_description_IMC: "Stroke infraction ï¿½ use stroke codes "
     i18n_short_RA2: ""
     i18n_description_RA2: "Early swimmer take-off swimmer #2"
     i18n_short_RA3: ""

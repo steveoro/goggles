@@ -100,7 +100,6 @@ Goggles::Application.routes.draw do
       # === Meetings ===
       # FIXME REMOVE #index
       get "meetings/index",                     to: "meetings#index",                   as: "meetings"
-
       # TODO:
       get "meetings/current",                   to: "meetings#current"
       get "meetings/custom_search",             to: "meetings#custom_search"
@@ -108,7 +107,6 @@ Goggles::Application.routes.draw do
       # TODO / FUTURE DEV: 
 #      get "meetings/tagged_by_me",              to: "meetings#tagged_by_me"
 #      get "meetings/tagged_by_buddies",         to: "meetings#tagged_by_buddies"
-
       get "meetings/search_swimmer",            to: "meetings#search_swimmer"
       get "meetings/search_team",               to: "meetings#search_team"
       get "meeting/show_full/:id",              to: "meetings#show_full",               as: "meeting_show_full"
@@ -117,27 +115,12 @@ Goggles::Application.routes.draw do
       get "meeting/show_team_results/:id",      to: "meetings#show_team_results",       as: "meeting_show_team_results"
       get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
 
-      # === Exercises ===
-      get  "exercises/json_list",               to: "exercises#json_list",              as: "exercises_json_list"
-      get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
-
-      # === Meeting Calendars ===
-      match "meeting_calendars/index",          to: "meeting_calendars#index",          as: "meeting_calendars", via: [:get, :post]
-
-      # === Rankings ===
-      get "rankings/index",                     as: "rankings"
-      get "ranking/:id",                        to: "rankings#show",                    as: "ranking"
-
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_team",                  to: "records#for_team"
       get  "records/for_swimmer",               to: "records#for_swimmer"
       # FIXME
       get  "records/show_for_team",             to: "records#show_for_team"
-
-      # === Results ===
-      get "results/index",                      as: "results"
-      get "result/:id",                         to: "results#show",                     as: "result"
 
       # === Swimmers ===
       get  "swimmers/index",                    as: "swimmers"
@@ -146,6 +129,13 @@ Goggles::Application.routes.draw do
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/all_races/:id",             to: "swimmers#all_races",               as: "swimmer_all_races"
       match "swimmer/misc/:id",                 to: "swimmers#misc",                    as: "swimmer_misc",         via: [:get, :post]
+
+      # === Teams ===
+      get  "teams/index",                       to: "teams#index",                      as: "teams"
+      get  "teams/radio/:id",                   to: "teams#radio",                      as: "teams_radio"
+      get  "teams/count_meetings/:id",          to: "teams#count_meetings",             as: "team_count_meetings"
+      get  "teams/count_results/:id",           to: "teams#count_results",              as: "team_count_results"
+      get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_results"
 
       # === Swimming Pools ===
       get "swimming_pools/index",               as: "swimming_pools"
@@ -164,10 +154,9 @@ Goggles::Application.routes.draw do
         end
       end
 
-      # === Teams ===
-      get "teams/count_meetings/:id",           to: "teams#count_meetings",             as: "team_count_meetings"
-      get "teams/count_results/:id",            to: "teams#count_results",              as: "team_count_results"
-      get "teams/count_details/:id",            to: "teams#count_details",              as: "team_count_results"
+      # === Exercises ===
+      get  "exercises/json_list",               to: "exercises#json_list",              as: "exercises_json_list"
+      get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 
       # === Trainings ===
       resources :trainings

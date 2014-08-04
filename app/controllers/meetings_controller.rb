@@ -6,69 +6,24 @@ require 'common/format'
 
 = MeetingsController
 
-  - version:  4.00.397
+  - version:  4.00.399
   - author:   Steve A.
 
 =end
 class MeetingsController < ApplicationController
 
-  # Index/Search action.
-  #
-  # @deprecated
-  #
-  # Supports the optional parameters:
-  # - :preselect_ids, set it to 1 to obtain an array of IDs with which pre-filter the grid results.
-  # - :prefilter_swimmer, a text to be displayed for additional info regarding the pre-filtering process
-  # - swimmer_id: Swimmer id, defined only when prefiltered from previous search actions.
-  # - :prefilter_team, a text to be displayed for additional info regarding the pre-filtering process
-  # - team_id: Team id, defined only when prefiltered from previous search actions.
-  #
-  def index
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}.index() -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-    prefilter = [ params[:prefilter_swimmer], params[:prefilter_team] ].compact.join(', ')
-    @title = I18n.t('meeting.index_title') +
-             (prefilter.size > 0 ? " (#{prefilter})" : '')
-    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
-    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
-    ids = nil
-    # Prepare pre-selection parameters:
-    if params[:preselect_ids].to_i > 0
-      if @preselected_swimmer_id
-        swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
-        ids = swimmer.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
-      else
-        team = Team.find_by_id( @preselected_team_id )
-        ids = team.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
-      end
-    end
-    # Initialize the grid according to parameters:
-    @meetings_grid = initialize_grid(
-      Meeting,
-      include: [:season, :season_type],
-      conditions: ids ? { id: ids } : nil,
-      order: 'meetings.header_date',
-      order_direction: 'asc',
-      per_page: 20
-    )        
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   # Index of the meetings for the current academic/sport year.
   #
-  # Supports these optional parameters:
+  # === Optional parameters:
   # - title:      a text title override;
   # - swimmer_id: a Swimmer id to be highlighted among the results;
   # - team_id:    a Team id to be highlighted among the results.
   #
   def current
     @title = if params[:title]
-      I18n.t('meeting.index_title') + " #{ params[:title] }"
+      I18n.t('meeting.current_title') + " (#{ params[:title] })"
     else
-      I18n.t('meeting.index_title')
+      I18n.t('meeting.current_title')
     end
     @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
     @preselected_team_id    = params[:team_id].to_i if params[:team_id]
@@ -85,7 +40,86 @@ class MeetingsController < ApplicationController
       order: 'meetings.header_date',
       order_direction: 'asc',
       per_page: 20
-    )        
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Meetings search index with a simple text input which searches among
+  # all the descriptions and the results texts to extract the search results.
+  #
+  # Currently, it collects all the IDs of the Meetings for which the search
+  # text can be matched inside:
+  #
+  # => meetings.description
+  # => meetings.header_year
+  # => meetings.notes
+  # => meetings.reference_name
+  #
+  # => swimmers.complete_name
+  #
+  # => teams.name
+  #
+  # => meeting_events.event_type#i18n_short
+  # => meeting_events.event_type#i18n_description
+  #
+  # === Optional parameters:
+  # - title:      a text title override;
+  # - swimmer_id: a Swimmer id to be highlighted among the results;
+  # - team_id:    a Team id to be highlighted among the results.
+  #
+  def simple_search
+# DEBUG
+    logger.debug "PARAMS : #{params.inspect }"
+    @title = if params[:title]
+      I18n.t('meeting.simple_title') + " (#{ params[:title] })"
+    else
+      I18n.t('meeting.simple_title')
+    end
+    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
+    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    ids = []
+
+    # AJAX call? Parse parameter and retrieve records range:
+    if request.xhr?
+      search_text = "%#{ params[:search_text] }%"
+      # Search among most-used text columns:
+      ids << Meeting.where(
+        [
+          "(description LIKE ?) OR (header_year LIKE ?) OR (notes LIKE ?) OR (reference_name LIKE ?)",
+          search_text, search_text, search_text, search_text
+        ]
+      ).map{ |row| row.id }.uniq
+
+      # Search among linked Swimmers:
+      ids << Meeting.includes( :swimmers ).where( ["swimmers.complete_name LIKE ?", search_text] ).map{ |row| row.id }.uniq
+
+      # Search among linked Teams:
+      ids << Meeting.includes( :teams ).where( ["teams.name LIKE ?", search_text] ).map{ |row| row.id }.uniq
+
+      # Search among linked EventTypes:
+      event_type_ids = EventType.includes(:stroke_type).find_all do |row|
+        ( row.i18n_short =~ %r(#{params[:search_text]})i ) ||
+        ( row.i18n_description =~ %r(#{params[:search_text]})i )
+      end.map{ |row| row.id }
+      ids << Meeting.includes( :meeting_events ).where( :'meeting_events.event_type_id' => event_type_ids ).map{ |row| row.id }.uniq
+    end
+
+    # Initialize the grid:
+    @meetings_grid = initialize_grid(
+      Meeting,
+      include: [:season, :season_type],
+      conditions: { id: ids },
+      order: 'meetings.header_date',
+      order_direction: 'asc',
+      per_page: 20
+    )
+    # Respond according to requested format (GET request => .html, AJAX request => .js)
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -93,14 +127,14 @@ class MeetingsController < ApplicationController
 
   # Meetings index with full search customization support.
   #
-  # Supports these optional parameters:
+  # === Optional parameters:
   # - title:      a text title override;
   # - swimmer_id: a Swimmer id to be highlighted among the results;
   # - team_id:    a Team id to be highlighted among the results.
   #
   def custom_search
     @title = if params[:title]
-      I18n.t('meeting.index_title') + " #{ params[:title] }"
+      I18n.t('meeting.index_title') + " (#{ params[:title] })"
     else
       I18n.t('meeting.index_title')
     end
@@ -113,36 +147,7 @@ class MeetingsController < ApplicationController
       order: 'meetings.header_date',
       order_direction: 'asc',
       per_page: 20
-    )        
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Meetings search index with a simple text input which searches among
-  # all the descriptions and the results texts to extract the search results. 
-  #
-  # Supports these optional parameters:
-  # - title:      a text title override;
-  # - swimmer_id: a Swimmer id to be highlighted among the results;
-  # - team_id:    a Team id to be highlighted among the results.
-  #
-  def simple_search
-    @title = if params[:title]
-      I18n.t('meeting.index_title') + " #{ params[:title] }"
-    else
-      I18n.t('meeting.index_title')
-    end
-    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
-    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
-    # Initialize the grid:
-    @meetings_grid = initialize_grid(
-      Meeting,
-      include: [:season, :season_type],
-      order: 'meetings.header_date',
-      order_direction: 'asc',
-      per_page: 20
-    )        
+    )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -151,7 +156,7 @@ class MeetingsController < ApplicationController
   # Show all details regarding a single Meeting
   # Assumes params[:id] refers to a specific Meeting row.
   #
-  # Supports the optional parameters:
+  # === Optional parameters:
   # - swimmer_id: Swimmer id to be highlighted, defined only when prefiltered from previous search actions.
   # - team_id: Team id to be highlighted, defined only when prefiltered from previous search actions.
   #
@@ -160,7 +165,7 @@ class MeetingsController < ApplicationController
     @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
@@ -183,14 +188,15 @@ class MeetingsController < ApplicationController
   # Show the ranking regarding a single Meeting
   # Assumes params[:id] refers to a specific Meeting row.
   #
-  # Supports also the facultative params[:team_id] to highlight a specific team
+  # === Optional parameters:
+  # - team_id, to highlight a specific team
   #
   def show_ranking
     meeting_id = params[:id].to_i
     @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
     @preselected_team_id = params[:team_id]
 # DEBUG
@@ -230,7 +236,7 @@ class MeetingsController < ApplicationController
         b.meeting_individual_points + b.meeting_relay_points + b.meeting_team_points
       ) <=> (
         a.meeting_individual_points + a.meeting_relay_points + a.meeting_team_points
-      ) 
+      )
     }
                                                     # Finally, update ranking according to the sorted array:
     @total_team_bonus = 0
@@ -249,7 +255,9 @@ class MeetingsController < ApplicationController
   #
   # === Params:
   # - id: Meeting row id.
-  # - team_id: (facultative) used as a pass-throught parameter in the tabbed links,
+  #
+  # === Optional parameters:
+  # - team_id: used as a pass-throught parameter in the tabbed links,
   #               just to highlight a specific team
   #
   def show_stats
@@ -257,7 +265,7 @@ class MeetingsController < ApplicationController
     @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
     @preselected_team_id = params[:team_id]
 # DEBUG
@@ -265,18 +273,18 @@ class MeetingsController < ApplicationController
 
     teams_hash = {}
     # Stores, for each Team id as key:
-    # team_id => [ [array of processed swimmer ids], Team name, Male count, female count, tot. count, is_highlighted, gold_count, silver_count, bronze_count ], 
-    # Sort resulting list by team name, ASC 
+    # team_id => [ [array of processed swimmer ids], Team name, Male count, female count, tot. count, is_highlighted, gold_count, silver_count, bronze_count ],
+    # Sort resulting list by team name, ASC
 
     categories_hash = {}
     # Stores, for each category id as key:
-    # category_id => [ [array of processed swimmer ids], category name, Male count, female count, tot. count ], 
-    # Sort resulting list by category ID, ASC 
+    # category_id => [ [array of processed swimmer ids], category name, Male count, female count, tot. count ],
+    # Sort resulting list by category ID, ASC
 
     event_types_hash = {}
     # Stores, for each EventType id as key:
-    # event_type_id => [ EventType name, Male count, female count, tot. count ], 
-    # Sort resulting list by event_type name, ASC 
+    # event_type_id => [ EventType name, Male count, female count, tot. count ],
+    # Sort resulting list by event_type name, ASC
 
     @specials_hash = {}
     # Stores, for the current meeting:
@@ -336,7 +344,7 @@ class MeetingsController < ApplicationController
       else
         cat_arr = categories_hash[ ind_result.get_category_type_id ]
         unless cat_arr[0].include?( ind_result.swimmer_id )
-          cat_arr[0] << ind_result.swimmer_id       # Add current result's swimmer to the "already processed list" 
+          cat_arr[0] << ind_result.swimmer_id       # Add current result's swimmer to the "already processed list"
           cat_arr[2] += female
           cat_arr[3] += male
           cat_arr[4] += male_female
@@ -421,13 +429,13 @@ class MeetingsController < ApplicationController
     meeting_id = params[:id].to_i
     unless ( meeting_id > 0 && @team_id > 0 )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
                                                     # Get the meeting:
     @meeting = Meeting.find_by_id( meeting_id )
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
                                                     # Get the events filtered by team_id:
     mir = MeetingIndividualResult.includes(:meeting, :meeting_event).where(
@@ -504,14 +512,14 @@ class MeetingsController < ApplicationController
     meeting_id = params[:id].to_i
     unless ( meeting_id > 0 && swimmer_id > 0 )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
 
     @meeting = Meeting.find_by_id( meeting_id )
     @swimmer = Swimmer.find_by_id( swimmer_id )
     unless ( @meeting && @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
 
     @individual_result_list = MeetingIndividualResult.includes(:meeting).where(
@@ -522,7 +530,7 @@ class MeetingsController < ApplicationController
     )
     unless ( @individual_result_list.size > 0 )
       flash[:error] = I18n.t(:no_result_to_show)
-      redirect_to( meetings_path() ) and return
+      redirect_to( meetings_current_path() ) and return
     end
     # Get a timestamp for the cache key:
     @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
