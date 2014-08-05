@@ -137,6 +137,16 @@ class SwimmersController < ApplicationController
           # - Render the result with verbose cosmetics data such as
           #   base time, world record holder, national record holder,
           #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
+          
+          # Retrieve team record
+          #@team_best=RecordCollector.new()
+          @team_best=IndividualRecord.where(
+            pool_type_id:      @current_pool.id,
+            gender_type_id:    @swimmer_gender.id,
+            category_types_id: @swimmer_category.id,
+            event_type_id:     @current_event.id,
+            team_id:           @swimmer.get_current_team.id 
+          )
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')
           redirect_to( swimmer_misc_path(@swimmer) ) and return

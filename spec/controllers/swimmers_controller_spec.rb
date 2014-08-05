@@ -309,17 +309,20 @@ describe SwimmersController, :type => :controller do
         it "assigns a event_type" do
           expect( assigns(:current_event) ).to be_an_instance_of( EventType )
         end
-        it "event type is in event_by_pool_type for current season" do
+        it "accepts event type which is in event_by_pool_type for current season" do
           expect( assigns(:current_event).events_by_pool_types.where(pool_type_id: @fixture_events_by_pool_type.pool_type_id).count ).to be > 0
         end
         it "assigns timing data" do
           expect( assigns(:timing) ).to be_an_instance_of( Timing )
         end
-        it "timing data inserted is a valid timing" do
+        it "accepts timing data which is a valid timing" do
           expect( assigns(:timing).to_hundreds ).to be > 0
         end
         it "assigns a positive result score" do
           expect( assigns(:standard_points) ).to be >= 0
+        end
+        xit "assigns team best" do
+          expect( assigns(:team_best) ).to be_an_instance_of( IndividualRecord )
         end
       end
       # -----------------------------------------------------------------------
