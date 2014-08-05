@@ -17,42 +17,34 @@ describe SwimmerDecorator do
 
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method with parameters, returning String or nil)", [
-        :get_confirm_label_text_for, 
+        :get_confirm_label_text_for,
         :get_confirm_tooltip_text_for,
         :get_confirm_path_for,
-        :get_invite_label_text_for, 
+        :get_invite_label_text_for,
         :get_invite_tooltip_text_for,
         :get_invite_path_for,
-        :get_block_label_text_for, 
+        :get_block_label_text_for,
         :get_block_tooltip_text_for,
         :get_block_path_for,
-        :get_remove_label_text_for, 
+        :get_remove_label_text_for,
         :get_remove_tooltip_text_for,
         :get_remove_path_for,
-        :get_edit_label_text_for, 
+        :get_edit_label_text_for,
         :get_edit_tooltip_text_for,
         :get_edit_path_for
       ],
       @user2
     )
-    it_behaves_like( "(the existance of a method returning an array)", [
+    it_behaves_like( "(the existance of a method returning a collection or an object responding to :each)", [
         :get_current_teams,
-        :get_best_timings
-# FIXME
-#        :get_all_races,
-#        :get_owned_records,
-#        :get_medals
+        :get_medals
       ]
     )
     it_behaves_like( "(the existance of a method returning numeric values)", [
-# FIXME
-#        :get_total_owned_team_records,
         :get_total_gold_medals,
         :get_total_silver_medals,
         :get_total_bronze_medals,
         :get_total_wooden_medals
-# FIXME
-#        :get_total_owned_season_records
       ]
     )
   end

@@ -1,12 +1,10 @@
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to( t('radiography.radio_tab'), swimmer_radio_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
   %li
-    = link_to( t('radiography.medals_tab'), swimmer_medals_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
   %li
-    = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(:id=>@swimmer.id) )
-  %li
-    = link_to( t('radiography.all_races_tab'), swimmer_all_races_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
   %li.active
     = link_to( t('radiography.misc_tab'), '#' )
 
@@ -17,9 +15,9 @@
       = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
   .row-fluid
     %h3= "#{t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}"
-    %h4= "#{@current_season.get_full_name}" 
-    %h4= I18n.t('activerecord.models.gender_type') + ": #{@swimmer_gender.i18n_description}" 
-    %h4= I18n.t('activerecord.models.category_type') + ": #{@swimmer_category.get_short_name}" 
+    %h4= "#{@current_season.get_full_name}"
+    %h4= I18n.t('activerecord.models.gender_type') + ": #{@swimmer_gender.i18n_description}"
+    %h4= I18n.t('activerecord.models.category_type') + ": #{@swimmer_category.get_short_name}"
 
   .row-fluid
     = form_tag( :swimmer_misc, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
@@ -51,12 +49,11 @@
     .row-fluid
       %h4= 'FIN standard points: ' + "#{@standard_points}"
       %p= 'Base time: ' + "#{@current_time_standard.get_timing_instance.to_s}"
-      %p= 'World record: ' 
-      %p= 'Team record: ' 
+      %p= 'World record: '
+      %p= 'Team record: '
       %p= @swimmer.get_full_name + ' personal best: '
       %p= @swimmer.get_full_name + ' seasonal best: '
   - else
     .row-fluid
       = "Select pool type and event and fill in the timing fields, than press calculate button to know the standard FIN points"
 
-      

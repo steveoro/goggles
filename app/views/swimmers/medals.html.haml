@@ -1,14 +1,12 @@
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to( t('radiography.radio_tab'), swimmer_radio_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
   %li.active
     = link_to( t('radiography.medals_tab'), '#' )
   %li
-    = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
   %li
-    = link_to( t('radiography.all_races_tab'), swimmer_all_races_path(:id=>@swimmer.id) )
-  %li
-    = link_to( t('radiography.misc_tab'), swimmer_misc_path(:id=>@swimmer.id) )
+    = link_to( t('radiography.misc_tab'), swimmer_misc_path(id: @swimmer.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
@@ -48,4 +46,4 @@
           = @tot_season_records_for_this_swimmer
 
     .span3
-      = image_tag( 'img_radiography.jpg', :class=>"img-polaroid" ) 
+      = image_tag( 'img_radiography.jpg', :class=>"img-polaroid" )

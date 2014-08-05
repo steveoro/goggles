@@ -14,12 +14,10 @@
                 = label_tag( :text, I18n.t('meeting.text_to_be_searched'), for: :text, 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.simple_search_tooltip') )
               .controls
                 = text_field_tag( :text, nil, { class: 'input-xxlarge' } )
+                = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
+                %span(id='loadingIndicator' hidden='true')
+                  = image_tag( 'indicator.gif' )
               %script
                 $('#tooltipLabel').tooltip();
-          .row-fluid
-            .controls
-              = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
-              %span(id='loadingIndicator' hidden='true')
-                = image_tag( 'indicator.gif' )
 #meetingGrid
   =render(partial: 'simple_search_grid')

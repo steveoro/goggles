@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  4.00.385
+  - version:  4.00.405
   - author:   Steve A., Leega
 
 =end
@@ -57,7 +57,7 @@ class SwimmersController < ApplicationController
   #
   def medals
     @swimmer = SwimmerDecorator.decorate( @swimmer )
-###################################################### TODO REFACTOR this using the new Decorator:
+    # TODO REFACTOR this using the new Decorator:
     # --- "Medals" tab: ---
     @gold_medals   = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 1 )
     @silver_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 2 )
@@ -98,18 +98,6 @@ class SwimmersController < ApplicationController
   #++
 
 
-  # Radiography for a specified swimmer id: "All the races" tab rendering.
-  #
-  # == Params:
-  # id: the swimmer id to be processed
-  #
-  def all_races
-    redirect_to meetings_current_path( preselect_ids: 1, prefilter_swimmer: @swimmer.get_full_name, swimmer_id: @swimmer.id )
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   # Radiography for a specified swimmer id: "Misc" tab rendering
   # FIN standard point calculation
   #
@@ -136,18 +124,18 @@ class SwimmersController < ApplicationController
       minutes  = params[:minutes] ? params[:minutes].to_i : -1
       seconds  = params[:seconds] ? params[:seconds].to_i : -1
       hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
-      @timing = Timing.new( hundreds, seconds, minutes ) 
+      @timing = Timing.new( hundreds, seconds, minutes )
 
       if @timing && @timing.to_hundreds > 0
         # Verify event is ammissible for pool type
         if @current_event.events_by_pool_types.where(pool_type_id: pool_type_id).count > 0
-          score_calculation = ScoreCalculator.new( @swimmer, @current_season, @current_pool, @current_event ) 
+          score_calculation = ScoreCalculator.new( @swimmer, @current_season, @current_pool, @current_event )
           @standard_points = score_calculation.get_fin_score( @timing )
-          @current_time_standard = score_calculation.get_time_standard           
+          @current_time_standard = score_calculation.get_time_standard
 
           # Leega: TODO
           # - Render the result with verbose cosmetics data such as
-          #   base time, world record holder, national record holder, 
+          #   base time, world record holder, national record holder,
           #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')

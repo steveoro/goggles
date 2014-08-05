@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'wice_grid'
 
 
 describe SwimmersController, :type => :controller do
@@ -11,8 +12,8 @@ describe SwimmersController, :type => :controller do
       end
       it "assigns the required variables" do
         get :index
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
-        expect( assigns(:swimmers_grid) ).not_to be_nil 
+        expect( assigns(:title) ).to be_an_instance_of( String )
+        expect( assigns(:swimmers_grid) ).to be_an_instance_of( Wice::WiceGrid )
       end
       it "renders the search template" do
         get :index
@@ -34,7 +35,7 @@ describe SwimmersController, :type => :controller do
       end
       it "redirects to #index" do
         get :radio, id: 0
-        expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
+        expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
       end
     end
 
@@ -48,7 +49,7 @@ describe SwimmersController, :type => :controller do
       end
       it "assigns the required variables" do
         get :radio, id: @fixture.id
-        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator ) 
+        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
       end
       it "renders the template" do
         get :radio, id: @fixture.id
@@ -88,12 +89,12 @@ describe SwimmersController, :type => :controller do
     context "as a logged-in user" do
       context "with an HTML request for a non-existing id," do
         before(:each) { get action_sym, id: 0 }
-        
+
         it "handles the request with a redirect" do
           expect(response.status).to eq( 302 )
         end
         it "redirects to #index" do
-          expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
+          expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
         end
       end
 
@@ -105,7 +106,7 @@ describe SwimmersController, :type => :controller do
         end
         it "assigns the required variables" do
           klass = (action_sym == :all_races ? Swimmer : SwimmerDecorator)
-          expect( assigns(:swimmer) ).to be_an_instance_of( klass ) 
+          expect( assigns(:swimmer) ).to be_an_instance_of( klass )
         end
         it "renders the template" do
           expect(response).to render_template(action_sym)
@@ -130,49 +131,12 @@ describe SwimmersController, :type => :controller do
   # ===========================================================================
 
 
-  describe '[GET #all_races/:id]' do
-    it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :all_races )
-
-    before :each do
-      @fixture = create( :swimmer )
-      # We need to set this to make the redirect_to(:back) pass the tests:
-      request.env["HTTP_REFERER"] = swimmers_path()
-    end
-
-    context "as a logged-in user" do
-      before(:each) { login_user() }
-
-      context "with an HTML request for a non-existing id," do
-        before(:each) { get :all_races, id: 0 }
-        it "handles the request with a redirect" do
-          expect(response.status).to eq( 302 )
-        end
-        it "redirects to #index" do
-          expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
-        end
-      end
-      context "with an HTML request for a valid id," do
-        before(:each) { get :all_races, id: @fixture.id }
-        it "handles the request with a redirect" do
-          expect(response.status).to eq( 302 )
-        end
-        it "redirects to meetings_current_path( prefiltered )" do
-          expect( response ).to redirect_to(
-            meetings_current_path( preselect_ids: 1, prefilter_swimmer: @fixture.get_full_name, swimmer_id: @fixture.id )
-          ) 
-        end
-      end
-    end
-  end
-  # ===========================================================================
-
-
   describe '[GET #misc/:id]' do
     it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :misc )
     it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :misc )
 
     context "as a logged-in user" do
-      before(:each) do 
+      before(:each) do
         login_user()
         @swimmer = create(:swimmer)
         get :misc, id: @swimmer.id
@@ -180,15 +144,15 @@ describe SwimmersController, :type => :controller do
 
       it "assigns a current season" do
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
-      end 
+      end
       it "assigns a category_type" do
-        expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
+        expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )
       end
       it "assigns a gender_type" do
-        expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
+        expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
       end
       it "assigns -1 value to standard points" do
-        expect( assigns(:standard_points) ).to eq( -1 )       
+        expect( assigns(:standard_points) ).to eq( -1 )
       end
     end
   end
@@ -209,7 +173,7 @@ describe SwimmersController, :type => :controller do
         expect(response.status).to eq( 302 )
       end
       it "redirects to #index" do
-        expect( response ).to redirect_to( request.env["HTTP_REFERER"] ) 
+        expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
       end
     end
     # -------------------------------------------------------------------------
@@ -244,17 +208,17 @@ describe SwimmersController, :type => :controller do
           expect(response.status).to eq( 302 )
         end
         it "redirects to #misc" do
-          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) ) 
+          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) )
         end
         it "displays the flash error message" do
-          expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) ) 
+          expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) )
         end
         it "assigns -1 value to standard points" do
-          expect( assigns(:standard_points) ).to eq( -1 )       
+          expect( assigns(:standard_points) ).to eq( -1 )
         end
       end
       # -----------------------------------------------------------------------
-      
+
       context "with an invalid timing" do
         before(:each) do
           post(
@@ -271,13 +235,13 @@ describe SwimmersController, :type => :controller do
           expect(response.status).to eq( 302 )
         end
         it "redirects to #misc" do
-          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) ) 
+          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) )
         end
         it "displays the flash error message" do
-          expect( flash[:error] ).to include( I18n.t('radiography.wrong_timing') ) 
-        end        
+          expect( flash[:error] ).to include( I18n.t('radiography.wrong_timing') )
+        end
         it "assigns -1 value to standard points" do
-          expect( assigns(:standard_points) ).to eq( -1 )       
+          expect( assigns(:standard_points) ).to eq( -1 )
         end
       end
       # -----------------------------------------------------------------------
@@ -298,13 +262,13 @@ describe SwimmersController, :type => :controller do
           expect(response.status).to eq( 302 )
         end
         it "redirects to #misc" do
-          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) ) 
+          expect( response ).to redirect_to( swimmer_misc_path(@swimmer.id) )
         end
         it "displays the flash error message" do
-          expect( flash[:error] ).to include( I18n.t('radiography.wrong_event_or_pool') ) 
-        end        
+          expect( flash[:error] ).to include( I18n.t('radiography.wrong_event_or_pool') )
+        end
         it "assigns -1 value to standard points" do
-          expect( assigns(:standard_points) ).to eq( -1 )       
+          expect( assigns(:standard_points) ).to eq( -1 )
         end
       end
       # -----------------------------------------------------------------------
@@ -325,74 +289,38 @@ describe SwimmersController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
-          expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator ) 
+          expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
         end
         it "renders the template" do
           expect(response).to render_template(:misc)
         end
         it "assigns a current season" do
           expect( assigns(:current_season) ).to be_an_instance_of( Season )
-        end 
+        end
         it "assigns a category_type" do
-          expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )      
+          expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )
         end
         it "assigns a gender_type" do
-          expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )        
-        end 
+          expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
+        end
         it "assigns a pool_type" do
-          expect( assigns(:current_pool) ).to be_an_instance_of( PoolType )        
-        end 
+          expect( assigns(:current_pool) ).to be_an_instance_of( PoolType )
+        end
         it "assigns a event_type" do
-          expect( assigns(:current_event) ).to be_an_instance_of( EventType )        
-        end 
+          expect( assigns(:current_event) ).to be_an_instance_of( EventType )
+        end
         it "event type is in event_by_pool_type for current season" do
-          expect( assigns(:current_event).events_by_pool_types.where(pool_type_id: @fixture_events_by_pool_type.pool_type_id).count ).to be > 0 
+          expect( assigns(:current_event).events_by_pool_types.where(pool_type_id: @fixture_events_by_pool_type.pool_type_id).count ).to be > 0
         end
         it "assigns timing data" do
-          expect( assigns(:timing) ).to be_an_instance_of( Timing )        
-        end 
+          expect( assigns(:timing) ).to be_an_instance_of( Timing )
+        end
         it "timing data inserted is a valid timing" do
-          expect( assigns(:timing).to_hundreds ).to be > 0        
-        end 
-        xit "assigns a positive result score" do
-          expect( assigns(:standard_points) ).to be >= 0        
-        end           
-      end
-      # -----------------------------------------------------------------------
-
-        
-      context "with an existing time standard" do
-        before(:each) do
-          fixture_current_season = Season.get_last_season_by_type( 'MASFIN' )
-          fixture_time_standard = create(:time_standard,
-            season_id:        fixture_current_season.id,
-            gender_type_id:   @swimmer.gender_type,
-            category_type_id: @swimmer.get_category_type_for_season( fixture_current_season.id ),
-            event_type_id:    @fixture_events_by_pool_type.event_type_id, 
-            pool_type_id:     @fixture_events_by_pool_type.pool_type_id
-          )
-          #puts "\r\n - swimmer: #{ @swimmer.inspect }"
-          #puts "- fixture_time_standard: #{ fixture_time_standard.inspect }"
-          #puts "- fixture_events_by_pool_type: #{ @fixture_events_by_pool_type.inspect }"
-          post(
-            :misc,
-            id:         @swimmer.id,
-            event_type: {id: @fixture_events_by_pool_type.event_type_id},
-            pool_type:  {id: @fixture_events_by_pool_type.pool_type_id},
-            minutes:    minutes,
-            seconds:    seconds,
-            hundreds:   hundreds
-          )
+          expect( assigns(:timing).to_hundreds ).to be > 0
         end
-        xit "retreives the standard time" do
-          expect( assigns(:current_time_standard) ).to be_an_instance_of( TimeStandard )        
+        it "assigns a positive result score" do
+          expect( assigns(:standard_points) ).to be >= 0
         end
-        xit "the standard time is valid" do
-          expect( assigns(:current_time_standard).get_timing_instance.to_hundreds ).to be > 0        
-        end
-        xit "assigns a positive result score" do
-          expect( assigns(:standard_points) ).to be >= 0        
-        end           
       end
       # -----------------------------------------------------------------------
     end

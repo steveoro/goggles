@@ -1,0 +1,54 @@
+%ul.nav.nav-tabs#topOfPage
+  %li.active#firstTab
+    = link_to( t('radiography.radio_tab'), '#' )
+
+.container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = I18n.t('radiography.radio_tab') + ' -- '
+      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @team.get_full_name)
+  .row-fluid
+    .span9
+      .row-fluid
+        .span3
+          = I18n.t(:name) +':'
+        .span6
+          %b= @team.get_verbose_name
+          = admin_signed_in? ? " (id=#{@team.id})" : ''
+      .row-fluid
+        .span3
+          = I18n.t('team.affiliations') +':'
+        .span6
+          = @team.season_types.uniq.map{ |row| row.get_full_name }.join(', ')
+      .row-fluid
+        .span3
+          = I18n.t('swimmers.meeting_presence') +':'
+        .span6
+          = count_with_award_star( @team.meetings.collect{|row| row.id}.uniq.size )
+  .row-fluid
+    %p
+
+  .row-fluid
+    = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn"} )
+  .row-fluid
+    %p
+
+  .row-fluid
+    %a{ href: "#", onclick: "$('#loadingIndicator').show(); $('#records_4x_grid').hide(); loadAJAXTeamRecord(#{@team.id});", 'data-toggle' => 'tooltip', title: I18n.t('team.team_records_load_tooltip') }
+      = I18n.t('team.team_records')
+    %span(id='loadingIndicator' hidden='true')
+      = image_tag( 'indicator.gif' )
+
+  .row-fluid
+    #records_4x_grid
+
+%script
+  $('#firstTab').addClass('active');
+  function loadAJAXTeamRecord(team_id) {                                        |
+    $.ajax({                                                                    |
+      url: "#{ records_for_team_path() }",                                      |
+      data: { team: { id: team_id } },                                          |
+      success: function(data) { $('#records_4x_grid').show(); },                |
+      dataType: 'script'                                                        |
+    });                                                                         |
+  };                                                                            |

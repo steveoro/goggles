@@ -10,7 +10,8 @@
         attribute: 'description',
         detach_with_id: :flt_description
     ) do |meeting|
-        link_to(
+        link_to_if(
+            meeting.meeting_individual_results.count + meeting.meeting_relay_results.count > 0,
             meeting.description,
             meeting_show_full_path( id: meeting.id, team_id: @preselected_team_id, swimmer_id: @preselected_swimmer_id )
         )
@@ -47,19 +48,17 @@
     g.column(
         name: I18n.t('meeting.events_list'),
     ) do |meeting|
-        # TODO Add here the link to the starting list
         meeting.get_complete_events.split("\r\n")
             .map{ |e| content_tag(:p, e) }.join().html_safe
     end
 
     g.column(
-        name: I18n.t('meeting.ind_results_short'),
+        name: I18n.t('meeting.start_list_and_manifest'),
     ) do |meeting|
-        meeting.meeting_individual_results.count
-    end
-    g.column(
-        name: I18n.t('meeting.rel_results_short'),
-    ) do |meeting|
-        meeting.meeting_relay_results.count
+        link_to_if(
+            (meeting.meeting_entries.count > 0),
+            image_tag('book_open.png', 'data-toggle' => 'tooltip', title: I18n.t('meeting.start_list_tooltip') ),
+            wip_path()
+        )
     end
 end -%>

@@ -2,7 +2,7 @@
 
 = SwimmerDecorator
 
-  - version:  4.00.339.20140707
+  - version:  4.00.405
   - author:   Steve A.
 
   Decorator for the Swimmer model.
@@ -266,52 +266,10 @@ class SwimmerDecorator < Draper::Decorator
   # Returns the Array of currently associated Teams for this Swimmer.
   #
   def get_current_teams()
-    teams
-  end
-
-  # Returns the Array of best Timings for this Swimmer, according to the specified
-  # PoolType.
-  #
-  def get_best_timings( pool_type_id = nil )
-    []
-  end
-
-  # Returns the Array of all the MeetingIndividualResult(s) for this Swimmer,
-  # according to the specified PoolType.
-  #
-  def get_all_races( pool_type_id = nil )
-    (
-      meeting_individual_results.joins( :pool_type )
-        .where{ my{pool_type_id}.nil? ? true : pool_type.id == my{pool_type_id} }
-    )
+    teams.uniq
   end
   #-- --------------------------------------------------------------------------
   #++
-
-  # Returns the Array of all the MeetingIndividualResult(s) that are a Team record
-  # for this Swimmer.
-  # Whenever a Team or a Season are specified they will act as filtering parameters.
-  #
-  def get_owned_records( team = nil, season = nil )
-    # FIXME this has not been tested yet:
-#    all_championships_records = MeetingIndividualResult
-    (
-      MeetingIndividualResult
-        .joins( :season, :event_type, :category_type, :gender_type, :pool_type )
-        .is_valid
-        .has_rank( 1 )
-        .select(
-          'seasons.id, meeting_program_id, swimmer_id, minutes, seconds, hundreds,' <<
-          ' event_types.code, category_types.code, gender_types.code, pool_types.code'
-        ).group(
-          'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
-        ).having{
-          ( swimmer_id == my{id} ) &
-          ( my{team}.nil?   ? true : teams.id == my{team.id} ) &
-          ( my{season}.nil? ? true : seasons.id == my{season.id} )
-        }
-    )
-  end
 
   # Returns the Array of all the MeetingIndividualResult(s) that are crowned by a
   # specific ranking position for this Swimmer.
@@ -326,14 +284,6 @@ class SwimmerDecorator < Draper::Decorator
   end
   #-- --------------------------------------------------------------------------
   #++
-
-  # Returns the total count of all the MeetingIndividualResult(s) that are a Team record
-  # for this Swimmer.
-  # Whenever a Team is specified it will act as a filtering parameter.
-  #
-  def get_total_owned_team_records( team = nil )
-    get_owned_records( team ).size
-  end
 
   # Returns the total count of all the gold medals for this Swimmer.
   #
@@ -357,13 +307,6 @@ class SwimmerDecorator < Draper::Decorator
   #
   def get_total_wooden_medals()
     MeetingIndividualResult.count_swimmer_ranks_for( id, 4 )
-  end
-
-  # Returns the total count of all the Season records for this Swimmer.
-  # Whenever a Season is specified it will act as a filtering parameter.
-  #
-  def get_total_owned_season_records( season = nil )
-    get_owned_records( nil, season ).size
   end
   #-- --------------------------------------------------------------------------
   #++

@@ -6,15 +6,43 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  4.00.383
+  - version:  4.00.405
   - author:   Steve A.
 
 =end
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_filter :authenticate_user_from_token!, except: [:index, :radio]
+  before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
+  # Parse parameters:
+  before_filter :verify_parameter, except: [:index]
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Index/Search action
+  #
+  def index
+    @title = I18n.t('team.search_title')
+    @teams_grid = initialize_grid(
+      Team,
+      order: 'name',
+      order_direction: 'asc',
+      per_page: 20
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Radiography for a specified team id: main ID card "Radiography" tab rendering.
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def radio
+    # --- "Radiography" tab: ---
+  end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -69,6 +97,37 @@ class TeamsController < ApplicationController
     else
       render json: ''
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Verifies that a team id is provided as parameter; otherwise
+  # redirects to the home page.
+  # Assigns the @team instance when successful.
+  #
+  # == Params:
+  # id: the team id to be processed by most of the methods (see before filter above)
+  #
+  def verify_parameter
+    set_team
+    unless ( @team )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+  end
+
+  # Verifies that a team id is provided as a parameter to this controller.
+  # Assigns the @team instance when successful.
+  #
+  # == Controller Params:
+  # id: the team id to be processed by most of the methods (see before filter above)
+  #
+  def set_team
+    @team = Team.find_by_id( params[:id].to_i )
   end
   #-- -------------------------------------------------------------------------
   #++

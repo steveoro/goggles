@@ -14,11 +14,6 @@
             = grid_filter @meetings_grid, :flt_description
         .row-fluid
           .span2
-            = I18n.t(:season_type, { scope: [:activerecord, :models] })
-          .span10
-            = grid_filter @meetings_grid, :flt_season_type_id
-        .row-fluid
-          .span2
             = I18n.t(:season, { scope: [:activerecord, :models] })
           .span10
             = grid_filter @meetings_grid, :flt_season_id
