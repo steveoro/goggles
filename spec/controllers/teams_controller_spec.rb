@@ -58,4 +58,66 @@ describe TeamsController, :type => :controller do
     end
   end
   # ===========================================================================
+
+
+  shared_examples_for "(Teams restricted GET action as an unlogged user)" do |action_sym|
+    before :each do
+      @fixture = create( :team )
+    end
+
+    context "unlogged user" do
+      it "displays the Login page for an invalid id" do
+        get_action_and_check_if_its_the_login_page_for( action_sym, 0 )
+      end
+      it "displays the Login page for a valid id" do
+        get_action_and_check_if_its_the_login_page_for( action_sym, @fixture.id )
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  shared_examples_for "(Teams restricted GET action as a logged-in user)" do |action_sym|
+    before :each do
+      @fixture = create( :team )
+      # We need to set this to make the redirect_to(:back) pass the tests:
+      request.env["HTTP_REFERER"] = teams_path()
+      login_user()
+    end
+
+    context "as a logged-in user" do
+      context "with an HTML request for a non-existing id," do
+        before(:each) { get action_sym, id: 0 }
+
+        it "handles the request with a redirect" do
+          expect(response.status).to eq( 302 )
+        end
+        it "redirects to #index" do
+          expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
+        end
+      end
+
+      context "with an HTML request for a valid id," do
+        before(:each) { get action_sym, id: @fixture.id }
+
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
+        it "assigns the required variables" do
+          expect( assigns(:team) ).to be_an_instance_of( Team )
+        end
+        it "renders the template" do
+          expect(response).to render_template(action_sym)
+        end
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[GET #best_timings/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :best_timings )
+    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :best_timings )
+  end
+  # ===========================================================================
 end

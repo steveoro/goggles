@@ -1,0 +1,23 @@
+%ul.nav.nav-tabs#topOfPage
+  %li
+    = link_to( t('radiography.radio_tab'), swimmer_radio_path(id: @team.id) )
+  %li.active
+    = link_to( t('radiography.best_timings_tab'), '#' )
+
+.container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = I18n.t('radiography.best_timings_tab') + ' -- '
+      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @team.get_full_name)
+  .row-fluid
+    #records_4x_grid
+      #loadingIndicator.offset6
+        = I18n.t('please_wait')
+        = image_tag( 'indicator.gif' )
+
+%script
+  $.ajax({                                                                      |
+    url: "#{ records_for_team_path() }",                                        |
+    data: { swimmer: { id: "#{@team.id}" } },                                   |
+    dataType: 'script'                                                          |
+  });                                                                           |
