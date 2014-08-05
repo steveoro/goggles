@@ -354,43 +354,7 @@ describe SwimmersController, :type => :controller do
         it "timing data inserted is a valid timing" do
           expect( assigns(:timing).to_hundreds ).to be > 0        
         end 
-        xit "assigns a positive result score" do
-          expect( assigns(:standard_points) ).to be >= 0        
-        end           
-      end
-      # -----------------------------------------------------------------------
-
-        
-      context "with an existing time standard" do
-        before(:each) do
-          fixture_current_season = Season.get_last_season_by_type( 'MASFIN' )
-          fixture_time_standard = create(:time_standard,
-            season_id:        fixture_current_season.id,
-            gender_type_id:   @swimmer.gender_type,
-            category_type_id: @swimmer.get_category_type_for_season( fixture_current_season.id ),
-            event_type_id:    @fixture_events_by_pool_type.event_type_id, 
-            pool_type_id:     @fixture_events_by_pool_type.pool_type_id
-          )
-          #puts "\r\n - swimmer: #{ @swimmer.inspect }"
-          #puts "- fixture_time_standard: #{ fixture_time_standard.inspect }"
-          #puts "- fixture_events_by_pool_type: #{ @fixture_events_by_pool_type.inspect }"
-          post(
-            :misc,
-            id:         @swimmer.id,
-            event_type: {id: @fixture_events_by_pool_type.event_type_id},
-            pool_type:  {id: @fixture_events_by_pool_type.pool_type_id},
-            minutes:    minutes,
-            seconds:    seconds,
-            hundreds:   hundreds
-          )
-        end
-        xit "retreives the standard time" do
-          expect( assigns(:current_time_standard) ).to be_an_instance_of( TimeStandard )        
-        end
-        xit "the standard time is valid" do
-          expect( assigns(:current_time_standard).get_timing_instance.to_hundreds ).to be > 0        
-        end
-        xit "assigns a positive result score" do
+        it "assigns a positive result score" do
           expect( assigns(:standard_points) ).to be >= 0        
         end           
       end

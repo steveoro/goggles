@@ -46,13 +46,13 @@ class ScoreCalculator
   
   private
 
-  # Retreives the swimmer gender
+  # Retrieves the swimmer gender
   #
   def retreive_swimmer_gender
     @swimmer_gender = @swimmer.gender_type
   end
   
-  # Retreives the swimmer category for a given season
+  # Retrieves the swimmer category for a given season
   #
   # == Params:
   # season_id: id of the interested season
@@ -61,13 +61,13 @@ class ScoreCalculator
     @swimmer.get_category_type_for_season( @season.id )
   end
 
-  # Retreives the swimmer category for a given season
+  # Retrieves the swimmer category for a given season
   #
   # == Params:
   # season_id: id of the interested season
   #
   def retreive_time_standard
-    # Retreives category and gender through the swimmer
+    # Retrieves category and gender through the swimmer
     # @swimmer_category = get_swimmer_category
     # @swimmer_gender = get_swimmer_gender
     TimeStandard.where(
@@ -79,10 +79,10 @@ class ScoreCalculator
       ).first
   end
   
-  # Compuite the FIN standard score for a given event, pool type, gender, category, season
+  # Compute the FIN standard score for a given event, pool type, gender, category, season
   # FIN standard points is calculated with:
   # TimeStandard : TimeSwam = x : 1000
-  # If no time standard, FIN score equalals to 1000
+  # If no time standard, FIN score equals to 1000
   #
   # == Params:
   # time_swam: the time swam for calculation
@@ -91,7 +91,7 @@ class ScoreCalculator
     # Without a correct time_swam always return 0
     fin_score = 0
     if time_swam && time_swam.to_hundreds > 0
-      # Retreive the time standard
+      # Retrieves the time standard
       @current_time_standard = get_time_standard
       if @current_time_standard && @current_time_standard.get_timing_instance.to_hundreds > 0
         # Calculate the score with 2 decimals fixed
