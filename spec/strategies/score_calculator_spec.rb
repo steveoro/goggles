@@ -15,7 +15,7 @@ describe ScoreCalculator do
   context "with requested parameters" do
     subject { ScoreCalculator.new( @fix_swimmer, @fix_season, @fix_pool_type, @fix_event_type ) }
 
-    describe "[get_swimmer_gender]" do
+    describe "has a method [get_swimmer_gender]" do
       it "respond to get_swimmer_gender methods" do
         expect( subject.get_swimmer_gender ).to respond_to
       end
@@ -25,12 +25,22 @@ describe ScoreCalculator do
     end
     #-- -----------------------------------------------------------------------
 
-    describe "[get_swimmer_category]" do
+    describe "has a method [get_swimmer_category]" do
       it "respond to get_swimmer_category methods" do
         expect( subject.get_swimmer_category ).to respond_to
       end
       it "returns a category_type istance" do
         expect( subject.get_swimmer_category ).to be_an_instance_of( CategoryType )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "has a method [get_time_standard]" do
+      it "respond to get_time_standard methods" do
+        expect( subject.get_time_standard ).to respond_to
+      end
+      it "returns a time standard istance" do
+        expect( subject.get_time_standard ).to be_an_instance_of( TimeStandard )
       end
     end
     #-- -----------------------------------------------------------------------
