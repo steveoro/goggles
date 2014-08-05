@@ -448,9 +448,9 @@ it:
 
   meeting:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
-    index_title: "Gare - ricerca personalizzata"
-    simple_title: "Gare - ricerca semplice"
-    current_title: "Cerca fra le gare correnti"
+    index_title: "Tutte le Gare - ricerca personalizzata"
+    simple_title: "Tutte le Gare - ricerca semplice"
+    current_title: "Cerca fra le Gare correnti"
     index_menu: "Ricerca personalizzata"
     simple_menu: "Ricerca semplice"
     current_menu: "Tutte le gare correnti"
@@ -464,8 +464,8 @@ it:
     team_total_bronze_medals: "Tot. medaglie Bronzo"
     team_total_wooden_medals: "Tot. medaglie di Legno [:-)]"
     team_total_outstanding_scores: "Tot. punteggi notevoli"
-    search_by_swimmer: "Cerca per Atleta"
-    search_by_team: "Cerca per Squadra"
+    search_by_swimmer: "Cerca Gare per Atleta"
+    search_by_team: "Cerca Gare per Squadra"
     total_attended_meetings: "Partecipaz. a Meeting"
     total_results: "Risultati totali"
     total_results_short: "Risult. tot."
@@ -481,8 +481,10 @@ it:
     events_list: "Eventi"
     planned_events: "Eventi in programma"
     text_to_be_searched: "Testo da cercare"
-    simple_search_tooltip: "Inserisci direttamente il testo da ricercare all'interno delle gare e dei risultati (descrizioni, nomi, ...)"
+    simple_search_tooltip: "Inserisci direttamente il testo da ricercare all'interno delle gare e dei risultati (nomi persone o luoghi, descrizioni o parole come '50 FA' o '200 RA', ...)"
     no_records_matching_search_text: "(Nessuna riga dati trovata contenente il testo di ricerca.)"
+    to_be_defined: '(Dati ancora mancanti)'
+    clear_prefiltering: "Azzera prefiltraggio"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"

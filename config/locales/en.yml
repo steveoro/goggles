@@ -448,8 +448,8 @@ en:
 
   meeting:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
-    index_title: "Meetings - custom search"
-    simple_title: "Meetings - simple search"
+    index_title: "All Meetings - custom search"
+    simple_title: "All Meetings - simple search"
     current_title: "Search among current Meetings"
     index_menu: "Custom search"
     simple_menu: "Simple search"
@@ -464,8 +464,8 @@ en:
     team_total_bronze_medals: "Tot. Bronze medals"
     team_total_wooden_medals: "Tot. 'Wooden' medals [:-)]"
     team_total_outstanding_scores: "Tot. outstanding scores"
-    search_by_swimmer: "Search by Athlete"
-    search_by_team: "Search by Team"
+    search_by_swimmer: "Search Meeting by Athlete"
+    search_by_team: "Search Meeting by Team"
     total_attended_meetings: "Attended Meetings"
     total_results: "Total Results"
     total_results_short: "Tot. Results"
@@ -480,8 +480,10 @@ en:
     events_list: "Events"
     planned_events: "Planned Events"
     text_to_be_searched: "Text to be searched"
-    simple_search_tooltip: "Type the text to be searched among all meetings and their results (descriptions, names, ...)"
+    simple_search_tooltip: "Type directly the text to be searched among all meetings and their results (persons' names or places, descriptions or words, like '50 FS' or '200 BS', ...)"
     no_records_matching_search_text: "(No records were found matching the search text.)"
+    to_be_defined: '(Missing data)'
+    clear_prefiltering: "Clear pre-filtering"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"

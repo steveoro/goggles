@@ -47,7 +47,8 @@
         detach_with_id: :flt_events_list
     ) do |meeting|
         # TODO Add here the link to the starting list
-        meeting.get_complete_events.gsub("\r\n", "<br/>").html_safe
+        meeting.get_complete_events.split("\r\n")
+            .map{ |e| content_tag(:p, e) }.join().html_safe
     end
 
     g.column(

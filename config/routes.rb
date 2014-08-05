@@ -98,13 +98,10 @@ Goggles::Application.routes.draw do
       post "social/edit/:id",                   to: "socials#edit"
 
       # === Meetings ===
-      # FIXME REMOVE #index
-      get "meetings/index",                     to: "meetings#index",                   as: "meetings"
-      # TODO:
       get "meetings/current",                   to: "meetings#current"
       get "meetings/custom_search",             to: "meetings#custom_search"
       get "meetings/simple_search",             to: "meetings#simple_search"
-      # TODO / FUTURE DEV: 
+      # TODO / FUTURE DEV:
 #      get "meetings/tagged_by_me",              to: "meetings#tagged_by_me"
 #      get "meetings/tagged_by_buddies",         to: "meetings#tagged_by_buddies"
       get "meetings/search_swimmer",            to: "meetings#search_swimmer"

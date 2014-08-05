@@ -155,7 +155,7 @@ class Meeting < ActiveRecord::Base
     if events.count > 0
       events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
     else
-      'To be defined...'
+      I18n.t('meeting.to_be_defined')
     end
   end
 
@@ -185,7 +185,7 @@ class Meeting < ActiveRecord::Base
       if ms.count == 1
         self.get_short_events
       else
-        'To be defined...'
+        I18n.t('meeting.to_be_defined')
       end
     end
   end

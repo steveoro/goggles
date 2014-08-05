@@ -49,13 +49,17 @@ describe RecordCollector do
 
   describe "#initialize" do
     it "allows a list of IndividualRecord rows as a parameter" do
-      result = RecordCollector.new( list: create_list(:individual_record, 5) )
+      list = create_list(:individual_record, 5)
+      result = RecordCollector.new( list: list )
       expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.count ).to eq( list.size )
       expect( result.count ).to eq(5)
     end
     it "allows a list of MeetingIndividualResult rows as a parameter" do
-      result = RecordCollector.new( list: create_list(:meeting_individual_result, 5) )
+      list = create_list(:meeting_individual_result, 5)
+      result = RecordCollector.new( list: list )
       expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.count ).to eq( list.size )
       expect( result.count ).to eq(5)
     end
   end
@@ -67,17 +71,17 @@ describe RecordCollector do
       expect( subject.collection ).to be_an_instance_of( RecordCollection )
     end
     # This is useful if the getter is implemented using #dup or #clone.
-    # [Steve, 20140717] *** Currently: NOT ***    
+    # [Steve, 20140717] *** Currently: NOT ***
     it "returns a collection having the same number of elements of the internal collection" do
       expect( subject.collection.count ).to eq(subject.count)
-    end    
+    end
   end
 
   describe "#count" do
     it "returns the size of the internal collection" do
       subject.clear
       expect( subject.count ).to eq(0)
-    end    
+    end
     it "clears the internal list" do
       subject.collect_from_results_having('25', '50FA', 'M35', 'M')
       expect( subject.count ).to be > 0
@@ -87,7 +91,7 @@ describe RecordCollector do
   describe "#clear" do
     it "returns the cleared collection instance" do
       expect( subject.clear ).to be_an_instance_of( RecordCollection )
-    end    
+    end
     it "clears the internal list" do
       subject.collect_from_results_having('25', '50FA', 'M35', 'M')
       expect{ subject.clear }.to change{ subject.count }.to(0)

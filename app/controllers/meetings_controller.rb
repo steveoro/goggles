@@ -6,22 +6,22 @@ require 'common/format'
 
 = MeetingsController
 
-  - version:  4.00.399
+  - version:  4.00.401
   - author:   Steve A.
 
 =end
 class MeetingsController < ApplicationController
 
-  # Index of the meetings for the current academic/sport year.
+  # Index of the meetings for the current sport/academic year.
   #
   # === Optional parameters:
-  # - title:      a text title override;
+  # - text:       a text to be added to the title in between brackets;
   # - swimmer_id: a Swimmer id to be highlighted among the results;
   # - team_id:    a Team id to be highlighted among the results.
   #
   def current
-    @title = if params[:title]
-      I18n.t('meeting.current_title') + " (#{ params[:title] })"
+    @title = if params[:text].to_s.size > 0
+      I18n.t('meeting.current_title') + " ('#{ params[:text] }')"
     else
       I18n.t('meeting.current_title')
     end
@@ -49,7 +49,14 @@ class MeetingsController < ApplicationController
   # Meetings search index with a simple text input which searches among
   # all the descriptions and the results texts to extract the search results.
   #
-  # Currently, it collects all the IDs of the Meetings for which the search
+  # Despite the name, this method performs some complicated & educated guesses
+  # about what the user may usually want to find out.
+  #
+  # To achieve this, the dataset is literally constructed by collecting possibile
+  # match candidates among several sub-entities linked to the row of the Meeting
+  # itself.
+  #
+  # Currently, the method collects all the IDs of the Meetings for which the search
   # text can be matched inside:
   #
   # => meetings.description
@@ -64,26 +71,50 @@ class MeetingsController < ApplicationController
   # => meeting_events.event_type#i18n_short
   # => meeting_events.event_type#i18n_description
   #
+  #
+  # === Parameters:
+  # - text:       the text to be searched;
+  #               - stored in session[:text] when not empty;
+  #               - clears session[:text] when equal to '*' (a single asterisk).
+  #
+  #
   # === Optional parameters:
-  # - title:      a text title override;
   # - swimmer_id: a Swimmer id to be highlighted among the results;
   # - team_id:    a Team id to be highlighted among the results.
   #
   def simple_search
-# DEBUG
-    logger.debug "PARAMS : #{params.inspect }"
-    @title = if params[:title]
-      I18n.t('meeting.simple_title') + " (#{ params[:title] })"
+    # Clear the saved text search when request with special code:
+    session[:text] = params[:text] = nil if params[:text] == '*'
+    # Store the search text when it changes to something:
+    session[:text] = params[:text] if params[:text].to_s.size > 0
+    saved_text = session[:text]
+    search_text = "%#{ saved_text }%" if saved_text.to_s.size > 0
+
+    # Build-up title:
+    @title = if saved_text.to_s.size > 0
+      I18n.t('meeting.simple_title') + " ('#{ saved_text }')"
     else
       I18n.t('meeting.simple_title')
     end
-    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
-    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+
+    # Assign ID highlighters based on search text (when not provided):
+    if params[:swimmer_id]
+      @preselected_swimmer_id = params[:swimmer_id].to_i
+    elsif saved_text
+      serched_swimmer = Swimmer.where( ["swimmers.complete_name LIKE ?", search_text] ).first
+      @preselected_swimmer_id = serched_swimmer.id if serched_swimmer
+    end
+    if params[:team_id]
+      @preselected_team_id = params[:team_id].to_i
+    elsif saved_text
+      serched_team = Team.where( ["teams.name LIKE ?", search_text] ).first
+      @preselected_team_id = serched_team.id if serched_team
+    end
     ids = []
 
-    # AJAX call? Parse parameter and retrieve records range:
-    if request.xhr?
-      search_text = "%#{ params[:search_text] }%"
+    # Avoid query build-up if no search text is given:
+    if saved_text.to_s.size > 0
+      search_text = "%#{ saved_text }%"
       # Search among most-used text columns:
       ids << Meeting.where(
         [
@@ -100,8 +131,8 @@ class MeetingsController < ApplicationController
 
       # Search among linked EventTypes:
       event_type_ids = EventType.includes(:stroke_type).find_all do |row|
-        ( row.i18n_short =~ %r(#{params[:search_text]})i ) ||
-        ( row.i18n_description =~ %r(#{params[:search_text]})i )
+        ( row.i18n_short =~ %r(#{saved_text})i ) ||
+        ( row.i18n_description =~ %r(#{saved_text})i )
       end.map{ |row| row.id }
       ids << Meeting.includes( :meeting_events ).where( :'meeting_events.event_type_id' => event_type_ids ).map{ |row| row.id }.uniq
     end
@@ -115,11 +146,6 @@ class MeetingsController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
-    # Respond according to requested format (GET request => .html, AJAX request => .js)
-    respond_to do |format|
-      format.html
-      format.js
-    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -127,23 +153,37 @@ class MeetingsController < ApplicationController
 
   # Meetings index with full search customization support.
   #
+  # Note that while other actions, such as #current or #simple_search allow the same
+  # <tt>swimmer_id</tt> & <tt>team_id</tt> parameters just to highlight results in any selected meeting,
+  # here these two parameters are actually used to pre-filter the dataset.
+  #
   # === Optional parameters:
-  # - title:      a text title override;
-  # - swimmer_id: a Swimmer id to be highlighted among the results;
-  # - team_id:    a Team id to be highlighted among the results.
+  # - text:       a text to be added to the title in between brackets;
+  # - swimmer_id: a Swimmer id to be used as a pre-filter for domain passed to the grid;
+  # - team_id:    a Team id to be used as a pre-filter for domain passed to the grid;
   #
   def custom_search
-    @title = if params[:title]
-      I18n.t('meeting.index_title') + " (#{ params[:title] })"
+    @title = if params[:text].to_s.size > 0
+      I18n.t('meeting.index_title') + " ('#{ params[:text] }')"
     else
       I18n.t('meeting.index_title')
     end
     @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
     @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    ids = nil
+    # Prepare pre-selection parameters:
+    if @preselected_swimmer_id
+      swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
+      ids = swimmer.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
+    elsif @preselected_team_id
+      team = Team.find_by_id( @preselected_team_id )
+      ids = team.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
+    end
     # Initialize the grid:
     @meetings_grid = initialize_grid(
       Meeting,
       include: [:season, :season_type],
+      conditions: ids ? { id: ids } : nil,
       order: 'meetings.header_date',
       order_direction: 'asc',
       per_page: 20
@@ -169,9 +209,6 @@ class MeetingsController < ApplicationController
     end
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
-# DEBUG
-#    logger.debug "@preselected_swimmer_id : #{@preselected_swimmer_id}"
-#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
     @meeting_events_list = @meeting.meeting_events.includes(
       :event_type, :stroke_type
@@ -179,7 +216,12 @@ class MeetingsController < ApplicationController
       'event_types.is_a_relay, meeting_events.event_order'
     )
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
+    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
+      @meeting.meeting_individual_results.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -199,8 +241,6 @@ class MeetingsController < ApplicationController
       redirect_to( meetings_current_path() ) and return
     end
     @preselected_team_id = params[:team_id]
-# DEBUG
-#    logger.debug "@preselected_team_id    : #{@preselected_team_id}"
 
     if ( @meeting.meeting_team_scores.count > 0 )
       @meeting_team_scores = @meeting.meeting_team_scores.includes(
@@ -245,7 +285,12 @@ class MeetingsController < ApplicationController
       @total_team_bonus += team_score.meeting_team_points
     }
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
+    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
+      @meeting.meeting_individual_results.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -412,7 +457,12 @@ class MeetingsController < ApplicationController
                                                   # Prepare the event type gender count list and sort it by name:
     @event_types_array = event_types_hash.values.sort{ |a, b|  a[0] <=> b[0] }
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
+    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
+      @meeting.meeting_individual_results.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -496,7 +546,12 @@ class MeetingsController < ApplicationController
       'event_types.is_a_relay, meeting_events.event_order'
     )
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
+    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
+      @meeting.meeting_individual_results.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -533,7 +588,12 @@ class MeetingsController < ApplicationController
       redirect_to( meetings_current_path() ) and return
     end
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @meeting.meeting_individual_results.select( :updated_at ).max.updated_at.to_i
+    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
+      @meeting.meeting_individual_results.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
