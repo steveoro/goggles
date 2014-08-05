@@ -1,6 +1,8 @@
 %ul.nav.nav-tabs#topOfPage
   %li.active#firstTab
     = link_to( t('radiography.radio_tab'), '#' )
+  %li
+    = link_to( t('radiography.best_timings_tab'), team_best_timings_path(id: @team.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign

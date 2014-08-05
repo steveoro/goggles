@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.379
+  - Goggles framework vers.:  4.00.405
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -30,6 +30,7 @@ class RecordCollector
   # - swimmer: a Swimmer instance
   # - team: a filtering Team instance (mutually exclusive with season_type)
   # - season_type: a filtering SeasonType instance (mutually exclusive with team, takes precedence over team)
+  # - season: a filtering Season instance (this filter is ignored when looping on IndividualRecords)
   # - meeting: a Meeting instance (this filter is ignored when looping on IndividualRecords)
   #
   def initialize( options = {} )
@@ -39,11 +40,12 @@ class RecordCollector
     @swimmer      = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
     @team         = options[:team] if options[:team].instance_of?( Team )
     @season_type  = options[:season_type] if options[:season_type].instance_of?( SeasonType )
+    @season       = options[:season] if options[:season].instance_of?( Season )
     @meeting      = options[:meeting] if options[:meeting].instance_of?( Meeting )
     # Set precedence on filter values:
     @team = nil if @season_type
     # Cache the unique codes lists:
-    @pool_type_codes     = PoolType.select(:code).uniq.map{ |row| row.code }.delete_if{ |e| e == '33' }
+    @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
     @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
     @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
     @gender_type_codes   = GenderType.select(:code).uniq.map{ |row| row.code }.delete_if{ |e| e == 'X' }
@@ -64,6 +66,11 @@ class RecordCollector
   # Getter for the internal SeasonType parameter. +nil+ when not defined.
   def season_type
     @season_type
+  end
+
+  # Getter for the internal Season parameter. +nil+ when not defined.
+  def season
+    @season
   end
 
   # Getter for the internal Meeting parameter. +nil+ when not defined.
@@ -143,12 +150,12 @@ class RecordCollector
         )
       else                                          # Record not found?
         row.is_team_record = is_team_record
-        is_ok = row.save 
+        is_ok = row.save
       end
       persisted_ok += 1 if is_ok
       @collection.delete_with_key(key) if remove_from_list && is_ok
     end
-    remove_from_list ? (@collection.count == 0) : (@collection.count == persisted_ok) 
+    remove_from_list ? (@collection.count == 0) : (@collection.count == persisted_ok)
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -175,6 +182,7 @@ class RecordCollector
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
+    mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     update_and_return_collection_with_first_results( mir )
   end

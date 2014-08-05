@@ -41,7 +41,17 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def radio
-    # --- "Radiography" tab: ---
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified team id: "Best timings" tab rendering
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def best_timings
   end
   #-- -------------------------------------------------------------------------
   #++

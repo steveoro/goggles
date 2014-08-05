@@ -13,6 +13,7 @@ describe RecordCollector do
   # TODO test context for prefiltering with a SeasonType
   # TODO test context for prefiltering with a Swimmer
   # TODO test context for prefiltering with a Meeting
+  # TODO test context for prefiltering with a Season
 
   # Using a pre-filtered collector on a Team will speed-up the tests:
   subject { RecordCollector.new( team: Team.find_by_id(1) ) }
@@ -23,6 +24,7 @@ describe RecordCollector do
       [
         :swimmer,
         :team,
+        :season,
         :season_type,
         :meeting,
         :collection,
