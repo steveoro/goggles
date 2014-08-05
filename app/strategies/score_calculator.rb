@@ -8,6 +8,8 @@
 #
 class ScoreCalculator
 
+  # Initialization within a swimmer
+  #
   # == Params:
   # An instance of swimmer
   # An instance of season
@@ -29,6 +31,10 @@ class ScoreCalculator
 
   def get_swimmer_category
     @swimmer_category ||= retreive_swimmer_category
+  end
+
+  def get_time_standard
+    @current_time_standard ||= retreive_time_standard
   end
 
   def get_fin_score( time_swam )
@@ -54,10 +60,28 @@ class ScoreCalculator
   def retreive_swimmer_category
     @swimmer.get_category_type_for_season( @season.id )
   end
+
+  # Retreives the swimmer category for a given season
+  #
+  # == Params:
+  # season_id: id of the interested season
+  #
+  def retreive_time_standard
+    # Retreives category and gender through the swimmer
+    # @swimmer_category = get_swimmer_category
+    # @swimmer_gender = get_swimmer_gender
+    TimeStandard.where(
+        season_id:        @season.id,
+        gender_type_id:   get_swimmer_gender.id, 
+        category_type_id: get_swimmer_category.id,
+        pool_type_id:     @pool_type.id,
+        event_type_id:    @event_type.id
+      ).first
+  end
   
   # Compuite the FIN standard score for a given event, pool type, gender, category, season
   # FIN standard points is calculated with:
-  # TimeStandard : TimeSwam = 1000 : x
+  # TimeStandard : TimeSwam = x : 1000
   # If no time standard, FIN score equalals to 1000
   #
   # == Params:
@@ -67,21 +91,11 @@ class ScoreCalculator
     # Without a correct time_swam always return 0
     fin_score = 0
     if time_swam && time_swam.to_hundreds > 0
-      # Retreives category and gender through the swimmer
-      @swimmer_category = get_swimmer_category
-      @swimmer_gender = get_swimmer_gender
-  
       # Retreive the time standard
-      @current_time_standard = TimeStandard.where(
-        season_id:        @season.id,
-        gender_type_id:   @swimmer_gender.id, 
-        category_type_id: @swimmer_category.id,
-        pool_type_id:     @pool_type.id,
-        event_type_id:    @event_type.id
-      ).first
+      @current_time_standard = get_time_standard
       if @current_time_standard && @current_time_standard.get_timing_instance.to_hundreds > 0
         # Calculate the score with 2 decimals fixed
-        fin_score = time_swam.to_hundreds * 1000 / @current_time_standard.get_timing_instance.to_hundreds
+        fin_score = @current_time_standard.get_timing_instance.to_hundreds * 1000 / time_swam.to_hundreds
       else
         # Without time standard the score is always 1000
         fin_score = 1000

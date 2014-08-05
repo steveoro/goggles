@@ -141,7 +141,9 @@ class SwimmersController < ApplicationController
       if @timing && @timing.to_hundreds > 0
         # Verify event is ammissible for pool type
         if @current_event.events_by_pool_types.where(pool_type_id: pool_type_id).count > 0
-          @standard_points = ScoreCalculator.new( @swimmer, @current_season, @current_pool, @current_event ).get_fin_score( @timing )          
+          score_calculation = ScoreCalculator.new( @swimmer, @current_season, @current_pool, @current_event ) 
+          @standard_points = score_calculation.get_fin_score( @timing )
+          @current_time_standard = score_calculation.get_time_standard           
 
           # Leega: TODO
           # - Render the result with verbose cosmetics data such as

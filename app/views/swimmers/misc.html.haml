@@ -11,7 +11,7 @@
     = link_to( t('radiography.misc_tab'), '#' )
 
 .container-fluid
-  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+  .row-fluid.alert.alert-success.goggles-div-centeralign
     %h4
       = I18n.t('radiography.misc_tab') + ' -- '
       = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
@@ -47,11 +47,10 @@
               = image_tag( 'indicator.gif' )
   - if @standard_points.to_i >= 0
     .row-fluid.alert.alert-success.goggles-div-centeralign
-      %h4
-        = 'FIN Standard points calculation for ' + "#{@current_event.i18n_description} - #{@current_pool.i18n_description}: "
+      %h4= 'FIN Standard points calculation for ' + "#{@current_event.i18n_description} - #{@current_pool.i18n_description}: "
     .row-fluid
-      %p= 'FIN standard points: ' + "#{@standard_points}"
-      %p= 'Base time: ' 
+      %h4= 'FIN standard points: ' + "#{@standard_points}"
+      %p= 'Base time: ' + "#{@current_time_standard.get_timing_instance.to_s}"
       %p= 'World record: ' 
       %p= 'Team record: ' 
       %p= @swimmer.get_full_name + ' personal best: '
