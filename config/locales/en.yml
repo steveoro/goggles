@@ -200,7 +200,7 @@ en:
     medals_tab: "Medals"
     best_timings_tab: "Best Timings"
     all_races_tab: "All the races for this Swimmer"
-    misc_tab: "Misc"
+    misc_tab: "FIN score computation"
     compute_fin_score_for: "Compute FIN score for"
     total_gold_medals: "Gold Medals tot."
     total_silver_medals: "Silver Medals tot."

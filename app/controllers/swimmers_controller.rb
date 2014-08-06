@@ -137,16 +137,41 @@ class SwimmersController < ApplicationController
           # - Render the result with verbose cosmetics data such as
           #   base time, world record holder, national record holder,
           #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
+
+=begin          
+          # Retrieve team records
+          team_rc = RecordCollector.new( team: @swimmer.get_current_team )
+          @team_record = RecordCollectionDecorator.decorate(
+            team_rc.collect_from_records_having( 
+              @current_pool.code,
+              @current_event.code, 
+              @swimmer_category.code, 
+              @swimmer_gender.code
+            )
+          ).to_complete_html_list
           
-          # Retrieve team record
-          #@team_best=RecordCollector.new()
-          @team_best=IndividualRecord.where(
-            pool_type_id:      @current_pool.id,
-            gender_type_id:    @swimmer_gender.id,
-            category_types_id: @swimmer_category.id,
-            event_type_id:     @current_event.id,
-            team_id:           @swimmer.get_current_team.id 
-          )
+          # Retrieve swimmer personal best
+          swimmer_rc = RecordCollector.new( swimmer: @swimmer )
+          @swimmer_record = RecordCollectionDecorator.decorate(
+            swimmer_rc.collect_from_results_having(
+              @current_pool.code, 
+              @current_event.code, 
+              @swimmer_category.code, 
+              @swimmer_gender.code
+            )
+          ).to_complete_html_list
+          
+          # Retrieve team records
+          season_rc = RecordCollector.new( season: @current_season )
+          @season_record = RecordCollectionDecorator.decorate(
+            season_rc.collect_from_records_having(
+              @current_pool.code, 
+              @current_event.code, 
+              @swimmer_category.code, 
+              @swimmer_gender.code
+            )
+          ).to_complete_html_list
+=end
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')
           redirect_to( swimmer_misc_path(@swimmer) ) and return

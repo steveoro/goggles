@@ -201,7 +201,7 @@ it:
     medals_tab: "Medagliere"
     best_timings_tab: "Tempi migliori"
     all_races_tab: "Tutte le gare per questo Atleta"
-    misc_tab: "Varie ed eventuali"
+    misc_tab: "Calcola punteggio FIN"
     compute_fin_score_for: "Calcola il punteggio FIN per"
     total_gold_medals: "Tot. Medaglie Oro"
     total_silver_medals: "Tot. Medaglie Argento"

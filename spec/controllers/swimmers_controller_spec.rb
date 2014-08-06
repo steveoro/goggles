@@ -321,8 +321,14 @@ describe SwimmersController, :type => :controller do
         it "assigns a positive result score" do
           expect( assigns(:standard_points) ).to be >= 0
         end
-        xit "assigns team best" do
-          expect( assigns(:team_best) ).to be_an_instance_of( IndividualRecord )
+        xit "assigns team record" do
+          expect( assigns(:team_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
+        end
+        xit "assigns season record" do
+          expect( assigns(:season_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
+        end
+        xit "assigns swimmer record" do
+          expect( assigns(:swimmer_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
         end
       end
       # -----------------------------------------------------------------------

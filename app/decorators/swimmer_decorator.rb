@@ -263,10 +263,18 @@ class SwimmerDecorator < Draper::Decorator
   #-- --------------------------------------------------------------------------
   #++
 
-  # Returns the Array of currently associated Teams for this Swimmer.
+  # Returns the Array of associated Teams for this Swimmer.
   #
-  def get_current_teams()
+  def get_teams()
     teams.uniq
+  end
+  #-- --------------------------------------------------------------------------
+
+  # Returns the currently associated Teams for this Swimmer in a given season,
+  # or nil if not found
+  #
+  def get_current_team( season )
+    badges.where( season_id: season.id ).last
   end
   #-- --------------------------------------------------------------------------
   #++
