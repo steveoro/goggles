@@ -167,6 +167,40 @@ shared_examples_for "(the existance of a method returning a collection or an obj
       it "returns a collection responding to :each" do
         expect( subject.send(method_name.to_sym) ).to respond_to(:each)
       end
+      it "returns a collection responding to :count" do
+        expect( subject.send(method_name.to_sym) ).to respond_to(:count)
+      end
+    end
+  end
+end
+
+shared_examples_for "(the existance of a method returning a kind of object or nil)" do |method_name_array, object_kind|
+  it_behaves_like "(the existance of a method)", method_name_array
+  method_name_array.each do |method_name|
+    describe "##{method_name}" do
+      it "returns a #{object_kind.name} or nil" do
+        result = subject.send(method_name.to_sym)
+        if result
+          expect( result ).to be_an_instance_of( object_kind )
+        else
+          expect( result ).to be_nil
+        end
+      end
+    end
+  end
+end
+
+shared_examples_for "(the existance of a method with parameters, returning a kind of object or nil)" do |method_name, object_kind, parameter_kind|
+  it_behaves_like "(the existance of a method)", [method_name]
+  describe "##{method_name}" do
+    let(:fix_parameter) { create( parameter_kind.to_sym ) }
+    it "returns a #{object_kind.name} or nil" do
+      result = subject.send(method_name.to_sym, fix_parameter)
+      if result
+        expect( result ).to be_an_instance_of( object_kind )
+      else
+        expect( result ).to be_nil
+      end
     end
   end
 end
@@ -205,6 +239,9 @@ shared_examples_for "(the existance of a method returning a collection of some k
     describe "##{method_name}" do
       it "returns a collection responding to :each" do
         expect( subject.send(method_name.to_sym) ).to respond_to(:each)
+      end
+      it "returns a collection responding to :count" do
+        expect( subject.send(method_name.to_sym) ).to respond_to(:count)
       end
       it "returns a list of #{common_kind.name}" do
         subject.send(method_name.to_sym).each do |element|

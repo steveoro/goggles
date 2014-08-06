@@ -40,6 +40,9 @@ select, input[type="file"] {
 	height: 28px;
 	line-height: 1.2em;
 }
+.input-micro {
+  width:25px;
+}
 
 
 /* ----- jQuery Spinner styles overrides ----- */

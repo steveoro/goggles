@@ -36,7 +36,7 @@ describe SwimmerDecorator do
       @user2
     )
     it_behaves_like( "(the existance of a method returning a collection or an object responding to :each)", [
-        :get_current_teams,
+        :get_teams,
         :get_medals
       ]
     )
@@ -308,4 +308,15 @@ describe SwimmerDecorator do
     )
   end
   # ---------------------------------------------------------------------------
+  
+  describe "#get_current_team" do
+    context "with correct parameters" do
+      it_behaves_like(
+        "(the existance of a method with parameters, returning a kind of object or nil)", 
+        :get_current_team,
+        Team,
+        :season
+      )
+    end
+  end
 end
