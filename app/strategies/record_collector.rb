@@ -42,6 +42,8 @@ class RecordCollector
     @season_type  = options[:season_type] if options[:season_type].instance_of?( SeasonType )
     @season       = options[:season] if options[:season].instance_of?( Season )
     @meeting      = options[:meeting] if options[:meeting].instance_of?( Meeting )
+    @start_date   = options[:start_date] if options[:start_date].instance_of?( Date )
+    @end_date     = options[:end_date] if options[:end_date].instance_of?( Date )
     # Set precedence on filter values:
     @team = nil if @season_type
     # Cache the unique codes lists:
@@ -76,6 +78,16 @@ class RecordCollector
   # Getter for the internal Meeting parameter. +nil+ when not defined.
   def meeting
     @meeting
+  end
+
+  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  def start_date
+    @start_date
+  end
+
+  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  def end_date
+    @end_date
   end
 
   # Getter for the internal list.
@@ -166,6 +178,33 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
+  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code )
+# DEBUG
+#    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{gender_type_code}') ]---"
+    mir = MeetingIndividualResult.is_valid
+      .joins( :pool_type, :event_type, :gender_type )
+      .where(
+      [
+        '(pool_types.code = ?) AND (event_types.code = ?) AND ' +
+        '(gender_types.code = ?) AND ' +
+        '(minutes * 6000 + seconds*100 + hundreds > 0)', # (avoid null times)
+        pool_type_code, event_type_code, gender_type_code
+      ]
+    )
+    mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
+    mir = mir.where( ['team_id = ?', @team.id]) if @team
+    mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
+    mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
+    mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
+    update_and_return_collection_with_first_results( mir )
+  end
+
+
+  # Returns the internal RecordCollection instance updated with the records collected using
+  # the specified parameters.
+  #
+  # This method works by scanning existing MeetingIndividualResult(s) on DB.
+  #
   def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
@@ -184,6 +223,7 @@ class RecordCollector
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
+    mir = mir.joins( :meeting ).where( ['(meetings.header_date >= ?) AND (meetings.header_date <= ?)', @start_date, @end_date]) if @start_date
     update_and_return_collection_with_first_results( mir )
   end
 

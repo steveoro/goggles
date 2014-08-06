@@ -142,7 +142,8 @@ class SwimmersController < ApplicationController
           @national_record = I18n.t('coming_soon')
 
           # Retrieve seasonal records:
-          seasonal_record_rc = RecordCollector.new( season: @current_season )
+          #seasonal_record_rc = RecordCollector.new( season: @current_season )
+          seasonal_record_rc = RecordCollector.new( start_date: @current_season.begin_date, end_date: @current_season.end_date )
           @seasonal_record = RecordCollectionDecorator.decorate(
             seasonal_record_rc.collect_from_results_having(
               @current_pool.code,
@@ -153,21 +154,21 @@ class SwimmersController < ApplicationController
           ).to_complete_html_list
           
           # Retrieve swimmer personal best:
+          # Scan all time results, without category
           personal_best_rc = RecordCollector.new( swimmer: @swimmer )
           @personal_best = RecordCollectionDecorator.decorate(
-            personal_best_rc.collect_from_results_having(
+            personal_best_rc.collect_from_all_category_results_having(
               @current_pool.code,
               @current_event.code,
-              @swimmer_category.code,
               @swimmer_gender.code
             )
           ).to_short_meeting_html_list
           
           # TODO
           # Retrieves seasonal best for swimmer for all current seasons
-          seasonal_best_rc = RecordCollector.new( swimmer: @swimmer, season: @current_season )
+          seasonal_best_rc = RecordCollector.new( swimmer: @swimmer, start_date: @current_season.begin_date, end_date: @current_season.end_date )
           @seasonal_best = RecordCollectionDecorator.decorate(
-            personal_best_rc.collect_from_results_having(
+            seasonal_best_rc.collect_from_results_having(
               @current_pool.code,
               @current_event.code,
               @swimmer_category.code,

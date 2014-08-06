@@ -31,6 +31,7 @@ describe RecordCollector do
         :count,
         :clear,
         :collect_from_results_having,
+        :collect_from_all_category_results_having,
         :collect_from_records_having,
         :get_collected_season_types,
         :save,
@@ -64,6 +65,48 @@ describe RecordCollector do
       expect( result.count ).to eq( list.size )
       expect( result.count ).to eq(5)
     end
+    it "allows a season instance as a parameter" do
+      fix_par = create(:season)
+      result = RecordCollector.new( season: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.season ).to eq( fix_par )
+    end
+    it "allows a meeting instance as a parameter" do
+      fix_par = create(:meeting)
+      result = RecordCollector.new( meeting: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.meeting ).to eq( fix_par )
+    end
+    it "allows a team instance as a parameter" do
+      fix_par = create(:team)
+      result = RecordCollector.new( team: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.team ).to eq( fix_par )
+    end
+    it "allows a swimmer instance as a parameter" do
+      fix_par = create(:swimmer)
+      result = RecordCollector.new( swimmer: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.swimmer ).to eq( fix_par )
+    end
+    it "allows a season type instance as a parameter" do
+      fix_par = create(:season_type)
+      result = RecordCollector.new( season_type: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.season_type ).to eq( fix_par )
+    end
+    it "allows a start date instance as a parameter" do
+      fix_par = Date.new
+      result = RecordCollector.new( start_date: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.start_date ).to eq( fix_par )
+    end    
+    it "allows an end date instance as a parameter" do
+      fix_par = Date.new
+      result = RecordCollector.new( end_date: fix_par )
+      expect( result ).to be_an_instance_of( RecordCollector )
+      expect( result.end_date ).to eq( fix_par )
+    end    
   end
   #-- -------------------------------------------------------------------------
   #++
