@@ -39,7 +39,7 @@ en:
     affiliations: "Affiliations"
     all_races: "All races for this Team"
     team_records: "Team records"
-    team_records_load_tooltip: "Click to load all the records detained by this Team for the registered affiliations"
+    team_records_load_tooltip: "Show all the records detained by this Team for the registered affiliations"
     meeting_presence: "Meeting presence"
 
   badge:
@@ -60,9 +60,9 @@ en:
     index_menu: "Custom search"
     simple_menu: "Simple search"
     current_menu: "All current meetings"
-    show_results_tooltip: "Click to show all the results for this Meeting"
-    show_swimmer_results_tooltip: "Click to show all the results for this swimmer at this Meeting"
-    show_team_results_tooltip: "Click to show all the results for this team at this Meeting"
+    show_results_tooltip: "Show all the results for this Meeting"
+    show_swimmer_results_tooltip: "Show all the results for this swimmer at this Meeting"
+    show_team_results_tooltip: "Show all the results for this team at this Meeting"
     team_total_athletes: "Tot. athletes involved"
     team_total_events: "Tot. competing events"
     team_total_gold_medals: "Tot. Gold medals"
@@ -91,8 +91,8 @@ en:
     to_be_defined: '(Missing data)'
     clear_prefiltering: "Clear pre-filtering"
     start_list_and_manifest: "Start-list / Manifest"
-    start_list_tooltip: "Click to go to the Start-list page for this meeting"
-    manifest_tooltip: "Click to go to the Manifest page for this meeting"
+    start_list_tooltip: "Go to the Start-list page for this meeting"
+    manifest_tooltip: "Go to the Manifest page for this meeting"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -152,8 +152,8 @@ en:
     team_search_title: "Search Records for a Team"
     team_title: "Team Records"
     compute_label: "Compute"
-    total_count_disclaimer_tooltip: "Click to count the total records held by this athlete. This total will include also Records held during affiliations with different Teams."
-    team_load_records_tooltip: "Click to load the record list held by this athlete when affiliated with this Team."
+    total_count_disclaimer_tooltip: "Count the total records held by this athlete. This total will include also Records held during affiliations with different Teams."
+    team_load_records_tooltip: "Show the record list held by this athlete when affiliated with this Team."
     menu_by_team: "for a chosen Team"
     season_type_search_title: "Search Records for a Season type"
     season_type_title: "Records for Season type/Federation"
@@ -166,6 +166,7 @@ en:
     seasonal_best: "Seasonal best"
     meeting_best: "Meeting best"
     world_record: "World record"
+    national_record: "National record"    
     team_record: "Team record"
 
   meeting_stats:
@@ -219,6 +220,7 @@ en:
     time_standard: "Base time"
     team_radio_tab_title: "{TEAM_NAME} according to the Chronometer"
     team_current_swimmers_tab: "Current Swimmers"
+    team_radio_tab_tooltip: "Go to this Team 'Radiography' page"
 
   misc_main_menu:
     title: "Misc"
@@ -315,18 +317,18 @@ en:
     menu_social_index: "Swimming Buddies"
     menu_social_show: "Show"
     menu_social_invite: "Invite"
-    invite_request_tooltip: "Click to invite {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else."
+    invite_request_tooltip: "Invite {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else."
     menu_social_approve: "Approve"
-    approve_request_tooltip: "Click to approve the invite from {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else. If 'approve' shows up again for an already approved friendship, it means that either one of you has edited the sharing options and you have to approve them again."
+    approve_request_tooltip: "Approve the invite from {SWIMMER_NAME} to become a 'swimming buddy' of yours or to share results, trainings or whatever else. If 'approve' shows up again for an already approved friendship, it means that either one of you has edited the sharing options and you have to approve them again."
     menu_social_block: "Block"
-    block_request_tooltip: "Click to block the friendship with {SWIMMER_NAME}."
+    block_request_tooltip: "Block the friendship with {SWIMMER_NAME}."
     menu_social_unblock: "Unblock"
-    unblock_request_tooltip: "Click to unblock the friendship with {SWIMMER_NAME}."
+    unblock_request_tooltip: "Unblock the friendship with {SWIMMER_NAME}."
     menu_social_block_unblock: "Block / Unblock"
     menu_social_remove: "Remove"
-    remove_request_tooltip: "Click to REMOVE the friendship with {SWIMMER_NAME}."
+    remove_request_tooltip: "REMOVE the friendship with {SWIMMER_NAME}."
     menu_social_edit: "Edit"
-    edit_request_tooltip: "Click to edit the friendship details regarding {SWIMMER_NAME}."
+    edit_request_tooltip: "Edit the friendship details regarding {SWIMMER_NAME}."
 
     menu_social_confirm: "Confirm ID"
     menu_social_unconfirm: "Un-confirm ID"

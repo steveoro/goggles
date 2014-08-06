@@ -15,7 +15,9 @@ describe RecordCollectionDecorator do
     it_behaves_like( "(the existance of a method)",
       [
         :to_complete_html_list,
-        :to_verbose_html_list
+        :to_verbose_html_list,
+        :to_short_html_list,
+        :to_short_meeting_html_list,        
       ]
     )
   end
@@ -35,6 +37,24 @@ describe RecordCollectionDecorator do
   describe "#to_verbose_html_list" do
     it "returns an ActiveSupport::SafeBuffer" do
       expect( subject.to_verbose_html_list ).to be_an_instance_of(ActiveSupport::SafeBuffer)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#to_short_html_list" do
+    it "returns an ActiveSupport::SafeBuffer" do
+      expect( subject.to_short_html_list ).to be_an_instance_of(ActiveSupport::SafeBuffer)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#to_short_meeting_html_list" do
+    it "returns an ActiveSupport::SafeBuffer" do
+      expect( subject.to_short_meeting_html_list ).to be_an_instance_of(ActiveSupport::SafeBuffer)
     end
   end
   #-- -------------------------------------------------------------------------

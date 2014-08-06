@@ -321,14 +321,35 @@ describe SwimmersController, :type => :controller do
         it "assigns a positive result score" do
           expect( assigns(:standard_points) ).to be >= 0
         end
-        xit "assigns team record" do
-          expect( assigns(:team_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
+        it "assigns current time standard" do
+          expect( assigns(:current_time_standard) ).to be_an_instance_of( TimeStandard ).or be_nil
         end
-        xit "assigns season record" do
-          expect( assigns(:season_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
+        it "assigns world record" do
+          expect( assigns(:world_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
         end
-        xit "assigns swimmer record" do
-          expect( assigns(:swimmer_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
+        it "assigns national record" do
+          expect( assigns(:national_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+        end
+        it "assigns season record" do
+          expect( assigns(:seasonal_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+        end
+        it "assigns swimmer record" do
+          expect( assigns(:personal_best) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+        end
+        it "assigns season record" do
+          expect( assigns(:seasonal_best) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+        end
+        
+        describe "while assigning team records," do
+          it "assigns an hash" do
+            expect( assigns(:available_team_records) ).to be_an_instance_of( Hash ).or be_an_instance_of( ActiveSupport::HashWithIndifferentAccess )
+          end
+          it "has Team instances as keys" do
+            expect( assigns(:available_team_records).keys ).to all( be_an_instance_of( Team ) )
+          end
+          it "has html record as element" do
+            expect( assigns(:available_team_records).values ).to all( be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String ) )
+          end
         end
       end
       # -----------------------------------------------------------------------

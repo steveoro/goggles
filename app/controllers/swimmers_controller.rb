@@ -133,43 +133,63 @@ class SwimmersController < ApplicationController
           @standard_points = score_calculation.get_fin_score( @timing )
           @current_time_standard = score_calculation.get_time_standard
 
-          # - Render the result with verbose cosmetics data such as
-          #   base time, world record holder, national record holder,
-          #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
+          # TODO
+          # Retrieves world record
+          @world_record = I18n.t('coming_soon')
 
-          # Retrieve team records:
-          last_available_team = @swimmer.badges.last.team if @swimmer.badges.last
-          team_rc = RecordCollector.new( team: last_available_team )
-          @team_record = RecordCollectionDecorator.decorate(
-            team_rc.collect_from_records_having(
-              @current_pool.code,
-              @current_event.code,
-              @swimmer_category.code,
-              @swimmer_gender.code
-            )
-          ).to_complete_html_list if last_available_team
-
-          # Retrieve swimmer personal best:
-          swimmer_rc = RecordCollector.new( swimmer: @swimmer )
-          @swimmer_record = RecordCollectionDecorator.decorate(
-            swimmer_rc.collect_from_results_having(
-              @current_pool.code,
-              @current_event.code,
-              @swimmer_category.code,
-              @swimmer_gender.code
-            )
-          ).to_complete_html_list
+          # TODO
+          # Retrieves national record
+          @national_record = I18n.t('coming_soon')
 
           # Retrieve seasonal records:
-          season_rc = RecordCollector.new( season: @current_season )
-          @season_record = RecordCollectionDecorator.decorate(
-            season_rc.collect_from_results_having(
+          seasonal_record_rc = RecordCollector.new( season: @current_season )
+          @seasonal_record = RecordCollectionDecorator.decorate(
+            seasonal_record_rc.collect_from_results_having(
               @current_pool.code,
               @current_event.code,
               @swimmer_category.code,
               @swimmer_gender.code
             )
           ).to_complete_html_list
+          
+          # Retrieve swimmer personal best:
+          personal_best_rc = RecordCollector.new( swimmer: @swimmer )
+          @personal_best = RecordCollectionDecorator.decorate(
+            personal_best_rc.collect_from_results_having(
+              @current_pool.code,
+              @current_event.code,
+              @swimmer_category.code,
+              @swimmer_gender.code
+            )
+          ).to_short_meeting_html_list
+          
+          # TODO
+          # Retrieves seasonal best for swimmer for all current seasons
+          seasonal_best_rc = RecordCollector.new( swimmer: @swimmer, season: @current_season )
+          @seasonal_best = RecordCollectionDecorator.decorate(
+            personal_best_rc.collect_from_results_having(
+              @current_pool.code,
+              @current_event.code,
+              @swimmer_category.code,
+              @swimmer_gender.code
+            )
+          ).to_short_meeting_html_list
+
+          # Retrieve team records:
+          available_teams = @swimmer.get_teams
+          @available_team_records = Hash.new
+          available_teams.each do |team|
+            team_rc = RecordCollector.new( team: team )
+            team_record = RecordCollectionDecorator.decorate(
+              team_rc.collect_from_records_having(
+                @current_pool.code,
+                @current_event.code,
+                @swimmer_category.code,
+                @swimmer_gender.code
+              )
+            ).to_complete_html_list
+            @available_team_records[team] = team_record         
+          end 
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')
           redirect_to( swimmer_misc_path(@swimmer) ) and return
