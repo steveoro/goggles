@@ -50,17 +50,40 @@
           %span(id='loadingIndicator' hidden='true')
             = image_tag( 'indicator.gif' )
   - if @standard_points.to_i >= 0
-    .row-fluid
-      .alert.alert-success.goggles-div-centeralign
-        %h4= "#{I18n.t('radiography.compute_fin_score_for')} #{@current_event.i18n_description} - #{@current_pool.i18n_description}: #{@timing.to_s}"
-    .row-fluid
-      %h4= "#{I18n.t('radiography.fin_standard_points')}: #{format_score(@standard_points)}".html_safe
-      %p= "#{I18n.t('radiography.time_standard')}: #{@current_time_standard.get_timing_instance.to_s}"
-      %p= "#{I18n.t('records.world_record')}: "
-      %p= "#{I18n.t('records.seasonal_best')}: "
-      %p= "#{I18n.t('records.team_record')}: #{@team_record}".html_safe
-      %p= "#{I18n.t('records.personal_best')} #{@swimmer.get_full_name}: #{@swimmer_record}".html_safe
-      %p= "#{I18n.t('records.seasonal_best')} #{@swimmer.get_full_name}: "
+    %table.table
+      %tr
+        %td.goggles-aligncenter{ colspan: 4 }
+          %b= "#{I18n.t('radiography.compute_fin_score_for')} #{@current_event.i18n_description} - #{@current_pool.i18n_description}: #{@timing.to_s}"
+      %tr
+        %td.goggles-aligncenter{ colspan: 4 }
+          "#{I18n.t('radiography.fin_standard_points')}: #{format_score(@standard_points)}".html_safe
+      %tr
+        %td.goggles-alignright
+          I18n.t('radiography.time_standard')
+        %td
+          @current_time_standard.get_timing_instance.to_s
+        %td.goggles-alignright
+          I18n.t('records.world_record')
+        %td
+          &nbsp;
+      %tr
+        %td.goggles-alignright
+          I18n.t('records.seasonal_best')
+        %td
+          &nbsp;
+        %td.goggles-alignright
+          I18n.t('records.team_record')
+        %td
+          @team_record
+      %tr
+        %td.goggles-alignright
+          "#{I18n.t('records.personal_best')} #{@swimmer.get_full_name}"
+        %td
+          @swimmer_record
+        %td.goggles-alignright
+          "#{I18n.t('records.seasonal_best')} #{@swimmer.get_full_name}"
+        %td
+          &nbsp;
   - else
     .row-fluid
       = I18n.t('radiography.how_to_calculate')
