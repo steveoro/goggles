@@ -22,8 +22,11 @@ class EventType < ActiveRecord::Base
 
   has_many :events_by_pool_types
 
-  scope :only_relays,     where(is_a_relay: true)
-  scope :are_not_relays,  where(is_a_relay: false)
+  scope :only_relays,         where(is_a_relay: true)
+  scope :are_not_relays,      where(is_a_relay: false)
+  scope :for_fin_calculation, where('((length_in_meters % 50) = 0) AND (length_in_meters <= 1500)')
+  
+  scope :sort_by_style,       order('style_order')
   # ----------------------------------------------------------------------------
 
 

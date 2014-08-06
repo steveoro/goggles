@@ -35,7 +35,7 @@
       .control-group
         = label_tag( :event_type, I18n.t('activerecord.models.event_type'), :for => :event_type, class: 'control-label' )
         .controls
-          = select( :event_type, :id, EventType.are_not_relays.to_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
+          = select( :event_type, :id, EventType.are_not_relays.for_fin_calculation.sort_by_style.to_unsorted_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
       .control-group
         = label_tag( :timing, t('radiography.timing'), :for => :timing, class: 'control-label' )
         .controls
