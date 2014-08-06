@@ -42,17 +42,18 @@ describe SwimmersController, :type => :controller do
     context "with an HTML request for a valid id," do
       before :each do
         @fixture = create( :swimmer )
+        get :radio, id: @fixture.id
       end
       it "handles successfully the request" do
-        get :radio, id: @fixture.id
         expect(response.status).to eq( 200 )
       end
       it "assigns the required variables" do
-        get :radio, id: @fixture.id
         expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
       end
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
+      end
       it "renders the template" do
-        get :radio, id: @fixture.id
         expect(response).to render_template(:radio)
       end
     end
@@ -105,8 +106,10 @@ describe SwimmersController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
-          klass = (action_sym == :all_races ? Swimmer : SwimmerDecorator)
-          expect( assigns(:swimmer) ).to be_an_instance_of( klass )
+          expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
+        end
+        it "assigns the tab title" do
+          expect( assigns(:tab_title) ).to be_an_instance_of( String )
         end
         it "renders the template" do
           expect(response).to render_template(action_sym)
@@ -127,6 +130,13 @@ describe SwimmersController, :type => :controller do
   describe '[GET #best_timings/:id]' do
     it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :best_timings )
     it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :best_timings )
+  end
+  # ===========================================================================
+
+
+  describe '[GET #full_history/:id]' do
+    it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :full_history )
+    it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :full_history )
   end
   # ===========================================================================
 
@@ -179,7 +189,7 @@ describe SwimmersController, :type => :controller do
     # -------------------------------------------------------------------------
 
 
-    context "as a logged-in user, " do
+    context "as a logged-in user," do
       let(:minutes)  { ((rand * 10) % 10).to_i + 1 }
       let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
       let(:hundreds) { ((rand * 99) % 99).to_i + 1 }
@@ -291,6 +301,9 @@ describe SwimmersController, :type => :controller do
         it "assigns the required variables" do
           expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
         end
+        it "assigns the tab title" do
+          expect( assigns(:tab_title) ).to be_an_instance_of( String )
+        end
         it "renders the template" do
           expect(response).to render_template(:misc)
         end
@@ -339,7 +352,7 @@ describe SwimmersController, :type => :controller do
         it "assigns season record" do
           expect( assigns(:seasonal_best) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
         end
-        
+
         describe "while assigning team records," do
           it "assigns an hash" do
             expect( assigns(:available_team_records) ).to be_an_instance_of( Hash ).or be_an_instance_of( ActiveSupport::HashWithIndifferentAccess )

@@ -75,3 +75,13 @@ span.ui-spinner .ui-icon {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
+
+/* ----- Custom background coloring styles: ----- */
+.goggles-meeting-csi {
+    background: #AAEEAA;
+}
+
+.goggles-meeting-fin {
+    background: #AACCF6;
+}

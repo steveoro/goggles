@@ -1,0 +1,17 @@
+%ul.nav.nav-tabs#topOfPage
+  %li
+    = link_to( t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
+  %li
+    = link_to( t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
+  %li
+    = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
+  %li.active
+    = link_to( t('radiography.full_history_tab'), '#' )
+  %li
+    = link_to( t('radiography.misc_tab'), swimmer_misc_path(id: @swimmer.id) )
+
+= render( partial: 'radio_title' )
+
+.row-fluid
+  .span3
+    = I18n.t('coming_soon')

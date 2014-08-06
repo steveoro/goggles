@@ -166,7 +166,7 @@ en:
     seasonal_best: "Seasonal best"
     meeting_best: "Meeting best"
     world_record: "World record"
-    national_record: "National record"    
+    national_record: "National record"
     team_record: "Team record"
 
   meeting_stats:
@@ -221,6 +221,8 @@ en:
     team_radio_tab_title: "{TEAM_NAME} according to the Chronometer"
     team_current_swimmers_tab: "Current Swimmers"
     team_radio_tab_tooltip: "Go to this Team 'Radiography' page"
+    full_history_tab: "The Full History"
+    full_history_tab_tooltip: "Go to 'The Full History' page of this Swimmer"
 
   misc_main_menu:
     title: "Misc"

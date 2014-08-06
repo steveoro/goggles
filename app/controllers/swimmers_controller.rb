@@ -45,6 +45,7 @@ class SwimmersController < ApplicationController
     # --- "Radiography" tab: ---
     @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
     @swimmer = SwimmerDecorator.decorate( @swimmer )
+    @tab_title = I18n.t('radiography.radio_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -56,9 +57,9 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def medals
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
-    # TODO REFACTOR this using the new Decorator:
     # --- "Medals" tab: ---
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+    @tab_title = I18n.t('radiography.medals_tab')
     @gold_medals   = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 1 )
     @silver_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 2 )
     @bronze_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 3 )
@@ -92,7 +93,33 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def best_timings
+    # --- "Best Timings" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
+    @tab_title = I18n.t('radiography.best_timings_tab')
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified swimmer id: "Full History" tab rendering
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def full_history
+    # --- "Full History" tab: ---
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+    @tab_title = I18n.t('radiography.full_history_tab')
+
+    # TODO
+    # - Collect all @swimmer MIRs
+    # - Group all MIR swam by pool type
+    # - Group all MIR swam by event codes
+    # - Count total MIR swam, group by pool type
+    # - Count total MIR swam, group by event code
+    # - For each event code swam (50FA, 50SL, ...)
+    #   => draw a scatter graph w/ 1 series x pool type (x: date, y: MIR timing)
+    #   => for each point, on-mouse-over tooltip w/ HTML details for the MIR + links to the corresponding #full_show of the meeting
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -105,8 +132,9 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def misc
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
     # --- "Misc" tab: ---
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+    @tab_title = I18n.t('radiography.misc_tab')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                           # Init score with a non-displayable value
     @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
@@ -152,7 +180,7 @@ class SwimmersController < ApplicationController
               @swimmer_gender.code
             )
           ).to_complete_html_list
-          
+
           # Retrieve swimmer personal best:
           # Scan all time results, without category
           personal_best_rc = RecordCollector.new( swimmer: @swimmer )
@@ -163,7 +191,7 @@ class SwimmersController < ApplicationController
               @swimmer_gender.code
             )
           ).to_short_meeting_html_list
-          
+
           # TODO
           # Retrieves seasonal best for swimmer for all current seasons
           seasonal_best_rc = RecordCollector.new( swimmer: @swimmer, start_date: @current_season.begin_date, end_date: @current_season.end_date )
@@ -189,8 +217,8 @@ class SwimmersController < ApplicationController
                 @swimmer_gender.code
               )
             ).to_complete_html_list
-            @available_team_records[team] = team_record         
-          end 
+            @available_team_records[team] = team_record
+          end
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')
           redirect_to( swimmer_misc_path(@swimmer) ) and return

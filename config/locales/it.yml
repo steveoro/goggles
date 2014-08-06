@@ -222,6 +222,8 @@ it:
     team_radio_tab_title: "{TEAM_NAME} secondo il Cronometro"
     team_current_swimmers_tab: "Nuotatori correnti"
     team_radio_tab_tooltip: "Vai alla 'Radiografia' della squadra"
+    full_history_tab: "La Storia Completa"
+    full_history_tab_tooltip: "Vai alla 'Storia Completa' per questo Atleta"
 
   misc_main_menu:
     title: "Varie"

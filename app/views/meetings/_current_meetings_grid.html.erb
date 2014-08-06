@@ -1,4 +1,9 @@
 <%= define_grid(@meetings_grid, hide_submit_button: true, hide_reset_button: true) do |g|
+    # FIXME .odd & .even styles still prevail:
+#    g.row_attributes do |meeting|
+#        { class: MeetingDecorator.decorate(meeting).get_css_class_for_season_type }
+#    end
+
     g.blank_slate do
         content_tag( :div, t(:no_data_found), class: 'well' )
     end
@@ -23,7 +28,12 @@
         custom_filter: Season.to_dropdown( "(end_date >= '#{@start_date}') AND (end_date <= '#{@end_date}')" ),
         detach_with_id: :flt_season_id
     ) do |meeting|
-        meeting.season.get_full_name if meeting.season
+        [
+            MeetingDecorator.decorate(meeting).get_logo_for_season_type +
+            '&nbsp;&nbsp;'.html_safe +
+            meeting.season.get_full_name,
+            { class: 'goggles-centeralign' }
+        ] if meeting.season
     end
 
     g.column(

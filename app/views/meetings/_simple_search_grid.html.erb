@@ -1,4 +1,9 @@
 <%= grid(@meetings_grid) do |g|
+    # FIXME .odd & .even styles still prevail:
+#    g.row_attributes do |meeting|
+#        { class: MeetingDecorator.decorate(meeting).get_css_class_for_season_type }
+#    end
+
     g.blank_slate do
         content_tag( :div, t('meeting.no_records_matching_search_text'), class: 'well' )
     end
@@ -22,7 +27,10 @@
         attribute: 'season_type_id',
         custom_filter: SeasonType.to_dropdown,
     ) do |meeting|
-        meeting.season.get_season_type if meeting.season
+        [
+            MeetingDecorator.decorate(meeting).get_logo_for_season_type,
+            { class: 'goggles-centeralign' }
+        ]
     end
 
     g.column(

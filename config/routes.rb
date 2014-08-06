@@ -124,6 +124,7 @@ Goggles::Application.routes.draw do
       get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
+      get  "swimmer/full_history/:id",          to: "swimmers#full_history",            as: "swimmer_full_history"
       match "swimmer/misc/:id",                 to: "swimmers#misc",                    as: "swimmer_misc",         via: [:get, :post]
 
       # === Teams ===
