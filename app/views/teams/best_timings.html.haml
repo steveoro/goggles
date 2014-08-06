@@ -1,6 +1,6 @@
 %ul.nav.nav-tabs#topOfPage
   %li
-    = link_to( t('radiography.radio_tab'), swimmer_radio_path(id: @team.id) )
+    = link_to( t('radiography.radio_tab'), team_radio_path(id: @team.id) )
   %li.active
     = link_to( t('radiography.best_timings_tab'), '#' )
 
@@ -18,6 +18,6 @@
 %script
   $.ajax({                                                                      |
     url: "#{ records_for_team_path() }",                                        |
-    data: { swimmer: { id: "#{@team.id}" } },                                   |
+    data: { team: { id: "#{@team.id}" } },                                   |
     dataType: 'script'                                                          |
   });                                                                           |

@@ -2,7 +2,7 @@
 
 = RecordCollectionDecorator
 
-  - version:  4.00.405
+  - version:  4.00.407
   - author:   Steve A.
 
   Decorator for the RecordCollection model.
@@ -13,20 +13,19 @@ class RecordCollectionDecorator < Draper::Decorator
   delegate_all
   include Rails.application.routes.url_helpers
 
-  # Define presentation-specific methods here. Helpers are accessed through
-  # `helpers` (aka `h`). You can override attributes, for example:
-  #
-  #   def created_at
-  #     helpers.content_tag :span, class: 'time' do
-  #       object.created_at.strftime("%a %m/%d/%y")
-  #     end
-  #   end
-
-
   # Returns the complete list of records in the collection for HTML rendering,
-  # in a standard format:
+  # in a standard format, assuming only the first timing of the list needs to be
+  # displayed:
   #
   #     <timing> (<athlete1>, <athlete2>, ...)
+  #
+  # Note that if the collection contains different kind of individual records (for
+  # different pool, event, gender and category combinations), *no distinction* will
+  # be made and all records will be treated as different achievements of the same
+  # result. (Thus, the single initial timing, followed by a list of athletes.)
+  #
+  # Each enlisted athlete name is a link to the meeting in which the timing has
+  # been achieved.
   #
   def to_complete_html_list
     rec_timing = nil
@@ -41,16 +40,25 @@ class RecordCollectionDecorator < Draper::Decorator
           meeting_show_full_path( id: meeting.id, swimmer_id: record.swimmer_id )
       )
     end
-    "#{rec_timing} (#{ rec_swimmers.join(', ') })".html_safe
+    count > 0 ? "#{rec_timing} (#{ rec_swimmers.join(', ') })".html_safe : "".html_safe
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
   # Returns the complete list of records in the collection for HTML rendering,
-  # in a verbose format:
+  # in a verbose format, assuming only the first timing of the list needs to be
+  # displayed:
   #
   #     <timing> (<athlete1> - <header_date1>, <athlete2> - <header_date1>, ...)
+  #
+  # Note that if the collection contains different kind of individual records (for
+  # different pool, event, gender and category combinations), *no distinction* will
+  # be made and all records will be treated as different achievements of the same
+  # result. (Thus, the single initial timing, followed by a list of athletes.)
+  #
+  # Each enlisted athlete name is a link to the meeting in which the timing has
+  # been achieved.
   #
   def to_verbose_html_list
     rec_timing = nil
@@ -66,7 +74,7 @@ class RecordCollectionDecorator < Draper::Decorator
           meeting_show_full_path( id: meeting.id, swimmer_id: record.swimmer_id )
       )
     end
-    "#{rec_timing} (#{ rec_swimmers.join(', ') })".html_safe
+    count > 0 ? "#{rec_timing} (#{ rec_swimmers.join(', ') })".html_safe : "".html_safe
   end
   #-- -------------------------------------------------------------------------
   #++

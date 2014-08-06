@@ -137,8 +137,9 @@ class SwimmersController < ApplicationController
           #   base time, world record holder, national record holder,
           #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
 
-          # Retrieve team records
-          team_rc = RecordCollector.new( team: @swimmer.get_current_team(@current_season) )
+          # Retrieve team records:
+          last_available_team = @swimmer.badges.last.team if @swimmer.badges.last
+          team_rc = RecordCollector.new( team: last_available_team )
           @team_record = RecordCollectionDecorator.decorate(
             team_rc.collect_from_records_having(
               @current_pool.code,
@@ -146,9 +147,9 @@ class SwimmersController < ApplicationController
               @swimmer_category.code,
               @swimmer_gender.code
             )
-          ).to_complete_html_list
+          ).to_complete_html_list if last_available_team
 
-          # Retrieve swimmer personal best
+          # Retrieve swimmer personal best:
           swimmer_rc = RecordCollector.new( swimmer: @swimmer )
           @swimmer_record = RecordCollectionDecorator.decorate(
             swimmer_rc.collect_from_results_having(
@@ -159,10 +160,10 @@ class SwimmersController < ApplicationController
             )
           ).to_complete_html_list
 
-          # Retrieve team records
+          # Retrieve seasonal records:
           season_rc = RecordCollector.new( season: @current_season )
           @season_record = RecordCollectionDecorator.decorate(
-            season_rc.collect_from_records_having(
+            season_rc.collect_from_results_having(
               @current_pool.code,
               @current_event.code,
               @swimmer_category.code,

@@ -1,3 +1,11 @@
+=begin
+
+= Badge
+
+  - version:  4.00.409
+  - author:   Steve A.
+
+=end
 class Badge < ActiveRecord::Base
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :season
@@ -16,6 +24,8 @@ class Badge < ActiveRecord::Base
   validates_associated :team_affiliation
   validates_associated :category_type
   validates_associated :entry_time_type
+
+  has_one  :season_type, through: :season
 
   has_many :meeting_individual_results
   has_many :swimmer_results

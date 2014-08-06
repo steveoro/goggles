@@ -50,10 +50,9 @@
     g.column(
         name: I18n.t('meeting.start_list_and_manifest'),
     ) do |meeting|
-        link_to_if(
-            (meeting.meeting_entries.count > 0),
+        link_to(
             image_tag('book_open.png', 'data-toggle' => 'tooltip', title: I18n.t('meeting.start_list_tooltip') ),
             wip_path()
-        )
+        ) if (meeting.meeting_entries.count > 0)
     end
 end -%>

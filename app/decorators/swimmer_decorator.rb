@@ -2,7 +2,7 @@
 
 = SwimmerDecorator
 
-  - version:  4.00.405
+  - version:  4.00.409
   - author:   Steve A.
 
   Decorator for the Swimmer model.

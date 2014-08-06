@@ -34,23 +34,3 @@
     = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn"} )
   .row-fluid
     %p
-
-  .row-fluid
-    %a{ href: "#", onclick: "$('#loadingIndicator').show(); $('#records_4x_grid').hide(); loadAJAXTeamRecord(#{@team.id});", 'data-toggle' => 'tooltip', title: I18n.t('team.team_records_load_tooltip') }
-      = I18n.t('team.team_records')
-    %span(id='loadingIndicator' hidden='true')
-      = image_tag( 'indicator.gif' )
-
-  .row-fluid
-    #records_4x_grid
-
-%script
-  $('#firstTab').addClass('active');
-  function loadAJAXTeamRecord(team_id) {                                        |
-    $.ajax({                                                                    |
-      url: "#{ records_for_team_path() }",                                      |
-      data: { team: { id: team_id } },                                          |
-      success: function(data) { $('#records_4x_grid').show(); },                |
-      dataType: 'script'                                                        |
-    });                                                                         |
-  };                                                                            |
