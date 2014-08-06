@@ -307,16 +307,20 @@ describe SwimmerDecorator do
       [:get_remove_path_for, :get_edit_path_for]
     )
   end
-  # ---------------------------------------------------------------------------
-  
+  #-- --------------------------------------------------------------------------
+  #++
+
+
   describe "#get_current_team" do
     context "with correct parameters" do
       it_behaves_like(
-        "(the existance of a method with parameters, returning a kind of object or nil)", 
+        "(the existance of a method with parameters, returning a kind of object or nil)",
         :get_current_team,
         Team,
         :season
       )
     end
   end
+  #-- --------------------------------------------------------------------------
+  #++
 end
