@@ -45,6 +45,20 @@ class TeamsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # Radiography for a specified team id: "Current Swimmers" tab rendering
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def current_swimmers
+    last_season = @team.seasons.last
+    current_badges = @team.badges.where( season_id: last_season.id ) if last_season && @team.badges
+# DEBUG
+    puts "\r\n- badges: #{current_badges ? current_badges.count : ''}\r\n"
+    @current_swimmers = current_badges ? current_badges.map{ |badge| badge.swimmer } : []
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Radiography for a specified team id: "Best timings" tab rendering
   #

@@ -1,6 +1,8 @@
 %ul.nav.nav-tabs#topOfPage
   %li
     = link_to( t('radiography.radio_tab'), team_radio_path(id: @team.id) )
+  %li
+    = link_to( t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
   %li.active
     = link_to( t('radiography.best_timings_tab'), '#' )
 
@@ -8,7 +10,7 @@
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
     %h4
       = I18n.t('radiography.best_timings_tab') + ' -- '
-      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @team.get_full_name)
+      = I18n.t('radiography.team_radio_tab_title').gsub('{TEAM_NAME}', @team.get_full_name)
   .row-fluid
     #records_4x_grid
       #loadingIndicator.offset6

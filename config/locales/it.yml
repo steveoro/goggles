@@ -40,6 +40,7 @@ it:
     all_races: "Tutte le gare per questa Squadra"
     team_records: "Record di Squadra"
     team_records_load_tooltip: "Clicca per caricare tutti i record detenuti da questa Squadra nelle affiliazioni registrate"
+    meeting_presence: "Partecipazioni a gare"
 
   badge:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Cartellini! (tab: 'badges')"
@@ -216,6 +217,8 @@ it:
     how_to_calculate: "Seleziona il tipo di vasca, la specialitò ed inserisci il tempo presunto, infine premi il pulsante Calcola punteggio FIN per ottenere il punteggio FIN"
     fin_standard_points: "Punteggio FIN"
     time_standard: "Tempo base"
+    team_radio_tab_title: "{TEAM_NAME} secondo il Cronometro"
+    team_current_swimmers_tab: "Nuotatori correnti"
 
   misc_main_menu:
     title: "Varie"
