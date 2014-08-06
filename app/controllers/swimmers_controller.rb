@@ -133,45 +133,42 @@ class SwimmersController < ApplicationController
           @standard_points = score_calculation.get_fin_score( @timing )
           @current_time_standard = score_calculation.get_time_standard
 
-          # Leega: TODO
           # - Render the result with verbose cosmetics data such as
           #   base time, world record holder, national record holder,
           #   personal best, seasonal best, team record, link to standard FIN base points, more?!?
 
-=begin          
           # Retrieve team records
-          team_rc = RecordCollector.new( team: @swimmer.get_current_team )
+          team_rc = RecordCollector.new( team: @swimmer.get_current_team(@current_season) )
           @team_record = RecordCollectionDecorator.decorate(
-            team_rc.collect_from_records_having( 
+            team_rc.collect_from_records_having(
               @current_pool.code,
-              @current_event.code, 
-              @swimmer_category.code, 
+              @current_event.code,
+              @swimmer_category.code,
               @swimmer_gender.code
             )
           ).to_complete_html_list
-          
+
           # Retrieve swimmer personal best
           swimmer_rc = RecordCollector.new( swimmer: @swimmer )
           @swimmer_record = RecordCollectionDecorator.decorate(
             swimmer_rc.collect_from_results_having(
-              @current_pool.code, 
-              @current_event.code, 
-              @swimmer_category.code, 
+              @current_pool.code,
+              @current_event.code,
+              @swimmer_category.code,
               @swimmer_gender.code
             )
           ).to_complete_html_list
-          
+
           # Retrieve team records
           season_rc = RecordCollector.new( season: @current_season )
           @season_record = RecordCollectionDecorator.decorate(
             season_rc.collect_from_records_having(
-              @current_pool.code, 
-              @current_event.code, 
-              @swimmer_category.code, 
+              @current_pool.code,
+              @current_event.code,
+              @swimmer_category.code,
               @swimmer_gender.code
             )
           ).to_complete_html_list
-=end
         else
           flash[:error] = I18n.t('radiography.wrong_event_or_pool')
           redirect_to( swimmer_misc_path(@swimmer) ) and return

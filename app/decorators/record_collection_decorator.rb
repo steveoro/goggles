@@ -38,7 +38,7 @@ class RecordCollectionDecorator < Draper::Decorator
       rec_swimmers << h.link_to_if(
           meeting,
           record.swimmer.get_full_name,
-          meeting_show_full_path( id: meeting.id, team_id: record.team_id, swimmer_id: record.swimmer_id )
+          meeting_show_full_path( id: meeting.id, swimmer_id: record.swimmer_id )
       )
     end
     "#{rec_timing} (#{ rec_swimmers.join(', ') })".html_safe
@@ -63,7 +63,7 @@ class RecordCollectionDecorator < Draper::Decorator
       rec_swimmers << h.link_to_if(
           meeting,
           link_label,
-          meeting_show_full_path( id: meeting.id, team_id: record.team_id, swimmer_id: record.swimmer_id )
+          meeting_show_full_path( id: meeting.id, swimmer_id: record.swimmer_id )
       )
     end
     "#{rec_timing} (#{ rec_swimmers.join(', ') })".html_safe
