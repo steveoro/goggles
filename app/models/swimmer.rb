@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = Swimmer
 
-  - version:  4.00.389
+  - version:  4.00.409
   - author:   Steve A.
 
 =end
@@ -18,8 +18,8 @@ class Swimmer < ActiveRecord::Base
 
   # This will be used to discriminate the actual user associated with this data
   # (the "associated_user_id") and the user_id which has created/updated/modified
-  # the data itself (usually a user with a higher grant) 
-  belongs_to :associated_user, class_name: "User", 
+  # the data itself (usually a user with a higher grant)
+  belongs_to :associated_user, class_name: "User",
              foreign_key: "associated_user_id"
 
   has_many :user_swimmer_confirmations
@@ -31,6 +31,7 @@ class Swimmer < ActiveRecord::Base
   has_many :badges
   has_many :teams,          through: :badges
   has_many :category_types, through: :badges
+  has_many :season_types,   through: :badges
 
   has_many :meeting_individual_results
   has_many :meeting_relay_swimmers
@@ -103,12 +104,12 @@ class Swimmer < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
-  # Returns true if the current row's gender_type_id is equal to MALE_ID 
+  # Returns true if the current row's gender_type_id is equal to MALE_ID
   def is_male
     ( self.gender_type_id == GenderType::MALE_ID )
   end
 
-  # Returns true if the current row's gender_type_id is equal to FEMALE_ID 
+  # Returns true if the current row's gender_type_id is equal to FEMALE_ID
   def is_female
     ( self.gender_type_id == GenderType::FEMALE_ID )
   end
@@ -123,7 +124,7 @@ class Swimmer < ActiveRecord::Base
   #
   def self.get_team_names( swimmer_id )
     swimmer = Swimmer.find_by_id( swimmer_id )
-    swimmer ? swimmer.teams.collect{|row| row.name }.uniq : []    
+    swimmer ? swimmer.teams.collect{|row| row.name }.uniq : []
   end
   #-- -------------------------------------------------------------------------
   #++

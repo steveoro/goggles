@@ -115,6 +115,24 @@ describe TeamsController, :type => :controller do
   # ===========================================================================
 
 
+  describe '[GET #current_swimmers/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :current_swimmers )
+    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :current_swimmers )
+
+    context "with an HTML request for a valid id," do
+      before :each do
+        @fixture = create( :team )
+      end
+      it "assigns a list of swimmers" do
+        get :current_swimmers, id: @fixture.id
+        expect( assigns(:current_swimmers) ).to be_an_instance_of( Array )
+        expect( assigns(:current_swimmers) ).to all( be_an_instance_of( Swimmer ) )
+      end
+    end
+  end
+  # ===========================================================================
+
+
   describe '[GET #best_timings/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :best_timings )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :best_timings )

@@ -40,6 +40,7 @@ en:
     all_races: "All races for this Team"
     team_records: "Team records"
     team_records_load_tooltip: "Click to load all the records detained by this Team for the registered affiliations"
+    meeting_presence: "Meeting presence"
 
   badge:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'badges'!"
@@ -216,6 +217,8 @@ en:
     how_to_calculate: "Select pool type and event and fill in the timing fields, than press calculate button to know the standard FIN points"
     fin_standard_points: "FIN standard points"
     time_standard: "Base time"
+    team_radio_tab_title: "{TEAM_NAME} according to the Chronometer"
+    team_current_swimmers_tab: "Current Swimmers"
 
   misc_main_menu:
     title: "Misc"
