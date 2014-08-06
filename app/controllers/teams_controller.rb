@@ -53,9 +53,11 @@ class TeamsController < ApplicationController
   def current_swimmers
     last_season = @team.seasons.last
     current_badges = @team.badges.where( season_id: last_season.id ) if last_season && @team.badges
-# DEBUG
-    puts "\r\n- badges: #{current_badges ? current_badges.count : ''}\r\n"
-    @current_swimmers = current_badges ? current_badges.map{ |badge| badge.swimmer } : []
+    @swimmers = if current_badges.nil?
+      []
+    else
+      current_badges.map{ |badge| badge.swimmer }.sort{ |a,b| a.get_full_name <=> b.get_full_name }
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

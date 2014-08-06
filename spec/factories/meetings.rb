@@ -12,7 +12,7 @@ FactoryGirl.define do
     edition_type_id           { ((rand * 100) % 5).to_i + 1 } # ASSERT: at least 5 edition types (1..5)
     timing_type_id            { ((rand * 100) % 3).to_i + 1 } # ASSERT: at least 3 timing types (1..3)
     user
-    
+
     factory :meeting_with_sessions do
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -22,7 +22,7 @@ FactoryGirl.define do
         )
       end
     end
-    
+
     # Complete meeting, with sessions, events, programs, results and passages
     factory :meeting_complete do
       after(:create) do |created_instance, evaluator|
@@ -40,9 +40,9 @@ FactoryGirl.define do
     session_order             { ((rand * 100) % 4).to_i + 1}
     meeting
     day_part_type_id          { ((rand * 100) % 4).to_i + 1} # ASSERT: at least 4 timing types
-    scheduled_date            { Date.today } 
-    warm_up_time              { Time.now } 
-    begin_time                { Time.now } 
+    scheduled_date            { Date.today }
+    warm_up_time              { Time.now }
+    begin_time                { Time.now }
     swimming_pool
     user
 
@@ -77,7 +77,7 @@ FactoryGirl.define do
     event_type_id             { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types
     heat_type_id              { ((rand * 100) % 3).to_i + 1} # ASSERT: at least 3 heat types
     user
-    
+
     factory :meeting_event_with_programs do
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -87,7 +87,7 @@ FactoryGirl.define do
         )
       end
     end
-    
+
     factory :meeting_event_complete do
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -106,7 +106,7 @@ FactoryGirl.define do
     gender_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
     pool_type_id              { meeting_event.meeting_session.swimming_pool.pool_type_id }
     user
-    
+
     factory :meeting_program_with_results do
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -116,7 +116,7 @@ FactoryGirl.define do
         )
       end
     end
-    
+
     factory :meeting_program_complete do
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -146,7 +146,7 @@ FactoryGirl.define do
     # The following column uses the pre-loaded seed records:
     disqualification_code_type_id { ((rand * 100) % 60).to_i + 1 }
     user
-    
+
     factory :meeting_individual_result_with_passages do
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -162,7 +162,7 @@ FactoryGirl.define do
     meeting_individual_result
     meeting_program           { meeting_individual_result.meeting_program }
     minutes                   0
-    seconds                   { ((rand * 59) % 59).to_i }  # Force not to use 59 
+    seconds                   { ((rand * 59) % 59).to_i }  # Force not to use 59
     hundreds                  { ((rand * 99) % 99).to_i }  # Force not to use 99
     minutes_from_start        1
     seconds_from_start        { seconds }
@@ -175,5 +175,5 @@ FactoryGirl.define do
     user
     # The following column uses the pre-loaded seed records:
     passage_type_id           { ((rand * 20) % 20).to_i + 1 }
-  end  
+  end
 end

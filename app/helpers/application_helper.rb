@@ -21,38 +21,42 @@ module ApplicationHelper
 
   # Returns the HTML code for displaying a total count value, sided by a number
   # of images, one for each step of the total count.
-  def count_with_image( count, step, image_name )
-    "#{ count } #{image_tag(image_name) * (count / step)}".html_safe
+  def count_with_image( count, step, image_name, align = :right )
+    if align == :right
+      "#{ count } #{image_tag(image_name) * (count / step)}".html_safe
+    else
+      "#{image_tag(image_name) * (count / step)} #{ count }".html_safe
+    end
   end
 
   # Works by calling #count_with_image using a 100 step value with a "small star"
   # image as defaults.
-  def count_with_small_star( count, step = 100 )
-    count_with_image( count, step, 'bullet_star.png' )
+  def count_with_small_star( count, step = 100, align = :right )
+    count_with_image( count, step, 'bullet_star.png', align )
   end
 
   # Works by calling #count_with_image using a 100 step value with an "award star"
   # image as defaults.
-  def count_with_award_star( count, step = 100 )
-    count_with_image( count, step, 'award_star_gold_3.png' )
+  def count_with_award_star( count, step = 100, align = :right )
+    count_with_image( count, step, 'award_star_gold_3.png', align )
   end
 
   # Works by calling #count_with_image using a 10000 step value with a "star"
   # image as defaults.
-  def count_with_star( count, step = 10000 )
-    count_with_image( count, step, 'star.png' )
+  def count_with_star( count, step = 10000, align = :right )
+    count_with_image( count, step, 'star.png', align )
   end
 
   # Works by calling #count_with_image using a 10 step value with a "red ribbon"
   # image as defaults.
-  def count_with_red_ribbon( count, step = 10 )
-    count_with_image( count, step, 'rosette.png' )
+  def count_with_red_ribbon( count, step = 10, align = :right )
+    count_with_image( count, step, 'rosette.png', align )
   end
 
   # Works by calling #count_with_image using a 10 step value with a "bomb"
   # image as defaults.
-  def count_with_bomb( count, step = 10 )
-    count_with_image( count, step, 'bomb.png' )
+  def count_with_bomb( count, step = 10, align = :right )
+    count_with_image( count, step, 'bomb.png', align )
   end
   #-- -------------------------------------------------------------------------
   #++

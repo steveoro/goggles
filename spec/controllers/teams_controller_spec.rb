@@ -25,7 +25,7 @@ describe TeamsController, :type => :controller do
 
 
   describe '[GET #radio/:id]' do
-    # We need to set this to make the redirect_to(:back) pass the tests:
+        # We need to set this to make the redirect_to(:back) passes the tests:
     before(:each) { request.env["HTTP_REFERER"] = teams_path() }
 
     context "with an HTML request for a non-existing id," do
@@ -80,7 +80,7 @@ describe TeamsController, :type => :controller do
   shared_examples_for "(Teams restricted GET action as a logged-in user)" do |action_sym|
     before :each do
       @fixture = create( :team )
-      # We need to set this to make the redirect_to(:back) pass the tests:
+        # We need to set this to make the redirect_to(:back) passes the tests:
       request.env["HTTP_REFERER"] = teams_path()
       login_user()
     end
@@ -119,14 +119,18 @@ describe TeamsController, :type => :controller do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :current_swimmers )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :current_swimmers )
 
-    context "with an HTML request for a valid id," do
+    context "with an HTML request for a valid id and a logged-in user," do
       before :each do
-        @fixture = create( :team )
+        @fixture = create( :team_with_badges )
+        # We need to set this to make the redirect_to(:back) passes the tests:
+        request.env["HTTP_REFERER"] = teams_path()
+        login_user()
+        get :current_swimmers, id: @fixture.id
       end
       it "assigns a list of swimmers" do
-        get :current_swimmers, id: @fixture.id
-        expect( assigns(:current_swimmers) ).to be_an_instance_of( Array )
-        expect( assigns(:current_swimmers) ).to all( be_an_instance_of( Swimmer ) )
+        expect( response.status ).to eq( 200 )
+        expect( assigns(:swimmers) ).to be_an_instance_of( Array )
+        expect( assigns(:swimmers) ).to all( be_an_instance_of( Swimmer ) )
       end
     end
   end

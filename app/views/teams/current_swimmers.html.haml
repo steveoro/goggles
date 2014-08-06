@@ -12,13 +12,21 @@
       = I18n.t('radiography.radio_tab') + ' -- '
       = I18n.t('radiography.team_radio_tab_title').gsub('{TEAM_NAME}', @team.get_full_name)
   .row-fluid
-    .span9
-      .row-fluid
-        .span3
-          = "#{ I18n.t(:name) }:"
-        .span6
-          %b= @team.get_verbose_name
-          = admin_signed_in? ? " (id=#{@team.id})" : ''
+    .span3.goggles-div-centeralign
+      = "#{ I18n.t(:name) }:"
+    .span1.goggles-div-centeralign
+      = "#{ I18n.t('swimmers.meeting_presence') }:"
+    .span1.goggles-div-centeralign
+      = "#{ I18n.t('swimmers.events_attended') }:"
+  - @swimmers.each do |swimmer|
+    .row-fluid
+      .span3
+        = link_to( swimmer.get_verbose_name, swimmer_radio_path(id: swimmer.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip') } )
+        = " (id=#{swimmer.id})" if admin_signed_in?
+      .span1.goggles-div-rightalign
+        = count_with_small_star( swimmer.meetings.uniq.count, 50, :left )
+      .span1.goggles-div-rightalign
+        = count_with_small_star( swimmer.meeting_individual_results.count + swimmer.meeting_relay_swimmers.count, 100, :left )
 
   .row-fluid
     %p
