@@ -161,6 +161,7 @@ en:
     federation_title: "Federation Records"
     menu_by_federation: "for a chosen Federation"
     personal_best: "Personal best"
+    seasonal_personal_best: "Seasonal personal best"
     seasonal_best: "Seasonal best"
     meeting_best: "Meeting best"
     world_record: "World record"
