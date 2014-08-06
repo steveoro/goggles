@@ -3,10 +3,10 @@ it:
     models:
       user: Utente
       article: Articolo
-      category_type: "Tipo Categoria"
+      category_type: "Categoria"
       city: "Citta'"
       data_import_city: "(Temp.) Citta'"
-      event_type: "Tipo Evento"
+      event_type: "Specialità"
       result_type: "Tipo Risultato"
       season_type: "Tipo Stagione"
       season: "Stagione"
@@ -42,10 +42,10 @@ it:
       individual_score_computation_type: "Tipo Calcolo Punti Ind."
       relay_score_computation_type: "Tipo Calcolo Punti Staff."
       team_score_computation_type: "Tipo Calcolo Punti Squadra"
-      meeting_event: "Eventi Meeting"
+      meeting_event: "Specialità Meeting"
       day_part_type: "Parte giorno"
       accreditation_time_type: "Tipo Tempo Accred."
-      pool_type: "Tipo Piscina"
+      pool_type: "Tipo vasca"
       locker_cabinet_type: "Tipo Armadietti"
       hair_dryer_type: "Tipo Asciugacapelli"
       exercise: "Esercizio"
@@ -108,7 +108,7 @@ it:
         begin_time: "Data/Ora inizio"
         is_autofilled: "Auto-fill?"
       meeting_program:
-        event_order: "Ord. evento"
+        event_order: "Ord. specialità"
         begin_time: "Ora inizio"
         minutes: "Min."
         seconds: "Sec."
