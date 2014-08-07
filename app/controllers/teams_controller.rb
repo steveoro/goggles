@@ -65,9 +65,20 @@ class TeamsController < ApplicationController
   # Radiography for a specified team id: "Best timings" tab rendering
   #
   # == Params:
-  # id: the swimmer id to be processed
+  # id: the team id to be processed
   #
   def best_timings
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified team id: "Palmares" tab rendering
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def palamares
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -153,7 +164,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed by most of the methods (see before filter above)
   #
   def set_team
-    @team = Team.find_by_id( params[:id].to_i )
+    @team = Team.find_by_id( params[:id].to_i ).decorate
   end
   #-- -------------------------------------------------------------------------
   #++

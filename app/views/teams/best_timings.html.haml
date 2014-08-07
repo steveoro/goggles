@@ -5,6 +5,8 @@
     = link_to( t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
   %li.active
     = link_to( t('radiography.best_timings_tab'), '#' )
+  %li
+    = link_to( t('radiography.palmares_tab'), team_palmares_path(id: @team.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
