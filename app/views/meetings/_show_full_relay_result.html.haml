@@ -1,0 +1,16 @@
+%tr
+  %td.goggles-rightalign
+    = relay_result.is_disqualified ? 'DSQ' : relay_result.rank
+  %td{'colspan'=>'4'}
+    %a{ id: "team#{relay_result.id}", href: "#{ meeting_show_team_results_path(id: @meeting.id, team_id: relay_result.team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') }
+      = relay_result.get_team_name
+  %td.goggles-rightalign
+    = relay_result.get_timing
+  %td.goggles-rightalign
+    = sprintf( "%02.2f", relay_result.meeting_points )
+  %td.goggles-rightalign
+    = sprintf( "%02.2f", relay_result.standard_points )
+  %td
+    = show_tag( relay_result.rank==1 && relay_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+    = show_tag( relay_result.rank==2 && relay_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+    = show_tag( relay_result.rank==3 && relay_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
