@@ -37,6 +37,7 @@ class Team < ActiveRecord::Base
   validates_length_of :fax_number,    maximum:  40
   validates_length_of :e_mail,        maximum: 100
   validates_length_of :contact_name,  maximum: 100
+  validates_length_of :home_page_url, maximum: 150
 
   scope :sort_team_by_user, ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
   scope :sort_team_by_city, ->(dir) { order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }
@@ -54,7 +55,7 @@ class Team < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{editable_name}#{city ? ' ('+city.name+')' : ''}"
+    "#{editable_name}#{city ? ' - ' + city.get_full_name : ''}"
   end
 
   # Same as get_full_name but adds also the ID at the end.

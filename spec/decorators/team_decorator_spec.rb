@@ -6,7 +6,10 @@ describe TeamDecorator do
 
   it_behaves_like("(the existance of a method returning strings)", [
     :get_season_type_list,
-    :get_contacts
+    :get_contacts,
+    :get_complete_address,
+    :get_home_site,
+    :get_last_meeting_name
   ])
   #-- --------------------------------------------------------------------------
   #++

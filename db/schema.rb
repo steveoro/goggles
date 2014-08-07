@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140731184807) do
+ActiveRecord::Schema.define(:version => 20140807154318) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1438,6 +1438,7 @@ ActiveRecord::Schema.define(:version => 20140731184807) do
     t.integer  "user_id"
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
+    t.string   "home_page_url",   :limit => 150
   end
 
   add_index "teams", ["city_id"], :name => "fk_teams_cities"

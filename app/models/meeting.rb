@@ -70,6 +70,7 @@ class Meeting < ActiveRecord::Base
 
   scope :sort_meeting_by_user,   ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }
   scope :sort_meeting_by_season, ->(dir) { order("seasons.begin_date #{dir.to_s}, meetings.description #{dir.to_s}") }
+  scope :sort_by_date,           ->(dir) { order("header_date #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

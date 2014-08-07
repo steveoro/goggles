@@ -19,9 +19,8 @@ class City < ActiveRecord::Base
   def get_full_name
     [
       (name.empty? || (name == '?') ? nil : name),
-      (zip.empty? || (zip == '?')   ? nil : zip),
-      (area.empty? || (area == '?') ? nil : area)
-    ].compact.join(", ")
+      (area.empty? || (area == '?') || (area == name) ? nil : "(#{area})")
+    ].compact.join(" ")
   end
 
   # Computes a verbose or formal description for the name associated with this data

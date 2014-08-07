@@ -225,6 +225,7 @@ en:
     full_history_tab: "The Full History"
     full_history_tab_tooltip: "Go to 'The Full History' page of this Swimmer"
     palmares_tab: "Palmares"
+    last_meeting: "Last meeting attended"
 
   misc_main_menu:
     title: "Misc"
@@ -519,6 +520,7 @@ en:
   copy_of: "Copy of"
   language: "Language"
   none: "None"   
+  unknown: "Unknown"   
 
   no_new_articles: No new articles
   select_file: "Select a file"
@@ -684,6 +686,7 @@ en:
   phone: "Phone #"
   fax: "Fax #"
   email: "E-mail"
+  home_site: "Internet page"
 
   title_wrong_meeting_result: "There's something wrong with some results of a certain Meeting..."
   title_feature_request: "'Feature request': I think you should really add this..."
