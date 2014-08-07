@@ -41,6 +41,7 @@ en:
     team_records: "Team records"
     team_records_load_tooltip: "Show all the records detained by this Team for the registered affiliations"
     meeting_presence: "Meeting presence"
+    season_presence: "Season presence"
 
   badge:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'badges'!"
@@ -223,6 +224,7 @@ en:
     team_radio_tab_tooltip: "Go to this Team 'Radiography' page"
     full_history_tab: "The Full History"
     full_history_tab_tooltip: "Go to 'The Full History' page of this Swimmer"
+    palmares_tab: "Palmares"
 
   misc_main_menu:
     title: "Misc"
@@ -516,6 +518,7 @@ en:
   coming_soon: "Coming soon!!"
   copy_of: "Copy of"
   language: "Language"
+  none: "None"   
 
   no_new_articles: No new articles
   select_file: "Select a file"
@@ -675,6 +678,12 @@ en:
   submit: "Submit"
   save: "Save"
   reset: "Reset"
+  address: "Address"
+  contacts: "Contacts"
+  mobile: "Mobile #"
+  phone: "Phone #"
+  fax: "Fax #"
+  email: "E-mail"
 
   title_wrong_meeting_result: "There's something wrong with some results of a certain Meeting..."
   title_feature_request: "'Feature request': I think you should really add this..."

@@ -142,4 +142,11 @@ describe TeamsController, :type => :controller do
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :best_timings )
   end
   # ===========================================================================
+
+
+  describe '[GET #palamares/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
+    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+  end
+  # ===========================================================================
 end

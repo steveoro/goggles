@@ -20,7 +20,6 @@ class Team < ActiveRecord::Base
   has_many :badges
   has_many :meeting_individual_results
   has_many :meetings, through: :meeting_individual_results
-  has_many :seasons,  through: :meetings
   has_many :meeting_relay_results
   has_many :team_affiliations
   has_many :seasons,      through: :team_affiliations
@@ -55,7 +54,7 @@ class Team < ActiveRecord::Base
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{editable_name}#{address ? ', '+address : ''}"
+    "#{editable_name}#{city ? ' ('+city.name+')' : ''}"
   end
 
   # Same as get_full_name but adds also the ID at the end.

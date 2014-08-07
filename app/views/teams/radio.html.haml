@@ -5,6 +5,8 @@
     = link_to( t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
   %li
     = link_to( t('radiography.best_timings_tab'), team_best_timings_path(id: @team.id) )
+  %li
+    = link_to( t('radiography.palmares_tab'), team_palmares_path(id: @team.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
@@ -17,13 +19,28 @@
         .span3
           = "#{ I18n.t(:name) }:"
         .span6
-          %b= @team.get_verbose_name
+          %b= @team.get_full_name
           = admin_signed_in? ? " (id=#{@team.id})" : ''
+      .row-fluid
+        .span3
+          = "#{ I18n.t('cities') }:"
+        .span6
+          = @team.city.get_full_name
+      .row-fluid
+        .span3
+          = "#{ I18n.t('address') }:"
+        .span6
+          = @team.address
+      .row-fluid
+        .span3
+          = "#{ I18n.t('contacts') }:"
+        .span6
+          = @team.get_contacts
       .row-fluid
         .span3
           = "#{ I18n.t('team.affiliations') }:"
         .span6
-          = @team.season_types.uniq.map{ |row| row.get_full_name }.join(', ')
+          = @team.get_season_type_list
       .row-fluid
         .span3
           = "#{ I18n.t('team.meeting_presence') }:"

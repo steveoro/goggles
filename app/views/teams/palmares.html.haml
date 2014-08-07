@@ -1,0 +1,30 @@
+%ul.nav.nav-tabs#topOfPage
+  %li
+    = link_to( t('radiography.radio_tab'), team_radio_path(id: @team.id) )
+  %li
+    = link_to( t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
+  %li
+    = link_to( t('radiography.best_timings_tab'), team_best_timings_path(id: @team.id) )
+  %li.active
+    = link_to( t('radiography.palmares_tab'), '#' )
+
+.container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = I18n.t('radiography.radio_tab') + ' -- '
+      = I18n.t('radiography.team_radio_tab_title').gsub('{TEAM_NAME}', @team.get_full_name)
+  .row-fluid
+    .span9
+      .row-fluid
+        .span5
+          = "#{ I18n.t('team.meeting_presence') }:"
+        .span4
+          = count_with_award_star( @team.meetings.collect{|row| row.id}.uniq.size )
+      - @team.season_types.uniq.each do |season_type|
+        .row-fluid
+          .span5
+            = "#{ I18n.t('team.season_presence') } #{season_type.get_full_name}"
+          .span4
+            = @team.seasons.where(season_type_id: season_type.id).count
+  .row-fluid
+    %p

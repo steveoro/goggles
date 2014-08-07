@@ -135,6 +135,7 @@ Goggles::Application.routes.draw do
       get  "teams/count_meetings/:id",          to: "teams#count_meetings",             as: "team_count_meetings"
       get  "teams/count_results/:id",           to: "teams#count_results",              as: "team_count_results"
       get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_results"
+      get  "teams/palmares/:id",                to: "teams#palmares",                   as: "team_palmares"
 
       # === Swimming Pools ===
       get "swimming_pools/index",               as: "swimming_pools"
