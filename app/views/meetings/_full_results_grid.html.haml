@@ -5,69 +5,23 @@
     %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_event.event_type.code}"}
       %h3= meeting_event.event_type.i18n_description
     -# --- Sub-legend for each category + gender
-    .navbar
-      %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::FEMALE_ID).i18n_short + ':'
-      %ul.nav
-        - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::FEMALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
-          %li
-            %a.goggles-nav-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
-      .ghost-divider-vertical
-      %a.goggles-small-brand(href='#')= GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
-      %ul.nav
-        - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::MALE_ID).order('meeting_programs.event_order ASC').each do |meeting_program|
-          %li
-            %a.goggles-nav-compact(href="\#mprg#{meeting_program.id}")= meeting_program.get_category_type_name
+    = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
 
-    - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('meeting_programs.event_order ASC').each do |meeting_program|
+    - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.id').each do |meeting_program|
       %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
-              %td{'colspan'=>'8'}
+              %td{'colspan'=>'9'}
                 %b= meeting_program.get_verbose_event_name
                 = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
             - unless is_a_relay
               - meeting_program.meeting_individual_results.order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
                 - is_highlighted = (@preselected_team_id.to_i == individual_result.team_id) || (@preselected_swimmer_id.to_i == individual_result.swimmer_id)
-                %tr{'class' => is_highlighted ? 'warning' : ''}
-                  %td.span1.goggles-rightalign
-                    = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
-                  %td.span4
-                    %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                      = individual_result.get_swimmer_name
-                  %td.span1
-                    = individual_result.get_year_of_birth
-                  %td.span4
-                    %a{'id'=>"team#{individual_result.id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>individual_result.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
-                      = individual_result.get_team_name
-                  %td.span1.goggles-rightalign
-                    = individual_result.get_timing
-                  %td.span1.goggles-rightalign
-                    = sprintf( "%02.2f", individual_result.standard_points )
-                  %td.span1.goggles-rightalign
-                    = sprintf( "%02.2f", individual_result.meeting_individual_points )
-                  %td.span1
-                    = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
-                    = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
-                    = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+                = render( partial: 'show_full_individual_result', locals: { individual_result: individual_result, is_highlighted: is_highlighted } )
             -# --- Team Relay result rows:
             - if is_a_relay
               - meeting_program.meeting_relay_results.order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
-                %tr
-                  %td.goggles-rightalign
-                    = relay_result.is_disqualified ? 'DSQ' : relay_result.rank
-                  %td{'colspan'=>'3'}
-                    %a{'id'=>"team#{relay_result.id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>relay_result.team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
-                      = relay_result.get_team_name
-                  %td.goggles-rightalign
-                    = relay_result.get_timing
-                  %td.goggles-rightalign
-                    = sprintf( "%02.2f", relay_result.meeting_points )
-                  %td.goggles-rightalign
-                    = sprintf( "%02.2f", relay_result.standard_points )
-                  %td
-                    = show_tag( relay_result.rank==1 && relay_result.is_valid_for_ranking, "medal_gold_3.png", '' )
-                    = show_tag( relay_result.rank==2 && relay_result.is_valid_for_ranking, "medal_silver_3.png", '' )
-                    = show_tag( relay_result.rank==3 && relay_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+                = render( partial: 'show_full_relay_result', locals: { relay_result: relay_result } )
 .row-fluid
   .span12

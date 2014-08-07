@@ -1,0 +1,38 @@
+- has_passages = ( individual_result.passages.count > 0 )
+%tr{ 'class' => is_highlighted ? 'warning' : '' }
+  %td.goggles-rightalign
+    = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
+  %td.span4
+    %a{ id: "swimmer#{individual_result.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, swimmer_id: individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
+      = individual_result.get_swimmer_name
+  %td
+    = individual_result.get_year_of_birth
+  %td.span4
+    %a{ id: "team#{individual_result.id}", href: "#{ meeting_show_team_results_path( id: @meeting.id, team_id: individual_result.team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') }
+      = individual_result.get_team_name
+  %td.goggles-centeralign
+    - if has_passages
+      %button.btn.btn-mini{ id: "passages#{individual_result.id}", type: 'button', 'data-toggle' => 'popover', 'data-placement' => "top" }
+        = I18n.t('social.passages')
+    - else
+      %button.btn.btn-mini.btn-link{ id: "passages#{individual_result.id}", type: 'button', disabled: 'disabled' }
+        = I18n.t('social.passages')
+  %td.goggles-rightalign
+    = individual_result.get_timing
+  %td.goggles-rightalign
+    = sprintf( "%02.2f", individual_result.standard_points )
+  %td.goggles-rightalign
+    = sprintf( "%02.2f", individual_result.meeting_individual_points )
+  %td
+    = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+    = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+    = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+
+- if has_passages
+  %script
+    var popContent = "#{ escape_javascript( render(partial: 'show_full_popover_passages', locals: {individual_result: individual_result})) }";
+    $("#passages#{individual_result.id}").popover({                             |
+      title: "#{ escape_javascript(individual_result.get_timing.html_safe) }",  |
+      html: true,                                                               |
+      content: popContent                                                       |
+    });                                                                         |
