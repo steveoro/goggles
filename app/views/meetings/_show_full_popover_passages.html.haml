@@ -5,3 +5,5 @@
         %i= "#{ passage.get_passage_distance } mt."
       %td.goggles-rightalign
         = passage.get_timing
+      %td.goggles-rightalign
+        = passage.compute_incremental_time

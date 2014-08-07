@@ -128,62 +128,65 @@ class Passage < ActiveRecord::Base
   # Safe getter for the associated list of passages.
   # Returns an empty array when none are found.
   # (User #get_passages.count to get the total number of passages.)
+  # Returns the list of Passage rows found.
   #
   def get_passages
     meeting_individual_result ? meeting_individual_result.get_passages : []
   end
 
   # Get final time from meeting_individual_result
-  # Different from compute_final_time, that calculate final time evaluating each passage
+  # Differs from #compute_final_time, in that it computes the final time
+  # by evaluating each passage.
+  #
   def get_final_time
     meeting_individual_result ? meeting_individual_result.get_timing : "#{compute_final_time} ***"
   end
 
-  # Calculate the distance swam for the passage
-  # The distance swam is the difference between passage length in meters and previous passage length in meters
+  # Computes the distance swam for the passage.
+  # The distance swam is the difference between the passage length in meters and
+  # the previous passage length in meters.
+  #
   def compute_distance_swam
     passage_distance = get_passage_distance
     previous_passage = get_passages.where('length_in_meters < ?', passage_distance).last
-    previous_passage ? passage_distance - previous_passage.get_passage_distance : passage_distance 
+    previous_passage ? passage_distance - previous_passage.get_passage_distance : passage_distance
   end
 
-  # Calculate the final time starting from the passages for a given result (event)
-  # The final time is the sum of single passage times of passages
-  # Assumes passage times are correctly set
+  # Computes the final time starting from the passages for a given result (event).
+  # The final time is the sum of each single passage time among the list of associated
+  # passages.
+  #
+  # Assumes passage times are correctly set.
+  # Returns a Timing instance.
+  #
   def compute_final_time
     passages_list = get_passages
     total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 )
-    Timing.new( total_hundreds ) 
+    Timing.new( total_hundreds )
   end
 
-  # Calculate the incremental time starting from the beginning of a given result (event)
-  # The incremental time is the sum of single passage times of passages list unitl current passage
-  # Assumes passage times are correctly set
+  # Computes the total time for this passage, starting from the beginning of a given result (event).
+  # This method returns the incremental time by summing all associated passages preceeding this one.
+  # Assumes passage times are correctly set.
+  # Returns a Timing instance.
+  #
   def compute_incremental_time
     passages_list = get_passages.where('length_in_meters < ?', get_passage_distance)
     total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 ) + hundreds + ( seconds * 100 ) + ( minutes * 6000 )
-    Timing.new( total_hundreds ) 
+    Timing.new( total_hundreds )
   end
-
-  # Calculate the passage time starting from the passages incremental time of a given result (event)
-  # The passage time is the difference between the incremental times of passage and previous passage
-  # Assumes passage times are correctly set
-  def compute_passage_time
-    previous_passage = get_passages.where('length_in_meters < ?', get_passage_distance).last
-    previous_hundreds = previous_passage ? previous_passage.hundreds_from_start + ( previous_passage.seconds_from_start * 100 ) + ( previous_passage.minutes_from_start * 6000 ) : 0
-    current_hundreds = hundreds_from_start + ( seconds_from_start * 100 ) + ( minutes_from_start * 6000 )
-    Timing.new( current_hundreds - previous_hundreds ) 
-  end
-  # ----------------------------------------------------------------------------
+  #-- --------------------------------------------------------------------------
+  #++
 
   # Check if final time from meeting individual result correponds to calculated final time
   # If result not present always return true
   def is_passage_total_correct
-    if meeting_individual_result 
+    if meeting_individual_result
       (meeting_individual_result.get_timing_instance == compute_final_time) ? true : false
     else
-      true 
+      true
     end
   end
-  # ----------------------------------------------------------------------------
+  #-- --------------------------------------------------------------------------
+  #++
 end

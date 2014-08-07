@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.175.20140210
+  - Goggles framework vers.:  4.00.420
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -19,7 +19,7 @@
 =end
 class Timing
 
-  attr_accessor :hundreds, :seconds, :minutes, :hours, :days 
+  attr_accessor :hundreds, :seconds, :minutes, :hours, :days
 
   # Creates a new instance.
   # Note the ascending precision of the parameters, which allows to skip
@@ -104,7 +104,10 @@ class Timing
   def to_s
     (days > 0 ? "#{days}d " : '') +
     (hours > 0 ? "#{hours}h " : '') +
-    sprintf("%2s'%2s\"%02.0f", minutes, seconds, hundreds)
+    sprintf(
+      minutes > 0 ? "%2s'%02.0f\"%02.0f" : "%2s'%2s\"%02.0f",
+      minutes, seconds, hundreds
+    )
   end
   # ---------------------------------------------------------------------------
 
@@ -118,11 +121,11 @@ class Timing
   # members with non positive values in the output string.
   #
   def self.to_compact_s( hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0 )
-    (days > 0 ? "#{days}d " : '') +
-    (hours > 0 ? "#{hours}h " : '') +
-    (minutes > 0 ? sprintf("%2s'", minutes) : '') +
-    (seconds > 0 ? sprintf("%2s\"", seconds) : '') +
-    (hundreds > 0 ? sprintf("%02.0f", hundreds) : '')
+    ( days > 0     ? "#{days}d " : '') +
+    ( hours > 0    ? "#{hours}h " : '') +
+    ( minutes > 0  ? sprintf( "%2s'", minutes ) : '') +
+    ( seconds > 0  ? sprintf( minutes > 0 ? "%02.0f" : "%2s\"", seconds ) : '') +
+    ( hundreds > 0 ? sprintf( "%02.0f", hundreds ) : '')
   end
   # ---------------------------------------------------------------------------
 

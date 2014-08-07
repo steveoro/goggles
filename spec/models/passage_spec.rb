@@ -20,7 +20,7 @@ describe Passage, :type => :model do
     end
 
     # Required values
-    # minutes, second, hundreds too, but already included in TimingGettable 
+    # minutes, second, hundreds too, but already included in TimingGettable
     it_behaves_like( "(missing required values)", [
       :minutes_from_start,
       :hundreds_from_start,
@@ -50,22 +50,21 @@ describe Passage, :type => :model do
         ]
       )
       it_behaves_like( "(the existance of a method returning numeric values)",
-        [ 
+        [
           :get_passage_distance,
           :compute_distance_swam
         ]
       )
       it_behaves_like( "(the existance of a method returning a boolean value)",
-        [ 
+        [
           :is_passage_total_correct
         ]
       )
 
       # Methods that return timimg istancies
-      [ 
+      [
         :compute_final_time,
         :compute_incremental_time,
-        :compute_passage_time
       ].each do |method_name|
         describe "##{method_name}" do
           it "returns a timing istance" do
@@ -77,12 +76,13 @@ describe Passage, :type => :model do
     #-- -----------------------------------------------------------------------
     #++
 
+
     describe "#get_passages" do
       it "returns a collection responding to :each" do
         expect( subject.get_passages ).to respond_to(:each)
       end
       it "returns a list of passages for the given result" do
-        subject.get_passages.each do |element| 
+        subject.get_passages.each do |element|
           expect( element ).to be_an_instance_of( Passage )
         end
       end
@@ -97,14 +97,41 @@ describe Passage, :type => :model do
         current_item_distance = 0
         fixture.get_passages.each do |item|
           expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because the factory can create passages having same distance
-          current_item_distance = item.passage_type.length_in_meters 
-        end      
+          current_item_distance = item.passage_type.length_in_meters
+        end
       end
     end
     #-- -----------------------------------------------------------------------
     #++
+
+
+    describe "#compute_final_time" do
+      context "within a sequence of passages," do
+        before(:each) do
+          # TODO define a list of passages linked together
+          # TODO compute the expected total
+          # FIXME this can be used for both #compute_final_time & #compute_incremental_time
+        end
+        it "returns a Timing instance"
+        it "returns a result which is equal to the sum of each passage time"
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    describe "#compute_incremental_time" do
+      context "within a sequence of passages," do
+        before(:each) do
+          # TODO define a list of passages linked together
+          # TODO compute the expected total
+          # FIXME this can be used for both #compute_final_time & #compute_incremental_time
+        end
+        it "returns a Timing instance"
+        it "returns a result which is equal to the sum of each passage time"
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
-  
 end

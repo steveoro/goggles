@@ -12,7 +12,7 @@
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
-              %td{'colspan'=>'9'}
+              %td{'colspan'=>'7'}
                 %b= meeting_program.get_verbose_event_name
                 = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
             - unless is_a_relay
