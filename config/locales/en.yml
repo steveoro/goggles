@@ -521,6 +521,8 @@ en:
   language: "Language"
   none: "None"   
   unknown: "Unknown"   
+  not_present: "Not present"   
+  not_computable: "Not computable"   
 
   no_new_articles: No new articles
   select_file: "Select a file"

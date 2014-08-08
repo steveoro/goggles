@@ -523,6 +523,8 @@ it:
   language: "Lingua"
   none: "Nessuna"
   unknown: "Sconosciuto"   
+  not_present: "Non presente"   
+  not_computable: "Non calcolabile"   
 
   no_new_articles: Nessun nuovo articolo
   select_file: "Scegli un file"

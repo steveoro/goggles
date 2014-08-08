@@ -52,12 +52,12 @@
     %tr
       %td.goggles-centeralign{ colspan: 6 }
         = "#{I18n.t('radiography.compute_fin_score_for')} #{@swimmer.get_full_name}, #{@current_event.i18n_description} - #{@current_pool.i18n_description}: #{@timing.to_s} => "
-        %b= format_score(@standard_points)
+        %b= "#{@current_time_standard ? format_score(@standard_points) : I18n.t('not_computable') }"
     %tr
       %td.goggles-rightalign
         = I18n.t('radiography.time_standard')
       %td
-        = @current_time_standard.get_timing
+        = "#{@current_time_standard ? @current_time_standard.get_timing : I18n.t('not_present') }"
       %td.goggles-rightalign
         = I18n.t('records.world_record')
       %td
