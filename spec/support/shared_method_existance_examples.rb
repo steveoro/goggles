@@ -44,6 +44,18 @@ shared_examples_for "(the existance of a method returning a valid instance)" do 
     end    
   end
 end
+
+
+shared_examples_for "(the existance of a method with parameter returning a valid instance or nil)" do |method_name, instance_const, parameter|
+  describe "##{method_name}" do
+    it "responds to ##{method_name}" do
+      expect( subject ).to respond_to( method_name )
+    end
+    it "returns an instance of #{instance_const}" do
+      expect( subject.send(method_name, parameter) ).to be_an_instance_of( instance_const ).or be_nil
+    end    
+  end
+end
 #-- ---------------------------------------------------------------------------
 #++
 

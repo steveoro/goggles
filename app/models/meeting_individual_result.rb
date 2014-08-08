@@ -68,13 +68,16 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :is_female,         -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
   scope :has_rank,          ->(rank_filter) { where(rank: rank_filter) }
+  scope :has_points,        ->(score_sym) { where("#{score_sym.to_s} > 0") }
 
   scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_meeting,   ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_swimmer,   ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
   scope :sort_by_team,      ->(dir) { order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_badge,     ->(dir) { order("badges.number #{dir.to_s}") }
+  scope :sort_by_timing,    ->(dir) { order("(hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
 
+  scope :for_event_by_pool_type, ->(event_by_pool_type) { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
 
   # ----------------------------------------------------------------------------
   # Base methods:

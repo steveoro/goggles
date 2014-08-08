@@ -237,14 +237,14 @@ class Swimmer < ActiveRecord::Base
   # +nil+ when not found.
   #
   def get_best_individual_result( score_method_sym = :standard_points )
-    meeting_individual_results.is_valid.order( score_method_sym ).last
+    meeting_individual_results.is_valid.has_points( score_method_sym ).order( score_method_sym ).last
   end
 
   # Returns the worst-ever MeetingIndividualResult according to the not-null standard points registered.
   # +nil+ when not found.
   #
   def get_worst_individual_result( score_method_sym = :standard_points )
-    meeting_individual_results.is_valid.order( score_method_sym ).first
+    meeting_individual_results.is_valid.has_points( score_method_sym ).order( score_method_sym ).first
   end
 
   # Returns the total count of registered disqualifications

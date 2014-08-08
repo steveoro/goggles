@@ -192,7 +192,6 @@ class SwimmersController < ApplicationController
             )
           ).to_short_meeting_html_list
 
-          # TODO
           # Retrieves seasonal best for swimmer for all current seasons
           seasonal_best_rc = RecordCollector.new( swimmer: @swimmer, start_date: @current_season.begin_date, end_date: @current_season.end_date )
           @seasonal_best = RecordCollectionDecorator.decorate(
