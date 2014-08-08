@@ -20,9 +20,9 @@ class PersonalBestGridBuilder
   # === Params
   # - record_collector: an instance of RecordCollector (assumed to have an already full RecordCollection)
   #
-  def initialize( record_collector )
-    raise ArgumentError.new("the parameter must be a RecordCollector instance") unless record_collector.instance_of?( RecordCollector )
-    @collector  = record_collector
+  def initialize( personal_best_collector )
+    raise ArgumentError.new("the parameter must be a PersonalBestCollector instance") unless personal_best_collector.instance_of?( PersonalBestCollector )
+    @collector  = personal_best_collector
 
     # Retrieves pool type suitable for meetings
     @pool_types = PoolType.is_suitable_for_meeting

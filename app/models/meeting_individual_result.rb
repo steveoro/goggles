@@ -69,6 +69,7 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   scope :has_rank,          ->(rank_filter) { where(rank: rank_filter) }
   scope :has_points,        ->(score_sym) { where("#{score_sym.to_s} > 0") }
+  scope :has_time,          -> { where("((minutes * 6000) + (seconds * 100) + hundreds > 0)") }
 
   scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_meeting,   ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
