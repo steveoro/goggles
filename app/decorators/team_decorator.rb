@@ -44,7 +44,7 @@ class TeamDecorator < Draper::Decorator
   # Returns the Team's home site if present
   #
   def get_home_site()
-    home_page_url ? h.link_to( home_page_url, home_page_url, { target: "blank" } ) : I18n.t('unknown')
+    home_page_url ? h.link_to( home_page_url, home_page_url, { target: "blank", 'data-toggle' => 'tooltip', title: I18n.t('team.visit_home_page') } ) : I18n.t('unknown')
   end
   #-- --------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ class TeamDecorator < Draper::Decorator
   #
   def get_last_meeting_name()
     meeting = meetings.sort_by_date(:desc).first
-    meeting ? h.link_to( meeting.get_full_name, meeting_show_full_path( id: meeting.id, team_id: id ) ) : I18n.t('none')
+    meeting ? h.link_to( meeting.get_full_name, meeting_show_full_path( id: meeting.id, team_id: id ), { 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') + "\r\n(#{ meeting.get_full_name })" } ) : I18n.t('none')
   end
   #-- --------------------------------------------------------------------------
 end

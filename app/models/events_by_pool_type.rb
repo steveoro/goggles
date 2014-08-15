@@ -8,6 +8,7 @@ class EventsByPoolType < ActiveRecord::Base
   validates_presence_of :event_type                 # (must be not null)
   validates_associated :event_type                  # (foreign key integrity)
 
+  # Leega TODO Verify differences between .includes and .joins
   scope :not_relays,    joins(:event_type).where('event_types.is_a_relay = false')
   # ----------------------------------------------------------------------------
 

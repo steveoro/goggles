@@ -32,7 +32,7 @@
       .span3
         = I18n.t('swimmers.affiliated_in_teams') +':'
       .span6
-        = @swimmer.get_team_names
+        = @swimmer.get_linked_team_names.html_safe
     .row-fluid
       .span3
         = I18n.t('swimmers.year_of_birth') +':'

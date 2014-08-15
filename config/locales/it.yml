@@ -42,6 +42,7 @@ it:
     team_records_load_tooltip: "Mostra tutti i record detenuti da questa Squadra nelle affiliazioni registrate"
     meeting_presence: "Partecipazioni a gare"
     season_presence: "Partecipazione a campionati"
+    visit_home_page: "Visita la home page della Squadra"
 
   badge:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Cartellini! (tab: 'badges')"

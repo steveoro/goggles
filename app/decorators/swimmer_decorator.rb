@@ -11,6 +11,7 @@
 =end
 class SwimmerDecorator < Draper::Decorator
   delegate_all
+  include Rails.application.routes.url_helpers
 
   # Getter for the label text associated with the SocialsController's actions #confirm / #unconfirm
   # for the specified user (accessing this Swimmer info page).
@@ -277,6 +278,24 @@ class SwimmerDecorator < Draper::Decorator
     badges.where( season_id: season.id ).last
   end
   #-- --------------------------------------------------------------------------
+
+  # Retrieves a comma-separated string containing all the distinct team
+  # names associated with this instance.
+  #
+  def get_linked_team_names
+    linked_list = ""
+    list = []
+    if teams
+      teams.uniq.each do |team|
+        list.append( h.link_to( team.name, team_radio_path( id: team.id ), { 'data-toggle' => 'tooltip', title: I18n.t('radiography.team_radio_tab_tooltip') } ) )
+      end
+      linked_list = list.join(', ')
+    else
+      linked_list = I18n.t('none')
+    end 
+    linked_list
+  end
+  #-- -------------------------------------------------------------------------
   #++
 
   # Returns the Array of all the MeetingIndividualResult(s) that are crowned by a
@@ -320,7 +339,7 @@ class SwimmerDecorator < Draper::Decorator
   #++
   
   # Personal bests
-  # Retreives a persoanl best for the swimmer in a given event and pool types
+  # Retrieves a personal best for the swimmer in a given event and pool types
   #
   def get_personal_best( events_by_pool_type )
     meeting_individual_results.for_event_by_pool_type(events_by_pool_type).sort_by_timing(:asc).first
