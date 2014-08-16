@@ -15,7 +15,8 @@ describe PersonalBestGridBuilder do
       [
         :collection,
         :count,
-        :event_types
+        :event_types,
+        :swimmer_record_types
       ]
     )
     it_behaves_like( "(the existance of a method returning a collection of some kind of instances)",

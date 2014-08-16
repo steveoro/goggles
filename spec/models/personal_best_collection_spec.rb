@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe PersonalBestCollection, :type => :model do
   # Use pre-loaded seeds:
-  let( :results )   { MeetingIndividualResult.where( swimmer_id: 142 ) }
+  let( :results )   { MeetingIndividualResult.where( swimmer_id: 23 ) }
   let( :fixture )   { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture2 )  { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 )  { results.at( ((rand * 1000) % results.size).to_i ) }
@@ -49,9 +49,9 @@ describe PersonalBestCollection, :type => :model do
       expect( result.count ).to eq(1)
     end
     it "allows a list of MeetingIndividualResult rows as a parameter" do
-      result = PersonalBestCollection.new( create_list(:meeting_individual_result, 5) )
+      result = PersonalBestCollection.new( create_list(:meeting_individual_result, 3, swimmer_id: 23) )
       expect( result ).to be_an_instance_of( PersonalBestCollection )
-      expect( result.count ).to eq(5)
+      expect( result.count ).to eq(3)
     end
   end
   #-- -----------------------------------------------------------------------
@@ -223,11 +223,11 @@ describe PersonalBestCollection, :type => :model do
 
     it "returns an instance of IndividualRecord" do
       expect(
-        subject.get_record_for( pool_type_code, event_type_code )
+        subject.get_record_for( pool_type_code, event_type_code, 'Personal best' )
       ).to be_an_instance_of( IndividualRecord )
     end    
     it "returns the corresponding individual result for the specified keys" do
-      result = subject.get_record_for( pool_type_code, event_type_code )
+      result = subject.get_record_for( pool_type_code, event_type_code, 'Personal best' )
       expect( result.pool_type.code ).to      eq( pool_type_code )
       expect( result.event_type.code ).to     eq( event_type_code )
     end    

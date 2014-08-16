@@ -82,8 +82,8 @@ class PersonalBestCollection
   #++
 
   # Returns the IndividualRecord for the specified parameters or nil when not found.
-  def get_record_for( pool_type_code, event_type_code )
-    encoded_key = encode_key_from_codes( pool_type_code, event_type_code )
+  def get_record_for( pool_type_code, event_type_code, swimmer_record_type = 'Personal best' )
+    encoded_key = encode_key_from_codes( pool_type_code, event_type_code, swimmer_record_type )
     @list[ encoded_key ]   
   end
 
@@ -103,8 +103,8 @@ class PersonalBestCollection
 
   # Returns the encoded string key used to store the specified IndividualRecord record.
   #
-  def encode_key_from_codes( pool_type_code, event_type_code )
-    "#{pool_type_code}-#{event_type_code}"
+  def encode_key_from_codes( pool_type_code, event_type_code, swimmer_record_type = 'Personal best' )
+    "#{pool_type_code}-#{event_type_code}-#{swimmer_record_type}"
   end
 
 

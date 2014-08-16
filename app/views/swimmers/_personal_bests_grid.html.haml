@@ -8,29 +8,26 @@
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
-          %td
-          %td.goggles-centeralign
-            %b= 'Personal best'
-          %td.goggles-centeralign
-            %b= 'Seasonal best'
-          %td.goggles-centeralign
-            %b= 'Last performance'
+          %td.goggles-rightalign
+          - grid_builder.swimmer_record_types.each do |swimmer_record_type|
+            %td.goggles-centeralign
+              %b= swimmer_record_type
   
         - grid_builder.event_types( pool_type.id ).each do |event_type|
           - if grid_builder.collection.has_record_for( pool_type.code, event_type.code )
             %tr
-              %td.goggles-td.goggles-rightalign
+              %td.goggles-rightalign
                 %b= event_type.i18n_short
-                - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code )
-                %td.goggles-centeralign
-                  %p
-                    %b= record.get_timing
-                    - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
-                      %p= Format.a_date( sched_date )
-                      %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}
-                        %p= record.meeting_individual_result.meeting.description
-                    - else
-                      %p= '-'
-                %td.goggles-centeralign
-                %td.goggles-centeralign
-
+              - grid_builder.swimmer_record_types.each do |swimmer_record_type|
+                - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, swimmer_record_type )
+                %td
+                  - if record
+                    %p
+                      %b= record.get_timing
+                      - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
+                        %p= Format.a_date( sched_date )
+                        %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}
+                          %p= record.meeting_individual_result.meeting.description
+                      - else
+                        %p= '-'
+              

@@ -98,6 +98,7 @@ class SwimmersController < ApplicationController
     @tab_title = I18n.t('radiography.best_timings_tab')
 
     # Collect personal bests
+    # TODO Delegate to an AJAX function
     collector = PersonalBestCollector.new( @swimmer )
     collector.full_scan do |this, events_by_pool_type|
       this.collect_from_all_category_results_having( events_by_pool_type )

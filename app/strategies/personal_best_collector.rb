@@ -105,37 +105,9 @@ class PersonalBestCollector
   #-- -------------------------------------------------------------------------
   #++
 
-  # Getter for the list of all unique SeasonType instances found referenced by the
-  # current collection.
-  #
-  # Returns an Hash with the tuples { season_types.id => SeasonType instance } as
-  # individual elements.
-  #
-  def get_collected_season_types
-    result = {}
-    @collection.each do |collection_key, individual_record|
-      season_type = individual_record.season_type
-      result[ season_type.id ] = season_type unless result.has_key?( season_type.id )
-    end
-    result
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-
-
   # Returns the list of allowed Events by PoolType codes
   def events_by_pool_type_list
     EventsByPoolType.not_relays
-  end
-
-  # Returns the list of allowed PoolType codes
-  def pool_type_codes_list
-    EventsByPoolType.not_relays.joins(:pool_type).select('pool_types.code').uniq.map{ |row| row.code }
-  end
-
-  # Returns the list of allowed EventType codes
-  def event_type_codes_list( pool_type_code )
-    PoolType.find_by_code( pool_type_code ).events_by_pool_types.not_relays.joins(:event_type).select('event_types.code').uniq.map{ |row| row.code }
   end
 
 

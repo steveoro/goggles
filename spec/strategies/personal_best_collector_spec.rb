@@ -25,18 +25,9 @@ describe PersonalBestCollector do
         :count,
         :clear,
         :collect_from_all_category_results_having,
-        :get_collected_season_types,
-        :full_scan
+        :full_scan,
+        :events_by_pool_type_list
       ]
-    )
-    it_behaves_like( "(the existance of a method returning an Enumerable of non-empty Strings)",
-      [
-        :pool_type_codes_list,
-      ]
-    )
-    it_behaves_like( "(the existance of a method with parameter returning an Enumerable of non-empty Strings)",
-      :event_type_codes_list,
-      '25'
     )
   end
 
@@ -115,20 +106,8 @@ describe PersonalBestCollector do
   #++
 
 
-  describe "#get_collected_season_types" do
-    it "returns an instance of Hash" do
-      expect( subject.get_collected_season_types ).to be_an_instance_of( Hash )
-    end
-    it "returns at least a number lesser or equal to the total collection count" do
-      expect( subject.get_collected_season_types.count ).to be <= subject.count
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  describe "#get_collected_season_types" do
-    xit "returns a collection of personal bests"
+  describe "#events_by_pool_type_list" do
+    xit "returns a collection of EventsByPoolType"
   end
   #-- -------------------------------------------------------------------------
   #++
