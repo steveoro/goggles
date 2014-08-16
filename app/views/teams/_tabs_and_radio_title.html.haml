@@ -1,0 +1,37 @@
+%ul.nav.nav-tabs#topOfPage
+  - if params[:action] == 'radio'
+    %li.active
+      = link_to( t('radiography.radio_tab'), '#' )
+  - else
+    %li
+      = link_to( t('radiography.radio_tab'), team_radio_path(id: @team.id) )
+  - if params[:action] == 'current_swimmers'
+    %li.active
+      = link_to( t('radiography.team_current_swimmers_tab'), '#' )
+  - else
+    %li
+      = link_to( t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
+  - if params[:action] == 'best_timings'
+    %li.active
+      = link_to( t('radiography.best_timings_tab'), '#' )
+  - else
+    %li
+      = link_to( t('radiography.best_timings_tab'), team_best_timings_path(id: @team.id) )
+  - if params[:action] == 'palamares'
+    %li.active
+      = link_to( t('radiography.palmares_tab'), '#' )
+  - else
+    %li
+      = link_to( t('radiography.palmares_tab'), team_palmares_path(id: @team.id) )
+  - if params[:action] == 'ober_cup'
+    %li.active
+      = link_to( t('radiography.ober_cup_tab'), '#' )
+  - else
+    %li
+      = link_to( t('radiography.ober_cup_tab'), team_ober_cup_path(id: @team.id) )
+
+.container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = I18n.t('radiography.radio_tab') + ' -- '
+      = I18n.t('radiography.team_radio_tab_title').gsub('{TEAM_NAME}', @team.get_full_name)
