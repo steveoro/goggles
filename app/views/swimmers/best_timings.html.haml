@@ -12,15 +12,5 @@
 
 = render( partial: 'radio_title' )
 
-.row-fluid
-  #records_4x_grid
-    #loadingIndicator.offset6
-      = I18n.t('please_wait')
-      = image_tag( 'indicator.gif' )
+= render( partial: 'personal_best_grid' )
 
-%script
-  $.ajax({                                                                      |
-    url: "#{ records_for_swimmer_path() }",                                     |
-    data: { swimmer: { id: "#{@swimmer.id}" } },                                |
-    dataType: 'script'                                                          |
-  });                                                                           |

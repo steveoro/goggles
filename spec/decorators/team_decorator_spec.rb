@@ -9,6 +9,7 @@ describe TeamDecorator do
     :get_contacts,
     :get_complete_address,
     :get_home_site,
+    :get_first_meeting_name,
     :get_last_meeting_name
   ])
   #-- --------------------------------------------------------------------------

@@ -96,6 +96,13 @@ class SwimmersController < ApplicationController
     # --- "Best Timings" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.best_timings_tab')
+
+    # Collect personal bests
+    collector = PersonalBestCollector.new( @swimmer )
+    collector.full_scan do |this, events_by_pool_type|
+      this.collect_from_all_category_results_having( events_by_pool_type )
+    end
+    @grid_builder = PersonalBestGridBuilder.new( collector )
   end
   #-- -------------------------------------------------------------------------
   #++

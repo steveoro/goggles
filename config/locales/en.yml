@@ -227,6 +227,8 @@ en:
     full_history_tab_tooltip: "Go to 'The Full History' page of this Swimmer"
     palmares_tab: "Palmares"
     last_meeting: "Last meeting attended"
+    first_meeting: "First meeting attended"
+    ober_cup_tab: "Ober cup"
 
   misc_main_menu:
     title: "Misc"

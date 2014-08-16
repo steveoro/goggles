@@ -25,16 +25,18 @@ class PersonalBestGridBuilder
     @collector  = personal_best_collector
 
     # Retrieves pool type suitable for meetings
-    @pool_types = PoolType.is_suitable_for_meeting
+    @pool_types = PoolType.only_for_meetings
     
     # This will create an Hash with all the tuples made by (pool_type.id => event_type lists),
     # with each event list built using the distribution of events found inside EventsByPoolType:
     @event_types_by_pool = {} 
     @pool_types.each do |pool_type|
-      event_by_pool_type_ids = EventsByPoolType
+        #.includes( :event_type )
+        #.where{ event_types.is_a_relay == false }
+
+
+      event_by_pool_type_ids = EventsByPoolType.not_relays
         .where( pool_type_id: pool_type.id )
-        .includes( :event_type )
-        .where{ event_types.is_a_relay == false }
         .select( :event_type_id )
       @event_types_by_pool[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
     end
@@ -42,26 +44,7 @@ class PersonalBestGridBuilder
   #-- --------------------------------------------------------------------------
   #++
 
-  # Getter for a unique text cache key associated with this instance and its internal collection.
-  #
-  # This will generate a different string from the one returned by #collection.cache_key
-  # if the internal RecordCollector instance has been pre-filtered with a swimmer
-  # instance.
-  #
-  # (This allows the grid builder to be initialized with a special collector created
-  # from an already existing colletion of records, where the swimmer pre-filter is being
-  # used just to highlight his/her results among the others, while having different
-  # cache hits for pages regarding the essential same collection but highlighted in a
-  # different way.)
-  #
-  def cache_key
-    if @collector.swimmer
-      "#{@collector.swimmer.id}:" << @collector.collection.cache_key
-    else
-      @collector.collection.cache_key
-    end
-  end
-
+  
   # Getter for the internal list.
   def collection
     @collector.collection
@@ -70,6 +53,11 @@ class PersonalBestGridBuilder
   # Getter for the internal list #count method.
   def count
     @collector.count
+  end
+
+  # Getter for the internal list #clear method.
+  def clear
+    @collector.clear
   end
   #-- -------------------------------------------------------------------------
   #++

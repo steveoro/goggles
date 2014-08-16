@@ -47,6 +47,10 @@ describe SwimmerDecorator do
         :get_total_wooden_medals
       ]
     )
+    it_behaves_like( "(the existance of a method returning strings)", [
+        :get_linked_team_names
+      ]
+    )    
   end
   # ---------------------------------------------------------------------------
 
@@ -337,7 +341,19 @@ describe SwimmerDecorator do
     )
     
     context "the swimmer swam the event type in the pool type" do
-      xit "returns a meeting individual result"
+      fix_swimmer = Swimmer.find(23).decorate              # Assumes the existence of 23 Swimmer: Leega
+      fix_events_by_pool_type = EventsByPoolType.find(11)  # Assumes the existence of event 11: 50FA - 25 mt
+      it "returns a meeting individual result" do
+        expect( fix_swimmer.get_personal_best(fix_events_by_pool_type) ).to be_an_instance_of( MeetingIndividualResult )
+      end
+    end
+    
+    context "the swimmer doesn't swam the event type in the pool type" do
+      fix_swimmer = Swimmer.find(23).decorate              # Assumes the existence of 23 Swimmer: Leega
+      fix_events_by_pool_type = EventsByPoolType.find(8)   # Assumes the existence of event 8: 3000SL - 25 mt
+      it "returns a meeting individual result" do
+        expect( fix_swimmer.get_personal_best(fix_events_by_pool_type) ).to be_nil
+      end
     end
   end
   #-- --------------------------------------------------------------------------

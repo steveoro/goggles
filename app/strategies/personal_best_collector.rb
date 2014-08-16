@@ -123,6 +123,11 @@ class PersonalBestCollector
   #++
 
 
+  # Returns the list of allowed Events by PoolType codes
+  def events_by_pool_type_list
+    EventsByPoolType.not_relays
+  end
+
   # Returns the list of allowed PoolType codes
   def pool_type_codes_list
     EventsByPoolType.not_relays.joins(:pool_type).select('pool_types.code').uniq.map{ |row| row.code }
@@ -164,10 +169,8 @@ class PersonalBestCollector
   # RecordCollection with the former method.
   #
   def full_scan( &block )
-    self.pool_type_codes_list.each do |pool_type_code|
-      self.event_type_codes_list(pool_type_code).each do |event_type_code|
-        yield( self, pool_type_code, event_type_code ) if block_given?
-      end
+    self.events_by_pool_type_list.each do |events_by_pool_type|
+      yield( self, events_by_pool_type ) if block_given?
     end
     @collection
   end

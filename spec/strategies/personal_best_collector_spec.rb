@@ -4,9 +4,9 @@ require 'benchmark'
 
 describe PersonalBestCollector do
   # Use pre-loaded seeds:
-  let( :swimmer )  { Swimmer.find( 23 ) }
+  let( :swimmer )  { Swimmer.find( 23 ) }  # Assumes swimmer Leega from seeds
   let( :results )  { swimmer.meeting_individual_result }
-  let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}
+  let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}  # Assumes 50FA, 25 mt from seeds
 
   # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
   # TODO test context for prefiltering with a SeasonType

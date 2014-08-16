@@ -50,6 +50,14 @@ class TeamDecorator < Draper::Decorator
 
   # Returns the Team's last meeting name (and header date)
   #
+  def get_first_meeting_name()
+    meeting = meetings.sort_by_date(:asc).first
+    meeting ? h.link_to( meeting.get_full_name, meeting_show_full_path( id: meeting.id, team_id: id ), { 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') + "\r\n(#{ meeting.get_full_name })" } ) : I18n.t('none')
+  end
+  #-- --------------------------------------------------------------------------
+
+  # Returns the Team's last meeting name (and header date)
+  #
   def get_last_meeting_name()
     meeting = meetings.sort_by_date(:desc).first
     meeting ? h.link_to( meeting.get_full_name, meeting_show_full_path( id: meeting.id, team_id: id ), { 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') + "\r\n(#{ meeting.get_full_name })" } ) : I18n.t('none')
