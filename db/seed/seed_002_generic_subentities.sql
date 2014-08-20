@@ -118,10 +118,10 @@ INSERT INTO passage_types (id,code,length_in_meters,lock_version,created_at,upda
 --
 -- Dump dei dati per la tabella pool_types
 -- 
-INSERT INTO pool_types (id,code,length_in_meters,is_suitable_for_meetings,lock_version,created_at,updated_at) VALUES 
-(1,'25',25,1,0,CURDATE(),CURDATE()),
-(2,'50',50,1,0,CURDATE(),CURDATE()),
-(3,'33',33,0,0,CURDATE(),CURDATE());
+INSERT INTO pool_types (id,code,length_in_meters,lock_version,created_at,updated_at) VALUES 
+(1,'25',25,0,CURDATE(),CURDATE()),
+(2,'50',50,0,CURDATE(),CURDATE()),
+(3,'33',33,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella achievement_types
@@ -321,6 +321,18 @@ INSERT INTO coach_level_types (id,code,level,lock_version,created_at,updated_at)
 (5,'A1',300,0,CURDATE(),CURDATE()),
 (6,'A2',350,0,CURDATE(),CURDATE()),
 (7,'AC',400,0,CURDATE(),CURDATE());
+
+--
+-- Dump dei dati per la tabella record_types
+-- 
+INSERT INTO record_types (id,code,is_for_swimmers,is_for_teams,is_for_seasons,lock_version,created_at,updated_at) VALUES 
+(1,'SPB',1,0,0,0,CURDATE(),CURDATE()),
+(2,'SSB',1,0,0,0,CURDATE(),CURDATE()),
+(3,'SLP',1,0,0,0,CURDATE(),CURDATE()),
+(4,'TTB',0,1,0,0,CURDATE(),CURDATE()),
+(5,'TSB',0,1,0,0,CURDATE(),CURDATE()),
+(6,'SOR',0,0,1,0,CURDATE(),CURDATE()),
+(7,'FOR',0,0,0,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella event_types

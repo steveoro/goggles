@@ -44,9 +44,12 @@ class RecordCollector
     @meeting      = options[:meeting] if options[:meeting].instance_of?( Meeting )
     @start_date   = options[:start_date] if options[:start_date].instance_of?( Date )
     @end_date     = options[:end_date] if options[:end_date].instance_of?( Date )
+
     # Set precedence on filter values:
     @team = nil if @season_type
+    
     # Cache the unique codes lists:
+    @record_type_codes   = RecordType.select(:code).uniq.map{ |row| row.code }
     @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
     @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
     @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
@@ -80,12 +83,12 @@ class RecordCollector
     @meeting
   end
 
-  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  # Getter for the internal start date parameter. +nil+ when not defined.
   def start_date
     @start_date
   end
 
-  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  # Getter for the internal end date parameter. +nil+ when not defined.
   def end_date
     @end_date
   end
@@ -134,6 +137,7 @@ class RecordCollector
           event_type_id:    row.event_type_id,
           category_type_id: row.category_type_id,
           gender_type_id:   row.gender_type_id,
+          record_type_id:   row.record_type_id,
           team_id:          row.team_id,
           is_team_record:   true
         ).first
@@ -143,6 +147,7 @@ class RecordCollector
           event_type_id:    row.event_type_id,
           category_type_id: row.category_type_id,
           gender_type_id:   row.gender_type_id,
+          record_type_id:   row.record_type_id,
           season_id:        row.season_id,
           is_team_record:   false
         ).first
@@ -150,13 +155,13 @@ class RecordCollector
                                                     # Persist row:
       if existing_record                            # Record found already existing?
         is_ok = existing_record.update_attributes(
-          minutes: row.minutes,
-          seconds: row.seconds,
-          hundreds: row.hundreds,
-          swimmer_id: row.swimmer_id,
-          team_id: row.team_id,
-          season_id: row.season_id,
-          federation_type_id: row.federation_type_id,
+          minutes:                      row.minutes,
+          seconds:                      row.seconds,
+          hundreds:                     row.hundreds,
+          swimmer_id:                   row.swimmer_id,
+          team_id:                      row.team_id,
+          season_id:                    row.season_id,
+          federation_type_id:           row.federation_type_id,
           meeting_individual_result_id: row.meeting_individual_result_id,
           is_team_record: is_team_record
         )
@@ -178,7 +183,7 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code )
+  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code, record_type_code = 'FOR' )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
@@ -196,7 +201,7 @@ class RecordCollector
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
-    update_and_return_collection_with_first_results( mir )
+    update_and_return_collection_with_first_results( mir, record_type_code )
   end
 
 
@@ -205,7 +210,7 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code )
+  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code = 'FOR' )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
@@ -224,7 +229,7 @@ class RecordCollector
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     mir = mir.joins( :meeting ).where( ['(meetings.header_date >= ?) AND (meetings.header_date <= ?)', @start_date, @end_date]) if @start_date
-    update_and_return_collection_with_first_results( mir )
+    update_and_return_collection_with_first_results( mir, record_type_code )
   end
 
 
@@ -233,21 +238,22 @@ class RecordCollector
   #
   # This method works by scanning existing IndividualRecord(s) on DB.
   #
-  def collect_from_records_having( pool_type_code, event_type_code, category_type_code, gender_type_code )
+  def collect_from_records_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code = 'FOR' )
     ir = IndividualRecord
-      .joins( :pool_type, :event_type, :category_type, :gender_type )
+      .joins( :record_type, :pool_type, :event_type, :category_type, :gender_type )
       .where(
       [
+        '(record_types.code = ?) AND ' +
         '(pool_types.code = ?) AND (event_types.code = ?) AND ' +
         '(category_types.code = ?) AND (gender_types.code = ?) AND ' +
         '(minutes * 6000 + seconds*100 + hundreds > 0)', # (avoid null times)
-        pool_type_code, event_type_code, category_type_code, gender_type_code
+        record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code
       ]
     )
     ir = ir.where( swimmer_id: @swimmer.id ) if @swimmer
     ir = ir.team_records.where( team_id: @team.id ) if @team
     ir = ir.for_season_type( @season_type.id ) if @season_type
-    update_and_return_collection_with_first_results( ir )
+    update_and_return_collection_with_first_results( ir, record_type_code )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -269,6 +275,11 @@ class RecordCollector
   #-- --------------------------------------------------------------------------
   #++
 
+
+  # Returns the list of allowed RecordType codes
+  def record_type_code_list
+    @record_type_codes
+  end
 
   # Returns the list of allowed PoolType codes
   def pool_type_code_list
@@ -345,7 +356,7 @@ class RecordCollector
   # <tt>prefiltered_results</tt> is a Relation of either IndividualRecord or
   # MeetingIndividualResult instances.
   #
-  def update_and_return_collection_with_first_results( prefiltered_results, limit = 3 )
+  def update_and_return_collection_with_first_results( prefiltered_results, record_type_code, limit = 3 )
     # Store these max first ranking results:
     first_recs = prefiltered_results.order( :minutes, :seconds, :hundreds ).limit(limit)
 # DEBUG

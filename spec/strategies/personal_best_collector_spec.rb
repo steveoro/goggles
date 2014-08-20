@@ -5,8 +5,8 @@ require 'benchmark'
 describe PersonalBestCollector do
   # Use pre-loaded seeds:
   let( :swimmer )  { Swimmer.find( 23 ) }  # Assumes swimmer Leega from seeds
-  let( :results )  { swimmer.meeting_individual_result }
   let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}  # Assumes 50FA, 25 mt from seeds
+  let( :record_type )  { RecordType.find( 1 ) }  # Assumes Swimmer persoanl best from seeds
 
   # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
   # TODO test context for prefiltering with a SeasonType
@@ -33,19 +33,25 @@ describe PersonalBestCollector do
 
 
   describe "#initialize" do
-    it "allows a list of IndividualRecord rows as a parameter" do
-      list = create_list(:individual_record, 3, swimmer_id: swimmer.id)
-      result = PersonalBestCollector.new( swimmer, list: list )
-      expect( result ).to be_an_instance_of( PersonalBestCollector )
-      expect( result.count ).to eq( list.size )
-      expect( result.count ).to eq(3)
+    it "doesn't allows initialization without swimmer" do
+      expect{ PersonalBestCollector.new() }.to raise_error( ArgumentError )
     end
-    it "allows a list of MeetingIndividualResult rows as a parameter" do
-      list = create_list(:meeting_individual_result, 3, swimmer_id: swimmer.id)
+    it "allows a list of IndividualRecord rows as a parameter" do
+      list = create_list(:individual_record, 5, swimmer_id: swimmer.id)
       result = PersonalBestCollector.new( swimmer, list: list )
       expect( result ).to be_an_instance_of( PersonalBestCollector )
       expect( result.count ).to eq( list.size )
-      expect( result.count ).to eq(3)
+      expect( result.count ).to eq(5)
+    end
+    it "allows a list of MeetingIndividualResult rows and a record type as parameters" do
+      list = create_list(:meeting_individual_result, 5, swimmer_id: swimmer.id)
+      result = PersonalBestCollector.new( swimmer, list: list, record_type: record_type )
+      expect( result ).to be_an_instance_of( PersonalBestCollector )
+      expect( result.count ).to be > 0
+    end
+    it "doesn't allows a list of MeetingIndividualResult rows as a parameter without record type" do
+      list = create_list(:meeting_individual_result, 3, swimmer_id: swimmer.id)
+      expect{ PersonalBestCollector.new( swimmer, list: list) }.to raise_error( ArgumentError )
     end
     it "allows a season instance as a parameter" do
       fix_par = create(:season)
@@ -88,7 +94,7 @@ describe PersonalBestCollector do
 
   describe "#collect_from_all_category_results_having" do
     it "returns the size of the internal collection" do
-      subject.collect_from_all_category_results_having( events_by_pool_type )
+      subject.collect_from_all_category_results_having( events_by_pool_type, record_type )
       expect( subject.count ).to be > 0
     end
   end
@@ -98,7 +104,7 @@ describe PersonalBestCollector do
       expect( subject.clear ).to be_an_instance_of( PersonalBestCollection )
     end
     it "clears the internal list" do
-      subject.collect_from_all_category_results_having( events_by_pool_type )
+      subject.collect_from_all_category_results_having( events_by_pool_type, record_type )
       expect{ subject.clear }.to change{ subject.count }.to(0)
     end
   end

@@ -25,11 +25,7 @@ class PersonalBestGridBuilder
     @collector  = personal_best_collector
     
     # Defines record types handled by personal best grid
-    @swimmer_record_types = [
-      'Personal best', 
-      'Seasonal best', 
-      'Last performance'
-    ]
+    @record_types = RecordType.for_swimmers
 
     # Retrieves pool type suitable for meetings
     @pool_types = PoolType.only_for_meetings
@@ -70,8 +66,8 @@ class PersonalBestGridBuilder
   #++
 
   # Returns the Enumerator of the handled record types.
-  def swimmer_record_types
-    @swimmer_record_types.each
+  def record_types
+    @record_types.each
   end
 
   # Returns the Enumerator of the allowed PoolTypes.

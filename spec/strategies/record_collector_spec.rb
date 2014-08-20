@@ -4,7 +4,7 @@ require 'benchmark'
 
 describe RecordCollector do
   # Use pre-loaded seeds:
-  let( :results )  { MeetingIndividualResult.where( swimmer_id: 142 ) }
+  let( :results )  { MeetingIndividualResult.where( swimmer_id: 23 ) }
   let( :fixture )  { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture2 ) { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 ) { results.at( ((rand * 1000) % results.size).to_i ) }
@@ -41,6 +41,7 @@ describe RecordCollector do
     )
     it_behaves_like( "(the existance of a method returning an Enumerable of non-empty Strings)",
       [
+        :record_type_code_list,
         :pool_type_code_list,
         :event_type_codes_list,
         :category_type_codes_list,

@@ -107,15 +107,15 @@ class RecordCollection
   # When specified as +true+, the <tt>is_tie_in</tt> parameter allows to retrieve not
   # the first record, but its tie-in (if any). 
   #
-  def get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code, is_tie_in = false )
-    encoded_key = encode_key_from_codes( pool_type_code, event_type_code, category_type_code, gender_type_code )
+  def get_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code, is_tie_in = false )
+    encoded_key = encode_key_from_codes( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
     @list[ is_tie_in ? encoded_key << 'b' : encoded_key ]   
   end
 
   # Returns +true+ if there is an IndividualRecord for the specified parameters or +false+ when not found.
   #
-  def has_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
-    ! get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code ).nil?   
+  def has_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
+    ! get_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code ).nil?   
   end
 
   # Returns +true+ if there are any IndividualRecord instances for the specified parameters
@@ -124,8 +124,8 @@ class RecordCollection
   # This is equivalent to test if there's any value in a row of any of the records "4x grid" view
   # (where each one of the 4 grid enlists categories on columns and events on rows).
   #
-  def has_any_record_for( pool_type_code, event_type_code, gender_type_code )
-    @list.any? { |key, row| key =~ /#{pool_type_code}\-#{event_type_code}\-.{3,}\-#{gender_type_code}/ }
+  def has_any_record_for( record_type_code, pool_type_code, event_type_code, gender_type_code )
+    @list.any? { |key, row| key =~ /#{record_type_code}\-#{pool_type_code}\-#{event_type_code}\-.{3,}\-#{gender_type_code}/ }
   end
 
   # Getter for the IndividualRecord for the specified key. Returns nil when not found.
@@ -136,16 +136,16 @@ class RecordCollection
 
   # Returns +true+ if there is a same-ranking (tie-in) record match for the specified parameters or +false+ when not found.
   #
-  def has_tie_in_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
-    ! get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code, true ).nil?   
+  def has_tie_in_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
+    ! get_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code, true ).nil?   
   end
   #-- -------------------------------------------------------------------------
   #++
 
   # Returns the encoded string key used to store the specified IndividualRecord record.
   #
-  def encode_key_from_codes( pool_type_code, event_type_code, category_type_code, gender_type_code )
-    "#{pool_type_code}-#{event_type_code}-#{category_type_code}-#{gender_type_code}"
+  def encode_key_from_codes( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
+    "#{record_type_code}-#{pool_type_code}-#{event_type_code}-#{category_type_code}-#{gender_type_code}"
   end
 
 
@@ -155,6 +155,7 @@ class RecordCollection
     if individual_result_or_record
       record_candidate = get_record_candidate( individual_result_or_record )
       encode_key_from_codes(
+        record_candidate.record_type   ? record_candidate.record_type.code : '?',
         record_candidate.pool_type     ? record_candidate.pool_type.code : '?',
         record_candidate.event_type    ? record_candidate.event_type.code : '?',
         record_candidate.category_type ? record_candidate.category_type.code : '?',
@@ -195,9 +196,27 @@ class RecordCollection
       @max_updated_at = individual_result_or_record.updated_at.to_i if @max_updated_at < individual_result_or_record.updated_at.to_i
     end
     if individual_result_or_record.instance_of?( MeetingIndividualResult )
-      IndividualRecord.new.from_individual_result( individual_result_or_record )
+      IndividualRecord.new.from_individual_result( individual_result_or_record, RecordType.find_by_code(chose_record_type) )
     else
       individual_result_or_record
+    end
+  end
+  
+  # Chose which record type should used for collecting tose record
+  # 
+  def chose_record_type
+    if @team && @start_date
+      'TSB' # Team seasonal best
+    else
+      if @team
+        'TTB' # Team best (team record)
+      else
+        if @start_date
+          'SOR' # seasonal best
+        else
+          'FOR' # Overall record
+        end
+      end
     end
   end
   #-- -------------------------------------------------------------------------

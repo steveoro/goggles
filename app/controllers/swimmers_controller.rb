@@ -96,13 +96,31 @@ class SwimmersController < ApplicationController
     # --- "Best Timings" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.best_timings_tab')
+    current_season = Season.get_last_season_by_type( 'MASFIN' )
+
+    # Leega. 
+    # TODO: Delegate to an AJAX function. I've removed the prevoius AJAX call
 
     # Collect personal bests
-    # TODO Delegate to an AJAX function
     collector = PersonalBestCollector.new( @swimmer )
     collector.full_scan do |this, events_by_pool_type|
-      this.collect_from_all_category_results_having( events_by_pool_type )
+      this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SPB') )
     end
+    
+    # Collect seasonal bests
+    collector.set_start_date( current_season.begin_date ) 
+    collector.set_end_date( current_season.end_date )
+    collector.full_scan do |this, events_by_pool_type|
+      this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SSB') )
+    end
+    
+    # Collect last result
+    #collector.set_start_date( nil ) 
+    #collector.set_end_date( nil )
+    collector.full_scan do |this, events_by_pool_type|
+      this.collect_last_results_having( events_by_pool_type, RecordType.find_by_code('SLP') )
+    end
+
     @grid_builder = PersonalBestGridBuilder.new( collector )
   end
   #-- -------------------------------------------------------------------------
@@ -185,7 +203,8 @@ class SwimmersController < ApplicationController
               @current_pool.code,
               @current_event.code,
               @swimmer_category.code,
-              @swimmer_gender.code
+              @swimmer_gender.code,
+              'SOR'
             )
           ).to_complete_html_list
 
@@ -196,7 +215,8 @@ class SwimmersController < ApplicationController
             personal_best_rc.collect_from_all_category_results_having(
               @current_pool.code,
               @current_event.code,
-              @swimmer_gender.code
+              @swimmer_gender.code,
+              'SPB'
             )
           ).to_short_meeting_html_list
 
@@ -207,7 +227,8 @@ class SwimmersController < ApplicationController
               @current_pool.code,
               @current_event.code,
               @swimmer_category.code,
-              @swimmer_gender.code
+              @swimmer_gender.code,
+              'SSB'
             )
           ).to_short_meeting_html_list
 
@@ -221,7 +242,8 @@ class SwimmersController < ApplicationController
                 @current_pool.code,
                 @current_event.code,
                 @swimmer_category.code,
-                @swimmer_gender.code
+                @swimmer_gender.code,
+                'TTB'
               )
             ).to_complete_html_list
             @available_team_records[team] = team_record

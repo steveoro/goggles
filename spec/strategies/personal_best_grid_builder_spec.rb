@@ -4,24 +4,25 @@ require 'spec_helper'
 describe PersonalBestGridBuilder do
   let( :swimmer )  { Swimmer.find( 23 ) }  # Assumes swimmer Leega from seeds
   let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}  # Assumes 50FA, 25 mt from seeds
-  let( :individual_record_list ) { create_list(:individual_record, 3, {swimmer_id: swimmer.id}) }
+  let( :individual_record_list ) { create_list(:individual_record, 5, {swimmer_id: swimmer.id}) }
   let( :pool_type ) { PoolType.only_for_meetings.first }
+  let( :record_type ) { RecordType.for_swimmers.first }
 
   # Using a pre-filled collector will speed-up the tests:
-  subject { PersonalBestGridBuilder.new( PersonalBestCollector.new( swimmer, list: individual_record_list) ) }
+  subject { PersonalBestGridBuilder.new( PersonalBestCollector.new( swimmer, list: individual_record_list, record_type: record_type ) ) }
 
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method)",
       [
         :collection,
         :count,
-        :event_types,
-        :swimmer_record_types
+        :event_types
       ]
     )
     it_behaves_like( "(the existance of a method returning a collection of some kind of instances)",
       [
-        :pool_types
+        :pool_types,
+        :record_types
       ],
       ActiveRecord::Base
     )
@@ -33,7 +34,7 @@ describe PersonalBestGridBuilder do
   describe "#initialize" do
     it "allows an instance of PersonalBestCollector as a parameter" do
       expect( subject ).to be_an_instance_of( PersonalBestGridBuilder )
-      expect( subject.count ).to eq(3)
+      expect( subject.count ).to be > 0
     end
   end
   #-- -------------------------------------------------------------------------
@@ -55,7 +56,9 @@ describe PersonalBestGridBuilder do
       subject.clear
       expect( subject.count ).to eq(0)
     end    
-    xit "returns the size of the internal collection"
+    it "returns the size of the internal collection" do
+      expect( subject.collection.count ).to eq(subject.count)      
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

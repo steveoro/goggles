@@ -18,7 +18,8 @@ describe IndividualRecord, :type => :model do
       :season,
       :season_type,
       :federation_type,
-      :meeting_individual_result
+      :meeting_individual_result,
+      :record_type
     ])    
 
     # Filtering scopes:
@@ -57,9 +58,11 @@ describe IndividualRecord, :type => :model do
     #++
 
     describe "#from_individual_result" do
-      it "accepts a MeetingIndividualResult parameter" do
+      it "accepts a MeetingIndividualResult and RecordType parameters" do
+        fix_record_type = RecordType.find( ((rand * 7) % 7).to_i + 1 )
+        fixture = create( :meeting_individual_result )
         expect(
-          subject.from_individual_result( create(:meeting_individual_result) )
+          subject.from_individual_result( fixture, fix_record_type )
         ).to be_an_instance_of( IndividualRecord )
       end
       it "raises an exception for a nil parameter" do
@@ -68,9 +71,14 @@ describe IndividualRecord, :type => :model do
       it "raises an exception for an unsupported parameter" do
         expect{ subject.from_individual_result( '' ) }.to raise_error( ArgumentError )
       end
-      it "copies the member values into the instance" do
+      it "raises an exception for missing record type parameter" do
         fixture = create( :meeting_individual_result )
-        result = IndividualRecord.new.from_individual_result( fixture )
+        expect{ subject.from_individual_result( fixture ) }.to raise_error( ArgumentError )
+      end
+      it "copies the member values into the instance" do
+        fix_record_type = RecordType.find( ((rand * 7) % 7).to_i + 1 )
+        fixture = create( :meeting_individual_result )
+        result = IndividualRecord.new.from_individual_result( fixture, fix_record_type )
         expect( result.pool_type_id ).to eq( fixture.pool_type.id )
         expect( result.event_type_id ).to eq( fixture.event_type.id )
         expect( result.category_type_id ).to eq( fixture.category_type.id )
@@ -82,6 +90,7 @@ describe IndividualRecord, :type => :model do
         expect( result.team_id ).to eq( fixture.team.id )
         expect( result.season_id ).to eq( fixture.season.id )
         expect( result.federation_type_id ).to eq( fixture.season.federation_type.id )
+        expect( result.record_type_id ).to eq( fix_record_type.id )
       end
     end
   end

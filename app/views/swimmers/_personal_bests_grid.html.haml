@@ -4,22 +4,22 @@
       = "#{pool_type.i18n_short}"
       %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
 .row-fluid
-  .span6
+  .span9
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
           %td.goggles-rightalign
-          - grid_builder.swimmer_record_types.each do |swimmer_record_type|
+          - grid_builder.record_types.each do |record_type|
             %td.goggles-centeralign
-              %b= swimmer_record_type
+              %b= record_type.i18n_description
   
         - grid_builder.event_types( pool_type.id ).each do |event_type|
-          - if grid_builder.collection.has_record_for( pool_type.code, event_type.code )
+          - if grid_builder.collection.has_record_for( pool_type.code, event_type.code, 'SPB' )
             %tr
               %td.goggles-rightalign
                 %b= event_type.i18n_short
-              - grid_builder.swimmer_record_types.each do |swimmer_record_type|
-                - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, swimmer_record_type )
+              - grid_builder.record_types.each do |record_type|
+                - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, record_type.code )
                 %td
                   - if record
                     %p

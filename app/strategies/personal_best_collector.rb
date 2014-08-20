@@ -34,17 +34,29 @@ class PersonalBestCollector
   # - meeting: a Meeting instance (this filter is ignored when looping on IndividualRecords)
   #
   def initialize( swimmer, options = {} )
+    raise ArgumentError unless swimmer.instance_of?( Swimmer )
     @swimmer      = swimmer
     
-    list_of_rows  = options[:list].respond_to?(:each) ? options[:list] : nil
-    @collection   = PersonalBestCollection.new( list_of_rows )
-
     # Options safety check:
     #@swimmer      = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
     @season_type  = options[:season_type] if options[:season_type].instance_of?( SeasonType )
     @season       = options[:season] if options[:season].instance_of?( Season )
     @start_date   = options[:start_date] if options[:start_date].instance_of?( Date )
     @end_date     = options[:end_date] if options[:end_date].instance_of?( Date )
+
+    # Leega. TODO:
+    # If the list of rows is given each element should be qualified with record type
+    # In particular when the list is made from MeetingIndividualResult it's necessary
+    # to specify record type intended for  
+    list_of_rows  = options[:list].respond_to?(:each) ? options[:list] : nil
+    record_type   = options[:record_type] if options[:record_type].instance_of?( RecordType )
+    
+    if list_of_rows && list_of_rows[0].instance_of?( MeetingIndividualResult )
+      raise ArgumentError unless record_type
+    end
+
+        
+    @collection   = PersonalBestCollection.new( list_of_rows, record_type )
 
     # Cache the unique codes lists:
     #@events_by_pool_types = EventsByPoolType.not_relays
@@ -90,17 +102,43 @@ class PersonalBestCollector
   #++
 
 
+  # Setter for the internal Meeting parameter. +nil+ when not defined.
+  def set_start_date( start_date )
+    @start_date = start_date
+  end
+
+  # Setter for the internal Meeting parameter. +nil+ when not defined.
+  def set_end_date( end_date )
+    @end_date = end_date
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
   # Returns the internal RecordCollection instance updated with the records collected using
   # the specified parameters.
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_all_category_results_having( events_by_pool_type )
+  def collect_from_all_category_results_having( events_by_pool_type, record_type )
     mir = @swimmer.meeting_individual_results.is_valid.has_time.for_event_by_pool_type( events_by_pool_type )
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     mir = mir.joins( :meeting ).where( ['(meetings.header_date >= ?) AND (meetings.header_date <= ?)', @start_date, @end_date]) if @start_date
-    update_and_return_collection_with_first_results( mir )
+    update_and_return_collection_with_first_results( mir, record_type )
+  end
+
+
+  # Returns the internal RecordCollection instance updated with the records collected using
+  # the specified parameters.
+  #
+  # This method works by scanning existing MeetingIndividualResult(s) on DB.
+  #
+  def collect_last_results_having( events_by_pool_type, record_type )
+    mir = @swimmer.meeting_individual_results.is_valid.has_time.for_event_by_pool_type( events_by_pool_type ).sort_by_date('DESC').limit(1)
+    mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
+    mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
+    update_and_return_collection_with_first_results( mir, record_type )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -159,7 +197,7 @@ class PersonalBestCollector
   # <tt>prefiltered_results</tt> is a Relation of either IndividualRecord or
   # MeetingIndividualResult instances.
   #
-  def update_and_return_collection_with_first_results( prefiltered_results, limit = 3 )
+  def update_and_return_collection_with_first_results( prefiltered_results, record_type, limit = 3 )
     # Store these max first ranking results:
     first_recs = prefiltered_results.order( :minutes, :seconds, :hundreds ).limit(limit)
 
@@ -168,7 +206,7 @@ class PersonalBestCollector
                                                     # Remove from the result all other rows that have a greater timing result (keep same ranking results)
       first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
     end
-    first_recs.each { |rec| @collection << rec }    # Add the first records to the collection
+    first_recs.each { |rec| @collection.add(rec, record_type) }    # Add the first records to the collection
     @collection
   end
   #-- -------------------------------------------------------------------------
