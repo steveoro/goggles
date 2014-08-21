@@ -107,18 +107,16 @@ class SwimmersController < ApplicationController
       this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SPB') )
     end
     
+    # Collect last result
+    collector.full_scan do |this, events_by_pool_type|
+      this.collect_last_results_having( events_by_pool_type, RecordType.find_by_code('SLP') )
+    end
+    
     # Collect seasonal bests
     collector.set_start_date( current_season.begin_date ) 
     collector.set_end_date( current_season.end_date )
     collector.full_scan do |this, events_by_pool_type|
       this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SSB') )
-    end
-    
-    # Collect last result
-    #collector.set_start_date( nil ) 
-    #collector.set_end_date( nil )
-    collector.full_scan do |this, events_by_pool_type|
-      this.collect_last_results_having( events_by_pool_type, RecordType.find_by_code('SLP') )
     end
 
     @grid_builder = PersonalBestGridBuilder.new( collector )
@@ -182,7 +180,7 @@ class SwimmersController < ApplicationController
 
       if @timing && @timing.to_hundreds > 0
         # Verify event is ammissible for pool type
-        if @current_event.events_by_pool_types.where(pool_type_id: pool_type_id).count > 0
+        if events_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes( @current_pool.code, @current_event.code )
           score_calculation = ScoreCalculator.new( @swimmer, @current_season, @current_pool, @current_event )
           @standard_points = score_calculation.get_fin_score( @timing )
           @current_time_standard = score_calculation.get_time_standard
@@ -210,25 +208,20 @@ class SwimmersController < ApplicationController
 
           # Retrieve swimmer personal best:
           # Scan all time results, without category
-          personal_best_rc = RecordCollector.new( swimmer: @swimmer )
-          @personal_best = RecordCollectionDecorator.decorate(
-            personal_best_rc.collect_from_all_category_results_having(
-              @current_pool.code,
-              @current_event.code,
-              @swimmer_gender.code,
-              'SPB'
+          personal_best_pb = PersonalBestCollector.new( @swimmer )
+          @personal_best = PersonalBestCollectionDecorator.decorate(
+            personal_best_pb.collect_from_all_category_results_having(
+              events_by_pool_type,
+              RecordType.find_by_code('SPB')
             )
           ).to_short_meeting_html_list
 
           # Retrieves seasonal best for swimmer for all current seasons
-          seasonal_best_rc = RecordCollector.new( swimmer: @swimmer, start_date: @current_season.begin_date, end_date: @current_season.end_date )
-          @seasonal_best = RecordCollectionDecorator.decorate(
-            seasonal_best_rc.collect_from_results_having(
-              @current_pool.code,
-              @current_event.code,
-              @swimmer_category.code,
-              @swimmer_gender.code,
-              'SSB'
+          seasonal_best_pb = PersonalBestCollector.new( @swimmer, start_date: @current_season.begin_date, end_date: @current_season.end_date )
+          @seasonal_best = PersonalBestCollectionDecorator.decorate(
+            seasonal_best_pb.collect_from_all_category_results_having(
+              events_by_pool_type,
+              RecordType.find_by_code('SSB')
             )
           ).to_short_meeting_html_list
 

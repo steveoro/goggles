@@ -12,4 +12,10 @@ class EventsByPoolType < ActiveRecord::Base
   scope :not_relays,    joins(:event_type).where('event_types.is_a_relay = false')
   # ----------------------------------------------------------------------------
 
+  # Find a sopecific event for a pool type using codes
+  #
+  def self.find_by_pool_and_event_codes( pool_type_code, event_type_code )
+    result = EventsByPoolType.joins(:event_type, :pool_type).where( ['(pool_types.code = ?) AND (event_types.code = ?)', pool_type_code, event_type_code] )
+    result ? result.first : nil  
+  end
 end

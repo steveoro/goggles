@@ -15,6 +15,10 @@ class RecordType < ActiveRecord::Base
   scope :for_seasons,         -> { where(is_for_seasons: true) }
   # ----------------------------------------------------------------------------
   
+  # Returns default record types for unhadled record types request
+  # in record scanning
+  # Probably no necessary. In any case, deprecate.
+  #
   def self.default_record_type_id
     7
   end

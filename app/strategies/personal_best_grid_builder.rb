@@ -30,6 +30,7 @@ class PersonalBestGridBuilder
     # Retrieves pool type suitable for meetings
     @pool_types = PoolType.only_for_meetings
     
+    # Leega. TODO: Refactor this to a class method of EventsByPoolType
     # This will create an Hash with all the tuples made by (pool_type.id => event_type lists),
     # with each event list built using the distribution of events found inside EventsByPoolType:
     @event_types_by_pool = {} 

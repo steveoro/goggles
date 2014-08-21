@@ -38,23 +38,19 @@ class PersonalBestCollector
     @swimmer      = swimmer
     
     # Options safety check:
-    #@swimmer      = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
     @season_type  = options[:season_type] if options[:season_type].instance_of?( SeasonType )
     @season       = options[:season] if options[:season].instance_of?( Season )
     @start_date   = options[:start_date] if options[:start_date].instance_of?( Date )
     @end_date     = options[:end_date] if options[:end_date].instance_of?( Date )
 
-    # Leega. TODO:
     # If the list of rows is given each element should be qualified with record type
     # In particular when the list is made from MeetingIndividualResult it's necessary
     # to specify record type intended for  
     list_of_rows  = options[:list].respond_to?(:each) ? options[:list] : nil
     record_type   = options[:record_type] if options[:record_type].instance_of?( RecordType )
-    
     if list_of_rows && list_of_rows[0].instance_of?( MeetingIndividualResult )
       raise ArgumentError unless record_type
     end
-
         
     @collection   = PersonalBestCollection.new( list_of_rows, record_type )
 
