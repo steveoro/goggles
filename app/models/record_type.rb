@@ -17,7 +17,7 @@ class RecordType < ActiveRecord::Base
   
   # Returns default record types for unhadled record types request
   # in record scanning
-  # Probably no necessary. In any case, deprecate.
+  # Probably not necessary. In any case, deprecate.
   #
   def self.default_record_type_id
     7

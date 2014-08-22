@@ -60,9 +60,9 @@ class RecordCollection
   end
 
   # Removes from the internal list of records the specified element.
-  def delete( individual_result_or_record )
+  def delete( individual_result_or_record, record_type_code = nil )
     if individual_result_or_record
-      record_candidate = get_record_candidate( individual_result_or_record )
+      record_candidate = get_record_candidate( individual_result_or_record, record_type_code )
       encoded_key = encode_key_from_record( record_candidate )
       delete_with_key( encoded_key )
     else
@@ -76,9 +76,9 @@ class RecordCollection
   # result has the same timing (with same pool, event, category & gender) but
   # is from a different swimmer.
   #
-  def add( individual_result_or_record )
+  def add( individual_result_or_record, record_type_code = nil )
     if individual_result_or_record
-      record_candidate = get_record_candidate( individual_result_or_record )
+      record_candidate = get_record_candidate( individual_result_or_record, record_type_code )
       encoded_key = encode_key_from_record( record_candidate )
       existing_record = @list[ encoded_key ]
       if ( existing_record &&                       # Same record w/ different swimmer?
@@ -190,13 +190,13 @@ class RecordCollection
   # the internal cache key list.
   # It doesn't check for a nil parameter.
   #
-  def get_record_candidate( individual_result_or_record )
+  def get_record_candidate( individual_result_or_record, record_type_code = nil )
     if individual_result_or_record.respond_to?(:id) && individual_result_or_record.respond_to?(:updated_at)
       @cached_ids << individual_result_or_record.id
       @max_updated_at = individual_result_or_record.updated_at.to_i if @max_updated_at < individual_result_or_record.updated_at.to_i
     end
     if individual_result_or_record.instance_of?( MeetingIndividualResult )
-      IndividualRecord.new.from_individual_result( individual_result_or_record, RecordType.find_by_code(chose_record_type) )
+      IndividualRecord.new.from_individual_result( individual_result_or_record, RecordType.find_by_code( record_type_code ? record_type_code : chose_record_type ) )
     else
       individual_result_or_record
     end

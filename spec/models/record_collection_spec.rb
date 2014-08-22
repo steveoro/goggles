@@ -8,11 +8,13 @@ describe RecordCollection, :type => :model do
   let( :fixture2 )  { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 )  { results.at( ((rand * 1000) % results.size).to_i ) }
 
+  let( :record_type_code )    { 'FOR' }
   let( :pool_type_code )      { fixture.pool_type.code }
   let( :event_type_code )     { fixture.event_type.code }
   let( :category_type_code )  { fixture.category_type.code }
   let( :gender_type_code )    { fixture.gender_type.code }
 
+  let( :record_type_code2 )   { 'TTB' }
   let( :pool_type_code2 )     { fixture2.pool_type.code }
   let( :event_type_code2 )    { fixture2.event_type.code }
   let( :category_type_code2 ) { fixture2.category_type.code }
@@ -127,14 +129,15 @@ describe RecordCollection, :type => :model do
 
   describe "#encode_key_from_codes" do
     it "returns a String" do
-      expect( subject.encode_key_from_codes('a', 'b', 'c', 'd') ).to be_an_instance_of( String )
+      expect( subject.encode_key_from_codes('a', 'b', 'c', 'd', 'e') ).to be_an_instance_of( String )
     end    
     it "contains all the specifed codes" do
-      result = subject.encode_key_from_codes('a1', 'b2', 'c3', 'd4')
+      result = subject.encode_key_from_codes('a1', 'b2', 'c3', 'd4', 'e5')
       expect( result ).to include('a1')
       expect( result ).to include('b2')
       expect( result ).to include('c3')
       expect( result ).to include('d4')
+      expect( result ).to include('e5')
     end    
   end
 
@@ -145,6 +148,7 @@ describe RecordCollection, :type => :model do
     end    
     it "contains all the specifed codes" do
       result = subject.encode_key_from_record(fixture)
+      expect( result ).to include( record_type_code )
       expect( result ).to include( fixture.pool_type.code )
       expect( result ).to include( fixture.event_type.code )
       expect( result ).to include( fixture.category_type.code )
@@ -181,6 +185,7 @@ describe RecordCollection, :type => :model do
       subject.delete(fixture)
       expect(
         subject.has_record_for(
+          record_type_code,
           fixture.pool_type.code,
           fixture.event_type.code,
           fixture.category_type.code,
@@ -198,6 +203,7 @@ describe RecordCollection, :type => :model do
   describe "#delete_with_key" do
     let( :encoded_key ) do
       subject.encode_key_from_codes(
+        record_type_code,
         fixture.pool_type.code,
         fixture.event_type.code,
         fixture.category_type.code,
@@ -222,6 +228,7 @@ describe RecordCollection, :type => :model do
       subject.delete_with_key(encoded_key)
       expect(
         subject.has_record_for(
+          record_type_code,
           fixture.pool_type.code,
           fixture.event_type.code,
           fixture.category_type.code,
@@ -298,11 +305,12 @@ describe RecordCollection, :type => :model do
 
     it "returns an instance of IndividualRecord" do
       expect(
-        subject.get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
+        subject.get_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
       ).to be_an_instance_of( IndividualRecord )
     end    
     it "returns the corresponding individual result for the specified keys" do
-      result = subject.get_record_for( pool_type_code, event_type_code, category_type_code, gender_type_code )
+      result = subject.get_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
+      expect( result.record_type.code ).to    eq( record_type_code )
       expect( result.pool_type.code ).to      eq( pool_type_code )
       expect( result.event_type.code ).to     eq( event_type_code )
       expect( result.category_type.code ).to  eq( category_type_code )
@@ -311,13 +319,13 @@ describe RecordCollection, :type => :model do
     it "returns the tie-in record when requested by parameter and available" do
       subject.add(tie_fixture1)
       subject.add(tie_fixture2)
-      result = subject.get_record_for( tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code, true )
+      result = subject.get_record_for( record_type_code, tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code, true )
       expect( result.meeting_individual_result_id ).to eq( tie_fixture2.id )
     end    
     it "returns the first stored record when requested normally and tie-ins are available" do
       subject.add(tie_fixture1)
       subject.add(tie_fixture2)
-      result = subject.get_record_for( tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code )
+      result = subject.get_record_for( record_type_code, tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code )
       expect( result.meeting_individual_result_id ).to eq( tie_fixture1.id )
     end    
   end
@@ -328,17 +336,17 @@ describe RecordCollection, :type => :model do
   describe "#has_record_for" do
     before( :each ) do
       subject.add(fixture)
-      subject.add(fixture2)
+      subject.add(fixture2, record_type_code2)
     end
 
     it "returns true for an existing record" do
       expect(
-        subject.has_record_for( pool_type_code2, event_type_code2, category_type_code2, gender_type_code2 )
+        subject.has_record_for( record_type_code2, pool_type_code2, event_type_code2, category_type_code2, gender_type_code2 )
       ).to be true
     end    
     it "returns false for a non existing record" do
       expect(
-        subject.has_record_for( '45', event_type_code2, 'M85', gender_type_code2 )
+        subject.has_record_for( 'FOR', '45', event_type_code2, 'M85', gender_type_code2 )
       ).to be false
     end    
   end
@@ -347,17 +355,17 @@ describe RecordCollection, :type => :model do
   describe "#has_any_record_for" do
     before( :each ) do
       subject.clear()
-      subject.add(fixture2)
+      subject.add(fixture2, record_type_code2)
     end
 
     it "returns true for an existing record" do
       expect(
-        subject.has_any_record_for( pool_type_code2, event_type_code2, gender_type_code2 )
+        subject.has_any_record_for( record_type_code2, pool_type_code2, event_type_code2, gender_type_code2 )
       ).to be true
     end    
     it "returns false for a non existing record" do
       expect(
-        subject.has_any_record_for( '45', event_type_code2, gender_type_code2 )
+        subject.has_any_record_for( 'FOR', '45', event_type_code2, gender_type_code2 )
       ).to be false
     end    
   end
@@ -369,14 +377,14 @@ describe RecordCollection, :type => :model do
       subject.add(tie_fixture1)
       subject.add(tie_fixture2)
       expect(
-        subject.has_tie_in_for( tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code )
+        subject.has_tie_in_for( record_type_code, tie_fixture1.pool_type.code, tie_fixture1.event_type.code, tie_fixture1.category_type.code, tie_fixture1.gender_type.code )
       ).to be true
     end    
     it "returns false for a record w/o tie-ins" do
       subject.clear()
       subject.add(fixture)
       expect(
-        subject.has_tie_in_for( fixture.pool_type.code, fixture.event_type.code, fixture.category_type.code, fixture.gender_type.code )
+        subject.has_tie_in_for( record_type_code, fixture.pool_type.code, fixture.event_type.code, fixture.category_type.code, fixture.gender_type.code )
       ).to be false
     end    
   end

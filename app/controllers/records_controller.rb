@@ -37,7 +37,7 @@ class RecordsController < ApplicationController
       else
         RecordCollector.new()
       end
-      @grid_builder = RecordGridBuilder.new( collector )
+      @grid_builder = RecordGridBuilder.new( collector, 'SOR' )
     else
       @title = I18n.t('records.season_type_search_title')
     end
@@ -80,7 +80,7 @@ class RecordsController < ApplicationController
       else
         RecordCollector.new()
       end
-      @grid_builder = RecordGridBuilder.new( collector )
+      @grid_builder = RecordGridBuilder.new( collector, 'TTB' )
     else
       @title = I18n.t('records.team_search_title')
     end
@@ -107,10 +107,10 @@ class RecordsController < ApplicationController
       swimmer = Swimmer.find_by_id( params[:swimmer][:id] ) if params[:swimmer] && params[:swimmer][:id]
       collector = RecordCollector.new( swimmer: swimmer )
       collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-        this.collect_from_results_having( pool_code, event_code, category_code, gender_code )
+        this.collect_from_results_having( pool_code, event_code, category_code, gender_code, 'SPB' )
       end if swimmer
       @title = I18n.t('records.swimmer_title') + (swimmer ? " (#{swimmer.get_full_name})" : '')
-      @grid_builder = RecordGridBuilder.new( collector )
+      @grid_builder = RecordGridBuilder.new( collector, 'SPB' )
     else
       @title = I18n.t('records.swimmer_search_title')
     end

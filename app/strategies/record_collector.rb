@@ -163,7 +163,7 @@ class RecordCollector
           season_id:                    row.season_id,
           federation_type_id:           row.federation_type_id,
           meeting_individual_result_id: row.meeting_individual_result_id,
-          is_team_record: is_team_record
+          is_team_record:               is_team_record
         )
       else                                          # Record not found?
         row.is_team_record = is_team_record
@@ -183,7 +183,7 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code, record_type_code = 'FOR' )
+  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code, record_type_code = nil )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
@@ -210,7 +210,7 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code = 'FOR' )
+  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code = nil )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
@@ -371,7 +371,7 @@ class RecordCollector
 #    first_recs.each do |row|
 #      puts "- ID:#{row.id} => #{row.get_full_name}\r\n"
 #    end
-    first_recs.each { |rec| @collection << rec }    # Add the first records to the collection
+    first_recs.each { |rec| @collection.add( rec, record_type_code ) }    # Add the first records to the collection
     @collection
   end
   #-- -------------------------------------------------------------------------

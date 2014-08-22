@@ -9,6 +9,8 @@ describe RecordCollector do
   let( :fixture2 ) { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 ) { results.at( ((rand * 1000) % results.size).to_i ) }
 
+  let( :fix_record_type ) { RecordType.find_by_code('FOR') }
+
   # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
   # TODO test context for prefiltering with a SeasonType
   # TODO test context for prefiltering with a Swimmer
@@ -159,10 +161,10 @@ describe RecordCollector do
 
   describe "#collect_from_records_having" do
     it "returns an instance of RecordCollection" do
-      expect( subject.collect_from_records_having('25', '50FA', 'M35', 'M') ).to be_an_instance_of( RecordCollection )
+      expect( subject.collect_from_records_having('25', '50FA', 'M35', 'M', fix_record_type.code) ).to be_an_instance_of( RecordCollection )
     end
     it "returns collection of no more than 2 records" do
-      result = subject.collect_from_records_having('50', '50FA', 'M40', 'M')
+      result = subject.collect_from_records_having('50', '50FA', 'M40', 'M', fix_record_type.code)
       expect( result.count ).to be < 3
     end
   end
@@ -182,7 +184,7 @@ describe RecordCollector do
 
 
   describe "#save" do
-    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M') }
+    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M', fix_record_type.code ) }
 
     it "returns true on no-errors found" do
       expect( subject.save ).to be true
@@ -198,7 +200,7 @@ describe RecordCollector do
 
 
   describe "#commit" do
-    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M') }
+    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M', fix_record_type.code) }
 
     it "returns true on no-errors found" do
       expect( subject.commit ).to be true
@@ -215,7 +217,7 @@ describe RecordCollector do
       before_count = subject.count
       expect( subject.commit ).to be true
       # Search again, with same params, but from results, to update existing records:
-      subject.collect_from_results_having('25', '50FA', 'M35', 'M')
+      subject.collect_from_results_having('25', '50FA', 'M35', 'M', fix_record_type.code)
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
     end
   end

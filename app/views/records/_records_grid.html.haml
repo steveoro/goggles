@@ -13,12 +13,12 @@
             %b= category_type.get_full_name
 
       - grid_builder.event_types( pool_type.id ).each do |event_type|
-        - if grid_builder.collection.has_any_record_for( pool_type.code, event_type.code, gender_type.code )
+        - if grid_builder.collection.has_any_record_for( grid_builder.get_record_type_code, pool_type.code, event_type.code, gender_type.code )
           %tr
             %td.goggles-td.goggles-rightalign
               %b= event_type.i18n_short
             - grid_builder.category_types.each do |category_type|
-              - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, category_type.code, gender_type.code )
+              - record = grid_builder.collection.get_record_for( grid_builder.get_record_type_code, pool_type.code, event_type.code, category_type.code, gender_type.code )
               - is_highlighted = ( record && @highlight_swimmer && (record.swimmer_id == @highlight_swimmer.id) )
               %td.goggles-td
                 - if record

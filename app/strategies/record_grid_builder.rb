@@ -20,9 +20,10 @@ class RecordGridBuilder
   # === Params
   # - record_collector: an instance of RecordCollector (assumed to have an already full RecordCollection)
   #
-  def initialize( record_collector )
+  def initialize( record_collector, record_type_code = 'FOR' )
     raise ArgumentError.new("the parameter must be a RecordCollector instance") unless record_collector.instance_of?( RecordCollector )
     @collector  = record_collector
+    @record_type_code = record_type_code
 
     @pool_types = PoolType.where{ code != '33' }   # (uses Squeel DSL syntax)
     # This will create an Hash with all the tuples made by (pool_type.id => event_type lists),
@@ -145,6 +146,15 @@ class RecordGridBuilder
   # model instances (not just unique string codes).
   def gender_types
     @gender_types.each
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns the record type the grif builder was initialized for
+  #
+  def get_record_type_code
+    @record_type_code
   end
   #-- -------------------------------------------------------------------------
   #++
