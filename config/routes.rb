@@ -36,6 +36,7 @@ Goggles::Application.routes.draw do
       get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
       get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
       get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer", as: "records_count_records_for_swimmer"
+      get    "records/for_personal_best/:id", to: "records#for_personal_best", as: "records_for_personal_best"
 
       # === Swimmers ===
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
@@ -118,6 +119,7 @@ Goggles::Application.routes.draw do
       get  "records/for_swimmer",               to: "records#for_swimmer"
       # FIXME
       get  "records/show_for_team",             to: "records#show_for_team"
+      get  "records/for_personal_best",         to: "records#for_personal_best"
 
       # === Swimmers ===
       get  "swimmers/index",                    as: "swimmers"

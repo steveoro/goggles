@@ -100,9 +100,9 @@ class SwimmersController < ApplicationController
 
     # Leega. 
     # TODO: Delegate to an AJAX function. I've removed the prevoius AJAX call
+    collector = PersonalBestCollector.new( @swimmer )
 
     # Collect personal bests
-    collector = PersonalBestCollector.new( @swimmer )
     collector.full_scan do |this, events_by_pool_type|
       this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SPB') )
     end

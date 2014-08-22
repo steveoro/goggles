@@ -18,4 +18,18 @@ class EventsByPoolType < ActiveRecord::Base
     result = EventsByPoolType.joins(:event_type, :pool_type).where( ['(pool_types.code = ?) AND (event_types.code = ?)', pool_type_code, event_type_code] )
     result ? result.first : nil  
   end
+  # ----------------------------------------------------------------------------
+
+  # Leega TODO Implements that method correctly and do the same for poll list by event
+  # Return an hash with the list of events for every pool types
+  #
+  def self.get_event_list_for_pool_type
+    event_types_by_pool = {}
+    PoolType.only_for_meetings.each do |pool_type|
+      event_by_pool_type_ids = EventsByPoolType.not_relays
+        .where( pool_type_id: pool_type.id )
+        .select( :event_type_id )
+    end
+    event_types_by_pool[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
+  end 
 end
