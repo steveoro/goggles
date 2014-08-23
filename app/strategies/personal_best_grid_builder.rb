@@ -29,21 +29,6 @@ class PersonalBestGridBuilder
 
     # Retrieves pool type suitable for meetings
     @pool_types = PoolType.only_for_meetings
-    
-    # Leega. TODO: Refactor this to a class method of EventsByPoolType
-    # This will create an Hash with all the tuples made by (pool_type.id => event_type lists),
-    # with each event list built using the distribution of events found inside EventsByPoolType:
-    @event_types_by_pool = {} 
-    @pool_types.each do |pool_type|
-        #.includes( :event_type )
-        #.where{ event_types.is_a_relay == false }
-
-
-      event_by_pool_type_ids = EventsByPoolType.not_relays
-        .where( pool_type_id: pool_type.id )
-        .select( :event_type_id )
-      @event_types_by_pool[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
-    end
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -66,7 +51,9 @@ class PersonalBestGridBuilder
   #-- -------------------------------------------------------------------------
   #++
 
+
   # Returns the Enumerator of the handled record types.
+  #
   def record_types
     @record_types.each
   end
@@ -74,7 +61,7 @@ class PersonalBestGridBuilder
   # Returns the Enumerator of the allowed PoolTypes.
   #
   # Note that these are substantially different from the similar methods found
-  # inside RecordCollector: these return an actual Enumerator for all the allowed
+  # inside PersonalBestCollector: these return an actual Enumerator for all the allowed
   # model instances (not just unique string codes).
   def pool_types
     @pool_types.each
@@ -83,10 +70,10 @@ class PersonalBestGridBuilder
   # Returns the Enumerator of the allowed EventTypes.
   #
   # Note that these are substantially different from the similar methods found
-  # inside RecordCollector: these return an actual Enumerator for all the allowed
+  # inside PersonalBestCollector: these return an actual Enumerator for all the allowed
   # model instances (not just unique string codes).
   def event_types( pool_type_id )
-    @event_types_by_pool.has_key?(pool_type_id) ? @event_types_by_pool[pool_type_id].each : [].each
+    PoolType.find(pool_type_id).event_types.each
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -20,16 +20,28 @@ class EventsByPoolType < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Leega TODO Implements that method correctly and do the same for poll list by event
-  # Return an hash with the list of events for every pool types
+  # Return the event types for a given pool type code
   #
-  def self.get_event_list_for_pool_type
-    event_types_by_pool = {}
+  def self.get_event_types_for_pool_type_by_code(pool_type_code)
+    PoolType.find_by_code(pool_type_code).event_types
+  end 
+    
+  # Return the pool types for a given event type code
+  #
+  def self.get_pool_types_for_event_type_by_code(event_type_code)
+    EventType.find_by_code(event_type_code).pool_types
+  end 
+    
+  # Leega TODO Implements that method correctly
+  # Return an hash with pool type id and all event types related
+  #
+  def self.get_events_by_pool_type_hash
+    events_by_pool_type_hash = {}
     PoolType.only_for_meetings.each do |pool_type|
       event_by_pool_type_ids = EventsByPoolType.not_relays
         .where( pool_type_id: pool_type.id )
         .select( :event_type_id )
+      events_by_pool_type_hash[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
     end
-    event_types_by_pool[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
   end 
 end

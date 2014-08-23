@@ -21,6 +21,7 @@ class EventType < ActiveRecord::Base
   validates_numericality_of :style_order
 
   has_many :events_by_pool_types
+  has_many :pool_types,       through: :events_by_pool_types
 
   scope :only_relays,         where(is_a_relay: true)
   scope :are_not_relays,      where(is_a_relay: false)

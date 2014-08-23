@@ -10,6 +10,7 @@ class PoolType < ActiveRecord::Base
   validates_length_of     :length_in_meters, maximum: 3, allow_nil: false
 
   has_many :events_by_pool_types
+  has_many :event_types, through: :events_by_pool_types
 
   scope :only_for_meetings, where(is_suitable_for_meetings: true)
 
