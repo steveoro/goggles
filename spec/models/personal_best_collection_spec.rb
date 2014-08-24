@@ -264,4 +264,27 @@ describe PersonalBestCollection, :type => :model do
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+
+  describe "#has_any_record_for" do
+    it "returns true for an existing record" do
+      subject.add(fixture2, RecordType.find( 2 ))
+      expect(
+        subject.has_any_record_for( pool_type_code, event_type_code )
+      ).to be true
+      expect(
+        subject.has_any_record_for( pool_type_code2, event_type_code2 )
+      ).to be true
+    end    
+    it "returns false for a non existing record" do
+      expect(
+        subject.has_any_record_for( 'fake', event_type_code )
+      ).to be false
+      expect(
+        subject.has_any_record_for( pool_type_code, 'fake' )
+      ).to be false
+    end    
+  end
+  #-- -------------------------------------------------------------------------
+  #++  
 end

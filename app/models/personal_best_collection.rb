@@ -97,7 +97,7 @@ class PersonalBestCollection
   # Doesn't consider the record type
   #
   def has_any_record_for( pool_type_code, event_type_code )
-    ! get_record_for( pool_type_code, event_type_code, nil ).nil?   
+    @list.any? { |key, row| key =~ /#{pool_type_code}\-#{event_type_code}/ }
   end
 
   # Getter for the IndividualRecord for the specified key. Returns nil when not found.

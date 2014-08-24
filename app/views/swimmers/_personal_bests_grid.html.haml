@@ -14,7 +14,7 @@
               %b= record_type.i18n_description
   
         - grid_builder.event_types( pool_type.id ).each do |event_type|
-          - if grid_builder.collection.has_record_for( pool_type.code, event_type.code, 'SPB' )
+          - if grid_builder.collection.has_any_record_for( pool_type.code, event_type.code )
             %tr
               %td.goggles-rightalign
                 %b= event_type.i18n_short
