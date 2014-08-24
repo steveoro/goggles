@@ -70,12 +70,12 @@ class PersonalBestCollector
     @season
   end
 
-  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  # Getter for the internal start date parameter. +nil+ when not defined.
   def start_date
     @start_date
   end
 
-  # Getter for the internal Meeting parameter. +nil+ when not defined.
+  # Getter for the internal end date parameter. +nil+ when not defined.
   def end_date
     @end_date
   end

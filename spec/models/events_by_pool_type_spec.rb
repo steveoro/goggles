@@ -3,7 +3,7 @@ require 'spec_helper'
 describe EventsByPoolType, :type => :model do
   #subject { create(:events_by_pool_type) }
   # Assumes presence in seeds
-  subject { EventsByPoolType.find( ((rand * 100) % 50).to_i + 1 ) }
+  subject { EventsByPoolType.find( ((rand * 100) % EventsByPoolType.count).to_i + 1 ) }
   
   context "well formed instance" do
     it "is a valid istance" do
@@ -74,6 +74,31 @@ describe EventsByPoolType, :type => :model do
           expect( pool_type ).to be_an_instance_of( PoolType )
         end        
       end      
+    end
+    
+    describe "#get_events_by_pool_type_array" do
+      it "has a self method get_events_by_pool_type_array" do
+        expect( EventsByPoolType ).to respond_to( :get_events_by_pool_type_array )
+      end
+      it "returns an array" do
+        expect( EventsByPoolType.get_events_by_pool_type_array ).to be_a_kind_of( Enumerable )
+      end
+      it "returns a non empty array" do
+        expect( EventsByPoolType.get_events_by_pool_type_array.count ).to be > 0
+        
+      end
+      it "returns an array with collection of relations as elements" do
+        EventsByPoolType.get_events_by_pool_type_array.each do |key,element|
+          expect( element ).to be_an_instance_of( ActiveRecord::Relation )
+        end
+      end
+      it "returns an array with collection of event types as elements" do
+        EventsByPoolType.get_events_by_pool_type_array.each do |key,element|
+          element.each do |element_element|
+            expect( element_element ).to be_an_instance_of( EventType )
+          end
+        end
+      end
     end
   end  
 end

@@ -28,6 +28,7 @@ class PersonalBestGridBuilder
     @record_types = RecordType.for_swimmers
 
     # Retrieves pool type suitable for meetings
+    # Leega: Maybe should be better to determinate pool types from EventsByPoolType
     @pool_types = PoolType.only_for_meetings
   end
   #-- --------------------------------------------------------------------------

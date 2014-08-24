@@ -1,12 +1,13 @@
 require 'spec_helper'
 require 'benchmark'
+require 'date'
 
 
 describe PersonalBestCollector do
   # Use pre-loaded seeds:
   let( :swimmer )  { Swimmer.find( 23 ) }  # Assumes swimmer Leega from seeds
   let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}  # Assumes 50FA, 25 mt from seeds
-  let( :record_type )  { RecordType.find( 1 ) }  # Assumes Swimmer persoanl best from seeds
+  let( :record_type )  { RecordType.find( 1 ) }  # Assumes Swimmer personal best from seeds
 
   # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
   # TODO test context for prefiltering with a SeasonType
@@ -26,7 +27,11 @@ describe PersonalBestCollector do
         :clear,
         :collect_from_all_category_results_having,
         :full_scan,
-        :events_by_pool_type_list
+        :start_date,
+        :end_date,
+        :events_by_pool_type_list,
+        :set_start_date,
+        :set_end_date
       ]
     )
   end
@@ -113,7 +118,69 @@ describe PersonalBestCollector do
 
 
   describe "#events_by_pool_type_list" do
-    xit "returns a collection of EventsByPoolType"
+    it "returns a non empty collection" do
+      expect( subject.events_by_pool_type_list.count ).to be > 0
+    end
+    it "returns a collection" do
+      expect( subject.events_by_pool_type_list ).to be_an_instance_of( ActiveRecord::Relation )
+    end
+    it "returns a collection of EventsByPoolType" do
+      subject.events_by_pool_type_list.each do |element|
+        expect( element ).to be_an_instance_of( EventsByPoolType )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#start_date" do
+    it "returns a date or a nil value" do
+      expect( subject.start_date ).to be_an_instance_of( Date ).or be_nil
+    end
+    it "retunrs nil if start date nt set" do
+      expect( subject.start_date ).to be_nil
+    end
+    it "returns the start_date internal variable if set" do
+      fix_date = Date.today
+      fix_pb_collector = PersonalBestCollector.new( swimmer, start_date: fix_date, end_date: fix_date )
+      expect( fix_pb_collector.start_date ).to equal( fix_date )
+    end
+  end
+  
+  describe "#set_start_date" do
+    it "assigns a given date to start_date internal variable" do
+      fix_date = Date.today
+      expect( subject.start_date ).to be_nil
+      subject.set_start_date( fix_date )
+      expect( subject.start_date ).to equal( fix_date )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#end_date" do
+    it "returns a date or a nil value" do
+      expect( subject.end_date ).to be_an_instance_of( Date ).or be_nil
+    end
+    it "retunrs nil if end date nt set" do
+      expect( subject.end_date ).to be_nil
+    end
+    it "returns the end_date internal variable if set" do
+      fix_date = Date.today
+      fix_pb_collector = PersonalBestCollector.new( swimmer, start_date: fix_date, end_date: fix_date )
+      expect( fix_pb_collector.end_date ).to equal( fix_date )
+    end
+  end
+  
+  describe "#set_end_date" do
+    it "assigns a given date to end_date internal variable" do
+      fix_date = Date.today
+      expect( subject.end_date ).to be_nil
+      subject.set_end_date( fix_date )
+      expect( subject.end_date ).to equal( fix_date )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -124,21 +191,6 @@ describe PersonalBestCollector do
       # Do nothing, just test the result
       expect( subject.full_scan() ).to be_an_instance_of( PersonalBestCollection )
     end
-
-    # Disabled to speed-up the testing process:
-#    it "benchmarks the scan duration" do
-#      puts "\r\n\t*** Benchmark for #full_scan() ***"
-#      Benchmark.bmbm do |x|
-#        x.report("records")  {
-#          subject.full_scan() do |this, pool_code, event_code, category_code, gender_code|
-#            this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
-#          end
-#        }
-#        # Worthless comparison:
-#        x.report("no block") { subject.full_scan() }
-#      end
-#      puts ''
-#    end
   end
   #-- -------------------------------------------------------------------------
   #++
