@@ -195,12 +195,18 @@ class PersonalBestCollector
   #
   def update_and_return_collection_with_first_results( prefiltered_results, record_type, limit = 3 )
     # Store these max first ranking results:
-    first_recs = prefiltered_results.order( :minutes, :seconds, :hundreds ).limit(limit)
-
-    if first_recs.size > 0                          # Compute the first timing result value
-      first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
-                                                    # Remove from the result all other rows that have a greater timing result (keep same ranking results)
-      first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
+    # Order by time only if necessary.
+    # If prefiltered_results contains only one record it's not necessary and
+    # it should be not performed not to override previous sorting
+    if prefiltered_results.count > 1
+      first_recs = prefiltered_results.order( :minutes, :seconds, :hundreds ).limit(limit)
+      if first_recs.size > 0                          # Compute the first timing result value
+        first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
+                                                      # Remove from the result all other rows that have a greater timing result (keep same ranking results)
+        first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
+      end
+    else
+      first_recs = prefiltered_results
     end
     first_recs.each { |rec| @collection.add(rec, record_type) }    # Add the first records to the collection
     @collection

@@ -26,6 +26,7 @@ describe PersonalBestCollector do
         :count,
         :clear,
         :collect_from_all_category_results_having,
+        :collect_last_results_having,
         :full_scan,
         :start_date,
         :end_date,
@@ -86,6 +87,7 @@ describe PersonalBestCollector do
   #-- -------------------------------------------------------------------------
   #++
 
+
   describe "#collection" do
     it "returns the collection instance" do
       expect( subject.collection ).to be_an_instance_of( PersonalBestCollection )
@@ -96,6 +98,9 @@ describe PersonalBestCollector do
       expect( subject.collection.count ).to eq(subject.count)
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   describe "#collect_from_all_category_results_having" do
     it "returns the size of the internal collection" do
@@ -103,6 +108,19 @@ describe PersonalBestCollector do
       expect( subject.count ).to be > 0
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#collect_last_results_having" do
+    it "returns the size of the internal collection" do
+      subject.collect_last_results_having( events_by_pool_type, record_type )
+      expect( subject.count ).to be == 1
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   describe "#clear" do
     it "returns the cleared collection instance" do

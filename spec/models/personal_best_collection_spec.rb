@@ -68,7 +68,7 @@ describe PersonalBestCollection, :type => :model do
     it "returns an instance of IndividualRecord when found" do
       subject.clear
       subject.add(fixture, record_type)
-      key = subject.encode_key_from_record( fixture, record_type )
+      key = subject.encode_key_from_record( IndividualRecord.new.from_individual_result( fixture, record_type ) )
       expect( subject.get_record_with_key(key) ).to be_an_instance_of( IndividualRecord )
     end    
   end
@@ -89,10 +89,10 @@ describe PersonalBestCollection, :type => :model do
 
   describe "#encode_key_from_record" do
     it "returns a String" do
-      expect( subject.encode_key_from_record(fixture, record_type) ).to be_an_instance_of( String )
+      expect( subject.encode_key_from_record(IndividualRecord.new.from_individual_result( fixture, record_type )) ).to be_an_instance_of( String )
     end    
     it "contains all the specifed codes" do
-      result = subject.encode_key_from_record(fixture, record_type)
+      result = subject.encode_key_from_record(IndividualRecord.new.from_individual_result( fixture, record_type ))
       expect( result ).to include( fixture.pool_type.code )
       expect( result ).to include( fixture.event_type.code )
       expect( result ).to include( record_type.code )

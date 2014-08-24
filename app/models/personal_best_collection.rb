@@ -57,7 +57,7 @@ class PersonalBestCollection
   def delete( individual_result, record_type )
     if individual_result
       record_candidate = get_record_candidate( individual_result, record_type )
-      encoded_key = encode_key_from_record( record_candidate, record_type )
+      encoded_key = encode_key_from_record( record_candidate )
       delete_with_key( encoded_key )
     else
       false
@@ -68,7 +68,7 @@ class PersonalBestCollection
   def add( individual_result, record_type )
     if individual_result
       record_candidate = get_record_candidate( individual_result, record_type )
-      encoded_key = encode_key_from_record( record_candidate, record_type )
+      encoded_key = encode_key_from_record( record_candidate )
       @list[ encoded_key ] = record_candidate
       encoded_key
     else
@@ -116,14 +116,17 @@ class PersonalBestCollection
 
 
   # Returns the encoded string key used to store the specified IndividualRecord record.
+  # Assumes individual_result is always an IndividualResult. So before this method
+  # should be used private get_record_candidate to create IndividualRecord from
+  # MeetingIndividualResult
   #
-  def encode_key_from_record( individual_result, record_type )
+  def encode_key_from_record( individual_result )
     if individual_result
-      record_candidate = get_record_candidate( individual_result, record_type )
+      #record_candidate = get_record_candidate( individual_result, record_type )
       encode_key_from_codes(
-        record_candidate.pool_type     ? record_candidate.pool_type.code : '?',
-        record_candidate.event_type    ? record_candidate.event_type.code : '?',
-        record_candidate.record_type   ? record_candidate.record_type.code : '?',
+        individual_result.pool_type   ? individual_result.pool_type.code   : '?',
+        individual_result.event_type  ? individual_result.event_type.code  : '?',
+        individual_result.record_type ? individual_result.record_type.code : '?'
       )
     else
       nil
