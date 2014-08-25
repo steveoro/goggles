@@ -10,19 +10,21 @@ class GoggleCupStandard < ActiveRecord::Base
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :goggle_cup
-  belongs_to :badge
+  belongs_to :swimmer
   belongs_to :event_type
   belongs_to :pool_type
   validates_associated :goggle_cup
-  validates_associated :badge
+  validates_associated :swimmer
   validates_associated :event_type
   validates_associated :pool_type
+  
+  has_one :team,  through: :goggle_cup
 
-  scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, event_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_by_goggle_cup,  ->(dir) { order("goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, event_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_by_badge,       ->(dir) { order("badges.number #{dir.to_s}, goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, event_types.code #{dir.to_s}") }
-  scope :sort_by_event_type,  ->(dir) { order("event_types.code #{dir.to_s}, goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_by_pool_type,   ->(dir) { order("pool_types.code #{dir.to_s}, goggle_cups.year #{dir.to_s}, event_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
+  scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, event_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_goggle_cup,  ->(dir) { order("goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, event_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_swimmer,     ->(dir) { order("swimmers.complete_name #{dir.to_s}, goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, event_types.code #{dir.to_s}") }
+  scope :sort_by_event_type,  ->(dir) { order("event_types.code #{dir.to_s}, goggle_cups.year #{dir.to_s}, pool_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_pool_type,   ->(dir) { order("pool_types.code #{dir.to_s}, goggle_cups.year #{dir.to_s}, event_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
@@ -32,12 +34,12 @@ class GoggleCupStandard < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{goggle_cup.year}, #{get_event_type} #{badges.number}: #{get_timing}"
+    "#{goggle_cup.year}, #{get_event_type} #{swimmers.complete_name}: #{get_timing}"
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{goggle_cup.year} #{get_pool_type}, #{get_event_type}: #{badges.number} => #{get_timing}"
+    "#{goggle_cup.year} #{get_pool_type}, #{get_event_type}: #{swimmers.complete_name} => #{get_timing}"
   end
 
   # Retrieves the user name associated with this instance
