@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140819142216) do
+ActiveRecord::Schema.define(:version => 20140825195959) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -741,24 +741,35 @@ ActiveRecord::Schema.define(:version => 20140819142216) do
 
   add_index "gender_types", ["code"], :name => "index_gender_types_on_code", :unique => true
 
+  create_table "goggle_cup_definitions", :force => true do |t|
+    t.integer  "lock_version",  :default => 0
+    t.integer  "goggle_cup_id"
+    t.integer  "season_id"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "goggle_cup_definitions", ["goggle_cup_id"], :name => "fk_goggle_cup_definitions_goggle_cups"
+  add_index "goggle_cup_definitions", ["season_id"], :name => "fk_goggle_cup_definitions_seasons"
+
   create_table "goggle_cup_standards", :force => true do |t|
     t.integer  "lock_version",                                             :default => 0
     t.integer  "minutes",       :limit => 3,                               :default => 0,   :null => false
     t.integer  "seconds",       :limit => 2,                               :default => 0,   :null => false
     t.integer  "hundreds",      :limit => 2,                               :default => 0,   :null => false
-    t.integer  "badge_id"
     t.integer  "event_type_id"
     t.integer  "pool_type_id"
     t.datetime "created_at",                                                                :null => false
     t.datetime "updated_at",                                                                :null => false
     t.decimal  "reaction_time",              :precision => 5, :scale => 2, :default => 0.0, :null => false
     t.integer  "goggle_cup_id"
+    t.integer  "swimmer_id"
   end
 
-  add_index "goggle_cup_standards", ["badge_id"], :name => "fk_goggle_cup_standards_badges"
   add_index "goggle_cup_standards", ["event_type_id"], :name => "fk_goggle_cup_standards_event_types"
   add_index "goggle_cup_standards", ["goggle_cup_id"], :name => "fk_goggle_cup_standards_goggle_cups"
   add_index "goggle_cup_standards", ["pool_type_id"], :name => "fk_goggle_cup_standards_pool_types"
+  add_index "goggle_cup_standards", ["swimmer_id"], :name => "fk_goggle_cup_standards_swimmers"
 
   create_table "goggle_cups", :force => true do |t|
     t.integer  "lock_version",               :default => 0
@@ -768,6 +779,7 @@ ActiveRecord::Schema.define(:version => 20140819142216) do
     t.integer  "team_id"
     t.datetime "created_at",                                   :null => false
     t.datetime "updated_at",                                   :null => false
+    t.integer  "user_id"
   end
 
   add_index "goggle_cups", ["season_year"], :name => "idx_season_year"
@@ -811,6 +823,8 @@ ActiveRecord::Schema.define(:version => 20140819142216) do
     t.integer  "meeting_individual_result_id"
     t.integer  "record_type_id"
   end
+
+  add_index "individual_records", ["record_type_id"], :name => "fk_individual_records_record_types"
 
   create_table "kick_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
