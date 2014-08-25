@@ -12,14 +12,14 @@
           - grid_builder.record_types.each do |record_type|
             %td.goggles-centeralign
               %b= record_type.i18n_description
-  
+
         - grid_builder.event_types( pool_type.id ).each do |event_type|
           - if grid_builder.collection.has_any_record_for( pool_type.code, event_type.code )
             %tr
               %td.goggles-rightalign
                 %b= event_type.i18n_short
               - grid_builder.record_types.each do |record_type|
-                - record = grid_builder.collection.get_record_for( pool_type.code, event_type.code, record_type.code )
+                - record = grid_builder.collection.get_record_for( record_type.code, pool_type.code, event_type.code )
                 %td
                   - if record
                     %p
@@ -30,4 +30,4 @@
                           %p= record.meeting_individual_result.meeting.description
                       - else
                         %p= '-'
-              
+

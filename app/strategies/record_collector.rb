@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.405
+  - Goggles framework vers.:  4.00.439
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -23,6 +23,11 @@ class RecordCollector
   #         be added to the internal collection during initialization.
   #         (These will be converted to IndividualRecord(s) and indexed by their values)
   #
+  # - record_type_code: a valid RecordType.code string to categorize the collected records.
+  # - record_type: a valid RecordType instance to categorize the collected records.
+  # (The last two are mutually exclusive but both supported. These are required when the list
+  # contains MeetingIndividualResult elements)
+  #
   # === Supported filtering options:
   # When provided, any of these options are combined together and will be used
   # to filter out the results during the collection loops.
@@ -35,7 +40,15 @@ class RecordCollector
   #
   def initialize( options = {} )
     list_of_rows  = options[:list].respond_to?(:each) ? options[:list] : nil
-    @collection   = RecordCollection.new( list_of_rows )
+
+    record_type_code = options[:record_type_code] if options[:record_type_code].instance_of?( String )
+    record_type_code = options[:record_type].code if options[:record_type].instance_of?( RecordType )
+    if list_of_rows && list_of_rows[0].instance_of?( MeetingIndividualResult )
+      raise ArgumentError.new("Missing a valid record_type or record_type_code parameter!") unless record_type_code
+    end
+
+    @collection   = RecordCollection.new( list_of_rows, record_type_code )
+
     # Options safety check:
     @swimmer      = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
     @team         = options[:team] if options[:team].instance_of?( Team )
@@ -47,7 +60,7 @@ class RecordCollector
 
     # Set precedence on filter values:
     @team = nil if @season_type
-    
+
     # Cache the unique codes lists:
     @record_type_codes   = RecordType.select(:code).uniq.map{ |row| row.code }
     @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
@@ -183,9 +196,9 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code, record_type_code = nil )
+  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code, record_type_code )
 # DEBUG
-#    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{gender_type_code}') ]---"
+#    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{gender_type_code}', '#{record_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
       .joins( :pool_type, :event_type, :gender_type )
       .where(
@@ -210,7 +223,7 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code = nil )
+  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
@@ -238,7 +251,7 @@ class RecordCollector
   #
   # This method works by scanning existing IndividualRecord(s) on DB.
   #
-  def collect_from_records_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code = 'FOR' )
+  def collect_from_records_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code )
     ir = IndividualRecord
       .joins( :record_type, :pool_type, :event_type, :category_type, :gender_type )
       .where(
@@ -251,7 +264,7 @@ class RecordCollector
       ]
     )
     ir = ir.where( swimmer_id: @swimmer.id ) if @swimmer
-    ir = ir.team_records.where( team_id: @team.id ) if @team
+    ir = ir.where( team_id: @team.id ) if @team
     ir = ir.for_season_type( @season_type.id ) if @season_type
     update_and_return_collection_with_first_results( ir, record_type_code )
   end
@@ -315,13 +328,13 @@ class RecordCollector
   # in the constructor. As in:
   #
   #     collector.full_scan() do |this, pool_code, event_code, category_code, gender_code|
-  #       this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
+  #       this.collect_from_records_having( pool_code, event_code, category_code, gender_code, 'FOR' )
   #     end
   #
   # ...Or:...
   #
   #     collector.full_scan() do |this, pool_code, event_code, category_code, gender_code|
-  #       this.collect_from_results_having( pool_code, event_code, category_code, gender_code )
+  #       this.collect_from_results_having( pool_code, event_code, category_code, gender_code, 'FOR' )
   #     end
   #
   # Please, be aware that an unfiltered full scan using #collect_from_results_having

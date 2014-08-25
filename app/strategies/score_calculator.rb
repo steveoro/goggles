@@ -26,15 +26,15 @@ class ScoreCalculator
   #++
 
   def get_swimmer_gender
-    @swimmer_gender ||= retreive_swimmer_gender
+    @swimmer_gender ||= retrieve_swimmer_gender
   end
 
   def get_swimmer_category
-    @swimmer_category ||= retreive_swimmer_category
+    @swimmer_category ||= retrieve_swimmer_category
   end
 
   def get_time_standard
-    @current_time_standard ||= retreive_time_standard
+    @current_time_standard ||= retrieve_time_standard
   end
 
   def get_fin_score( time_swam )
@@ -42,22 +42,22 @@ class ScoreCalculator
   end
   #-- --------------------------------------------------------------------------
   #++
-  
-  
+
+
   private
 
   # Retrieves the swimmer gender
   #
-  def retreive_swimmer_gender
+  def retrieve_swimmer_gender
     @swimmer_gender = @swimmer.gender_type
   end
-  
+
   # Retrieves the swimmer category for a given season
   #
   # == Params:
   # season_id: id of the interested season
   #
-  def retreive_swimmer_category
+  def retrieve_swimmer_category
     @swimmer.get_category_type_for_season( @season.id )
   end
 
@@ -66,19 +66,19 @@ class ScoreCalculator
   # == Params:
   # season_id: id of the interested season
   #
-  def retreive_time_standard
+  def retrieve_time_standard
     # Retrieves category and gender through the swimmer
     # @swimmer_category = get_swimmer_category
     # @swimmer_gender = get_swimmer_gender
     TimeStandard.where(
-        season_id:        @season.id,
-        gender_type_id:   get_swimmer_gender.id, 
-        category_type_id: get_swimmer_category.id,
-        pool_type_id:     @pool_type.id,
-        event_type_id:    @event_type.id
+        season_id:        @season ? @season.id : 0,
+        gender_type_id:   get_swimmer_gender ? get_swimmer_gender.id : 0,
+        category_type_id: get_swimmer_category ? get_swimmer_category.id : 0,
+        pool_type_id:     @pool_type ? @pool_type.id : 0,
+        event_type_id:    @event_type ? @event_type.id : 0
       ).first
   end
-  
+
   # Compute the FIN standard score for a given event, pool type, gender, category, season
   # FIN standard points is calculated with:
   # TimeStandard : TimeSwam = x : 1000
@@ -101,7 +101,7 @@ class ScoreCalculator
         fin_score = 1000
       end
     end
-    fin_score.round(2)        
+    fin_score.round(2)
   end
   #-- --------------------------------------------------------------------------
   #++

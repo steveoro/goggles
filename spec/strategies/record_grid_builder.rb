@@ -57,19 +57,19 @@ describe RecordGridBuilder do
       expect( subject.collection ).to be_an_instance_of( RecordCollection )
     end
     # This is useful if the getter is implemented using #dup or #clone.
-    # [Steve, 20140717] *** Currently: NOT ***    
+    # [Steve, 20140717] *** Currently: NOT ***
     it "returns a collection having the same number of elements of the internal collection" do
       expect( subject.collection.count ).to eq(subject.count)
-    end    
+    end
   end
 
   describe "#count" do
     it "returns the size of the internal collection" do
       subject.clear
       expect( subject.count ).to eq(0)
-    end    
+    end
     it "clears the internal list" do
-      subject.collect_from_results_having('25', '50FA', 'M35', 'M')
+      subject.collect_from_results_having('25', '50FA', 'M35', 'M', 'FOR')
       expect{ subject.count > 0 }.to be true
     end
   end

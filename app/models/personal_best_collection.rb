@@ -3,12 +3,11 @@
 =begin
 
 = PersonalBestCollection
-  - Goggles framework vers.:  4.00.424.20140808
-  - author: Leega
+  - Goggles framework vers.:  4.00.439
+  - author: Leega, Steve A.
 
  Wrapper class to store and manage a collection of individual results from meetings.
 
- Leega TODO Review this assumption
  The internal list contains only instances of IndividualRecord.
  When a new element to be added is given, it is also converted to an IndividualRecord
  instance before being appended to the others.
@@ -21,13 +20,15 @@ class PersonalBestCollection
   #
   # The given parameter can either be a single instance or a list (responding to :each)
   # of MeetingIndividualResult or IndividualRecord rows.
+  # The record_type parameter can be safely skipped if the main parameter is
+  # an instance of IndividualRecord.
   #
-  def initialize( individual_result = nil, record_type = nil )
+  def initialize( individual_result_or_record = nil, record_type_code = chose_record_type_code )
     @list = {}
-    if individual_result.respond_to?(:each)
-      individual_result.each { |row| add(row, record_type) }
+    if individual_result_or_record.respond_to?(:each)
+      individual_result_or_record.each { |row| add(row, record_type_code) }
     else
-      add( individual_result, record_type )
+      add( individual_result_or_record, record_type_code )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -54,10 +55,9 @@ class PersonalBestCollection
   end
 
   # Removes from the internal list of records the specified element.
-  def delete( individual_result, record_type )
-    if individual_result
-      record_candidate = get_record_candidate( individual_result, record_type )
-      encoded_key = encode_key_from_record( record_candidate )
+  def delete( individual_result_or_record, record_type_code )
+    if individual_result_or_record
+      encoded_key = encode_key_from_record( individual_result_or_record, record_type_code )
       delete_with_key( encoded_key )
     else
       false
@@ -65,11 +65,21 @@ class PersonalBestCollection
   end
 
   # Adds a new member returning its encoded key.
-  def add( individual_result, record_type )
-    if individual_result
-      record_candidate = get_record_candidate( individual_result, record_type )
-      encoded_key = encode_key_from_record( record_candidate )
-      @list[ encoded_key ] = record_candidate
+  def add( individual_result_or_record, record_type_code )
+    if individual_result_or_record
+      encoded_key, record_candidate = get_record_candidate_and_key( individual_result_or_record, record_type_code )
+      existing_record = @list[ encoded_key ]
+      if ( existing_record &&                       # Same record w/ different swimmer?
+           record_candidate &&
+           (existing_record.swimmer_id != record_candidate.swimmer_id) &&
+           (existing_record.minutes  == record_candidate.minutes) &&
+           (existing_record.seconds  == record_candidate.seconds) &&
+           (existing_record.hundreds == record_candidate.hundreds)
+         )                                          # Add a tie-in w/ special key ending in 'b'
+        @list[ encoded_key << 'b' ] = record_candidate
+      else                                          # Add a normal record:
+        @list[ encoded_key ] = record_candidate
+      end
       encoded_key
     else
       nil
@@ -82,15 +92,19 @@ class PersonalBestCollection
   #++
 
   # Returns the IndividualRecord for the specified parameters or nil when not found.
-  def get_record_for( pool_type_code, event_type_code, record_type )
-    encoded_key = encode_key_from_codes( pool_type_code, event_type_code, record_type )
-    @list[ encoded_key ]   
+  #
+  # When specified as +true+, the <tt>is_tie_in</tt> parameter allows to retrieve not
+  # the first record, but its tie-in (if any).
+  #
+  def get_record_for( record_type_code, pool_type_code, event_type_code, is_tie_in = false )
+    encoded_key = encode_key_from_codes( record_type_code, pool_type_code, event_type_code )
+    @list[ is_tie_in ? encoded_key << 'b' : encoded_key ]
   end
 
   # Returns +true+ if there is an IndividualRecord for the specified parameters or +false+ when not found.
   #
-  def has_record_for( pool_type_code, event_type_code, record_type )
-    ! get_record_for( pool_type_code, event_type_code, record_type ).nil?   
+  def has_record_for( record_type_code, pool_type_code, event_type_code )
+    ! get_record_for( record_type_code, pool_type_code, event_type_code ).nil?
   end
 
   # Returns +true+ if there is an IndividualRecord for the specified parameters or +false+ when not found.
@@ -105,28 +119,34 @@ class PersonalBestCollection
   def get_record_with_key( encoded_key )
     @list[ encoded_key ]
   end
+
+  # Returns +true+ if there is a same-ranking (tie-in) record match for the specified parameters or +false+ when not found.
+  #
+  def has_tie_in_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code )
+    ! get_record_for( record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code, true ).nil?
+  end
   #-- -------------------------------------------------------------------------
   #++
 
   # Returns the encoded string key used to store the specified IndividualRecord record.
   #
-  def encode_key_from_codes( pool_type_code, event_type_code, record_type )
-    "#{pool_type_code}-#{event_type_code}-#{record_type}"
+  def encode_key_from_codes( record_type_code, pool_type_code, event_type_code )
+    "#{record_type_code}-#{pool_type_code}-#{event_type_code}"
   end
 
 
   # Returns the encoded string key used to store the specified IndividualRecord record.
-  # Assumes individual_result is always an IndividualResult. So before this method
-  # should be used private get_record_candidate to create IndividualRecord from
-  # MeetingIndividualResult
   #
-  def encode_key_from_record( individual_result )
-    if individual_result
-      #record_candidate = get_record_candidate( individual_result, record_type )
+  # The record_type_code parameter can be safely skipped if the main parameter is
+  # an instance of IndividualRecord.
+  #
+  def encode_key_from_record( individual_result_or_record, record_type_code )
+    if individual_result_or_record
+      record_candidate = get_record_candidate( individual_result_or_record, record_type_code )
       encode_key_from_codes(
-        individual_result.pool_type   ? individual_result.pool_type.code   : '?',
-        individual_result.event_type  ? individual_result.event_type.code  : '?',
-        individual_result.record_type ? individual_result.record_type.code : '?'
+        record_type_code,
+        individual_result_or_record.pool_type   ? individual_result_or_record.pool_type.code   : '?',
+        individual_result_or_record.event_type  ? individual_result_or_record.event_type.code  : '?'
       )
     else
       nil
@@ -146,15 +166,59 @@ class PersonalBestCollection
   private
 
 
-  # Returns a valid record candidate as an IndividualRecord instance, while updating
-  # the internal cache key list.
-  # It doesn't check for a nil parameter.
+  # Returns a valid record candidate as an IndividualRecord instance and his encoded
+  # key as a two-item array [encoded_key, record_candidate].
   #
-  def get_record_candidate( individual_result, record_type )
-    if individual_result.instance_of?( MeetingIndividualResult )
-      IndividualRecord.new.from_individual_result( individual_result, record_type )
+  def get_record_candidate_and_key( individual_result_or_record, record_type_code )
+    if individual_result_or_record
+      record_candidate = get_record_candidate( individual_result_or_record, record_type_code )
+      [
+        encode_key_from_codes(
+          record_type_code,
+          individual_result_or_record.pool_type  ? individual_result_or_record.pool_type.code  : '?',
+          individual_result_or_record.event_type ? individual_result_or_record.event_type.code : '?'
+        ),
+        record_candidate
+      ]
     else
-      individual_result
+      [nil, nil]
+    end
+  end
+
+
+  # Returns a valid record candidate as an IndividualRecord instance.
+  # It assumes individual_result_or_record is not +nil+.
+  #
+  def get_record_candidate( individual_result_or_record, record_type_code )
+    if individual_result_or_record.instance_of?( MeetingIndividualResult )
+      IndividualRecord.new.from_individual_result(
+        individual_result_or_record,
+        RecordType.find_by_code( record_type_code )
+      )
+    else
+      individual_result_or_record
+    end
+  end
+
+
+  # Choses which record type should used for the record collection.
+  #
+  # Keep in mind that the only place where record_type could be nil is
+  # in the default constructor.
+  #
+  def chose_record_type_code
+    if @team && @start_date
+      'TSB' # Team season best
+    else
+      if @team
+        'TTB' # Team best (team record)
+      else
+        if @start_date
+          'SOR' # season best
+        else
+          'FOR' # Overall record
+        end
+      end
     end
   end
   #-- -------------------------------------------------------------------------

@@ -29,7 +29,7 @@ class RecordGridBuilder
     # This will create an Hash with all the tuples made by (pool_type.id => event_type lists),
     # with each event list built using the distribution of events found inside EventsByPoolType:
 
-    @event_types_by_pool = {} 
+    @event_types_by_pool = {}
     @pool_types.each do |pool_type|
       event_by_pool_type_ids = EventsByPoolType
         .where( pool_type_id: pool_type.id )
@@ -46,7 +46,7 @@ class RecordGridBuilder
     # We may have 3 cases:
     # - filtering by Team (more than 1 SeasonType may be available)
     # - filtering by SeasonType (just 1)
-    # - no filtering (either by list addition or by swimmer filtering => more than 1 SeasonType may be available) 
+    # - no filtering (either by list addition or by swimmer filtering => more than 1 SeasonType may be available)
     season_types = if @collector.season_type
       [ @collector.season_type ]
     elsif @collector.team
@@ -149,7 +149,6 @@ class RecordGridBuilder
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   # Returns the record type the grif builder was initialized for
   #

@@ -14,7 +14,7 @@ describe RecordsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :for_season_type
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
+        expect( assigns(:title) ).to be_an_instance_of( String )
       end
       it "renders the form template" do
         get :for_season_type
@@ -30,9 +30,9 @@ describe RecordsController, :type => :controller do
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
-          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
+          expect( assigns(:grid_builder).count ).to eq(0)
           expect(response).to render_template(:for_season_type)
         end
       end
@@ -44,11 +44,11 @@ describe RecordsController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
         end
         it "has a non-empty record list" do
-          expect( assigns(:grid_builder).count ).to be > 0 
+          expect( assigns(:grid_builder).count ).to be > 0
         end
         it "renders the form template" do
           expect(response).to render_template(:for_season_type)
@@ -67,7 +67,7 @@ describe RecordsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :for_team
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
+        expect( assigns(:title) ).to be_an_instance_of( String )
       end
       it "renders the form template" do
         get :for_team
@@ -83,9 +83,9 @@ describe RecordsController, :type => :controller do
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
-          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
+          expect( assigns(:grid_builder).count ).to eq(0)
           expect(response).to render_template(:for_team)
         end
       end
@@ -98,11 +98,11 @@ describe RecordsController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
         end
         it "has a non-empty record list" do
-          expect( assigns(:grid_builder).count ).to be > 0 
+          expect( assigns(:grid_builder).count ).to be > 0
         end
         it "renders the form template" do
           expect(response).to render_template(:for_team)
@@ -121,7 +121,7 @@ describe RecordsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :for_swimmer
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
+        expect( assigns(:title) ).to be_an_instance_of( String )
       end
       it "renders the form template" do
         get :for_swimmer
@@ -137,9 +137,9 @@ describe RecordsController, :type => :controller do
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
-          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
+          expect( assigns(:grid_builder).count ).to eq(0)
           expect(response).to render_template(:for_swimmer)
         end
       end
@@ -153,11 +153,11 @@ describe RecordsController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
         end
         it "has a non-empty record list" do
-          expect( assigns(:grid_builder).count ).to be > 0 
+          expect( assigns(:grid_builder).count ).to be > 0
         end
         it "renders the form template" do
           expect(response).to render_template(:for_swimmer)
@@ -177,7 +177,7 @@ describe RecordsController, :type => :controller do
       end
       xit "assigns the required variables" do
         get :for_personal_best
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
+        expect( assigns(:title) ).to be_an_instance_of( String )
       end
       xit "renders the form template" do
         get :for_personal_best
@@ -193,9 +193,9 @@ describe RecordsController, :type => :controller do
         # once, with all the test performed at once (even thou it's not a best-practice).
         xit "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( PersoanlBestGridBuilder ) 
-          expect( assigns(:grid_builder).count ).to eq(0) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( PersoanlBestGridBuilder )
+          expect( assigns(:grid_builder).count ).to eq(0)
           #expect(response).to render_template(:for_personal_best)
         end
       end
@@ -209,11 +209,11 @@ describe RecordsController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         xit "assigns the required variables" do
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:grid_builder) ).to be_an_instance_of( PersoanlBestGridBuilder ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:grid_builder) ).to be_an_instance_of( PersoanlBestGridBuilder )
         end
         xit "has a non-empty record list" do
-          expect( assigns(:grid_builder).count ).to be > 0 
+          expect( assigns(:grid_builder).count ).to be > 0
         end
         xit "renders the form template" do
           expect(response).to render_template(:for_personal_best)

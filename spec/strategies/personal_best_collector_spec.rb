@@ -7,7 +7,7 @@ describe PersonalBestCollector do
   # Use pre-loaded seeds:
   let( :swimmer )  { Swimmer.find( 23 ) }  # Assumes swimmer Leega from seeds
   let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}  # Assumes 50FA, 25 mt from seeds
-  let( :record_type )  { RecordType.find( 1 ) }  # Assumes Swimmer personal best from seeds
+  let( :record_type_code )  { RecordType.find( 1 ).code }  # Assumes Swimmer personal best from seeds
 
   # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
   # TODO test context for prefiltering with a SeasonType
@@ -51,7 +51,7 @@ describe PersonalBestCollector do
     end
     it "allows a list of MeetingIndividualResult rows and a record type as parameters" do
       list = create_list(:meeting_individual_result, 5, swimmer_id: swimmer.id)
-      result = PersonalBestCollector.new( swimmer, list: list, record_type: record_type )
+      result = PersonalBestCollector.new( swimmer, list: list, record_type_code: record_type_code )
       expect( result ).to be_an_instance_of( PersonalBestCollector )
       expect( result.count ).to be > 0
     end
@@ -76,13 +76,13 @@ describe PersonalBestCollector do
       result = PersonalBestCollector.new( swimmer, start_date: fix_par )
       expect( result ).to be_an_instance_of( PersonalBestCollector )
       expect( result.start_date ).to eq( fix_par )
-    end    
+    end
     it "allows an end date instance as a parameter" do
       fix_par = Date.new
       result = PersonalBestCollector.new( swimmer, end_date: fix_par )
       expect( result ).to be_an_instance_of( PersonalBestCollector )
       expect( result.end_date ).to eq( fix_par )
-    end    
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -104,7 +104,7 @@ describe PersonalBestCollector do
 
   describe "#collect_from_all_category_results_having" do
     it "returns the size of the internal collection" do
-      subject.collect_from_all_category_results_having( events_by_pool_type, record_type )
+      subject.collect_from_all_category_results_having( events_by_pool_type, record_type_code )
       expect( subject.count ).to be > 0
     end
   end
@@ -114,7 +114,7 @@ describe PersonalBestCollector do
 
   describe "#collect_last_results_having" do
     it "returns the size of the internal collection" do
-      subject.collect_last_results_having( events_by_pool_type, record_type )
+      subject.collect_last_results_having( events_by_pool_type, record_type_code )
       expect( subject.count ).to be == 1
     end
   end
@@ -127,7 +127,7 @@ describe PersonalBestCollector do
       expect( subject.clear ).to be_an_instance_of( PersonalBestCollection )
     end
     it "clears the internal list" do
-      subject.collect_from_all_category_results_having( events_by_pool_type, record_type )
+      subject.collect_from_all_category_results_having( events_by_pool_type, record_type_code )
       expect{ subject.clear }.to change{ subject.count }.to(0)
     end
   end
@@ -165,7 +165,7 @@ describe PersonalBestCollector do
       expect( fix_pb_collector.start_date ).to equal( fix_date )
     end
   end
-  
+
   describe "#set_start_date" do
     it "assigns a given date to start_date internal variable" do
       fix_date = Date.today
@@ -191,7 +191,7 @@ describe PersonalBestCollector do
       expect( fix_pb_collector.end_date ).to equal( fix_date )
     end
   end
-  
+
   describe "#set_end_date" do
     it "assigns a given date to end_date internal variable" do
       fix_date = Date.today

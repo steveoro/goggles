@@ -9,16 +9,15 @@ describe RecordCollector do
   let( :fixture2 ) { results.at( ((rand * 1000) % results.size).to_i ) }
   let( :fixture3 ) { results.at( ((rand * 1000) % results.size).to_i ) }
 
-  let( :fix_record_type ) { RecordType.find_by_code('FOR') }
-
   # TODO refactor tests using a 4-element array of subjects, for each subject do the tests
+
+  subject { RecordCollector.new() }
+  # TODO Extract all tests on subject as shared examples & test subject with different context pre-filtering as below:
+  # TODO test context for prefiltering with a Team => subject { RecordCollector.new(team: Team.find_by_id(1)) }
   # TODO test context for prefiltering with a SeasonType
   # TODO test context for prefiltering with a Swimmer
   # TODO test context for prefiltering with a Meeting
   # TODO test context for prefiltering with a Season
-
-  # Using a pre-filtered collector on a Team will speed-up the tests:
-  subject { RecordCollector.new( team: Team.find_by_id(1) ) }
 
 
   context "[implemented methods]" do
@@ -63,7 +62,7 @@ describe RecordCollector do
     end
     it "allows a list of MeetingIndividualResult rows as a parameter" do
       list = create_list(:meeting_individual_result, 5)
-      result = RecordCollector.new( list: list )
+      result = RecordCollector.new( list: list, record_type_code: 'FOR' )
       expect( result ).to be_an_instance_of( RecordCollector )
       expect( result.count ).to eq( list.size )
       expect( result.count ).to eq(5)
@@ -103,13 +102,13 @@ describe RecordCollector do
       result = RecordCollector.new( start_date: fix_par )
       expect( result ).to be_an_instance_of( RecordCollector )
       expect( result.start_date ).to eq( fix_par )
-    end    
+    end
     it "allows an end date instance as a parameter" do
       fix_par = Date.new
       result = RecordCollector.new( end_date: fix_par )
       expect( result ).to be_an_instance_of( RecordCollector )
       expect( result.end_date ).to eq( fix_par )
-    end    
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -131,7 +130,7 @@ describe RecordCollector do
       expect( subject.count ).to eq(0)
     end
     it "clears the internal list" do
-      subject.collect_from_results_having('25', '50FA', 'M35', 'M')
+      subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
       expect( subject.count ).to be > 0
     end
   end
@@ -141,7 +140,7 @@ describe RecordCollector do
       expect( subject.clear ).to be_an_instance_of( RecordCollection )
     end
     it "clears the internal list" do
-      subject.collect_from_results_having('25', '50FA', 'M35', 'M')
+      subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
       expect{ subject.clear }.to change{ subject.count }.to(0)
     end
   end
@@ -151,20 +150,20 @@ describe RecordCollector do
 
   describe "#collect_from_results_having" do
     it "returns an instance of RecordCollection" do
-      expect( subject.collect_from_results_having('25', '50FA', 'M35', 'M') ).to be_an_instance_of( RecordCollection )
+      expect( subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR') ).to be_an_instance_of( RecordCollection )
     end
     it "returns collection of no more than 2 records" do
-      result = subject.collect_from_results_having('50', '50FA', 'M40', 'M')
+      result = subject.collect_from_results_having('50', '100DO', 'M40', 'M', 'FOR')
       expect( result.count ).to be < 3
     end
   end
 
   describe "#collect_from_records_having" do
     it "returns an instance of RecordCollection" do
-      expect( subject.collect_from_records_having('25', '50FA', 'M35', 'M', fix_record_type.code) ).to be_an_instance_of( RecordCollection )
+      expect( subject.collect_from_records_having('25', '100DO', 'M35', 'M', 'FOR') ).to be_an_instance_of( RecordCollection )
     end
     it "returns collection of no more than 2 records" do
-      result = subject.collect_from_records_having('50', '50FA', 'M40', 'M', fix_record_type.code)
+      result = subject.collect_from_records_having('50', '100DO', 'M40', 'M', 'FOR')
       expect( result.count ).to be < 3
     end
   end
@@ -184,7 +183,10 @@ describe RecordCollector do
 
 
   describe "#save" do
-    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M', fix_record_type.code ) }
+    before(:each) do
+      subject.collect_from_records_having('25', '100DO', 'M35', 'M', 'FOR')
+      expect( subject.count ).to be > 0
+    end
 
     it "returns true on no-errors found" do
       expect( subject.save ).to be true
@@ -200,7 +202,10 @@ describe RecordCollector do
 
 
   describe "#commit" do
-    before(:each) { subject.collect_from_records_having('25', '50FA', 'M35', 'M', fix_record_type.code) }
+    before(:each) do
+      subject.collect_from_records_having('25', '100DO', 'M35', 'M', 'FOR')
+      expect( subject.count ).to be > 0
+    end
 
     it "returns true on no-errors found" do
       expect( subject.commit ).to be true
@@ -217,7 +222,7 @@ describe RecordCollector do
       before_count = subject.count
       expect( subject.commit ).to be true
       # Search again, with same params, but from results, to update existing records:
-      subject.collect_from_results_having('25', '50FA', 'M35', 'M', fix_record_type.code)
+      subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
     end
   end
@@ -237,7 +242,7 @@ describe RecordCollector do
 #      Benchmark.bmbm do |x|
 #        x.report("records")  {
 #          subject.full_scan() do |this, pool_code, event_code, category_code, gender_code|
-#            this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
+#            this.collect_from_records_having( pool_code, event_code, category_code, gender_code, 'FOR' )
 #          end
 #        }
 #        # Worthless comparison:

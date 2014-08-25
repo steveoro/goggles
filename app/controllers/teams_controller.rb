@@ -174,7 +174,8 @@ class TeamsController < ApplicationController
   # id: the team id to be processed by most of the methods (see before filter above)
   #
   def set_team
-    @team = Team.find_by_id( params[:id].to_i ).decorate
+    @team = Team.find_by_id( params[:id].to_i )
+    @team = @team.decorate if @team
   end
   #-- -------------------------------------------------------------------------
   #++

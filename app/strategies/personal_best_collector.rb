@@ -3,8 +3,8 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.424
-  - author: Leega
+  - Goggles framework vers.:  4.00.439
+  - author: Leega, Steve A.
 
  Collector strategy class for individual all time personal bests stored into
  a newly created PersonalBestCollection instance.
@@ -23,6 +23,11 @@ class PersonalBestCollector
   #         be added to the internal collection during initialization.
   #         (These will be converted to IndividualRecord(s) and indexed by their values)
   #
+  # - record_type_code: a valid RecordType.code string to categorize the collected records.
+  # - record_type: a valid RecordType instance to categorize the collected records.
+  # (The last two are mutually exclusive but both supported. These are required when the list
+  # contains MeetingIndividualResult elements)
+  #
   # === Supported filtering options:
   # When provided, any of these options are combined together and will be used
   # to filter out the results during the collection loops.
@@ -34,9 +39,9 @@ class PersonalBestCollector
   # - meeting: a Meeting instance (this filter is ignored when looping on IndividualRecords)
   #
   def initialize( swimmer, options = {} )
-    raise ArgumentError unless swimmer.instance_of?( Swimmer )
+    raise ArgumentError.new("The swimmer parameter is not a valid instance of Swimmer!") unless swimmer.instance_of?( Swimmer )
     @swimmer      = swimmer
-    
+
     # Options safety check:
     @season_type  = options[:season_type] if options[:season_type].instance_of?( SeasonType )
     @season       = options[:season] if options[:season].instance_of?( Season )
@@ -45,14 +50,16 @@ class PersonalBestCollector
 
     # If the list of rows is given each element should be qualified with record type
     # In particular when the list is made from MeetingIndividualResult it's necessary
-    # to specify record type intended for  
+    # to specify record type intended for
     list_of_rows  = options[:list].respond_to?(:each) ? options[:list] : nil
-    record_type   = options[:record_type] if options[:record_type].instance_of?( RecordType )
+
+    record_type_code = options[:record_type_code] if options[:record_type_code].instance_of?( String )
+    record_type_code = options[:record_type].code if options[:record_type].instance_of?( RecordType )
     if list_of_rows && list_of_rows[0].instance_of?( MeetingIndividualResult )
-      raise ArgumentError unless record_type
+      raise ArgumentError.new("Missing a valid record_type or record_type_code parameter!") unless record_type_code
     end
-        
-    @collection   = PersonalBestCollection.new( list_of_rows, record_type )
+
+    @collection   = PersonalBestCollection.new( list_of_rows, record_type_code )
 
     # Cache the unique codes lists:
     #@events_by_pool_types = EventsByPoolType.not_relays
@@ -116,12 +123,12 @@ class PersonalBestCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_all_category_results_having( events_by_pool_type, record_type )
+  def collect_from_all_category_results_having( events_by_pool_type, record_type_code )
     mir = @swimmer.meeting_individual_results.is_valid.has_time.for_event_by_pool_type( events_by_pool_type )
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     mir = mir.joins( :meeting ).where( ['(meetings.header_date >= ?) AND (meetings.header_date <= ?)', @start_date, @end_date]) if @start_date
-    update_and_return_collection_with_first_results( mir, record_type )
+    update_and_return_collection_with_first_results( mir, record_type_code )
   end
 
 
@@ -130,11 +137,11 @@ class PersonalBestCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_last_results_having( events_by_pool_type, record_type )
+  def collect_last_results_having( events_by_pool_type, record_type_code )
     mir = @swimmer.meeting_individual_results.is_valid.has_time.for_event_by_pool_type( events_by_pool_type ).sort_by_date('DESC').limit(1)
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
-    update_and_return_collection_with_first_results( mir, record_type )
+    update_and_return_collection_with_first_results( mir, record_type_code )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -193,7 +200,7 @@ class PersonalBestCollector
   # <tt>prefiltered_results</tt> is a Relation of either IndividualRecord or
   # MeetingIndividualResult instances.
   #
-  def update_and_return_collection_with_first_results( prefiltered_results, record_type, limit = 3 )
+  def update_and_return_collection_with_first_results( prefiltered_results, record_type_code, limit = 3 )
     # Store these max first ranking results:
     # Order by time only if necessary.
     # If prefiltered_results contains only one record it's not necessary and
@@ -208,7 +215,7 @@ class PersonalBestCollector
     else
       first_recs = prefiltered_results
     end
-    first_recs.each { |rec| @collection.add(rec, record_type) }    # Add the first records to the collection
+    first_recs.each { |rec| @collection.add(rec, record_type_code) } # Add the first records to the collection
     @collection
   end
   #-- -------------------------------------------------------------------------

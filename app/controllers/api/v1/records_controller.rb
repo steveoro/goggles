@@ -59,7 +59,7 @@ class Api::V1::RecordsController < ApplicationController
     if params[:id] && (swimmer = Swimmer.find_by_id(params[:id]))
       collector = RecordCollector.new( swimmer: swimmer )
       collection = collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-        this.collect_from_results_having( pool_code, event_code, category_code, gender_code )
+        this.collect_from_results_having( pool_code, event_code, category_code, gender_code, 'FOR' )
       end
       # Return just the list of rows:
       @records = collection.map{ |key, row| row }
@@ -87,7 +87,7 @@ class Api::V1::RecordsController < ApplicationController
     if params[:id] && (swimmer = Swimmer.find_by_id(params[:id]))
       collector = RecordCollector.new( swimmer: swimmer )
       collection = collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-        this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
+        this.collect_from_records_having( pool_code, event_code, category_code, gender_code, 'FOR' )
       end
       @total = collection.count
     end

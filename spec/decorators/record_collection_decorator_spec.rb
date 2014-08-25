@@ -5,7 +5,7 @@ describe RecordCollectionDecorator do
   before :each do
     team = Team.find(1)
     rc = RecordCollector.new( team: team )
-    @collection = rc.collect_from_results_having('25','50FA','M45','M')
+    @collection = rc.collect_from_results_having('25','50FA','M45','M','FOR')
   end
 
   subject { RecordCollectionDecorator.decorate(@collection) }
@@ -17,7 +17,7 @@ describe RecordCollectionDecorator do
         :to_complete_html_list,
         :to_verbose_html_list,
         :to_short_html_list,
-        :to_short_meeting_html_list,        
+        :to_short_meeting_html_list,
       ]
     )
   end

@@ -97,9 +97,21 @@ DESC
       logger.info( "\r\nProcessing #{sym}: #{index+1}/#{list.count} '#{instance.get_full_name}', max inner loops tot.: #{total}" )
       collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
         # First, initialize the collection by getting the existing records:
-        this.collect_from_records_having( pool_code, event_code, category_code, gender_code )
+        this.collect_from_records_having(
+          pool_code,
+          event_code,
+          category_code,
+          gender_code,
+          sym == :team ? 'TTB' : 'FOR'
+        )
         # Then, update the collection if a better record is found from the results:
-        this.collect_from_results_having( pool_code, event_code, category_code, gender_code )
+        this.collect_from_results_having(
+          pool_code,
+          event_code,
+          category_code,
+          gender_code,
+          sym == :team ? 'TTB' : 'FOR'
+        )
         putc '.'
       end
       logger.info("\r\nFull scan completed. Saving data...")

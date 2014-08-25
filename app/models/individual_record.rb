@@ -10,7 +10,7 @@
 
   Stores the current & best individual results (or records) collected from all
   team or federation results.
-  
+
   This entity must be periodically updated by a batch rake task (usually after
   each MeetingIndividualResult insertion).
 
@@ -66,8 +66,8 @@ class IndividualRecord < ActiveRecord::Base
   #
   # Leega TODO: Remove is_team_record
   def from_individual_result( individual_result, record_type, is_team_record = false )
-    raise ArgumentError unless individual_result.instance_of?( MeetingIndividualResult )
-    raise ArgumentError unless record_type.instance_of?( RecordType )
+    raise ArgumentError.new("The result specified is not a valid instance of MeetingIndividualResult!") unless individual_result.instance_of?( MeetingIndividualResult )
+    raise ArgumentError.new("The record type specified is not a valid instance of RecordType!") unless record_type.instance_of?( RecordType )
     self.meeting_individual_result_id = individual_result.id
     self.pool_type_id        = individual_result.pool_type.id
     self.event_type_id       = individual_result.event_type.id
