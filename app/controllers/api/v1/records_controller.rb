@@ -11,16 +11,36 @@ class Api::V1::RecordsController < ApplicationController
 
   # Returns a JSON-encoded Array of all the IndividualRecord found, filtered by
   # SeasonType#id.
-  # Returned rows will have is_team_record = false.
+  # Returned rows will be 'global' records (not for teams, nor swimmers or seasons).
   #
-  # Each array element is a JSON-encoded hash of a single row.
+  # Each array element is a JSON-encoded hash of a single row of IndividualRecord.
   # The keys of the Hash are the attributes as string.
   #
   # === Required params:
-  # - 'id': the matching IndividualRecord#season_type_id
+  # - 'id': the matching IndividualRecord#season_type_id, searched among the generic records
+  #         (not team- or swimmer- or season- related)
   #
   def for_season_type
     @records = IndividualRecord.for_season_type( params[:id] ) if params[:id]
+    respond_with( @records )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns a JSON-encoded Array of all the IndividualRecord found, filtered by
+  # FederationType#id.
+  # Returned rows will be 'global' records (not for teams, nor swimmers or seasons).
+  #
+  # Each array element is a JSON-encoded hash of a single row of IndividualRecord.
+  # The keys of the Hash are the attributes as string.
+  #
+  # === Required params:
+  # - 'id': the matching IndividualRecord#federation_id, searched among the generic records
+  #         (not team- or swimmer- or season- related)
+  #
+  def for_federation
+    @records = IndividualRecord.for_federation( params[:id] ) if params[:id]
     respond_with( @records )
   end
   #-- -------------------------------------------------------------------------
@@ -31,7 +51,7 @@ class Api::V1::RecordsController < ApplicationController
   # Team#id.
   # Returned rows will have is_team_record = true.
   #
-  # Each array element is a JSON-encoded hash of a single row.
+  # Each array element is a JSON-encoded hash of a single row of IndividualRecord.
   # The keys of the Hash are the attributes as string.
   #
   # === Required params:
@@ -47,9 +67,11 @@ class Api::V1::RecordsController < ApplicationController
 
   # Returns a JSON-encoded Hash of all the IndividualRecord found, filtered by
   # Swimmer#id and collected by looping on all MeetingIndividualResult.
-  # Returned rows will be the best results obtained by the specified swimmer_id.
   #
-  # Each array element is a JSON-encoded hash of a single row.
+  # The returned rows will be the best results obtained by the specified swimmer_id and
+  # categorized in the RecordCollection as 'generic' records (code: 'FOR').
+  #
+  # Each array element is a JSON-encoded hash of a single row of IndividualRecord.
   # The keys of the Hash are the attributes as string.
   #
   # === Required params:

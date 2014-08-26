@@ -13,7 +13,7 @@ require 'common/format'
 class RecordsController < ApplicationController
 
 
-  # Collects individual records grouped by SeasonType.
+  # Collects individual records grouped by SeasonType (classified as 'generic').
   #
   # Dual-phase action:
   # - Phase 1: GET => renders search form
@@ -22,9 +22,9 @@ class RecordsController < ApplicationController
   #
   def for_season_type
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-    logger.debug "> #{params.inspect}"
-    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+#    logger.debug "> #{params.inspect}"
+#    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?
       # Check if we have also a possibile swimmer parameter to highlight his/her results:
@@ -34,7 +34,7 @@ class RecordsController < ApplicationController
       season_type = SeasonType.find_by_id( params[:season_type][:id] ) if params[:season_type] && params[:season_type][:id]
       @title = I18n.t('records.season_type_title') + (season_type ? " (#{season_type.short_name})" : '')
       collector = if season_type
-        records = IndividualRecord.for_federation( season_type.id )
+        records = IndividualRecord.for_season_type( season_type.id )
         # [Steve, 20140723] 'Must always specify the filtering type for the RecordCollector,
         # especially when we pre-load the list of records:
         RecordCollector.new( list: records, record_type_code: 'FOR', season_type: season_type, swimmer: @highlight_swimmer )
@@ -55,7 +55,7 @@ class RecordsController < ApplicationController
   #++
 
 
-  # Collects individual records/best results for a specified Team.
+  # Collects individual records/best results for a specified Team (classified as 'for teams').
   #
   # Dual-phase action:
   # - Phase 1: GET => renders search form
@@ -64,9 +64,9 @@ class RecordsController < ApplicationController
   #
   def for_team
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-    logger.debug "> #{params.inspect}"
-    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+#    logger.debug "> #{params.inspect}"
+#    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?
       # Check if we have also a possibile swimmer parameter to highlight his/her results:
@@ -99,7 +99,7 @@ class RecordsController < ApplicationController
   #++
 
 
-  # Collects individual records/best results for a specified Swimmer.
+  # Collects individual records/best results for a specified Swimmer (but classified as 'generic').
   #
   # Dual-phase action:
   # - Phase 1: GET => renders search form
@@ -108,9 +108,9 @@ class RecordsController < ApplicationController
   #
   def for_swimmer
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-    logger.debug "> #{params.inspect}"
-    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+#    logger.debug "> #{params.inspect}"
+#    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?
       swimmer = Swimmer.find_by_id( params[:swimmer][:id] ) if params[:swimmer] && params[:swimmer][:id]
