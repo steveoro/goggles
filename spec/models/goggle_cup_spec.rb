@@ -47,6 +47,38 @@ describe GoggleCup, :type => :model do
         :get_verbose_name
       ])
     end
+    # ---------------------------------------------------------------------------
+    #++
+
+    describe "class #has_team_goggle_cup_for_season method" do
+      it "responds to #has_team_goggle_cup_for_season" do
+        expect( subject.class ).to respond_to( :has_team_goggle_cup_for_season? )
+      end
+      it "returns a boolean" do
+        fix_team_id   = ((rand * 100) % 30).to_i + 1
+        fix_season_id = ((rand * 100) % 20).to_i + 1
+        result = GoggleCup.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id)
+        if result
+          expect( result == true ).to be true
+        else
+          expect( result == false ).to be true
+        end
+      end
+      it "returns true if goggle cup present" do
+        # Assumes CSI Ober Ferrari, Campionato regionale CSI 2013/2014
+        fix_team_id   = 1
+        fix_season_id = 131
+        expect( GoggleCup.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be true
+      end
+      it "returns false if goggle cup not present" do
+        # Assumes id given doesn't exists
+        fix_team_id   = 12456
+        fix_season_id = 56897
+        expect( GoggleCup.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be false
+      end
+    end
+    # ---------------------------------------------------------------------------
+    #++
   end
   #-- -------------------------------------------------------------------------
   #++

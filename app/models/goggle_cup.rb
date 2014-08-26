@@ -49,4 +49,11 @@ class GoggleCup < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
+  # Check if a given team has a goggle cup for a certain season
+  #
+  def self.has_team_goggle_cup_for_season?( team_id, season_id )
+    GoggleCup.includes(:goggle_cup_definitions).where(['team_id = ? AND goggle_cup_definitions.season_id = ?', team_id, season_id]).count > 0
+  end
+  # ----------------------------------------------------------------------------
+
 end

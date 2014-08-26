@@ -15,24 +15,24 @@ INSERT INTO goggle_cups (id,description,max_points,season_year,max_performance,u
 -- Dump dei dati per la tabella goggle_cup_definitions
 -- 
 INSERT INTO goggle_cup_definitions (id,goggle_cup_id,season_id,lock_version,created_at,updated_at) VALUES 
-(1,(select t.id from goggle_cups t where t.season_year = '2007'  AND t.team_id = 1),10,0,CURDATE(),CURDATE()),
-(2,(select t.id from goggle_cups t where t.season_year = '2007'  AND t.team_id = 1),11,0,CURDATE(),CURDATE()),
-(3,(select t.id from goggle_cups t where t.season_year = '2008'  AND t.team_id = 1),12,0,CURDATE(),CURDATE()),
-(4,(select t.id from goggle_cups t where t.season_year = '2008'  AND t.team_id = 1),13,0,CURDATE(),CURDATE()),
-(5,(select t.id from goggle_cups t where t.season_year = '2009'  AND t.team_id = 1),14,0,CURDATE(),CURDATE()),
-(6,(select t.id from goggle_cups t where t.season_year = '2009'  AND t.team_id = 1),15,0,CURDATE(),CURDATE()),
-(7,(select t.id from goggle_cups t where t.season_year = '2010'  AND t.team_id = 1),91,0,CURDATE(),CURDATE()),
-(8,(select t.id from goggle_cups t where t.season_year = '2010'  AND t.team_id = 1),92,0,CURDATE(),CURDATE()),
-(9,(select t.id from goggle_cups t where t.season_year = '2011'  AND t.team_id = 1),101,0,CURDATE(),CURDATE()),
-(10,(select t.id from goggle_cups t where t.season_year = '2011'  AND t.team_id = 1),102,0,CURDATE(),CURDATE()),
-(11,(select t.id from goggle_cups t where t.season_year = '2012'  AND t.team_id = 1),111,0,CURDATE(),CURDATE()),
-(12,(select t.id from goggle_cups t where t.season_year = '2012'  AND t.team_id = 1),112,0,CURDATE(),CURDATE()),
-(13,(select t.id from goggle_cups t where t.season_year = '2012'  AND t.team_id = 1),114,0,CURDATE(),CURDATE()),
-(14,(select t.id from goggle_cups t where t.season_year = '2013'  AND t.team_id = 1),121,0,CURDATE(),CURDATE()),
-(15,(select t.id from goggle_cups t where t.season_year = '2013'  AND t.team_id = 1),122,0,CURDATE(),CURDATE()),
-(16,(select t.id from goggle_cups t where t.season_year = '2014'  AND t.team_id = 1),131,0,CURDATE(),CURDATE()),
-(17,(select t.id from goggle_cups t where t.season_year = '2014'  AND t.team_id = 1),132,0,CURDATE(),CURDATE()),
-(18,(select t.id from goggle_cups t where t.season_year = '2014'  AND t.team_id = 1),123,0,CURDATE(),CURDATE());
+(1,(select t.id from goggle_cups t where t.season_year = 2007  AND t.team_id = 1),10,0,CURDATE(),CURDATE()),
+(2,(select t.id from goggle_cups t where t.season_year = 2007  AND t.team_id = 1),11,0,CURDATE(),CURDATE()),
+(3,(select t.id from goggle_cups t where t.season_year = 2008  AND t.team_id = 1),12,0,CURDATE(),CURDATE()),
+(4,(select t.id from goggle_cups t where t.season_year = 2008  AND t.team_id = 1),13,0,CURDATE(),CURDATE()),
+(5,(select t.id from goggle_cups t where t.season_year = 2009  AND t.team_id = 1),14,0,CURDATE(),CURDATE()),
+(6,(select t.id from goggle_cups t where t.season_year = 2009  AND t.team_id = 1),15,0,CURDATE(),CURDATE()),
+(7,(select t.id from goggle_cups t where t.season_year = 2010  AND t.team_id = 1),91,0,CURDATE(),CURDATE()),
+(8,(select t.id from goggle_cups t where t.season_year = 2010  AND t.team_id = 1),92,0,CURDATE(),CURDATE()),
+(9,(select t.id from goggle_cups t where t.season_year = 2011  AND t.team_id = 1),101,0,CURDATE(),CURDATE()),
+(10,(select t.id from goggle_cups t where t.season_year = 2011  AND t.team_id = 1),102,0,CURDATE(),CURDATE()),
+(11,(select t.id from goggle_cups t where t.season_year = 2012  AND t.team_id = 1),111,0,CURDATE(),CURDATE()),
+(12,(select t.id from goggle_cups t where t.season_year = 2012  AND t.team_id = 1),112,0,CURDATE(),CURDATE()),
+(13,(select t.id from goggle_cups t where t.season_year = 2012  AND t.team_id = 1),114,0,CURDATE(),CURDATE()),
+(14,(select t.id from goggle_cups t where t.season_year = 2013  AND t.team_id = 1),121,0,CURDATE(),CURDATE()),
+(15,(select t.id from goggle_cups t where t.season_year = 2013  AND t.team_id = 1),122,0,CURDATE(),CURDATE()),
+(16,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),131,0,CURDATE(),CURDATE()),
+(17,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),132,0,CURDATE(),CURDATE()),
+(18,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),123,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella goggle_cup_standards
