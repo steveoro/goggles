@@ -8,6 +8,10 @@
 /.bundle
 /.project
 /.coveralls.yml
+/.git
+/.git/*
+/.settings
+/.settings/*
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
