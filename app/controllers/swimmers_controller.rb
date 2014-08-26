@@ -98,25 +98,25 @@ class SwimmersController < ApplicationController
     @tab_title = I18n.t('radiography.best_timings_tab')
     current_season = Season.get_last_season_by_type( 'MASFIN' )
 
-    # Leega. 
+    # Leega.
     # TODO: Delegate to an AJAX function. I've removed the prevoius AJAX call
     collector = PersonalBestCollector.new( @swimmer )
 
     # Collect personal bests
     collector.full_scan do |this, events_by_pool_type|
-      this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SPB') )
+      this.collect_from_all_category_results_having( events_by_pool_type, 'SPB' )
     end
-    
+
     # Collect last result
     collector.full_scan do |this, events_by_pool_type|
-      this.collect_last_results_having( events_by_pool_type, RecordType.find_by_code('SLP') )
+      this.collect_last_results_having( events_by_pool_type, 'SLP' )
     end
-    
+
     # Collect seasonal bests
-    collector.set_start_date( current_season.begin_date ) 
+    collector.set_start_date( current_season.begin_date )
     collector.set_end_date( current_season.end_date )
     collector.full_scan do |this, events_by_pool_type|
-      this.collect_from_all_category_results_having( events_by_pool_type, RecordType.find_by_code('SSB') )
+      this.collect_from_all_category_results_having( events_by_pool_type, 'SSB' )
     end
 
     @grid_builder = PersonalBestGridBuilder.new( collector )
@@ -212,7 +212,7 @@ class SwimmersController < ApplicationController
           @personal_best = PersonalBestCollectionDecorator.decorate(
             personal_best_pb.collect_from_all_category_results_having(
               events_by_pool_type,
-              RecordType.find_by_code('SPB')
+              'SPB'
             )
           ).to_short_meeting_html_list
 
@@ -221,7 +221,7 @@ class SwimmersController < ApplicationController
           @seasonal_best = PersonalBestCollectionDecorator.decorate(
             seasonal_best_pb.collect_from_all_category_results_having(
               events_by_pool_type,
-              RecordType.find_by_code('SSB')
+              'SSB'
             )
           ).to_short_meeting_html_list
 

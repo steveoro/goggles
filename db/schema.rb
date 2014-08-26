@@ -772,15 +772,14 @@ ActiveRecord::Schema.define(:version => 20140826081547) do
   add_index "goggle_cup_standards", ["swimmer_id"], :name => "fk_goggle_cup_standards_swimmers"
 
   create_table "goggle_cups", :force => true do |t|
-    t.integer  "lock_version",                  :default => 0
-    t.string   "description",     :limit => 60,                   :null => false
-    t.integer  "season_year",                   :default => 2010, :null => false
-    t.integer  "max_points",                    :default => 1000, :null => false
+    t.integer  "lock_version",               :default => 0
+    t.string   "description",  :limit => 60,                   :null => false
+    t.integer  "season_year",                :default => 2010, :null => false
+    t.integer  "max_points",                 :default => 1000, :null => false
     t.integer  "team_id"
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
     t.integer  "user_id"
-    t.integer  "max_performance", :limit => 2,  :default => 5,    :null => false
   end
 
   add_index "goggle_cups", ["season_year"], :name => "idx_season_year"
