@@ -25,7 +25,7 @@ describe IndividualRecord, :type => :model do
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
       :team_records,
-      :season_type_records,
+      :seasonal_records,
       :for_team,
       :for_season_type,
       :for_federation,
