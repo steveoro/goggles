@@ -205,7 +205,7 @@ class PersonalBestCollector
     # Order by time only if necessary.
     # If prefiltered_results contains only one record it's not necessary and
     # it should be not performed not to override previous sorting
-    if prefiltered_results.count > 1
+    if prefiltered_results.size > 1
       first_recs = prefiltered_results.order( :minutes, :seconds, :hundreds ).limit(limit)
       if first_recs.size > 0                          # Compute the first timing result value
         first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds

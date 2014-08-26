@@ -23,12 +23,14 @@ class PersonalBestCollection
   # The record_type parameter can be safely skipped if the main parameter is
   # an instance of IndividualRecord.
   #
-  def initialize( individual_result_or_record = nil, record_type_code = chose_record_type_code )
+  def initialize( individual_result_or_record = nil, record_type_code = nil )
     @list = {}
+    initial_record_type_code = record_type_code || chose_record_type_code( individual_result_or_record )
+
     if individual_result_or_record.respond_to?(:each)
-      individual_result_or_record.each { |row| add(row, record_type_code) }
-    else
-      add( individual_result_or_record, record_type_code )
+      individual_result_or_record.each { |row| add(row, initial_record_type_code) }
+    elsif individual_result_or_record
+      add( individual_result_or_record, initial_record_type_code )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -202,23 +204,21 @@ class PersonalBestCollection
 
 
   # Choses which record type should used for the record collection.
+  # Defaults to 'FOR' for undetermined rows.
   #
   # Keep in mind that the only place where record_type could be nil is
   # in the default constructor.
   #
-  def chose_record_type_code
-    if @team && @start_date
-      'TSB' # Team season best
+  def chose_record_type_code( possible_list_or_row_of_result_or_record )
+    single_row = if possible_list_or_row_of_result_or_record.respond_to?(:each)
+      possible_list_or_row_of_result_or_record.first
     else
-      if @team
-        'TTB' # Team best (team record)
-      else
-        if @start_date
-          'SOR' # season best
-        else
-          'FOR' # Overall record
-        end
-      end
+      possible_list_or_row_of_result_or_record
+    end
+    if single_row.instance_of?( IndividualRecord )
+      single_row.record_type.code
+    else
+      'FOR'
     end
   end
   #-- -------------------------------------------------------------------------
