@@ -46,9 +46,9 @@ describe GoggleCupStandard, :type => :model do
     it "returns a boolean" do
       fix_goggle_cup_id = 8
       fix_swimmer_id    = 23
-      fix_event_type_id = ((rand * 100) % 18).to_i + 1
-      fix_pool_type_id  = ((rand * 100) % 2).to_i + 1
-      result = GoggleCupStandard.has_standard?(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id)
+      fix_pool_type_id  = PoolType.only_for_meetings[ ((rand * 100) % PoolType.only_for_meetings.count).to_i ].id
+      fix_event_type_id = EventType.are_not_relays[ ((rand * 100) % EventType.are_not_relays.count).to_i ].id
+      result = subject.class.has_standard?(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id)
       if result
         expect( result == true ).to be true
       else
@@ -61,11 +61,11 @@ describe GoggleCupStandard, :type => :model do
       fix_swimmer_id    = 23
       fix_event_type_id = 11
       fix_pool_type_id  = 1
-      expect( GoggleCupStandard.has_standard?(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id) ).to be true
+      expect( subject.class.has_standard?(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id) ).to be true
     end
     it "returns false if standard not present" do
       # Assumes id given doesn't exists
-      expect( GoggleCupStandard.has_standard?(154123, 12568, 4, 185) ).to be false
+      expect( subject.class.has_standard?(154123, 12568, 4, 185) ).to be false
     end
   end
   # ---------------------------------------------------------------------------
@@ -78,9 +78,9 @@ describe GoggleCupStandard, :type => :model do
     it "returns an ActiveRecord object or nil" do
       fix_goggle_cup_id = 8
       fix_swimmer_id    = 23
-      fix_event_type_id = ((rand * 100) % 18).to_i + 1
-      fix_pool_type_id  = ((rand * 100) % 2).to_i + 1
-      expect( GoggleCupStandard.get_standard(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id) ).to be_an_instance_of( ActiveRecord::Base ).or be_nil
+      fix_pool_type_id  = PoolType.only_for_meetings[ ((rand * 100) % PoolType.only_for_meetings.count).to_i ].id
+      fix_event_type_id = EventType.are_not_relays[ ((rand * 100) % EventType.are_not_relays.count).to_i ].id
+      expect( subject.class.get_standard(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id) ).to be_a_kind_of( ActiveRecord::Base ).or be_nil
     end
     it "returns a GoggleCupStandard if standard present" do
       # Assumes Leega, ober cup 2014, 50FA, 25 mt
@@ -88,11 +88,11 @@ describe GoggleCupStandard, :type => :model do
       fix_swimmer_id    = 23
       fix_event_type_id = 11
       fix_pool_type_id  = 1
-      expect( GoggleCupStandard.get_standard(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id) ).to be_an_instance_of( GoggleCupStandard )
+      expect( subject.class.get_standard(fix_goggle_cup_id, fix_swimmer_id, fix_pool_type_id, fix_event_type_id) ).to be_an_instance_of( GoggleCupStandard )
     end
     it "returns nil if standard not present" do
       # Assumes id given doesn't exists
-      expect( GoggleCupStandard.get_standard(154123, 12568, 4, 185) ).to be_nil
+      expect( subject.class.get_standard(154123, 12568, 4, 185) ).to be_nil
     end
   end
   # ---------------------------------------------------------------------------

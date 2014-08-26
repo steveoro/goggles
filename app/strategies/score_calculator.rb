@@ -92,7 +92,7 @@ class ScoreCalculator
     fin_score = 0
     if time_swam && time_swam.to_hundreds > 0
       # Retrieves the time standard
-      @current_time_standard = get_time_standard
+      get_time_standard
       if @current_time_standard && @current_time_standard.get_timing_instance.to_hundreds > 0
         # Calculate the score with 2 decimals fixed
         fin_score = @current_time_standard.get_timing_instance.to_hundreds * 1000 / time_swam.to_hundreds
