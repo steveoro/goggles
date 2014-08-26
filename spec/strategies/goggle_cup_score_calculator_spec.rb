@@ -6,10 +6,9 @@ describe GoggleCupScoreCalculator do
     @fix_goggle_cup = create(:goggle_cup)
     @fix_swimmer    = create(:swimmer)
 
-    # Leega
-    # FIXME Data forced from seeds
-    @fix_pool_type     = PoolType.only_for_meetings[ ((rand * 2) % 2).to_i ]
-    @fix_event_type    = EventType.are_not_relays[ ((rand * 18) % 18).to_i ]
+    # Data forced from seeds
+    @fix_pool_type  = PoolType.only_for_meetings[ ((rand * 100) % PoolType.only_for_meetings.count).to_i ]
+    @fix_event_type = EventType.are_not_relays[ ((rand * 100) % EventType.are_not_relays.count).to_i ]
   end
 
   context "with requested parameters" do
@@ -86,6 +85,7 @@ describe GoggleCupScoreCalculator do
       end      
       #-- -----------------------------------------------------------------------
     end
+    #-- -----------------------------------------------------------------------
 
     describe "#set_goggle_cup_standard," do
       before :each do
@@ -132,14 +132,14 @@ describe GoggleCupScoreCalculator do
         end
 
         it "goggle cup standard exists" do
-          expect( @fix_new_standard.get_goggle_cup_standard ).to be_an_instance_of( GoggleCupStandard )
+          expect( subject.get_goggle_cup_standard ).to be_an_instance_of( GoggleCupStandard )
         end
         it "updates the goggle cup standard" do
-          expect( @fix_new_standard.set_goggle_cup_standard(@fix_time_swam) ).to be true
+          expect( subject.set_goggle_cup_standard(@fix_time_swam) ).to be true
         end
         it "goggle cup standard is equal to time swam" do
-          @fix_new_standard.set_goggle_cup_standard(@fix_time_swam)
-          expect( @fix_new_standard.get_goggle_cup_standard.get_timing_instance.to_hundreds ).to be @fix_time_swam.to_hundreds
+          subject.set_goggle_cup_standard(@fix_time_swam)
+          expect( subject.get_goggle_cup_standard.get_timing_instance.to_hundreds ).to be @fix_time_swam.to_hundreds
         end
       end
     end

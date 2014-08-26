@@ -72,9 +72,9 @@ describe GoggleCup, :type => :model do
       end
       it "returns false if goggle cup not present" do
         # Assumes id given doesn't exists
-        fix_team_id   = 12456
-        fix_season_id = 56897
-        expect( subject.class.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be false
+        wrong_team_id   = 12456
+        wrong_season_id = 56897
+        expect( subject.class.has_team_goggle_cup_for_season?(wrong_team_id, wrong_season_id) ).to be false
       end
     end
     # ---------------------------------------------------------------------------
