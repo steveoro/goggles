@@ -142,15 +142,23 @@
     .row-fluid
       .span3
         = I18n.t('swimmers.total_team_records') +':'
-      .span1
+      .span6
         %a#totalCount{ href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXRecordCount();", 'data-toggle' => 'tooltip', title: I18n.t('records.total_count_disclaimer_tooltip') }
           = I18n.t('records.compute_label')
-      .span5
+        - SeasonType.uniq.each do |season_type|
+          %span{ id: "labelSeasonType#{season_type.id}", hidden: true }
+            = "#{season_type.get_full_name}: "
+          %span{ id: "totalSeasonType#{season_type.id}", hidden: true }
+            0
+          %span{ id: "spaceSeasonType#{season_type.id}", hidden: true }
+            &nbsp;
         %span(id='loadingIndicator' hidden='true')
           = image_tag( 'indicator.gif' )
 
     .row-fluid
-      .offset3.span6
+      .span3
+        = I18n.t('swimmers.records_by_team') +':'
+      .span6
         %ul
           - @swimmer.teams.uniq.each do |team|
             %li
@@ -164,7 +172,19 @@
   function loadAJAXRecordCount() {                                              |
     $.ajax({                                                                    |
       url: "#{ api_v1_records_count_records_for_swimmer_path(id: @swimmer.id) }", |
-      success: function(data) { $('#loadingIndicator').hide(); $('#totalCount').replaceWith( data['total'] ); }, |
+      success: function(data) {                                                 |
+        $('#loadingIndicator').hide();                                          |
+        $('#totalCount').replaceWith('');                                       |
+        for ( var i = 0; i < data.length; i++ ) {                               |
+            if ( data[i]['total'] > 0 ) {                                       |
+                tagTotalId = '#totalSeasonType' + data[i]['season_type_id'];    |
+                $( tagTotalId ).replaceWith( data[i]['total'] );                |
+                $( tagTotalId ).show();                                         |
+                $( '#labelSeasonType' + data[i]['season_type_id'] ).show();     |
+                $( '#spaceSeasonType' + data[i]['season_type_id'] ).show();     |
+            }                                                                   |
+        }                                                                       |
+      },                                                                        |
       dataType: 'json'                                                          |
     });                                                                         |
   };                                                                            |

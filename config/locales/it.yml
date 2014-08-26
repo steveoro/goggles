@@ -23,7 +23,8 @@ it:
     last_attended_meeting: "Ultima gara disputata"
     best_score_ever: "Miglior punteggio di sempre"
     worst_score_ever: "Peggior punteggio di sempre (non nullo)"
-    total_team_records: "Record societari"
+    total_team_records: "Record di Federazione detenuti"
+    records_by_team: "Record per affiliazione"
     total_disqualifications: "Squalifiche subite"
     no_disqualifications: "Nessuna !!"
     swimmers: "Nuotatori"
@@ -525,9 +526,9 @@ it:
   copy_of: "Copia di"
   language: "Lingua"
   none: "Nessuna"
-  unknown: "Sconosciuto"   
-  not_present: "Non presente"   
-  not_computable: "Non calcolabile"   
+  unknown: "Sconosciuto"
+  not_present: "Non presente"
+  not_computable: "Non calcolabile"
 
   no_new_articles: Nessun nuovo articolo
   select_file: "Scegli un file"

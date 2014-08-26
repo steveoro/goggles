@@ -64,8 +64,8 @@ class RecordsController < ApplicationController
   #
   def for_team
 # DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-#    logger.debug "> #{params.inspect}"
+    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "> #{params.inspect}\r\n\r\n=====================================================\r\n\r\n"
 #    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?

@@ -92,28 +92,34 @@ class Api::V1::RecordsController < ApplicationController
   #++
 
 
-  # Returns a JSON-encoded Hash astoring the count of all existing IndividualRecord found
-  # for the specified Swimmer#id.
+  # Counts the records for each federation/season_type for a specified Swimmer.
   #
-  # The resulting Hash will have the structure:
+  # Returns a JSON-encoded array of Hash instances, each one storing a different season_type_id
+  # and its corresponding total count of all the existing IndividualRecord found for the specified
+  # Swimmer#id.
   #
+  # The resulting Array will have the structure:
+  #
+  #   [
   #     {
-  #       +total+ : <total number of records found for the swimmer_id parameter>
-  #     }
+  #       +season_type_id+ : <currently processed season_type_id>
+  #       +total+ : <total number of season_type/federation records found for the swimmer_id parameter>
+  #     },
+  #     # [...1 hash for each defined season type...]
+  #   ]
   #
   # === Required params:
   # - 'id': the matching IndividualRecord#swimmer_id
   #
   def count_records_for_swimmer
     @total = 0
-    if params[:id] && (swimmer = Swimmer.find_by_id(params[:id]))
-      collector = RecordCollector.new( swimmer: swimmer )
-      collection = collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-        this.collect_from_records_having( pool_code, event_code, category_code, gender_code, 'FOR' )
-      end
-      @total = collection.count
+    result_array = SeasonType.uniq.map(&:id).map do |id|
+      {
+        season_type_id: id,
+        total: IndividualRecord.for_season_type(id).where( swimmer_id: params[:id] ).count
+      }
     end
-    respond_with( { total: @total } )
+    respond_with( result_array )
   end
   #-- -------------------------------------------------------------------------
   #++

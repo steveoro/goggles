@@ -203,10 +203,23 @@ describe Api::V1::RecordsController, :type => :controller do
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
       end
-      it "returns an empty Array as result" do
+      it "returns a JSONified Array of Hash as result" do
         result = JSON.parse(response.body)
-        expect( result ).to be_an_instance_of(Hash)
-        expect( result['total'] ).to eq(0)
+        expect( result ).to be_an_instance_of(Array)
+        expect( result ).to all( be_an_instance_of(Hash) )
+      end
+      it "returns a list of Hash having 'total' and 'season_type_id' as fields" do
+        result = JSON.parse(response.body)
+        result.each do |item|
+          expect( item.has_key?('season_type_id') ).to be true
+          expect( item.has_key?('total') ).to be true
+        end
+      end
+      it "returns a JSONified list of empty totals" do
+        result = JSON.parse(response.body)
+        result.each do |item|
+          expect( item['total'] ).to eq(0)
+        end
       end
     end
 
@@ -216,13 +229,30 @@ describe Api::V1::RecordsController, :type => :controller do
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
       end
-      it "returns a JSON array with an Hash as each element (representing each row)" do
+      it "returns a JSONified Array of Hash as result" do
         result = JSON.parse(response.body)
-        expect( result ).to be_an_instance_of(Hash)
-        # Hopefully, there should be at least 5 records/best results for this swimmer
-        # in the preloaded seed files:
-        # FIXME WARNING: this may change from time to time as records are updated with the results according to current seed data! This should be refactored somehow.
-        expect( result['total'] ).to be >= 5
+        expect( result ).to be_an_instance_of(Array)
+        expect( result ).to all( be_an_instance_of(Hash) )
+      end
+      it "returns a list of Hash having 'total' and 'season_type_id' as fields" do
+        result = JSON.parse(response.body)
+        result.each do |item|
+          expect( item.has_key?('season_type_id') ).to be true
+          expect( item.has_key?('total') ).to be true
+        end
+      end
+      it "returns at least some non-zero value for the specified swimmer" do
+        result = JSON.parse(response.body)
+        result.each do |hash|
+          expect( hash ).to be_an_instance_of(Hash)
+          # Hopefully, there should be at least 5 records/best results for this swimmer/season_type
+          # combo in the preloaded seed files for this specific season_type_id:
+          # FIXME WARNING: this may change from time to time as records are updated with the results according to current seed data! This should be refactored somehow.
+          if hash['season_type_id'] == 2
+            expect( hash['total'] ).to be >= 5
+            break
+          end
+        end
       end
     end
   end
