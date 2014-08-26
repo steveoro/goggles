@@ -119,9 +119,9 @@ INSERT INTO passage_types (id,code,length_in_meters,lock_version,created_at,upda
 -- Dump dei dati per la tabella pool_types
 -- 
 INSERT INTO pool_types (id,code,length_in_meters,is_suitable_for_meetings,lock_version,created_at,updated_at) VALUES 
-(1,'25',25',1,0,CURDATE(),CURDATE()),
-(2,'50',50',1,0,CURDATE(),CURDATE()),
-(3,'33',33',0,0,CURDATE(),CURDATE());
+(1,'25',25,1,0,CURDATE(),CURDATE()),
+(2,'50',50,1,0,CURDATE(),CURDATE()),
+(3,'33',33,0,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella achievement_types
