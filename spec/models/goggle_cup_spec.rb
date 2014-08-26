@@ -57,7 +57,7 @@ describe GoggleCup, :type => :model do
       it "returns a boolean" do
         fix_team_id   = ((rand * 100) % 30).to_i + 1
         fix_season_id = ((rand * 100) % 20).to_i + 1
-        result = GoggleCup.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id)
+        result = subject.class.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id)
         if result
           expect( result == true ).to be true
         else
@@ -68,13 +68,13 @@ describe GoggleCup, :type => :model do
         # Assumes CSI Ober Ferrari, Campionato regionale CSI 2013/2014
         fix_team_id   = 1
         fix_season_id = 131
-        expect( GoggleCup.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be true
+        expect( subject.class.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be true
       end
       it "returns false if goggle cup not present" do
         # Assumes id given doesn't exists
         fix_team_id   = 12456
         fix_season_id = 56897
-        expect( GoggleCup.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be false
+        expect( subject.class.has_team_goggle_cup_for_season?(fix_team_id, fix_season_id) ).to be false
       end
     end
     # ---------------------------------------------------------------------------
