@@ -134,7 +134,7 @@ class SwimmersController < ApplicationController
     # --- "Full History" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.full_history_tab1')
-    @all_mirs = MeetingIndividualResult.where( swimmer_id: @swimmer.id )
+    @all_mirs = MeetingIndividualResult.sort_by_date('ASC').where( swimmer_id: @swimmer.id )
 
     # TODO
     # - Group all MIR swam by pool type
