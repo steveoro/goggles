@@ -24,6 +24,7 @@ class Team < ActiveRecord::Base
   has_many :team_affiliations
   has_many :seasons,      through: :team_affiliations
   has_many :season_types, through: :team_affiliations
+  has_many :goggle_cups
 
   validates_presence_of :name
   validates_length_of :name, within: 1..60, allow_nil: false
@@ -70,6 +71,19 @@ class Team < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
+
+
+  # Check if team has a Goggle cup not closed (ended) at a certain date
+  #
+  # params
+  # evaluation_date: the date the goggle cup should be current at (default today)
+  #
+  def has_goggle_cup_at?( evaluation_date = Date.today )
+    goggle_cups.each do |goggle_cup|
+      return true if goggle_cup.is_current_at?( evaluation_date )
+    end
+    false
+  end
 
 
   # Label symbol corresponding to either a column name or a model method to be used
