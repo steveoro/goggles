@@ -1,0 +1,25 @@
+%ul.nav.nav-tabs#topOfPage
+  - is_active = ( params[:action] == 'radio' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.radio_tab'),          is_active ? '#' : swimmer_radio_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'medals' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.medals_tab'),         is_active ? '#' : swimmer_medals_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'best_timings' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.best_timings_tab'),   is_active ? '#' : swimmer_best_timings_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'full_history_1' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.full_history_tab1'),  is_active ? '#' : swimmer_full_history_1_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'full_history_2' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.full_history_tab2'),  is_active ? '#' : swimmer_full_history_2_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'misc' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.misc_tab'),           is_active ? '#' : swimmer_misc_path(id: @swimmer.id) )
+
+.container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = "#{@tab_title} -- "
+      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)

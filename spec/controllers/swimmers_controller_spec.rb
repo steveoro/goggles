@@ -134,9 +134,42 @@ describe SwimmersController, :type => :controller do
   # ===========================================================================
 
 
-  describe '[GET #full_history/:id]' do
-    it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :full_history )
-    it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :full_history )
+  describe '[GET #full_history_1/:id]' do
+    it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :full_history_1 )
+    it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :full_history_1 )
+
+    context "as a logged-in user" do
+      before(:each) do
+        login_user()
+        @swimmer = create(:swimmer)
+        get :full_history_1, id: @swimmer.id
+      end
+
+      it "assigns a list of MeetingIndividualResult(s)" do
+        expect( assigns(:all_mirs) ).to respond_to?( :each )
+        expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[GET #full_history_2/:id]' do
+    it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :full_history_2 )
+    it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :full_history_2 )
+
+    context "as a logged-in user" do
+      before(:each) do
+        login_user()
+        @swimmer = create(:swimmer)
+        get :full_history_2, id: @swimmer.id
+      end
+
+      it "assigns a list of MeetingIndividualResult(s)" do
+        expect( assigns(:all_mirs) ).to respond_to?( :each )
+        expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
+      end
+    end
   end
   # ===========================================================================
 
