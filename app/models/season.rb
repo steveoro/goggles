@@ -25,6 +25,7 @@ class Season < ActiveRecord::Base
   has_one  :federation_type, through: :season_type
 
   has_many :meetings
+  has_many :goggle_cup_definitions
 
   validates_presence_of :header_year
   validates_length_of   :header_year, within: 1..9, allow_nil: false

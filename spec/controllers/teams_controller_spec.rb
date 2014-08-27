@@ -154,6 +154,56 @@ describe TeamsController, :type => :controller do
   describe '[GET #goggle_cup/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+    
+    context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have a current Goggle cup," do
+      before :each do
+        @fixture = create( :team_with_badges )
+        request.env["HTTP_REFERER"] = teams_path()
+        login_user()
+        get :goggle_cup, id: @fixture.id
+      end
+      it "deosn't assign a goggle_cup instance" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns(:goggle_cup) ).to be_an_instance_of( GoggleCup ).or be_nil
+      end
+    end
+
+    context "with an HTML request for a valid id and a logged-in user for for a team that has a current Goggle cup," do
+      before :each do
+        @fixture = Team.find(1)
+        request.env["HTTP_REFERER"] = teams_path()
+        login_user()
+        get :goggle_cup, id: @fixture.id
+      end
+      it "assigns a goggle_cup instance" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns(:goggle_cup) ).to be_an_instance_of( GoggleCup )
+      end
+      it "assigns a goggle_cup_rank instance" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns(:goggle_cup_rank) ).to be_an_instance_of( Array )
+      end
+      it "assigns an hash with points to every elements of goggle_cup_rank instance " do
+        expect( response.status ).to eq( 200 )
+        assigns(:goggle_cup_rank).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element.has_key?( :total ) ).to be true
+          expect( element.has_key?( :average ) ).to be true
+          expect( element.has_key?( :min ) ).to be true
+          expect( element.has_key?( :max ) ).to be true
+          expect( element.has_key?( :count ) ).to be true
+        end
+      end
+      it "assigns a sorted by total key array" do
+        expect( response.status ).to eq( 200 )
+        rank_array = assigns(:goggle_cup_rank)
+        current_item = rank_array.first[:total]
+        rank_array.each do |item|
+          expect( item[:total] ).to be <= current_item
+          current_item = item[:total] 
+        end      
+      end
+    end
   end
   # ===========================================================================
 

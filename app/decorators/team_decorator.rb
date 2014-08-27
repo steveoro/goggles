@@ -68,7 +68,7 @@ class TeamDecorator < Draper::Decorator
   #
   def get_current_goggle_cup_name_at( evaluation_date = Date.today )
     goggle_cup = get_current_goggle_cup_at( evaluation_date )
-    goggle_cup ? goggle_cup.get_full_name : I18n.t('radiography.ober_cup_tab')
+    goggle_cup ? goggle_cup.get_full_name : I18n.t('radiography.goggle_cup_tab')
   end
   #-- --------------------------------------------------------------------------
 end
