@@ -140,7 +140,8 @@ Goggles::Application.routes.draw do
       get  "teams/count_results/:id",           to: "teams#count_results",              as: "team_count_results"
       get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_results"
       get  "teams/palmares/:id",                to: "teams#palmares",                   as: "team_palmares"
-      get  "teams/ober_cup/:id",                to: "teams#ober_cup",                   as: "team_ober_cup"
+      get  "teams/goggle_cup/:id",              to: "teams#goggle_cup",                 as: "team_goggle_cup"
+      get  "teams/goggle_cup_all_of_fame/:id",  to: "teams#goggle_cup_all_of_fame",     as: "team_goggle_cup_all_of_fame"
 
       # === Swimming Pools ===
       get "swimming_pools/index",               as: "swimming_pools"

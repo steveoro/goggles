@@ -84,6 +84,21 @@ class Team < ActiveRecord::Base
     end
     false
   end
+  # ----------------------------------------------------------------------------
+
+  # Returns the current goggle cup if present
+  #
+  # params
+  # evaluation_date: the date the goggle cup should be current at (default today)
+  #
+  def get_current_goggle_cup_at( evaluation_date = Date.today )
+    goggle_cups.each do |goggle_cup|
+      return goggle_cup if goggle_cup.is_current_at?( evaluation_date )
+    end
+    nil
+  end
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
 
 
   # Label symbol corresponding to either a column name or a model method to be used

@@ -84,15 +84,27 @@ class TeamsController < ApplicationController
   #++
 
 
-  # Radiography for a specified team id: "Ober cup" tab rendering
+  # Radiography for a specified team id: "Goggle cup" tab rendering
   #
   # == Params:
   # id: the team id to be processed
   #
-  def ober_cup
+  def goggle_cup
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Radiography for a specified team id: "Goggle cup all of fame" tab rendering
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def goggle_cup_all_of_fame
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Return the number of meetings attended by a Team instance
   # Usage: count_meetings_team_path( id: team_id_to_be_searched )
