@@ -10,8 +10,8 @@ class GoggleCupDefinition < ActiveRecord::Base
   
   has_one :team,  through: :goggle_cup
 
-  scope :sort_by_goggle_cup,  ->(dir) { order("goggle_cups.season_year #{dir.to_s}, team.name #{dir.to_s}, seasons.description #{dir.to_s}") }
-  scope :sort_by_season,      ->(dir) { order("seasons.description #{dir.to_s}, goggle_cups.season_year #{dir.to_s}, team.name #{dir.to_s}") }
+  scope :sort_by_begin_date,  ->(dir) { includes(:season).order("seasons.begin_date #{dir.to_s}") }
+  scope :sort_by_end_date,    ->(dir) { includes(:season).order("seasons.end_date #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

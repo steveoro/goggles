@@ -22,8 +22,8 @@ describe GoggleCupDefinition, :type => :model do
 
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
-      :sort_by_goggle_cup,
-      :sort_by_season
+      :sort_by_begin_date,
+      :sort_by_end_date
     ])
   end
   #-- -------------------------------------------------------------------------
