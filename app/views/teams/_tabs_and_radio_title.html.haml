@@ -25,10 +25,17 @@
       = link_to( t('radiography.palmares_tab'), team_palmares_path(id: @team.id) )
   - if params[:action] == 'ober_cup'
     %li.active
-      = link_to( t('radiography.ober_cup_tab'), '#' )
+      = link_to( @team.get_current_goggle_cup_name_at, '#' )
   - else
     %li
-      = link_to( t('radiography.ober_cup_tab'), team_ober_cup_path(id: @team.id) )
+      = link_to( @team.get_current_goggle_cup_name_at, team_ober_cup_path(id: @team.id) )
+  - if @team.goggle_cups.count > 1
+    - if params[:action] == 'goggle_cup_all_of_fame'
+      %li.active
+        = link_to( t('radiography.goggle_cup_all_f_fame'), '#' )
+    - else
+      %li
+        = link_to( t('radiography.goggle_cup_all_f_fame'), team_ober_cup_all_of_fame_path(id: @team.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign

@@ -63,4 +63,12 @@ class TeamDecorator < Draper::Decorator
     meeting ? h.link_to( meeting.get_full_name, meeting_show_full_path( id: meeting.id, team_id: id ), { 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') + "\r\n(#{ meeting.get_full_name })" } ) : I18n.t('none')
   end
   #-- --------------------------------------------------------------------------
+
+  # Returns the current goggle cup name if present
+  #
+  def get_current_goggle_cup_name_at( evaluation_date = Date.today )
+    goggle_cup = get_current_goggle_cup_at( evaluation_date )
+    goggle_cup ? goggle_cup.get_full_name : I18n.t('radiography.ober_cup_tab')
+  end
+  #-- --------------------------------------------------------------------------
 end

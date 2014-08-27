@@ -71,6 +71,35 @@ describe Team, :type => :model do
     end
     # ---------------------------------------------------------------------------
     #++
+    
+    describe "#get_current_goggle_cup_at" do
+      it "responds to #get_current_goggle_cup_at" do
+        expect( subject ).to respond_to( :get_current_goggle_cup_at )
+      end
+      context "without parameters" do
+        it "returns an instance of goggle_cup or nil" do
+          expect( subject.get_current_goggle_cup_at ).to be_an_instance_of( GoggleCup ).or be_nil
+        end
+      end
+      context "with a date as parameter" do
+        it "returns an instance of goggle_cup or nil" do
+          fix_date = Date.today
+          expect( subject.get_current_goggle_cup_at( fix_date ) ).to be_an_instance_of( GoggleCup ).or be_nil
+        end
+        it "returns an instance of goggle_cup for CSI Ober Ferrari at 01-01-2014" do
+          fix_date = Date.parse("2014-01-01")
+          expect( subject.get_current_goggle_cup_at( fix_date ) ).to be_an_instance_of( GoggleCup )
+        end
+        it "returns Ober Cup 2014 for CSI Ober Ferrari at 01-01-2014" do
+          fix_date = Date.parse("2014-01-01")
+          expect( subject.get_current_goggle_cup_at( fix_date ).get_full_name ).to include( 'Ober Cup 2014' )
+        end
+        it "returns nil for CSI Ober Ferrari at 01-01-1990" do
+          fix_date = Date.parse("1990-01-01")
+          expect( subject.get_current_goggle_cup_at( fix_date ) ).to be_nil
+        end
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
