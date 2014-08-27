@@ -225,12 +225,15 @@ it:
     team_radio_tab_title: "{TEAM_NAME} secondo il Cronometro"
     team_current_swimmers_tab: "Nuotatori correnti"
     team_radio_tab_tooltip: "Vai alla 'Radiografia' della squadra"
-    full_history_tab: "La Storia Completa"
-    full_history_tab_tooltip: "Vai alla 'Storia Completa' per questo Atleta"
+    full_history_tab1: "La Storia Completa: carriera"
+    full_history_tab1_tooltip: "Vai alla 'Storia Completa' per questo Atleta, contenente l'elenco cronologico di tutti i risultati"
+    full_history_tab2: "La Storia Completa: analisi"
+    full_history_tab2_tooltip: "Vai alla 'Storia Completa' per questo Atleta, contenente un analisi sintentica dei risultati raggruppati per tipo"
     palmares_tab: "Palmares"
     last_meeting: "Ultima gara disputata"
     first_meeting: "Prima gara disputata"
-    ober_cup_tab: "Ober cup"
+    goggle_cup_tab: "Goggle cup"
+    goggle_cup_all_of_fame_tab: "Albo d'oro"   
 
   misc_main_menu:
     title: "Varie"

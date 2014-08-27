@@ -64,9 +64,8 @@ class RecordsController < ApplicationController
   #
   def for_team
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-    logger.debug "> #{params.inspect}\r\n\r\n=====================================================\r\n\r\n"
-#    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+#    logger.debug "> #{params.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr?
       # Check if we have also a possibile swimmer parameter to highlight his/her results:
@@ -79,10 +78,14 @@ class RecordsController < ApplicationController
       @title = I18n.t('records.team_title') + (team ? " (#{team.get_full_name})" : '')
       collector = if team
         records = IndividualRecord.for_team( team.id )
+# DEBUG
+#        logger.debug "> Tot. records found: #{records.size}\r\n\r\n"
         # [Steve, 20140723] 'Must always specify the filtering type for the RecordCollector,
         # especially when we pre-load the list of records:
         RecordCollector.new( list: records, record_type_code: 'TTB', team: team, swimmer: @highlight_swimmer )
       else
+# DEBUG
+#        logger.debug "> NO TEAM!\r\n\r\n"
         RecordCollector.new( record_type_code: 'TTB' )
       end
       @grid_builder = RecordGridBuilder.new( collector, 'TTB' )

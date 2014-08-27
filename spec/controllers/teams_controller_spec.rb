@@ -149,4 +149,18 @@ describe TeamsController, :type => :controller do
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
   end
   # ===========================================================================
+
+
+  describe '[GET #goggle_cup/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
+    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+  end
+  # ===========================================================================
+
+
+  describe '[GET #goggle_cup_all_of_fame/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
+    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+  end
+  # ===========================================================================
 end

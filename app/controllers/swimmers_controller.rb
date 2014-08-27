@@ -125,15 +125,40 @@ class SwimmersController < ApplicationController
   #++
 
 
-  # Radiography for a specified swimmer id: "Full History" tab rendering
+  # Radiography for a specified swimmer id: "Full History: career" tab rendering.
   #
   # == Params:
   # id: the swimmer id to be processed
   #
-  def full_history
+  def full_history_1
     # --- "Full History" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
-    @tab_title = I18n.t('radiography.full_history_tab')
+    @tab_title = I18n.t('radiography.full_history_tab1')
+    @all_mirs = MeetingIndividualResult.where( swimmer_id: @swimmer.id )
+
+    # TODO
+    # - Group all MIR swam by pool type
+    # - Group all MIR swam by event codes
+    # - Count total MIR swam, group by pool type
+    # - Count total MIR swam, group by event code
+    # - For each event code swam (50FA, 50SL, ...)
+    #   => draw a scatter graph w/ 1 series x pool type (x: date, y: MIR timing)
+    #   => for each point, on-mouse-over tooltip w/ HTML details for the MIR + links to the corresponding #full_show of the meeting
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified swimmer id: "Full History: analysis" tab rendering.
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def full_history_2
+    # --- "Full History" tab: ---
+    @swimmer = SwimmerDecorator.decorate( @swimmer )
+    @tab_title = I18n.t('radiography.full_history_tab2')
+    @all_mirs = MeetingIndividualResult.where( swimmer_id: @swimmer.id )
 
     # TODO
     # - Collect all @swimmer MIRs
