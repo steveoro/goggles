@@ -146,7 +146,7 @@ describe SwimmersController, :type => :controller do
       end
 
       it "assigns a list of MeetingIndividualResult(s)" do
-        expect( assigns(:all_mirs) ).to respond_to?( :each )
+        expect( assigns(:all_mirs).respond_to?( :each ) ).to be true
         expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
       end
     end
@@ -166,7 +166,7 @@ describe SwimmersController, :type => :controller do
       end
 
       it "assigns a list of MeetingIndividualResult(s)" do
-        expect( assigns(:all_mirs) ).to respond_to?( :each )
+        expect( assigns(:all_mirs).respond_to?( :each ) ).to be true
         expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
       end
     end

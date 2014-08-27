@@ -1,0 +1,9 @@
+%table.table.table-striped.table-bordered.table-condensed.table-hover
+  - individual_result.passages.order(:passage_type_id).each do |passage|
+    %tr
+      %td.goggles-rightalign
+        %i= "#{ passage.get_passage_distance } mt."
+      %td.goggles-rightalign
+        = passage.get_timing
+      %td.goggles-rightalign
+        = passage.compute_incremental_time

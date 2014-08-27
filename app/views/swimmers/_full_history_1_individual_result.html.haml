@@ -1,0 +1,35 @@
+- has_passages = ( individual_result.passages.count > 0 )
+%tr
+  %td.span1
+    %a{'id'=>"mir#{individual_result.id}", 'href'=>"#{ meeting_show_full_path(:id=>individual_result.meeting.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip')}
+      = Format.a_date( individual_result.get_scheduled_date )
+  %td.span3
+    = individual_result.meeting.get_short_name
+  %td.span2
+    = individual_result.meeting_program.event_type.i18n_short
+    ,
+    = individual_result.meeting_program.get_category_type_name
+  %td.span1.goggles-rightalign
+    = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+    = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+    = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+    = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
+  %td.span1.goggles-rightalign
+    - if has_passages
+      .btn-link{ id: "passages#{individual_result.id}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
+        = individual_result.get_timing
+    - else
+      = individual_result.get_timing
+  %td.span1.goggles-rightalign
+    = sprintf( "%02.2f", individual_result.standard_points )
+  %td.span1.goggles-rightalign
+    = sprintf( "%02.2f", individual_result.meeting_individual_points )
+
+- if has_passages
+  %script
+    var popContent = "#{ escape_javascript( render(partial: 'full_history_1_popover_passages', locals: {individual_result: individual_result})) }";
+    $("#passages#{individual_result.id}").popover({                             |
+      title: "#{ escape_javascript(individual_result.get_timing.html_safe) }",  |
+      html: true,                                                               |
+      content: popContent                                                       |
+    });                                                                         |
