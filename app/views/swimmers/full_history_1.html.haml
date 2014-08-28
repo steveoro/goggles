@@ -1,3 +1,19 @@
 = render( partial: 'tabs_and_radio_title' )
 
-= render( partial: 'full_history_1_grid' )
+.row-fluid
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      - PoolType.only_for_meetings.each do |pool_type|
+        %tr{'class'=>'info'}
+          %td
+            %b= 'Date'
+          %td
+            %b= 'Meeting'
+          - event_list = @full_history_by_date[pool_type.code][0]
+          - event_list.each do |event|
+            %td
+              %b= event
+        - @full_history_by_date[pool_type.code][1].each do |individual_result|
+          = render( partial: 'full_history_by_date', locals: { individual_result: individual_result, event_list: event_list } )
+.row-fluid
+  .span12

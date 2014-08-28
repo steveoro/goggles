@@ -126,6 +126,8 @@ class SwimmersController < ApplicationController
 
 
   # Radiography for a specified swimmer id: "Full History: career" tab rendering.
+  # Creates a grid, splitted by pool type, with the events as columns and
+  # the meetings attended in cronological order as rows
   #
   # == Params:
   # id: the swimmer id to be processed
@@ -134,7 +136,24 @@ class SwimmersController < ApplicationController
     # --- "Full History" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.full_history_tab1')
-    @all_mirs = MeetingIndividualResult.sort_by_date('ASC').where( swimmer_id: @swimmer.id )
+    @all_mirs = @swimmer.meeting_individual_results.sort_by_date('ASC')
+
+    @full_history_by_date = Hash.new 
+    
+    # Cycles between pool types suitable for meetings
+    PoolType.only_for_meetings.each do |pool_type|
+      # Collect results for the pool type
+      mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date( 'ASC' )
+
+      # Collect event types swam to create grid structure
+      event_list = mirs.select('event_types.code').map{ |mir| mir.event_type.code }.uniq
+      
+      @full_history_by_date[pool_type.code] = [event_list, mirs]
+    end
+    
+    
+    
+    
 
     # TODO
     # - Group all MIR swam by pool type

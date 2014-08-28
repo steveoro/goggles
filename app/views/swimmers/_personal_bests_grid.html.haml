@@ -22,12 +22,13 @@
                 - record = grid_builder.collection.get_record_for( record_type.code, pool_type.code, event_type.code )
                 %td
                   - if record
-                    %p
-                      %b= record.get_timing
-                      - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
-                        %p= Format.a_date( sched_date )
-                        %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip')}
-                          %p= record.meeting_individual_result.meeting.description
-                      - else
-                        %p= '-'
+                    %b= record.get_timing
+                    %br
+                    - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
+                      = Format.a_date( sched_date )
+                      %br
+                      %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip')}
+                        = record.meeting_individual_result.meeting.description
+                    - else
+                      = '-'
 

@@ -41,6 +41,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def radio
+    @tab_title = I18n.t('radiography.radio_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -51,6 +52,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def current_swimmers
+    @tab_title = I18n.t('radiography.team_current_swimmers_tab')
     last_season = @team.seasons.last
     current_badges = @team.badges.where( season_id: last_season.id ) if last_season && @team.badges
     @swimmers = if current_badges.nil?
@@ -68,6 +70,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def best_timings
+    @tab_title = I18n.t('radiography.best_timings_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -78,7 +81,8 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
-  def palamares
+  def palmares
+    @tab_title = I18n.t('radiography.palmares_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -91,12 +95,13 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def goggle_cup
+    @tab_title = @team.get_current_goggle_cup_name_at
+
     # Gets current goggle cup, if any
     @goggle_cup = @team.get_current_goggle_cup_at
-    if @goggle_cup
-      # Prepares an hash to store goggle cup rank
-      @goggle_cup_rank = calculate_goggle_cup_rank( @goggle_cup )
-    end
+
+    # Gets goggle cup ranks
+    @goggle_cup_rank = @goggle_cup ? @goggle_cup.calculate_goggle_cup_rank : [] 
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -109,14 +114,16 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def goggle_cup_all_of_fame
+    @tab_title = I18n.t('radiography.goggle_cup_all_of_fame_tab')
+    
     # Prepares an hash to store closed goggle cup rank
     @closed_goggle_cup = [] 
     
-    # Gets closed goggle cup, if any
+    # Gets closed, valid goggle cup, if any
     @team.goggle_cups.each do |goggle_cup|
       if goggle_cup.is_closed_at?
         # Collects first three positions of that closed goggle cup
-        goggle_cup_rank = calculate_goggle_cup_rank( goggle_cup )
+        goggle_cup_rank = goggle_cup.calculate_goggle_cup_rank
 
         # Adds goggle cup data to the hash
         @closed_goggle_cup << {
@@ -224,49 +231,6 @@ class TeamsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
-  # Goggle cup rank calculaion
-  #
-  # == Params:
-  # id: the team id to be processed
-  #
-  def calculate_goggle_cup_rank( goggle_cup )
-    # Prepares an hash to store goggle cup rank
-    goggle_cup_rank = []
-
-    # Collects swimmers involved
-    # A swimmer is involved if has a badge for at a least a season of goggle cup definition
-    # and is ranked if has at least a result for that badge(s)
-    swimmers = @team.badges
-      .joins(season: :goggle_cup_definitions)
-      .where(['goggle_cup_definitions.goggle_cup_id = ?', goggle_cup.id])
-      .collect{|badge| badge.swimmer }
-      .uniq
-    
-    # Collects best results for each swimmer
-    # The number of result to consider is set in the goggle cup header
-    swimmers.each do |swimmer|
-      points = swimmer.meeting_individual_results
-        .joins(season: :goggle_cup_definitions)
-        .where(['goggle_cup_definitions.goggle_cup_id = ?', goggle_cup.id])
-        .has_points(:goggle_cup_points)
-        .sort_by_goggle_cup('DESC')
-        .limit(goggle_cup.max_performance)
-        .collect{ |meeting_individual_result| meeting_individual_result.goggle_cup_points }
-      goggle_cup_rank << {
-        swimmer: swimmer, 
-        total:   points.sum, 
-        max:     points.max,
-        min:     points.min,
-        count:   points.count,
-        average: (points.sum / points.count).round( 2 ) 
-      } if points.count > 0
-    end
-    
-    # Sorts the hash to create rank
-    goggle_cup_rank.sort!{ |hash_element_prev, hash_element_next| hash_element_next[:total] <=> hash_element_prev[:total] }
-  end
   #-- -------------------------------------------------------------------------
   #++
 end

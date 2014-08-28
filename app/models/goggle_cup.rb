@@ -21,6 +21,8 @@ class GoggleCup < ActiveRecord::Base
   has_many :goggle_cup_standards
   has_many :goggle_cup_definitions
   has_many :seasons, through: :goggle_cup_definitions
+  has_many :meetings, through: :seasons
+  has_many :meeting_individual_results, through: :meetings
 
   validates_presence_of     :description
   validates_length_of       :description, within: 1..60, allow_nil: false
@@ -38,7 +40,7 @@ class GoggleCup < ActiveRecord::Base
 
   scope :sort_goggle_cup_by_user,  ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
   scope :sort_goggle_cup_by_team,  ->(dir) { order("teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
-
+  
 
   # ----------------------------------------------------------------------------
   # Base methods:
@@ -97,12 +99,66 @@ class GoggleCup < ActiveRecord::Base
   def is_current_at?( evaluation_date = Date.today ) 
     get_begin_date <= evaluation_date && get_end_date >= evaluation_date  
   end
+
+  # Check if a Goggle cup has at least one valid result
+  #
+  def has_results? 
+    meeting_individual_results.has_points( :goggle_cup_points ).count > 0  
+  end
   # ----------------------------------------------------------------------------
 
   # Check if a given team has a goggle cup for a certain season
   #
   def self.has_team_goggle_cup_for_season?( team_id, season_id )
     GoggleCup.includes(:goggle_cup_definitions).where(['team_id = ? AND goggle_cup_definitions.season_id = ?', team_id, season_id]).count > 0
+  end
+  # ----------------------------------------------------------------------------
+
+
+  # Goggle cup rank calculaion
+  # Calculate the goggle cup rank by collecting swimmers involved
+  # and considering, for each, the estabilshed number of valid results
+  # If any valid results is presente returns an empty array
+  #
+  def calculate_goggle_cup_rank
+    # Prepares an hash to store goggle cup rank
+    goggle_cup_rank = []
+
+    # Check goggle cup has at least one valid result
+    if self.has_results?
+      # Collects swimmers involved
+      # A swimmer is involved if has a badge for at a least a season of goggle cup definition
+      # and is ranked if has at least a result for that badge(s)
+      swimmers = self.team.badges
+        .joins(season: :goggle_cup_definitions)
+        .where(['goggle_cup_definitions.goggle_cup_id = ?', self.id])
+        .collect{|badge| badge.swimmer }
+        .uniq
+      
+      # Collects best results for each swimmer
+      # The number of result to consider is set in the goggle cup header
+      swimmers.each do |swimmer|
+        points = swimmer.meeting_individual_results
+          .joins(season: :goggle_cup_definitions)
+          .where(['goggle_cup_definitions.goggle_cup_id = ?', self.id])
+          .has_points(:goggle_cup_points)
+          .sort_by_goggle_cup('DESC')
+          .limit(self.max_performance)
+          .collect{ |meeting_individual_result| meeting_individual_result.goggle_cup_points }
+        goggle_cup_rank << {
+          swimmer: swimmer, 
+          total:   points.sum, 
+          max:     points.max,
+          min:     points.min,
+          count:   points.count,
+          average: (points.sum / points.count).round( 2 ) 
+        } if points.count > 0
+      end
+      
+      # Sorts the hash to create rank
+      goggle_cup_rank.sort!{ |hash_element_prev, hash_element_next| hash_element_next[:total] <=> hash_element_prev[:total] }
+    end
+    goggle_cup_rank
   end
   # ----------------------------------------------------------------------------
 end
