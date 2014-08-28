@@ -183,7 +183,14 @@ describe TeamsController, :type => :controller do
         expect( response.status ).to eq( 200 )
         expect( assigns( :goggle_cup_rank ) ).to be_an_instance_of( Array )
       end
-      it "assigns an hash with points to every elements of goggle_cup_rank instance " do
+      it "assigns an hash in which swimmer key contains an instance of Swimmer" do
+        expect( response.status ).to eq( 200 )
+        assigns( :goggle_cup_rank ).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element[:swimmer] ).to be_an_instance_of( Swimmer ) 
+        end
+      end
+      it "assigns an hash with points to every elements of goggle_cup_rank instance" do
         expect( response.status ).to eq( 200 )
         assigns( :goggle_cup_rank ).each do |element|
           expect( element ).to be_a_kind_of( Hash )
@@ -217,6 +224,94 @@ describe TeamsController, :type => :controller do
   describe '[GET #goggle_cup_all_of_fame/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+
+    context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have closed Goggle cup," do
+      before :each do
+        @fixture = create( :team_with_badges )
+        request.env["HTTP_REFERER"] = teams_path()
+        login_user()
+        get :goggle_cup_all_of_fame, id: @fixture.id
+      end
+      it "doesn't assign a closed goggle cup collection" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns( :closed_goggle_cup ) ).to be_an_instance_of( Array )
+        expect( assigns( :closed_goggle_cup ).size ).to be 0
+      end
+    end
+
+    context "with an HTML request for a valid id and a logged-in user for for a team that has some closed Goggle cup," do
+      before :each do
+        @fixture = Team.find(1)
+        request.env["HTTP_REFERER"] = teams_path()
+        login_user()
+        get :goggle_cup_all_of_fame, id: @fixture.id
+      end
+      it "assigns a closed goggle cup collection" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns( :closed_goggle_cup ) ).to be_an_instance_of( Array )
+      end
+      it "assigns an hash with points to every elements of closed_goggle_cup collection" do
+        expect( response.status ).to eq( 200 )
+        assigns( :closed_goggle_cup ).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element.has_key?( :goggle_cup ) ).to be true
+          expect( element.has_key?( :year ) ).to be true
+          expect( element.has_key?( :first ) ).to be true
+          expect( element.has_key?( :first_points ) ).to be true
+          expect( element.has_key?( :second ) ).to be true
+          expect( element.has_key?( :second_points ) ).to be true
+          expect( element.has_key?( :third ) ).to be true
+          expect( element.has_key?( :third_points ) ).to be true
+        end
+      end
+      it "assigns an hash in which goggle_cup key contains an instance of GoggleCup" do
+        expect( response.status ).to eq( 200 )
+        assigns( :closed_goggle_cup ).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element[:goggle_cup] ).to be_an_instance_of( GoggleCup ) 
+        end
+      end
+      it "assigns an hash in which first key contains an instance of Swimmer with valid score" do
+        expect( response.status ).to eq( 200 )
+        assigns( :closed_goggle_cup ).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element[:first] ).to be_an_instance_of( Swimmer ) 
+          expect( element[:first_points] ).to be > 0 
+        end
+      end
+      it "assigns an hash in which second and third keys contains instances of Swimmer or nil" do
+        expect( response.status ).to eq( 200 )
+        assigns( :closed_goggle_cup ).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element[:second] ).to be_an_instance_of( Swimmer ).or be_nil 
+          expect( element[:third] ).to be_an_instance_of( Swimmer ).or be_nil 
+        end
+      end
+      it "assigns an hash in which first, second and third points are ordered descending" do
+        expect( response.status ).to eq( 200 )
+        assigns( :closed_goggle_cup ).each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element[:first_points] ).to be >= element[:second_points] 
+          expect( element[:second_points] ).to be >= element[:third_points] 
+        end
+      end
+      it "assigns a sorted by year key array" do
+        expect( response.status ).to eq( 200 )
+        rank_array = assigns(:closed_goggle_cup)
+        current_item = rank_array.first[:year]
+        rank_array.each do |item|
+          expect( item[:year] ).to be <= current_item
+          current_item = item[:year] 
+        end      
+      end
+      # Leega
+      # TODO Review seeds because Ober cups before 2013 are missing
+      # Maybe should be necessary to create a method to ensure goggle cup are valid
+      xit "assigns an array where count is the number of closed goggle cups for the team" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns( :closed_goggle_cup ).count ).to be @fixture.goggle_cups.count - ( @fixture.has_goggle_cup_at? ? 1 : 0 )
+      end
+    end
   end
   # ===========================================================================
 end

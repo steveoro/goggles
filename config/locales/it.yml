@@ -242,6 +242,9 @@ it:
     max: "Max"
     min: "Min"
     count: "Gare"
+    winner: "Vincitore"
+    second_placed: "Secondo classificato"
+    third_placed: "Terzo classificato"
 
   misc_main_menu:
     title: "Varie"

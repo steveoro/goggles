@@ -241,6 +241,9 @@ en:
     max: "Max"
     min: "Min"
     count: "Count"
+    winner: "Winner"
+    second_placed: "Second placed"
+    third_placed: "Third placed"
 
   misc_main_menu:
     title: "Misc"

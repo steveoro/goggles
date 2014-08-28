@@ -63,6 +63,7 @@ en:
       trainings: "Trainings"
       user_training: "User Training"
       user_training_story: "User Training Story"
+      goggle_cup: "Goggle cup"
 
     attributes:
       user:
@@ -245,6 +246,8 @@ en:
           attributes:
             exercise_id:
               blank: "can't be blank"
+            description:
+              blank: "can't be blank"
         user_training_story:
           attributes:
             swimming_pool:
@@ -254,4 +257,6 @@ en:
         user_training_row:
           attributes:
             exercise_id:
+              blank: "can't be blank"
+            description:
               blank: "can't be blank"
