@@ -42,12 +42,28 @@ describe TrainingsController, :type => :controller do
         expect(response).to redirect_to( trainings_path() )
       end
 
-      it "assigns a training_max_part_order (for an owned training)" do
-        fixture = create( :training_with_rows, user: @user )
-        get :edit, id: fixture.id
-        expect( response.status ).to eq(200)
-        expect( assigns(:training_max_part_order) ).not_to be_nil 
-        expect( assigns(:training_max_part_order) >= 0 ).to be true 
+      context "with some existing rows," do
+        before(:each) do
+          fixture = create( :training_with_rows, user: @user )
+          get :edit, id: fixture.id
+          expect( response.status ).to eq(200)
+        end
+
+        it "assigns a training_max_part_order (for an owned training)" do
+          expect( assigns(:training_max_part_order) ).not_to be_nil
+          expect( assigns(:training_max_part_order) >= 0 ).to be true
+        end
+        [
+          :start_rest_options_array, :pause_options_array,
+          :exercise_options_array, :step_type_options_array,
+          :arm_aux_options_array, :kick_aux_options_array,
+          :body_aux_options_array, :breath_aux_options_array
+        ].each do |assigned_sym|
+          it "assigns a non-empty :#{assigned_sym} for the corresponding combo-box" do
+            expect( assigns(:start_rest_options_array) ).to be_an_instance_of(Array)
+            expect( assigns(:start_rest_options_array).size ).to be > 1
+          end
+        end
       end
     end
   end

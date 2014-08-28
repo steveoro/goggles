@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.383
+  - version:  4.00.453
   - author:   Steve A.
 
 =end
@@ -82,8 +82,11 @@ class UserTrainingStoriesController < ApplicationController
   # Edit action.
   #
   def edit
-    @user_training_story = UserTrainingStoryDecorator.decorate(@user_training_story)
-    @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
+    @title = I18n.t('user_training_stories.show_title')
+      .gsub(
+        "{TRAINING_TITLE}",
+        UserTrainingStoryDecorator.decorate(@user_training_story).get_user_training_name
+      )
   end
 
 

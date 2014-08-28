@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = TrainingsController
 
-  - version:  4.00.383
+  - version:  4.00.453
   - author:   Steve A., Leega
 
 =end
@@ -55,6 +55,7 @@ class TrainingsController < ApplicationController
   def new
     @training = Training.new
     @training_max_part_order = 0
+    assign_all_options_array()
     render :edit
   end
 
@@ -71,7 +72,8 @@ class TrainingsController < ApplicationController
         redirect_to( training_path(@training) )
       else
         flash[:error] = I18n.t('activerecord.errors.messages.record_invalid')
-        render :action => :edit
+        assign_all_options_array()
+        render :edit
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -85,9 +87,9 @@ class TrainingsController < ApplicationController
   # Edit action.
   #
   def edit
-    @training = TrainingDecorator.decorate( @training )
     @training_max_part_order = @training.training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
+    assign_all_options_array()
   end
 
 
@@ -98,7 +100,8 @@ class TrainingsController < ApplicationController
       flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( training_path(@training) )
     else
-      render :action => 'edit'
+      assign_all_options_array()
+      render :edit
     end
   end
   #-- -------------------------------------------------------------------------
@@ -133,7 +136,7 @@ class TrainingsController < ApplicationController
     title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
 
                                                     # == OPTIONS setup + RENDERING phase ==
-    base_filename = "#{I18n.t('trainings.training')}_#{@training.title}" 
+    base_filename = "#{I18n.t('trainings.training')}_#{@training.title}"
     filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
       :report_title         => title,
@@ -280,6 +283,24 @@ class TrainingsController < ApplicationController
   #
   def set_training
     @training = Training.find_by_id( params[:id].to_i )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Prepares and assigns all the arrays used for the drop-down combo selects of the
+  # edit form.
+  # This should be invoked before any rendering of the edit views.
+  #
+  def assign_all_options_array
+    @start_rest_options_array = 0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
+    @pause_options_array      = 0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
+    @exercise_options_array   = [[nil,nil]] + Exercise.to_dropdown()
+    @step_type_options_array  = TrainingStepType.to_dropdown( nil, :id, :i18n_description )
+    @arm_aux_options_array    = ArmAuxType.to_dropdown( nil, :id, :i18n_description )
+    @kick_aux_options_array   = KickAuxType.to_dropdown( nil, :id, :i18n_description )
+    @body_aux_options_array   = BodyAuxType.to_dropdown( nil, :id, :i18n_description )
+    @breath_aux_options_array = BreathAuxType.to_dropdown( nil, :id, :i18n_description )
   end
   #-- -------------------------------------------------------------------------
   #++

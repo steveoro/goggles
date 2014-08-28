@@ -46,3 +46,57 @@ For each subsequent source update do either a deploy or a deploy:update :
 
 Use 'deploy:full_release' task to update also the versioning number & the news log:
 - cap -v <server_name> with_assets deploy:full_release
+
+
+
+=== How-to: load existing seeds.
+
+Use the custom compound rake task:
+
+  > rake db:rebuild_from_scratch
+
+...Which, in turn, executes all migrations plus all the SQL files stored inside
+the db/seed directory.
+
+DO NOT use a Rails/Ruby import method with #create([...]), because is painstakingly
+slow.
+
+Simply put: >>> STICK WITH SQL DUMP FILES. <<<
+
+You can safely skip the following if you already know it. (This is here just as a reminder! ;-) )
+
+*** [BEGIN] !!!! DON'T DO THIS -- DON'T DO THIS: !!!!
+
+This is an example of a painstakingly slow method to reload all the current
+IndividualRecord rows.
+
+Before launching rake db:seed (which is able to look-up only for db/seeds.rb file),
+create the empty file 'db/seeds_for_individual_record.rb' and fill it using the
+task provided by the seed_dump gem (vers. 0.5.3):
+
+  > rake db:seed:dump MODELS=IndividualRecord WITH_ID=1 CREATE_METHOD='create!' FILE=db/seeds_for_individual_record.rb
+
+Then, inside db/seeds.rb, to load and run the refactored data seed, add a simple:
+
+  # [...other file contents...]
+  load 'db/seeds_for_individual_record.rb'
+
+Finally, invoke "rake db:seed" to run the Rails create!() line generated with the
+above task.
+
+For versions of Rails prior to 4, this is slow and inefficient and may take several
+minutes to complete on a very fast machine (for a 5K rows creation statement), where
+a corresponding SQL file full of INSERTs would take just a few seconds.
+
+So, DON'T USE THIS APPROACH with Rails <= 3!
+
+*** [END] ---- DON'T DO THIS -- DON'T DO THIS ----
+
+
+
+=== How-to: extract SQL dumps for data seeds.
+
+Use the dedicated custom rake task:
+
+  > rake db:seed_dump_sql
+

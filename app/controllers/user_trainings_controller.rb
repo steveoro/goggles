@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingsController
 
-  - version:  4.00.383
+  - version:  4.00.453
   - author:   Steve A., Leega
 
 =end
@@ -114,6 +114,7 @@ class UserTrainingsController < ApplicationController
   def new
     @user_training = UserTraining.new
     @user_training_max_part_order = 0
+    assign_all_options_array()
     render :edit
   end
 
@@ -127,16 +128,14 @@ class UserTrainingsController < ApplicationController
     if request.post?
       @user_training = UserTraining.new( params[:user_training] )
       @user_training.user_id = current_user.id      # Set the owner for all the records
-# DEBUG
-      logger.debug "> RESULTING @user_training: #{@user_training.inspect}"
-      logger.debug "> VALID: #{@user_training.valid?}"
 
       if @user_training.save
         flash[:info] = I18n.t('trainings.training_created')
         redirect_to( user_training_path(@user_training) )
       else
         flash[:error] = I18n.t('activerecord.errors.messages.record_invalid')
-        render :action => :edit
+        assign_all_options_array()
+        render :edit
       end
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -150,9 +149,9 @@ class UserTrainingsController < ApplicationController
   # Edit action.
   #
   def edit
-    @user_training = TrainingDecorator.decorate( @user_training )
     @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
+    assign_all_options_array()
   end
 
   # Update action.
@@ -162,7 +161,8 @@ class UserTrainingsController < ApplicationController
       flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( user_training_path(@user_training) )
     else
-      render :action => 'edit'
+      assign_all_options_array()
+      render :edit
     end
   end
   #-- -------------------------------------------------------------------------
@@ -196,7 +196,7 @@ class UserTrainingsController < ApplicationController
     title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
 
                                                     # == OPTIONS setup + RENDERING phase ==
-    base_filename = "#{I18n.t('trainings.training')}_#{@user_training.description}" 
+    base_filename = "#{I18n.t('trainings.training')}_#{@user_training.description}"
     filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
       :report_title         => title,
@@ -343,6 +343,24 @@ class UserTrainingsController < ApplicationController
   #
   def set_user_training
     @user_training = UserTraining.find_by_id( params[:id].to_i )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Prepares and assigns all the arrays used for the drop-down combo selects of the
+  # edit form.
+  # This should be invoked before any rendering of the edit views.
+  #
+  def assign_all_options_array
+    @start_rest_options_array = 0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
+    @pause_options_array      = 0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
+    @exercise_options_array   = [[nil,nil]] + Exercise.to_dropdown()
+    @step_type_options_array  = TrainingStepType.to_dropdown( nil, :id, :i18n_description )
+    @arm_aux_options_array    = ArmAuxType.to_dropdown( nil, :id, :i18n_description )
+    @kick_aux_options_array   = KickAuxType.to_dropdown( nil, :id, :i18n_description )
+    @body_aux_options_array   = BodyAuxType.to_dropdown( nil, :id, :i18n_description )
+    @breath_aux_options_array = BreathAuxType.to_dropdown( nil, :id, :i18n_description )
   end
   #-- -------------------------------------------------------------------------
   #++

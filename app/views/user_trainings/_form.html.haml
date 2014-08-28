@@ -1,7 +1,7 @@
 .row-fluid.span12
 
 = simple_form_for @user_training do |f|
-  = f.input :description, input_html: { rows: 3, class: 'span8' }
+  = f.input :description, label: I18n.t(:description), input_html: { rows: 3, class: 'span8' }
 
   .row-fluid.goggles-div-centeralign
     .span1
@@ -23,8 +23,7 @@
         = link_to_function( image_tag('shape_group.png'), "$('.full_row').toggleClass('framed');" )
   %ul.droppable.sortable#training_rows
     = f.simple_fields_for :user_training_rows do |user_training_row_form|
-      = render 'user_training_row_fields', :f => user_training_row_form
-
+      = render( 'user_training_row_fields', f: user_training_row_form )
   %p
   %p
     %i= "#{I18n.t(:drag_and_drop_to_sort_rows)} / "
@@ -35,6 +34,5 @@
 
 %script
   $('.toolTip').tooltip({placement:'bottom'});
-  var exerciseAutocompleteURL = "#{ exercises_json_list_path() }";
 
 = javascript_include_tag 'training_row_form'

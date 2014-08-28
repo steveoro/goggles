@@ -164,6 +164,7 @@ table td.goggles-rightalign {
 .g-w300 input, .g-w300 select { min-width: 300px; width: 300px; }
 .g-w320 input, .g-w320 select { min-width: 320px; width: 320px; }
 .g-w350 input, .g-w350 select { min-width: 350px; width: 350px; }
+.g-w370 input, .g-w370 select { min-width: 370px; width: 370px; }
 .g-w400 input, .g-w400 select { min-width: 400px; width: 400px; }
 
 
@@ -253,6 +254,8 @@ li.goggles-sortable div {
 */
 .group_hdr {
     margin-top: 4px;
+    padding-top: 5px;
+    background: #cfcfcf;
 }
 
 .framed {

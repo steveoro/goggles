@@ -6,7 +6,7 @@ require 'wrappers/timing'
 
 = UserTrainingRow
 
-  - version:  4.00.319.20140617
+  - version:  4.00.453
   - author:   Steve A., Leega
 
 =end
@@ -19,9 +19,9 @@ class UserTrainingRow < ActiveRecord::Base
   belongs_to :body_aux_type
   belongs_to :breath_aux_type
   validates_associated :user_training
-  validates_presence_of :user_training_id
+  validates_presence_of :user_training
   validates_associated :exercise
-  validates_presence_of :exercise_id
+  validates_presence_of :exercise
   validates_associated :training_step_type
   validates_associated :arm_aux_type
   validates_associated :kick_aux_type
@@ -61,7 +61,7 @@ class UserTrainingRow < ActiveRecord::Base
   validates_length_of       :pause, within: 1..4, allow_nil: false
   validates_numericality_of :pause
 
-  attr_accessible :part_order, 
+  attr_accessible :part_order,
                   :group_id, :group_times, :group_start_and_rest, :group_pause,
                   :times, :distance, :start_and_rest, :pause,
                   :user_training_id, :exercise_id, :training_step_type_id,

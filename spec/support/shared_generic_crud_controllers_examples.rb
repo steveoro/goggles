@@ -18,12 +18,12 @@ require 'spec_helper'
 # - if the model responds to +user+, any fixtures created by factories will be
 #   forced to the +current_user+ ownership, so that any privacy rules may be skipped
 #   here and be tested externally.
-# 
+#
 #
 # === Params:
 # - table_name      => the table name of the model associated with the controller to be tested
 # - decorator_name  => the string name of the Decorator class
-# 
+#
 shared_examples_for "(generic CRUD controller actions)" do |table_name, decorator_name|
 
   let( :model_name )              { table_name.classify }
@@ -75,9 +75,9 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       it "assigns an instance to be shown" do
         get :show, id: @fixture.id
         expect( response.status ).to eq(200)
-        expect( assigns( model_name_sym ) ).not_to be_nil 
+        expect( assigns( model_name_sym ) ).not_to be_nil
         expect( assigns( model_name_sym ) ).to be_an_instance_of( decorator_name.constantize )
-        expect( assigns( :title ) ).not_to be_nil 
+        expect( assigns( :title ) ).not_to be_nil
         expect( assigns( :title ) ).to be_an_instance_of(String)
         detail_model_name = "#{table_name.classify.underscore}_rows"
         if assigns( model_name_sym ).respond_to?( detail_model_name )
@@ -88,7 +88,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       it "renders the show template" do
         get :show, id: @fixture.id
-        expect( controller.params[:id].to_i == @fixture.id ).to be true 
+        expect( controller.params[:id].to_i == @fixture.id ).to be true
         expect(response.status).to eq(200)
         expect(response).to render_template(:show)
       end
@@ -142,15 +142,15 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       it "assigns an instance to be edited" do
         get :edit, id: @fixture.id
         expect( response.status ).to eq(200)
-        expect( assigns( model_name_sym ) ).not_to be_nil 
-        expect( assigns( model_name_sym ) ).to be_an_instance_of( decorator_name.constantize )
-        expect( assigns( :title ) ).not_to be_nil 
+        expect( assigns( model_name_sym ) ).not_to be_nil
+        expect( assigns( model_name_sym ) ).to be_an_instance_of( model_name.constantize )
+        expect( assigns( :title ) ).not_to be_nil
         expect( assigns( :title ) ).to be_an_instance_of(String)
       end
 
       it "renders the edit template" do
         get :edit, id: @fixture.id
-        expect( controller.params[:id].to_i == @fixture.id ).to be true 
+        expect( controller.params[:id].to_i == @fixture.id ).to be true
         expect(response.status).to eq(200)
         expect(response).to render_template(:edit)
       end
@@ -162,10 +162,10 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
   describe '[POST #create]' do
     context "unlogged user" do
-      it "doesn't create a new row" do 
+      it "doesn't create a new row" do
         expect {
           post :create, model_name_sym => entity_attrs
-        }.not_to change( model_name.constantize, :count ) 
+        }.not_to change( model_name.constantize, :count )
       end
     end
     # -------------------------------------------------------------------------
@@ -258,9 +258,9 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
         end
         it "renders the edit method" do
           expect(response).to render_template( :edit )
-        end 
+        end
       end
-    end 
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -270,7 +270,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
     context "unlogged user" do
       it "doesn't delete the row" do
-        fixture = create( model_name_sym ) 
+        fixture = create( model_name_sym )
         expect {
           delete :destroy, id: fixture.id
         }.not_to change( model_name.constantize, :count )

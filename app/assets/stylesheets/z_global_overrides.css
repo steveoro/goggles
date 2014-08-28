@@ -41,9 +41,17 @@ select, input[type="file"] {
 	line-height: 1.2em;
 }
 .input-micro {
-  width:25px;
+    width:25px;
 }
 
+.help-block, .help-inline {
+    color: #990000;
+    font-style: italic;
+}
+
+.ui-widget .ui-widget {
+    font-size: 0.75em;
+}
 
 /* ----- jQuery Spinner styles overrides ----- */
 .ui-spinner {

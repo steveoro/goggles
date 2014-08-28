@@ -1,5 +1,14 @@
 # encoding: utf-8
 
+# === Main Seed file for additional data ===
+#
+# - To be run only after the base SQL-seed load task has been executed
+#   ("rake db:rebuild_from_scratch" or "rake sql_exec [db/seed/*.sql]")
+#
+# - Load/execute this file with:
+#   > rake db:seed
+#
+
 # *** Default User / Swimmer confirmations & Friendships: ***
 
 steve = User.where( description: 'Stefano Alloro' ).first
