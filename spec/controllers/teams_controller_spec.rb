@@ -50,6 +50,7 @@ describe TeamsController, :type => :controller do
       it "assigns the required variables" do
         get :radio, id: @fixture.id
         expect( assigns(:team) ).to be_an_instance_of( Team )
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
       it "renders the template" do
         get :radio, id: @fixture.id
@@ -131,6 +132,7 @@ describe TeamsController, :type => :controller do
         expect( response.status ).to eq( 200 )
         expect( assigns(:swimmers) ).to be_an_instance_of( Array )
         expect( assigns(:swimmers) ).to all( be_an_instance_of( Swimmer ) )
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
     end
   end
@@ -147,6 +149,15 @@ describe TeamsController, :type => :controller do
   describe '[GET #palmares/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+
+    context "with an HTML request for a valid id and a logged-in user," do
+      before :each do
+        @fixture = Team.find(1)
+        request.env["HTTP_REFERER"] = teams_path()
+        login_user()
+        get :palmares, id: @fixture.id
+      end
+    end
   end
   # ===========================================================================
 
@@ -161,6 +172,9 @@ describe TeamsController, :type => :controller do
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup, id: @fixture.id
+      end
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
       it "doesn't assign a goggle_cup instance" do
         expect( response.status ).to eq( 200 )
@@ -179,6 +193,9 @@ describe TeamsController, :type => :controller do
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup, id: @fixture.id
+      end
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
       it "assigns a goggle_cup instance" do
         expect( response.status ).to eq( 200 )
@@ -210,6 +227,9 @@ describe TeamsController, :type => :controller do
         expect( assigns( :closed_goggle_cup ) ).to be_an_instance_of( Array )
         expect( assigns( :closed_goggle_cup ).size ).to be 0
       end
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
+      end
     end
 
     context "with an HTML request for a valid id and a logged-in user for for a team that has some closed Goggle cup," do
@@ -218,6 +238,9 @@ describe TeamsController, :type => :controller do
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup_all_of_fame, id: @fixture.id
+      end
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
       it "assigns a closed goggle cup collection" do
         expect( response.status ).to eq( 200 )
