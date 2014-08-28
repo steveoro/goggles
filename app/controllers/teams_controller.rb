@@ -114,7 +114,7 @@ class TeamsController < ApplicationController
           .where(['goggle_cup_definitions.goggle_cup_id = ?', @goggle_cup.id])
           .has_points(:goggle_cup_points)
           .sort_by_goggle_cup('DESC')
-          .limit(@goggle_cup.max_points)
+          .limit(@goggle_cup.max_performance)
           .collect{ |meeting_individual_result| meeting_individual_result.goggle_cup_points }
         @goggle_cup_rank << {
           swimmer: swimmer, 

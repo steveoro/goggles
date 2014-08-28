@@ -2,6 +2,8 @@ require 'spec_helper'
 
 
 describe SwimmerDecorator do
+  include Rails.application.routes.url_helpers
+
   before :each do
     @user = create( :user )
     @user2 = create( :user )
@@ -48,7 +50,7 @@ describe SwimmerDecorator do
       ]
     )
     it_behaves_like( "(the existance of a method returning strings)", [
-        :get_linked_team_names
+        :get_linked_team_names,
       ]
     )    
   end
@@ -354,6 +356,23 @@ describe SwimmerDecorator do
       it "returns a meeting individual result" do
         expect( fix_swimmer.get_personal_best(fix_events_by_pool_type) ).to be_nil
       end
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  describe "#get_linked_swimmer_name" do
+    it "responds to #get_linked_swimmer_name method" do
+      expect( subject ).to respond_to( :get_linked_swimmer_name )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_swimmer_name ).to include( 'href' )
+    end
+    it "returns an HTML link to the swimmer radiography path" do
+      expect( subject.get_linked_swimmer_name ).to include( swimmer_radio_path(id: subject.id) )
+    end
+    it "returns a string containing the swimmer full name" do
+      expect( subject.get_linked_swimmer_name ).to include( subject.get_full_name )
     end
   end
   #-- --------------------------------------------------------------------------

@@ -214,36 +214,44 @@ en:
         start_and_rest: "Start+Rest"
         pause: "Pause"
 
-  errors:
-    unable_to_retrieve_row_data: "Unable to retrieve the requested record."
-    messages:
-      record_invalid: "The record has failed the validation process."
-    models:
-      category_type:
-        attributes:
-          code:
-            already_exists: "already exists"
-      city:
-        attributes:
-          name:
-            already_exists: "already exists"
-      data_import_city:
-        attributes:
-          name:
-            already_exists: "already exists"
-      training:
-        attributes:
-          title:
-            blank: "can't be blank"
-          description:
-            blank: "can't be blank"
-          min_swimmer_level:
-            blank: "can't be blank"
-          max_swimmer_level:
-            blank: "can't be blank"
-      user_training_story:
-        attributes:
-          swimming_pool:
-            invalid: "fails validations or has invalid attributes"
-          swam_date:
-            blank: "can't be blank"
+    errors:
+      unable_to_retrieve_row_data: "Unable to retrieve the requested record."
+      messages:
+        record_invalid: "The record has failed the validation process."
+      models:
+        category_type:
+          attributes:
+            code:
+              already_exists: "already exists"
+        city:
+          attributes:
+            name:
+              already_exists: "already exists"
+        data_import_city:
+          attributes:
+            name:
+              already_exists: "already exists"
+        training:
+          attributes:
+            title:
+              blank: "can't be blank"
+            description:
+              blank: "can't be blank"
+            min_swimmer_level:
+              blank: "can't be blank"
+            max_swimmer_level:
+              blank: "can't be blank"
+        training_row:
+          attributes:
+            exercise_id:
+              blank: "can't be blank"
+        user_training_story:
+          attributes:
+            swimming_pool:
+              invalid: "fails validations or has invalid attributes"
+            swam_date:
+              blank: "can't be blank"
+        user_training_row:
+          attributes:
+            exercise_id:
+              blank: "can't be blank"

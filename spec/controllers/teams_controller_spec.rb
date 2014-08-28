@@ -177,15 +177,15 @@ describe TeamsController, :type => :controller do
       end
       it "assigns a goggle_cup instance" do
         expect( response.status ).to eq( 200 )
-        expect( assigns(:goggle_cup) ).to be_an_instance_of( GoggleCup )
+        expect( assigns( :goggle_cup ) ).to be_an_instance_of( GoggleCup )
       end
       it "assigns a goggle_cup_rank instance" do
         expect( response.status ).to eq( 200 )
-        expect( assigns(:goggle_cup_rank) ).to be_an_instance_of( Array )
+        expect( assigns( :goggle_cup_rank ) ).to be_an_instance_of( Array )
       end
       it "assigns an hash with points to every elements of goggle_cup_rank instance " do
         expect( response.status ).to eq( 200 )
-        assigns(:goggle_cup_rank).each do |element|
+        assigns( :goggle_cup_rank ).each do |element|
           expect( element ).to be_a_kind_of( Hash )
           expect( element.has_key?( :total ) ).to be true
           expect( element.has_key?( :average ) ).to be true
@@ -193,6 +193,12 @@ describe TeamsController, :type => :controller do
           expect( element.has_key?( :max ) ).to be true
           expect( element.has_key?( :count ) ).to be true
         end
+      end
+      it "assigns an array where count key <= goggle_cup.max_performance" do
+        expect( response.status ).to eq( 200 )
+        assigns( :goggle_cup_rank ).each do |item|
+          expect( item[:count] ).to be <= assigns( :goggle_cup ).max_performance
+        end              
       end
       it "assigns a sorted by total key array" do
         expect( response.status ).to eq( 200 )

@@ -1,6 +1,44 @@
 = render( partial: 'tabs_and_radio_title' )
 
+.row-fluid#goggle_cup_grid
+  .offset1.span10 
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-rightalign
+            %b= I18n.t('goggle_cup.rank')
+          %td
+            %b= I18n.t('activerecord.models.swimmer')
+          %td.goggles-rightalign
+            %b= I18n.t('goggle_cup.total')
+          %td.goggles-centeralign
+            %b= I18n.t('goggle_cup.count')
+          %td.goggles-rightalign
+            %b= I18n.t('goggle_cup.average')
+          %td.goggles-rightalign
+            %b= I18n.t('goggle_cup.max')
+          %td.goggles-rightalign
+            %b= I18n.t('goggle_cup.min')
+        - @goggle_cup_rank.each_with_index do |rank_element,index|
+          %tr
+            %td.goggles-rightalign
+              = show_tag( index==0, "medal_gold_3.png", '' )
+              = show_tag( index==1, "medal_silver_3.png", '' )
+              = show_tag( index==2, "medal_bronze_3.png", '' )
+              = index + 1
+            %td
+              = rank_element[:swimmer].decorate.get_linked_swimmer_name
+            %td.goggles-rightalign
+              = sprintf( "%02.2f", rank_element[:total] )             
+            %td.goggles-centeralign
+              = rank_element[:count]             
+            %td.goggles-rightalign
+              = sprintf( "%02.2f", rank_element[:average] )             
+            %td.goggles-rightalign
+              = sprintf( "%02.2f", rank_element[:max] )             
+            %td.goggles-rightalign
+              = sprintf( "%02.2f", rank_element[:min] )             
+
 .row-fluid
-  = I18n.t('coming_soon')
-.row-fluid
-  %p
+  .span12
+    
