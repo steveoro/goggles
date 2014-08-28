@@ -139,15 +139,53 @@ describe SwimmersController, :type => :controller do
     it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :full_history_1 )
 
     context "as a logged-in user" do
+      
       before(:each) do
         login_user()
-        @swimmer = create(:swimmer)
+        #@swimmer = create(:swimmer)
+        @swimmer = Swimmer.find(23)
         get :full_history_1, id: @swimmer.id
       end
 
+      # FIXME Remove this
       it "assigns a list of MeetingIndividualResult(s)" do
         expect( assigns(:all_mirs).respond_to?( :each ) ).to be true
         expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
+      end
+   
+      
+      it "assigns an hash with data collected" do
+        expect( assigns( :full_history_by_date ) ).to be_a_kind_of( Hash )
+      end
+      it "assigns an hash with the same number of element of pool types suitable for meetings" do
+        expect( assigns( :full_history_by_date ).size ).to be PoolType.only_for_meetings.count
+      end
+      
+      xit "assigns an hash that responds to pool type codes"
+
+      it "assigns an hash with array as elements" do
+        result = assigns( :full_history_by_date )
+        PoolType.only_for_meetings.each do |pool_type|
+          expect( result[pool_type.code] ).to be_a_kind_of( Array )
+        end
+      end
+      it "assigns an hash with array of two elements as element" do
+        result = assigns( :full_history_by_date )
+        PoolType.only_for_meetings.each do |pool_type|
+          expect( result[pool_type.code].size ).to be 2
+        end
+      end
+      it "assigns an hash with array of two elements as element and the first array element is a list" do
+        result = assigns( :full_history_by_date )
+        PoolType.only_for_meetings.each do |pool_type|
+          expect( result[pool_type.code][0] ).to be_a_kind_of( Array )
+        end
+      end
+      it "assigns an hash with array of two elements as element and the second array element is a collection of meeting individual results" do
+        result = assigns( :full_history_by_date )
+        PoolType.only_for_meetings.each do |pool_type|
+          expect( result[pool_type.code][1] ).to all(  be_an_instance_of( MeetingIndividualResult ) )
+        end
       end
     end
   end

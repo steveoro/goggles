@@ -81,6 +81,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_goggle_cup, ->(dir) { order("goggle_cup_points #{dir.to_s}") }
 
   scope :for_event_by_pool_type, ->(event_by_pool_type) { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
+  scope :for_pool_type,      ->(pool_type) { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
 
   # ----------------------------------------------------------------------------
   # Base methods:

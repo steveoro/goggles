@@ -157,6 +157,10 @@ describe TeamsController, :type => :controller do
         login_user()
         get :palmares, id: @fixture.id
       end
+
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
+      end
     end
   end
   # ===========================================================================
