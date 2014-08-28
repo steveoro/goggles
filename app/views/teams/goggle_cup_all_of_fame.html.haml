@@ -7,10 +7,13 @@
         %td
           %b= I18n.t('activerecord.models.goggle_cup')
         %td{'colspan'=>'2'}
+          = image_tag('medal_gold_3.png')
           %b= I18n.t('goggle_cup.winner')          
         %td{'colspan'=>'2'}
+          = image_tag('medal_silver_3.png')
           %b= I18n.t('goggle_cup.second_placed')
         %td{'colspan'=>'2'}
+          = image_tag('medal_bronze_3.png')
           %b= I18n.t('goggle_cup.third_placed')
       - @closed_goggle_cup.each do |goggle_cup_rank|
         %tr

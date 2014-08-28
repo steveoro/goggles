@@ -41,6 +41,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def radio
+    @tab_title = I18n.t('radiography.radio_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -51,6 +52,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def current_swimmers
+    @tab_title = I18n.t('radiography.team_current_swimmers_tab')
     last_season = @team.seasons.last
     current_badges = @team.badges.where( season_id: last_season.id ) if last_season && @team.badges
     @swimmers = if current_badges.nil?
@@ -68,6 +70,7 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def best_timings
+    @tab_title = I18n.t('radiography.best_timings_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -78,7 +81,8 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
-  def palamares
+  def palmares
+    @tab_title = I18n.t('radiography.palmares_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -91,6 +95,8 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def goggle_cup
+    @tab_title = @team.get_current_goggle_cup_name_at
+
     # Gets current goggle cup, if any
     @goggle_cup = @team.get_current_goggle_cup_at
 
@@ -108,6 +114,8 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def goggle_cup_all_of_fame
+    @tab_title = I18n.t('radiography.goggle_cup_all_of_fame_tab')
+    
     # Prepares an hash to store closed goggle cup rank
     @closed_goggle_cup = [] 
     
