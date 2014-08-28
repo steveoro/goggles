@@ -4,7 +4,7 @@
 # Assorted helpers for clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.335
+# @version  4.00.451
 #
 module UserTrainingsHelper
 
@@ -21,12 +21,12 @@ module UserTrainingsHelper
   # specified UserTraining instance, but only if the current user can access its contents.
   # Otherwise it simply returns the label.
   #
-  # Assumes user_training is a valid UserTraining instance.
+  # Does not return anything if the user_training is nil.
   #
   def link_to_user_training_show( user_training )
     link_to( user_training_path(id: user_training.id) ) do
       image_tag('page_go.png') << " #{I18n.t(:show)}"
-    end if check_user_training_visibility_for( user_training )
+    end if user_training && check_user_training_visibility_for( user_training )
   end
 
 

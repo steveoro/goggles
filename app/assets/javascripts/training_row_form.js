@@ -31,7 +31,8 @@ var $initialDragParent = false;
 function setupWidgets() {
   $('.jspinner').spinner();                          // Init spinners (this is simple)
   initGroupHeadersVisibility();
-  initAutocomplete();
+// [Steve, 20140828] W.I.P. Temp. disable:
+//  initAutocomplete();
   initDroppables( $('.droppable') );
   initSortables( $('.sortable') );
 };
@@ -393,10 +394,11 @@ function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
 $(document).ready( function(obj) {
   setupWidgets();
 
+// [Steve, 20140828] W.I.P. Temp. disable:
   // Set value for each exercise_desc, according to exercise_id
-  $('input.numeric.exercise_id[type=hidden]').each( function(index, elem) {
-    getSingleExerciseDescByAjax( elem.value, $('input.exercise-autocomplete').get(index) );
-  });
+//  $('input.numeric.exercise_id[type=hidden]').each( function(index, elem) {
+//    getSingleExerciseDescByAjax( elem.value, $('input.exercise-autocomplete').get(index) );
+//  });
 
   $('#training_rows').on( "cocoon:before-remove", function(e, training_row) {
       $(this).data('remove-timeout', 1000);

@@ -70,6 +70,7 @@ class TrainingsController < ApplicationController
         flash[:info] = I18n.t('trainings.training_created')
         redirect_to( training_path(@training) )
       else
+        flash[:error] = I18n.t('activerecord.errors.messages.record_invalid')
         render :action => :edit
       end
     else

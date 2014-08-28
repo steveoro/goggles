@@ -4,7 +4,7 @@
 # Assorted helpers for clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.335
+# @version  4.00.451
 #
 module TrainingsHelper
 
@@ -21,12 +21,12 @@ module TrainingsHelper
   # specified Training instance, but only if the current user can access its contents.
   # Otherwise it simply returns the label.
   #
-  # Assumes training is a valid Training instance.
+  # Does not return anything if the training is new (with id == nil).
   #
   def link_to_training_show( training )
     link_to( training_path(id: training.id) ) do
       image_tag('page_go.png') << " #{I18n.t(:show)}"
-    end if check_training_visibility_for( training )
+    end if training && check_training_visibility_for( training )
   end
 
 

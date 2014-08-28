@@ -4,7 +4,7 @@
 # Assorted helpers for clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.335
+# @version  4.00.451
 #
 module UserTrainingStoriesHelper
 
@@ -21,11 +21,11 @@ module UserTrainingStoriesHelper
   # specified UserTrainingStory instance, but only if the current user can access its contents.
   # Otherwise it simply returns the label.
   #
-  # Assumes user_training_story is a valid UserTrainingStory instance.
+  # Does not return anything if the training is nil.
   #
   def link_to_user_training_from_story( user_training_story )
     label =  UserTrainingStoryDecorator.decorate(user_training_story).get_user_training_name
-    if user_training_story.user_training && user_training_story.user_training.visible_to_user(current_user)
+    if user_training_story && user_training_story.user_training && user_training_story.user_training.visible_to_user(current_user)
       link_to(
           label,
           user_training_path( id: user_training_story.user_training_id )

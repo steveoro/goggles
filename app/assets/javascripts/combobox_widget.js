@@ -1,7 +1,7 @@
 /*!
   === Custom ComboBox Widget implementation ===
 
-  - app. ver.: 4.00.399
+  - app. ver.: 4.00.450
 
 
   ==== Usage:
@@ -51,105 +51,100 @@
 
  */
 (function( $, undefined ) {
+	$.widget( "ui.combobox", {
+		version: "1.00",
+		widgetEventPrefix: "combobox",
+		uiCombo: null,
+		uiInput: null,
+		_wasOpen: false,
 
-   $.widget( "ui.combobox", {
-      version: "1.00",
+		_create: function() {
+	        var self = this,
+	            select = this.element.hide(),
+	            input, wrapper;
 
-      widgetEventPrefix: "combobox",
+	        input = this.uiInput = $( "<input />" )
+				.insertAfter(select)
+				.addClass( "ui-widget ui-widget-content ui-corner-left ui-combobox-input" )
+				.val( select.children(':selected').text() )
+				.attr( 'tabindex', select.attr( 'tabindex') )
+				.width( $(this.element).width() );
 
-      uiCombo: null,
-      uiInput: null,
-      _wasOpen: false,
+	        wrapper = this.uiCombo = input
+				.wrap( '<span>' )
+				.parent()
+				.addClass( 'ui-combobox' )
+				.insertAfter( select );
 
-      _create: function() {
+	        input.autocomplete({
+				delay: 0,
+				minLength: 0,
+				appendTo: wrapper,
+				source: $.proxy( this, "_linkSelectList" ),
+				select: function(event, ui) {
+					//var selectedObj = ui.item;
+					$(this).attr('title', ui.item.value);
+				}
+			});
 
-         var self = this,
-             select = this.element.hide(),
-             input, wrapper;
-
-         input = this.uiInput = $( "<input />" )
-                      .insertAfter(select)
-                      .addClass("ui-widget ui-widget-content ui-corner-left ui-combobox-input")
-                      .val( select.children(':selected').text() )
-                      .attr('tabindex', select.attr( 'tabindex'))
-                      .width($(this.element).width());
-
-         wrapper = this.uiCombo =
-            input.wrap( '<span>' )
-               .parent()
-               .addClass( 'ui-combobox' )
-               .insertAfter( select );
-
-         input
-          .autocomplete({
-
-             delay: 0,
-             minLength: 0,
-
-             appendTo: wrapper,
-             source: $.proxy( this, "_linkSelectList" ),
-             select: function(event, ui) {
-               //var selectedObj = ui.item;
-               $(this).attr('title', ui.item.value);
-           }
-          });
-
-         $( "<button>" )
-            .attr( "tabIndex", -1 )
-            .attr( "type", "button" )
-            .insertAfter( input )
-            .button({
-               icons: {
-                  primary: "ui-icon-triangle-1-s"
-               },
-               text: false
-            })
-            .removeClass( "ui-corner-all" )
-            .addClass( "ui-corner-right ui-button-icon ui-combobox-button" );
-
-         // Our items have HTML tags.  The default rendering uses text()
-         // to set the content of the <a> tag.  We need html().
-         input.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-           return $( "<li>" )
-             .attr('class', item.option.className)
-             .append( $( "<a>" ).html( item.label ) )
-             .appendTo( ul );
-         };
-         this._on( this._events );
-      },
+			$( "<button>" )
+				.attr( "tabIndex", -1 )
+				.attr( "type", "button" )
+				.insertAfter( input )
+				.button({
+					icons: {
+						primary: "ui-icon-triangle-1-s"
+					},
+					text: false
+				})
+				.removeClass( "ui-corner-all" )
+				.addClass( "ui-corner-right ui-button-icon ui-combobox-button" );
+	
+			// Our items have HTML tags.  The default rendering uses text()
+			// to set the content of the <a> tag.  We need html().
+			input.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+				return $( "<li>" )
+				.attr('class', item.option.className)
+				.append( $( "<a>" ).html( item.label ) )
+				.appendTo( ul );
+			};
+			this._on( this._events );
+		},
 
 
-      _linkSelectList: function( request, response ) {
-         var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), 'i' );
-         //response( this.element.children('option').map(function() {
-         response( this.element.children('option:not([style*="display: none"])').map(function() {
-                  var text = $( this ).text();
+		_linkSelectList: function( request, response ) {
+			var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), 'i' );
+			// response( this.element.children('option').map(function() {
+			response( this.element.children('option:not([style*="display: none"])').map(function() {
+				var text = $( this ).text();
 
-                  if ( this.value && ( !request.term || matcher.test(text) ) ) {
-                     var optionData = {
-                         label: text,
-                         value: text,
-                         option: this
-                     };
-                     if (request.term) {
-                        optionData.label = text.replace(
-                           new RegExp(
-                              "(?![^&;]+;)(?!<[^<>]*)(" +
-                              $.ui.autocomplete.escapeRegex(request.term) +
-                              ")(?![^<>]*>)(?![^&;]+;)", "gi"),
-                              "<strong>$1</strong>");
-                    }
-                    return optionData;
-                  }
-              })
-           );
-      },
+				if ( this.value && ( !request.term || matcher.test(text) ) ) {
+					var optionData = {
+						label: text,
+					    value: text,
+					    option: this
+					};
+					if (request.term) {
+						optionData.label = text.replace(
+						new RegExp(
+							"(?![^&;]+;)(?!<[^<>]*)(" +
+							$.ui.autocomplete.escapeRegex(request.term) +
+							")(?![^<>]*>)(?![^&;]+;)", "gi"),
+							"<strong>$1</strong>"
+						);
+					}
+					return optionData;
+				}
+			})
+		);
+	},
+	// --- [end of WIDGET definition] ---
 
-      _events: {
 
-         "autocompletechange input" : function(event, ui) {
-            var $el = $(event.currentTarget);
-            var changedOption = ui.item ? ui.item.option : null;
+	_events: {
+		"autocompletechange input" : function(event, ui) {
+			var $el = $(event.currentTarget);
+			var changedOption = ui.item ? ui.item.option : null;
             if ( !ui.item ) {
                var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $el.val() ) + "$", "i" ),
                valid = false,
@@ -206,7 +201,6 @@
             this._trigger( "change", event, {
               item: changedOption
             });
-
          },
 
          "autocompleteselect input": function( event, ui ) {
@@ -233,9 +227,11 @@
             // pass empty string as value to search for, displaying all results
             this.uiInput.autocomplete("search", "");
          }
-      },
+	},
+	// --- [end of EVENTS definition] ---
 
-      value: function ( newVal ) {
+
+	value: function ( newVal ) {
          var select = this.element,
              valid = false,
              selected;

@@ -5,7 +5,7 @@
 # policy.
 #
 # @author   Steve A.
-# @version  4.00.335
+# @version  4.00.450
 #
 class TrainingAccessibility
 
@@ -25,6 +25,7 @@ class TrainingAccessibility
   def is_owned()
     !!(
       @training && 
+      @training.id &&
       ( 
         @is_admin_logged_in || ( @current_user && (@training.user_id == @current_user.id) ) 
       )
@@ -35,7 +36,7 @@ class TrainingAccessibility
   # Returns +true+ when successful.
   #
   def is_visible()
-    !!( @training && ( @is_admin_logged_in || @current_user ) )
+    !!( @training && @training.id && ( @is_admin_logged_in || @current_user ) )
   end
   #-- --------------------------------------------------------------------------
   #++

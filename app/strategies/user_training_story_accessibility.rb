@@ -5,7 +5,7 @@
 # policy.
 #
 # @author   Steve A.
-# @version  4.00.383
+# @version  4.00.450
 #
 class UserTrainingStoryAccessibility
 
@@ -24,7 +24,8 @@ class UserTrainingStoryAccessibility
   #
   def is_owned()
     !!(
-      @user_training_story && 
+      @user_training_story &&
+      @user_training_story.id && 
       ( 
         @is_admin_logged_in ||
         ( @current_user && (@user_training_story.user_id == @current_user.id) ) 
@@ -38,6 +39,7 @@ class UserTrainingStoryAccessibility
   def is_visible()
     !!(
       @user_training_story && 
+      @user_training_story.id && 
       ( 
         @is_admin_logged_in ||
         ( @current_user && @user_training_story.visible_to_user(@current_user) ) 

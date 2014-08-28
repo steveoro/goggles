@@ -121,14 +121,21 @@ class UserTrainingsController < ApplicationController
   # Create action (POST only).
   #
   def create
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "> #{params.inspect}\r\n"
     if request.post?
       @user_training = UserTraining.new( params[:user_training] )
       @user_training.user_id = current_user.id      # Set the owner for all the records
+# DEBUG
+      logger.debug "> RESULTING @user_training: #{@user_training.inspect}"
+      logger.debug "> VALID: #{@user_training.valid?}"
 
       if @user_training.save
         flash[:info] = I18n.t('trainings.training_created')
         redirect_to( user_training_path(@user_training) )
       else
+        flash[:error] = I18n.t('activerecord.errors.messages.record_invalid')
         render :action => :edit
       end
     else

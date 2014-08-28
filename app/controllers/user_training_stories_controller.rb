@@ -67,6 +67,7 @@ class UserTrainingStoriesController < ApplicationController
         flash[:info] = I18n.t('user_training_stories.story_created')
         redirect_to( user_training_story_path(@user_training_story) )
       else
+        flash[:error] = I18n.t('activerecord.errors.messages.record_invalid')
         render :action => :edit
       end
     else
