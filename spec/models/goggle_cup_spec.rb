@@ -2,6 +2,9 @@ require 'spec_helper'
 
 
 describe GoggleCup, :type => :model do
+  # Force Ober cup 2014 for CSI Ober Ferrari
+  let( :fix_goggle_cup )   { GoggleCup.find(8) }
+          
   describe "[a non-valid instance]" do
     it_behaves_like( "(missing required values)", [ 
       :description, 
@@ -60,6 +63,10 @@ describe GoggleCup, :type => :model do
         :is_closed_at?,
         :is_current_at?,
         :has_results?
+      ])
+      
+      it_behaves_like( "(the existance of a method returning an array)", [
+        :calculate_goggle_cup_rank
       ])
     end
     # ---------------------------------------------------------------------------
@@ -209,8 +216,56 @@ describe GoggleCup, :type => :model do
         expect( subject.has_results? ).to be false
       end
       it "returns true for Ober Cup 2014 of CSI Nuoto Ober Ferrari" do
-        fix_goggle_cup = GoggleCup.find(8)
         expect( fix_goggle_cup.has_results? ).to be true
+      end
+    end
+    # ---------------------------------------------------------------------------
+    #++
+
+    describe "#calculate_goggle_cup_rank" do
+      context "for a non valid goggle cup" do
+        it "assigns an empty array" do
+          result = subject.calculate_goggle_cup_rank
+          expect( result ).to be_a_kind_of( Array )
+          expect( result.size == 0 ).to be true
+        end
+      end
+      
+      context "for a valid goggle cup" do
+        it "assigns an empty array" do
+          result = fix_goggle_cup.calculate_goggle_cup_rank
+          expect( result ).to be_a_kind_of( Array )
+          expect( result.size ).to be > 0
+        end
+        it "assigns an array of hash in which swimmer key contains an instance of Swimmer" do
+          fix_goggle_cup.calculate_goggle_cup_rank.each do |element|
+            expect( element ).to be_a_kind_of( Hash )
+            expect( element[:swimmer] ).to be_an_instance_of( Swimmer ) 
+          end
+        end
+        it "assigns an array of hash with points to every elements of goggle_cup_rank instance" do
+          fix_goggle_cup.calculate_goggle_cup_rank.each do |element|
+            expect( element ).to be_a_kind_of( Hash )
+            expect( element.has_key?( :total ) ).to be true
+            expect( element.has_key?( :average ) ).to be true
+            expect( element.has_key?( :min ) ).to be true
+            expect( element.has_key?( :max ) ).to be true
+            expect( element.has_key?( :count ) ).to be true
+          end
+        end
+        it "assigns an array where count key <= goggle_cup.max_performance" do
+          fix_goggle_cup.calculate_goggle_cup_rank.each do |element|
+            expect( element[:count] ).to be <= fix_goggle_cup.max_performance
+          end              
+        end
+        it "assigns a sorted by total key array" do
+          rank_array = fix_goggle_cup.calculate_goggle_cup_rank
+          current_item = rank_array.first[:total]
+          rank_array.each do |item|
+            expect( item[:total] ).to be <= current_item
+            current_item = item[:total] 
+          end      
+        end
       end
     end
     # ---------------------------------------------------------------------------

@@ -162,14 +162,14 @@ describe TeamsController, :type => :controller do
         login_user()
         get :goggle_cup, id: @fixture.id
       end
-      it "deosn't assign a goggle_cup instance" do
+      it "doesn't assign a goggle_cup instance" do
         expect( response.status ).to eq( 200 )
         expect( assigns(:goggle_cup) ).to be_an_instance_of( GoggleCup ).or be_nil
       end
       it "assigns an empty goggle_cup_rank instance" do
         expect( response.status ).to eq( 200 )
         expect( assigns( :goggle_cup_rank ) ).to be_an_instance_of( Array )
-        expect( assigns( :goggle_cup_rank ).size == 0 ).to be true
+        expect( assigns( :goggle_cup_rank ).size ).to be 0
       end
     end
 
@@ -188,39 +188,6 @@ describe TeamsController, :type => :controller do
         expect( response.status ).to eq( 200 )
         expect( assigns( :goggle_cup_rank ) ).to be_an_instance_of( Array )
         expect( assigns( :goggle_cup_rank ).size ).to be >= 0
-      end
-      it "assigns an hash in which swimmer key contains an instance of Swimmer" do
-        expect( response.status ).to eq( 200 )
-        assigns( :goggle_cup_rank ).each do |element|
-          expect( element ).to be_a_kind_of( Hash )
-          expect( element[:swimmer] ).to be_an_instance_of( Swimmer ) 
-        end
-      end
-      it "assigns an hash with points to every elements of goggle_cup_rank instance" do
-        expect( response.status ).to eq( 200 )
-        assigns( :goggle_cup_rank ).each do |element|
-          expect( element ).to be_a_kind_of( Hash )
-          expect( element.has_key?( :total ) ).to be true
-          expect( element.has_key?( :average ) ).to be true
-          expect( element.has_key?( :min ) ).to be true
-          expect( element.has_key?( :max ) ).to be true
-          expect( element.has_key?( :count ) ).to be true
-        end
-      end
-      it "assigns an array where count key <= goggle_cup.max_performance" do
-        expect( response.status ).to eq( 200 )
-        assigns( :goggle_cup_rank ).each do |item|
-          expect( item[:count] ).to be <= assigns( :goggle_cup ).max_performance
-        end              
-      end
-      it "assigns a sorted by total key array" do
-        expect( response.status ).to eq( 200 )
-        rank_array = assigns(:goggle_cup_rank)
-        current_item = rank_array.first[:total]
-        rank_array.each do |item|
-          expect( item[:total] ).to be <= current_item
-          current_item = item[:total] 
-        end      
       end
     end
   end
@@ -310,9 +277,6 @@ describe TeamsController, :type => :controller do
           current_item = item[:year] 
         end      
       end
-      # Leega
-      # TODO Review seeds because Ober cups before 2013 are missing
-      # Maybe should be necessary to create a method to ensure goggle cup are valid
       it "assigns an array where count is the number of closed goggle cups for the team" do
         expect( response.status ).to eq( 200 )
         closed_goggle_cup = 0
