@@ -21,6 +21,8 @@ class GoggleCup < ActiveRecord::Base
   has_many :goggle_cup_standards
   has_many :goggle_cup_definitions
   has_many :seasons, through: :goggle_cup_definitions
+  has_many :meetings, through: :seasons
+  has_many :meeting_individual_results, through: :meetings
 
   validates_presence_of     :description
   validates_length_of       :description, within: 1..60, allow_nil: false
@@ -38,7 +40,7 @@ class GoggleCup < ActiveRecord::Base
 
   scope :sort_goggle_cup_by_user,  ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
   scope :sort_goggle_cup_by_team,  ->(dir) { order("teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
-
+  
 
   # ----------------------------------------------------------------------------
   # Base methods:
@@ -96,6 +98,12 @@ class GoggleCup < ActiveRecord::Base
   #
   def is_current_at?( evaluation_date = Date.today ) 
     get_begin_date <= evaluation_date && get_end_date >= evaluation_date  
+  end
+
+  # Check if a Goggle cup has at least one valid result
+  #
+  def has_results? 
+    meeting_individual_results.has_points( :goggle_cup_points ).count > 0  
   end
   # ----------------------------------------------------------------------------
 

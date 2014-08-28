@@ -93,7 +93,12 @@ class TeamsController < ApplicationController
   def goggle_cup
     # Gets current goggle cup, if any
     @goggle_cup = @team.get_current_goggle_cup_at
-    if @goggle_cup
+
+    # Prepares an hash to store closed goggle cup rank
+    @goggle_cup_rank = [] 
+
+    # Check if goggle cup has at least a valid result
+    if @goggle_cup && @goggle_cup.has_results? 
       # Prepares an hash to store goggle cup rank
       @goggle_cup_rank = calculate_goggle_cup_rank( @goggle_cup )
     end
@@ -112,9 +117,9 @@ class TeamsController < ApplicationController
     # Prepares an hash to store closed goggle cup rank
     @closed_goggle_cup = [] 
     
-    # Gets closed goggle cup, if any
+    # Gets closed, valid goggle cup, if any
     @team.goggle_cups.each do |goggle_cup|
-      if goggle_cup.is_closed_at?
+      if goggle_cup.is_closed_at? && goggle_cup.has_results?
         # Collects first three positions of that closed goggle cup
         goggle_cup_rank = calculate_goggle_cup_rank( goggle_cup )
 
@@ -234,7 +239,7 @@ class TeamsController < ApplicationController
   def calculate_goggle_cup_rank( goggle_cup )
     # Prepares an hash to store goggle cup rank
     goggle_cup_rank = []
-
+    
     # Collects swimmers involved
     # A swimmer is involved if has a badge for at a least a season of goggle cup definition
     # and is ranked if has at least a result for that badge(s)

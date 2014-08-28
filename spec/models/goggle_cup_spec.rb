@@ -32,7 +32,9 @@ describe GoggleCup, :type => :model do
       [ 
         :goggle_cup_definitions,
         :goggle_cup_standards,
-        :seasons
+        :seasons,
+        :meetings,
+        :meeting_individual_results
       ],
       ActiveRecord::Base
     )
@@ -56,7 +58,8 @@ describe GoggleCup, :type => :model do
       
       it_behaves_like( "(the existance of a method returning a boolean value)", [
         :is_closed_at?,
-        :is_current_at?
+        :is_current_at?,
+        :has_results?
       ])
     end
     # ---------------------------------------------------------------------------
@@ -196,6 +199,18 @@ describe GoggleCup, :type => :model do
       it "returns false if given date is later than the end of goggle cup" do
         found_date = subject.get_end_date + 1
         expect( subject.is_current_at?( found_date ) ).to be false
+      end
+    end
+    # ---------------------------------------------------------------------------
+    #++
+
+    describe "#has_results?" do
+      it "returns false for an empty goggle cup" do
+        expect( subject.has_results? ).to be false
+      end
+      it "returns true for Ober Cup 2014 of CSI Nuoto Ober Ferrari" do
+        fix_goggle_cup = GoggleCup.find(8)
+        expect( fix_goggle_cup.has_results? ).to be true
       end
     end
     # ---------------------------------------------------------------------------

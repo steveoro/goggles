@@ -7,7 +7,7 @@
         %td
           %b= I18n.t('activerecord.models.goggle_cup')
         %td{'colspan'=>'2'}
-          %b= I18n.t('goggle_cup.winner')
+          %b= I18n.t('goggle_cup.winner')          
         %td{'colspan'=>'2'}
           %b= I18n.t('goggle_cup.second_placed')
         %td{'colspan'=>'2'}
@@ -15,11 +15,11 @@
       - @closed_goggle_cup.each do |goggle_cup_rank|
         %tr
           %td
-            = goggle_cup_rank[:goggle_cup].get_full_name             
+            %b= goggle_cup_rank[:goggle_cup].get_full_name             
           %td
-            = goggle_cup_rank[:first].decorate.get_linked_swimmer_name
+            %b= goggle_cup_rank[:first].decorate.get_linked_swimmer_name
           %td.goggles-rightalign
-            = sprintf( "%02.2f", goggle_cup_rank[:first_points] )             
+            %b= sprintf( "%02.2f", goggle_cup_rank[:first_points] )             
           %td
             = goggle_cup_rank[:second].decorate.get_linked_swimmer_name
           %td.goggles-rightalign

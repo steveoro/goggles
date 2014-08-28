@@ -166,6 +166,11 @@ describe TeamsController, :type => :controller do
         expect( response.status ).to eq( 200 )
         expect( assigns(:goggle_cup) ).to be_an_instance_of( GoggleCup ).or be_nil
       end
+      it "assigns an empty goggle_cup_rank instance" do
+        expect( response.status ).to eq( 200 )
+        expect( assigns( :goggle_cup_rank ) ).to be_an_instance_of( Array )
+        expect( assigns( :goggle_cup_rank ).size == 0 ).to be true
+      end
     end
 
     context "with an HTML request for a valid id and a logged-in user for for a team that has a current Goggle cup," do
@@ -182,6 +187,7 @@ describe TeamsController, :type => :controller do
       it "assigns a goggle_cup_rank instance" do
         expect( response.status ).to eq( 200 )
         expect( assigns( :goggle_cup_rank ) ).to be_an_instance_of( Array )
+        expect( assigns( :goggle_cup_rank ).size ).to be >= 0
       end
       it "assigns an hash in which swimmer key contains an instance of Swimmer" do
         expect( response.status ).to eq( 200 )
@@ -307,9 +313,13 @@ describe TeamsController, :type => :controller do
       # Leega
       # TODO Review seeds because Ober cups before 2013 are missing
       # Maybe should be necessary to create a method to ensure goggle cup are valid
-      xit "assigns an array where count is the number of closed goggle cups for the team" do
+      it "assigns an array where count is the number of closed goggle cups for the team" do
         expect( response.status ).to eq( 200 )
-        expect( assigns( :closed_goggle_cup ).count ).to be @fixture.goggle_cups.count - ( @fixture.has_goggle_cup_at? ? 1 : 0 )
+        closed_goggle_cup = 0
+        @fixture.goggle_cups.each do |goggle_cup|
+          closed_goggle_cup += 1 if goggle_cup.is_closed_at? && goggle_cup.has_results?
+        end
+        expect( assigns( :closed_goggle_cup ).count == closed_goggle_cup ).to be true
       end
     end
   end
