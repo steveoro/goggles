@@ -66,6 +66,7 @@ it:
       trainings: "Allenamenti"
       user_training: "Allenamento Utente"
       user_training_story: "Storia Allenamento"
+      goggle_cup: "Goggle cup"
 
     attributes:
       article:
@@ -257,11 +258,23 @@ it:
               blank: "non puo' essere vuoto"
             max_swimmer_level:
               blank: "non puo' essere vuoto"
+        training_row:
+          attributes:
+            exercise_id:
+              blank: "non puo' essere vuota"
+            description:
+              blank: "non puo' essere vuota"
         user_training_story:
           attributes:
             swimming_pool:
               invalid: "fallisce le validazioni o possiede attributi che non sono validi"
             swam_date:
+              blank: "non puo' essere vuota"
+        user_training_row:
+          attributes:
+            exercise_id:
+              blank: "non puo' essere vuota"
+            description:
               blank: "non puo' essere vuota"
         user:
           attributes:

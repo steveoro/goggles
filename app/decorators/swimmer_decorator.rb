@@ -279,6 +279,14 @@ class SwimmerDecorator < Draper::Decorator
   end
   #-- --------------------------------------------------------------------------
 
+  # Retrieves the swimmer complete name
+  # with link to swimmer radiography
+  #
+  def get_linked_swimmer_name
+    h.link_to( get_full_name, swimmer_radio_path(id: swimmer.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip') } )
+  end
+  #-- -------------------------------------------------------------------------
+
   # Retrieves a comma-separated string containing all the distinct team
   # names associated with this instance.
   #

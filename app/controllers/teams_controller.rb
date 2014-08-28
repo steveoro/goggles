@@ -85,22 +85,55 @@ class TeamsController < ApplicationController
 
 
   # Radiography for a specified team id: "Goggle cup" tab rendering
+  # Collects and represents the Goggle cup ranking
   #
   # == Params:
   # id: the team id to be processed
   #
   def goggle_cup
+    # Gets current goggle cup, if any
+    @goggle_cup = @team.get_current_goggle_cup_at
+    if @goggle_cup
+      # Prepares an hash to store goggle cup rank
+      @goggle_cup_rank = calculate_goggle_cup_rank( @goggle_cup )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
   # Radiography for a specified team id: "Goggle cup all of fame" tab rendering
+  # Shows the first three swuimmer of closed edition of Goggle cup
   #
   # == Params:
   # id: the team id to be processed
   #
   def goggle_cup_all_of_fame
+    # Prepares an hash to store closed goggle cup rank
+    @closed_goggle_cup = [] 
+    
+    # Gets closed goggle cup, if any
+    @team.goggle_cups.each do |goggle_cup|
+      if goggle_cup.is_closed_at?
+        # Collects first three positions of that closed goggle cup
+        goggle_cup_rank = calculate_goggle_cup_rank( goggle_cup )
+
+        # Adds goggle cup data to the hash
+        @closed_goggle_cup << {
+          goggle_cup:    goggle_cup,
+          year:          goggle_cup.season_year,
+          first:         goggle_cup_rank.size > 0 ? goggle_cup_rank[0][:swimmer] : nil,
+          first_points:  goggle_cup_rank.size > 0 ? goggle_cup_rank[0][:total] : 0,
+          second:        goggle_cup_rank.size > 1 ? goggle_cup_rank[1][:swimmer] : nil,
+          second_points: goggle_cup_rank.size > 1 ? goggle_cup_rank[1][:total] : 0,
+          third:         goggle_cup_rank.size > 2 ? goggle_cup_rank[2][:swimmer] : nil,
+          third_points:  goggle_cup_rank.size > 2 ? goggle_cup_rank[2][:total] : 0
+        } if goggle_cup_rank.size > 0
+      end
+      
+      # Sorts the array  by the year
+      @closed_goggle_cup.sort!{ |hash_element_prev, hash_element_next| hash_element_next[:year] <=> hash_element_prev[:year] }
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -188,6 +221,51 @@ class TeamsController < ApplicationController
   def set_team
     @team = Team.find_by_id( params[:id].to_i )
     @team = @team.decorate if @team
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Goggle cup rank calculaion
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def calculate_goggle_cup_rank( goggle_cup )
+    # Prepares an hash to store goggle cup rank
+    goggle_cup_rank = []
+
+    # Collects swimmers involved
+    # A swimmer is involved if has a badge for at a least a season of goggle cup definition
+    # and is ranked if has at least a result for that badge(s)
+    swimmers = @team.badges
+      .joins(season: :goggle_cup_definitions)
+      .where(['goggle_cup_definitions.goggle_cup_id = ?', goggle_cup.id])
+      .collect{|badge| badge.swimmer }
+      .uniq
+    
+    # Collects best results for each swimmer
+    # The number of result to consider is set in the goggle cup header
+    swimmers.each do |swimmer|
+      points = swimmer.meeting_individual_results
+        .joins(season: :goggle_cup_definitions)
+        .where(['goggle_cup_definitions.goggle_cup_id = ?', goggle_cup.id])
+        .has_points(:goggle_cup_points)
+        .sort_by_goggle_cup('DESC')
+        .limit(goggle_cup.max_performance)
+        .collect{ |meeting_individual_result| meeting_individual_result.goggle_cup_points }
+      goggle_cup_rank << {
+        swimmer: swimmer, 
+        total:   points.sum, 
+        max:     points.max,
+        min:     points.min,
+        count:   points.count,
+        average: (points.sum / points.count).round( 2 ) 
+      } if points.count > 0
+    end
+    
+    # Sorts the hash to create rank
+    goggle_cup_rank.sort!{ |hash_element_prev, hash_element_next| hash_element_next[:total] <=> hash_element_prev[:total] }
   end
   #-- -------------------------------------------------------------------------
   #++

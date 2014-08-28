@@ -1,6 +1,34 @@
 = render( partial: 'tabs_and_radio_title' )
 
+.row-fluid#goggle_cup_all_of_fame_grid
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('activerecord.models.goggle_cup')
+        %td{'colspan'=>'2'}
+          %b= I18n.t('goggle_cup.winner')
+        %td{'colspan'=>'2'}
+          %b= I18n.t('goggle_cup.second_placed')
+        %td{'colspan'=>'2'}
+          %b= I18n.t('goggle_cup.third_placed')
+      - @closed_goggle_cup.each do |goggle_cup_rank|
+        %tr
+          %td
+            = goggle_cup_rank[:goggle_cup].get_full_name             
+          %td
+            = goggle_cup_rank[:first].decorate.get_linked_swimmer_name
+          %td.goggles-rightalign
+            = sprintf( "%02.2f", goggle_cup_rank[:first_points] )             
+          %td
+            = goggle_cup_rank[:second].decorate.get_linked_swimmer_name
+          %td.goggles-rightalign
+            = sprintf( "%02.2f", goggle_cup_rank[:second_points] )             
+          %td
+            = goggle_cup_rank[:third].decorate.get_linked_swimmer_name
+          %td.goggles-rightalign
+            = sprintf( "%02.2f", goggle_cup_rank[:third_points] )             
+
 .row-fluid
-  = I18n.t('coming_soon')
-.row-fluid
-  %p
+  .span12
+    
