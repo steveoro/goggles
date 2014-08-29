@@ -19,10 +19,7 @@ class TrainingRow < ActiveRecord::Base
   belongs_to :body_aux_type
   belongs_to :breath_aux_type
   validates_associated :training
-  validates_presence_of :training
   validates_associated :exercise
-  validates_presence_of :exercise
-
   validates_associated :training_step_type
   validates_associated :arm_aux_type
   validates_associated :kick_aux_type

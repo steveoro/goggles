@@ -100,7 +100,6 @@ class UserTrainingsController < ApplicationController
   # Show action.
   #
   def show
-    @user_training = TrainingDecorator.decorate( @user_training )
     user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
     @user_training_rows = TrainingRowDecorator.decorate_collection( user_training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )

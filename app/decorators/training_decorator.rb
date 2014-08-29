@@ -14,7 +14,7 @@ class TrainingDecorator < Draper::Decorator
 
 
   # Creates the Hash of all the pre-computed attributes used by type-ahead look-up
-  # combos and lists. 
+  # combos and lists.
   #
   # == Returns:
   # An Hash instance having the following structure:
@@ -26,7 +26,7 @@ class TrainingDecorator < Draper::Decorator
   #       :user_name              => user associated with the decorated Training or UserTraining,
   #       :swimmer_level_type_description => #get_swimmer_level_type( :i18n_description ),
   #       :swimmer_level_type_alternate   => #get_swimmer_level_type( :i18n_alternate ),
-  #     }</tt>. 
+  #     }</tt>.
   #
   def drop_down_attrs()
     {
@@ -90,19 +90,19 @@ class TrainingDecorator < Draper::Decorator
   # Only the first row found with a valid group id (>0) will be used for group definition;
   # the others will only be checked for group_id consistency.
   #
-  # It returns an empty Hash if the current Training instance has no groups defined. 
+  # It returns an empty Hash if the current Training instance has no groups defined.
   #
   def build_group_list_hash
-    if self.class.respond_to?( :training_rows )
-      row_with_groups = training_rows.with_groups
-    elsif self.class.respond_to?( :user_training_rows )
-      row_with_groups = user_training_rows.with_groups
+    if self.object.respond_to?( :training_rows )
+      row_with_groups = object.training_rows.with_groups
+    elsif self.object.respond_to?( :user_training_rows )
+      row_with_groups = object.user_training_rows.with_groups
     else
       row_with_groups = []
     end
     group_list = {}                                 # Collect a custom hash and a list of data rows for each group of rows:
     row_with_groups.each{ |row|                     # If the group id is missing from the hash keys, add it:
-      if (! group_list.has_key?( row.group_id ))
+      unless group_list.has_key?( row.group_id )
         group_list[ row.group_id ] = {
           id:             row.group_id,
           times:          row.group_times,

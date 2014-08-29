@@ -76,7 +76,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
         get :show, id: @fixture.id
         expect( response.status ).to eq(200)
         expect( assigns( model_name_sym ) ).not_to be_nil
-        expect( assigns( model_name_sym ) ).to be_an_instance_of( decorator_name.constantize )
+        expect( assigns( model_name_sym ) ).to be_an_instance_of( model_name.constantize )
         expect( assigns( :title ) ).not_to be_nil
         expect( assigns( :title ) ).to be_an_instance_of(String)
         detail_model_name = "#{table_name.classify.underscore}_rows"

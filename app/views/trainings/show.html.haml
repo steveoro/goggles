@@ -2,11 +2,13 @@
   .span3
     = link_to_trainings()
   .span2
-    = link_to_user_training_printout( @training )
+    = link_to_training_printout( @training )
   .span2
-    = link_to_user_edit( @user_training )
+    = link_to_training_edit( @training )
   .span2
-    = link_to_training_duplicate( @user_training )
+    = link_to_training_duplicate( @training )
+- # From down here to below we just need the decorated instance:
+- @training = TrainingDecorator.decorate( @training )
 
 .accordion
   .accordion-group

@@ -41,6 +41,7 @@ FactoryGirl.define do
   factory :training do
     sequence( :title )  { |n| "Workout model n.#{n}" }
     training_header
+
     # user_training_with_rows will create detail data after the user_training has been created
     factory :training_with_rows do
       # the after(:create) yields two values: the row instance itself and the
@@ -53,6 +54,15 @@ FactoryGirl.define do
           ((rand * 10).to_i + 2),                   # total number or detail rows
           training: created_instance                # association enforce for each sub-row
         )
+      end
+    end
+
+    factory :training_with_grouped_rows do
+      after(:create) do |created_instance, evaluator|
+        create( :training_row, training: created_instance, part_order: 1 )
+        create( :training_row, training: created_instance, part_order: 2, group_id: 1, group_times: 5 )
+        create( :training_row, training: created_instance, part_order: 3, group_id: 1 )
+        create( :training_row, training: created_instance, part_order: 4 )
       end
     end
 
@@ -90,7 +100,7 @@ FactoryGirl.define do
 
 
   factory :user_training_story do
-    swam_date                 { Date.today } 
+    swam_date                 { Date.today }
     total_training_time       65
     notes                     { "Dude, that was hard!\r\n#{ Faker::Lorem.paragraph }" }
     user

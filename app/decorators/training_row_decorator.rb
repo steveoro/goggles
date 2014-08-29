@@ -31,8 +31,6 @@ class TrainingRowDecorator < Draper::Decorator
   #-- -------------------------------------------------------------------------
   #++
 
-# FIXME THIS SHOULD BE REPLACED EVERYWHERE WITH DEDICATED CALLS TO EACH MEMBER/METHOD (i.e. decorated_row.get_formatted_part_order() instead of field_array[0])
-
   # Similarly to get_full_name, computes the description for the name associated with
   # this row, storing each main group of data as items of a single array result.
   #
@@ -47,7 +45,7 @@ class TrainingRowDecorator < Draper::Decorator
   #      #0: ordering (string),
   #      #1: training_step_type description,
   #      #2: esteemed tot. duration in secs (integer or string, depending on the parameter),
-  #      #3: total distance with multiplier (string), 
+  #      #3: total distance with multiplier (string),
   #      #4: full exercise description
   #    ]
   #
@@ -153,7 +151,7 @@ class TrainingRowDecorator < Draper::Decorator
       get_arm_aux_type_name( :short ),
       get_kick_aux_type_name( :short ),
       get_body_aux_type_name( :short ),
-      get_breath_aux_type_name( :short ),             
+      get_breath_aux_type_name( :short ),
       get_formatted_start_and_rest,
       get_formatted_pause
     ].delete_if{ |e| e.nil? || e.to_s.empty? }.join(' ')
@@ -222,7 +220,7 @@ class TrainingRowDecorator < Draper::Decorator
     else
       breath_aux_type.i18n_description
     end
-  end  
+  end
   #-- -------------------------------------------------------------------------
   #++
 end
