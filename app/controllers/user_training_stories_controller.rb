@@ -41,8 +41,7 @@ class UserTrainingStoriesController < ApplicationController
   # Show action.
   #
   def show
-    @user_training_story = UserTrainingStoryDecorator.decorate(@user_training_story)
-    @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.get_user_training_name )
+    @title = I18n.t('user_training_stories.show_title').gsub( "{TRAINING_TITLE}", @user_training_story.decorate.get_user_training_name )
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -44,15 +44,28 @@ shared_examples_for "(TrainingDecorator usable for both Training & UserTraining)
     it "returns an Hash" do
       expect( subject.build_group_list_hash() ).to be_an_instance_of( Hash )
     end
-# TODO For these tests to be enabled we will need a Training seed with a group defined in it: 
-    # it "has the expected keys" do
-      # expect( subject.build_group_list_hash().keys ).to include(
-        # :id, :times, :start_and_rest, :pause, :datarows
-      # )
-    # end
-    # it "has the :datarows member Array" do
-      # expect( subject.build_group_list_hash()[:datarows] ).to be_an_instance_of( Array )
-    # end
+
+    context "when used on a Training with grouped details," do
+      let( :fixture ) { create( :training_with_grouped_rows ) }
+      let( :group_hash ) { TrainingDecorator.decorate( fixture ).build_group_list_hash() }
+
+      it "has the expected keys" do
+        expect( group_hash.values ).to all( be_an_instance_of( Hash ) )
+        group_hash.values.each do |value_hash|
+          expect( value_hash.keys ).to include( :id, :times, :start_and_rest, :pause, :datarows )
+        end
+      end
+      it "has the :datarows member Array" do
+        group_hash.values.each do |value_hash|
+          expect( value_hash[:datarows] ).to be_an_instance_of( Array )
+        end
+      end
+      it "has a non empty list of :datarows" do
+        group_hash.values.each do |value_hash|
+          expect( value_hash[:datarows].size ).to be > 0
+        end
+      end
+    end
   end
 end
 #-- ---------------------------------------------------------------------------
