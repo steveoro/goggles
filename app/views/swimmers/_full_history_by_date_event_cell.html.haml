@@ -1,0 +1,16 @@
+- has_passages = ( individual_result.passages.count > 0 )
+%td.goggles-rightalign
+  - if has_passages
+    .btn-link{ id: "passages#{individual_result.id}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
+      = individual_result.get_timing
+  - else
+    = individual_result.get_timing
+
+- if has_passages
+  %script
+    var popContent = "#{ escape_javascript( render(partial: 'result_popover_passages', locals: {individual_result: individual_result})) }";
+    $("#passages#{individual_result.id}").popover({                             |
+      title: "#{ escape_javascript(individual_result.get_timing.html_safe) }",  |
+      html: true,                                                               |
+      content: popContent                                                       |
+    });                                                                         |

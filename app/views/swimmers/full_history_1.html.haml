@@ -1,19 +1,31 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-      - PoolType.only_for_meetings.each do |pool_type|
-        %tr{'class'=>'info'}
-          %td
-            %b= 'Date'
-          %td
-            %b= 'Meeting'
-          - event_list = @full_history_by_date[pool_type.code][0]
-          - event_list.each do |event|
-            %td
-              %b= event
-        - @full_history_by_date[pool_type.code][1].each do |individual_result|
-          = render( partial: 'full_history_by_date', locals: { individual_result: individual_result, event_list: event_list } )
-.row-fluid
-  .span12
+.row-fluid#full_history_by_date_grid
+  .goggles-category-gap#pageTop
+    -# --- Sub-legend for pool-type
+    .navbar
+      %ul.nav
+        - PoolType.only_for_meetings.each do |pool_type|
+          %li
+            %a.goggles-nav-compact(href="##{pool_type.code}")= pool_type.i18n_description
+        .ghost-divider-vertical
+
+  - PoolType.only_for_meetings.each do |pool_type|
+    .row-fluid
+      .goggles-category-gap{ 'id' => "#{pool_type.code}" }
+        %h3
+          = "#{pool_type.i18n_description}"
+          %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td.goggles-centeralign
+              %b= I18n.t('meeting.meeting')
+            - event_list = @full_history_by_date[pool_type.code][0]
+            - event_list.each do |event|
+              %td.goggles-centeralign
+                %b= event
+          - @full_history_by_date[pool_type.code][1].each do |event_by_date|
+            = render( partial: 'full_history_by_date_meeting_row', locals: { event_by_date: event_by_date, event_list: event_list } )
+
+.row-fluid.goggles-category-gap

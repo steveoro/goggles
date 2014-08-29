@@ -145,10 +145,32 @@ class SwimmersController < ApplicationController
       # Collect results for the pool type
       mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date( 'ASC' )
 
+      # The event_by_date structure
+      # The structure is an array of hashes with elements formed by
+      # the meeting (meeting) that contains the meeting reference
+      # and the event_type_codes ("50SL", "50FA", etc.) that
+      # contains the meeting_individual_result swam in the event_type
+      # at the meeting.
+      # TODO Refactor that structure as a collection, like personal bests
+      event_by_date = []
+      mirs.each do |meeting_individul_result|
+        # If thi is the first meeting result creates a new element, else add the result for the event type
+        found = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individul_result.meeting }
+        if found
+          event_by_date[found][meeting_individul_result.event_type.code] = meeting_individul_result
+        else
+          new_hash = {}
+          new_hash[:meeting] = meeting_individul_result.meeting
+          new_hash[meeting_individul_result.event_type.code] = meeting_individul_result
+          event_by_date << new_hash 
+        end
+      end
+      
       # Collect event types swam to create grid structure
       event_list = mirs.select('event_types.code').map{ |mir| mir.event_type.code }.uniq
       
-      @full_history_by_date[pool_type.code] = [event_list, mirs]
+      #@full_history_by_date[pool_type.code] = [event_list, mirs]
+      @full_history_by_date[pool_type.code] = [event_list, event_by_date]
     end
     
     
