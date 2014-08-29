@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.325.20140620
+- version:  4.00.457
 - author:   Steve A.
 
 =end
@@ -49,7 +49,7 @@ class TrainingPrintoutLayout
         Subject:      options[ :meta_info_subject ],
         Keywords:     options[ :meta_info_keywords ],
         Creator:      AUTHOR_STRING,
-        Producer:     "Prawn @ AgeX5 framework",
+        Producer:     "Goggles/Prawn. Layout (c) AgeX5 framework",
         CreationDate: Time.now
       }
     }
@@ -60,7 +60,7 @@ class TrainingPrintoutLayout
     build_report_body( pdf, options )
     finalize_standard_report( pdf )
     pdf.render()
-  end 
+  end
   # ---------------------------------------------------------------------------
 
 
@@ -123,13 +123,34 @@ class TrainingPrintoutLayout
       330                                           # full exercise description
     ]
 
-    detail_rows.each{ |detail_row|
-                                                    # Detect if current row belongs to a grouping
-      if (detail_row.group_id > 0) &&
-         group_list_hash.has_key?( detail_row.group_id )
-        curr_group_id = detail_row.group_id       # Store group id for future reference
-                                                    # For each context, format accordingly:
-        if old_group_id != curr_group_id            # Start of new group?
+    # Build the detail_table_array by scanning each detail row one by one.
+    # If the current row belongs to a group, add it to a dedicated sub-table.
+    detail_rows.each do |detail_row|
+      # First we check if the current row implies a context change:
+      # either a new grouping or a new, simple detail row.
+      # This may imply that we still have to render the sub-table of an existing
+      # (thus, completed) grouping. So...
+      # Do we have an existing group to add to the table data while the context changes?
+      if group_array && (group_subtable_array.size > 0) &&
+        (old_group_id != detail_row.group_id)       # Group change/ending and existing group found?
+        sub_table = pdf.make_table( group_subtable_array, cell_style: {size: 8}, position: :left ) do
+          cells.column(0).align = :right
+          cells.column(0).width = column_widths[4]
+          cells.column(0).borders = [:top, :bottom, :left]
+          cells.column(1).align = :left
+          cells.column(1).borders = [:top, :bottom, :right]
+          cells.column(1).width = column_widths[5]
+        end
+        group_array << { content: sub_table, colspan: 2 }
+        detail_table_array << group_array
+        group_array = nil                           # Reset the group temp storage
+        group_subtable_array = []
+      end
+                                                    # Detect if current row belongs to a grouping:
+      if (detail_row.group_id > 0) && group_list_hash.has_key?( detail_row.group_id )
+                                                    # === IN GROUP ===
+        curr_group_id = detail_row.group_id         # Store group id for future reference
+        if old_group_id != curr_group_id            # === START NEW group ===
           old_group_id = curr_group_id
           group_hash = group_list_hash[ detail_row.group_id ]
 
@@ -147,26 +168,13 @@ class TrainingPrintoutLayout
             "#{group_hash[:times] }x #{group_pause} #{group_s_r}"
           ]
         end
+                                                    # Update group sub-table:
         group_subtable_array << [
           detail_row.get_formatted_distance(),
           detail_row.get_row_description()
         ]
-      else                                          # Not in a group?
+      else                                          # === NOT GROUPED ===
         curr_group_id = 0
-        if group_array                              # Do we have a group to add to the table data?
-          sub_table = pdf.make_table( group_subtable_array, cell_style: {size: 8}, position: :left ) do
-            cells.column(0).align = :right
-            cells.column(0).width = column_widths[4]
-            cells.column(0).borders = [:top, :bottom, :left]
-            cells.column(1).align = :left
-            cells.column(1).borders = [:top, :bottom, :right]
-            cells.column(1).width = column_widths[5]
-          end
-          group_array << { content: sub_table, colspan: 2 }
-          detail_table_array << group_array
-          group_array = nil                         # Reset the group temp storage
-          group_subtable_array = []
-        end
                                                     # Proceed adding current data row:
         detail_table_array << [
           detail_row.get_formatted_part_order(),
@@ -177,7 +185,31 @@ class TrainingPrintoutLayout
           detail_row.get_row_description()
         ]
       end
-    }
+    end
+
+    # The following checks for residual grouping sub-table at the end of the
+    # detail row loop scan.
+    #
+    # This is due to the fact the each grouping is composed of at least 2 detail
+    # rows, where the first one acts as the group header.
+    #
+    # So we must check also that the subtable size is valid (> 0) to verify that
+    # the header has been already added to the list.
+    if group_array && (group_subtable_array.size > 0)
+      puts "- residual group found with id:#{old_group_id}"
+      sub_table = pdf.make_table( group_subtable_array, cell_style: {size: 8}, position: :left ) do
+        cells.column(0).align = :right
+        cells.column(0).width = column_widths[4]
+        cells.column(0).borders = [:top, :bottom, :left]
+        cells.column(1).align = :left
+        cells.column(1).borders = [:top, :bottom, :right]
+        cells.column(1).width = column_widths[5]
+      end
+      group_array << { content: sub_table, colspan: 2 }
+      detail_table_array << group_array
+      group_array = nil                           # Reset the group temp storage
+      group_subtable_array = []
+    end
 
     pdf.bounding_box( [0, pdf.bounds.height - 40],
                       width: pdf.bounds.width,
@@ -185,30 +217,30 @@ class TrainingPrintoutLayout
                                                     # -- Report title and header:
       pdf.text(
         "<u><b>#{ options[:report_title] }</b></u>",
-        { align: :left, size: 9, inline_format: true } 
+        { align: :left, size: 9, inline_format: true }
       )
       pdf.text(
         "<i>#{ I18n.t('activerecord.attributes.training.user') }:</i> #{ header_row.get_user_name }",
-        { align: :left, size: 9, inline_format: true } 
+        { align: :left, size: 9, inline_format: true }
       )
       pdf.text(
         "<i>#{ I18n.t('activerecord.models.swimmer_level_type') }:</i> #{ header_row.get_swimmer_level_type(:i18n_description) }",
-        { align: :left, size: 9, inline_format: true } 
+        { align: :left, size: 9, inline_format: true }
       )
       pdf.text(
         header_row.description,
-        { align: :left, size: 9, inline_format: true } 
+        { align: :left, size: 9, inline_format: true }
       )
       pdf.move_down( 10 )
 
       pdf.text(
         "<i>#{ I18n.t('trainings.total_meters') }:</i> #{ header_row.compute_total_distance }",
-        { align: :left, size: 8, inline_format: true } 
+        { align: :left, size: 8, inline_format: true }
       )
       tot_secs = header_row.compute_total_seconds()
       pdf.text(
         "<i>#{ I18n.t('trainings.esteemed_timing') }:</i> #{ Timing.to_hour_string(tot_secs) }",
-        { align: :left, size: 8, inline_format: true } 
+        { align: :left, size: 8, inline_format: true }
       )
       pdf.move_down( 10 )
                                                     # -- Main data table:
@@ -259,7 +291,7 @@ class TrainingPrintoutLayout
       pdf.move_down( 10 )
       pdf.stroke_horizontal_rule()
     end
-  end 
+  end
   # ---------------------------------------------------------------------------
 
 
