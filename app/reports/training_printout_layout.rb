@@ -196,7 +196,6 @@ class TrainingPrintoutLayout
     # So we must check also that the subtable size is valid (> 0) to verify that
     # the header has been already added to the list.
     if group_array && (group_subtable_array.size > 0)
-      puts "- residual group found with id:#{old_group_id}"
       sub_table = pdf.make_table( group_subtable_array, cell_style: {size: 8}, position: :left ) do
         cells.column(0).align = :right
         cells.column(0).width = column_widths[4]
