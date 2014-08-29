@@ -38,7 +38,7 @@ it:
     title: "Squadre"
     search_title: "Cerca Squadra"
     affiliations: "Affiliazioni"
-    all_races: "Tutte le gare per questa Squadra"
+    all_races: "Tutte le gare della Squadra"
     team_records: "Record di Squadra"
     team_records_load_tooltip: "Mostra tutti i record detenuti da questa Squadra nelle affiliazioni registrate"
     meeting_presence: "Partecipazioni a gare"

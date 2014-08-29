@@ -24,6 +24,9 @@ class TeamsController < ApplicationController
   # Index/Search action
   #
   def index
+    # Leega
+    # TODO Verify order by name:
+    # Team CITTA' DEI RAGAZZI (alias NUOTO AZZURRO) doesn't result correctly ordered
     @title = I18n.t('team.search_title')
     @teams_grid = initialize_grid(
       Team,

@@ -295,7 +295,7 @@ class SwimmerDecorator < Draper::Decorator
     list = []
     if teams
       teams.uniq.each do |team|
-        list.append( h.link_to( team.name, team_radio_path( id: team.id ), { 'data-toggle' => 'tooltip', title: I18n.t('radiography.team_radio_tab_tooltip') } ) )
+        list.append( team.decorate.get_linked_name )
       end
       linked_list = list.join(', ')
     else

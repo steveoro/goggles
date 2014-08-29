@@ -13,6 +13,14 @@ class TeamDecorator < Draper::Decorator
   delegate_all
   include Rails.application.routes.url_helpers
 
+  # Retrieves the swimmer complete name
+  # with link to swimmer radiography
+  #
+  def get_linked_name
+    h.link_to( get_full_name, team_radio_path(id: team.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.team_radio_tab_tooltip') } )
+  end
+  #-- -------------------------------------------------------------------------
+
   # Returns the list of season types the teams was affiliate
   #
   def get_season_type_list()
