@@ -136,11 +136,9 @@ class SwimmersController < ApplicationController
     # --- "Full History" tab: ---
     @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.full_history_tab1')
-    @all_mirs = @swimmer.meeting_individual_results.sort_by_date('ASC')
-
-    @full_history_by_date = Hash.new 
     
     # Cycles between pool types suitable for meetings
+    @full_history_by_date = Hash.new 
     PoolType.only_for_meetings.each do |pool_type|
       # Collect results for the pool type
       mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date( 'ASC' )
@@ -169,28 +167,31 @@ class SwimmersController < ApplicationController
       # Collect event types swam to create grid structure
       event_list = mirs.select('event_types.code').map{ |mir| mir.event_type.code }.uniq
       
+      # Sort event type list by event type style order
+      event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
+      
       #@full_history_by_date[pool_type.code] = [event_list, mirs]
       @full_history_by_date[pool_type.code] = [event_list, event_by_date]
     end
     
-    
-    
-    
-
     # TODO
-    # - Group all MIR swam by pool type
-    # - Group all MIR swam by event codes
-    # - Count total MIR swam, group by pool type
-    # - Count total MIR swam, group by event code
-    # - For each event code swam (50FA, 50SL, ...)
-    #   => draw a scatter graph w/ 1 series x pool type (x: date, y: MIR timing)
-    #   => for each point, on-mouse-over tooltip w/ HTML details for the MIR + links to the corresponding #full_show of the meeting
+    # - Evidenziate personal bests
+    #   Should be better to have information already stored in mirs
+    #   even calculate it run time
+    # - Sort event list by event_type order with a dedicated function 
+    #   that uses only one DB read
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
   # Radiography for a specified swimmer id: "Full History: analysis" tab rendering.
+  # Create a grid for each event_by_pool_type swam
+  # For each show all results and passages ordered by timing descending
+  # The columns of every event_by_pool_type will meeting, timing
+  # reaction time, standard points, position, passage splits
+  # So every event shown will be different.
+  # The structure of event grids will depends on passages configuration
   #
   # == Params:
   # id: the swimmer id to be processed
