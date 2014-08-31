@@ -28,7 +28,8 @@ describe MeetingIndividualResult, :type => :model do
       :is_female,
       :has_rank,
       :for_event_by_pool_type,
-      :for_pool_type
+      :for_pool_type,
+      :sort_by_pool_and_event
     ])
 
     context "[general methods]" do

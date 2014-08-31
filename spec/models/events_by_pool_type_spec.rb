@@ -16,7 +16,10 @@ describe EventsByPoolType, :type => :model do
     ])
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
-      :not_relays
+      :not_relays,
+      :only_for_meetings,
+      :sort_by_pool,
+      :sort_by_event
     ])
         
     describe "#find_by_pool_and_event_codes" do

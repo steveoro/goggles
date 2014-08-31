@@ -8,8 +8,11 @@ class EventsByPoolType < ActiveRecord::Base
   validates_presence_of :event_type                 # (must be not null)
   validates_associated :event_type                  # (foreign key integrity)
 
-  # Leega TODO Verify differences between .includes and .joins
   scope :not_relays,    joins(:event_type).where('event_types.is_a_relay = false')
+  scope :only_for_meetings, joins(:pool_type).where('pool_types.is_suitable_for_meetings = true')
+
+  scope :sort_by_pool,  joins(:event_type, :pool_type).order('pool_types.length_in_meters, event_types.style_order')
+  scope :sort_by_event, joins(:event_type, :pool_type).order('event_types.style_order, pool_types.length_in_meters')
   # ----------------------------------------------------------------------------
 
   # Find a sopecific event for a pool type using codes

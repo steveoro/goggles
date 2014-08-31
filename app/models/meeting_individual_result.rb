@@ -77,8 +77,9 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_team,       ->(dir) { order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_badge,      ->(dir) { order("badges.number #{dir.to_s}") }
   scope :sort_by_timing,     ->(dir) { order("(hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
-  scope :sort_by_date,       ->(dir) { includes(:meeting_session).order("meeting_sessions.scheduled_date #{dir.to_s}") }
+  scope :sort_by_date,       ->(dir = 'ASC') { includes(:meeting_session).order("meeting_sessions.scheduled_date #{dir.to_s}") }
   scope :sort_by_goggle_cup, ->(dir) { order("goggle_cup_points #{dir.to_s}") }
+  scope :sort_by_pool_and_event, ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir.to_s}, event_types.style_order #{dir.to_s}") }
 
   scope :for_event_by_pool_type, ->(event_by_pool_type) { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
   scope :for_pool_type,      ->(pool_type) { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }

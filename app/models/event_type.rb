@@ -75,4 +75,20 @@ class EventType < ActiveRecord::Base
     relay_type ? relay_type.id : 0
   end
   # ----------------------------------------------------------------------------
+  
+  # Sorts an array of event codes using the style order
+  # 
+  # Params
+  # - event_list: an array of event codes
+  #
+  # Return a sorted list
+  def self.sort_list_by_style_order( event_list = nil )
+    @sorted_full_list = EventType.sort_by_style.map{ |event_type| event_type.code }
+    if event_list
+      event_list.sort!{ |el_prev, el_next| @sorted_full_list.rindex(el_prev) <=> @sorted_full_list.rindex(el_next) }
+    else
+      event_list = @sorted_full_list
+    end
+    event_list
+  end
 end

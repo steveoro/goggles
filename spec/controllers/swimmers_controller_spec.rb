@@ -254,16 +254,46 @@ describe SwimmersController, :type => :controller do
     it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :full_history_2 )
 
     context "as a logged-in user" do
+      let( :events ) { EventsByPoolType.only_for_meetings.not_relays.sort_by_event }
+      
       before(:each) do
         login_user()
         @swimmer = create(:swimmer)
         get :full_history_2, id: @swimmer.id
       end
 
+      # TODO
+      # Remove this
       it "assigns a list of MeetingIndividualResult(s)" do
         expect( assigns(:all_mirs).respond_to?( :each ) ).to be true
         expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
       end
+      
+      it "assigns an hash with data collected" do
+        expect( assigns( :full_history_by_event ) ).to be_a_kind_of( Hash )
+      end
+      it "assigns an hash with the same number of element of event by pool types not relays and suitable for meetings" do
+        expect( assigns( :full_history_by_event ).size ).to eq( events.count )
+      end
+      it "assigns an hash that responds to event type code - pool type code" do
+        result = assigns( :full_history_by_event )
+        events.each do |events_by_pool_type|
+          expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).not_to be_nil
+        end
+      end
+      it "assigns an hash with array as elements" do
+        result = assigns( :full_history_by_event )
+        events.each do |events_by_pool_type|
+          expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).to be_a_kind_of( Array )
+        end
+      end
+      it "assigns an hash with array of two elements as element" do
+        result = assigns( :full_history_by_event )
+        events.each do |events_by_pool_type|
+          expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"].size ).to be 2
+        end
+      end
+
     end
   end
   # ===========================================================================

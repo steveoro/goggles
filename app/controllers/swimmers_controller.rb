@@ -44,7 +44,6 @@ class SwimmersController < ApplicationController
   def radio
     # --- "Radiography" tab: ---
     @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.radio_tab')
   end
   #-- -------------------------------------------------------------------------
@@ -58,7 +57,6 @@ class SwimmersController < ApplicationController
   #
   def medals
     # --- "Medals" tab: ---
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.medals_tab')
     @gold_medals   = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 1 )
     @silver_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 2 )
@@ -94,7 +92,6 @@ class SwimmersController < ApplicationController
   #
   def best_timings
     # --- "Best Timings" tab: ---
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.best_timings_tab')
     current_season = Season.get_last_season_by_type( 'MASFIN' )
 
@@ -134,14 +131,13 @@ class SwimmersController < ApplicationController
   #
   def full_history_1
     # --- "Full History" tab: ---
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.full_history_tab1')
     
     # Cycles between pool types suitable for meetings
     @full_history_by_date = Hash.new 
     PoolType.only_for_meetings.each do |pool_type|
       # Collect results for the pool type
-      mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date( 'ASC' )
+      mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date
 
       # The event_by_date structure
       # The structure is an array of hashes with elements formed by
@@ -168,9 +164,8 @@ class SwimmersController < ApplicationController
       event_list = mirs.select('event_types.code').map{ |mir| mir.event_type.code }.uniq
       
       # Sort event type list by event type style order
-      event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
-      
-      #@full_history_by_date[pool_type.code] = [event_list, mirs]
+      #event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
+      event_list = EventType.sort_list_by_style_order( event_list )      
       @full_history_by_date[pool_type.code] = [event_list, event_by_date]
     end
     
@@ -178,8 +173,7 @@ class SwimmersController < ApplicationController
     # - Evidenziate personal bests
     #   Should be better to have information already stored in mirs
     #   even calculate it run time
-    # - Sort event list by event_type order with a dedicated function 
-    #   that uses only one DB read
+    # - Compare event list sort with class function or direct on the array
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -198,19 +192,29 @@ class SwimmersController < ApplicationController
   #
   def full_history_2
     # --- "Full History" tab: ---
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
-    @tab_title = I18n.t('radiography.full_history_tab2')
-    @all_mirs = MeetingIndividualResult.where( swimmer_id: @swimmer.id )
+    @tab_title = I18n.t('radiography.full_history_by_event')
+    @all_mirs = @swimmer.meeting_individual_results.sort_by_pool_and_event
+    
+    # Creates an hash with event_by_pool_type as code
+    # Every element is an array of hashes
+    # Every hash element of the array has:
+    # - meeting
+    # - result
+    # - passages
+    # Cycles between pool types suitable for meetings
+    @full_history_by_event = Hash.new 
+    EventsByPoolType.only_for_meetings.not_relays.sort_by_event.each do |events_by_pool_type|
+      hash_key = "#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"
+      result_by_time = []
+      
+      # Collect the passage list
+      passage_list = []
+      
+      
+      @full_history_by_event[hash_key] = [passage_list, result_by_time]
+    end
 
-    # TODO
-    # - Collect all @swimmer MIRs
-    # - Group all MIR swam by pool type
-    # - Group all MIR swam by event codes
-    # - Count total MIR swam, group by pool type
-    # - Count total MIR swam, group by event code
-    # - For each event code swam (50FA, 50SL, ...)
-    #   => draw a scatter graph w/ 1 series x pool type (x: date, y: MIR timing)
-    #   => for each point, on-mouse-over tooltip w/ HTML details for the MIR + links to the corresponding #full_show of the meeting
+
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -224,7 +228,6 @@ class SwimmersController < ApplicationController
   #
   def misc
     # --- "Misc" tab: ---
-    @swimmer = SwimmerDecorator.decorate( @swimmer )
     @tab_title = I18n.t('radiography.misc_tab')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                           # Init score with a non-displayable value
@@ -348,6 +351,7 @@ class SwimmersController < ApplicationController
   #
   def set_swimmer
     @swimmer = Swimmer.find_by_id( params[:id].to_i )
+    @swimmer = @swimmer.decorate if @swimmer    
   end
   #-- -------------------------------------------------------------------------
   #++
