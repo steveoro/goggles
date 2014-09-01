@@ -137,8 +137,14 @@ class SwimmersController < ApplicationController
     @full_history_by_date = Hash.new 
     PoolType.only_for_meetings.each do |pool_type|
       # Collect results for the pool type
-      mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date
-
+      # TODO Verify if selecting only used attributi si better/faster than selectin the whole object
+      #mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date
+      mirs = @swimmer.meeting_individual_results
+       .joins(:event_type)
+       .for_pool_type( pool_type )
+       .sort_by_date
+       .select([:id, :minutes, :seconds, :hundreds])
+       
       # The event_by_date structure
       # The structure is an array of hashes with elements formed by
       # the meeting (meeting) that contains the meeting reference
@@ -205,16 +211,19 @@ class SwimmersController < ApplicationController
     @full_history_by_event = Hash.new 
     EventsByPoolType.only_for_meetings.not_relays.sort_by_event.each do |events_by_pool_type|
       hash_key = "#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"
-      result_by_time = []
+      result_by_time = @swimmer
+       .meeting_individual_results
+       .for_event_by_pool_type( events_by_pool_type )
+       .sort_by_timing( 'DESC' )
+       .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
       
       # Collect the passage list
-      passage_list = []
+      result_id_list = result_by_time.map{ |mir| mir.id } 
+      passage_list = Passage.joins(:passage_type).select('passage_types.length_in_meters').where(['meeting_individual_result_id in (?)', result_id_list]).uniq.map{ |pt| pt.length_in_meters }
       
-      
+      # Create has element with event type by pool data
       @full_history_by_event[hash_key] = [passage_list, result_by_time]
     end
-
-
   end
   #-- -------------------------------------------------------------------------
   #++

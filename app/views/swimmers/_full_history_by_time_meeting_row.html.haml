@@ -1,0 +1,16 @@
+%tr
+  %td
+    %a{'id'=>"meeting#{meeting.id}", 'href'=>"#{ meeting_show_full_path(:id=>meeting.id, :swimmer_id=>@swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip')}
+      = meeting.get_short_name + ' ( ' + Format.a_date( meeting.get_scheduled_date ) + ')'
+  %td.goggles-rightalign
+    = meeting_individual_result.reaction_time
+  - passage_list.each_with_index do |passage, index|
+    %td.goggles-rightalign
+      - if meeting_individual_result.passages[index]
+        = meeting_individual_result.passages[index].get_timing
+  %td.goggles-rightalign
+    = meeting_individual_result.get_timing
+  %td.goggles-rightalign
+    = meeting_individual_result.standard_points
+  %td.goggles-rightalign
+    = meeting_individual_result.rank
