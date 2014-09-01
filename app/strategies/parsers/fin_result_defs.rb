@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.96.20131115
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
  Container class for the lists of ContextDetector and TokenExtractor
@@ -19,8 +19,8 @@ require 'parsers/token_extractor'
 class FinResultDefs
 
   attr_accessor :full_pathname, :show_progress, :logger
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  #++
 
 
   # Creates a new instance.
@@ -29,16 +29,19 @@ class FinResultDefs
     self.full_pathname = full_pathname
     self.logger = logger
 
-    # == Context type parser hash - an Hash of row type symbols pointing to an array of conditions to be satisfied.
+    # == Context type parser hash
+    # An Hash of row type symbols pointing to an array of conditions to be satisfied.
     #
-    # Parsing a row type implies detecting the context on which the tokens of the row will be extracted.
+    # Parsing a row type implies detecting the context in which the tokens of the
+    # row will be extracted.
     #
     # To successfully parse a row type (thus defining the current context of the tokenizer),
-    # for each type symbol here enlisted, all of its value elements must result true, equal or "satisfied",
-    # for the type of context to be reckognized as "active".
+    # for each type symbol here enlisted, all of its value elements must result true,
+    # equal or "satisfied", for the type of context to be reckognized as "active".
     #
-    # For instance, for the type :category_header, 3 consecutive lines of the parsed file must satisfy
-    # the conditions inside its element array (respectively at index 0, 1 and 2).
+    # For instance, for the type :category_header, 3 consecutive lines of the parsed
+    # file must satisfy the conditions inside its element array (respectively at
+    # index 0, 1 and 2).
     # Whereas, for the type :result_row a single condition is defined as enough.
     #
     # If the condition is a String, the equal operator is used (=).
@@ -49,7 +52,7 @@ class FinResultDefs
     # context of data, if the conditions are loose enough).
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
-      :meeting_header => ContextDetector.new(
+      meeting_header: ContextDetector.new(
         :meeting_header,
         [
           /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
@@ -60,7 +63,7 @@ class FinResultDefs
         nil,                                          # parent context
         4                                             # line_timeout (line after which these checks will be skipped)
       ),
-      :category_header => ContextDetector.new(
+      category_header: ContextDetector.new(
         :category_header,
         [
           '',
@@ -78,7 +81,7 @@ class FinResultDefs
         ],
         logger
       ),
-      :team_ranking => ContextDetector.new(
+      team_ranking: ContextDetector.new(
         :team_ranking,
         [
           /classifica(\s+di)?(\s+societ)?/ui,
@@ -86,7 +89,7 @@ class FinResultDefs
         ],
         logger
       ),
-      :stats => ContextDetector.new(
+      stats: ContextDetector.new(
         :stats,
         [
           '',
@@ -96,7 +99,7 @@ class FinResultDefs
         logger
       ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      :result_row => ContextDetector.new(
+      result_row: ContextDetector.new(
         :result_row,
         [
           /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
@@ -104,63 +107,64 @@ class FinResultDefs
         logger,
         :category_header                              # parent context
       ),
-      :relay_row => ContextDetector.new(
+      relay_row: ContextDetector.new(
         :relay_row,
         [
           /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)$/i
         ],
         logger,
-        :relay_header    
+        :relay_header
       ),
-      :ranking_row => ContextDetector.new(
+      ranking_row: ContextDetector.new(
         :ranking_row,
         [
           /\s+\d{1,6}[\,|\.]\d\d$/ui
         ],
         logger,
-        :team_ranking    
+        :team_ranking
       ),
 
-      :stats_teams_tot => ContextDetector.new(
+      stats_teams_tot: ContextDetector.new(
         :stats_teams_tot,
         [ /Numero di soc.+\siscritte\s/ui ],
         logger,
-        :stats    
+        :stats
       ),
-      :stats_teams_presence => ContextDetector.new(
+      stats_teams_presence: ContextDetector.new(
         :stats_teams_presence,
         [ /Numero di soc.+\spartecipanti\s/ui ],
         logger,
-        :stats    
+        :stats
       ),
-      :stats_swimmer_tot => ContextDetector.new(
+      stats_swimmer_tot: ContextDetector.new(
         :stats_swimmer_tot,
         [ /Numero totale di atleti iscritti\s/ui ],
         logger,
-        :stats    
+        :stats
       ),
-      :stats_swimmer_presence => ContextDetector.new(
+      stats_swimmer_presence: ContextDetector.new(
         :stats_swimmer_presence,
         [ /Numero di atleti partecipanti\s/ui ],
         logger,
-        :stats    
+        :stats
       )
     }
 
-    # == String tokenizer type hash - an Hash of row type symbols pointing to an array of arrays,
-    # in which each single element array is a TokenExtractor instance, used to define each token
+    # == String tokenizer type hash
+    # An Hash of row type symbols pointing to an array of arrays, in which each
+    # single element array is a TokenExtractor instance, used to define each token
     # boundary inside the currently parsed row.
     #
-    # For each context defined by the row_types array, and for each possible row, an array
-    # of conditions must be defined to detect the starting and ending position from which the token must be
-    # extracted. (see ++TokenExtractor++ class).
+    # For each context defined by the row_types array, and for each possible row,
+    # an array of conditions must be defined to detect the starting and ending position
+    # from which the token must be extracted. (see ++TokenExtractor++ class).
     #
-    # Use nil or an empty array to skip token extraction for the current line of context. If the
-    # "starting condition" applies successfully but the following condition doesn't, the end of line is
-    # considered the actual token end boundary.
+    # Use +nil+ or an empty array to skip token extraction for the current line
+    # of context. If the "starting condition" applies successfully but the following
+    # condition doesn't, the end of line is considered the actual token end boundary.
     #
     @tokenizer_types = {
-      :meeting_header => [
+      meeting_header: [
         # -- Fields to be extracted: :title OR :meeting_dates
         [
           TokenExtractor.new(
@@ -208,7 +212,7 @@ class FinResultDefs
         ]
       ],
 
-      :category_header => [                           # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements 
+      category_header: [                              # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
         nil,
         # -- Fields to be extracted: :distance, :style, :gender, :category_group, :base_time
         [
@@ -281,16 +285,16 @@ class FinResultDefs
       ],
 
       # -- Fields to be extracted: (nothing, 2 lines in cache)
-      :team_ranking => [
+      team_ranking: [
         nil, nil
       ],
 
       # -- Fields to be extracted: (nothing, 3 lines in cache)
-      :stats => [
+      stats: [
         nil, nil, nil
       ],
-  
-      :result_row => [                              # 1 condition => 1 cached row
+
+      result_row: [                                 # 1 condition => 1 cached row
         [                                           # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
           TokenExtractor.new(
             :result_position,
@@ -334,7 +338,7 @@ class FinResultDefs
       ],
 
       # -- Fields to be extracted: :result_position, :team_name, :result_time, :result_score
-      :relay_row => [
+      relay_row: [
         [                                             # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
           TokenExtractor.new(
             :result_position,
@@ -367,7 +371,7 @@ class FinResultDefs
       ],
 
       # -- Fields to be extracted: :result_position, :team_code, :team_name, :result_score
-      :ranking_row => [
+      ranking_row: [
         [
           TokenExtractor.new(
             :result_position,
@@ -393,7 +397,7 @@ class FinResultDefs
       ],
 
       # -- Fields to be extracted: :total (for all rows)
-      :stats_teams_tot => [
+      stats_teams_tot: [
         [
           TokenExtractor.new(
             :total,
@@ -402,7 +406,7 @@ class FinResultDefs
           )
         ]
       ],
-      :stats_teams_presence => [
+      stats_teams_presence: [
         [
           TokenExtractor.new(
             :total,
@@ -411,7 +415,7 @@ class FinResultDefs
           )
         ]
       ],
-      :stats_swimmer_tot => [
+      stats_swimmer_tot: [
         [
           TokenExtractor.new(
             :total,
@@ -420,7 +424,7 @@ class FinResultDefs
           )
         ]
       ],
-      :stats_swimmer_presence => [
+      stats_swimmer_presence: [
         [
           TokenExtractor.new(
             :total,
@@ -431,20 +435,21 @@ class FinResultDefs
       ]
     }
 
-    # == String tokenizer field names Hash - an Hash of field names enlisted in arrays, one for each
-    # possible row type symbol defined for @tokenizer_types.
+    # == String tokenizer field names Hash
+    # An Hash of field names enlisted in arrays, one for each possible row type
+    # symbol defined for @tokenizer_types.
     #
-    # Note that each field name is supposed to be unique among all the arrays belonging to the same
-    # tokenizer type; otherwise, when not null, the last value found will overwrite any
-    # other existing key having the same symbol.
+    # Note that each field name is supposed to be unique among all the arrays
+    # belonging to the same tokenizer type; otherwise, when not null, the last
+    # value found will overwrite any other existing key having the same symbol.
     #
     @tokenizer_fields = {
-      :meeting_header => [                           # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
+      meeting_header: [                             # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
         [ :title, :meeting_dates ],
         [ :organization, :title ],
         [ :meeting_dates, :organization ]
       ],
-      :category_header => [                           # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
+      category_header: [                            # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
         nil,
         [ :distance, :style, :gender, :category_group, :base_time ],
         nil
@@ -455,7 +460,7 @@ class FinResultDefs
         nil
       ],
 
-      :result_row => [                                # 1 condition => 1 cached row => the tokenizer list must have 1 element (which is 1 array)
+      result_row: [                                 # 1 condition => 1 cached row => the tokenizer list must have 1 element (which is 1 array)
         [
           :result_position,
           :team_code,
@@ -466,39 +471,41 @@ class FinResultDefs
           :result_score
         ]
       ],
-      :relay_row => [
+      relay_row: [
         [ :result_position, :team_name, :result_time, :result_score ]
       ],
-  
-      :team_ranking => [                              # 2 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
+
+      team_ranking: [                               # 2 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
         nil,
         nil
       ],
-      :ranking_row => [
+      ranking_row: [
         [ :result_position, :team_code, :team_name, :result_score ]
       ],
 
-      :stats => [                                     # 3 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
+      stats: [                                      # 3 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
         nil, nil, nil
       ],
-      :stats_teams_tot        => [ [ :total ] ],
-      :stats_teams_presence   => [ [ :total ] ],
-      :stats_swimmer_tot      => [ [ :total ] ],
-      :stats_swimmer_presence => [ [ :total ] ]
+      stats_teams_tot:        [ [ :total ] ],
+      stats_teams_presence:   [ [ :total ] ],
+      stats_swimmer_tot:      [ [ :total ] ],
+      stats_swimmer_presence: [ [ :total ] ]
     }
 
-    # == Context Group Keys Hash - this Hash contains as each item value the array of all
-    # the key field for a specific context symbol.
-    # The field names must be taken from @tokenizer_fields and these will be concatenated
-    # together to form the unique key representing a single context data page on the result hash.
+    # == Context Group Keys Hash
+    # This Hash contains as each item value the array of all the key field for
+    # a specific context symbol.
+    # The field names must be taken from @tokenizer_fields and these will be
+    # concatenated together to form the unique key representing a single context
+    # data page on the result hash.
     #
-    # If no key is defined for a specific context symbol, each entry will be treated as unique
-    # and added to the result array of data pages.
+    # If no key is defined for a specific context symbol, each entry will be
+    # treated as unique and added to the result array of data pages.
     #
     @context_keys = {
-      :meeting_header =>  [:title],
-      :category_header => [:distance, :style, :gender, :category_group],
-      relay_header:    [:type, :category_group]  # (type includes also the gender token)
+      meeting_header:  [:title],
+      category_header: [:distance, :style, :gender, :category_group],
+      relay_header:    [:type, :category_group]     # (type includes also the gender token)
     }
                                                     # === Internal structure integrity checks: ===
                                                     # Pre-check format type definition:
@@ -509,19 +516,20 @@ class FinResultDefs
       rails "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)
     }
   end
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  #++
 
 
   # Returns the whole Hash of all defined Context Types, where the hash key
   # is the context symbol and the value is the corresponding ContextDetector
   # instance.
-  # 
+  #
   def get_context_types()
     return @context_types
   end
 
   # Returns just the Array of all defined context key symbols.
-  # 
+  #
   def get_context_keys()
     return @context_types.keys
   end
@@ -529,7 +537,7 @@ class FinResultDefs
   # Returns the Array of all the *required* (that is, guaranteed to be
   # created) output field keys for a specified context symbol.
   # Returns an empty array if the +context_sym+ is not found.
-  # 
+  #
   def get_required_field_keys( context_sym )
     return @context_keys[ context_sym ] ? @context_keys[ context_sym ] : []
   end
@@ -540,17 +548,19 @@ class FinResultDefs
   # Please note that not all returned fields in the Array may be present or used in
   # any returned row. (Empty or blank fields are stripped out and then compacted
   # from the resulting array of values.)
-  # 
+  #
   def get_field_list_for( context_sym )
     return [] if @tokenizer_fields[ context_sym ].nil?
     @tokenizer_fields[ context_sym ].flatten.compact.uniq
   end
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  #++
 
 
-  # Returns the specific ContextDetector instance associated with the context symbol specified.
+  # Returns the specific ContextDetector instance associated with the context
+  # symbol specified.
   # Returns +nil+ when not found.
-  # 
+  #
   def get_detector_for( context_sym )
     @context_types[ context_sym ]
   end
@@ -558,20 +568,21 @@ class FinResultDefs
 
   # Returns +true+ if the specified context symbol points to a ContextDetector
   # instance that is root or has a +nil+ parent context.
-  # 
+  #
   def is_a_parent( context_sym )
     detector = get_detector_for( context_sym )
     ( detector.nil? || detector.is_a_parent_context() )
   end
-  # ---------------------------------------------------------------------------
-
+  # ----------------------------------------------------------------------------
+  #++
 
   # Returns an Hash of field name symbols as keys with their corresponding
-  # @tokenizer_types instances as values. ( {<field_name_sym> => <corresponding_tokenizer_instance>, ...} )
+  # @tokenizer_types instances as values.
+  # ( {<field_name_sym> => <corresponding_tokenizer_instance>, ...} )
   #
   # Note that this is "flattened" version of the same result
   # obtained from #get_tokenizer_types_for( context_sym ).
-  # 
+  #
   def get_tokenizers_for( context_sym )
     return {} if @tokenizer_fields[ context_sym ].nil? || @tokenizer_types[ context_sym ].nil?
     keys = @tokenizer_fields[ context_sym ].flatten.compact
@@ -580,7 +591,7 @@ class FinResultDefs
     keys.each_with_index{ |k, i|
       result_hash[ k ] = values[i]
     }
-    result_hash 
+    result_hash
   end
 
   # Returns the intact structure of the tokenizer type defined for
@@ -593,7 +604,7 @@ class FinResultDefs
   #
   # This complex structure is actually used only by the parser
   # instance itself.
-  # 
+  #
   def get_tokenizer_types_for( context_sym )
     @tokenizer_types[ context_sym ]
   end
@@ -604,13 +615,14 @@ class FinResultDefs
   # The returned value is somehow similar in structure to the
   # one returned by #get_tokenizer_types_for( context_sym ),
   # but simpler, since it just has a matrix of field names (in symbols)
-  # with one list of row symbols for each row of context defined.  
+  # with one list of row symbols for each row of context defined.
   #
   # This complex structure is actually used only by the parser
   # instance itself.
-  # 
+  #
   def get_tokenizer_fields_for( context_sym )
     @tokenizer_fields[ context_sym ]
   end
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  #++
 end
