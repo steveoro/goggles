@@ -119,7 +119,10 @@
         - else
           = I18n.t('swimmers.no_disqualifications')
   .span3
-    = image_tag( avatar_url(@swimmer), class: "img-polaroid" )
+    - if ( @swimmer.associated_user == current_user )
+      = link_to( image_tag(avatar_url(@swimmer), class: "img-polaroid"), "http://#{I18n.locale}.gravatar.com/", 'data-toggle' => 'tooltip', title: I18n.t('radiography.link_to_gravatar_tooltip') )
+    -else
+      = image_tag( avatar_url(@swimmer), class: "img-polaroid" )
     .row-fluid
       %br
     .row-fluid

@@ -4,7 +4,7 @@
 # Assorted helpers for badge-like clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.458
+# @version  4.00.459
 #
 module SwimmersHelper
 
@@ -18,7 +18,12 @@ module SwimmersHelper
     default_url = 'img_radiography.jpg'
     if swimmer.associated_user
       gravatar_id = Digest::MD5::hexdigest( swimmer.associated_user.email ).downcase
-      "http://gravatar.com/avatar/#{ gravatar_id }.png?s=48&d=#{ CGI.escape(default_url) }"
+      # [Steve, 20140901] If this was Rails 4, a simple image_url() would have done the job:
+#      absolute_url = request.protocol + request.host_with_port + path_to_image( default_url )
+      # [Steve, 20140901] For development/testing, we need a public-accessible server with the default image:
+      default_uri = "http://csinuoto.csire.it/master/radio/imggenerica.jpg"
+      escaped_url = CGI.escape( default_uri )
+      "http://gravatar.com/avatar/#{ gravatar_id }.png?d=#{ escaped_url }"
     else
       default_url
     end
