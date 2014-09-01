@@ -25,7 +25,9 @@
               %td.goggles-rightalign
                 %b= 'Rank'
               
-            - full_history_element[1].each do |result_by_time|
-              = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: result_by_time, passage_list: passage_list, meeting: result_by_time.meeting } )
+            - full_history_element[1].each do |meeting_individual_result|
+              - meeting = meeting_individual_result.meeting
+              - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result)
+              = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
 
 .row-fluid.goggles-category-gap

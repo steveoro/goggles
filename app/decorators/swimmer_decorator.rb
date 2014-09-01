@@ -267,7 +267,7 @@ class SwimmerDecorator < Draper::Decorator
   # Returns the Array of associated Teams for this Swimmer.
   #
   def get_teams()
-    teams.uniq
+    @teams ||= teams.uniq
   end
   #-- --------------------------------------------------------------------------
 
@@ -283,7 +283,7 @@ class SwimmerDecorator < Draper::Decorator
   # with link to swimmer radiography
   #
   def get_linked_swimmer_name
-    h.link_to( get_full_name, swimmer_radio_path(id: swimmer.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip') } )
+    @linked_swimmer_name ||= h.link_to( get_full_name, swimmer_radio_path(id: swimmer.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip') } )
   end
   #-- -------------------------------------------------------------------------
 
@@ -301,7 +301,7 @@ class SwimmerDecorator < Draper::Decorator
     else
       linked_list = I18n.t('none')
     end 
-    linked_list
+    @linked_team_list ||= linked_list
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -323,25 +323,25 @@ class SwimmerDecorator < Draper::Decorator
   # Returns the total count of all the gold medals for this Swimmer.
   #
   def get_total_gold_medals()
-    MeetingIndividualResult.count_swimmer_ranks_for( id, 1 )
+    @swimmer_gold_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 1 )
   end
 
   # Returns the total count of all the silver medals for this Swimmer.
   #
   def get_total_silver_medals()
-    MeetingIndividualResult.count_swimmer_ranks_for( id, 2 )
+    @swimmer_silver_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 2 )
   end
 
   # Returns the total count of all the bronze medals for this Swimmer.
   #
   def get_total_bronze_medals()
-    MeetingIndividualResult.count_swimmer_ranks_for( id, 3 )
+    @swimmer_bronze_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 3 )
   end
 
   # Returns the total count of all the "wooden" medals for this Swimmer.
   #
   def get_total_wooden_medals()
-    MeetingIndividualResult.count_swimmer_ranks_for( id, 4 )
+    @swimmer_wooden_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 4 )
   end
   #-- --------------------------------------------------------------------------
   #++

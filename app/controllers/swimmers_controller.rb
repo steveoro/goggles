@@ -131,7 +131,7 @@ class SwimmersController < ApplicationController
   #
   def full_history_1
     # --- "Full History" tab: ---
-    @tab_title = I18n.t('radiography.full_history_tab1')
+    @tab_title = I18n.t('radiography.full_history_by_date')
     
     # Cycles between pool types suitable for meetings
     @full_history_by_date = Hash.new 
@@ -140,10 +140,10 @@ class SwimmersController < ApplicationController
       # TODO Verify if selecting only used attributi si better/faster than selectin the whole object
       #mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date
       mirs = @swimmer.meeting_individual_results
-       .joins(:event_type)
-       .for_pool_type( pool_type )
-       .sort_by_date
-       .select([:id, :minutes, :seconds, :hundreds])
+        .joins(:event_type)
+        .for_pool_type( pool_type )
+        .sort_by_date
+        .select([:id, :minutes, :seconds, :hundreds])
        
       # The event_by_date structure
       # The structure is an array of hashes with elements formed by
@@ -199,7 +199,6 @@ class SwimmersController < ApplicationController
   def full_history_2
     # --- "Full History" tab: ---
     @tab_title = I18n.t('radiography.full_history_by_event')
-    @all_mirs = @swimmer.meeting_individual_results.sort_by_pool_and_event
     
     # Creates an hash with event_by_pool_type as code
     # Every element is an array of hashes
@@ -211,18 +210,23 @@ class SwimmersController < ApplicationController
     @full_history_by_event = Hash.new 
     EventsByPoolType.only_for_meetings.not_relays.sort_by_event.each do |events_by_pool_type|
       hash_key = "#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"
-      result_by_time = @swimmer
-       .meeting_individual_results
-       .for_event_by_pool_type( events_by_pool_type )
-       .sort_by_timing( 'DESC' )
-       .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
-      
+      results_by_time = @swimmer.meeting_individual_results
+        .for_event_by_pool_type( events_by_pool_type )
+        .sort_by_timing( 'ASC' )
+        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
+       
+      # Collect all passages
+      passages = Passage.joins(:event_type, :pool_type, :passage_type)
+        .where(swimmer: @swimmer)
+        .where(['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id])
+        .select([:meeting_individual_result_id, :passage_type_id, :minutes, :seconds, :hundreds])
+        .select('passage_types.length_in_meters')
+
       # Collect the passage list
-      result_id_list = result_by_time.map{ |mir| mir.id } 
-      passage_list = Passage.joins(:passage_type).select('passage_types.length_in_meters').where(['meeting_individual_result_id in (?)', result_id_list]).uniq.map{ |pt| pt.length_in_meters }
+      passages_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
       
       # Create has element with event type by pool data
-      @full_history_by_event[hash_key] = [passage_list, result_by_time]
+      @full_history_by_event[hash_key] = [passages_list, results_by_time, passages]
     end
   end
   #-- -------------------------------------------------------------------------
