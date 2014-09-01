@@ -21,9 +21,9 @@
               %td.goggles-rightalign
                 %b= 'Final'
               %td.goggles-rightalign
-                %b= 'Points'
+                %b= I18n.t('meeting.scores')
               %td.goggles-rightalign
-                %b= 'Rank'
+                %b= I18n.t('meeting.rank')
               
             - full_history_element[1].each do |meeting_individual_result|
               - meeting = meeting_individual_result.meeting
