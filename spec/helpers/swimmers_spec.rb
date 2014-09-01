@@ -12,6 +12,30 @@ describe SwimmersHelper, :type => :helper do
     @swimming_buddy = create(:user, swimmer: nil)
   end
 
+
+  describe "#avatar_url" do
+    context "without an associated swimmer," do
+      it "returs the default image url" do
+        expect( helper.avatar_url(@swimmer) ).to eq( 'img_radiography.jpg' )
+      end
+    end
+
+    context "with an associated swimmer" do
+      before(:each) { @current_user.set_associated_swimmer( @swimmer ) }
+      it "returs the default image url" do
+        expect( helper.avatar_url(@swimmer) ).to include( 'http://gravatar.com/avatar' )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # ----------------------------------------------------------------------------
+  # Other badge-related method specs:
+  # ----------------------------------------------------------------------------
+
+
   context "[not logged-in]" do
     [
       :social_confirm_badge, :social_invite_badge, :social_block_badge,

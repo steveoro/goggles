@@ -4,7 +4,7 @@
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.82.20131105
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
  Utility class for detecting context changes in the text scanned
@@ -76,7 +76,7 @@ class ContextDetector
   # pre-defined parent context must be equal to previously
   # detected context (specified upon each new line feed).
   #
-  def initialize( context_name, condition_array, logger = nil, 
+  def initialize( context_name, condition_array, logger = nil,
                   parent_context_name = nil, line_timeout = 0 )
     raise "ContextDetector: condition_array not valid for context '#{context_name}'!" unless condition_array.kind_of?(Array)
     self.context_name = context_name.to_sym
@@ -163,7 +163,7 @@ class ContextDetector
         logger ?  logger.debug( "ContextDetector: @detection_index=#{@detection_index} VS #{self.condition_array.size}, successful check in progress..." ) :
                   puts( "ContextDetector: @detection_index=#{@detection_index} VS #{self.condition_array.size}, successful check in progress..." )
       end
-                                                    # Successful matches are enough for a CONTEXT DETECTION? 
+                                                    # Successful matches are enough for a CONTEXT DETECTION?
       if ( @detection_index == condition_array.size )
         logger.debug( "ContextDetector: ==> context '#{self.context_name}' DETECTED <==" ) if (logger && DEBUG_VERBOSE)
         is_context_detected = true

@@ -9,12 +9,12 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.96.20131115
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
   to search and/or add a new entity record inside the database, assuming
-  the results from the parsing ("phase 1") have already been obtained. 
+  the results from the parsing ("phase 1") have already been obtained.
 
   Refactored from the original DataImportController implementation.
 
@@ -37,7 +37,7 @@ require 'parsers/fin_result_parser_tools'
 
 =end
 module FinResultPhase2
-  
+
   # Certainty bias score result for "fuzzy name search".
   FUZZY_SEARCH_BIAS_SCORE = 0.98
 
@@ -53,7 +53,7 @@ module FinResultPhase2
 
   # Team analysis/recognition log, stored as an UTF-8 string.
   # Any uncertain team name match is always logged as well as all the
-  # existing possible "best-matches" for a minimun result bias score. 
+  # existing possible "best-matches" for a minimun result bias score.
   @team_analysis_log = ''
 
   # Total of stored data rows
@@ -66,7 +66,7 @@ module FinResultPhase2
   @current_admin_id = 0
 
   # When not nil and not empty, contains the array of hash of
-  # results from the "team analysis" phase. 
+  # results from the "team analysis" phase.
   @team_analysis_results = []
   # ---------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ module FinResultPhase2
 # DEBUG
       logger.debug( "                 Parsed CATEGORY header_row[:fields]=#{header_row[:fields].inspect}...\r\n" )
 
-                                                    # -- MEETING PROGRAM (digest part) --                                                    
+                                                    # -- MEETING PROGRAM (digest part) --
       gender_type_id   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
       raise "Unrecognized GenderType in category headers! (token='#{header_row[:fields][:gender] }')" if gender_type_id == 0
       category_type_id = CategoryType.parse_category_type_from_import_text( season_id, header_row[:fields][:category_group] )
@@ -156,7 +156,7 @@ module FinResultPhase2
                                                     # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index { |detail_row, detail_row_idx|
-                                                    # -- MEETING INDIVIDUAL RESULT (digest part) --                                                    
+                                                    # -- MEETING INDIVIDUAL RESULT (digest part) --
         result_id = search_or_add_a_corresponding_individual_result(
             full_pathname, data_import_session_id,
             season_id, season_type_id, season_starting_year,
@@ -218,7 +218,7 @@ module FinResultPhase2
                                          # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index { |detail_row, detail_row_idx|
-                                                    # -- MEETING RELAY RESULT (digest part) --                                                    
+                                                    # -- MEETING RELAY RESULT (digest part) --
         result_id = search_or_add_a_corresponding_meeting_relay_result(
             full_pathname, data_import_session_id, season_id, meeting_program_id,
             detail_row, detail_row_idx, detail_rows.size,
@@ -254,9 +254,9 @@ module FinResultPhase2
       logger.debug( "Parsed TEAM RANKING header_row[:fields]=#{header_row[:fields].inspect}...\r\n" )
                                                     # **** DETAIL LOOP **** For each result row:...
       detail_rows.each_with_index { |detail_row, detail_row_idx|
-                                                    # -- MEETING RELAY RESULT (digest part) --                                                    
+                                                    # -- MEETING RELAY RESULT (digest part) --
         result_id = search_or_add_a_corresponding_meeting_team_score(
-            full_pathname, data_import_session_id, season_id, meeting_id, 
+            full_pathname, data_import_session_id, season_id, meeting_id,
             detail_row, detail_row_idx, detail_rows.size,
             force_missing_team_creation
         )
@@ -631,7 +631,7 @@ module FinResultPhase2
   #   - negative IDs only for already existing/commited rows in "standard" entity;
   #   - 0 only on error/unable to process.
   #
-  def search_or_add_a_corresponding_meeting_program( full_pathname, session_id, season_id, 
+  def search_or_add_a_corresponding_meeting_program( full_pathname, session_id, season_id,
                                                      meeting_id, meeting_session_id,
                                                      header_row, header_index, gender_type_id,
                                                      category_type_id, stroke_type_id, length_in_meters,
@@ -1224,7 +1224,7 @@ module FinResultPhase2
     # enough to get the seeked results:
     #
     #     relay_results = meeting.meeting_relay_results.where(
-    #         team_id: -team_id, 
+    #         team_id: -team_id,
     #         is_out_of_race: false, is_disqualified: false
     #     )
                                                     # Collect ALL meeting_sessions IDs:
@@ -1408,7 +1408,7 @@ module FinResultPhase2
     last_name = first_name = nil
 # DEBUG
 #    @phase_1_log << "Processing swimmer_name='#{swimmer_name}', splitted_name='#{splitted_name.inspect}'\r\n"
-                                                    # (Must find a "separator length" that at least results in a last_name + first_name array)    
+                                                    # (Must find a "separator length" that at least results in a last_name + first_name array)
     if splitted_name.size < 2                       # Substitute all >= 3-space gaps with a constant 2-space gap:
       splitted_name = (splitted_name[0]).split(' ')
     end
@@ -1430,7 +1430,7 @@ module FinResultPhase2
 #      :complete_name
 #    ) unless result_row
     result_row = Swimmer.where(
-      [ 
+      [
         "(year_of_birth = ?) AND (complete_name LIKE ?)",
         swimmer_year, complete_name+'%'
       ]
@@ -1604,14 +1604,14 @@ module FinResultPhase2
       end
     end
 
-    if result_id < 0                                # Do we have an actual Team? => INTEGRITY Check on TeamAffiliation     
+    if result_id < 0                                # Do we have an actual Team? => INTEGRITY Check on TeamAffiliation
       team_affiliation = TeamAffiliation.where(     # Check if there is (& there must be) a corresponding TeamAffiliation for THIS season: if missing, add it.
         team_id: - result_id,
         season_id: season_id
       ).first
                                                     # Always add any MISSING TeamAffiliation
       unless team_affiliation                       # (since the allegedly linked Team was found)
-        begin                
+        begin
           TeamAffiliation.transaction do
             team_affiliation = TeamAffiliation.new(
               name: team_name,             # Use the actual provided (and searched) name instead of the result_row.name

@@ -9,14 +9,14 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.95.20131114
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
   to create new entity records inside the database, assuming
   the results from the digest ("phase 2") have already been stored
   into dedicated "data_import_XYZ" tables (one for each entity that has
-  been processed). 
+  been processed).
 
   Refactored from the original DataImportController implementation.
 
@@ -42,7 +42,7 @@ module FinResultPhase3
   # Commit method for DataImportMeeting / Meeting.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -120,7 +120,7 @@ module FinResultPhase3
   # Commit method for DataImportMeetingSession / MeetingSession.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -243,7 +243,7 @@ module FinResultPhase3
   # Commit method for DataImportMeetingProgram / MeetingProgram.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -330,7 +330,7 @@ module FinResultPhase3
   # Commit method for DataImportCity / City.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -384,7 +384,7 @@ module FinResultPhase3
   # Commit method for DataImportTeam / Team / TeamAffiliation.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -465,7 +465,7 @@ module FinResultPhase3
   # Commit method for DataImportSwimmer / Swimmer.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -522,7 +522,7 @@ module FinResultPhase3
   # Commit method for DataImportBadge / Badge.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -582,7 +582,7 @@ module FinResultPhase3
   # Commit method for DataImportMeetingIndividualResult / MeetingIndividualResult.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -650,7 +650,7 @@ module FinResultPhase3
   # Commit method for DataImportMeetingRelayResult / MeetingRelayResult.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
@@ -716,7 +716,7 @@ module FinResultPhase3
   # Commit method for DataImportMeetingTeamScore / MeetingTeamScore.
   # Commits the rows of the entity from the data-import temp. table to the actual
   # entity destination table.
-  #  
+  #
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #

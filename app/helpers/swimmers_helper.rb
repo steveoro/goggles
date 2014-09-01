@@ -4,9 +4,28 @@
 # Assorted helpers for badge-like clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.339
+# @version  4.00.458
 #
 module SwimmersHelper
+
+  # Returns a default (local) image URL for a non-associated swimmer or
+  # a goggler without a Gravatar image.
+  #
+  # Returns the Gravatar image link for an associated swimmer (a Goggler) with
+  # a valid Gravatar account and a custom image.
+  #
+  def avatar_url( swimmer )
+    default_url = 'img_radiography.jpg'
+    if swimmer.associated_user
+      gravatar_id = Digest::MD5::hexdigest( swimmer.associated_user.email ).downcase
+      "http://gravatar.com/avatar/#{ gravatar_id }.png?s=48&d=#{ CGI.escape(default_url) }"
+    else
+      default_url
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Creates a toggle link for #confirm/#unconfirm actions for valid swimmers.
   #
@@ -78,7 +97,8 @@ module SwimmersHelper
     path      = decorated_swimmer.get_edit_path_for( current_user )
     build_link_result( "edit#{swimmer.id}", label_txt, "label label-info", tooltip, path ) if path
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private

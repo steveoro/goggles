@@ -6,7 +6,7 @@ require 'parsers/context_detector'
 require 'parsers/token_extractor'
 require 'parsers/fin_result_defs'
 require 'parsers/fin_result_parser_tools'
-                                                    # The following applies only to Ruby <= 1.9.2   
+                                                    # The following applies only to Ruby <= 1.9.2
 require 'iconv' unless String.method_defined?( :encode )
 
 
@@ -15,7 +15,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.83.20131105
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -23,7 +23,7 @@ require 'iconv' unless String.method_defined?( :encode )
  locale (since F.I.N. is the Italian Swimming Federation).
 
  All the RegExp used by this Parser class assume the file to be processed is compliant
- with the format used in these kind of files. 
+ with the format used in these kind of files.
 
 =end
 class FinResultParser
@@ -83,13 +83,13 @@ class FinResultParser
   #   has the same keys as the @context_keys[:category_header] Array
   #   (Note that the *last* field may/may not be included for certain categories),
   #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each
-  #   possible value found of the above fields. 
+  #   possible value found of the above fields.
   #
   # - <hash_of_result_row_fields_with_values>
   #   has the same keys as the flattened array @tokenizer_fields[:result_row]
   #   (Note that the *first* field may/may not be included for certain categories),
   #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each
-  #   possible value found of the above fields. 
+  #   possible value found of the above fields.
   #
   def self.parse_txt_file( full_pathname, show_progress = DEBUG_VERBOSE, logger = nil )
     logger.info( "\r\n-- FinResultParser::parse_txt_file(#{full_pathname}):" ) if logger
@@ -129,11 +129,11 @@ class FinResultParser
           parse_result[ context_sym ] = [] if parse_result[ context_sym ].nil?
                                                     # Run checkings for current line:
           is_detected = detector.feed_and_detect( curr_line, line_count, previous_parent_context )
-          
+
           if ( is_detected )                        # === DETECTION SUCCESSFULL ===
             logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
             cached_rows = detector.dump_line_cache()
-            token_hash = tokenize_context_cache( 
+            token_hash = tokenize_context_cache(
                 parsing_defs, context_sym,
                 cached_rows,
                 logger, line_count + 1
@@ -162,7 +162,7 @@ class FinResultParser
               if show_progress
                 logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{key_string}'.") : puts("   Adding new context '#{context_sym}', key_string='#{key_string}'.")
               end
-              
+
               parse_result[ context_sym ] << {
                 id: key_string, fields: token_hash,
                 import_text: cached_rows.join("\r\n")
@@ -244,7 +244,7 @@ class FinResultParser
       puts( "Total read lines ....... : #{line_count} (including garbage)" )
       puts( "Protocol efficiency .... : #{(( tot_rows.to_f)/line_count.to_f * 10000.0).round / 100.0} %" )
       puts( "File done.\r\n---------------------------------------------\r\n\r\n\r\n" )
-    end 
+    end
 
     {
       parse_result: parse_result,
@@ -260,7 +260,7 @@ class FinResultParser
 
 
   # Returns a unique string ID for the context_sym and token_hash specified
-  # 
+  #
   def self.compose_memstorage_key( parsing_defs, context_sym, token_hash, logger = nil )
     return nil if ( parsing_defs.get_required_field_keys( context_sym ).size < 1 )
     all_keys_list  = parsing_defs.get_required_field_keys( context_sym ).flatten.compact

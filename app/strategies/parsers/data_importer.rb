@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
+
 require 'parsers/fin_result_parser'
 require 'parsers/fin_result_parser_tools'
 require 'parsers/fin_result_phase2'
@@ -11,10 +12,10 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.131.20131230
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
-  Data-Import methods container class. 
+  Data-Import methods container class.
   Refactored from the original DataImportController implementation.
 
   === Defines:
@@ -40,7 +41,7 @@ class DataImporter
   include FinResultPhase2
   include FinResultPhase3
 
-  attr_accessor :logger, :flash, 
+  attr_accessor :logger, :flash,
                 # Batch/delayed execution parameters:
                 :full_pathname, :season, :force_missing_meeting_creation,
                 :force_missing_team_creation,
@@ -163,7 +164,7 @@ class DataImporter
   # +true+ if the team_analysis phase was executed
   # due to some problematic team name.
   def has_team_analysis_results
-    ( @team_analysis_results.instance_of?(Array) && (@team_analysis_results.size > 0) ) 
+    ( @team_analysis_results.instance_of?(Array) && (@team_analysis_results.size > 0) )
   end
 
   # Getter for the default log base file name (pathname + log filename w/o extension)
@@ -185,7 +186,7 @@ class DataImporter
       total_data_rows: total_data_rows,
       :file_format => file_format,
       season_id: season_id,
-      phase_3_log: '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers") 
+      phase_3_log: '0',                          # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers")
       user_id: current_admin_id
     )
   end
@@ -228,7 +229,7 @@ class DataImporter
   # Executes the batch action using a delayed_job-compatible
   # +perform+ method signature.
   # This assumes that all parameters relevant to the execution
-  # must be already set into their dedicated class members.  
+  # must be already set into their dedicated class members.
   #
 # FIXME TEST delayed_job execution without perform method
 #  def perform
@@ -247,8 +248,8 @@ class DataImporter
     1
   end
 
-  # Sets the parameter values for batch/delayed execution.  
-  # 
+  # Sets the parameter values for batch/delayed execution.
+  #
   def set_parameters( full_pathname, season = nil,
                       force_missing_meeting_creation = false,
                       force_missing_team_creation = false,
@@ -273,10 +274,10 @@ class DataImporter
     if log_contents.size > 0
       File.open( log_filename + extension, 'w' ) do |f|
         f.puts header_text if header_text.size > 0
-        f.puts log_contents  
+        f.puts log_contents
         f.puts footer_text if footer_text.size > 0
-      end 
-    end 
+      end
+    end
   end
 
   # Saves to the specifed log_filename the log_contents, adding a default
@@ -325,7 +326,7 @@ class DataImporter
   # ---------------------------------------------------------------------------
 
 
-  # Executes a single data-import task as a whole process, without phases 
+  # Executes a single data-import task as a whole process, without phases
   # interruption.
   #
   # If +season+ instance is +nil+, it will be assumed from the pathname
@@ -594,7 +595,7 @@ class DataImporter
              (meeting_id != 0) && (meeting_session_id != 0)
                                                     # Update the import log before exiting:
         @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
-        return nil 
+        return nil
       end
 
                                                     # --- CATEGORY (digest part) --
@@ -612,7 +613,7 @@ class DataImporter
       )
       unless can_go_on                              # Update the import log before exiting:
         @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
-        return nil 
+        return nil
       end
                                                     # --- RELAY (digest part) --
       logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.3) processing RELAY HEADERS...\r\n" )
@@ -629,7 +630,7 @@ class DataImporter
       )
       unless can_go_on                              # Update the import log before exiting:
         @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
-        return nil 
+        return nil
       end
 
                                                     # After having successfully stored the contents, remove the file

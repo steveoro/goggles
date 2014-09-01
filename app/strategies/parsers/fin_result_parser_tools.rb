@@ -9,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.96.20131115
+  - Goggles framework vers.:  4.00.458
   - author: Steve A.
 
 == FinResultParserTools module
@@ -20,7 +20,7 @@ require 'common/format'
  locale (since F.I.N. is the Italian Swimming Federation).
 
  All the RegExp used by this Parser class assume the file to be processed is compliant
- with the format used in these kind of files. 
+ with the format used in these kind of files.
 
 =end
 module FinResultParserTools
@@ -59,7 +59,7 @@ module FinResultParserTools
   # ---------------------------------------------------------------------------
 
 
-  # Parses a text date extracted from a FIN result text file. 
+  # Parses a text date extracted from a FIN result text file.
   #
   def self.parse_meeting_date( text_token )
 # DEBUG
@@ -333,7 +333,7 @@ module FinResultParserTools
   # An array of Hash having each element as:
   #
   #  { score: <match_score>, row: <match_row_instance> }
-  # 
+  #
   # Where the match_row_instance is a match that has scored higher than the bias.
   #
   def self.collect_best_fuzzy_matches( matching_string, array_of_rows, getter_for_comparison,
@@ -423,7 +423,7 @@ module FinResultParserTools
     team_id           = result_hash3[:team_id]
     best_match        = result_hash3[:best_match]
 
-    if team_id.to_i > 0                             # Let's be sure that there aren't really no affiliations with these parameters:     
+    if team_id.to_i > 0                             # Let's be sure that there aren't really no affiliations with these parameters:
       team_affiliation = TeamAffiliation.where(
         team_id: team_id,
         season_id: desired_season_id
@@ -531,7 +531,7 @@ module FinResultParserTools
     result_list = result_list.sort!{ |x,y| x[:score] <=> y[:score] }
     result_list.each { |result|
       analysis_text_log << "   - " << self.format_result_row( result[:row], result[:score] )
-      
+
       if result[:row].instance_of?( Team )
         # We will store only the highest matches per class, while looping on the results:
         team_match = result if team_match.nil? || (team_match && team_match[:score] < result[:score])
@@ -552,7 +552,7 @@ module FinResultParserTools
       hiscoring_match = result if hiscoring_match.nil? || (hiscoring_match && hiscoring_match[:score] < result[:score])
       analysis_text_log << "\r\n"
     }
-                                                    # Couldn't find a Team in result, but found an affiliation? 
+                                                    # Couldn't find a Team in result, but found an affiliation?
     if (best_match)                                 # (That is: look-alike affiliation name found, but linked to a too-different team name?)
       team_id = best_match[:row].team_id            # Always override the chosen team_id with the best match
       team_match = { score: best_match[:score], row: best_match[:row].team } if team_match.nil?
