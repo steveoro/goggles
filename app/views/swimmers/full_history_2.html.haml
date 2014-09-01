@@ -1,5 +1,31 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid
-  .span3
-    = I18n.t('coming_soon')
+.row-fluid#full_history_by_date_grid
+  .goggles-category-gap#pageTop
+
+  - @full_history_by_event.each do |full_history_key,full_history_element|
+    - if full_history_element[1].size > 0
+      .row-fluid
+        .goggles-category-gap{ 'id' => "#{full_history_key}" }
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'info'}
+              %td
+                %b= full_history_key
+              %td.goggles-rightalign
+                %b= 'R.T.'
+              - passage_list = full_history_element[0]
+              - passage_list.each do |passage_code|
+                %td.goggles-centeralign
+                  %b= passage_code
+              %td.goggles-rightalign
+                %b= 'Final'
+              %td.goggles-rightalign
+                %b= 'Points'
+              %td.goggles-rightalign
+                %b= 'Rank'
+              
+            - full_history_element[1].each do |result_by_time|
+              = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: result_by_time, passage_list: passage_list, meeting: result_by_time.meeting } )
+
+.row-fluid.goggles-category-gap

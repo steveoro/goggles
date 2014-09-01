@@ -145,33 +145,35 @@ describe SwimmersController, :type => :controller do
         get :full_history_1, id: @swimmer.id
       end
 
-      it "assigns an hash with data collected" do
-        expect( assigns( :full_history_by_date ) ).to be_a_kind_of( Hash )
-      end
-      it "assigns an hash with the same number of element of pool types suitable for meetings" do
-        expect( assigns( :full_history_by_date ).size ).to be PoolType.only_for_meetings.count
-      end
-      it "assigns an hash that responds to pool type codes" do
-        result = assigns( :full_history_by_date )
-        PoolType.only_for_meetings.each do |pool_type|
-          expect( result[pool_type.code] ).not_to be_nil
+      context "full_history_by_date general structure," do
+        it "assigns an hash with data collected" do
+          expect( assigns( :full_history_by_date ) ).to be_a_kind_of( Hash )
         end
-      end
-      it "assigns an hash with array as elements" do
-        result = assigns( :full_history_by_date )
-        PoolType.only_for_meetings.each do |pool_type|
-          expect( result[pool_type.code] ).to be_a_kind_of( Array )
+        it "assigns an hash with the same number of element of pool types suitable for meetings" do
+          expect( assigns( :full_history_by_date ).size ).to be PoolType.only_for_meetings.count
         end
-      end
-      it "assigns an hash with array of two elements as element" do
-        result = assigns( :full_history_by_date )
-        PoolType.only_for_meetings.each do |pool_type|
-          expect( result[pool_type.code].size ).to be 2
+        it "assigns an hash that responds to pool type codes" do
+          result = assigns( :full_history_by_date )
+          PoolType.only_for_meetings.each do |pool_type|
+            expect( result[pool_type.code] ).not_to be_nil
+          end
+        end
+        it "assigns an hash with array as elements" do
+          result = assigns( :full_history_by_date )
+          PoolType.only_for_meetings.each do |pool_type|
+            expect( result[pool_type.code] ).to be_a_kind_of( Array )
+          end
+        end
+        it "assigns an hash with array of two elements as element" do
+          result = assigns( :full_history_by_date )
+          PoolType.only_for_meetings.each do |pool_type|
+            expect( result[pool_type.code].size ).to be 2
+          end
         end
       end
       
-      context "event_list structure," do
-        it "assigns an hash with array of two elements as element and the first array element is a list that contains '50FA'" do
+      context "event_list element structure," do
+        it "assigns an hash with array of two elements as element and the first array element is a list" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
             event_list = result[pool_type.code][0]
@@ -180,7 +182,7 @@ describe SwimmersController, :type => :controller do
         end
       end
       
-      context "event_by_date structure," do
+      context "event_by_date element structure," do
         it "assigns an hash with array of two elements as element and the second array element is an array" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
@@ -269,31 +271,97 @@ describe SwimmersController, :type => :controller do
         expect( assigns(:all_mirs) ).to all(  be_an_instance_of( MeetingIndividualResult ) )
       end
       
-      it "assigns an hash with data collected" do
-        expect( assigns( :full_history_by_event ) ).to be_a_kind_of( Hash )
-      end
-      it "assigns an hash with the same number of element of event by pool types not relays and suitable for meetings" do
-        expect( assigns( :full_history_by_event ).size ).to eq( events.count )
-      end
-      it "assigns an hash that responds to event type code - pool type code" do
-        result = assigns( :full_history_by_event )
-        events.each do |events_by_pool_type|
-          expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).not_to be_nil
+      context "full_history_by_date general structure," do
+        it "assigns an hash with data collected" do
+          expect( assigns( :full_history_by_event ) ).to be_a_kind_of( Hash )
+        end
+        it "assigns an hash with the same number of element of event by pool types not relays and suitable for meetings" do
+          expect( assigns( :full_history_by_event ).size ).to eq( events.count )
+        end
+        it "assigns an hash that responds to event type code - pool type code" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).not_to be_nil
+          end
+        end
+        it "assigns an hash with array as elements" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).to be_a_kind_of( Array )
+          end
+        end
+        it "assigns an hash with array of two elements as element" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"].size ).to be 2
+          end
+        end
+        it "hasn't elements with results for invalid event for pool type" do
+          expect( assigns( :full_history_by_event )["100MI-50"] ).to be_nil
+          expect( assigns( :full_history_by_event )["25FA-55"] ).to be_nil
         end
       end
-      it "assigns an hash with array as elements" do
-        result = assigns( :full_history_by_event )
-        events.each do |events_by_pool_type|
-          expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).to be_a_kind_of( Array )
-        end
-      end
-      it "assigns an hash with array of two elements as element" do
-        result = assigns( :full_history_by_event )
-        events.each do |events_by_pool_type|
-          expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"].size ).to be 2
+      
+      context "passage_list element structure," do
+        it "assigns an hash with array of two elements as element and the first array element is a list" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            passage_list = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][0]
+            expect( passage_list ).to be_a_kind_of( Array )
+          end
         end
       end
 
+      context "result_by_time element structure," do
+        it "assigns an hash with array of two elements as element and the second array element is a collection of meeting individual result" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            result_by_time = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][1]
+            expect( result_by_time ).to all( be_a_kind_of( MeetingIndividualResult ) )
+          end
+        end
+        it "assigns an hash with array of two elements as element and the second array element is a collection of meeting individual result with all swimmer results" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            result_by_time = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][1]
+            expect( result_by_time.count ).to eq( @swimmer.meeting_individual_results.for_event_by_pool_type(events_by_pool_type).count )
+          end
+        end
+      end
+    end
+      
+    context "as a logged-in user, with LIGABUE MARCO seeds" do
+      before(:each) do
+        login_user()
+        @swimmer = Swimmer.find(23)            # Assumes LIGABUE MARCO from seeds
+        get :full_history_2, id: @swimmer.id
+      end
+      
+      it "has elements with results for 50FA, 100FA, 200MI in each pool types" do
+        expect( assigns( :full_history_by_event )["200MI-50"][1].count ).to be > 0
+        expect( assigns( :full_history_by_event )["200MI-25"][1].count ).to be > 0
+        expect( assigns( :full_history_by_event )["100FA-50"][1].count ).to be > 0
+        expect( assigns( :full_history_by_event )["100FA-25"][1].count ).to be > 0
+        expect( assigns( :full_history_by_event )["50FA-50"][1].count ).to be > 0
+        expect( assigns( :full_history_by_event )["50FA-25"][1].count ).to be > 0
+      end
+      it "has elements with correct number of passages type" do
+        expect( assigns( :full_history_by_event )["200MI-25"][0].count ).to eq(4)
+        expect( assigns( :full_history_by_event )["200MI-50"][0].count ).to eq(4)
+        expect( assigns( :full_history_by_event )["100SL-25"][0].count ).to eq(2)
+        expect( assigns( :full_history_by_event )["100MI-25"][0].count ).to eq(4)
+        expect( assigns( :full_history_by_event )["50FA-50"][0].count ).to eq(0)
+      end
+      it "has elements with result and passages only at 50, 100, 150 and 200 for 200MI, 50 meters" do
+        passage_list = assigns( :full_history_by_event )["200MI-50"][0]
+        expect( passage_list.count ).to eq(4)
+        expect( passage_list ).to include( 50 )
+        expect( passage_list ).to include( 100 )
+        expect( passage_list ).to include( 150 )
+        expect( passage_list ).to include( 200 )
+        expect( passage_list ).not_to include( 25 )
+        expect( passage_list ).not_to include( 300 )
+      end
     end
   end
   # ===========================================================================
