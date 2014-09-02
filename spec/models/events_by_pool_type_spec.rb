@@ -21,7 +21,16 @@ describe EventsByPoolType, :type => :model do
       :sort_by_pool,
       :sort_by_event
     ])
+    # Has_many / has_one relationships:
+    it_behaves_like( "(it has_one of these required models)", [ 
+      :stroke_type
+    ])    
         
+    it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
+      :i18n_short,
+      :i18n_description
+    ])
+
     describe "#find_by_pool_and_event_codes" do
       it "has a self method find_by_pool_and_event_codes" do
         expect( EventsByPoolType ).to respond_to( :find_by_pool_and_event_codes )
@@ -36,6 +45,22 @@ describe EventsByPoolType, :type => :model do
       end
       it "returns nil if no event for the pool type present" do
         expect( EventsByPoolType.find_by_pool_and_event_codes('50', '100MI') ).to be_nil        
+      end
+    end
+    
+    describe "#find_by_key" do
+      it "has a self method find_by_key" do
+        expect( EventsByPoolType ).to respond_to( :find_by_key )
+      end
+      it "returns a EventsByPool instance or nil" do
+        fix_key = "#{PoolType.find( ((rand * 100) % 3).to_i + 1 ).code}-#{EventType.find( ((rand * 100) % 30).to_i + 1 ).code}" 
+        expect( EventsByPoolType.find_by_key(fix_key) ).to be_an_instance_of( EventsByPoolType ).or be_nil
+      end
+      it "returns a EventsByPool instance if present" do
+        expect( EventsByPoolType.find_by_key("#{subject.event_type.code}-#{subject.pool_type.code}") ).to be_an_instance_of( EventsByPoolType )
+      end
+      it "returns nil if no event for the pool type present" do
+        expect( EventsByPoolType.find_by_key('100MI-50') ).to be_nil        
       end
     end
     

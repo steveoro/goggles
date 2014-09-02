@@ -1,7 +1,26 @@
 = render( partial: 'tabs_and_radio_title' )
 
+- pool_type_25 = PoolType.find_by_code('25').i18n_description
+- pool_type_50 = PoolType.find_by_code('50').i18n_description
+
 .row-fluid#full_history_by_date_grid
   .goggles-category-gap#pageTop
+    .span2
+      %b= I18n.t('index')
+    .span4
+      %b= pool_type_25
+    .span6
+      %b= pool_type_50
+  - @index_table.each do |index_row|
+    .row-fluid
+      .span2
+        %b= index_row[:stroke_type]
+      .span4
+        - index_row[pool_type_25].each do |event_type|
+          %a.goggles-nav-compact(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
+      .span6
+        - index_row[pool_type_50].each do |event_type|
+          %a.goggles-nav-compact(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
 
   - @full_history_by_event.each do |full_history_key,full_history_element|
     - if full_history_element[1].size > 0
@@ -11,17 +30,21 @@
           %tbody
             %tr{'class'=>'info'}
               %td
-                %b= full_history_key
+                %b= EventsByPoolType.find_by_key(full_history_key).i18n_description
+                = ' ('
+                = full_history_element[1].count
+                = I18n.t('results') + ')'
+                %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
               %td.goggles-rightalign
-                %b= 'R.T.'
+                %b= I18n.t('meeting.reaction_time')
               - passage_list = full_history_element[0]
               - passage_list.each do |passage_code|
                 %td.goggles-centeralign
                   %b= passage_code
               %td.goggles-rightalign
-                %b= 'Final'
+                %b= I18n.t('meeting.timing')
               %td.goggles-rightalign
-                %b= I18n.t('meeting.scores')
+                %b= I18n.t('meeting.fin_score')
               %td.goggles-rightalign
                 %b= I18n.t('meeting.rank')
               

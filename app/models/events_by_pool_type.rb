@@ -7,6 +7,8 @@ class EventsByPoolType < ActiveRecord::Base
   belongs_to :event_type
   validates_presence_of :event_type                 # (must be not null)
   validates_associated :event_type                  # (foreign key integrity)
+  
+  has_one :stroke_type, through: :event_type
 
   scope :not_relays,    joins(:event_type).where('event_types.is_a_relay = false')
   scope :only_for_meetings, joins(:pool_type).where('pool_types.is_suitable_for_meetings = true')
@@ -15,11 +17,31 @@ class EventsByPoolType < ActiveRecord::Base
   scope :sort_by_event, joins(:event_type, :pool_type).order('event_types.style_order, pool_types.length_in_meters')
   # ----------------------------------------------------------------------------
 
+  # Returns a short description for the event by pool
+  #
+  def i18n_short
+    "#{event_type.i18n_short}-#{pool_type.i18n_short}"
+  end
+
+  # Returns a full description for the event by pool
+  #
+  def i18n_description
+    "#{event_type.i18n_description} - #{pool_type.i18n_description}"
+  end
+  # ----------------------------------------------------------------------------
+
   # Find a sopecific event for a pool type using codes
   #
   def self.find_by_pool_and_event_codes( pool_type_code, event_type_code )
     result = EventsByPoolType.joins(:event_type, :pool_type).where( ['(pool_types.code = ?) AND (event_types.code = ?)', pool_type_code, event_type_code] )
     result ? result.first : nil  
+  end
+
+  # Find a sopecific event for a pool type using a key formed by event code '-' pool code
+  #
+  def self.find_by_key( key, separator = '-' )
+    codes = key.split(separator)
+    codes.size == 2 ? self.find_by_pool_and_event_codes( codes[1], codes[0] ) : nil
   end
   # ----------------------------------------------------------------------------
 

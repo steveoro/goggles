@@ -56,6 +56,7 @@ en:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'seasons'!"
 
   meeting:
+    meeting: "Meeting"
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
     index_title: "All Meetings - custom search"
     simple_title: "All Meetings - simple search"
@@ -85,7 +86,11 @@ en:
     personal_records: "Personal records"
     rank: "Rank"
     standard: "Std."
-    meeting: "Meeting"
+    timing: "Timing"
+    reaction_time: "R.T."
+    fin_score: "FIN score"
+    goggle_score: "Goggle cup score"
+    meeting_score: "Meeting score"
     events_list: "Events"
     planned_events: "Planned Events"
     text_to_be_searched: "Text to be searched"
@@ -641,6 +646,7 @@ en:
   show_details: Show details
   details: Row details
   search: Search
+  index: Index
 
   articles_list: Articles list
   articles: Articles
