@@ -9,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.458
+  - Goggles framework vers.:  4.00.461
   - author: Steve A.
 
 == FinResultParserTools module

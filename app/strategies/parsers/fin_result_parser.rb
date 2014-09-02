@@ -15,7 +15,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.458
+  - Goggles framework vers.:  4.00.461
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -270,7 +270,7 @@ class FinResultParser
   end
 
 
-  # Tokenize a group of cached lines, reckognized as belonging to a specific "context",
+  # Tokenize a group of cached lines, recognized as belonging to a specific "context",
   # defined by the conditions specified inside the dedicated structures.
   #
   # === Returns

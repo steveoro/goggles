@@ -9,7 +9,7 @@ require 'parsers/fin_result_parser_tools'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.458
+  - Goggles framework vers.:  4.00.461
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods

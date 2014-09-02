@@ -64,6 +64,7 @@ GEM
     acts_as_votable (0.9.0)
     arel (3.0.3)
     ast (2.0.0)
+    awesome_print (1.2.0)
     bcrypt (3.1.7)
     bcrypt (3.1.7-x86-mingw32)
     better_errors (1.1.0)
@@ -101,6 +102,8 @@ GEM
     celluloid (0.15.2)
       timers (~> 1.1.0)
     cocoon (1.2.6)
+    code_analyzer (0.4.5)
+      sexp_processor
     codeclimate-test-reporter (0.3.0)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
@@ -112,6 +115,7 @@ GEM
       execjs
     coffee-script-source (1.7.1)
     color (1.7.1)
+    colored (1.2)
     colorize (0.7.3)
     countries (0.9.3)
       currencies (~> 0.4.2)
@@ -123,6 +127,12 @@ GEM
       simplecov (>= 0.7)
       term-ansicolor
       thor
+    cucumber (1.3.16)
+      builder (>= 2.1.2)
+      diff-lcs (>= 1.1.3)
+      gherkin (~> 2.12)
+      multi_json (>= 1.7.5, < 2.0)
+      multi_test (>= 0.1.1)
     currencies (0.4.2)
     daemons (1.1.9)
     debug_inspector (0.0.2)
@@ -161,15 +171,24 @@ GEM
     formatador (0.2.5)
     fuzzy-string-match_pure (0.9.5)
     generator (0.0.1)
+    gherkin (2.12.2)
+      multi_json (~> 1.3)
+    gherkin (2.12.2-x86-mingw32)
+      multi_json (~> 1.3)
     guard (2.6.1)
       formatador (>= 0.2.4)
       listen (~> 2.7)
       lumberjack (~> 1.0)
       pry (>= 0.9.12)
       thor (>= 0.18.1)
+    guard-cucumber (1.4.1)
+      cucumber (>= 1.2.0)
+      guard (>= 1.1.0)
     guard-rspec (4.3.1)
       guard (~> 2.1)
       rspec (>= 2.14, < 4.0)
+    guard-shell (0.6.1)
+      guard (>= 1.1.0)
     haml (4.0.5)
       tilt
     hike (1.2.3)
@@ -209,6 +228,7 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.0)
     multi_json (1.10.1)
+    multi_test (0.1.1)
     mysql2 (0.3.16)
     nested_form (0.3.2)
     net-http-digest_auth (1.4)
@@ -283,6 +303,16 @@ GEM
       remotipart (~> 1.0)
       safe_yaml (~> 0.6)
       sass-rails (~> 3.1)
+    rails_best_practices (1.15.4)
+      activesupport
+      awesome_print
+      code_analyzer (>= 0.4.3)
+      colored
+      erubis
+      i18n
+      json
+      require_all
+      ruby-progressbar
     railties (3.2.19)
       actionpack (= 3.2.19)
       activesupport (= 3.2.19)
@@ -299,6 +329,7 @@ GEM
       json (~> 1.4)
     remotipart (1.2.1)
     request_store (1.0.8)
+    require_all (1.3.2)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
@@ -343,6 +374,7 @@ GEM
       sass (>= 3.1.10)
       tilt (~> 1.3)
     seed_dump (0.5.3)
+    sexp_processor (4.4.4)
     simple-navigation (3.13.0)
       activesupport (>= 2.3.2)
     simple-navigation-bootstrap (1.0.0)
@@ -439,7 +471,9 @@ DEPENDENCIES
   fuzzy-string-match_pure
   generator
   guard
+  guard-cucumber
   guard-rspec
+  guard-shell
   i18n
   jquery-rails
   jquery-ui-rails
@@ -452,6 +486,7 @@ DEPENDENCIES
   prawn (~> 0.15)
   rails (= 3.2.19)
   rails_admin
+  rails_best_practices
   rest-client
   rspec (~> 3)
   rspec-rails (~> 3)

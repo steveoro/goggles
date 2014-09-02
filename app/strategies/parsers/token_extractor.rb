@@ -4,7 +4,7 @@
 
 = TokenExtractor
 
-  - Goggles framework vers.:  4.00.458
+  - Goggles framework vers.:  4.00.461
   - author: Steve A.
 
  Utility class to store tokenizing expressions/conditions or absolute indexes

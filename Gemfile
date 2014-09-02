@@ -97,10 +97,15 @@ end
 group :test do
   gem "rspec", '~> 3'
   gem "rspec-rails", '~> 3'
+
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   gem "factory_girl_rails"
+  gem 'rails_best_practices'
+
   gem 'guard'
   gem 'guard-rspec'
+  gem 'guard-shell'
+  gem 'guard-cucumber'
   gem 'rspec_api_blueprint', require: false
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', '~> 0.7.1', require: false
@@ -108,7 +113,7 @@ group :test do
   gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
 
   # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
-  gem 'ffaker', require: false                      # Adds dummy names & fixture generator 
+  gem 'ffaker', require: false                      # Adds dummy names & fixture generator
 end
 
 
