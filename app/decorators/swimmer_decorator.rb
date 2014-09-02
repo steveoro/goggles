@@ -352,4 +352,6 @@ class SwimmerDecorator < Draper::Decorator
   def get_personal_best( events_by_pool_type )
     meeting_individual_results.for_event_by_pool_type(events_by_pool_type).sort_by_timing(:asc).first
   end
+  #-- --------------------------------------------------------------------------
+  #++
 end

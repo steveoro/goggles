@@ -58,11 +58,19 @@ class SwimmersController < ApplicationController
   def medals
     # --- "Medals" tab: ---
     @tab_title = I18n.t('radiography.medals_tab')
-    @gold_medals   = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 1 )
-    @silver_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 2 )
-    @bronze_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 3 )
-    @wooden_medals = MeetingIndividualResult.count_swimmer_ranks_for( @swimmer.id, 4 )
-                                                    # Collect "Palmares": find all Championship holders having swimmer id = swimmer_id
+    @gold_medals   = @swimmer.get_total_gold_medals
+    @silver_medals = @swimmer.get_total_silver_medals
+    @bronze_medals = @swimmer.get_total_bronze_medals
+    @wooden_medals = @swimmer.get_total_wooden_medals
+    
+    # TODO
+    # Collects medals for season types and presents in a table
+    # with total columns
+    
+    # TODO
+    # Coolect medals for event types and presents in a table
+    # with total columns
+
     # FIXME this has not been tested yet:
     all_championships_records = MeetingIndividualResult.includes(
       :season, :event_type, :category_type, :gender_type, :pool_type
@@ -77,9 +85,6 @@ class SwimmersController < ApplicationController
     all_championships_records.each{ | mir |
       @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
     }
-
-    # TODO Collect actual Palmares array (displayed on a table)
-    # TODO create a table with all the medals divided by event type / pool type
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -130,15 +135,13 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def full_history_1
-    # --- "Full History" tab: ---
+    # --- "Full History by date" tab: ---
     @tab_title = I18n.t('radiography.full_history_by_date')
-    
+
     # Cycles between pool types suitable for meetings
     @full_history_by_date = Hash.new 
     PoolType.only_for_meetings.each do |pool_type|
       # Collect results for the pool type
-      # TODO Verify if selecting only used attributi si better/faster than selectin the whole object
-      #mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date
       mirs = @swimmer.meeting_individual_results
         .joins(:event_type)
         .for_pool_type( pool_type )
@@ -176,10 +179,9 @@ class SwimmersController < ApplicationController
     end
     
     # TODO
-    # - Evidenziate personal bests
-    #   Should be better to have information already stored in mirs
-    #   even calculate it run time
-    # - Compare event list sort with class function or direct on the array
+    # Evidenziate personal bests
+    # Should be better to have information already stored in mirs
+    # even calculate it run time
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -197,7 +199,7 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   #
   def full_history_2
-    # --- "Full History" tab: ---
+    # --- "Full History by time" tab: ---
     @tab_title = I18n.t('radiography.full_history_by_event')
     
     # Prepares an array for the index table
