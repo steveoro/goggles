@@ -6,19 +6,20 @@ require 'parsers/token_extractor'
 
 =begin
 
-= FinResultDefs
+= TxtResultDefs
 
   - Goggles framework vers.:  4.00.461
   - author: Steve A.
 
- Container class for the lists of ContextDetector and TokenExtractor
+ Base class for any sibling that needs to define lists of ContextDetector and
+ TokenExtractor(s) for a specific file format.
  classes and all the other structures required by the parser processing
  text data files of type 'fin_result'.
 
 =end
-class FinResultDefs
+class TxtResultDefs
 
-  attr_reader :full_pathname, :show_progress, :logger
+  attr_reader :full_pathname, :logger, :tokenizer_types
   # ----------------------------------------------------------------------------
   #++
 
