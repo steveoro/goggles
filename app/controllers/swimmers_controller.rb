@@ -205,13 +205,15 @@ class SwimmersController < ApplicationController
     # with pool type code as key
     # Eg: 
     # [
-    #   {stroke_type: 'SL', stroke_code: 'SL', 
-    #     25: {50: '50SL-25', 100: '100SL-25', 200:'200SL-25', 800: '800SL-25'},
-    #     50: {50: '50SL-50', 200: '200SL-50'}
+    #   { stroke_type: 'SL',
+    #     stroke_code: 'SL', 
+    #     25: {50, 100, 200, 800},
+    #     50: {50, 200, 800},
     #   }
-    #   {stroke_type: 'FA', stroke_code: 'FA',  
-    #     25: {50: '50FA-25', 100: '100FA-25'},
-    #     50: [50: '50FA-50'}
+    #   { stroke_type: 'FA',
+    #     stroke_code: 'FA',  
+    #     25: {50, 100},
+    #     50: {50, 100},
     #   }
     #   ...
     # ]

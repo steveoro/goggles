@@ -260,7 +260,7 @@ describe SwimmersController, :type => :controller do
       
       before(:each) do
         login_user()
-        @swimmer = create(:swimmer)
+        @swimmer = create(:swimmer_with_results)
         get :full_history_2, id: @swimmer.id
       end
 
@@ -326,8 +326,10 @@ describe SwimmersController, :type => :controller do
         it "assigns an hash with array of three elements as element and the third array element is a collection of passage" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            results_by_time = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][2]
-            expect( results_by_time ).to all( be_a_kind_of( Passage ) )
+            passages = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][2]
+            if passages
+              expect( passages ).to all( be_a_kind_of( Passage ) )
+            end
           end
         end       
       end
@@ -384,17 +386,22 @@ describe SwimmersController, :type => :controller do
             expect( index_element[:stroke_type] ).not_to be_nil
           end
         end
+        it "assigns an array with hashes elements that responds to :stroke_code" do
+          assigns( :index_table ).each do |index_element|
+            expect( index_element[:stroke_code] ).not_to be_nil
+          end
+        end
         it "assigns an array with hashes elements for FA, SL, RA e MI" do
           index_table = assigns( :index_table )
-          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('FA').i18n_description } ).to be > 0 
-          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('SL').i18n_description } ).to be > 0 
-          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('RA').i18n_description } ).to be > 0 
-          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('MI').i18n_description } ).to be > 0 
+          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('FA').i18n_description } ).not_to be_nil 
+          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('SL').i18n_description } ).not_to be_nil 
+          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('RA').i18n_description } ).not_to be_nil 
+          expect( index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('MI').i18n_description } ).not_to be_nil 
         end
         it "assigns an array with hashes elements for FA, that responds to 25 and 50 pool types" do
           index_table = assigns( :index_table )
           index_row = index_table[index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('FA').i18n_description }]
-          expect( index_row.size ).to eq( 3 ) 
+          expect( index_row.size ).to eq( 4 ) 
           expect( index_row[PoolType.find_by_code('25').i18n_description] ).not_to be_nil 
           expect( index_row[PoolType.find_by_code('50').i18n_description] ).not_to be_nil 
         end

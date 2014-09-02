@@ -23,6 +23,16 @@ FactoryGirl.define do
     fake_phone_numbers
     e_mail                    { Faker::Internet.email }
     nickname                  { Faker::Internet.user_name  }
+    
+    factory :swimmer_with_results do
+      after(:create) do |created_instance, evaluator|
+        meeting_individual_result = create_list(
+          :meeting_individual_result_with_passages,  
+          ((rand * 10).to_i + 2),                   # total number of results
+          swimmer: created_instance                 # association enforce for each sub-row
+        )
+      end
+    end
   end
   # ---------------------------------------------------------------------------
 
