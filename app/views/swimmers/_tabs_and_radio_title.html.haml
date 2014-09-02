@@ -8,12 +8,12 @@
   - is_active = ( params[:action] == 'best_timings' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('radiography.best_timings_tab'),   is_active ? '#' : swimmer_best_timings_path(id: @swimmer.id) )
-  - is_active = ( params[:action] == 'full_history_1' )
+  - is_active = ( params[:action] == 'full_history_by_date' )
   %li{ class: is_active ? 'active' : '' }
-    = link_to( t('radiography.full_history_tab1'),  is_active ? '#' : swimmer_full_history_1_path(id: @swimmer.id) )
-  - is_active = ( params[:action] == 'full_history_2' )
+    = link_to( t('radiography.full_history_by_date'),  is_active ? '#' : swimmer_full_history_1_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'full_history_by_time' )
   %li{ class: is_active ? 'active' : '' }
-    = link_to( t('radiography.full_history_tab2'),  is_active ? '#' : swimmer_full_history_2_path(id: @swimmer.id) )
+    = link_to( t('radiography.full_history_by_event'),  is_active ? '#' : swimmer_full_history_2_path(id: @swimmer.id) )
   - is_active = ( params[:action] == 'misc' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('radiography.misc_tab'),           is_active ? '#' : swimmer_misc_path(id: @swimmer.id) )

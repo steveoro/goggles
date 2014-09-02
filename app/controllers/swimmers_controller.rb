@@ -131,7 +131,7 @@ class SwimmersController < ApplicationController
   #
   def full_history_1
     # --- "Full History" tab: ---
-    @tab_title = I18n.t('radiography.full_history_tab1')
+    @tab_title = I18n.t('radiography.full_history_by_date')
     
     # Cycles between pool types suitable for meetings
     @full_history_by_date = Hash.new 
@@ -140,10 +140,10 @@ class SwimmersController < ApplicationController
       # TODO Verify if selecting only used attributi si better/faster than selectin the whole object
       #mirs = @swimmer.meeting_individual_results.joins(:event_type).for_pool_type( pool_type ).sort_by_date
       mirs = @swimmer.meeting_individual_results
-       .joins(:event_type)
-       .for_pool_type( pool_type )
-       .sort_by_date
-       .select([:id, :minutes, :seconds, :hundreds])
+        .joins(:event_type)
+        .for_pool_type( pool_type )
+        .sort_by_date
+        .select([:id, :minutes, :seconds, :hundreds])
        
       # The event_by_date structure
       # The structure is an array of hashes with elements formed by
@@ -199,7 +199,25 @@ class SwimmersController < ApplicationController
   def full_history_2
     # --- "Full History" tab: ---
     @tab_title = I18n.t('radiography.full_history_by_event')
-    @all_mirs = @swimmer.meeting_individual_results.sort_by_pool_and_event
+    
+    # Prepares an array for the index table
+    # Every element of the array is an hash with style and event list arrays
+    # with pool type code as key
+    # Eg: 
+    # [
+    #   { stroke_type: 'SL',
+    #     stroke_code: 'SL', 
+    #     25: {50, 100, 200, 800},
+    #     50: {50, 200, 800},
+    #   }
+    #   { stroke_type: 'FA',
+    #     stroke_code: 'FA',  
+    #     25: {50, 100},
+    #     50: {50, 100},
+    #   }
+    #   ...
+    # ]
+    @index_table = []
     
     # Creates an hash with event_by_pool_type as code
     # Every element is an array of hashes
@@ -211,18 +229,53 @@ class SwimmersController < ApplicationController
     @full_history_by_event = Hash.new 
     EventsByPoolType.only_for_meetings.not_relays.sort_by_event.each do |events_by_pool_type|
       hash_key = "#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"
-      result_by_time = @swimmer
-       .meeting_individual_results
-       .for_event_by_pool_type( events_by_pool_type )
-       .sort_by_timing( 'DESC' )
-       .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
-      
-      # Collect the passage list
-      result_id_list = result_by_time.map{ |mir| mir.id } 
-      passage_list = Passage.joins(:passage_type).select('passage_types.length_in_meters').where(['meeting_individual_result_id in (?)', result_id_list]).uniq.map{ |pt| pt.length_in_meters }
+      results_by_time = @swimmer.meeting_individual_results
+        .for_event_by_pool_type( events_by_pool_type )
+        .sort_by_timing( 'ASC' )
+        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
+       
+      # If has results collect passages and prepares hash for index table
+      if results_by_time.count > 0
+        # Collect all passages
+        passages = Passage.joins(:event_type, :pool_type, :passage_type)
+          .where(swimmer: @swimmer)
+          .where(['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id])
+          .select([:meeting_individual_result_id, :passage_type_id, :minutes, :seconds, :hundreds])
+          .select('passage_types.length_in_meters')
+  
+        # Collects the passage list
+        passages_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
+        
+        # Adds the event type in the hash index table
+        stroke_type_code = events_by_pool_type.stroke_type.code
+        stroke_type_des = events_by_pool_type.stroke_type.i18n_description
+        pool_type_des = events_by_pool_type.pool_type.i18n_description
+        event_type_dist = events_by_pool_type.event_type.length_in_meters
+        stroke_index = @index_table.rindex{ |hash_element| hash_element[:stroke_type] == stroke_type_des }
+        if stroke_index
+          # The stroke type already exist. Check for the pool type
+          if @index_table[stroke_index][pool_type_des]
+            # The pool type already exists. Check for event type and, if not, add
+            @index_table[stroke_index][pool_type_des] << event_type_dist if not @index_table[stroke_index][pool_type_des].rindex(event_type_dist)
+          else
+            # Creates the pool type with event
+            @index_table[stroke_index][pool_type_des] = [event_type_dist]
+          end 
+        else 
+          # Creates the element for the stroke type
+          new_hash = Hash.new
+          new_hash[:stroke_type] = stroke_type_des 
+          new_hash[:stroke_code] = stroke_type_code 
+          new_hash[pool_type_des] = [event_type_dist]
+          @index_table << new_hash 
+        end
+      else
+        passages = nil
+        passages_list = []
+      end
       
       # Create has element with event type by pool data
-      @full_history_by_event[hash_key] = [passage_list, result_by_time]
+      @full_history_by_event[hash_key] = [passages_list, results_by_time, passages]
     end
   end
   #-- -------------------------------------------------------------------------

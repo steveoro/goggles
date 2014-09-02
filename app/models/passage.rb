@@ -30,6 +30,7 @@ class Passage < ActiveRecord::Base
 
   has_one :meeting,         through: :meeting_program
   has_one :event_type,      through: :meeting_program
+  has_one :pool_type,       through: :meeting_program
 #  has_one :badge,           through: :meeting_entry
 
   validates_presence_of     :minutes_from_start
