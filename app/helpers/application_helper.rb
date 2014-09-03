@@ -23,9 +23,9 @@ module ApplicationHelper
   # of images, one for each step of the total count.
   def count_with_image( count, step, image_name, align = :right )
     if align == :right
-      "#{ count } #{image_tag(image_name) * (count / step)}".html_safe
+      "#{ count.to_i } #{image_tag(image_name) * (count.to_i / step)}".html_safe
     else
-      "#{image_tag(image_name) * (count / step)} #{ count }".html_safe
+      "#{image_tag(image_name) * (count.to_i / step)} #{ count.to_i }".html_safe
     end
   end
 

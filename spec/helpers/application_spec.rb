@@ -10,7 +10,7 @@ describe ApplicationHelper, :type => :helper do
 
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method)",
-      [ 
+      [
         :format_longtext,
         :show_tag,
         :count_with_image,

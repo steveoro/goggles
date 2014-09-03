@@ -102,7 +102,8 @@ group :test do
   # The driver for browser testing may be switched back to the default (:rack_test,
   # without Javascript support) with: > Capybara.use_default_driver
   gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
-  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
+  # FIXME not working on Leega workstation:
+#  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
 
   gem 'cucumber'
   gem 'cucumber-rails', require: false
