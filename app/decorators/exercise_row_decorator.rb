@@ -32,7 +32,7 @@ class ExerciseRowDecorator < Draper::Decorator
         ( show_also_ordinal_part ? sprintf("%02s)", part_order) : '' ),
         compute_displayable_distance( total_distance ),
         get_base_movement_short( true, swimmer_level_type_id ),
-        get_training_mode_type_name( verbose_level ),
+        get_training_mode_type_friendly,
         get_execution_note_type_name( verbose_level ),
         get_formatted_start_and_rest,
         get_formatted_pause
@@ -131,6 +131,14 @@ class ExerciseRowDecorator < Draper::Decorator
     else
       training_mode_type.i18n_alternate
     end
+  end
+
+  # TODO Refactor that ugly solution. Maybe redefine the seed
+  # Returns the Training Mode type short name
+  #
+  def get_training_mode_type_friendly
+    return '' unless training_mode_type
+    training_mode_type.i18n_alternate
   end
   #-- -------------------------------------------------------------------------
   #++

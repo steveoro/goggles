@@ -70,9 +70,12 @@ module DropDownListable
       }.sort_by{ |ar| ar[0] }
     end
 
-    # Create a custom sorted dropdown list
+    # Create a custom not sorted dropdown list
     # This method is an extension of to_dropdown method
     # that only exclude the automatic sort by label
+    # so the object to dropdown should be sorted before
+    # and preserve order in the dropdown box
+    #
     def to_unsorted_dropdown( where_condition = nil, key_sym = :id, label_sym = get_label_symbol() )
       self.where( where_condition ).map{ |row|
         [row.send(label_sym), row.send(key_sym)]

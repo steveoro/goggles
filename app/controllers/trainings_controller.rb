@@ -295,7 +295,7 @@ class TrainingsController < ApplicationController
     @start_rest_options_array = 0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
     @pause_options_array      = 0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
     @exercise_options_array   = [[nil,nil]] + Exercise.to_dropdown()
-    @step_type_options_array  = TrainingStepType.to_dropdown( nil, :id, :i18n_description )
+    @step_type_options_array  = TrainingStepType.to_unsorted_dropdown( nil, :id, :i18n_description )
     @arm_aux_options_array    = ArmAuxType.to_dropdown( nil, :id, :i18n_description )
     @kick_aux_options_array   = KickAuxType.to_dropdown( nil, :id, :i18n_description )
     @body_aux_options_array   = BodyAuxType.to_dropdown( nil, :id, :i18n_description )

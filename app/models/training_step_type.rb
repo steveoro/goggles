@@ -11,7 +11,7 @@ class TrainingStepType < ActiveRecord::Base
   validates_presence_of     :code, length: { maximum: 1 }, allow_nil: false
   validates_uniqueness_of   :code, message: :already_exists
 
-  scope :sort_by_step_order, -> { order('step_order') }
+  scope :sort_by_step_order, order('step_order')
   # ----------------------------------------------------------------------------
 
   # [Steve, 20140127] Update: since we want to force ordering according to the step order,

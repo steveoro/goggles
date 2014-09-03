@@ -156,7 +156,7 @@ class Timing
   # Returns an empty string if the value is 0.
   #
   def self.to_formatted_start_and_rest( total_seconds )
-    total_seconds > 0 ? " S-R: #{Timing.to_s(0, total_seconds)}" : ''
+    total_seconds > 0 ? " SR.#{Timing.to_minute_string(total_seconds)}" : ''
   end
   # ---------------------------------------------------------------------------
 end
