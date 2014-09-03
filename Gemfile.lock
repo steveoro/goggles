@@ -94,6 +94,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-webkit (1.3.0)
+      capybara (>= 2.0.2, < 2.5.0)
+      json
     carrierwave (0.10.0)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -101,6 +104,8 @@ GEM
       mime-types (>= 1.16)
     celluloid (0.15.2)
       timers (~> 1.1.0)
+    childprocess (0.5.3)
+      ffi (~> 1.0, >= 1.0.11)
     cocoon (1.2.6)
     code_analyzer (0.4.5)
       sexp_processor
@@ -133,8 +138,15 @@ GEM
       gherkin (~> 2.12)
       multi_json (>= 1.7.5, < 2.0)
       multi_test (>= 0.1.1)
+    cucumber-rails (1.4.1)
+      capybara (>= 1.1.2, < 3)
+      cucumber (>= 1.3.8, < 2)
+      mime-types (~> 1.16)
+      nokogiri (~> 1.5)
+      rails (>= 3, < 5)
     currencies (0.4.2)
     daemons (1.1.9)
+    database_cleaner (1.3.0)
     debug_inspector (0.0.2)
     delayed_job (4.0.2)
       activesupport (>= 3.0, < 4.2)
@@ -374,6 +386,11 @@ GEM
       sass (>= 3.1.10)
       tilt (~> 1.3)
     seed_dump (0.5.3)
+    selenium-webdriver (2.42.0)
+      childprocess (>= 0.5.0)
+      multi_json (~> 1.0)
+      rubyzip (~> 1.0)
+      websocket (~> 1.0.4)
     sexp_processor (4.4.4)
     simple-navigation (3.13.0)
       activesupport (>= 2.3.2)
@@ -431,6 +448,7 @@ GEM
     warden (1.2.3)
       rack (>= 1.0)
     webrobots (0.1.1)
+    websocket (1.0.7)
     wice_grid (3.4.8)
       kaminari (>= 0.13.0)
     win32console (1.3.2-x86-mingw32)
@@ -453,13 +471,17 @@ DEPENDENCIES
   capistrano-rails (~> 1.1)
   capistrano-rvm
   capybara
+  capybara-webkit
   carrierwave
   cocoon
   codeclimate-test-reporter
   coffee-rails (~> 3.2)
   country_select
   coveralls
+  cucumber
+  cucumber-rails
   daemons
+  database_cleaner
   delayed_job_active_record
   devise (~> 3.2.4)
   devise-i18n
@@ -496,6 +518,7 @@ DEPENDENCIES
   ruport!
   sass-rails (~> 3.2)
   seed_dump (~> 0.5.3)
+  selenium-webdriver
   simple-navigation
   simple-navigation-bootstrap
   simple_form

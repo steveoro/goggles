@@ -99,6 +99,15 @@ group :test do
   gem "rspec-rails", '~> 3'
 
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
+  # The driver for browser testing may be switched back to the default (:rack_test,
+  # without Javascript support) with: > Capybara.use_default_driver
+  gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
+  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
+
+  gem 'cucumber'
+  gem 'cucumber-rails', require: false
+  gem 'database_cleaner'                            # For cucumber features
+
   gem "factory_girl_rails"
   gem 'rails_best_practices'
 
