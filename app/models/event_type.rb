@@ -6,6 +6,8 @@ class EventType < ActiveRecord::Base
   belongs_to :stroke_type
   validates_presence_of :stroke_type                # (must be not null)
   validates_associated :stroke_type                 # (foreign key integrity)
+  
+  delegate :code, :i18n_short, :i18n_description, :to => :stroke_type, :prefix => true 
 
   validates_presence_of   :code
   validates_length_of     :code, within: 1..10, allow_nil: false
@@ -38,7 +40,7 @@ class EventType < ActiveRecord::Base
       "#{ self.phases }x#{ self.phase_length_in_meters } #{ self.stroke_type.i18n_short(true) } " +
       ( self.partecipants != self.phases ? "(#{relay_name}/#{self.partecipants})" : "(#{relay_name})" )
     else
-      "#{self.length_in_meters} " + self.stroke_type.i18n_short()
+      "#{self.length_in_meters} #{self.stroke_type_i18n_short}"
     end
   end
 
@@ -49,7 +51,7 @@ class EventType < ActiveRecord::Base
       "#{ self.phases }x#{ self.phase_length_in_meters } #{ self.stroke_type.i18n_description(true) } " +
       ( self.partecipants != self.phases ? "(#{relay_name} #{self.partecipants} #{I18n.t(:athletes)})" : "(#{relay_name})" )
     else
-      "#{self.length_in_meters} " + self.stroke_type.i18n_description()
+      "#{self.length_in_meters} #{self.stroke_type_i18n_description}"
     end
   end
   # ----------------------------------------------------------------------------

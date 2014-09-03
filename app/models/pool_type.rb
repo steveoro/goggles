@@ -45,5 +45,10 @@ class PoolType < ActiveRecord::Base
   def i18n_description
     "#{self.length_in_meters} " + I18n.t( :meters )
   end
+
+  # Computes a localized verbose description for the value/code associated with this data
+  def i18n_verbose
+    I18n.t( :pool_type_des ).gsub("{POOL_LENGTH}", self.length_in_meters.to_s) 
+  end
   # ----------------------------------------------------------------------------
 end

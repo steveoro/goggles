@@ -274,19 +274,19 @@ describe SwimmersController, :type => :controller do
         it "assigns an hash that responds to event type code - pool type code" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).not_to be_nil
+            expect( result[events_by_pool_type.get_key] ).not_to be_nil
           end
         end
         it "assigns an hash with array as elements" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"] ).to be_a_kind_of( Array )
+            expect( result[events_by_pool_type.get_key] ).to be_a_kind_of( Array )
           end
         end
-        it "assigns an hash with array of three elements as element" do
+        it "assigns an hash with array of four elements as element" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            expect( result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"].size ).to be 3
+            expect( result[events_by_pool_type.get_key].size ).to be 4
           end
         end
         it "hasn't elements with results for invalid event for pool type" do
@@ -296,40 +296,49 @@ describe SwimmersController, :type => :controller do
       end
       
       context "passages_list element structure," do
-        it "assigns an hash with array of three elements as element and the first array element is a list" do
+        it "assigns an hash with array of four elements as element and the first array element is a list" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            passages_list = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][0]
+            passages_list = result[events_by_pool_type.get_key][0]
             expect( passages_list ).to be_a_kind_of( Array )
           end
         end
       end
 
       context "results_by_time element structure," do
-        it "assigns an hash with array of three elements as element and the second array element is a collection of meeting individual result" do
+        it "assigns an hash with array of four elements as element and the second array element is a collection of meeting individual result" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            results_by_time = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][1]
+            results_by_time = result[events_by_pool_type.get_key][1]
             expect( results_by_time ).to all( be_a_kind_of( MeetingIndividualResult ) )
           end
         end
-        it "assigns an hash with array of three elements as element and the second array element is a collection of meeting individual result with all swimmer results" do
+        it "assigns an hash with array of four elements as element and the second array element is a collection of meeting individual result with all swimmer results" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            results_by_time = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][1]
+            results_by_time = result[events_by_pool_type.get_key][1]
             expect( results_by_time.count ).to eq( @swimmer.meeting_individual_results.for_event_by_pool_type(events_by_pool_type).count )
           end
         end
       end
       
       context "passages element structure," do
-        it "assigns an hash with array of three elements as element and the third array element is a collection of passage" do
+        it "assigns an hash with array of four elements as element and the third array element is a collection of passage" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            passages = result["#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"][2]
+            passages = result[events_by_pool_type.get_key][2]
             if passages
               expect( passages ).to all( be_a_kind_of( Passage ) )
             end
+          end
+        end       
+      end
+
+      context "verbose event description element," do
+        it "assigns an hash with array of four elements as element and the third array element is a collection of passage" do
+          result = assigns( :full_history_by_event )
+          events.each do |events_by_pool_type|
+            expect( result[events_by_pool_type.get_key][3] ).to be_an_instance_of( String )
           end
         end       
       end
@@ -402,13 +411,13 @@ describe SwimmersController, :type => :controller do
           index_table = assigns( :index_table )
           index_row = index_table[index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('FA').i18n_description }]
           expect( index_row.size ).to eq( 4 ) 
-          expect( index_row[PoolType.find_by_code('25').i18n_description] ).not_to be_nil 
-          expect( index_row[PoolType.find_by_code('50').i18n_description] ).not_to be_nil 
+          expect( index_row[PoolType.find_by_code('25').i18n_verbose] ).not_to be_nil 
+          expect( index_row[PoolType.find_by_code('50').i18n_verbose] ).not_to be_nil 
         end
         it "assigns an array with hashes elements for FA, that responds to 25 and has 2 elements: (50FA, 100FA)" do
           index_table = assigns( :index_table )
           index_row = index_table[index_table.rindex{ |hash_element| hash_element[:stroke_type] == StrokeType.find_by_code('FA').i18n_description }]
-          index_row_list = index_row[PoolType.find_by_code('25').i18n_description]
+          index_row_list = index_row[PoolType.find_by_code('25').i18n_verbose]
           expect( index_row_list.size ).to eq(2) 
           expect( index_row_list.join(',') ).to eq('50,100') 
         end

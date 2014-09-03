@@ -21,7 +21,7 @@ describe EventsByPoolType, :type => :model do
       :sort_by_pool,
       :sort_by_event
     ])
-    # Has_many / has_one relationships:
+    # Has_one relationships:
     it_behaves_like( "(it has_one of these required models)", [ 
       :stroke_type
     ])    

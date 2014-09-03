@@ -230,7 +230,8 @@ class SwimmersController < ApplicationController
     # Cycles between pool types suitable for meetings
     @full_history_by_event = Hash.new 
     EventsByPoolType.only_for_meetings.not_relays.sort_by_event.each do |events_by_pool_type|
-      hash_key = "#{events_by_pool_type.event_type.code}-#{events_by_pool_type.pool_type.code}"
+      #hash_key = events_by_pool_type.i18n_description
+      hash_key = events_by_pool_type.get_key
       results_by_time = @swimmer.meeting_individual_results
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
@@ -249,10 +250,10 @@ class SwimmersController < ApplicationController
         passages_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
         
         # Adds the event type in the hash index table
-        stroke_type_code = events_by_pool_type.stroke_type.code
-        stroke_type_des = events_by_pool_type.stroke_type.i18n_description
-        pool_type_des = events_by_pool_type.pool_type.i18n_description
-        event_type_dist = events_by_pool_type.event_type.length_in_meters
+        stroke_type_code = events_by_pool_type.stroke_type_code
+        stroke_type_des = events_by_pool_type.stroke_type_i18n_description
+        pool_type_des = events_by_pool_type.pool_type_i18n_verbose
+        event_type_dist = events_by_pool_type.event_type_length_in_meters
         stroke_index = @index_table.rindex{ |hash_element| hash_element[:stroke_type] == stroke_type_des }
         if stroke_index
           # The stroke type already exist. Check for the pool type
@@ -277,7 +278,7 @@ class SwimmersController < ApplicationController
       end
       
       # Create has element with event type by pool data
-      @full_history_by_event[hash_key] = [passages_list, results_by_time, passages]
+      @full_history_by_event[hash_key] = [passages_list, results_by_time, passages, events_by_pool_type.i18n_description]
     end
   end
   #-- -------------------------------------------------------------------------
