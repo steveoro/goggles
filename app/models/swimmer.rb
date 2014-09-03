@@ -56,6 +56,11 @@ class Swimmer < ActiveRecord::Base
   validates_length_of :e_mail,        maximum: 100
   validates_length_of :nickname,      maximum: 25
 
+  # Protect mass-assignment:
+  attr_accessible :associated_user, :user,
+                  :gender_type, :complete_name, :last_name, :first_name,
+                  :year_of_birth, :phone_mobile, :phone_number, :e_mail,
+                  :nickname
 
   scope :is_male,             -> { where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,           -> { where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
@@ -173,8 +178,11 @@ class Swimmer < ActiveRecord::Base
   # Helper getter for the current category type of this swimmer,
   # according to the latest registered badge.
   #
+  # It can be nil.
+  #
   def get_current_category_type_from_badges
-    self.badges.joins(:season).order('seasons.header_year').last.category_type
+    last_badge = badges.joins(:season).order('seasons.header_year').last
+    last_badge.category_type if last_badge
   end
 
 

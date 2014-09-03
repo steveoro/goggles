@@ -5,14 +5,14 @@ require 'fileutils'
 require 'mechanize'
 
 require 'framework/console_logger'
-require 'parsers/data_importer'
+require 'parsers/data_importer.rb'
 
 
 =begin
 
 = Web-Crawling Helper tasks
 
-  - Goggles framework vers.:  4.00.225.20140418
+  - Goggles framework vers.:  4.00.463
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -42,7 +42,7 @@ namespace :crawler do
       agent.user_agent_alias = 'Mac Safari'
     }
     result_links = []
-  
+
     a.get( search_url ) do |page|
       if dump_forms                                   # - Just dump the names:
         page.forms.each do |form|                     # Scan for forms and fields and dump their names if requested
@@ -56,7 +56,7 @@ namespace :crawler do
         search_result = page.form_with(:name => form_name) do |search|
           search.send( query_field, search_text )
         end.submit
-  
+
         search_result.links.each do |link|
           unless link.href.nil? || link.href == '' || link.href == '#' ||
                  # [Steve, 20140306] This is a crude regexp for filtering out less-interesting links from the google front search page
@@ -143,7 +143,7 @@ namespace :crawler do
       agent.user_agent_alias = 'Mac Safari'
     }
     result_links = []
-  
+
     a.get( site_url ) do |page|
       page.links.each do |link|
         if match_text.nil? || ((link.text =~ match_text) != nil)
