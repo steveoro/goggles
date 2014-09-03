@@ -1,26 +1,30 @@
 = render( partial: 'tabs_and_radio_title' )
 
-- pool_type_25 = PoolType.find_by_code('25').i18n_description
-- pool_type_50 = PoolType.find_by_code('50').i18n_description
+- pool_type_25 = PoolType.find_by_code('25').i18n_verbose
+- pool_type_50 = PoolType.find_by_code('50').i18n_verbose
 
 .row-fluid#full_history_by_date_grid
   .goggles-category-gap#pageTop
-    .span2
-      %b= I18n.t('index')
-    .span4
-      %b= pool_type_25
-    .span6
-      %b= pool_type_50
-  - @index_table.each do |index_row|
-    .row-fluid
-      .span2
-        %b= index_row[:stroke_type]
-      .span4
-        - index_row[pool_type_25].each do |event_type|
-          %a.goggles-nav-compact(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
-      .span6
-        - index_row[pool_type_50].each do |event_type|
-          %a.goggles-nav-compact(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
+
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('index')
+        %td
+          %b= pool_type_25
+        %td
+          %b= pool_type_50
+      - @index_table.each do |index_row|
+        %tr
+          %td
+            %b= index_row[:stroke_type]
+          %td
+            - index_row[pool_type_25].each do |event_type|
+              %a(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
+          %td
+            - index_row[pool_type_50].each do |event_type|
+              %a(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
 
   - @full_history_by_event.each do |full_history_key,full_history_element|
     - if full_history_element[1].size > 0
@@ -30,7 +34,7 @@
           %tbody
             %tr{'class'=>'info'}
               %td
-                %b= EventsByPoolType.find_by_key(full_history_key).i18n_description
+                %b= full_history_element[3]
                 = ' ('
                 = full_history_element[1].count
                 = I18n.t('results') + ')'

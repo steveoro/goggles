@@ -600,6 +600,7 @@ en:
   meters: "meters"
   meters_short: "mt."
   athletes: "athletes"
+  pool_type_des: "{POOL_LENGTH} meters pool"
 
   warning_no_data_to_send: "There aren't any data rows to process!"
   drag_to_resize: "Drag to resize the area"

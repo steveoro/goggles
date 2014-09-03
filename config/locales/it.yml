@@ -601,6 +601,7 @@ it:
   meters: "metri"
   meters_short: "mt."
   athletes: "atleti"
+  pool_type_des: "Vasca da {POOL_LENGTH} metri"
 
   warning_no_data_to_send: "Non ci sono righe dati da elaborare!"
   drag_to_resize: "Trascina per ridimensionare le aree"

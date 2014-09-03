@@ -10,6 +10,10 @@ class EventsByPoolType < ActiveRecord::Base
   
   has_one :stroke_type, through: :event_type
 
+  delegate :code, :length_in_meters, :is_a_relay, :i18n_description, :to => :event_type, :prefix => true 
+  delegate :code, :length_in_meters, :is_suitable_for_meetings, :i18n_description, :i18n_verbose, :to => :pool_type, :prefix => true 
+  delegate :code, :i18n_description, :to => :stroke_type, :prefix => true 
+  
   scope :not_relays,    joins(:event_type).where('event_types.is_a_relay = false')
   scope :only_for_meetings, joins(:pool_type).where('pool_types.is_suitable_for_meetings = true')
 
@@ -35,6 +39,12 @@ class EventsByPoolType < ActiveRecord::Base
   def self.find_by_pool_and_event_codes( pool_type_code, event_type_code )
     result = EventsByPoolType.joins(:event_type, :pool_type).where( ['(pool_types.code = ?) AND (event_types.code = ?)', pool_type_code, event_type_code] )
     result ? result.first : nil  
+  end
+
+  # Gets a key formed with event code and pool code
+  #
+  def get_key
+    "#{self.event_type_code}-#{self.pool_type_code}"
   end
 
   # Find a sopecific event for a pool type using a key formed by event code '-' pool code
