@@ -93,6 +93,7 @@ class TrainingDecorator < Draper::Decorator
   # It returns an empty Hash if the current Training instance has no groups defined.
   #
   def build_group_list_hash
+    # Create objects either from training and user_trainings
     if self.object.respond_to?( :training_rows )
       row_with_groups = object.training_rows.with_groups
     elsif self.object.respond_to?( :user_training_rows )
@@ -100,6 +101,7 @@ class TrainingDecorator < Draper::Decorator
     else
       row_with_groups = []
     end
+    
     group_list = {}                                 # Collect a custom hash and a list of data rows for each group of rows:
     row_with_groups.each{ |row|                     # If the group id is missing from the hash keys, add it:
       unless group_list.has_key?( row.group_id )
@@ -114,6 +116,14 @@ class TrainingDecorator < Draper::Decorator
         group_list[ row.group_id ][ :datarows ] << row
       end
     }
+    
+    # Compute totals
+    group_list.each do |key, element|
+      tot_group_secs   = TrainingRow.compute_total_seconds( element[:datarows] )
+      tot_group_timing = Timing.to_minute_string( tot_group_secs )
+      element[:tot_group_timing] = tot_group_timing
+    end 
+    
     group_list
   end
   #-- -------------------------------------------------------------------------

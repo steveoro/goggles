@@ -1,51 +1,5 @@
-.row-fluid
-  .span3
-    = link_to_user_trainings()
-  .span2
-    = link_to_user_training_printout( @user_training )
-  .span2
-    = link_to_user_training_edit( @user_training )
-  .span2
-    = link_to_user_training_duplicate( @user_training )
-- # From down here to below we just need the decorated instance:
-- @user_training = TrainingDecorator.decorate( @user_training )
-
-.accordion
-  .accordion-group
-    .accordion-heading.goggles-accordion-heading
-      .row-fluid
-        .span12
-          %h3= @title
-    .accordion-body
-      .accordion-inner
-        - if admin_signed_in?
-          .row-fluid
-            .span2
-              = 'ID:'
-            .span10
-              = @user_training.id
-        .row-fluid
-          .span2
-            = I18n.t('activerecord.attributes.training.user') + ':'
-          .span2
-            %b= @user_training.get_user_name
-          .span2
-            = I18n.t('trainings.suggested_level') + ':'
-          .span2
-            = @user_training.get_swimmer_level_type( :i18n_description )
-          .span2
-            %i= I18n.t(:updated_at) + ':'
-          .span2
-            %i= Format.a_short_datetime( @user_training.updated_at )
-        .row-fluid
-          .span2
-            = I18n.t('trainings.total_meters') + ':'
-          .span2
-            %b= @user_training.compute_total_distance
-          .span2
-            = I18n.t('trainings.esteemed_timing') + ':'
-          .span6
-            %b= Timing.to_hour_string( @user_training.compute_total_seconds() )
+= render( partial: 'show_header_links' )
+= render( partial: 'show_title' )
 
 .row-fluid
   .span12
@@ -53,46 +7,13 @@
     - group_list_hash = @user_training.build_group_list_hash()
     - previous_step = 'none'
     - @user_training_rows.each do |user_training_row|
-      - fields = user_training_row.to_array()
-      - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id )
+      - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id) && (curr_group_id != user_training_row.group_id)
+        - fields = user_training_row.to_array()
+        = render( partial: 'show_group_rows', locals: { group_hash: group_list_hash[ user_training_row.group_id ], previous_step: previous_step } )
         - curr_group_id = user_training_row.group_id
-        - if old_group_id != curr_group_id          # Start of new group?
-          - old_group_id     = curr_group_id
-          - group_hash       = group_list_hash[ user_training_row.group_id ]
-          - tot_group_secs   = TrainingRow.compute_total_seconds( group_hash[:datarows] )
-          - tot_group_timing = Timing.to_minute_string( tot_group_secs )
-          .row-fluid
-            .span2.goggles-training
-              %pre= "#{fields[1] } (#{ tot_group_timing })"
-            .span1.goggles-training
-              %pre= "#{group_hash[:times] }x"
-            .span1.goggles-div-rightalign.goggles-training
-              %pre= fields[3]
-            .span8.goggles-training
-              %pre= fields[4]
-        - else                                      # Same old group?
-          - group_hash       = group_list_hash[ user_training_row.group_id ]
-          .row-fluid
-            - group_pause = group_hash[:pause].to_i
-            - group_s_r   = group_hash[:start_and_rest].to_i
-            .offset2.span1.goggles-training
-              - if ( group_pause > 0 || group_s_r > 0 )
-                %pre= "#{ Timing.to_formatted_start_and_rest( group_s_r ) } #{ Timing.to_formatted_pause( group_pause ) }"
-            .span1.goggles-div-rightalign.goggles-training
-              %pre= fields[3]
-            .span8.goggles-training
-              %pre= fields[4]
-      - else                                        # Not in a group?
-        - curr_group_id = 0
-        .row-fluid
-          .span2.goggles-training
-            - if previous_step != fields[1] 
-              %pre
-                = "#{fields[1] } "
-                - if fields[2].to_i > 0
-                  = "(#{ Timing.to_minute_string(fields[2]) })" 
-          .span1.goggles-div-rightalign.goggles-training
-            %pre= fields[3]
-          .span9.goggles-training
-            %pre= fields[4]
-      - previous_step = fields[1]
+        - previous_step = fields[1]
+      - else
+        - if (user_training_row.group_id == 0)                                       # Not in a group?
+          - fields = user_training_row.to_array()
+          = render( partial: 'show_single_row', locals: { fields: fields, previous_step: previous_step } )
+          - previous_step = fields[1]

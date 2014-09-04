@@ -52,7 +52,7 @@ shared_examples_for "(TrainingDecorator usable for both Training & UserTraining)
       it "has the expected keys" do
         expect( group_hash.values ).to all( be_an_instance_of( Hash ) )
         group_hash.values.each do |value_hash|
-          expect( value_hash.keys ).to include( :id, :times, :start_and_rest, :pause, :datarows )
+          expect( value_hash.keys ).to include( :id, :times, :start_and_rest, :pause, :datarows, :tot_group_timing )
         end
       end
       it "has the :datarows member Array" do
