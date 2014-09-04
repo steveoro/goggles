@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.420
+  - Goggles framework vers.:  4.00.463
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -18,6 +18,7 @@
 
 =end
 class Timing
+  include Comparable
 
   attr_accessor :hundreds, :seconds, :minutes, :hours, :days
 
@@ -26,55 +27,57 @@ class Timing
   # the rarely used ones.
   #
   def initialize( hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0 )
-    self.hundreds = hundreds
-    self.seconds = seconds
-    self.minutes = minutes
-    self.hours = hours
-    self.days = days
+    @hundreds = hundreds.to_i
+    @seconds = seconds.to_i
+    @minutes = minutes.to_i
+    @hours = hours.to_i
+    @days = days.to_i
                                                     # Adjust the result:
-    set_from_hundreds( self.to_hundreds )
+    set_from_hundreds( to_hundreds )
   end
 
   # Clears the cached results. This method is useful only if the same TokenExtractor
   # instance is used to tokenize different source texts.
   #
   def clear()
-    self.hundreds = 0
-    self.seconds = 0
-    self.minutes = 0
-    self.hours = 0
-    self.days = 0
+    @hundreds = 0
+    @seconds = 0
+    @minutes = 0
+    @hours = 0
+    @days = 0
     self
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Sets the current instance value according to the total Fixnum value of hundreds of a second
   # specified as a parameter.
   #
   def set_from_hundreds( hundreds_value )
-    self.days = hundreds_value / 8640000
+    @days = hundreds_value / 8640000
     remainder = hundreds_value % 8640000
-    self.hours = remainder / 360000
+    @hours = remainder / 360000
     remainder  = remainder % 360000
-    self.minutes = remainder / 6000
+    @minutes = remainder / 6000
     remainder    = remainder % 6000
-    self.seconds = remainder / 100
+    @seconds = remainder / 100
     remainder    = remainder % 100
-    self.hundreds = remainder
+    @hundreds = remainder
     self
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns a new instance containing as member values the sum of the current instance
   # with the one specified as a parameter.
   #
   def +( timing )
     Timing.new(
-      self.hundreds + timing.hundreds,
-      self.seconds + timing.seconds,
-      self.minutes + timing.minutes,
-      self.hours + timing.hours,
-      self.days + timing.days
+      @hundreds + timing.hundreds,
+      @seconds + timing.seconds,
+      @minutes + timing.minutes,
+      @hours + timing.hours,
+      @days + timing.days
     )
   end
 
@@ -83,33 +86,56 @@ class Timing
   #
   def -( timing )
     Timing.new(
-      self.hundreds - timing.hundreds,
-      self.seconds - timing.seconds,
-      self.minutes - timing.minutes,
-      self.hours - timing.hours,
-      self.days - timing.days
+      @hundreds - timing.hundreds,
+      @seconds - timing.seconds,
+      @minutes - timing.minutes,
+      @hours - timing.hours,
+      @days - timing.days
     )
   end
-  # ---------------------------------------------------------------------------
+
+  # Equals operator. Returns true if the two Timing objects have the same
+  # value. +false+ otherwise.
+  #
+  def ==( timing )
+    return false unless timing.instance_of?( Timing )
+    (
+      @days == timing.days &&
+      @hours == timing.hours &&
+      @minutes == timing.minutes &&
+      @seconds == timing.seconds &&
+      @hundreds == timing.hundreds
+    )
+  end
+
+  # Comparable operator. Returns -1, 0, or 1 depending on the order between the
+  # two Timing objects.
+  # (See +Comparable+ class in Ruby library)
+  #
+  def <=>( timing )
+    raise IllegalArgumentException.new("the parameter is not a Timing instance!") unless timing.instance_of?( Timing )
+    to_hundreds <=> timing.to_hundreds
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Converts the current instance to total Fixnum value of hundreds of a second.
   def to_hundreds
-    self.hundreds + self.seconds * 100 + self.minutes * 6000 +
-    self.hours * 360000 + self.days * 8640000
+    @hundreds + @seconds * 100 + @minutes * 6000 +
+    @hours * 360000 + @days * 8640000
   end
 
   # Converts the current instance to a readable string.
-  # If +hide_zero_members+ is true, members of the class that have a zero value
-  # will not be included in the output string.
   def to_s
-    (days > 0 ? "#{days}d " : '') +
-    (hours > 0 ? "#{hours}h " : '') +
+    (days.to_i > 0 ? "#{days}d " : '') +
+    (hours.to_i > 0 ? "#{hours}h " : '') +
     sprintf(
-      minutes > 0 ? "%2s'%02.0f\"%02.0f" : "%2s'%2s\"%02.0f",
-      minutes, seconds, hundreds
+      minutes.to_i > 0 ? "%2s'%02.0f\"%02.0f" : "%2s'%2s\"%02.0f",
+      minutes.to_i, seconds.to_i, hundreds.to_i
     )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Commodity class method. Same as to_s.
   #
@@ -121,42 +147,49 @@ class Timing
   # members with non positive values in the output string.
   #
   def self.to_compact_s( hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0 )
-    ( days > 0     ? "#{days}d " : '') +
-    ( hours > 0    ? "#{hours}h " : '') +
-    ( minutes > 0  ? sprintf( "%2s'", minutes ) : '') +
-    ( seconds > 0  ? sprintf( minutes > 0 ? "%02.0f" : "%2s\"", seconds ) : '') +
-    ( hundreds > 0 ? sprintf( "%02.0f", hundreds ) : '')
+    ( days.to_i > 0     ? "#{days}d " : '') +
+    ( hours.to_i > 0    ? "#{hours}h " : '') +
+    ( minutes.to_i > 0  ? sprintf( "%2s'", minutes ) : '') +
+    ( seconds.to_i > 0  ? sprintf( minutes > 0 ? "%02.0f" : "%2s\"", seconds ) : '') +
+    ( hundreds.to_i > 0 ? sprintf( "%02.0f", hundreds ) : '')
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Outputs the specified value of seconds in an hour-format string (Hh MM' SS").
   #
   def self.to_hour_string( total_seconds )
-    tot_h = total_seconds.to_i/3600
-    rem_min = (total_seconds.to_i%3600)
-    sprintf("%1s\h %2s\' %02.0f\"", tot_h, rem_min/60, rem_min%60)
+    hours = total_seconds.to_i / 3600
+    remainder  = total_seconds.to_i % 3600
+    minutes = remainder / 60
+    seconds = remainder % 60
+    to_compact_s( 0, seconds, minutes, hours )
   end
 
   # Outputs the specified value of seconds in a minute-format (M'SS").
   #
   def self.to_minute_string( total_seconds )
-    sprintf( "%1s\'%02.0f\"", total_seconds.to_i/60, total_seconds.to_i%60 )
+    minutes = total_seconds.to_i / 60
+    seconds = total_seconds.to_i % 60
+    to_compact_s( 0, seconds, minutes )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Outputs the specified value of seconds in a "pause in seconds" format (P.SS").
   # Returns an empty string if the value is 0.
   #
   def self.to_formatted_pause( total_seconds )
     # Note that with pause > 60", Timing conversion won't be perfomed using to_compact_s
-    total_seconds > 0 ? " p.#{Timing.to_compact_s(0, total_seconds)}" : ''
+    total_seconds.to_i > 0 ? " p.#{ Timing.to_compact_s(0, total_seconds.to_i) }" : ''
   end
 
   # Outputs the specified value of seconds in a "Start-Rest " format (S-R: M'.SS").
   # Returns an empty string if the value is 0.
   #
   def self.to_formatted_start_and_rest( total_seconds )
-    total_seconds > 0 ? " SR.#{Timing.to_minute_string(total_seconds)}" : ''
+    total_seconds.to_i > 0 ? " SR.#{ Timing.to_minute_string(total_seconds.to_i) }" : ''
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

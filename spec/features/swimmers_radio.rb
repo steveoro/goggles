@@ -11,8 +11,8 @@ describe "Swimmers radio tab", :type => :feature do
     end
 
     it "shows successfully the detailed info for a chosen Swimmer" do
-      expect(page).to include( chosen_swimmer.get_full_name_with_nickname )
-      expect(page).to include( chosen_swimmer.year_of_birth )
+      expect( page.body ).to include( chosen_swimmer.get_full_name_with_nickname )
+      expect( page.body ).to include( chosen_swimmer.year_of_birth.to_s )
     end
 
     it "doesn't have a link to change the avatar image" do
@@ -30,8 +30,8 @@ describe "Swimmers radio tab", :type => :feature do
     end
 
     it "shows successfully the detailed info for a chosen Swimmer" do
-      expect(page).to include( chosen_swimmer.get_full_name_with_nickname )
-      expect(page).to include( chosen_swimmer.year_of_birth )
+      expect( page.body ).to include( chosen_swimmer.get_full_name_with_nickname )
+      expect( page.body ).to include( chosen_swimmer.year_of_birth.to_s )
     end
 
     it "has a link to change the avatar image" do
