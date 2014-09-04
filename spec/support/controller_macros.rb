@@ -6,7 +6,7 @@
   - author:   Steve A.
 
   Support module for RSpec for defining utility helpers for controller specs.
-  
+
   Note that all the methods contained here are meant to be used at the instance
   level (that is inside a spec example or a block, like a before-hook body).
   This implies that this module must be included in RSpec configuration using
@@ -88,13 +88,13 @@ module ControllerMacros
   #
   def login_user_with_capybara
     @user = create(:user)
-    @request.env["devise.mapping"] = Devise.mappings[:user]
+#    @request.env["devise.mapping"] = Devise.mappings[:user]
     visit new_user_session_path()
     fill_in "user_email", with: @user.email
     fill_in "user_password", with: @user.password
-    click_button I18n.t('devise.new_session_submit')
-    expect(response.status).to eq(200)
-    controller.stub current_user: @user
+    click_button 'Sign in' # I18n.t('devise.new_session_submit')
+#    expect( response.status ).to eq(200)
+#    controller.stub current_user: @user
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -18,6 +18,8 @@ SimpleCov.start 'rails'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
+require 'capybara/rails'
+require 'capybara/rspec'
 # require 'rspec_api_blueprint'
 
 # Since we don't have a Travis server (yet) this is useless:
@@ -37,10 +39,12 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 RSpec.configure do |config|
   # [Steve, 20140226] Add helpers to get Devise working with RSpec
   config.include( Devise::TestHelpers, type: :controller )
+  config.include( Devise::TestHelpers, type: :features )
   # [Steve, 20140226] Add other custom helpers.
   # (Use #include to access the methods at the instance level: inside examples.)
   # (Use #extend to access them at the class level: outside examples, as in "#before".)
   config.include( ControllerMacros, type: :controller )
+  config.include( ControllerMacros, type: :features )
   config.extend( CustomMatchers::Routing, type: :controller )
   # [Steve, 20140226] Configure FactoryGirl to work with RSpec
   config.include( FactoryGirl::Syntax::Methods )
