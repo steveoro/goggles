@@ -9,7 +9,8 @@
     - @user_training_rows.each do |user_training_row|
       - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id) && (curr_group_id != user_training_row.group_id)
         - fields = user_training_row.to_array()
-        = render( partial: 'show_group_rows', locals: { group_hash: group_list_hash[ user_training_row.group_id ], previous_step: previous_step } )
+        - group_hash = group_list_hash[ user_training_row.group_id ]
+        = render( partial: 'show_group_rows', locals: { group_hash: group_hash, previous_step: previous_step } )
         - curr_group_id = user_training_row.group_id
         - previous_step = fields[1]
       - else
@@ -17,3 +18,4 @@
           - fields = user_training_row.to_array()
           = render( partial: 'show_single_row', locals: { fields: fields, previous_step: previous_step } )
           - previous_step = fields[1]
+
