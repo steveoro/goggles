@@ -59,9 +59,9 @@ module ControllerMacros
     visit new_admin_session_path()
     fill_in "user_email", with: @admin.email
     fill_in "user_password", with: @admin.password
-    click_button I18n.t('devise.new_session_submit')
-    expect(response.status).to eq(200)
-    controller.stub current_user: @admin
+    click_button 'Sign in' # I18n.t('devise.new_session_submit')
+#    expect(response.status).to eq(200)
+#    controller.stub current_user: @admin
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -88,7 +88,6 @@ module ControllerMacros
   #
   def login_user_with_capybara
     @user = create(:user)
-#    @request.env["devise.mapping"] = Devise.mappings[:user]
     visit new_user_session_path()
     fill_in "user_email", with: @user.email
     fill_in "user_password", with: @user.password

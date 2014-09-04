@@ -40,12 +40,7 @@ gem 'acts_as_reportable'
 gem 'prawn', '~> 0.15'
                                                     # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
 gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
-
 gem 'generator'
-
-# To use uploads:
-gem 'carrierwave'
-
 gem 'zip'
 gem 'rubyzip', :require => 'zip/zip'
                                                     # [Steve, 20130715] Goggles-specific:
@@ -101,7 +96,7 @@ group :test do
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   # The driver for browser testing may be switched back to the default (:rack_test,
   # without Javascript support) with: > Capybara.use_default_driver
-  gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
+  #gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
   # FIXME not working on Leega workstation:
 #  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
 
