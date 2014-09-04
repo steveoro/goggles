@@ -105,17 +105,12 @@ group :test do
   # FIXME not working on Leega workstation:
 #  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
 
-  gem 'cucumber'
-  gem 'cucumber-rails', require: false
-  gem 'database_cleaner'                            # For cucumber features
-
   gem "factory_girl_rails"
   gem 'rails_best_practices'
 
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-shell'
-  gem 'guard-cucumber'
   gem 'rspec_api_blueprint', require: false
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', '~> 0.7.1', require: false
@@ -125,13 +120,6 @@ group :test do
   # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
   gem 'ffaker', require: false                      # Adds dummy names & fixture generator
 end
-
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# Use unicorn as the web server
-# gem 'unicorn'
 
 # gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
 
