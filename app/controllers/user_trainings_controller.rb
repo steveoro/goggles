@@ -103,6 +103,7 @@ class UserTrainingsController < ApplicationController
     user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
     @user_training_rows = TrainingRowDecorator.decorate_collection( user_training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
+    @user_training = TrainingDecorator.decorate( @user_training )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -352,14 +353,14 @@ class UserTrainingsController < ApplicationController
   # This should be invoked before any rendering of the edit views.
   #
   def assign_all_options_array
-    @start_rest_options_array = 0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
-    @pause_options_array      = 0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
-    @exercise_options_array   = [[nil,nil]] + Exercise.to_dropdown()
-    @step_type_options_array  = TrainingStepType.to_unsorted_dropdown( nil, :id, :i18n_description )
-    @arm_aux_options_array    = ArmAuxType.to_dropdown( nil, :id, :i18n_description )
-    @kick_aux_options_array   = KickAuxType.to_dropdown( nil, :id, :i18n_description )
-    @body_aux_options_array   = BodyAuxType.to_dropdown( nil, :id, :i18n_description )
-    @breath_aux_options_array = BreathAuxType.to_dropdown( nil, :id, :i18n_description )
+    @start_rest_options_array ||= 0.step(3600,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
+    @pause_options_array      ||= 0.step(1800,5).collect{ |x| [(x > 0 ? sprintf("%2s\'%02.0f\"",x/60, x%60) : '-'), x] }
+    @exercise_options_array   ||= [[nil,nil]] + Exercise.to_dropdown()
+    @step_type_options_array  ||= TrainingStepType.to_unsorted_dropdown( nil, :id, :i18n_description )
+    @arm_aux_options_array    ||= ArmAuxType.to_dropdown( nil, :id, :i18n_description )
+    @kick_aux_options_array   ||= KickAuxType.to_dropdown( nil, :id, :i18n_description )
+    @body_aux_options_array   ||= BodyAuxType.to_dropdown( nil, :id, :i18n_description )
+    @breath_aux_options_array ||= BreathAuxType.to_dropdown( nil, :id, :i18n_description )
   end
   #-- -------------------------------------------------------------------------
   #++
