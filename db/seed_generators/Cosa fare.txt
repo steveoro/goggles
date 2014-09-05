@@ -1,0 +1,15 @@
+REM Per ricreare i files di seed da GASA32:
+REM - Rimuovere indici
+REM - Azzerare CARNUO
+REM - Azzerare EVENUO
+REM - Censire nuotatori
+REM - Censire eventi
+
+CD \SVILUPPO\TOOLS\GASA32\MAS
+DEL *.CDX
+ZAPPA CARNUO
+ZAPPA EVENUO
+CALL G NuotatoriCSI
+CALL G CreaSingoliEventiCSI
+CALL G CreaEventiStaffetteCSI
+CALL G CreaCartelliniCSI

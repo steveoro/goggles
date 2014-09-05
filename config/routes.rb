@@ -175,7 +175,6 @@ Goggles::Application.routes.draw do
       get  "user_trainings/json_list",          to: "user_trainings#json_list"
       get  "user_training/json_list/:id",       to: "user_trainings#json_list",           as: "user_training_json_list"
       get  "user_training/printout/:id",        to: "user_trainings#printout",            as: "user_training_printout"
-      get  "user_training/from_model",          to: "user_trainings#from_model",          as: "user_training_from_model"
       post "user_training/duplicate/:id",       to: "user_trainings#duplicate",           as: "user_training_duplicate"
       post "user_training/create_user_story/:id", to: "user_trainings#create_user_story", as: "user_training_create_user_story"
 
