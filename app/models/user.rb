@@ -140,7 +140,6 @@ class User < ActiveRecord::Base
       if swimmer                                    # Already associated? Clear first the old swimmer:
         swimmer.associated_user_id = nil
         swimmer.save!
-#        swimmer.with_lock { swimmer.save! }
       end
       self.swimmer_id = new_swimmer.id              # Update this user:
       self.year_of_birth = new_swimmer.year_of_birth
@@ -148,20 +147,16 @@ class User < ActiveRecord::Base
       self.last_name  = new_swimmer.last_name.titleize unless new_swimmer.last_name.empty?
       self.description = "#{self.first_name} #{self.last_name}"
       save!
-#      self.with_lock { save! }
       new_swimmer.associated_user_id = self.id      # Update the swimmer
       new_swimmer.save!
-#      new_swimmer.with_lock { new_swimmer.save! }
 
     elsif new_swimmer.nil?                          # === Clear (dissociate) existing association:
       if swimmer
         swimmer.associated_user_id = nil
         swimmer.save!
-#        swimmer.with_lock { swimmer.save! }
       end
       self.swimmer_id = nil
       save!
-#      self.with_lock { save! }
     end
     reload
   end
