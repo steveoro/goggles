@@ -608,6 +608,7 @@ en:
   show_details_tooltip: "Show the row details in a small pop-up window"
   add: Add
   add_new: Add new!
+  add_from_model: Add from model
   edit: Edit
   delete: Delete
   duplicate: Copy

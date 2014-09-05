@@ -609,6 +609,7 @@ it:
   show_details_tooltip: "Mostra i dettagli della riga selezionata in una finestra pop-up"
   add: Aggiungi
   add_new: Aggiungi nuovo!
+  add_from_model: Aggiungi da modello
   edit: Modifica
   delete: Elimina
   duplicate: Copia

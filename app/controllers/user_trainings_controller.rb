@@ -119,6 +119,23 @@ class UserTrainingsController < ApplicationController
   end
 
 
+  # New action from existing model.
+  #
+  def from_model
+    @user_training = UserTraining.new
+    
+    Training.find(1).training_rows.each do |model_row|
+      new_row = UserTrainingRow.new( model_row.attributes.reject{|e| ['id','lock_version','created_at','updated_at'].include?(e)} )
+      new_row.user_training_id = @user_training.id
+      @user_training.user_training_rows << new_row 
+    end
+    @user_training_max_part_order = Training.find(1).training_rows.maximum(:part_order)
+
+    assign_all_options_array()
+    render :edit
+  end
+
+
   # Create action (POST only).
   #
   def create
