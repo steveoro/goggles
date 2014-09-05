@@ -156,7 +156,7 @@ executed freely on any empty database with any name of choice.
 
 The file is stored as:
 
-  - 'db/dump/[database name].sql.bz2'
+  - 'db/dump/#{Rails.env}.sql.bz2'
 
 This is assumed to be kept under the source tree repository and used for a quick recovery
 of the any of the DB structures using the dedicated task "db:rebuild_from_dump".
@@ -177,7 +177,7 @@ Options: [Rails.env=#{Rails.env}]
                                                     # Display some info:
     puts "DB name:          #{db_name}"
     puts "DB user:          #{db_user}"
-    file_name     = File.join( File.join('db', 'dump'), "#{db_name}#{file_ext}" )
+    file_name     = File.join( File.join('db', 'dump'), "#{Rails.env}#{file_ext}" )
     puts "\r\nProcessing #{db_name} => #{file_name} ...\r\n"
     sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} #{zip_pipe} > #{file_name}"
     puts "\r\nRecovery dump created.\r\n\r\n"
@@ -209,8 +209,8 @@ Options: [Rails.env=#{Rails.env}] [to='production'|'development'|'test']
     puts "DB name: #{db_name} (SOURCE) => #{output_db} (DEST)"
     puts "DB user: #{db_user}"
 
-    file_name = File.join( File.join('db', 'dump'), "#{db_name}#{file_ext}" )
-    sql_file_name = File.join( 'tmp', "#{db_name}.sql" )
+    file_name = File.join( File.join('db', 'dump'), "#{Rails.env}#{file_ext}" )
+    sql_file_name = File.join( 'tmp', "#{Rails.env}.sql" )
 
     puts "\r\Uncompressing dump file '#{file_name}' => '#{sql_file_name}'..."
     sh "bunzip2 -ck #{file_name} > #{sql_file_name}"
