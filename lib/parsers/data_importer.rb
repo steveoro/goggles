@@ -12,7 +12,7 @@ require 'parsers/fin_result_phase3'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.467
   - author: Steve A.
 
   Data-Import methods container class.

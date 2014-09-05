@@ -61,6 +61,6 @@ group :best_practices do
     # For a list of implemented best-practices, do checkout:
     # https://github.com/railsbp/rails_best_practices/wiki/How-to-write-your-own-check-list
     #
-    watch(/.*\.rb/) { |m| `echo "Checking best-practices..." ; bundle exec rails_best_practices #{m[0]}` }
+    watch(/.*\.rb/) { |m| `echo "Checking best-practices..." && bundle exec rails_best_practices #{m[0]}` }
   end
 end

@@ -4,6 +4,7 @@ require 'parsers/txt_result_defs'
 require 'parsers/context_type_def'
 require 'parsers/context_detector'
 require 'parsers/token_extractor'
+require 'parsers/fin_result_consts'
 
 
 =begin
@@ -19,24 +20,11 @@ require 'parsers/token_extractor'
 
 =end
 class FinResultDefs < TxtResultDefs
+  include FinResultConsts
 
   attr_reader :full_pathname, :logger
   # ----------------------------------------------------------------------------
   #++
-
-# TODO Extract each ContextTypeDef as a constant like this:
-
-  MEETING_HEADER_DEF = ContextTypeDef.new(
-    :meeting_header,
-    [
-      /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
-      /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/ui,
-      /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/ui
-    ],
-    nil,                                            # parent context
-    4                                               # line_timeout (line after which these checks will be skipped)
-  )
-
 
 
   # Creates a new instance, storing the parameters for the parsing.
@@ -68,117 +56,20 @@ class FinResultDefs < TxtResultDefs
     # context of data, if the conditions are loose enough).
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
-      meeting_header: ContextDetector.new(
-        MEETING_HEADER_DEF,
-        logger
-      ),
-      category_header: ContextDetector.new(
-        ContextTypeDef.new(
-          :category_header,
-          [
-            '',
-            /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
-            /^--------------------------/
-          ]
-        ),
-        logger
-      ),
-      relay_header: ContextDetector.new(
-        ContextTypeDef.new(
-          :relay_header,
-          [
-            '',
-            /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
-            /^--------------------------/
-          ]
-        ),
-        logger
-      ),
-      team_ranking: ContextDetector.new(
-        ContextTypeDef.new(
-          :team_ranking,
-          [
-            /classifica(\s+di)?(\s+societ)?/ui,
-            ''
-          ]
-        ),
-        logger
-      ),
-      stats: ContextDetector.new(
-        ContextTypeDef.new(
-          :stats,
-          [
-            '',
-            /statistiche/ui,
-            ''
-          ]
-        ),
-        logger
-      ),
+      meeting_header:   ContextDetector.new( CNT_TYPE_MEETING_HEADER, logger ),
+      category_header:  ContextDetector.new( CNT_TYPE_CATEGORY_HEADER, logger ),
+      relay_header:     ContextDetector.new( CNT_TYPE_RELAY_HEADER, logger ),
+      team_ranking:     ContextDetector.new( CNT_TYPE_TEAM_RANKING, logger ),
+      stats:            ContextDetector.new( CNT_TYPE_STATS, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      result_row: ContextDetector.new(
-        ContextTypeDef.new(
-          :result_row,
-          [
-            /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
-          ],
-          :category_header                            # parent context
-        ),
-        logger
-      ),
-      relay_row: ContextDetector.new(
-        ContextTypeDef.new(
-          :relay_row,
-          [
-            /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)$/i
-          ],
-          :relay_header
-        ),
-        logger
-      ),
-      ranking_row: ContextDetector.new(
-        ContextTypeDef.new(
-          :ranking_row,
-          [
-            /\s+\d{1,6}[\,|\.]\d\d$/ui
-          ],
-          :team_ranking
-        ),
-        logger
-      ),
+      result_row:   ContextDetector.new( CNT_TYPE_RESULT_ROW, logger ),
+      relay_row:    ContextDetector.new( CNT_TYPE_RELAY_ROW, logger ),
+      ranking_row:  ContextDetector.new( CNT_TYPE_RANKING_ROW, logger ),
 
-      stats_teams_tot: ContextDetector.new(
-        ContextTypeDef.new(
-          :stats_teams_tot,
-          [ /Numero di soc.+\siscritte\s/ui ],
-          :stats
-        ),
-        logger
-      ),
-      stats_teams_presence: ContextDetector.new(
-        ContextTypeDef.new(
-          :stats_teams_presence,
-          [ /Numero di soc.+\spartecipanti\s/ui ],
-          :stats
-        ),
-        logger
-      ),
-      stats_swimmer_tot: ContextDetector.new(
-        ContextTypeDef.new(
-          :stats_swimmer_tot,
-          [ /Numero totale di atleti iscritti\s/ui ],
-          :stats
-        ),
-        logger
-      ),
-      stats_swimmer_presence: ContextDetector.new(
-        ContextTypeDef.new(
-          :stats_swimmer_presence,
-          [ /Numero di atleti partecipanti\s/ui ],
-          :stats
-        ),
-        logger
-      )
+      stats_teams_tot:        ContextDetector.new( CNT_TYPE_STATS_TEAMS_TOT, logger ),
+      stats_teams_presence:   ContextDetector.new( CNT_TYPE_STATS_TEAMS_PRESENCE, logger ),
+      stats_swimmer_tot:      ContextDetector.new( CNT_TYPE_STATS_SWIMMER_TOT, logger ),
+      stats_swimmer_presence: ContextDetector.new( CNT_TYPE_STATS_SWIMMER_PRESENCE, logger )
     }
 
     # == String tokenizer type hash
@@ -198,48 +89,18 @@ class FinResultDefs < TxtResultDefs
       meeting_header: [
         # -- Fields to be extracted: :title OR :meeting_dates
         [
-          TokenExtractor.new(
-            :title,
-            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Regionali|Campionati))/ui,
-            /$/ui,
-            3                                         # line_timeout
-          ),
-          TokenExtractor.new(
-            :meeting_dates,
-            /\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
-            /$/ui,
-            3                                         # line_timeout
-          )
+          TOK_EXT_MEETING_HEADER_TITLE,
+          TOK_EXT_MEETING_HEADER_MEETING_DATES,
         ],
         # -- Fields to be extracted: :organization OR :title
         [
-          TokenExtractor.new(
-            :organization,
-            /(?<=manifestazione organizzata da)\s/ui,
-            /$/ui,
-            3                                         # line_timeout
-          ),
-          TokenExtractor.new(
-            :title,
-            /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\w+|Trof)|Trofeo|Regionali|Campionati))/ui,
-            /$/ui,
-            3                                         # line_timeout
-          )
+          TOK_EXT_MEETING_HEADER_ORGANIZATION,
+          TOK_EXT_MEETING_HEADER_TITLE
         ],
         # -- Fields to be extracted: :meeting_dates OR :organization
         [
-          TokenExtractor.new(
-            :meeting_dates,
-            /\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
-            /$/ui,
-            3                                         # line_timeout
-          ),
-          TokenExtractor.new(
-            :organization,
-            /(?<=manifestazione organizzata da)\s/ui,
-            /$/ui,
-            3                                         # line_timeout
-          )
+          TOK_EXT_MEETING_HEADER_MEETING_DATES,
+          TOK_EXT_MEETING_HEADER_ORGANIZATION,
         ]
       ],
 
@@ -247,31 +108,11 @@ class FinResultDefs < TxtResultDefs
         nil,
         # -- Fields to be extracted: :distance, :style, :gender, :category_group, :base_time
         [
-          TokenExtractor.new(                         # RegExp for distance:
-            :distance,
-            /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) */ui,
-            / *(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/ui
-          ),
-          TokenExtractor.new(
-            :style,
-            / *(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/ui,
-            / *(maschi|femmi)/ui
-          ),
-          TokenExtractor.new(
-            :gender,
-            / *(maschi|femmi)/ui,
-            /\s+-\s+categoria/ui
-          ),
-          TokenExtractor.new(
-            :category_group,
-            / *((master|under)\s\d\d|[MU]\d\d)/ui,
-            / *tempo base */ui
-          ),
-          TokenExtractor.new(
-            :base_time,
-            /\d{1,2}'\d\d"\d\d$/u,
-            9                                       # (max size)
-          )
+          TOK_EXT_CATEGORY_HEADER_DISTANCE,
+          TOK_EXT_CATEGORY_HEADER_STYLE,
+          TOK_EXT_CATEGORY_HEADER_GENDER,
+          TOK_EXT_CATEGORY_HEADER_CATEGORY_GROUP,
+          TOK_EXT_CATEGORY_HEADER_BASE_TIME
         ],
         nil
       ],
@@ -280,37 +121,12 @@ class FinResultDefs < TxtResultDefs
       relay_header: [
         nil,
         [
-          TokenExtractor.new(
-            :type,
-            /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx)/i,
-            /\s+-\s+cat/ui
-          ),
-          TokenExtractor.new(
-            :distance,
-            /\dx\d{2,3}\s+(stile|mi|sl|mx)/ui,
-            4                                       # (max size)
-          ),
-          TokenExtractor.new(
-            :style,
-            /(?<=\d\s)\s*(stile|mi|sl|mx)/ui,
-            /\s+(-\s+cat|masch|femm)/ui
-          ),
-          TokenExtractor.new(
-            :gender,
-            /\s+(maschi|femmi)/ui,
-            /\s+-\s+categoria/ui
-          ),
-          TokenExtractor.new(
-            :category_group,
-            /M\d\d0\-\d\d\d/ui,
-            7                                       # (max size)
-  #          /\s*tempo base\s*/ui
-          ),
-          TokenExtractor.new(
-            :base_time,
-            /\s\d{1,2}'\d\d"\d\d/ui,
-            9                                       # (max size)
-          )
+          TOK_EXT_RELAY_HEADER_TYPE,
+          TOK_EXT_RELAY_HEADER_DISTANCE,
+          TOK_EXT_RELAY_HEADER_STYLE,
+          TOK_EXT_CATEGORY_HEADER_GENDER,
+          TOK_EXT_RELAY_HEADER_CATEGORY_GROUP,
+          TOK_EXT_RELAY_HEADER_BASE_TIME
         ],
         nil
       ],
@@ -327,141 +143,55 @@ class FinResultDefs < TxtResultDefs
 
       result_row: [                                 # 1 condition => 1 cached row
         [                                           # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
-          TokenExtractor.new(
-            :result_position,
-            / \d{1,3}(?= {1,3})/ui,
-            / (?=[a-z]+)/ui
-          ),
-          TokenExtractor.new(
-            :team_code,
-            /(\w\w\w-\d{6})/ui,
-            10                                      # (max size)
-          ),
-          TokenExtractor.new(
-            :swimmer_name,
-            /(?<=[\sa-z0-9-]{10}|[\sa-z0-9-]{18})\s(\D{25})/ui,
-            29                                      # (max size)
-          ),
-          TokenExtractor.new(
-            :swimmer_year,
-            /\b\d{4} +(?=\D+)/ui,
-            4                                       # (max size)
-          ),
-          TokenExtractor.new(
-            :team_name,
-            # [Steve, 20130809] Regexp is too slow!! (And doesn't work for team names with numbers in it.) Using Fixnum absolute index instead:
-  #          /([a-zA-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝß]+[\ |\-|\.|\`|\']{1,3})+ {3,}(Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/u,
-            48,                                     # (starting idx)
-            26                                      # (max size)
-          ),
-          TokenExtractor.new(
-            :result_time,
-  #          /(Ritirat|Squalif|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i,
-            / (Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d)/ui,
-            8                                       # (max size)
-          ),
-          TokenExtractor.new(
-            :result_score,
-            /\b\d{1,4}[\,|\.]\d\d$/ui,
-            7                                       # (max size)
-          )
+          TOK_EXT_RESULT_ROW_RESULT_POSITION,
+          TOK_EXT_RESULT_ROW_TEAM_CODE,
+          TOK_EXT_RESULT_ROW_SWIMMER_NAME,
+          TOK_EXT_RESULT_ROW_SWIMMER_YEAR,
+          TOK_EXT_RESULT_ROW_TEAM_NAME,
+          TOK_EXT_RESULT_ROW_RESULT_TIME,
+          TOK_EXT_RESULT_ROW_RESULT_SCORE
         ]
       ],
 
       # -- Fields to be extracted: :result_position, :team_name, :result_time, :result_score
       relay_row: [
         [                                             # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
-          TokenExtractor.new(
-            :result_position,
-  #          / \d{1,3}(?= {1,3})/ui,
-  #          / (?=[a-z]+)/ui
-            8,                                      # (starting idx)
-            /(?<=\s{3}\d|gara|\s{18})\s+\w+/ui
-#            12                                      # (max size)
-          ),
-          TokenExtractor.new(
-            :team_name,
-            /(?<=\s{3}\d\s{3}|gara\s|\d{6}\s|\s{22})\s+\w+/ui,
-#            24,                                     # (starting idx)
-            25                                      # (max size)
-          ),
-          TokenExtractor.new(
-            :result_time,
-  #          / (Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/ui,
-            59,                                     # (starting idx)
-            /(\s\d{1,4}[\,|\.]\d\d$|(?<=Squalif\.)$)/ui
-#            8                                       # (max size)
-          ),
-          TokenExtractor.new(
-            :result_score,
-            /\s\d{1,4}[\,|\.]\d\d$/ui,
-#            68,                                     # (starting idx)
-            8                                       # (max size)
-          )
+          TOK_EXT_RELAY_ROW_RESULT_POSITION,
+          TOK_EXT_RELAY_ROW_TEAM_NAME,
+          TOK_EXT_RELAY_ROW_RESULT_TIME,
+          TOK_EXT_RELAY_ROW_RESULT_SCORE
         ]
       ],
 
       # -- Fields to be extracted: :result_position, :team_code, :team_name, :result_score
       ranking_row: [
         [
-          TokenExtractor.new(
-            :result_position,
-            8,
-            7                                       # (max size)
-          ),
-          TokenExtractor.new(
-            :team_code,
-            /(?<=\s)\w\w\w-\d{6}/ui,
-            10                                      # (max size)
-          ),
-          TokenExtractor.new(
-            :team_name,
-            /(?<=(\w{3}-\d{6}\s{2})|(\d\s{6})|(\s{19}))\w+/ui,
-            /\s\d{1,6}[\,|\.]\d\d$/ui
-          ),
-          TokenExtractor.new(
-            :result_score,
-            /\s\d{1,6}[\,|\.]\d\d$/ui,
-            /$/ui
-          )
+          TOK_EXT_RANKING_ROW_RESULT_POSITION,
+          TOK_EXT_RANKING_ROW_TEAM_CODE,
+          TOK_EXT_RANKING_ROW_TEAM_NAME,
+          TOK_EXT_RANKING_ROW_RESULT_SCORE
         ]
       ],
 
       # -- Fields to be extracted: :total (for all rows)
       stats_teams_tot: [
         [
-          TokenExtractor.new(
-            :total,
-            /\d/ui,
-            10                                      # (max size)
-          )
+          TOK_EXT_STATS_TEAM_TOTAL
         ]
       ],
       stats_teams_presence: [
         [
-          TokenExtractor.new(
-            :total,
-            /\d/ui,
-            10                                      # (max size)
-          )
+          TOK_EXT_STATS_TEAM_TOTAL
         ]
       ],
       stats_swimmer_tot: [
         [
-          TokenExtractor.new(
-            :total,
-            /\d/ui,
-            10                                      # (max size)
-          )
+          TOK_EXT_STATS_TEAM_TOTAL
         ]
       ],
       stats_swimmer_presence: [
         [
-          TokenExtractor.new(
-            :total,
-            /\d/ui,
-            10                                      # (max size)
-          )
+          TOK_EXT_STATS_TEAM_TOTAL
         ]
       ]
     }

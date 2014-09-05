@@ -4,7 +4,7 @@
 
 = TokenExtractor
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.467
   - author: Steve A.
 
  Utility class to store tokenizing expressions/conditions or absolute indexes
@@ -35,7 +35,8 @@ class TokenExtractor
     @computed_start = nil                           # Cache for computed values (sadly, only non-nil results are cached)
     @computed_end   = nil
   end
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Clears the cached results. This method is useful only if the same TokenExtractor
   # instance is used to tokenize different source texts.
@@ -44,7 +45,6 @@ class TokenExtractor
     @computed_start = nil
     @computed_end   = nil
   end
-
 
   # Returns the starting index of the token inside the specified text; nil if not found
   def get_start_index( text )
@@ -58,7 +58,6 @@ class TokenExtractor
     end
   end
 
-
   # Returns the ending index of the token inside the specified text; nil if not found
   def get_end_index( text )
     return @computed_end unless @computed_end.nil?
@@ -70,8 +69,8 @@ class TokenExtractor
       @computed_end = nil
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the token specified by the conditions defined with this
   # instance, or an empty string if no starting point was found.
@@ -92,12 +91,12 @@ class TokenExtractor
     token
   end
 
-
   # Converts the current instance to a readable string
   def to_s
     "[TokenExtractor: #{field_name}, start=#{starting_with}, end=#{ending_with}]" +
     (@computed_start ? " cached: (#{@computed_start}.." : ' cached: (nil..') +
     (@computed_end ? "#{@computed_end})" : 'nil)')
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

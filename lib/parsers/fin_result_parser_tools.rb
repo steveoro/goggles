@@ -9,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.467
   - author: Steve A.
 
 == FinResultParserTools module
@@ -51,12 +51,13 @@ module FinResultParserTools
     code_start_idx = name =~ /(?<=\d{8})\D/
     header_date = Date.parse( name[date_start_idx .. code_start_idx-1] )
     {
-      :prefix       => name[ 0 .. date_start_idx-1 ],
+      prefix:      name[ 0 .. date_start_idx-1 ],
       header_date: header_date,
-      code: name[ code_start_idx .. name.size ]
+      code:        name[ code_start_idx .. name.size ]
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Parses a text date extracted from a FIN result text file.
@@ -80,8 +81,8 @@ module FinResultParserTools
 # TODO FUTURE DEV when a meeting is not found, try again with the next available meeting date
     Date.parse( text_date )
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Given the individual results time token extracted from the text file,
@@ -110,7 +111,8 @@ module FinResultParserTools
       0
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Given the individual results time token extracted from the text file,
   # returns an Array containing the integer values for [minutes, seconds, hundreths].
@@ -122,8 +124,8 @@ module FinResultParserTools
       result_time.split(/\'|\"/).collect!{ |e| e.to_i }
     end
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Tries to return a City name (string) from a team name.
@@ -356,8 +358,8 @@ module FinResultParserTools
     }
     results.sort!{ |x,y| x[:score] <=> y[:score] }
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Uses #collect_best_fuzzy_matches() to iterate until it finds at least
@@ -473,8 +475,8 @@ module FinResultParserTools
     sql_text_log << team_analysis_result.rebuild_sql_text()
     team_analysis_result
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private
@@ -594,7 +596,8 @@ module FinResultParserTools
       best_match: best_match
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Iterates on itself until at least a match is found or the minimum bias score is
@@ -624,5 +627,6 @@ module FinResultParserTools
       result_list: result_list
     }
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

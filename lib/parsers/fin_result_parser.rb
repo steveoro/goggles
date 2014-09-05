@@ -15,7 +15,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.467
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -30,15 +30,15 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = false
+  DEBUG_VERBOSE       = false
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE                                = false
+  DEBUG_VERY_VERBOSE  = false
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
-  DEBUG_EXTRA_VERBOSE                               = false
+  DEBUG_EXTRA_VERBOSE = false
   # ---------------------------------------------------------------------------
 
 
@@ -213,7 +213,7 @@ class FinResultParser
             if DEBUG_VERY_VERBOSE && parse_result[ context_sym ].last
               logger ? logger.debug("   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}") : puts("   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}\r\n")
             end
-          # else                                    # === DETECTION UNSUCCESSFULL ===
+          # else                                    # === DETECTION UNSUCCESSFUL ===
             # ( nothing to do )
           end
         }
