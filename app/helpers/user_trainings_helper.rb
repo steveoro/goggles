@@ -75,19 +75,6 @@ module UserTrainingsHelper
   end
 
 
-  # Returns the HTML for the UserTrainingController#duplicate() action of the specified
-  # UserTraining instance, but only if the current user can access its contents.
-  #
-  # Assumes user_training is a valid UserTraining instance.
-  #
-  def link_to_user_training_from_model( training_model = Training.find(1) )
-    link_to(
-      I18n.t('add_from_model'),
-      user_training_from_model_path(id: training_model.id)
-    )
-  end
-
-
   # Returns the HTML for the UserTrainingController#create_user_story() action of the specified
   # UserTraining instance, but only if the current user can access its contents.
   #
