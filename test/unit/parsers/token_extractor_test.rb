@@ -61,7 +61,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   test "tokenize_meeting_header" do
     parsing_defs = FinResultDefs.new( '' )
-    tokenizers   = parsing_defs.get_tokenizers_for( :meeting_header ).values
+    tokenizers   = parsing_defs.tokenizers_for( :meeting_header ).values
     txt_fixtures = get_txt_fixtures_for_meeting_header()
     expectations = get_expectations_for_meeting_header()
     process_fixtures_and_expectations( tokenizers, txt_fixtures, expectations )
@@ -71,7 +71,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   test "tokenize_category_header" do
     parsing_defs = FinResultDefs.new( '' )
-    tokenizers   = parsing_defs.get_tokenizers_for( :category_header ).values
+    tokenizers   = parsing_defs.tokenizers_for( :category_header ).values
     txt_fixtures = get_txt_fixtures_for_category_header()
     expectations = get_expectations_for_category_header()
     process_fixtures_and_expectations( tokenizers, txt_fixtures, expectations )
@@ -79,7 +79,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   test "tokenize_result_row" do
     parsing_defs = FinResultDefs.new( '' )
-    tokenizers   = parsing_defs.get_tokenizers_for( :result_row ).values
+    tokenizers   = parsing_defs.tokenizers_for( :result_row ).values
     txt_fixtures = get_txt_fixtures_for_result_row()
     expectations = get_expectations_for_result_row()
     process_fixtures_and_expectations( tokenizers, txt_fixtures, expectations )
@@ -89,7 +89,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   test "tokenize_relay_header" do
     parsing_defs = FinResultDefs.new( '' )
-    tokenizers   = parsing_defs.get_tokenizers_for( :relay_header ).values
+    tokenizers   = parsing_defs.tokenizers_for( :relay_header ).values
     txt_fixtures = get_txt_fixtures_for_relay_header()
     expectations = get_expectations_for_relay_header()
     process_fixtures_and_expectations( tokenizers, txt_fixtures, expectations )
@@ -97,7 +97,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   test "tokenize_relay_row" do
     parsing_defs = FinResultDefs.new( '' )
-    tokenizers   = parsing_defs.get_tokenizers_for( :relay_row ).values
+    tokenizers   = parsing_defs.tokenizers_for( :relay_row ).values
     txt_fixtures = get_txt_fixtures_for_relay_row()
     expectations = get_expectations_for_relay_row()
     process_fixtures_and_expectations( tokenizers, txt_fixtures, expectations )
@@ -107,7 +107,7 @@ class TokenExtractorTest < ActiveSupport::TestCase
 
   test "tokenize_ranking_row" do
     parsing_defs = FinResultDefs.new( '' )
-    tokenizers   = parsing_defs.get_tokenizers_for( :ranking_row ).values
+    tokenizers   = parsing_defs.tokenizers_for( :ranking_row ).values
     txt_fixtures = get_txt_fixtures_for_ranking_row()
     expectations = get_expectations_for_ranking_row()
     process_fixtures_and_expectations( tokenizers, txt_fixtures, expectations )

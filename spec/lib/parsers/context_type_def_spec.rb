@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'parsers/context_type_def'
 
 
-describe ContextTypeDef do
+describe ContextTypeDef, type: :model do
   let( :fix_conditions ) do
     [
       /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,

@@ -9,10 +9,10 @@ class FinResultDefsTest < ActiveSupport::TestCase
   test "respond to main methods" do
     parsing_defs = FinResultDefs.new( '' )
     [
-      'get_context_types', 'get_context_keys', 'get_required_field_keys',
-      'get_field_list_for', 'get_detector_for', 'is_a_parent',
-      'get_tokenizers_for', 'get_tokenizer_types_for',
-      'get_tokenizer_fields_for'
+      'context_types', 'defined_keys', 'required_keys',
+      'field_list_for', 'detector_for', 'is_a_parent',
+      'tokenizers_for', 'tokenizer_types_for',
+      'tokenizer_fields_for'
     ].each do |method_name|
       assert( parsing_defs.respond_to?(method_name), "doesn't respond to '#{method_name}'!" )
     end
@@ -20,10 +20,10 @@ class FinResultDefsTest < ActiveSupport::TestCase
   # ---------------------------------------------------------------------------
 
 
-  test "get_field_list_for all defined contexts" do
+  test "field_list_for all defined contexts" do
     parsing_defs = FinResultDefs.new( '' )
-    parsing_defs.get_context_keys().each do |key|
-      field_list = parsing_defs.get_field_list_for( key )
+    parsing_defs.defined_keys().each do |key|
+      field_list = parsing_defs.field_list_for( key )
       assert( field_list.instance_of?( Array ), "field_list for '#{key}' is not an Array!" )
       # XXX [Steve, 20131007] Note that the field_list *may* be an empty
       # array, as it is the case for team_ranking header, which does not
@@ -35,10 +35,10 @@ class FinResultDefsTest < ActiveSupport::TestCase
   # ---------------------------------------------------------------------------
 
 
-  test "get_tokenizers_for all defined contexts" do
+  test "tokenizers_for all defined contexts" do
     parsing_defs = FinResultDefs.new( '' )
-    parsing_defs.get_context_keys().each do |key|
-      result_hash = parsing_defs.get_tokenizers_for( key )
+    parsing_defs.defined_keys().each do |key|
+      result_hash = parsing_defs.tokenizers_for( key )
       assert( result_hash.instance_of?( Hash ), "result_hash for '#{key}' is not an Hash" )
       # XXX [Steve, 20131007] Note that the result_hash *may* be an empty
       # Hash, as it is the case for team_ranking header, which does not
@@ -46,7 +46,7 @@ class FinResultDefsTest < ActiveSupport::TestCase
       # purpose of "context discriminator")
       # Thus, nothing more can be tested for the resulting result_hash!
 # DEBUG
-      puts "\r\n--- get_tokenizers_for(#{key}) result_hash inspect:"
+      puts "\r\n--- tokenizers_for(#{key}) result_hash inspect:"
       puts result_hash.inspect
     end
   end
@@ -102,7 +102,7 @@ class FinResultDefsTest < ActiveSupport::TestCase
 
   def process_format_samples_for_result_row( format_sample_array, format_range_array )
     parsing_defs = FinResultDefs.new( '' )
-    tokenizer_hash = parsing_defs.get_tokenizers_for(:result_row)
+    tokenizer_hash = parsing_defs.tokenizers_for(:result_row)
 
     format_sample_array.each{ |sample_row|
 # DEBUG

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-require 'parsers/context_type_def'
+require 'parsers/context_detector'
 
 
-describe ContextDetector do
+describe ContextDetector, type: :model do
 
   context "for a well-defined instance," do
     let( :fix_context_type ) do

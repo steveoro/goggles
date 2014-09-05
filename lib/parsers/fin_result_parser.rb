@@ -121,7 +121,7 @@ class FinResultParser
         end
         full_text_file_contents << curr_line
                                                     # For each context type defined...
-        parsing_defs.get_context_types().each { |context_sym, detector|
+        parsing_defs.context_types().each { |context_sym, detector|
           if DEBUG_EXTRA_VERBOSE
             logger ? logger.debug( "Using #{detector}..." ) : puts( "Using #{detector}..." )
           end
@@ -142,7 +142,7 @@ class FinResultParser
             if detector.is_a_parent_context()       # *** CONTEXT -is- PARENT: HEADER
               previous_parent_context = context_sym
                                                     # There must be a unique key defined for this context
-              if ( parsing_defs.get_required_field_keys( context_sym ).size < 1 )
+              if ( parsing_defs.required_keys( context_sym ).size < 1 )
                 key_string = line_count + 1         # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking)
                 if logger
                   if DEBUG_VERBOSE
@@ -262,8 +262,8 @@ class FinResultParser
   # Returns a unique string ID for the context_sym and token_hash specified
   #
   def self.compose_memstorage_key( parsing_defs, context_sym, token_hash, logger = nil )
-    return nil if ( parsing_defs.get_required_field_keys( context_sym ).size < 1 )
-    all_keys_list  = parsing_defs.get_required_field_keys( context_sym ).flatten.compact
+    return nil if ( parsing_defs.required_keys( context_sym ).size < 1 )
+    all_keys_list  = parsing_defs.required_keys( context_sym ).flatten.compact
     logger.debug( "\r\n*** all_keys_list= #{all_keys_list.inspect}" ) if (logger && DEBUG_VERBOSE)
     logger.debug( "** token_hash= #{token_hash.inspect}" ) if (logger && DEBUG_VERBOSE)
     ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join
@@ -281,7 +281,7 @@ class FinResultParser
   # the flatten+merge operation.)
   #
   def self.tokenize_context_cache( parsing_defs, context_sym, row_cache_array, logger = nil, current_line_number = 0 )
-    tokenizer_context_list = parsing_defs.get_tokenizer_types_for( context_sym )
+    tokenizer_context_list = parsing_defs.tokenizer_types_for( context_sym )
     raise "Tokenizer context list not found for context '#{context_sym}'!" unless tokenizer_context_list.kind_of?(Array)
     token_list = []
     prev_token_start = nil                          # Clear previous token starting index before the loop
@@ -298,7 +298,7 @@ class FinResultParser
         token_list << {}                            # Add a new row item to the resulting token list of rows
                                                     # For each tokenizer row list...
         tokenizer_row_list.each_with_index { |token_extractor, tok_idx|
-          token_field = ( parsing_defs.get_tokenizer_fields_for( context_sym ) )[row_idx][tok_idx]
+          token_field = ( parsing_defs.tokenizer_fields_for( context_sym ) )[row_idx][tok_idx]
 # DEBUG
 #          logger.debug( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (logger && DEBUG_VERY_VERBOSE)
 #          puts( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (DEBUG_VERBOSE)

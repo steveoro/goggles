@@ -483,7 +483,7 @@ class DataImporter
     #       full_text_file_contents: full_text_file_contents
     #     }
     #
-    # FinResultParser.get_field_list_for( context_sym )
+    # FinResultParser.field_list_for( context_sym )
     # returns the possible fields for either :category_header || :result_row
 
     line_count = result_hash[:line_count]

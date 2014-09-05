@@ -38,28 +38,28 @@ class ContextDetectorTest < ActiveSupport::TestCase
 
   test "feed_and_detect_meeting_header" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :meeting_header )
+    detector = parsing_defs.detector_for( :meeting_header )
     fixtures = get_fixtures_for_meeting_header()
     process_fixtures_and_expectations( detector, fixtures )
   end
 
   test "feed_and_detect_category_header" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :category_header )
+    detector = parsing_defs.detector_for( :category_header )
     fixtures = get_fixtures_for_category_header()
     process_fixtures_and_expectations( detector, fixtures )
   end
 
   test "feed_and_detect_relay_header" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :relay_header )
+    detector = parsing_defs.detector_for( :relay_header )
     fixtures = get_fixtures_for_relay_header()
     process_fixtures_and_expectations( detector, fixtures )
   end
 
   test "feed_and_detect_team_ranking" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :team_ranking )
+    detector = parsing_defs.detector_for( :team_ranking )
     fixtures = get_fixtures_for_team_ranking()
     process_fixtures_and_expectations( detector, fixtures )
   end
@@ -67,21 +67,21 @@ class ContextDetectorTest < ActiveSupport::TestCase
 
   test "feed_and_detect_result_row" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :result_row )
+    detector = parsing_defs.detector_for( :result_row )
     fixtures = get_fixtures_for_result_row()
     process_fixtures_and_expectations( detector, fixtures )
   end
 
   test "feed_and_detect_relay_row" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :relay_row )
+    detector = parsing_defs.detector_for( :relay_row )
     fixtures = get_fixtures_for_relay_row()
     process_fixtures_and_expectations( detector, fixtures )
   end
 
   test "feed_and_detect_ranking_row" do
     parsing_defs = FinResultDefs.new( '' ) # no filename, no logger defined
-    detector = parsing_defs.get_detector_for( :ranking_row )
+    detector = parsing_defs.detector_for( :ranking_row )
     fixtures = get_fixtures_for_ranking_row()
     process_fixtures_and_expectations( detector, fixtures )
   end
