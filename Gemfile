@@ -89,7 +89,7 @@ group :development do
 end
 
 
-group :test do
+group :development, :test do
   gem "rspec", '~> 3'
   gem "rspec-rails", '~> 3'
 
