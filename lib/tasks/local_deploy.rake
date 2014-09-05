@@ -15,7 +15,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.355.20140716
+  - Goggles framework vers.:  4.465.20140905
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -23,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.355.20140716'
+SCRIPT_VERSION = '4.465.20140905'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -89,7 +89,7 @@ Rake.application.remove_task 'db:test:prepare'
 
 
 namespace :db do
-  namespace :test do 
+  namespace :test do
     task :prepare do |t|
       # rewrite the task to not do anything you don't want
     end
@@ -100,6 +100,9 @@ namespace :db do
   desc <<-DESC
   This is an override of the standard Rake db:reset task.
 It actually DROPS the Database, recreates it using a mysql shell command.
+
+Options: [Rails.env=#{Rails.env}]
+
   DESC
   task :reset do |t|
     puts "*** Task: Custom DB RESET ***"
@@ -121,15 +124,17 @@ It actually DROPS the Database, recreates it using a mysql shell command.
 
   desc <<-DESC
   Recreates the current DB from scratch.
-  Invokes the following tasks in in one shot:
+Invokes the following tasks in in one shot:
 
   - db:reset           ...to clear the current DB (default: development);
   - db:migrate         ...to run migrations;
   - sql:exec           ...to import the base seed files (/db/seed/*.sql);
   - db:update_records  ...to pre-compute & fill the individual_records table;
-  
-  Keep in mind that, when not in production, the test DB must then be updated
-  using the db:clone_to_test dedicated task.
+
+Keep in mind that, when not in production, the test DB must then be updated
+using the db:clone_to_test dedicated task.
+
+Options: [Rails.env=#{Rails.env}]
 
   DESC
   task :rebuild_from_scratch do
@@ -144,12 +149,95 @@ It actually DROPS the Database, recreates it using a mysql shell command.
 
 
   desc <<-DESC
-  Clones the development or production database to the test database (according to
-  Rails environment; default is obviously 'development').
-  Assumes development db name ends in '_development' and production db name doesn't
-  have any suffix.
+  Similarly to sql:dump, db:dump creates a bzipped MySQL dump of the whole DB for
+later restore.
+The resulting file does not contain any "create database" statement and it can be
+executed freely on any empty database with any name of choice.
 
-  Options: [Rails.env=#{Rails.env}]
+The file is stored as:
+
+  - 'db/dump/[database name].sql.bz2'
+
+This is assumed to be kept under the source tree repository and used for a quick recovery
+of the any of the DB structures using the dedicated task "db:rebuild_from_dump".
+
+Options: [Rails.env=#{Rails.env}]
+
+  DESC
+  task :dump => [ 'utils:script_status' ] do
+    puts "*** Task: DB dump for quick recovery ***"
+                                                    # Prepare & check configuration:
+    rails_config  = Rails.configuration
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+    db_host       = rails_config.database_configuration[Rails.env]['host']
+    zip_pipe = ' | bzip2 -c'
+    file_ext = '.sql.bz2'
+                                                    # Display some info:
+    puts "DB name:          #{db_name}"
+    puts "DB user:          #{db_user}"
+    file_name     = File.join( File.join('db', 'dump'), "#{db_name}#{file_ext}" )
+    puts "\r\nProcessing #{db_name} => #{file_name} ...\r\n"
+    sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} #{zip_pipe} > #{file_name}"
+    puts "\r\nRecovery dump created.\r\n\r\n"
+  end
+  # ---------------------------------------------------------------------------
+
+
+  desc <<-DESC
+  Recreates the current DB from a recovery dump created with db:dump.
+
+Options: [Rails.env=#{Rails.env}] [to='production'|'development'|'test']
+
+  - to: when not specified, the destination database will be the same of the
+        current Rails.env
+
+  DESC
+  task :rebuild_from_dump => [ 'utils:script_status' ] do
+    puts "*** Task: DB rebuild from dump ***"
+                                                    # Prepare & check configuration:
+    rails_config  = Rails.configuration
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+    db_host       = rails_config.database_configuration[Rails.env]['host']
+    output_db     = ENV.include?("to") ? rails_config.database_configuration[ENV["to"]]['database'] : db_name
+    file_ext = '.sql.bz2'
+    zip_pipe = 'bunzip2'
+                                                    # Display some info:
+    puts "DB name: #{db_name} (SOURCE) => #{output_db} (DEST)"
+    puts "DB user: #{db_user}"
+
+    file_name = File.join( File.join('db', 'dump'), "#{db_name}#{file_ext}" )
+    sql_file_name = File.join( 'tmp', "#{db_name}.sql" )
+
+    puts "\r\Uncompressing dump file '#{file_name}' => '#{sql_file_name}'..."
+    sh "bunzip2 -ck #{file_name} > #{sql_file_name}"
+
+    puts "\r\nDropping destination DB '#{output_db}'..."
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --execute=\"drop database if exists #{output_db}\""
+    puts "\r\nRecreating destination DB..."
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{output_db}\""
+
+    puts "\r\nExecuting '#{file_name}' on #{output_db}..."
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
+    puts "Deleting uncompressed file '#{sql_file_name}'..."
+    FileUtils.rm( sql_file_name )
+
+    puts "Rebuild from dump, done.\r\n\r\n"
+  end
+  # ---------------------------------------------------------------------------
+
+
+  desc <<-DESC
+  Clones the development or production database to the test database (according to
+Rails environment; default is obviously 'development').
+
+Assumes development db name ends in '_development' and production db name doesn't
+have any suffix.
+
+Options: [Rails.env=#{Rails.env}]
 
   DESC
   task :clone_to_test => ['utils:script_status', 'utils:chk_needed_dirs'] do
@@ -455,7 +543,7 @@ namespace :utils do
     puts "- ODT_OUTPUT_DIR  : #{ODT_OUTPUT_DIR}"
     puts "- UPLOADS_DIR     : #{UPLOADS_DIR}"
     puts "- DB_SEED_DIR     : #{DB_SEED_DIR}"
-    
+
     puts ""
   end
   # ----------------------------------------------------------------------------

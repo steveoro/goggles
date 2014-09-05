@@ -10,8 +10,11 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   Coveralls::SimpleCov::Formatter
 ]
 SimpleCov.start 'rails'
-# DEBUG
-# puts "SimpleCov required and started."
+puts "SimpleCov required and started."
+
+Coveralls.wear!('rails')
+puts "Coveralls required and started."
+
 
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
@@ -21,10 +24,6 @@ require 'rspec/rails'
 require 'capybara/rails'
 require 'capybara/rspec'
 # require 'rspec_api_blueprint'
-
-# Since we don't have a Travis server (yet) this is useless:
-#Coveralls.wear!
-#puts "Coveralls required and started."
 
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
