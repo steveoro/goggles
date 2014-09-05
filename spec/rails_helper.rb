@@ -1,17 +1,22 @@
 # [Steve] Test coverage integrated on CodeClimate:
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
+unless ENV["CI"]
+  require "codeclimate-test-reporter"
+  CodeClimate::TestReporter.start
+end
 
 # [Steve] Test coverage with local HTML-file reports (excluded from git repo):
-require 'simplecov'
-require 'coveralls'
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
-]
-SimpleCov.start 'rails'
-# DEBUG
-# puts "SimpleCov required and started."
+unless ENV["CI"]
+  require 'simplecov'
+  require 'coveralls'
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+    SimpleCov::Formatter::HTMLFormatter,
+    Coveralls::SimpleCov::Formatter
+  ]
+  SimpleCov.start 'rails'
+  puts "SimpleCov required and started."
+  Coveralls.wear!('rails')
+  puts "Coveralls required and started."
+end
 
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
