@@ -138,27 +138,30 @@ class User < ActiveRecord::Base
       return false if (new_swimmer.associated_user_id.to_i != 0) && (new_swimmer.associated_user_id.to_i != self.id)
       # TODO We could/should check here if we have a user.swimmer link that does NOT correspond to a swimmer.associated_user link
       if swimmer                                    # Already associated? Clear first the old swimmer:
-        swimmer.with_lock do
-          swimmer.associated_user_id = nil
-          swimmer.with_lock { swimmer.save! }
-        end
+        swimmer.associated_user_id = nil
+        swimmer.save!
+#        swimmer.with_lock { swimmer.save! }
       end
       self.swimmer_id = new_swimmer.id              # Update this user:
       self.year_of_birth = new_swimmer.year_of_birth
       self.first_name = new_swimmer.first_name.titleize unless new_swimmer.first_name.empty?
       self.last_name  = new_swimmer.last_name.titleize unless new_swimmer.last_name.empty?
       self.description = "#{self.first_name} #{self.last_name}"
-      self.with_lock { save! }
+      save!
+#      self.with_lock { save! }
       new_swimmer.associated_user_id = self.id      # Update the swimmer
-      new_swimmer.with_lock { new_swimmer.save! }
+      new_swimmer.save!
+#      new_swimmer.with_lock { new_swimmer.save! }
 
     elsif new_swimmer.nil?                          # === Clear (dissociate) existing association:
       if swimmer
         swimmer.associated_user_id = nil
-        swimmer.with_lock { swimmer.save! }
+        swimmer.save!
+#        swimmer.with_lock { swimmer.save! }
       end
       self.swimmer_id = nil
-      self.with_lock { save! }
+      save!
+#      self.with_lock { save! }
     end
     reload
   end

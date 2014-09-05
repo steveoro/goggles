@@ -16,7 +16,7 @@ module SwimmersHelper
   #
   def avatar_url( swimmer )
     default_url = 'img_radiography.jpg'
-    if swimmer.associated_user
+    if swimmer && swimmer.associated_user
       gravatar_id = Digest::MD5::hexdigest( swimmer.associated_user.email ).downcase
       # [Steve, 20140901] If this was Rails 4, a simple image_url() would have done the job:
 #      absolute_url = request.protocol + request.host_with_port + path_to_image( default_url )
