@@ -1,5 +1,5 @@
---
--- Dump dei dati per la tabella day_types
+--
+-- Dump dei dati per la tabella day_types
 -- 
 INSERT INTO day_types (id,code,week_order,lock_version,created_at,updated_at) VALUES 
 (1,'LU',1,0,CURDATE(),CURDATE()),
@@ -10,16 +10,16 @@ INSERT INTO day_types (id,code,week_order,lock_version,created_at,updated_at) VA
 (6,'SA',6,0,CURDATE(),CURDATE()),
 (7,'DO',7,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella gender_types
+--
+-- Dump dei dati per la tabella gender_types
 -- 
 INSERT INTO gender_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'M',0,CURDATE(),CURDATE()),
 (2,'F',0,CURDATE(),CURDATE()),
 (3,'X',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella stroke_types
+--
+-- Dump dei dati per la tabella stroke_types
 -- 
 INSERT INTO stroke_types (id,code,is_eventable,lock_version,created_at,updated_at) VALUES 
 (1,'SL',1,0,CURDATE(),CURDATE()),
@@ -29,10 +29,12 @@ INSERT INTO stroke_types (id,code,is_eventable,lock_version,created_at,updated_a
 (5,'MI',1,0,CURDATE(),CURDATE()),
 (6,'PA',0,0,CURDATE(),CURDATE()),
 (7,'VI',0,0,CURDATE(),CURDATE()),
-(8,'GE',0,0,CURDATE(),CURDATE());
+(8,'PO',0,0,CURDATE(),CURDATE()),
+(9,'GE',0,0,CURDATE(),CURDATE());
+(10,'MX',1,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella presence_types
+--
+-- Dump dei dati per la tabella presence_types
 -- 
 INSERT INTO presence_types (id,code,value,lock_version,created_at,updated_at) VALUES 
 (1,'P',100,0,CURDATE(),CURDATE()),
@@ -40,8 +42,8 @@ INSERT INTO presence_types (id,code,value,lock_version,created_at,updated_at) VA
 (3,'U',75,0,CURDATE(),CURDATE()),
 (4,'A',0,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella entry_time_types
+--
+-- Dump dei dati per la tabella entry_time_types
 -- 
 INSERT INTO entry_time_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'M',0,CURDATE(),CURDATE()),
@@ -50,8 +52,8 @@ INSERT INTO entry_time_types (id,code,lock_version,created_at,updated_at) VALUES
 (4,'A',0,CURDATE(),CURDATE()),
 (5,'U',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella passage_types
+--
+-- Dump dei dati per la tabella passage_types
 -- 
 INSERT INTO passage_types (id,code,length_in_meters,lock_version,created_at,updated_at) VALUES 
 (1,'P0025',25,0,CURDATE(),CURDATE()),
@@ -115,16 +117,16 @@ INSERT INTO passage_types (id,code,length_in_meters,lock_version,created_at,upda
 (59,'P1475',1475,0,CURDATE(),CURDATE()),
 (60,'P1500',1500,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella pool_types
+--
+-- Dump dei dati per la tabella pool_types
 -- 
 INSERT INTO pool_types (id,code,length_in_meters,is_suitable_for_meetings,lock_version,created_at,updated_at) VALUES 
 (1,'25',25,1,0,CURDATE(),CURDATE()),
 (2,'50',50,1,0,CURDATE(),CURDATE()),
 (3,'33',33,0,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella achievement_types
+--
+-- Dump dei dati per la tabella achievement_types
 -- 
 INSERT INTO achievement_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'AAMG',0,CURDATE(),CURDATE()),
@@ -147,8 +149,8 @@ INSERT INTO achievement_types (id,code,lock_version,created_at,updated_at) VALUE
 (18,'SMDF',0,CURDATE(),CURDATE()),
 (19,'SPBS',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella day_part_types
+--
+-- Dump dei dati per la tabella day_part_types
 -- 
 INSERT INTO day_part_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'M',0,CURDATE(),CURDATE()),
@@ -156,8 +158,8 @@ INSERT INTO day_part_types (id,code,lock_version,created_at,updated_at) VALUES
 (3,'S',0,CURDATE(),CURDATE()),
 (4,'N',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella heat_types
+--
+-- Dump dei dati per la tabella heat_types
 -- 
 INSERT INTO heat_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'B',0,CURDATE(),CURDATE()),
@@ -165,8 +167,8 @@ INSERT INTO heat_types (id,code,lock_version,created_at,updated_at) VALUES
 (3,'F',0,CURDATE(),CURDATE()),
 (4,'C',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella shower_types
+--
+-- Dump dei dati per la tabella shower_types
 -- 
 INSERT INTO shower_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'G',0,CURDATE(),CURDATE()),
@@ -174,8 +176,8 @@ INSERT INTO shower_types (id,code,lock_version,created_at,updated_at) VALUES
 (3,'C',0,CURDATE(),CURDATE()),
 (4,'B',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella hair_dryer_types
+--
+-- Dump dei dati per la tabella hair_dryer_types
 -- 
 INSERT INTO hair_dryer_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'G',0,CURDATE(),CURDATE()),
@@ -187,8 +189,8 @@ INSERT INTO hair_dryer_types (id,code,lock_version,created_at,updated_at) VALUES
 (7,'E',0,CURDATE(),CURDATE()),
 (8,'U',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella locker_cabinet_types
+--
+-- Dump dei dati per la tabella locker_cabinet_types
 -- 
 INSERT INTO locker_cabinet_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'G',0,CURDATE(),CURDATE()),
@@ -200,8 +202,8 @@ INSERT INTO locker_cabinet_types (id,code,lock_version,created_at,updated_at) VA
 (7,'0',0,CURDATE(),CURDATE()),
 (8,'5',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella edition_types
+--
+-- Dump dei dati per la tabella edition_types
 -- 
 INSERT INTO edition_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'O',0,CURDATE(),CURDATE()),
@@ -210,16 +212,16 @@ INSERT INTO edition_types (id,code,lock_version,created_at,updated_at) VALUES
 (4,'A',0,CURDATE(),CURDATE()),
 (5,'S',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella timing_types
+--
+-- Dump dei dati per la tabella timing_types
 -- 
 INSERT INTO timing_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'M',0,CURDATE(),CURDATE()),
 (2,'S',0,CURDATE(),CURDATE()),
 (3,'A',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella training_mode_types
+--
+-- Dump dei dati per la tabella training_mode_types
 -- 
 INSERT INTO training_mode_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'A1',0,CURDATE(),CURDATE()),
@@ -233,8 +235,8 @@ INSERT INTO training_mode_types (id,code,lock_version,created_at,updated_at) VAL
 (9,'C3/A1',0,CURDATE(),CURDATE()),
 (10,'D',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella training_step_types
+--
+-- Dump dei dati per la tabella training_step_types
 -- 
 INSERT INTO training_step_types (id,code,step_order,lock_version,created_at,updated_at) VALUES 
 (1,'R',1,0,CURDATE(),CURDATE()),
@@ -243,16 +245,17 @@ INSERT INTO training_step_types (id,code,step_order,lock_version,created_at,upda
 (4,'C',4,0,CURDATE(),CURDATE()),
 (5,'D',5,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella movement_types
+--
+-- Dump dei dati per la tabella movement_types
 -- 
 INSERT INTO movement_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'C',0,CURDATE(),CURDATE()),
 (2,'G',0,CURDATE(),CURDATE()),
 (3,'B',0,CURDATE(),CURDATE());
+(4,'T',0,CURDATE(),CURDATE()),
 
---
--- Dump dei dati per la tabella movement_scope_types
+--
+-- Dump dei dati per la tabella movement_scope_types
 -- 
 INSERT INTO movement_scope_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'I',0,CURDATE(),CURDATE()),
@@ -260,8 +263,8 @@ INSERT INTO movement_scope_types (id,code,lock_version,created_at,updated_at) VA
 (3,'N',0,CURDATE(),CURDATE()),
 (4,'C',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella arm_aux_types
+--
+-- Dump dei dati per la tabella arm_aux_types
 -- 
 INSERT INTO arm_aux_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'P',0,CURDATE(),CURDATE()),
@@ -269,8 +272,8 @@ INSERT INTO arm_aux_types (id,code,lock_version,created_at,updated_at) VALUES
 (3,'G',0,CURDATE(),CURDATE()),
 (4,'8',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella kick_aux_types
+--
+-- Dump dei dati per la tabella kick_aux_types
 -- 
 INSERT INTO kick_aux_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'L',0,CURDATE(),CURDATE()),
@@ -280,15 +283,15 @@ INSERT INTO kick_aux_types (id,code,lock_version,created_at,updated_at) VALUES
 (5,'E',0,CURDATE(),CURDATE()),
 (6,'T',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella breath_aux_types
+--
+-- Dump dei dati per la tabella breath_aux_types
 -- 
 INSERT INTO breath_aux_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'S',0,CURDATE(),CURDATE()),
 (2,'B',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella body_aux_types
+--
+-- Dump dei dati per la tabella body_aux_types
 -- 
 INSERT INTO body_aux_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'M',0,CURDATE(),CURDATE()),
@@ -298,8 +301,8 @@ INSERT INTO body_aux_types (id,code,lock_version,created_at,updated_at) VALUES
 (5,'P',0,CURDATE(),CURDATE()),
 (6,'T',0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella execution_note_types
+--
+-- Dump dei dati per la tabella execution_note_types
 -- 
 INSERT INTO execution_note_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'CBR',0,CURDATE(),CURDATE()),
@@ -309,9 +312,11 @@ INSERT INTO execution_note_types (id,code,lock_version,created_at,updated_at) VA
 (5,'FUO',0,CURDATE(),CURDATE()),
 (6,'GAL',0,CURDATE(),CURDATE()),
 (7,'VIR',0,CURDATE(),CURDATE());
+(8,'SAL',0,CURDATE(),CURDATE()),
+(9,'SCA',0,CURDATE(),CURDATE()),
 
---
--- Dump dei dati per la tabella coach_level_types
+--
+-- Dump dei dati per la tabella coach_level_types
 -- 
 INSERT INTO coach_level_types (id,code,level,lock_version,created_at,updated_at) VALUES 
 (1,'CA',10,0,CURDATE(),CURDATE()),
@@ -321,6 +326,15 @@ INSERT INTO coach_level_types (id,code,level,lock_version,created_at,updated_at)
 (5,'A1',300,0,CURDATE(),CURDATE()),
 (6,'A2',350,0,CURDATE(),CURDATE()),
 (7,'AC',400,0,CURDATE(),CURDATE());
+
+--
+-- Dump dei dati per la tabella medal_types
+-- 
+INSERT INTO medal_types (id,code,rank,weigth,lock_version,created_at,updated_at) VALUES 
+(1,'O',1,10000,0,CURDATE(),CURDATE()),
+(2,'A',2,100,0,CURDATE(),CURDATE()),
+(3,'B',3,1,0,CURDATE(),CURDATE()),
+(4,'L',4,0,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella record_types

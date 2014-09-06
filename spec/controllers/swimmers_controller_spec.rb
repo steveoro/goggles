@@ -123,6 +123,62 @@ describe SwimmersController, :type => :controller do
   describe '[GET #medals/:id]' do
     it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :medals )
     it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :medals )
+
+    context "as a logged-in user" do
+      before(:each) do
+        login_user()
+        @swimmer = create(:swimmer)
+        get :medals, id: @swimmer.id
+      end
+
+      it "assigns the required variables" do
+        expect( assigns(:seasonal_medal_collection) ).to be_an_instance_of( Array )
+      end
+      # TODO Maybe better use a db structure
+      it "defines an hash structure for medal types" do
+        medal_types = assigns(:medal_types)
+
+        puts "\r\n ----------------"
+        puts medal_types.inspect
+        puts "\r\n ----------------"
+        
+        expect( medal_types ).to be_a_kind_of( Hash )
+        expect( medal_types['1'] ).to be_an_instance_of( String )
+        expect( medal_types['2'] ).to be_an_instance_of( String )
+        expect( medal_types['3'] ).to be_an_instance_of( String )
+        expect( medal_types['4'] ).to be_an_instance_of( String )
+      end
+    end
+    
+    context "as a logged-in user, with LIGABUE MARCO seeds" do
+      before(:each) do
+        login_user()
+        @swimmer = Swimmer.find(23)
+        get :medals, id: @swimmer.id
+      end
+      
+      it "collects at least one season type medals information" do
+        expect( assigns(:seasonal_medal_collection).count ).to be > 0
+      end
+      it "assigns an array of hashes as medal seasonal collection" do
+        expect( assigns(:seasonal_medal_collection) ).to all( be_a_kind_of( Hash ) )     
+      end
+      it "assigns an array of hashes as medal seasonal collection which responds to :season_type" do
+        assigns(:seasonal_medal_collection).each do |seasonal_medals|
+          expect( seasonal_medals ).to respond_to( :season_type )
+          expect( seasonal_medals[:season_types] ).to be_an_instance_of( String )
+        end        
+      end
+      it "assigns an array of hashes as medal seasonal collection which responds to medal types" do
+        medal_types = assigns( :medal_types )
+        assigns(:seasonal_medal_collection).each do |seasonal_medals|
+          medal_types.keys each do |medal_type|
+            expect( seasonal_medals ).to respond_to( medal_type )
+            expect( seasonal_medals[medal_type] ).to be > 0
+          end
+        end        
+      end
+    end    
   end
   # ===========================================================================
 

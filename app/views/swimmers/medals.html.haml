@@ -30,6 +30,29 @@
         = I18n.t('radiography.total_season_records') +':'
       .span6
         = @tot_season_records_for_this_swimmer
-
+    .row-fluid
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td.goggles-centeralign
+              %b= I18n.t('medals')
+            - @seasonal_medal_colelction.each do |medal_collection|
+              %td.goggles-centeralign
+                %b= medal_collection[:season_type]
+            %td.goggles-centeralign
+              %b=  I18n.t('totals')
+          - @medal_types.keys do |medal_type|
+            %tr
+              %td
+                %b= @medal_types[medal_type]
+              - tot_medals_for_type = 0
+              - @seasonal_medal_colelction.each do |medal_collection|
+                - tot_medals_for_type += medal_collection[medal_type]
+                %td
+                  =medal_collection[medal_type]
+              %td
+                %b= tot_medals_for_type
+        
   .span3
     = image_tag( 'img_radiography.jpg', :class=>"img-polaroid" )
+
