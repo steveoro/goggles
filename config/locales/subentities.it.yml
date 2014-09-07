@@ -2,15 +2,15 @@ it:
   day_types:
     code: "Cod."
     i18n_short_LU: "Lun"
-    i18n_description_LU: "Luned�"
+    i18n_description_LU: "Lunedì"
     i18n_short_MA: "Mar"
-    i18n_description_MA: "Marted�"
+    i18n_description_MA: "Martedì"
     i18n_short_ME: "Mer"
-    i18n_description_ME: "Mercoled�"
+    i18n_description_ME: "Mercoledì"
     i18n_short_GI: "Gio"
-    i18n_description_GI: "Gioved�"
+    i18n_description_GI: "Giovedì"
     i18n_short_VE: "Ven"
-    i18n_description_VE: "Venerd�"
+    i18n_description_VE: "Venerdì"
     i18n_short_SA: "Sab"
     i18n_description_SA: "Sabato"
     i18n_short_DO: "Dom"
@@ -63,9 +63,6 @@ it:
     i18n_short_MX: "MX"
     i18n_description_MX: "MISTA"
     i18n_alternate_MX: "MS"
-    i18n_short_M: "M"
-    i18n_description_M: "MISTA"
-    i18n_alternate_M: "M"
 
   presence_types:
     code: "Cod."
@@ -369,7 +366,7 @@ it:
     i18n_description_B1: "Soglia aerobica (tra i 145 e 160 battiti per un giovane maschio allenato); produce poco acido lattico; serie lunghe di intensita media con riposi contenuti"
     i18n_alternate_B1: "allegro"
     i18n_short_B2: "VO2MAX (B2)"
-    i18n_description_B2: "Massimo consumo di ossigeno (attorno ai 165 battiti per un giovane maschio allenato); produce acido lattico in quantit� moderate; necessita di riposi pi� ampi"
+    i18n_description_B2: "Massimo consumo di ossigeno (attorno ai 165 battiti per un giovane maschio allenato); produce acido lattico in quantità moderate; necessita di riposi più ampi"
     i18n_alternate_B2: "sostenuto"
     i18n_short_C1: "TOLLERANZA (C1)"
     i18n_description_C1: "Regime anaerobico (oltre ai 180 battiti per un giovane maschio allenato); andature massimali o submassimali con riposi sostanziosi; distanze ridotte"
@@ -377,9 +374,9 @@ it:
     i18n_short_C2: "PICCO (C2)"
     i18n_description_C2: "Regime anaerobico (oltre 180 battiti per un giovane maschio allenato); velocita massimali; distanze brevi; Recuperi molto ampi"
     i18n_alternate_C2: "fortissimo"
-    i18n_short_C3: "RAPIDIT� (C3)"
-    i18n_description_C3: "Regime anaerobico alattacido; frequenza massimale, intensit� massimale; durate attorno ai 10\" con recuperi di almeno 45\""
-    i18n_alternate_C3: "intensit� max"
+    i18n_short_C3: "RAPIDITÀ (C3)"
+    i18n_description_C3: "Regime anaerobico alattacido; frequenza massimale, intensità massimale; durate attorno ai 10\" con recuperi di almeno 45\""
+    i18n_alternate_C3: "intensità max"
     i18n_short_A1/C3: "PROGR. (A1-C3)"
     i18n_description_A1/C3: "Progressione (da sciolto a massimale)"
     i18n_alternate_A1/C3: "progr."
@@ -400,7 +397,7 @@ it:
     i18n_description_A: "ATTIVAZIONE"
     i18n_short_C: "CENTRALE"
     i18n_description_C: "LAVORO CENTRALE"
-    i18n_short_D: "DEF."
+    i18n_short_D: "DEF"
     i18n_description_D: "DEFATICAMENTO"
 
   movement_types:
@@ -411,6 +408,8 @@ it:
     i18n_description_G: "solo gambe"
     i18n_short_B: "braccia"
     i18n_description_B: "solo braccia"
+    i18n_short_T: "tecnica"
+    i18n_description_T: "esercitazione tecnica"
 
   movement_scope_types:
     code: "Cod."
@@ -487,6 +486,10 @@ it:
     i18n_description_GAL: "Con partenza in galleggiamento"
     i18n_short_VIR: "partenza con virata"
     i18n_description_VIR: "Partenza fronte bordo con virata"
+    i18n_short_SAL: "A salire"
+    i18n_description_SAL: "A salire"
+    i18n_short_SCA: "A scalare"
+    i18n_description_SCA: "A scalare"
 
   coach_level_types:
     code: "Cod."
@@ -504,6 +507,21 @@ it:
     i18n_description_A2: "ALLENATORE II LIVELLO"
     i18n_short_AC: "ALL CAPO"
     i18n_description_AC: "ALLENATORE CAPO"
+
+  medal_types:
+    code: "Cod."
+    i18n_short_O: "Oro"
+    i18n_description_O: "Oro"
+    i18n_alternate_O: "Medaglia d'oro"
+    i18n_short_A: "Arg"
+    i18n_description_A: "Argento"
+    i18n_alternate_A: "Medaglia d'argento"
+    i18n_short_B: "Bro"
+    i18n_description_B: "Bronzo"
+    i18n_alternate_B: "Medaglia di bronzo"
+    i18n_short_L: "Leg"
+    i18n_description_L: "Legno"
+    i18n_alternate_L: "Medaglia di legno"
 
   event_types:
     code: "Cod."

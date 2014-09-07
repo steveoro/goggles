@@ -29,6 +29,7 @@ describe MeetingIndividualResult, :type => :model do
       :has_rank,
       :for_event_by_pool_type,
       :for_pool_type,
+      :for_season_type,
       :sort_by_pool_and_event
     ])
 
