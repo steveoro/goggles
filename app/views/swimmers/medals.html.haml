@@ -36,7 +36,7 @@
           %tr{'class'=>'info'}
             %td.goggles-centeralign
               %b= I18n.t('medals')
-            - @seasonal_medal_colelction.each do |medal_collection|
+            - @seasonal_medal_collection.each do |medal_collection|
               %td.goggles-centeralign
                 %b= medal_collection[:season_type]
             %td.goggles-centeralign
@@ -46,7 +46,7 @@
               %td
                 %b= @medal_types[medal_type]
               - tot_medals_for_type = 0
-              - @seasonal_medal_colelction.each do |medal_collection|
+              - @seasonal_medal_collection.each do |medal_collection|
                 - tot_medals_for_type += medal_collection[medal_type]
                 %td
                   =medal_collection[medal_type]
