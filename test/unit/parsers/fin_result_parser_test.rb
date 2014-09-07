@@ -128,7 +128,7 @@ class FinResultParserTest < ActiveSupport::TestCase
 #        puts "    - Array element -1:\r\n      #{val[-1].inspect}"
 #      }
                                                     # Check result classes:
-      parsing_defs.get_context_keys().each { |context_key|
+      parsing_defs.defined_keys().each { |context_key|
         assert parse_result.has_key?( context_key ), "parse_result doesn't have the context key '#{context_key}'!"
         context_data_pages = parse_result[ context_key ]
         assert( context_data_pages.instance_of?( Array ), "parse_result[ :#{context_key} ] is not an Array!" )
@@ -139,9 +139,9 @@ class FinResultParserTest < ActiveSupport::TestCase
             assert( data_page.has_key?(key), "parse_result[:#{context_key}][#{idx}] doesn't have the :#{key} key!" )
           end
 
-          required_field_list = parsing_defs.get_required_field_keys( context_key )
+          required_field_list = parsing_defs.required_keys( context_key )
 
-          parsing_defs.get_field_list_for( context_key ).each do |field_sym|
+          parsing_defs.field_list_for( context_key ).each do |field_sym|
             if required_field_list.include?( field_sym )
               assert( data_page[:fields].has_key?(field_sym), "parse_result[:#{context_key}][:fields] doesn't have the required field :#{field_sym}!" )
             end

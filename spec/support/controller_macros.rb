@@ -54,8 +54,8 @@ module ControllerMacros
   #
   # Assigns an @admin User instance with the currently logged-in admin.
   #
-  def login_admin_with_capybara
-    admin = create(:admin)
+  def login_admin_with_capybara( chosen_admin = nil )
+    admin = chosen_admin || create(:admin)
     visit new_admin_session_path()
     fill_in "user_email", with: @admin.email
     fill_in "user_password", with: @admin.password
@@ -86,8 +86,8 @@ module ControllerMacros
   #
   # Assigns an @user User instance with the currently logged-in user.
   #
-  def login_user_with_capybara
-    @user = create(:user)
+  def login_user_with_capybara( chosen_user = nil )
+    @user = chosen_user || create(:user)
     visit new_user_session_path()
     fill_in "user_email", with: @user.email
     fill_in "user_password", with: @user.password

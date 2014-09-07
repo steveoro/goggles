@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'parsers/txt_result_defs'
+require 'parsers/context_type_def'
 require 'parsers/context_detector'
 require 'parsers/token_extractor'
 
@@ -8,26 +10,40 @@ require 'parsers/token_extractor'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.467
   - author: Steve A.
 
- Container class for the lists of ContextDetector and TokenExtractor
+ Value object/Container class for the lists of ContextDetector and TokenExtractor
  classes and all the other structures required by the parser processing
  text data files of type 'fin_result'.
 
 =end
-class FinResultDefs
+class FinResultDefs < TxtResultDefs
 
-  attr_reader :full_pathname, :show_progress, :logger
+  attr_reader :full_pathname, :logger
   # ----------------------------------------------------------------------------
   #++
 
+# TODO Extract each ContextTypeDef as a constant like this:
 
-  # Creates a new instance.
+  MEETING_HEADER_DEF = ContextTypeDef.new(
+    :meeting_header,
+    [
+      /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
+      /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/ui,
+      /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/ui
+    ],
+    nil,                                            # parent context
+    4                                               # line_timeout (line after which these checks will be skipped)
+  )
+
+
+
+  # Creates a new instance, storing the parameters for the parsing.
   #
-  def initialize( full_pathname, logger = nil )
-    self.full_pathname = full_pathname
-    self.logger = logger
+  def initialize( source_full_pathname = '', logger = nil )
+    @full_pathname = source_full_pathname
+    @logger = logger
 
     # == Context type parser hash
     # An Hash of row type symbols pointing to an array of conditions to be satisfied.
@@ -53,100 +69,115 @@ class FinResultDefs
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
       meeting_header: ContextDetector.new(
-        :meeting_header,
-        [
-          /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
-          /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/ui,
-          /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/ui
-        ],
-        logger,
-        nil,                                          # parent context
-        4                                             # line_timeout (line after which these checks will be skipped)
+        MEETING_HEADER_DEF,
+        logger
       ),
       category_header: ContextDetector.new(
-        :category_header,
-        [
-          '',
-          /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
-          /^--------------------------/
-        ],
+        ContextTypeDef.new(
+          :category_header,
+          [
+            '',
+            /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
+            /^--------------------------/
+          ]
+        ),
         logger
       ),
       relay_header: ContextDetector.new(
-        :relay_header,
-        [
-          '',
-          /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
-          /^--------------------------/
-        ],
+        ContextTypeDef.new(
+          :relay_header,
+          [
+            '',
+            /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
+            /^--------------------------/
+          ]
+        ),
         logger
       ),
       team_ranking: ContextDetector.new(
-        :team_ranking,
-        [
-          /classifica(\s+di)?(\s+societ)?/ui,
-          ''
-        ],
+        ContextTypeDef.new(
+          :team_ranking,
+          [
+            /classifica(\s+di)?(\s+societ)?/ui,
+            ''
+          ]
+        ),
         logger
       ),
       stats: ContextDetector.new(
-        :stats,
-        [
-          '',
-          /statistiche/ui,
-          ''
-        ],
+        ContextTypeDef.new(
+          :stats,
+          [
+            '',
+            /statistiche/ui,
+            ''
+          ]
+        ),
         logger
       ),
                                                       # DETAIL CONTEXT(s) def. arrays:
       result_row: ContextDetector.new(
-        :result_row,
-        [
-          /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
-        ],
-        logger,
-        :category_header                              # parent context
+        ContextTypeDef.new(
+          :result_row,
+          [
+            /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i
+          ],
+          :category_header                            # parent context
+        ),
+        logger
       ),
       relay_row: ContextDetector.new(
-        :relay_row,
-        [
-          /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)$/i
-        ],
-        logger,
-        :relay_header
+        ContextTypeDef.new(
+          :relay_row,
+          [
+            /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)$/i
+          ],
+          :relay_header
+        ),
+        logger
       ),
       ranking_row: ContextDetector.new(
-        :ranking_row,
-        [
-          /\s+\d{1,6}[\,|\.]\d\d$/ui
-        ],
-        logger,
-        :team_ranking
+        ContextTypeDef.new(
+          :ranking_row,
+          [
+            /\s+\d{1,6}[\,|\.]\d\d$/ui
+          ],
+          :team_ranking
+        ),
+        logger
       ),
 
       stats_teams_tot: ContextDetector.new(
-        :stats_teams_tot,
-        [ /Numero di soc.+\siscritte\s/ui ],
-        logger,
-        :stats
+        ContextTypeDef.new(
+          :stats_teams_tot,
+          [ /Numero di soc.+\siscritte\s/ui ],
+          :stats
+        ),
+        logger
       ),
       stats_teams_presence: ContextDetector.new(
-        :stats_teams_presence,
-        [ /Numero di soc.+\spartecipanti\s/ui ],
-        logger,
-        :stats
+        ContextTypeDef.new(
+          :stats_teams_presence,
+          [ /Numero di soc.+\spartecipanti\s/ui ],
+          :stats
+        ),
+        logger
       ),
       stats_swimmer_tot: ContextDetector.new(
-        :stats_swimmer_tot,
-        [ /Numero totale di atleti iscritti\s/ui ],
-        logger,
-        :stats
+        ContextTypeDef.new(
+          :stats_swimmer_tot,
+          [ /Numero totale di atleti iscritti\s/ui ],
+          :stats
+        ),
+        logger
       ),
       stats_swimmer_presence: ContextDetector.new(
-        :stats_swimmer_presence,
-        [ /Numero di atleti partecipanti\s/ui ],
-        logger,
-        :stats
+        ContextTypeDef.new(
+          :stats_swimmer_presence,
+          [ /Numero di atleti partecipanti\s/ui ],
+          :stats
+        ),
+        logger
       )
     }
 
@@ -519,27 +550,18 @@ class FinResultDefs
   # ----------------------------------------------------------------------------
   #++
 
-
-  # Returns the whole Hash of all defined Context Types, where the hash key
-  # is the context symbol and the value is the corresponding ContextDetector
-  # instance.
-  #
-  def get_context_types()
-    return @context_types
-  end
-
   # Returns just the Array of all defined context key symbols.
   #
-  def get_context_keys()
-    return @context_types.keys
+  def defined_keys()
+    @context_types.keys
   end
 
   # Returns the Array of all the *required* (that is, guaranteed to be
   # created) output field keys for a specified context symbol.
   # Returns an empty array if the +context_sym+ is not found.
   #
-  def get_required_field_keys( context_sym )
-    return @context_keys[ context_sym ] ? @context_keys[ context_sym ] : []
+  def required_keys( context_sym )
+    @context_keys[ context_sym ] ? @context_keys[ context_sym ] : []
   end
 
   # Returns the Array of _possible_ field symbols used to populate the value item Hash
@@ -549,7 +571,7 @@ class FinResultDefs
   # any returned row. (Empty or blank fields are stripped out and then compacted
   # from the resulting array of values.)
   #
-  def get_field_list_for( context_sym )
+  def field_list_for( context_sym )
     return [] if @tokenizer_fields[ context_sym ].nil?
     @tokenizer_fields[ context_sym ].flatten.compact.uniq
   end
@@ -561,7 +583,7 @@ class FinResultDefs
   # symbol specified.
   # Returns +nil+ when not found.
   #
-  def get_detector_for( context_sym )
+  def detector_for( context_sym )
     @context_types[ context_sym ]
   end
 
@@ -570,7 +592,7 @@ class FinResultDefs
   # instance that is root or has a +nil+ parent context.
   #
   def is_a_parent( context_sym )
-    detector = get_detector_for( context_sym )
+    detector = detector_for( context_sym )
     ( detector.nil? || detector.is_a_parent_context() )
   end
   # ----------------------------------------------------------------------------
@@ -581,9 +603,9 @@ class FinResultDefs
   # ( {<field_name_sym> => <corresponding_tokenizer_instance>, ...} )
   #
   # Note that this is "flattened" version of the same result
-  # obtained from #get_tokenizer_types_for( context_sym ).
+  # obtained from #tokenizer_types_for( context_sym ).
   #
-  def get_tokenizers_for( context_sym )
+  def tokenizers_for( context_sym )
     return {} if @tokenizer_fields[ context_sym ].nil? || @tokenizer_types[ context_sym ].nil?
     keys = @tokenizer_fields[ context_sym ].flatten.compact
     values = @tokenizer_types[ context_sym ].flatten.compact
@@ -605,7 +627,7 @@ class FinResultDefs
   # This complex structure is actually used only by the parser
   # instance itself.
   #
-  def get_tokenizer_types_for( context_sym )
+  def tokenizer_types_for( context_sym )
     @tokenizer_types[ context_sym ]
   end
 
@@ -613,14 +635,14 @@ class FinResultDefs
   # the specified context symbol, or +nil+ when not found.
   #
   # The returned value is somehow similar in structure to the
-  # one returned by #get_tokenizer_types_for( context_sym ),
+  # one returned by #tokenizer_types_for( context_sym ),
   # but simpler, since it just has a matrix of field names (in symbols)
   # with one list of row symbols for each row of context defined.
   #
   # This complex structure is actually used only by the parser
   # instance itself.
   #
-  def get_tokenizer_fields_for( context_sym )
+  def tokenizer_fields_for( context_sym )
     @tokenizer_fields[ context_sym ]
   end
   # ----------------------------------------------------------------------------

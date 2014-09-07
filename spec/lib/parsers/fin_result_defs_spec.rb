@@ -1,15 +1,17 @@
 require 'spec_helper'
 
+require 'parsers/fin_result_defs'
 
-describe TxtResultDefs do
+
+describe FinResultDefs, type: :model do
   let( :fixture ) do
     nil
   end
 
 
   context "for a well-defined instance," do
-    subject { TxtResultDefs.new() }
 
+    subject { FinResultDefs.new() }
 
     it_behaves_like( "(the existance of a method)", [
       :full_pathname, :logger,
@@ -23,10 +25,9 @@ describe TxtResultDefs do
 
     describe "#full_pathname" do
       it "is a String" do
-        expect( subject.full_pathname ).to be_an_instance_of( String )
+        expect( subject.full_pathname ).to be_an_instance_of( String ).or be nil
       end
     end
-
 
     describe "#logger" do
       # TODO set a logger and test the getter
