@@ -79,9 +79,10 @@ class SwimmersController < ApplicationController
     # TODO
     # Collects medals for season types and presents in a table
     # with total columns
-    SeasonType.is_master.each do |season_type|
+    @swimmer.season_types.each do |season_type|
       # Creates an hash for seasonal medals
       seasonal_medals = Hash.new
+      seasonal_medals[:season_type] = season_type.get_full_name
 
       # Cycles between medal types      
       #@medal_types.map( |medal_type| medal_type.rank }.each do |medal_rank|
@@ -91,14 +92,9 @@ class SwimmersController < ApplicationController
           .for_season_type(season_type)
           .has_rank(medal_rank.to_i)
           .count
-        seasonal_medals[medal_rank] = medal_count if medal_count > 0
+        seasonal_medals[medal_rank] = medal_count
       end
-      
-      # Check if any medals for the season type
-      if seasonal_medals.size > 0
-        seasonal_medals[:season_type] = season_type.get_full_name
-        @seasonal_medal_collection << seasonal_medals 
-      end
+      @seasonal_medal_collection << seasonal_medals 
     end
     
     # TODO

@@ -63,9 +63,6 @@ en:
     i18n_short_MX: "MX"
     i18n_description_MX: "MIXED"
     i18n_alternate_MX: "MR"
-    i18n_short_M: "M"
-    i18n_description_M: "MIXED"
-    i18n_alternate_M: "M"
 
   presence_types:
     code: "code"
@@ -411,6 +408,8 @@ en:
     i18n_description_G: "kick only"
     i18n_short_B: "arm"
     i18n_description_B: "arm only"
+    i18n_short_T: "exercise"
+    i18n_description_T: "technical exercise"
 
   movement_scope_types:
     code: "code"
@@ -487,6 +486,10 @@ en:
     i18n_description_GAL: "Starting without border push"
     i18n_short_VIR: "turn start"
     i18n_description_VIR: "Starting locking at the border with turn"
+    i18n_short_SAL: "From first"
+    i18n_description_SAL: "From first to last"
+    i18n_short_SCA: "From last"
+    i18n_description_SCA: "From last to first"
 
   coach_level_types:
     code: "code"
@@ -504,6 +507,21 @@ en:
     i18n_description_A2: "2nd LEVEL COACH"
     i18n_short_AC: "HEAD COACH"
     i18n_description_AC: "HEAD COACH"
+
+  medal_types:
+    code: "code"
+    i18n_short_O: "Gold"
+    i18n_description_O: "Gold"
+    i18n_alternate_O: "Gold medal"
+    i18n_short_A: "Silv"
+    i18n_description_A: "Silver"
+    i18n_alternate_A: "Silver medal"
+    i18n_short_B: "Bro"
+    i18n_description_B: "Bronze"
+    i18n_alternate_B: "Bronze medal"
+    i18n_short_L: "Wood"
+    i18n_description_L: "Wooden"
+    i18n_alternate_L: "Wooden medal"
 
   disqualification_code_types:
     code: "code"
