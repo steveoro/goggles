@@ -45,14 +45,39 @@
               %b= medal_collection[:season_type]
           %td.span1.goggles-centeralign
             %b=  I18n.t('tot')
-        - @medal_types.keys.each do |medal_type|
+        - @medal_types.each do |medal_type|
           %tr
             %td
-              %b= @medal_types[medal_type]
+              %b= medal_type.i18n_description
             - tot_medals_for_type = 0
             - @seasonal_medal_collection.each do |medal_collection|
-              - tot_medals_for_type += medal_collection[medal_type]
+              - tot_medals_for_type += medal_collection[medal_type.rank]
               %td.goggles-rightalign
-                =medal_collection[medal_type]
+                =medal_collection[medal_type.rank]
+            %td.goggles-rightalign
+              %b= tot_medals_for_type
+
+- @event_medal_collection.keys.each do |pool_type|
+  .row-fluid.goggles-category-gap{ 'id' => "by_event_type #{pool_type}" }
+    %h3= "Medals by event types - #{pool_type}"
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-centeralign
+            %b= I18n.t('medals')
+          - @event_medal_collection[pool_type].each do |medal_collection|
+            %td.goggles-centeralign
+              %b= medal_collection[:event_type]
+          %td.goggles-centeralign
+            %b=  I18n.t('tot')
+        - @medal_types.each do |medal_type|
+          %tr
+            %td
+              %b= medal_type.i18n_description
+            - tot_medals_for_type = 0
+            - @event_medal_collection[pool_type].each do |medal_collection|
+              - tot_medals_for_type += medal_collection[medal_type.rank]
+              %td.goggles-rightalign
+                =medal_collection[medal_type.rank]
             %td.goggles-rightalign
               %b= tot_medals_for_type

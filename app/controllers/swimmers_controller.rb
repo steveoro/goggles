@@ -58,22 +58,14 @@ class SwimmersController < ApplicationController
   def medals
     # --- "Medals" tab: ---
     @tab_title = I18n.t('radiography.medals_tab')
+    @medal_types = MedalType.sort_by_rank
     @seasonal_medal_collection = []
-    
-    # TODO
-    # Maybe better create a medal_types on db to store info about
-    # medals such ranking, default images and so on.
-    # Defines a structure to classify and identify medals
-    #@medal_types = MedalType.sort_by_rank
-    @medal_types = Hash.new
-    @medal_types['1'] = 'gold'
-    @medal_types['2'] = 'silver'
-    @medal_types['3'] = 'bronze'
-    @medal_types['4'] = 'wooden'
+    @event_medal_collection = {}
     
     # TODO
     # Refactor this part using medal_types
     # Collects total for summary section
+    # To ensure cool render add the uri image resource too medal_types!
     @gold_medals   = @swimmer.get_total_gold_medals
     @silver_medals = @swimmer.get_total_silver_medals
     @bronze_medals = @swimmer.get_total_bronze_medals
@@ -102,8 +94,7 @@ class SwimmersController < ApplicationController
       seasonal_medals[:season_type] = season_type.get_full_name
 
       # Cycles between medal types      
-      #@medal_types.map( |medal_type| medal_type.rank }.each do |medal_rank|
-      @medal_types.keys.each do |medal_rank|
+      @medal_types.map{ |medal_type| medal_type.rank }.each do |medal_rank|
         seasonal_medals[medal_rank] = @swimmer.meeting_individual_results
           .is_valid
           .for_season_type(season_type)
@@ -120,10 +111,34 @@ class SwimmersController < ApplicationController
       @seasonal_medal_collection << seasonal_medals 
     end
     
-    # TODO
     # Coolect medals for event types and presents in a table
     # with total columns
-
+    PoolType.only_for_meetings.each do |pool_type|
+      # Divides events by pool type
+      @event_medal_collection[pool_type.code] = [] 
+      pool_type.events_by_pool_types.not_relays.each do |events_by_pool_type|
+        # Collects events for pool type
+        event_medals = {}
+        if @swimmer.meeting_individual_results
+            .is_valid
+            .for_event_by_pool_type(events_by_pool_type)
+            .count > 0
+          event_medals[:event_type] = events_by_pool_type.event_type_i18n_short
+  
+          # Cycles between medal types      
+          @medal_types.map{ |medal_type| medal_type.rank }.each do |medal_rank|
+            event_medals[medal_rank] = @swimmer.meeting_individual_results
+              .is_valid
+              .for_event_by_pool_type(events_by_pool_type)
+              .has_rank(medal_rank.to_i)
+              .count
+          end
+        end
+        
+        # Consider event only if is present at least one medal
+        @event_medal_collection[pool_type.code] << event_medals if event_medals.size > 0
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

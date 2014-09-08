@@ -131,17 +131,14 @@ describe SwimmersController, :type => :controller do
         get :medals, id: @swimmer.id
       end
 
-      it "assigns the required variables" do
+      it "retrieves the medal types" do
+        expect( assigns(:medal_types) ).to all( be_an_instance_of( MedalType ) )
+      end
+      it "assigns the required medal collection bu season" do
         expect( assigns(:seasonal_medal_collection) ).to be_an_instance_of( Array )
       end
-      # TODO Maybe better use a db structure
-      it "defines an hash structure for medal types" do
-        medal_types = assigns(:medal_types)
-        expect( medal_types ).to be_a_kind_of( Hash )
-        expect( medal_types['1'] ).to be_an_instance_of( String )
-        expect( medal_types['2'] ).to be_an_instance_of( String )
-        expect( medal_types['3'] ).to be_an_instance_of( String )
-        expect( medal_types['4'] ).to be_an_instance_of( String )
+      it "assigns the required medal collection by event" do
+        expect( assigns(:event_medal_collection) ).to be_a_kind_of( Hash )
       end
     end
     
@@ -167,16 +164,31 @@ describe SwimmersController, :type => :controller do
         end        
       end
       it "assigns an array of hashes as medal seasonal collection which responds to medal types" do
-        medal_types = assigns(:medal_types).keys
+        medal_types = assigns(:medal_types)
         assigns(:seasonal_medal_collection).each do |seasonal_medals|
           medal_types.each do |medal_type|
-            expect( seasonal_medals[medal_type] ).to be > 0
+            expect( seasonal_medals[medal_type.rank] ).to be > 0
           end
         end        
       end
       it "assigns an array of hashes as medal seasonal collection which responds to :tot_season_records" do
         assigns(:seasonal_medal_collection).each do |seasonal_medals|
           expect( seasonal_medals[:tot_season_records] ).to be >= 0
+        end        
+      end
+      it "assigns an array of hashes as medal event collection which responds to meeting suitable pool types with arrays" do
+        PoolType.only_for_meetings.each do |pool_type|
+          expect( assigns(:event_medal_collection)[pool_type.code] ).to be_a_kind_of( Array )
+        end        
+      end
+      it "assigns an array of hashes as medal event collection which responds to medal types" do
+        medal_types = assigns(:medal_types)
+        assigns(:event_medal_collection).keys.each do |pool_type|
+          assigns(:event_medal_collection)[pool_type].each do |event_medals|
+            medal_types.each do |medal_type|
+              expect( event_medals[medal_type.rank] ).to be >= 0
+            end
+          end
         end        
       end
     end    
