@@ -32,13 +32,13 @@ class TeamDecorator < Draper::Decorator
   # TODO Add the link to email address
   #
   def get_contacts()
-    contacts = [] 
+    contacts = []
     contacts.append(contact_name) if contact_name
     contacts.append("#{I18n.t('mobile')} #{phone_mobile}") if phone_mobile
     contacts.append("#{I18n.t('phone')} #{phone_number}") if phone_number
     contacts.append("#{I18n.t('fax')} #{fax_number}") if fax_number
     contacts.append("#{I18n.t('email')} " + h.mail_to(e_mail)) if e_mail
-    contacts.join(', ') 
+    contacts.join(', ')
   end
   #-- --------------------------------------------------------------------------
 

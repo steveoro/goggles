@@ -2,7 +2,7 @@
 
 - if @goggle_cup
   .row-fluid#goggle_cup_grid
-    .offset1.span10 
+    .offset1.span10
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -30,15 +30,15 @@
               %td
                 = rank_element[:swimmer].decorate.get_linked_swimmer_name
               %td.goggles-rightalign
-                %b= sprintf( "%02.2f", rank_element[:total] )             
+                %b= sprintf( "%02.2f", rank_element[:total] )
               %td.goggles-centeralign
-                = rank_element[:count]             
+                = rank_element[:count]
               %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:average] )             
+                = sprintf( "%02.2f", rank_element[:average] )
               %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:max] )             
+                = sprintf( "%02.2f", rank_element[:max] )
               %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:min] )             
-- else    
+                = sprintf( "%02.2f", rank_element[:min] )
+- else
   .row-fluid
-    %p= I18n.t('coming_soon')
+    %p= I18n.t('goggle_cup.send_us_your_goggle_cups')

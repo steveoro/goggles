@@ -75,7 +75,7 @@ class RecordsController < ApplicationController
       team = Team.find_by_id( params[:team][:id] ) if params[:team] && params[:team][:id]
       logger.debug "> @highlight_swimmer: #{@highlight_swimmer.inspect}"
       logger.debug "> team: #{team.inspect}"
-      @title = I18n.t('records.team_title') + (team ? " (#{team.decorate.get_linked_name})" : '')
+      @title = team ? "#{ I18n.t('records.team_title') } (#{team.decorate.get_linked_name})".html_safe : I18n.t('records.team_title')
       collector = if team
         records = IndividualRecord.for_team( team.id )
 # DEBUG
