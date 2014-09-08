@@ -10,7 +10,7 @@ class EventsByPoolType < ActiveRecord::Base
   
   has_one :stroke_type, through: :event_type
 
-  delegate :code, :length_in_meters, :is_a_relay, :i18n_description, :to => :event_type, :prefix => true 
+  delegate :code, :length_in_meters, :is_a_relay, :i18n_short, :i18n_description, :to => :event_type, :prefix => true 
   delegate :code, :length_in_meters, :is_suitable_for_meetings, :i18n_description, :i18n_verbose, :to => :pool_type, :prefix => true 
   delegate :code, :i18n_description, :to => :stroke_type, :prefix => true 
   
