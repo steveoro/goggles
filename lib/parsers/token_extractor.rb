@@ -4,7 +4,7 @@
 
 = TokenExtractor
 
-  - Goggles framework vers.:  4.00.467
+  - Goggles framework vers.:  4.00.469
   - author: Steve A.
 
  Utility class to store tokenizing expressions/conditions or absolute indexes
@@ -28,10 +28,10 @@ class TokenExtractor
 
   # Creates a new instance
   def initialize( field_name, starting_with, ending_with, line_timeout = 0 )
-    self.field_name = field_name
-    self.starting_with = starting_with
-    self.ending_with = ending_with
-    self.line_timeout = line_timeout
+    @field_name     = field_name
+    @starting_with  = starting_with
+    @ending_with    = ending_with
+    @line_timeout   = line_timeout
     @computed_start = nil                           # Cache for computed values (sadly, only non-nil results are cached)
     @computed_end   = nil
   end
@@ -81,7 +81,7 @@ class TokenExtractor
   # empty string.
   #
   def tokenize( text, current_line_number = 0 )
-    return '' if ((self.line_timeout > 0) && (current_line_number > self.line_timeout))
+    return '' if (@line_timeout > 0) && (current_line_number > @line_timeout)
     token = ''
     sidx = get_start_index( text )
     if ( sidx && (text.size >= sidx.to_i) )
@@ -93,7 +93,7 @@ class TokenExtractor
 
   # Converts the current instance to a readable string
   def to_s
-    "[TokenExtractor: #{field_name}, start=#{starting_with}, end=#{ending_with}]" +
+    "[TokenExtractor: #{@field_name}, start=#{@starting_with}, end=#{@ending_with}]" +
     (@computed_start ? " cached: (#{@computed_start}.." : ' cached: (nil..') +
     (@computed_end ? "#{@computed_end})" : 'nil)')
   end

@@ -122,9 +122,9 @@ class ContextDetector
   # Always +false+ otherwise.
   #
   def feed_and_detect( text_line, current_line_number, previous_context_name )
-    return false if ((@line_timeout > 0) && (current_line_number > @line_timeout))
-    return false if (@context_type.condition_array.size < 1)
-    return false if (@context_type.parent_context_name.nil? && (@context_type.parent_context_name != previous_context_name))
+    return false if ( (@context_type.line_timeout > 0) && (current_line_number > @context_type.line_timeout) )
+    return false if @context_type.condition_array.size < 1
+    return false if ( @context_type.parent_context_name != previous_context_name )
     is_context_detected = false
 
     condition_to_check = @context_type.condition_array[ @detection_index ]

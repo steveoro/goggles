@@ -13,8 +13,11 @@
 
 guard :shell do
   watch(/.*\.rb/) { |m| "#{m[0]} has changed." }
-  # Example: show the last lines of a modified text file:
-#  watch(/(.*).txt/) {|m| `tail #{m[0]}` }
+
+  # === Checking best-practices: ===
+  # For a list of implemented best-practices, do checkout:
+  # https://github.com/railsbp/rails_best_practices/wiki/How-to-write-your-own-check-list
+  watch(/.*\.rb/) { |m| `bundle exec rails_best_practices #{m[0]}` }
 end
 
 
@@ -53,14 +56,4 @@ group :specs do
 #    watch(%r{^features/support/.+$})                    { 'features' }
 #    watch(%r{^features/step_definitions/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }
 #  end
-end
-
-
-group :best_practices do
-  guard :shell do
-    # For a list of implemented best-practices, do checkout:
-    # https://github.com/railsbp/rails_best_practices/wiki/How-to-write-your-own-check-list
-    #
-    watch(/.*\.rb/) { |m| `echo "Checking best-practices..." && bundle exec rails_best_practices #{m[0]}` }
-  end
 end

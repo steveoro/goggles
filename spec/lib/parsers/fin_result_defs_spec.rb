@@ -1,17 +1,14 @@
+# encoding: utf-8
 require 'spec_helper'
 
 require 'parsers/fin_result_defs'
 
 
 describe FinResultDefs, type: :model do
-  let( :fixture ) do
-    nil
-  end
-
 
   context "for a well-defined instance," do
 
-    subject { FinResultDefs.new() }
+    subject { FinResultDefs.new( '', ConsoleLogger.new ) }
 
     it_behaves_like( "(the existance of a method)", [
       :full_pathname, :logger,
@@ -25,14 +22,14 @@ describe FinResultDefs, type: :model do
 
     describe "#full_pathname" do
       it "is a String" do
-        expect( subject.full_pathname ).to be_an_instance_of( String ).or be nil
+        expect( subject.full_pathname ).to be_an_instance_of( String )
       end
     end
 
-    describe "#logger" do
-      # TODO set a logger and test the getter
-      it "is a Logger or nil" do
-        expect( subject.logger ).to be_an_instance_of( Logger ).or be nil
+
+    describe "#logger (when defined)" do
+      it "is a Logger or ConsoleLogger instance" do
+        expect( subject.logger ).to be_an_instance_of( Logger ).or be_an_instance_of( ConsoleLogger )
       end
     end
     #-- -----------------------------------------------------------------------

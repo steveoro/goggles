@@ -1,64 +1,128 @@
+# encoding: utf-8
 require 'spec_helper'
 
+require 'framework/console_logger'
 require 'parsers/context_detector'
+require 'parsers/fin_result_consts'
 
 
 describe ContextDetector, type: :model do
 
   context "for a well-defined instance," do
     let( :fix_context_type ) do
-      ContextTypeDef.new(
-        :meeting_header,
-        [
-          /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/ui,
-          /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/ui
-        ]
-      )
+      FinResultConsts::ALL_CONTEXT_TYPE_DEFS[ (rand * FinResultConsts::ALL_CONTEXT_TYPE_DEFS.size).to_i ]
     end
 
-    subject { ContextDetector.new( fix_context_type ) }
+    subject { ContextDetector.new( fix_context_type, ConsoleLogger.new ) }
 
 
     it_behaves_like( "(the existance of a method)", [
-      :context_type, :logger, :current_context,
-      :clear, :is_a_parent_context, :dump_line_cache, :feed_and_detect, :to_s
+      :context_type, :logger,
+      :current_context, :dump_line_cache, :feed_and_detect,
+      :clear, :is_a_parent_context, :to_s
     ] )
     #-- -----------------------------------------------------------------------
     #++
+
+
+    describe "#initialize" do
+      it "is a ContextDetector instance" do
+        expect( subject ).to be_an_instance_of( ContextDetector )
+      end
+    end
 
 
     describe "#context_type" do
       it "is a ContextTypeDef instance" do
         expect( subject.context_type ).to be_an_instance_of( ContextTypeDef )
       end
-      it "is returns the ContextTypeDef specified in the constructor" do
+      it "is the same context specified in the constructor" do
+        expect( subject.context_type ).to be == fix_context_type
+      end
+      it "has the expected ContextTypeDef name" do
         expect( subject.context_type.context_name ).to eq( fix_context_type.context_name )
-        # TODO add == operator for contexts
       end
     end
 
 
-    describe "#logger" do
-      # TODO set a logger and test the getter
-      it "is a Logger or nil" do
-        expect( subject.logger ).to be_an_instance_of( Logger ).or be nil
+    describe "#logger (when defined)" do
+      it "is a Logger or ConsoleLogger instance" do
+        expect( subject.logger ).to be_an_instance_of( Logger ).or be_an_instance_of( ConsoleLogger )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    context "when out of parsing loop," do
+      describe "#current_context" do
+        it "is a always nil" do
+          expect( subject.current_context ).to be nil
+        end
+      end
+
+      describe "#dump_line_cache" do
+        it "returns an empty array" do
+          expect( subject.dump_line_cache ).to eq( [] )
+        end
+      end
+
+      describe "#clear" do
+        it "resets the current context and the cache of parsed lines" do
+          subject.clear
+          expect( subject.current_context ).to be nil
+          expect( subject.dump_line_cache.size ).to eq( 0 )
+        end
       end
     end
 
+    context "after a successful parsing," do
+      let( :fixture_line_0 ) { "                                  Campionati Regionali Emilia                                  " }
+      let( :fixture_line_1 ) { "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      " }
+      let( :fixture_line_2 ) { "                              Molinella - 15/16/17 Febbraio 2009                               " }
+      subject { ContextDetector.new( FinResultConsts::CNT_TYPE_MEETING_HEADER ) }
 
-    describe "#current_context" do
-      # TODO parse a line setting the current context
-      it "is a ContextTypeDef or nil" do
-        expect( subject.current_context ).to be_an_instance_of( ContextTypeDef ).or be nil
+      before(:each) do
+        subject.feed_and_detect( fixture_line_0, 0, nil )
+        subject.feed_and_detect( fixture_line_1, 1, nil )
+        @result = subject.feed_and_detect( fixture_line_2, 2, nil )
+      end
+
+      describe "#current_context" do
+        it "returns the last recognized context" do
+          expect( subject.current_context ).to be == FinResultConsts::CNT_TYPE_MEETING_HEADER
+        end
+      end
+
+      describe "#dump_line_cache" do
+        it "returns the list of lines defining the current context" do
+          expect( subject.dump_line_cache ).to contain_exactly( fixture_line_0, fixture_line_1, fixture_line_2 )
+        end
+      end
+
+      describe "#feed_and_detect" do
+        it "returns true when it recognizes the context" do
+          expect( @result ).to be true
+        end
+      end
+
+      describe "#clear" do
+        it "resets the current context and the cache of parsed lines" do
+          expect( subject.current_context ).not_to be nil
+          expect( subject.dump_line_cache.size ).to be > 0
+          subject.clear
+          expect( subject.current_context ).to be nil
+          expect( subject.dump_line_cache.size ).to eq( 0 )
+        end
       end
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
 
-    describe "#clear" do
-      # TODO parse a line setting the current context
-      it "resets the current contex" do
-        subject.clear
-        expect( subject.current_context ).to be nil
+    describe "#is_a_parent_context" do
+      it "returns true when the context definition has no parent name associated" do
+        expect( subject.is_a_parent_context ).to eq( fix_context_type.parent_context_name.nil? )
       end
     end
 
