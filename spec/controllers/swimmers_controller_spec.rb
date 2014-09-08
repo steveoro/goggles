@@ -156,24 +156,27 @@ describe SwimmersController, :type => :controller do
         expect( assigns(:seasonal_medal_collection).count ).to be > 0
       end
       it "collects informations for all the swimmer seasons" do
-        expect( assigns(:seasonal_medal_collection).count ).to eq( @swimmer.season_types.count )
+        expect( assigns(:seasonal_medal_collection).count ).to eq( @swimmer.season_types.uniq.count )
       end
       it "assigns an array of hashes as medal seasonal collection" do
         expect( assigns(:seasonal_medal_collection) ).to all( be_a_kind_of( Hash ) )     
       end
-      xit "assigns an array of hashes as medal seasonal collection which responds to :season_type" do
+      it "assigns an array of hashes as medal seasonal collection which responds to :season_type" do
         assigns(:seasonal_medal_collection).each do |seasonal_medals|
-          expect( seasonal_medals.has_key?(:season_types) ).to be_true
-          expect( seasonal_medals[:season_types] ).to be_an_instance_of( String )
+          expect( seasonal_medals[:season_type] ).to be_an_instance_of( String )
         end        
       end
-      xit "assigns an array of hashes as medal seasonal collection which responds to medal types" do
-        medal_types = assigns( :medal_types ).keys
+      it "assigns an array of hashes as medal seasonal collection which responds to medal types" do
+        medal_types = assigns(:medal_types).keys
         assigns(:seasonal_medal_collection).each do |seasonal_medals|
           medal_types.each do |medal_type|
-            expect( seasonal_medals.has_key?(medal_type) ).to be_true
             expect( seasonal_medals[medal_type] ).to be > 0
           end
+        end        
+      end
+      it "assigns an array of hashes as medal seasonal collection which responds to :tot_season_records" do
+        assigns(:seasonal_medal_collection).each do |seasonal_medals|
+          expect( seasonal_medals[:tot_season_records] ).to be >= 0
         end        
       end
     end    

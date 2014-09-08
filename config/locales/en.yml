@@ -700,6 +700,7 @@ en:
   search_rankings: "Search Rankings"
   search_results: "Search Results"
   relay_results: "Relay Results"
+  medals: "Medals"
   search: "Search"
   search_tooltip: "Click on the title bar to toggle the filtering controls. It's also possible to narrow the search results by typing other values in the dedicated cells on the grid."
   detail_show_tooltip: "Click on the title bar to toggle the details."

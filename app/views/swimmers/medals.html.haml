@@ -1,6 +1,7 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid
+.row-fluid.goggles-category-gap{ 'id' => "summary" }
+  %h3= 'Medals summary'
   .span9
     .row-fluid
       .span3
@@ -30,29 +31,28 @@
         = I18n.t('radiography.total_season_records') +':'
       .span6
         = @tot_season_records_for_this_swimmer
-    .row-fluid
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
-            %td.goggles-centeralign
-              %b= I18n.t('medals')
+       
+.row-fluid.goggles-category-gap{ 'id' => "by_season_type" }
+  %h3= 'Medals by season types'
+  .span5
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.span2.goggles-centeralign
+            %b= I18n.t('medals')
+          - @seasonal_medal_collection.each do |medal_collection|
+            %td.span2.goggles-centeralign
+              %b= medal_collection[:season_type]
+          %td.span1.goggles-centeralign
+            %b=  I18n.t('tot')
+        - @medal_types.keys.each do |medal_type|
+          %tr
+            %td
+              %b= @medal_types[medal_type]
+            - tot_medals_for_type = 0
             - @seasonal_medal_collection.each do |medal_collection|
-              %td.goggles-centeralign
-                %b= medal_collection[:season_type]
-            %td.goggles-centeralign
-              %b=  I18n.t('totals')
-          - @medal_types.keys do |medal_type|
-            %tr
-              %td
-                %b= @medal_types[medal_type]
-              - tot_medals_for_type = 0
-              - @seasonal_medal_collection.each do |medal_collection|
-                - tot_medals_for_type += medal_collection[medal_type]
-                %td
-                  =medal_collection[medal_type]
-              %td
-                %b= tot_medals_for_type
-        
-  .span3
-    = image_tag( 'img_radiography.jpg', :class=>"img-polaroid" )
-
+              - tot_medals_for_type += medal_collection[medal_type]
+              %td.goggles-rightalign
+                =medal_collection[medal_type]
+            %td.goggles-rightalign
+              %b= tot_medals_for_type

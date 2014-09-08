@@ -700,6 +700,7 @@ it:
   search_rankings: "Cerca Classifiche"
   search_results: "Cerca Risultati"
   relay_results: "Risultati Staffette"
+  medals: "Medaglie"
   search: "Cerca"
   search_tooltip: "Clicca sul titolo per nascondere o mostrare i comandi di filtraggio principali. E' possibile filtrare ulteriormente i risultati inserendo poi altri valori direttamente nell'elenco dei risultati."
   detail_show_tooltip: "Clicca sul titolo per nascondere o mostrare i dettagli."

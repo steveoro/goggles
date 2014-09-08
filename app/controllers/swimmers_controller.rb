@@ -71,35 +71,13 @@ class SwimmersController < ApplicationController
     @medal_types['3'] = 'bronze'
     @medal_types['4'] = 'wooden'
     
+    # TODO
+    # Refactor this part using medal_types
+    # Collects total for summary section
     @gold_medals   = @swimmer.get_total_gold_medals
     @silver_medals = @swimmer.get_total_silver_medals
     @bronze_medals = @swimmer.get_total_bronze_medals
     @wooden_medals = @swimmer.get_total_wooden_medals
-    
-    # TODO
-    # Collects medals for season types and presents in a table
-    # with total columns
-    @swimmer.season_types.each do |season_type|
-      # Creates an hash for seasonal medals
-      seasonal_medals = Hash.new
-      seasonal_medals[:season_type] = season_type.get_full_name
-
-      # Cycles between medal types      
-      #@medal_types.map( |medal_type| medal_type.rank }.each do |medal_rank|
-      @medal_types.keys do |medal_rank|
-        medal_count = @swimmer
-          .meeting_individual_results
-          .for_season_type(season_type)
-          .has_rank(medal_rank.to_i)
-          .count
-        seasonal_medals[medal_rank] = medal_count
-      end
-      @seasonal_medal_collection << seasonal_medals 
-    end
-    
-    # TODO
-    # Coolect medals for event types and presents in a table
-    # with total columns
 
     # FIXME this has not been tested yet:
     all_championships_records = MeetingIndividualResult.includes(
@@ -111,10 +89,41 @@ class SwimmersController < ApplicationController
     )
                                                     # Filter all_championships_records and find out how many records this swimmer still holds (if any)
     # FIXME this has not been tested yet:
-   @tot_season_records_for_this_swimmer = 0         # Count how many Season records are held by this swimmer:
+    @tot_season_records_for_this_swimmer = 0         # Count how many Season records are held by this swimmer:
     all_championships_records.each{ | mir |
       @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
     }
+    
+    # Collects medals for season types and presents in a table
+    # with total columns
+    @swimmer.season_types.uniq.each do |season_type|
+      # Creates an hash for seasonal medals
+      seasonal_medals = Hash.new
+      seasonal_medals[:season_type] = season_type.get_full_name
+
+      # Cycles between medal types      
+      #@medal_types.map( |medal_type| medal_type.rank }.each do |medal_rank|
+      @medal_types.keys.each do |medal_rank|
+        seasonal_medals[medal_rank] = @swimmer.meeting_individual_results
+          .is_valid
+          .for_season_type(season_type)
+          .has_rank(medal_rank.to_i)
+          .count
+      end
+
+      # FIXME this has not been tested yet:
+      seasonal_medals[:tot_season_records] = 0
+      all_championships_records.each{ | mir |
+        seasonal_medals[:tot_season_records] += 1 if (mir.swimmer_id == @swimmer.id && mir.season_type.id == season_type.id)
+      }
+  
+      @seasonal_medal_collection << seasonal_medals 
+    end
+    
+    # TODO
+    # Coolect medals for event types and presents in a table
+    # with total columns
+
   end
   #-- -------------------------------------------------------------------------
   #++
