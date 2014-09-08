@@ -1,7 +1,21 @@
 = render( partial: 'tabs_and_radio_title' )
 
+.row-fluid.goggles-category-gap#pageTop
+  .navbar
+    %ul.nav
+      %li
+        %a.goggles-nav-compact(href="#summary")= I18n.t('radiography.medals_summary') 
+      %li
+        %a.goggles-nav-compact(href="#by_season_type")= I18n.t('radiography.medals_by_season_type') 
+      - @event_medal_collection.keys.each do |pool_type|
+        %li
+          %a.goggles-nav-compact(href="#by_event_type_#{pool_type}")= I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type) 
+    .ghost-divider-vertical
+
 .row-fluid.goggles-category-gap{ 'id' => "summary" }
-  %h3= 'Medals summary'
+  %h3
+    = I18n.t('radiography.medals_summary')
+    %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
   .span9
     .row-fluid
       .span3
@@ -33,7 +47,9 @@
         = @tot_season_records_for_this_swimmer
        
 .row-fluid.goggles-category-gap{ 'id' => "by_season_type" }
-  %h3= 'Medals by season types'
+  %h3
+    = I18n.t('radiography.medals_by_season_type')
+    %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
   .span5
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
@@ -58,8 +74,10 @@
               %b= tot_medals_for_type
 
 - @event_medal_collection.keys.each do |pool_type|
-  .row-fluid.goggles-category-gap{ 'id' => "by_event_type #{pool_type}" }
-    %h3= "Medals by event types - #{pool_type}"
+  .row-fluid.goggles-category-gap{ 'id' => "by_event_type_#{pool_type}" }
+    %h3
+      = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
+      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
