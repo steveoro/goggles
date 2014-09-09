@@ -162,15 +162,15 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   TOK_EXT_MEETING_HEADER_MEETING_DATES = TokenExtractor.new(
     :meeting_dates,
     /\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
-    /$/ui,
+    /\z/ui,
     3                                               # line_timeout
   )
 
   # "meeting_header.organization" token extractor definition
   TOK_EXT_MEETING_HEADER_ORGANIZATION = TokenExtractor.new(
     :organization,
-    /(?<=manifestazione organizzata da)\s/ui,
-    /$/ui,
+    /(?<=manifestazione organizzata da )/ui,
+    /\z/ui,
     3                                               # line_timeout
   )
   # ----------------------------------------------------------------------------
