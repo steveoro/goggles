@@ -52,7 +52,7 @@ describe SwimmerDecorator do
     it_behaves_like( "(the existance of a method returning strings)", [
         :get_linked_team_names,
       ]
-    )    
+    )
   end
   # ---------------------------------------------------------------------------
 
@@ -336,12 +336,12 @@ describe SwimmerDecorator do
     #  @fix_events_for_pool_type = EventsByPoolType.find( 11 )  # Force 50FA, 25 meters
     #  create(:meeting_event_with_programs, event_type_id: @fix_events_for_pool_type.event_type_id)
     #end
-    it_behaves_like( "(the existance of a method with parameter returning a valid instance or nil)", 
+    it_behaves_like( "(the existance of a method with parameter returning a valid instance or nil)",
       :get_personal_best,
       MeetingIndividualResult,
       EventsByPoolType.find(11)
     )
-    
+
     context "the swimmer swam the event type in the pool type" do
       fix_swimmer = Swimmer.find(23).decorate              # Assumes the existence of 23 Swimmer: Leega
       fix_events_by_pool_type = EventsByPoolType.find(11)  # Assumes the existence of event 11: 50FA - 25 mt
@@ -349,7 +349,7 @@ describe SwimmerDecorator do
         expect( fix_swimmer.get_personal_best(fix_events_by_pool_type) ).to be_an_instance_of( MeetingIndividualResult )
       end
     end
-    
+
     context "the swimmer doesn't swam the event type in the pool type" do
       fix_swimmer = Swimmer.find(23).decorate              # Assumes the existence of 23 Swimmer: Leega
       fix_events_by_pool_type = EventsByPoolType.find(8)   # Assumes the existence of event 8: 3000SL - 25 mt
@@ -372,7 +372,7 @@ describe SwimmerDecorator do
       expect( subject.get_linked_swimmer_name ).to include( swimmer_radio_path(id: subject.id) )
     end
     it "returns a string containing the swimmer full name" do
-      expect( subject.get_linked_swimmer_name ).to include( subject.get_full_name )
+      expect( subject.get_linked_swimmer_name ).to include( ERB::Util.html_escape(subject.get_full_name) )
     end
   end
   #-- --------------------------------------------------------------------------

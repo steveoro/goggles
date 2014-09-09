@@ -54,11 +54,11 @@ describe RecordCollector do
 
   describe "#initialize" do
     it "allows a list of IndividualRecord rows as a parameter" do
-      list = create_list(:individual_record, 5)
+      # This should also work with a more simple "create_list(:individual_record, 5)"
+      list = IndividualRecordFactoryTools.create_personal_best_list( create(:swimmer) )
       result = RecordCollector.new( list: list )
       expect( result ).to be_an_instance_of( RecordCollector )
       expect( result.count ).to eq( list.size )
-      expect( result.count ).to eq(5)
     end
     it "allows a list of MeetingIndividualResult rows as a parameter" do
       list = create_list(:meeting_individual_result, 5)

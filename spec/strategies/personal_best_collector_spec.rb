@@ -43,16 +43,7 @@ describe PersonalBestCollector do
       expect{ PersonalBestCollector.new() }.to raise_error( ArgumentError )
     end
     it "allows a list of IndividualRecord rows as a parameter" do
-      # [Steve, 20140909]
-      # We will force a factory list creation with record_type_id: 1 (personal-best),
-      # which allows the generated rows to be almost always a valid (since federation,
-      # event, pool type and category will be randomized).
-      # But, at least in theory, it could be possible that a particular unlucky
-      # combination may generate two rows in the list with the same resulting
-      # composed record keys, thus making the spec fail.
-      # (...Due to the fact that the collector will overwrite a row with an existing
-      #  composed key with its latest added record.)
-      list = create_list(:individual_record, 5, record_type_id: 1, gender_type_id: swimmer.gender_type_id, swimmer_id: swimmer.id)
+      list = IndividualRecordFactoryTools.create_personal_best_list( swimmer )
       result = PersonalBestCollector.new( swimmer, list: list )
       expect( result ).to be_an_instance_of( PersonalBestCollector )
       expect( result.count ).to eq( list.size )

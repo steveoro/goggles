@@ -23,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.465.20140905'
+SCRIPT_VERSION = '4.477.20140909'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -188,7 +188,12 @@ Options: [Rails.env=#{Rails.env}]
   desc <<-DESC
   Recreates the current DB from a recovery dump created with db:dump.
 
-Options: [Rails.env=#{Rails.env}] [to='production'|'development'|'test']
+Options: [Rails.env=#{Rails.env}]
+         [from=dump_base_name|<#{Rails.env}>]
+         [to='production'|'development'|'test']
+
+  - from: when not specified, the source dump base name will be the same of the
+        current Rails.env
 
   - to: when not specified, the destination database will be the same of the
         current Rails.env
@@ -202,15 +207,16 @@ Options: [Rails.env=#{Rails.env}] [to='production'|'development'|'test']
     db_user       = rails_config.database_configuration[Rails.env]['username']
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
     db_host       = rails_config.database_configuration[Rails.env]['host']
-    output_db     = ENV.include?("to") ? rails_config.database_configuration[ENV["to"]]['database'] : db_name
+    dump_basename = ENV.include?("from") ? ENV["from"] : Rails.env
+    output_db     = ENV.include?("to")   ? rails_config.database_configuration[ENV["to"]]['database'] : db_name
     file_ext = '.sql.bz2'
     zip_pipe = 'bunzip2'
                                                     # Display some info:
-    puts "DB name: #{db_name} (SOURCE) => #{output_db} (DEST)"
+    puts "DB name: #{dump_basename} (dump) => #{output_db} (DEST)"
     puts "DB user: #{db_user}"
 
-    file_name = File.join( File.join('db', 'dump'), "#{Rails.env}#{file_ext}" )
-    sql_file_name = File.join( 'tmp', "#{Rails.env}.sql" )
+    file_name = File.join( File.join('db', 'dump'), "#{dump_basename}#{file_ext}" )
+    sql_file_name = File.join( 'tmp', "#{dump_basename}.sql" )
 
     puts "\r\Uncompressing dump file '#{file_name}' => '#{sql_file_name}'..."
     sh "bunzip2 -ck #{file_name} > #{sql_file_name}"

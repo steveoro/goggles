@@ -23,3 +23,38 @@ FactoryGirl.define do
     federation_type     { season.season_type.federation_type }
   end
 end
+#-- ---------------------------------------------------------------------------
+#++
+
+
+# Quick NameSpace container for creation-tools regarding this factory.
+#
+module IndividualRecordFactoryTools
+
+  # Creates (and returns) an Array of IndividualRecord rows associated
+  # to the specified swimmer, each with an unique event_type_id and
+  # with record_type_id forced to 1 (= "personal best").
+  def self.create_personal_best_list( swimmer, row_count = 5 )
+    unique_event_type_ids = (1..18).to_a.sort{ rand() - 0.5 }[ 0.. row_count-1 ]
+    list = []
+    unique_event_type_ids.each do |event_id|
+      list << FactoryGirl.create( :individual_record,
+        swimmer_id: swimmer.id,
+        meeting_individual_result: FactoryGirl.create( :meeting_individual_result,
+          swimmer_id: swimmer.id,
+          meeting_program: FactoryGirl.create( :meeting_program,
+            meeting_event: FactoryGirl.create( :meeting_event, event_type_id: event_id ),
+            gender_type_id: swimmer.gender_type_id
+          )
+        ),
+        record_type_id: 1,
+        event_type_id: event_id
+      )
+    end
+    list
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+end
+#-- ---------------------------------------------------------------------------
+#++

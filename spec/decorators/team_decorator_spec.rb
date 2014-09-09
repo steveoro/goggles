@@ -18,7 +18,7 @@ describe TeamDecorator do
   #-- --------------------------------------------------------------------------
   #++
 
-  describe "#get_linked__name" do
+  describe "#get_linked_name" do
     it "responds to #get_linked_name method" do
       expect( subject ).to respond_to( :get_linked_name )
     end
@@ -29,7 +29,7 @@ describe TeamDecorator do
       expect( subject.get_linked_name ).to include( team_radio_path(id: subject.id) )
     end
     it "returns a string containing the team full name" do
-      expect( subject.get_linked_name ).to include( subject.get_full_name )
+      expect( subject.get_linked_name ).to include( ERB::Util.html_escape(subject.get_full_name) )
     end
   end
   #-- --------------------------------------------------------------------------
