@@ -242,6 +242,7 @@ en:
     medals_summary: "Medals summary"
     medals_by_season_type: "Medals by season types"
     medals_by_event_type: "Medals by event types - {POOL_TYPE} meters pool" 
+    seasonal_records: "Seasonal records"
 
   goggle_cup:
     rank: "Rank"

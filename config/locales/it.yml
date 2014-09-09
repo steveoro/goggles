@@ -242,6 +242,7 @@ it:
     medals_summary: "Riepilogo medaglie"
     medals_by_season_type: "Medaglie per tipo stagione"
     medals_by_event_type: "Medaglie per specialità - vasca da {POOL_TYPE} metri" 
+    seasonal_records: "Record stagionali"
 
   goggle_cup:
     rank: "Pos"
