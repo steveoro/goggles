@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 
@@ -178,6 +179,7 @@ describe Timing, :type => :model do
       expect( subject ).to include( fix1_hundreds.to_s )
       expect( subject ).to include( fix1_secs.to_s )
       expect( subject ).to include( fix1_mins.to_s )
+      expect( subject ).to include( fix1_hours.to_s )
     end
   end
 

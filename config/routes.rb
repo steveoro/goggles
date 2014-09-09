@@ -182,14 +182,13 @@ Goggles::Application.routes.draw do
       resources :user_training_stories
 
       # === User Passages: ===
-      resources :passages do
-        member do
-          delete 'destroy',                     to: "passags#destroy",                    as: "destroy"
-        end
-        collection do
-          get 'for_meeting_individual_result/:id', to: "passages#for_meeting_individual_result", as: "for_meeting_individual_result"
-        end
-      end
+      get     "passages/show/:id",              to: "passages#show",                      as: "passage"
+      get     "passages/new",                   to: "passages#new",                       as: "new_passage"
+      post    "passages/create",                to: "passages#create",                    as: "create_passage"
+      get     "passages/edit/:id",              to: "passages#edit",                      as: "edit_passage"
+      put     "passages/update/:id",            to: "passages#update",                    as: "update_passage"
+      delete  "passages/destroy/:id",           to: "passages#destroy",                   as: "destroy_passage"
+      get     'passages/for_meeting_individual_result/:id', to: "passages#for_meeting_individual_result", as: "passages_for_meeting_individual_result"
     end
   end
 

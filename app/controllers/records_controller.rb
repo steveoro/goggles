@@ -121,7 +121,7 @@ class RecordsController < ApplicationController
       collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
         this.collect_from_results_having( pool_code, event_code, category_code, gender_code, 'FOR' )
       end if swimmer
-      @title = I18n.t('records.swimmer_title') + (swimmer ? " (#{swimmer.get_full_name})" : '')
+      @title = swimmer ? "#{ I18n.t('records.swimmer_title') } (#{swimmer.get_full_name})" : I18n.t('records.swimmer_title')
       @grid_builder = RecordGridBuilder.new( collector, 'FOR' )
     else
       @title = I18n.t('records.swimmer_search_title')
