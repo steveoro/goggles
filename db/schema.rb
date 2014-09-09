@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140909133849) do
+ActiveRecord::Schema.define(:version => 20140909161617) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -846,12 +846,13 @@ ActiveRecord::Schema.define(:version => 20140909133849) do
   add_index "locker_cabinet_types", ["code"], :name => "index_locker_cabinet_types_on_code", :unique => true
 
   create_table "medal_types", :force => true do |t|
-    t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 1,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.integer  "rank",                      :default => 0
-    t.integer  "weigth",                    :default => 0
+    t.integer  "lock_version",               :default => 0
+    t.string   "code",         :limit => 1,                 :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.integer  "rank",                       :default => 0
+    t.integer  "weigth",                     :default => 0
+    t.string   "image_uri",    :limit => 50
   end
 
   add_index "medal_types", ["code"], :name => "index_medal_types_on_code", :unique => true
@@ -1441,18 +1442,6 @@ ActiveRecord::Schema.define(:version => 20140909133849) do
   add_index "team_affiliations", ["number"], :name => "index_team_affiliations_on_number"
   add_index "team_affiliations", ["season_id", "team_id"], :name => "uk_team_affiliations_seasons_teams", :unique => true
   add_index "team_affiliations", ["team_id"], :name => "fk_team_affiliations_teams"
-
-  create_table "team_managers", :force => true do |t|
-    t.integer  "lock_version",        :default => 0
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
-    t.integer  "team_affiliation_id"
-    t.integer  "user_id"
-  end
-
-  add_index "team_managers", ["team_affiliation_id", "user_id"], :name => "team_manager_with_affiliation", :unique => true
-  add_index "team_managers", ["team_affiliation_id"], :name => "index_team_managers_on_team_affiliation_id"
-  add_index "team_managers", ["user_id"], :name => "index_team_managers_on_user_id"
 
   create_table "team_passage_templates", :force => true do |t|
     t.integer  "lock_version",                         :default => 0

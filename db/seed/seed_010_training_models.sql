@@ -5,15 +5,15 @@ START TRANSACTION;
 delete from training_rows;
 delete from trainings;
 
---
--- Dump dei dati per la tabella trainings
+--
+-- Dump dei dati per la tabella trainings
 -- 
 INSERT INTO trainings (id,title,description,min_swimmer_level,max_swimmer_level,user_id,lock_version,created_at,updated_at) VALUES 
 (1,'Tecnica 400 SL e FA','Parte iniziale allenamento standard con due giri di tecnica da 400, SL e FA',50,450,2,0,CURDATE(),CURDATE()),
 (2,'Tecnica 400 DO e RA','Parte iniziale allenamento standard con due giri di tecnica da 400, DO e RA',50,450,2,0,CURDATE(),CURDATE());
 
---
--- Dump dei dati per la tabella training_rows
+--
+-- Dump dei dati per la tabella training_rows
 -- 
 INSERT INTO training_rows (id,part_order,times,distance,start_and_rest,pause,group_id,group_times,group_start_and_rest,group_pause,training_id,exercise_id,training_step_type_id,arm_aux_type_id,kick_aux_type_id,body_aux_type_id,breath_aux_type_id,lock_version,created_at,updated_at) VALUES 
 (1,1,1,300,0,0,0,0,0,0,(select t.id from trainings t where t.title = 'Tecnica 400 SL e FA'),(select t.id from exercises t where t.code = 'A1PIAC'),(select t.id from training_step_types t where t.code = 'R'),(select t.id from arm_aux_types t where t.code = ''),(select t.id from kick_aux_types t where t.code = ''),(select t.id from body_aux_types t where t.code = ''),(select t.id from breath_aux_types t where t.code = ''),0,CURDATE(),CURDATE()),
