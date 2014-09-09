@@ -83,7 +83,7 @@ describe RecordsController, :type => :controller do
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
-          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:title) ).to  be_an_instance_of( String )
           expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
           expect( assigns(:grid_builder).count ).to eq(0)
           expect(response).to render_template(:for_team)
@@ -91,14 +91,16 @@ describe RecordsController, :type => :controller do
       end
 
       context "with a valid parameter," do
-        # (Team.id = 1 => CSI, existing in seeds)
+        # (Team.id = 1 => CSI, always existing in seeds)
         before(:each) { xhr :get, :for_team, team: {id: 1} }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
         end
-        it "assigns the required variables" do
-          expect( assigns(:title) ).to be_an_instance_of( String )
+        it "assigns a safe-buffer text link to the team's radio page in the title variable" do
+          expect( assigns(:title) ).to be_an_instance_of( ActiveSupport::SafeBuffer )
+        end
+        it "assigns the other required variables" do
           expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
         end
         it "has a non-empty record list" do
@@ -145,7 +147,6 @@ describe RecordsController, :type => :controller do
       end
 
       context "with a valid parameter," do
-        # (Team.id = 1 => CSI, existing in seeds)
         let(:leega_swimmer) { Swimmer.where(complete_name: 'LIGABUE MARCO').first }
         before(:each) { xhr :get, :for_swimmer, swimmer: {id: leega_swimmer.id} }
 

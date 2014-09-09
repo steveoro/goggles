@@ -22,8 +22,9 @@ class Team < ActiveRecord::Base
   has_many :meetings, through: :meeting_individual_results
   has_many :meeting_relay_results
   has_many :team_affiliations
-  has_many :seasons,      through: :team_affiliations
-  has_many :season_types, through: :team_affiliations
+  has_many :seasons,        through: :team_affiliations
+  has_many :season_types,   through: :team_affiliations
+  has_many :team_managers,  through: :team_affiliations
   has_many :goggle_cups
 
   validates_presence_of :name
@@ -43,6 +44,9 @@ class Team < ActiveRecord::Base
   scope :sort_team_by_user, ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
   scope :sort_team_by_city, ->(dir) { order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }
 
+  # Mass-assignment protection:
+  attr_accessible :editable_name, :address, :phone_mobile, :phone_number,
+                  :fax_number, :e_mail, :contact_name, :home_page_url
 
   # ----------------------------------------------------------------------------
   # Base methods:
@@ -112,7 +116,7 @@ class Team < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Retrieves the array of unique swimmer IDs registered for a specified meeting_id
-  # 
+  #
   def self.get_swimmer_ids_for( team_id, meeting_id )
     team = Team.find_by_id( team_id )
     team ? team.meeting_individual_results.includes(:meeting).where(['meetings.id=?', meeting_id]).collect{|row| row.swimmer_id}.uniq : []

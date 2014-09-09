@@ -13,27 +13,12 @@ class PassagesController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
-  
-  before_filter :verify_user_swimmer_confirmations 
+
+  before_filter :verify_user_swimmer_confirmations
   # FIXME Steve: must exclude #index from assigning the instance parameter!
   before_filter :verify_swimmer_ownership, except: [:new, :create]
   #-- -------------------------------------------------------------------------
   #++
-
-
-  # Index/Search action.
-  #
-  def index
-    @title = I18n.t('passages.index_title')
-    @passages_grid = initialize_grid(
-      Passage,
-      include: [:meeting_individual_result, :meeting_program, :meeting_event, :event_type],
-      order: :scheduled_date,
-      order_direction: 'asc',
-      per_page: 25
-    )
-  end
-  # ----------------------------------------------------------------------------
 
 
   # Returns the passage found for a specific passage id.
@@ -44,7 +29,7 @@ class PassagesController < ApplicationController
   def show
     @passage = Passage.find_by_id(params[:id])
     if @passage.nil?
-      redirect_to( passages_path() ) and return
+      redirect_to( root_path() ) and return
     end
     @title = I18n.t('passages.title_show')
     respond_with( @passage )
@@ -73,15 +58,15 @@ class PassagesController < ApplicationController
   def new
     @meeting_individual_result = MeetingIndividualResult.find_by_id(params[:meeting_individual_result_id])
     if @meeting_individual_result.nil?
-      redirect_to( passages_path() ) and return
+      redirect_to( root_path() ) and return
     end
-    
+
     @passage = Passage.new
     @passage.user_id = current_user.id
     @passage.swimmer_id = current_user.swimmer_id
-    @passage.meeting_individual_result_id = @meeting_individual_result.id 
-    @passage.meeting_program_id = @meeting_individual_result.meeting_program_id 
-    @passage.team_id = @meeting_individual_result.team_id 
+    @passage.meeting_individual_result_id = @meeting_individual_result.id
+    @passage.meeting_program_id = @meeting_individual_result.meeting_program_id
+    @passage.team_id = @meeting_individual_result.team_id
     @title = I18n.t('passages.title_show')
     respond_with( @passage )
   end
@@ -108,7 +93,7 @@ class PassagesController < ApplicationController
   #
   def edit
     @passage = Passage.find_by_id(params[:id])
-    redirect_to( passages_path() ) and return if @passage.nil?
+    redirect_to( root_path() ) and return if @passage.nil?
     @title = I18n.t('passages.title_show')
     respond_with( @passage )
   end
@@ -123,7 +108,7 @@ class PassagesController < ApplicationController
   #
   def update
     @passage = Passage.find_by_id(params[:id])
-    redirect_to( passages_path() ) and return if @passage.nil?
+    redirect_to( root_path() ) and return if @passage.nil?
     @passage.update_attributes(params[:passage])
     respond_with( @passage )
   end
@@ -144,11 +129,11 @@ class PassagesController < ApplicationController
     else
       flash[:error] = I18n.t(:invalid_action_request)
     end
-    redirect_to( passages_path() ) and return
+    redirect_to( root_path() ) and return
   end
   # ---------------------------------------------------------------------------
-  
-  
+
+
   private
 
   # Verifies that a passage id is provided as a parameter to this controller.
@@ -184,7 +169,7 @@ class PassagesController < ApplicationController
   # ----------------------------------------------------------------------------
 
   # TODO This method should be globalized as an helper. Copied & adapted from swimmng_pool_review
-  #  
+  #
   # Returns true if the user meets the criteria for creating a new instance or
   # false otherwise.
   #

@@ -6,22 +6,6 @@ require 'spec_helper'
 
 describe PassagesController, :type => :controller do
 
-  context "authorizated actions" do
-    # Leega
-    # FIXME Should check if user is a confirmed swimmer for each method invoked.
-    # Suppose before filter is correct using only the index action
-    it_behaves_like( "(Ap1-V1-Controllers, get actions that requires logged user who's a confirmed swimmer)", [
-      :index,
-      #:new,
-      #:create,
-      #:show,
-      #:for_meeting_individual_result,
-      #:edit,
-      #:update,
-      #:destroy      
-    ])
-  end
-   
   context "as a logged-in user who is a confirmed goggler" do
     # Action performed before next specs
     before :each do
@@ -32,32 +16,7 @@ describe PassagesController, :type => :controller do
       UserSwimmerConfirmation.confirm_for( @user, @user.swimmer, another_goggler_confirmator )
     end
 
-    # Leega
-    # FIXME Should verify the private method used by before filter works properly
-    #it "has current_user correctly set" do
-    #  expect( subject.current_user_have_enough_confirmations! ).to be true
-    #end
-    
-    describe '[GET #index]' do
-      context "with an HTML request," do
-        it "handles successfully the request" do
-          get :index
-          expect(response.status).to eq( 200 )
-        end
-        it "assigns the required variables" do
-          get :index
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:passages_grid) ).not_to be_nil 
-        end
-        it "renders the template" do
-          get :index
-          expect(response).to render_template(:index)
-        end
-      end
-    end
-    # ===========================================================================
-  
-  
+
     describe '[GET #show/:id]' do
       context "with an HTML request and a non-existing id," do
         it "handles the request with a redirect" do
@@ -66,10 +25,10 @@ describe PassagesController, :type => :controller do
         end
         it "redirects to #index" do
           get :show, id: 0
-          expect( response ).to redirect_to( passages_path()) 
+          expect( response ).to redirect_to( root_path())
         end
       end
-      
+
       context "with an HTML request and an existing id," do
         before :each do
           @passage = create( :passage, user: @user, swimmer: @user.swimmer )
@@ -80,8 +39,8 @@ describe PassagesController, :type => :controller do
         end
         it "assigns the required variables" do
           get :show, id: @passage.id
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:passage) ).to be_an_instance_of( Passage ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:passage) ).to be_an_instance_of( Passage )
         end
         it "renders the template" do
           get :show, id: @passage.id
@@ -90,13 +49,13 @@ describe PassagesController, :type => :controller do
       end
     end
     # ===========================================================================
-  
-  
+
+
     describe '[GET #for_meeting_individual_result/:id]' do
       before :each do
         @meeting_individual_result1 = create( :meeting_individual_result_with_passages, user: @user, swimmer: @user.swimmer )
       end
-  
+
       context "with an HTML request" do
         it "handles successfully the request" do
           get :for_meeting_individual_result, id: @meeting_individual_result1.id
@@ -104,8 +63,8 @@ describe PassagesController, :type => :controller do
         end
         it "assigns the required variables" do
           get :for_meeting_individual_result, id: @meeting_individual_result1.id
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:passages) ).to respond_to( :each ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:passages) ).to respond_to( :each )
         end
         it "renders the template" do
           get :for_meeting_individual_result, id: @meeting_individual_result1.id
@@ -114,8 +73,8 @@ describe PassagesController, :type => :controller do
       end
     end
     # ===========================================================================
-  
-  
+
+
     describe '[GET #new]' do
       context "with an HTML request without meeting_individual_result," do
         it "handles the request with a redirect" do
@@ -124,7 +83,7 @@ describe PassagesController, :type => :controller do
         end
         it "redirects to #index" do
           get :new
-          expect( response ).to redirect_to( passages_path()) 
+          expect( response ).to redirect_to( root_path())
         end
       end
 
@@ -137,13 +96,13 @@ describe PassagesController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables, pre-setting also the meeting_individual_result ID" do
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:passage) ).to be_an_instance_of( Passage ) 
-          expect( assigns(:passage).user_id ).to eq( @user.id ) 
-          expect( assigns(:passage).swimmer_id ).to eq( @user.swimmer_id ) 
-          expect( assigns(:passage).meeting_individual_result_id ).to eq( @meeting_individual_result.id ) 
-          expect( assigns(:passage).meeting_program_id ).to eq( @meeting_individual_result.meeting_program_id ) 
-          expect( assigns(:passage).team_id ).to eq( @meeting_individual_result.team_id ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:passage) ).to be_an_instance_of( Passage )
+          expect( assigns(:passage).user_id ).to eq( @user.id )
+          expect( assigns(:passage).swimmer_id ).to eq( @user.swimmer_id )
+          expect( assigns(:passage).meeting_individual_result_id ).to eq( @meeting_individual_result.id )
+          expect( assigns(:passage).meeting_program_id ).to eq( @meeting_individual_result.meeting_program_id )
+          expect( assigns(:passage).team_id ).to eq( @meeting_individual_result.team_id )
         end
         it "renders the template" do
           expect(response).to render_template(:new)
@@ -164,18 +123,18 @@ describe PassagesController, :type => :controller do
       it "handles successfully the request with HTML" do
         expect {
           post :create, passage: @passage.attributes
-        }.to change(Passage, :count).by(1) 
+        }.to change(Passage, :count).by(1)
       end
       it "assigns the required variables" do
         post :create, passage: @passage.attributes
-        expect( assigns(:passage) ).to be_an_instance_of( Passage ) 
+        expect( assigns(:passage) ).to be_an_instance_of( Passage )
         # Leega
         # FIXME Is it necessary to assign user, swimmer and so on at the create time?
-        #expect( assigns(:passage).user_id ).to eq( @user.id ) 
+        #expect( assigns(:passage).user_id ).to eq( @user.id )
       end
       it "redirects to #show after creation" do
         post :create, passage: @passage.attributes
-        expect( response ).to redirect_to( passage_path( Passage.last )) 
+        expect( response ).to redirect_to( passage_path( Passage.last ))
       end
     end
     # ===========================================================================
@@ -185,29 +144,29 @@ describe PassagesController, :type => :controller do
       context "with an HTML request and a non-existing id," do
         it "redirects to #index" do
           get :edit, id: 0
-          expect(response).to redirect_to( passages_path() )
+          expect(response).to redirect_to( root_path() )
         end
       end
-      
+
       context "with an HTML request and a valid id," do
         before :each do
           @passage = create( :passage, user: @user, swimmer: @user.swimmer )
         end
-  
+
         it "handles successfully the request" do
           get :edit, id: @passage.id
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables" do
           get :edit, id: @passage.id
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:passage) ).to be_an_instance_of( Passage ) 
-          expect( assigns(:passage).minutes ).to eq( @passage.minutes ) 
-          expect( assigns(:passage).seconds ).to eq( @passage.seconds ) 
-          expect( assigns(:passage).hundreds ).to eq( @passage.hundreds ) 
-          expect( assigns(:passage).meeting_individual_result_id ).to eq( @passage.meeting_individual_result_id ) 
-          expect( assigns(:passage).user_id ).to eq( @user.id ) 
-          expect( assigns(:passage).swimmer_id ).to eq( @passage.swimmer_id ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:passage) ).to be_an_instance_of( Passage )
+          expect( assigns(:passage).minutes ).to eq( @passage.minutes )
+          expect( assigns(:passage).seconds ).to eq( @passage.seconds )
+          expect( assigns(:passage).hundreds ).to eq( @passage.hundreds )
+          expect( assigns(:passage).meeting_individual_result_id ).to eq( @passage.meeting_individual_result_id )
+          expect( assigns(:passage).user_id ).to eq( @user.id )
+          expect( assigns(:passage).swimmer_id ).to eq( @passage.swimmer_id )
         end
         it "renders the template" do
           get :edit, id: @passage.id
@@ -222,7 +181,7 @@ describe PassagesController, :type => :controller do
       before :each do
         @passage = create( :passage, user: @user, swimmer: @user.swimmer )
         @new_minutes  = 2    # Assumes factory only uses 0 and 1
-        @new_seconds  = 59   # Assumes factory doesn't use only 59  
+        @new_seconds  = 59   # Assumes factory doesn't use only 59
         @new_hundreds = 99   # Assumes factory doesn't use only 99
       end
 
@@ -233,23 +192,23 @@ describe PassagesController, :type => :controller do
         edited_passage.hundreds = @new_hundreds
         put :update, id: edited_passage.id, passage: edited_passage.attributes
         @passage.reload
-        expect( @passage.minutes ).to eq(@new_minutes) 
-        expect( @passage.seconds ).to eq(@new_seconds) 
-        expect( @passage.hundreds ).to eq(@new_hundreds) 
+        expect( @passage.minutes ).to eq(@new_minutes)
+        expect( @passage.seconds ).to eq(@new_seconds)
+        expect( @passage.hundreds ).to eq(@new_hundreds)
       end
       it "assigns the required variables" do
         put :update, id: @passage.id, passage: @passage.attributes
-        expect( assigns(:passage) ).to be_an_instance_of( Passage ) 
-        expect( assigns(:passage).minutes ).to eq( @passage.minutes ) 
-        expect( assigns(:passage).seconds ).to eq( @passage.seconds ) 
-        expect( assigns(:passage).hundreds ).to eq( @passage.hundreds ) 
-        expect( assigns(:passage).meeting_individual_result_id ).to eq( @passage.meeting_individual_result_id ) 
-        expect( assigns(:passage).user_id ).to eq( @user.id ) 
-        expect( assigns(:passage).swimmer_id ).to eq( @passage.swimmer_id ) 
+        expect( assigns(:passage) ).to be_an_instance_of( Passage )
+        expect( assigns(:passage).minutes ).to eq( @passage.minutes )
+        expect( assigns(:passage).seconds ).to eq( @passage.seconds )
+        expect( assigns(:passage).hundreds ).to eq( @passage.hundreds )
+        expect( assigns(:passage).meeting_individual_result_id ).to eq( @passage.meeting_individual_result_id )
+        expect( assigns(:passage).user_id ).to eq( @user.id )
+        expect( assigns(:passage).swimmer_id ).to eq( @passage.swimmer_id )
       end
       it "redirects to #show after saving" do
         put :update, id: @passage.id, passage: @passage.attributes
-        expect( response ).to redirect_to( passage_path( @passage.id )) 
+        expect( response ).to redirect_to( passage_path( @passage.id ))
       end
     end
     # ===========================================================================
@@ -259,15 +218,15 @@ describe PassagesController, :type => :controller do
       before :each do
         @passage = create( :passage, user: @user, swimmer: @user.swimmer )
       end
-  
+
       it "handles successfully the request with HTML" do
         expect {
           delete :destroy, id: @passage.id
-        }.to change(Passage, :count).by(-1) 
+        }.to change(Passage, :count).by(-1)
       end
       it "redirects to #index after creation" do
         delete :destroy, id: @passage.id
-        expect( response ).to redirect_to( passages_path()) 
+        expect( response ).to redirect_to( root_path())
       end
     end
     # ===========================================================================

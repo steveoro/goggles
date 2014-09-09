@@ -11,7 +11,7 @@
               = admin_signed_in? ? " (meeting_events.id=#{meeting_event.id}" : ''
           - # Individual results
           - unless is_a_relay
-            - meeting_event.meeting_individual_results.for_team(@team).sort_by_gender_and_category.each do |individual_result|
+            - meeting_event.meeting_individual_results.for_team(@team).sort_by_swimmer.each do |individual_result|
               %tr
                 %td.span1.goggles-rightalign
                   = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )

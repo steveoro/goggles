@@ -21,15 +21,17 @@ class TeamAffiliation < ActiveRecord::Base
 
   has_one  :season_type, through: :season
 
+  delegate :name, to: :user, prefix: true
+
 
   scope :sort_team_affiliation_by_user,    ->(dir) { order("users.name #{dir.to_s}") }
   scope :sort_team_affiliation_by_team,    ->(dir) { order("teams.name #{dir.to_s}") }
   scope :sort_team_affiliation_by_season,  ->(dir) { order("seasons.begin_date #{dir.to_s}, team_affiliations.name #{dir.to_s}") }
 
 
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   # Base methods:
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
 
   # Computes a shorter description for the name associated with this data
@@ -41,12 +43,6 @@ class TeamAffiliation < ActiveRecord::Base
   def get_verbose_name
     "(#{number}) #{name}"
   end
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : ''
-  end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
-
 end

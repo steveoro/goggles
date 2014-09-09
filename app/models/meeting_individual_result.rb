@@ -7,8 +7,8 @@ require 'timing_gettable'
 #
 # Model class
 #
-# @author   Steve A.
-# @version  4.00.355
+# @author   Steve A., Leega
+# @version  4.00.475
 #
 class MeetingIndividualResult < ActiveRecord::Base
   include SwimmerRelatable
@@ -62,31 +62,31 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
 
-  delegate :short_name, :to => :category_type, :prefix => true 
+  delegate :short_name, to: :category_type, prefix: true
 
-  scope :is_valid,           -> { where(is_out_of_race: false, is_disqualified: false) }
-  scope :is_male,            -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
-  scope :is_female,          -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
+  scope :is_valid,                    ->              { where(is_out_of_race: false, is_disqualified: false) }
+  scope :is_male,                     ->              { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
+  scope :is_female,                   ->              { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
-  scope :has_rank,           ->(rank_filter) { where(rank: rank_filter) }
-  scope :has_points,         ->(score_sym) { where("#{score_sym.to_s} > 0") }
-  scope :has_time,           -> { where("((minutes * 6000) + (seconds * 100) + hundreds > 0)") }
+  scope :has_rank,                    ->(rank_filter) { where(rank: rank_filter) }
+  scope :has_points,                  ->(score_sym)   { where("#{score_sym.to_s} > 0") }
+  scope :has_time,                    ->              { where("((minutes * 6000) + (seconds * 100) + hundreds > 0)") }
 
-  scope :sort_by_user,       ->(dir) { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_by_meeting,    ->(dir) { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_by_swimmer,    ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
-  scope :sort_by_team,       ->(dir) { order("teams.name #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_by_badge,      ->(dir) { order("badges.number #{dir.to_s}") }
-  scope :sort_by_timing,     ->(dir) { order("(hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
-  scope :sort_by_date,       ->(dir = 'ASC') { includes(:meeting_session).order("meeting_sessions.scheduled_date #{dir.to_s}") }
-  scope :sort_by_goggle_cup, ->(dir) { order("goggle_cup_points #{dir.to_s}") }
-  scope :sort_by_pool_and_event, ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir.to_s}, event_types.style_order #{dir.to_s}") }
+  scope :sort_by_user,                ->(dir = 'ASC') { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_meeting,             ->(dir)         { order("meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
+  scope :sort_by_swimmer,             ->(dir = 'ASC') { joins(:swimmer).order("swimmers.complete_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
+  scope :sort_by_team,                ->(dir = 'ASC') { joins(:team, :swimmer).order("teams.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_badge,               ->(dir = 'ASC') { joins(:badge).order("badges.number #{dir.to_s}") }
+  scope :sort_by_timing,              ->(dir)         { order("(hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
+  scope :sort_by_date,                ->(dir = 'ASC') { includes(:meeting_session).order("meeting_sessions.scheduled_date #{dir.to_s}") }
+  scope :sort_by_goggle_cup,          ->(dir)         { order("goggle_cup_points #{dir.to_s}") }
+  scope :sort_by_pool_and_event,      ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir.to_s}, event_types.style_order #{dir.to_s}") }
   scope :sort_by_gender_and_category, ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir.to_s}, category_types.code #{dir.to_s}") }
 
-  scope :for_event_by_pool_type, ->(event_by_pool_type) { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
-  scope :for_pool_type,      ->(pool_type) { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
-  scope :for_season_type,    ->(season_type) { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
-  scope :for_team,           ->(team) { where(team_id: team.id) }
+  scope :for_event_by_pool_type,      ->(event_by_pool_type)  { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
+  scope :for_pool_type,               ->(pool_type)           { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
+  scope :for_season_type,             ->(season_type)         { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+  scope :for_team,                    ->(team)                { where(team_id: team.id) }
 
   # ----------------------------------------------------------------------------
   # Base methods:
@@ -319,7 +319,7 @@ class MeetingIndividualResult < ActiveRecord::Base
     first_recs = mir.includes(
       :meeting_program, :event_type, :category_type, :gender_type
     ).joins(
-      :meeting_program, :event_type, :category_type, :gender_type 
+      :meeting_program, :event_type, :category_type, :gender_type
     ).where( where_cond ).order(
       :minutes, :seconds, :hundreds
     ).limit( limit_for_same_ranking_results )

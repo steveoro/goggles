@@ -6,7 +6,7 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  4.00.405
+  - version:  4.00.475
   - author:   Steve A.
 
 =end
@@ -104,7 +104,7 @@ class TeamsController < ApplicationController
     @goggle_cup = @team.get_current_goggle_cup_at
 
     # Gets goggle cup ranks
-    @goggle_cup_rank = @goggle_cup ? @goggle_cup.calculate_goggle_cup_rank : [] 
+    @goggle_cup_rank = @goggle_cup ? @goggle_cup.calculate_goggle_cup_rank : []
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -118,10 +118,10 @@ class TeamsController < ApplicationController
   #
   def goggle_cup_all_of_fame
     @tab_title = I18n.t('radiography.goggle_cup_all_of_fame_tab')
-    
+
     # Prepares an hash to store closed goggle cup rank
-    @closed_goggle_cup = [] 
-    
+    @closed_goggle_cup = []
+
     # Gets closed, valid goggle cup, if any
     @team.goggle_cups.each do |goggle_cup|
       if goggle_cup.is_closed_at?
@@ -132,15 +132,15 @@ class TeamsController < ApplicationController
         @closed_goggle_cup << {
           goggle_cup:    goggle_cup,
           year:          goggle_cup.season_year,
-          first:         goggle_cup_rank.size > 0 ? goggle_cup_rank[0][:swimmer] : nil,
-          first_points:  goggle_cup_rank.size > 0 ? goggle_cup_rank[0][:total] : 0,
-          second:        goggle_cup_rank.size > 1 ? goggle_cup_rank[1][:swimmer] : nil,
-          second_points: goggle_cup_rank.size > 1 ? goggle_cup_rank[1][:total] : 0,
-          third:         goggle_cup_rank.size > 2 ? goggle_cup_rank[2][:swimmer] : nil,
-          third_points:  goggle_cup_rank.size > 2 ? goggle_cup_rank[2][:total] : 0
+          first:         goggle_cup_rank[0] ? goggle_cup_rank[0][:swimmer] : nil,
+          first_points:  goggle_cup_rank[0] ? goggle_cup_rank[0][:total]   : 0,
+          second:        goggle_cup_rank[1] ? goggle_cup_rank[1][:swimmer] : nil,
+          second_points: goggle_cup_rank[1] ? goggle_cup_rank[1][:total]   : 0,
+          third:         goggle_cup_rank[2] ? goggle_cup_rank[2][:swimmer] : nil,
+          third_points:  goggle_cup_rank[2] ? goggle_cup_rank[2][:total]   : 0
         } if goggle_cup_rank.size > 0
       end
-      
+
       # Sorts the array  by the year
       @closed_goggle_cup.sort!{ |hash_element_prev, hash_element_next| hash_element_next[:year] <=> hash_element_prev[:year] }
     end

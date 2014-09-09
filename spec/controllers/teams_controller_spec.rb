@@ -169,7 +169,7 @@ describe TeamsController, :type => :controller do
   describe '[GET #goggle_cup/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
-    
+
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have a current Goggle cup," do
       before :each do
         @fixture = create( :team_with_badges )
@@ -268,31 +268,31 @@ describe TeamsController, :type => :controller do
         expect( response.status ).to eq( 200 )
         assigns( :closed_goggle_cup ).each do |element|
           expect( element ).to be_a_kind_of( Hash )
-          expect( element[:goggle_cup] ).to be_an_instance_of( GoggleCup ) 
+          expect( element[:goggle_cup] ).to be_an_instance_of( GoggleCup )
         end
       end
       it "assigns an hash in which first key contains an instance of Swimmer with valid score" do
         expect( response.status ).to eq( 200 )
         assigns( :closed_goggle_cup ).each do |element|
           expect( element ).to be_a_kind_of( Hash )
-          expect( element[:first] ).to be_an_instance_of( Swimmer ) 
-          expect( element[:first_points] ).to be > 0 
+          expect( element[:first] ).to be_an_instance_of( Swimmer )
+          expect( element[:first_points] ).to be > 0
         end
       end
       it "assigns an hash in which second and third keys contains instances of Swimmer or nil" do
         expect( response.status ).to eq( 200 )
         assigns( :closed_goggle_cup ).each do |element|
           expect( element ).to be_a_kind_of( Hash )
-          expect( element[:second] ).to be_an_instance_of( Swimmer ).or be_nil 
-          expect( element[:third] ).to be_an_instance_of( Swimmer ).or be_nil 
+          expect( element[:second] ).to be_an_instance_of( Swimmer ).or be_nil
+          expect( element[:third] ).to be_an_instance_of( Swimmer ).or be_nil
         end
       end
       it "assigns an hash in which first, second and third points are ordered descending" do
         expect( response.status ).to eq( 200 )
         assigns( :closed_goggle_cup ).each do |element|
           expect( element ).to be_a_kind_of( Hash )
-          expect( element[:first_points] ).to be >= element[:second_points] 
-          expect( element[:second_points] ).to be >= element[:third_points] 
+          expect( element[:first_points] ).to be >= element[:second_points]
+          expect( element[:second_points] ).to be >= element[:third_points]
         end
       end
       it "assigns a sorted by year key array" do
@@ -301,8 +301,8 @@ describe TeamsController, :type => :controller do
         current_item = rank_array.first[:year]
         rank_array.each do |item|
           expect( item[:year] ).to be <= current_item
-          current_item = item[:year] 
-        end      
+          current_item = item[:year]
+        end
       end
       it "assigns an array where count is the number of closed goggle cups for the team" do
         expect( response.status ).to eq( 200 )
