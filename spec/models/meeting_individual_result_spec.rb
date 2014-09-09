@@ -30,7 +30,9 @@ describe MeetingIndividualResult, :type => :model do
       :for_event_by_pool_type,
       :for_pool_type,
       :for_season_type,
-      :sort_by_pool_and_event
+      :for_team,
+      :sort_by_pool_and_event,
+      :sort_by_gender_and_category
     ])
 
     context "[general methods]" do

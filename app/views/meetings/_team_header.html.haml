@@ -36,11 +36,12 @@
             = I18n.t(:team_total_wooden_medals, { scope: [:meeting] }) +':'
           .span1.goggles-div-rightalign
             = @team_ranks_4
-        .row-fluid
-          .span3
-            = I18n.t(:team_total_outstanding_scores, { scope: [:meeting] }) +" (> #{ 800 }):"
-          .span1.goggles-div-rightalign
-            = @team_outstanding_scores
+        - if @team_outstanding_scores > 0
+          .row-fluid
+            .span3
+              = I18n.t(:team_total_outstanding_scores, { scope: [:meeting] }) +" (> #{ 800 }):"
+            .span1.goggles-div-rightalign
+              = @team_outstanding_scores
 
       .accordion-inner
         %div.span12
@@ -67,9 +68,10 @@
                       = show_tag( row.rank==3 && row.is_valid_for_ranking, "medal_bronze_3.png", '' )
                       = row.rank
                     %td.goggles-border-onlyright.goggles-rightalign
-                      = (row.meeting_individual_points>800 ? "! " : '' )
-                      = show_tag( row.meeting_individual_points>800, "asterisk_orange.png", '' )
-                      = sprintf( "%02.2f", row.meeting_individual_points )
+                      - if row.meeting_individual_points > 0
+                        = (row.meeting_individual_points>800 ? "! " : '' )
+                        = show_tag( row.meeting_individual_points>800, "asterisk_orange.png", '' )
+                        = sprintf( "%02.2f", row.meeting_individual_points )
 
 %script
   $('#headerTeam').tooltip({placement:'bottom'});

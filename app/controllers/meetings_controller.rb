@@ -497,10 +497,13 @@ class MeetingsController < ApplicationController
     @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order(
       'swimmers.complete_name ASC'
     ).collect{ |row| row.swimmer }
-    @team_ranks_1 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 1 )
-    @team_ranks_2 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 2 )
-    @team_ranks_3 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 3 )
-    @team_ranks_4 = MeetingIndividualResult.count_team_ranks_for( meeting_id, @team_id, 4 )
+    
+    # TODO
+    # Refactor with medal_types
+    @team_ranks_1 = @meeting.meeting_individual_results.is_valid.has_rank(1).for_team(@team).count
+    @team_ranks_2 = @meeting.meeting_individual_results.is_valid.has_rank(2).for_team(@team).count
+    @team_ranks_3 = @meeting.meeting_individual_results.is_valid.has_rank(3).for_team(@team).count
+    @team_ranks_4 = @meeting.meeting_individual_results.is_valid.has_rank(4).for_team(@team).count
     @team_outstanding_scores = MeetingIndividualResult.count_team_results_for( meeting_id, @team_id, 800 )
                                                     # Collect an Hash with the swimmer_id pointing to the description of all the events performed by each swimmer:
     meeting_team_swimmers_ids = @meeting_team_swimmers.collect{|row| row.id}
@@ -530,7 +533,7 @@ class MeetingsController < ApplicationController
     @team_ranks_4 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 4 )
     @team_outstanding_scores += MeetingRelayResult.count_team_results_for( meeting_id, @team_id, 800 )
 
-                                                    # Get the programs filtered by team_id:
+    # Get the programs filtered by team_id:
     ind_prg_ids = MeetingIndividualResult.includes(:meeting, :meeting_program).where(
       [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
         meeting_id, @team_id ]
@@ -545,6 +548,7 @@ class MeetingsController < ApplicationController
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
     )
+    
     # Get a timestamp for the cache key:
     @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
       @meeting.meeting_individual_results.select( :updated_at )
