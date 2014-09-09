@@ -30,7 +30,7 @@ INSERT INTO stroke_types (id,code,is_eventable,lock_version,created_at,updated_a
 (6,'PA',0,0,CURDATE(),CURDATE()),
 (7,'VI',0,0,CURDATE(),CURDATE()),
 (8,'PO',0,0,CURDATE(),CURDATE()),
-(9,'GE',0,0,CURDATE(),CURDATE());
+(9,'GE',0,0,CURDATE(),CURDATE()),
 (10,'MX',1,0,CURDATE(),CURDATE());
 
 --
@@ -251,8 +251,8 @@ INSERT INTO training_step_types (id,code,step_order,lock_version,created_at,upda
 INSERT INTO movement_types (id,code,lock_version,created_at,updated_at) VALUES 
 (1,'C',0,CURDATE(),CURDATE()),
 (2,'G',0,CURDATE(),CURDATE()),
-(3,'B',0,CURDATE(),CURDATE());
-(4,'T',0,CURDATE(),CURDATE()),
+(3,'B',0,CURDATE(),CURDATE()),
+(4,'T',0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella movement_scope_types
@@ -311,7 +311,7 @@ INSERT INTO execution_note_types (id,code,lock_version,created_at,updated_at) VA
 (4,'VLN',0,CURDATE(),CURDATE()),
 (5,'FUO',0,CURDATE(),CURDATE()),
 (6,'GAL',0,CURDATE(),CURDATE()),
-(7,'VIR',0,CURDATE(),CURDATE());
+(7,'VIR',0,CURDATE(),CURDATE()),
 (8,'SAL',0,CURDATE(),CURDATE()),
 (9,'SCA',0,CURDATE(),CURDATE()),
 (10,'R02',0,CURDATE(),CURDATE()),

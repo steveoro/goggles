@@ -1443,6 +1443,18 @@ ActiveRecord::Schema.define(:version => 20140909161617) do
   add_index "team_affiliations", ["season_id", "team_id"], :name => "uk_team_affiliations_seasons_teams", :unique => true
   add_index "team_affiliations", ["team_id"], :name => "fk_team_affiliations_teams"
 
+  create_table "team_managers", :force => true do |t|
+    t.integer  "lock_version",        :default => 0
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.integer  "team_affiliation_id"
+    t.integer  "user_id"
+  end
+
+  add_index "team_managers", ["team_affiliation_id", "user_id"], :name => "team_manager_with_affiliation", :unique => true
+  add_index "team_managers", ["team_affiliation_id"], :name => "index_team_managers_on_team_affiliation_id"
+  add_index "team_managers", ["user_id"], :name => "index_team_managers_on_user_id"
+
   create_table "team_passage_templates", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
     t.integer  "part_order",              :limit => 3, :default => 0,     :null => false
