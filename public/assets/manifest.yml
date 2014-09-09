@@ -229,6 +229,10 @@ link_add.png: link_add-ee8c78e69d42c16b58aaf5248f75d946.png
 link_add/index.png: link_add-ee8c78e69d42c16b58aaf5248f75d946.png
 link_break.png: link_break-dcfaac81ada2473e6683f594b73c7c38.png
 link_break/index.png: link_break-dcfaac81ada2473e6683f594b73c7c38.png
+logo_csi.png: logo_csi-6df393784fbfd0abb6fbea478c146661.png
+logo_csi/index.png: logo_csi-6df393784fbfd0abb6fbea478c146661.png
+logo_fin.png: logo_fin-7fa5ab459f53b318b1dd0c65ce5f8727.png
+logo_fin/index.png: logo_fin-7fa5ab459f53b318b1dd0c65ce5f8727.png
 medal_bronze_1.png: medal_bronze_1-44ae5e1b0b5e306d0ac54f8ff246b2bb.png
 medal_bronze_1/index.png: medal_bronze_1-44ae5e1b0b5e306d0ac54f8ff246b2bb.png
 medal_bronze_2.png: medal_bronze_2-061f2519c6b7bc476f91e1847c6b1b68.png
@@ -375,10 +379,10 @@ wut.jpg: wut-f4e0cf730e29294db38ee2f7a995e67e.jpg
 wut/index.jpg: wut-f4e0cf730e29294db38ee2f7a995e67e.jpg
 zoom.png: zoom-197251d7b89d43098f85a9180cf1f648.png
 zoom/index.png: zoom-197251d7b89d43098f85a9180cf1f648.png
-application.js: application-46ae3287d6c733cd90a75cc1cf01b150.js
-application/index.js: application-46ae3287d6c733cd90a75cc1cf01b150.js
-application.css: application-449974a48dbaac115badea92857615d7.css
-application/index.css: application-449974a48dbaac115badea92857615d7.css
+application.js: application-624268bd0f3e04fd1be200566160909e.js
+application/index.js: application-624268bd0f3e04fd1be200566160909e.js
+application.css: application-3e14c4832ae8df9bb294ab9d165e42c3.css
+application/index.css: application-3e14c4832ae8df9bb294ab9d165e42c3.css
 images/animated-overlay.gif: images/animated-overlay-602eee4c79a4796b02bb6442948c9e28.gif
 images/animated-overlay/index.gif: images/animated-overlay-602eee4c79a4796b02bb6442948c9e28.gif
 images/ui-bg_diagonals-thick_90_eeeeee_40x40.png: images/ui-bg_diagonals-thick_90_eeeeee_40x40-8bc4c97e521caab3a15b33a525a7dcce.png
@@ -523,8 +527,8 @@ rails_admin/multiselect/ui-icon-circle-triangle-s-light.png: rails_admin/multise
 rails_admin/multiselect/ui-icon-circle-triangle-s-light/index.png: rails_admin/multiselect/ui-icon-circle-triangle-s-light-cf09df3fa57c3496f191d108dded0561.png
 rails_admin/jquery.colorpicker.js: rails_admin/jquery.colorpicker-201a905b06cff3f87b18f3f8961812b7.js
 rails_admin/jquery/index.colorpicker.js: rails_admin/jquery.colorpicker-201a905b06cff3f87b18f3f8961812b7.js
-rails_admin/rails_admin.js: rails_admin/rails_admin-e1449925a7c5e6125490d35496878078.js
-rails_admin/rails_admin/index.js: rails_admin/rails_admin-e1449925a7c5e6125490d35496878078.js
+rails_admin/rails_admin.js: rails_admin/rails_admin-21afa36dc175e106938bb33621cc2b37.js
+rails_admin/rails_admin/index.js: rails_admin/rails_admin-21afa36dc175e106938bb33621cc2b37.js
 rails_admin/base/README.txt: rails_admin/base/README-a926caeed07918a356b1702cf5e6c07b.txt
 rails_admin/base/README/index.txt: rails_admin/base/README-a926caeed07918a356b1702cf5e6c07b.txt
 rails_admin/jquery.colorpicker.css: rails_admin/jquery.colorpicker-03eb9e4441abf426eeb0c81dbe1cb444.css
@@ -567,5 +571,5 @@ jquery-ui/ui-icons_888888_256x240.png: jquery-ui/ui-icons_888888_256x240-8040cfc
 jquery-ui/ui-icons_888888_256x240/index.png: jquery-ui/ui-icons_888888_256x240-8040cfcc88792375b7788feb59189eef.png
 jquery-ui/ui-icons_cd0a0a_256x240.png: jquery-ui/ui-icons_cd0a0a_256x240-d4a62216bf6f0cd0071149890763a5ff.png
 jquery-ui/ui-icons_cd0a0a_256x240/index.png: jquery-ui/ui-icons_cd0a0a_256x240-d4a62216bf6f0cd0071149890763a5ff.png
-jquery.min.map: jquery.min-388372ef65cc311f6a3df4a6ceac8d22.map
-jquery/index.min.map: jquery.min-388372ef65cc311f6a3df4a6ceac8d22.map
+jquery.min.map: jquery.min-e146c025d6a36461812bc97143056bd3.map
+jquery/index.min.map: jquery.min-e146c025d6a36461812bc97143056bd3.map
