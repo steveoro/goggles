@@ -37,6 +37,8 @@ class Training < ActiveRecord::Base
   validates_numericality_of :max_swimmer_level
 
 
+  delegate :name, to: :user, prefix: true
+
   attr_accessible :title, :description, :min_swimmer_level, :max_swimmer_level,
                   :user_id, :training_rows_attributes # (Needed by the nested_form gem)
   #-- -------------------------------------------------------------------------
@@ -54,6 +56,7 @@ class Training < ActiveRecord::Base
   end
 
   # Retrieves the User short name (the owner of this Training)
+  # @ deprecated
   def get_user_name
     user ? user.name : ''
   end

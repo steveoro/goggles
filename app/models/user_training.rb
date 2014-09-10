@@ -6,7 +6,7 @@ require 'wrappers/timing'   # [Steve 20140311] Used by UserTrainingRow
 
 = Training
 
-  - version:  4.00.317.20140616
+  - version:  4.00.485
   - author:   Steve A., Leega
 
 =end
@@ -24,7 +24,10 @@ class UserTraining < ActiveRecord::Base
   validates_presence_of :description
   validates_length_of   :description, within: 1..250, allow_nil: false
 
-  attr_accessible :description, 
+
+  delegate :name, to: :user, prefix: true
+
+  attr_accessible :description,
                   :user_id, :user_training_rows_attributes, # (Needed by the nested_form gem)
                   :user_training_story_attributes
 
@@ -45,6 +48,7 @@ class UserTraining < ActiveRecord::Base
   end
 
   # Retrieves the User short name (the owner of this Training)
+  # @ deprecated
   def get_user_name
     user ? user.name : ''
   end

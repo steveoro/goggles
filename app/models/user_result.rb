@@ -39,14 +39,14 @@ class UserResult < ActiveRecord::Base
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
 
+
+  delegate :name, to: :user, prefix: true
+
   scope :sort_by_user,          ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_category_type, ->(dir) { order("category_types.code #{dir.to_s},swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
   scope :sort_by_swimmer,       ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}, meeting_individual_results.rank #{dir.to_s}") }
-
-
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Computes a shorter description for the name associated with this data
@@ -58,12 +58,8 @@ class UserResult < ActiveRecord::Base
   def get_verbose_name
     "#{description}: #{rank}) #{swimmer.get_verbose_name}), #{minutes}'#{seconds}""#{hundreds}"
   end
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : ''
-  end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves the localized Event Type code
   def get_event_type
@@ -74,6 +70,6 @@ class UserResult < ActiveRecord::Base
   def get_scheduled_date
     self.event_date ? Format.a_date(self.event_date) : '?'
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -1,9 +1,12 @@
 - if @articles
-  - for a in @articles
-    = content_tag( :h4, a.title, class:( a.is_sticky ? 'text-warning' : 'text-info') )
-    %blockquote
-      %p= a.entry_text
-      %small= "#{a.user_name}, #{Format.a_datetime( a.updated_at )}"
+  - for article in @articles
+    %div{'class'=>"alert alert-success", 'id'=>"feed#{article.id}"}
+      = button_tag( type:'button', id: "bntClose#{article.id}", 'data-dismiss'=>'alert', class: 'close' ) do
+        &times;
+      = content_tag( :h4, article.title, class:( article.is_sticky ? 'text-warning' : 'text-info') )
+      %br
+      %p= article.body
+      %small= "#{article.user_name}, #{Format.a_datetime( article.updated_at )}"
 
 - if @articles.nil? || (@articles && @articles.length == 0)
   %p{style: "text-align: center"}

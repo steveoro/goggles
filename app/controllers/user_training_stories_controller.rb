@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.453
+  - version:  4.00.483
   - author:   Steve A.
 
 =end
@@ -35,6 +35,7 @@ class UserTrainingStoriesController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
+    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
@@ -51,6 +52,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def new
     @user_training_story = UserTrainingStory.new
+    flash[:warning] = I18n.t('feature_wip_disclaimer')
     render :edit
   end
 
@@ -86,6 +88,7 @@ class UserTrainingStoriesController < ApplicationController
         "{TRAINING_TITLE}",
         UserTrainingStoryDecorator.decorate(@user_training_story).get_user_training_name
       )
+    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 

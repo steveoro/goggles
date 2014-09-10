@@ -241,7 +241,7 @@ en:
     link_to_gravatar_tooltip: "Customize your Gravatar!"
     medals_summary: "Medals summary"
     medals_by_season_type: "Medals by season types"
-    medals_by_event_type: "Medals by event types - {POOL_TYPE} meters pool" 
+    medals_by_event_type: "Medals by event types - {POOL_TYPE} meters pool"
     seasonal_records: "Seasonal records"
 
   goggle_cup:
@@ -517,6 +517,7 @@ en:
   no_detail_to_process: "There aren't any details to process for this element!"
   no_result_to_show: "There aren't any results to show with the specified parameters!"
   file_not_created_for_some_reason: "The file hasn't been created as expected."
+  feature_wip_disclaimer: "Please, be advised that this feature is currently available as a PREVIEW (beta) of the actual functionality planned.\r\nIt's still under heavy development and will change substantially during the next few months!\r\nIf you are a registered 'goggler' we will notify you with an e-mail when the upgrade is complete."
   main: 'Main'
   home: Home
   top_of_page: Top of page

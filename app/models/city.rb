@@ -1,6 +1,13 @@
 require 'drop_down_listable'
 
+=begin
 
+= City model
+
+  - version:  4.00.409
+  - author:   Steve A.
+
+=end
 class City < ActiveRecord::Base
   include DropDownListable
 
@@ -12,8 +19,8 @@ class City < ActiveRecord::Base
   validates_presence_of   :area, length: { within: 1..50 }, allow_nil: false
   validates_presence_of   :country, length: { within: 1..50 }, allow_nil: false
   validates_presence_of   :country_code, length: { within: 1..10 }, allow_nil: false
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -29,8 +36,8 @@ class City < ActiveRecord::Base
                    " #{self.country} (#{self.country_code})"
     get_full_name + country_desc
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
@@ -40,5 +47,6 @@ class City < ActiveRecord::Base
   def self.get_label_symbol
     :get_full_name
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

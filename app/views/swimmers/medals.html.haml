@@ -4,12 +4,12 @@
   .navbar
     %ul.nav
       %li
-        %a.goggles-nav-compact(href="#summary")= I18n.t('radiography.medals_summary') 
+        %a.goggles-nav-compact(href="#summary")= I18n.t('radiography.medals_summary')
       %li
-        %a.goggles-nav-compact(href="#by_season_type")= I18n.t('radiography.medals_by_season_type') 
+        %a.goggles-nav-compact(href="#by_season_type")= I18n.t('radiography.medals_by_season_type')
       - @event_medal_collection.keys.each do |pool_type|
         %li
-          %a.goggles-nav-compact(href="#by_event_type_#{pool_type}")= I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type) 
+          %a.goggles-nav-compact(href="#by_event_type_#{pool_type}")= I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
     .ghost-divider-vertical
 
 .row-fluid.goggles-category-gap{ 'id' => "summary" }
@@ -45,7 +45,7 @@
         = I18n.t('radiography.total_season_records') +':'
       .span6
         = @tot_season_records_for_this_swimmer
-       
+
 .row-fluid.goggles-category-gap{ 'id' => "by_season_type" }
   %h3
     = I18n.t('radiography.medals_by_season_type')
@@ -110,3 +110,5 @@
                   = medal_collection[medal_type.rank]
             %td.goggles-rightalign
               %b= tot_medals_for_type
+.row-fluid
+  %p

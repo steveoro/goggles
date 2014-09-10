@@ -23,17 +23,21 @@ class UserTrainingStory < ActiveRecord::Base
   validates_length_of       :total_training_time, within: 1..6, allow_nil: false
   validates_numericality_of :total_training_time
 
+
+  delegate :name, to: :user, prefix: true
+
   attr_accessible :swam_date, :total_training_time, :notes,
-                  :user_training_id, :swimming_pool_id, :swimmer_level_type_id 
+                  :user_training_id, :swimming_pool_id, :swimmer_level_type_id
 
 
   scope :sort_by_date,        order('swam_date')
-  scope :sort_by_duration,    order('total_training_time')  
+  scope :sort_by_duration,    order('total_training_time')
   #-- -------------------------------------------------------------------------
   #++
 
 
   # Retrieves the User short name (the owner of this UserTrainingStory)
+  # @ deprecated
   def get_user_name
     user ? user.name : ''
   end

@@ -5,7 +5,7 @@ require 'wrappers/timing'
 
 =begin
 
-= Swimmer
+= Swimmer model
 
   - version:  4.00.409
   - author:   Steve A.
@@ -56,6 +56,9 @@ class Swimmer < ActiveRecord::Base
   validates_length_of :e_mail,        maximum: 100
   validates_length_of :nickname,      maximum: 25
 
+
+  delegate :name, to: :user, prefix: true
+
   # Protect mass-assignment:
   attr_accessible :associated_user, :user,
                   :gender_type, :complete_name, :last_name, :first_name,
@@ -89,11 +92,6 @@ class Swimmer < ActiveRecord::Base
   # Safe getter for the nickname (it can be nil)
   def get_nickname
     self.nickname ? self.nickname : ''
-  end
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : ''
   end
   #-- -------------------------------------------------------------------------
   #++
