@@ -2,27 +2,30 @@ SET AUTOCOMMIT=0;
 START TRANSACTION;
 
 -- Pulisco tutto quello che dipende da questo seed
--- DELETE FROM passages;
--- DELETE FROM meeting_team_scores;
--- DELETE FROM meeting_relay_results;
--- DELETE FROM meeting_individual_results;
--- DELETE FROM meeting_entries;
--- DELETE FROM meeting_programs;
--- DELETE FROM badges;
--- DELETE FROM team_affiliations;
--- DELETE FROM teams;
--- DELETE FROM swimmers;
+DELETE FROM goggle_cup_standards;
+DELETE FROM goggle_cup_definitions;
+DELETE FROM goggle_cups;
+DELETE FROM passages;
+DELETE FROM meeting_team_scores;
+DELETE FROM meeting_relay_results;
+DELETE FROM meeting_individual_results;
+DELETE FROM meeting_entries;
+DELETE FROM meeting_programs;
+DELETE FROM badges;
+DELETE FROM team_affiliations;
+DELETE FROM teams;
+DELETE FROM swimmers;
 
 -- Pulisco tutto quello che compete a questo seed
-DELETE FROM meeting_events
-DELETE FROM meeting_sessions
-DELETE FROM meetings
-DELETE FROM time_standards
-DELETE FROM category_types
-DELETE FROM seasons
-DELETE FROM season_types
-DELETE FROM federation_types
-DELETE FROM swimming_pools
+DELETE FROM meeting_events;
+DELETE FROM meeting_sessions;
+DELETE FROM meetings;
+DELETE FROM time_standards;
+DELETE FROM category_types;
+DELETE FROM seasons;
+DELETE FROM season_types;
+DELETE FROM federation_types;
+DELETE FROM swimming_pools;
 DELETE FROM cities;
 
 --
