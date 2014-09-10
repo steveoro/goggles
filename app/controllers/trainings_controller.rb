@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = TrainingsController
 
-  - version:  4.00.453
+  - version:  4.00.483
   - author:   Steve A., Leega
 
 =end
@@ -35,6 +35,7 @@ class TrainingsController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
+    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
@@ -55,6 +56,7 @@ class TrainingsController < ApplicationController
     @training = Training.new
     @training_max_part_order = 0
     assign_all_options_array()
+    flash[:warning] = I18n.t('feature_wip_disclaimer')
     render :edit
   end
 
@@ -89,6 +91,7 @@ class TrainingsController < ApplicationController
     @training_max_part_order = @training.training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
     assign_all_options_array()
+    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 

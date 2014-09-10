@@ -2,6 +2,59 @@
 
 en:
   devise:
+    resend_confirm_email_title: "Confirmation instructions"
+    resend_confirm_email_submit: "Resend the confirmation instructions"
+
+    confirm_email_greetings: "Hi there, <EMAIL>! Welcome to Goggles!"
+    confirm_email_text: "You can confirm your e-mail account by cliccking on the following link:"
+    confirm_email_submit: "Confirm my account"
+
+    reset_password_greetings: "Hi there, <EMAIL>!"
+    reset_password_text: "Somebody has requested a password-reset link for your account. You can do this by clicking on the following link:"
+    reset_password_submit: "Change my password"
+    reset_password_footnote1: "If you haven't request this, please ignore this e-mail."
+    reset_password_footnote2: "Keep in mind that your password won't change as long as you will not click the above link."
+
+    unlock_password_greetings: "Hi there, <EMAIL>!"
+    unlock_password_info: "Your account has been locked due to an excessive amount of wrong password guesses. Maybe you've forgot your password. ...Or maybe someone else is trying to sneak in."
+    unlock_password_text: "Click on the link here below to unlock your account:"
+    unlock_password_submit: "Unlock my account"
+
+    edit_password_title: "Change my password"
+    edit_password_new_password: "New password"
+    edit_password_confirm: "Confirm new password"
+    edit_password_submit: "Change my password"
+
+    new_password_title: "Have you forgotten your password?"
+    new_password_submit: "Send me a link for password reset"
+
+    edit_user_title: "Edit"
+    edit_user_waiting_confirm_info: "Currently waiting confirmation for:"
+    edit_user_leave_blank_info: "(leave blank if you do not whish to change it)"
+    edit_user_need_password_info: "(we need your current password to confirm the changes)"
+    edit_user_submit: "Update"
+    edit_user_cancel_account_title: "Delete my account"
+    edit_user_unregister_title: "Unsatisfied?"
+    edit_user_unregister_submit: "Delete my account"
+    edit_user_unregister_confirmation: "Are you sure you want to proceed?"
+    edit_user_link_to_back_title: "Back"
+
+    new_user_title: "Register"
+    new_user_submit: "Register"
+
+    new_session_title: "Sign-in"
+    new_session_submit: "Sign-in"
+
+    link_log_in: "Sign-in"
+    link_register: "Register"
+    link_forgot_password: "Forgotten password?"
+    link_resend_confirm_email: "You haven't received you account-confirmation link?"
+    link_resend_unlock_email: "You haven't received you account-unlocking link?"
+    link_log_in_with: "Sign-in with"
+
+    unlock_user_title: "Resend the unlock link"
+    unlock_user_submit: "Resend the unlock link"
+
     confirmations:
       confirmed: "Your account was successfully confirmed."
       send_instructions: "You will receive an email with instructions about how to confirm your account in a few minutes."
