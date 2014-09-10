@@ -76,20 +76,25 @@ gem 'rubocop', require: false                       # [Steve] For style checking
 
 gem "mechanize"                                     # [Steve, 20140306] For web-crawling tasks
 gem "rest-client"
-gem 'capistrano',  '~> 3.1'                         # Deploy with Capistrano
 
 
 group :development do
-  gem 'capistrano-rvm'
-  gem 'capistrano-bundler', '~> 1.1.2'
-  gem 'capistrano-rails', '~> 1.1'
   gem "better_errors"
   gem "binding_of_caller"
-  gem 'seed_dump', '~> 0.5.3'                         # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 end
 
 
 group :development, :test do
+  # Although Capistrano + seed_dump are strictly development-related gems,
+  # including them into the test environment also allows Semaphore CI to
+  # perform automated deployment from a test build without changing the current
+  # Rails environment.
+  gem 'capistrano',  '~> 3.1'                       # Deploy with Capistrano
+  gem 'capistrano-rvm'
+  gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-rails', '~> 1.1'
+  gem 'seed_dump', '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
+
   gem "rspec", '~> 3'
   gem "rspec-rails", '~> 3'
 
