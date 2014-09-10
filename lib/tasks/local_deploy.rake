@@ -15,7 +15,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.465.20140905
+  - Goggles framework vers.:  4.00.483
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -23,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.477.20140909'
+SCRIPT_VERSION = '4.00.483.20140910'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -497,14 +497,13 @@ DESC
     db_version    = ENV.include?("db_version") ? ENV['db_version'] + '.' + time_signature : nil
     app_version   = ENV.include?("app_version") ? ENV['app_version'] + '.' + time_signature : SHORT_AGEX_VERSION
 
-# TODO [FUTUREDEV] include LeUser default id search
     puts "Logging the update into the news blog..."
     Article.create({
-      :title => "Aggiornamento dell'applicazione",
+      title: "Aggiornamento dell'applicazione",
 # TODO [FUTUREDEV] Localize this
-      :entry_text => "L'applicazione e' stata aggiornata e portata alla versione " + app_version +
-                     (db_version.nil? ? "" : ". La struttura del DB e' stata portata alla versione " + db_version) + ".",
-      :user_id => 1                                 # default user id (must be not null)
+      body:  "L'applicazione e' stata aggiornata e portata alla versione " + app_version +
+             (db_version.nil? ? "" : ". La struttura del DB e' stata portata alla versione " + db_version) + ".",
+      user_id: 1 # default user id (must be not null)
     })
     puts "NewsLog update: done."
   end
