@@ -1,13 +1,21 @@
 require 'drop_down_listable'
 
+=begin
+
+= EventType model
+
+  - version:  4.00.409
+  - author:   Steve A.
+
+=end
 class EventType < ActiveRecord::Base
   include DropDownListable
 
   belongs_to :stroke_type
   validates_presence_of :stroke_type                # (must be not null)
   validates_associated :stroke_type                 # (foreign key integrity)
-  
-  delegate :code, :i18n_short, :i18n_description, :to => :stroke_type, :prefix => true 
+
+  delegate :code, :i18n_short, :i18n_description, to: :stroke_type, prefix: true
 
   validates_presence_of   :code
   validates_length_of     :code, within: 1..10, allow_nil: false
@@ -28,10 +36,10 @@ class EventType < ActiveRecord::Base
   scope :only_relays,         where(is_a_relay: true)
   scope :are_not_relays,      where(is_a_relay: false)
   scope :for_fin_calculation, where('((length_in_meters % 50) = 0) AND (length_in_meters <= 1500)')
-  
-  scope :sort_by_style,       order('style_order')
-  # ----------------------------------------------------------------------------
 
+  scope :sort_by_style,       order('style_order')
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes a localized shorter description for the value/code associated with this data
   def i18n_short
@@ -54,7 +62,8 @@ class EventType < ActiveRecord::Base
       "#{self.length_in_meters} #{self.stroke_type_i18n_description}"
     end
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Given a localized text description from an imported text plus other key
@@ -76,10 +85,11 @@ class EventType < ActiveRecord::Base
     ).first
     relay_type ? relay_type.id : 0
   end
-  # ----------------------------------------------------------------------------
-  
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Sorts an array of event codes using the style order
-  # 
+  #
   # Params
   # - event_list: an array of event codes
   #
@@ -93,4 +103,6 @@ class EventType < ActiveRecord::Base
     end
     event_list
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

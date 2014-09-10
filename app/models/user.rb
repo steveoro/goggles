@@ -48,13 +48,15 @@ class User < ActiveRecord::Base
                   :outstanding_goggle_score_bias,
                   :outstanding_standard_score_bias,
                   :coach_level_type, :swimmer_level_type
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Clears swimmer association before account removal.
   before_destroy do |user|
     if user.has_associated_swimmer?
       user.set_associated_swimmer( nil )
     end
-    # TODO Does it really need to clear automatically user_id from:
+    # TODO Do we really need to clear automatically user_id from:
     # - UserTraining
     # - UserTrainingStory
     # - UserSwimmerConfirmation ?
@@ -74,12 +76,9 @@ class User < ActiveRecord::Base
     Article.where( user_id: user.id ).update_all( user_id: nil )
     Achievement.where( user_id: user.id ).update_all( user_id: nil )
   end
-
-
-  #-- -------------------------------------------------------------------------
-  # Base methods:
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Utility method to retrieve the controller base route directly from an instance of the model
   def base_uri
@@ -103,6 +102,7 @@ class User < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
+
   # Returns the an array containing the first and the last name of this
   # user. When empty or nil the names are obtained from the description.
   def get_first_and_last_name
@@ -119,6 +119,7 @@ class User < ActiveRecord::Base
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Updates both this user and a Swimmer instance for "association" (identity match).
   #
@@ -160,7 +161,8 @@ class User < ActiveRecord::Base
     end
     reload
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns true if this user has a swimmer_id already associated to him/her.
@@ -178,8 +180,8 @@ class User < ActiveRecord::Base
   def find_any_confirmation_given_to( user )
     UserSwimmerConfirmation.find_any_between( user, self ).first
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
@@ -189,8 +191,8 @@ class User < ActiveRecord::Base
   def self.get_label_symbol
     :name
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns either the preffered swimmer level ID for this user or its own computed
   # value; 0 in case the association is not yet defined.
@@ -210,6 +212,6 @@ class User < ActiveRecord::Base
       ''
     end
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

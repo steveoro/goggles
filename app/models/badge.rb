@@ -1,6 +1,6 @@
 =begin
 
-= Badge
+= Badge model
 
   - version:  4.00.409
   - author:   Steve A.
@@ -34,16 +34,16 @@ class Badge < ActiveRecord::Base
 
   validates_presence_of   :number, length: { within: 1..40 }, allow_nil: false
 
-  scope :sort_by_user,          ->(dir)  { order("users.name #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_by_season,        ->(dir)  { order("seasons.begin_date #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_by_team,          ->(dir)  { order("teams.name #{dir.to_s}, badges.number #{dir.to_s}") }
-  scope :sort_by_swimmer,       ->(dir)  { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
-  scope :sort_by_category_type, ->(dir)  { order("category_types.code #{dir.to_s}, badges.number #{dir.to_s}") }
 
+  delegate :name, to: :user, prefix: true
 
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
+  scope :sort_by_user,          ->(dir)  { joins(:user).order("users.name #{dir.to_s}") }
+  scope :sort_by_season,        ->(dir)  { joins(:season).order("seasons.begin_date #{dir.to_s}") }
+  scope :sort_by_team,          ->(dir)  { joins(:team).order("teams.name #{dir.to_s}") }
+  scope :sort_by_swimmer,       ->(dir)  { joins(:swimmer).order("swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_category_type, ->(dir)  { joins(:category_type).order("category_types.code #{dir.to_s}") }
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Computes a shorter description for the name associated with this data
@@ -55,11 +55,6 @@ class Badge < ActiveRecord::Base
   def get_verbose_name
     "#{number} (#{team ? team.name : '?'})"
   end
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : ''
-  end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

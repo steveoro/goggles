@@ -4,10 +4,10 @@ require 'drop_down_listable'
 
 =begin
 
-= CategoryType model
+= Team model
 
-  - version:  4.00.359.20140718
-  - author:   Steve A.
+  Encloses data for a specific and unique Team, which can have several TeamAffiliation(s),
+  one for each academic/sport year.
 
 =end
 class Team < ActiveRecord::Base
@@ -44,13 +44,13 @@ class Team < ActiveRecord::Base
   scope :sort_team_by_user, ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
   scope :sort_team_by_city, ->(dir) { order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }
 
+
+  delegate :name, to: :user, prefix: true
+
   # Mass-assignment protection:
   attr_accessible :editable_name, :address, :phone_mobile, :phone_number,
                   :fax_number, :e_mail, :contact_name, :home_page_url
-
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
 
   # Computes a shorter description for the name associated with this data
@@ -67,14 +67,8 @@ class Team < ActiveRecord::Base
   def get_full_name_with_id
     "#{editable_name} (#{id})"
   end
-
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : ''
-  end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Check if team has a Goggle cup not closed (ended) at a certain date
@@ -88,7 +82,8 @@ class Team < ActiveRecord::Base
     end
     false
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns the current goggle cup if present
   #
@@ -101,8 +96,8 @@ class Team < ActiveRecord::Base
     end
     nil
   end
-  # ----------------------------------------------------------------------------
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Label symbol corresponding to either a column name or a model method to be used
@@ -113,7 +108,8 @@ class Team < ActiveRecord::Base
   def self.get_label_symbol
     :get_full_name
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Retrieves the array of unique swimmer IDs registered for a specified meeting_id
   #
@@ -121,5 +117,6 @@ class Team < ActiveRecord::Base
     team = Team.find_by_id( team_id )
     team ? team.meeting_individual_results.includes(:meeting).where(['meetings.id=?', meeting_id]).collect{|row| row.swimmer_id}.uniq : []
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end
