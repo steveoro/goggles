@@ -175,11 +175,11 @@ describe Timing, :type => :model do
     it "returns a String" do
       expect( subject ).to be_an_instance_of( String )
     end
-    it "contains the value of its most significant members" do
+    it "includes the value of its most significant and non-zero members" do
       expect( subject ).to include( fix1_hundreds.to_s )
       expect( subject ).to include( fix1_secs.to_s )
-      expect( subject ).to include( fix1_mins.to_s )
-      expect( subject ).to include( fix1_hours.to_s )
+      expect( subject ).to include( fix1_mins.to_s ) if fix1_mins.to_i > 0
+      expect( subject ).to include( fix1_hours.to_s ) if fix1_hours.to_i > 0
     end
   end
 
