@@ -3,6 +3,7 @@
 -- 
 SET AUTOCOMMIT=0;
 START TRANSACTION;
+DELETE FROM meeting_relay_results;
 INSERT INTO meeting_relay_results (id,rank,meeting_points,minutes,seconds,hundreds,user_id,team_id,is_disqualified,is_out_of_race,meeting_program_id,team_affiliation_id,lock_version,created_at,updated_at) VALUES 
 (1,1,'30',2,28,80,2,11,0,0,(select mp.id from meeting_programs mp join meeting_events me on me.id = mp.meeting_event_id join event_types et on et.id = me.event_type_id join meeting_sessions ms on ms.id = me.meeting_session_id join gender_types gt on gt.id = mp.gender_type_id join category_types ct on ct.id = mp.category_type_id where et.code = 'S4X50MI' and ms.meeting_id = 81 and gt.code = 'F' and ct.code = '001-119'),(select ta.id from team_affiliations ta join seasons s on s.id = ta.season_id join meetings m on m.season_id = s.id where ta.team_id = 11 and m.id = 81),0,CURDATE(),CURDATE()),
 (2,2,'24',2,34,40,2,5,0,0,(select mp.id from meeting_programs mp join meeting_events me on me.id = mp.meeting_event_id join event_types et on et.id = me.event_type_id join meeting_sessions ms on ms.id = me.meeting_session_id join gender_types gt on gt.id = mp.gender_type_id join category_types ct on ct.id = mp.category_type_id where et.code = 'S4X50MI' and ms.meeting_id = 81 and gt.code = 'F' and ct.code = '001-119'),(select ta.id from team_affiliations ta join seasons s on s.id = ta.season_id join meetings m on m.season_id = s.id where ta.team_id = 5 and m.id = 81),0,CURDATE(),CURDATE()),

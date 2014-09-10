@@ -4018,3 +4018,5 @@ INSERT INTO goggle_cup_standards (id,swimmer_id,minutes,seconds,hundreds,goggle_
 (3964,1859,0,0,34,(select t.id from goggle_cups t where t.team_id = 1  AND t.season_year = 2014),(select t.id from event_types t where t.code = '50SL'),(select t.id from pool_types t where t.code = '50'),0,CURDATE(),CURDATE()),
 (3965,1870,0,0,36,(select t.id from goggle_cups t where t.team_id = 1  AND t.season_year = 2014),(select t.id from event_types t where t.code = '50SL'),(select t.id from pool_types t where t.code = '25'),0,CURDATE(),CURDATE()),
 (3966,1870,0,0,35,(select t.id from goggle_cups t where t.team_id = 1  AND t.season_year = 2014),(select t.id from event_types t where t.code = '50SL'),(select t.id from pool_types t where t.code = '50'),0,CURDATE(),CURDATE());
+
+commit;
