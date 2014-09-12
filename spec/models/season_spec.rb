@@ -8,23 +8,23 @@ describe Season, :type => :model do
   describe "[a non-valid instance]" do
     it "is not a valid season without description" do
       expect( build(:season, description: nil) ).not_to be_valid
-    end    
+    end
     it "is not a valid season without header_year" do
       expect( build(:season, header_year: nil) ).not_to be_valid
-    end    
+    end
     it "is not a valid season with incorrect header_year" do
       expect( build(:season, header_year: "More_than_9_char_string") ).not_to be_valid
-    end    
+    end
     it "is not a valid season without edition" do
       expect( build(:season, edition: nil) ).not_to be_valid
-    end    
+    end
     it "is not a valid season with incorrect edition" do
       expect( build(:season, edition: 1234567890) ).not_to be_valid
-    end    
+    end
     it "is not a valid season without begin_date" do
       # Should pass end_date and header_year, calculated from begin_date
       expect( build(:season, begin_date: nil, end_date: Date.parse('2014-06-15'), header_year: 2014) ).not_to be_valid
-    end    
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -57,37 +57,37 @@ describe Season, :type => :model do
       expect( subject ).to respond_to( :is_season_ended_at )
     end
 
-    it "#is_season_ended_at should evaluate dates" do 
+    it "#is_season_ended_at should evaluate dates" do
       expect( subject.is_season_ended_at( subject.end_date + 365 ) ).to be true
-      expect( subject.is_season_ended_at( subject.end_date - 365 ) ).to be false       
+      expect( subject.is_season_ended_at( subject.end_date - 365 ) ).to be false
 
       subject.begin_date = Date.today - 465
       subject.end_date = Date.today - 100
-      expect( subject.is_season_ended_at() ).to be true       
+      expect( subject.is_season_ended_at() ).to be true
 
       subject.begin_date = Date.today - 265
       subject.end_date = Date.today + 100
-      expect( subject.is_season_ended_at() ).to be false       
+      expect( subject.is_season_ended_at() ).to be false
 
       subject.end_date = nil
-      expect( subject.is_season_ended_at(Date.parse('2025-12-31')) ).to be false       
-      expect( subject.is_season_ended_at(Date.parse('1999-01-01')) ).to be false       
-      expect( subject.is_season_ended_at() ).to be false       
+      expect( subject.is_season_ended_at(Date.parse('2025-12-31')) ).to be false
+      expect( subject.is_season_ended_at(Date.parse('1999-01-01')) ).to be false
+      expect( subject.is_season_ended_at() ).to be false
     end
-    
+
     it "has a method to return if a season is started at a certain date" do
       expect( subject ).to respond_to( :is_season_started_at )
     end
 
-    it "#is_season_started_at should evaluate dates" do 
+    it "#is_season_started_at should evaluate dates" do
       expect( subject.is_season_started_at( subject.begin_date + 365 ) ).to be true
       expect( subject.is_season_started_at( subject.begin_date - 365 ) ).to be false
 
       subject.begin_date = Date.today - 200
-      expect( subject.is_season_started_at() ).to be true       
+      expect( subject.is_season_started_at() ).to be true
 
       subject.begin_date = Date.today + 100
-      expect( subject.is_season_started_at() ).to be false       
+      expect( subject.is_season_started_at() ).to be false
     end
 
     it "has a method to return the season type" do
@@ -137,9 +137,9 @@ describe Season, :type => :model do
 
     context "[season result methods]" do
       it "has a method to determine the season ranking"
-      
+
       it "has a method to determine the season team charts"
-      
+
       it "has a method to determine the season athlete charts"
     end
     # --------------------------------------------------------------------------

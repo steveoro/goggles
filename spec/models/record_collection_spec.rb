@@ -4,9 +4,9 @@ require 'spec_helper'
 describe RecordCollection, :type => :model do
   # Use pre-loaded seeds:
   let( :results )   { MeetingIndividualResult.where( swimmer_id: 142 ) }
-  let( :fixture )   { results.at( ((rand * 1000) % results.size).to_i ) }
-  let( :fixture2 )  { results.at( ((rand * 1000) % results.size).to_i ) }
-  let( :fixture3 )  { results.at( ((rand * 1000) % results.size).to_i ) }
+  let( :fixture )   { results.to_a[ rand * 200 ] } # Choose a random MIR among the first 200 ones
+  let( :fixture2 )  { results.to_a[ rand * 200 ] }
+  let( :fixture3 )  { results.to_a[ rand * 200 ] }
 
   let( :record_type_code )    { 'FOR' }
   let( :pool_type_code )      { fixture.pool_type.code }
@@ -21,6 +21,11 @@ describe RecordCollection, :type => :model do
   let( :gender_type_code2 )   { fixture2.gender_type.code }
 
   let( :tie_fixture1 ) {
+    # This can come in handy when the seeds are messed out:
+    if fixture.meeting_program.invalid?
+      puts "\r\nWARNING: found NON-VALID MeetingProgram! ID: #{fixture.meeting_program.id}"
+      puts "         Errors: #{fixture.meeting_program.errors.to_json}"
+    end
     create(
       :meeting_individual_result,
       meeting_program: fixture.meeting_program,

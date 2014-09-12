@@ -1,3 +1,6 @@
+/*!40101 SET character_set_client = latin1 */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+
 SET AUTOCOMMIT = 0; 
 START TRANSACTION; 
 
@@ -2158,7 +2161,7 @@ INSERT INTO team_affiliations (id,season_id,team_id,name,number,must_calculate_g
 (180,111,31,'VV.F "Marconi" RE','',0,2,0,CURDATE(),CURDATE()),
 (181,111,32,'Calypso','',0,2,0,CURDATE(),CURDATE()),
 (182,111,35,'Onda della Pietra','',0,2,0,CURDATE(),CURDATE()),
-(183,111,36,'Asd Acquapi—','',0,2,0,CURDATE(),CURDATE()),
+(183,111,36,'Asd Acquapiù','',0,2,0,CURDATE(),CURDATE()),
 (184,111,37,'Coop NE Parma','',0,2,0,CURDATE(),CURDATE()),
 (185,121,1,'CSInuoto OberFerrari','04200002',1,2,0,CURDATE(),CURDATE()),
 (186,121,3,'CSI Nuoto Correggio','',0,2,0,CURDATE(),CURDATE()),

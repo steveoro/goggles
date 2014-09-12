@@ -4,24 +4,28 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :federation_type do
-    sequence( :code )         { |n| n.to_s }
-    description               { "#{ Faker::Lorem.word.camelcase } Swimming Federation" }
-    short_name                "SFX"
+    sequence( :code )
+    description               { "Fake #{ Faker::Lorem.word.camelcase } Swimming Federation" }
+    short_name                { "FSF#{code}" }
   end
 
   factory :season_type do
-    code                      { "MAS#{federation_type.code}" }
-    description               { "MASTER #{federation_type.code} #{ Faker::Lorem.word.upcase }" }
-    short_name                { "MASTER #{federation_type.code}" }
-    federation_type
+    # Code has a unique index on season_type, so we must use a sequence here:
+    sequence( :code )         { |n| "#{federation_type.code}-#{n}" }
+    federation_type           { FederationType.all.to_a[ rand * 10 % 5 ] } # ASSERT: at least 5 season types
+    description               { "MASTER #{federation_type.code} #{ Faker::Lorem.word.upcase }"[0..99] }
+    short_name                { "MASTER #{federation_type.code}"[0..39] }
   end
 
   factory :season do
-    sequence( :description )  { |n| "Farloque season #(n)" }
+    sequence( :edition )
+    sequence( :description )  { |n| "Fake Season #{n}/#{edition}" }
+    # The following column uses the pre-loaded seed records:
+    edition_type_id           { ((rand * 100) % 5).to_i + 1 } # ASSERT: at least 5 edition types
     begin_date                { Date.parse("#{ 2000 + ((rand * 100) % 15).to_i }-09-01") }
     end_date                  { Date.parse("#{ begin_date.year + 1 }-06-15") }
     header_year               { end_date.year }
-    season_type
+    season_type               { SeasonType.all.to_a[ rand * 10 % 8 ] } # ASSERT: at least 8 season types
   end
 
   factory :category_type do

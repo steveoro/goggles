@@ -8,8 +8,9 @@ describe MeetingIndividualResult, :type => :model do
   #++
 
   context "[a well formed instance]" do
+
     subject { create(:meeting_individual_result) }
-  
+
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
@@ -36,7 +37,7 @@ describe MeetingIndividualResult, :type => :model do
     ])
 
     context "[general methods]" do
-      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [
         :get_full_name,
         :get_verbose_name
       ])
@@ -44,7 +45,7 @@ describe MeetingIndividualResult, :type => :model do
 
     context "[methods used for selecting records]" do
       it_behaves_like( "(the existance of a method with parameters, returning boolean values)",
-        [ 
+        [
           :has_pool_type_code?,
           :has_event_type_code?,
           :has_category_type_code?,
@@ -62,7 +63,7 @@ describe MeetingIndividualResult, :type => :model do
         expect( subject.get_passages ).to respond_to(:each)
       end
       it "returns a list of passages for the given result" do
-        subject.get_passages.each do |element| 
+        subject.get_passages.each do |element|
           expect( element ).to be_an_instance_of( Passage )
         end
       end
@@ -75,8 +76,8 @@ describe MeetingIndividualResult, :type => :model do
         current_item_distance = 0
         fixture.get_passages.each do |item|
           expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because the factory can create passages having same distance
-          current_item_distance = item.passage_type.length_in_meters 
-        end      
+          current_item_distance = item.passage_type.length_in_meters
+        end
       end
     end
     #-- -----------------------------------------------------------------------

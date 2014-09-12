@@ -1,3 +1,6 @@
+/*!40101 SET character_set_client = latin1 */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+
 --
 -- Dump dei dati per la tabella goggle_cups
 -- 

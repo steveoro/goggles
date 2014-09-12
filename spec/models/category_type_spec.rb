@@ -5,28 +5,28 @@ describe CategoryType, :type => :model do
   it_behaves_like "DropDownListable"
 
   describe "[a non-valid instance]" do
-    it_behaves_like( "(missing required values)", [ :code ])    
+    it_behaves_like( "(missing required values)", [ :code ])
   end
 
   describe "[a well formed instance]" do
     subject { create(:category_type) }
-  
+
     context "[well formed category type instance]" do
       it "is a valid istance" do
         expect( subject ).to be_valid
       end
-      it_behaves_like( "(belongs_to required models)", [ 
+      it_behaves_like( "(belongs_to required models)", [
         :season
-      ])    
+      ])
     end
 
     # Test the existance of all the required has_one relationships:
     it_behaves_like( "(it has_one of these required models)",
-      [ 
+      [
         :season_type,
         :federation_type
       ]
-    )    
+    )
 
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
@@ -37,7 +37,7 @@ describe CategoryType, :type => :model do
 
     context "[general methods]" do
 
-      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [
         :get_short_name,
         :get_full_name,
         :get_verbose_name
@@ -57,6 +57,6 @@ describe CategoryType, :type => :model do
       end
     end
 
-    # Add other method validations     
+    # Add other method validations
   end
 end

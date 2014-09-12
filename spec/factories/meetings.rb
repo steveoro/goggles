@@ -4,11 +4,12 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :meeting do
-    sequence( :code )         { |n| "farloque#(n)" }
+    sequence( :code )         { |n| "meeting#(n)" }
     description               { "#{Faker::Name.suffix} #{Faker::Address.city} Meeting" }
     edition                   { ((rand * 100) % 40).to_i }
-    season
+    season                    { Season.all.to_a[ rand * 10 ] } # Get all Season rows, choose a random one among the first 10
     header_year               { season.header_year }
+    # The following 2 columns use the pre-loaded seed records:
     edition_type_id           { ((rand * 100) % 5).to_i + 1 } # ASSERT: at least 5 edition types (1..5)
     timing_type_id            { ((rand * 100) % 3).to_i + 1 } # ASSERT: at least 3 timing types (1..3)
     user
@@ -17,7 +18,7 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_session,
-          ((rand * 3).to_i + 1),               # total number of results
+          ((rand * 10) % 2).to_i + 1,
           meeting: created_instance            # association enforce for each sub-row
         )
       end
@@ -28,17 +29,20 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_session_complete,
-          ((rand * 3).to_i + 1),               # total number of results
-          meeting: created_instance            # association enforce for each sub-row
+          ((rand * 10) % 2).to_i + 1,
+          meeting:      created_instance            # association enforce for each sub-row
         )
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   factory :meeting_session do
     description               "FINALS"
     session_order             { ((rand * 100) % 4).to_i + 1}
     meeting
+    # The following column uses the pre-loaded seed records:
     day_part_type_id          { ((rand * 100) % 4).to_i + 1} # ASSERT: at least 4 timing types
     scheduled_date            { Date.today }
     warm_up_time              { Time.now }
@@ -47,14 +51,10 @@ FactoryGirl.define do
     user
 
     factory :meeting_session_with_rows do
-      # the after(:create) yields two values: the row instance itself and the
-      # evaluator, which stores all values from the factory, including transient
-      # attributes; `create_list`'s second argument is the number of records
-      # to create and we make sure the association is set properly to the created instance:
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_event,
-          ((rand * 10).to_i + 2),                   # total number or detail rows
+          ((rand * 10) % 3).to_i + 2,
           meeting_session: created_instance         # association enforce for each sub-row
         )
       end
@@ -64,26 +64,29 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_event_complete,
-          ((rand * 2).to_i + 2),                   # total number or detail rows
+          ((rand * 10) % 3).to_i + 2,
           meeting_session: created_instance         # association enforce for each sub-row
         )
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   factory :meeting_event do
-    event_order               { ((rand * 100) % 15).to_i + 1}
+    event_order               { ((rand * 100) % 15).to_i + 1 }
     meeting_session
-    event_type_id             { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types
-    heat_type_id              { ((rand * 100) % 3).to_i + 1} # ASSERT: at least 3 heat types
+    # The following 2 columns use the pre-loaded seed records:
+    event_type_id             { ((rand * 100) % 18).to_i + 1 } # ASSERT: at least 18 event types
+    heat_type_id              { ((rand * 100) % 3).to_i + 1 }  # ASSERT: at least 3 heat types
     user
 
     factory :meeting_event_with_programs do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_program,
-          ((rand * 10).to_i + 1),              # total number of results
-          meeting_event: created_instance      # association enforce for each sub-row
+          ((rand * 10) % 3).to_i + 2,
+          meeting_event: created_instance           # association enforce for each sub-row
         )
       end
     end
@@ -92,16 +95,19 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_program_complete,
-          ((rand * 2).to_i + 1),              # total number of results
-          meeting_event: created_instance      # association enforce for each sub-row
+          ((rand * 10) % 3).to_i + 2,
+          meeting_event: created_instance           # association enforce for each sub-row
         )
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   factory :meeting_program do
     event_order               { ((rand * 100) % 25).to_i + 1 }
     meeting_event
+    # The following 2 columns use the pre-loaded seed records:
     category_type_id          { ((rand * 100) % 20).to_i + 1 } # ASSERT: at least 20 category types
     gender_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
     pool_type_id              { meeting_event.meeting_session.swimming_pool.pool_type_id }
@@ -111,8 +117,8 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_individual_result,
-          ((rand * 30).to_i + 2),              # total number of results
-          meeting_program: created_instance    # association enforce for each sub-row
+          ((rand * 10) % 5).to_i + 4,
+          meeting_program: created_instance         # association enforce for each sub-row
         )
       end
     end
@@ -121,12 +127,14 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :meeting_individual_result_with_passages,
-          ((rand * 5).to_i + 2),              # total number of results
-          meeting_program: created_instance    # association enforce for each sub-row
+          ((rand * 10) % 5).to_i + 2,
+          meeting_program: created_instance         # association enforce for each sub-row
         )
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   factory :meeting_individual_result do
     meeting_program
@@ -151,19 +159,21 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :passage,
-          ((rand * 10).to_i + 2),                     # total number of passages
+          ((rand * 10) % 3).to_i + 1,
           meeting_individual_result: created_instance # association enforce for each sub-row
         )
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   factory :passage do
     meeting_individual_result
     meeting_program           { meeting_individual_result.meeting_program }
     minutes                   0
-    seconds                   { ((rand * 59) % 59).to_i }  # Force not to use 59
-    hundreds                  { ((rand * 99) % 99).to_i }  # Force not to use 99
+    seconds                   { ((rand * 59) % 59).to_i }  # Forced not to use 59
+    hundreds                  { ((rand * 99) % 99).to_i }  # Forced not to use 99
     minutes_from_start        1
     seconds_from_start        { seconds }
     hundreds_from_start       { hundreds }
@@ -176,4 +186,6 @@ FactoryGirl.define do
     # The following column uses the pre-loaded seed records:
     passage_type_id           { ((rand * 20) % 20).to_i + 1 }
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end
