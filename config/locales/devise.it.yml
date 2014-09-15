@@ -36,6 +36,10 @@ it:
     edit_user_unregister_submit: "Elimina il mio account"
     edit_user_unregister_confirmation: "Siamo sicuri di voler continuare?"
     edit_user_link_to_back_title: "Indietro"
+    use_email_data_updates_notify_info: "(Permette a Goggles di inviarti una mail ogni volta che ci sono risultati gare o record nuovi.)"
+    use_email_achievements_notify_info: "(Goggles ti avvisera' ogni volta che tu o un tuo amico batte un record o ottiene un risultato 'notevole'.)"
+    use_email_newsletter_notify_info: "(Goggles ti inviera' una mail ogni volta che il sito subisce modifiche o aggiornamenti sostanziali -- di solito, meno che mensilmente.)"
+    use_email_community_notify_info: "(Goggles ti avvisera' per novita' riguardanti i tuoi compagni di squadra o i tuoi 'swimming buddies'.)"
 
     new_user_title: "Registrati"
     new_user_submit: "Registrati"

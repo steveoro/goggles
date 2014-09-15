@@ -219,6 +219,10 @@ it:
         enable_delete: "Puo' eliminare?"
         enable_setup: Abilita set-up
         authorization_level: Liv. autorizz.
+        use_email_data_updates_notify: "Notifica e-mail su dati gare aggiornati"
+        use_email_achievements_notify: "Notifica e-mail per 'achievements' interni"
+        use_email_newsletter_notify: "Newsletter su aggiornamenti sito"
+        use_email_community_notify: "Notifica e-mail su novita' della Community"
 
     errors:
       unable_to_retrieve_row_data: "Non ho trovato il record richiesto."

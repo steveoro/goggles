@@ -214,6 +214,24 @@ en:
         exercise: "Exercise"
         start_and_rest: "Start+Rest"
         pause: "Pause"
+      user:
+        created_on: Created on
+        email: "e-mail"
+        updated_on: Updated on
+        name: User name
+        hashed_pwd: Hashed Password
+        first_name: "Name"
+        last_name: "Last name"
+        year_of_birth: "Year of birth"
+        enable_blog: "Blogger?"
+        enable_edit: "Can edit?"
+        enable_delete: "Can delete?"
+        enable_setup: Enable set-up
+        authorization_level: Auth. Lev.
+        use_email_data_updates_notify: "Meeting data update e-mail notify"
+        use_email_achievements_notify: "Achievements update e-mail notify"
+        use_email_newsletter_notify: "Site update newsletter"
+        use_email_community_notify: "Community e-mail newsletter"
 
     errors:
       unable_to_retrieve_row_data: "Unable to retrieve the requested record."

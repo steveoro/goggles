@@ -38,6 +38,10 @@ en:
     edit_user_unregister_submit: "Delete my account"
     edit_user_unregister_confirmation: "Are you sure you want to proceed?"
     edit_user_link_to_back_title: "Back"
+    use_email_data_updates_notify_info: "(Allows Goggles to send you an e-mail each time new results or new meeting data are available.)"
+    use_email_achievements_notify_info: "(Goggles will notify you of each new record or personal achievement reached by you or a friend.)"
+    use_email_newsletter_notify_info: "(Goggles will notify you each time that the site gets updated or changes substantially -- usually less than monthly.)"
+    use_email_community_notify_info: "(Goggles will notify you of any news regarding your team mates or swimming buddies.)"
 
     new_user_title: "Register"
     new_user_submit: "Register"
