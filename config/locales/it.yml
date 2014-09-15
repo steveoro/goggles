@@ -730,6 +730,9 @@ it:
   to_be_defined: "Da definire..."
   not_available: "N.D."
 
+  maintenance_title: "Siamo in manutenzione!"
+  maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (ore italiane, presumibilmente). Riprova piu' tardi! ;-)"
+
   netzke:
     basepack:
       grid_panel:

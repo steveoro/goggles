@@ -72,9 +72,10 @@ Goggles::Application.routes.draw do
   scope "/" do
     scope "(:locale)", locale: /en|it/ do
       # === Home ===
-      match "wip",        to: "home#wip"
-      match "about",      to: "home#about"
-      match "contact_us", to: "home#contact_us"
+      match "wip",                              to: "home#wip"
+      match "about",                            to: "home#about"
+      match "contact_us",                       to: "home#contact_us"
+      match "maintenance",                      to: "home#maintenance"
 
       # === Socials ===
       # A user associates himself/herself with a swimmer:

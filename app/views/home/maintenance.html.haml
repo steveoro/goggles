@@ -1,0 +1,9 @@
+- # TODO add a custom maintenance image:
+- #.item.thumbnail.active
+- #  = image_tag("maintenance.jpg", size: '180', class: 'img-thumbnail img-responsive')
+%br
+.row-fluid
+  %h3
+    = I18n.t('maintenance_title')
+    = image_tag('wrench.png', alt: "Work In Progress")
+  %p= I18n.t('maintenance_info').gsub( '{DATETIME}', @presumed_downtime_end )

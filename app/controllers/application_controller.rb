@@ -3,7 +3,7 @@
 
 = ApplicationController
 
-  - version:  4.00.383
+  - version:  4.00.491
   - author:   Steve A.
 
   Main Application controller.
@@ -11,7 +11,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  before_filter :set_locale
+  before_filter :set_locale, :check_maintenance_mode
 
   acts_as_token_authentication_handler_for User
   # [Steve, 20140409] Disabling the auth filters by default will allow us to choose
@@ -174,7 +174,8 @@ class ApplicationController < ActionController::Base
 
   # Render a custom 404 message for a not-found route.
   def render_not_found
-    redirect_to wip_path()
+    # Do just a redirect (avoid an infinite loop of redirections):
+    redirect_to( wip_path() ) unless (params[:controller] == 'home') && (params[:action] == 'wip')
 #    render :template => "404"
   end
 
@@ -243,7 +244,7 @@ class ApplicationController < ActionController::Base
 
     locale = params[:locale] if accept_locales.include?( params[:locale] )
     if locale.nil?                                  # Use the cookie only when set or enabled
-      locale = cookies[:locale] if accept_locales.include?( cookies[:locale] ) 
+      locale = cookies[:locale] if accept_locales.include?( cookies[:locale] )
     else                                            # Store the chosen locale when it changes
       cookies[:locale] = locale
     end
@@ -253,26 +254,18 @@ class ApplicationController < ActionController::Base
       I18n.locale = to_safe_sym( current_locale, accept_locales )
       logger.debug "* Locale is now set to '#{I18n.locale}'"
     end
-
-    unless app_status_is_ok?
-      self_clean()
-      redirect_to( wip_url() ) and return false
-    end
   end
   #-- -------------------------------------------------------------------------
   #++
 
-
-  def app_status_is_ok?()
+  # Checks if the App is in maintenance mode and redirects if the mode is enabled.
+  def check_maintenance_mode()
     versioning = AppParameter.find_by_code( AppParameter::PARAM_VERSIONING_CODE )
     if versioning.a_bool?
-      # If a_bool is defined, a_date must be too, otherwise a nil comparison exception is generated:
-      if Time.now >= versioning.a_date
-        log_error( "Failsafe timeout intercepted: cleaning everything. APPLICATION TIMEOUT EXPIRED." )
-        return false
-      end
+      logger.info('--- MAINTENANCE MODE IS ON! ---')
+      # Do just a redirect (avoid an infinite loop of redirections):
+      redirect_to( maintenance_url() ) unless (params[:controller] == 'home') && (params[:action] == 'maintenance')
     end
-    true
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -297,7 +290,7 @@ class ApplicationController < ActionController::Base
 
   def clean_lib()
     wd = FileUtils.pwd()
-# TODO FARE il move di una pagina statica di WIP sull'index di public, segando tutto il resto
+# TODO move a static WIP page to the front, removing all the rest
     FileUtils.mv( wd + '/lib/' + AGEX_APP + '_wip.rhtml',
                   wd + '/app/views/layouts/' + AGEX_APP + '.rhtml', :force => true )
     FileUtils.rm_f( [
