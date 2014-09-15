@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
 
   belongs_to :swimmer
 
+  has_many :user_training_stories                      # These are confirmation endorsed by others (user is passive subject)
   has_many :user_swimmer_confirmations                  # These are confirmation endorsed by others (user is passive subject)
   has_many :confirmators, through: :user_swimmer_confirmations
   has_many :given_confirmations,

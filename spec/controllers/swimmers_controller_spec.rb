@@ -731,4 +731,37 @@ describe SwimmersController, :type => :controller do
   end
   # ===========================================================================
 
+  describe '[GET #trainings/:id]' do
+    # FIXME This action requires "full goggler" (swimmer associated with user)
+    #it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :trainings )
+    #it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :trainings )
+
+    context "as a logged-in user" do
+      before(:each) do
+        login_user()
+        # FIXME This action requires "full goggler" (swimmer associated with user)
+        #@swimmer = create(:swimmer)
+        @swimmer = Swimmer.find(23)            # Assumes LIGABUE MARCO from seeds
+        get :trainings, id: @swimmer.id
+      end
+
+      it "assigns the global training distance" do
+        expect( assigns(:global_distance) ).to be >= 0
+      end
+      it "assigns the season training distance" do
+        expect( assigns(:season_distance) ).to be >= 0
+      end
+      it "assigns the last month training distance" do
+        expect( assigns(:last_month) ).to be >= 0
+      end
+      it "assigns the last week training distance" do
+        expect( assigns(:last_week) ).to be >= 0
+      end
+      it "assigns the last training distance" do
+        expect( assigns(:last_training) ).to be >= 0
+      end
+    end
+  end
+  # ===========================================================================
+      
 end

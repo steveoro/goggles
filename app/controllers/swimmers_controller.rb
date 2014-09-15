@@ -444,6 +444,40 @@ class SwimmersController < ApplicationController
   #++
 
 
+  # Radiography for a specified swimmer id: "Trainings" tab rendering
+  # Swimmer training stats
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def trainings
+    @tab_title = I18n.t('radiography.trainings_tab')
+    
+    # Needs to be a full goggler (swimmer associated with a user)
+    if @swimmer.associated_user 
+      # Compute total training distances
+      current_season = Season.get_last_season_by_type( 'MASFIN' )
+      @global_distance = 0
+      @season_distance = 0
+      @last_month = 0
+      @last_week = 0
+      @swimmer.associated_user.user_training_stories.each do |user_training_story|
+        distance = user_training_story.user_training.compute_total_distance
+        @global_distance += user_training_story.user_training.compute_total_distance
+        @last_week += distance if user_training_story.swam_date >= ( Date.today - 7 )       
+        @last_month += distance if user_training_story.swam_date >= ( Date.today.prev_month )       
+        @season_distance += distance if user_training_story.swam_date >= current_season.begin_date       
+      end
+      @last_training = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.compute_total_distance if @swimmer.associated_user.user_training_stories.count > 0 
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   private
 
 

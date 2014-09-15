@@ -243,6 +243,13 @@ en:
     medals_by_season_type: "Medals by season types"
     medals_by_event_type: "Medals by event types - {POOL_TYPE} meters pool"
     seasonal_records: "Seasonal records"
+    trainings_tab: "Trainings"
+    trainings_summary: "Trainings summary"
+    global_training_distance: "Global trainings distance"
+    season_training_distance: "Season trainings distance"
+    month_training_distance: "Last month trainings distance"
+    week_training_distance: "Last week trainings distance"
+    last_training_distance: "Last training distance"
 
   goggle_cup:
     rank: "Rank"

@@ -59,6 +59,8 @@ class UserTrainingRow < ActiveRecord::Base
   validates_length_of       :pause, within: 1..4, allow_nil: false
   validates_numericality_of :pause
 
+  delegate :code, to: :training_step_type, prefix: true
+
   attr_accessible :part_order,
                   :group_id, :group_times, :group_start_and_rest, :group_pause,
                   :times, :distance, :start_and_rest, :pause,
@@ -68,6 +70,7 @@ class UserTrainingRow < ActiveRecord::Base
   scope :sort_by_part_order,    order('part_order')
   scope :with_groups,           where('group_id > 0').order('part_order')
   scope :without_groups,        where('(group_id is null) or (group_id = 0)').order('part_order')
+  scope :for_training_step_code, ->(training_step_code) {includes(:training_step_type).where(['training_step_types.code = ?', training_step_code])}
 
 
   # Overload constructor for setting default values

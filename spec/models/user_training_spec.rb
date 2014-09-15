@@ -53,4 +53,20 @@ describe UserTraining, :type => :model do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  [ 
+    :compute_step_distance
+  ].each do |method_name|
+    before :each do
+      @fix_step_code = TrainingStepType.all[ ((rand * 100) % TrainingStepType.count).to_i ] # Assumes from seed 
+    end
+
+    describe "##{method_name}" do
+      it "returns 0 or a positive number" do
+        expect( subject.send(method_name, @fix_step_code) ).to be >= 0
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

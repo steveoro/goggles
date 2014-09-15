@@ -243,6 +243,13 @@ it:
     medals_by_season_type: "Medaglie per tipo stagione"
     medals_by_event_type: "Medaglie per specialità - vasca da {POOL_TYPE} metri"
     seasonal_records: "Record stagionali"
+    trainings_tab: "Allenamenti"
+    trainings_summary: "Riepilogo kilometraggio"
+    global_training_distance: "Kilometraggio globale"
+    season_training_distance: "Kilometraggio stagione"
+    month_training_distance: "Kilometraggio ultimo mese"
+    week_training_distance: "Kilometraggio ultima settimana"
+    last_training_distance: "Kilometraggio ultimo allenamento"
 
   goggle_cup:
     rank: "Pos"

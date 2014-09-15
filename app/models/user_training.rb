@@ -18,14 +18,14 @@ class UserTraining < ActiveRecord::Base
 
   has_many :user_training_stories, dependent: :delete_all
 
-  has_many :exercises, through: :user_training_rows
+  has_many :exercises,           through: :user_training_rows
   has_many :training_step_types, through: :user_training_rows
 
   validates_presence_of :description
   validates_length_of   :description, within: 1..250, allow_nil: false
 
 
-  delegate :name, to: :user, prefix: true
+  delegate :name, to: :user,               prefix: true
 
   attr_accessible :description,
                   :user_id, :user_training_rows_attributes, # (Needed by the nested_form gem)
@@ -106,4 +106,36 @@ class UserTraining < ActiveRecord::Base
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+  
+  # Computes the total distance for a given training step
+  #
+  # params
+  # training_step_code: traing step to cpmpute distance for
+  #
+  def compute_step_distance( training_step_code )
+    group_secs = 0
+
+    # Compute grouped rows
+    group_list = TrainingDecorator.decorate( self ).build_group_list_hash()
+# FIXME USE NEW MOIZABLE FIELDS W/ IMPLEMENTED:
+    group_list.each{ |group_id, group_hash|         # Sum the total secs for each group:
+      if group_hash[:training_step_code] == training_step_code  
+        group_secs += group_hash[ :datarows ].
+          inject(0){ |sum, row| sum + row.compute_total_seconds() } * group_hash[:times]
+      end 
+    }
+# FIXME USE NEW MOIZABLE FIELDS W/ IMPLEMENTED:
+
+    
+    # Compute not grouped rows
+    self.user_training_rows.
+      without_groups.
+      for_training_step_code( training_step_code ).
+      inject( group_secs ){ |sum, row| sum + row.compute_total_seconds() }
+    
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+   
 end

@@ -131,6 +131,7 @@ Goggles::Application.routes.draw do
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
       match "swimmer/misc/:id",                 to: "swimmers#misc",                    as: "swimmer_misc",         via: [:get, :post]
+      get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
 
       # === Teams ===
       get  "teams/index",                       to: "teams#index",                      as: "teams"

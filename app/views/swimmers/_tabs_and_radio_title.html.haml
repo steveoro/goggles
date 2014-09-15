@@ -17,6 +17,9 @@
   - is_active = ( params[:action] == 'misc' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('radiography.misc_tab'),           is_active ? '#' : swimmer_misc_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'trainings' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.trainings_tab'),      is_active ? '#' : swimmer_trainings_path(id: @swimmer.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
