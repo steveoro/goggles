@@ -21,7 +21,7 @@
           %td.goggles-rightalign
             = @global_distance[:number]
           %td.goggles-rightalign
-            = @global_distance[:average]
+            = @global_distance[:avg_distance]
         %tr
           %td.span3
             %b= I18n.t('radiography.season_training')
@@ -30,7 +30,7 @@
           %td.goggles-rightalign
             = @season_distance[:number]
           %td.goggles-rightalign
-            = @season_distance[:average]
+            = @season_distance[:avg_distance]
         %tr
           %td.span3
             %b= I18n.t('radiography.month_training')
@@ -39,7 +39,7 @@
           %td.goggles-rightalign
             = @last_month[:number]
           %td.goggles-rightalign
-            = @last_month[:average]
+            = @last_month[:avg_distance]
         %tr
           %td.span3
             %b= I18n.t('radiography.week_training')
@@ -48,7 +48,7 @@
           %td.goggles-rightalign
             = @last_week[:number]
           %td.goggles-rightalign
-            = @last_week[:average]
+            = @last_week[:avg_distance]
         %tr
           %td.span3
             %b= I18n.t('radiography.last_training')

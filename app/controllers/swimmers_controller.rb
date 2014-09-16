@@ -460,40 +460,51 @@ class SwimmersController < ApplicationController
       # Compute total training distances
       current_season = Season.get_last_season_by_type( 'MASFIN' )
       
-      @global_distance = {:distance => 0, :number => 0, :average => 0}
-      @season_distance = {:distance => 0, :number => 0, :average => 0}
-      @last_month      = {:distance => 0, :number => 0, :average => 0}
-      @last_week       = {:distance => 0, :number => 0, :average => 0}
-      @last_training   = {:distance => 0}
+      @global_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
+      @season_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
+      @last_month      = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
+      @last_week       = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
+      @last_training   = {:distance => 0, :duration => 0}
       
       @global_distance[:number] = @swimmer.associated_user.user_training_stories.count
       @swimmer.associated_user.user_training_stories.each do |user_training_story|
-        distance = user_training_story.user_training.compute_total_distance
+        distance = user_training_story.user_training.total_distance
+        duration = user_training_story.user_training.esteemed_total_seconds
         
-        @global_distance[:distance] += user_training_story.user_training.compute_total_distance
+        @global_distance[:distance] += distance
+        @global_distance[:duration] += duration
         
         if user_training_story.swam_date >= ( Date.today - 7 ) 
           @last_week[:distance] += distance
+          @last_week[:duration] += duration
           @last_week[:number] += 1
         end
                 
         if user_training_story.swam_date >= ( Date.today.prev_month )
           @last_month[:distance] += distance
+          @last_month[:duration] += duration
           @last_month[:number] += 1
         end
                 
         if user_training_story.swam_date >= current_season.begin_date
           @season_distance[:distance] += distance
+          @season_distance[:duration] += duration
           @season_distance[:number] += 1
         end        
       end
       @last_training[:distance] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.compute_total_distance if @global_distance[:number] > 0
       
       # Compute average distance per training
-      @global_distance[:average] = @global_distance[:distance] / @global_distance[:number]  
-      @season_distance[:average] = @season_distance[:distance] / @season_distance[:number]  
-      @last_month[:average]      = @last_month[:distance] / @last_month[:number]  
-      @last_week[:average]       = @last_week[:distance] / @last_week[:number]  
+      @global_distance[:avg_distance] = @global_distance[:distance] / @global_distance[:number]  
+      @season_distance[:avg_distance] = @season_distance[:distance] / @season_distance[:number]  
+      @last_month[:avg_distance]      = @last_month[:distance] / @last_month[:number]  
+      @last_week[:avg_distance]       = @last_week[:distance] / @last_week[:number]  
+
+      # Compute average duration per training
+      @global_distance[:avg_duration] = @global_distance[:distance] / @global_distance[:number]  
+      @season_distance[:avg_duration] = @season_distance[:distance] / @season_distance[:number]  
+      @last_month[:avg_duration]      = @last_month[:distance] / @last_month[:number]  
+      @last_week[:avg_duration]       = @last_week[:distance] / @last_week[:number]  
        
     else
       flash[:error] = I18n.t(:invalid_action_request)
