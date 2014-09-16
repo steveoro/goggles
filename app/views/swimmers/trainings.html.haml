@@ -1,34 +1,61 @@
 = render( partial: 'tabs_and_radio_title' )
 
 .row-fluid.goggles-category-gap#pageTop
-  %h3
-    = I18n.t('radiography.trainings_summary')
-  .span9
-    .row-fluid
-      .span3
-        = I18n.t('radiography.global_training_distance')
-      .span6
-        = @global_distance
-    .row-fluid
-      .span3
-        = I18n.t('radiography.season_training_distance')
-      .span6
-        = @season_distance
-    .row-fluid
-      .span3
-        = I18n.t('radiography.month_training_distance')
-      .span6
-        = @last_month
-    .row-fluid
-      .span3
-        = I18n.t('radiography.week_training_distance')
-      .span6
-        = @last_week
-    .row-fluid
-      .span3
-        = I18n.t('radiography.last_training_distance')
-      .span6
-        = @last_training
+  .span6
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            %b= I18n.t('radiography.trainings_summary')
+          %td.goggles-rightalign
+            %b= I18n.t('radiography.distance_swam')
+          %td.goggles-rightalign
+            %b= I18n.t('radiography.trainings_number')
+          %td.goggles-rightalign
+            %b= I18n.t('radiography.average_distance')
+        %tr
+          %td.span3
+            %b= I18n.t('radiography.global_training')
+          %td.goggles-rightalign
+            = @global_distance[:distance]
+          %td.goggles-rightalign
+            = @global_distance[:number]
+          %td.goggles-rightalign
+            = @global_distance[:average]
+        %tr
+          %td.span3
+            %b= I18n.t('radiography.season_training')
+          %td.goggles-rightalign
+            = @season_distance[:distance]
+          %td.goggles-rightalign
+            = @season_distance[:number]
+          %td.goggles-rightalign
+            = @season_distance[:average]
+        %tr
+          %td.span3
+            %b= I18n.t('radiography.month_training')
+          %td.goggles-rightalign
+            = @last_month[:distance]
+          %td.goggles-rightalign
+            = @last_month[:number]
+          %td.goggles-rightalign
+            = @last_month[:average]
+        %tr
+          %td.span3
+            %b= I18n.t('radiography.week_training')
+          %td.goggles-rightalign
+            = @last_week[:distance]
+          %td.goggles-rightalign
+            = @last_week[:number]
+          %td.goggles-rightalign
+            = @last_week[:average]
+        %tr
+          %td.span3
+            %b= I18n.t('radiography.last_training')
+          %td.goggles-rightalign
+            = @last_training[:distance]
+          %td.goggles-rightalign
+          %td.goggles-rightalign
 
 .row-fluid
   %p

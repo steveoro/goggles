@@ -746,19 +746,24 @@ describe SwimmersController, :type => :controller do
       end
 
       it "assigns the global training distance" do
-        expect( assigns(:global_distance) ).to be >= 0
+        expect( assigns(:global_distance) ).to be_a_kind_of( Hash )
+        expect( assigns(:global_distance).keys ).to include('distance', 'number', 'average')
       end
       it "assigns the season training distance" do
-        expect( assigns(:season_distance) ).to be >= 0
+        expect( assigns(:season_distance) ).to be_a_kind_of( Hash )
+        expect( assigns(:season_distance).keys ).to include('distance', 'number', 'average')
       end
       it "assigns the last month training distance" do
-        expect( assigns(:last_month) ).to be >= 0
+        expect( assigns(:last_month) ).to be_a_kind_of( Hash )
+        expect( assigns(:last_month).keys ).to include('distance', 'number', 'average')
       end
       it "assigns the last week training distance" do
-        expect( assigns(:last_week) ).to be >= 0
+        expect( assigns(:last_week) ).to be_a_kind_of( Hash )
+        expect( assigns(:last_week).keys ).to include('distance', 'number', 'average')
       end
       it "assigns the last training distance" do
-        expect( assigns(:last_training) ).to be >= 0
+        expect( assigns(:last_training) ).to be_a_kind_of( Hash )
+        expect( assigns(:last_training).keys ).to include('distance')
       end
     end
   end
