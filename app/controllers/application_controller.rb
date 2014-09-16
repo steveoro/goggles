@@ -60,13 +60,11 @@ class ApplicationController < ActionController::Base
       msg = "[E!]-- ERROR INTERCEPTED: #{output_message}"
       error_description = $!
       error_trace = exception_or_text_msg.respond_to?( :backtrace ) ? exception_or_text_msg.backtrace : '(backtrace not available)'
-      admin = current_admin() ? current_admin().get_full_name : '(admin not logged in yet)'
-      user  = current_user() ? current_user().get_full_name : '(user not logged in yet)'
       logger.error( msg )
       logger.error( error_description )
                                                     # Send a message to the developers anyway:
       begin
-        AgexMailer.exception_mail( admin, user, error_description, error_trace ).deliver
+        AgexMailer.exception_mail( current_user, error_description, error_trace ).deliver
         logger.info("[*I*]- e-mail error report allegedly sent.")
       rescue
         logger.warn( '[W!]-- Unable to send out notification e-mail message, Mailer not responding or not configured properly yet.' )
@@ -80,12 +78,10 @@ class ApplicationController < ActionController::Base
   # taking place during app usage.
   #
   def log_action( action_performed, action_description )
-    user = current_user()
-    user = user ? user.get_full_name : '(user not logged in yet)'
-    logger.info("[*I*]- ACTION: '#{action_performed}', current user: #{user} => #{action_description}.")
+    logger.info("[*I*]- ACTION: '#{action_performed}', current user: #{current_user} => #{action_description}.")
                                                   # Send a message to the developers anyway:
     begin
-      AgexMailer.action_notify_mail( user, action_performed, action_description ).deliver
+      AgexMailer.action_notify_mail( current_user, action_performed, action_description ).deliver
       logger.info("[*I*]- action-notify e-mail allegedly sent.")
     rescue
       logger.warn( '[W!]-- Unable to send out action-notify e-mail message, Mailer not responding or not configured properly yet.' )

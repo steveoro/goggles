@@ -1,0 +1,12 @@
+en:
+  newsletter_mailer:
+    data_updates:
+      generic_title: "data update!"
+      meeting_data_title: "Meeting data update"
+      meeting_data_has_been_updated: "The Meeting data has been updated for the following Meetings:"
+    achievements:
+      generic_title: "new achievement unlocked!"
+    application:
+      generic_title: "news regarding the application!"
+    community:
+      generic_title: "you have some unread notifies!"

@@ -1,0 +1,11 @@
+%h2= "--=[  Goggles  -o^o-  ]=-- #{ t('newsletter_mailer.data_updates.generic_title') }"
+
+- if @meeting_array.respond_to?( :each )
+  %h3= t('newsletter_mailer.data_updates.meeting_data_title')
+  %p= t('newsletter_mailer.data_updates.meeting_data_has_been_updated')
+
+  %ul
+    - @meeting_array.each do |meeting|
+      %li
+        = link_to( meeting.description, meeting_show_full_path( id: meeting.id ) )
+        = " (#{ meeting.header_year })"
