@@ -446,6 +446,12 @@ class SwimmersController < ApplicationController
 
   # Radiography for a specified swimmer id: "Trainings" tab rendering
   # Swimmer training stats
+  # Training summary:
+  # Summarizes the distance and duration of trinings in significant oeriods
+  # FIXME
+  # Now uses global, last season, last month, last week and last training
+  # Maybe better to define swimmer-dependent significant periods such as
+  # macricycle, mesocycle and so on starting at a given date
   #
   # == Params:
   # id: the swimmer id to be processed
@@ -474,12 +480,16 @@ class SwimmersController < ApplicationController
         @global_distance[:distance] += distance
         @global_distance[:duration] += duration
         
+        # FIXME
+        # Maybe better show akways from last Monday
         if user_training_story.swam_date >= ( Date.today - 7 ) 
           @last_week[:distance] += distance
           @last_week[:duration] += duration
           @last_week[:number] += 1
         end
                 
+        # FIXME
+        # Maybe better show akways from the first day of current month
         if user_training_story.swam_date >= ( Date.today.prev_month )
           @last_month[:distance] += distance
           @last_month[:duration] += duration
@@ -492,7 +502,11 @@ class SwimmersController < ApplicationController
           @season_distance[:number] += 1
         end        
       end
-      @last_training[:distance] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.compute_total_distance if @global_distance[:number] > 0
+      
+      if @global_distance[:number] > 0
+        @last_training[:distance] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.total_distance 
+        @last_training[:duration] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.esteemed_total_seconds
+      end 
       
       # Compute average distance per training
       @global_distance[:avg_distance] = @global_distance[:distance] / @global_distance[:number]  
@@ -501,10 +515,10 @@ class SwimmersController < ApplicationController
       @last_week[:avg_distance]       = @last_week[:distance] / @last_week[:number]  
 
       # Compute average duration per training
-      @global_distance[:avg_duration] = @global_distance[:distance] / @global_distance[:number]  
-      @season_distance[:avg_duration] = @season_distance[:distance] / @season_distance[:number]  
-      @last_month[:avg_duration]      = @last_month[:distance] / @last_month[:number]  
-      @last_week[:avg_duration]       = @last_week[:distance] / @last_week[:number]  
+      @global_distance[:avg_duration] = @global_distance[:duration] / @global_distance[:number]  
+      @season_distance[:avg_duration] = @season_distance[:duration] / @season_distance[:number]  
+      @last_month[:avg_duration]      = @last_month[:duration] / @last_month[:number]  
+      @last_week[:avg_duration]       = @last_week[:duration] / @last_week[:number]  
        
     else
       flash[:error] = I18n.t(:invalid_action_request)
