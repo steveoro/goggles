@@ -1,6 +1,10 @@
 /*!40101 SET character_set_client = latin1 */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 
+-- Elimino i dati presenti
+DELETE FROM passages;
+DELETE FROM meeting_individual_results where id > 100000;
+
 --
 -- Dump dei dati per la tabella meeting_individual_results
 -- 

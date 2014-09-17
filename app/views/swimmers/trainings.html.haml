@@ -1,7 +1,7 @@
 = render( partial: 'tabs_and_radio_title' )
 
 .row-fluid.goggles-category-gap#pageTop
-  .span8
+  .span9
     %table.table.table-striped.table-bordered.table-hover.table-condensed#trainingSummary
       %tbody
         %tr{'class'=>'info'}
@@ -17,6 +17,8 @@
             %b= I18n.t('radiography.average_distance')
           %td.goggles-rightalign
             %b= I18n.t('radiography.average_duration')
+          %td.goggles-rightalign
+            %b= I18n.t('radiography.average_100_meters')
         %tr
           %td.span3
             %b= I18n.t('radiography.global_training')
@@ -30,6 +32,8 @@
             = @global_distance[:avg_distance]
           %td.goggles-rightalign
             = Timing.to_hour_string( @global_distance[:avg_duration] )
+          %td.goggles-rightalign
+            = Timing.to_minute_string( @global_distance[:avg_100_meters] )
         %tr
           %td.span3
             %b= I18n.t('radiography.season_training')
@@ -43,6 +47,8 @@
             = @season_distance[:avg_distance]
           %td.goggles-rightalign
             = Timing.to_hour_string( @season_distance[:avg_duration] )
+          %td.goggles-rightalign
+            = Timing.to_minute_string( @season_distance[:avg_100_meters] )
         %tr
           %td.span3
             %b= I18n.t('radiography.month_training')
@@ -56,6 +62,8 @@
             = @last_month[:avg_distance]
           %td.goggles-rightalign
             = Timing.to_hour_string( @last_month[:avg_duration] )
+          %td.goggles-rightalign
+            = Timing.to_minute_string( @last_month[:avg_100_meters] )
         %tr
           %td.span3
             %b= I18n.t('radiography.week_training')
@@ -69,6 +77,8 @@
             = @last_week[:avg_distance]
           %td.goggles-rightalign
             = Timing.to_hour_string( @last_week[:avg_duration] )
+          %td.goggles-rightalign
+            = Timing.to_minute_string( @last_week[:avg_100_meters] )
         %tr
           %td.span3
             %b= I18n.t('radiography.last_training')
@@ -79,6 +89,8 @@
           %td.goggles-rightalign
           %td.goggles-rightalign
           %td.goggles-rightalign
+          %td.goggles-rightalign
+            = Timing.to_minute_string( @last_training[:avg_100_meters] )
 
 .row-fluid
   %p

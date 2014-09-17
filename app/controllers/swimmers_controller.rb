@@ -466,11 +466,11 @@ class SwimmersController < ApplicationController
       # Compute total training distances
       current_season = Season.get_last_season_by_type( 'MASFIN' )
       
-      @global_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
-      @season_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
-      @last_month      = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
-      @last_week       = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0}
-      @last_training   = {:distance => 0, :duration => 0}
+      @global_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
+      @season_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
+      @last_month      = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
+      @last_week       = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
+      @last_training   = {:distance => 0, :duration => 0, :avg_100_meters => 0}
       
       @global_distance[:number] = @swimmer.associated_user.user_training_stories.count
       @swimmer.associated_user.user_training_stories.each do |user_training_story|
@@ -520,6 +520,12 @@ class SwimmersController < ApplicationController
       @last_month[:avg_duration]      = @last_month[:duration] / @last_month[:number]  
       @last_week[:avg_duration]       = @last_week[:duration] / @last_week[:number]  
        
+      # Compute average 100 meters performance
+      @global_distance[:avg_100_meters] = @global_distance[:avg_duration] / ( @global_distance[:avg_distance] / 100 )  
+      @season_distance[:avg_100_meters] = @season_distance[:avg_duration] / ( @season_distance[:avg_distance] / 100 )  
+      @last_month[:avg_100_meters]      = @last_month[:avg_duration] / ( @last_month[:avg_distance] / 100 )  
+      @last_week[:avg_100_meters]       = @last_week[:avg_duration] / ( @last_week[:avg_distance] / 100 )  
+      @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 )  
     else
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
