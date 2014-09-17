@@ -6,6 +6,7 @@ require 'fileutils'
 # WIP BEGIN -- was:
 # require File.join( Dir.pwd.to_s, 'config/environment' )
 require 'framework/version'
+require 'common/format'
 require 'framework/application_constants'
 # WIP END
 
@@ -15,7 +16,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.487
+  - Goggles framework vers.:  4.00.499
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -23,7 +24,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.487.20140911'
+SCRIPT_VERSION = '4.00.499.20140917'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -54,8 +55,8 @@ puts "- Script version  : #{SCRIPT_VERSION}"
 def get_full_path( sub_path )
   File.join( Dir.pwd, sub_path )
 end
-# ---------------------------------------------------------------------------
-# ===========================================================================
+#-- ---------------------------------------------------------------------------
+#++
 
 
 # Rotate backups inside a specific 'backup_folder' allowing only a maximum number of 'max_backups'
@@ -71,9 +72,8 @@ def rotate_backups( backup_folder, max_backups )
     end
     puts "Removed #{unwanted_backups.length} backups, #{all_backups.length - unwanted_backups.length} backups available."
 end
-# ---------------------------------------------------------------------------
-# ===========================================================================
-# ===========================================================================
+# =============================================================================
+# =============================================================================
 
 
 # [Steve, 20130808] The following will remove the task db:test:prepare
@@ -94,7 +94,8 @@ namespace :db do
       # rewrite the task to not do anything you don't want
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   desc <<-DESC
@@ -119,7 +120,8 @@ Options: [Rails.env=#{Rails.env}]
     puts "\r\nRecreating DB..."
     sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\""
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   desc <<-DESC
@@ -146,7 +148,8 @@ Options: [Rails.env=#{Rails.env}]
     Rake::Task['db:update_records'].invoke
     puts "Done."
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   desc <<-DESC
@@ -183,7 +186,8 @@ Options: [Rails.env=#{Rails.env}]
     sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} #{zip_pipe} > #{file_name}"
     puts "\r\nRecovery dump created.\r\n\r\n"
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   desc <<-DESC
@@ -234,7 +238,8 @@ Options: [Rails.env=#{Rails.env}]
 
     puts "Rebuild from dump, done.\r\n\r\n"
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   desc <<-DESC
@@ -278,10 +283,9 @@ Options: [Rails.env=#{Rails.env}]
 
     puts "Clone on Test DB done.\r\n\r\n"
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end
-# =============================================================================
 # =============================================================================
 
 
@@ -328,8 +332,8 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
     rotate_backups( backup_folder, max_backups )
     puts "Dump done.\r\n\r\n"
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   desc <<-DESC
   Executes all the SQL scripts ('*.sql') found in a special directory (usually for data seed).
@@ -373,7 +377,8 @@ Options: [exec_dir=#{DB_SEED_DIR}] [delete=1|<0>]
 
     puts "SQL script execute done.\r\n\r\n"
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end
 # =============================================================================
 # =============================================================================
@@ -383,12 +388,14 @@ end
 namespace :build do
 
   task :default => [:help]
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   desc 'Generic usage for the build tasks defined.'
   task :help => ['utils:script_status'] do
     Rake::Task['stats'].invoke
     puts "Subtasks defined for :build namespace:"
+    puts "\t:maintenance\ttoggles maintenance mode for the app"
     puts "\t:log_rotate\tlog backup and rotation (uses output_dir)"
     puts "\t:tar\t\tapp tree tar backup (uses output_dir)"
     puts "\t:version\tinternal DB version update"
@@ -396,7 +403,42 @@ namespace :build do
     puts "\t:local\t\tlocal build creation (uses output_dir)"
     puts ""
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+desc <<-DESC
+Sets or resets maintenance mode for the whole app by setting a proper DB flag.
+
+If the end_date is not parsable or not provided, the default is the current time
+plus 4 hours.
+
+    Options: [mode=<1>|0] [end_date=<restore_date_in_parsable_format>]
+             [Rails.env=#{Rails.env}]
+DESC
+  task :maintenance => [:environment, 'utils:script_status'] do
+    end_date   = ENV.include?("end_date") ? ENV['end_date'] : nil
+    versioning = AppParameter.find_by_code( AppParameter::PARAM_VERSIONING_CODE )
+
+    if ( ENV.include?("mode") && ENV['mode'].to_i < 1 )
+      puts "Toggling OFF maintenance mode..."
+      versioning.a_bool = false
+      versioning.a_date = nil
+    else
+      puts "Toggling ON maintenance mode (until '#{end_date}')..."
+      versioning.a_bool = true
+      begin
+        versioning.a_date = DateTime.parse( end_date )
+      rescue
+        versioning.a_date = DateTime.now + 4.hours
+      end
+    end
+    puts "Setting flag: #{ versioning.a_bool }, ending date: #{ Format.a_short_datetime( versioning.a_date ) }..."
+    versioning.save!
+    puts "Maintenance mode toggle: end."
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
 desc <<-DESC
@@ -427,7 +469,8 @@ DESC
     rotate_backups( backup_folder, max_backups * 3 )
     puts "Done.\r\n\r\n"
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
 desc <<-DESC
@@ -457,7 +500,8 @@ DESC
 
     puts "Done.\r\n"
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
 desc <<-DESC
@@ -483,8 +527,8 @@ DESC
     end
     puts "Base Versioning update: done."
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
 desc <<-DESC
 Updates the News log table with an entry stating that the application has been updated.
@@ -508,7 +552,8 @@ DESC
     })
     puts "NewsLog update: done."
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
 desc <<-DESC
@@ -525,7 +570,8 @@ DESC
   task :local => ['build:news_log','build:tar','sql:dump'] do
     puts "BUILD: LOCAL: done."
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end
 # ==============================================================================
 
@@ -552,8 +598,8 @@ namespace :utils do
 
     puts ""
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   desc "Check and creates missing needed directories"
   task(:chk_needed_dirs) do                         # Check the needed folders & create if missing:
@@ -563,8 +609,8 @@ namespace :utils do
     end
     puts "\r\n"
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   desc "Clears the app 'output' directory (if existing) contained inside /public."
   task(:clear_output) do
@@ -588,6 +634,7 @@ namespace :utils do
     end
     puts 'Done.'
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end
 # ==============================================================================
