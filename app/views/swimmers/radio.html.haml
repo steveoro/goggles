@@ -31,12 +31,11 @@
         = I18n.t('swimmers.current_category') +':'
       .span9
         = @swimmer.get_current_category_type_codes.join(' / ')
-    .row-fluid
-      .span3
+        = ' ('
         = I18n.t('swimmers.last_registered_category') +':'
-      .span9
         - category = @swimmer.get_current_category_type_from_badges
         = category ? category.code : '?'
+        = ')'
     .row-fluid
       .span3
         = I18n.t('swimmers.meeting_presence') +':'
