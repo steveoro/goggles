@@ -183,7 +183,11 @@ Options: [Rails.env=#{Rails.env}]
     puts "DB user:          #{db_user}"
     file_name     = File.join( File.join('db', 'dump'), "#{Rails.env}#{file_ext}" )
     puts "\r\nProcessing #{db_name} => #{file_name} ...\r\n"
-    sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} #{zip_pipe} > #{file_name}"
+    # To disable extended inserts, add this option: --skip-extended-insert
+    # (The Resulting SQL file will be much longer, though -- but the bzipped
+    #  version can result more compressed due to the replicated strings, and it is
+    #  indeed much more readable and editable...)
+    sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{db_name} #{zip_pipe} > #{file_name}"
     puts "\r\nRecovery dump created.\r\n\r\n"
   end
   #-- -------------------------------------------------------------------------
