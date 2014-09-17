@@ -744,5 +744,5 @@ en:
   not_available: "N.A."
 
   maintenance_title: "Maintenance time!"
-  maintenance_info: "The server is currently down for maintenance for data & site update, until {DATETIME} (Italy time zone, hopefully). Try again later! ;-)"
+  maintenance_info: "The server is currently down for maintenance for data & site update, until {DATETIME} (hopefully; Italy time zone). Try again later! ;-)"
 

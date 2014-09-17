@@ -207,16 +207,19 @@
           %td.span3
             = I18n.t('meeting_stats.oldest_female_athlete')
           %td.span1.goggles-rightalign
-            = @meeting.header_date.year - @specials_hash[ :oldest_female_athlete ].year_of_birth.to_i
-            = image_tag( "cake.png" )
+            - if @specials_hash[ :oldest_female_athlete ]
+              = @meeting.header_date.year - @specials_hash[ :oldest_female_athlete ].year_of_birth.to_i
+              = image_tag( "cake.png" )
           %td.span3
-            %a{'id'=>"swimmer#{@specials_hash[ :oldest_female_athlete ].id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ :oldest_female_athlete ].id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-              = @specials_hash[ :oldest_female_athlete ].get_full_name
+            - if @specials_hash[ :oldest_female_athlete ]
+              %a{'id'=>"swimmer#{@specials_hash[ :oldest_female_athlete ].id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ :oldest_female_athlete ].id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                = @specials_hash[ :oldest_female_athlete ].get_full_name
           %td.span1.goggles-rightalign
-            = @specials_hash[ :oldest_female_athlete ].year_of_birth
+            - if @specials_hash[ :oldest_female_athlete ]
+              = @specials_hash[ :oldest_female_athlete ].year_of_birth
           %td.span1.goggles-rightalign
         - [ :best_1st_female_score, :best_2nd_female_score, :best_3rd_female_score, :worst_female_score ].each do | key |
-          - if @specials_hash[ key ].standard_points > 0
+          - if @specials_hash[ key ] && @specials_hash[ key ].standard_points > 0
             %tr
               %td.span3
                 = I18n.t( key, scope: [:meeting_stats] )
@@ -233,16 +236,19 @@
           %td.span3
             = I18n.t('meeting_stats.oldest_male_athlete')
           %td.span1.goggles-rightalign
-            = @meeting.header_date.year - @specials_hash[ :oldest_male_athlete ].year_of_birth.to_i
-            = image_tag( "cake.png" )
+            - if @specials_hash[ :oldest_male_athlete ]
+              = @meeting.header_date.year - @specials_hash[ :oldest_male_athlete ].year_of_birth.to_i
+              = image_tag( "cake.png" )
           %td.span3
-            %a{'id'=>"swimmer#{@specials_hash[ :oldest_male_athlete ].id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ :oldest_male_athlete ].id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-              = @specials_hash[ :oldest_male_athlete ].get_full_name
+            - if @specials_hash[ :oldest_male_athlete ]
+              %a{'id'=>"swimmer#{@specials_hash[ :oldest_male_athlete ].id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>@specials_hash[ :oldest_male_athlete ].id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                = @specials_hash[ :oldest_male_athlete ].get_full_name
           %td.span1.goggles-rightalign
-            = @specials_hash[ :oldest_male_athlete ].year_of_birth
+            - if @specials_hash[ :oldest_male_athlete ]
+              = @specials_hash[ :oldest_male_athlete ].year_of_birth
           %td.span1.goggles-rightalign
         - [ :best_1st_male_score, :best_2nd_male_score, :best_3rd_male_score, :worst_male_score ].each do | key |
-          - if @specials_hash[ key ].standard_points > 0
+          - if @specials_hash[ key ] && @specials_hash[ key ].standard_points > 0
             %tr
               %td.span3
                 = I18n.t( key, scope: [:meeting_stats] )

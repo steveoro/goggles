@@ -8,7 +8,7 @@ require 'common/format'
 
 = AdminIndexController
 
-  - version:  4.00.383
+  - version:  4.00.499
   - author:   Steve A.
 
 =end
@@ -47,7 +47,7 @@ class AdminIndexController < ApplicationController
   #
   def upload_db_dump
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ upload_db_dump() -----"
+#    logger.debug "\r\n\r\n!! ------ upload_db_dump() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     @console_output = ''
     @filename_to_be_run = nil
@@ -119,7 +119,7 @@ class AdminIndexController < ApplicationController
   #
   def upload_db_seed
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ upload_db_seed() -----"
+#    logger.debug "\r\n\r\n!! ------ upload_db_seed() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     @console_output = ''
     @filename_to_be_run = nil
@@ -222,7 +222,7 @@ class AdminIndexController < ApplicationController
   #
   def db_structure
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ db_structure() -----"
+#    logger.debug "\r\n\r\n!! ------ db_structure() -----"
 #    logger.debug "PARAMS: #{params.inspect}"
     @console_output = params[:console_output]
   end
@@ -232,29 +232,10 @@ class AdminIndexController < ApplicationController
     @console_output = ''
     if request.post?
       logger.info( "\r\n\r\n!! ------ db_reset() -----" )
-      logger.info( "#{current_admin.name} is executing DROP + CREATE DATABASE + Migrations + SEED...\r\n" )
-      output = "Executing DROP + CREATE DATABASE + Migrations + SEED...\r\n"
-      rails_config  = Rails.configuration             # Prepare & check configuration:
-      db_name       = rails_config.database_configuration[Rails.env]['database']
-      db_user       = rails_config.database_configuration[Rails.env]['username']
-      db_pwd        = rails_config.database_configuration[Rails.env]['password']
-      output << `mysql --user=#{db_user} --password=#{db_pwd} --execute=\"drop database if exists #{db_name}\"`
-      output << `mysql --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{db_name}\"`
-      execute_cmd( 'rake', 'db:migrate' )
-                                                    # Remove DB password from the output
-      output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-
-      if $?.success?
-        output << "\r\nExecution of 'rake db:migrate' OK.\r\n"
-      else
-        output << "\r\nExecution of 'rake db:migrate' FAILED!\r\n"
-      end
-      execute_cmd( 'rake', 'sql:exec' )
-      if $?.success?
-        output << "\r\nExecution of 'rake sql:exec' OK.\r\n"
-      else
-        output << "\r\nExecution of 'rake sql:exec' FAILED!\r\n"
-      end
+      logger.info( "#{current_admin.name} is executing a DB:REBUILD_FROM_DUMP...\r\n" )
+      output = "Executing DB:REBUILD_FROM_DUMP...\r\n"
+      is_ok = execute_cmd( 'bundle exec rake', 'db:rebuild_from_dump' )
+      output << "\r\nExecution of 'rake db:rebuild_from_dump' #{ is_ok ? 'OK!' : 'FAILED!'}\r\n"
       @console_output = output                      # Cannot use full console output because it's too big!
     end
     redirect_to db_structure_path( console_output: @console_output )
@@ -267,12 +248,8 @@ class AdminIndexController < ApplicationController
       logger.info( "\r\n---- run_db_migrations() ----" )
       logger.info( "#{current_admin.name} is executing 'rake db:migrate'...\r\n" )
       output = "Executing 'rake db:migrate'...\r\n"
-      execute_cmd( 'rake', 'db:migrate' )
-      if $?.success?
-        output << "\r\nExecution of 'rake db:migrate' OK.\r\n"
-      else
-        output << "\r\nExecution of 'rake db:migrate' FAILED!\r\n"
-      end
+      is_ok = execute_cmd( 'rake', 'db:migrate' )
+      output << "\r\nExecution of 'rake db:migrate' #{ is_ok ? 'OK!' : 'FAILED!'}\r\n"
       @console_output = output                      # Cannot use full console output because it's too big!
     end
     redirect_to db_structure_path( console_output: @console_output )
@@ -369,7 +346,7 @@ class AdminIndexController < ApplicationController
              "Passage rows deleted: #{deleted_pass}\r\n" +
              "MeetingProgram rows deleted: #{deleted_progs}\r\n" +
              "MeetingEvent rows deleted: #{deleted_events}\r\n" +
-             "+ all associated MeetingTeamScore & MeetingSession rows.\r\n" 
+             "+ all associated MeetingTeamScore & MeetingSession rows.\r\n"
     redirect_to goggles_admin_index_path( console_output: output )
   end
   # ---------------------------------------------------------------------------
@@ -433,52 +410,80 @@ class AdminIndexController < ApplicationController
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private
 
 
-  # Executes the specified command name with its parameters on the running server.
+  # Executes non-interactively the specified command name with its parameters on
+  # the running server.
+  # Returns true on success, false otherwise.
   #
   def execute_cmd( cmd_name, parameters )
     command_line = "#{cmd_name} #{parameters}"
-    output = `#{command_line}`
-
-    output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-    command_line.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-                                                  # Log what the admin has been doing:
+    output = ''
+    is_ok = false
+                                                    # Log what the admin is about to do:
     logger.info( "\r\n---- execute_cmd( #{cmd_name}, #{parameters} ) ----" )
     logger.info( "#{current_admin.name} is executing \"#{command_line}\" in '#{Dir.pwd}'...\r\n" )
-    if $?.success?
-      @console_output << "\r\nExecuting \"#{command_line}\" in '#{Dir.pwd}'...\r\n"
-      @console_output << output
-    else
-      @console_output << "Execution of \"#{command_line}\" (in '#{Dir.pwd}') FAILED!"
+    Open3.popen3( command_line ) do |stdin, stdout, stderr, wait_thr|
+      stdout.each_line { |line| output << line }
+      stderr.each_line { |line| output << "[STDERR]> #{line}" }
+      stdin.close
+      is_ok = wait_thr.value.success?
     end
+                                                    # Remove sensible data from output buffer:
+    output.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+    command_line.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+                                                    # Log the results:
+    logger.info( "Resulting output:\r\n----8<----8<----8<----\r\n#{output}\r\n----8<----8<----8<----\r\n" )
+    @console_output << "\r\nExecuting \"#{command_line}\" in '#{Dir.pwd}'...\r\n"
+    @console_output << "Execution FAILED!\r\n" unless is_ok
+    @console_output << output
+    is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
-  # Executes the specified command_line on the running server with sudo priviledges.
+  # Executes non-interactively the specified command_line on the running server
+  # with sudo priviledges.
+  # Returns true on success, false otherwise.
   #
   def execute_sudo_cmd( command_line, password )
+    command_line = "sudo -S #{command_line}"
     output = ''
-    output, status = Open3.capture2e( "sudo -S #{command_line}", :stdin_data => password + "\r\n" )
-    output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-    command_line.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-                                                  # Log what the admin has been doing:
+    is_ok = false
+                                                    # Log what the admin is about to do:
     logger.info( "\r\n---- execute_sudo_cmd( #{command_line} ) ----" )
-    logger.info( "#{current_admin.name} is executing \"sudo #{command_line}\"...\r\n" )
-    logger.info( output )
-    @console_output = "Executing \"sudo #{command_line}\"...\r\n"
+    logger.info( "#{current_admin.name} is executing \"#{command_line}\" in '#{Dir.pwd}'...\r\n" )
+    Open3.popen3( command_line ) do |stdin, stdout, stderr, wait_thr|
+      stdin.puts "#{password}\r\n"
+      stdout.each_line { |line| output << line }
+      stderr.each_line { |line| output << "[STDERR]> #{line}" }
+      stdin.close
+      is_ok = wait_thr.value.success?
+    end
+                                                    # Remove sensible data from output buffer:
+    output.gsub!( Regexp.new( password ), '[***] ')
+    command_line.gsub!( Regexp.new( password ), '[***]')
+    output.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+    command_line.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+                                                    # Log the results:
+    logger.info( "Resulting output:\r\n----8<----8<----8<----\r\n#{output}\r\n----8<----8<----8<----\r\n" )
+    @console_output = "Executing \"#{command_line}\" in '#{Dir.pwd}'...\r\n"
+    @console_output << "Execution FAILED!\r\n" unless is_ok
     @console_output << output
-    @console_output << "\r\nExit status: #{status}"
+    is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Executes the mysqldump command.
+  # Returns true on success, false otherwise.
   #
   def execute_mysqldump_with_send_file( table_names = nil )
     rails_config  = Rails.configuration
@@ -490,6 +495,8 @@ class AdminIndexController < ApplicationController
     db_version    = Version::DB + '.' + DateTime.now.strftime("%Y%m%d.%H%M")
     output_folder = File.join( File.join(Rails.root, 'public'), 'output' )
     file_name     = File.join( output_folder, "#{db_name}" )
+    output        = ''
+    is_ok         = false
                                                     # Prepare and execute the mysqldump command:
     command_line = "mysqldump -u #{db_user} -p#{db_pwd} --no-autocommit --single-transaction --extended-insert --triggers --routines --comments "
     if table_names.instance_of?(Array) && (table_names.size > 0)
@@ -499,19 +506,25 @@ class AdminIndexController < ApplicationController
       command_line << "--add-drop-database -B #{db_name}"
     end
     file_name << "-#{db_version}#{file_ext}"
-                                                    # Do the actual run and capture the output:
-    output = `#{command_line} #{zip_pipe} > #{file_name}`
-    output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-    command_line.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
-                                                    # Log what the admin has been doing:
+    command_line = "#{command_line} #{zip_pipe} > #{file_name}"
+                                                    # Log what the admin is about to do:
     logger.info( "\r\n---- run_mysqldump_with_send_file( #{ table_names ? table_names[0] : 'FULL DUMP'} ) ----" )
     logger.info( "#{current_admin.name} is executing \"#{command_line}\" in '#{Dir.pwd}'...\r\n" )
-    logger.info( output )
-    if $?.success?
-      logger.info( "Done!" )
-    else
-      logger.error( "Execution FAILED!" )
+                                                    # Do the actual run and capture the output:
+    Open3.popen3( command_line ) do |stdin, stdout, stderr, wait_thr|
+      stdout.each_line { |line| output << line }
+      stderr.each_line { |line| output << "[STDERR]> #{line}" }
+      stdin.close
+      is_ok = wait_thr.value.success?
     end
+                                                    # Remove sensible data from output buffer:
+    output.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+    command_line.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+                                                    # Log the results:
+    logger.info( "Resulting output:\r\n----8<----8<----8<----\r\n#{output}\r\n----8<----8<----8<----\r\n" )
+    @console_output = "Executing \"#{command_line}\" in '#{Dir.pwd}'...\r\n"
+    @console_output << "Execution FAILED!\r\n" unless is_ok
+    @console_output << output
 
     if File.exists?( file_name )
       send_file( file_name )
@@ -519,9 +532,10 @@ class AdminIndexController < ApplicationController
       flash[:error] = I18n.t(:file_not_created_for_some_reason)
       redirect_to goggles_admin_index_path( console_output: output )
     end
+    is_ok
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Merge two teams, given their ID.
@@ -570,16 +584,16 @@ class AdminIndexController < ApplicationController
     # - collect duplicates TeamAffiliation
     #   - duplicate row must be converted to equivalent destination (the one they are the duplicate of)
     #   - destination value must be used for update
-    #   - duplicate row can then be safely removed 
+    #   - duplicate row can then be safely removed
     # - collect non-duplicates (new) Badge
     # - collect duplicates Badge
     #   - proceed as above [...]
     # All other linked entites have similar dependencies:...
 
     # => foreach non-duplicate DataImportTeamAlias: update them (team_id)
-    #   => delete remaining duplicates 
+    #   => delete remaining duplicates
     # => foreach non-duplicate GoggleCup: update them (team_id)
-    #   => delete remaining duplicates 
+    #   => delete remaining duplicates
 
     # => process non-duplicate Badges and update them (one by one)
     #    for each new Badge, find and update its linked:
@@ -880,7 +894,8 @@ class AdminIndexController < ApplicationController
 
     flash[:info] = I18n.t(:teams_merged) if is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Logs what was found during the collection phase.
@@ -895,7 +910,8 @@ class AdminIndexController < ApplicationController
       }
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Executes a single group of update operations for the team-merge process
@@ -920,7 +936,8 @@ class AdminIndexController < ApplicationController
       row.save!
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Executes a single group of delete operations for the team-merge process
@@ -933,6 +950,6 @@ class AdminIndexController < ApplicationController
       row.destroy
     end
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

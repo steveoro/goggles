@@ -744,7 +744,7 @@ it:
   not_available: "N.D."
 
   maintenance_title: "Siamo in manutenzione!"
-  maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (ore italiane, presumibilmente). Riprova piu' tardi! ;-)"
+  maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (presumibilmente; ore italiane). Riprova piu' tardi! ;-)"
 
   netzke:
     basepack:
