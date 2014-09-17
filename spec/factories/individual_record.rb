@@ -31,6 +31,8 @@ end
 #
 module IndividualRecordFactoryTools
 
+  # FIXME If new version will run correctly remove this method
+  #
   # Creates (and returns) an Array of IndividualRecord rows associated
   # to the specified swimmer, each with an unique event_type_id and
   # with record_type_id forced to 1 (= "personal best").
@@ -62,7 +64,8 @@ module IndividualRecordFactoryTools
   # with record_type_id forced to 1 (= "personal best").
   def self.create_personal_best_list( swimmer, row_count = 5 )
     list = []
-    EventsByPoolType.only_for_meetings.not_relays.each do |event_by_pool_type|
+    event_list = EventsByPoolType.only_for_meetings.not_relays.select([:event_type_id, :pool_type_id]).sort{ rand() - 0.5 }[ 0.. row_count-1 ]
+    event_list.each do |event_by_pool_type|
       list << FactoryGirl.create( :individual_record,
         swimmer_id: swimmer.id,
         meeting_individual_result: FactoryGirl.create( :meeting_individual_result,
@@ -71,17 +74,17 @@ module IndividualRecordFactoryTools
             meeting_event: FactoryGirl.create( :meeting_event, 
               meeting_session: FactoryGirl.create( :meeting_session, 
                 swimming_pool: FactoryGirl.create( :swimming_pool, 
-                  pool_type: event_by_pool_type.pool_type ) 
+                  pool_type_id: event_by_pool_type.pool_type_id ) 
                 ),
-              event_type: event_by_pool_type.event_type ),
+              event_type_id: event_by_pool_type.event_type_id ),
             gender_type_id: swimmer.gender_type_id
           )
         ),
         record_type_id: 1,
-        event_type:     event_by_pool_type.event_type
+        event_type_id:  event_by_pool_type.event_type_id
       )
     end
-    list.sort{ rand() - 0.5 }[ 0.. row_count-1 ]
+    list
   end   
 end
 #-- ---------------------------------------------------------------------------
