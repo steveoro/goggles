@@ -77,7 +77,8 @@ FactoryGirl.define do
     event_order               { ((rand * 100) % 15).to_i + 1 }
     meeting_session
     # The following 2 columns use the pre-loaded seed records:
-    event_type_id             { ((rand * 100) % 18).to_i + 1 } # ASSERT: at least 18 event types
+    #event_type_id             { ((rand * 100) % 18).to_i + 1 } # ASSERT: at least 18 event types
+    event_type_id             { EventsByPoolType.only_for_meetings.not_relays.for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).to_a[ rand * 16 ].event_type_id }
     heat_type_id              { ((rand * 100) % 3).to_i + 1 }  # ASSERT: at least 3 heat types
     user
 

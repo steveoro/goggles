@@ -18,6 +18,7 @@ describe EventsByPoolType, :type => :model do
     it_behaves_like( "(the existance of a class method)", [
       :not_relays,
       :only_for_meetings,
+      :for_pool_type_code,
       :sort_by_pool,
       :sort_by_event
     ])

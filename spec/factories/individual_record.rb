@@ -34,9 +34,9 @@ module IndividualRecordFactoryTools
   # Creates (and returns) an Array of IndividualRecord rows associated
   # to the specified swimmer, each with an unique event_type_id and
   # with record_type_id forced to 1 (= "personal best").
-  def self.create_personal_best_list( swimmer, row_count = 5 )
-    unique_event_type_ids = (1..18).to_a.sort{ rand() - 0.5 }[ 0.. row_count-1 ]
+  def self.steve_create_personal_best_list( swimmer, row_count = 5 )
     list = []
+    unique_event_type_ids = (1..18).to_a.sort{ rand() - 0.5 }[ 0.. row_count-1 ]
     unique_event_type_ids.each do |event_id|
       list << FactoryGirl.create( :individual_record,
         swimmer_id: swimmer.id,
@@ -55,6 +55,34 @@ module IndividualRecordFactoryTools
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+  # Leega version, forced to use events_by_pool_type
+  # Creates (and returns) an Array of IndividualRecord rows associated
+  # to the specified swimmer, each with an unique event_type_id and
+  # with record_type_id forced to 1 (= "personal best").
+  def self.create_personal_best_list( swimmer, row_count = 5 )
+    list = []
+    EventsByPoolType.only_for_meetings.not_relays.each do |event_by_pool_type|
+      list << FactoryGirl.create( :individual_record,
+        swimmer_id: swimmer.id,
+        meeting_individual_result: FactoryGirl.create( :meeting_individual_result,
+          swimmer_id:      swimmer.id,
+          meeting_program: FactoryGirl.create( :meeting_program,
+            meeting_event: FactoryGirl.create( :meeting_event, 
+              meeting_session: FactoryGirl.create( :meeting_session, 
+                swimming_pool: FactoryGirl.create( :swimming_pool, 
+                  pool_type: event_by_pool_type.pool_type ) 
+                ),
+              event_type: event_by_pool_type.event_type ),
+            gender_type_id: swimmer.gender_type_id
+          )
+        ),
+        record_type_id: 1,
+        event_type:     event_by_pool_type.event_type
+      )
+    end
+    list.sort{ rand() - 0.5 }[ 0.. row_count-1 ]
+  end   
 end
 #-- ---------------------------------------------------------------------------
 #++
