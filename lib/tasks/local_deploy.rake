@@ -138,10 +138,11 @@ Options: [Rails.env=#{Rails.env}]
 
   DESC
   task :rebuild_from_scratch do
-    puts "*** Task: Compound DB RESET + MIGRATE + SQL:EXEC + UPDATE_RECORDS ***"
+    puts "*** Task: Compound DB RESET + MIGRATE + SQL:EXEC + DB:SEED + UPDATE_RECORDS ***"
     Rake::Task['db:reset'].invoke
     Rake::Task['db:migrate'].invoke
     Rake::Task['sql:exec'].invoke
+    Rake::Task['db:seed'].invoke
     Rake::Task['db:update_records'].invoke
     puts "Done."
   end
