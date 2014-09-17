@@ -743,6 +743,8 @@ en:
   to_be_defined: "To be defined..."
   not_available: "N.A."
 
+  tech_deployment_details: "Tech info stuff"
+  more_info: "What's this?..."
   maintenance_title: "Maintenance time!"
   maintenance_info: "The server is currently down for maintenance for data & site update, until {DATETIME} (hopefully; Italy time zone). Try again later! ;-)"
 

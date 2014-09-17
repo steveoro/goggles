@@ -1,7 +1,9 @@
 %br
   .row-fluid
     %div{'class'=>"alert alert-info", 'id'=>"forgive_us"}
-      %h3= I18n.t('forgive_us.title')
-      %p= I18n.t('forgive_us.part_1')
-      = I18n.t('forgive_us.part_2')
-      %br= I18n.t('forgive_us.part_3')
+      %h3= I18n.t('info_about.forgive_us.title')
+      %p= I18n.t('info_about.forgive_us.part_1')
+      %p= I18n.t('info_about.forgive_us.part_2')
+      %p
+        = I18n.t('info_about.forgive_us.part_3')
+        = link_to( I18n.t('contact_us'), contact_us_path() )

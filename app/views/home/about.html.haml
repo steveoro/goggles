@@ -1,0 +1,84 @@
+.row-fluid
+  - # What's Goggles?!?
+  = render( partial: 'what_is_goggles' )
+%hr
+
+.row-fluid
+  %h3= I18n.t( :tech_deployment_details )
+
+.row-fluid
+  .span6
+    .row-fluid
+      %h3
+        Versioning:
+    .row-fluid
+      .span6
+        %h4
+          Internal Framework version:
+      .span6
+        %b= h( AGEX_FRAMEWORK_VERSION ) if defined? AGEX_FRAMEWORK_VERSION
+    .row-fluid
+      .span6
+        = "#{ AGEX_APP_NAME } application, version:"
+      .span6
+        %b= h( @versioning.send(AppParameter::PARAM_APP_NAME_FIELD) )
+        = show_tag( @versioning.a_bool, "time.png" )
+    .row-fluid
+      .span6
+        = "#{ AGEX_APP_NAME } database framework, vers.:"
+      .span6
+        %b= h( @versioning.send(AppParameter::PARAM_DB_VERSION_FIELD) )
+    .row-fluid
+      .span6
+        Build date:
+      .span6
+        = h Format.a_datetime( @versioning.send( @versioning.respond_to?('updated_on') ? 'updated_on' : 'updated_at' ) )
+    .row-fluid
+      .span6
+        Running environment:
+      .span6
+        %i
+          %b= h( "Rack: #{ENV['RACK_ENV'] }" ) if defined? ENV
+    .row-fluid
+      .offset6.span6
+        %i
+          %b= h( "Rails: #{ENV['RAILS_ENV'] }" ) if defined? ENV
+    .row-fluid
+      .offset6.span6
+        %i
+          %b= h( "#{ENV['HOSTNAME'] } (#{ENV['CPU'] }, #{ENV['MACHTYPE'] })" ) if defined? ENV
+    %br
+    .row-fluid
+      .span2
+        %a{ href: "http://www.rubyonrails.org/" }
+          = image_tag( 'rails.png', height: '32', alt: 'Rails Logo' )
+      .span10
+        %p
+          Developed by Stefano Alloro, using
+          %a{ href: "http://www.rubyonrails.org/" }
+            Ruby On Rails
+          = '(vers. ' + h( RAILS_GEM_VERSION ) + ')' if defined? RAILS_GEM_VERSION
+        %p
+          AgeX Framework structure (p) 2006-2013,
+          = image_tag( 'fasar_logo_1.png', size: '256x32', alt: 'FASAR Software' )
+    %br
+    .row-fluid
+      %h3
+        Core extensions:
+    .row-fluid
+      .span2
+        %a{ href: "http://rubyreports.org/" }
+          = image_tag( 'ruport.png', size: '96x48', alt: 'Ruport' )
+      .span10
+        %p
+          RubyReports, a ruby gem library for easy(er) reporting.
+    %br
+
+  .offset6
+    .row-fluid.span6
+      %h3
+        Installed Gems:
+    .row-fluid.span6
+      %ul
+        - @gem_info.each do |row|
+          %li= row
