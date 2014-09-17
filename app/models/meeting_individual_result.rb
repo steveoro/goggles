@@ -63,6 +63,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_numericality_of :reaction_time
 
   delegate :short_name, to: :category_type, prefix: true
+  delegate :code,       to: :event_type, prefix: true
 
   scope :is_valid,                    ->              { where(is_out_of_race: false, is_disqualified: false) }
   scope :is_male,                     ->              { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }

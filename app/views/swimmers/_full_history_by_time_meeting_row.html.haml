@@ -15,6 +15,6 @@
     = meeting_individual_result.get_timing
   %td.goggles-rightalign
     - if meeting_individual_result.standard_points > 0
-      = meeting_individual_result.standard_points
+      = format_score( meeting_individual_result.standard_points )
   %td.goggles-rightalign
     = meeting_individual_result.rank
