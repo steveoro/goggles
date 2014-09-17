@@ -1,0 +1,6 @@
+%h2= "--=[  Goggles  -o^o-  ]=-- #{ t('newsletter_mailer.community.generic_title') }"
+
+- if @newsfeed_array.respond_to?( :each )
+  %h3= t('newsletter_mailer.community.unread_news')
+  - @newsfeed_array.each do |feed|
+    = render( partial: 'goggles/news_feed_row', locals: { feed: feed } )

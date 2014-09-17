@@ -6,7 +6,9 @@ en:
       meeting_data_has_been_updated: "The Meeting data has been updated for the following Meetings:"
     achievements:
       generic_title: "new achievement unlocked!"
+      unlocked_achievements: "Unlocked Achievements"
     application:
       generic_title: "news regarding the application!"
     community:
       generic_title: "you have some unread notifies!"
+      unread_news: "Unread news"

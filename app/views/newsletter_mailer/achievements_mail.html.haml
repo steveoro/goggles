@@ -1,0 +1,6 @@
+%h2= "--=[  Goggles  -o^o-  ]=-- #{ t('newsletter_mailer.achievements.generic_title') }"
+
+- if @achievements_array.respond_to?( :each )
+  %h3= t('newsletter_mailer.achievements.unlocked_achievements')
+  - @achievements_array.each do |achievement|
+    = render( partial: 'goggles/achievement_row', locals: { achievement: achievement } )

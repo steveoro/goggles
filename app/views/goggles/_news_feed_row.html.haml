@@ -1,0 +1,6 @@
+%h4.text-info= feed.title
+%p= feed.body
+%small= "#{Format.a_datetime( feed.updated_at )}"
+%p
+  %small= "#{t('newsfeed.go_to_friend')} " if feed.is_friend_activity && feed.friend
+  %small= link_to( feed.friend.name, swimmer_radio_path(feed.friend.swimmer_id) ) if feed.is_friend_activity && feed.friend && feed.friend.swimmer_id

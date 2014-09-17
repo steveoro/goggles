@@ -12,11 +12,9 @@ describe NewsletterMailer, :type => :mailer do
     it 'renders the receiver email' do
       expect( subject.to.first ).to include( user.email )
     end
-
     it 'renders the title in the subject' do
       expect( subject.subject ).to match( I18n.t('newsletter_mailer.data_updates.generic_title') )
     end
-
     it 'renders the hostname in the subject' do
       expect( subject.subject ).to match( ENV['HOSTNAME'] )
     end
@@ -25,6 +23,57 @@ describe NewsletterMailer, :type => :mailer do
       meeting_array.each do |meeting|
         expect( subject.body.encoded ).to include( meeting.description )
         expect( subject.body.encoded ).to include( meeting.header_year )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "#achievements_mail()" do
+    let(:achievements_array) do
+      unique_achievement_ids = (1..12).to_a.sort{ rand() - 0.5 }[ 0..2 ]
+      Achievement.where( id: unique_achievement_ids )
+    end
+    subject { NewsletterMailer.achievements_mail( user, achievements_array ) }
+
+    it 'renders the receiver email' do
+      expect( subject.to.first ).to include( user.email )
+    end
+    it 'renders the title in the subject' do
+      expect( subject.subject ).to match( I18n.t('newsletter_mailer.achievements.generic_title') )
+    end
+    it 'renders the hostname in the subject' do
+      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+    end
+
+    xit 'renders for each specified achievement its localized name and description' do
+      achievements_array.each do |achievement|
+        # FIXME Missing something like a "get_full_name" w/ localization support
+#        expect( subject.body.encoded ).to include( achievement.code )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "#community_mail()" do
+    let(:newsfeed_array) { create_list( :news_feed, 5, user: user ) }
+    subject { NewsletterMailer.community_mail( user, newsfeed_array ) }
+
+    it 'renders the receiver email' do
+      expect( subject.to.first ).to include( user.email )
+    end
+    it 'renders the title in the subject' do
+      expect( subject.subject ).to match( I18n.t('newsletter_mailer.community.generic_title') )
+    end
+    it 'renders the hostname in the subject' do
+      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+    end
+
+    it 'renders for each specified news_feed its title and body' do
+      newsfeed_array.each do |feed|
+        expect( subject.body.encoded ).to include( feed.title )
+        expect( subject.body.encoded ).to include( feed.body )
       end
     end
   end

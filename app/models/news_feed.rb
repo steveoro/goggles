@@ -1,3 +1,11 @@
+=begin
+
+= NewsFeed model
+
+  - version:  4.00.501
+  - author:   Steve A.
+
+=end
 class NewsFeed < ActiveRecord::Base
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
   belongs_to :friend, class_name: "User", foreign_key: "friend_id"
