@@ -554,7 +554,7 @@ it:
   invalid_user: "Utente / Password non corretti!"
   access_denied: "Accesso negato."
   disconnected: Disconnesso
-  welcome: 'Benvenuti !'
+  welcome: 'Benvenuto !'
   hi: Ciao
   or: oppure
   user_created: Utente creato con successo.
