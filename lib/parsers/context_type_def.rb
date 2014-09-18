@@ -59,7 +59,7 @@ class ContextTypeDef
 
   # Convert the current instance to a readable string
   def to_s
-    "[ContextTypeDef: #{@context_name}, #{@condition_array.size} condition(s)" +
+    "[ContextTypeDef: #{@context_name.upcase}, #{@condition_array.size} condition(s)" +
     ( @parent_context_name ? ", parent: '#{@parent_context_name}'" : '' ) +
     ( @line_timeout ? ", timeout: #{@line_timeout}" : '' ) + ']'
   end

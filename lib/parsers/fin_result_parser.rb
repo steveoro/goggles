@@ -15,7 +15,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.467
+  - Goggles framework vers.:  4.00.503
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -34,12 +34,13 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE  = false
+  DEBUG_VERY_VERBOSE  = true
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
   DEBUG_EXTRA_VERBOSE = false
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  #++
 
 
   # Read and parse a single txt file into a complex Hash structure in memory.
@@ -92,14 +93,13 @@ class FinResultParser
   #   possible value found of the above fields.
   #
   def self.parse_txt_file( full_pathname, show_progress = DEBUG_VERBOSE, logger = nil )
-    logger.info( "\r\n-- FinResultParser::parse_txt_file(#{full_pathname}):" ) if logger
+    log_somehow( logger, "\r\n-- FinResultParser::parse_txt_file(#{full_pathname}):", true, :info )
                                                     # Store the basename of the file, just for reference
     source_file_name = File.basename( full_pathname )
     line_count = 0                                  # File lines
     tot_rows = 0                                    # Total data rows extracted
     previous_key = {}                               # Previously unique key Hash, one for each parsed context
     previous_parent_context = nil
-    condition_ok = true
     index_to_check = 0
     previous_rows = {}
     parse_result = {}
@@ -108,7 +108,7 @@ class FinResultParser
                                                     # Scan each line of the file until gets reaches EOF:
     File.open( full_pathname ) do |f|
       f.each_line { |curr_line|                     # Handle invalid char sequences using forced encoding:
-        logger.debug( "Reading line #{line_count}...: <<#{curr_line}>>" ) if (logger && DEBUG_VERBOSE)
+        log_somehow( logger, "Reading line #{line_count}...: <<#{curr_line}>>", DEBUG_VERBOSE )
         if String.method_defined?( :encode )
           if curr_line.force_encoding("ISO-8859-1").valid_encoding?
             curr_line = curr_line.force_encoding("ISO-8859-1").encode("UTF-8", { invalid: :replace, undef: :replace, replace: '' }).rstrip
@@ -120,18 +120,18 @@ class FinResultParser
           curr_line = ic.iconv(curr_line)
         end
         full_text_file_contents << curr_line
+        any_detection = false
                                                     # For each context type defined...
-        parsing_defs.context_types.each { |context_sym, detector|
-          if DEBUG_EXTRA_VERBOSE
-            logger ? logger.debug( "Using #{detector}..." ) : puts( "Using #{detector}..." )
-          end
+        parsing_defs.context_types.each do |context_sym, detector|
+          log_somehow( logger, "Using #{detector}...", DEBUG_EXTRA_VERBOSE )
                                                     # Init parse result data pages if necessary:
           parse_result[ context_sym ] = [] if parse_result[ context_sym ].nil?
                                                     # Run checkings for current line:
           is_detected = detector.feed_and_detect( curr_line, line_count, previous_parent_context )
 
           if ( is_detected )                        # === DETECTION SUCCESSFULL ===
-            logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
+            any_detection = true
+            log_somehow( logger, "=> Context switched to '#{context_sym}'. Token extraction in progress...", DEBUG_VERBOSE )
             cached_rows = detector.dump_line_cache
             token_hash = tokenize_context_cache(
                 parsing_defs, context_sym,
@@ -144,24 +144,16 @@ class FinResultParser
                                                     # There must be a unique key defined for this context
               if ( parsing_defs.required_keys( context_sym ).size < 1 )
                 key_string = line_count + 1         # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking)
-                if logger
-                  if DEBUG_VERBOSE
-                    logger.warn( "---WARNING: missing unique key definition for context '#{context_sym}'!" )
-                    logger.warn( "            Using current line count (#{line_count+1}) as unique ID." )
-                  end
-                else
-                  if DEBUG_VERBOSE
-                    puts( "---WARNING: missing unique key definition for context '#{context_sym}'!" )
-                    puts( "            Using current line count (#{key_string}) as unique ID." )
-                  end
-                end
+                log_somehow(
+                  logger,
+                  "---WARNING: missing unique key definition for context '#{context_sym}'!\r\n" +
+                  "            Using current line count (#{line_count+1}) as unique ID.",
+                  DEBUG_VERBOSE, :warn
+                )
               else                                  # Extract unique key and store new current context page
                 key_string = compose_memstorage_key( parsing_defs, context_sym, token_hash, logger )
               end
-
-              if show_progress
-                logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{key_string}'.") : puts("   Adding new context '#{context_sym}', key_string='#{key_string}'.")
-              end
+              log_somehow( logger, "   Adding new context '#{context_sym}', key_string='#{key_string}'.", show_progress )
 
               parse_result[ context_sym ] << {
                 id:           key_string,
@@ -178,20 +170,16 @@ class FinResultParser
               if ( parent_context == previous_parent_context )
                                                     # There must be already a unique key stored for the other (parent) context
                 if previous_key[ parent_context ].nil?
-                  if logger
-                    logger.warn("---WARNING: missing unique key for parent context '#{parent_context}' (parent of '#{context_sym}').")
-                    logger.warn("            Cannot add '#{context_sym}' data page.")
-                  else
-                    puts("---WARNING: missing unique key for parent context '#{parent_context}' (parent of '#{context_sym}').")
-                    puts("            Cannot add '#{context_sym}' data page.")
-                  end
+                  log_somehow(
+                    logger,
+                    "---WARNING: missing unique key for parent context '#{parent_context}' (parent of '#{context_sym}').\r\n" +
+                    "            Cannot add '#{context_sym}' data page.",
+                    true, :warn
+                  )
                 else                                # Retrieve pre-stored unique key of parent context and store new current context page
-                  if DEBUG_VERBOSE
-                    logger ? logger.debug("   Found (parent) key_string='#{previous_key[ parent_context ] }'.") : puts("   Found (parent) key_string='#{previous_key[ parent_context ] }'.")
-                  end
-                  if show_progress
-                    logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'.") : puts("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'")
-                  end
+                  log_somehow( logger, "   Found (parent) key_string='#{previous_key[ parent_context ] }'.", DEBUG_VERBOSE )
+                  log_somehow( logger, "   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'", show_progress )
+
                   parse_result[ context_sym ] << {
                     id:           previous_key[ parent_context ],
                     fields:       token_hash,
@@ -211,41 +199,39 @@ class FinResultParser
                 # only correct method to uniquely identify two context with the same RegExp.
               end
             end
-            if DEBUG_VERY_VERBOSE && parse_result[ context_sym ].last
-              logger ? logger.debug("   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}") : puts("   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}\r\n")
-            end
-          # else                                    # === DETECTION UNSUCCESSFUL ===
-            # ( nothing to do )
+            log_somehow( logger, "   Parse_result fields = #{parse_result[ context_sym ].last[:fields].inspect}", DEBUG_VERY_VERBOSE && parse_result[ context_sym ].last )
+
+#          else                                     # === DETECTION UNSUCCESSFUL ===
+            # ( nothing to do -- left here in case we need to log also this )
           end
-        }
+        end                                         # ---(end loop on ContextDetectors)---
+        unless any_detection                        # Clear parent context when nothing is recognized:
+          previous_parent_context = nil
+          log_somehow( logger, "   Nothing recognized, parent context set to nil.", DEBUG_VERBOSE )
+        end
         line_count += 1
       }
     end                                             # (automatically closes the file)
 
-    if logger
-      logger.info( "\r\n---------------------------------------------\r\n------------------ STATS: -------------------\r\n---------------------------------------------\r\n\r\nFile '#{source_file_name}':" )
-    else
-      puts( "\r\n---------------------------------------------\r\n------------------ STATS: -------------------\r\n---------------------------------------------\r\n\r\nFile '#{source_file_name}':" )
-    end
+    log_somehow(
+      logger,
+      "\r\n---------------------------------------------\r\n" +
+      "------------------ STATS: -------------------\r\n" +
+      "---------------------------------------------\r\n\r\nFile '#{source_file_name}':",
+      true, :info
+    )
     tot_data_rows = 0                               # Count total data rows, just for "fun stats"
     parse_result.each { |context_sym, data_page_array|
-      if logger
-        logger.info( "Total '#{context_sym}' data pages : #{data_page_array.size} / #{tot_rows} lines found" )
-      else
-        puts( "Total '#{context_sym}' data pages : #{data_page_array.size} / #{tot_rows} lines found" )
-      end
-      tot_data_rows += data_page_array.size         # (ASSERT: it should be that tot_data_rows == tot_rows)
+      log_somehow( logger, "Total '#{context_sym}' data pages : #{data_page_array.size} / #{tot_rows} lines found", true, :info )
+      tot_data_rows += data_page_array.size         # ASSERT: expect( tot_data_rows == tot_rows )
     }
-
-    if logger
-      logger.info( "\r\nTotal read lines ....... : #{line_count} (including garbage)" )
-      logger.info( "Protocol efficiency .... : #{(( tot_rows.to_f)/line_count.to_f * 10000.0).round / 100.0} %" )
-      logger.info( "File done.\r\n---------------------------------------------\r\n\r\n\r\n" )
-    else
-      puts( "Total read lines ....... : #{line_count} (including garbage)" )
-      puts( "Protocol efficiency .... : #{(( tot_rows.to_f)/line_count.to_f * 10000.0).round / 100.0} %" )
-      puts( "File done.\r\n---------------------------------------------\r\n\r\n\r\n" )
-    end
+    log_somehow(
+      logger,
+      "\r\nTotal read lines ....... : #{line_count} (including garbage)" +
+      "Protocol efficiency .... : #{(( tot_rows.to_f)/line_count.to_f * 10000.0).round / 100.0} %" +
+      "File done.\r\n---------------------------------------------\r\n\r\n\r\n",
+      true, :info
+    )
 
     {
       parse_result:             parse_result,
@@ -254,19 +240,35 @@ class FinResultParser
       full_text_file_contents:  full_text_file_contents
     }
   end
-  # ---------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  #++
 
 
   private
 
+
+  # Either uses the logger, if defined or outputs the message directly on the console using puts.
+  # The condition_for_logging is checked before allowing any logging.
+  def self.log_somehow( logger, msg, condition_for_logging, logging_method_sym = :debug )
+    return unless condition_for_logging
+    if logger && logger.respond_to?( logging_method_sym )
+      logger.send( logging_method_sym, msg )
+    else
+      puts( msg )
+    end
+  end
 
   # Returns a unique string ID for the context_sym and token_hash specified
   #
   def self.compose_memstorage_key( parsing_defs, context_sym, token_hash, logger = nil )
     return nil if ( parsing_defs.required_keys( context_sym ).size < 1 )
     all_keys_list  = parsing_defs.required_keys( context_sym ).flatten.compact
-    logger.debug( "\r\n*** all_keys_list= #{all_keys_list.inspect}" ) if (logger && DEBUG_VERBOSE)
-    logger.debug( "** token_hash= #{token_hash.inspect}" ) if (logger && DEBUG_VERBOSE)
+    log_somehow(
+      logger,
+      "\r\n*** all_keys_list= #{all_keys_list.inspect}" +
+      "** token_hash= #{token_hash.inspect}",
+      DEBUG_VERBOSE
+    )
     ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join('-')
   end
 
@@ -300,13 +302,11 @@ class FinResultParser
                                                     # For each tokenizer row list...
         tokenizer_row_list.each_with_index { |token_extractor, tok_idx|
           token_field = ( parsing_defs.tokenizer_fields_for( context_sym ) )[row_idx][tok_idx]
-# DEBUG
-#          logger.debug( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (logger && DEBUG_VERY_VERBOSE)
-#          puts( "-- Processing token '#{token_field}' using #{token_extractor}..." ) if (DEBUG_VERBOSE)
+# DEBUG (commented out due to excessive detail)
+#          log_somehow( logger, "-- Processing token '#{token_field}' using #{token_extractor}...", DEBUG_EXTRA_VERBOSE )
           token = token_extractor.tokenize( row_to_be_parsed, current_line_number )
-# DEBUG
-#          logger.debug( "   Extracted '#{token}'." ) if (logger && DEBUG_VERBOSE)
-#          puts( "   Extracted '#{token}'." ) if (DEBUG_VERBOSE)
+# DEBUG (commented out due to excessive detail)
+#          log_somehow( logger, "   Extracted '#{token}'.", DEBUG_EXTRA_VERBOSE )
           token_extractor.clear()                   # Add to the token list only if it contains anything
           token_list.last[ token_field ] = token if token && token.length > 0
         }
@@ -315,10 +315,9 @@ class FinResultParser
 
     result_token_hash = {}
     token_list.flatten.each{|sub_hash| result_token_hash.merge!(sub_hash) }
-    logger.debug( "-- Returning token list: #{result_token_hash.inspect}" ) if (logger && DEBUG_VERBOSE)
+    log_somehow( logger, "-- Returning token list: #{result_token_hash.inspect}", DEBUG_VERBOSE )
     result_token_hash
   end
-  # ---------------------------------------------------------------------------
-
+  # ----------------------------------------------------------------------------
+  #++
 end
-# -----------------------------------------------------------------------------

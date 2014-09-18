@@ -849,7 +849,7 @@ module FinResultPhase2
       flash[:error] = "#{I18n.t(:something_went_wrong)} ['returned swimmer_id IS ZERO']"
       return 0
     end
-    team_id    = search_or_add_a_corresponding_team( session_id, season_id, team_name, force_missing_team_creation )
+    team_id = search_or_add_a_corresponding_team( session_id, season_id, team_name, force_missing_team_creation )
     if ( team_id == 0 )                             # Immediately exit on team search/add error:
       @phase_1_log << "\r\nsearch_or_add_a_corresponding_individual_result(): returned team_id IS ZERO! (And it can't be.)\r\n"
       logger.error( "\r\nsearch_or_add_a_corresponding_individual_result(): returned team_id IS ZERO! (And it can't be.)" )

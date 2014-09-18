@@ -4,18 +4,18 @@
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.503
   - author: Steve A.
 
- Utility class for detecting context changes in the text scanned
- by the parser classes.
+ Service class delegated to ContextType recognition.
 
  The class is designed to be fed one line at a time (coherently with
- reading long files), caching its source feed and detecting a possible
+ reading long files). It caches its source feed and detects a possible
  "context change" when the number of lines fed in is enough to fulfill
  all the checks required by the array of conditions that define the
  context itself.
- Each condition can be either a String (exact match) or a Regexp (Regexp match).
+ At implementation level, each condition can be either a String (exact match)
+ or a Regexp (Regexp match).
 
  The "feed text" must result in a successful match for it to be stored
  into the internal buffer cache and, thus, all the stored "conditions"
@@ -28,7 +28,8 @@
 
  Furthermore, clearing the instance with </tt>clear()</tt> is usually
  unnecessary but it could be useful when using the same instance on
- different source files.
+ different source data (specially in test, when running against different
+ fixture files or while running specs examples using the same subject).
 
 
 === Members:
@@ -56,15 +57,15 @@ class ContextDetector
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = false
+  DEBUG_VERBOSE                                     = true
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE                                = false
+  DEBUG_VERY_VERBOSE                                = true
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
-  DEBUG_EXTRA_VERBOSE                               = false
+  DEBUG_EXTRA_VERBOSE                               = true
   # ---------------------------------------------------------------------------
 
 
@@ -128,42 +129,38 @@ class ContextDetector
   # Always +false+ otherwise.
   #
   def feed_and_detect( text_line, current_line_number, previous_context_name )
+    log_somehow(
+      @logger,
+      "ContextDetector: called for #{@context_type}.\r\n" +
+      "                 Processing line #{current_line_number} (timeout: #{@context_type.line_timeout}), cond. array size: #{@context_type.condition_array.size},\r\n" +
+      "                 prev. context: <#{previous_context_name.inspect}> (expecting: <#{@context_type.parent_context_name.inspect}>)",
+      DEBUG_VERY_VERBOSE
+    )
     return false if ( (@context_type.line_timeout > 0) && (current_line_number > @context_type.line_timeout) )
     return false if @context_type.condition_array.size < 1
     return false if ( @context_type.parent_context_name != previous_context_name )
     is_context_detected = false
 
     condition_to_check = @context_type.condition_array[ @detection_index ]
-    if DEBUG_EXTRA_VERBOSE
-      @logger ? @logger.debug("ContextDetector: curr line:\r\n<#{text_line}>") : puts("ContextDetector: curr line:\r\n<#{text_line}>")
-    end
+    log_somehow( @logger, "ContextDetector: curr line:\r\n<#{text_line}>", DEBUG_EXTRA_VERBOSE )
                                                     # Check if the current line condition applies:
     if ( condition_to_check.kind_of?( String ) )
-      if DEBUG_EXTRA_VERBOSE
-        @logger ? @logger.debug("ContextDetector: checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...") : puts("ContextDetector: checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...")
-      end
+      log_somehow( @logger, "ContextDetector: checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
       is_condition_ok = ( text_line == condition_to_check )
     elsif ( condition_to_check.kind_of?( Regexp ) )
-      if DEBUG_EXTRA_VERBOSE
-        @logger ? @logger.debug("ContextDetector: checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...") : puts("ContextDetector: checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...")
-      end
+      log_somehow( @logger, "ContextDetector: checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
       is_condition_ok = !( text_line =~ condition_to_check ).nil?
     end
                                                     # Condition satisfied?
     if ( is_condition_ok )
-      if DEBUG_VERY_VERBOSE
-        @logger ? @logger.debug( "ContextDetector: condition OK for '#{@context_type.context_name}>'." ) : puts( "ContextDetector: condition OK for '#{@context_type.context_name}>'." )
-      end
+      log_somehow( @logger, "ContextDetector: condition OK for <#{@context_type.context_name}>.", DEBUG_VERY_VERBOSE )
                                                     # Store current line in buffer:
       @array_of_lines << text_line
       @detection_index += 1                         # Increase successful detections
-      if DEBUG_VERY_VERBOSE
-        @logger ? @logger.debug( "ContextDetector: @detection_index=#{@detection_index} VS #{@context_type.condition_array.size}, successful check in progress..." ) :
-                  puts( "ContextDetector: @detection_index=#{@detection_index} VS #{@context_type.condition_array.size}, successful check in progress..." )
-      end
+      log_somehow( @logger, "ContextDetector: @detection_index=#{@detection_index} VS #{@context_type.condition_array.size}, successful check in progress...", DEBUG_VERY_VERBOSE )
                                                     # Successful matches are enough for a CONTEXT DETECTION?
       if ( @detection_index == @context_type.condition_array.size )
-        @logger.debug( "ContextDetector: ==> context '#{@context_type.context_name}' DETECTED <==" ) if (@logger && DEBUG_VERBOSE)
+        log_somehow( @logger, "ContextDetector: ==> context '#{@context_type.context_name}' DETECTED <==", DEBUG_VERBOSE )
         is_context_detected = true
         @current_context  = @context_type
         @detection_index = 0
@@ -180,6 +177,27 @@ class ContextDetector
   # Convert the current instance to a readable string
   def to_s
     "[ContextDetector] => #{@context_type}" + ( @current_context ? ", current: '#{@current_context}'" : '' )
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+# FIXME Refactor this into an included Module
+# TODO change FinResultParser to be instantiated instead of a singleton class (which is also defined not correctly)
+# TODO make FinResultParser include the same module to share this logging tool
+
+  # Either uses the logger, if defined or outputs the message directly on the console using puts.
+  # The condition_for_logging is checked before allowing any logging.
+  def log_somehow( logger, msg, condition_for_logging, logging_method_sym = :debug )
+    return unless condition_for_logging
+    if logger && logger.respond_to?( logging_method_sym )
+      logger.send( logging_method_sym, msg )
+    else
+      puts( msg )
+    end
   end
   #-- --------------------------------------------------------------------------
   #++

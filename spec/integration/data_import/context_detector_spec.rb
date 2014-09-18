@@ -24,6 +24,7 @@ describe ContextDetector, type: :integration do
   #   name of the previously recognized contex. Defaults to +nil+.
   #
   def check_for_parsing_ok( after_n_feeds, feed_array, prev_context_name = nil )
+    subject.clear
     feed_array[ 0 .. feed_array.size-2 ].each_with_index do | feed_line, line_idx |
       expect( subject.feed_and_detect( feed_line, line_idx, prev_context_name ) ).to be false
     end if after_n_feeds > 1
@@ -45,6 +46,7 @@ describe ContextDetector, type: :integration do
   #   name of the previously recognized contex. Defaults to +nil+.
   #
   def check_for_parsing_fail( feed_array, fake_offset_index = 0, prev_context_name = nil )
+    subject.clear
     feed_array[ 0 .. feed_array.size-1 ].each_with_index do | feed_line, line_idx |
       expect( subject.feed_and_detect( feed_line, fake_offset_index + line_idx, prev_context_name ) ).to be false
     end
@@ -58,8 +60,8 @@ describe ContextDetector, type: :integration do
 
     it "recognizes the 'FIN Campionati Regionali' format" do
       feed = [
-        #            10        20        30        40        50        60        70        80        90
-        #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      #            10        20        30        40        50        60        70        80        90
+      #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
         "                                  Campionati Regionali Emilia                                  ",
         "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      ",
         "                              Molinella - 15/16/17 Febbraio 2009                               "
@@ -177,7 +179,7 @@ describe ContextDetector, type: :integration do
     #-- -------------------------------------------------------------------------
     #++
 
-    it "fails to recognize any header with a false-positive (sample #1)" do
+    it "doesn't recognize a false-positive (sample #1)" do
       feed = [
         "",
         "        400 stile libero  femminile  -  Categoria  Under 25        ",
@@ -187,7 +189,7 @@ describe ContextDetector, type: :integration do
     end
 
     # This examples tests the line_timeout feature of the ContextDetector.
-    it "fails to recognize any header with a false-positive (sample #2)" do
+    it "doesn't recognize a false-positive (sample #2)" do
       feed = [
         " 19 MAR-034567 1979 GINONE  ALESSANDRO            AS FIGARO NUOTO             0'29\"05  800,69",
         " 20 EMI-023456 1978 GILBERTAZZI  PAOLINO          NUOTO CLUB FIDENZUOLA       0'29\"11  799,04",
@@ -210,8 +212,8 @@ describe ContextDetector, type: :integration do
 
     it "recognizes the 'FIN category w/ base time' format (sample #1)" do
       feed = [
-        #            10        20        30        40        50        60        70        80        90
-        #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      #            10        20        30        40        50        60        70        80        90
+      #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
         '',
         "        50 stile libero  maschile   -  Categoria  Master 45       Tempo Base   :  0'24\"09",
         '----------------------------------------------------------------------------------------------'
@@ -284,7 +286,7 @@ describe ContextDetector, type: :integration do
     #-- -----------------------------------------------------------------------
     #++
 
-    it "fails to recognize any header with a false-positive (sample #1)" do
+    it "doesn't recognize a false-positive (sample #1)" do
       feed = [
         '',
         "       2   DIDDIEFFIGGI  FEDERICA         1980   ROMA  NUOTO SSD  AR         1'17\"73  682,05",
@@ -293,7 +295,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a relay header (sample #1)" do
+    it "doesn't recognize a relay header (sample #1)" do
       feed = [
         '',
         "        mistaffetta 4x50 stile libero  -  Categoria M100-119      Tempo Base   :  1'42\"99",
@@ -302,10 +304,19 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a relay header (sample #2)" do
+    it "doesn't recognize a relay header (sample #2)" do
       feed = [
         '',
         "        staffetta 4x50 stile libero  Maschile   -  Categoria M160-199Tempo Base   :  1'39\"09",
+        '----------------------------------------------------------------------------------------------'
+      ]
+      check_for_parsing_fail( feed )
+    end
+
+    it "doesn't recognize a relay header (sample #3)" do
+      feed = [
+        '',
+        "        mistaffetta 4x50 stile libero  -  Categoria M160-199      Tempo Base   :  1'45\"29",
         '----------------------------------------------------------------------------------------------'
       ]
       check_for_parsing_fail( feed )
@@ -322,8 +333,8 @@ describe ContextDetector, type: :integration do
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #1)" do
       feed = [
-        #            10        20        30        40        50        60        70        80        90
-        #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      #            10        20        30        40        50        60        70        80        90
+      #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
         '',
         "        mistaffetta 4x50 stile libero  -  Categoria M100-119      Tempo Base   :  1'42\"99",
         '----------------------------------------------------------------------------------------------'
@@ -353,6 +364,15 @@ describe ContextDetector, type: :integration do
       feed = [
         '',
         "        mistaffetta 4x50 mista  -  Categoria M160-199             Tempo Base   :  1'57\"26",
+        '----------------------------------------------------------------------------------------------'
+      ]
+      check_for_parsing_ok( 3, feed )
+    end
+
+    it "recognizes the 'FIN mixed relay w/ base time' format (sample #5)" do
+      feed = [
+        '',
+        "        mistaffetta 4x50 stile libero  -  Categoria M240-279      Tempo Base   :  2'02\"17",
         '----------------------------------------------------------------------------------------------'
       ]
       check_for_parsing_ok( 3, feed )
@@ -396,7 +416,7 @@ describe ContextDetector, type: :integration do
     #-- -----------------------------------------------------------------------
     #++
 
-    it "fails to recognize any header with a result-like feed (sample #1)" do
+    it "doesn't recognize a result-like feed (sample #1)" do
       feed = [
         '',
         "       1   BIBBIBBI  FRANCESCA            1981   MILANO  NUOTO CSI           1'19\"58  650,73",
@@ -405,7 +425,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a result-like feed (sample #2)" do
+    it "doesn't recognize a result-like feed (sample #2)" do
       feed = [
         '',
         "  3 EMI-012345 1979 SBRAMBELLA  LUISA             NUOTO OTELLO PUTINA         1'30\"60  828,15",
@@ -414,7 +434,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a result-like feed (sample #3)" do
+    it "doesn't recognize a result-like feed (sample #3)" do
       feed = [
         '',
         "    EMI-012345 1983 MEGAFAKE JAMIE                OH-MY OH-MY                Ritirato    0,00",
@@ -423,7 +443,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a ranking-like feed (sample #1)" do
+    it "doesn't recognize a ranking-like feed (sample #1)" do
       feed = [
         '',
         "                        CSI NUOTO OBER FERR                Squalif.",
@@ -432,7 +452,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a ranking-like feed (sample #2)" do
+    it "doesn't recognize a ranking-like feed (sample #2)" do
       feed = [
         '',
         "            1   EMI-001234  GINONE SUPER NUOTO                62525,95",
@@ -441,7 +461,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a ranking-like feed (sample #3)" do
+    it "doesn't recognize a ranking-like feed (sample #3)" do
       feed = [
         '',
         "            3   EMI-023456  MI TUFFO CLUB                     46753,95",
@@ -450,7 +470,7 @@ describe ContextDetector, type: :integration do
       check_for_parsing_fail( feed )
     end
 
-    it "fails to recognize any header with a ranking-like feed (sample #4)" do
+    it "doesn't recognize a ranking-like feed (sample #4)" do
       feed = [
         '',
         "            3      VADO IN PISCINA                   37112,33",
@@ -470,8 +490,8 @@ describe ContextDetector, type: :integration do
 
     it "recognizes the 'FIN team-ranking' format (sample #1)" do
       feed = [
-        #            10        20        30        40        50        60        70        80        90
-        #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      #            10        20        30        40        50        60        70        80        90
+      #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
         "                                  Classifica Società                                 ",
         ''
       ]
@@ -503,8 +523,8 @@ describe ContextDetector, type: :integration do
 
     it "recognizes the 'FIN stats' format (sample #1)" do
       feed = [
-        #            10        20        30        40        50        60        70        80        90
-        #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      #            10        20        30        40        50        60        70        80        90
+      #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
         '',
         "                                  Statistiche Società                                 ",
         ''
@@ -574,35 +594,35 @@ describe ContextDetector, type: :integration do
     #-- -----------------------------------------------------------------------
     #++
 
-    it "fails to recognize any detail-row format with a relay-like feed (sample #1)" do
+    it "doesn't recognize a relay-like feed (sample #1)" do
       feed = [
         "                        CSI NUOTO OBER FERR                Squalif."
       ]
       check_for_parsing_fail( feed, 0, :relay_header )
     end
 
-    it "fails to recognize any detail-row format with a relay-like feed (sample #2)" do
+    it "doesn't recognize a relay-like feed (sample #2)" do
       feed = [
         "                  4     MEROLANUOTO S.R.L.                  2'14\"12  874,29"
       ]
       check_for_parsing_fail( feed, 0, :relay_header )
     end
 
-    it "fails to recognize any detail-row format with a relay-like feed (sample #3)" do
+    it "doesn't recognize a relay-like feed (sample #3)" do
       feed = [
         "         Fuori gara     KGB FBI NUOTO                       2'18\"35  744,99"
       ]
       check_for_parsing_fail( feed, 0, :relay_header )
     end
 
-    it "fails to recognize any detail-row format with a ranking-like feed (sample #1)" do
+    it "doesn't recognize a ranking-like feed (sample #1)" do
       feed = [
         "            1   EMI-001444  MODENA SPLASH CSI                 62525,95"
       ]
       check_for_parsing_fail( feed, 0, :team_ranking )
     end
 
-    it "fails to recognize any detail-row format with a ranking-like feed (sample #2)" do
+    it "doesn't recognize a ranking-like feed (sample #2)" do
       feed = [
         "            1      N REGGIANI                        66495,23"
       ]
@@ -660,21 +680,21 @@ describe ContextDetector, type: :integration do
     #-- -----------------------------------------------------------------------
     #++
 
-    it "fails to recognize any detail-row format with a ranking-like feed (sample #1)" do
+    it "doesn't recognize a ranking-like feed (sample #1)" do
       feed = [
         "            1   EMI-123456  MODENESE NUOTO                    62525,95"
       ]
       check_for_parsing_fail( feed, 0, :team_ranking )
     end
 
-    it "fails to recognize any detail-row format with a ranking-like feed (sample #2)" do
+    it "doesn't recognize a ranking-like feed (sample #2)" do
       feed = [
         "            1      N REGGIANI                        66495,23"
       ]
       check_for_parsing_fail( feed, 0, :team_ranking )
     end
 
-    it "fails to recognize any detail-row format with a result-like feed (sample #1)" do
+    it "doesn't recognize a result-like feed (sample #1)" do
       feed = [
         "       1   SBIRULONI  FERRUCCIA           1982   N ALBINETANI                5'28\"30  0,00"
       ]
@@ -704,14 +724,14 @@ describe ContextDetector, type: :integration do
     #-- -----------------------------------------------------------------------
     #++
 
-    it "fails to recognize any detail-row format with a relay-like feed (sample #1)" do
+    it "doesn't recognize a relay-like feed (sample #1)" do
       feed = [
         "                  4     MEROLANUOTO S.R.L.                  2'14\"12  874,29"
       ]
       check_for_parsing_fail( feed, 0, :relay_header )
     end
 
-    it "fails to recognize any detail-row format with a result-like feed (sample #1)" do
+    it "doesn't recognize a result-like feed (sample #1)" do
       feed = [
         "       1   SBIRULONI  FERRUCCIA           1982   N ALBINETANI                5'28\"30  0,00"
       ]

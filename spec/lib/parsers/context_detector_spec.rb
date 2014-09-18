@@ -132,7 +132,7 @@ describe ContextDetector, type: :model do
         expect( subject.to_s ).to be_an_instance_of( String )
       end
       it "includes the context name" do
-        expect( subject.to_s ).to include( subject.context_type.context_name.to_s )
+        expect( subject.to_s ).to include( subject.context_type.context_name.to_s.upcase )
       end
       it "includes the number of conditions defined" do
         expect( subject.to_s ).to include( subject.context_type.condition_array.size.to_s )

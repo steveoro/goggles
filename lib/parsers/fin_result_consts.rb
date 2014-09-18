@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.467
+  - Goggles framework vers.:  4.00.503
   - author: Steve A.
 
  Value object/Container module that stores all the common constant definitions
@@ -37,9 +37,9 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   CNT_TYPE_CATEGORY_HEADER = ContextTypeDef.new(
     :category_header,
     [
-      '',
-      /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
-      /^--------------------------/
+      /^\s*(\r\n|\n|$)/ui,  # matches any kind of newline, an empty line or a line with only invisible chars
+      /(?<!\dx)(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
+      /^-{25}/
     ]
   )
 
@@ -47,9 +47,9 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   CNT_TYPE_RELAY_HEADER = ContextTypeDef.new(
     :relay_header,
     [
-      '',
+      /^\s*(\r\n|\n|$)/ui,
       /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
-      /^--------------------------/
+      /^-{25}/
     ]
   )
 
@@ -58,7 +58,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     :team_ranking,
     [
       /classifica(\s+di)?(\s+societ)?/ui,
-      ''
+      /^\s*(\r\n|\n|$)/ui
     ]
   )
 
@@ -66,9 +66,9 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   CNT_TYPE_STATS = ContextTypeDef.new(
     :stats,
     [
-      '',
+      /^\s*(\r\n|\n|$)/ui,
       /statistiche/ui,
-      ''
+      /^\s*(\r\n|\n|$)/ui
     ]
   )                                                 # == DETAIL CONTEXT TYPES definitions: ==
 
