@@ -59,7 +59,6 @@ class Swimmer < ActiveRecord::Base
 
   delegate :name, to: :user, prefix: true
 
-  # Protect mass-assignment:
   attr_accessible :associated_user, :user,
                   :gender_type, :complete_name, :last_name, :first_name,
                   :year_of_birth, :phone_mobile, :phone_number, :e_mail,

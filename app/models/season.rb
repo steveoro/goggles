@@ -42,6 +42,10 @@ class Season < ActiveRecord::Base
   scope :sort_season_by_begin_date,  ->(dir) { order("seasons.begin_date #{dir.to_s}") }
   scope :sort_season_by_season_type, ->(dir) { order("season_types.code #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
   scope :sort_season_by_user,        ->(dir) { order("users.name #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
+
+
+  attr_accessible :season_type_id, :edition_type_id, :timing_type_id,
+                  :header_year, :edition, :description, :begin_date, :end_date
   #-- -------------------------------------------------------------------------
   #++
 

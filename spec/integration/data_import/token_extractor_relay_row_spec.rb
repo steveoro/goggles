@@ -25,7 +25,23 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
       "                1  SIC-000140   POL. WATERPOLO PALE              2'06\"56  987,67",
       "                1  LOM-009402   MALASPINA SC                     1'35\"98 1003,23",
-      "                1  LOM-037241   SPORT MANAGEMENT                 1'45\"45  955,05"
+      "                1  LOM-037241   SPORT MANAGEMENT                 1'45\"45  955,05",
+
+      "                  1  EMI-001439   MODENA NUOTO                     2'20\"87  747,43",
+      "                  2  VEN-002980   CENTRO NUOTO JESOLO              2'22\"03  741,32",
+      "                  3  EMI-006504   CIVATURS DE AKKER                2'32\"95  688,39",
+      "                  1  EMI-001438   ASS.NE AMICI DEL NU              2'43\"31  748,09",
+      "                  1  EMI-001439   MODENA NUOTO                     2'20\"87  747,43",
+      "                  2  VEN-002980   CENTRO NUOTO JESOLO              2'22\"03  741,32",
+      "                  3  EMI-006504   CIVATURS DE AKKER                2'32\"95  688,39",
+      "                  1  EMI-001438   ASS.NE AMICI DEL NU              2'43\"31  748,09",
+
+      "                  1  UMB-000017   LIBERTAS THYRUS ASD              1'56\"86  928,72",
+      "                  2  TOS-017267   C.S.I. NUOTO PRATO               2'07\"68  850,02",
+      "                  8  EMI-001430   ASS.SPORTIVA DINAMI              2'24\"32  752,01",
+      "         Fuori gara  XSM-000102   SAN MARINO MASTER                2'10\"10  834,20",
+      "         Fuori gara  MAR-000566   POLISP. PIAN DEL BR              2'10\"61  830,95",
+      "         Fuori gara  MAR-000465   IL GRILLO                        2'24\"58  750,66"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -48,7 +64,23 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         '1',
         '1',
-        '1'
+        '1',
+
+        '1',
+        '2',
+        '3',
+        '1',
+        '1',
+        '2',
+        '3',
+        '1',
+
+        '1',
+        '2',
+        '8',
+        'Fuori gara',
+        'Fuori gara',
+        'Fuori gara'
       ]
     end
 
@@ -74,7 +106,23 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         'POL. WATERPOLO PALE',
         'MALASPINA SC',
-        'SPORT MANAGEMENT'
+        'SPORT MANAGEMENT',
+
+        "MODENA NUOTO",
+        "CENTRO NUOTO JESOLO",
+        "CIVATURS DE AKKER",
+        "ASS.NE AMICI DEL NU",
+        "MODENA NUOTO",
+        "CENTRO NUOTO JESOLO",
+        "CIVATURS DE AKKER",
+        "ASS.NE AMICI DEL NU",
+
+        "LIBERTAS THYRUS ASD",
+        "C.S.I. NUOTO PRATO",
+        "ASS.SPORTIVA DINAMI",
+        "SAN MARINO MASTER",
+        "POLISP. PIAN DEL BR",
+        "IL GRILLO"
       ]
     end
 
@@ -100,7 +148,23 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         "2'06\"56",
         "1'35\"98",
-        "1'45\"45"
+        "1'45\"45",
+
+        "2'20\"87",
+        "2'22\"03",
+        "2'32\"95",
+        "2'43\"31",
+        "2'20\"87",
+        "2'22\"03",
+        "2'32\"95",
+        "2'43\"31",
+
+        "1'56\"86",
+        "2'07\"68",
+        "2'24\"32",
+        "2'10\"10",
+        "2'10\"61",
+        "2'24\"58"
       ]
     end
 
@@ -126,7 +190,23 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         '987,67',
         '1003,23',
-        '955,05'
+        '955,05',
+
+        "747,43",
+        "741,32",
+        "688,39",
+        "748,09",
+        "747,43",
+        "741,32",
+        "688,39",
+        "748,09",
+
+        "928,72",
+        "850,02",
+        "752,01",
+        "834,20",
+        "830,95",
+        "750,66"
       ]
     end
 

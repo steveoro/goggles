@@ -19,7 +19,7 @@ describe ContextDetector, type: :model do
     it_behaves_like( "(the existance of a method)", [
       :context_type, :logger,
       :current_context, :dump_line_cache, :feed_and_detect,
-      :clear, :is_a_parent_context, :to_s
+      :clear, :parent_context_name, :is_a_parent_context, :to_s
     ] )
     #-- -----------------------------------------------------------------------
     #++

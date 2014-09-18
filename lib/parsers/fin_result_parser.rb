@@ -30,7 +30,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE       = false
+  DEBUG_VERBOSE       = true
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
@@ -121,7 +121,7 @@ class FinResultParser
         end
         full_text_file_contents << curr_line
                                                     # For each context type defined...
-        parsing_defs.context_types().each { |context_sym, detector|
+        parsing_defs.context_types.each { |context_sym, detector|
           if DEBUG_EXTRA_VERBOSE
             logger ? logger.debug( "Using #{detector}..." ) : puts( "Using #{detector}..." )
           end
@@ -132,14 +132,14 @@ class FinResultParser
 
           if ( is_detected )                        # === DETECTION SUCCESSFULL ===
             logger.debug( "=> Context switched to '#{context_sym}'. Token extraction in progress..." ) if (logger && DEBUG_VERBOSE)
-            cached_rows = detector.dump_line_cache()
+            cached_rows = detector.dump_line_cache
             token_hash = tokenize_context_cache(
                 parsing_defs, context_sym,
                 cached_rows,
                 logger, line_count + 1
             )
 
-            if detector.is_a_parent_context()       # *** CONTEXT -is- PARENT: HEADER
+            if detector.is_a_parent_context         # *** CONTEXT -is- PARENT: HEADER
               previous_parent_context = context_sym
                                                     # There must be a unique key defined for this context
               if ( parsing_defs.required_keys( context_sym ).size < 1 )
@@ -164,8 +164,9 @@ class FinResultParser
               end
 
               parse_result[ context_sym ] << {
-                id: key_string, fields: token_hash,
-                import_text: cached_rows.join("\r\n")
+                id:           key_string,
+                fields:       token_hash,
+                import_text:  cached_rows.join("\r\n")
               }
               tot_rows += 1                         # Increase data rows stat only when actually adding any data
                                                     # Store new unique key in previous_key hash linked by current context (which may be a new parent context for other sub-pages)
@@ -192,9 +193,9 @@ class FinResultParser
                     logger ? logger.debug("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'.") : puts("   Adding new context '#{context_sym}', key_string='#{previous_key[ parent_context ] }'")
                   end
                   parse_result[ context_sym ] << {
-                    id: previous_key[ parent_context ],
-                    fields: token_hash,
-                    import_text: cached_rows.join("\r\n")
+                    id:           previous_key[ parent_context ],
+                    fields:       token_hash,
+                    import_text:  cached_rows.join("\r\n")
                   }
                   tot_rows += 1                     # Increase data rows stat only when actually adding any data
                 end
@@ -247,10 +248,10 @@ class FinResultParser
     end
 
     {
-      parse_result: parse_result,
-      line_count: line_count,
-      total_data_rows: tot_data_rows,
-      full_text_file_contents: full_text_file_contents
+      parse_result:             parse_result,
+      line_count:               line_count,
+      total_data_rows:          tot_data_rows,
+      full_text_file_contents:  full_text_file_contents
     }
   end
   # ---------------------------------------------------------------------------
@@ -266,7 +267,7 @@ class FinResultParser
     all_keys_list  = parsing_defs.required_keys( context_sym ).flatten.compact
     logger.debug( "\r\n*** all_keys_list= #{all_keys_list.inspect}" ) if (logger && DEBUG_VERBOSE)
     logger.debug( "** token_hash= #{token_hash.inspect}" ) if (logger && DEBUG_VERBOSE)
-    ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join
+    ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join('-')
   end
 
 

@@ -286,7 +286,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     :team_name,
     # Slow vers: /([a-zA-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝß]+[\ |\-|\.|\`|\']{1,3})+ {3,}(Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/u,
     # [Steve, 20130809] Regexp is too slow!! (And doesn't work for team names with numbers in it.) Using Fixnum absolute index instead:
-    48,                                             # (starting idx)
+    49,                                             # (starting idx)
     26                                              # (max size)
   )
 
@@ -310,8 +310,6 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_row.result_position" token extractor definition
   TOK_EXT_RELAY_ROW_RESULT_POSITION = TokenExtractor.new(
     :result_position,
-#    / \d{1,3}(?= {1,3})/ui,
-#    / (?=[a-z]+)/ui
     8,                                              # (starting idx)
     /(?<=\s{3}\d|gara|\s{18})\s+\w+/ui
 #    12                                              # (max size)
@@ -320,8 +318,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_row.team_name" token extractor definition
   TOK_EXT_RELAY_ROW_TEAM_NAME = TokenExtractor.new(
     :team_name,
-    /(?<=\s{3}\d\s{3}|gara\s|\d{6}\s|\s{22})\s+\w+/ui,
-#    24,                                             # (starting idx)
+    /(\s{3,5}.{25}\s{8,12})(?=Ritir|Squal|\d{1,2}'\d{2}"\d{2})/ui,
     25                                              # (max size)
   )
 

@@ -96,6 +96,12 @@ class ContextDetector
     @detection_index = 0
   end
 
+  # Returns the name of the parent context
+  #
+  def parent_context_name()
+    @context_type.parent_context_name
+  end
+
   # Returns +true+ if the context defined with this instance
   # is a "root/parent" (that is, an instance with no parents).
   #

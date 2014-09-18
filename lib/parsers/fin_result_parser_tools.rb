@@ -414,8 +414,11 @@ module FinResultParserTools
     analysis_text_log << "\r\n-------------------------------------------------------------------------------------------------------------\r\n"
     analysis_text_log << "                    [[[ '#{matching_string}' ]]]  -- season_id: #{desired_season_id}, best-match search:\r\n\r\n"
     result_hash3 = self.prepare_analysis_report(
-      matching_string, desired_season_id, analysis_text_log,
-      result_list, min_bias_score
+      matching_string,
+      desired_season_id,
+      analysis_text_log,
+      result_list,
+      min_bias_score
     )
 
     analysis_text_log = result_hash3[:analysis]
@@ -485,9 +488,10 @@ module FinResultParserTools
   # Returns a formatted string containing the result row main values
   #
   def self.format_result_row( result_row, result_score )
-    output = "(#{sprintf("%-16s", result_row.class.name)})" <<
-             " '#{result_row.name}', score #{sprintf("%1.4f", result_score)}" <<
-             ", ID: #{sprintf("%4s", result_row.id)}"
+    output = "(#{sprintf("%-16s", result_row.class.name)})"
+    output << " '#{result_row.name}', " if result_row.respond_to?(:name)
+    output << "score #{sprintf("%1.4f", result_score)}"
+    output << ", ID: #{sprintf("%4s", result_row.id)}" if (!result_row.nil?) && result_row.respond_to?(:id)
     output << ", season_id: #{sprintf("%4s", result_row.season_id)}" if result_row.respond_to?(:season_id)
     output << "\t=> Team ID: #{sprintf("%4s", result_row.team_id)}"  if result_row.respond_to?(:team_id)
     output << " >> 100% ! <<" if result_score >= 0.9999
@@ -530,7 +534,7 @@ module FinResultParserTools
     best_match = nil
     hiscoring_match = nil                           # Overall hi-scoring result (either Team or TeamAff.)
 
-    result_list = result_list.sort!{ |x,y| x[:score] <=> y[:score] }
+    result_list = result_list.sort!{ |x,y| x[ :score ] <=> y[ :score ] }
     result_list.each { |result|
       analysis_text_log << "   - " << self.format_result_row( result[:row], result[:score] )
 
@@ -545,20 +549,20 @@ module FinResultParserTools
           # [Steve] Only affiliations with the desired_season_id are the best matches,
           # but we will update also the pointer to the affiliation & highest scoring match
           # if the best match has at least the same result score.
-          affiliation_match = result if affiliation_match.nil? || (affiliation_match && affiliation_match[:score] <= result[:score])
-          hiscoring_match = result if hiscoring_match.nil? || (hiscoring_match && hiscoring_match[:score] <= result[:score])
+          affiliation_match = result if affiliation_match.nil? || ( affiliation_match && affiliation_match[:score] <= result[:score] )
+          hiscoring_match   = result if hiscoring_match.nil?   || ( hiscoring_match   && hiscoring_match[:score] <= result[:score] )
         end
         # We will store only the highest matches per class, while looping on the results:
-        affiliation_match = result if affiliation_match.nil? || (affiliation_match && affiliation_match[:score] < result[:score])
+        affiliation_match = result if affiliation_match.nil? || ( affiliation_match && affiliation_match[:score] < result[:score] )
       end
-      hiscoring_match = result if hiscoring_match.nil? || (hiscoring_match && hiscoring_match[:score] < result[:score])
+      hiscoring_match = result if hiscoring_match.nil? || ( hiscoring_match && hiscoring_match[:score] < result[:score] )
       analysis_text_log << "\r\n"
     }
                                                     # Couldn't find a Team in result, but found an affiliation?
     if (best_match)                                 # (That is: look-alike affiliation name found, but linked to a too-different team name?)
       team_id = best_match[:row].team_id            # Always override the chosen team_id with the best match
       team_match = { score: best_match[:score], row: best_match[:row].team } if team_match.nil?
-    elsif (team_match.nil? && best_match.nil? && affiliation_match)
+    elsif ( team_match.nil? && best_match.nil? && affiliation_match )
       team_match = { score: affiliation_match[:score], row: affiliation_match[:row].team }
     end
                                                     # Result team_id not set yet?:
@@ -588,12 +592,12 @@ module FinResultParserTools
     end
     analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id
     {
-      analysis: analysis_text_log,
-      team_id: team_id,
-      team_match: team_match,
-      affiliation_match: affiliation_match,
-      hiscoring_match: hiscoring_match,
-      best_match: best_match
+      analysis:           analysis_text_log,
+      team_id:            team_id,
+      team_match:         team_match,
+      affiliation_match:  affiliation_match,
+      hiscoring_match:    hiscoring_match,
+      best_match:         best_match
     }
   end
   #-- -------------------------------------------------------------------------
@@ -617,14 +621,15 @@ module FinResultParserTools
     if ( (total_matches < 1) && (bias_score > limit_bias_score) )
       result_hash = seek_minimum_bias_score_for(
           matching_string, array_of_rows, getter_for_comparison,
-          bias_score - 0.01, limit_bias_score
+          bias_score - 0.01,
+          limit_bias_score
       )
       bias_score = result_hash[:updated_bias_score]
       result_list = result_list + result_hash[:result_list]
     end
     {
       updated_bias_score: bias_score,
-      result_list: result_list
+      result_list:        result_list
     }
   end
   #-- -------------------------------------------------------------------------

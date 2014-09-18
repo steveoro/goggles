@@ -24,12 +24,15 @@ class TeamAffiliation < ActiveRecord::Base
 
   has_one  :season_type, through: :season
 
-
-  delegate :name, to: :user, prefix: true
-
   scope :sort_team_affiliation_by_user,    ->(dir) { order("users.name #{dir.to_s}") }
   scope :sort_team_affiliation_by_team,    ->(dir) { order("teams.name #{dir.to_s}") }
   scope :sort_team_affiliation_by_season,  ->(dir) { order("seasons.begin_date #{dir.to_s}, team_affiliations.name #{dir.to_s}") }
+
+
+  delegate :name, to: :user, prefix: true
+  delegate :name, :editable_name, to: :team, prefix: true
+
+  attr_accessible :name, :number, :team_id, :season_id, :season_type_id
   #-- -------------------------------------------------------------------------
   #++
 

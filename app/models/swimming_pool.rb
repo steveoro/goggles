@@ -1,3 +1,8 @@
+=begin
+
+= SwimmingPool model
+
+=end
 class SwimmingPool < ActiveRecord::Base
   include DropDownListable
 
@@ -44,9 +49,12 @@ class SwimmingPool < ActiveRecord::Base
   scope :sort_swimming_pool_by_locker_cabinet_type, ->(dir) { order("locker_cabinet_types.code #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
 
 
+  delegate :name, to: :user, prefix: true
+
+  attr_accessible :city_id, :pool_type_id, :shower_type_id, :hair_dryer_type_id,
+                  :locker_cabinet_type_id, :name, :nick_name, :address,
+                  :phone_number, :fax_number, :e_mail, :contact_name, :lanes_number
   #-- -------------------------------------------------------------------------
-  # Base methods:
-  # ---------------------------------------------------------------------------
   #++
 
   # Outputs a short description for the name associated with this data

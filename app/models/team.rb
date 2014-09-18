@@ -47,7 +47,6 @@ class Team < ActiveRecord::Base
 
   delegate :name, to: :user, prefix: true
 
-  # Mass-assignment protection:
   attr_accessible :editable_name, :address, :phone_mobile, :phone_number,
                   :fax_number, :e_mail, :contact_name, :home_page_url
   #-- -------------------------------------------------------------------------
