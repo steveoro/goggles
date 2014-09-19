@@ -11,7 +11,7 @@ require 'parsers/fin_result_consts'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.503
+  - Goggles framework vers.:  4.00.505
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -22,15 +22,18 @@ require 'parsers/fin_result_consts'
 class FinResultDefs < TxtResultDefs
   include FinResultConsts
 
-  attr_reader :full_pathname, :logger
+  # This logger will be used by each ContextDetector instance defined internally.
+  attr_reader :logger
   # ----------------------------------------------------------------------------
   #++
 
 
   # Creates a new instance, storing the parameters for the parsing.
   #
-  def initialize( source_full_pathname = '', logger = nil )
-    @full_pathname = source_full_pathname
+  # The logger specified here will be passed on to each ContextDetector
+  # instance defined internally.
+  #
+  def initialize( logger = nil )
     @logger = logger
 
     # == Context type parser hash

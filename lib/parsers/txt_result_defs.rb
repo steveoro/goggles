@@ -5,7 +5,7 @@
 
 = TxtResultDefs
 
-  - Goggles framework vers.:  4.00.467
+  - Goggles framework vers.:  4.00.505
   - author: Steve A.
 
  Base class for any sibling that needs to define lists of ContextDetector and
@@ -122,6 +122,16 @@ class TxtResultDefs
   #
   def tokenizer_fields_for( context_sym )
     @tokenizer_fields[ context_sym ]
+  end
+  # ----------------------------------------------------------------------------
+  #++
+
+  # Returns a copy of <tt>#context_types</tt> Hash containing just a selection of
+  # all ContextTypeDef instances that require <tt>parent_context_name</tt> as their
+  # recognized parent context.
+  #
+  def context_types_children_of( parent_context_name )
+    @context_types.select{ |key, context| context.parent_context_name == parent_context_name }
   end
   # ----------------------------------------------------------------------------
   #++

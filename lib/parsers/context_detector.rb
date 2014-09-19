@@ -1,10 +1,12 @@
 # encoding: utf-8
+require 'parsers/tools_logging'
+
 
 =begin
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.503
+  - Goggles framework vers.:  4.00.505
   - author: Steve A.
 
  Service class delegated to ContextType recognition.
@@ -52,6 +54,7 @@
 
 =end
 class ContextDetector
+  include Tools::Logging
 
   attr_reader :context_type, :logger, :current_context
 
@@ -131,36 +134,45 @@ class ContextDetector
   def feed_and_detect( text_line, current_line_number, previous_context_name )
     log_somehow(
       @logger,
-      "ContextDetector: called for #{@context_type}.\r\n" +
+      "\r\nContextDetector: called for #{@context_type}.\r\n" +
       "                 Processing line #{current_line_number} (timeout: #{@context_type.line_timeout}), cond. array size: #{@context_type.condition_array.size},\r\n" +
       "                 prev. context: <#{previous_context_name.inspect}> (expecting: <#{@context_type.parent_context_name.inspect}>)",
-      DEBUG_VERY_VERBOSE
+      DEBUG_VERBOSE
     )
-    return false if ( (@context_type.line_timeout > 0) && (current_line_number > @context_type.line_timeout) )
-    return false if @context_type.condition_array.size < 1
-    return false if ( @context_type.parent_context_name != previous_context_name )
+    if ( (@context_type.line_timeout > 0) && (current_line_number > @context_type.line_timeout) )
+      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for line timeout.", DEBUG_VERY_VERBOSE )
+      return false
+    end
+    if @context_type.condition_array.size < 1
+      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for NO conditions defined.", DEBUG_VERY_VERBOSE )
+      return false
+    end
+    if ( @context_type.parent_context_name != previous_context_name )
+      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context.", DEBUG_VERY_VERBOSE )
+      return false
+    end
     is_context_detected = false
 
     condition_to_check = @context_type.condition_array[ @detection_index ]
-    log_somehow( @logger, "ContextDetector: curr line:\r\n<#{text_line}>", DEBUG_EXTRA_VERBOSE )
+    log_somehow( @logger, "                 Curr. line: <#{text_line}>", DEBUG_EXTRA_VERBOSE )
                                                     # Check if the current line condition applies:
     if ( condition_to_check.kind_of?( String ) )
-      log_somehow( @logger, "ContextDetector: checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
+      log_somehow( @logger, "                 Checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
       is_condition_ok = ( text_line == condition_to_check )
     elsif ( condition_to_check.kind_of?( Regexp ) )
-      log_somehow( @logger, "ContextDetector: checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
+      log_somehow( @logger, "                 Checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
       is_condition_ok = !( text_line =~ condition_to_check ).nil?
     end
                                                     # Condition satisfied?
     if ( is_condition_ok )
-      log_somehow( @logger, "ContextDetector: condition OK for <#{@context_type.context_name}>.", DEBUG_VERY_VERBOSE )
+      log_somehow( @logger, "                 CONDITION OK for \033[1;37;40m#{ @context_type.context_name.to_s.upcase }\033[0m.", DEBUG_VERY_VERBOSE )
                                                     # Store current line in buffer:
       @array_of_lines << text_line
       @detection_index += 1                         # Increase successful detections
-      log_somehow( @logger, "ContextDetector: @detection_index=#{@detection_index} VS #{@context_type.condition_array.size}, successful check in progress...", DEBUG_VERY_VERBOSE )
+      log_somehow( @logger, "                 @detection_index=#{@detection_index} VS #{@context_type.condition_array.size}, successful check in progress...", DEBUG_VERY_VERBOSE )
                                                     # Successful matches are enough for a CONTEXT DETECTION?
       if ( @detection_index == @context_type.condition_array.size )
-        log_somehow( @logger, "ContextDetector: ==> context '#{@context_type.context_name}' DETECTED <==", DEBUG_VERBOSE )
+        log_somehow( @logger, "                 \033[32m==> context '\033[1;33;40m#{ @context_type.context_name.to_s.upcase }\033[0m\033[32m' DETECTED <==\033[0m", DEBUG_VERBOSE )
         is_context_detected = true
         @current_context  = @context_type
         @detection_index = 0
@@ -168,6 +180,7 @@ class ContextDetector
     else
       clear()
     end
+    log_somehow( @logger, "---------------- (ContextDetector end)", DEBUG_VERBOSE )
     is_context_detected
   end
   #-- --------------------------------------------------------------------------
@@ -177,27 +190,6 @@ class ContextDetector
   # Convert the current instance to a readable string
   def to_s
     "[ContextDetector] => #{@context_type}" + ( @current_context ? ", current: '#{@current_context}'" : '' )
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-
-
-  private
-
-
-# FIXME Refactor this into an included Module
-# TODO change FinResultParser to be instantiated instead of a singleton class (which is also defined not correctly)
-# TODO make FinResultParser include the same module to share this logging tool
-
-  # Either uses the logger, if defined or outputs the message directly on the console using puts.
-  # The condition_for_logging is checked before allowing any logging.
-  def log_somehow( logger, msg, condition_for_logging, logging_method_sym = :debug )
-    return unless condition_for_logging
-    if logger && logger.respond_to?( logging_method_sym )
-      logger.send( logging_method_sym, msg )
-    else
-      puts( msg )
-    end
   end
   #-- --------------------------------------------------------------------------
   #++

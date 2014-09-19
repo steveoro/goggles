@@ -462,7 +462,7 @@ class DataImporter
     @phase_1_log = "\r\nParsed header_fields: #{header_fields.inspect}\r\n"
     data_rows = []
 
-    result_hash = FinResultParser.parse_txt_file( full_pathname, false, logger ) # (=> show_progress = false)
+    result_hash = FinResultParser.parse_txt_file( full_pathname, logger ) # (=> show_progress = false)
     # NOTE: result_hash has the following structure:
     #     {
     #       parse_result: {

@@ -11,7 +11,8 @@ describe TxtResultDefs, type: :model do
     it_behaves_like( "(the existance of a method)", [
       :context_types, :defined_keys, :required_keys,
       :field_list_for, :detector_for, :tokenizers_for, :is_a_parent,
-      :tokenizer_types_for, :tokenizer_fields_for
+      :tokenizer_types_for, :tokenizer_fields_for,
+      :context_types_children_of
     ] )
   end
   #-- -------------------------------------------------------------------------
