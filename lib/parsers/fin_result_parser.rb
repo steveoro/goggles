@@ -118,7 +118,7 @@ class FinResultParser
                                                     # -- HEADER (& ALL) Context detection: for each context type defined...
         parsing_defs.context_types.each do |context_name, detector|
           parse_service.parse( detector, curr_line )
-        end
+        end unless any_detection                    # Do not loop on all if we already have a matching child context
         parse_service.increase_line_count
       end
     end                                             # (automatically closes the file)
@@ -139,8 +139,8 @@ class FinResultParser
     log_somehow(
       logger,
       "\r\nTotal read lines ....... : #{parse_service.line_count} (including garbage)" +
-      "Protocol efficiency .... : #{(( parse_service.total_data_rows.to_f) / parse_service.line_count.to_f * 10000.0).round / 100.0} %" +
-      "File done.\r\n---------------------------------------------\r\n\r\n\r\n",
+      "\r\nProtocol efficiency .... : #{(( parse_service.total_data_rows.to_f) / parse_service.line_count.to_f * 10000.0).round / 100.0} %" +
+      "\r\nFile done.\r\n---------------------------------------------\r\n\r\n\r\n",
       true, :info
     )
 

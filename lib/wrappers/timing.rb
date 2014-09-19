@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.463
+  - Goggles framework vers.:  4.00.505
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -147,16 +147,20 @@ class Timing
   # members with non positive values in the output string.
   #
   def self.to_compact_s( hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0 )
-    ( days.to_i > 0     ? "#{days}d " : '') +
-    ( hours.to_i > 0    ? "#{hours}h " : '') +
-    ( minutes.to_i > 0  ? sprintf( "%2s'", minutes ) : '') +
-    ( seconds.to_i > 0  ? sprintf( minutes > 0 ? "%02.0f" : "%2s\"", seconds ) : '') +
-    ( hundreds.to_i > 0 ? sprintf( "%02.0f", hundreds ) : '')
+    ( days.to_i == 0     ? '' : "#{days}d " ) +
+    ( hours.to_i == 0    ? '' : "#{hours}h " ) +
+    ( minutes.to_i == 0  ? '' : sprintf( "%2s'", minutes ) ) +
+    ( seconds.to_i == 0  ? '' : sprintf( (minutes > 0 ? "%02.0f\"" : "%2s\""), seconds ) ) +
+    ( hundreds.to_i == 0 ? '' : sprintf( "%02.0f", hundreds ) )
   end
   #-- -------------------------------------------------------------------------
   #++
 
   # Outputs the specified value of seconds in an hour-format string (Hh MM' SS").
+  # It skips the output of any 2-digit part when its value is 0.
+  # (This is true for hours, minutes, seconds and even hundreds, making this method
+  # ideal to represent a total duration or span of time, without displaying the
+  # non-significant members).
   #
   def self.to_hour_string( total_seconds )
     hours = total_seconds.to_i / 3600
@@ -167,6 +171,7 @@ class Timing
   end
 
   # Outputs the specified value of seconds in a minute-format (M'SS").
+  # It skips the output of the minutes when 0.
   #
   def self.to_minute_string( total_seconds )
     minutes = total_seconds.to_i / 60

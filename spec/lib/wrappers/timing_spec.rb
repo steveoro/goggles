@@ -251,8 +251,25 @@ describe Timing, :type => :model do
       it "returns a String" do
         expect( subject ).to be_an_instance_of( String )
       end
-      it "contains the value of its most significant members" do
-        expect( subject ).to include( (fixture_secs / 3600).to_i.to_s )
+      it "contains the 'hours' member when its value is > 0" do
+        hours = fixture_secs.to_i / 3600
+        if ( hours > 0 )
+          expect( subject ).to include( hours.to_s + 'h' )
+        end
+      end
+      it "contains the 'minutes' member when its value is > 0" do
+        remainder = fixture_secs.to_i % 3600
+        minutes = remainder / 60
+        if ( minutes > 0 )
+          expect( subject ).to include( minutes.to_s + "'" )
+        end
+      end
+      it "contains the 'seconds' member when its value is > 0" do
+        remainder = fixture_secs.to_i % 3600
+        seconds = remainder % 60
+        if ( seconds > 0 )
+          expect( subject ).to include( seconds.to_s + '"' )
+        end
       end
     end
 
@@ -272,8 +289,23 @@ describe Timing, :type => :model do
       it "returns a String" do
         expect( subject ).to be_an_instance_of( String )
       end
-      it "contains the value of its most significant members" do
-        expect( subject ).to include( (fixture_secs / 60).to_i.to_s )
+      it "does not contain the 'hours' member, even if its value is > 0" do
+        hours = fixture_secs.to_i / 3600
+        if ( hours > 0 )
+          expect( subject ).not_to include( hours.to_s + 'h' )
+        end
+      end
+      it "contains the 'minutes' member when its value is > 0" do
+        minutes = fixture_secs.to_i / 60
+        if ( minutes > 0 )
+          expect( subject ).to include( minutes.to_s + "'" )
+        end
+      end
+      it "contains the 'seconds' member when its value is > 0" do
+        seconds = fixture_secs.to_i % 60
+        if ( seconds > 0 )
+          expect( subject ).to include( seconds.to_s + '"' )
+        end
       end
     end
 

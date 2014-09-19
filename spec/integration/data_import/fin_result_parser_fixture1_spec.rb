@@ -46,8 +46,9 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
     it "recognizes a list of :result_row data pages" do
       expect( subject.has_key?( :result_row ) ).to be true
     end
-    xit "has the exact amount of :result_row data pages for this fixture" do
-
+    it "has the exact amount of :result_row data pages for this fixture" do
+      expect( subject[:result_row] ).to be_an_instance_of( Array )
+      expect( subject[:result_row].size ).to eq( 69 )
     end
 
     it "recognizes a list of :relay_header data pages" do
@@ -61,18 +62,17 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
     it "recognizes a list of :relay_row data pages" do
       expect( subject.has_key?( :relay_row ) ).to be true
     end
-    xit "has the exact amount of :relay_row data pages for this fixture" do
-
+    it "has the exact amount of :relay_row data pages for this fixture" do
+      expect( subject[:relay_row] ).to be_an_instance_of( Array )
+      expect( subject[:relay_row].size ).to eq( 8 )
     end
 
     it "recognizes a list of :stats data pages" do
       expect( subject.has_key?( :stats ) ).to be true
     end
-# FIXME why do we store any info for the title page of the stats?
-    it "has just 1 :stat data page" do
+    it "has just 1 :stat (header) data page" do
       expect( subject[:stats] ).to be_an_instance_of( Array )
       expect( subject[:stats].size ).to eq( 1 )
-      puts "\r\n>>>>> #{subject[:stats].inspect}\r\n"
     end
 
     it "recognizes a list of :stats details data pages" do
@@ -85,21 +85,27 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
 
     end
 
+    # The key to the array of data-pages must always be present,
+    # even though the array of data pages is empty:
     it "recognizes a list of :team_ranking data pages" do
       expect( subject.has_key?( :team_ranking ) ).to be true
     end
-    # This is because we do not extract any data info from the "Ranking" title string
-# FIXME Perhaps this is due to the fact that the parsing fails...
+    # We want to be sure that the stats sub-page about the
+    # enlisted Teams won't be mistaken for a :team_ranking
+    # data-page:
     it "has no :team_ranking data page" do
       expect( subject[:team_ranking] ).to be_an_instance_of( Array )
       expect( subject[:team_ranking].size ).to eq( 0 )
     end
 
+    # The key to the array of data-pages must always be present,
+    # even though the array of data pages is empty:
     it "recognizes a list of :ranking_row data pages" do
       expect( subject.has_key?( :ranking_row ) ).to be true
     end
-    xit "has the exact amount of :ranking_row data pages for this fixture" do
-
+    it "has no :ranking_row data pages" do
+      expect( subject[:ranking_row] ).to be_an_instance_of( Array )
+      expect( subject[:ranking_row].size ).to eq( 0 )
     end
   end
   #-- -------------------------------------------------------------------------

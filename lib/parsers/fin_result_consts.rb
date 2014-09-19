@@ -113,10 +113,26 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     :stats
   )
 
+  # "Statistics / empty row" (detail) context type definition.
+  CNT_TYPE_STATS_EMPTY_ROW = ContextTypeDef.new(
+    :stats_empty_row,
+    [ /^\s*(\r\n|\n|$)/ui ],
+    :stats
+  )
+
+  # "Statistics / anything" (wildchar for detail) context type definition.
+  # Allows the :stats header context to be kept as valid even when
+  # unknown lines are encountered.
+  CNT_TYPE_STATS_ANYTHING = ContextTypeDef.new(
+    :stats_anything,
+    [ /^.+$/ui ],
+    :stats
+  )
+
   # "Statistics / Swimmers in tot." (detail) context type definition.
   CNT_TYPE_STATS_SWIMMER_TOT = ContextTypeDef.new(
     :stats_swimmer_tot,
-    [ /Numero totale di atleti iscritti\s/ui ],
+    [ /Numero tot.+\sdi atleti iscritti\s/ui ],
     :stats
   )
 
