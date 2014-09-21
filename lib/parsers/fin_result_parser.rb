@@ -35,11 +35,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE  = true
-
-  # Set this to true or false to enable or disable debugging output, L3.
-  #
-  DEBUG_EXTRA_VERBOSE = false
+  DEBUG_VERY_VERBOSE  = false
   #-- -------------------------------------------------------------------------
   #++
 
@@ -99,15 +95,14 @@ class FinResultParser
     parse_service = TxtParseService.new( parsing_defs )
     full_text_file_contents = ""
                                                     # Scan each line of the file until gets reaches EOF:
-    File.open( full_pathname ) do |f|
+    File.open( full_pathname, 'r:utf-8' ) do |f|
       f.each_line do |curr_line|
-        log_somehow( logger, "Reading line #{parse_service.line_count}...: <<#{curr_line}>>", DEBUG_VERBOSE )
-        curr_line = force_valid_encoding( curr_line )
+        log_somehow( logger, "Reading line #{parse_service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE )
         full_text_file_contents << curr_line
         any_detection = false
                                                     # -- DETAIL Context detection:
         parsing_defs.context_types_children_of( parse_service.previous_parent_context ).each do |context_name, detector|
-          log_somehow( logger, "Prioritizing on children of #{context_name}...", DEBUG_EXTRA_VERBOSE )
+          log_somehow( logger, "Prioritizing on children of #{parse_service.previous_parent_context.to_s.upcase}: checking #{context_name.to_s.upcase}...", DEBUG_VERY_VERBOSE )
           any_detection = parse_service.parse( detector, curr_line )
         end unless parse_service.previous_parent_context.nil?
                                                     # Clear parent context only when no DETAIL are recognized:
@@ -162,7 +157,11 @@ class FinResultParser
   # forced encoding for the specified string, returning a new UTF-8
   # string.
   #
+  # @deprecated Useless, as of this version
+  #
   def self.force_valid_encoding( curr_line )
+    # Don't change the encoding if it's already UTF-8:
+    return curr_line if curr_line.respond_to?(:encoding) && ( curr_line.encoding.name == 'UTF-8' )
     if String.method_defined?( :encode )
       if curr_line.force_encoding( "ISO-8859-1" ).valid_encoding?
         curr_line = curr_line.force_encoding("ISO-8859-1")
@@ -190,67 +189,6 @@ class FinResultParser
     else
       puts( msg )
     end
-  end
-
-  # Returns a unique string ID for the context_name and token_hash specified
-  #
-  def self.compose_memstorage_key( parsing_defs, context_name, token_hash, logger = nil )
-    return nil if ( parsing_defs.required_keys( context_name ).size < 1 )
-    all_keys_list  = parsing_defs.required_keys( context_name ).flatten.compact
-    log_somehow(
-      logger,
-      "\r\n*** all_keys_list= #{all_keys_list.inspect}" +
-      "** token_hash= #{token_hash.inspect}",
-      DEBUG_VERBOSE
-    )
-    ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join('-')
-  end
-
-
-  # Tokenize a group of cached lines, recognized as belonging to a specific "context",
-  # defined by the conditions specified inside the dedicated structures.
-  #
-  # === Returns
-  # An Hash composed of all the tokens extracted for each passed cached row, all
-  # merged into a single container. Duplicate field names will be overwritten as new
-  # hash keys (L.I.F.O.). (That is, if 2 different cached rows have same-named fields
-  # for token extraction, only the last extracted field with the same name will survive
-  # the flatten+merge operation.)
-  #
-  def self.tokenize_context_cache( parsing_defs, context_name, row_cache_array, logger = nil, current_line_number = 0 )
-    tokenizer_context_list = parsing_defs.tokenizer_types_for( context_name )
-    raise "Tokenizer context list not found for context '#{context_name}'!" unless tokenizer_context_list.kind_of?(Array)
-    token_list = []
-    prev_token_start = nil                          # Clear previous token starting index before the loop
-                                                    # For each cached row:
-    row_cache_array.each_with_index { |row, row_idx|
-                                                    # Retrieve the list of tokenizers for the current row:
-      tokenizer_row_list = tokenizer_context_list[ row_idx ]
-      row_to_be_parsed   = row_cache_array[ row_idx ]
-      token_start = nil                             # Clear token starting index before processing the whole row
-      token_field = nil
-      prev_token_field = nil
-                                                    # The tokenizer row-list may or may not be defined: we must check it
-      if ( tokenizer_row_list.kind_of?(Array) && tokenizer_row_list.size > 0 )
-        token_list << {}                            # Add a new row item to the resulting token list of rows
-                                                    # For each tokenizer row list...
-        tokenizer_row_list.each_with_index { |token_extractor, tok_idx|
-          token_field = ( parsing_defs.tokenizer_fields_for( context_name ) )[row_idx][tok_idx]
-# DEBUG (commented out due to excessive detail)
-#          log_somehow( logger, "-- Processing token '#{token_field}' using #{token_extractor}...", DEBUG_EXTRA_VERBOSE )
-          token = token_extractor.tokenize( row_to_be_parsed, current_line_number )
-# DEBUG (commented out due to excessive detail)
-#          log_somehow( logger, "   Extracted '#{token}'.", DEBUG_EXTRA_VERBOSE )
-          token_extractor.clear()                   # Add to the token list only if it contains anything
-          token_list.last[ token_field ] = token if token && token.length > 0
-        }
-      end
-    }
-
-    result_token_hash = {}
-    token_list.flatten.each{|sub_hash| result_token_hash.merge!(sub_hash) }
-    log_somehow( logger, "-- Returning token list: #{result_token_hash.inspect}", DEBUG_VERBOSE )
-    result_token_hash
   end
   #-- -------------------------------------------------------------------------
   #++

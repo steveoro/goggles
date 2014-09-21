@@ -6,7 +6,7 @@ require 'parsers/tools_logging'
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.509
+  - Goggles framework vers.:  4.00.511
   - author: Steve A.
 
  Service class delegated to ContextType recognition.
@@ -185,6 +185,7 @@ class ContextDetector
         @detection_index = 0
       end
     else
+      log_somehow( @logger, "                 => \033[1;31;40mno match\033[0m.", DEBUG_VERY_VERBOSE )
       clear()
     end
     log_somehow( @logger, "---------------- (ContextDetector end)", DEBUG_VERBOSE )

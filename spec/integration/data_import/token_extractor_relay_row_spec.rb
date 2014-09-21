@@ -8,6 +8,10 @@ require 'parsers/fin_result_consts'
 
 
 describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
+  let( :dummy_wrapper ) do
+    class DummyWrapper; include FinResultConsts; end
+    DummyWrapper.new
+  end
 
   let(:feed) do
     [
@@ -48,7 +52,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_POSITION," do
-    subject { FinResultConsts::TOK_EXT_RELAY_ROW_RESULT_POSITION }
+    subject { dummy_wrapper.tokenizer_relay_row_result_position }
 
     let(:expected_tokens) do
       [ # field = :result_position
@@ -90,7 +94,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing TEAM_NAME," do
-    subject { FinResultConsts::TOK_EXT_RELAY_ROW_TEAM_NAME }
+    subject { dummy_wrapper.tokenizer_relay_row_team_name }
 
     let(:expected_tokens) do
       [ # field = :team_name
@@ -132,7 +136,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_TIME," do
-    subject { FinResultConsts::TOK_EXT_RELAY_ROW_RESULT_TIME }
+    subject { dummy_wrapper.tokenizer_relay_row_result_time }
 
     let(:expected_tokens) do
       [ # field = :result_time
@@ -174,7 +178,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_SCORE," do
-    subject { FinResultConsts::TOK_EXT_RELAY_ROW_RESULT_SCORE }
+    subject { dummy_wrapper.tokenizer_relay_row_result_score }
 
     let(:expected_tokens) do
       [ # field = :result_score

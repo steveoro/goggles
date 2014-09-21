@@ -8,6 +8,10 @@ require 'parsers/fin_result_consts'
 
 
 describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
+  let( :dummy_wrapper ) do
+    class DummyWrapper; include FinResultConsts; end
+    DummyWrapper.new
+  end
 
   let(:feed) do
     [
@@ -29,7 +33,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing TYPE," do
-    subject { FinResultConsts::TOK_EXT_RELAY_HEADER_TYPE }
+    subject { dummy_wrapper.tokenizer_relay_header_type }
 
     let(:expected_tokens) do
       [ # field = :type
@@ -52,7 +56,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing DISTANCE," do
-    subject { FinResultConsts::TOK_EXT_RELAY_HEADER_DISTANCE }
+    subject { dummy_wrapper.tokenizer_relay_header_distance }
 
     let(:expected_tokens) do
       [ # field = :distance
@@ -75,7 +79,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing STYLE," do
-    subject { FinResultConsts::TOK_EXT_RELAY_HEADER_STYLE }
+    subject { dummy_wrapper.tokenizer_relay_header_style }
 
     let(:expected_tokens) do
       [ # field = :style
@@ -98,7 +102,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing CATEGORY_GROUP," do
-    subject { FinResultConsts::TOK_EXT_RELAY_HEADER_CATEGORY_GROUP }
+    subject { dummy_wrapper.tokenizer_relay_header_category_group }
 
     let(:expected_tokens) do
       [ # field = :category_group
@@ -121,7 +125,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing BASE_TIME," do
-    subject { FinResultConsts::TOK_EXT_RELAY_HEADER_BASE_TIME }
+    subject { dummy_wrapper.tokenizer_relay_header_base_time }
 
     let(:expected_tokens) do
       [ # field = :base_time

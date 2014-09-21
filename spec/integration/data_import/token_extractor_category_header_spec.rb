@@ -8,6 +8,10 @@ require 'parsers/fin_result_consts'
 
 
 describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration do
+  let( :dummy_wrapper ) do
+    class DummyWrapper; include FinResultConsts; end
+    DummyWrapper.new
+  end
 
   let(:feed) do
     [
@@ -34,7 +38,7 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
   #++
 
   context "when tokenizing DISTANCE," do
-    subject { FinResultConsts::TOK_EXT_CATEGORY_HEADER_DISTANCE }
+    subject { dummy_wrapper.tokenizer_category_header_distance }
 
     let(:expected_tokens) do
       [ # field = :distance
@@ -61,7 +65,7 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
   #++
 
   context "when tokenizing STYLE," do
-    subject { FinResultConsts::TOK_EXT_CATEGORY_HEADER_STYLE }
+    subject { dummy_wrapper.tokenizer_category_header_style }
 
     let(:expected_tokens) do
       [ # field = :style
@@ -88,7 +92,7 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
   #++
 
   context "when tokenizing GENDER," do
-    subject { FinResultConsts::TOK_EXT_CATEGORY_HEADER_GENDER }
+    subject { dummy_wrapper.tokenizer_category_header_gender }
 
     let(:expected_tokens) do
       [ # field = :gender
@@ -115,7 +119,7 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
   #++
 
   context "when tokenizing CATEGORY_GROUP," do
-    subject { FinResultConsts::TOK_EXT_CATEGORY_HEADER_CATEGORY_GROUP }
+    subject { dummy_wrapper.tokenizer_category_header_group }
 
     let(:expected_tokens) do
       [ # field = :category_group
@@ -142,7 +146,7 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
   #++
 
   context "when tokenizing BASE_TIME," do
-    subject { FinResultConsts::TOK_EXT_CATEGORY_HEADER_BASE_TIME }
+    subject { dummy_wrapper.tokenizer_category_header_base_time }
 
     let(:expected_tokens) do
       [ # field = :base_time

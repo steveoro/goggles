@@ -8,6 +8,10 @@ require 'parsers/fin_result_consts'
 
 
 describe "TokenExtractor for MEETING_HEADER-type buffers,", type: :integration do
+  let( :dummy_wrapper ) do
+    class DummyWrapper; include FinResultConsts; end
+    DummyWrapper.new
+  end
 
   let(:feed) do
     [
@@ -57,7 +61,7 @@ describe "TokenExtractor for MEETING_HEADER-type buffers,", type: :integration d
   #++
 
   context "when tokenizing HEADER_TITLE," do
-    subject { FinResultConsts::TOK_EXT_MEETING_HEADER_TITLE }
+    subject { dummy_wrapper.tokenizer_meeting_header_title }
 
     let(:expected_tokens) do
       [ # field = :title
@@ -107,7 +111,7 @@ describe "TokenExtractor for MEETING_HEADER-type buffers,", type: :integration d
   #++
 
   context "when tokenizing MEETING_DATES," do
-    subject { FinResultConsts::TOK_EXT_MEETING_HEADER_MEETING_DATES }
+    subject { dummy_wrapper.tokenizer_meeting_header_meeting_dates }
 
     let(:expected_tokens) do
       [ # field = :meeting_dates
@@ -157,7 +161,7 @@ describe "TokenExtractor for MEETING_HEADER-type buffers,", type: :integration d
   #++
 
   context "when tokenizing ORGANIZATION," do
-    subject { FinResultConsts::TOK_EXT_MEETING_HEADER_ORGANIZATION }
+    subject { dummy_wrapper.tokenizer_meeting_header_organization }
 
     let(:expected_tokens) do
       [ # field = :organization

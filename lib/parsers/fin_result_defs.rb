@@ -11,7 +11,7 @@ require 'parsers/fin_result_consts'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.509
+  - Goggles framework vers.:  4.00.511
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -59,27 +59,17 @@ class FinResultDefs < TxtResultDefs
     # context of data, if the conditions are loose enough).
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
-      meeting_header:   ContextDetector.new( CNT_TYPE_MEETING_HEADER, logger ),
-      category_header:  ContextDetector.new( CNT_TYPE_CATEGORY_HEADER, logger ),
-      relay_header:     ContextDetector.new( CNT_TYPE_RELAY_HEADER, logger ),
-      team_ranking:     ContextDetector.new( CNT_TYPE_TEAM_RANKING, logger ),
-      stats:            ContextDetector.new( CNT_TYPE_STATS, logger ),
+      meeting_header:   ContextDetector.new( context_type_meeting_header, logger ),
+      category_header:  ContextDetector.new( context_type_category_header, logger ),
+      relay_header:     ContextDetector.new( context_type_relay_header, logger ),
+      team_ranking:     ContextDetector.new( context_type_team_ranking, logger ),
+      stats:            ContextDetector.new( context_type_stats, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      result_row:       ContextDetector.new( CNT_TYPE_RESULT_ROW, logger ),
-      relay_row:        ContextDetector.new( CNT_TYPE_RELAY_ROW, logger ),
-      ranking_row:      ContextDetector.new( CNT_TYPE_RANKING_ROW, logger ),
+      result_row:       ContextDetector.new( context_type_result_row, logger ),
+      relay_row:        ContextDetector.new( context_type_relay_row, logger ),
+      ranking_row:      ContextDetector.new( context_type_ranking_row, logger ),
 
-      stats_details:    ContextDetector.new( CNT_TYPE_STATS_DETAIL, logger )
-
-#      stats_teams_tot:        ContextDetector.new( CNT_TYPE_STATS_TEAMS_TOT, logger ),
-#      stats_teams_presence:   ContextDetector.new( CNT_TYPE_STATS_TEAMS_PRESENCE, logger ),
-#      stats_swimmer_tot:      ContextDetector.new( CNT_TYPE_STATS_SWIMMER_TOT, logger ),
-#      stats_swimmer_presence: ContextDetector.new( CNT_TYPE_STATS_SWIMMER_PRESENCE, logger ),
-      # "Wildcard" context types defined just for the stats section, which can
-      # be interleaved with unrecognized rows or empty rows:
-      # (these should be checked last to avoid conflicts)
-#      stats_empty_row:        ContextDetector.new( CNT_TYPE_STATS_EMPTY_ROW, logger ),
-#      stats_anything:         ContextDetector.new( CNT_TYPE_STATS_ANYTHING, logger )
+      stats_details:    ContextDetector.new( context_type_stats_details, logger )
     }
 
     # == String tokenizer type hash
@@ -99,18 +89,18 @@ class FinResultDefs < TxtResultDefs
       meeting_header: [
         # -- Fields to be extracted: :title OR :meeting_dates
         [
-          TOK_EXT_MEETING_HEADER_TITLE,
-          TOK_EXT_MEETING_HEADER_MEETING_DATES,
+          tokenizer_meeting_header_title,
+          tokenizer_meeting_header_meeting_dates,
         ],
         # -- Fields to be extracted: :organization OR :title
         [
-          TOK_EXT_MEETING_HEADER_ORGANIZATION,
-          TOK_EXT_MEETING_HEADER_TITLE
+          tokenizer_meeting_header_organization,
+          tokenizer_meeting_header_title
         ],
         # -- Fields to be extracted: :meeting_dates OR :organization
         [
-          TOK_EXT_MEETING_HEADER_MEETING_DATES,
-          TOK_EXT_MEETING_HEADER_ORGANIZATION,
+          tokenizer_meeting_header_meeting_dates,
+          tokenizer_meeting_header_organization,
         ]
       ],
 
@@ -118,11 +108,11 @@ class FinResultDefs < TxtResultDefs
         nil,
         # -- Fields to be extracted: :distance, :style, :gender, :category_group, :base_time
         [
-          TOK_EXT_CATEGORY_HEADER_DISTANCE,
-          TOK_EXT_CATEGORY_HEADER_STYLE,
-          TOK_EXT_CATEGORY_HEADER_GENDER,
-          TOK_EXT_CATEGORY_HEADER_CATEGORY_GROUP,
-          TOK_EXT_CATEGORY_HEADER_BASE_TIME
+          tokenizer_category_header_distance,
+          tokenizer_category_header_style,
+          tokenizer_category_header_gender,
+          tokenizer_category_header_group,
+          tokenizer_category_header_base_time
         ],
         nil
       ],
@@ -131,12 +121,12 @@ class FinResultDefs < TxtResultDefs
       relay_header: [
         nil,
         [
-          TOK_EXT_RELAY_HEADER_TYPE,
-          TOK_EXT_RELAY_HEADER_DISTANCE,
-          TOK_EXT_RELAY_HEADER_STYLE,
-          TOK_EXT_CATEGORY_HEADER_GENDER,
-          TOK_EXT_RELAY_HEADER_CATEGORY_GROUP,
-          TOK_EXT_RELAY_HEADER_BASE_TIME
+          tokenizer_relay_header_type,
+          tokenizer_relay_header_distance,
+          tokenizer_relay_header_style,
+          tokenizer_category_header_gender,
+          tokenizer_relay_header_category_group,
+          tokenizer_relay_header_base_time
         ],
         nil
       ],
@@ -146,72 +136,74 @@ class FinResultDefs < TxtResultDefs
         nil, nil
       ],
 
-      # -- Fields to be extracted: (nothing, 3 lines in cache)
+      # -- Fields to be extracted: (nothing, 2 lines in cache)
       stats: [
-        nil, nil, nil
+        nil, nil
       ],
 
       result_row: [                                 # 1 condition => 1 cached row
         [                                           # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
-          TOK_EXT_RESULT_ROW_RESULT_POSITION,
-          TOK_EXT_RESULT_ROW_TEAM_CODE,
-          TOK_EXT_RESULT_ROW_SWIMMER_NAME,
-          TOK_EXT_RESULT_ROW_SWIMMER_YEAR,
-          TOK_EXT_RESULT_ROW_TEAM_NAME,
-          TOK_EXT_RESULT_ROW_RESULT_TIME,
-          TOK_EXT_RESULT_ROW_RESULT_SCORE
+          tokenizer_result_row_result_position,
+          tokenizer_result_row_team_code,
+          tokenizer_result_row_swimmer_name,
+          tokenizer_result_row_swimmer_year,
+          tokenizer_result_row_team_name,
+          tokenizer_result_row_result_time,
+          tokenizer_result_row_result_score
         ]
       ],
 
       # -- Fields to be extracted: :result_position, :team_name, :result_time, :result_score
       relay_row: [
         [                                             # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
-          TOK_EXT_RELAY_ROW_RESULT_POSITION,
-          TOK_EXT_RELAY_ROW_TEAM_NAME,
-          TOK_EXT_RELAY_ROW_RESULT_TIME,
-          TOK_EXT_RELAY_ROW_RESULT_SCORE
+          tokenizer_relay_row_result_position,
+          tokenizer_relay_row_team_name,
+          tokenizer_relay_row_result_time,
+          tokenizer_relay_row_result_score
         ]
       ],
 
       # -- Fields to be extracted: :result_position, :team_code, :team_name, :result_score
       ranking_row: [
         [
-          TOK_EXT_RANKING_ROW_RESULT_POSITION,
-          TOK_EXT_RANKING_ROW_TEAM_CODE,
-          TOK_EXT_RANKING_ROW_TEAM_NAME,
-          TOK_EXT_RANKING_ROW_RESULT_SCORE
+          tokenizer_ranking_row_result_position,
+          tokenizer_ranking_row_team_code,
+          tokenizer_ranking_row_team_name,
+          tokenizer_ranking_row_result_score
         ]
       ],
 
-      # -- Fields to be extracted: :total (for all rows)
+      # -- Fields to be extracted: :teams_tot, :teams_presence,
+      #    :swimmer_tot, :swimmer_presence, :entries_tot, :entries_presence,
+      #    :disqual_tot, :withdrawals_tot
       stats_details: [
-        [ TOK_EXT_STATS_TEAMS_TOT ],
+        [ tokenizer_stats_teams_tot ],
         nil,
-        [ TOK_EXT_STATS_TEAMS_PRESENCE ],
-        nil,
-        [ TOK_EXT_STATS_SWIMMER_TOT ],
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        [ TOK_EXT_STATS_SWIMMER_PRESENCE ]
-      ]
+        [ tokenizer_stats_teams_presence ], nil,
 
-      # stats_teams_tot: [
-        # [ TOK_EXT_STATS_TEAM_TOTAL ]
-      # ],
-      # stats_teams_presence: [
-        # [ TOK_EXT_STATS_TEAM_TOTAL ]
-      # ],
-      # stats_swimmer_tot: [
-        # [ TOK_EXT_STATS_TEAM_TOTAL ]
-      # ],
-      # stats_swimmer_presence: [
-        # [ TOK_EXT_STATS_TEAM_TOTAL ]
-      # ],
-      # stats_anything:  [ nil ],
-      # stats_empty_row: [ nil ]
+        [ tokenizer_stats_swimmers_tot ],
+        nil,
+        nil,
+        nil,
+        nil, nil,
+
+        [ tokenizer_stats_swimmers_presence ],
+        nil,
+        nil,
+        nil, nil,
+
+        [ tokenizer_stats_entries_tot ],
+        nil,
+        nil, nil,
+
+        [ tokenizer_stats_entries_presence ],
+        nil, nil,
+
+        nil,
+        nil,
+        [ tokenizer_stats_disqual_tot ],
+        [ tokenizer_stats_withdrawals_tot ]
+      ]
     }
 
     # == String tokenizer field names Hash
@@ -263,28 +255,37 @@ class FinResultDefs < TxtResultDefs
       ],
 
       stats: [                                      # 3 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
-        nil, nil, nil
+        nil, nil
       ],
 
       stats_details: [
         [ :teams_tot ],
         nil,
-        [ :teams_presence ],
-        nil,
+        [ :teams_presence ], nil,
+
         [ :swimmer_tot ],
         nil,
         nil,
         nil,
+        nil, nil,
+
+        [ :swimmer_presence ],
         nil,
         nil,
-        [ :swimmer_presence ]
+        nil, nil,
+
+        [ :entries_tot ],
+        nil,
+        nil, nil,
+
+        [ :entries_presence ],
+        nil,  nil,
+
+        nil,
+        nil,
+        [ :disqual_tot ],
+        [ :withdrawals_tot ]
       ]
-      # stats_teams_tot:        [ [ :total ] ],
-      # stats_teams_presence:   [ [ :total ] ],
-      # stats_swimmer_tot:      [ [ :total ] ],
-      # stats_swimmer_presence: [ [ :total ] ],
-      # stats_anything:         [ nil ],
-      # stats_empty_row:        [ nil ]
     }
 
     # == Context Group Keys Hash

@@ -56,10 +56,16 @@ describe TxtParseService, type: :model do
   context "for a valid instance," do
     subject { TxtParseService.new( FinResultDefs.new ) }
 
+    let( :dummy_wrapper ) do
+      class DummyWrapper; include FinResultConsts; end
+      DummyWrapper.new
+    end
+
+
     describe "#parse" do
       it "recognizes a 'in progress' change of a multi-line context with a single correct feed" do
         subject.clear                               # Clear the service and do a quick parsing:
-        expect( subject.parse( ContextDetector.new(FinResultConsts::CNT_TYPE_STATS), '' ) ).to be true
+        expect( subject.parse( ContextDetector.new(dummy_wrapper.context_type_stats), 'Statistiche' ) ).to be true
       end
     end
     #-- -----------------------------------------------------------------------
@@ -69,7 +75,7 @@ describe TxtParseService, type: :model do
       before(:each) do
         subject.clear                               # Clear the service and do a quick parsing:
         last_result = false
-        detector    = ContextDetector.new( FinResultConsts::CNT_TYPE_STATS )
+        detector    = ContextDetector.new( dummy_wrapper.context_type_stats )
         ['', ' Statistiche ', ''].each do |curr_line|
           last_result = subject.parse( detector, curr_line )
           subject.increase_line_count

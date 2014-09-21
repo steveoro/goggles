@@ -7,7 +7,7 @@ require 'parsers/context_detector'
 
 = TxtParseService
 
-  - Goggles framework vers.:  4.00.509
+  - Goggles framework vers.:  4.00.511
   - author: Steve A.
 
  Service class delegated to the parsing of a single line of text,
@@ -120,7 +120,7 @@ class TxtParseService
     anything_detected = detector.feed_and_detect( current_line, @line_count, @previous_parent_context )
 
     if ( anything_detected )                              # === DETECTION SUCCESSFULL ===
-      log_somehow( logger, "=> Context switched to '#{context_name}'. Token extraction in progress...", DEBUG_VERBOSE )
+      log_somehow( logger, "=> Context switched to '\033[1;33;40m#{ context_name.to_s.upcase }\033[0m'. Token extraction in progress...", DEBUG_VERBOSE )
       cached_rows = detector.dump_line_cache
       token_hash  = tokenize_context_cache( context_name, cached_rows )
 

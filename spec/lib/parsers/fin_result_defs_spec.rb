@@ -52,7 +52,6 @@ describe FinResultDefs, type: :model do
         it "has all the required keys" do
           expect( subject.context_types_children_of(:stats).keys ).to include(
             :stats_details
-#            :stats_teams_tot, :stats_teams_presence, :stats_swimmer_tot, :stats_swimmer_presence
           )
         end
       end
@@ -63,10 +62,6 @@ describe FinResultDefs, type: :model do
           expect( subject.context_types_children_of(:relay_row).keys.size ).to eq(0)
           expect( subject.context_types_children_of(:ranking_row).keys.size ).to eq(0)
           expect( subject.context_types_children_of(:stats_details).keys.size ).to eq(0)
-#          expect( subject.context_types_children_of(:stats_teams_tot).keys.size ).to eq(0)
-#          expect( subject.context_types_children_of(:stats_teams_presence).keys.size ).to eq(0)
-#          expect( subject.context_types_children_of(:stats_swimmer_tot).keys.size ).to eq(0)
-#          expect( subject.context_types_children_of(:stats_swimmer_presence).keys.size ).to eq(0)
         end
       end
     end

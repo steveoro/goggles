@@ -9,12 +9,14 @@ require 'parsers/fin_result_consts'
 describe ContextDetector, type: :model do
 
   context "for a well-defined instance," do
-    let( :fix_context_type ) do
-      FinResultConsts::ALL_CONTEXT_TYPE_DEFS[ (rand * FinResultConsts::ALL_CONTEXT_TYPE_DEFS.size).to_i ]
+    let( :dummy_wrapper ) do
+      class DummyWrapper; include FinResultConsts; end
+      DummyWrapper.new
     end
+    let( :context_types_array ) { dummy_wrapper.get_context_types_list() }
+    let( :fix_context_type )    { context_types_array[ (rand * context_types_array.size).to_i ] }
 
     subject { ContextDetector.new( fix_context_type, ConsoleLogger.new ) }
-
 
     it_behaves_like( "(the existance of a method)", [
       :context_type, :logger,
@@ -32,7 +34,6 @@ describe ContextDetector, type: :model do
       end
     end
 
-
     describe "#context_type" do
       it "is a ContextTypeDef instance" do
         expect( subject.context_type ).to be_an_instance_of( ContextTypeDef )
@@ -45,7 +46,6 @@ describe ContextDetector, type: :model do
       end
     end
 
-
     describe "#logger (when defined)" do
       it "is a Logger or ConsoleLogger instance" do
         expect( subject.logger ).to be_an_instance_of( Logger ).or be_an_instance_of( ConsoleLogger )
@@ -53,7 +53,6 @@ describe ContextDetector, type: :model do
     end
     #-- -----------------------------------------------------------------------
     #++
-
 
     context "when out of parsing loop," do
       describe "#current_context" do
@@ -93,7 +92,7 @@ describe ContextDetector, type: :model do
       let( :fixture_line_0 ) { "                                  Campionati Regionali Emilia                                  " }
       let( :fixture_line_1 ) { "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      " }
       let( :fixture_line_2 ) { "                              Molinella - 15/16/17 Febbraio 2009                               " }
-      subject { ContextDetector.new( FinResultConsts::CNT_TYPE_MEETING_HEADER ) }
+      subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header ) }
 
       before(:each) do
         subject.feed_and_detect( fixture_line_0, 0, nil )
@@ -103,7 +102,7 @@ describe ContextDetector, type: :model do
 
       describe "#current_context" do
         it "returns the last recognized context" do
-          expect( subject.current_context ).to be == FinResultConsts::CNT_TYPE_MEETING_HEADER
+          expect( subject.current_context ).to be == dummy_wrapper.context_type_meeting_header
         end
       end
       describe "#detection_is_in_progress" do
@@ -136,13 +135,11 @@ describe ContextDetector, type: :model do
     #-- -----------------------------------------------------------------------
     #++
 
-
     describe "#is_a_parent_context" do
       it "returns true when the context definition has no parent name associated" do
         expect( subject.is_a_parent_context ).to eq( fix_context_type.parent_context_name.nil? )
       end
     end
-
 
     describe "#to_s" do
       it "returns a String" do

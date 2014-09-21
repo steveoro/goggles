@@ -54,9 +54,14 @@ describe ContextDetector, type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
+  let( :dummy_wrapper ) do
+    class DummyWrapper; include FinResultConsts; end
+    DummyWrapper.new
+  end
+
 
   context "when parsing MEETING_HEADER," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_MEETING_HEADER, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
 
     it "recognizes the 'FIN Campionati Regionali' format" do
       feed = [
@@ -208,7 +213,7 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing CATEGORY_HEADER," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_CATEGORY_HEADER, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_category_header, nil ) }
 
     it "recognizes the 'FIN category w/ base time' format (sample #1)" do
       feed = [
@@ -329,7 +334,7 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing RELAY_HEADER," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_RELAY_HEADER, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_relay_header, nil ) }
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #1)" do
       feed = [
@@ -486,7 +491,7 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing TEAM_RANKING," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_TEAM_RANKING, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_team_ranking, nil ) }
 
     it "recognizes the 'FIN team-ranking' format (sample #1)" do
       feed = [
@@ -519,14 +524,13 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing STATS," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_STATS, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_stats, nil ) }
 
     it "recognizes the 'FIN stats' format (sample #1)" do
       feed = [
       #            10        20        30        40        50        60        70        80        90
       #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
-        '',
-        "                                  Statistiche Società                                 ",
+        "                                Statistiche                                ",
         ''
       ]
       check_for_parsing_ok( 3, feed )
@@ -534,17 +538,7 @@ describe ContextDetector, type: :integration do
 
     it "recognizes the 'FIN stats' format (sample #2)" do
       feed = [
-        '',
-        "                                  Statistiche Societ�                                 ",
-        ''
-      ]
-      check_for_parsing_ok( 3, feed )
-    end
-
-    it "recognizes the 'FIN stats' format (sample #3)" do
-      feed = [
-        '',
-        "Statistiche societa'",
+        "Statistiche",
         ''
       ]
       check_for_parsing_ok( 3, feed )
@@ -555,7 +549,7 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing RESULT_ROW," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_RESULT_ROW, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_result_row, nil ) }
 
     it "recognizes the 'FIN result-row' format #1 (sample #1)" do
       feed = [
@@ -634,7 +628,7 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing RELAY_ROW," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_RELAY_ROW, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_relay_row, nil ) }
 
     it "recognizes the 'FIN relay-row' format #1 (sample #1)" do
       feed = [
@@ -706,7 +700,7 @@ describe ContextDetector, type: :integration do
 
 
   context "when parsing RANKING_ROW," do
-    subject { ContextDetector.new( FinResultConsts::CNT_TYPE_RANKING_ROW, nil ) }
+    subject { ContextDetector.new( dummy_wrapper.context_type_ranking_row, nil ) }
 
     it "recognizes the 'FIN ranking-row' format #1 (sample #1)" do
       feed = [

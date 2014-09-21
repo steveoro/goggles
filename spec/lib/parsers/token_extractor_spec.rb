@@ -9,8 +9,13 @@ require 'parsers/fin_result_consts'
 describe TokenExtractor, type: :model do
 
   context "for a well-defined instance," do
+    let( :dummy_wrapper ) do
+      class DummyWrapper; include FinResultConsts; end
+      DummyWrapper.new
+    end
+    let( :tokenizers_array ) { dummy_wrapper.get_tokenizers_list() }
 
-    subject { FinResultConsts::ALL_TOKEN_EXTRACTOR[ (rand * FinResultConsts::ALL_TOKEN_EXTRACTOR.size).to_i ] }
+    subject { tokenizers_array[ (rand * tokenizers_array.size).to_i ]  }
 
     it_behaves_like( "(the existance of a method)", [
       :field_name, :starting_with, :ending_with, :line_timeout,
