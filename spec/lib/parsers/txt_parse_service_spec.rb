@@ -57,9 +57,9 @@ describe TxtParseService, type: :model do
     subject { TxtParseService.new( FinResultDefs.new ) }
 
     describe "#parse" do
-      it "doesn't recognize the change of a multi-line context with a single correct feed" do
+      it "recognizes a 'in progress' change of a multi-line context with a single correct feed" do
         subject.clear                               # Clear the service and do a quick parsing:
-        expect( subject.parse( ContextDetector.new(FinResultConsts::CNT_TYPE_STATS), '' ) ).to be false
+        expect( subject.parse( ContextDetector.new(FinResultConsts::CNT_TYPE_STATS), '' ) ).to be true
       end
     end
     #-- -----------------------------------------------------------------------

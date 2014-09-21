@@ -6,7 +6,7 @@ require 'parsers/tools_logging'
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.505
+  - Goggles framework vers.:  4.00.509
   - author: Steve A.
 
  Service class delegated to ContextType recognition.
@@ -56,19 +56,19 @@ require 'parsers/tools_logging'
 class ContextDetector
   include Tools::Logging
 
-  attr_reader :context_type, :logger, :current_context
+  attr_reader :context_type, :logger, :current_context, :detection_index
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = true
+  DEBUG_VERBOSE                                     = false
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE                                = true
+  DEBUG_VERY_VERBOSE                                = false
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
-  DEBUG_EXTRA_VERBOSE                               = true
+  DEBUG_EXTRA_VERBOSE                               = false
   # ---------------------------------------------------------------------------
 
 
@@ -111,6 +111,13 @@ class ContextDetector
   #
   def is_a_parent_context()
     @context_type.parent_context_name.nil?
+  end
+
+  # Returns +true+ if the context defined with this instance
+  # is in the progress of being recognized.
+  #
+  def detection_is_in_progress()
+    ( 0 < @detection_index ) && ( @detection_index < @context_type.condition_array.size )
   end
 
   # Returns the current buffered lines cache, automatically

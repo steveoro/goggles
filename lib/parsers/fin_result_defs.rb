@@ -11,7 +11,7 @@ require 'parsers/fin_result_consts'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.505
+  - Goggles framework vers.:  4.00.509
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -65,14 +65,21 @@ class FinResultDefs < TxtResultDefs
       team_ranking:     ContextDetector.new( CNT_TYPE_TEAM_RANKING, logger ),
       stats:            ContextDetector.new( CNT_TYPE_STATS, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      result_row:   ContextDetector.new( CNT_TYPE_RESULT_ROW, logger ),
-      relay_row:    ContextDetector.new( CNT_TYPE_RELAY_ROW, logger ),
-      ranking_row:  ContextDetector.new( CNT_TYPE_RANKING_ROW, logger ),
+      result_row:       ContextDetector.new( CNT_TYPE_RESULT_ROW, logger ),
+      relay_row:        ContextDetector.new( CNT_TYPE_RELAY_ROW, logger ),
+      ranking_row:      ContextDetector.new( CNT_TYPE_RANKING_ROW, logger ),
 
-      stats_teams_tot:        ContextDetector.new( CNT_TYPE_STATS_TEAMS_TOT, logger ),
-      stats_teams_presence:   ContextDetector.new( CNT_TYPE_STATS_TEAMS_PRESENCE, logger ),
-      stats_swimmer_tot:      ContextDetector.new( CNT_TYPE_STATS_SWIMMER_TOT, logger ),
-      stats_swimmer_presence: ContextDetector.new( CNT_TYPE_STATS_SWIMMER_PRESENCE, logger )
+      stats_details:    ContextDetector.new( CNT_TYPE_STATS_DETAIL, logger )
+
+#      stats_teams_tot:        ContextDetector.new( CNT_TYPE_STATS_TEAMS_TOT, logger ),
+#      stats_teams_presence:   ContextDetector.new( CNT_TYPE_STATS_TEAMS_PRESENCE, logger ),
+#      stats_swimmer_tot:      ContextDetector.new( CNT_TYPE_STATS_SWIMMER_TOT, logger ),
+#      stats_swimmer_presence: ContextDetector.new( CNT_TYPE_STATS_SWIMMER_PRESENCE, logger ),
+      # "Wildcard" context types defined just for the stats section, which can
+      # be interleaved with unrecognized rows or empty rows:
+      # (these should be checked last to avoid conflicts)
+#      stats_empty_row:        ContextDetector.new( CNT_TYPE_STATS_EMPTY_ROW, logger ),
+#      stats_anything:         ContextDetector.new( CNT_TYPE_STATS_ANYTHING, logger )
     }
 
     # == String tokenizer type hash
@@ -177,26 +184,34 @@ class FinResultDefs < TxtResultDefs
       ],
 
       # -- Fields to be extracted: :total (for all rows)
-      stats_teams_tot: [
-        [
-          TOK_EXT_STATS_TEAM_TOTAL
-        ]
-      ],
-      stats_teams_presence: [
-        [
-          TOK_EXT_STATS_TEAM_TOTAL
-        ]
-      ],
-      stats_swimmer_tot: [
-        [
-          TOK_EXT_STATS_TEAM_TOTAL
-        ]
-      ],
-      stats_swimmer_presence: [
-        [
-          TOK_EXT_STATS_TEAM_TOTAL
-        ]
+      stats_details: [
+        [ TOK_EXT_STATS_TEAMS_TOT ],
+        nil,
+        [ TOK_EXT_STATS_TEAMS_PRESENCE ],
+        nil,
+        [ TOK_EXT_STATS_SWIMMER_TOT ],
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        [ TOK_EXT_STATS_SWIMMER_PRESENCE ]
       ]
+
+      # stats_teams_tot: [
+        # [ TOK_EXT_STATS_TEAM_TOTAL ]
+      # ],
+      # stats_teams_presence: [
+        # [ TOK_EXT_STATS_TEAM_TOTAL ]
+      # ],
+      # stats_swimmer_tot: [
+        # [ TOK_EXT_STATS_TEAM_TOTAL ]
+      # ],
+      # stats_swimmer_presence: [
+        # [ TOK_EXT_STATS_TEAM_TOTAL ]
+      # ],
+      # stats_anything:  [ nil ],
+      # stats_empty_row: [ nil ]
     }
 
     # == String tokenizer field names Hash
@@ -250,10 +265,26 @@ class FinResultDefs < TxtResultDefs
       stats: [                                      # 3 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
         nil, nil, nil
       ],
-      stats_teams_tot:        [ [ :total ] ],
-      stats_teams_presence:   [ [ :total ] ],
-      stats_swimmer_tot:      [ [ :total ] ],
-      stats_swimmer_presence: [ [ :total ] ]
+
+      stats_details: [
+        [ :teams_tot ],
+        nil,
+        [ :teams_presence ],
+        nil,
+        [ :swimmer_tot ],
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        [ :swimmer_presence ]
+      ]
+      # stats_teams_tot:        [ [ :total ] ],
+      # stats_teams_presence:   [ [ :total ] ],
+      # stats_swimmer_tot:      [ [ :total ] ],
+      # stats_swimmer_presence: [ [ :total ] ],
+      # stats_anything:         [ nil ],
+      # stats_empty_row:        [ nil ]
     }
 
     # == Context Group Keys Hash
@@ -277,7 +308,7 @@ class FinResultDefs < TxtResultDefs
 
     @context_types.each { |key, detector|
       raise "Missing parser Hash key '#{key}'!" unless ( @tokenizer_types.has_key?(key) && @tokenizer_fields.has_key?(key) )
-      rails "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)
+      raise "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)
     }
   end
   # ----------------------------------------------------------------------------

@@ -16,7 +16,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.503
+  - Goggles framework vers.:  4.00.509
   - author: Steve A.
 
  Dedicated parser for FIN Results.

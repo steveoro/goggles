@@ -1,7 +1,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.225.20140418
+# - vers. : 4.00.509
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
@@ -152,7 +152,7 @@ namespace :app do
     DESC
     task :common_output do
       on roles(:app) do |host|
-        puts "      > Updating output dirs permissions..."
+        puts "      > Updating output & cache dirs permissions..."
         # mkdir -p is making sure that the directories are there for some SCM's that don't
         # save empty folders:
         within File.join(shared_path, "public") do
@@ -163,52 +163,11 @@ namespace :app do
           execute :chmod, "-R 0775 uploads"
           execute :chown, "-R #{fetch(:runner)}:www uploads"
         end
+        within File.join(shared_path, "tmp") do
+          execute :chmod, "777 cache"
+        end
       end
     end
-    # --------------------------------------------------------------------------
-
-
-
-# @deprecated:
-    # desc <<-DESC
-      # Recreates the symlink for production.rb file for the newly deployed release.
-    # DESC
-    # task :symlink_for_prod_env do
-      # on roles(:app) do
-        # execute :ln, "-nfs #{shared_path}/config/environments/production.rb #{release_path}/config/environments/production.rb"
-      # end
-    # end
-    # --------------------------------------------------------------------------
-
-# @deprecated
-    # desc <<-DESC
-      # Changes ownership for some of the released code.
-      # It is called after finalize_update and before the deployment finishes.
-#     
-      # It assumes a Rails project was deployed, so if you are deploying
-      # something else, you may want to override this task with your own
-      # environment's requirements.
-#     
-      # This task will set the ownage of the public (Document) dir and some of its
-      # subfolders.
-    # DESC
-    # task :public_dirs do
-      # on roles(:app) do |host|
-        # # Make a link also for the added common output folder:
-        # execute <<-CMD
-          # rm -rf #{latest_release}/public/output &&
-          # ln -s #{shared_path}/output #{latest_release}/public/output &&
-          # rm -rf #{latest_release}/public/uploads &&
-          # ln -s #{shared_path}/uploads #{latest_release}/public/uploads
-        # CMD
-# 
-        # execute :chown, "-R #{fetch(:runner)}:www #{shared_path}/log"
-        # execute "if test -e #{shared_path}/log/production.log ; then chmod -R 0666 #{shared_path}/log/production.log ; fi"
-        # extjs_dir = File.join(shared_path, "extjs")
-        # puts "Recreating ExtJS symlink inside release path '#{release_path}'..."
-        # execute :ln, "-nfs #{extjs_dir} #{release_path}/public/extjs ; chown -R #{fetch(:runner)}:www #{latest_release}/public"
-      # end
-    # end
     # --------------------------------------------------------------------------
 
   end

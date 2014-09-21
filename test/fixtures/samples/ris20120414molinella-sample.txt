@@ -156,9 +156,9 @@ Torna a inizio pagina
 
 Statistiche
 
-                Numero di societ‡ iscritte                               107     
-                Societ‡ che hanno fatto iscrizioni online                104     
-                Numero di societ‡ partecipanti                            99     
+                Numero di societ√† iscritte                               107     
+                Societ√† che hanno fatto iscrizioni online                104     
+                Numero di societ√† partecipanti                            99     
 
                 Numero totale di atleti iscritti                         702     
                 Numero di atleti under 25 iscritti                        53     
@@ -292,7 +292,7 @@ Statistiche
     103   VEN-028306  RHODIGIUM NUOTO 200                    0         1         1
     104   VEN-029044  SIS NUOTO VERONA AS                    1         0         1
     105   VEN-029059  TEAM EUGANEO                           4         4         8
-    106   VEN-035063  CITT¿ SPORT VICENZA                    0         1         1
+    106   VEN-035063  CITT√† SPORT VICENZA                    0         1         1
     107   VEN-035371  JESOLO SPORTING CLU                    0         1         1
 
               TOTALE                                       221       471       692

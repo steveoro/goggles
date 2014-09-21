@@ -19,6 +19,7 @@ describe ContextDetector, type: :model do
     it_behaves_like( "(the existance of a method)", [
       :context_type, :logger,
       :current_context, :dump_line_cache, :feed_and_detect,
+      :detection_index, :detection_is_in_progress,
       :clear, :parent_context_name, :is_a_parent_context, :to_s
     ] )
     #-- -----------------------------------------------------------------------
@@ -61,6 +62,18 @@ describe ContextDetector, type: :model do
         end
       end
 
+      describe "#detection_index" do
+        it "is a always 0" do
+          expect( subject.detection_index ).to eq(0)
+        end
+      end
+
+      describe "#detection_is_in_progress" do
+        it "is a always false" do
+          expect( subject.detection_is_in_progress ).to be false
+        end
+      end
+
       describe "#dump_line_cache" do
         it "returns an empty array" do
           expect( subject.dump_line_cache ).to eq( [] )
@@ -93,7 +106,11 @@ describe ContextDetector, type: :model do
           expect( subject.current_context ).to be == FinResultConsts::CNT_TYPE_MEETING_HEADER
         end
       end
-
+      describe "#detection_is_in_progress" do
+        it "is a always false" do
+          expect( subject.detection_is_in_progress ).to be false
+        end
+      end
       describe "#dump_line_cache" do
         it "returns the list of lines defining the current context" do
           expect( subject.dump_line_cache ).to contain_exactly( fixture_line_0, fixture_line_1, fixture_line_2 )

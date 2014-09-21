@@ -7,7 +7,7 @@ require 'parsers/context_detector'
 
 = TxtParseService
 
-  - Goggles framework vers.:  4.00.505
+  - Goggles framework vers.:  4.00.509
   - author: Steve A.
 
  Service class delegated to the parsing of a single line of text,
@@ -38,7 +38,7 @@ class TxtParseService
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE  = true
+  DEBUG_VERY_VERBOSE  = false
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
@@ -108,7 +108,7 @@ class TxtParseService
   #    > txt_parse_service_instance.result_for( detector.context_name )
   #
   # === Returns:
-  # - +true+ for a successful detection, +false+ otherwise.
+  # - +true+ for a successful or a partial detection (a detection "in progress"), +false+ otherwise.
   #
   def parse( detector, current_line )
     logger = @parsing_defs.logger
@@ -117,9 +117,9 @@ class TxtParseService
                                                     # Init parse result data pages if necessary:
     @result[ context_name ] = [] if @result[ context_name ].nil?
                                                     # Run checkings for current line:
-    is_detected = detector.feed_and_detect( current_line, @line_count, @previous_parent_context )
+    anything_detected = detector.feed_and_detect( current_line, @line_count, @previous_parent_context )
 
-    if ( is_detected )                              # === DETECTION SUCCESSFULL ===
+    if ( anything_detected )                              # === DETECTION SUCCESSFULL ===
       log_somehow( logger, "=> Context switched to '#{context_name}'. Token extraction in progress...", DEBUG_VERBOSE )
       cached_rows = detector.dump_line_cache
       token_hash  = tokenize_context_cache( context_name, cached_rows )
@@ -160,7 +160,7 @@ class TxtParseService
           # It seems that the :id field of the parse result hash is not used
           # anymore, as of this version.
 
-          # TODO Check actual usage of the :id=>key_string member in the result.
+          # FIXME Really seems that we keep result hashes with duplicated (:id=>key_string), without any compact()/reduce operation...
                                                     # There must be already a unique key stored for the other (parent) context
           if @previous_key[ parent_context ].nil?
             log_somehow(
@@ -198,12 +198,14 @@ class TxtParseService
       end
       log_somehow( logger, "   @result fields = #{@result[ context_name ].last[:fields].inspect}", DEBUG_VERY_VERBOSE && @result[ context_name ].last )
 
-#      else                                     # === DETECTION UNSUCCESSFUL ===
-      # ( nothing to do -- left here in case we need to log also this )
-
-      # FIXME Should we reset/clear the Detector when it's not successful?
+    else                                     # === DETECTION UNSUCCESSFUL (perhaps is "in progress") ===
+      # We must report false only if we are sure nothing has been recognized
+      # so far to prevent premature parent context reset by the external parser
+      # (otherwise "in progress" recognitions will be halted if reported as "not detected"):
+      anything_detected = detector.detection_is_in_progress
+      log_somehow( logger, "   Parent context still valid, detection in progress...", DEBUG_VERBOSE ) if anything_detected
     end
-    is_detected
+    anything_detected
   end
   # ----------------------------------------------------------------------------
   #++

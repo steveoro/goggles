@@ -8,7 +8,7 @@ require 'parsers/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.503
+  - Goggles framework vers.:  4.00.509
   - author: Steve A.
 
  Value object/Container module that stores all the common constant definitions
@@ -99,17 +99,36 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     :team_ranking
   )
 
+  # "Statistics details section start" context type definition.
+  CNT_TYPE_STATS_DETAIL = ContextTypeDef.new(
+    :stats_details,
+    [
+      /numero di soc.+\siscritte\s/ui,
+      /^.+$/ui,                                     # (anything)
+      /numero di soc.+\spartecipanti\s/ui,
+      /^\s*(\r\n|\n|$)/ui,                          # (empty)
+      /numero tot.+\sdi atleti iscritti\s/ui,
+      /^.+$/ui,                                     # (anything)
+      /^.+$/ui,                                     # (anything)
+      /^.+$/ui,                                     # (anything)
+      /^.+$/ui,                                     # (anything)
+      /^\s*(\r\n|\n|$)/ui,                          # (empty)
+      /numero di atleti partecipanti\s/ui
+    ],
+    :stats
+  )
+
   # "Statistics / Teams in total" (detail) context type definition.
   CNT_TYPE_STATS_TEAMS_TOT = ContextTypeDef.new(
     :stats_teams_tot,
-    [ /Numero di soc.+\siscritte\s/ui ],
+    [ /numero di soc.+\siscritte\s/ui ],
     :stats
   )
 
   # "Statistics / Teams presence" (detail) context type definition.
   CNT_TYPE_STATS_TEAMS_PRESENCE = ContextTypeDef.new(
     :stats_teams_presence,
-    [ /Numero di soc.+\spartecipanti\s/ui ],
+    [ /numero di soc.+\spartecipanti\s/ui ],
     :stats
   )
 
@@ -132,14 +151,14 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Statistics / Swimmers in tot." (detail) context type definition.
   CNT_TYPE_STATS_SWIMMER_TOT = ContextTypeDef.new(
     :stats_swimmer_tot,
-    [ /Numero tot.+\sdi atleti iscritti\s/ui ],
+    [ /numero tot.+\sdi atleti iscritti\s/ui ],
     :stats
   )
 
   # "Statistics / Swimmers presence" (detail) context type definition.
   CNT_TYPE_STATS_SWIMMER_PRESENCE = ContextTypeDef.new(
     :stats_swimmer_presence,
-    [ /Numero di atleti partecipanti\s/ui ],
+    [ /numero di atleti partecipanti\s/ui ],
     :stats
   )
   # ----------------------------------------------------------------------------
@@ -155,10 +174,11 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     CNT_TYPE_RESULT_ROW,
     CNT_TYPE_RELAY_ROW,
     CNT_TYPE_RANKING_ROW,
-    CNT_TYPE_STATS_TEAMS_TOT,
-    CNT_TYPE_STATS_TEAMS_PRESENCE,
-    CNT_TYPE_STATS_SWIMMER_TOT,
-    CNT_TYPE_STATS_SWIMMER_PRESENCE
+    CNT_TYPE_STATS_DETAIL
+#    CNT_TYPE_STATS_TEAMS_TOT,
+#    CNT_TYPE_STATS_TEAMS_PRESENCE,
+#    CNT_TYPE_STATS_SWIMMER_TOT,
+#    CNT_TYPE_STATS_SWIMMER_PRESENCE
   ]
   # ----------------------------------------------------------------------------
   #++
@@ -363,21 +383,18 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     8,
     7                                               # (max size)
   )
-
   # "ranking_row.team_code" token extractor definition
   TOK_EXT_RANKING_ROW_TEAM_CODE = TokenExtractor.new(
     :team_code,
     /(?<=\s)\w\w\w-\d{6}/ui,
     10                                              # (max size)
   )
-
   # "ranking_row.team_name" token extractor definition
   TOK_EXT_RANKING_ROW_TEAM_NAME = TokenExtractor.new(
     :team_name,
     /(?<=(\w{3}-\d{6}\s{2})|(\d\s{6})|(\s{19}))\w+/ui,
     /\s\d{1,6}[\,|\.]\d\d$/ui
   )
-
   # "ranking_row.result_score" token extractor definition
   TOK_EXT_RANKING_ROW_RESULT_SCORE = TokenExtractor.new(
     :result_score,
@@ -387,9 +404,27 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # ----------------------------------------------------------------------------
   #++
 
-  # "stats_team_tot.total" token extractor definition
-  TOK_EXT_STATS_TEAM_TOTAL = TokenExtractor.new(
-    :total,
+  # "stats_details.teams_tot" token extractor definition
+  TOK_EXT_STATS_TEAMS_TOT = TokenExtractor.new(
+    :teams_tot,
+    /\d/ui,
+    10                                              # (max size)
+  )
+  # "stats_details.teams_presence" token extractor definition
+  TOK_EXT_STATS_TEAMS_PRESENCE = TokenExtractor.new(
+    :teams_presence,
+    /\d/ui,
+    10                                              # (max size)
+  )
+  # "stats_details.swimmer_tot" token extractor definition
+  TOK_EXT_STATS_SWIMMER_TOT = TokenExtractor.new(
+    :swimmer_tot,
+    /\d/ui,
+    10                                              # (max size)
+  )
+  # "stats_details.swimmer_presence" token extractor definition
+  TOK_EXT_STATS_SWIMMER_PRESENCE = TokenExtractor.new(
+    :swimmer_presence,
     /\d/ui,
     10                                              # (max size)
   )
@@ -426,7 +461,10 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     TOK_EXT_RANKING_ROW_TEAM_CODE,
     TOK_EXT_RANKING_ROW_TEAM_NAME,
     TOK_EXT_RANKING_ROW_RESULT_SCORE,
-    TOK_EXT_STATS_TEAM_TOTAL
+    TOK_EXT_STATS_TEAMS_TOT,
+    TOK_EXT_STATS_TEAMS_PRESENCE,
+    TOK_EXT_STATS_SWIMMER_TOT,
+    TOK_EXT_STATS_SWIMMER_PRESENCE
   ]
   # ----------------------------------------------------------------------------
   #++

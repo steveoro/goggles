@@ -1,3 +1,11 @@
+=begin
+
+= MeetingsHelper
+
+  - Goggles framework vers.:  4.00.509
+  - author: Steve A.
+
+=end
 module MeetingsHelper
 
   # Getter for a unique string key viable for use as a cache key for fragments involving
@@ -8,6 +16,7 @@ module MeetingsHelper
       action_name,
       meeting_id,
       max_mir_updated_at.to_i.to_s,
+      I18n.locale.to_s,
       team_id,
       swimmer_id
     ].compact.join('-')

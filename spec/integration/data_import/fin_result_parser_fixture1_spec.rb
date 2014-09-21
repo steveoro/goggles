@@ -17,17 +17,10 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
   it "returns an Hash" do
     expect( @result_hash ).to be_an_instance_of( Hash )
   end
-  it "has the :parse_result key" do
-    expect( @result_hash.has_key?( :parse_result ) ).to be true
-  end
-  it "has the :line_count key" do
-    expect( @result_hash.has_key?( :line_count ) ).to be true
-  end
-  it "has the :total_data_rows key" do
-    expect( @result_hash.has_key?( :total_data_rows ) ).to be true
-  end
-  it "has the :full_text_file_contents key" do
-    expect( @result_hash.has_key?( :full_text_file_contents ) ).to be true
+  it "has the :parse_result, :line_count, :total_data_rows & :full_text_file_contents keys" do
+    expect( @result_hash.keys ).to contain_exactly(
+      :parse_result, :line_count, :total_data_rows, :full_text_file_contents
+    )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -76,13 +69,21 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
     end
 
     it "recognizes a list of :stats details data pages" do
-      expect( subject.has_key?( :stats_teams_tot ) ).to be true
-      expect( subject.has_key?( :stats_teams_presence ) ).to be true
-      expect( subject.has_key?( :stats_swimmer_tot ) ).to be true
-      expect( subject.has_key?( :stats_swimmer_presence ) ).to be true
+      expect( subject.has_key?( :stats_details ) ).to be true
     end
-    xit "has the exact amount of :stats details data pages for this fixture" do
-
+    it "has the exact amount of :stats details data pages for this fixture" do
+      expect( subject[:stats_details] ).to be_an_instance_of( Array )
+      expect( subject[:stats_details].size ).to eq( 1 )
+    end
+    context "for the :stats_details data page," do
+      it "has the exact values for all :stats_details of this fixture" do
+        data_page_field_hash = subject[:stats_details].first[:fields]
+        expect( data_page_field_hash ).to be_an_instance_of( Hash )
+        expect( data_page_field_hash[ :teams_tot ]        ).to eq( '107' )
+        expect( data_page_field_hash[ :teams_presence ]   ).to eq( '99' )
+        expect( data_page_field_hash[ :swimmer_tot ]      ).to eq( '702' )
+        expect( data_page_field_hash[ :swimmer_presence ] ).to eq( '630' )
+      end
     end
 
     # The key to the array of data-pages must always be present,
@@ -111,28 +112,63 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
-  xit "recognizes a 50FS FEM U25 category header" do
+  # In-depth check for each CATEGORY_HEADER found:
+  [
+    "50-stile libero-femminile-Under 25",
+    "50-stile libero-femminile-Master 25",
+    "50-stile libero-femminile-Master 30",
+    "50-stile libero-maschile-Master 50",
+    "50-stile libero-maschile-Master 55",
+    "50-stile libero-maschile-Master 60",
+    "50-stile libero-maschile-Master 65",
+    "50-stile libero-maschile-Master 70",
+    "400-stile libero-femminile-Under 25",
+    "400-stile libero-femminile-Master 25",
+    "400-stile libero-femminile-Master 30",
+    "400-stile libero-femminile-Master 35",
+    "100-misti-femminile-Under 25",
+    "100-misti-femminile-Master 25",
+    "100-misti-femminile-Master 30",
+    "100-misti-femminile-Master 35"
+  ].each do |string_key|
+    it "recognizes a '#{string_key}' category header" do
+      headers_list = @result_hash[:parse_result][:category_header]
+      recognized_result = headers_list.find_all { |category_hdr_hash|
+        category_hdr_hash[:id] == string_key
+      }.first
 
+      expect( recognized_result ).to be_an_instance_of( Hash )
+      expect( recognized_result[:fields] ).to be_an_instance_of( Hash )
+      # We use "include" instead of "contain_exactly" because :base_time
+      # may or may not be found:
+      expect( recognized_result[:fields].keys ).to include( :distance, :style, :gender, :category_group )
+      expect( recognized_result[:import_text] ).to be_an_instance_of( String )
+    end
   end
-  xit "recognizes a 50FS FEM M25 category header" do
+  #-- -------------------------------------------------------------------------
+  #++
 
-  end
-  xit "recognizes a 50FS FEM M30 category header" do
+# FIXME We store duplicated rows even if the memstore ID is the same, and this is surely a waste of memory...
 
-  end
-  xit "recognizes a 50FS MAL M50 category header" do
+  # In-depth check for each RELAY_HEADER found:
+  [
+    "mistaffetta 4x50 stile libero-M160-199",
+    "mistaffetta 4x50 stile libero-M240-279",
+    "mistaffetta 4x50 stile libero-M160-199",
+    "mistaffetta 4x50 stile libero-M240-279"
+  ].each do |string_key|
+    it "recognizes a '#{string_key}' relay header" do
+      headers_list = @result_hash[:parse_result][:relay_header]
+      recognized_result = headers_list.find_all { |relay_hdr_hash|
+        relay_hdr_hash[:id] == string_key
+      }.first
 
+      expect( recognized_result ).to be_an_instance_of( Hash )
+      expect( recognized_result[:fields] ).to be_an_instance_of( Hash )
+      expect( recognized_result[:fields].keys ).to include( :type, :category_group )
+      expect( recognized_result[:import_text] ).to be_an_instance_of( String )
+    end
   end
-  xit "recognizes a 50FS MAL M55 category header" do
-
-  end
-  xit "recognizes a 50FS MAL M60 category header" do
-
-  end
-  xit "recognizes a 50FS MAL M65 category header" do
-
-  end
-  xit "recognizes a 50FS MAL M70 category header" do
-
-  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
