@@ -83,6 +83,8 @@ class AdminImportController < ApplicationController
   # Alternative phase-2 outcome from phase-1, if some problematic team names
   # are found.
   #
+  # This is actually displayed as "Phase 1.1 - Team Analysis" (Review/confirm not-found or dubious Team names)
+  #
   def step2_analysis
 # DEBUG
     logger.debug "\r\n\r\n!! ------ admin_import::step2_analysis -----"
@@ -103,6 +105,8 @@ class AdminImportController < ApplicationController
 
   # Data Import Wizard: Phase#2 (file parsing & consequent manual review of the data)
   # Scan each data-import row and parse it, preparing its "preview" columns.
+  #
+  # This is actually displayed as "Phase 2 - Manual data check" (edit imported data before committing)
   #
   # == Params:
   #
@@ -220,6 +224,8 @@ class AdminImportController < ApplicationController
   # (Invoked after the alternative phase-2 outcome, when the Team-Analysis
   # phase has been triggered.)
   #
+  # This is called after "Phase 1.1 - Team Analysis" and before "Phase 2 - Manual check"
+  #
   def step3_analysis_commit
 # DEBUG
     logger.debug "\r\n\r\n!! ------ admin_import::step3_analysis_commit -----"
@@ -229,6 +235,8 @@ class AdminImportController < ApplicationController
     must_go_back_on_commit = false
     confirmed_actions_ids = []
     overridden_alias_actions = {}
+
+# FIXME Create a dedicated Strategy/Service class for all this mess (keep it separate from the rest of the app -- for the moment "lib/parsers" may suffice)
                                                     # Parse parameters:
     params.each{ |key, value|
       data_import_session_id = value.to_i if ( key.to_sym == :data_import_session_id)
@@ -392,6 +400,8 @@ class AdminImportController < ApplicationController
   # Data Import Wizard: phase #3 (Phase #2 is manual review of the parsed data)
   # On editable data grid final commit, do the actual data import into destination table,
   # logging every error or mismatch and finally displaying it on the dedicated view.
+  #
+  # This is the final ("Commit") phase of the data-import process.
   #
   # == Params:
   #
