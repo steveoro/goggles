@@ -16,7 +16,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.509
+  - Goggles framework vers.:  4.00.513
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -90,58 +90,39 @@ class FinResultParser
   #   possible value found of the above fields.
   #
   def self.parse_txt_file( full_pathname, logger = nil )
-    log_somehow( logger, "\r\n-- FinResultParser::parse_txt_file(#{full_pathname}):", true, :info )
     parsing_defs  = FinResultDefs.new( logger )
-    parse_service = TxtParseService.new( parsing_defs )
+    service = TxtParseService.new( parsing_defs )
+    service.log_somehow( logger, "\r\n-- FinResultParser::parse_txt_file(#{full_pathname}):", true, :info )
     full_text_file_contents = ""
                                                     # Scan each line of the file until gets reaches EOF:
-    File.open( full_pathname, 'r:utf-8' ) do |f|
-      f.each_line do |curr_line|
-        log_somehow( logger, "Reading line #{parse_service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE )
+    File.open( full_pathname ) do |f|
+      f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
+        curr_line = force_valid_encoding( curr_line )
+        service.log_somehow( logger, "Reading line #{service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE )
         full_text_file_contents << curr_line
         any_detection = false
                                                     # -- DETAIL Context detection:
-        parsing_defs.context_types_children_of( parse_service.previous_parent_context ).each do |context_name, detector|
-          log_somehow( logger, "Prioritizing on children of #{parse_service.previous_parent_context.to_s.upcase}: checking #{context_name.to_s.upcase}...", DEBUG_VERY_VERBOSE )
-          any_detection = parse_service.parse( detector, curr_line )
-        end unless parse_service.previous_parent_context.nil?
+        parsing_defs.context_types_children_of( service.previous_parent_context ).each do |context_name, detector|
+          service.log_somehow( logger, "Prioritizing on children of #{service.previous_parent_context.to_s.upcase}: checking #{context_name.to_s.upcase}...", DEBUG_VERY_VERBOSE )
+          any_detection = service.parse( detector, curr_line )
+        end unless service.previous_parent_context.nil?
                                                     # Clear parent context only when no DETAIL are recognized:
-        if parse_service.previous_parent_context && !any_detection
-          parse_service.clear_parent_context
-          log_somehow( logger, "   No possible CHILDREN/DETAIL contexts recognized, parent context set to nil.", DEBUG_VERBOSE )
+        if service.previous_parent_context && !any_detection
+          service.clear_parent_context
+          service.log_somehow( logger, "   No possible CHILDREN/DETAIL contexts recognized, parent context set to nil.", DEBUG_VERBOSE )
         end
                                                     # -- HEADER (& ALL) Context detection: for each context type defined...
         parsing_defs.context_types.each do |context_name, detector|
-          parse_service.parse( detector, curr_line )
+          service.parse( detector, curr_line )
         end unless any_detection                    # Do not loop on all if we already have a matching child context
-        parse_service.increase_line_count
+        service.increase_line_count
       end
     end                                             # (automatically closes the file)
-
-    log_somehow(
-      logger,
-      "\r\n---------------------------------------------\r\n" +
-      "------------------ STATS: -------------------\r\n" +
-      "---------------------------------------------\r\n\r\nFile '#{File.basename( full_pathname )}':",
-      true, :info
-    )
-
-    tot_data_rows = 0                               # Count total data rows, just for "fun stats"
-    parse_service.result.each { |context_name, result_page_array|
-      log_somehow( logger, "Total '#{context_name}' data pages : #{result_page_array.size} / #{parse_service.total_data_rows} lines found", true, :info )
-      tot_data_rows += result_page_array.size       # ASSERT: expect( tot_data_rows == parse_service.total_data_rows )
-    }
-    log_somehow(
-      logger,
-      "\r\nTotal read lines ....... : #{parse_service.line_count} (including garbage)" +
-      "\r\nProtocol efficiency .... : #{(( parse_service.total_data_rows.to_f) / parse_service.line_count.to_f * 10000.0).round / 100.0} %" +
-      "\r\nFile done.\r\n---------------------------------------------\r\n\r\n\r\n",
-      true, :info
-    )
+    tot_data_rows = service.log_parsing_stats( full_pathname )
 
     {
-      parse_result:             parse_service.result,
-      line_count:               parse_service.line_count,
+      parse_result:             service.result,
+      line_count:               service.line_count,
       total_data_rows:          tot_data_rows,
       full_text_file_contents:  full_text_file_contents
     }
@@ -149,24 +130,27 @@ class FinResultParser
   #-- -------------------------------------------------------------------------
   #++
 
-
-  private
-
-
+  # Forces the character encoding a single string/line of text.
+  #
   # This will handle file encoding & invalid char sequences using a
   # forced encoding for the specified string, returning a new UTF-8
   # string.
   #
-  # @deprecated Useless, as of this version
+  # === Returns:
+  # The same string forcibly encoded in UTF-8.
   #
   def self.force_valid_encoding( curr_line )
-    # Don't change the encoding if it's already UTF-8:
-    return curr_line if curr_line.respond_to?(:encoding) && ( curr_line.encoding.name == 'UTF-8' )
     if String.method_defined?( :encode )
-      if curr_line.force_encoding( "ISO-8859-1" ).valid_encoding?
+      return curr_line if curr_line.valid_encoding?
+
+      if curr_line.force_encoding( "UTF-8" ).valid_encoding?
+        curr_line = curr_line.force_encoding("UTF-8").rstrip
+
+      elsif curr_line.force_encoding( "ISO-8859-1" ).valid_encoding?
         curr_line = curr_line.force_encoding("ISO-8859-1")
           .encode( "UTF-8", { invalid: :replace, undef: :replace, replace: '' } )
           .rstrip
+
       elsif curr_line.force_encoding( "UTF-16" ).valid_encoding?
         curr_line = curr_line.force_encoding("UTF-16")
           .encode( "UTF-8", { invalid: :replace, undef: :replace, replace: '' } )
@@ -177,18 +161,6 @@ class FinResultParser
       curr_line = ic.iconv(curr_line)
     end
     curr_line
-  end
-
-
-  # Either uses the logger, if defined or outputs the message directly on the console using puts.
-  # The condition_for_logging is checked before allowing any logging.
-  def self.log_somehow( logger, msg, condition_for_logging, logging_method_sym = :debug )
-    return unless condition_for_logging
-    if logger && logger.respond_to?( logging_method_sym )
-      logger.send( logging_method_sym, msg )
-    else
-      puts( msg )
-    end
   end
   #-- -------------------------------------------------------------------------
   #++

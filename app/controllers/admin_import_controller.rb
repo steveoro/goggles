@@ -49,7 +49,7 @@ class AdminImportController < ApplicationController
   # - <tt>:id</tt> => when present, is id of the data-import session to be checked out;
   #                   when missing, the last row created is used instead.
   # == Returns:
-  # A DIV class containing the HTML representation of the updated progress bar. 
+  # A DIV class containing the HTML representation of the updated progress bar.
   #
   def get_step_progress                             # Retrieve current sessions for the current user and list them:
     if request.xhr?
@@ -274,7 +274,7 @@ class AdminImportController < ApplicationController
       season_id = result.desired_season_id
                                                     # -- Can ADD new Team? (Default action for unconfirmed results)
       if ( (! is_confirmed) || result.can_insert_team )
-        begin                
+        begin
           Team.transaction do                       # Let's make sure other threads have not already done what we want to do:
             if ( Team.where(name: team_name).none? )
               committed_row = Team.new(
@@ -299,7 +299,8 @@ class AdminImportController < ApplicationController
       end
                                                     # -- Can ADD new Team Alias?
       if ( is_confirmed && result.can_insert_alias )
-        begin                
+        raise "DataImportTeamAlias creation: unable to proceed! 'team_id' unexpectedly zero or nil!" if team_id.to_i < 1
+        begin
           DataImportTeamAlias.transaction do       # Let's make sure other threads have not already done what we want to do:
             if ( DataImportTeamAlias.where(name: team_name, team_id: team_id).none? )
               committed_row = DataImportTeamAlias.new(
@@ -320,7 +321,8 @@ class AdminImportController < ApplicationController
       end
                                                     # -- Can ADD new TeamAffiliation?
       if ( is_confirmed && result.can_insert_affiliation )
-        begin                
+        raise "TeamAffiliation creation: unable to proceed! 'team_id' unexpectedly zero or nil!" if team_id.to_i < 1
+        begin
           TeamAffiliation.transaction do            # Let's make sure other threads have not already done what we want to do:
             if ( TeamAffiliation.where(
                     team_id: team_id,
@@ -362,7 +364,7 @@ class AdminImportController < ApplicationController
 
     if is_ok
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
-        DataImporter.destroy_data_import_session( data_import_session_id: data_import_session_id ) 
+        DataImporter.destroy_data_import_session( data_import_session_id: data_import_session_id )
       else                                          # Clear just the results from the session if everything is ok:
         DataImportTeamAnalysisResult.delete_all( data_import_session_id: data_import_session_id )
       end

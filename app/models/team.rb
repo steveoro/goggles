@@ -14,8 +14,7 @@ class Team < ActiveRecord::Base
   include DropDownListable
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
-  belongs_to :city
-  validates_associated :city
+  belongs_to :city                                  # City can be null especially in Teams added by data-import
 
   has_many :badges
   has_many :meeting_individual_results
@@ -47,7 +46,8 @@ class Team < ActiveRecord::Base
 
   delegate :name, to: :user, prefix: true
 
-  attr_accessible :editable_name, :address, :phone_mobile, :phone_number,
+  attr_accessible :name, :name_variations, :user_id,
+                  :editable_name, :address, :phone_mobile, :phone_number,
                   :fax_number, :e_mail, :contact_name, :home_page_url
   #-- -------------------------------------------------------------------------
   #++

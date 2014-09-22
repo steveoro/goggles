@@ -27,7 +27,6 @@ class FinResultDefs < TxtResultDefs
   # ----------------------------------------------------------------------------
   #++
 
-
   # Creates a new instance, storing the parameters for the parsing.
   #
   # The logger specified here will be passed on to each ContextDetector

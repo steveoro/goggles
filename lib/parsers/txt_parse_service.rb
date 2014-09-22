@@ -203,9 +203,45 @@ class TxtParseService
       # so far to prevent premature parent context reset by the external parser
       # (otherwise "in progress" recognitions will be halted if reported as "not detected"):
       anything_detected = detector.detection_is_in_progress
-      log_somehow( logger, "   Parent context still valid, detection in progress...", DEBUG_VERBOSE ) if anything_detected
+      log_somehow( logger, "   Parent context still valid, detection in progress...", DEBUG_VERY_VERBOSE ) if anything_detected
     end
     anything_detected
+  end
+  # ----------------------------------------------------------------------------
+  #++
+
+
+  # Assuming the parsing has already ended, this will yield to the logger a mini-report
+  # about all the parsing stats collected so far.
+  # (Useful only when the parsing of a whole file is actually finished.)
+  #
+  # === Params:
+  # - the full_pathname of the parsed text file (for logging purposes)
+  #
+  # === Returns:
+  # The total number of data rows parsed.
+  #
+  def log_parsing_stats( full_pathname )
+    log_somehow(
+      @parsing_defs.logger,
+      "\r\n---------------------------------------------\r\n" +
+      "------------------ STATS: -------------------\r\n" +
+      "---------------------------------------------\r\n\r\nFile '#{File.basename( full_pathname )}':",
+      true, :info
+    )
+    tot_data_rows = 0                               # Count total data rows, just for "fun stats"
+    @result.each { |context_name, result_page_array|
+      log_somehow( @parsing_defs.logger, "Total '#{context_name}' data pages : #{result_page_array.size} / #{@total_data_rows} lines found", true, :info )
+      tot_data_rows += result_page_array.size       # ASSERT: expect( tot_data_rows == parse_service.total_data_rows )
+    }
+    log_somehow(
+      @parsing_defs.logger,
+      "\r\nTotal read lines ....... : #{@line_count} (including garbage)" +
+      "\r\nProtocol efficiency .... : #{@line_count == 0 ? 0 : ( @total_data_rows.to_f / @line_count.to_f * 10000.0 ).round / 100.0} %" +
+      "\r\nFile done.\r\n---------------------------------------------\r\n\r\n\r\n",
+      true, :info
+    )
+    tot_data_rows
   end
   # ----------------------------------------------------------------------------
   #++

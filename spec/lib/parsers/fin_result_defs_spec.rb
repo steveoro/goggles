@@ -25,8 +25,6 @@ describe FinResultDefs, type: :model do
         expect( subject.logger ).to be_an_instance_of( Logger ).or be_an_instance_of( ConsoleLogger )
       end
     end
-    #-- -----------------------------------------------------------------------
-    #++
 
     describe "#context_types_children_of()" do
       it "returns an Hash" do

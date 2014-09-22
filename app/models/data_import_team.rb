@@ -11,8 +11,7 @@ class DataImportTeam < ActiveRecord::Base
   validates_presence_of :import_text
 
   belongs_to :data_import_city
-  belongs_to :city
-  validates_associated  :city
+  belongs_to :city                                  # City can be null especially in Teams added by data-import
 
   validates_presence_of :name, length: { within: 1..60 }, allow_nil: false
 
@@ -26,10 +25,12 @@ class DataImportTeam < ActiveRecord::Base
   scope :sort_by_city,                 ->(dir) { order("cities.name #{dir.to_s}, data_import_teams.name #{dir.to_s}") }
 
 
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
+  delegate :name, to: :user, prefix: true
 
+  attr_accessible :data_import_session_id, :conflicting_id, :import_text,
+                  :name, :badge_number, :data_import_city_id, :city_id, :user_id
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes a shorter description for the name associated with this data
   def get_full_name

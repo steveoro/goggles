@@ -25,7 +25,7 @@ end
 #group :specs, halt_on_fail: true do
 group :specs do
 
-  guard :rspec, cmd: 'bundle exec rspec' do
+  guard :rspec, cmd: 'zeus rspec' do
     watch(%r{^spec/.+_spec\.rb$})
     watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
     watch('spec/spec_helper.rb')  { "spec" }

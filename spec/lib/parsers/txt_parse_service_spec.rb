@@ -10,12 +10,12 @@ require 'parsers/fin_result_defs'
 describe TxtParseService, type: :model do
 
   context "for a new empty instance," do
-    subject { TxtParseService.new( TxtResultDefs.new ) }
+    subject { TxtParseService.new( FinResultDefs.new ) }
 
     it_behaves_like( "(the existance of a method)", [
       :result, :line_count, :total_data_rows, :previous_parent_context,
       :clear, :parse, :result_for,
-      :increase_line_count, :clear_parent_context
+      :increase_line_count, :clear_parent_context, :log_parsing_stats
     ] )
 
     describe "#result" do
@@ -47,6 +47,12 @@ describe TxtParseService, type: :model do
     describe "#increase_line_count" do
       it "adds +1 to the line count" do
         expect{ subject.increase_line_count }.to change{ subject.line_count }.by(1)
+      end
+    end
+
+    describe "#log_parsing_stats" do
+      it "returns 0 (when no parsing has been done)" do
+        expect( subject.log_parsing_stats('dummy_file.txt') ).to eq(0)
       end
     end
   end

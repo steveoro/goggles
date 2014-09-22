@@ -32,7 +32,8 @@ class TeamAffiliation < ActiveRecord::Base
   delegate :name, to: :user, prefix: true
   delegate :name, :editable_name, to: :team, prefix: true
 
-  attr_accessible :name, :number, :team_id, :season_id, :season_type_id
+  attr_accessible :name, :number, :team_id, :season_id,
+                  :user_id, :is_autofilled, :must_calculate_goggle_cup
   #-- -------------------------------------------------------------------------
   #++
 

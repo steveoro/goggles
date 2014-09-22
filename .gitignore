@@ -12,6 +12,8 @@
 /.git/*
 /.settings
 /.settings/*
+custom_plan.rb
+zeus.json
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
