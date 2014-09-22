@@ -324,8 +324,9 @@ INSERT INTO execution_note_types (id,code,lock_version,created_at,updated_at) VA
 (11,'R03',0,CURDATE(),CURDATE()),
 (12,'R04',0,CURDATE(),CURDATE()),
 (13,'R05',0,CURDATE(),CURDATE()),
-(14,'R07',0,CURDATE(),CURDATE()),
-(15,'R09',0,CURDATE(),CURDATE());
+(14,'C25',0,CURDATE(),CURDATE()),
+(15,'C50',0,CURDATE(),CURDATE()),
+(15,'C00',0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella coach_level_types

@@ -502,6 +502,12 @@ it:
     i18n_description_R07: "Ogni 7 bracciate"
     i18n_short_R09: "Ogni 9"
     i18n_description_R09: "Ogni 9 bracciate"
+    i18n_short_C25: "Cambio 25"
+    i18n_description_C25: "Cambio ogni 25"
+    i18n_short_C50: "Cambio 50"
+    i18n_description_C50: "Cambio ogni 50"
+    i18n_short_C00: "Cambio 100"
+    i18n_description_C00: "Cambio ogni 100"
 
   coach_level_types:
     code: "Cod."
