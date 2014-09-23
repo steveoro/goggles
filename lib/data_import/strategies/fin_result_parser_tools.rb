@@ -9,7 +9,7 @@ require 'common/format'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.467
+  - Goggles framework vers.:  4.00.515
   - author: Steve A.
 
 == FinResultParserTools module
@@ -24,109 +24,6 @@ require 'common/format'
 
 =end
 module FinResultParserTools
-
-  # Parses the data-import header fields encoded in the filename.
-  # This method assumes data-import filename format as follows:
-  #
-  # <prefix><date_ISO><code><.extension>
-  #
-  # - prefix: a variable length (usually 3 chars) prefix, stating the format of the data
-  # - date_ISO: the encoded date of the data, in ISO-format without separators ("YYYYmmdd")
-  # - code: a variable length string code, which identifies the Meeting, indipendently from season or year
-  # - extension: usually, "txt"
-  #
-  # == Returns:
-  # An Hash with the format:
-  #
-  #    {
-  #       prefix: prefix string,
-  #       header_date: Date instance parsed from date_ISO,
-  #       code: code string
-  #    }
-  #
-  def self.parse_filename_fields( full_pathname )
-    ext  = File.extname(full_pathname)
-    name = File.basename(full_pathname, ext)
-    date_start_idx = name =~ /\d{8}/
-    code_start_idx = name =~ /(?<=\d{8})\D/
-    header_date = Date.parse( name[date_start_idx .. code_start_idx-1] )
-    {
-      prefix:      name[ 0 .. date_start_idx-1 ],
-      header_date: header_date,
-      code:        name[ code_start_idx .. name.size ]
-    }
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Parses a text date extracted from a FIN result text file.
-  #
-  def self.parse_meeting_date( text_token )
-# DEBUG
-#    puts("parse_meeting_date( '#{text_token}' ) called.")
-    date_num_idx = text_token =~ /\d{1,2}((\/|-|\,)\d{1,2})*\s/ui
-    month_idx    = text_token =~ /(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\d{2,4}/ui
-    year_idx     = text_token =~ /\s\d{2,4}/ui
-
-    day       = text_token[ date_num_idx .. date_num_idx+1 ].strip if date_num_idx
-    month     = text_token[ month_idx .. month_idx+2 ].downcase if month_idx
-    month_num = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'].index( month )
-    year      = text_token[ year_idx .. year_idx+4 ].strip if year_idx
-
-    text_date = "#{year}-#{sprintf( "%#{2.2}i", month_num.to_i+1)}-#{day}"
-# DEBUG
-#    puts("parse_meeting_date(): resulting text date: '#{text_date}'.")
-# TODO FUTURE DEV return an hash or an array of allowed meeting (session) dates
-# TODO FUTURE DEV when a meeting is not found, try again with the next available meeting date
-    Date.parse( text_date )
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Given the individual results time token extracted from the text file,
-  # returns true if it contains the "out of race" code. false otherwise.
-  #
-  def self.parse_out_of_race_from_result_time( result_time )
-    ! ( result_time =~ /Fuori gara|F\.G\./i ).nil?
-  end
-
-  # Given the individual results time token extracted from the text file,
-  # returns true if it contains the "disqualified" code. false otherwise.
-  #
-  def self.parse_disqualified_from_result_time( result_time )
-    ! ( result_time =~ /Ritir|Squal/i ).nil?
-  end
-
-  # Given the individual results time token extracted from the text file,
-  # returns the disqualification_code_types.ID, when possible. 0 otherwise
-  #
-  def self.parse_disqualification_code_type_id_from_result_time( result_time )
-    if result_time =~ /Ritir/i
-      DisqualificationCodeType::DSQ_RETIRED_ID
-    elsif result_time =~ /Squal/i
-      DisqualificationCodeType::DSQ_FALSE_START_ID
-    else
-      0
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Given the individual results time token extracted from the text file,
-  # returns an Array containing the integer values for [minutes, seconds, hundreths].
-  #
-  def self.parse_mins_secs_hds_from_result_time( result_time )
-    if ( result_time =~ /\d{1,2}'\d\d"\d\d/ui ).nil?
-      [0, 0, 0]
-    else
-      result_time.split(/\'|\"/).collect!{ |e| e.to_i }
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
 
   # Tries to return a City name (string) from a team name.
   # == Returns:

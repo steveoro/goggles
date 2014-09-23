@@ -2,20 +2,22 @@
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 
-require 'parsers/fin_result_parser'
-require 'parsers/fin_result_parser_tools'
-require 'parsers/fin_result_phase2'
-require 'parsers/fin_result_phase3'
+require 'data_import/header_fields'
+require 'data_import/strategies/filename_parser'
+require 'data_import/strategies/fin_result_parser'
+require 'data_import/strategies/fin_result_parser_tools'
+require 'data_import/strategies/fin_result_phase2'
+require 'data_import/strategies/fin_result_phase3'
 
 
 =begin
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.467
+  - Goggles framework vers.:  4.00.515
   - author: Steve A.
 
-  Data-Import methods container class.
+  Data-Import strategy class.
   Refactored from the original DataImportController implementation.
 
   === Defines:
@@ -412,7 +414,8 @@ class DataImporter
                     force_missing_team_creation, do_not_consume_file )
 
                                                     # -- FILE HEADER digest --
-    header_fields = FinResultParserTools.parse_filename_fields( full_pathname )
+    header_fields = FilenameParser.new( full_pathname ).parse
+
     season_id = 0
     if season.nil?                                  # Try to detect which season from the path/name of the file
       container_dir_parts = File.dirname(full_pathname).split(File::SEPARATOR).last.split('.')
@@ -427,7 +430,7 @@ class DataImporter
         logger.info( "   Detected forced season ID=#{season_id} from container folder name. Parsing file..." )
         @phase_1_log = "Detected forced season ID=#{season_id} from container folder name. Parsing file...\r\n"
       else
-        seek_date = header_fields[:header_date]
+        seek_date = header_fields.header_date
         mas_fin_season_type = SeasonType.find_by_code('MASFIN')
         unless ( mas_fin_season_type && mas_fin_season_type.id.to_i > 0 )
           flash[:error] = "#{I18n.t(:season_type_not_found, { scope: [:admin_import] })} (code='MASFIN'))"
@@ -451,12 +454,12 @@ class DataImporter
       @phase_1_log = "Specified season ID=#{season_id}. Parsing file...\r\n"
     end
     self.season = season                            # Update the internal reference member
-    @season_id = season_id                          # Set the currently used season_id (this member variable is used just by its getter method)
+    @season_id  = season_id                         # Set the currently used season_id (this member variable is used just by its getter method)
                                                     # Get the remaining default values from the season instance:
-    header_fields[:header_year] = season.header_year
-    header_fields[:edition] = season.edition
-    header_fields[:edition_type_id] = season.edition_type_id
-    header_fields[:timing_type_id]  = season.timing_type_id
+    header_fields.header_year     = season.header_year
+    header_fields.edition         = season.edition
+    header_fields.edition_type_id = season.edition_type_id
+    header_fields.timing_type_id  = season.timing_type_id
 # DEBUG
     logger.debug( "\r\nParsed header_fields: #{header_fields.inspect}" )
     @phase_1_log = "\r\nParsed header_fields: #{header_fields.inspect}\r\n"
@@ -524,14 +527,18 @@ class DataImporter
           logger.debug( "meeting_header_row = #{meeting_header_row.inspect}" )
           @phase_1_log = "meeting_header_row = #{meeting_header_row.inspect}\r\n"
           meeting_dates = meeting_header_row[:fields][:meeting_dates]
-          scheduled_date = FinResultParserTools.parse_meeting_date( meeting_dates ) unless meeting_dates.to_s.empty?
+          # TODO [Steve, 20140923]
+          #      The new MeetingDateParser now supports multiple date extraction: this should be used
+          #      to extract all meeting_session dates, when possible.
+          scheduled_dates = MeetingDateParser.new.parse( meeting_dates )
+          scheduled_date  = scheduled_dates.first
 # DEBUG
-          logger.debug( "meeting_dates = '#{meeting_dates}', scheduled_date=#{scheduled_date}" )
-          @phase_1_log = "meeting_dates = '#{meeting_dates}', scheduled_date=#{scheduled_date}\r\n"
+          logger.debug( "meeting_dates = '#{meeting_dates}' => #{scheduled_dates.inspect} (#{scheduled_date})" )
+          @phase_1_log = "meeting_dates = '#{meeting_dates}' => #{scheduled_dates.inspect} (#{scheduled_date})"
         end
                                                     # ...Otherwise, parse them from the filename/header:
-        if scheduled_date.nil? && header_fields[:header_date]
-          scheduled_date = header_fields[:header_date]
+        if scheduled_date.nil? && header_fields.header_date
+          scheduled_date = header_fields.header_date
 # DEBUG
           logger.debug( "scheduled_date=#{scheduled_date} (set to file name date)" )
           @phase_1_log = "scheduled_date=#{scheduled_date} (set to file name date)\r\n"

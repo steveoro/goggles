@@ -2,17 +2,16 @@
 require 'spec_helper'
 
 require 'framework/console_logger'
-require 'parsers/context_detector'
-require 'parsers/token_extractor'
-require 'parsers/fin_result_consts'
+require 'data_import/services/context_detector'
+require 'data_import/services/token_extractor'
+require 'data_import/fin_result_consts'
 
 
 describe "FinResultParser parsing fixture file 3,", type: :integration do
-  FIXTURE_FILE_3 = File.join(Rails.root, 'test/fixtures/samples/fixture3-ris20120114ravenna-sample.txt')
-
   # We need to parse the fixture file just once to speed-up tests:
-  before( :all ) { @result_hash = FinResultParser.parse_txt_file( FIXTURE_FILE_3 ) }
-
+  before( :all ) do
+    @result_hash = FinResultParser.parse_txt_file( File.join(Rails.root, 'test/fixtures/samples/fixture3-ris20120114ravenna-sample.txt') )
+  end
 
   it "returns an Hash" do
     expect( @result_hash ).to be_an_instance_of( Hash )

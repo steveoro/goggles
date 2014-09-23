@@ -1,6 +1,6 @@
 # encoding: utf-8
-require 'parsers/tools_logging'
-require 'parsers/context_detector'
+require 'data_import/tools_logging'
+require 'data_import/services/context_detector'
 
 
 =begin

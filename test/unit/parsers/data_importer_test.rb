@@ -2,7 +2,7 @@
 
 require 'test_helper'
 require 'framework/console_logger'
-require 'parsers/data_importer'
+require 'data_import/strategies/data_importer'
 
 
 class DataImporterTest < ActiveSupport::TestCase

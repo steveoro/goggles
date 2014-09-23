@@ -7,7 +7,7 @@
   - Goggles framework vers.:  4.00.469
   - author: Steve A.
 
- Utility class to store tokenizing expressions/conditions or absolute indexes
+ Service class to store tokenizing expressions/conditions or absolute indexes
  to retrieve the values (tokens) associated to a single field name.
 
 
