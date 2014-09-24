@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-require 'parsers/fin_result_defs'
+require 'data_import/fin_result_defs'
 
 
 describe FinResultDefs, type: :model do

@@ -1,15 +1,17 @@
 # encoding: utf-8
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
-require 'parsers/fin_result_parser'
-require 'parsers/fin_result_parser_tools'
+require 'data_import/header_fields'
+require 'data_import/strategies/city_comparator'
+require 'data_import/strategies/fin_result_parser'
+require 'data_import/strategies/fin_result_parser_tools'
 
 
 =begin
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.513
+  - Goggles framework vers.:  4.00.515
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -353,7 +355,7 @@ module FinResultPhase2
       notes = (meeting_dates ? "#{meeting_dates}\r\n" : '') +
               (organization ? "#{organization}" : '')
     end
-    description = ( title ? title : "#{header_fields[:code] } (#{Format.a_date(scheduled_date)})" )
+    description = ( title ? title : "#{header_fields.code_name } (#{Format.a_date(scheduled_date)})" )
 # DEBUG
     logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
     @phase_1_log << "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n"
@@ -365,7 +367,7 @@ module FinResultPhase2
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
     result_row = Meeting.where(
       [ "(header_date = ?) AND (season_id = ?) AND (code = ?)",
-        scheduled_date, season_id, header_fields[:code] ]
+        scheduled_date, season_id, header_fields.code_name ]
     ).first
     if result_row                                   # We must differentiate the result: negative for Meeting, positive for DataImportMeeting
 # DEBUG
@@ -374,7 +376,7 @@ module FinResultPhase2
       result_id = - result_row.id
       not_found = false
                                                     # [Steve, 20131114] Sometimes header_year is missing from old seed data; we need to check this (otherwise validation fails):
-      result_row.header_year = header_fields[:header_year] if header_fields[:header_year]
+      result_row.header_year = header_fields.header_year if header_fields.header_year
       result_row.notes = notes if notes
       result_row.save! if result_row.changed?
                                                     # Search also inside data_import_xxx table counterpart when unsuccesful:
@@ -409,13 +411,13 @@ module FinResultPhase2
 #            entry_deadline: scheduled_date - 14, # (This is just a guess)
             are_results_acquired: true,
             is_under_25_admitted: true, # (This is just a guess)
-            configuration_file: full_pathname,
-            header_date: scheduled_date,
-            code: header_fields[:code],
-            header_year: header_fields[:header_year],
-            edition: header_fields[:edition], # (This is just a guess)
-            edition_type_id: header_fields[:edition_type_id],
-            timing_type_id: header_fields[:timing_type_id],
+            configuration_file:   full_pathname,
+            header_date:          scheduled_date,
+            code:                 header_fields.code_name,
+            header_year:          header_fields.header_year,
+            edition:              header_fields.edition, # (This is just a guess)
+            edition_type_id:      header_fields.edition_type_id,
+            timing_type_id:       header_fields.timing_type_id,
             # TODO/FUTURE DEV:
 #            individual_score_computation_type_id: 0,
 #            relay_score_computation_type_id: 0,
@@ -512,21 +514,20 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found                                    # (the following is an educated guess)
-      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields[:code] }%" ]).first
+      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields.code_name }%" ]).first
 
       begin                                         # --- BEGIN transaction ---
         field_hash = {
           data_import_session_id: session_id,
-          import_text: ( meeting_dates.instance_of?(String) && meeting_dates.size > 0 ? meeting_dates : '-' ),
-          scheduled_date: scheduled_date,
-          warm_up_time: warm_up_time,
-          begin_time: begin_time,
-          description: description,
-          session_order: 1,                     # (since we are processing just 1 meeting session at a time; but is far from correct)
-          user_id: @current_admin_id,
-          swimming_pool_id: ( swimming_pool ? swimming_pool.id : nil ),
-          day_part_type_id: DayPartType::MORNING_ID
-
+          import_text:            ( meeting_dates.instance_of?(String) && meeting_dates.size > 0 ? meeting_dates : '-' ),
+          scheduled_date:         scheduled_date,
+          warm_up_time:           warm_up_time,
+          begin_time:             begin_time,
+          description:            description,
+          session_order:          1,                # (since we are processing just 1 meeting session at a time; but is far from correct)
+          user_id:                @current_admin_id,
+          swimming_pool_id:       ( swimming_pool ? swimming_pool.id : nil ),
+          day_part_type_id:       DayPartType::MORNING_ID
           # TODO :notes is not used!
         }.merge(
           meeting_id.to_i < 0 ?  { meeting_id: -meeting_id } : { data_import_meeting_id: meeting_id }
@@ -648,7 +649,8 @@ module FinResultPhase2
                                                     # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
     event_order = header_index + 1                  # (Actually, this counts each single Heat as an event)
     base_time   = header_row[:fields][:base_time]
-    mins, secs, hds = FinResultParserTools.parse_mins_secs_hds_from_result_time( base_time )
+    result_parser   = ResultTimeParser.new( 0, base_time ).parse
+    mins, secs, hds = result_parser.mins_secs_hds_array
                                                     # Quick'n'dirty trick: compute approx. begin_time using scheduled_date + header_index * (mins, secs, hds) of base time
     heat_number_approx   = ( detail_rows_size / 8 ) + 1
     @esteemed_meeting_mins += heat_number_approx * (mins < 3 ? 2 : mins + 2)
@@ -868,10 +870,11 @@ module FinResultPhase2
     result_time       = detail_row[:fields][:result_time]
     result_score      = ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f
     is_play_off       = true
-    is_out_of_race    = FinResultParserTools.parse_out_of_race_from_result_time( rank )
-    is_disqualified   = FinResultParserTools.parse_disqualified_from_result_time( result_time )
-    dsq_code_type_id  = is_disqualified ? FinResultParserTools.parse_disqualification_code_type_id_from_result_time( result_time ) : nil
-    mins, secs, hds   = FinResultParserTools.parse_mins_secs_hds_from_result_time( result_time )
+    result_parser     = ResultTimeParser.new( rank, result_time ).parse
+    is_out_of_race    = result_parser.is_out_of_race?
+    is_disqualified   = result_parser.is_disqualified?
+    dsq_code_type_id  = result_parser.disqualification_code_type_id
+    mins, secs, hds   = result_parser.mins_secs_hds_array
 # DEBUG
 #    logger.debug( "\r\nIndividual Result parsing: rank:'#{rank}', result_time:'#{result_time}', result_score:'#{result_score}'" )
 #    logger.debug( "is_out_of_race:'#{is_out_of_race}', is_disqualified:'#{is_disqualified}'\r\n" )
@@ -1049,14 +1052,15 @@ module FinResultPhase2
       return 0
     end
 
-    is_play_off     = true
-    is_out_of_race  = FinResultParserTools.parse_out_of_race_from_result_time( rank )
-    is_disqualified = FinResultParserTools.parse_disqualified_from_result_time( result_time )
-    dsq_code_type_id = is_disqualified ? FinResultParserTools.parse_disqualification_code_type_id_from_result_time( result_time ) : nil
-    mins, secs, hds = FinResultParserTools.parse_mins_secs_hds_from_result_time( result_time )
-    standard_points = result_score
-    meeting_points  = result_score
-    rank = rank.to_i                                # Note that 'Fuori gara'.to_i = 0
+    is_play_off       = true
+    result_parser     = ResultTimeParser.new( rank, result_time ).parse
+    is_out_of_race    = result_parser.is_out_of_race?
+    is_disqualified   = result_parser.is_disqualified?
+    dsq_code_type_id  = result_parser.disqualification_code_type_id
+    mins, secs, hds   = result_parser.mins_secs_hds_array
+    standard_points   = result_score
+    meeting_points    = result_score
+    rank              = rank.to_i                   # Note that 'Fuori gara'.to_i = 0
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
     if (meeting_program_id < 0) && (team_id < 0)
@@ -1423,35 +1427,38 @@ module FinResultPhase2
     not_found = true
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-# [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
-#    result_row = FinResultParserTools.find_best_fuzzy_match(
-#      team_name,
-#      Swimmer.where(year_of_birth: swimmer_year),
-#      :complete_name
-#    ) unless result_row
+# TODO [Steve, 20131106] Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
+#    unless result_row
+#      matcher = FuzzyStringMatcher.new( Swimmer.where(year_of_birth: swimmer_year), :complete_name )
+#      result_row = matcher.find( swimmer_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
+#    end
     result_row = Swimmer.where(
       [
         "(year_of_birth = ?) AND (complete_name LIKE ?)",
         swimmer_year, complete_name+'%'
       ]
-    ).first
+    ).first # unless result_row
+
     if result_row                                   # We must differentiate the result: negative for Swimmer, positive for DataImportSwimmer
       result_id = - result_row.id
       not_found = false
 # DEBUG
 #      logger.debug( "Swimmer found! (ID=#{result_id})" )
     else                                            # Search also inside DataImportSwimmer when unsuccesful:
-# [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
-#    result_row = FinResultParserTools.find_best_fuzzy_match(
-#      team_name,
-#      DataImportSwimmer.where(data_import_session_id: session_id, year_of_birth: swimmer_year),
-#      :complete_name
-#    ) unless result_row
+# TODO [Steve, 20131106] Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
+#      unless result_row
+#        matcher = FuzzyStringMatcher.new(
+#          DataImportSwimmer.where(data_import_session_id: session_id, year_of_birth: swimmer_year),
+#          :complete_name
+#        )
+#        result_row = matcher.find( swimmer_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
+#      end
       result_row = DataImportSwimmer.where(
         [ "(data_import_session_id = ?) AND (year_of_birth = ?) AND (complete_name LIKE ?)",
           session_id, swimmer_year, complete_name+'%'
         ]
-      ).first
+      ).first # unless result_row
+
       if result_row
         result_id = result_row.id
         not_found = false
@@ -1587,12 +1594,8 @@ module FinResultPhase2
     end
                                                     # *** (4) FUZZY SCAN on Teams:
     if not_found
-      result_row = FinResultParserTools.find_best_fuzzy_match(
-        team_name,
-        Team.all,
-        :name, :editable_name,
-        FUZZY_SEARCH_BIAS_SCORE
-      )                                             # ALWAYS LOG any chosen "best match" which is slightly different from the searched string:
+      matcher = FuzzyStringMatcher.new( Team.all, :name, :editable_name )
+      result_row = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
       if result_row
 # DEBUG
         logger.debug( "Team found by (strict) fuzzy search! (with ID=#{result_row.id})" )
@@ -1670,7 +1673,7 @@ module FinResultPhase2
     if not_found                                    # --- FIELD SETUP: Extract field values before the search:
       city_id = search_or_add_a_corresponding_city(
         session_id,
-        FinResultParserTools.guess_city_from_team_name(team_name)
+        CityComparator.guess_city_from_team_name( team_name )
       )
       begin                                         # --- BEGIN transaction ---
 # DEBUG
@@ -1817,9 +1820,9 @@ module FinResultPhase2
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
     result_row = nil
     City.all.each { |city|                          # Loop on all pre-inserted cities and search for a match
-      is_same_city = FinResultParserTools.seems_to_be_the_same_city(
-        name, city.name,
-        area, city.area,
+      is_same_city = CityComparator.seems_the_same(
+        name,         city.name,
+        area,         city.area,
         country_code, city.country_code
       )
       if is_same_city
@@ -1836,9 +1839,9 @@ module FinResultPhase2
 #      logger.debug( "City found! (#{result_row.name}, ID=#{result_id})" )
     else                                            # Search also inside DataImportTeam when unsuccesful:
       DataImportCity.all.each { |city|              # Loop on all pre-inserted cities and search for a match
-        is_same_city = FinResultParserTools.seems_to_be_the_same_city(
-          name, city.name,
-          area, city.area,
+        is_same_city = CityComparator.seems_the_same(
+          name,         city.name,
+          area,         city.area,
           country_code, city.country_code
         )
         if is_same_city

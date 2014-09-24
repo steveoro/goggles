@@ -31,33 +31,6 @@ end
 #
 module IndividualRecordFactoryTools
 
-  # FIXME If new version will run correctly remove this method
-  #
-  # Creates (and returns) an Array of IndividualRecord rows associated
-  # to the specified swimmer, each with an unique event_type_id and
-  # with record_type_id forced to 1 (= "personal best").
-  def self.steve_create_personal_best_list( swimmer, row_count = 5 )
-    list = []
-    unique_event_type_ids = (1..18).to_a.sort{ rand() - 0.5 }[ 0.. row_count-1 ]
-    unique_event_type_ids.each do |event_id|
-      list << FactoryGirl.create( :individual_record,
-        swimmer_id: swimmer.id,
-        meeting_individual_result: FactoryGirl.create( :meeting_individual_result,
-          swimmer_id: swimmer.id,
-          meeting_program: FactoryGirl.create( :meeting_program,
-            meeting_event: FactoryGirl.create( :meeting_event, event_type_id: event_id ),
-            gender_type_id: swimmer.gender_type_id
-          )
-        ),
-        record_type_id: 1,
-        event_type_id: event_id
-      )
-    end
-    list
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-  
   # Leega version, forced to use events_by_pool_type
   # Creates (and returns) an Array of IndividualRecord rows associated
   # to the specified swimmer, each with an unique event_type_id and
@@ -71,10 +44,10 @@ module IndividualRecordFactoryTools
         meeting_individual_result: FactoryGirl.create( :meeting_individual_result,
           swimmer_id:      swimmer.id,
           meeting_program: FactoryGirl.create( :meeting_program,
-            meeting_event: FactoryGirl.create( :meeting_event, 
-              meeting_session: FactoryGirl.create( :meeting_session, 
-                swimming_pool: FactoryGirl.create( :swimming_pool, 
-                  pool_type_id: event_by_pool_type.pool_type_id ) 
+            meeting_event: FactoryGirl.create( :meeting_event,
+              meeting_session: FactoryGirl.create( :meeting_session,
+                swimming_pool: FactoryGirl.create( :swimming_pool,
+                  pool_type_id: event_by_pool_type.pool_type_id )
                 ),
               event_type_id: event_by_pool_type.event_type_id ),
             gender_type_id: swimmer.gender_type_id
@@ -85,7 +58,7 @@ module IndividualRecordFactoryTools
       )
     end
     list
-  end   
+  end
 end
 #-- ---------------------------------------------------------------------------
 #++

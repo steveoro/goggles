@@ -86,14 +86,16 @@ describe RecordCollection, :type => :model do
       expect( result.count ).to eq(1)
     end
     it "allows a list of IndividualRecord rows as a parameter" do
-      result = RecordCollection.new( create_list(:individual_record, 5) )
+      record_list = IndividualRecordFactoryTools.create_personal_best_list( create(:swimmer) )
+      result = RecordCollection.new( record_list )
       expect( result ).to be_an_instance_of( RecordCollection )
-      expect( result.count ).to eq(5)
+      expect( result.count ).to eq( record_list.size )
     end
     it "allows a list of MeetingIndividualResult rows as a parameter" do
-      result = RecordCollection.new( create_list(:meeting_individual_result, 5) )
+      mir_list = MeetingIndividualResultFactoryTools.create_unique_result_list( create(:swimmer) )
+      result = RecordCollection.new( mir_list )
       expect( result ).to be_an_instance_of( RecordCollection )
-      expect( result.count ).to eq(5)
+      expect( result.count ).to eq( mir_list.size )
     end
   end
   #-- -----------------------------------------------------------------------

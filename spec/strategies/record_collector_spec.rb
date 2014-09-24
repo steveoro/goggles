@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'benchmark'
 
 
-describe RecordCollector do
+describe RecordCollector, type: :strategy do
   # Use pre-loaded seeds:
   let( :results )  { MeetingIndividualResult.where( swimmer_id: 23 ) }
   let( :fixture )  { results.at( ((rand * 1000) % results.size).to_i ) }

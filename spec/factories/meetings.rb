@@ -190,3 +190,35 @@ FactoryGirl.define do
   #-- -------------------------------------------------------------------------
   #++
 end
+
+
+# Quick NameSpace container for creation-tools regarding this factory.
+#
+module MeetingIndividualResultFactoryTools
+
+  # Creates (and returns) an Array of MeetingIndividualResult rows associated
+  # to the specified swimmer, each with an unique event_type_id.
+  def self.create_unique_result_list( swimmer, row_count = 5 )
+    list = []
+    event_list = EventsByPoolType.only_for_meetings.not_relays.select([:event_type_id, :pool_type_id]).sort{ rand() - 0.5 }[ 0.. row_count-1 ]
+    event_list.each do |event_by_pool_type|
+      list << FactoryGirl.create( :meeting_individual_result,
+        swimmer_id:      swimmer.id,
+        meeting_program: FactoryGirl.create( :meeting_program,
+          meeting_event: FactoryGirl.create( :meeting_event,
+            meeting_session: FactoryGirl.create( :meeting_session,
+              swimming_pool: FactoryGirl.create( :swimming_pool,
+                pool_type_id: event_by_pool_type.pool_type_id
+              )
+            ),
+            event_type_id: event_by_pool_type.event_type_id
+          ),
+          gender_type_id: swimmer.gender_type_id
+        )
+      )
+    end
+    list
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++

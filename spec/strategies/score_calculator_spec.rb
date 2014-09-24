@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe ScoreCalculator do
+describe ScoreCalculator, type: :strategy do
   before :each do
     @fix_swimmer = create(:swimmer)
 
@@ -42,9 +42,9 @@ describe ScoreCalculator do
         expect(subject).to respond_to(:get_time_standard)
       end
       it "returns a time standard istance if the request time standard exists" do
-        create(:time_standard, 
+        create(:time_standard,
           season_id: @fix_season.id,
-          gender_type_id: @fix_gender_type.id, 
+          gender_type_id: @fix_gender_type.id,
           category_type_id: @fix_category_type.id,
           event_type_id: @fix_event_type.id,
           pool_type_id: @fix_pool_type.id
@@ -57,9 +57,9 @@ describe ScoreCalculator do
     describe "#get_fin_score," do
       before :each do
         @fix_time_swam = Timing.new(((rand * 99) % 99).to_i + 1, ((rand * 59) % 59).to_i + 1, ((rand * 10) % 10).to_i)
-        create(:time_standard, 
+        create(:time_standard,
           season_id: @fix_season.id,
-          gender_type_id: @fix_gender_type.id, 
+          gender_type_id: @fix_gender_type.id,
           category_type_id: @fix_category_type.id,
           event_type_id: @fix_event_type.id,
           pool_type_id: @fix_pool_type.id
@@ -72,7 +72,7 @@ describe ScoreCalculator do
         expect( subject.get_fin_score(@fix_time_swam) ).to be >= 0
       end
       #-- -----------------------------------------------------------------------
-    
+
       it "checks for correct calculation for no time standard present" do
         wrong_pool_type = PoolType.where(is_suitable_for_meetings: false).first
         score_1000 = ScoreCalculator.new( @fix_swimmer, @fix_season, wrong_pool_type, @fix_event_type )
@@ -84,7 +84,7 @@ describe ScoreCalculator do
       end
       it "checks for correct calculation for time standard present worst than time swam" do
         better_time_swam = Timing.new(subject.get_time_standard.get_timing_instance.to_hundreds - 150)
-        expect( subject.get_fin_score(better_time_swam) ).to be > 1000        
+        expect( subject.get_fin_score(better_time_swam) ).to be > 1000
       end
       it "checks for correct calculation for time standard present equal to time swam" do
         same_time_swam = Timing.new(subject.get_time_standard.get_timing_instance.to_hundreds)

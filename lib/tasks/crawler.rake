@@ -5,7 +5,6 @@ require 'fileutils'
 require 'mechanize'
 
 require 'framework/console_logger'
-require 'parsers/data_importer.rb'
 
 
 =begin

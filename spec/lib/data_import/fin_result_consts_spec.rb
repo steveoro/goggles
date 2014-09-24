@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-require 'parsers/context_type_def'
-require 'parsers/fin_result_consts'
-require 'parsers/token_extractor'
+require 'data_import/context_type_def'
+require 'data_import/fin_result_consts'
+require 'data_import/services/token_extractor'
 
 
 describe FinResultConsts, type: :model do

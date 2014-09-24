@@ -2,11 +2,11 @@
 require 'spec_helper'
 
 require 'framework/console_logger'
-require 'parsers/context_detector'
-require 'parsers/fin_result_consts'
+require 'data_import/services/context_detector'
+require 'data_import/fin_result_consts'
 
 
-describe ContextDetector, type: :model do
+describe ContextDetector, type: :service do
 
   context "for a well-defined instance," do
     let( :dummy_wrapper ) do

@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 require 'test_helper'
-require 'parsers/fin_result_parser_tools'
+require 'data_import/strategies/fin_result_parser_tools'
 
 
 class FinResultParserToolsTest < ActiveSupport::TestCase

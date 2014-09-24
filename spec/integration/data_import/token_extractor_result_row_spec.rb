@@ -2,9 +2,9 @@
 require 'spec_helper'
 
 require 'framework/console_logger'
-require 'parsers/context_detector'
-require 'parsers/token_extractor'
-require 'parsers/fin_result_consts'
+require 'data_import/services/context_detector'
+require 'data_import/services/token_extractor'
+require 'data_import/fin_result_consts'
 
 
 describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do

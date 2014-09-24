@@ -8,7 +8,6 @@ require 'framework/version'
 require 'framework/application_constants'
 
 require 'framework/console_logger'
-require 'parsers/data_importer'
 
 
 =begin

@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  4.00.405
+  - version:  4.00.515
   - author:   Steve A., Leega
 
 =end
@@ -61,7 +61,7 @@ class SwimmersController < ApplicationController
     @medal_types = MedalType.sort_by_rank
     @seasonal_medal_collection = []
     @event_medal_collection = {}
-    
+
     # TODO
     # Refactor this part using medal_types
     # Collects total for summary section
@@ -85,7 +85,7 @@ class SwimmersController < ApplicationController
     all_championships_records.each{ | mir |
       @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
     }
-    
+
     # Collects medals for season types and presents in a table
     # with total columns
     @swimmer.season_types.uniq.each do |season_type|
@@ -93,7 +93,7 @@ class SwimmersController < ApplicationController
       seasonal_medals = Hash.new
       seasonal_medals[:season_type] = season_type.get_full_name
 
-      # Cycles between medal types      
+      # Cycles between medal types
       @medal_types.map{ |medal_type| medal_type.rank }.each do |medal_rank|
         seasonal_medals[medal_rank] = @swimmer.meeting_individual_results
           .is_valid
@@ -107,15 +107,15 @@ class SwimmersController < ApplicationController
       all_championships_records.each{ | mir |
         seasonal_medals[:tot_season_records] += 1 if (mir.swimmer_id == @swimmer.id && mir.season_type.id == season_type.id)
       }
-  
-      @seasonal_medal_collection << seasonal_medals 
+
+      @seasonal_medal_collection << seasonal_medals
     end
-    
+
     # Coolect medals for event types and presents in a table
     # with total columns
     PoolType.only_for_meetings.each do |pool_type|
       # Divides events by pool type
-      @event_medal_collection[pool_type.code] = [] 
+      @event_medal_collection[pool_type.code] = []
       pool_type.events_by_pool_types.not_relays.each do |events_by_pool_type|
         # Collects events for pool type
         event_medals = {}
@@ -124,8 +124,8 @@ class SwimmersController < ApplicationController
             .for_event_by_pool_type(events_by_pool_type)
             .count > 0
           event_medals[:event_type] = events_by_pool_type.event_type_i18n_short
-  
-          # Cycles between medal types      
+
+          # Cycles between medal types
           @medal_types.map{ |medal_type| medal_type.rank }.each do |medal_rank|
             event_medals[medal_rank] = @swimmer.meeting_individual_results
               .is_valid
@@ -134,7 +134,7 @@ class SwimmersController < ApplicationController
               .count
           end
         end
-        
+
         # Consider event only if is present at least one medal
         @event_medal_collection[pool_type.code] << event_medals if event_medals.size > 0
       end
@@ -193,7 +193,7 @@ class SwimmersController < ApplicationController
     @tab_title = I18n.t('radiography.full_history_by_date')
 
     # Cycles between pool types suitable for meetings
-    @full_history_by_date = Hash.new 
+    @full_history_by_date = Hash.new
     PoolType.only_for_meetings.each do |pool_type|
       # Collect results for the pool type
       mirs = @swimmer.meeting_individual_results
@@ -201,7 +201,7 @@ class SwimmersController < ApplicationController
         .for_pool_type( pool_type )
         .sort_by_date
         .select([:id, :minutes, :seconds, :hundreds])
-       
+
       # The event_by_date structure
       # The structure is an array of hashes with elements formed by
       # the meeting (meeting) that contains the meeting reference
@@ -219,19 +219,19 @@ class SwimmersController < ApplicationController
           new_hash = {}
           new_hash[:meeting] = meeting_individul_result.meeting
           new_hash[meeting_individul_result.event_type.code] = meeting_individul_result
-          event_by_date << new_hash 
+          event_by_date << new_hash
         end
       end
-      
+
       # Collect event types swam to create grid structure
       event_list = mirs.select('event_types.code').map{ |mir| mir.event_type.code }.uniq
-      
+
       # Sort event type list by event type style order
       #event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
-      event_list = EventType.sort_list_by_style_order( event_list )      
+      event_list = EventType.sort_list_by_style_order( event_list )
       @full_history_by_date[pool_type.code] = [event_list, event_by_date]
     end
-    
+
     # TODO
     # Evidenziate personal bests
     # Should be better to have information already stored in mirs
@@ -255,26 +255,26 @@ class SwimmersController < ApplicationController
   def full_history_2
     # --- "Full History by time" tab: ---
     @tab_title = I18n.t('radiography.full_history_by_event')
-    
+
     # Prepares an array for the index table
     # Every element of the array is an hash with style and event list arrays
     # with pool type code as key
-    # Eg: 
+    # Eg:
     # [
     #   { stroke_type: 'SL',
-    #     stroke_code: 'SL', 
+    #     stroke_code: 'SL',
     #     25: {50, 100, 200, 800},
     #     50: {50, 200, 800},
     #   }
     #   { stroke_type: 'FA',
-    #     stroke_code: 'FA',  
+    #     stroke_code: 'FA',
     #     25: {50, 100},
     #     50: {50, 100},
     #   }
     #   ...
     # ]
     @index_table = []
-    
+
     # Creates an hash with event_by_pool_type as code
     # Every element is an array of hashes
     # Every hash element of the array has:
@@ -282,7 +282,7 @@ class SwimmersController < ApplicationController
     # - result
     # - passages
     # Cycles between pool types suitable for meetings
-    @full_history_by_event = Hash.new 
+    @full_history_by_event = Hash.new
     EventsByPoolType.only_for_meetings.not_relays.sort_by_event.each do |events_by_pool_type|
       #hash_key = events_by_pool_type.i18n_description
       hash_key = events_by_pool_type.get_key
@@ -290,7 +290,7 @@ class SwimmersController < ApplicationController
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
         .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
-       
+
       # If has results collect passages and prepares hash for index table
       if results_by_time.count > 0
         # Collect all passages
@@ -299,10 +299,10 @@ class SwimmersController < ApplicationController
           .where(['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id])
           .select([:meeting_individual_result_id, :passage_type_id, :minutes, :seconds, :hundreds])
           .select('passage_types.length_in_meters')
-  
+
         # Collects the passage list
         passages_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
-        
+
         # Adds the event type in the hash index table
         stroke_type_code = events_by_pool_type.stroke_type_code
         stroke_type_des = events_by_pool_type.stroke_type_i18n_description
@@ -317,20 +317,20 @@ class SwimmersController < ApplicationController
           else
             # Creates the pool type with event
             @index_table[stroke_index][pool_type_des] = [event_type_dist]
-          end 
-        else 
+          end
+        else
           # Creates the element for the stroke type
           new_hash = Hash.new
-          new_hash[:stroke_type] = stroke_type_des 
-          new_hash[:stroke_code] = stroke_type_code 
+          new_hash[:stroke_type] = stroke_type_des
+          new_hash[:stroke_code] = stroke_type_code
           new_hash[pool_type_des] = [event_type_dist]
-          @index_table << new_hash 
+          @index_table << new_hash
         end
       else
         passages = nil
         passages_list = []
       end
-      
+
       # Create has element with event type by pool data
       @full_history_by_event[hash_key] = [passages_list, results_by_time, passages, events_by_pool_type.i18n_description]
     end
@@ -458,36 +458,36 @@ class SwimmersController < ApplicationController
   #
   def trainings
     @tab_title = I18n.t('radiography.trainings_tab')
-    
+
     # FIXME
     # Needs to be a full goggler (swimmer associated with a user)
     # Needs to be a the user associated swimmer or a buddy with training sharing
-    if @swimmer.associated_user 
+    if @swimmer.associated_user
       # Compute total training distances
       current_season = Season.get_last_season_by_type( 'MASFIN' )
-      
+
       @global_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
       @season_distance = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
       @last_month      = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
       @last_week       = {:distance => 0, :duration => 0, :number => 0, :avg_distance => 0, :avg_duration => 0, :avg_100_meters => 0}
       @last_training   = {:distance => 0, :duration => 0, :avg_100_meters => 0}
-      
+
       @global_distance[:number] = @swimmer.associated_user.user_training_stories.count
       @swimmer.associated_user.user_training_stories.each do |user_training_story|
         distance = user_training_story.user_training.total_distance
         duration = user_training_story.user_training.esteemed_total_seconds
-        
+
         @global_distance[:distance] += distance
         @global_distance[:duration] += duration
-        
+
         # FIXME
         # Maybe better show akways from last Monday
-        if user_training_story.swam_date >= ( Date.today - 7 ) 
+        if user_training_story.swam_date >= ( Date.today - 7 )
           @last_week[:distance] += distance
           @last_week[:duration] += duration
           @last_week[:number] += 1
         end
-                
+
         # FIXME
         # Maybe better show akways from the first day of current month
         if user_training_story.swam_date >= ( Date.today.prev_month )
@@ -495,37 +495,37 @@ class SwimmersController < ApplicationController
           @last_month[:duration] += duration
           @last_month[:number] += 1
         end
-                
+
         if user_training_story.swam_date >= current_season.begin_date
           @season_distance[:distance] += distance
           @season_distance[:duration] += duration
           @season_distance[:number] += 1
-        end        
+        end
       end
-      
+
       if @global_distance[:number] > 0
-        @last_training[:distance] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.total_distance 
+        @last_training[:distance] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.total_distance
         @last_training[:duration] = @swimmer.associated_user.user_training_stories.sort_by_date.last.user_training.esteemed_total_seconds
-      end 
-      
+      end
+
       # Compute average distance per training
-      @global_distance[:avg_distance] = @global_distance[:distance] / @global_distance[:number]  
-      @season_distance[:avg_distance] = @season_distance[:distance] / @season_distance[:number]  
-      @last_month[:avg_distance]      = @last_month[:distance] / @last_month[:number]  
-      @last_week[:avg_distance]       = @last_week[:distance] / @last_week[:number]  
+      @global_distance[:avg_distance] = @global_distance[:distance] / @global_distance[:number] if @global_distance[:number].to_i > 0
+      @season_distance[:avg_distance] = @season_distance[:distance] / @season_distance[:number] if @season_distance[:number].to_i > 0
+      @last_month[:avg_distance]      = @last_month[:distance] / @last_month[:number] if @last_month[:number].to_i > 0
+      @last_week[:avg_distance]       = @last_week[:distance] / @last_week[:number] if @last_week[:number].to_i > 0
 
       # Compute average duration per training
-      @global_distance[:avg_duration] = @global_distance[:duration] / @global_distance[:number]  
-      @season_distance[:avg_duration] = @season_distance[:duration] / @season_distance[:number]  
-      @last_month[:avg_duration]      = @last_month[:duration] / @last_month[:number]  
-      @last_week[:avg_duration]       = @last_week[:duration] / @last_week[:number]  
-       
+      @global_distance[:avg_duration] = @global_distance[:duration] / @global_distance[:number] if @global_distance[:number].to_i > 0
+      @season_distance[:avg_duration] = @season_distance[:duration] / @season_distance[:number] if @season_distance[:number].to_i > 0
+      @last_month[:avg_duration]      = @last_month[:duration] / @last_month[:number] if @last_month[:number].to_i > 0
+      @last_week[:avg_duration]       = @last_week[:duration] / @last_week[:number] if @last_week[:number].to_i > 0
+
       # Compute average 100 meters performance
-      @global_distance[:avg_100_meters] = @global_distance[:avg_duration] / ( @global_distance[:avg_distance] / 100 )  
-      @season_distance[:avg_100_meters] = @season_distance[:avg_duration] / ( @season_distance[:avg_distance] / 100 )  
-      @last_month[:avg_100_meters]      = @last_month[:avg_duration] / ( @last_month[:avg_distance] / 100 )  
-      @last_week[:avg_100_meters]       = @last_week[:avg_duration] / ( @last_week[:avg_distance] / 100 )  
-      @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 )  
+      @global_distance[:avg_100_meters] = @global_distance[:avg_duration] / ( @global_distance[:avg_distance] / 100 ) if @global_distance[:avg_distance].to_i > 0
+      @season_distance[:avg_100_meters] = @season_distance[:avg_duration] / ( @season_distance[:avg_distance] / 100 ) if @season_distance[:avg_distance].to_i > 0
+      @last_month[:avg_100_meters]      = @last_month[:avg_duration] / ( @last_month[:avg_distance] / 100 ) if @last_month[:avg_distance].to_i > 0
+      @last_week[:avg_100_meters]       = @last_week[:avg_duration] / ( @last_week[:avg_distance] / 100 ) if @last_week[:avg_distance].to_i > 0
+      @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 ) if @last_training[:distance].to_i > 0
     else
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
@@ -561,7 +561,7 @@ class SwimmersController < ApplicationController
   #
   def set_swimmer
     @swimmer = Swimmer.find_by_id( params[:id].to_i )
-    @swimmer = @swimmer.decorate if @swimmer    
+    @swimmer = @swimmer.decorate if @swimmer
   end
   #-- -------------------------------------------------------------------------
   #++
