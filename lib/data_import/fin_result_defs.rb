@@ -1,10 +1,10 @@
 # encoding: utf-8
 
-require 'parsers/txt_result_defs'
-require 'parsers/context_type_def'
-require 'parsers/context_detector'
-require 'parsers/token_extractor'
-require 'parsers/fin_result_consts'
+require 'data_import/txt_result_defs'
+require 'data_import/context_type_def'
+require 'data_import/services/context_detector'
+require 'data_import/services/token_extractor'
+require 'data_import/fin_result_consts'
 
 
 =begin

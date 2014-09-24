@@ -741,7 +741,7 @@ describe SwimmersController, :type => :controller do
         login_user()
         # FIXME This action requires "full goggler" (swimmer associated with user)
         #@swimmer = create(:swimmer)
-        @swimmer = Swimmer.find(23)            # Assumes LIGABUE MARCO from seeds
+        @swimmer = Swimmer.find_by_id(23)           # Assumes LIGABUE MARCO from seeds
         get :trainings, id: @swimmer.id
       end
 
@@ -793,5 +793,5 @@ describe SwimmersController, :type => :controller do
     end
   end
   # ===========================================================================
-      
+
 end

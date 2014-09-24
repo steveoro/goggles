@@ -3,12 +3,9 @@ require 'rubygems'
 require 'find'
 require 'fileutils'
 
-# WIP BEGIN -- was:
-# require File.join( Dir.pwd.to_s, 'config/environment' )
 require 'framework/version'
 require 'common/format'
 require 'framework/application_constants'
-# WIP END
 
 
 =begin
@@ -16,7 +13,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.499
+  - Goggles framework vers.:  4.00.515
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -24,7 +21,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.499.20140917'
+SCRIPT_VERSION = '4.00.515'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
