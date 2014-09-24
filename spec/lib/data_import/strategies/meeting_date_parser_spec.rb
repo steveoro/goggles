@@ -5,7 +5,7 @@ require 'ffaker'
 require 'data_import/strategies/meeting_date_parser'
 
 
-describe MeetingDateParser, type: :model do
+describe MeetingDateParser, type: :strategy do
 
   context "as a valid instance," do
     let(:day_1)        { ((rand * 100) % 28).to_i+1 }

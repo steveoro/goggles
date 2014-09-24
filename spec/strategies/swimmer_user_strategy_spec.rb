@@ -13,7 +13,7 @@ end
 # =============================================================================
 
 
-describe SwimmerUserStrategy do
+describe SwimmerUserStrategy, type: :strategy do
   before :each do
     @user = create( :user )
     @user2 = create( :user )
@@ -30,7 +30,7 @@ describe SwimmerUserStrategy do
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method with parameters, returning boolean values)",
       [
-        :is_associated_to_somebody_else_than, 
+        :is_associated_to_somebody_else_than,
         :is_confirmable_by,
         :is_unconfirmable_by,
         :is_invitable_by,

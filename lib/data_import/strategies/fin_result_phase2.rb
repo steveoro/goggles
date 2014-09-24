@@ -2,6 +2,7 @@
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 require 'data_import/header_fields'
+require 'data_import/strategies/city_comparator'
 require 'data_import/strategies/fin_result_parser'
 require 'data_import/strategies/fin_result_parser_tools'
 
@@ -1426,35 +1427,38 @@ module FinResultPhase2
     not_found = true
 
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-# [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
-#    result_row = FinResultParserTools.find_best_fuzzy_match(
-#      team_name,
-#      Swimmer.where(year_of_birth: swimmer_year),
-#      :complete_name
-#    ) unless result_row
+# TODO [Steve, 20131106] Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
+#    unless result_row
+#      matcher = FuzzyStringMatcher.new( Swimmer.where(year_of_birth: swimmer_year), :complete_name )
+#      result_row = matcher.find( swimmer_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
+#    end
     result_row = Swimmer.where(
       [
         "(year_of_birth = ?) AND (complete_name LIKE ?)",
         swimmer_year, complete_name+'%'
       ]
-    ).first
+    ).first # unless result_row
+
     if result_row                                   # We must differentiate the result: negative for Swimmer, positive for DataImportSwimmer
       result_id = - result_row.id
       not_found = false
 # DEBUG
 #      logger.debug( "Swimmer found! (ID=#{result_id})" )
     else                                            # Search also inside DataImportSwimmer when unsuccesful:
-# [Steve, 20131106] TODO Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
-#    result_row = FinResultParserTools.find_best_fuzzy_match(
-#      team_name,
-#      DataImportSwimmer.where(data_import_session_id: session_id, year_of_birth: swimmer_year),
-#      :complete_name
-#    ) unless result_row
+# TODO [Steve, 20131106] Toggle ON/OFF fuzzy search for names also upon parameter/checkbox:
+#      unless result_row
+#        matcher = FuzzyStringMatcher.new(
+#          DataImportSwimmer.where(data_import_session_id: session_id, year_of_birth: swimmer_year),
+#          :complete_name
+#        )
+#        result_row = matcher.find( swimmer_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
+#      end
       result_row = DataImportSwimmer.where(
         [ "(data_import_session_id = ?) AND (year_of_birth = ?) AND (complete_name LIKE ?)",
           session_id, swimmer_year, complete_name+'%'
         ]
-      ).first
+      ).first # unless result_row
+
       if result_row
         result_id = result_row.id
         not_found = false
@@ -1590,12 +1594,8 @@ module FinResultPhase2
     end
                                                     # *** (4) FUZZY SCAN on Teams:
     if not_found
-      result_row = FinResultParserTools.find_best_fuzzy_match(
-        team_name,
-        Team.all,
-        :name, :editable_name,
-        FUZZY_SEARCH_BIAS_SCORE
-      )                                             # ALWAYS LOG any chosen "best match" which is slightly different from the searched string:
+      matcher = FuzzyStringMatcher.new( Team.all, :name, :editable_name )
+      result_row = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
       if result_row
 # DEBUG
         logger.debug( "Team found by (strict) fuzzy search! (with ID=#{result_row.id})" )
@@ -1673,7 +1673,7 @@ module FinResultPhase2
     if not_found                                    # --- FIELD SETUP: Extract field values before the search:
       city_id = search_or_add_a_corresponding_city(
         session_id,
-        FinResultParserTools.guess_city_from_team_name(team_name)
+        CityComparator.guess_city_from_team_name( team_name )
       )
       begin                                         # --- BEGIN transaction ---
 # DEBUG
@@ -1820,9 +1820,9 @@ module FinResultPhase2
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
     result_row = nil
     City.all.each { |city|                          # Loop on all pre-inserted cities and search for a match
-      is_same_city = FinResultParserTools.seems_to_be_the_same_city(
-        name, city.name,
-        area, city.area,
+      is_same_city = CityComparator.seems_the_same(
+        name,         city.name,
+        area,         city.area,
         country_code, city.country_code
       )
       if is_same_city
@@ -1839,9 +1839,9 @@ module FinResultPhase2
 #      logger.debug( "City found! (#{result_row.name}, ID=#{result_id})" )
     else                                            # Search also inside DataImportTeam when unsuccesful:
       DataImportCity.all.each { |city|              # Loop on all pre-inserted cities and search for a match
-        is_same_city = FinResultParserTools.seems_to_be_the_same_city(
-          name, city.name,
-          area, city.area,
+        is_same_city = CityComparator.seems_the_same(
+          name,         city.name,
+          area,         city.area,
           country_code, city.country_code
         )
         if is_same_city

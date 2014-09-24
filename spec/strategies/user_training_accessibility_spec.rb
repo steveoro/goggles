@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserTrainingAccessibility do
+describe UserTrainingAccessibility, type: :strategy do
   before :each do
     @user = create( :user )
     @non_shared_fixture = create( :user_training )

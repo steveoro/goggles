@@ -9,7 +9,7 @@ require 'data_import/txt_result_defs'
 require 'data_import/fin_result_defs'
 
 
-describe FinResultParser, type: :model do
+describe FinResultParser, type: :strategy do
 
   context "as a stand-alone class," do
     subject { FinResultParser }

@@ -3,7 +3,7 @@ require 'benchmark'
 require 'date'
 
 
-describe PersonalBestCollector do
+describe PersonalBestCollector, type: :strategy do
   # Use pre-loaded seeds:
   let( :swimmer )  { Swimmer.find( 23 ) }  # Assumes swimmer Leega from seeds
   let( :events_by_pool_type ) { EventsByPoolType.find( 11 )}  # Assumes 50FA, 25 mt from seeds

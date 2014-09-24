@@ -7,7 +7,7 @@ require 'data_import/txt_result_defs'
 require 'data_import/fin_result_defs'
 
 
-describe TxtParseService, type: :model do
+describe TxtParseService, type: :service do
 
   context "for a new empty instance," do
     subject { TxtParseService.new( FinResultDefs.new ) }

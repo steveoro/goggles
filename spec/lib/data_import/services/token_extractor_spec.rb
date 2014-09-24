@@ -6,7 +6,7 @@ require 'data_import/services/token_extractor'
 require 'data_import/fin_result_consts'
 
 
-describe TokenExtractor, type: :model do
+describe TokenExtractor, type: :service do
 
   context "for a well-defined instance," do
     let( :dummy_wrapper ) do

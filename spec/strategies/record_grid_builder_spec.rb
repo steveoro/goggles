@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe RecordGridBuilder do
+describe RecordGridBuilder, type: :strategy do
   let(:individual_record_list) { create_list(:individual_record, 5) }
 
   # Using a pre-filled collector will speed-up the tests:

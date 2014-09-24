@@ -6,7 +6,7 @@ require 'data_import/strategies/filename_parser'
 require 'data_import/header_fields'
 
 
-describe FilenameParser, type: :model do
+describe FilenameParser, type: :strategy do
 
   context "as a valid instance," do
     let(:pathname)    { File.join(Faker::Lorem.word, Faker::Lorem.word) }

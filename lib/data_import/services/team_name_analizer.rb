@@ -1,30 +1,62 @@
 # encoding: utf-8
 
-require 'fileutils'
-require 'fuzzystringmatch'
-require 'common/format'
 require 'fuzzy_string_matcher'
+#require 'data_import/tools_logging'
 
 
 =begin
 
-= DataImporter
+= TeamNameAnalizer
 
   - Goggles framework vers.:  4.00.517
   - author: Steve A.
 
-== FinResultParserTools module
+ Service class delegated to analize,
+ given the current and previous context definition.
 
- Container dedicated to parsing tools for FIN Results files.
+ Stores the overall progress of the parsing it has performed but it
+ should be controlled externally by a dedicated Strategy class.
 
- FIN Results are swimming meeting result text files, written mostly in UTF-8 italian
- locale (since F.I.N. is the Italian Swimming Federation).
+=== The typical usage involves:
 
- All the RegExp used by this Parser class assume the file to be processed is compliant
- with the format used in these kind of files.
+ - creating a dedicated parse definition holder-object, typically
+   by subclassing TxtResultDefs and specifing this in the constructor;
+
+ - for each available line of text to be parsed:
+   - for each defined ContextDetector (inside the above TxtResultDefs sibling):
+     - call #parse() on the current line and detector to see if there's a match
+
+ - obtain the parsing result either by #result or, more specifically,
+   by calling #result_for( context_name )
 
 =end
-module FinResultParserTools
+class TeamNameAnalizer
+
+  # Memoized getter for all the Team instances.
+  #
+  def all_teams
+    @teams ||= Team.all
+  end
+
+  # Memoized getter for all the TeamAffiliation instances.
+  #
+  def all_affiliations
+    @team_affiliations ||= TeamAffiliation.all
+  end
+
+  # Returns the internal FuzzyStringMatcher dedicated to scanning all Team instances.
+  #
+  def team_matcher
+    @teams_matcher ||= FuzzyStringMatcher.new( all_teams, :name )
+  end
+
+  # Returns the internal FuzzyStringMatcher dedicated to scanning all TeamAffiliation instances.
+  #
+  def affiliation_matcher
+    @teams_matcher ||= FuzzyStringMatcher.new( all_affiliations, :name )
+  end
+  # ----------------------------------------------------------------------------
+  #++
 
   # Uses #FuzzyStringMatcher::collect_matches() to iterate until it finds at least
   # a single possible match, provided it has a minimum result bias score.
@@ -57,23 +89,19 @@ module FinResultParserTools
   # === Returns:
   # A #DataImportTeamAnalysisResult instance.
   #
-  def self.analyze_team_name_best_matches( matching_string, desired_season_id,
-                                           analysis_text_log, sql_text_log,
-                                           starting_bias_score = FuzzyStringMatcher::BIAS_SCORE_MAX,
-                                           ending_bias_score   = FuzzyStringMatcher::BIAS_SCORE_MIN )
-    all_teams = Team.all
-    all_affiliations = TeamAffiliation.all
-    matcher = FuzzyStringMatcher.new( all_teams, :name )
-    bias_score_1, result_list_1 = matcher.seek_deep_match( matching_string, starting_bias_score, ending_bias_score )
-    matcher = FuzzyStringMatcher.new( all_affiliations, :name )
-    bias_score_2, result_list_2 = matcher.seek_deep_match( matching_string, starting_bias_score, ending_bias_score )
+  def analyze( matching_string, desired_season_id,
+               analysis_text_log, sql_text_log,
+               starting_bias_score = FuzzyStringMatcher::BIAS_SCORE_MAX,
+               ending_bias_score   = FuzzyStringMatcher::BIAS_SCORE_MIN )
+    bias_score_1, result_list_1 = team_matcher.seek_deep_match( matching_string, starting_bias_score, ending_bias_score )
+    bias_score_2, result_list_2 = affiliation_matcher.seek_deep_match( matching_string, starting_bias_score, ending_bias_score )
                                                     # Collect result lists and min. bias:
     result_list    = result_list_1 + result_list_2
     min_bias_score = bias_score_1 < bias_score_2 ? bias_score_1 : bias_score_2
                                                     # Prepare report:
     analysis_text_log << "\r\n-------------------------------------------------------------------------------------------------------------\r\n"
     analysis_text_log << "                    [[[ '#{matching_string}' ]]]  -- season_id: #{desired_season_id}, best-match search:\r\n\r\n"
-    result_hash3 = self.prepare_analysis_report(
+    result_hash3 = prepare_analysis_report(
       matching_string,
       desired_season_id,
       analysis_text_log,
@@ -147,7 +175,7 @@ module FinResultParserTools
 
   # Returns a formatted string containing the result row main values
   #
-  def self.format_result_row( result_row, result_score )
+  def format_result_row( result_row, result_score )
     output = "(#{sprintf("%-16s", result_row.class.name)})"
     output << " '#{result_row.name}', " if result_row.respond_to?(:name)
     output << "score #{sprintf("%1.4f", result_score)}"
@@ -186,8 +214,8 @@ module FinResultParserTools
   #                            defined only if season_id is equal to the desired value.
   #    }
   #
-  def self.prepare_analysis_report( matching_string, desired_season_id, analysis_text_log,
-                                    result_list, min_bias_score )
+  def prepare_analysis_report( matching_string, desired_season_id, analysis_text_log,
+                               result_list, min_bias_score )
     affiliation_match = nil
     team_match = nil
     team_id = nil
@@ -196,7 +224,7 @@ module FinResultParserTools
 
     result_list = result_list.sort!{ |x,y| x[ :score ] <=> y[ :score ] }
     result_list.each { |result|
-      analysis_text_log << "   - " << self.format_result_row( result[:row], result[:score] )
+      analysis_text_log << "   - " << format_result_row( result[:row], result[:score] )
 
       if result[:row].instance_of?( Team )
         # We will store only the highest matches per class, while looping on the results:
@@ -235,19 +263,19 @@ module FinResultParserTools
     end
 
     if team_match
-      analysis_text_log << "   Team   BEST...: " << self.format_result_row( team_match[:row], team_match[:score] )
+      analysis_text_log << "   Team   BEST...: " << format_result_row( team_match[:row], team_match[:score] )
       analysis_text_log << "\r\n"
     end
     if affiliation_match
-      analysis_text_log << "   Affil. BEST...: " << self.format_result_row( affiliation_match[:row], affiliation_match[:score] )
+      analysis_text_log << "   Affil. BEST...: " << format_result_row( affiliation_match[:row], affiliation_match[:score] )
       analysis_text_log << "\r\n"
     end
     if hiscoring_match
-      analysis_text_log << "   Hi-scoring....: " << self.format_result_row( hiscoring_match[:row], hiscoring_match[:score] )
+      analysis_text_log << "   Hi-scoring....: " << format_result_row( hiscoring_match[:row], hiscoring_match[:score] )
       analysis_text_log << "\r\n"
     end
     if best_match
-      analysis_text_log << "   - Preferred - : " << self.format_result_row( best_match[:row], best_match[:score] )
+      analysis_text_log << "   - Preferred - : " << format_result_row( best_match[:row], best_match[:score] )
       analysis_text_log << "\r\n"
     end
     analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id

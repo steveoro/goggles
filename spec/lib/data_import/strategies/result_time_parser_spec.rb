@@ -5,7 +5,7 @@ require 'ffaker'
 require 'data_import/strategies/result_time_parser'
 
 
-describe ResultTimeParser, type: :model do
+describe ResultTimeParser, type: :strategy do
 
   context "as a valid instance," do
     let(:mins)    { ((rand * 59) % 59).to_i }
