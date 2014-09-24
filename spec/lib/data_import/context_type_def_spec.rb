@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'parsers/context_type_def'
+require 'data_import/context_type_def'
 
 
 describe ContextTypeDef, type: :model do

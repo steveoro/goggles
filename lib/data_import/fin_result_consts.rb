@@ -1,7 +1,7 @@
 # encoding: utf-8
 
-require 'parsers/context_type_def'
-require 'parsers/token_extractor'
+require 'data_import/context_type_def'
+require 'data_import/services/token_extractor'
 
 
 =begin

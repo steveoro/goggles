@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-require 'parsers/txt_parse_service'
-require 'parsers/context_detector'
-require 'parsers/fin_result_consts'
-require 'parsers/txt_result_defs'
-require 'parsers/fin_result_defs'
+require 'data_import/services/txt_parse_service'
+require 'data_import/services/context_detector'
+require 'data_import/fin_result_consts'
+require 'data_import/txt_result_defs'
+require 'data_import/fin_result_defs'
 
 
 describe TxtParseService, type: :model do
