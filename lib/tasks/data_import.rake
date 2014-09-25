@@ -9,16 +9,17 @@ require 'framework/application_constants'
 
 require 'framework/console_logger'
 require 'data_import/strategies/data_importer'
+require 'fuzzy_string_matcher'
 
 
 =begin
 
 = Data-Import Helper tasks
 
-  - Goggles framework vers.:  4.00.225.20140414
+  - Goggles framework vers.:  4.00.519
   - author: Steve A.
 
-  Data-Import rake tasks. 
+  Data-Import rake tasks.
 
   (ASSUMES TO BE rakeD inside Rails.root)
 
@@ -28,21 +29,22 @@ LOG_DIR     = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 # -----------------------------------------------------------------------------
 
 
-def launch_data_importer( pathname, season, force_meeting, force_team,
-                          do_not_consume_file, log_dir, logger, flash, delayed )
-  data_importer = DataImporter.new( logger, flash, 1 ) # default admin_id=1
-  data_importer.set_batch_parameters(
-      seasonpathname, season, force_meeting, force_team,
-      do_not_consume_file, log_dir
-  )
-  delayed ? data_importer.delay( queue: 'data-import').batch_import() :
-            data_importer.batch_import()
-end
-# -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
-
-
 namespace :dataimport do
+
+  # Executes the DataImporter
+  def launch_data_importer( pathname, season, force_meeting, force_team,
+                            do_not_consume_file, log_dir, logger, flash, delayed )
+    data_importer = DataImporter.new( logger, flash, 1 ) # default admin_id=1
+    data_importer.set_batch_parameters(
+        seasonpathname, season, force_meeting, force_team,
+        do_not_consume_file, log_dir
+    )
+    delayed ? data_importer.delay( queue: 'data-import').batch_import() :
+              data_importer.batch_import()
+  end
+  # ----------------------------------------------------------------------------
+  #++
+
 
   desc <<-DESC
   Executes the data-import process as a batch, delayed job.
@@ -50,7 +52,7 @@ All files found in the designated directory will be enqued, processed
 and consumed. Resulting log files are stored into '#{LOG_DIR}'.
 
 Options: [exec_path=#{UPLOADS_DIR}] [delete=1|<0>]
-         [force_meeting=1|<0>] [force_team=1|<0>] 
+         [force_meeting=1|<0>] [force_team=1|<0>]
          [force_season_id=<season_id>]
          [log_dir=#{LOG_DIR}] [delayed=<1>|0]
 
@@ -87,7 +89,7 @@ Options: [exec_path=#{UPLOADS_DIR}] [delete=1|<0>]
               from the command line, using (for example):
 
               RAILS_ENV=production script/delayed_job -n 2 start --exit-on-complete
-              
+
               The job queue(s) can be monitored using the DJMon web app,
               at http://<server_ip>:<server_port>/dj_mon
 
