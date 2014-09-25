@@ -1,6 +1,8 @@
 # encoding: utf-8
 
-require 'fuzzy_string_matcher'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../app/strategies/fuzzy_string_matcher'
+
 #require 'data_import/tools_logging'
 
 

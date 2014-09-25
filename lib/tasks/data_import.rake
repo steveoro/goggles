@@ -8,7 +8,6 @@ require 'framework/version'
 require 'framework/application_constants'
 
 require 'framework/console_logger'
-require 'fuzzy_string_matcher'
 require 'data_import/strategies/data_importer'
 
 
