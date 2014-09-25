@@ -2,11 +2,13 @@
 
 require 'spec_helper'
 
-#require 'data_import/services/txt_parse_service'
-#require 'data_import/services/context_detector'
-#require 'data_import/fin_result_consts'
-#require 'data_import/txt_result_defs'
-#require 'data_import/fin_result_defs'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../../lib/data_import/strategies/fin_result_parser'
+require_relative '../../../../lib/data_import/services/txt_parse_service'
+require_relative '../../../../lib/data_import/services/context_detector'
+require_relative '../../../../lib/data_import/fin_result_consts'
+require_relative '../../../../lib/data_import/txt_result_defs'
+require_relative '../../../../lib/data_import/fin_result_defs'
 
 
 describe FinResultParser, type: :strategy do

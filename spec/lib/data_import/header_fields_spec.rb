@@ -3,7 +3,8 @@
 require 'spec_helper'
 require 'ffaker'
 
-#require 'data_import/header_fields'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../lib/data_import/header_fields'
 
 
 describe HeaderFields, type: :model do

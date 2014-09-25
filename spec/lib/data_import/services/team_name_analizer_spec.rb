@@ -1,8 +1,9 @@
 # encoding: utf-8
 require 'spec_helper'
 
-require 'fuzzy_string_matcher'
-# require 'data_import/services/team_name_analizer'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../../lib/data_import/services/team_name_analizer'
+#require_relative '../../../app/strategies/fuzzy_string_matcher'
 
 
 describe TeamNameAnalizer, type: :service, data_import: true do

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-#require 'data_import/txt_result_defs'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../lib/data_import/txt_result_defs'
 
 
 describe TxtResultDefs, type: :model do

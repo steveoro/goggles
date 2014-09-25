@@ -1,9 +1,10 @@
 # encoding: utf-8
 require 'spec_helper'
 
-#require 'framework/console_logger'
-#require 'data_import/services/token_extractor'
-#require 'data_import/fin_result_consts'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../../lib/data_import/services/token_extractor'
+require_relative '../../../../lib/framework/console_logger'
+require_relative '../../../../lib/data_import/fin_result_consts'
 
 
 describe TokenExtractor, type: :service do

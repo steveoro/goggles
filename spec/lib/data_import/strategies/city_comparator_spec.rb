@@ -3,7 +3,8 @@
 require 'spec_helper'
 require 'ffaker'
 
-#require 'data_import/strategies/city_comparator'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../../lib/data_import/strategies/city_comparator'
 
 
 describe CityComparator, type: :strategy do

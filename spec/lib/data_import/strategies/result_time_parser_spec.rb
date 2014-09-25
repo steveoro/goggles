@@ -3,7 +3,8 @@
 require 'spec_helper'
 require 'ffaker'
 
-#require 'data_import/strategies/result_time_parser'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../../lib/data_import/strategies/result_time_parser'
 
 
 describe ResultTimeParser, type: :strategy do

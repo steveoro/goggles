@@ -1,7 +1,9 @@
 # encoding: utf-8
 require 'spec_helper'
 
-#require 'data_import/fin_result_defs'
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../lib/data_import/fin_result_defs'
+require_relative '../../../lib/framework/console_logger'
 
 
 describe FinResultDefs, type: :model do
