@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
+require 'fuzzy_string_matcher'
 # require 'data_import/services/team_name_analizer'
 
 
