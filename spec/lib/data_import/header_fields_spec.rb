@@ -2,7 +2,8 @@
 
 require 'spec_helper'
 require 'ffaker'
-require 'data_import/header_fields'
+
+#require 'data_import/header_fields'
 
 
 describe HeaderFields, type: :model do

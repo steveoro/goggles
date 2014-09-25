@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'data_import/tools_logging'
+#require 'data_import/tools_logging'
 
 
 describe Tools::Logging, type: :model do

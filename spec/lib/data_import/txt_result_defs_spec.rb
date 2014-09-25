@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'data_import/txt_result_defs'
+#require 'data_import/txt_result_defs'
 
 
 describe TxtResultDefs, type: :model do

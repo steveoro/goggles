@@ -1,10 +1,10 @@
 # encoding: utf-8
 require 'spec_helper'
 
-require 'framework/console_logger'
-require 'data_import/services/context_detector'
-require 'data_import/services/token_extractor'
-require 'data_import/fin_result_consts'
+#require 'framework/console_logger'
+#require 'data_import/services/context_detector'
+#require 'data_import/services/token_extractor'
+#require 'data_import/fin_result_consts'
 
 
 describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do

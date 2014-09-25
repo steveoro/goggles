@@ -2,7 +2,8 @@
 
 require 'spec_helper'
 require 'ffaker'
-require 'data_import/strategies/meeting_date_parser'
+
+#require 'data_import/strategies/meeting_date_parser'
 
 
 describe MeetingDateParser, type: :strategy do

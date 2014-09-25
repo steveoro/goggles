@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-require 'data_import/services/txt_parse_service'
-require 'data_import/services/context_detector'
-require 'data_import/fin_result_consts'
-require 'data_import/txt_result_defs'
-require 'data_import/fin_result_defs'
+#require 'data_import/services/txt_parse_service'
+#require 'data_import/services/context_detector'
+#require 'data_import/fin_result_consts'
+#require 'data_import/txt_result_defs'
+#require 'data_import/fin_result_defs'
 
 
 describe FinResultParser, type: :strategy do

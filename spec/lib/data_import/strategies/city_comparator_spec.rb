@@ -2,7 +2,8 @@
 
 require 'spec_helper'
 require 'ffaker'
-require 'data_import/strategies/city_comparator'
+
+#require 'data_import/strategies/city_comparator'
 
 
 describe CityComparator, type: :strategy do

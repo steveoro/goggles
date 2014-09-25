@@ -2,7 +2,8 @@
 
 require 'spec_helper'
 require 'ffaker'
-require 'data_import/strategies/result_time_parser'
+
+#require 'data_import/strategies/result_time_parser'
 
 
 describe ResultTimeParser, type: :strategy do

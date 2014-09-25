@@ -1,10 +1,10 @@
 # encoding: utf-8
 require 'spec_helper'
 
-require 'data_import/services/team_name_analizer'
+# require 'data_import/services/team_name_analizer'
 
 
-describe TeamNameAnalizer, type: :service do
+describe TeamNameAnalizer, type: :service, data_import: true do
 
   context "for a well-defined instance," do
     subject { TeamNameAnalizer.new() }
