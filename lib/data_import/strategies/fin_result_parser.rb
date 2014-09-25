@@ -5,7 +5,6 @@ require 'common/format'
 require 'data_import/services/context_detector'
 require 'data_import/services/token_extractor'
 require 'data_import/fin_result_defs'
-require 'data_import/strategies/fin_result_parser_tools'
 require 'data_import/services/txt_parse_service'
                                                     # The following applies only to Ruby <= 1.9.2
 require 'iconv' unless String.method_defined?( :encode )

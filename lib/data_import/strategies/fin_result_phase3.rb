@@ -1,8 +1,6 @@
 # encoding: utf-8
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
-require 'data_import/strategies/fin_result_parser'
-require 'data_import/strategies/fin_result_parser_tools'
 
 
 =begin

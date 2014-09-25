@@ -4,7 +4,7 @@ require 'common/format'
 require 'data_import/header_fields'
 require 'data_import/strategies/city_comparator'
 require 'data_import/strategies/fin_result_parser'
-require 'data_import/strategies/fin_result_parser_tools'
+require 'data_import/services/team_name_analizer'
 
 
 =begin
@@ -1639,9 +1639,11 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found && (!force_missing_team_creation)
-      result = FinResultParserTools.analyze_team_name_best_matches(
-          team_name, season_id, @team_analysis_log,
-          @sql_executable_log, 0.99, 0.8
+      result = TeamNameAnalizer.new.analyze(
+          team_name, season_id,
+          @team_analysis_log,
+          @sql_executable_log,
+          0.99, 0.8
       )
       @team_analysis_log  = result.analysis_log_text
       @sql_executable_log = result.sql_text

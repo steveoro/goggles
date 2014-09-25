@@ -3,9 +3,9 @@ require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 
 require 'data_import/header_fields'
+require 'data_import/services/team_name_analizer'
 require 'data_import/strategies/filename_parser'
 require 'data_import/strategies/fin_result_parser'
-require 'data_import/strategies/fin_result_parser_tools'
 require 'data_import/strategies/fin_result_phase2'
 require 'data_import/strategies/fin_result_phase3'
 
