@@ -7,7 +7,7 @@ require 'fuzzystringmatch'
 
 = FuzzyStringMatcher
 
-  - Goggles framework vers.:  4.00.517
+  - Goggles framework vers.:  4.00.521
   - author: Steve A.
 
  Generic strategy class dedicated to find best fuzzy matches
@@ -156,6 +156,12 @@ class FuzzyStringMatcher
   # a single array:
   #
   #   [ updated_bias_score, result_list ]
+  #
+  # ...Where each item in the +result_list+ array is an Hash with this structure:
+  #
+  #   { score: <match_score>, row: <match_row_instance> }
+  #
+  # (The +result_list+ is of the same kind returned by #collect_matches)
   #
   def seek_deep_match( matching_string, bias_score = BIAS_SCORE_MAX, limit_bias_score = BIAS_SCORE_MIN )
     result_list   = collect_matches( matching_string, bias_score )

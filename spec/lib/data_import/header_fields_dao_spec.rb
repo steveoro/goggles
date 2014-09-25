@@ -4,10 +4,10 @@ require 'spec_helper'
 require 'ffaker'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../lib/data_import/header_fields'
+require_relative '../../../lib/data_import/header_fields_dao'
 
 
-describe HeaderFields, type: :model do
+describe HeaderFieldsDAO, type: :model do
 
   context "as a valid instance," do
     let(:pathname)    { File.join(Faker::Lorem.word, Faker::Lorem.word) }
@@ -20,7 +20,7 @@ describe HeaderFields, type: :model do
     let(:code_name)     { Faker::Lorem.word }
     let(:full_pathname) { File.join( pathname, "#{ prefix }#{ header_date }#{ code_name }.txt" ) }
 
-    subject { HeaderFields.new( full_pathname, prefix, header_date, code_name ) }
+    subject { HeaderFieldsDAO.new( full_pathname, prefix, header_date, code_name ) }
 
 
     it_behaves_like( "(the existance of a method)", [

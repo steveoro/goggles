@@ -3,7 +3,7 @@
 require 'fileutils'
 require 'common/format'
 
-require 'data_import/header_fields'
+require 'data_import/header_fields_dao'
 
 
 =begin
@@ -46,7 +46,7 @@ class FilenameParser
   # This method updates the corresponding member variables.
   #
   # == Returns:
-  # - an HeaderFields DAO on header_date parsing success, +nil+ otherwise.
+  # - an HeaderFieldsDAO DAO on header_date parsing success, +nil+ otherwise.
   #
   def parse()
     ext  = File.extname( @full_pathname )
@@ -61,7 +61,7 @@ class FilenameParser
       @header_date = nil
     end
     if @header_date.instance_of?( Date )
-      HeaderFields.new( @full_pathname, @prefix, @header_date, @code_name )
+      HeaderFieldsDAO.new( @full_pathname, @prefix, @header_date, @code_name )
     else
       nil
     end

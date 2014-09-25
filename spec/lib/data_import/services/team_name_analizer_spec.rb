@@ -3,7 +3,6 @@ require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../../lib/data_import/services/team_name_analizer'
-#require_relative '../../../app/strategies/fuzzy_string_matcher'
 
 
 describe TeamNameAnalizer, type: :service, data_import: true do
@@ -14,6 +13,7 @@ describe TeamNameAnalizer, type: :service, data_import: true do
     it_behaves_like( "(the existance of a method)", [
       :all_teams, :all_affiliations,
       :team_matcher, :affiliation_matcher,
+      :analysis_text_log, :sql_text_log,
       :analyze
     ] )
     #-- -----------------------------------------------------------------------
@@ -46,6 +46,21 @@ describe TeamNameAnalizer, type: :service, data_import: true do
     describe "#affiliation_matcher" do
       it "returns the internal FuzzyStringMatcher dedicated to TeamAffiliation scanning" do
         expect( subject.team_matcher ).to be_an_instance_of(FuzzyStringMatcher)
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#analysis_text_log" do
+      it "returns a String" do
+        expect( subject.analysis_text_log ).to be_an_instance_of(String)
+        expect( subject.analysis_text_log.size ).to be >= 0
+      end
+    end
+    describe "#sql_text_log" do
+      it "returns a String" do
+        expect( subject.sql_text_log ).to be_an_instance_of(String)
+        expect( subject.sql_text_log.size ).to be >= 0
       end
     end
     #-- -----------------------------------------------------------------------

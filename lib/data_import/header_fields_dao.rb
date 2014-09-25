@@ -3,7 +3,7 @@
 
 =begin
 
-= HeaderFields
+= HeaderFieldsDAO
 
   - Goggles framework vers.:  4.00.515
   - author: Steve A.
@@ -12,7 +12,7 @@
  or the header of a meeting result file.
 
 =end
-class HeaderFields
+class HeaderFieldsDAO
 
   # These must be initialized on creation:
   attr_reader :full_pathname, :prefix, :header_date, :code_name

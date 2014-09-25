@@ -2,7 +2,7 @@
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 
-require 'data_import/header_fields'
+require 'data_import/header_fields_dao'
 require 'data_import/services/team_name_analizer'
 require 'data_import/strategies/filename_parser'
 require 'data_import/strategies/fin_result_parser'
@@ -414,7 +414,7 @@ class DataImporter
                     force_missing_team_creation, do_not_consume_file )
 
                                                     # -- FILE HEADER digest --
-    header_fields = FilenameParser.new( full_pathname ).parse
+    header_fields_dao = FilenameParser.new( full_pathname ).parse
 
     season_id = 0
     if season.nil?                                  # Try to detect which season from the path/name of the file
@@ -430,7 +430,7 @@ class DataImporter
         logger.info( "   Detected forced season ID=#{season_id} from container folder name. Parsing file..." )
         @phase_1_log = "Detected forced season ID=#{season_id} from container folder name. Parsing file...\r\n"
       else
-        seek_date = header_fields.header_date
+        seek_date = header_fields_dao.header_date
         mas_fin_season_type = SeasonType.find_by_code('MASFIN')
         unless ( mas_fin_season_type && mas_fin_season_type.id.to_i > 0 )
           flash[:error] = "#{I18n.t(:season_type_not_found, { scope: [:admin_import] })} (code='MASFIN'))"
@@ -456,13 +456,13 @@ class DataImporter
     self.season = season                            # Update the internal reference member
     @season_id  = season_id                         # Set the currently used season_id (this member variable is used just by its getter method)
                                                     # Get the remaining default values from the season instance:
-    header_fields.header_year     = season.header_year
-    header_fields.edition         = season.edition
-    header_fields.edition_type_id = season.edition_type_id
-    header_fields.timing_type_id  = season.timing_type_id
+    header_fields_dao.header_year     = season.header_year
+    header_fields_dao.edition         = season.edition
+    header_fields_dao.edition_type_id = season.edition_type_id
+    header_fields_dao.timing_type_id  = season.timing_type_id
 # DEBUG
-    logger.debug( "\r\nParsed header_fields: #{header_fields.inspect}" )
-    @phase_1_log = "\r\nParsed header_fields: #{header_fields.inspect}\r\n"
+    logger.debug( "\r\nParsed header_fields_dao: #{header_fields_dao.inspect}" )
+    @phase_1_log = "\r\nParsed header_fields_dao: #{header_fields_dao.inspect}\r\n"
     data_rows = []
 
     result_hash = FinResultParser.parse_txt_file( full_pathname, logger ) # (=> show_progress = false)
@@ -470,7 +470,7 @@ class DataImporter
     #     {
     #       parse_result: {
     #         :category_header => [
-    #           { id: <category_header_id>, fields: <hash_of_category_header_fields_with_values>,
+    #           { id: <category_header_id>, fields: <hash_of_category_header_fields_dao_with_values>,
     #             import_text: last_line_of_text_used_to_extract_all_fields }
     #           ... (one Hash for each <category_header_id>)
     #         ],
@@ -537,8 +537,8 @@ class DataImporter
           @phase_1_log = "meeting_dates = '#{meeting_dates}' => #{scheduled_dates.inspect} (#{scheduled_date})"
         end
                                                     # ...Otherwise, parse them from the filename/header:
-        if scheduled_date.nil? && header_fields.header_date
-          scheduled_date = header_fields.header_date
+        if scheduled_date.nil? && header_fields_dao.header_date
+          scheduled_date = header_fields_dao.header_date
 # DEBUG
           logger.debug( "scheduled_date=#{scheduled_date} (set to file name date)" )
           @phase_1_log = "scheduled_date=#{scheduled_date} (set to file name date)\r\n"
@@ -572,7 +572,7 @@ class DataImporter
       if season && can_go_on                        # -- MEETING digest --
         meeting_id = search_or_add_a_corresponding_meeting(
             full_pathname, session_id, season_id, meeting_header_row,
-            meeting_dates, scheduled_date, header_fields, force_missing_meeting_creation
+            meeting_dates, scheduled_date, header_fields_dao, force_missing_meeting_creation
         )
       end
 
@@ -594,7 +594,7 @@ class DataImporter
         meeting_session_id = search_or_add_a_corresponding_meeting_session(
             full_pathname, session_id, meeting_id,
             meeting_dates, scheduled_date,
-            header_fields, force_missing_meeting_creation
+            header_fields_dao, force_missing_meeting_creation
         )
       end
 

@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
-require 'data_import/header_fields'
+require 'data_import/header_fields_dao'
 require 'data_import/strategies/city_comparator'
 require 'data_import/strategies/fin_result_parser'
 require 'data_import/services/team_name_analizer'
@@ -342,7 +342,7 @@ module FinResultPhase2
   #
   def search_or_add_a_corresponding_meeting( full_pathname, session_id, season_id,
                                              meeting_header_row, meeting_dates, scheduled_date,
-                                             header_fields, force_missing_meeting_creation = false )
+                                             header_fields_dao, force_missing_meeting_creation = false )
     result_id = 0
     result_row = nil
     not_found = true
@@ -355,7 +355,7 @@ module FinResultPhase2
       notes = (meeting_dates ? "#{meeting_dates}\r\n" : '') +
               (organization ? "#{organization}" : '')
     end
-    description = ( title ? title : "#{header_fields.code_name } (#{Format.a_date(scheduled_date)})" )
+    description = ( title ? title : "#{header_fields_dao.code_name } (#{Format.a_date(scheduled_date)})" )
 # DEBUG
     logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
     @phase_1_log << "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n"
@@ -367,7 +367,7 @@ module FinResultPhase2
                                                     # ASSERT: there can be only 1 row keyed by this tuple:
     result_row = Meeting.where(
       [ "(header_date = ?) AND (season_id = ?) AND (code = ?)",
-        scheduled_date, season_id, header_fields.code_name ]
+        scheduled_date, season_id, header_fields_dao.code_name ]
     ).first
     if result_row                                   # We must differentiate the result: negative for Meeting, positive for DataImportMeeting
 # DEBUG
@@ -376,7 +376,7 @@ module FinResultPhase2
       result_id = - result_row.id
       not_found = false
                                                     # [Steve, 20131114] Sometimes header_year is missing from old seed data; we need to check this (otherwise validation fails):
-      result_row.header_year = header_fields.header_year if header_fields.header_year
+      result_row.header_year = header_fields_dao.header_year if header_fields_dao.header_year
       result_row.notes = notes if notes
       result_row.save! if result_row.changed?
                                                     # Search also inside data_import_xxx table counterpart when unsuccesful:
@@ -413,11 +413,11 @@ module FinResultPhase2
             is_under_25_admitted: true, # (This is just a guess)
             configuration_file:   full_pathname,
             header_date:          scheduled_date,
-            code:                 header_fields.code_name,
-            header_year:          header_fields.header_year,
-            edition:              header_fields.edition, # (This is just a guess)
-            edition_type_id:      header_fields.edition_type_id,
-            timing_type_id:       header_fields.timing_type_id,
+            code:                 header_fields_dao.code_name,
+            header_year:          header_fields_dao.header_year,
+            edition:              header_fields_dao.edition, # (This is just a guess)
+            edition_type_id:      header_fields_dao.edition_type_id,
+            timing_type_id:       header_fields_dao.timing_type_id,
             # TODO/FUTURE DEV:
 #            individual_score_computation_type_id: 0,
 #            relay_score_computation_type_id: 0,
@@ -462,7 +462,7 @@ module FinResultPhase2
   #
   def search_or_add_a_corresponding_meeting_session( full_pathname, session_id, meeting_id,
                                                      meeting_dates, scheduled_date,
-                                                     header_fields, force_missing_meeting_creation = false )
+                                                     header_fields_dao, force_missing_meeting_creation = false )
     result_id = 0
     result_row = nil
     not_found = true
@@ -514,7 +514,7 @@ module FinResultPhase2
     end
                                                     # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
     if not_found                                    # (the following is an educated guess)
-      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields.code_name }%" ]).first
+      swimming_pool = SwimmingPool.where([ "(nick_name LIKE ?)", "#{header_fields_dao.code_name }%" ]).first
 
       begin                                         # --- BEGIN transaction ---
         field_hash = {

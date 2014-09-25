@@ -2,32 +2,32 @@
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../app/strategies/fuzzy_string_matcher'
+require_relative '../../../lib/data_import/analysis_report_dao'
 
 
 =begin
 
 = TeamNameAnalizer
 
-  - Goggles framework vers.:  4.00.517
+  - Goggles framework vers.:  4.00.521
   - author: Steve A.
 
- Service class delegated to analize,
- given the current and previous context definition.
+ Service class delegated to analize the Team name matches.
 
- Stores the overall progress of the parsing it has performed but it
- should be controlled externally by a dedicated Strategy class.
+ Produces a detailed verbose text log of the analysis as well as a list of
+ "suggested" SQL actions that should be carried out in case the analysis is
+ confirmed by human interaction.
 
-=== The typical usage involves:
 
- - creating a dedicated parse definition holder-object, typically
-   by subclassing TxtResultDefs and specifing this in the constructor;
+=== Typical usage:
 
- - for each available line of text to be parsed:
-   - for each defined ContextDetector (inside the above TxtResultDefs sibling):
-     - call #parse() on the current line and detector to see if there's a match
+ - create and memoize an instance of the analyzer;
 
- - obtain the parsing result either by #result or, more specifically,
-   by calling #result_for( context_name )
+ - for each available team name to be searched:
+   - call #analyze( searched_team_name ) and get the result for the current team
+
+ - at the end of all the scanning a full text log and sql log is available
+   by calling the dedicated getter methods.
 
 =end
 class TeamNameAnalizer
@@ -54,6 +54,25 @@ class TeamNameAnalizer
   #
   def affiliation_matcher
     @teams_matcher ||= FuzzyStringMatcher.new( all_affiliations, :name )
+  end
+  # ----------------------------------------------------------------------------
+  #++
+
+  # Returns the overall text log for all the analysis operations performed
+  # with this instance.
+  # It is never +nil+, empty at first.
+  #
+  def analysis_text_log
+    @analysis_text_log ||= ''
+  end
+
+  # Returns the overall SQL log for all the "suggested" SQL operations that should
+  # be allegedly carried out by  accepting each analysis result given by calling
+  # the #analize method on this instance.
+  # It is never +nil+, empty at first.
+  #
+  def sql_text_log
+    @sql_text_log ||= ''
   end
   # ----------------------------------------------------------------------------
   #++
@@ -89,8 +108,7 @@ class TeamNameAnalizer
   # === Returns:
   # A #DataImportTeamAnalysisResult instance.
   #
-  def analyze( matching_string, desired_season_id,
-               analysis_text_log, sql_text_log,
+  def analyze( matching_string, desired_season_id, analysis_text_log, sql_text_log,
                starting_bias_score = FuzzyStringMatcher::BIAS_SCORE_MAX,
                ending_bias_score   = FuzzyStringMatcher::BIAS_SCORE_MIN )
     bias_score_1, result_list_1 = team_matcher.seek_deep_match( matching_string, starting_bias_score, ending_bias_score )
@@ -101,28 +119,25 @@ class TeamNameAnalizer
                                                     # Prepare report:
     analysis_text_log << "\r\n-------------------------------------------------------------------------------------------------------------\r\n"
     analysis_text_log << "                    [[[ '#{matching_string}' ]]]  -- season_id: #{desired_season_id}, best-match search:\r\n\r\n"
-    result_hash3 = prepare_analysis_report(
-      matching_string,
-      desired_season_id,
-      analysis_text_log,
-      result_list,
-      min_bias_score
+    report_dao = prepare_analysis_report(
+      matching_string, desired_season_id, analysis_text_log,
+      result_list, min_bias_score
     )
 
-    analysis_text_log = result_hash3[:analysis]
-    team_match        = result_hash3[:team_match]        # (Not used yet)
-    affiliation_match = result_hash3[:affiliation_match] # (Not used yet)
-    hiscoring_match   = result_hash3[:hiscoring_match]   # (Not used yet)
-    team_id           = result_hash3[:team_id]
-    best_match        = result_hash3[:best_match]
+    team_match        = report_dao.team_match        # (Not used yet)
+    team_id           = report_dao.team_id
+    affiliation_match = report_dao.affiliation_match # (Not used yet)
+    hiscoring_match   = report_dao.hiscoring_match   # (Not used yet)
+    best_match        = report_dao.best_match
+    analysis_text_log = report_dao.text_log
 
     if team_id.to_i > 0                             # Let's be sure that there aren't really no affiliations with these parameters:
       team_affiliation = TeamAffiliation.where(
-        team_id: team_id,
+        team_id:   team_id,
         season_id: desired_season_id
       ).first
       if team_affiliation
-        best_match = team_affiliation
+        best_match        = team_affiliation
         affiliation_match = team_affiliation
       end
     end
@@ -190,29 +205,9 @@ class TeamNameAnalizer
   # Prepares the report of best-matches text given the result hash.
   #
   # === Returns:
-  # An hash with the structure:
+  # An +AnalysisReportDAO+ object containing all the result fields.
   #
-  #    {
-  #      analysis: analysis output text log.
-  #
-  #      team_match: match {:row, :score} from teams, for the highest-scoring
-  #                            match from teams.
-  #                            +nil+ when no existing team was found in the results or linked
-  #                            to them.
-  #
-  #      team_id: commodity id from the row above or from affiliation's team
-  #                            (may, in fact, not be the same, depending on the "best match").
-  #                            +nil+ when no existing team was found in the results.
-  #
-  #      affiliation_match: match {:row, :score} from affiliations, will store
-  #                            the highest-scoring match, indipendently from season_id.
-  #
-  #      hiscoring_match: absolute highest scoring match, either from teams or affilations
-  #                            (indipendently from season_id).
-  #
-  #      best_match: best match {:row, :score} from affiliations,
-  #                            defined only if season_id is equal to the desired value.
-  #    }
+  # @see #AnalysisReportDAO
   #
   def prepare_analysis_report( matching_string, desired_season_id, analysis_text_log,
                                result_list, min_bias_score )
@@ -279,14 +274,11 @@ class TeamNameAnalizer
       analysis_text_log << "\r\n"
     end
     analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id
-    {
-      analysis:           analysis_text_log,
-      team_id:            team_id,
-      team_match:         team_match,
-      affiliation_match:  affiliation_match,
-      hiscoring_match:    hiscoring_match,
-      best_match:         best_match
-    }
+
+    AnalysisReportDAO.new(
+      team_match, team_id, affiliation_match,
+      hiscoring_match, best_match, analysis_text_log
+    )
   end
   #-- -------------------------------------------------------------------------
   #++

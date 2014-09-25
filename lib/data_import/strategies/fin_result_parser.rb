@@ -51,7 +51,7 @@ class FinResultParser
   #       parse_result: {
   #         :category_header => [
   #           {
-  #             id: <category_header_id>, fields: <hash_of_category_header_fields_with_values>,
+  #             id: <category_header_id>, fields: <hash_of_category_header_fields_dao_with_values>,
   #             import_text: last_line_of_text_used_to_extract_all_fields
   #           }
   #           ... (one Hash for each single <category_header_id>)
@@ -76,7 +76,7 @@ class FinResultParser
   #   is a composed string-concatenation key obtained from the current values of
   #   distance + style + gender [+ category_group] (this last one, only when found).
   #
-  # - <hash_of_category_header_fields_with_values>
+  # - <hash_of_category_header_fields_dao_with_values>
   #   has the same keys as the @context_keys[:category_header] Array
   #   (Note that the *last* field may/may not be included for certain categories),
   #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each

@@ -5,7 +5,7 @@ require 'ffaker'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../../lib/data_import/strategies/filename_parser'
-require_relative '../../../../lib/data_import/header_fields'
+require_relative '../../../../lib/data_import/header_fields_dao'
 
 
 describe FilenameParser, type: :strategy do
@@ -37,8 +37,8 @@ describe FilenameParser, type: :strategy do
     ] )
 
     describe "#parse" do
-      it "returns an HeaderFields DAO for a valid date" do
-        expect( subject.parse() ).to be_an_instance_of( HeaderFields )
+      it "returns an HeaderFieldsDAO DAO for a valid date" do
+        expect( subject.parse() ).to be_an_instance_of( HeaderFieldsDAO )
       end
       it "returns nil for a non-valid date" do
         parser = FilenameParser.new( File.join( pathname, "#{ prefix }#{ invalid_date }#{ code_name }.txt" ) )
@@ -52,7 +52,7 @@ describe FilenameParser, type: :strategy do
       describe "after a successful parsing," do
         before(:each) do
           @result = subject.parse
-          expect( @result ).to be_an_instance_of( HeaderFields )
+          expect( @result ).to be_an_instance_of( HeaderFieldsDAO )
         end
 
         it "updates the :prefix member" do
