@@ -13,17 +13,16 @@ class SwimmingPoolReview < ActiveRecord::Base
 
   validates_presence_of :entry_text
 
+
+  delegate :name, to: :user, prefix: true
+
   attr_accessible :title, :entry_text, :user_id, :swimming_pool_id
 
 
   scope :sort_swimming_pool_by_user,          ->(dir) { order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
   scope :sort_swimming_pool_by_swimming_pool, ->(dir) { order("swimming_pools.name #{dir.to_s}") }
-
-
-  # ----------------------------------------------------------------------------
-  # Base methods:
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
@@ -35,16 +34,10 @@ class SwimmingPoolReview < ActiveRecord::Base
     "[#{user_name}] #{title}"
   end
 
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    self.user ? self.user.name : '?'
-  end
-
   # Safe getter for swimming pool name
   def swimming_pool_name( method_sym = :get_verbose_name )
     self.swimming_pool ? self.swimming_pool.send(method_sym.to_sym) : '?'
   end
-  # ----------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

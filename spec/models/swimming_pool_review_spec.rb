@@ -8,8 +8,9 @@ describe SwimmingPoolReview, :type => :model do
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
+
     # Validated relations:
-    it_behaves_like( "(belongs_to required models)", [ 
+    it_behaves_like( "(belongs_to required models)", [
       :swimming_pool
     ])    
 
