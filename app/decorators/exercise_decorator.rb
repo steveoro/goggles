@@ -2,8 +2,8 @@
 
 = ExerciseDecorator
 
-  - version:  4.00.313.20140610
-  - author:   Steve A.
+  - version:  4.00.525
+  - author:   Steve A., Leega
 
   Decorator for the Exercise model.
   Contains all presentation-logic centered methods.
@@ -14,7 +14,7 @@ class ExerciseDecorator < Draper::Decorator
 
 
   # Creates the Hash of all the pre-computed attributes used by type-ahead look-up
-  # combos and lists. 
+  # combos and lists.
   #
   # == Params:
   # - <tt>current_user</tt> => the current_user instance, when available.
@@ -30,7 +30,7 @@ class ExerciseDecorator < Draper::Decorator
   #       :is_kick_aux_allowed    => #is_kick_aux_allowed(),
   #       :is_body_aux_allowed    => #is_body_aux_allowed(),
   #       :is_breath_aux_allowed  => #is_breath_aux_allowed(),
-  #     }</tt>. 
+  #     }</tt>.
   #
   def drop_down_attrs( current_user = nil )
     {
@@ -66,7 +66,8 @@ class ExerciseDecorator < Draper::Decorator
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
+
   # Returns a "natural" description for this data row.
   # The "natural" description is obtanied computing
   # exercise row and cobineing elements with some optimization
@@ -74,27 +75,27 @@ class ExerciseDecorator < Draper::Decorator
   #
   def get_friendly_description( total_distance = 0, swimmer_level_type_id = 0, separator = " + " )
     natural_description = ''
-    
-    # If less than two row should use exercise full name    
+
+    # If less than two row should use exercise full name
     if exercise_rows.count < 2
       natural_description = get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, separator = " + " )
     else
       er = exercise_rows.includes([:base_movement, :tarining_mode_type])
-      
+
       # Check if same stroke type in all rows
       is_same_stroke = er.select('base_movements.stroke_type_id').uniq.count == 1
-      
+
       # Check if same trainng mode in all rows
       is_same_mode = er.select(:training_mode_type_id).uniq.count == 1
 
       # Check if same distance
       is_same_distance = er.select(:percentage).uniq.count == 1
-       
+
       exercise_rows.sort_by_part_order.collect{ |row|
         ExerciseRowDecorator.decorate( row ).get_description_elements( total_distance, swimmer_level_type_id )
       }.join(separator)
-      
     end
-  end  
-  
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
