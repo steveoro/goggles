@@ -146,8 +146,11 @@ describe UserContentLogger, type: :strategy do
           read_file = File.read( subject.log_filename )
           expect( read_file ).to include( sql_contents )
         end
-        it "sends an e-mail" do
-          expect( AgexMailer.deliveries ).not_to be_empty
+        it "sends a creation alert e-mail" do
+          creation_mail = AgexMailer.deliveries.select do |mail|
+            mail.subject =~ /row CREATED/
+          end
+          expect( creation_mail ).not_to be_empty
         end
         it "includes an SQL log in the message" do
           expect(
@@ -165,10 +168,6 @@ describe UserContentLogger, type: :strategy do
           read_file = File.read( subject.log_filename )
           expect( read_file ).to include( sql_contents )
         end
-        it "doesn't send an e-mail" do
-          subject.after_update( record )
-          expect( AgexMailer.deliveries ).to be_empty
-        end
       end
 
 
@@ -180,9 +179,11 @@ describe UserContentLogger, type: :strategy do
           read_file = File.read( subject.log_filename )
           expect( read_file ).to include( sql_contents )
         end
-        it "sends an e-mail" do
-          subject.before_destroy( record )
-          expect( AgexMailer.deliveries ).not_to be_empty
+        it "sends a destroy alert e-mail" do
+          destroy_mail = AgexMailer.deliveries.select do |mail|
+            mail.subject =~ /row DELETED/
+          end
+          expect( destroy_mail ).not_to be_empty
         end
         it "includes an SQL log in the message" do
           expect(

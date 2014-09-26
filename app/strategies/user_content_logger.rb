@@ -72,7 +72,7 @@ class UserContentLogger
                                                     # Send a notification to the admin, if requested:
     AgexMailer.action_notify_mail(
       record.respond_to?( :user ) ? record.user : nil,
-      "New entry for #{@table_name}",
+      "#{@table_name} row CREATED",
       contents
     ).deliver if @email_on_create
   end
