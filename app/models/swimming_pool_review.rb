@@ -1,4 +1,19 @@
+# encoding: utf-8
+
+
+=begin
+
+= SwimmingPoolReview model
+
+  - version:  4.00.523
+  - author:   Steve A.
+
+=end
 class SwimmingPoolReview < ActiveRecord::Base
+  after_create    UserContentLogger.new('swimming_pool_reviews')
+  after_update    UserContentLogger.new('swimming_pool_reviews')
+  before_destroy  UserContentLogger.new('swimming_pool_reviews')
+
   acts_as_votable
 
   belongs_to :user
@@ -17,7 +32,6 @@ class SwimmingPoolReview < ActiveRecord::Base
   delegate :name, to: :user, prefix: true
 
   attr_accessible :title, :entry_text, :user_id, :swimming_pool_id
-
 
   scope :sort_swimming_pool_by_user,          ->(dir) { order("users.name #{dir.to_s}, swimming_pools.name #{dir.to_s}") }
   scope :sort_swimming_pool_by_swimming_pool, ->(dir) { order("swimming_pools.name #{dir.to_s}") }

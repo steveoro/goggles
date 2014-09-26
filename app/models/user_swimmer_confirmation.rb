@@ -1,4 +1,22 @@
+# encoding: utf-8
+
+
+=begin
+
+= UserSwimmerConfirmation model
+
+  - version:  4.00.523
+  - author:   Steve A.
+
+  Holds confirmations received by a user about its association with a
+  swimmer_id.
+
+=end
 class UserSwimmerConfirmation < ActiveRecord::Base
+  after_create    UserContentLogger.new('user_swimmer_confirmations')
+  after_update    UserContentLogger.new('user_swimmer_confirmations')
+  before_destroy  UserContentLogger.new('user_swimmer_confirmations')
+
   belongs_to :user
   belongs_to :swimmer
   validates_associated :swimmer
@@ -7,10 +25,13 @@ class UserSwimmerConfirmation < ActiveRecord::Base
     class_name: User,
     foreign_key: "confirmator_id"
 
+  attr_accessible :user_id, :swimmer_id, :confirmator_id
+
   scope :find_for_user,         ->(user) { where( user_id: user.id ) }
   scope :find_for_confirmator,  ->(confirmator) { where( confirmator_id: confirmator.id ) }
   scope :find_any_between,      ->(user, confirmator) { where( confirmator_id: confirmator.id, user_id: user.id ) }
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Confirms the association for a user to a swimmer, given another
@@ -18,7 +39,7 @@ class UserSwimmerConfirmation < ActiveRecord::Base
   #
   # The parameters can either be model instances or simple IDs.
   # Returns the confirmation row on success, +nil+ otherwise.
-  # 
+  #
   def self.confirm_for( user, swimmer, confirmator )
     user_id, swimmer_id, confirmator_id = self.parse_parameters( user, swimmer, confirmator )
     return nil unless self.validate_parameters( user_id, swimmer_id, confirmator_id )
@@ -32,8 +53,8 @@ class UserSwimmerConfirmation < ActiveRecord::Base
       nil
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Removes the single confirmation row for the association between a user and a swimmer,
   # given another user that acts as a "confirmator" (in this case, the "un-confirmator").
@@ -43,7 +64,7 @@ class UserSwimmerConfirmation < ActiveRecord::Base
   #
   # The parameters can either be model instances or simple IDs (Fixnum).
   # Returns +true+ on success, +false+ otherwise.
-  # 
+  #
   def self.unconfirm_for( user, swimmer, confirmator )
     user_id, swimmer_id, confirmator_id = self.parse_parameters( user, swimmer, confirmator )
     return false unless self.validate_parameters( user_id, swimmer_id, confirmator_id )
@@ -64,7 +85,8 @@ class UserSwimmerConfirmation < ActiveRecord::Base
       false
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private
@@ -89,5 +111,6 @@ class UserSwimmerConfirmation < ActiveRecord::Base
       confirmator_id.kind_of?( Fixnum ) && confirmator_id.to_i > 0
     )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

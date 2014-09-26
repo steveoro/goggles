@@ -2,7 +2,7 @@
 
 = UserAchievement model
 
-  - version:  4.00.501
+  - version:  4.00.523
   - author:   Leega, Steve A.
 
   Mapper for achievements reached by users.
@@ -10,8 +10,14 @@
 
 =end
 class UserAchievement < ActiveRecord::Base
+  after_create    UserContentLogger.new('user_achievements')
+  after_update    UserContentLogger.new('user_achievements')
+  before_destroy  UserContentLogger.new('user_achievements')
+
   belongs_to :user
   belongs_to :achievement
+
+  attr_accessible :user_id, :achievement_id
 
   delegate :name, to: :user, prefix: true
   #-- -------------------------------------------------------------------------

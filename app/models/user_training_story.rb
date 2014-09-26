@@ -3,11 +3,15 @@
 
 = UserTrainingStory model
 
-  - version:  4.00.321.20140618
+  - version:  4.00.523
   - author:   Steve A.
 
 =end
 class UserTrainingStory < ActiveRecord::Base
+  after_create    UserContentLogger.new('user_training_stories')
+  after_update    UserContentLogger.new('user_training_stories')
+  before_destroy  UserContentLogger.new('user_training_stories')
+
   include TrainingSharable                          # (This adds also a belongs_to :user clause)
 
   belongs_to :user_training

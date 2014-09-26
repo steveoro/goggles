@@ -1,16 +1,18 @@
 # encoding: utf-8
-require 'wrappers/timing'   # [Steve 20140311] Used by TrainingRow
 
 
 =begin
 
 = Training model
 
-  - version:  4.00.317.20140616
+  - version:  4.00.523
   - author:   Steve A., Leega
 
 =end
 class Training < ActiveRecord::Base
+  after_create    UserContentLogger.new('trainings')
+  after_update    UserContentLogger.new('trainings')
+  before_destroy  UserContentLogger.new('trainings')
 
   belongs_to :user
   # [Steve, 20120212] Validating on User fails always because of validation requirements inside User (password & salt)

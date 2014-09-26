@@ -6,11 +6,15 @@ require 'wrappers/timing'   # [Steve 20140311] Used by UserTrainingRow
 
 = Training
 
-  - version:  4.00.485
+  - version:  4.00.523
   - author:   Steve A., Leega
 
 =end
 class UserTraining < ActiveRecord::Base
+  after_create    UserContentLogger.new('user_trainings')
+  after_update    UserContentLogger.new('user_trainings')
+  before_destroy  UserContentLogger.new('user_trainings')
+
   include TrainingSharable                          # (This adds also a belongs_to :user clause)
 
   has_many :user_training_rows, dependent: :delete_all

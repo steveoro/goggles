@@ -7,6 +7,10 @@ require 'i18n'
 
 
 class User < ActiveRecord::Base
+  after_create    UserContentLogger.new('users', email_on_create: true)
+  after_update    UserContentLogger.new('users')
+  before_destroy  UserContentLogger.new('users')
+
   include Rails.application.routes.url_helpers
   include DropDownListable
   include Amistad::FriendModel                       # For Facebook-like friendship management
@@ -98,7 +102,7 @@ class User < ActiveRecord::Base
 
   # to_s() override for debugging purposes:
   def to_s
-    "[User: '#{get_full_name}']"
+    "[User: #{get_full_name} ID: #{id}]"
   end
   #-- -------------------------------------------------------------------------
   #++

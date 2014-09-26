@@ -1,9 +1,22 @@
+# encoding: utf-8
 require 'wrappers/timing'
 require 'timing_gettable'
 require 'timing_validatable'
 
 
+=begin
+
+= UserResult model
+
+  - version:  4.00.523
+  - author:   Steve A.
+
+=end
 class UserResult < ActiveRecord::Base
+  after_create    UserContentLogger.new('user_results')
+  after_update    UserContentLogger.new('user_results')
+  before_destroy  UserContentLogger.new('user_results')
+
   include TimingGettable
   include TimingValidatable
 
@@ -39,6 +52,11 @@ class UserResult < ActiveRecord::Base
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
 
+  attr_accessible :user_id, :swimmer_id, :category_type_id, :pool_type_id,
+                  :event_type_id, :meeting_individual_result_id,
+                  :disqualification_code_type_id,
+                  :description, :standard_points, :meeting_points, :rank,
+                  :is_disqualified, :reaction_time
 
   delegate :name, to: :user, prefix: true
 

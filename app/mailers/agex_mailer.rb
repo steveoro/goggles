@@ -26,7 +26,7 @@ class AgexMailer < ActionMailer::Base
   def exception_mail( user, error_description, error_backtrace )
     admin = Admin.find_by_name('steve')
     @admin_name  = admin.name
-    @user_name   = user.name
+    @user_name   = user.name if user.respond_to?(:name)
     @description = error_description
     @backtrace   = error_backtrace
     @host = ENV['HOSTNAME']
@@ -52,7 +52,7 @@ class AgexMailer < ActionMailer::Base
   #
   def action_notify_mail( user, action_name, action_description )
     admin = Admin.find_by_name('steve')
-    @user_name = user.name
+    @user_name = user.name if user.respond_to?(:name)
     @action_name = action_name
     @description = action_description
     @host = ENV['HOSTNAME']

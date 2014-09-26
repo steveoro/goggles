@@ -6,11 +6,15 @@ require 'wrappers/timing'
 
 = UserTrainingRow
 
-  - version:  4.00.453
+  - version:  4.00.523
   - author:   Steve A., Leega
 
 =end
 class UserTrainingRow < ActiveRecord::Base
+  after_create    UserContentLogger.new('user_training_rows')
+  after_update    UserContentLogger.new('user_training_rows')
+  before_destroy  UserContentLogger.new('user_training_rows')
+
   belongs_to :user_training
   belongs_to :exercise
   belongs_to :training_step_type

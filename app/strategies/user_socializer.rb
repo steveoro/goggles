@@ -1,7 +1,7 @@
 #
 # == UserSocializer
 #
-# B-L incapsulator for User-social interactions with news-feed generation.
+# Strategy/B-L incapsulator for User-social interactions with news-feed generation.
 #
 # @author   Steve A.
 # @version  4.00.291

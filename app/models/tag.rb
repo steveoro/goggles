@@ -1,4 +1,16 @@
+=begin
+
+= Tag model
+
+  - version:  4.00.523
+  - author:   Steve A.
+
+=end
 class Tag < ActiveRecord::Base
+  after_create    UserContentLogger.new('tags')
+  after_update    UserContentLogger.new('tags')
+  before_destroy  UserContentLogger.new('tags')
+
   include Rails.application.routes.url_helpers
 
   validates_presence_of :name
@@ -6,12 +18,14 @@ class Tag < ActiveRecord::Base
   validates_uniqueness_of :name, message: :already_exists
 
   belongs_to :user
-  # [Steve, 20120212] Validating user fails always because of validation requirements inside User (password & salt)
-#  validates_associated :user                    # (Do not enable this for User)
-  validates_presence_of :user_id
 
 #  has_many :tag4_entities
-  # ---------------------------------------------------------------------------
+
+  delegate :name, to: :user, prefix: true
+
+  attr_accessible :name, :user_id
+  #-- -------------------------------------------------------------------------
+  #++
 
   def base_uri
     tags_path( self )

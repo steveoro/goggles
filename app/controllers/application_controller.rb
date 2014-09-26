@@ -3,7 +3,7 @@
 
 = ApplicationController
 
-  - version:  4.00.491
+  - version:  4.00.523
   - author:   Steve A.
 
   Main Application controller.
@@ -22,10 +22,6 @@ class ApplicationController < ActionController::Base
 # XXX Comment/Uncomment this to show or skip the 'better-errors' output page with stack trace:
 #  rescue_from Exception, :with => :handle_exception
 #  rescue_from ActionController::RoutingError, :with => :render_not_found
-
-
-  # Set this to true to enable double logging (both the logger variable and stdout will be used).
-  DEBUG_VERBOSE_ON_CONSOLE = false unless defined?(DEBUG_VERBOSE_ON_CONSOLE)
 
 
   # Set the default URL options:
@@ -70,21 +66,6 @@ class ApplicationController < ActionController::Base
         logger.warn( '[W!]-- Unable to send out notification e-mail message, Mailer not responding or not configured properly yet.' )
       end
       logger.error( error_trace ) if verbose_trace
-    end
-  end
-
-
-  # Sends out an e-mail to notify the developers of important actions by the users
-  # taking place during app usage.
-  #
-  def log_action( action_performed, action_description )
-    logger.info("[*I*]- ACTION: '#{action_performed}', current user: #{current_user} => #{action_description}.")
-                                                  # Send a message to the developers anyway:
-    begin
-      AgexMailer.action_notify_mail( current_user, action_performed, action_description ).deliver
-      logger.info("[*I*]- action-notify e-mail allegedly sent.")
-    rescue
-      logger.warn( '[W!]-- Unable to send out action-notify e-mail message, Mailer not responding or not configured properly yet.' )
     end
   end
   #-- -------------------------------------------------------------------------
