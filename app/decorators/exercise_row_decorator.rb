@@ -62,6 +62,30 @@ class ExerciseRowDecorator < Draper::Decorator
   #-- -------------------------------------------------------------------------
   #++
 
+  # Returns a "natural" description for this data row.
+  # The "natural" description is obtanied computing
+  # exercise row and cobineing elements with some optimization
+  # to create compact and more readable result
+  #
+  # === Params:
+  # - total_distance: can be 0 if it must be obtained from each component
+  # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
+  # - add_stroke: should add stroke indication
+  # - add_mode: should add mode indication
+  # - add_distance: should add distance indication
+  #
+  def get_description_elements( total_distance = 0, swimmer_level_type_id = 0, add_stroke = :false, add_mode = :false, add_distance = false)
+    [ add_distance ? compute_displayable_distance( total_distance ) : '',
+      get_base_movement_short( true, swimmer_level_type_id ),
+      add_mode ? get_training_mode_type_friendly : '',
+      get_execution_note_type_name,
+      get_formatted_start_and_rest,
+      get_formatted_pause
+    ].delete_if{ |e| e.to_s.empty? }.join(' ')
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Returns the formatted string of the +pause+ value
   def get_formatted_pause
     Timing.to_formatted_pause( pause )
