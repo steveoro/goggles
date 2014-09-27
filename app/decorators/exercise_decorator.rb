@@ -68,20 +68,56 @@ class ExerciseDecorator < Draper::Decorator
   #++
 
 
-  # Returns a "natural" description for this data row.
+  # Returns a "natural" friendly description for exercises.
   # The "natural" description is obtanied computing
-  # exercise row and cobineing elements with some optimization
-  # to create compact and more readable result
+  # exercise row and combineing elements with some optimization
+  # to create compact and more readable results
+  #
+  # If exercise rows of exercises with multiple rows has
+  # the same stroke type it will precede the description, not never repeated
+  # eg: SL 25 fast + 50 slow + 25 fast        instead of
+  #     25 SL fast + 25 SL slow + 25 SL fast
+  # 
+  # If exercise rows of exercises with multiple rows has
+  # the same training mode it will forward the description enclosed in parethesiys
+  # eg: (25 SL + 25 DO) fast                  instead of
+  #     25 SL fast + 25 DO fast
+  #  (maybe shuld be better: SL/DO fast change at 25)
+  # 
+  # If exercise rows of exercises with multiple rows ora the only row has
+  # the description of movemente "Complete" it should be omissed
+  # eg: 50 SL + 50 DO                         instead of
+  #     50 SL complete + 50 DO complete
+  #  or 50 SL                                 instead of
+  #     50 SL complete
+  # 
+  # If the training mode is A2 it sohuld be omissed (it's the default)
+  # eg: 50 SL + 50 DO                         instead of
+  #     50 SL resistance + 50 DO resistance
+  #  or 25 FA fast + 25 SL                    instead of
+  #     25 FA fast + 25 SL resistance
+  # 
+  # TODO Should we optimize something on distance too?
+  #
+  # So, finally we will have
+  # 25 SL fast + 50 SL slow + 25 FA fast      instead of
+  # 25 SL complete fast + 50 SL complete slow + 25 FA complete fast
+  # or
+  # SL 15 fast + 35 slow                      instead of
+  # 15 SL complete fast + 35 SL complete slow
+  # or
+  # 100 SL                                    instead of
+  # 100 SL complete resistance
   #
   def get_friendly_description( total_distance = 0, swimmer_level_type_id = 0, separator = " + " )
     natural_description = ''
+    er = exercise_rows.includes([:base_movement, :tarining_mode_type])
 
     # If less than two row should use exercise full name
-    if exercise_rows.count < 2
+    if er.count < 2
+      # TODO optimize training mode and complete movements
       natural_description = get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, separator = " + " )
     else
-      er = exercise_rows.includes([:base_movement, :tarining_mode_type])
-
       # Check if same stroke type in all rows
       is_same_stroke = er.select('base_movements.stroke_type_id').uniq.count == 1
 
