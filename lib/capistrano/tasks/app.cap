@@ -1,7 +1,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.509
+# - vers. : 4.00.527
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
@@ -163,13 +163,17 @@ namespace :app do
           execute :chmod, "-R 0775 uploads"
           execute :chown, "-R #{fetch(:runner)}:www uploads"
         end
+        # [Steve, 20140928] Allow custom log file to be written by nobody:nobody.
+        # (Inside the log dir, make sure to "chmod 0665" anything else).
+        within shared_path do
+          execute :chmod, "777 log"
+        end
         within File.join(shared_path, "tmp") do
           execute :chmod, "777 cache"
         end
       end
     end
     # --------------------------------------------------------------------------
-
   end
   # ============================================================================
 end
