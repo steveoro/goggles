@@ -206,9 +206,10 @@ describe PersonalBestCollection, :type => :model do
     end
     it "adds correctly 2 different records to the list" do
       subject.clear
+      unique_mirs = MeetingIndividualResultFactoryTools.create_unique_result_list( create(:swimmer), 2 )
       expect{
-        subject.add( fixture, record_type_code )
-        subject.add( create(:meeting_individual_result), record_type_code )
+        subject.add( unique_mirs.first, record_type_code )
+        subject.add( unique_mirs.last, record_type_code )
       }.to change{ subject.count }.by(2)
     end
   end
