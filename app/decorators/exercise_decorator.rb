@@ -111,11 +111,10 @@ class ExerciseDecorator < Draper::Decorator
   #
   def get_friendly_description( total_distance = 0, swimmer_level_type_id = 0, separator = " + " )
     natural_description = ''
-    er = exercise_rows.includes([:base_movement, :tarining_mode_type])
+    er = exercise_rows.includes([:base_movement, :tarining_mode_type, :movement_scope_type])
 
     # If less than two row should use exercise full name
-    if er.count < 2
-      # TODO optimize training mode and complete movements
+    if er.count == 1
       natural_description = get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, separator = " + " )
     else
       # Check if same stroke type in all rows
@@ -126,6 +125,8 @@ class ExerciseDecorator < Draper::Decorator
 
       # Check if same distance
       is_same_distance = er.select(:percentage).uniq.count == 1
+
+      # If no facilities use standard description
 
       exercise_rows.sort_by_part_order.collect{ |row|
         ExerciseRowDecorator.decorate( row ).get_description_elements( total_distance, swimmer_level_type_id )

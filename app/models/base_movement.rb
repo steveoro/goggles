@@ -17,7 +17,6 @@ class BaseMovement < ActiveRecord::Base
   validates_presence_of   :code, length: { within: 1..6 }, allow_nil: false
   validates_uniqueness_of :code, message: :already_exists
 
-
   # ---------------------------------------------------------------------------
   # Base methods / overrides:
   # ---------------------------------------------------------------------------
@@ -117,5 +116,4 @@ class BaseMovement < ActiveRecord::Base
     end
   end
   # ----------------------------------------------------------------------------
-  
 end
