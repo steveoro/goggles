@@ -90,8 +90,13 @@ class ExerciseDecorator < Draper::Decorator
   #  or 25 FA fast + 25 SL                    instead of
   #     25 FA fast + 25 SL resistance
   # 
+  # If the distance is unknown and rows are 2 with same %, should compress
+  # description with /
+  # eg: SL fast/DO slow                       instead of
+  #     50% SL fast + 50% DO slow
+  # 
+  # TODO Remove slow indication on pure technique movements (movement_type_code = 'T')
   # TODO Optimize stroke type on base movement. Should refactor base_movement seed
-  # TODO Should we optimize something on distance too?
   #
   # So, finally we will have
   # (25 FA + 25 SL) fast                      instead of
@@ -102,31 +107,44 @@ class ExerciseDecorator < Draper::Decorator
   #
   def get_friendly_description( total_distance = 0, swimmer_level_type_id = 0, separator = " + " )
     natural_description = ''
-    er = exercise_rows.includes([:base_movement, :training_mode_type])
+    er = exercise_rows.includes([:base_movement, :training_mode_type, :movement_type]).sort_by_part_order
 
     # If only one row should use exercise short description
     # suppressing training mode if A2
     if er.count == 1
-      natural_description = get_short_description( total_distance, :true, er.training_mode_type_code != 'A2', :true)
+      natural_description = er.first.decorate.get_short_description( 
+        total_distance, 
+        :true, 
+        (er.first.training_mode_type_code != 'A2' && er.first.base_movement.movement_type_code != 'T'), 
+        :true)
     else
       # Check if same movement in all rows
       is_same_movement = ( base_movements.uniq.count == 1 )
-
-      # Check if same trainng mode in all rows
-      is_same_mode = ( training_mode_types.uniq.count == 1 )
-
-      # Check if same distance
-      #is_same_distance = er.select(:percentage).uniq.count == 1
 
       if is_same_movement
         natural_description = er.first.base_movement_i18n_short + ' '
       end
       
+      # Check if same trainng mode in all rows
+      is_same_mode = ( training_mode_types.uniq.count == 1 )
+
+      # Check if same distance
+      is_same_distance = ( er.select(:percentage).uniq.map{ |row| row.percentage }.count == 1 && er.first.percentage > 0 ) 
+      
+      if is_same_distance
+        separator = ' / '
+      end
+
       # If same movements or training mode open parenthesys 
       natural_description += '(' if is_same_movement or is_same_mode
 
-      natural_description += exercise_rows.sort_by_part_order.collect{ |row|
-        ExerciseRowDecorator.decorate( row ).get_short_description( total_distance, not(is_same_movement), not(is_same_mode) )
+      natural_description += er.collect{ |row|
+        ExerciseRowDecorator.decorate( row ).get_short_description( 
+          total_distance, 
+          not(is_same_movement), 
+          (not(is_same_mode) && row.base_movement.movement_type_code != 'T'), 
+          not(is_same_distance) 
+        )
       }.join(separator)
       
       # If same movements close parenthesys

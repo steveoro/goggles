@@ -14,6 +14,8 @@ class ExerciseRow < ActiveRecord::Base
   validates_associated :base_movement
   validates_associated :training_mode_type
   validates_associated :execution_note_type
+  
+  has_one :movement_type, through: :base_movement
 
   validates_presence_of     :part_order, length: { within: 1..3 }, allow_nil: false
   validates_numericality_of :part_order

@@ -54,6 +54,13 @@ class Exercise < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
+
+  def get_friendly_description( total_distance = 0, swimmer_level_type_id = 0, separator = " + " )
+    ExerciseDecorator.decorate( self ).get_friendly_description( total_distance, swimmer_level_type_id, separator )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #

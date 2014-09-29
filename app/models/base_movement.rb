@@ -17,6 +17,8 @@ class BaseMovement < ActiveRecord::Base
   validates_presence_of   :code, length: { within: 1..6 }, allow_nil: false
   validates_uniqueness_of :code, message: :already_exists
 
+  delegate :code,     to: :movement_type,      prefix: true
+
   # ---------------------------------------------------------------------------
   # Base methods / overrides:
   # ---------------------------------------------------------------------------
