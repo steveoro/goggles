@@ -18,11 +18,22 @@ describe NewsletterMailer, :type => :mailer do
     it 'renders the hostname in the subject' do
       expect( subject.subject ).to match( ENV['HOSTNAME'] )
     end
-
     it 'renders for each specified meeting its description and header_year' do
       meeting_array.each do |meeting|
         expect( subject.body.encoded ).to include( meeting.description )
         expect( subject.body.encoded ).to include( meeting.header_year )
+      end
+    end
+
+    describe "#deliver" do
+      it "sends an e-mail" do
+        expect{ subject.deliver }.to change{ NewsletterMailer.deliveries.size }
+      end
+      it "delivers the generated message" do
+        subject.deliver
+        expect(
+          NewsletterMailer.deliveries.last.body.encoded
+        ).to match( subject.body.encoded )
       end
     end
   end
@@ -52,6 +63,50 @@ describe NewsletterMailer, :type => :mailer do
 #        expect( subject.body.encoded ).to include( achievement.code )
       end
     end
+
+    describe "#deliver" do
+      it "sends an e-mail" do
+        expect{ subject.deliver }.to change{ NewsletterMailer.deliveries.size }
+      end
+      it "delivers the generated message" do
+        subject.deliver
+        expect(
+          NewsletterMailer.deliveries.last.body.encoded
+        ).to match( subject.body.encoded )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "#application_mail()" do
+    let(:contents) { "<p><b>#{Faker::Lorem.paragraph}</b></p><p>#{Faker::Lorem.paragraph}</p>" }
+    subject { NewsletterMailer.application_mail( user, contents ) }
+
+    it 'renders the receiver email' do
+      expect( subject.to.first ).to include( user.email )
+    end
+    it 'renders the title in the subject' do
+      expect( subject.subject ).to match( I18n.t('newsletter_mailer.application.generic_title') )
+    end
+    it 'renders the hostname in the subject' do
+      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+    end
+    it 'renders the specified contents in its body' do
+      expect( subject.body.encoded ).to include( contents )
+    end
+
+    describe "#deliver" do
+      it "sends an e-mail" do
+        expect{ subject.deliver }.to change{ NewsletterMailer.deliveries.size }
+      end
+      it "delivers the generated message" do
+        subject.deliver
+        expect(
+          NewsletterMailer.deliveries.last.body.encoded
+        ).to match( subject.body.encoded )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -74,6 +129,18 @@ describe NewsletterMailer, :type => :mailer do
       newsfeed_array.each do |feed|
         expect( subject.body.encoded ).to include( feed.title )
         expect( subject.body.encoded ).to include( feed.body )
+      end
+    end
+
+    describe "#deliver" do
+      it "sends an e-mail" do
+        expect{ subject.deliver }.to change{ NewsletterMailer.deliveries.size }
+      end
+      it "delivers the generated message" do
+        subject.deliver
+        expect(
+          NewsletterMailer.deliveries.last.body.encoded
+        ).to match( subject.body.encoded )
       end
     end
   end

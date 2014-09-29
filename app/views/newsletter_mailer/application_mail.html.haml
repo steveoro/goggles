@@ -1,0 +1,5 @@
+%h2= "--=[  Goggles  -o^o-  ]=-- #{ t('newsletter_mailer.application.generic_title') }"
+
+%p= "#{t('hi')} #{@user.name}!"
+
+= @contents.html_safe
