@@ -6,6 +6,14 @@ require 'framework/naming_tools'
 require 'i18n'
 
 
+=begin
+
+= User model
+
+  - version:  4.00.529
+  - author:   Steve A.
+
+=end
 class User < ActiveRecord::Base
   after_create    UserContentLogger.new('users', email_on_create: true)
   after_update    UserContentLogger.new('users')
