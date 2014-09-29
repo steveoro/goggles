@@ -117,7 +117,7 @@ namespace :app do
       on roles(:app) do |host|
         lib_dir = File.join(shared_path, "public/extjs")
         puts "      > Checking '#{lib_dir}' existance..."
-  
+
         if test("[ ! -z \"$(ls #{lib_dir})\" ]")
           info "Directory #{lib_dir} found with files."
         else
