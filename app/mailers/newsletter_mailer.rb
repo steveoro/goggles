@@ -24,8 +24,8 @@ class NewsletterMailer < ActionMailer::Base
   #
   def data_updates_mail( user, meeting_array = nil )
     @user  = user
-    @meeting_array = meeting_array
     @host  = ENV['HOSTNAME']
+    @meeting_array = meeting_array
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.data_updates.generic_title')}",
       to:      user.email,
@@ -36,7 +36,7 @@ class NewsletterMailer < ActionMailer::Base
   #++
 
   # Generates an e-mail about any Achievement row triggered recently by the user.
-  # This mailing action should be performed only weekly or monthly. 
+  # This mailing action should be performed only weekly or monthly.
   #
   # == Params:
   #
@@ -46,8 +46,8 @@ class NewsletterMailer < ActionMailer::Base
   #
   def achievements_mail( user, achievements_array = nil )
     @user  = user
-    @achievements_array = achievements_array
     @host  = ENV['HOSTNAME']
+    @achievements_array = achievements_array
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.achievements.generic_title')}",
       to:      user.email,
@@ -57,8 +57,29 @@ class NewsletterMailer < ActionMailer::Base
   #-- -------------------------------------------------------------------------
   #++
 
+  # Generates an e-mail regarding any generic application updates or usable for any
+  # hand-made report or newsletter.
+  #
+  # == Params:
+  #
+  # - user: the current_user instance
+  # - contents: the actual contents of the mail body; rendered as html_safe.
+  #
+  def application_mail( user, contents )
+    @user  = user
+    @host  = ENV['HOSTNAME']
+    @contents = contents
+    mail(
+      subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.application.generic_title')}",
+      to:      user.email,
+      date:    Time.now
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Generates an e-mail about missed user updates or special community messages
-  # This mailing action should be performed only weekly or monthly. 
+  # This mailing action should be performed only weekly or monthly.
   #
   # == Params:
   #

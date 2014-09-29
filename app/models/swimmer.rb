@@ -7,11 +7,16 @@ require 'wrappers/timing'
 
 = Swimmer model
 
-  - version:  4.00.409
+  - version:  4.00.529
   - author:   Steve A.
 
 =end
 class Swimmer < ActiveRecord::Base
+  # [Steve, 20140929] Here we just need to log the updates, since the users
+  # can only add or remote UserSwimmerConfirmations, thus updating the only
+  # related field on the table (:user_swimmer_confirmations).
+  after_update    UserContentLogger.new('swimmers')
+
   include DropDownListable
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!

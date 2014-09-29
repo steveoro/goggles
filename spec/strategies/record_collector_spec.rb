@@ -54,18 +54,25 @@ describe RecordCollector, type: :strategy do
 
   describe "#initialize" do
     it "allows a list of IndividualRecord rows as a parameter" do
-      # This should also work with a more simple "create_list(:individual_record, 5)"
+      # The created list must be of unique, distict rows or the add
+      # process of the constructor may overwrite items falling into
+      # the same category, type & age groups.
+      #
+      # For this reason, here we cannot use a simple "create_list(:individual_record, 5)".
       list = IndividualRecordFactoryTools.create_personal_best_list( create(:swimmer) )
+      # default record_type_code: 'SPB' => "Swimmer Personal-best"-type of record, ID ~> 1
       result = RecordCollector.new( list: list )
       expect( result ).to be_an_instance_of( RecordCollector )
       expect( result.count ).to eq( list.size )
     end
     it "allows a list of MeetingIndividualResult rows as a parameter" do
-      list = create_list(:meeting_individual_result, 5)
+      # Same previous example above, if we want to test the exact lenght
+      # of the internal result list, we cannot rely on a simple "create_list".
+      list = MeetingIndividualResultFactoryTools.create_unique_result_list( create(:swimmer) )
+      # record_type_code: 'FOR' => Federation-type record, ID ~> 7
       result = RecordCollector.new( list: list, record_type_code: 'FOR' )
       expect( result ).to be_an_instance_of( RecordCollector )
       expect( result.count ).to eq( list.size )
-      expect( result.count ).to eq(5)
     end
     it "allows a season instance as a parameter" do
       fix_par = create(:season)

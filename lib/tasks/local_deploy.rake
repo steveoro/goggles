@@ -13,7 +13,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.515
+  - Goggles framework vers.:  4.00.529
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -21,7 +21,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.515'
+SCRIPT_VERSION = '4.00.529'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -459,7 +459,17 @@ DESC
       for log_filename in Dir.glob(File.join("#{curr_path}",'*.log'), File::FNM_PATHNAME)
         puts "Processing #{log_filename}..."
         Dir.chdir( backup_folder )
-        sh "tar --bzip2 -cf #{File.basename(log_filename, '.log') + time_signature + '.log.tar.bz2'} #{log_filename}"
+        # Make first a copy on /tmp, so that we may archive it even if it's currently
+        # being modified:
+        temp_file = File.join('/tmp', "#{ File.basename(log_filename) }")
+        puts "Making a temp. copy on #{temp_file}..."
+        sh "cp #{log_filename} #{ temp_file }"
+        puts "Archiving contents..."
+        sh "tar --bzip2 -cf #{File.basename(log_filename, '.log') + time_signature + '.log.tar.bz2'} #{temp_file}"
+        puts "Removing temp. file..."
+        FileUtils.rm( temp_file )
+        # (We'll leave the tar file just created under the log dir, so that the #rotate_backups
+        #  will be able to treat it properly.)
       end
     end
     Dir.chdir( Dir.pwd.to_s )
