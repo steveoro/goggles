@@ -13,8 +13,9 @@ class Exercise < ActiveRecord::Base
   include DropDownListable
 
   has_many :exercise_rows
-  has_many :trainings, through: :training_rows
-  has_many :base_movements, through: :exercise_rows
+  has_many :trainings,           through: :training_rows
+  has_many :base_movements,      through: :exercise_rows
+  has_many :training_mode_types, through: :exercise_rows
 
   validates_length_of     :training_step_type_codes, maximum: 50, allow_nil: true
 

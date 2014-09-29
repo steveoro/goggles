@@ -72,7 +72,7 @@ class BaseMovement < ActiveRecord::Base
   def get_movement_type_name( verbose_level = :short )
     if ( movement_type && movement_type.code == MovementType::CODE_FULL )
       ''
-    elsif movement_type                       # Retrieve the movement_scope_type only if it is defined and it's not "generic"
+    elsif movement_type                       # Retrieve the movement_scope_type only if it is defined and it's not "full"
       if ( verbose_level.to_sym == :short )
         movement_type.i18n_short
       else

@@ -74,9 +74,9 @@ class ExerciseDecorator < Draper::Decorator
   # to create compact and more readable results
   #
   # If exercise rows of exercises with multiple rows has
-  # the same stroke type it will precede the description, not never repeated
-  # eg: SL 25 fast + 50 slow + 25 fast        instead of
-  #     25 SL fast + 25 SL slow + 25 SL fast
+  # the same base movement it will precede the description, never repeated
+  # eg: SL (25 fast + 50 slow + 25 fast)      instead of
+  #     25 SL fast + 50 SL slow + 25 SL fast
   # 
   # If exercise rows of exercises with multiple rows has
   # the same training mode it will forward the description enclosed in parethesiys
@@ -84,54 +84,59 @@ class ExerciseDecorator < Draper::Decorator
   #     25 SL fast + 25 DO fast
   #  (maybe shuld be better: SL/DO fast change at 25)
   # 
-  # If exercise rows of exercises with multiple rows ora the only row has
-  # the description of movemente "Complete" it should be omissed
-  # eg: 50 SL + 50 DO                         instead of
-  #     50 SL complete + 50 DO complete
-  #  or 50 SL                                 instead of
-  #     50 SL complete
-  # 
   # If the training mode is A2 it sohuld be omissed (it's the default)
   # eg: 50 SL + 50 DO                         instead of
   #     50 SL resistance + 50 DO resistance
   #  or 25 FA fast + 25 SL                    instead of
   #     25 FA fast + 25 SL resistance
   # 
+  # TODO Optimize stroke type on base movement. Should refactor base_movement seed
   # TODO Should we optimize something on distance too?
   #
   # So, finally we will have
-  # 25 SL fast + 50 SL slow + 25 FA fast      instead of
-  # 25 SL complete fast + 50 SL complete slow + 25 FA complete fast
+  # (25 FA + 25 SL) fast                      instead of
+  # 25 FA fast + 25 SL fast
   # or
-  # SL 15 fast + 35 slow                      instead of
-  # 15 SL complete fast + 35 SL complete slow
-  # or
-  # 100 SL                                    instead of
-  # 100 SL complete resistance
+  # SL (15 fast + 35 slow)                    instead of
+  # 15 SL fast + 35 SL slow
   #
   def get_friendly_description( total_distance = 0, swimmer_level_type_id = 0, separator = " + " )
     natural_description = ''
-    er = exercise_rows.includes([:base_movement, :tarining_mode_type, :movement_scope_type])
+    er = exercise_rows.includes([:base_movement, :training_mode_type])
 
-    # If less than two row should use exercise full name
+    # If only one row should use exercise short description
+    # suppressing training mode if A2
     if er.count == 1
-      natural_description = get_full_name( total_distance = 0, verbose_level = :full, swimmer_level_type_id = 0, separator = " + " )
+      natural_description = get_short_description( total_distance, :true, er.training_mode_type_code != 'A2', :true)
     else
-      # Check if same stroke type in all rows
-      is_same_stroke = er.select('base_movements.stroke_type_id').uniq.count == 1
+      # Check if same movement in all rows
+      is_same_movement = ( base_movements.uniq.count == 1 )
 
       # Check if same trainng mode in all rows
-      is_same_mode = er.select(:training_mode_type_id).uniq.count == 1
+      is_same_mode = ( training_mode_types.uniq.count == 1 )
 
       # Check if same distance
-      is_same_distance = er.select(:percentage).uniq.count == 1
+      #is_same_distance = er.select(:percentage).uniq.count == 1
 
-      # If no facilities use standard description
+      if is_same_movement
+        natural_description = er.first.base_movement_i18n_short + ' '
+      end
+      
+      # If same movements or training mode open parenthesys 
+      natural_description += '(' if is_same_movement or is_same_mode
 
-      exercise_rows.sort_by_part_order.collect{ |row|
-        ExerciseRowDecorator.decorate( row ).get_description_elements( total_distance, swimmer_level_type_id )
+      natural_description += exercise_rows.sort_by_part_order.collect{ |row|
+        ExerciseRowDecorator.decorate( row ).get_short_description( total_distance, not(is_same_movement), not(is_same_mode) )
       }.join(separator)
+      
+      # If same movements close parenthesys
+      natural_description += ')' if is_same_movement or is_same_mode
+      
+      # If same mode add mode
+      natural_description += ' ' + er.first.training_mode_type_i18n_alternate if is_same_mode
+      
     end
+    natural_description
   end
   #-- -------------------------------------------------------------------------
   #++

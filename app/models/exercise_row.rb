@@ -29,6 +29,9 @@ class ExerciseRow < ActiveRecord::Base
   validates_presence_of     :pause, length: { within: 1..4 }, allow_nil: false
   validates_numericality_of :pause
 
+  delegate :code, :i18n_short,     to: :base_movement,      prefix: true
+  delegate :code, :i18n_alternate, to: :training_mode_type, prefix: true
+
   scope :sort_by_part_order, -> { order('part_order') }
   #-- -------------------------------------------------------------------------
   #++

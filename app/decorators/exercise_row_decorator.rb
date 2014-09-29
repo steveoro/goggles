@@ -70,14 +70,14 @@ class ExerciseRowDecorator < Draper::Decorator
   # === Params:
   # - total_distance: can be 0 if it must be obtained from each component
   # - swimmer_level_type_id: the id of the user's swimmer level type (or its preferred swimmer level type ID); NOT the code, NOT the level: the *ID*; it can be 0 if it must be ignored
-  # - add_stroke: should add stroke indication
-  # - add_mode: should add mode indication
+  # - add_movement: should add stroke indication (base movement)
+  # - add_mode: should add training mode indication
   # - add_distance: should add distance indication
   #
-  def get_description_elements( total_distance = 0, swimmer_level_type_id = 0, add_stroke = :false, add_mode = :false, add_distance = false)
+  def get_short_description( total_distance = 0, add_movement = :true, add_mode = :true, add_distance = :true)
     [ add_distance ? compute_displayable_distance( total_distance ) : '',
-      get_base_movement_short( true, swimmer_level_type_id ),
-      add_mode ? get_training_mode_type_friendly : '',
+      add_movement ? base_movement_i18n_short : '',
+      add_mode ? training_mode_type_i18n_alternate : '',
       get_execution_note_type_name,
       get_formatted_start_and_rest,
       get_formatted_pause
