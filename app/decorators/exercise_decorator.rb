@@ -90,13 +90,19 @@ class ExerciseDecorator < Draper::Decorator
   #  or 25 FA fast + 25 SL                    instead of
   #     25 FA fast + 25 SL resistance
   # 
-  # If the distance is unknown and rows are 2 with same %, should compress
-  # description with /
-  # eg: SL fast/DO slow                       instead of
+  # If the distance is unknown and rows have same %, should compress
+  # description suppressing percentage
+  # eg: SL fast + DO slow                     instead of
   #     50% SL fast + 50% DO slow
   # 
-  # TODO Remove slow indication on pure technique movements (movement_type_code = 'T')
+  # Remove slow indication on pure technique movements (movement_type_code = 'T')
+  # eg: SL 1 arm ahead + SL resistance        instead of
+  #     50% SL 1 arm ahead slow + 50% SL resistance
+  #
   # TODO Optimize stroke type on base movement. Should refactor base_movement seed
+  # to obtain something like:
+  # SL (kick only + complete) resistance instead of (SL kick only + SL) resistance
+  # (SL + RA) kick only resistance instead of (SL kick only + RA kick only) resistance
   #
   # So, finally we will have
   # (25 FA + 25 SL) fast                      instead of
@@ -131,10 +137,6 @@ class ExerciseDecorator < Draper::Decorator
       # Check if same distance
       is_same_distance = ( er.select(:percentage).uniq.map{ |row| row.percentage }.count == 1 && er.first.percentage > 0 ) 
       
-      if is_same_distance
-        separator = ' / '
-      end
-
       # If same movements or training mode open parenthesys 
       natural_description += '(' if is_same_movement or is_same_mode
 
@@ -153,6 +155,8 @@ class ExerciseDecorator < Draper::Decorator
       # If same mode add mode
       natural_description += ' ' + er.first.training_mode_type_i18n_alternate if is_same_mode
       
+      # debug. Remove this
+      #natural_description += ' [' + code + ']' 
     end
     natural_description
   end
