@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe UserSocializer, :type => :model do
+describe UserSocializer, :type => :strategy do
   before :each do
     @user = create( :user )
     @swimming_buddy = create( :user )
@@ -50,6 +50,12 @@ describe UserSocializer, :type => :model do
       expect{
         subject.invite_with_notify( @swimming_buddy )
       }.to change{ NewsFeed.friend_activities.count }.by(1)
+    end
+    it "sends the receiver a notification mail when successful" do
+      expect{
+        subject.invite_with_notify( @swimming_buddy )
+      }.to change{ NewsletterMailer.deliveries.size }
+      expect( NewsletterMailer.deliveries.last.to.first ).to include( @swimming_buddy.email )
     end
     it "(Failing with an invited pending friendship) does not update any news-feed" do
       expect{

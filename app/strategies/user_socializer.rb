@@ -4,7 +4,7 @@
 # Strategy/B-L incapsulator for User-social interactions with news-feed generation.
 #
 # @author   Steve A.
-# @version  4.00.291
+# @version  4.00.531
 #
 class UserSocializer
 
@@ -69,20 +69,21 @@ class UserSocializer
   # Suggest a user to become a friend. If the operation succeeds, the method returns true, else false.
   #
   # Same as User#invite() but updates also the news feed for the recipient (the
-  # invited friend).
+  # invited friend) and sends him/her a notification e-mail.
   #
   # The "requestee" friendable can also set the requested sharing attributes which
   # will then either be confirmed (set to true) or denied (set to false) during the approval process.
   #
   def invite_with_notify( swimming_buddy, shares_passages = false, shares_trainings = false, shares_calendars = false )
     if @user.invite( swimming_buddy, shares_passages, shares_trainings, shares_calendars )
-      NewsFeed.create_social_feed(
+      news_feed = NewsFeed.create_social_feed(
         swimming_buddy.id,
         @user.id,
         I18n.t('newsfeed.invite_title'),
         I18n.t('newsfeed.invite_body').gsub("{SWIMMER_NAME}", @user.get_full_name)
       )
-      # TODO Create also achievement accordingly
+      # Generate a nofify mail without delay:
+      NewsletterMailer.community_mail( swimming_buddy, news_feed ).deliver
     end
   end
 

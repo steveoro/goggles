@@ -74,25 +74,14 @@ class User < ActiveRecord::Base
     if user.has_associated_swimmer?
       user.set_associated_swimmer( nil )
     end
-    # TODO Do we really need to clear automatically user_id from:
-    # - UserTraining
-    # - UserTrainingStory
-    # - UserSwimmerConfirmation ?
-    # - UserResult
-    # - UserAchievement
-    # - SwimmingPoolReview
-    # - Passage
-    # - Article ?
-    # - Achievement ?
+    # We leave user-generated content in place on user-deletion, but
+    # we simply disassociate the content from the user_id, to respect
+    # the user decision to disappear:
     UserTraining.where( user_id: user.id ).update_all( user_id: nil )
     UserTrainingStory.where( user_id: user.id ).update_all( user_id: nil )
-    UserSwimmerConfirmation.where( user_id: user.id ).update_all( user_id: nil )
     UserResult.where( user_id: user.id ).update_all( user_id: nil )
     UserAchievement.where( user_id: user.id ).update_all( user_id: nil )
     SwimmingPoolReview.where( user_id: user.id ).update_all( user_id: nil )
-    Passage.where( user_id: user.id ).update_all( user_id: nil )
-    Article.where( user_id: user.id ).update_all( user_id: nil )
-    Achievement.where( user_id: user.id ).update_all( user_id: nil )
   end
   #-- -------------------------------------------------------------------------
   #++
