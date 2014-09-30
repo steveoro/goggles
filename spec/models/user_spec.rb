@@ -12,7 +12,7 @@ describe User, :type => :model do
     end
 
     context "[general methods]" do
-      it_behaves_like( "(the existance of a method)", [ 
+      it_behaves_like( "(the existance of a method)", [
         :get_full_name,
         :to_s,
         :get_first_and_last_name,
@@ -24,6 +24,14 @@ describe User, :type => :model do
         :find_any_confirmation_given_to
       ])
     end
+
+    # Filtering scopes:
+    it_behaves_like( "(the existance of a scope with no parameters)", [
+      :data_updates_newsletter_readers,
+      :achievements_newsletter_readers,
+      :generic_newsletter_readers,
+      :community_newsletter_readers
+    ])
     #-- -----------------------------------------------------------------------
     #++
 
@@ -119,12 +127,12 @@ describe User, :type => :model do
 
     describe "#has_associated_swimmer?" do
       it "returns true if it has an associated swimmer" do
-        subject.swimmer = create(:swimmer) 
+        subject.swimmer = create(:swimmer)
         expect( subject.has_associated_swimmer? ).to be true
       end
 
       it "returns false if it has not an associated swimmer" do
-        subject.swimmer = nil 
+        subject.swimmer = nil
         expect( subject.has_associated_swimmer? ).to be false
       end
     end
@@ -139,7 +147,7 @@ describe User, :type => :model do
       end
 
       it "returns false if the association is not confirmed" do
-        subject.swimmer = create(:swimmer) 
+        subject.swimmer = create(:swimmer)
         expect( subject.has_swimmer_confirmations? ).to be false
       end
     end

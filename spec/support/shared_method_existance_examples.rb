@@ -16,7 +16,7 @@ shared_examples_for "(the existance of a scope with no parameters)" do |method_n
 
   method_name_array.each do |method_name|
     it "returns an instance of ActiveRecord::Relation" do
-      expect( subject.class ).to be_an_instance_of( ActiveRecord::Relation )
+      expect( subject.class.send(method_name) ).to be_an_instance_of( ActiveRecord::Relation )
     end
   end
 end
@@ -38,10 +38,10 @@ shared_examples_for "(the existance of a method returning a valid instance)" do 
     end
     it "returns an instance of #{instance_const}" do
       expect( subject.send(method_name) ).to be_an_instance_of( instance_const )
-    end    
+    end
     it "returns a valid instance" do
       expect( subject.send(method_name) ).to be_valid
-    end    
+    end
   end
 end
 
@@ -53,7 +53,7 @@ shared_examples_for "(the existance of a method with parameter returning a valid
     end
     it "returns an instance of #{instance_const}" do
       expect( subject.send(method_name, parameter) ).to be_an_instance_of( instance_const ).or be_nil
-    end    
+    end
   end
 end
 #-- ---------------------------------------------------------------------------
@@ -293,7 +293,7 @@ shared_examples_for "(missing required values)" do |attribute_name_array|
   attribute_name_array.each do |attribute_name|
     it "not a valid instance without ##{attribute_name}" do
       expect( FactoryGirl.build( subject.class, attribute_name.to_sym => nil ) ).not_to be_valid
-    end    
+    end
   end
 end
 
@@ -305,7 +305,7 @@ shared_examples_for "(it has_one of these required models)" do |attribute_name_a
     end
     it "returns an instance of #{attribute_name.to_s.camelize}" do
       expect( subject.send(attribute_name) ).to be_an_instance_of( attribute_name.to_s.camelize.constantize )
-    end    
+    end
   end
 end
 
@@ -314,7 +314,7 @@ shared_examples_for "(belongs_to required models)" do |attribute_name_array|
   attribute_name_array.each do |attribute_name|
     it "it belongs_to :#{attribute_name}" do
       expect( subject.send(attribute_name.to_sym) ).to be_a( eval(attribute_name.to_s.camelize) )
-    end    
+    end
   end
 end
 # -----------------------------------------------------------------------------

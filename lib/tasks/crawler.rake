@@ -100,7 +100,7 @@ namespace :crawler do
 
   DESC
   task :search do |t|
-    puts "\r\n*** Crawler:::search ***"
+    puts "\r\n*** Crawler::search ***"
     search_url  = ENV.include?("site") ? ENV["site"] : SEARCH_URL
     search_text = ENV.include?("text") ? ENV["text"] : "\"master swimming\" meeting results"
     form_name   = ENV.include?("form_name") ? ENV["form_name"] : 'gbqf'

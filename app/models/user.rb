@@ -61,6 +61,11 @@ class User < ActiveRecord::Base
                   :outstanding_goggle_score_bias,
                   :outstanding_standard_score_bias,
                   :coach_level_type, :swimmer_level_type
+
+  scope :data_updates_newsletter_readers, ->{ where(use_email_data_updates_notify: true) }
+  scope :achievements_newsletter_readers, ->{ where(use_email_achievements_notify: true) }
+  scope :generic_newsletter_readers,      ->{ where(use_email_newsletter_notify: true) }
+  scope :community_newsletter_readers,    ->{ where(use_email_community_notify: true) }
   #-- -------------------------------------------------------------------------
   #++
 
