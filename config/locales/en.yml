@@ -748,3 +748,9 @@ en:
   maintenance_title: "Maintenance time!"
   maintenance_info: "The server is currently down for maintenance for data & site update, until {DATETIME} (hopefully; Italy time zone). Try again later! ;-)"
 
+  championships:
+    title: "Championships"
+    supermaster_fin: "FIN Supermaster"
+    regional_er_csi: "CSI Regional Emilia Romagna"
+    history: "History"
+    history_title: "Past championships history"
