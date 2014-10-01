@@ -748,6 +748,13 @@ it:
   maintenance_title: "Siamo in manutenzione!"
   maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (presumibilmente; ore italiane). Riprova piu' tardi! ;-)"
 
+  championships:
+    title: "Campionati"
+    supermaster_fin: "FIN Supermaster"
+    regional_er_csi: "CSI Regionale Emilia Romagna"
+    history: "Storico"
+    history_title: "Storico campionati conclusi"
+
   netzke:
     basepack:
       grid_panel:

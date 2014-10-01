@@ -149,6 +149,11 @@ Goggles::Application.routes.draw do
       get "swimming_pools/index",               as: "swimming_pools"
       get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
 
+      # === Championships ===
+      get  "championships/supermaster_fin",     to: "championships#supermaster_fin",    as: "championships_supermaster_fin"
+      get  "championships/regional_er_csi",     to: "championships#regional_er_csi",    as: "championships_regional_er_csi"
+      get  "championships/history",             to: "championships#history",            as: "championships_history"
+
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do
         member do

@@ -77,6 +77,13 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item( :key_meetings_custom,      t('meeting.index_menu'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
     end
 
+    primary.item( :key_championships,                    t('championships.title'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_supermaster_fin_path() 
+      lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_regional_er_csi_path() 
+      lev2_nav.item( :key_separator2_0,                  content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item :key_championships_history,          t('championships.history'), championships_history_path() 
+    end
+
     primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|
       lev2_nav.item :key_records_season_type,   t('records.menu_by_season_type'), records_for_season_type_path()
       lev2_nav.item :key_records_team,          t('records.menu_by_team'),        records_for_team_path()
