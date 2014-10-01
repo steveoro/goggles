@@ -405,19 +405,19 @@ module FinResultPhase2
         DataImportMeeting.transaction do
           result_row = DataImportMeeting.new(
             data_import_session_id: session_id,
-            import_text: meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
-            description: description,
+            import_text:            meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
+            description:            description,
             # [Steve, 20131025] No default value for this one:
 #            entry_deadline: scheduled_date - 14, # (This is just a guess)
-            are_results_acquired: true,
-            is_under_25_admitted: true, # (This is just a guess)
-            configuration_file:   full_pathname,
-            header_date:          scheduled_date,
-            code:                 header_fields_dao.code_name,
-            header_year:          header_fields_dao.header_year,
-            edition:              header_fields_dao.edition, # (This is just a guess)
-            edition_type_id:      header_fields_dao.edition_type_id,
-            timing_type_id:       header_fields_dao.timing_type_id,
+            are_results_acquired:   true,
+            is_under_25_admitted:   true, # (This is just a guess)
+            configuration_file:     full_pathname,
+            header_date:            scheduled_date,
+            code:                   header_fields_dao.code_name,
+            header_year:            header_fields_dao.header_year,
+            edition:                header_fields_dao.edition, # (This is just a guess)
+            edition_type_id:        header_fields_dao.edition_type_id,
+            timing_type_id:         header_fields_dao.timing_type_id,
             # TODO/FUTURE DEV:
 #            individual_score_computation_type_id: 0,
 #            relay_score_computation_type_id: 0,

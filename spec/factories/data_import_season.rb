@@ -7,7 +7,7 @@ FactoryGirl.define do
     data_import_session
 
     conflicting_id            nil
-    import_text               { Faker::Lorem.paragraphs }
+    import_text               { Faker::Lorem.paragraph[0..255] }
 
     random_season             # Trait defined in factories/seasons.rb
 
