@@ -12,7 +12,8 @@ INSERT INTO goggle_cups (id,description,max_points,season_year,max_performance,u
 (5,'Ober Cup 2011',1000,2011,5,2,1,0,CURDATE(),CURDATE()),
 (6,'Ober Cup 2012',1000,2012,5,2,1,0,CURDATE(),CURDATE()),
 (7,'Ober Cup 2013',1000,2013,5,2,1,0,CURDATE(),CURDATE()),
-(8,'Ober Cup 2014',1000,2014,5,2,1,0,CURDATE(),CURDATE());
+(8,'Ober Cup 2014',1000,2014,5,2,1,0,CURDATE(),CURDATE()),
+(9,'Ober Cup 2015',1000,2015,5,2,1,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella goggle_cup_definitions
@@ -35,7 +36,10 @@ INSERT INTO goggle_cup_definitions (id,goggle_cup_id,season_id,lock_version,crea
 (15,(select t.id from goggle_cups t where t.season_year = 2013  AND t.team_id = 1),122,0,CURDATE(),CURDATE()),
 (16,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),131,0,CURDATE(),CURDATE()),
 (17,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),132,0,CURDATE(),CURDATE()),
-(18,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),123,0,CURDATE(),CURDATE());
+(18,(select t.id from goggle_cups t where t.season_year = 2014  AND t.team_id = 1),123,0,CURDATE(),CURDATE()),
+(19,(select t.id from goggle_cups t where t.season_year = 2015  AND t.team_id = 1),141,0,CURDATE(),CURDATE()),
+(20,(select t.id from goggle_cups t where t.season_year = 2015  AND t.team_id = 1),142,0,CURDATE(),CURDATE()),
+(21,(select t.id from goggle_cups t where t.season_year = 2015  AND t.team_id = 1),134,0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella goggle_cup_standards
