@@ -16,8 +16,10 @@ FactoryGirl.define do
     description               { "MASTER #{federation_type.code} #{ Faker::Lorem.word.upcase }"[0..99] }
     short_name                { "MASTER #{federation_type.code}"[0..39] }
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-  factory :season do
+  trait :random_season do
     sequence( :edition )
     sequence( :description )  { |n| "Fake Season #{n}/#{edition}" }
     # The following column uses the pre-loaded seed records:
@@ -27,6 +29,12 @@ FactoryGirl.define do
     header_year               { end_date.year }
     season_type               { SeasonType.all.to_a[ rand * 10 % 8 ] } # ASSERT: at least 8 season types
   end
+
+  factory :season do
+    random_season
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   factory :category_type do
     age_begin                 { ((((rand * 100) % 15).to_i * 5) + 25) }
