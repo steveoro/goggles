@@ -571,7 +571,7 @@ class DataImporter
 
       if season && can_go_on                        # -- MEETING digest --
         meeting_id = search_or_add_a_corresponding_meeting(
-            full_pathname, session_id, season_id, meeting_header_row,
+            data_import_session, full_pathname, season_id, meeting_header_row,
             meeting_dates, scheduled_date, header_fields_dao, force_missing_meeting_creation
         )
       end

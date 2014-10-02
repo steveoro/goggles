@@ -33,7 +33,7 @@
 
     - #attributes_for_creation, with the attributes hash used for creating a new row (in case all the searches are negative).
 
-  - At the end of the build process #get_corresponding_row will be invoked.
+  - At the end of the build process #default_search will be invoked.
 
 
 === Example (for entity: Season):
@@ -97,10 +97,24 @@ class DataImportEntityBuilder
   def initialize( data_import_session, &block )
     @data_import_session = data_import_session
     @result_row = nil
+
+    # TODO Create 3 different scopes, one for each distinct moment:
+
     # Evaluate the block passed within the context of this instance:
     instance_eval( &block )
-    # After the block has been parsed, we can retrieve the corresponding row:
-    get_corresponding_row()
+
+    # TODO different scopes for different sub-phases
+    # - setup
+    # - search          => default default_search unless block_given?
+    # - if_match_found  => needed?
+    # - if_not_found    => default add_new unless block_given?
+
+    # After the block has been parsed, we can retrieve the corresponding row;
+    # this will also update @result_row:
+    default_search()
+
+    # Nothing existing/conflicting found? Add a fresh new row
+    add_new() if ( @result_id == 0 )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -251,30 +265,20 @@ class DataImportEntityBuilder
   #++
 
 
-  # "Corresponding entity row" getter / adder.
+  private
+
+
+  # Default implementation for the search of a "corresponding entity row".
+  # First searches in the primary entity and then in the secondary, but only
+  # if the @secondary_search_condition has been set.
   #
-  # (1) It searches for a corresponding / existing entity row given the parameters.
-  # (2) When no corresponding rows are found in the primary entity, the correlated
-  # temporary 'data_import_' entity is searched next.
+  # == Returns:
+  # The method updates directly the @result_id member.
   #
-  # (3) When neither are a good match for a "corresponding row", a fresh new temp
-  # is added in the dedicated data-import table of the entity (the same table scanned
-  # on step 2).
-  #
-  # === Parameters:
-  #   - the header_date parsed from the file name.
-  #
-  # == Returns: the corresponding id of searched entity row,
-  #   - positive if freshly added into its dedicated data_import_xxx table;
-  #   - negative IDs only for already existing/commited rows in "standard" entity;
-  #   - 0 only on error/unable to process.
-  #
-  def get_corresponding_row()
+  def default_search()
     @result_id = search_for( @primary_entity, @primary_search_condition )
                                                     # Nothing found? Do a secondary search:
     @result_id = search_for( secondary_entity, @secondary_search_condition ) if ( @secondary_search_condition && @result_id == 0 )
-                                                    # Nothing existing/conflicting found? Add a fresh new data-import row:
-    add_new() if ( @result_id == 0 )
   end
   #-- -------------------------------------------------------------------------
   #++

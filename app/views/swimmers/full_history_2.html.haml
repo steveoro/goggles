@@ -20,14 +20,16 @@
           %td
             %b= index_row[:stroke_type]
           %td
-            - index_row[pool_type_25].each do |event_type|
-              %a(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
+            - if index_row[pool_type_25].respond_to?(:each)
+              - index_row[pool_type_25].each do |event_type|
+                %a(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
           %td
-            - index_row[pool_type_50].each do |event_type|
-              %a(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
+            - if index_row[pool_type_50].respond_to?(:each)
+              - index_row[pool_type_50].each do |event_type|
+                %a(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
 
-  - @full_history_by_event.each do |full_history_key,full_history_element|
-    - if full_history_element[1].size > 0
+  - @full_history_by_event.each do |full_history_key, full_history_element|
+    - if full_history_element[1].respond_to?(:size) && full_history_element[1].size > 0
       .row-fluid
         .goggles-category-gap{ 'id' => "#{full_history_key}" }
         %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -36,25 +38,27 @@
               %td
                 %b= full_history_element[3]
                 = ' ('
-                = full_history_element[1].count
+                = full_history_element[1].count if full_history_element[1].respond_to?(:count)
                 = I18n.t('results') + ')'
                 %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
               %td.goggles-rightalign
                 %b= I18n.t('meeting.reaction_time')
               - passage_list = full_history_element[0]
-              - passage_list.each do |passage_code|
-                %td.goggles-centeralign
-                  %b= passage_code
+              - if passage_list.respond_to?(:each)
+                - passage_list.each do |passage_code|
+                  %td.goggles-centeralign
+                    %b= passage_code
               %td.goggles-rightalign
                 %b= I18n.t('meeting.timing')
               %td.goggles-rightalign
                 %b= I18n.t('meeting.fin_score')
               %td.goggles-rightalign
                 %b= I18n.t('meeting.rank')
-              
-            - full_history_element[1].each do |meeting_individual_result|
-              - meeting = meeting_individual_result.meeting
-              - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result)
-              = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
+
+            - if full_history_element[1].respond_to?(:each)
+              - full_history_element[1].each do |meeting_individual_result|
+                - meeting = meeting_individual_result.meeting
+                - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result) if full_history_element[2].respond_to?(:where)
+                = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
 
 .row-fluid.goggles-category-gap

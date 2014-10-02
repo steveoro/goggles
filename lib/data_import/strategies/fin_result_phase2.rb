@@ -5,13 +5,14 @@ require 'data_import/header_fields_dao'
 require 'data_import/strategies/city_comparator'
 require 'data_import/strategies/fin_result_parser'
 require 'data_import/services/team_name_analizer'
+require 'data_import/services/data_import_entity_builder'
 
 
 =begin
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.515
+  - Goggles framework vers.:  4.00.535
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -270,8 +271,9 @@ module FinResultPhase2
     }                                               # **** (END of HEADER) ****
     is_ok
   end
-  # -----------------------------------------------------------------------------
-  # -----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # DataImportSeason relation getter / adder.
@@ -285,49 +287,47 @@ module FinResultPhase2
   #
   # @deprecated Not used as of this version: NOTE that all referenced season_id below are ASSUMED as always positive (that is, coming from Season, not DataImportSeason !)
   #
-  def search_or_add_a_corresponding_season( full_pathname, session_id )
-    result_id = 0
-    result_row = nil
-    not_found = true
-                                                    # --- FIELD SETUP: Extract field values before the search:
-    description = I18n.t(:missing_data_warning, { scope: [:admin_import] })
-    begin_date  = Date.parse( "#{Date.today.year - 1}-09-01" )
-    end_date    = Date.parse( "#{Date.today.year}-06-30" )
-    season_type_id = SeasonType.first.id            # FIXME ASSERT: season type is always "MASFIN"
-    must_use_time_standards = true
-                                                    # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-    # ********* TODO SEARCH for any existing/conflicting Season rows
-                                                    # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
-    if not_found
-      begin                                         # --- BEGIN transaction ---
-        DataImportSeason.transaction do
-          result_row = DataImportSeason.new(
-            data_import_session_id: session_id,
-            import_text: '-',
-            description: description,
-            begin_date: begin_date,
-            end_date: end_date,
-            must_use_time_standards: must_use_time_standards,
-            season_type_id: season_type_id
-          )
-          result_row.save!                          # raise automatically an exception if save is not successful
-        end
-      rescue                                        # --- RESCUE (failed) transaction ---
-        @phase_1_log << "\r\nDataImportSeason creation: exception caught during save!\r\n"
-        @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** DataImportSeason creation: exception caught during save!" )
-        logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-        flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
-      else
-        result_id = result_row.id
-# DEBUG
-        logger.debug( "Created data_import_season, ID:'#{result_id}', '#{result_row.description}'." )
-        @phase_1_log << "Created data_import_season, ID:'#{result_id}', '#{result_row.description}'.\r\n"
-        @stored_data_rows += 1
-      end                                           # --- END transaction ---
+  def search_or_add_a_corresponding_season( data_import_session, header_date )
+    builder = DataImportEntityBuilder.build( data_import_session ) do
+      entity            Season
+
+      fields_setup do                             # Set the fields:
+        header_date     = Date.parse( header_date )
+        @description    = I18n.t( 'admin_import.missing_data_warning' )
+        @header_date    = header_date.kind_of?( Date ) ? header_date : Date.today
+        year            = @header_date.month < 10 ? @header_date.year - 1 : @header_date.year
+        # FIXME This is an approximation, it should include most of the seasons:
+        @begin_date     = "#{year}-09-01" # Date.parse( "#{year}-09-01" )
+        @end_date       = "#{year + 1}-09-30" # Date.parse( "#{year + 1}-08-30" )
+        @header_year    = "#{year}/#{year+1}" # "#{@begin_date.year}/#{@end_date.year}",
+        # FIXME ASSERT: season type is always "MASFIN"
+        @season_type_id = SeasonType.first.id
+        # FIXME This is plain wrong:
+        @edition        = 0
+      end
+                                                  # Search conditions:
+      primary_search    [
+        "(season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
+        @season_type_id, @begin_date, @end_date
+      ]
+      secondary_search  [
+        "(data_import_session_id = ?) AND (season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
+        @data_import_session.id, @season_type_id, @begin_date, @end_date
+      ]
+
+      attributes_for_creation(
+        data_import_session_id: @data_import_session.id,
+        import_text:            @header_date,
+        description:            @description,
+        begin_date:             @begin_date,
+        end_date:               @end_date,
+        season_type_id:         @season_type_id,
+        header_year:            @header_year,
+        edition:                @edition
+      )
     end
 
-    result_id
+    builder.result_id
   end
 
 
@@ -340,15 +340,110 @@ module FinResultPhase2
   #   - negative IDs only for already existing/commited rows in "standard" entity;
   #   - 0 only on error/unable to process.
   #
-  def search_or_add_a_corresponding_meeting( full_pathname, session_id, season_id,
+  def search_or_add_a_corresponding_meeting( data_import_session, full_pathname, season_id,
                                              meeting_header_row, meeting_dates, scheduled_date,
                                              header_fields_dao, force_missing_meeting_creation = false )
-    result_id = 0
-    result_row = nil
-    not_found = true
-                                                    # --- FIELD SETUP: Extract field values before the search:
-    title = organization = notes = nil
+    # result_id = 0
+    # result_row = nil
+    # not_found = true
+                                                    # # --- FIELD SETUP: Extract field values before the search:
+    # title = organization = notes = nil
+#
+    # if ( meeting_header_row )
+      # title         = meeting_header_row[:fields][:title]
+      # organization  = meeting_header_row[:fields][:organization]
+      # notes = (meeting_dates ? "#{meeting_dates}\r\n" : '') +
+              # (organization ? "#{organization}" : '')
+    # end
+    # description = ( title ? title : "#{header_fields_dao.code_name } (#{Format.a_date(scheduled_date)})" )
+# # DEBUG
+    # logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
+    # @phase_1_log << "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n"
 
+                                                    # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
+# DEBUG
+    # logger.debug( "Seeking existing Meeting @ #{scheduled_date}..." )
+    # @phase_1_log << "Seeking existing Meeting @ #{scheduled_date}...\r\n"
+                                                    # # ASSERT: there can be only 1 row keyed by this tuple:
+    # result_row = Meeting.where(
+      # [ "(header_date = ?) AND (season_id = ?) AND (code = ?)",
+        # scheduled_date, season_id, header_fields_dao.code_name ]
+    # ).first
+    # if result_row                                   # We must differentiate the result: negative for Meeting, positive for DataImportMeeting
+# # DEBUG
+      # logger.debug( "Meeting found! (#{result_row.description})" )
+      # @phase_1_log << "Meeting found! (#{result_row.description})\r\n"
+      # result_id = - result_row.id
+      # not_found = false
+                                                    # # [Steve, 20131114] Sometimes header_year is missing from old seed data; we need to check this (otherwise validation fails):
+      # result_row.header_year = header_fields_dao.header_year if header_fields_dao.header_year
+      # result_row.notes = notes if notes
+      # result_row.save! if result_row.changed?
+                                                    # # Search also inside data_import_xxx table counterpart when unsuccesful:
+    # else
+# # DEBUG
+      # logger.debug( "Seeking existing DataImportMeeting @ #{scheduled_date}..." )
+      # @phase_1_log << "Seeking existing DataImportMeeting @ #{scheduled_date}...\r\n"
+                                                    # # ASSERT: there can be only 1 row keyed by this tuple:
+      # result_row = DataImportMeeting.where(
+        # [ "(data_import_session_id = ?) AND (header_date = ?) AND (season_id = ?) AND (description = ?)",
+          # data_import_session.id, scheduled_date, season_id, description ]
+      # ).first
+      # if result_row
+        # result_id = result_row.id
+        # not_found = false
+      # end
+    # end
+
+    # if not_found && (!force_missing_meeting_creation)
+      # flash[:error] = "#{I18n.t(:requested_entity_missing)}: 'Meeting'"
+      # return 0
+    # end
+                                                    # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
+    # if not_found
+      # begin                                         # --- BEGIN transaction ---
+        # DataImportMeeting.transaction do
+          # result_row = DataImportMeeting.new(
+            # data_import_session_id: data_import_session.id,
+            # import_text:            meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
+            # description:            description,
+            # # [Steve, 20131025] No default value for this one:
+# #            entry_deadline: scheduled_date - 14, # (This is just a guess)
+            # are_results_acquired:   true,
+            # is_under_25_admitted:   true, # (This is just a guess)
+            # configuration_file:     full_pathname,
+            # header_date:            scheduled_date,
+            # code:                   header_fields_dao.code_name,
+            # header_year:            header_fields_dao.header_year,
+            # edition:                header_fields_dao.edition, # (This is just a guess)
+            # edition_type_id:        header_fields_dao.edition_type_id,
+            # timing_type_id:         header_fields_dao.timing_type_id,
+            # # TODO/FUTURE DEV:
+# #            individual_score_computation_type_id: 0,
+# #            relay_score_computation_type_id: 0,
+# #            team_score_computation_type_id: 0,
+            # notes: notes,
+            # season_id: season_id,
+            # user_id: @current_admin_id
+          # )
+          # result_row.save!                          # raise automatically an exception if save is not successful
+        # end
+      # rescue                                        # --- RESCUE (failed) transaction ---
+        # @phase_1_log << "\r\nDataImportMeeting creation: exception caught during save!\r\n"
+        # @phase_1_log << "#{ $!.to_s }\r\n" if $!
+        # logger.error( "\r\n*** DataImportMeeting creation: exception caught during save!" )
+        # logger.error( "*** #{ $!.to_s }\r\n" ) if $!
+        # flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+      # else
+        # result_id = result_row.id
+# # DEBUG
+        # logger.debug( "Created data_import_meeting, ID:'#{result_id}', '#{result_row.get_verbose_name}'." )
+        # @phase_1_log << "Created data_import_meeting, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
+        # @stored_data_rows += 1
+      # end                                           # --- END transaction ---
+    # end
+
+    title = organization = notes = nil
     if ( meeting_header_row )
       title         = meeting_header_row[:fields][:title]
       organization  = meeting_header_row[:fields][:organization]
@@ -356,94 +451,57 @@ module FinResultPhase2
               (organization ? "#{organization}" : '')
     end
     description = ( title ? title : "#{header_fields_dao.code_name } (#{Format.a_date(scheduled_date)})" )
-# DEBUG
-    logger.debug( "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n" )
-    @phase_1_log << "\r\nParsed MEETING header_row = #{meeting_header_row.inspect}...\r\n\r\n"
 
-                                                    # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
-# DEBUG
-    logger.debug( "Seeking existing Meeting @ #{scheduled_date}..." )
-    @phase_1_log << "Seeking existing Meeting @ #{scheduled_date}...\r\n"
-                                                    # ASSERT: there can be only 1 row keyed by this tuple:
-    result_row = Meeting.where(
-      [ "(header_date = ?) AND (season_id = ?) AND (code = ?)",
-        scheduled_date, season_id, header_fields_dao.code_name ]
-    ).first
-    if result_row                                   # We must differentiate the result: negative for Meeting, positive for DataImportMeeting
-# DEBUG
-      logger.debug( "Meeting found! (#{result_row.description})" )
-      @phase_1_log << "Meeting found! (#{result_row.description})\r\n"
-      result_id = - result_row.id
-      not_found = false
-                                                    # [Steve, 20131114] Sometimes header_year is missing from old seed data; we need to check this (otherwise validation fails):
-      result_row.header_year = header_fields_dao.header_year if header_fields_dao.header_year
-      result_row.notes = notes if notes
-      result_row.save! if result_row.changed?
-                                                    # Search also inside data_import_xxx table counterpart when unsuccesful:
-    else
-# DEBUG
-      logger.debug( "Seeking existing DataImportMeeting @ #{scheduled_date}..." )
-      @phase_1_log << "Seeking existing DataImportMeeting @ #{scheduled_date}...\r\n"
-                                                    # ASSERT: there can be only 1 row keyed by this tuple:
-      result_row = DataImportMeeting.where(
-        [ "(data_import_session_id = ?) AND (header_date = ?) AND (season_id = ?) AND (description = ?)",
-          session_id, scheduled_date, season_id, description ]
-      ).first
-      if result_row
-        result_id = result_row.id
-        not_found = false
-      end
+
+    builder = DataImportEntityBuilder.build( data_import_session ) do
+      entity            Meeting
+                                                  # Search conditions:
+      primary_search    [
+        "(header_date = ?) AND (season_id = ?) AND (code = ?)",
+        scheduled_date, season_id, header_fields_dao.code_name
+      ]
+      secondary_search  [
+        "(data_import_session_id = ?) AND (header_date = ?) AND (season_id = ?) AND (description = ?)",
+        data_import_session.id, scheduled_date, season_id, description
+      ]
+
+# FIXME WE NEED 3 DIFFERENT SCOPES: 1 for setup (before search), 1 for search & 1 for creation or search unsuccessfull
+
+      attributes_for_creation(
+        data_import_session_id: data_import_session.id,
+        import_text:            meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
+        description:            description,
+        # [Steve, 20131025] No default value for this one:
+#       entry_deadline:         scheduled_date - 14, # (This is just a guess)
+        are_results_acquired:   true,
+        is_under_25_admitted:   true, # (This is just a guess)
+        configuration_file:     full_pathname,
+        header_date:            scheduled_date,
+        code:                   header_fields_dao.code_name,
+        header_year:            header_fields_dao.header_year,
+        edition:                header_fields_dao.edition, # (This is just a guess)
+        edition_type_id:        header_fields_dao.edition_type_id,
+        timing_type_id:         header_fields_dao.timing_type_id,
+        # TODO/FUTURE DEV:
+#       individual_score_computation_type_id: 0,
+#       relay_score_computation_type_id: 0,
+#       team_score_computation_type_id: 0,
+        notes:                  notes,
+        season_id:              season_id,
+        user_id:                @current_admin_id
+      )
     end
 
-    if not_found && (!force_missing_meeting_creation)
-      flash[:error] = "#{I18n.t(:requested_entity_missing)}: 'Meeting'"
-      return 0
-    end
-                                                    # --- ADD: Nothing existing/conflicting found? => Add a fresh new data-import row
-    if not_found
-      begin                                         # --- BEGIN transaction ---
-        DataImportMeeting.transaction do
-          result_row = DataImportMeeting.new(
-            data_import_session_id: session_id,
-            import_text:            meeting_header_row.instance_of?(Hash) ? meeting_header_row[:import_text] : '-',
-            description:            description,
-            # [Steve, 20131025] No default value for this one:
-#            entry_deadline: scheduled_date - 14, # (This is just a guess)
-            are_results_acquired:   true,
-            is_under_25_admitted:   true, # (This is just a guess)
-            configuration_file:     full_pathname,
-            header_date:            scheduled_date,
-            code:                   header_fields_dao.code_name,
-            header_year:            header_fields_dao.header_year,
-            edition:                header_fields_dao.edition, # (This is just a guess)
-            edition_type_id:        header_fields_dao.edition_type_id,
-            timing_type_id:         header_fields_dao.timing_type_id,
-            # TODO/FUTURE DEV:
-#            individual_score_computation_type_id: 0,
-#            relay_score_computation_type_id: 0,
-#            team_score_computation_type_id: 0,
-            notes: notes,
-            season_id: season_id,
-            user_id: @current_admin_id
-          )
-          result_row.save!                          # raise automatically an exception if save is not successful
-        end
-      rescue                                        # --- RESCUE (failed) transaction ---
-        @phase_1_log << "\r\nDataImportMeeting creation: exception caught during save!\r\n"
-        @phase_1_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** DataImportMeeting creation: exception caught during save!" )
-        logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-        flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
-      else
-        result_id = result_row.id
-# DEBUG
-        logger.debug( "Created data_import_meeting, ID:'#{result_id}', '#{result_row.get_verbose_name}'." )
-        @phase_1_log << "Created data_import_meeting, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
-        @stored_data_rows += 1
-      end                                           # --- END transaction ---
+    if builder.result_row
+      # [Steve, 20131114] Sometimes header_year is missing from old seed data;
+      # furthermore, here we have the opportunity to fill-in any missing details
+      # coming from the data-import to update any result found.
+      builder.result_row.header_year = header_fields_dao.header_year if builder.result_row.header_year.nil? && header_fields_dao.header_year
+      builder.result_row.notes = notes if builder.result_row.notes.nil? && notes
+      builder.result_row.save! if builder.result_row.changed?
     end
 
-    result_id
+    builder.result_id
   end
 
 

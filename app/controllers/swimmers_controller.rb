@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  4.00.515
+  - version:  4.00.535
   - author:   Steve A., Leega
 
 =end
@@ -459,6 +459,7 @@ class SwimmersController < ApplicationController
   def trainings
     @tab_title = I18n.t('radiography.trainings_tab')
 
+    # FIXME [Steve] DISABLE the tab even before doing a redirect on the action
     # FIXME
     # Needs to be a full goggler (swimmer associated with a user)
     # Needs to be a the user associated swimmer or a buddy with training sharing
