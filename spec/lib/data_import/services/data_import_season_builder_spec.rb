@@ -15,7 +15,7 @@ describe DataImportSeasonBuilder, type: :service do
 #      DataImportSeasonBuilder.find_or_create_new( data_import_session ) {}
 #    end
 
-    it "returns a DataImportSeasonBuilder instance" do
+    xit "returns a DataImportSeasonBuilder instance" do
       result = DataImportSeasonBuilder.find_or_create_new( data_import_session ) {}
       expect( result ).to be_an_instance_of( DataImportSeasonBuilder )
     end
