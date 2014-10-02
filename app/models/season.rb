@@ -26,6 +26,8 @@ class Season < ActiveRecord::Base
 
   has_many :meetings
   has_many :goggle_cup_definitions
+  has_many :team_affiliations
+  has_many :meeting_individual_results, through: :meetings
 
   validates_presence_of :header_year
   validates_length_of   :header_year, within: 1..9, allow_nil: false

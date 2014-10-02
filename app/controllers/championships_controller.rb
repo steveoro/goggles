@@ -15,7 +15,7 @@ class ChampionshipsController < ApplicationController
   #
   def supermaster_fin
     # TODO Use description of current FIN season
-    @title = 'FIN Supermaster 2014-2015'
+    @title = 'FIN - Circuito italiano supermaster 2014-2015'
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -24,7 +24,7 @@ class ChampionshipsController < ApplicationController
   #
   def regional_er_csi
     # TODO Use description of current FIN season
-    @title = 'CSI Circuito regionale master Emilia Romagna 2014-2015'    
+    @title = 'CSI - Circuito regionale master Emilia Romagna 2014-2015'    
   end
   #-- -------------------------------------------------------------------------
   #++
