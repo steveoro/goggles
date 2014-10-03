@@ -58,7 +58,7 @@ class ChampionshipRankingCalculator
   # Computes the teams points for a given meeting 
   #
   def retreive_season_team_points
-    @championship_scores = @season.meeting_team_scores.has_season_points
+    @season.meeting_team_scores.has_season_points
   end
   #-- --------------------------------------------------------------------------
   #++
