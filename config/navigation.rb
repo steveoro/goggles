@@ -57,7 +57,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item(
         :key_user_radio_id,
         t('radiography.id_card'),
-        Proc.new { current_user.nil? ? '' : swimmer_radio_path(current_user.swimmer_id) },
+        Proc.new { current_user.nil? ? '' : swimmer_radio_path(id: current_user.swimmer_id) },
         if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
       )
       lev2_nav.item(
@@ -78,10 +78,10 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item( :key_championships,                    t('championships.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_supermaster_fin_path() 
-      lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_regional_er_csi_path() 
+      lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_supermaster_fin_path()
+      lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_regional_er_csi_path()
       lev2_nav.item( :key_separator2_0,                  content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item :key_championships_history,          t('championships.history'), championships_history_path() 
+      lev2_nav.item :key_championships_history,          t('championships.history'), championships_history_path()
     end
 
     primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|

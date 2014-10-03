@@ -29,7 +29,7 @@
                       = record.get_swimmer_name
                   - else
                     %p
-                      %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(:id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+                      %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
                         = record.get_swimmer_name
                   - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
                     %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting_individual_result.meeting.description})"}

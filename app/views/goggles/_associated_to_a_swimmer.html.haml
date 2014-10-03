@@ -2,7 +2,7 @@
   %h3
     = (current_user.has_swimmer_confirmations? ? t('user_association.you_are') : t('user_association.you_are_or_you_said_it')) + ':'
   %p
-    = link_to( current_user.swimmer.get_verbose_name, swimmer_radio_path( current_user.swimmer ), {id: "swimmer#{current_user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
+    = link_to( current_user.swimmer.get_verbose_name, swimmer_radio_path(id: current_user.swimmer), {id: "swimmer#{current_user.swimmer_id}", 'data-toggle' => 'tooltip', title: I18n.t('radiography.radio_tab_tooltip')} )
   %p
     - if current_user.has_swimmer_confirmations?
       = t('user_association.confirmed_by') + ':'
