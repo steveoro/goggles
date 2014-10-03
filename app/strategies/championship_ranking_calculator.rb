@@ -37,7 +37,17 @@ class ChampionshipRankingCalculator
   # and at least one valid result
   #
   def retrieve_involved_teams
-    @season.team_affiliations.joins(:meeting_individual_results).uniq.map{ |ta| ta.team_name }
+    @season.team_affiliations.joins(:meeting_individual_results).includes(:team).uniq.map{ |ta| [ta.team_id, ta.team_name] }
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Computes the teams points for a given meeting 
+  #
+  def compute_meeting_teams_points(meeting)
+    @involved_teams.each do |team|
+      individual_points = meeting.meeting_individual_results.for_team(Team.find(team[0])).select(:team_points).collect{ |r| r.team_points }.sum
+    end
   end
   #-- --------------------------------------------------------------------------
   #++
