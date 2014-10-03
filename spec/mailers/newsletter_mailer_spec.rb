@@ -16,7 +16,7 @@ describe NewsletterMailer, :type => :mailer do
       expect( subject.subject ).to match( I18n.t('newsletter_mailer.data_updates.generic_title') )
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( NewsletterMailer::HOSTNAME )
     end
     it 'renders for each specified meeting its description and header_year' do
       meeting_array.each do |meeting|
@@ -54,7 +54,7 @@ describe NewsletterMailer, :type => :mailer do
       expect( subject.subject ).to match( I18n.t('newsletter_mailer.achievements.generic_title') )
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( NewsletterMailer::HOSTNAME )
     end
 
     xit 'renders for each specified achievement its localized name and description' do
@@ -90,7 +90,7 @@ describe NewsletterMailer, :type => :mailer do
       expect( subject.subject ).to match( I18n.t('newsletter_mailer.application.generic_title') )
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( NewsletterMailer::HOSTNAME )
     end
     it 'renders the specified contents in its body' do
       expect( subject.body.encoded ).to include( contents )
@@ -122,7 +122,7 @@ describe NewsletterMailer, :type => :mailer do
       expect( subject.subject ).to match( I18n.t('newsletter_mailer.community.generic_title') )
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( NewsletterMailer::HOSTNAME )
     end
 
     it 'renders for each specified news_feed its title and body' do

@@ -18,7 +18,7 @@ describe AgexMailer, :type => :mailer do
       expect( subject.subject ).to match( description )
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( AgexMailer::HOSTNAME )
     end
     it 'renders the user_name in the message' do
       expect( subject.body.encoded ).to match( user.name )
@@ -57,7 +57,7 @@ describe AgexMailer, :type => :mailer do
       expect( subject.subject ).to match(action_name)
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( AgexMailer::HOSTNAME )
     end
     it 'renders the user_name in the message' do
       expect( subject.body.encoded ).to match( user.name )
@@ -99,7 +99,7 @@ describe AgexMailer, :type => :mailer do
       expect( subject.subject ).to match( "ID:#{entity_id}" )
     end
     it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( ENV['HOSTNAME'] )
+      expect( subject.subject ).to match( AgexMailer::HOSTNAME )
     end
     it 'renders the name of the sender user in the message' do
       expect( subject.body.encoded ).to match( user.name )

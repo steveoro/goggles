@@ -14,7 +14,7 @@ describe DataImportEntityBuilder, type: :service do
     DataImportEntityBuilder.build( data_import_session ) do
       entity            Season
 
-      fields_setup do                             # Set the fields:
+      set_up do                                   # Set the fields:
         header_date     = Date.parse( fixture_date )
         @description    = I18n.t( 'admin_import.missing_data_warning' )
         @header_date    = header_date.kind_of?( Date ) ? header_date : Date.today
@@ -28,15 +28,18 @@ describe DataImportEntityBuilder, type: :service do
         # FIXME This is plain wrong:
         @edition        = 0
       end
-                                                  # Search conditions:
-      primary_search    [
-        "(season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
-        @season_type_id, @begin_date, @end_date
-      ]
-      secondary_search  [
-        "(data_import_session_id = ?) AND (season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
-        @data_import_session.id, @season_type_id, @begin_date, @end_date
-      ]
+                                                  # Search phase:
+      search do
+        primary    [
+          "(season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
+          @season_type_id, @begin_date, @end_date
+        ]
+        secondary  [
+          "(data_import_session_id = ?) AND (season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
+          @data_import_session.id, @season_type_id, @begin_date, @end_date
+        ]
+        default_search
+      end
 
       attributes_for_creation(
         data_import_session_id: @data_import_session.id,
@@ -48,13 +51,19 @@ describe DataImportEntityBuilder, type: :service do
         header_year:            @header_year,
         edition:                @edition
       )
+
+      if_not_found do
+# DEBUG
+#        puts "\r\nCreating a new DataImportSeason..."
+        add_new
+      end
     end
   end
   #-- -------------------------------------------------------------------------
   #++
 
   context "after a self.build() with a matching Season row," do
-    subject { season_build_process( "2013-11-01" ) }
+    subject { season_build_process( "2001-11-01" ) }
 
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
@@ -74,7 +83,7 @@ describe DataImportEntityBuilder, type: :service do
         expect( subject.result_id ).to be < 0
       end
       it "is the ID of the resulting row, with a minus sign" do
-        expect( subject.result_id ).to eq( - subject.result_row.id )
+        expect( subject.result_id ).to eq( -(subject.result_row.id) )
       end
     end
   end
@@ -146,23 +155,26 @@ describe DataImportEntityBuilder, type: :service do
   #++
 
 
-  # Prepares the result subject for the specs.
+  # # Prepares the result subject for the specs.
   def time_standard_build_process( season_id, event_type_id, category_type_id,
                                    gender_type_id, pool_type_id, mins, secs, hds )
     DataImportEntityBuilder.build( data_import_session ) do
       entity              TimeStandard
                                                   # Search condition:
-      primary_search(
-        event_type_id:    event_type_id,
-        category_type_id: category_type_id,
-        gender_type_id:   gender_type_id,
-        pool_type_id:     pool_type_id,
-        minutes:          mins,
-        seconds:          secs,
-        hundreds:         hds
-      )
+      search do
+        primary(
+          event_type_id:    event_type_id,
+          category_type_id: category_type_id,
+          gender_type_id:   gender_type_id,
+          pool_type_id:     pool_type_id,
+          minutes:          mins,
+          seconds:          secs,
+          hundreds:         hds
+        )
+        default_search
+      end
 
-      # This will override what is the secondary entity:
+      # This will override what is the default secondary entity ('DataImportTimeStandard', which does not exist):
       entity_for_creation TimeStandard
 
       attributes_for_creation(
@@ -175,6 +187,8 @@ describe DataImportEntityBuilder, type: :service do
         seconds:          secs,
         hundreds:         hds
       )
+
+      if_not_found        { add_new }
     end
   end
   #-- -------------------------------------------------------------------------
@@ -215,7 +229,7 @@ describe DataImportEntityBuilder, type: :service do
         expect( subject.result_id ).to be < 0
       end
       it "is the ID of the resulting row, with a minus sign" do
-        expect( subject.result_id ).to eq( - subject.result_row.id )
+        expect( subject.result_id ).to eq( -(subject.result_row.id) )
       end
     end
   end
