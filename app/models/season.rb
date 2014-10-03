@@ -22,11 +22,13 @@ class Season < ActiveRecord::Base
   validates_associated :edition_type
   validates_associated :timing_type
 
-  has_one  :federation_type, through: :season_type
+  has_one  :federation_type,            through: :season_type
 
   has_many :meetings
   has_many :goggle_cup_definitions
   has_many :team_affiliations
+  has_many :meeting_team_scores
+  has_many :teams,                      through: :team_affiliations
   has_many :meeting_individual_results, through: :meetings
 
   validates_presence_of :header_year
