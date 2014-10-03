@@ -25,6 +25,9 @@ Options: [meetings=<id_1>[,<id_2>,...] ]
 DESC
     task :data_update do |t|
       puts "\r\n*** Mailer::job::data_update ***\r\n"
+      puts "Requiring Rails environment to allow usage of any Model..."
+      require 'rails/all'
+      require File.join( Rails.root.to_s, 'config/environment' )
       meeting_ids   = ENV.include?("meetings") ? ENV["meetings"].to_s.split(',') : nil
       meeting_ids   = meeting_ids.map{ |id| id.to_i } if meeting_ids
       meeting_array = Meeting.where( id: meeting_ids )
@@ -47,6 +50,9 @@ news-feed rows for each user that has enabled the newsletter.
 DESC
     task :community do |t|
       puts "\r\n*** Mailer::job::community ***\r\n"
+      puts "Requiring Rails environment to allow usage of any Model..."
+      require 'rails/all'
+      require File.join( Rails.root.to_s, 'config/environment' )
       involved_users = User.community_newsletter_readers
       puts "Generating mail queue for a maximum of #{ involved_users.size } user(s)..."
       tot_generated_jobs = 0
