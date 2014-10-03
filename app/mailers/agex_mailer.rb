@@ -2,16 +2,19 @@
 
 = AgexMailer
 
-  - version:  4.00.495
+  - version:  4.00.541
   - author:   Steve A.
 
   Mailer base custom class for the Agex framework.
 =end
 class AgexMailer < ActionMailer::Base
 
+  # Hostname shown as mail sender domain (ENV['HOSTNAME'] is not good, because it uses the local IP)
+  HOSTNAME = Goggles::Application.config.action_mailer.default_url_options[:host]
+
   # Internal Mailer address for the "From" field of the e-mails. Usually something like "no-reply@fasar.software.it"
   #
-  default :from => "AgeX Mailer <no-reply@#{ ENV['HOSTNAME'] }>"
+  default :from => "AgeX Mailer <no-reply@#{ HOSTNAME }>"
 
 
   # "Exception intercepted" message.
@@ -29,7 +32,7 @@ class AgexMailer < ActionMailer::Base
     @user_name   = user.name if user.respond_to?(:name)
     @description = error_description
     @backtrace   = error_backtrace
-    @host = ENV['HOSTNAME']
+    @host = HOSTNAME
 
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] AgexMailer EXCEPTION: '#{error_description}'.",
@@ -55,7 +58,7 @@ class AgexMailer < ActionMailer::Base
     @user_name = user.name if user.respond_to?(:name)
     @action_name = action_name
     @description = action_description
-    @host = ENV['HOSTNAME']
+    @host = HOSTNAME
 
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] AgexMailer action '#{action_name}'",
@@ -85,7 +88,7 @@ class AgexMailer < ActionMailer::Base
     @entity_name   = entity_name
     @entity_id     = entity_id
     @entity_title  = entity_title
-    @host = ENV['HOSTNAME']
+    @host = HOSTNAME
 
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] Abuse report for '#{entity_name}', ID:#{entity_id}",

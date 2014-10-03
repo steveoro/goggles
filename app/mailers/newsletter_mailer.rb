@@ -2,16 +2,19 @@
 
 = AgexMailer
 
-  - version:  4.00.495
+  - version:  4.00.541
   - author:   Steve A.
 
   Custom mailer for all the Goggles newsletter types.
 =end
 class NewsletterMailer < ActionMailer::Base
 
+  # Hostname shown as mail sender domain (ENV['HOSTNAME'] is not good, because it uses the local IP)
+  HOSTNAME = Goggles::Application.config.action_mailer.default_url_options[:host]
+
   # Internal Mailer address for the "From" field of the e-mails. Usually something like "no-reply@fasar.software.it"
   #
-  default :from => "Goggles Mailer <no-reply@#{ ENV['HOSTNAME'] }>"
+  default :from => "Goggles Mailer <no-reply@#{ HOSTNAME }>"
 
 
   # Generates a mailing message signaling a "data update" to a user.
@@ -24,7 +27,7 @@ class NewsletterMailer < ActionMailer::Base
   #
   def data_updates_mail( user, meeting_array = nil )
     @user  = user
-    @host  = ENV['HOSTNAME']
+    @host  = HOSTNAME
     @meeting_array = meeting_array
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.data_updates.generic_title')}",
@@ -46,7 +49,7 @@ class NewsletterMailer < ActionMailer::Base
   #
   def achievements_mail( user, achievements_array = nil )
     @user  = user
-    @host  = ENV['HOSTNAME']
+    @host  = HOSTNAME
     @achievements_array = achievements_array
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.achievements.generic_title')}",
@@ -67,7 +70,7 @@ class NewsletterMailer < ActionMailer::Base
   #
   def application_mail( user, contents )
     @user  = user
-    @host  = ENV['HOSTNAME']
+    @host  = HOSTNAME
     @contents = contents
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.application.generic_title')}",
@@ -90,7 +93,7 @@ class NewsletterMailer < ActionMailer::Base
   def community_mail( user, newsfeed_array = nil )
     @user  = user
     @newsfeed_array = newsfeed_array
-    @host  = ENV['HOSTNAME']
+    @host  = HOSTNAME
     mail(
       subject: "[#{AGEX_APP_NAME}@#{@host}] #{I18n.t('newsletter_mailer.community.generic_title')}",
       to:      user.email,

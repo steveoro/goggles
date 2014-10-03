@@ -1,7 +1,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.225.20140418
+# - vers. : 4.00.539
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
@@ -218,12 +218,12 @@ EOF
         end
       end
       on roles(:app) do |host|
-        puts "      > Executing the SQL dump for 'friendships' table..."
+        puts "      > Executing the SQL dump for 'friendships', 'news_feeds' and 'articles' tables..."
         # To disable extended inserts, add this option: --skip-extended-insert
         # (The Resulting SQL file will be much longer, though -- but the bzipped
         #  version can result more compressed due to the replicated strings, and it is
         #  indeed much more readable and editable...)
-        execute :mysqldump, "-h#{primary(:db)} -u#{fetch(:db_user)} -p#{fetch(:db_password)} -l -f --triggers --routines -i --skip-extended-insert --no-autocommit --tables --single-transaction #{fetch(:application)} friendships #{zip_pipe} > /tmp/#{file_name}"
+        execute :mysqldump, "-h#{primary(:db)} -u#{fetch(:db_user)} -p#{fetch(:db_password)} -l -f --triggers --routines -i --skip-extended-insert --no-autocommit --tables --single-transaction #{fetch(:application)} articles friendships news_feeds #{zip_pipe} > /tmp/#{file_name}"
         info "Retrieving the file..."
         download! "/tmp/#{file_name}", File.join(dest_path, file_name)
         info "Removing remote temp file..."

@@ -5,10 +5,10 @@ en:
       meeting_data_title: "Aggiornamento dati gara"
       meeting_data_has_been_updated: "Sono stati aggiornati i dati gara per i seguenti Meeting:"
     achievements:
-      generic_title: "nuovo riconoscimento ottenuto!"
+      generic_title: "Nuovo riconoscimento ottenuto!"
       unlocked_achievements: "Riconoscimenti"
     application:
-      generic_title: "novita' riguardanti l'applicazione!"
+      generic_title: "Novita' riguardanti l'applicazione!"
     community:
-      generic_title: "hai delle notifiche in sospeso!"
+      generic_title: "Hai delle notifiche in sospeso!"
       unread_news: "Notizie non ancora lette"

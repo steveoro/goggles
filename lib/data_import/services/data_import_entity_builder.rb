@@ -5,7 +5,7 @@
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.535
+  - Goggles framework vers.:  4.00.541
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required
@@ -14,46 +14,59 @@
 
 === Typical usage:
 
-  - Create a new 'build process', by specifying the existing data-import session.
-  - Provide a block as parameter, which will define the 'build' process, invoking
-    in turn:
+  Define a new 'build process', by specifying the existing data-import session.
+  Provide a block as parameter, which will define the 'build' process, invoking
+  in turn:
 
-    - #entity, to define the entity involved;
+    - An #entity statement, to define the entity involved;
 
-    - #fields_setup, with the custom logic defining the field values used for the search and the row creation process;
+    - A #set_up scope, with the custom logic defining the field values used for the
+      search and the row creation process.
 
-    - #primary_search, with the condition to seek for an existing row in the primary entity, having the values defined above;
+    - A #search scope, containing:
+      - at least, a #primary statement with the condition to seek for an existing row in
+        the primary entity, having the values defined above;
+      - a #secondary condition statement, with similar conditions, but used for the
+        secondary/'data-import' entity;
+      - the type of search or the action to be taken in this scope, typically
+        a call to #default_search will suffice.
 
-    - #secondary_search, with similar conditions, but used for the secondary/'data-import' entity;
+    - Any #custom_logic scope (if required), with any block that must be executed
+      anywhere during the build process.
 
-    - #custom_logic (if required), with any block that must be executed before the end of the build process;
-
-    - #entity_for_creation, to define the entity used for row creation (see below);
+    - A #entity_for_creation statement, to define the entity used for row creation (see below);
       (when not called, the default is to use the secondary or 'data-import' entity for row creation)
 
-    - #attributes_for_creation, with the attributes hash used for creating a new row (in case all the searches are negative).
+    - An #attributes_for_creation statement, with the attributes hash used for creating
+      a new row (in case all the searches are negative).
 
-  - At the end of the build process #default_search will be invoked.
+    - An #if_not_found scope, to define any action taken when the candidates are not
+      found (typically, a call to #add_new).
 
 
-=== Example (for entity: Season):
+=== Example (for entity Season):
 
     builder = DataImportEntityBuilder.build( data_import_session ) do
       # Entity definition step:
       entity                    Season
 
       # Column value acquisition/definition step:
-      fields_setup do
+      set_up do
         @header_date = compute_a_value_for_header_date
         @other_field = another_compute
         # [...]
       end
 
-      # Search done on 'seasons':
-      primary_search            ['where clause 1', @header_date, @other_field]
+      search do
+        # Search done on 'seasons':
+        primary                 ['where clause 1', @header_date, @other_field]
 
-      # Search done on 'data_import_seasons':
-      secondary_search          ['where clause 2', @data_import_session.id, @header_date, @other_field]
+        # Search done on 'data_import_seasons':
+        secondary               ['where clause 2', @data_import_session.id, @header_date, @other_field]
+
+        # Type of search performed:
+        default_search
+      end
 
       # Attributes for adding a new row into 'data_import_seasons':
       attributes_for_creation(
@@ -66,6 +79,11 @@
         header_year:            @header_year,
         edition:                @edition
       )
+
+      # Action to be taken when the search block is unsuccessful:
+      if_not_found do
+        add_new
+      end
     end
 
     builder.result_row  # => the instance found or created (nil on error)
@@ -73,6 +91,52 @@
 
 =end
 class DataImportEntityBuilder
+
+  # Common basic scope builder
+  class BasicScope
+    def initialize( builder, &block )
+      @builder = builder
+      @builder.instance_eval( &block )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Creates and parses all the actions accepted by a 'search' scope.
+  class SearchScope < BasicScope
+    def method_missing( method_name, *args, &block )
+      if [
+        :primary, :secondary, :search_for, :default_search
+      ].include?( method_name )
+        @builder.instance_eval( &block )
+      else
+        super
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Creates and parses all the actions accepted by a 'if_not_found' scope.
+  class IfNotFoundScope < BasicScope
+    def method_missing( method_name, *args, &block )
+      if [ :if_not_found, :add_new, :search ].include?( method_name )
+        @builder.instance_eval( &block )
+      else
+        super
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Creates and parses all the actions accepted by a 'custom_logic' scope.
+  class CustomLogicScope < BasicScope
+    # (nothing needed for the moment -- same as BasicScope)
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   attr_reader :data_import_session, :result_row, :result_id
   #-- -------------------------------------------------------------------------
@@ -96,36 +160,51 @@ class DataImportEntityBuilder
   #
   def initialize( data_import_session, &block )
     @data_import_session = data_import_session
-    @result_row = nil
-
-    # TODO Create 3 different scopes, one for each distinct moment:
-
     # Evaluate the block passed within the context of this instance:
     instance_eval( &block )
-
-    # TODO different scopes for different sub-phases
-    # - setup
-    # - search          => default default_search unless block_given?
-    # - if_match_found  => needed?
-    # - if_not_found    => default add_new unless block_given?
-
-    # After the block has been parsed, we can retrieve the corresponding row;
-    # this will also update @result_row:
-    default_search()
-
-    # Nothing existing/conflicting found? Add a fresh new row
-    add_new() if ( @result_id == 0 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
+  # Creates a new 'set_up' scope for the specified block.
+  #
+  def set_up( &block )
+    DataImportEntityBuilder::BasicScope.new( self, &block )
+  end
+
+  # Creates a new 'search' scope for the specified block.
+  #
+  def search( &block )
+    DataImportEntityBuilder::SearchScope.new( self, &block )
+  end
+
+  # Creates a new 'custom_logic' scope for the specified block.
+  #
+  def custom_logic( &block )
+    DataImportEntityBuilder::CustomLogicScope.new( self, &block )
+  end
+
+  # Creates a new 'if_not_found' scope for the specified block.
+  #
+  def if_not_found( &block )
+    DataImportEntityBuilder::IfNotFoundScope.new( self, &block ) if result_not_found?
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns true if a "corresponding entity row" has not been found yet.
+  #
+  def result_not_found?
+    @result_id.to_i == 0
+  end
+
   # Sets the entity associated with the build process.
   #
   def entity( entity_class )
-    @primary_entity   = entity_class
+    @primary_entity = entity_class
   end
-
 
   # Getter for the secondary entity associated with the build process.
   # The entity used for the creation of a new row has the precedence in
@@ -134,16 +213,8 @@ class DataImportEntityBuilder
   def secondary_entity
     @secondary_entity ||= @creation_entity || "DataImport#{@primary_entity}".constantize
   end
-
-
-  # Use this to initialize the member values before setting the search conditions.
-  #
-  # This simply evaluates the block in the context of the current instance, so use
-  # member variables to set fields that will be used as search values.
-  #
-  def fields_setup( &block )
-    instance_eval( &block )
-  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Sets the search condition for the entity itself (the 'primary' table, not its
@@ -152,10 +223,9 @@ class DataImportEntityBuilder
   # == Example:
   # - Entity: Season => condition will be applied on table 'seasons'.
   #
-  def primary_search( condition )
+  def primary( condition )
     @primary_search_condition = condition
   end
-
 
   # Sets the search condition for the data-import entity.
   # Set this to nil to skip the "secondary search" phase.
@@ -163,46 +233,21 @@ class DataImportEntityBuilder
   # == Example:
   # - Entity: Season => condition will be applied on table 'data_import_seasons'.
   #
-  def secondary_search( condition )
+  def secondary( condition )
     @secondary_search_condition = condition
   end
-
-
-  # Custom logic block to be executed whenever required (inside the 'build' process
-  # definition).
-  #
-  # The block specified will be evaluated in the context of the current instance,
-  # so use member variables to set fields that will be re-used.
-  #
-  def custom_logic( &block )
-    instance_eval( &block )
-  end
-
-
-  # Sets the entity used to create a new row.
-  #
-  def entity_for_creation( entity_class )
-    @creation_entity = entity_class
-  end
-
-
-  # Attributes hash used during the creation of a new row.
-  #
-  def attributes_for_creation( attributes_hash )
-    @attributes_hash = attributes_hash
-  end
-  #-- -------------------------------------------------------------------------
-  #++
 
 
   # Performs a search for an existing row for the specified +entity+, using the
   # +search_condition+.
   #
-  # This method should not be used directly: it's called internally during the
-  # #build process.
+  # == Returns: the corresponding id of the found row (on the specified entity);
+  #   - a negative ID when found on a primary entity;
+  #   - a positive ID when found on a data-import entity;
+  #   - 0 when not found.
   #
   def search_for( entity, search_condition )
-    result_id = 0
+    @result_id = 0
 # DEBUG
 #    puts "Seeking existing #{entity.name} with #{search_condition.inspect}\r\n"
     @data_import_session.phase_1_log << "Seeking existing #{entity.name} with #{search_condition.inspect}\r\n"
@@ -212,12 +257,41 @@ class DataImportEntityBuilder
 #      puts "#{entity.name} found! (ID: #{@result_row.id})\r\n"
       @data_import_session.phase_1_log << "#{entity.name} found! (ID: #{@result_row.id})\r\n"
       # We must differentiate the result: positive for a 'data_import' entity, negative otherwise
-      result_id = @result_row.id * (entity.name =~ /DataImport/ ? 1 : -1)
+      @result_id = @result_row.id * (entity.name =~ /DataImport/ ? 1 : -1)
     end
-    result_id
+    @result_id
+  end
+
+
+  # Default implementation for the "full search" of a "corresponding entity row".
+  #
+  # First searches in the primary entity and then the secondary, but only
+  # if the @secondary_search_condition has been set.
+  #
+  # == Returns:
+  # The method updates directly the @result_row and @result_id members.
+  # The actual result returned is the result from the last invocation of #search_for.
+  #
+  def default_search
+    search_for( @primary_entity, @primary_search_condition )
+                                                    # Nothing found? Do a secondary search:
+    search_for( secondary_entity, @secondary_search_condition ) if ( @secondary_search_condition && result_not_found? )
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Sets the entity used to create a new row.
+  #
+  def entity_for_creation( entity_class )
+    @creation_entity = entity_class
+  end
+
+  # Attributes hash used during the creation of a new row.
+  #
+  def attributes_for_creation( attributes_hash )
+    @attributes_hash = attributes_hash
+  end
 
 
   # Creates a new 'data-import' row.
@@ -226,7 +300,7 @@ class DataImportEntityBuilder
   # #build process.
   #
   # == Returns: the corresponding id of the created row (on a data-import/secondary entity);
-  #   - a positive ID for a successful row creation;
+  #   - an always positive ID for a successful row creation;
   #   - 0 only on error/unable to process.
   #
   def add_new()
@@ -260,25 +334,6 @@ class DataImportEntityBuilder
 
     @data_import_session.save!
     @result_id
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  private
-
-
-  # Default implementation for the search of a "corresponding entity row".
-  # First searches in the primary entity and then in the secondary, but only
-  # if the @secondary_search_condition has been set.
-  #
-  # == Returns:
-  # The method updates directly the @result_id member.
-  #
-  def default_search()
-    @result_id = search_for( @primary_entity, @primary_search_condition )
-                                                    # Nothing found? Do a secondary search:
-    @result_id = search_for( secondary_entity, @secondary_search_condition ) if ( @secondary_search_condition && @result_id == 0 )
   end
   #-- -------------------------------------------------------------------------
   #++

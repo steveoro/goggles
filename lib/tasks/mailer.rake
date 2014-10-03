@@ -71,21 +71,23 @@ DESC
       users_with_pending_friendships.select! do |user|
         NewsFeed.unread.where( user_id: user.id ).count == 0
       end
+      # Force locale for NewsFeed generation to 'it-IT'
+      I18n.locale = :it
+      # Avoid duplication:
+      users_with_pending_friendships = users_with_pending_friendships.uniq
 
       # Last, generate a pending-invitation newsfeed notification row, so that we may
       # also deliver an email about it:
       users_with_pending_friendships.each_with_index do |user, index|
         puts "Adding missing NewsFeed row for #{user}, (users #{index+1}/#{users_with_pending_friendships.size}..."
-        # Since we don't need to generate a newsfeed for all pending rows belonging to a same user,
-        # we just get the first one and process it. It will be the receiving user's responsibility
-        # to check out all pending friendships actually found.
-        swimming_buddy = user.pending_invited_by.first
-        NewsFeed.create_social_feed(
-          user.id,
-          swimming_buddy.id,
-          I18n.t('newsfeed.invite_title'),
-          I18n.t('newsfeed.invite_body').gsub("{SWIMMER_NAME}", swimming_buddy.get_full_name)
-        )
+        user.pending_invited_by.each do |swimming_buddy|
+          NewsFeed.create_social_feed(
+            user.id,
+            swimming_buddy.id,
+            I18n.t('newsfeed.invite_title'),
+            I18n.t('newsfeed.invite_body').gsub("{SWIMMER_NAME}", swimming_buddy.get_full_name)
+          )
+        end
       end
 
       # Finally, loop on all unread newsfeed and generate a notification mail:
