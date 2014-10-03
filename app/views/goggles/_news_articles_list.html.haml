@@ -20,6 +20,6 @@
     = link_to( api_v1_news_feed_read_path(id: feed.id), {method: :put, remote: true, success: "alert('Done!');"} ) do
       - button_tag( type:'button', id: "bntClose#{feed.id}", 'data-dismiss'=>'alert', class: 'close' ) do
         &times;
-    = render( partial: 'news_feed_row', locals: { feed: feed } )
+    = render( partial: 'goggles/news_feed_row', locals: { feed: feed } )
     %script
       $( "#bntClose#{feed.id}" ).click( function(){ $("#feed#{feed.id}").remove(); } );
