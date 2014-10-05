@@ -8,6 +8,7 @@ FactoryGirl.define do
     description               { "#{Faker::Name.suffix} #{Faker::Address.city} Meeting" }
     edition                   { ((rand * 100) % 40).to_i }
     season                    { Season.all.to_a[ rand * 10 ] } # Get all Season rows, choose a random one among the first 10
+    header_date               { season.begin_date + (rand * 100).to_i.days }
     header_year               { season.header_year }
     # The following 2 columns use the pre-loaded seed records:
     edition_type_id           { ((rand * 100) % 5).to_i + 1 } # ASSERT: at least 5 edition types (1..5)

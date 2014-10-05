@@ -156,17 +156,6 @@ class DataImportEntityBuilder
   #++
 
 
-  # Creates a new instance.
-  #
-  def initialize( data_import_session, &block )
-    @data_import_session = data_import_session
-    # Evaluate the block passed within the context of this instance:
-    instance_eval( &block )
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   # Creates a new 'set_up' scope for the specified block.
   #
   def set_up( &block )
@@ -211,7 +200,7 @@ class DataImportEntityBuilder
   # defining what "secondary entity" actually refers to.
   #
   def secondary_entity
-    @secondary_entity ||= @creation_entity || "DataImport#{@primary_entity}".constantize
+    @secondary_entity = @creation_entity || "DataImport#{@primary_entity}".constantize
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -243,7 +232,8 @@ class DataImportEntityBuilder
   #
   # == Returns: the corresponding id of the found row (on the specified entity);
   #   - a negative ID when found on a primary entity;
-  #   - a positive ID when found on a data-import entity;
+  #   - a positive ID when found on a data-import entity (the choice is made
+  #     simply by looking at the model name);
   #   - 0 when not found.
   #
   def search_for( entity, search_condition )
@@ -334,6 +324,20 @@ class DataImportEntityBuilder
 
     @data_import_session.save!
     @result_id
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Creates a new instance.
+  #
+  def initialize( data_import_session, &block )
+    @data_import_session = data_import_session
+    # Evaluate the block passed within the context of this instance:
+    instance_eval( &block )
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -10,16 +10,20 @@ require 'data_import/header_fields_dao'
 
 = FilenameParser
 
-  - Goggles framework vers.:  4.00.515
+  - Goggles framework vers.:  4.00.543
   - author: Steve A.
 
  Strategy class dedicated to extracting required Meeting fields
  from result file names.
 
+=== Typical usage:
+
+    header_fields_dao = FilenameParser.new( full_pathname ).parse
+
 =end
 class FilenameParser
 
-  attr_reader :full_pathname, :prefix, :header_date, :code_name
+  attr_reader :full_pathname, :prefix, :header_date, :header_year, :code_name
   #-- -------------------------------------------------------------------------
   #++
 
@@ -28,6 +32,7 @@ class FilenameParser
     @full_pathname = full_pathname
     @prefix = ''
     @header_date = nil
+    @header_year = nil
     @code_name = ''
   end
   #-- -------------------------------------------------------------------------
@@ -46,7 +51,9 @@ class FilenameParser
   # This method updates the corresponding member variables.
   #
   # == Returns:
-  # - an HeaderFieldsDAO DAO on header_date parsing success, +nil+ otherwise.
+  # - an HeaderFieldsDAO DAO on header_date parsing success.
+  #
+  # @raise ArgumentError on invalid or un-parsable header_date (header_date & header_year cannot be nil).
   #
   def parse()
     ext  = File.extname( @full_pathname )
@@ -58,13 +65,12 @@ class FilenameParser
     begin
       @header_date = Date.parse( name[date_start_idx .. code_start_idx-1] )
     rescue
-      @header_date = nil
+      raise ArgumentError.new("Unable to parse header_date!")
     end
-    if @header_date.instance_of?( Date )
-      HeaderFieldsDAO.new( @full_pathname, @prefix, @header_date, @code_name )
-    else
-      nil
-    end
+    year = header_date.month < 10 ? header_date.year - 1 : header_date.year
+    @header_year = "#{year}/#{year+1}"
+
+    HeaderFieldsDAO.new( @full_pathname, @prefix, @header_date, @header_year, @code_name )
   end
   #-- -------------------------------------------------------------------------
   #++

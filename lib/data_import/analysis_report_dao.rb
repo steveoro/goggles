@@ -3,7 +3,7 @@
 
 =begin
 
-= HeaderFieldsDAO
+= AnalysisReportDAO
 
   - Goggles framework vers.:  4.00.521
   - author: Steve A.

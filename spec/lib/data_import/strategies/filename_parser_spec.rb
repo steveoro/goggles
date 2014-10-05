@@ -11,19 +11,14 @@ require_relative '../../../../lib/data_import/header_fields_dao'
 describe FilenameParser, type: :strategy do
 
   context "as a valid instance," do
-    let(:pathname)    { File.join(Faker::Lorem.word, Faker::Lorem.word) }
-    let(:prefix)      { Faker::Lorem.word[0..2] }
-    let(:header_date) do
-      "#{ ((rand * 100) % 10).to_i + 2007 }" +
-      "%02d" % "#{ ((rand * 100) % 12).to_i + 1 }" +
-      "%02d" % "#{ ((rand * 100) % 28).to_i + 1 }"
-    end
-    let(:invalid_date) do
-      "#{ ((rand * 100) % 10).to_i + 2007 }" +
-      "%02d" % "#{ ((rand * 100) % 12).to_i + 1 }" +
-      "%02d" % "#{ ((rand * 100) % 28).to_i + 31 }"
-    end
-    let(:code_name)   { Faker::Lorem.word }
+    let(:pathname)      { File.join(Faker::Lorem.word, Faker::Lorem.word) }
+    let(:prefix)        { Faker::Lorem.word[0..2] }
+    let(:year)          { ((rand * 100) % 10).to_i + 2007 }
+    let(:month)         { ((rand * 100) % 12).to_i + 1 }
+    let(:day)           { ((rand * 100) % 28).to_i + 1 }
+    let(:header_date)   { "%04d%02d%02d" % [year, month, day] }
+    let(:invalid_date)  { "%04d%02d%02d" % [year, month, day+31] }
+    let(:code_name)     { Faker::Lorem.word }
 
     subject do
       FilenameParser.new(
@@ -33,20 +28,21 @@ describe FilenameParser, type: :strategy do
 
 
     it_behaves_like( "(the existance of a method)", [
-      :full_pathname, :prefix, :header_date, :code_name, :parse
+      :full_pathname, :prefix, :header_date, :code_name, :header_year,
+      :parse
     ] )
 
     describe "#parse" do
       it "returns an HeaderFieldsDAO DAO for a valid date" do
         expect( subject.parse() ).to be_an_instance_of( HeaderFieldsDAO )
       end
-      it "returns nil for a non-valid date" do
+      it "raises ArgumentError for a non-valid date" do
         parser = FilenameParser.new( File.join( pathname, "#{ prefix }#{ invalid_date }#{ code_name }.txt" ) )
-        expect( parser.parse ).to be nil
+        expect{ parser.parse }.to raise_error( ArgumentError )
       end
-      it "returns nil for a non-valid filename" do
+      it "raises ArgumentError for a non-valid filename" do
         parser = FilenameParser.new( File.join( pathname, "#{ prefix }#{ code_name }.txt" ) )
-        expect( parser.parse ).to be nil
+        expect{ parser.parse }.to raise_error( ArgumentError )
       end
 
       describe "after a successful parsing," do
