@@ -41,6 +41,22 @@ describe ChampionshipRankingCalculator, type: :strategy do
       end
     end
     #-- -----------------------------------------------------------------------
+
+    describe "#compute_season_ranking," do
+      it "responds to compute_season_ranking method" do
+        expect(subject).to respond_to(:compute_season_ranking)
+      end
+      it "returns an hash" do
+        expect( subject.compute_season_ranking ).to be_a_kind_of( Hash )
+      end
+      it "returns an hash that responds to :columns, :meetings, :teams" do
+        keys = subject.compute_season_ranking.keys
+        expect( keys ).to include(:columns)        
+        expect( keys ).to include(:meetings)        
+        expect( keys ).to include(:teams)        
+      end
+    end
+    #-- -----------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
   #++
