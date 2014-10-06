@@ -19,9 +19,12 @@ class DataImportCityBuilder < DataImportEntityBuilder
   # Searches for an existing City by looking at common patterns
   # inside the given Team name, or it adds a new one, if not found.
   #
+  # The current implementation uses CityComparator to guess city
+  # fields and is able to detect only a handful of northern italian cities.
   # (The guessing of the missing field names is not guaranteed to be successfull.)
   #
   def self.build_from_team_name( data_import_session, team_name )
+    @@comparator ||= CityComparator.new             # memoize the comparator, so that we may re-use it in future
     city_fields   = CityComparator.guess_city_from_team_name( team_name )
     names         = city_fields.split(',')
     name          = names.size > 0 ? names[0] : '?'
@@ -34,33 +37,39 @@ class DataImportCityBuilder < DataImportEntityBuilder
       entity City
 
       search do                                     # Primary search:
-        City.all.each do |city|                     # Loop on all pre-inserted cities and search for a match
+# DEBUG
+#        puts "\r\nSearching: #{name}"
+        @@comparator.known_cities.each do |city|
           is_same_city = CityComparator.seems_the_same(
             name,         city.name,
             area,         city.area,
             country_code, city.country_code
           )
           if is_same_city
-            result_row = city
+# DEBUG
+#            puts "City: match found for #{city.name}"
+            set_result( city )
             break
           end
         end
-        set_result( result_row )
       end
 
       if_not_found do                               # Secondary search:
-        DataImportCity.all.each do |city|           # Loop on all pre-inserted cities and search for a match
+# DEBUG
+#        puts "NOT found: #{name}"
+        @@comparator.known_data_import_cities.each do |city|
           is_same_city = CityComparator.seems_the_same(
             name,         city.name,
             area,         city.area,
             country_code, city.country_code
           )
           if is_same_city
-            result_row = city
+# DEBUG
+#            puts "DataImportCity: match found for #{city.name}"
+            set_result( city )
             break
           end
         end
-        set_result( result_row )
       end
 
       if_not_found do

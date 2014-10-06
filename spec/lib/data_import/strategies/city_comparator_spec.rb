@@ -45,7 +45,7 @@ describe CityComparator, type: :strategy do
     ]
   end
 
-  context "as a valid instance," do
+  context "as a stand-alone class," do
     subject { CityComparator }
 
     # Since subject is already a class, we just need to use this shared existance example
@@ -57,6 +57,24 @@ describe CityComparator, type: :strategy do
     ] )
     #-- -----------------------------------------------------------------------
     #++
+
+
+    describe "#known_cities" do
+      it "is the list of all known (primary entity) cities" do
+        comparator = CityComparator.new
+        expect( comparator.known_cities.count ).to eq(City.count)
+      end
+    end
+
+    describe "#known_data_import_cities" do
+      it "is the list of all known (secondary entity, data-import) cities" do
+        comparator = CityComparator.new
+        expect( comparator.known_data_import_cities.count ).to eq(DataImportCity.count)
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
 
     describe "self.guess_city_from_team_name()" do
       it "returns a comma-separated string list with a matching City and Area name when successful" do

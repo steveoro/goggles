@@ -5,14 +5,29 @@
 
 = CityComparator
 
-  - Goggles framework vers.:  4.00.517
+  - Goggles framework vers.:  4.00.545
   - author: Steve A.
 
  Generic strategy class dedicated to compare City names taking
  into account possible abbreviations and naming variations.
 
+  As an instance, it memoizes the list of existing/known cities
+  from the database, to speed-up any repeated search.
+
 =end
 class CityComparator
+
+  attr_reader :known_cities, :known_data_import_cities
+
+
+  # Creates a new instance.
+  #
+  def initialize()
+    @known_cities = City.all
+    @known_data_import_cities = DataImportCity.all
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Tries to return a City name (string) from a team name.
   # == Returns:
@@ -74,7 +89,7 @@ class CityComparator
     when /PONTEDERA/i
       "Pontedera,Pisa,56025"
     when /PRATO/i
-      "Prato,Prato,59100"
+      "Prato,Firenze,59100"
     when /RAVENN/i
       "Ravenna,Ravenna"
     when /RICCIONE/i
@@ -145,7 +160,7 @@ class CityComparator
   def self.compare_city_member_strings( city_member_name_1, city_member_name_2 )
     normalized_array_1 = get_token_array_from_city_member_name( city_member_name_1 ).join(' ')
     normalized_array_2 = get_token_array_from_city_member_name( city_member_name_2 )
-    reg = Regexp.new( normalized_array_2.join('\s.*'), Regexp::IGNORECASE )
+    reg = Regexp.new( normalized_array_2.join('\s.*'), Regexp::IGNORECASE ) if normalized_array_2.instance_of?(Array)
     match = ( normalized_array_1 =~ reg )
     ! match.nil?
   end
