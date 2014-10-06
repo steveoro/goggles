@@ -1,4 +1,29 @@
 = render( partial: 'title' )
 
-.row
-  .p= t('coming_soon')
+.row-fluid#regional_er_csi
+  .goggles-category-gap#pageTop
+
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td.goggles-rightalign
+          %b= I18n.t('championships.position')
+        %td
+          %b= I18n.t('championships.team')
+        - @championship_ranking[:meetings].each do |meeting|
+          %td.goggles-centeralign
+            = meeting.header_date
+        %td.goggles-rightalign
+          %b= I18n.t('championships.total_points')
+      - @championship_ranking[:teams].each_with_index do |ranked_team,index|
+        %tr
+          %td.goggles-rightalign
+            = (index + 1).to_s
+          %td
+            = ranked_team[:team].name
+          - @championship_ranking[:meetings].each do |meeting|
+            %td
+          %td.goggles-rightalign
+            = ranked_team[:total_points].to_s
+          
+                 

@@ -50,7 +50,7 @@ class ChampionshipRankingCalculator
       end
       team_ranking << team_scores 
     end
-    @championship_ranking[:teams] = team_ranking.sort{ |p,n| p[:total_points] <=> n[:total_points] }
+    @championship_ranking[:teams] = team_ranking.sort{ |p,n| n[:total_points] <=> p[:total_points] }
     @championship_ranking
   end
   #-- --------------------------------------------------------------------------
