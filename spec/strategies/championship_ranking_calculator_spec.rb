@@ -55,6 +55,25 @@ describe ChampionshipRankingCalculator, type: :strategy do
         expect( keys ).to include(:meetings)        
         expect( keys ).to include(:teams)        
       end
+      it "returns an hash with array teams and columns keys" do
+        expect( subject.compute_season_ranking[:columns] ).to be_a_kind_of( Array )        
+        expect( subject.compute_season_ranking[:teams] ).to be_a_kind_of( Array )        
+      end
+      it "returns an hash with meetings key containing meetings" do
+        expect( subject.compute_season_ranking[:meetings] ).to all(be_an_instance_of( Meeting ))        
+      end
+      
+      context "With 2013-2014 CSI season" do
+        it "has found 2 columns for meeting scores" do
+          expect( subject.compute_season_ranking[:columns].count ).to be_equal(2)        
+        end
+        it "has found 5 meetings involved" do
+          expect( subject.compute_season_ranking[:meetings].count ).to be_equal(5)        
+        end
+        it "has found 14 teams involved" do
+          expect( subject.compute_season_ranking[:teams].count ).to be_equal(14)        
+        end
+      end
     end
     #-- -----------------------------------------------------------------------
   end

@@ -754,3 +754,6 @@ en:
     regional_er_csi: "CSI Regional Emilia Romagna"
     history: "History"
     history_title: "Past championships history"
+    position: "Pos."
+    team: "Team"
+    total_points: "Tot. points"

@@ -27,9 +27,10 @@ class ChampionshipsController < ApplicationController
     @title = 'CSI - Circuito regionale master Emilia Romagna 2014-2015'
     
     # TODO Find current CSI season
-    #current_season = Season.find(131)
+    current_season = Season.find(131)
     
-    #championship_calculator = ChampionshipRankingCalculator.new( current_season )
+    championship_calculator = ChampionshipRankingCalculator.new( current_season )
+    @championship_ranking = championship_calculator.compute_season_ranking 
   end
   #-- -------------------------------------------------------------------------
   #++

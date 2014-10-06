@@ -754,6 +754,9 @@ it:
     regional_er_csi: "CSI Regionale Emilia Romagna"
     history: "Storico"
     history_title: "Storico campionati conclusi"
+    position: "Pos."
+    team: "Squadra"
+    total_points: "Tot. punti"
 
   netzke:
     basepack:
