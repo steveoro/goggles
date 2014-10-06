@@ -757,3 +757,8 @@ en:
     position: "Pos."
     team: "Team"
     total_points: "Tot. points"
+    season_individual_points: "Individuals"
+    season_relay_points: "Relays"
+    season_team_points: "Team"
+    meeting_total: "Meeting tot."
+    team_ranking: "Team ranking"

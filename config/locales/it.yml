@@ -757,6 +757,11 @@ it:
     position: "Pos."
     team: "Squadra"
     total_points: "Tot. punti"
+    season_individual_points: "Gare"
+    season_relay_points: "Staff."
+    season_team_points: "Squadra"
+    meeting_total: "Tot. prova"
+    team_ranking: "Classifica di società"
 
   netzke:
     basepack:

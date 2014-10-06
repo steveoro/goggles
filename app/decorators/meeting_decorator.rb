@@ -10,6 +10,7 @@
 
 =end
 class MeetingDecorator < Draper::Decorator
+  include Rails.application.routes.url_helpers
   delegate_all
 
 
@@ -44,6 +45,15 @@ class MeetingDecorator < Draper::Decorator
     else
       ''
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Retrieves the meeting description
+  # with link to meeting result show full
+  #
+  def get_linked_short_name
+    h.link_to( get_short_name + ' (' + get_scheduled_date + ')', meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
   end
   #-- -------------------------------------------------------------------------
   #++

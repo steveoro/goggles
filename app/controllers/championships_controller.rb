@@ -23,12 +23,11 @@ class ChampionshipsController < ApplicationController
   # CSI Regional Emilia Romagna championship ranking data display manager
   #
   def regional_er_csi
-    # TODO Use description of current FIN season
-    @title = 'CSI - Circuito regionale master Emilia Romagna 2014-2015'
-    
     # TODO Find current CSI season
     current_season = Season.find(131)
     
+    @title = current_season.get_full_name
+
     championship_calculator = ChampionshipRankingCalculator.new( current_season )
     @championship_ranking = championship_calculator.compute_season_ranking 
   end
