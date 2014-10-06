@@ -1781,7 +1781,7 @@ module FinResultPhase2
   #   - 0 only on error/unable to process.
   #
   def search_or_add_a_corresponding_city( session_id, city_name )
-    return 0 if city_name.nil? || city_name.size < 2
+    return 0 unless city_name.instance_of(String) && city_name.size > 1
                                                     # --- FIELD SETUP: Extract field values before the search:
     names = city_name.split(',')
 # DEBUG

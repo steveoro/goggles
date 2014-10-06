@@ -5,7 +5,7 @@
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.541
+  - Goggles framework vers.:  4.00.545
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required
@@ -106,7 +106,8 @@ class DataImportEntityBuilder
   class SearchScope < BasicScope
     def method_missing( method_name, *args, &block )
       if [
-        :primary, :secondary, :search_for, :default_search
+        :primary, :secondary, :search_for, :default_search,
+        :primary_search_ok?, :secondary_search_ok?, :set_result
       ].include?( method_name )
         @builder.instance_eval( &block )
       else
@@ -120,7 +121,12 @@ class DataImportEntityBuilder
   # Creates and parses all the actions accepted by a 'if_not_found' scope.
   class IfNotFoundScope < BasicScope
     def method_missing( method_name, *args, &block )
-      if [ :if_not_found, :add_new, :search ].include?( method_name )
+      if [
+        :if_not_found, # (accepts also nested IFs)
+        :search, :primary_search_ok?, :secondary_search_ok?, :set_result,
+        :set_up, # (accepts also nested SET_UPs)
+        :entity_for_creation, :attributes_for_creation, :add_new
+      ].include?( method_name )
         @builder.instance_eval( &block )
       else
         super
@@ -132,7 +138,7 @@ class DataImportEntityBuilder
 
   # Creates and parses all the actions accepted by a 'custom_logic' scope.
   class CustomLogicScope < BasicScope
-    # (nothing needed for the moment -- same as BasicScope)
+    # (nothing needed for the moment -- same as BasicScope, accepts anything)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -189,6 +195,20 @@ class DataImportEntityBuilder
     @result_id.to_i == 0
   end
 
+  # Returns true if a matching entity row has been found inside the
+  # primary entity defined.
+  #
+  def primary_search_ok?
+    @result_id.to_i < 0
+  end
+
+  # Returns true if a matching entity row has been found inside the
+  # secondary entity defined.
+  #
+  def secondary_search_ok?
+    @result_id.to_i > 0
+  end
+
   # Sets the entity associated with the build process.
   #
   def entity( entity_class )
@@ -241,15 +261,31 @@ class DataImportEntityBuilder
 # DEBUG
 #    puts "Seeking existing #{entity.name} with #{search_condition.inspect}\r\n"
     @data_import_session.phase_1_log << "Seeking existing #{entity.name} with #{search_condition.inspect}\r\n"
-    @result_row = entity.where( search_condition ).first
-    if @result_row
+    set_result( entity.where( search_condition ).first )
 # DEBUG
-#      puts "#{entity.name} found! (ID: #{@result_row.id})\r\n"
-      @data_import_session.phase_1_log << "#{entity.name} found! (ID: #{@result_row.id})\r\n"
-      # We must differentiate the result: positive for a 'data_import' entity, negative otherwise
-      @result_id = @result_row.id * (entity.name =~ /DataImport/ ? 1 : -1)
-    end
+#    puts "#{entity.name} found! (ID: #{@result_row.id})\r\n" if @result_row
+    @data_import_session.phase_1_log << "#{entity.name} found! (ID: #{@result_row.id})\r\n" if @result_row
     @result_id
+  end
+
+  # Sets the #result_row and #result_id members accordingly, clearing them
+  # if the result_row is nil.
+  #
+  # === Values for #result_id:
+  #   - a negative ID when found on a primary entity;
+  #   - a positive ID when found on a data-import entity (the choice is made
+  #     simply by looking at the model name);
+  #   - 0 when not found.
+  #
+  def set_result( result_row )
+    if result_row
+      @result_row = result_row
+      # We must differentiate the result: positive for a 'data_import' entity, negative otherwise
+      @result_id = @result_row.id * (result_row.class.name =~ /DataImport/ ? 1 : -1)
+    else
+      @result_row = nil
+      @result_id = 0
+    end
   end
 
 

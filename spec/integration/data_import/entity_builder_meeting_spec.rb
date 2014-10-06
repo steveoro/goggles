@@ -37,14 +37,14 @@ describe "DataImportEntityBuilder for Meeting,", type: :integration do
   def meeting_build_process( full_pathname, season, meeting_header_row, meeting_dates_text,
                              scheduled_date, header_fields_dao, force_missing_meeting_creation )
     DataImportEntityBuilder.build( data_import_session ) do
-      entity Meeting
+      entity      Meeting
 
       set_up do                                   # Set the fields:
         if ( meeting_header_row )
-          @title = meeting_header_row[:fields][:title]
+          @title        = meeting_header_row[:fields][:title]
           @organization = meeting_header_row[:fields][:organization]
-          @notes = (meeting_dates_text ? "#{meeting_dates_text}\r\n" : '') +
-                   (@organization ? "#{@organization}" : '')
+          @notes        = (meeting_dates_text ? "#{meeting_dates_text}\r\n" : '') +
+                          (@organization ? "#{@organization}" : '')
         end
         @description = ( @title ? @title : "#{header_fields_dao.code_name } (#{Format.a_date(scheduled_date)})" )
       end

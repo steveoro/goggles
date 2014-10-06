@@ -24,6 +24,7 @@ describe DataImportEntityBuilder, type: :service do
     it_behaves_like( "(the existance of a method)", [
       :set_up, :search, :custom_logic, :if_not_found,
       :result_not_found?, :entity, :secondary_entity,
+      :primary_search_ok?, :secondary_search_ok?, :set_result,
       :primary, :secondary, :search_for, :default_search,
       :entity_for_creation, :attributes_for_creation, :add_new
     ] )
@@ -46,6 +47,16 @@ describe DataImportEntityBuilder, type: :service do
     describe "#result_not_found?" do
       it "is true" do
         expect( subject.result_not_found? ).to be true
+      end
+    end
+    describe "#primary_search_ok?" do
+      it "is true" do
+        expect( subject.primary_search_ok? ).to be false
+      end
+    end
+    describe "#secondary_search_ok?" do
+      it "is true" do
+        expect( subject.secondary_search_ok? ).to be false
       end
     end
 
@@ -105,12 +116,60 @@ describe DataImportEntityBuilder, type: :service do
         expect( subject.search_for(DataImportSession, id: data_import_session.id) ).to eq( subject.result_id )
       end
       it "updates #result_not_found?" do
+        # Search ok on the primary:
         subject.search_for(Meeting, id: meeting_rand_id)
         expect( subject.result_not_found? ).to be false
+        # Search failure:
         subject.search_for(Meeting, id: -1)
         expect( subject.result_not_found? ).to be true
+        # Search ok on the secondary:
         subject.search_for(DataImportSession, id: data_import_session.id)
         expect( subject.result_not_found? ).to be false
+      end
+      it "updates #primary_search_ok? and #secondary_search_ok?" do
+        # Search ok on the primary:
+        subject.search_for(Meeting, id: meeting_rand_id)
+        expect( subject.primary_search_ok? ).to be true
+        expect( subject.secondary_search_ok? ).to be false
+        # Search failure:
+        subject.search_for(Meeting, id: -1)
+        expect( subject.primary_search_ok? ).to be false
+        expect( subject.secondary_search_ok? ).to be false
+        # Search ok on the secondary:
+        subject.search_for(DataImportSession, id: data_import_session.id)
+        expect( subject.primary_search_ok? ).to be false
+        expect( subject.secondary_search_ok? ).to be true
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#set_result" do
+      it "clears both #result_row and #result_id when the parameter is nil" do
+        subject.set_result(nil)
+        expect( subject.result_row ).to be nil
+        expect( subject.result_id ).to eq(0)
+      end
+      it "sets the #result_row to the instance specified as the parameter" do
+        # Example with a primary entity:
+        season = create(:season)
+        subject.set_result( season )
+        expect( subject.result_row ).to eq( season )
+        # Example with a secondary entity:
+        data_import_season = create(:data_import_season)
+        subject.set_result( data_import_season )
+        expect( subject.result_row ).to eq( data_import_season )
+      end
+      it "sets the #result_id to the -ID of the parameter if it's a primary entity" do
+        season = create(:season)
+        subject.set_result( season )
+        expect( subject.result_row ).to eq( season )
+        expect( subject.result_id ).to eq( -season.id )
+      end
+      it "sets the #result_id to the +ID of the parameter if it's a secondary entity" do
+        data_import_season = create(:data_import_season)
+        subject.set_result( data_import_season )
+        expect( subject.result_id ).to eq( data_import_season.id )
       end
     end
     #-- -----------------------------------------------------------------------
@@ -120,24 +179,28 @@ describe DataImportEntityBuilder, type: :service do
       it "searches just on the primary entity when a match can be found" do
         subject.entity(Meeting)
         subject.primary( id: meeting_rand_id )
-        expect( subject.result_id ).to be nil
+        expect( subject.result_id ).to be nil # since search has yet to be run
         expect( subject.result_not_found? ).to be true
+        expect( subject.primary_search_ok? ).to be false
 
         subject.default_search
         expect( subject.result_not_found? ).to be false
         expect( subject.result_id ).to eq( -meeting_rand_id )
+        expect( subject.primary_search_ok? ).to be true
       end
       it "searches the secondary entity when the search fails on the primary and a secondary condition is set" do
         data_import_season = create( :data_import_season )
         subject.entity(Season)
         subject.primary( id: -1 )
         subject.secondary( id: data_import_season.id )
-        expect( subject.result_id ).to be nil
+        expect( subject.result_id ).to be nil # since search has yet to be run
         expect( subject.result_not_found? ).to be true
+        expect( subject.secondary_search_ok? ).to be false
 
         subject.default_search
         expect( subject.result_not_found? ).to be false
         expect( subject.result_id ).to eq( data_import_season.id )
+        expect( subject.secondary_search_ok? ).to be true
       end
     end
     #-- -----------------------------------------------------------------------
