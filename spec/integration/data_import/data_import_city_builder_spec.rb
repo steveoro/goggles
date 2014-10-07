@@ -21,7 +21,7 @@ describe DataImportCityBuilder, type: :integration do
 
   context "after a self.build() with a matching entity row," do
     subject do
-      DataImportCityBuilder.build_from_team_name( data_import_session, recognized_team_name )
+      DataImportCityBuilder.build_from_parameters( data_import_session, recognized_team_name )
     end
 
     it "returns a DataImportEntityBuilder instance" do
@@ -54,7 +54,7 @@ describe DataImportCityBuilder, type: :integration do
 
   context "after a self.build() with a NON-matching entity row," do
     subject do
-      DataImportCityBuilder.build_from_team_name( data_import_session, new_team_name )
+      DataImportCityBuilder.build_from_parameters( data_import_session, new_team_name )
     end
 
     it "returns a DataImportEntityBuilder instance" do

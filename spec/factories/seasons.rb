@@ -25,7 +25,7 @@ FactoryGirl.define do
     # The following column uses the pre-loaded seed records:
     edition_type_id           { ((rand * 100) % 5).to_i + 1 } # ASSERT: at least 5 edition types
     begin_date                { Date.parse("#{ 2000 + ((rand * 100) % 15).to_i }-09-01") }
-    end_date                  { Date.parse("#{ begin_date.year + 1 }-06-15") }
+    end_date                  { Date.parse("#{ begin_date.year + 1 }-08-30") }
     header_year               { end_date.year }
     season_type               { SeasonType.all.to_a[ rand * 10 % 8 ] } # ASSERT: at least 8 season types
   end

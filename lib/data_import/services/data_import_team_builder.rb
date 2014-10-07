@@ -76,7 +76,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
 
       if_not_found do
         if force_missing_team_creation              # Guess city name & setup fields:
-          city_builder = DataImportCityBuilder.build_from_team_name( data_import_session, team_name )
+          city_builder = DataImportCityBuilder.build_from_parameters( data_import_session, team_name )
           entity_for_creation DataImportTeam
 
           attributes_for_creation(

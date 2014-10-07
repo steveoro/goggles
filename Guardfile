@@ -39,10 +39,20 @@ group :specs do
     watch(%r{^spec\/.+_spec\.rb$})
     watch(%r{^app\/(.+)\.rb$})                           { |m| "spec/#{m[1]}_spec.rb" }
     watch(%r{^app\/(.*)(\.erb|\.haml|\.slim)$})          { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
-    watch(%r{^lib\/(.+\/)(.+)\.rb$})                     { |m| "spec/lib/#{m[1]}#{m[2]}_spec.rb" }
-    watch(%r{^app\/controllers\/(.+)_(controller)\.rb$})  do |m|
-    	[ "spec/routing/#{m[1]}_routing_spec.rb",  "spec/acceptance/#{m[1]}_spec.rb" ] +
-    	Dir['spec/#{m[2]}s/#{m[1]}_#{m[2]}*spec.rb'] # <== This will yield all filenames like "<plural_resource_name>_controller<anything>spec.rb"
+    watch(%r{^lib\/(.+\/)(.+)\.rb$}) do |m|
+#      puts "m1: '#{m[1]}', m2: '#{m[2]}'"
+      [
+        "spec/lib/#{m[1]}#{m[2]}_spec.rb"
+      ] +
+      Dir[ "spec/integration/data_import/#{m[2]}*spec.rb" ]
+    end
+    watch(%r{^app\/controllers\/(.+)_(controller)\.rb$}) do |m|
+      [
+        "spec/routing/#{m[1]}_routing_spec.rb",
+    	"spec/acceptance/#{m[1]}_spec.rb"
+      ] +
+      # This will yield all filenames like "<plural_resource_name>_controller<anything>spec.rb":
+      Dir[ 'spec/#{m[2]}s/#{m[1]}_#{m[2]}*spec.rb' ]
    	end
 
     # Capybara features specs

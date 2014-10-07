@@ -3,85 +3,95 @@ require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../lib/data_import/services/data_import_entity_builder'
-require_relative '../../../lib/data_import/services/data_import_team_builder'
+require_relative '../../../lib/data_import/services/data_import_time_standard_builder'
 
 
-describe DataImportTeamBuilder, type: :integration do
+describe DataImportTimeStandardBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
   #-- -------------------------------------------------------------------------
   #++
 
-  context "after a self.build() with NO matching Team row," do
+  context "after a self.build() with NO matching TimeStandard row," do
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      ts = build( :time_standard )                  # Build (without saving) a totally fake time standard
+      DataImportTimeStandardBuilder.build_from_parameters(
         data_import_session,
-        "#{create(:city).name} swimming club ASD",
         create(:season),
-        true # force_missing_team_creation
+        ts.event_type_id,
+        ts.category_type_id,
+        ts.gender_type_id,
+        ts.pool_type_id,
+        ts.minutes,
+        ts.seconds,
+        ts.hundreds
       )
     end
 
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
+
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
     describe "#result_row" do
-      it "returns a data-import entity instance when the process is successful" do
-        expect( subject.result_row ).to be_an_instance_of( DataImportTeam )
+      it "returns the newly created entity instance" do
+        expect( subject.result_row ).to be_an_instance_of( TimeStandard )
       end
     end
     describe "#result_id" do
-      it "returns a positive ID when the resulting row is a data-import entity" do
+      it "returns a positive ID" do
         expect( subject.result_id ).to be > 0
-        expect( subject.result_row.id ).to be > 0
       end
       it "is the ID of the resulting row" do
-        expect( subject.result_row ).to be_an_instance_of( DataImportTeam )
-        expect( subject.result_row.id ).to eq( subject.result_id )
+        expect( subject.result_id ).to eq( subject.result_row.id )
       end
     end
   end
   #-- -------------------------------------------------------------------------
   #++
 
-
-  context "after a self.build() with a matching Team row," do
-    let(:team)   { create(:team) }
+  context "after a self.build() with a matching TimeStandard row," do
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      ts = create( :time_standard )
+      # Alternatively, we can randomize this with existing rows from seeded TimeStandard:
+#      ts = TimeStandard.all.sort{ rand() - 0.5 }[0]
+      DataImportTimeStandardBuilder.build_from_parameters(
         data_import_session,
-        team.name,
-        create(:season), # <== This'd yield to the creation of the missing TeamAffiliation for this new season
-        false # force_missing_team_creation
+        ts.season,
+        ts.event_type_id,
+        ts.category_type_id,
+        ts.gender_type_id,
+        ts.pool_type_id,
+        ts.minutes,
+        ts.seconds,
+        ts.hundreds
       )
     end
 
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
+
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
     describe "#result_row" do
-      it "returns a data-import entity instance when the process is successful" do
-        expect( subject.result_row ).to be_an_instance_of( Team )
+      it "returns the entity instance found when the primary search is successful" do
+        expect( subject.result_row ).to be_an_instance_of( TimeStandard )
       end
     end
     describe "#result_id" do
       it "returns a negative ID when the primary search is successful" do
         expect( subject.result_id ).to be < 0
-        expect( subject.result_row.id ).to be > 0
       end
       it "is the ID of the resulting row, with a minus sign" do
-        expect( subject.result_row ).to be_an_instance_of( Team )
-        expect( subject.result_row.id ).to eq( -(subject.result_id) )
+        expect( subject.result_id ).to eq( -(subject.result_row.id) )
       end
     end
   end

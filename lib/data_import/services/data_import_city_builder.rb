@@ -23,7 +23,7 @@ class DataImportCityBuilder < DataImportEntityBuilder
   # fields and is able to detect only a handful of northern italian cities.
   # (The guessing of the missing field names is not guaranteed to be successfull.)
   #
-  def self.build_from_team_name( data_import_session, team_name )
+  def self.build_from_parameters( data_import_session, team_name )
     @@comparator ||= CityComparator.new             # memoize the comparator, so that we may re-use it in future
     city_fields   = CityComparator.guess_city_from_team_name( team_name )
     names         = city_fields.split(',')

@@ -3,22 +3,25 @@ require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../lib/data_import/services/data_import_entity_builder'
-require_relative '../../../lib/data_import/services/data_import_team_builder'
+require_relative '../../../lib/data_import/services/data_import_season_builder'
 
 
-describe DataImportTeamBuilder, type: :integration do
+describe DataImportSeasonBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
   #-- -------------------------------------------------------------------------
   #++
 
-  context "after a self.build() with NO matching Team row," do
+  context "after a self.build() with NO matching Season row," do
+    let(:year)                { ((rand * 100) % 50).to_i + 1945 }
+    let(:month)               { ((rand * 100) % 12).to_i + 1 }
+    let(:day)                 { ((rand * 100) % 28).to_i + 1 }
+    let(:not_found_date_text) { "%04d%02d%02d" % [year, month, day] }
+
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      DataImportSeasonBuilder.build_from_parameters(
         data_import_session,
-        "#{create(:city).name} swimming club ASD",
-        create(:season),
-        true # force_missing_team_creation
+        not_found_date_text,
       )
     end
 
@@ -32,7 +35,7 @@ describe DataImportTeamBuilder, type: :integration do
     end
     describe "#result_row" do
       it "returns a data-import entity instance when the process is successful" do
-        expect( subject.result_row ).to be_an_instance_of( DataImportTeam )
+        expect( subject.result_row ).to be_an_instance_of( DataImportSeason )
       end
     end
     describe "#result_id" do
@@ -41,7 +44,7 @@ describe DataImportTeamBuilder, type: :integration do
         expect( subject.result_row.id ).to be > 0
       end
       it "is the ID of the resulting row" do
-        expect( subject.result_row ).to be_an_instance_of( DataImportTeam )
+        expect( subject.result_row ).to be_an_instance_of( DataImportSeason )
         expect( subject.result_row.id ).to eq( subject.result_id )
       end
     end
@@ -50,14 +53,15 @@ describe DataImportTeamBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with a matching Team row," do
-    let(:team)   { create(:team) }
+  context "after a self.build() with a matching Season row," do
+    let(:season) { create(:season) }
+
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      DataImportSeasonBuilder.build_from_parameters(
         data_import_session,
-        team.name,
-        create(:season), # <== This'd yield to the creation of the missing TeamAffiliation for this new season
-        false # force_missing_team_creation
+        season.begin_date.strftime("%Y%m%d"),
+        season.season_type,
+        season.edition
       )
     end
 
@@ -70,18 +74,16 @@ describe DataImportTeamBuilder, type: :integration do
       end
     end
     describe "#result_row" do
-      it "returns a data-import entity instance when the process is successful" do
-        expect( subject.result_row ).to be_an_instance_of( Team )
+      it "returns the entity instance found when the primary search is successful" do
+        expect( subject.result_row ).to be_an_instance_of( Season )
       end
     end
     describe "#result_id" do
       it "returns a negative ID when the primary search is successful" do
         expect( subject.result_id ).to be < 0
-        expect( subject.result_row.id ).to be > 0
       end
       it "is the ID of the resulting row, with a minus sign" do
-        expect( subject.result_row ).to be_an_instance_of( Team )
-        expect( subject.result_row.id ).to eq( -(subject.result_id) )
+        expect( subject.result_id ).to eq( -(subject.result_row.id) )
       end
     end
   end
