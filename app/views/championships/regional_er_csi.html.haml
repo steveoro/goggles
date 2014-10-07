@@ -1,6 +1,6 @@
 = render( partial: 'title' )
 
-- col_x_meeting = @championship_ranking[:columns].count + 1
+- col_x_meeting = @championship_ranking.columns.count + 1
 
 .row-fluid#regional_er_csi
   .goggles-category-gap#pageTop
@@ -13,34 +13,34 @@
           %b= I18n.t('championships.position')
         %td{ rowspan: 2 }
           %b= I18n.t('championships.team')
-        - @championship_ranking[:meetings].each do |meeting|
+        - @championship_ranking.meetings.each do |meeting|
           %td.goggles-centeralign{ colspan: col_x_meeting }
             = meeting.decorate.get_linked_short_name
         %td.goggles-rightalign{ rowspan: 2 }
           %b= I18n.t('championships.total_points')
       %tr{'class'=>'info'}
-        - @championship_ranking[:meetings].each do |meeting|
-          - @championship_ranking[:columns].each do |column|
+        - @championship_ranking.meetings.each do |meeting|
+          - @championship_ranking.columns.each do |column|
             %td.goggles-rightalign
               = I18n.t('championships.' + column.to_s)
           %td.goggles-rightalign
             = I18n.t('championships.meeting_total')
-      - @championship_ranking[:teams].each_with_index do |team_ranking,index|
+      - @championship_ranking.teams.each_with_index do |team_ranking,index|
         %tr
           %td.goggles-rightalign
-            = (index + 1).to_i
+            %b= (index + 1).to_i
           %td
-            = team_ranking[:team].decorate.get_linked_name
-          - @championship_ranking[:meetings].each_with_index do |meeting,index_meeting|
+            = team_ranking.team.decorate.get_linked_name
+          - @championship_ranking.meetings.each_with_index do |meeting,index_meeting|
             - meeting_total = 0
-            - @championship_ranking[:columns].each do |column|
+            - @championship_ranking.columns.each do |column|
               %td.goggles-rightalign
-                - if team_ranking[:meetings][index_meeting]
-                  = team_ranking[:meetings][index_meeting][column].to_i
-                  - meeting_total += team_ranking[:meetings][index_meeting][column].to_i
+                - if team_ranking.meetings[index_meeting]
+                  = team_ranking.meetings[index_meeting][column].to_i
+                  - meeting_total += team_ranking.meetings[index_meeting][column].to_i
             %td.goggles-rightalign
               %b= meeting_total.to_i
           %td.goggles-rightalign
-            %b= team_ranking[:total_points].to_i
+            %b= team_ranking.total_points.to_i
           
                  

@@ -37,21 +37,35 @@ class ChampionshipRankingCalculator
   #++
   
   def compute_season_ranking()
-    @championship_ranking = Hash.new
-    @championship_ranking[:columns] = [:season_individual_points, :season_relay_points]
-    @championship_ranking[:meetings] = get_involved_meetings 
+    # TODO determinate columns depending on season formulas and/or details
+    columns = [:season_individual_points, :season_relay_points]
+    involved_meetings = get_involved_meetings
+    
+    #@championship_ranking = Hash.new
+    #@championship_ranking[:columns] = [:season_individual_points, :season_relay_points]
+    #@championship_ranking[:meetings] = get_involved_meetings 
     
     team_ranking = []
     get_involved_teams.each do |team|
       # Create team scores
-      team_scores = {:team => team, :total_points => compute_season_team_points(team), :meetings => []}
-      @championship_ranking[:meetings].each do |meeting|
-        team_scores[:meetings] << retreive_meeting_team_points(team, meeting, @championship_ranking[:columns])
+      total_team_points = 0
+      #team_scores = {:team => team, :total_points => 0, :meetings => []}
+      team_scores = ChampionshipDAO::TeamRankingDAO.new(team)
+      #@championship_ranking[:meetings].each do |meeting|
+      involved_meetings.each do |meeting|
+        # TODO Should perform a unique read from DB and cycle on data red
+        meeting_team_points = retreive_meeting_team_points(team, meeting, columns)
+        #total_team_points += compute_meeting_team_points(meeting_team_points, @championship_ranking[:columns]) if meeting_team_points 
+        #team_scores[:meetings] << meeting_team_points 
+        #team_scores.meetings << meeting_team_points
+        team_scores.add_meeting( meeting_team_points, columns )
       end
+      #team_scores[:total_points] = total_team_points 
+      #team_scores.total_points = total_team_points
       team_ranking << team_scores 
     end
-    @championship_ranking[:teams] = team_ranking.sort{ |p,n| n[:total_points] <=> p[:total_points] }
-    @championship_ranking
+    #@championship_ranking[:teams] = team_ranking.sort{ |p,n| n[:total_points] <=> p[:total_points] }
+    @championship_ranking = ChampionshipDAO.new( columns, involved_meetings, team_ranking.sort{ |p,n| n.total_points <=> p.total_points } )
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -76,6 +90,13 @@ class ChampionshipRankingCalculator
   #-- --------------------------------------------------------------------------
   #++
 
+
+  # Retrieves the teams points for season meetings 
+  #
+  def retreive_season_points
+    @season.meeting_team_scores.has_season_points.select('team_id, meeting_id, season_team_points, season_individual_points, season_relay_points')
+  end
+
   # Computes the season total points for a given team 
   #
   # Params
@@ -85,8 +106,11 @@ class ChampionshipRankingCalculator
     # Sum team points among season meetings
     @season.meeting_team_scores.has_season_points.for_team(team).select('(sum(season_team_points) + sum(season_individual_points) + sum(season_relay_points)) as total_pts').first.total_pts.to_i
   end
+  #-- --------------------------------------------------------------------------
+  #++
 
-  # Retrievs the teams points for a given meeting 
+
+  # Retrieves the teams points for a given meeting 
   #
   # Params
   # team    => Team to collect scores
@@ -97,10 +121,19 @@ class ChampionshipRankingCalculator
     meeting.meeting_team_scores.for_team(team).select(columns).first
   end
 
-  # Retrievs the teams points for season meetings 
+  # Computes the teams points for a certain meeting 
   #
-  def retreive_season_points
-    @season.meeting_team_scores.has_season_points.select('team_id, meeting_id, season_team_points, season_individual_points, season_relay_points')
+  # Params
+  # team    => Team to collect scores
+  # meeting => Meeting to collect scores for the team
+  # columns => Array of columns to collect
+  #
+  def compute_meeting_team_points(meeting_season_points, columns)
+    total_meeting_points = 0
+    columns.each do |column|
+      total_meeting_points += meeting_season_points[column]
+    end
+    total_meeting_points
   end
   #-- --------------------------------------------------------------------------
   #++

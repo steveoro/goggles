@@ -11,12 +11,39 @@
 
 =end
 class ChampionshipDAO
+  
+  class TeamRankingDAO
+    # These must be initialized on creation:
+    attr_reader :team
+
+    # These can be edited later on:
+    attr_accessor :total_points, :meetings
+    #-- -------------------------------------------------------------------------
+    #++
+  
+    # Creates a new instance.
+    #
+    def initialize( team)
+      @team          = team
+      @meetings      = []
+      @total_points  = 0   # Automatically computed on meeting add
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+    
+    # Add a meeting to the meetings collection
+    def add_meeting(season_meeting_team_score, columns)
+      @meetings << season_meeting_team_score
+      if season_meeting_team_score
+        columns.each do |column|
+          @total_points += season_meeting_team_score[column]
+        end
+      end
+    end
+  end
 
   # These must be initialized on creation:
   attr_reader :columns, :meetings, :teams
-
-  # These can be edited later on:
-  #attr_accessor :edition
   #-- -------------------------------------------------------------------------
   #++
 
@@ -26,7 +53,6 @@ class ChampionshipDAO
     @columns    = columns
     @meetings   = meetings
     @teams      = teams
-    #@edition    = 0
   end
   #-- -------------------------------------------------------------------------
   #++

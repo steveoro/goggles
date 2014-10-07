@@ -46,6 +46,23 @@ describe ChampionshipRankingCalculator, type: :strategy do
       it "responds to compute_season_ranking method" do
         expect(subject).to respond_to(:compute_season_ranking)
       end
+      it "returns a ChampionshipDAO" do
+        expect( subject.compute_season_ranking ).to be_an_instance_of( ChampionshipDAO )
+      end
+
+      context "With 2013-2014 CSI season" do
+        it "has found 2 columns for meeting scores" do
+          expect( subject.compute_season_ranking.columns.count ).to be_equal(2)        
+        end
+        it "has found 5 meetings involved" do
+          expect( subject.compute_season_ranking.meetings.count ).to be_equal(5)        
+        end
+        it "has found 14 teams involved" do
+          expect( subject.compute_season_ranking.teams.count ).to be_equal(14)        
+        end
+      end
+      
+=begin
       it "returns an hash" do
         expect( subject.compute_season_ranking ).to be_a_kind_of( Hash )
       end
@@ -63,17 +80,7 @@ describe ChampionshipRankingCalculator, type: :strategy do
         expect( subject.compute_season_ranking[:meetings] ).to all(be_an_instance_of( Meeting ))        
       end
       
-      context "With 2013-2014 CSI season" do
-        it "has found 2 columns for meeting scores" do
-          expect( subject.compute_season_ranking[:columns].count ).to be_equal(2)        
-        end
-        it "has found 5 meetings involved" do
-          expect( subject.compute_season_ranking[:meetings].count ).to be_equal(5)        
-        end
-        it "has found 14 teams involved" do
-          expect( subject.compute_season_ranking[:teams].count ).to be_equal(14)        
-        end
-      end
+=end
     end
     #-- -----------------------------------------------------------------------
   end

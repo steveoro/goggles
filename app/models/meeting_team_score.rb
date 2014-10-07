@@ -40,8 +40,9 @@ class MeetingTeamScore < ActiveRecord::Base
   validates_numericality_of :season_relay_points
   validates_numericality_of :season_team_points
 
-  scope :has_season_points,          where('(season_individual_points + season_relay_points + season_team_points) > 0')
-  scope :for_team,          ->(team) { where(team_id: team.id) }
+  scope :has_season_points,             where('(season_individual_points + season_relay_points + season_team_points) > 0')
+  scope :for_team,          ->(team)    { where(team_id: team.id) }
+  scope :for_meeting,       ->(meeting) { where(meeting_id: meeting.id) }
 
   # ----------------------------------------------------------------------------
   # Base methods:
