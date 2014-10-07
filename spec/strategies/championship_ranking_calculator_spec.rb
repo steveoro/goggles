@@ -42,45 +42,41 @@ describe ChampionshipRankingCalculator, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
 
-    describe "#compute_season_ranking," do
-      it "responds to compute_season_ranking method" do
-        expect(subject).to respond_to(:compute_season_ranking)
+    describe "#get_columns," do
+      it "responds to get_columns method" do
+        expect(subject).to respond_to(:get_columns)
+      end
+      it "returns an enumerable" do
+        expect( subject.get_columns ).to be_a_kind_of( Array )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_season_ranking," do
+      it "responds to get_season_ranking method" do
+        expect(subject).to respond_to(:get_season_ranking)
       end
       it "returns a ChampionshipDAO" do
-        expect( subject.compute_season_ranking ).to be_an_instance_of( ChampionshipDAO )
+        expect( subject.get_season_ranking ).to be_an_instance_of( ChampionshipDAO )
       end
 
-      context "With 2013-2014 CSI season" do
+      context "with 2013-2014 CSI season" do
         it "has found 2 columns for meeting scores" do
-          expect( subject.compute_season_ranking.columns.count ).to be_equal(2)        
+          expect( subject.get_season_ranking.columns.count ).to be_equal(2)        
         end
         it "has found 5 meetings involved" do
-          expect( subject.compute_season_ranking.meetings.count ).to be_equal(5)        
+          expect( subject.get_season_ranking.meetings.count ).to be_equal(5)        
         end
         it "has found 14 teams involved" do
-          expect( subject.compute_season_ranking.teams.count ).to be_equal(14)        
+          expect( subject.get_season_ranking.team_scores.count ).to be_equal(14)        
+        end
+        it "has found CSI Nuoto Ober Ferrari (1) in 2nd position" do
+          expect( subject.get_season_ranking.team_scores[1].team.id ).to be_equal(1)        
+        end
+        it "has found CSI Nuoto Ober Ferrari with 3136 points" do
+          expect( subject.get_season_ranking.team_scores[1].total_points.to_i ).to be_equal(3136)        
         end
       end
-      
-=begin
-      it "returns an hash" do
-        expect( subject.compute_season_ranking ).to be_a_kind_of( Hash )
-      end
-      it "returns an hash that responds to :columns, :meetings, :teams" do
-        keys = subject.compute_season_ranking.keys
-        expect( keys ).to include(:columns)        
-        expect( keys ).to include(:meetings)        
-        expect( keys ).to include(:teams)        
-      end
-      it "returns an hash with array teams and columns keys" do
-        expect( subject.compute_season_ranking[:columns] ).to be_a_kind_of( Array )        
-        expect( subject.compute_season_ranking[:teams] ).to be_a_kind_of( Array )        
-      end
-      it "returns an hash with meetings key containing meetings" do
-        expect( subject.compute_season_ranking[:meetings] ).to all(be_an_instance_of( Meeting ))        
-      end
-      
-=end
     end
     #-- -----------------------------------------------------------------------
   end

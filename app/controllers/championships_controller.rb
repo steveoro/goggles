@@ -29,7 +29,7 @@ class ChampionshipsController < ApplicationController
     @title = current_season.get_full_name
 
     championship_calculator = ChampionshipRankingCalculator.new( current_season )
-    @championship_ranking = championship_calculator.compute_season_ranking 
+    @championship_ranking = championship_calculator.get_season_ranking 
   end
   #-- -------------------------------------------------------------------------
   #++

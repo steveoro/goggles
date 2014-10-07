@@ -12,7 +12,7 @@
 =end
 class ChampionshipDAO
   
-  class TeamRankingDAO
+  class TeamScoreDAO
     # These must be initialized on creation:
     attr_reader :team
 
@@ -23,7 +23,7 @@ class ChampionshipDAO
   
     # Creates a new instance.
     #
-    def initialize( team)
+    def initialize( team )
       @team          = team
       @meetings      = []
       @total_points  = 0   # Automatically computed on meeting add
@@ -43,16 +43,16 @@ class ChampionshipDAO
   end
 
   # These must be initialized on creation:
-  attr_reader :columns, :meetings, :teams
+  attr_reader :columns, :meetings, :team_scores
   #-- -------------------------------------------------------------------------
   #++
 
   # Creates a new instance.
   #
-  def initialize( columns, meetings, teams )
-    @columns    = columns
-    @meetings   = meetings
-    @teams      = teams
+  def initialize( columns, meetings, team_scores )
+    @columns     = columns
+    @meetings    = meetings
+    @team_scores = team_scores.sort{ |p,n| n.total_points <=> p.total_points }
   end
   #-- -------------------------------------------------------------------------
   #++

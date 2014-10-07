@@ -16,8 +16,7 @@ class ChampionshipRankingCalculator
   # An instance of season
   #
   def initialize( season )
-    @season = season
-    
+    @season = season    
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -33,43 +32,21 @@ class ChampionshipRankingCalculator
   def get_involved_meetings
     @involved_meetings ||= retrieve_involved_meetings
   end
-  #-- --------------------------------------------------------------------------
-  #++
-  
-  def compute_season_ranking()
-    # TODO determinate columns depending on season formulas and/or details
-    columns = [:season_individual_points, :season_relay_points]
-    involved_meetings = get_involved_meetings
-    
-    #@championship_ranking = Hash.new
-    #@championship_ranking[:columns] = [:season_individual_points, :season_relay_points]
-    #@championship_ranking[:meetings] = get_involved_meetings 
-    
-    team_ranking = []
-    get_involved_teams.each do |team|
-      # Create team scores
-      total_team_points = 0
-      #team_scores = {:team => team, :total_points => 0, :meetings => []}
-      team_scores = ChampionshipDAO::TeamRankingDAO.new(team)
-      #@championship_ranking[:meetings].each do |meeting|
-      involved_meetings.each do |meeting|
-        # TODO Should perform a unique read from DB and cycle on data red
-        meeting_team_points = retreive_meeting_team_points(team, meeting, columns)
-        #total_team_points += compute_meeting_team_points(meeting_team_points, @championship_ranking[:columns]) if meeting_team_points 
-        #team_scores[:meetings] << meeting_team_points 
-        #team_scores.meetings << meeting_team_points
-        team_scores.add_meeting( meeting_team_points, columns )
-      end
-      #team_scores[:total_points] = total_team_points 
-      #team_scores.total_points = total_team_points
-      team_ranking << team_scores 
-    end
-    #@championship_ranking[:teams] = team_ranking.sort{ |p,n| n[:total_points] <=> p[:total_points] }
-    @championship_ranking = ChampionshipDAO.new( columns, involved_meetings, team_ranking.sort{ |p,n| n.total_points <=> p.total_points } )
+
+  # Get season score columns (point types) 
+  # 
+  def get_columns
+    @columns ||= retrieve_columns
+  end
+
+  # Get season ranking
+  # 
+  def get_season_ranking
+    @championship_ranking ||= compute_season_ranking
   end
   #-- --------------------------------------------------------------------------
   #++
-
+  
 
   private
 
@@ -86,6 +63,14 @@ class ChampionshipRankingCalculator
   #
   def retrieve_involved_meetings
     @season.meetings.joins(:meeting_team_scores).uniq
+  end
+
+  # Retrieves meetings involved in season ranking
+  # The meetings involved are those with at least one valid seasonal result
+  #
+  def retrieve_columns
+    # TODO determinate columns depending on season formulas and/or details
+    [:season_individual_points, :season_relay_points]
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -134,6 +119,29 @@ class ChampionshipRankingCalculator
       total_meeting_points += meeting_season_points[column]
     end
     total_meeting_points
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+  
+  
+  def compute_season_ranking
+    # Sets championship characteristics
+    get_columns
+    get_involved_meetings
+    get_involved_teams    
+    team_scores = []
+    
+    @involved_teams.each do |team|
+      # Create team scores
+      team_score = ChampionshipDAO::TeamScoreDAO.new(team)
+      @involved_meetings.each do |meeting|
+        # TODO Should perform a unique read from DB and cycle on data red
+        meeting_team_points = retreive_meeting_team_points(team, meeting, @columns)
+        team_score.add_meeting( meeting_team_points, @columns )
+      end
+      team_scores << team_score 
+    end
+    ChampionshipDAO.new( @columns, @involved_meetings, team_scores )
   end
   #-- --------------------------------------------------------------------------
   #++

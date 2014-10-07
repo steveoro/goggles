@@ -25,22 +25,22 @@
               = I18n.t('championships.' + column.to_s)
           %td.goggles-rightalign
             = I18n.t('championships.meeting_total')
-      - @championship_ranking.teams.each_with_index do |team_ranking,index|
+      - @championship_ranking.team_scores.each_with_index do |team_score,index|
         %tr
           %td.goggles-rightalign
             %b= (index + 1).to_i
           %td
-            = team_ranking.team.decorate.get_linked_name
+            = team_score.team.decorate.get_linked_name
           - @championship_ranking.meetings.each_with_index do |meeting,index_meeting|
             - meeting_total = 0
             - @championship_ranking.columns.each do |column|
               %td.goggles-rightalign
-                - if team_ranking.meetings[index_meeting]
-                  = team_ranking.meetings[index_meeting][column].to_i
-                  - meeting_total += team_ranking.meetings[index_meeting][column].to_i
+                - if team_score.meetings[index_meeting]
+                  = team_score.meetings[index_meeting][column].to_i
+                  - meeting_total += team_score.meetings[index_meeting][column].to_i
             %td.goggles-rightalign
               %b= meeting_total.to_i
           %td.goggles-rightalign
-            %b= team_ranking.total_points.to_i
+            %b= team_score.total_points.to_i
           
                  
