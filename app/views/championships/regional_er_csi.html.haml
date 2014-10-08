@@ -6,7 +6,7 @@
   .goggles-category-gap#pageTop
 
   %h2= I18n.t('championships.team_ranking')
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#team_ranking
     %tbody
       %tr{'class'=>'info'}
         %td.goggles-rightalign{ rowspan: 2 }
@@ -43,4 +43,24 @@
           %td.goggles-rightalign
             %b= team_score.total_points.to_i
           
+  %h2= I18n.t('championships.team_stats')
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#team_stats
+    %tbody
+      %tr{'class'=>'info'}
+        %td{ rowspan: 2 }
+          %b= I18n.t('championships.team')
+        - @championship_ranking.meetings.each do |meeting|
+          %td.goggles-centeralign{ colspan: 3 }
+            = meeting.decorate.get_linked_short_name
+      %tr{'class'=>'info'}
+        - @championship_ranking.meetings.each do |meeting|
+          %td.goggles-rightalign
+            = I18n.t('championships.males')
+          %td.goggles-rightalign
+            = I18n.t('championships.females')
+          %td.goggles-rightalign
+            = I18n.t('championships.relays')
+      %tr
+        %td{ colspan: 16 }
+          .p= t('coming_soon')
                  
