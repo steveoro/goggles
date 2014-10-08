@@ -423,7 +423,15 @@ INSERT INTO exercises (id,code,user_id,training_step_type_codes,lock_version,cre
 (253,'A2DOCT',2,'C',0,CURDATE(),CURDATE()),
 (254,'A2FACT',2,'C',0,CURDATE(),CURDATE()),
 (255,'A2RACT',2,'C',0,CURDATE(),CURDATE()),
-(256,'A2MICT',2,'C',0,CURDATE(),CURDATE());
+(256,'A2MICT',2,'C',0,CURDATE(),CURDATE()),
+(257,'C1SLFT',2,'C',0,CURDATE(),CURDATE()),
+(258,'C1FAFT',2,'C',0,CURDATE(),CURDATE()),
+(259,'C1DOFT',2,'C',0,CURDATE(),CURDATE()),
+(260,'C1RAFT',2,'C',0,CURDATE(),CURDATE()),
+(261,'C1SLVR',2,'C',0,CURDATE(),CURDATE()),
+(262,'C1FAVR',2,'C',0,CURDATE(),CURDATE()),
+(263,'C1DOVR',2,'C',0,CURDATE(),CURDATE()),
+(264,'C1RAVR',2,'C',0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella exercise_rows
@@ -792,6 +800,18 @@ INSERT INTO exercise_rows (id,part_order,percentage,distance,start_and_rest,paus
 (361,1,100,0,0,0,(select t.id from exercises t where t.code = 'A2DOCT'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
 (362,1,100,0,0,0,(select t.id from exercises t where t.code = 'A2FACT'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
 (363,1,100,0,0,0,(select t.id from exercises t where t.code = 'A2RACT'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
-(364,1,100,0,0,0,(select t.id from exercises t where t.code = 'A2MICT'),(select t.id from base_movements t where t.code = 'MICMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE());
+(364,1,100,0,0,0,(select t.id from exercises t where t.code = 'A2MICT'),(select t.id from base_movements t where t.code = 'MICMPL'),(select t.id from training_mode_types t where t.code = 'A2'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
+(365,1,50,0,0,0,(select t.id from exercises t where t.code = 'C1SLFT'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
+(366,2,50,0,0,0,(select t.id from exercises t where t.code = 'C1SLFT'),(select t.id from base_movements t where t.code = 'GECMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(367,1,50,0,0,0,(select t.id from exercises t where t.code = 'C1FAFT'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
+(368,2,50,0,0,0,(select t.id from exercises t where t.code = 'C1FAFT'),(select t.id from base_movements t where t.code = 'GECMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(369,1,50,0,0,0,(select t.id from exercises t where t.code = 'C1DOFT'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
+(370,2,50,0,0,0,(select t.id from exercises t where t.code = 'C1DOFT'),(select t.id from base_movements t where t.code = 'GECMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(371,1,50,0,0,0,(select t.id from exercises t where t.code = 'C1RAFT'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'FUO'),0,CURDATE(),CURDATE()),
+(372,2,50,0,0,0,(select t.id from exercises t where t.code = 'C1RAFT'),(select t.id from base_movements t where t.code = 'GECMPL'),(select t.id from training_mode_types t where t.code = 'A1'),(select t.id from execution_note_types t where t.code = ''),0,CURDATE(),CURDATE()),
+(373,1,100,0,0,0,(select t.id from exercises t where t.code = 'C1SLVR'),(select t.id from base_movements t where t.code = 'SLCMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'MET'),0,CURDATE(),CURDATE()),
+(374,1,100,0,0,0,(select t.id from exercises t where t.code = 'C1FAVR'),(select t.id from base_movements t where t.code = 'FACMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'MET'),0,CURDATE(),CURDATE()),
+(375,1,100,0,0,0,(select t.id from exercises t where t.code = 'C1DOVR'),(select t.id from base_movements t where t.code = 'DOCMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'MET'),0,CURDATE(),CURDATE()),
+(376,1,100,0,0,0,(select t.id from exercises t where t.code = 'C1RAVR'),(select t.id from base_movements t where t.code = 'RACMPL'),(select t.id from training_mode_types t where t.code = 'C1'),(select t.id from execution_note_types t where t.code = 'MET'),0,CURDATE(),CURDATE());
 
 COMMIT;

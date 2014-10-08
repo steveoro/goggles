@@ -508,6 +508,8 @@ it:
     i18n_description_C50: "Cambio ogni 50"
     i18n_short_C00: "Cambio 100"
     i18n_description_C00: "Cambio ogni 100"
+    i18n_short_MET: "Da metà vasca"
+    i18n_description_MET: "Con partenza da metà vasca"
 
   coach_level_types:
     code: "Cod."

@@ -14,8 +14,10 @@ class ChampionshipsController < ApplicationController
   # Supermaster FIN championship ranking data display manager
   #
   def supermaster_fin
-    # TODO Use description of current FIN season
-    @title = 'FIN - Circuito italiano supermaster 2014-2015'
+    # TODO Find current FIN season
+    current_season = Season.find(142)
+    
+    @title = current_season.get_full_name
   end
   #-- -------------------------------------------------------------------------
   #++

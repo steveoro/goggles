@@ -508,6 +508,8 @@ en:
     i18n_description_C50: "Change at 50"
     i18n_short_C00: "Change 100"
     i18n_description_C00: "Change at 100"
+    i18n_short_MET: "From mddle"
+    i18n_description_MET: "Starting from middle"
 
   coach_level_types:
     code: "code"
