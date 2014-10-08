@@ -2,6 +2,7 @@
 
 require 'common/format'
 require 'data_import/services/data_import_entity_builder'
+require 'data_import/services/data_import_meeting_builder'
 
 
 =begin
@@ -19,18 +20,47 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
 
   # Searches for an existing MeetingSession given the parameters, or it adds a new one, if not found.
   #
-  # Since Meetings data structure is deemed to be critical, the creation of a missing
-  # meeting-session can be toggled by the dedicated flag.
+  # Since Meetings data structure is deemed to be critical, the creation of any missing
+  # link in the meeting data structure can be toggled by the dedicated flag.
   #
-  def self.build_from_parameters( data_import_session, meeting_id,
-                                  meeting_dates_text, scheduled_date,
-                                  header_fields_dao, force_missing_meeting_creation )
+  # When enabled, this implementation searches and/or recreates also any missing row
+  # up the season (included).
+  #
+  # === Basic Chain of existance:
+  #
+  #   Season
+  #     -> Meeting
+  #         -> MeetingSession (SwimmingPool)
+  #             -> MeetingEvent
+  #                 -> MeetingProgram
+  #                     -> MeetingIndividualResult (Team, Swimmer, Badge)
+  #                     -> MeetingRelayResult (Team)
+  #         -> MeetingTeamScore (Team)
+  #
+  def self.build_from_parameters( data_import_session, meeting,
+                                  header_fields_dao,
+                                  meeting_dates_text,
+                                  scheduled_date,
+                                  force_missing_meeting_creation = false )
 # DEBUG
-    puts "\r\nMeetingSession, build_from_parameters: meeting_id=#{meeting_id}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao}"
+    puts "\r\nMeetingSession, build_from_parameters: meeting ID=#{meeting.instance_of?(Meeting) ? meeting.id : meeting.inspect}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao.inspect}"
     self.build( data_import_session ) do
       entity  MeetingSession
 
       set_up do
+        @meeting = meeting
+        if meeting.nil?
+# DEBUG
+          puts "Searching a missing Meeting..."
+          @meeting = DataImportMeetingBuilder.build_from_parameters(
+            data_import_session,
+            nil,  # season
+            header_fields_dao,
+            nil,
+            meeting_dates_text,
+            force_missing_meeting_creation
+          ).result_row
+        end
         @description = "#{I18n.t(:meeting_session, { scope: [:activerecord, :models] })} #1"
         @warm_up_time  = Time.utc(
           scheduled_date.year, scheduled_date.month, scheduled_date.day,
@@ -46,13 +76,15 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
         primary     [
           "(scheduled_date = ?) AND (meeting_id = ?)",
           scheduled_date,
-          ( meeting_id < 0 ? -meeting_id : meeting_id )
+          # The following check allows us to forcibly fail the primary search when
+          # there's a recognized secondary entity already:
+          ( @meeting.instance_of?(Meeting) ? @meeting.id : 0 )
         ]
         secondary   [
           "(data_import_session_id = ?) AND (scheduled_date = ?) AND " +
-          "(#{meeting_id < 0 ? '' : 'data_import_'}meeting_id = ?)",
+          "(#{@meeting.instance_of?(Meeting) ? '' : 'data_import_'}meeting_id = ?)",
           data_import_session.id, scheduled_date,
-          ( meeting_id < 0 ? -meeting_id : meeting_id )
+          @meeting.id
         ]
         default_search
 # DEBUG
@@ -62,13 +94,13 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
 
       custom_logic do
         if primary_search_ok?
-          fix_existing_invalid_meeting_session( @result_row )
+          DataImportMeetingSessionBuilder.fix_existing_invalid_meeting_session( @result_row )
         end
       end
 
       if_not_found do
 # DEBUG
-        puts "NOT found!"
+        puts "NOT found! meeting ID=#{@meeting.id}"
         if force_missing_meeting_creation           # Get swimming_pool first:
           swimming_pool = SwimmingPool.where([
             "(nick_name LIKE ?)", "#{header_fields_dao.code_name }%"
@@ -87,8 +119,8 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
             user_id:                1, # (don't care)
             swimming_pool_id:       swimming_pool ? swimming_pool.id : nil,
             day_part_type_id:       DayPartType::MORNING_ID,
-            meeting_id:             meeting_id.to_i < 0 ? -meeting_id : nil,
-            data_import_meeting_id: meeting_id.to_i < 0 ? nil : meeting_id
+            meeting_id:             @meeting.instance_of?(Meeting)           ? @meeting.id : nil,
+            data_import_meeting_id: @meeting.instance_of?(DataImportMeeting) ? @meeting.id : nil
           )
           add_new
         else

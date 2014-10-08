@@ -30,6 +30,11 @@ describe DataImportTeamBuilder, type: :integration do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+
+    it "creates a new secondary entity row" do
+      expect{ subject }.to change{ DataImportTeam.count }.by(1)
+    end
+
     describe "#result_row" do
       it "returns a data-import entity instance when the process is successful" do
         expect( subject.result_row ).to be_an_instance_of( DataImportTeam )
@@ -69,6 +74,15 @@ describe DataImportTeamBuilder, type: :integration do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+
+    it "does not create any additional primary entity row" do
+      # 1 is from the calling factory create
+      expect{ subject }.to change{ Team.count }.by(1)
+    end
+    it "does not create a new secondary entity row" do
+      expect{ subject }.not_to change{ DataImportTeam.count }
+    end
+
     describe "#result_row" do
       it "returns a data-import entity instance when the process is successful" do
         expect( subject.result_row ).to be_an_instance_of( Team )

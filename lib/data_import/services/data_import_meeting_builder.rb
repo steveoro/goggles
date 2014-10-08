@@ -2,6 +2,7 @@
 
 require 'common/format'
 require 'data_import/services/data_import_entity_builder'
+require 'data_import/services/data_import_season_builder'
 
 
 =begin
@@ -17,18 +18,51 @@ require 'data_import/services/data_import_entity_builder'
 =end
 class DataImportMeetingBuilder < DataImportEntityBuilder
 
-  # Searches for an existing Meeting given the parameters, or it adds a new one, if not found.
+  # Searches for an existing Meeting given the parameters, or it adds a new one,
+  # if not found.
+  #
+  # Since Meetings data structure is deemed to be critical, the creation of any missing
+  # link in the meeting data structure can be toggled by the dedicated flag.
+  #
+  # When enabled, this implementation searches and/or recreates also any missing row
+  # up the season (included).
+  #
+  # === Basic Chain of existance:
+  #
+  #   Season
+  #     -> Meeting
+  #         -> MeetingSession (SwimmingPool)
+  #             -> MeetingEvent
+  #                 -> MeetingProgram
+  #                     -> MeetingIndividualResult (Team, Swimmer, Badge)
+  #                     -> MeetingRelayResult (Team)
+  #         -> MeetingTeamScore (Team)
   #
   def self.build_from_parameters( data_import_session, season,
-                                  meeting_header_row, meeting_dates_text,
-                                  header_fields_dao, force_missing_meeting_creation )
+                                  header_fields_dao,
+                                  meeting_header_row = nil,
+                                  meeting_dates_text = nil,
+                                  force_missing_meeting_creation = false )
 # DEBUG
 #    puts "\r\nbuild_from_parameters: #{header_fields_dao.inspect}"
     self.build( data_import_session ) do
       entity      Meeting
 
       set_up do                                   # Set the fields:
-        if ( meeting_header_row )
+        @season = season
+        if season.nil?
+# DEBUG
+          puts "Searching a missing Season..."
+          @season = DataImportSeasonBuilder.build_from_parameters(
+            data_import_session,
+            header_fields_dao.header_date,
+            1, # season_type_id
+            0, # edition
+            force_missing_meeting_creation
+          ).result_row
+        end
+
+        if meeting_header_row
           @title        = meeting_header_row[:fields][:title]
           @organization = meeting_header_row[:fields][:organization]
           @notes        = (meeting_dates_text ? "#{meeting_dates_text}\r\n" : '') +
@@ -39,12 +73,17 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
                                                   # Search conditions:
       search do
         primary    [
-          "(header_date = ?) AND (season_id = ?) AND (code = ?)",
-          header_fields_dao.header_date, season.id, header_fields_dao.code_name
+          "(header_date = ?) AND (code = ?) AND (season_id = ?)",
+          header_fields_dao.header_date, header_fields_dao.code_name,
+          # The following check allows us to forcibly fail the primary search when
+          # there's a recognized secondary entity already:
+          ( @season.instance_of?(Season) ? @season.id : 0 )
         ]
         secondary  [
-          "(data_import_session_id = ?) AND (header_date = ?) AND (season_id = ?) AND (description = ?)",
-          data_import_session.id, header_fields_dao.header_date, season.id, @description
+          "(data_import_session_id = ?) AND (header_date = ?) AND (code = ?) AND " +
+          "(#{ @season.instance_of?(Season) ? '' : 'data_import_' }season_id = ?)",
+          data_import_session.id, header_fields_dao.header_date, header_fields_dao.code_name,
+          @season.id
         ]
         default_search
       end
@@ -69,15 +108,18 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
 #       relay_score_computation_type_id: 0,
 #       team_score_computation_type_id: 0,
         notes:                  @notes,
-        season_id:              season.id,
+        season_id:              @season.instance_of?(Season)           ? @season.id : nil,
+        data_import_season_id:  @season.instance_of?(DataImportSeason) ? @season.id : nil,
         user_id:                1 # (don't care)
       )
 
       if_not_found do
         if force_missing_meeting_creation
+# DEBUG
+          puts "Creating a new DataImportMeeting..."
           add_new
         else
-          raise "Matching Meeting NOT found but meeting creation is disabled!"
+          raise "Matching Meeting NOT found but meeting-data creation is disabled!"
         end
       end
     end

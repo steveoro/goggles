@@ -31,32 +31,25 @@ describe DataImportMeetingSessionBuilder, type: :integration do
     subject do
       DataImportMeetingSessionBuilder.build_from_parameters(
         data_import_session,
-        # Note that we have to use the minus sign to signal that
-        # the ID comes from a primary entity:
-        # TODO Change this whole behaviour using instances once the refactoring is complete
-        -meeting_session.meeting_id,
+        meeting_session.meeting,
+        matching_header_dao,
         meeting_dates_text,
         meeting_session.scheduled_date + 5.days,
-        matching_header_dao,
         true # force_missing_meeting_creation
       )
     end
 
-# FIXME revise all the things!
-# TODO Add check on DB change for all other data_import_XXX_builder_specs!
-# TODO Change stupid ID management with instance passing
-
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
-    it "creates a new secondary entity row" do
-      expect{ subject }.to change{ DataImportMeetingSession.count }.by(1)
-    end
-
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
+    end
+
+    it "creates a new secondary entity row" do
+      expect{ subject }.to change{ DataImportMeetingSession.count }.by(1)
     end
     describe "#result_row" do
       it "returns a data-import entity instance when the process is successful" do
@@ -79,10 +72,10 @@ describe DataImportMeetingSessionBuilder, type: :integration do
     subject do
       DataImportMeetingSessionBuilder.build_from_parameters(
         data_import_session,
-        0,
+        nil,
+        header_fields_dao,
         nil,
         Date.today,
-        header_fields_dao,
         true # force_missing_meeting_creation
       )
     end
@@ -90,14 +83,14 @@ describe DataImportMeetingSessionBuilder, type: :integration do
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
-    it "creates a new secondary entity row" do
-      expect{ subject }.to change{ DataImportMeetingSession.count }.by(1)
-    end
-
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
+    end
+
+    it "creates a new secondary entity row" do
+      expect{ subject }.to change{ DataImportMeetingSession.count }.by(1)
     end
     describe "#result_row" do
       it "returns a data-import entity instance when the process is successful" do
@@ -122,39 +115,36 @@ describe DataImportMeetingSessionBuilder, type: :integration do
 #      meeting_session = MeetingSession.all.sort{ rand() - 0.5 }[0]
       DataImportMeetingSessionBuilder.build_from_parameters(
         data_import_session,
-        # Note that we have to use the minus sign to signal that
-        # the ID comes from a primary entity:
-        # TODO Change this whole behaviour using instances once the refactoring is complete
-        -meeting_session.meeting_id,
+        meeting_session.meeting,
+        matching_header_dao,
         nil,
         meeting_session.scheduled_date,
-        matching_header_dao,
         false # force_missing_meeting_creation
       )
     end
 
-    xit "returns a DataImportEntityBuilder instance" do
+    it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
-    xit "does not create a new secondary entity row" do
-      expect{ subject }.not_to change{ DataImportMeetingSession.count }
-    end
-
     describe "#data_import_session" do
-      xit "is the DataImportSession specified for the build" do
+      it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+
+    it "does not create a new secondary entity row" do
+      expect{ subject }.not_to change{ DataImportMeetingSession.count }
+    end
     describe "#result_row" do
-      xit "returns the entity instance found when the primary search is successful" do
+      it "returns the entity instance found when the primary search is successful" do
         expect( subject.result_row ).to be_an_instance_of( MeetingSession )
       end
     end
     describe "#result_id" do
-      xit "returns a negative ID when the primary search is successful" do
+      it "returns a negative ID when the primary search is successful" do
         expect( subject.result_id ).to be < 0
       end
-      xit "is the ID of the resulting row, with a minus sign" do
+      it "is the ID of the resulting row, with a minus sign" do
         expect( subject.result_id ).to eq( -(subject.result_row.id) )
       end
     end

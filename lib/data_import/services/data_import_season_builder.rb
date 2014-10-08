@@ -17,28 +17,54 @@ require 'data_import/services/data_import_entity_builder'
 =end
 class DataImportSeasonBuilder < DataImportEntityBuilder
 
-  # Searches for an existing Season given the parameters, or it adds a new one, if not found.
+  # Searches for an existing Season given the parameters, or it adds a new one,
+  # when not found.
   #
-  # The <tt>header_date_text</tt> is the text token containing the date of the meeting
-  # results being parsed, from which the current season and its fields will be
-  # deduced, assuming the date falls into a common range of dates defining an academic
-  # year (from the start of September of the starting year, to the start of September of
-  # the ending year).
+  # == Parameters:
   #
-  # <tt>season_type_id</tt>, when not specified, is assumed to be ID=1 (code: 'MASFIN')
-  # <tt>edition</tt>, when not specified, is assumed to be 0.
+  # - <tt>header_date</tt> can either be the actual Date instance parsed from the
+  #   filename of the datafile, or the unparsed, source text token (from the filename)
+  #   containing the date of the meeting results being parsed.
+  #   This parameter will yield the values for the current season and its fields,
+  #   assuming the date falls into the most common range defining an academic year
+  #   (which is from the start of September for the starting year until the following
+  #    September of the next year).
   #
-  def self.build_from_parameters( data_import_session, header_date_text,
-                                  season_type_id = 1, edition = 0 )
+  # - <tt>season_type_id</tt>, when not specified, is assumed to be ID=1 (code: 'MASFIN')
+  #
+  # - <tt>edition</tt>, when not specified, is assumed to be 0.
+  #
+  # - <tt>force_missing_meeting_creation</tt>, false when not specified.
+  #
+  # Since Meetings data structure is deemed to be critical, the creation of any missing
+  # link in the meeting data structure can be toggled by the dedicated flag.
+  #
+  # When enabled, this implementation searches and/or recreates also any missing row
+  # up the season (included).
+  #
+  # === Basic Chain of existance:
+  #
+  #   Season
+  #     -> Meeting
+  #         -> MeetingSession (SwimmingPool)
+  #             -> MeetingEvent
+  #                 -> MeetingProgram
+  #                     -> MeetingIndividualResult (Team, Swimmer, Badge)
+  #                     -> MeetingRelayResult (Team)
+  #         -> MeetingTeamScore (Team)
+  #
+  def self.build_from_parameters( data_import_session, header_date,
+                                  season_type_id = 1, edition = 0,
+                                  force_missing_meeting_creation = false )
 # DEBUG
-#    puts "\r\nSeason, build_from_parameters: #{header_date_text}, season_type: #{season_type_id}, edition: #{edition}"
+    puts "\r\nSeason, build_from_parameters: #{header_date}, season_type: #{season_type_id}, edition: #{edition}"
     self.build( data_import_session ) do
       entity            Season
 
       set_up do                                   # Set the fields:
-        header_date     = Date.parse( header_date_text )
+        @header_date    = header_date.kind_of?(Date) ?
+                          header_date : ( header_date.instance_of?(String) ? Date.parse( header_date ) : Date.today )
         @description    = I18n.t( 'admin_import.missing_data_warning' )
-        @header_date    = header_date.kind_of?( Date ) ? header_date : Date.today
         year            = @header_date.month < 9 ? @header_date.year - 1 : @header_date.year
         # FIXME This is an approximation, it should include most of the seasons:
         @begin_date     = "#{year}-09-01" # Date.parse( "#{year}-09-01" )
@@ -72,9 +98,13 @@ class DataImportSeasonBuilder < DataImportEntityBuilder
       )
 
       if_not_found do
+        if force_missing_meeting_creation
 # DEBUG
-#        puts "Creating a new DataImportSeason..."
-        add_new
+          puts "Creating a new DataImportSeason..."
+          add_new
+        else
+          raise "Matching Season NOT found but meeting-data creation is disabled!"
+        end
       end
     end
   end

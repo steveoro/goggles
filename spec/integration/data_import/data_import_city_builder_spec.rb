@@ -32,6 +32,10 @@ describe DataImportCityBuilder, type: :integration do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+
+    it "does not create a new secondary entity row" do
+      expect{ subject }.not_to change{ DataImportCity.count }
+    end
     describe "#result_row" do
       it "returns a primary entity instance when the process is successful" do
         expect( subject.result_row ).to be_an_instance_of( City )
@@ -64,6 +68,10 @@ describe DataImportCityBuilder, type: :integration do
       it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
+    end
+
+    it "creates a new secondary entity row" do
+      expect{ subject }.to change{ DataImportCity.count }.by(1)
     end
     describe "#result_row" do
       it "returns a secondary entity instance when the process is successful" do

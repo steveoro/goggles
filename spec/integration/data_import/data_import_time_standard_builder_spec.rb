@@ -37,6 +37,11 @@ describe DataImportTimeStandardBuilder, type: :integration do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+
+    it "creates a new primary entity row" do
+      expect{ subject }.to change{ TimeStandard.count }.by(1)
+    end
+
     describe "#result_row" do
       it "returns the newly created entity instance" do
         expect( subject.result_row ).to be_an_instance_of( TimeStandard )
@@ -81,6 +86,12 @@ describe DataImportTimeStandardBuilder, type: :integration do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+
+    it "does not create any additional primary entity rows" do
+      # 1 is from the calling factory create
+      expect{ subject }.to change{ TimeStandard.count }.by(1)
+    end
+
     describe "#result_row" do
       it "returns the entity instance found when the primary search is successful" do
         expect( subject.result_row ).to be_an_instance_of( TimeStandard )
