@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140909161617) do
+ActiveRecord::Schema.define(:version => 20141009084432) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -245,6 +245,20 @@ ActiveRecord::Schema.define(:version => 20140909161617) do
 
   add_index "comments", ["comment_id"], :name => "fk_comments_comments"
   add_index "comments", ["swimming_pool_review_id"], :name => "fk_comments_swimming_pool_reviews"
+
+  create_table "computed_season_ranking", :force => true do |t|
+    t.integer  "lock_version",                                :default => 0
+    t.datetime "created_at",                                                   :null => false
+    t.datetime "updated_at",                                                   :null => false
+    t.integer  "ranking",                                     :default => 0,   :null => false
+    t.decimal  "total_points", :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.integer  "team_id"
+    t.integer  "season_id"
+  end
+
+  add_index "computed_season_ranking", ["season_id", "ranking"], :name => "rankings_x_season"
+  add_index "computed_season_ranking", ["season_id", "team_id"], :name => "teams_x_season"
+  add_index "computed_season_ranking", ["team_id"], :name => "fk_computed_season_rankings_teams"
 
   create_table "data_import_badges", :force => true do |t|
     t.integer  "lock_version",                         :default => 0

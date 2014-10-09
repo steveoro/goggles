@@ -27,10 +27,13 @@ describe Team, :type => :model do
         :meetings,
         :seasons,
         :meeting_relay_results,
+        :meeting_team_scores,
         :team_affiliations,
         :seasons,
         :season_types,
-        :goggle_cups
+        :team_managers,
+        :goggle_cups,
+        :computed_season_ranking
       ],
       ActiveRecord::Base
     )    

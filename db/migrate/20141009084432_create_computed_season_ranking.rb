@@ -8,11 +8,11 @@ class CreateComputedSeasonRanking < ActiveRecord::Migration
     # 
     # N.B. Maybe in a future should be updatated runtime for current seasons too
     #
-    create_table :computed_season_ranking do |t|
+    create_table :computed_season_rankings do |t|
       t.integer :lock_version, :default => 0
       t.timestamps
 
-      t.integer :ranking, :limit => 4, :null => false, :default => 0
+      t.integer :rank, :limit => 4, :null => false, :default => 0
       t.decimal :total_points, :precision => 10, :scale => 2, :default => 0.0, :null => false
 
       # Always validated at insertion:
@@ -20,18 +20,18 @@ class CreateComputedSeasonRanking < ActiveRecord::Migration
       t.references :season
     end
 
-    add_index :computed_season_ranking, [:season_id, :ranking], name: 'rankings_x_season'
-    add_index :computed_season_ranking, [:season_id, :team_id], name: 'teams_x_season'
+    add_index :computed_season_rankings, [:season_id, :ranking], name: 'rankings_x_season'
+    add_index :computed_season_rankings, [:season_id, :team_id], name: 'teams_x_season'
 
     # Add the foreing keys to enforce the associations:
     execute <<-SQL
-      ALTER TABLE computed_season_ranking
+      ALTER TABLE computed_season_rankings
         ADD CONSTRAINT fk_computed_season_rankings_seasons
         FOREIGN KEY (season_id)
         REFERENCES seasons(id)
     SQL
     execute <<-SQL
-      ALTER TABLE computed_season_ranking
+      ALTER TABLE computed_season_rankings
         ADD CONSTRAINT fk_computed_season_rankings_teams
         FOREIGN KEY (team_id)
         REFERENCES teams(id)

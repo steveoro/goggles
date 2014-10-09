@@ -34,9 +34,20 @@ describe Season, :type => :model do
 
     it "is a valid istance" do
       expect( subject ).to be_valid
-      expect( subject.season_type ).to be_a( SeasonType )
-      expect( subject.federation_type ).to be_a( FederationType )
     end
+    # Validated relations:
+    it_behaves_like( "(belongs_to required models)", [
+      :season_type,
+      :timing_type,
+      :edition_type
+    ])
+    # Filtering scopes:
+    it_behaves_like( "(the existance of a class method)", [
+      :sort_season_by_begin_date,
+      :sort_season_by_season_type,
+      :sort_season_by_user
+    ])
+
     it "has a method to return full description of the season" do
       expect( subject ).to respond_to( :get_full_name )
     end
@@ -136,11 +147,7 @@ describe Season, :type => :model do
     # --------------------------------------------------------------------------
 
     context "[season result methods]" do
-      it "has a method to determine the season ranking"
-
-      it "has a method to determine the season team charts"
-
-      it "has a method to determine the season athlete charts"
+      xit "has a method to determine the season athlete charts"
     end
     # --------------------------------------------------------------------------
   end

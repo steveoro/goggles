@@ -28,6 +28,7 @@ FactoryGirl.define do
     end_date                  { Date.parse("#{ begin_date.year + 1 }-08-30") }
     header_year               { end_date.year }
     season_type               { SeasonType.all.to_a[ rand * 10 % 8 ] } # ASSERT: at least 8 season types
+    timing_type               { TimingType.all.to_a[ rand * 10 % 3 ] } # ASSERT: at least 3 timing types
   end
 
   factory :season do
@@ -46,4 +47,15 @@ FactoryGirl.define do
     federation_code           { (rand * 100).to_i.to_s }
     season
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  factory :computed_season_ranking do
+    season
+    team
+    rank                      { (((rand * 10) % 3).to_i + 1) }
+    total_points              { ((rand * 5000).to_i + 1) }
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
