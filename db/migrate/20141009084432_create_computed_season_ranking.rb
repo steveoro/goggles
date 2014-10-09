@@ -20,7 +20,7 @@ class CreateComputedSeasonRanking < ActiveRecord::Migration
       t.references :season
     end
 
-    add_index :computed_season_rankings, [:season_id, :ranking], name: 'rankings_x_season'
+    add_index :computed_season_rankings, [:season_id, :rank], name: 'rank_x_season'
     add_index :computed_season_rankings, [:season_id, :team_id], name: 'teams_x_season'
 
     # Add the foreing keys to enforce the associations:
