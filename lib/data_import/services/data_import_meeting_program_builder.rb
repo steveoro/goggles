@@ -148,10 +148,6 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 #        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
-      custom_logic do
-        if primary_search_ok?
-        end
-      end
 
       if_not_found do
 # DEBUG

@@ -5,15 +5,14 @@ require 'date'
 describe MeetingSession, :type => :model do
 
   context "[a non-valid instance]" do
-    it_behaves_like( "(missing required values)", [ 
+    it_behaves_like( "(missing required values)", [
       :description,
       :session_order,
       :scheduled_date
-    ])    
+    ])
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   shared_examples_for( "date/time formatter method" ) do |method_name, member_name_sym, format_reg_expr, text_msg_for_not_available|
     describe "##{method_name}" do
@@ -51,20 +50,27 @@ describe MeetingSession, :type => :model do
   end
   #-- -------------------------------------------------------------------------
   #++
+  let(:meeting_session) { create( :meeting_session ) }
+
 
   context "[a well formed instance]" do
-    subject { create( :meeting_session_with_rows ) }
+    before(:each) do
+      create_list( :meeting_event, 5, meeting_session: meeting_session )
+    end
+
+    subject { meeting_session }
+
 
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
     # Validated relations:
-    it_behaves_like( "(belongs_to required models)", [ 
+    it_behaves_like( "(belongs_to required models)", [
       :meeting
-    ])    
+    ])
 
     describe "[general methods]" do
-      it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)", [
         :get_short_name,
         :get_full_name,
         :get_verbose_name,
@@ -80,7 +86,7 @@ describe MeetingSession, :type => :model do
         :get_short_events
       ])
 
-      it_behaves_like( "(the existance of a method returning numeric values)", [ 
+      it_behaves_like( "(the existance of a method returning numeric values)", [
         :get_pool_length_in_meters,
         :get_pool_lanes_number
       ])
@@ -108,8 +114,8 @@ describe MeetingSession, :type => :model do
           expect( subject.get_short_name ).to include( subject.get_short_events )
         end
       end
-  
-  
+
+
       describe "#get_full_name" do
         it "returns a String instance" do
           expect( subject.get_full_name ).to be_an_instance_of( String )

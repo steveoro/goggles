@@ -3,11 +3,11 @@ require 'spec_helper'
 
 
 describe Timing, :type => :model do
-  let(:fix1_hundreds)  { (rand * 100).to_i }
-  let(:fix1_secs)      { (rand * 60).to_i }
-  let(:fix1_mins)      { (rand * 60).to_i }
-  let(:fix1_hours)     { (rand * 24).to_i }
-  let(:fix1_days)      { (rand * 3).to_i }
+  let(:fix1_hundreds)  { (rand * 100).to_i % 100 }
+  let(:fix1_secs)      { (rand * 60).to_i % 60 }
+  let(:fix1_mins)      { (rand * 60).to_i % 60 }
+  let(:fix1_hours)     { (rand * 24).to_i % 24 }
+  let(:fix1_days)      { (rand * 3).to_i % 3 }
 
   shared_examples_for "(a new Timing with all members at 0)" do
     it "returns a Timing object" do
@@ -176,8 +176,8 @@ describe Timing, :type => :model do
       expect( subject ).to be_an_instance_of( String )
     end
     it "includes the value of its most significant and non-zero members" do
-      expect( subject ).to include( fix1_hundreds.to_s )
-      expect( subject ).to include( fix1_secs.to_s )
+      expect( subject ).to include( fix1_hundreds.to_s ) if fix1_hundreds.to_i > 0
+      expect( subject ).to include( fix1_secs.to_s ) if fix1_secs.to_i > 0
       expect( subject ).to include( fix1_mins.to_s ) if fix1_mins.to_i > 0
       expect( subject ).to include( fix1_hours.to_s ) if fix1_hours.to_i > 0
     end

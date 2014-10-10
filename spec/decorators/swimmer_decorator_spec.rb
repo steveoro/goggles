@@ -332,14 +332,10 @@ describe SwimmerDecorator do
 
 
   describe "#get_personal_best" do
-    #before.each do
-    #  @fix_events_for_pool_type = EventsByPoolType.find( 11 )  # Force 50FA, 25 meters
-    #  create(:meeting_event_with_programs, event_type_id: @fix_events_for_pool_type.event_type_id)
-    #end
     it_behaves_like( "(the existance of a method with parameter returning a valid instance or nil)",
       :get_personal_best,
       MeetingIndividualResult,
-      EventsByPoolType.find(11)
+      EventsByPoolType.find(11)                           # Force 50FA, 25 meters
     )
 
     context "the swimmer swam the event type in the pool type" do
