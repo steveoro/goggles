@@ -10,6 +10,9 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
+  # Existing or matching fixture params:
+  let(:meeting_program)       { create( :meeting_program ) }
+
   # Non-existing (totally random) fixture params. Rebuild a plausible event & program
   # starting from the meeting session:
   let(:meeting_session)       { create( :meeting_session ) }
@@ -54,11 +57,9 @@ describe DataImportMeetingProgramBuilder, type: :integration do
   let(:header_index)          { (rand * 50).to_i }
   # This is just used to compute the esteemed heat number:
   let(:detail_rows_size)      { (rand * 40).to_i }
-
-  # Existing or matching fixture params:
-  let(:meeting_program)       { create( :meeting_program ) }
   #-- -------------------------------------------------------------------------
   #++
+
 
   context "after a self.build() with NO matching MeetingProgram (and NO MeetingEvent)," do
     subject do
@@ -83,6 +84,10 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
     it "creates a new secondary entity row" do
       expect{ subject }.to change{ DataImportMeetingProgram.count }.by(1)
+    end
+    it "does not create a new primary entity row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.not_to change{ MeetingProgram.count }
     end
     describe "#result_row" do
       it "returns a data-import entity instance when the process is successful" do
