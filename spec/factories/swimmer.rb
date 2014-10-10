@@ -14,6 +14,19 @@ FactoryGirl.define do
   end
   # ---------------------------------------------------------------------------
 
+
+  factory :data_import_swimmer do
+    data_import_session
+    conflicting_id        nil
+    first_name                { Faker::Name.first_name }
+    last_name                 { Faker::Name.last_name }
+    gender_type_id            { (rand * 100).to_i.even? ? GenderType::FEMALE_ID : GenderType::MALE_ID }
+    year_of_birth             { 18.year.ago.year - ((rand * 100) % 60).to_i } # was Date.today.year -
+    complete_name             { "#{last_name} #{first_name}" }
+    import_text               { "#{year_of_birth} #{complete_name}" }
+  end
+
+
   factory :swimmer do
     first_name                { Faker::Name.first_name }
     last_name                 { Faker::Name.last_name }
@@ -23,11 +36,11 @@ FactoryGirl.define do
     fake_phone_numbers
     e_mail                    { Faker::Internet.email }
     nickname                  { Faker::Internet.user_name  }
-    
+
     factory :swimmer_with_results do
       after(:create) do |created_instance, evaluator|
         meeting_individual_result = create_list(
-          :meeting_individual_result_with_passages,  
+          :meeting_individual_result_with_passages,
           ((rand * 10).to_i + 2),                   # total number of results
           swimmer: created_instance                 # association enforce for each sub-row
         )
@@ -35,6 +48,7 @@ FactoryGirl.define do
     end
   end
   # ---------------------------------------------------------------------------
+
 
   factory :team do
     name                      { "#{city.name} swimming club ASD" }
@@ -58,14 +72,28 @@ FactoryGirl.define do
     end
   end
 
+
+  factory :data_import_badge do
+    data_import_session
+    random_badge_code
+    import_text               { number }
+    team
+    swimmer
+    season
+    entry_time_type           { EntryTimeType.all.sort{ rand - 0.5 }[0] }
+    category_type             { create(:category_type, season: season) }
+    user
+  end
+
+
   factory :badge do
     random_badge_code
     team
     swimmer
     season_id                 { team_affiliation.season_id }
     team_affiliation
-    entry_time_type_id        { ((rand * 10) % 5).to_i + 1} # ASSERT: at least 5 entry time types
-    category_type_id          { swimmer.get_category_type_for_season( season_id ).id }
+    entry_time_type           { EntryTimeType.all.sort{ rand - 0.5 }[0] }
+    category_type             { swimmer.get_category_type_for_season( season_id ) }
     user
   end
 

@@ -5,7 +5,6 @@ require 'ffaker'
 FactoryGirl.define do
   factory :data_import_season do
     data_import_session
-
     conflicting_id            nil
     import_text               { Faker::Lorem.paragraph[0..200] }
 

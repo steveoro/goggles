@@ -44,6 +44,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
       entity  MeetingIndividualResult
 
       set_up do
+        # TODO builder for swimmer
+        # TODO builder for badge
       end
 
 

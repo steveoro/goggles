@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'data_import/strategies/city_comparator'
+require 'data_import/services/data_import_entity_builder'
 
 
 =begin
