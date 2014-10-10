@@ -78,12 +78,12 @@ describe ChampionshipRankingCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
 
     describe "#save_computed_season_rank" do
-      before :each do
-        # Calcolation of season ranking needed
-        subject.get_season_ranking
+      it "returns true on no-errors found for not yet computed ranking" do
+        expect( subject.save_computed_season_rank ).to be true
+        expect( subject.save_computed_season_rank( 2 ) ).to be true
       end
-      
-      it "returns true on no-errors found" do
+      it "returns true on no-errors found for ranking already computed" do
+        subject.get_season_ranking
         expect( subject.save_computed_season_rank ).to be true
         expect( subject.save_computed_season_rank( 2 ) ).to be true
       end
@@ -93,6 +93,9 @@ describe ChampionshipRankingCalculator, type: :strategy do
       it "doesn't increase the table size when persisting existing records" do
         subject.save_computed_season_rank  # make sure the record already persist
         expect{ subject.save_computed_season_rank }.not_to change{ ComputedSeasonRanking.count }
+      end
+      it "returns true on no-errors even if not enough ranked teams" do
+        expect( subject.save_computed_season_rank( 5689 ) ).to be true
       end
     end
     #-- -------------------------------------------------------------------------

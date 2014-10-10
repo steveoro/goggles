@@ -56,6 +56,13 @@ class ChampionshipRankingCalculator
   def save_computed_season_rank( rank_position = 3 )
     persisted_ok = 0
 
+    # If scroes not computed, compute
+    get_season_ranking if not @championship_ranking
+    
+    # If ranked teams less than rank_position, adeguates rank_position
+    max_ranked = @championship_ranking.team_scores.count
+    rank_position = max_ranked if rank_position > max_ranked 
+
     @championship_ranking.team_scores.each_with_index do |team_score,index|
       is_ok = false
       rank = index + 1
