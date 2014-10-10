@@ -83,7 +83,7 @@ FactoryGirl.define do
           meeting_session.swimming_pool.pool_type.code
       ){ rand - 0.5 }[0].event_type_id
     end
-    heat_type_id              { HeatType.all.sort{ rand - 0.5 }[0] }
+    heat_type                 { HeatType.all.sort{ rand - 0.5 }[0] }
     user
   end
 
