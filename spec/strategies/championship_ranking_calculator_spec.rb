@@ -2,18 +2,24 @@ require 'spec_helper'
 
 
 describe ChampionshipRankingCalculator, type: :strategy do
-  before :each do
-    # Data forced from seeds
-    @fix_season  = Season.find(131)
+  let( :fix_season )  { Season.find(131) }     # Data forced from seeds
+
+  subject { ChampionshipRankingCalculator.new( fix_season ) }
+
+  context "[implemented methods]" do
+    it_behaves_like( "(the existance of a method)",
+      [
+        :get_involved_teams,
+        :get_involved_meetings,
+        :get_columns,
+        :get_season_ranking,
+        :save_computed_season_rank
+      ]
+    )
   end
 
   context "with requested parameters" do
-    subject { ChampionshipRankingCalculator.new( @fix_season ) }
-
     describe "#get_involved_teams," do
-      it "responds to get_involved_teams method" do
-        expect(subject).to respond_to(:get_involved_teams)
-      end
       it "returns a relation" do
         expect( subject.get_involved_teams ).to be_a_kind_of( ActiveRecord::Relation )
       end
@@ -27,9 +33,6 @@ describe ChampionshipRankingCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
 
     describe "#get_involved_meetings," do
-      it "responds to get_involved_meetings method" do
-        expect(subject).to respond_to(:get_involved_meetings)
-      end
       it "returns an enumerable" do
         expect( subject.get_involved_meetings ).to be_a_kind_of( ActiveRecord::Relation )
       end
@@ -43,9 +46,6 @@ describe ChampionshipRankingCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
 
     describe "#get_columns," do
-      it "responds to get_columns method" do
-        expect(subject).to respond_to(:get_columns)
-      end
       it "returns an enumerable" do
         expect( subject.get_columns ).to be_a_kind_of( Array )
       end
@@ -53,9 +53,6 @@ describe ChampionshipRankingCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
 
     describe "#get_season_ranking," do
-      it "responds to get_season_ranking method" do
-        expect(subject).to respond_to(:get_season_ranking)
-      end
       it "returns a ChampionshipDAO" do
         expect( subject.get_season_ranking ).to be_an_instance_of( ChampionshipDAO )
       end
@@ -79,6 +76,27 @@ describe ChampionshipRankingCalculator, type: :strategy do
       end
     end
     #-- -----------------------------------------------------------------------
+
+    describe "#save_computed_season_rank" do
+      before :each do
+        # Calcolation of season ranking needed
+        subject.get_season_ranking
+      end
+      
+      it "returns true on no-errors found" do
+        expect( subject.save_computed_season_rank ).to be true
+        expect( subject.save_computed_season_rank( 2 ) ).to be true
+      end
+      it "increases the table size when persisting non existing records" do
+        expect{ subject.save_computed_season_rank }.to change{ ComputedSeasonRanking.count }
+      end
+      it "doesn't increase the table size when persisting existing records" do
+        subject.save_computed_season_rank  # make sure the record already persist
+        expect{ subject.save_computed_season_rank }.not_to change{ ComputedSeasonRanking.count }
+      end
+    end
+    #-- -------------------------------------------------------------------------
+    #++
   end
   #-- -------------------------------------------------------------------------
   #++

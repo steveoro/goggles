@@ -46,7 +46,53 @@ class ChampionshipRankingCalculator
   end
   #-- --------------------------------------------------------------------------
   #++
-  
+
+  # Saves/persists the season ranking first postions
+  # Returns true on no errors
+  #
+  # Parameters
+  # rank_position => Number of rank positions to save (default first 3)
+  #
+  def save_computed_season_rank( rank_position = 3 )
+    persisted_ok = 0
+
+    @championship_ranking.team_scores.each_with_index do |team_score,index|
+      is_ok = false
+      rank = index + 1
+
+      # Verify if data already exist
+      if ComputedSeasonRanking.where(
+        season_id: @season.id,
+        rank: rank
+      ).count > 0           
+        # Search existing data row for update
+        computed_season_ranking = ComputedSeasonRanking.where(
+          season_id: @season.id,
+          rank: rank
+        ).first
+        is_ok = computed_season_ranking.update_attributes(
+          team_id: team_score.team.id,
+          total_points: team_score.total_points
+        )
+      else
+        # Create new data row
+        computed_season_ranking = ComputedSeasonRanking.new(
+          season_id: @season.id,
+          team_id: team_score.team.id,
+          rank: rank,
+          total_points: team_score.total_points
+        )
+        is_ok = computed_season_ranking.save
+      end
+      persisted_ok += 1 if is_ok
+      break if rank == rank_position
+    end
+    
+    (rank_position == persisted_ok)
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
 
   private
 
@@ -78,7 +124,7 @@ class ChampionshipRankingCalculator
 
   # Retrieves the teams points for season meetings 
   #
-  def retreive_season_points
+  def retrieve_season_points
     @season.meeting_team_scores.has_season_points.select('team_id, meeting_id, season_team_points, season_individual_points, season_relay_points')
   end
 
@@ -102,7 +148,7 @@ class ChampionshipRankingCalculator
   # meeting => Meeting to collect scores for the team
   # columns => Array of columns to collect
   #
-  def retreive_meeting_team_points(team, meeting, columns)
+  def retrieve_meeting_team_points(team, meeting, columns)
     meeting.meeting_team_scores.for_team(team).select(columns).first
   end
 
@@ -136,7 +182,7 @@ class ChampionshipRankingCalculator
       team_score = ChampionshipDAO::TeamScoreDAO.new(team)
       @involved_meetings.each do |meeting|
         # TODO Should perform a unique read from DB and cycle on data red
-        meeting_team_points = retreive_meeting_team_points(team, meeting, @columns)
+        meeting_team_points = retrieve_meeting_team_points(team, meeting, @columns)
         team_score.add_meeting( meeting_team_points, @columns )
       end
       team_scores << team_score 
