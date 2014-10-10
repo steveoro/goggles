@@ -74,14 +74,22 @@ FactoryGirl.define do
   #-- -------------------------------------------------------------------------
   #++
 
-  factory :meeting_event do
+  trait :meeting_event_random do
     event_order               { ((rand * 100) % 15).to_i + 1 }
     meeting_session
-    # The following 2 columns use the pre-loaded seed records:
-    #event_type_id             { ((rand * 100) % 18).to_i + 1 } # ASSERT: at least 18 event types
-    event_type_id             { EventsByPoolType.only_for_meetings.not_relays.for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).to_a[ rand * 16 ].event_type_id }
-    heat_type_id              { ((rand * 100) % 3).to_i + 1 }  # ASSERT: at least 3 heat types
+    event_type_id do                                # This will include also relays
+      EventsByPoolType.only_for_meetings
+        .for_pool_type_code(
+          meeting_session.swimming_pool.pool_type.code
+      ){ rand - 0.5 }[0].event_type_id
+    end
+    heat_type_id              { HeatType.all.sort{ rand - 0.5 }[0] }
     user
+  end
+
+
+  factory :meeting_event do
+    meeting_event_random
 
     factory :meeting_event_with_programs do
       after(:create) do |created_instance, evaluator|
@@ -109,9 +117,12 @@ FactoryGirl.define do
   factory :meeting_program do
     event_order               { ((rand * 100) % 25).to_i + 1 }
     meeting_event
-    # The following 2 columns use the pre-loaded seed records:
-    category_type_id          { ((rand * 100) % 20).to_i + 1 } # ASSERT: at least 20 category types
-    gender_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
+    category_type do                                # Get a coherent category according to the meeting_event:
+      meeting_event.event_type.is_a_relay ?
+      CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] :
+      CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+    end
+    gender_type_id            { ((rand * 10) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
     pool_type_id              { meeting_event.meeting_session.swimming_pool.pool_type_id }
     user
 

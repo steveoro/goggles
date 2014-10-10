@@ -10,13 +10,23 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
-  # Non-existing (totally random) fixture params:
+  # Non-existing (totally random) fixture params. Rebuild a plausible event & program
+  # starting from the meeting session:
   let(:meeting_session)       { create( :meeting_session ) }
   let(:season)                { meeting_session.meeting.season }
-  let(:gender_type)           { GenderType.all.sort{ rand - 0.5 }[0] }
-  let(:category_type)         { CategoryType.all.sort{ rand - 0.5 }[0] }
-  let(:stroke_type)           { StrokeType.all.sort{ rand - 0.5 }[0] }
-  let(:event_type)            { EventType.all.sort{ rand - 0.5 }[0] }
+  let(:gender_type)           { GenderType.find( 1 + (rand * 10).to_i % 2 ) }
+  let(:event_type) do
+    EventsByPoolType.only_for_meetings
+    .for_pool_type_code(
+      meeting_session.swimming_pool.pool_type.code
+    ){ rand - 0.5 }[0].event_type
+  end
+  let(:category_type) do
+    event_type.is_a_relay ?
+    CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] :
+    CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+  end
+  let(:stroke_type)           { event_type.stroke_type }
   let(:length_in_meters)      { event_type.length_in_meters }
   let(:time_standard) do
     create(
@@ -27,17 +37,15 @@ describe DataImportMeetingProgramBuilder, type: :integration do
       event_type_id:    event_type.id
     )
   end
-  # NOTE:
-  # header_row[:fields] => [ :distance, :style, :gender, :category_group, :base_time ]
   let(:header_row) do
     {
-      import_text: "#{Faker::Lorem.word} meeting - organized by #{Faker::Lorem.word} team",
+      import_text: Faker::Lorem.paragraph,
       fields: {
-        distance: length_in_meters.to_s,
-        style: stroke_type.code,
-        gender: gender_type.code,
+        distance:       length_in_meters.to_s,
+        style:          stroke_type.code,
+        gender:         gender_type.code,
         category_group: category_type.code,
-        base_time: "%2d'%02d\"%02d" % [time_standard.minutes, time_standard.seconds, time_standard.hundreds]
+        base_time:      "%2d'%02d\"%02d" % [time_standard.minutes, time_standard.seconds, time_standard.hundreds]
       }
     }
   end
@@ -48,10 +56,11 @@ describe DataImportMeetingProgramBuilder, type: :integration do
   let(:detail_rows_size)      { (rand * 40).to_i }
 
   # Existing or matching fixture params:
+  let(:meeting_program)       { create( :meeting_program ) }
   #-- -------------------------------------------------------------------------
   #++
 
-  context "after a self.build() with NO matching MeetingProgram (but existing MeetingEvent)," do
+  context "after a self.build() with NO matching MeetingProgram (and NO MeetingEvent)," do
     subject do
       DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
@@ -63,29 +72,85 @@ describe DataImportMeetingProgramBuilder, type: :integration do
       )
     end
 
-    xit "returns a DataImportEntityBuilder instance" do
+    it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
     describe "#data_import_session" do
-      xit "is the DataImportSession specified for the build" do
+      it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
 
-    xit "creates a new secondary entity row" do
+    it "creates a new secondary entity row" do
       expect{ subject }.to change{ DataImportMeetingProgram.count }.by(1)
     end
     describe "#result_row" do
-      xit "returns a data-import entity instance when the process is successful" do
+      it "returns a data-import entity instance when the process is successful" do
         expect( subject.result_row ).to be_an_instance_of( DataImportMeetingProgram )
       end
     end
     describe "#result_id" do
-      xit "returns a positive ID when the resulting row is a data-import entity" do
+      it "returns a positive ID when the resulting row is a data-import entity" do
         expect( subject.result_id ).to be > 0
       end
-      xit "is the ID of the resulting row" do
+      it "is the ID of the resulting row" do
         expect( subject.result_id ).to eq( subject.result_row.id )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "after a self.build() with a matching MeetingProgram (and its MeetingEvent)," do
+    subject do
+      DataImportMeetingProgramBuilder.build_from_parameters(
+        data_import_session,
+        meeting_program.season,
+        meeting_program.meeting_session,
+        # base_time is the only one parsed inside the method:
+        { fields: { base_time: meeting_program.time_standard ? meeting_program.time_standard.get_timing : '' } },
+        header_index,   # rand
+        meeting_program.gender_type,
+        meeting_program.category_type,
+        meeting_program.stroke_type,
+        meeting_program.event_type.length_in_meters,
+        meeting_program.meeting_session.scheduled_date,
+        detail_rows_size # rand
+      )
+    end
+
+    it "returns a DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    end
+    describe "#data_import_session" do
+      it "is the DataImportSession specified for the build" do
+        expect( subject.data_import_session ).to eq( data_import_session )
+      end
+    end
+
+    it "doesn't create any additional primary entity row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ MeetingProgram.count }.by(1)
+    end
+    it "doesn't create a new secondary entity row" do
+      expect{ subject }.not_to change{ DataImportMeetingProgram.count }
+    end
+    it "doesn't create any additional MeetingEvent row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ MeetingEvent.count }.by(1)
+    end
+
+    describe "#result_row" do
+      it "returns a primary entity instance when the process is successful" do
+        expect( subject.result_row ).to be_an_instance_of( MeetingProgram )
+      end
+    end
+    describe "#result_id" do
+      it "returns a negative ID when the resulting row is a primary entity" do
+        expect( subject.result_id ).to be < 0
+      end
+      it "is the ID of the resulting row (with a minus sign)" do
+        expect( subject.result_id ).to eq( -subject.result_row.id )
       end
     end
   end

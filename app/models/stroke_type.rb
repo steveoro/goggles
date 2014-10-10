@@ -1,24 +1,37 @@
+# encoding: utf-8
+
+=begin
+
+= StrokeType model
+
+  - version:  4.00.555
+  - author:   Steve A.
+
+=end
 class StrokeType < ActiveRecord::Base
+
+  # Unique ID used inside the DB to address the Freestyle (Crawl) StrokeType instance
+  FREESTYLE_ID    = 1
+
+  # Unique ID used inside the DB to address the Butterfly StrokeType instance
+  BUTTERFLY_ID    = 2
+
+  # Unique ID used inside the DB to address the Backstroke StrokeType instance
+  BACKSTROKE_ID   = 3
+
+  # Unique ID used inside the DB to address the Breaststroke StrokeType instance
+  BREASTSTROKE_ID = 4
+
+  # Unique ID used inside the DB to address the Mixed StrokeType instance
+  MIXED_ID        = 5
 
   validates_presence_of   :code
   validates_length_of     :code, within: 1..2, allow_nil: false
   validates_uniqueness_of :code, message: :already_exists
 
+  attr_accessible :code
 
-  # Unique ID used inside the DB to address the Freestyle (Crawl) StrokeType instance 
-  FREESTYLE_ID    = 1
-
-  # Unique ID used inside the DB to address the Butterfly StrokeType instance 
-  BUTTERFLY_ID    = 2
-
-  # Unique ID used inside the DB to address the Backstroke StrokeType instance 
-  BACKSTROKE_ID   = 3
-
-  # Unique ID used inside the DB to address the Breaststroke StrokeType instance 
-  BREASTSTROKE_ID = 4
-
-  # Unique ID used inside the DB to address the Mixed StrokeType instance 
-  MIXED_ID        = 5
+  scope :is_eventable,         where(is_eventable: true)
   # ----------------------------------------------------------------------------
 
 
