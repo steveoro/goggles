@@ -64,34 +64,27 @@ class ChampionshipRankingCalculator
     rank_position = max_ranked if rank_position > max_ranked 
 
     @championship_ranking.team_scores.each_with_index do |team_score,index|
-      is_ok = false
       rank = index + 1
 
-      # Verify if data already exist
-      if ComputedSeasonRanking.where(
+      # Search existing data row for update
+      computed_season_ranking = ComputedSeasonRanking.where(
         season_id: @season.id,
         rank: rank
-      ).count > 0           
-        # Search existing data row for update
-        computed_season_ranking = ComputedSeasonRanking.where(
-          season_id: @season.id,
-          rank: rank
-        ).first
-        is_ok = computed_season_ranking.update_attributes(
-          team_id: team_score.team.id,
-          total_points: team_score.total_points
-        )
-      else
+      ).first
+      
+      # Verify if data already exist
+      if not computed_season_ranking
         # Create new data row
         computed_season_ranking = ComputedSeasonRanking.new(
           season_id: @season.id,
-          team_id: team_score.team.id,
-          rank: rank,
-          total_points: team_score.total_points
+          team_id: team_score.team.id
         )
-        is_ok = computed_season_ranking.save
       end
-      persisted_ok += 1 if is_ok
+      
+      # Save calculated attributes
+      computed_season_ranking.rank         = rank
+      computed_season_ranking.total_points = team_score.total_points
+      persisted_ok += 1 if computed_season_ranking.save
       break if rank == rank_position
     end
     
@@ -123,7 +116,17 @@ class ChampionshipRankingCalculator
   #
   def retrieve_columns
     # TODO determinate columns depending on season formulas and/or details
-    [:season_individual_points, :season_relay_points]
+    #[:season_individual_points, :season_relay_points]
+    
+    # To find significant columns, for now, consider columns
+    # which have at least one score
+    # Cycle between three season point columns
+    # to check if score is stored
+    columns = []
+    [:season_individual_points, :season_relay_points, :season_team_points].each do |column|
+      columns << column if @season.meeting_team_scores.where("#{column} > 0").count > 0
+    end
+    columns
   end
   #-- --------------------------------------------------------------------------
   #++
