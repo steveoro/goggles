@@ -3,7 +3,6 @@ require 'ffaker'
 
 FactoryGirl.define do
 
-
   trait :random_city do
     name                    { Faker::Address.city }
     zip                     { Faker::AddressFR.postal_code }
@@ -15,13 +14,14 @@ FactoryGirl.define do
 
   factory :city do
     random_city
-
-    factory :data_import_city do
-      data_import_session
-      conflicting_id        nil
-      import_text           { Faker::Lorem.paragraph[0..100] }
-    end
   end
-  # ---------------------------------------------------------------------------
 
+  factory :data_import_city do
+    data_import_session
+    conflicting_id        nil
+    import_text           { Faker::Lorem.paragraph[0..100] }
+    random_city
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

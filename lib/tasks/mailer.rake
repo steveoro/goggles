@@ -4,7 +4,7 @@
 
 = Mailer Helper tasks
 
-  - Goggles framework vers.:  4.00.539
+  - Goggles framework vers.:  4.00.559
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -67,10 +67,13 @@ DESC
 
       # Second, remove from the list all users that have at least an unread newsfeed row
       # (we don't care what type of newsfeed it is, we just want to process all
-      # the users that do not have any notification and for whose we can generate one):
+      # the users that do not have any pending notification and for whose we can generate one).
+      # This will give us a list of all the users that do NOT have any pending newsfeed:
       users_with_pending_friendships.select! do |user|
-        NewsFeed.unread.where( user_id: user.id ).count == 0
+        NewsFeed.unread.where( user_id: user.id ).count == 0  # Keep only users WITHOUT unread (pending) newsfeed
       end
+      # (If a user has a pending newsfeed, it will be treated more below)
+
       # Force locale for NewsFeed generation to 'it-IT'
       I18n.locale = :it
       # Avoid duplication:
@@ -81,6 +84,7 @@ DESC
       users_with_pending_friendships.each_with_index do |user, index|
         puts "Adding missing NewsFeed row for #{user}, (users #{index+1}/#{users_with_pending_friendships.size}..."
         user.pending_invited_by.each do |swimming_buddy|
+          puts "==> #{user}, buddy: #{swimming_buddy}... (#{I18n.t('newsfeed.invite_title')})"
           NewsFeed.create_social_feed(
             user.id,
             swimming_buddy.id,

@@ -1524,6 +1524,7 @@ module FinResultPhase2
     return 0 if team_name.nil? || team_name.size < 2
     result_id = 0
     not_found = true
+    @city_comparator ||= CityComparator.new
                                                     # --- SEARCH for any existing/conflicting rows (DO NOT create forcibly one each time)
 # DEBUG
     logger.debug( "Seeking TeamAffiliation '#{team_name}'..." )
@@ -1651,7 +1652,7 @@ module FinResultPhase2
     if not_found                                    # --- FIELD SETUP: Extract field values before the search:
       city_id = search_or_add_a_corresponding_city(
         session_id,
-        CityComparator.guess_city_from_team_name( team_name )
+        @city_comparator.search_from_composed_name( team_name )
       )
       begin                                         # --- BEGIN transaction ---
 # DEBUG
