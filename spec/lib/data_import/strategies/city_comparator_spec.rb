@@ -51,44 +51,39 @@ describe CityComparator, type: :strategy do
     # Since subject is already a class, we just need to use this shared existance example
     # instead of the "(the existance of a class method)":
     it_behaves_like( "(the existance of a method)", [
-      :guess_city_from_team_name,
       :get_token_array_from_city_member_name,
       :compare_city_member_strings, :seems_the_same
     ] )
     #-- -----------------------------------------------------------------------
     #++
 
+    context "instance methods" do
+      subject { CityComparator.new }
 
-    describe "#known_cities" do
-      it "is the list of all known (primary entity) cities" do
-        comparator = CityComparator.new
-        expect( comparator.known_cities.count ).to eq(City.count)
-      end
-    end
-
-    describe "#known_data_import_cities" do
-      it "is the list of all known (secondary entity, data-import) cities" do
-        comparator = CityComparator.new
-        expect( comparator.known_data_import_cities.count ).to eq(DataImportCity.count)
-      end
-    end
-    #-- -----------------------------------------------------------------------
-    #++
-
-
-    describe "self.guess_city_from_team_name()" do
-      it "returns a comma-separated string list with a matching City and Area name when successful" do
-        # Test some examples with possible false-positives:
-        team_names.each_with_index do |team_name, index|
-          result = subject.guess_city_from_team_name( team_name )
-          expect( result ).to be_an_instance_of( String )
-          expect( result.split(',').size ).to be >= 2
-          expect( result ).to eq( city_from_team_expectations[index] )
+      describe "#search_composed_name" do
+        it "returns a City instance when a match is found" do
+          ambiguous_city = create( :city, name: "Port" )
+          primary_team_names = ( create_list( :city, 15 ) << ambiguous_city )
+            .map{ |city| "#{city.name} Swimming Club United" }
+          primary_team_names.each do |team_name|
+# DEBUG
+#            puts "Searching '#{team_name}'"
+            expect( subject.search_composed_name(team_name) ).to be_an_instance_of(City)
+          end
         end
-      end
-      it "returns an empty string when not successful" do
-        result = subject.guess_city_from_team_name( 'Fake Team ASD' )
-        expect( result ).to eq('')
+
+        [
+          "Reggio Emilia Nuoto ASD", "Castelnovo Monti Team Club",
+          "Parma Club 91", "Modena Nuoto", "CSI Correggio",
+          "Scuola Nuoto Carpi"
+        ].each do |team_name|
+          it "returns a City instance when a match is found among existing seeds (team: '#{team_name}')" do
+            expect( subject.search_composed_name(team_name) ).to be_an_instance_of(City)
+          end
+        end
+        it "returns nil when no matches are found" do
+          expect( subject.search_composed_name( "#{Faker::Address.city} Team") ).to be nil
+        end
       end
     end
     #-- -----------------------------------------------------------------------
