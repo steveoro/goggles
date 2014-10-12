@@ -49,6 +49,9 @@ describe ChampionshipRankingCalculator, type: :strategy do
       it "returns an enumerable" do
         expect( subject.get_columns ).to be_a_kind_of( Array )
       end
+      it "return 3 columns in 2011-2012 CSI" do
+        expect( ChampionshipRankingCalculator.new( Season.find(111) ).get_columns.count ).to be_equal(3)
+      end
     end
     #-- -----------------------------------------------------------------------
 
