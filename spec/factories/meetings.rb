@@ -63,17 +63,37 @@ FactoryGirl.define do
   #-- -------------------------------------------------------------------------
   #++
 
-  factory :meeting_program do
+  trait :common_meeting_program_fields do
     event_order               { ((rand * 100) % 25).to_i + 1 }
+    gender_type_id            { ((rand * 10) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
+    user
+  end
+
+
+  factory :meeting_program do
+    common_meeting_program_fields
     meeting_event
     category_type do                                # Get a coherent category according to the meeting_event:
       meeting_event.event_type.is_a_relay ?
       CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] :
       CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
     end
-    gender_type_id            { ((rand * 10) % 2).to_i + 1 }  # ASSERT: at least 2 gender types
-    pool_type_id              { meeting_event.meeting_session.swimming_pool.pool_type_id }
-    user
+    pool_type                 { meeting_event.meeting_session.swimming_pool.pool_type }
+
+    # This should yield only valid MeetingProgram rows, for individual results (not relays):
+    factory :meeting_program_individual do
+      pool_type               { PoolType.only_for_meetings{ rand - 0.5 }[0] }
+      meeting_event do
+        create(
+          :meeting_event,
+          meeting_session: create(:meeting_session),
+          event_type: EventsByPoolType.only_for_meetings
+            .for_pool_type_code( pool_type.code ){ rand - 0.5 }[0]
+            .event_type
+        )
+      end
+      category_type           { CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0] }
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

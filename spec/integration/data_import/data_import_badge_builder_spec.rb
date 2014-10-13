@@ -13,8 +13,7 @@ describe DataImportBadgeBuilder, type: :integration do
   let(:badge)                 { create( :badge ) }
   let(:data_import_badge)     { create( :data_import_badge, data_import_session: data_import_session ) }
 
-  # Non-existing (totally random) fixture params. Rebuild a plausible event & program
-  # starting from the meeting session:
+  # Non-existing (totally random) fixture params:
   let(:season)                { create( :season ) }
   let(:team)                  { create( :team ) }
   let(:swimmer)               { create( :swimmer ) }
@@ -22,6 +21,27 @@ describe DataImportBadgeBuilder, type: :integration do
   let(:entry_time_type)       { EntryTimeType.all.sort{ rand - 0.5 }[0] }
 
   let(:badge_code)            { 8.times.map{ (rand * 10).to_i }.join }
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  context "after a self.build() with invalid parameters," do
+    subject do
+      DataImportBadgeBuilder.build_from_parameters(
+        data_import_session,
+        nil,
+        season,
+        team,
+        swimmer,
+        category_type,
+        entry_time_type
+      )
+    end
+
+    it "returns nil" do
+      expect( subject ).to be nil
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
