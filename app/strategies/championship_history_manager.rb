@@ -10,7 +10,11 @@ class ChampionshipHistoryManager
 
   # Initialization
   #
-  def initialize
+  # == Params:
+  # An instance of season_type
+  #
+  def initialize( season_type )
+    @season_type = season_type
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -23,6 +27,14 @@ class ChampionshipHistoryManager
   #-- --------------------------------------------------------------------------
   #++
   
+  # Get closed seasons
+  # 
+  def get_season_ranking_history
+    @seasons_ranking_history ||= retrieve_season_ranking_history
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
 
   private
 
@@ -31,9 +43,29 @@ class ChampionshipHistoryManager
   # TODO Decide where a season is closed. Should be different from season end date
   #      Has to indicate where season championship is over. 
   #      Maybe should store closed championship final ranking in a delegate structure
+  # TODO Make it a scope of season
   #
   def retrieve_closed_seasons
-    Season.where(['end_date < ?', Date.today]).sort_season_by_begin_date('DESC')
+    @season_type.seasons.where(['end_date < ?', Date.today]).sort_season_by_begin_date('DESC')
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+  
+  # Retrieves closed season ranking history
+  # and stores in an array of hashes
+  # with season and ranking keys
+  #
+  def retrieve_season_ranking_history
+    seasons_ranking_history = []
+    get_closed_seasons if not @closed_seasons
+    
+    @closed_seasons.each do |season|
+      season_ranking_history = Hash.new
+      season_ranking_history[:season] = season
+      season_ranking_history[:ranking] = season.computed_season_ranking
+      seasons_ranking_history << season_ranking_history 
+    end
+    seasons_ranking_history 
   end
   #-- --------------------------------------------------------------------------
   #++
