@@ -17,9 +17,9 @@
         - closed_season[:ranking].each do |computed_season_ranking|
           %tr
             %td.goggles-rightalign
-              computed_season_ranking.rank
+              = computed_season_ranking.rank
             %td
-              computed_season_ranking.team.decorate.get_linked_name
+              = computed_season_ranking.team.decorate.get_linked_name
             %td.goggles-rightalign
-              computed_season_ranking.total_points
+              = computed_season_ranking.total_points
   
