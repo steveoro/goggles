@@ -81,7 +81,8 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_supermaster_fin_path()
       lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_regional_er_csi_path()
       lev2_nav.item( :key_separator2_0,                  content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item :key_championships_history,          t('championships.history'), championships_history_path()
+      lev2_nav.item :key_championships_history_regional_er_csi, t('championships.history_regiona_er_csi'), championships_history_regional_er_csi_path()
+      lev2_nav.item :key_championships_history_supermaster_fin, t('championships.history_supermaster_fin'), championships_history_supermaster_fin_path()
     end
 
     primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|

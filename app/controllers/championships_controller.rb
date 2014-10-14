@@ -37,9 +37,29 @@ class ChampionshipsController < ApplicationController
   #++
 
   # Past seasons championships ranking data display manager
+  # for CSI regional ER championships (closed seasons)
   #
-  def history
-    @title = I18n.t('championships.history_title')    
+  def history_regional_er_csi
+    current_season_type = SeasonType.find_by_code('MASCSI')
+    
+    @title = I18n.t('championships.history_title') + ' ' + current_season_type.get_full_name     
+
+    championship_history_manager = ChampionshipHistoryManager.new( current_season_type )
+    @championship_history_manager = championship_history_manager.get_season_ranking_history 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Past seasons championships ranking data display manager
+  # for FIN supermaster championships (closed seasons)
+  #
+  def history_supermaster_fin
+    current_season_type = SeasonType.find_by_code('MASFIN')
+    
+    @title = I18n.t('championships.history_title') + ' ' + current_season_type.get_full_name     
+
+    #championship_history_manager = ChampionshipHistoryManager.new( current_season_type )
+    #@championship_history_manager = championship_history_manager.get_season_ranking_history 
   end
   #-- -------------------------------------------------------------------------
   #++

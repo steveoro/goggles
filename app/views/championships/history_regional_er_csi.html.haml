@@ -1,0 +1,25 @@
+= render( partial: 'title' )
+
+.row-fluid#regional_er_csi
+  .goggles-category-gap#pageTop
+
+  - @championship_history_manager.each do |closed_season|
+    %h2= closed_season[:season].get_full_name
+    %table.table.table-striped.table-bordered.table-hover.table-condensed#closed_season.id
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-rightalign
+            %b= I18n.t('championships.position')
+          %td
+            %b= I18n.t('championships.team')
+          %td.goggles-rightalign
+            %b= I18n.t('championships.total_points')
+        - closed_season[:ranking].each do |computed_season_ranking|
+          %tr
+            %td.goggles-rightalign
+              computed_season_ranking.rank
+            %td
+              computed_season_ranking.team.decorate.get_linked_name
+            %td.goggles-rightalign
+              computed_season_ranking.total_points
+  

@@ -27,10 +27,13 @@ class ChampionshipHistoryManager
   #-- --------------------------------------------------------------------------
   #++
   
-  # Get closed seasons
+  # Get stored ranking for the given sesason
+  #
+  # Parameters
+  # rank_position => Number of rank positions to save (default first 3)
   # 
-  def get_season_ranking_history
-    @seasons_ranking_history ||= retrieve_season_ranking_history
+  def get_season_ranking_history( rank_position = 3 )
+    @seasons_ranking_history ||= retrieve_season_ranking_history(rank_position)
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -55,14 +58,17 @@ class ChampionshipHistoryManager
   # and stores in an array of hashes
   # with season and ranking keys
   #
-  def retrieve_season_ranking_history
+  # Parameters
+  # rank_position => Number of rank positions to save
+  #
+  def retrieve_season_ranking_history( rank_position )
     seasons_ranking_history = []
     get_closed_seasons if not @closed_seasons
     
     @closed_seasons.each do |season|
       season_ranking_history = Hash.new
       season_ranking_history[:season] = season
-      season_ranking_history[:ranking] = season.computed_season_ranking
+      season_ranking_history[:ranking] = season.computed_season_ranking.includes(:team).sort_by_rank.limit(rank_position)
       seasons_ranking_history << season_ranking_history 
     end
     seasons_ranking_history 

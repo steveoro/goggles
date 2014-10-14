@@ -152,7 +152,8 @@ Goggles::Application.routes.draw do
       # === Championships ===
       get  "championships/supermaster_fin",     to: "championships#supermaster_fin",    as: "championships_supermaster_fin"
       get  "championships/regional_er_csi",     to: "championships#regional_er_csi",    as: "championships_regional_er_csi"
-      get  "championships/history",             to: "championships#history",            as: "championships_history"
+      get  "championships/history_regional_er_csi", to: "championships#history_regional_er_csi", as: "championships_history_regional_er_csi"
+      get  "championships/history_supermaster_fin", to: "championships#history_supermaster_fin", as: "championships_history_supermaster_fin"
 
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do
