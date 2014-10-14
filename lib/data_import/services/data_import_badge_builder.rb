@@ -20,7 +20,8 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
   # if no matches are found.
   #
   # == Returns
-  #   #result_id as:
+  # +nil+ in case of invalid parameters
+  # #result_id as:
   #     - positive (#id) for a freshly added row into DataImportBadge;
   #     - negative (- #id) for a matching existing or commited row in Badge;
   #     - 0 on error/unable to process.

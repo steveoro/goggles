@@ -26,10 +26,10 @@ class DataImportTeamBuilder < DataImportEntityBuilder
     self.build( data_import_session ) do
       entity              TeamAffiliation
       entity_for_creation DataImportTeam
-                                                  # 1) Search TeamAffiliation + DataImportTeam:
+                                                  # 1) Default search: TeamAffiliation + DataImportTeam:
       search do
-        primary     [ "(name LIKE ?)", team_name+'%' ]
-        secondary   [ "(data_import_session_id = ?) AND (name LIKE ?)", data_import_session.id, team_name+'%' ]
+        primary     [ "(season_id = ?) AND (name LIKE ?)", season.id, "#{team_name}%" ]
+        secondary   [ "(data_import_session_id = ?) AND (name LIKE ?)", data_import_session.id, "#{team_name}%" ]
         default_search
         entity      Team                          # reset primary entity after the search
         if primary_search_ok? # Force result to be a Team instance when it is found
@@ -39,7 +39,9 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         end
       end
                                                   # 2) Search for a team alias:
-      if_not_found  { search_for( DataImportTeamAlias, name: team_name ) }
+      if_not_found  do
+        search_for( DataImportTeamAlias, name: team_name )
+      end
 
       if_not_found do                             # 3) Do a single-shot, "best-match" fuzzy search:
         matcher     = FuzzyStringMatcher.new( Team.all, :name, :editable_name )
@@ -55,21 +57,26 @@ class DataImportTeamBuilder < DataImportEntityBuilder
       custom_logic do
         if primary_search_ok?
           actual_team_result = @result_row
-          search_for( TeamAffiliation, team_id: -@result_id, season_id: season.id )
-
-          if_not_found do
-            entity_for_creation TeamAffiliation
-            attributes_for_creation(
-              name:                       team_name, # Use the actual provided (and searched) name instead of the result_row.name
-              team_id:                    -@result_id,
-              season_id:                  season.id,
-              is_autofilled:              true, # signal that we have guessed some of the values
-              must_calculate_goggle_cup:  false,
-              user_id:                    1 # (don't care)
-              # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
-            )
-            add_new                       # this will reset the result_row, so we restore it by hand
-          end
+# DEBUG
+#          puts "actual_team_result: #{actual_team_result.inspect}"
+          # It should never happen that: (Team missing && TeamAffiliation found).
+          # In that case, we would have to search again for an existing TeamAffiliation
+          #  to make sure that the add_new below does not create duplicates. Like this:
+          #
+          #    search_for( TeamAffiliation, team_id: actual_team_result.id, season_id: season.id )
+          #
+          # ...And wrap the add_new below in a if_not_found block.
+          entity_for_creation TeamAffiliation
+          attributes_for_creation(
+            name:                       team_name,  # Use the actual provided (and searched) name instead of the result_row.name
+            team_id:                    actual_team_result.id,
+            season_id:                  season.id,
+            is_autofilled:              true,       # signal that we have guessed some of the values
+            must_calculate_goggle_cup:  false,
+            user_id:                    1           # (don't care)
+            # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
+          )
+          add_new                                   # this will reset the result_row, so we restore it by hand
           set_result actual_team_result
         end
       end
@@ -78,13 +85,12 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         if force_missing_team_creation              # Guess city name & setup fields:
           city_builder = DataImportCityBuilder.build_from_parameters( data_import_session, team_name )
           entity_for_creation DataImportTeam
-
           attributes_for_creation(
             data_import_session_id: data_import_session.id,
             import_text:            team_name,
             name:                   team_name,
-            city_id:                city_builder.result_id.to_i < 0 ? -city_builder.result_id : nil,
-            data_import_city_id:    city_builder.result_id.to_i < 0 ? nil : city_builder.result_id,
+            city_id:                city_builder.result_row.instance_of?(City)           ? city_builder.result_row.id : nil,
+            data_import_city_id:    city_builder.result_row.instance_of?(DataImportCity) ? city_builder.result_row.id : nil,
             user_id:                1 # (don't care)
           )
           add_new

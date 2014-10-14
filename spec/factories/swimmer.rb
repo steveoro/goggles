@@ -50,13 +50,24 @@ FactoryGirl.define do
   # ---------------------------------------------------------------------------
 
 
+  factory :data_import_team do
+    data_import_session
+    city
+    name                      { "#{city.name} Swimming Club ASD" }
+    import_text               { name }
+    data_import_city          nil
+    badge_number              nil
+    user
+  end
+
+
   factory :team do
-    name                      { "#{city.name} swimming club ASD" }
+    city
+    name                      { "#{city.name} Swimming Club ASD" }
     editable_name             { name }
     address                   { Faker::Address.street_address }
     fake_phone_numbers
     e_mail                    { Faker::Internet.email }
-    city
     user
 
     factory :team_with_badges do
@@ -65,37 +76,40 @@ FactoryGirl.define do
         create_list(
           :badge,
           ((rand * 10).to_i + 2),                   # total number of results
-          team: created_instance,                   # association enforce for each sub-row
+          team:             created_instance,       # association enforce for each sub-row
           team_affiliation: affiliation
         )
       end
     end
   end
+  # ---------------------------------------------------------------------------
+
+
+  trait :badge_common_fields do
+    random_badge_code
+    team
+    swimmer
+    entry_time_type           { EntryTimeType.all.sort{ rand - 0.5 }[0] }
+    user
+  end
 
 
   factory :data_import_badge do
     data_import_session
-    random_badge_code
-    import_text               { number }
-    team
-    swimmer
+    badge_common_fields
     season
-    entry_time_type           { EntryTimeType.all.sort{ rand - 0.5 }[0] }
     category_type             { create(:category_type, season: season) }
-    user
+    import_text               { number }
   end
 
 
   factory :badge do
-    random_badge_code
-    team
-    swimmer
     season_id                 { team_affiliation.season_id }
+    badge_common_fields
     team_affiliation
-    entry_time_type           { EntryTimeType.all.sort{ rand - 0.5 }[0] }
     category_type             { swimmer.get_category_type_for_season( season_id ) }
-    user
   end
+
 
   factory :team_affiliation do
     name                      { team.name }
@@ -104,5 +118,5 @@ FactoryGirl.define do
     season_id                 131  # FIXME Randomize season
     user
   end
-
+  # ---------------------------------------------------------------------------
 end
