@@ -70,6 +70,43 @@ FactoryGirl.define do
   end
 
 
+  factory :data_import_meeting_program do
+    data_import_session
+    conflicting_id            nil
+    import_text               { Faker::Lorem.paragraph[0..250] }
+    common_meeting_program_fields
+    data_import_meeting_session_id nil
+    meeting_session
+    event_type do
+      EventsByPoolType.only_for_meetings
+        .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
+        .event_type
+    end
+    category_type do                                # Get a coherent category according to the meeting_event:
+      event_type.is_a_relay ?
+      CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] :
+      CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+    end
+    minutes                   { ((rand * 2) % 2).to_i }
+    seconds                   { ((rand * 60) % 60).to_i }
+    hundreds                  { ((rand * 100) % 100).to_i }
+    is_out_of_race            false
+    heat_type_id              HeatType::FINALS_ID
+
+    factory :data_import_meeting_program_individual do
+      event_type do
+        EventsByPoolType.only_for_meetings
+          .not_relays
+          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
+          .event_type
+      end
+      category_type do                              # Get a coherent category according to the meeting_event:
+        CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+      end
+    end
+  end
+
+
   factory :meeting_program do
     common_meeting_program_fields
     meeting_event
@@ -88,6 +125,7 @@ FactoryGirl.define do
           :meeting_event,
           meeting_session: create(:meeting_session),
           event_type: EventsByPoolType.only_for_meetings
+            .not_relays
             .for_pool_type_code( pool_type.code ){ rand - 0.5 }[0]
             .event_type
         )
@@ -98,8 +136,8 @@ FactoryGirl.define do
   #-- -------------------------------------------------------------------------
   #++
 
-  factory :meeting_individual_result do
-    meeting_program
+
+  trait :common_meeting_individual_result_fields do
     rank                      { ((rand * 100) % 25).to_i + 1 }
     standard_points           { (rand * 1000).to_i}
     meeting_individual_points { standard_points }
@@ -116,6 +154,29 @@ FactoryGirl.define do
     # The following column uses the pre-loaded seed records:
     disqualification_code_type_id { ((rand * 100) % 60).to_i + 1 }
     user
+  end
+
+
+  factory :data_import_meeting_individual_result do
+    data_import_session
+    conflicting_id            nil
+    import_text               { Faker::Lorem.paragraph[0..250] }
+    common_meeting_individual_result_fields
+    association :data_import_meeting_program, factory: :data_import_meeting_program_individual
+    meeting_program_id        nil
+    data_import_swimmer_id    nil
+    data_import_team_id       nil
+    data_import_badge_id      nil
+    athlete_name              { swimmer.complete_name }
+    team_name                 { team.name }
+    athlete_badge_number      { badge.number }
+    year_of_birth             { swimmer.year_of_birth }
+  end
+
+
+  factory :meeting_individual_result do
+    association :meeting_program, factory: :meeting_program_individual
+    common_meeting_individual_result_fields
 
     factory :meeting_individual_result_with_passages do
       after(:create) do |created_instance, evaluator|
