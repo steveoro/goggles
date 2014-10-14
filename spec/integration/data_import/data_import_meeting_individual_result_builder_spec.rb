@@ -312,4 +312,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # TODO Test DataImportMeetingIndividualResultBuilder.fix_missing_rank for DataImportMeetingRelayResult
+
 end

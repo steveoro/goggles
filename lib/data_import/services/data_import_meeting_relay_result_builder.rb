@@ -4,15 +4,13 @@ require 'common/format'
 require 'data_import/strategies/result_time_parser'
 require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_team_builder'
-require 'data_import/services/data_import_swimmer_builder'
-require 'data_import/services/data_import_badge_builder'
 
 
 =begin
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.561
+  - Goggles framework vers.:  4.00.563
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -25,55 +23,77 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
   # if none are found.
   #
   # == Returns
-  #   #result_id as:
+  # +nil+ in case of invalid parameters
+  # #result_id as:
   #     - positive (#id) for a freshly added row into DataImportMeetingIndividualResult;
   #     - negative (- #id) for a matching existing or commited row in MeetingIndividualResult;
   #     - 0 on error/unable to process.
   #
   # @raise ArgumentError unless <tt>season</tt> and <tt>meeting_program</tt> are both not-nil.
-  # @raise ArgumentError unless <tt>gender_type</tt> is a valid GenderType.
-  # @raise ArgumentError unless <tt>category_type</tt> is a valid CategoryType.
   #
   def self.build_from_parameters( data_import_session, season, meeting_program,
                                   detail_row, detail_row_idx, detail_rows_size,
-                                  gender_type, category_type,
                                   force_missing_team_creation = false )
-    raise ArgumentError.new("Both season and meeting_program must be not nil!")          if season.nil? || meeting_program.nil?
-    raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
-    raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
+    raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting_program.nil?
 # DEBUG
-#    puts "\r\n\r\nMRR - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
-#    puts "#{meeting_program.inspect}"
+    puts "\r\n\r\nMRR - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
+    puts "#{meeting_program.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingRelayResult
 
       set_up do
-        # TODO
+        @import_text = detail_row[:import_text]
+        rank         = detail_row[:fields][:result_position]
+        @team_name   = detail_row[:fields][:team_name]
+        result_time  = detail_row[:fields][:result_time]
+        result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
+        team_builder = DataImportTeamBuilder.build_from_parameters(
+           data_import_session,
+           @team_name,
+           season,
+           force_missing_team_creation
+        ) if @team_name
+        @team = team_builder.result_row if @team_name && team_builder
+        unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
+#          @phase_1_log << "\r\DataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
+#          logger.error( "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)" )
+#          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
+          set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
+        end
+        result_parser      = ResultTimeParser.new( rank, result_time ).parse
+        @is_play_off       = true
+        @is_out_of_race    = result_parser.is_out_of_race?
+        @is_disqualified   = result_parser.is_disqualified?
+        @dsq_code_type_id  = result_parser.disqualification_code_type_id
+        @mins, @secs, @hds = result_parser.mins_secs_hds_array
+        @standard_points   = result_score
+        @meeting_points    = result_score
+        @rank              = rank.to_i              # Note that 'Fuori gara'.to_i = 0
       end
 
 
       search do
 # DEBUG
         puts( "Seeking existing MeetingRelayResult..." )
-        # TODO
         primary     [
-          # "(meeting_program_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
-          # ( meeting_program.instance_of?(MeetingProgram) ? meeting_program.id : 0 ),
-          # ( @swimmer.instance_of?(Swimmer)               ? @swimmer.id        : 0 ),
-          # ( @team.instance_of?(Team)                     ? @team.id           : 0 )
+          "(meeting_program_id = ?) AND (team_id = ?) AND (rank = ?) AND " +
+          "(minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
+          ( meeting_program.instance_of?(MeetingProgram) ? meeting_program.id : 0 ),
+          ( @team.instance_of?(Team)                     ? @team.id           : 0 ),
+          @rank, @mins, @secs, @hds
         ]
         secondary   [
-          # "(data_import_session_id = ?) AND " +
-          # "(#{meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_'}meeting_program_id = ?) AND " +
-          # "(#{@swimmer.instance_of?(Swimmer)               ? '' : 'data_import_'}swimmer_id = ?) AND " +
-          # "(#{@team.instance_of?(Team)                     ? '' : 'data_import_'}team_id = ?)",
-          # data_import_session.id,
-          # meeting_program.id,
-          # @swimmer.id,
-          # @team.id
+          "(data_import_session_id = ?) AND " +
+          "(#{meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_'}meeting_program_id = ?) AND " +
+          "(#{@team.instance_of?(Team)                     ? '' : 'data_import_'}team_id = ?) AND " +
+          "(rank = ?) AND (minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
+          data_import_session.id,
+          meeting_program.id,
+          @team.id,
+          @rank, @mins, @secs, @hds
         ]
-#        default_search
+        default_search
 # DEBUG
         puts "primary_search_ok!" if primary_search_ok?
         puts "secondary_search_ok!" if secondary_search_ok?
@@ -82,21 +102,39 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
 
       if_not_found do
 # DEBUG
-        puts "Search failed: adding new MeetingRelayResult with: TODO..."
+        puts "Search failed: adding new MeetingRelayResult with: @team=#{@team.name}..."
+                                                    # Fix possible blank or missing ranking values:
+        @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+          DataImportMeetingRelayResult,
+          data_import_session,
+          meeting_program,
+          @standard_points
+        ) if ( @rank == 0 && @standard_points >= 0.0 && !@is_out_of_race )
+
         attributes_for_creation(
           data_import_session_id:         data_import_session.id,
           import_text:                    @import_text,
+          is_play_off:                    @is_play_off,
+          is_out_of_race:                 @is_out_of_race,
+          is_disqualified:                @is_disqualified,
+          disqualification_code_type_id:  @dsq_code_type_id,
+          standard_points:                @standard_points,
+          meeting_points:                 @meeting_points,
+          rank:                           @rank,
+          minutes:                        @mins,
+          seconds:                        @secs,
+          hundreds:                       @hds,
+          relay_header:                   @team_name,
+          # TODO FUTURE DEV:
+          reaction_time:                  0,
+#          entry_time_type_id:            nil,
           user_id:                        1, # (don't care)
-#          meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id  : nil,
-#          data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id  : nil,
-#          swimmer_id:                     @swimmer.instance_of?(Swimmer)                        ? @swimmer.id         : nil,
-#          data_import_swimmer_id:         @swimmer.instance_of?(DataImportSwimmer)              ? @swimmer.id         : nil,
-#          team_id:                        @team.instance_of?(Team)                              ? @team.id            : nil,
-#          data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id            : nil,
-#          badge_id:                       @badge.instance_of?(Badge)                            ? @badge.id           : nil,
-#          data_import_badge_id:           @badge.instance_of?(DataImportBadge)                  ? @badge.id           : nil
+          meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id  : nil,
+          data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id  : nil,
+          team_id:                        @team.instance_of?(Team)                              ? @team.id            : nil,
+          data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id            : nil
         )
-#        add_new
+        add_new
       end
     end
   end

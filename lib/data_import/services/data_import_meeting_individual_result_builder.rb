@@ -12,7 +12,7 @@ require 'data_import/services/data_import_badge_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.561
+  - Goggles framework vers.:  4.00.563
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -25,7 +25,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
   # if none are found.
   #
   # == Returns
-  #   #result_id as:
+  # +nil+ in case of invalid parameters
+  # #result_id as:
   #     - positive (#id) for a freshly added row into DataImportMeetingIndividualResult;
   #     - negative (- #id) for a matching existing or commited row in MeetingIndividualResult;
   #     - 0 on error/unable to process.
@@ -61,6 +62,12 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
            force_missing_team_creation
         ) if team_name
         @team = team_builder.result_row if team_name && team_builder
+        unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
+#          @phase_1_log << "\r\DataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
+#          logger.error( "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)" )
+#          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
+          set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
+        end
 
         swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
           data_import_session,
@@ -139,7 +146,10 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 #        puts "Search failed: adding new MeetingIndividualResult with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
                                                     # Fix possible blank or missing ranking values:
         @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
-          data_import_session, meeting_program, @standard_points
+          DataImportMeetingIndividualResult,
+          data_import_session,
+          meeting_program,
+          @standard_points
         ) if ( @rank.to_i == 0 && @standard_points >= 0.0 && !@is_out_of_race )
 
         attributes_for_creation(
@@ -184,15 +194,30 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
   # Checks for a missing or blank rank value and tries to fix it, either by searching
   # the previous individual result row (and assigning the current rank to previous+1),
   # or by using the total number of individual results found for the same program,
-  # in case no previous row was found.
+  # in case no previous rows were found.
   #
-  def self.fix_missing_rank( data_import_session, meeting_program, standard_points )
+  # === Parameters:
+  #
+  # - entity:
+  #   the entity containing the result, either a DataImportMeetingIndividualResult or
+  #   a DataImportRelayResult.
+  #
+  # - data_import_session:
+  #   the current data-import session instance.
+  #
+  # - meeting_program:
+  #   the MeetingProgram or DataImportMeetingProgram to which the results are referring to.
+  #
+  # - standard_points:
+  #   the parsed score of the result.
+  #
+  def self.fix_missing_rank( entity, data_import_session, meeting_program, standard_points )
 # DEBUG
-#    puts "Rank == 0 (relay results). Searching previous same-scored row to assign same rank..."
-#    logger.info( "Rank == 0 (relay results). Searching previous same-scored row to assign same rank..." )
-#    @phase_1_log << "Rank == 0 (relay results). Searching previous same-scored row to assign same rank...\r\n"
+#    puts "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank..."
+#    logger.info( "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank..." )
+#    @phase_1_log << "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank...\r\n"
     rank = 0
-    prev_row = DataImportMeetingIndividualResult.where( [
+    prev_row = entity.where( [
       "(data_import_session_id = ?) AND " +
       "(#{ meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_' }meeting_program_id = ?) AND " +
       "(standard_points = ?)",
@@ -202,7 +227,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
     if prev_row                                     # Assign same rank as "previous" row:
       rank = prev_row.rank
     else                                            # Assign rank as total existing rows + 1 in same category/context:
-      tot_rows = DataImportMeetingIndividualResult.where( [
+      tot_rows = entity.where( [
         "(data_import_session_id = ?) AND " +
         "(#{ meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_' }meeting_program_id = ?)",
         data_import_session.id, meeting_program.id

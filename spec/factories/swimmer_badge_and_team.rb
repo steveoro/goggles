@@ -115,7 +115,7 @@ FactoryGirl.define do
     name                      { team.name }
     random_badge_code
     team
-    season_id                 131  # FIXME Randomize season
+    season
     user
   end
   # ---------------------------------------------------------------------------

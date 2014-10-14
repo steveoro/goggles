@@ -7,13 +7,14 @@ class EventsByPoolType < ActiveRecord::Base
   belongs_to :event_type
   validates_presence_of :event_type                 # (must be not null)
   validates_associated :event_type                  # (foreign key integrity)
-  
+
   has_one :stroke_type, through: :event_type
 
-  delegate :code, :length_in_meters, :is_a_relay, :i18n_short, :i18n_description, :to => :event_type, :prefix => true 
-  delegate :code, :length_in_meters, :is_suitable_for_meetings, :i18n_description, :i18n_verbose, :to => :pool_type, :prefix => true 
-  delegate :code, :i18n_description, :to => :stroke_type, :prefix => true 
-  
+  delegate :code, :length_in_meters, :is_a_relay, :i18n_short, :i18n_description, :to => :event_type, :prefix => true
+  delegate :code, :length_in_meters, :is_suitable_for_meetings, :i18n_description, :i18n_verbose, :to => :pool_type, :prefix => true
+  delegate :code, :i18n_description, :to => :stroke_type, :prefix => true
+
+  scope :are_relays,         joins(:event_type).where('event_types.is_a_relay = true')
   scope :not_relays,         joins(:event_type).where('event_types.is_a_relay = false')
   scope :only_for_meetings,  joins(:pool_type).where('pool_types.is_suitable_for_meetings = true')
   scope :for_pool_type_code, ->(pool_type_code) { joins(:pool_type).where(['pool_types.code = ?', pool_type_code]) }
@@ -39,7 +40,7 @@ class EventsByPoolType < ActiveRecord::Base
   #
   def self.find_by_pool_and_event_codes( pool_type_code, event_type_code )
     result = EventsByPoolType.joins(:event_type, :pool_type).where( ['(pool_types.code = ?) AND (event_types.code = ?)', pool_type_code, event_type_code] )
-    result ? result.first : nil  
+    result ? result.first : nil
   end
 
   # Gets a key formed with event code and pool code
@@ -60,14 +61,14 @@ class EventsByPoolType < ActiveRecord::Base
   #
   def self.get_event_types_for_pool_type_by_code(pool_type_code)
     PoolType.find_by_code(pool_type_code).event_types
-  end 
-    
+  end
+
   # Return the pool types for a given event type code
   #
   def self.get_pool_types_for_event_type_by_code(event_type_code)
     EventType.find_by_code(event_type_code).pool_types
-  end 
-    
+  end
+
   # Leega TODO Implements that method correctly, if it's necessary
   # Return an hash with pool type id and all event types related
   #
@@ -80,5 +81,5 @@ class EventsByPoolType < ActiveRecord::Base
       events_by_pool_type_array[ pool_type.id ] = EventType.where( id: event_by_pool_type_ids )
     end
     events_by_pool_type_array
-  end 
+  end
 end
