@@ -104,18 +104,18 @@ FactoryGirl.define do
 
 
   factory :badge do
-    season_id                 { team_affiliation.season_id }
     badge_common_fields
-    team_affiliation
-    category_type             { swimmer.get_category_type_for_season( season_id ) }
+    team_affiliation          { create(:team_affiliation, team: team) }
+    season                    { team_affiliation.season }
+    category_type             { create(:category_type, season: season) }
   end
 
 
   factory :team_affiliation do
-    name                      { team.name }
-    random_badge_code
     team
     season
+    name                      { team.name }
+    random_badge_code
     user
   end
   # ---------------------------------------------------------------------------
