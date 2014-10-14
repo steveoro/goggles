@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 
-describe DataImportMeetingIndividualResult, :type => :model do
-  it_behaves_like "TimingGettable"
-
+describe DataImportSwimmer, :type => :model do
   # TODO
   # describe "[a non-valid instance]" do
     # it_behaves_like( "(missing required values)", [ :number ])
@@ -12,7 +10,7 @@ describe DataImportMeetingIndividualResult, :type => :model do
   #++
 
   context "[a well formed instance]" do
-    subject { create(:data_import_meeting_individual_result) }
+    subject { create(:data_import_swimmer) }
 
     it "is a valid istance" do
       expect( subject ).to be_valid

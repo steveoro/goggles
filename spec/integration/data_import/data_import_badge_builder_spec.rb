@@ -10,14 +10,24 @@ describe DataImportBadgeBuilder, type: :integration do
   let(:data_import_session)   { create( :data_import_session ) }
 
   # Existing or matching fixture params:
-  let(:badge)                 { create( :badge ) }
-  let(:data_import_badge)     { create( :data_import_badge, data_import_session: data_import_session ) }
+  let(:badge)                 { create( :badge, season: data_import_session.season ) }
+  let(:data_import_badge) do
+    create(
+      :data_import_badge,
+      data_import_session: data_import_session,
+      season: data_import_session.season
+    )
+  end
 
   # Non-existing (totally random) fixture params:
-  let(:season)                { create( :season ) }
   let(:team)                  { create( :team ) }
   let(:swimmer)               { create( :swimmer ) }
-  let(:category_type)         { create( :category_type ) }
+  let(:category_type) do
+    create(
+      :category_type,
+      season: data_import_session.season
+    )
+  end
   let(:entry_time_type)       { EntryTimeType.all.sort{ rand - 0.5 }[0] }
 
   let(:badge_code)            { 8.times.map{ (rand * 10).to_i }.join }
@@ -30,7 +40,7 @@ describe DataImportBadgeBuilder, type: :integration do
       DataImportBadgeBuilder.build_from_parameters(
         data_import_session,
         nil,
-        season,
+        data_import_session.season,
         team,
         swimmer,
         category_type,
@@ -51,7 +61,7 @@ describe DataImportBadgeBuilder, type: :integration do
       DataImportBadgeBuilder.build_from_parameters(
         data_import_session,
         badge_code,
-        season,
+        data_import_session.season,
         team,
         swimmer,
         category_type,

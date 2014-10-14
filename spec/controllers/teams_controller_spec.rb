@@ -122,7 +122,7 @@ describe TeamsController, :type => :controller do
 
     context "with an HTML request for a valid id and a logged-in user," do
       before :each do
-        @fixture = create( :team_with_badges )
+        @fixture = create( :team_affiliation_with_badges ).team
         # We need to set this to make the redirect_to(:back) passes the tests:
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
@@ -172,7 +172,7 @@ describe TeamsController, :type => :controller do
 
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have a current Goggle cup," do
       before :each do
-        @fixture = create( :team_with_badges )
+        @fixture = create( :team_affiliation_with_badges ).team
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup, id: @fixture.id
@@ -221,7 +221,7 @@ describe TeamsController, :type => :controller do
 
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have closed Goggle cup," do
       before :each do
-        @fixture = create( :team_with_badges )
+        @fixture = create( :team_affiliation_with_badges ).team
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup_all_of_fame, id: @fixture.id

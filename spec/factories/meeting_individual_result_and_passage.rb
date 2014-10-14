@@ -37,6 +37,12 @@ FactoryGirl.define do
     team_name                 { team.name }
     athlete_badge_number      { badge.number }
     year_of_birth             { swimmer.year_of_birth }
+
+    # Make the circular reference between the session and the
+    # season valid:
+    after(:create) do |created_instance, evaluator|
+      created_instance.data_import_session.season = created_instance.data_import_meeting_program.meeting_session.season
+    end
   end
 
 

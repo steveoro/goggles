@@ -12,6 +12,13 @@ describe MeetingProgram, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
+  it "has a valid factory for individual result" do
+    expect( create(:meeting_program_individual) ).to be_valid
+  end
+  it "has a valid factory for relay result" do
+    expect( create(:meeting_program_relay) ).to be_valid
+  end
+
   # This section is separated from the context below because really it's
   # more of a functional test instead of normal unit test.
   context "[a valid, pre-existing seeded domain]" do

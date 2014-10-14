@@ -97,6 +97,12 @@ FactoryGirl.define do
     is_out_of_race            false
     heat_type_id              HeatType::FINALS_ID
 
+    # Make the circular reference between the session and the
+    # season valid:
+    after(:create) do |created_instance, evaluator|
+      created_instance.data_import_session.season = created_instance.meeting_session.season
+    end
+
     factory :data_import_meeting_program_individual do
       event_type do
         EventsByPoolType.only_for_meetings

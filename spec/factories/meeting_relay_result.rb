@@ -11,7 +11,7 @@ FactoryGirl.define do
     is_disqualified           false
     standard_points           { (rand * 1000).to_i}
     meeting_points            { standard_points }
-    entry_minutes             { ((rand * 4) % 4).to_i }
+    minutes                   { ((rand * 4) % 4).to_i }
     seconds                   { ((rand * 60) % 60).to_i }
     hundreds                  { ((rand * 100) % 100).to_i }
     team
@@ -30,17 +30,23 @@ FactoryGirl.define do
     data_import_session
     conflicting_id            nil
     import_text               { Faker::Lorem.paragraph[0..250] }
-    common_meeting_individual_result_fields
+    common_meeting_relay_result_fields
     association :data_import_meeting_program, factory: :data_import_meeting_program_individual
     meeting_program_id        nil
     data_import_team_id       nil
     team_affiliation_id       nil # (If needed, this must be set externally to work: too much hierachy-tree dependency between needed entities)
+
+    # Make the circular reference between the session and the
+    # season valid:
+    after(:create) do |created_instance, evaluator|
+      created_instance.data_import_session.season = created_instance.data_import_meeting_program.meeting_session.season
+    end
   end
 
 
   factory :meeting_relay_result do
     association :meeting_program, factory: :meeting_program_individual
-    common_meeting_individual_result_fields
+    common_meeting_relay_result_fields
     team_affiliation_id       nil # (If needed, this must be set externally to work: too much hierachy-tree dependency between needed entities)
   end
   #-- -------------------------------------------------------------------------

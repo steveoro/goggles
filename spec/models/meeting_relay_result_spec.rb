@@ -6,6 +6,9 @@ describe MeetingRelayResult, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
-  # TODO factory
+  it "has a valid factory" do
+    expect( create(:meeting_relay_result) ).to be_valid
+  end
+
   # TODO same sections as MeetingIndividualResult spec
 end

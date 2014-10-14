@@ -69,18 +69,6 @@ FactoryGirl.define do
     fake_phone_numbers
     e_mail                    { Faker::Internet.email }
     user
-
-    factory :team_with_badges do
-      after(:create) do |created_instance, evaluator|
-        affiliation = create( :team_affiliation, team: created_instance, season_id: 131 )
-        create_list(
-          :badge,
-          ((rand * 10).to_i + 2),                   # total number of results
-          team:             created_instance,       # association enforce for each sub-row
-          team_affiliation: affiliation
-        )
-      end
-    end
   end
   # ---------------------------------------------------------------------------
 
@@ -117,6 +105,19 @@ FactoryGirl.define do
     name                      { team.name }
     random_badge_code
     user
+
+    factory :team_affiliation_with_badges do
+      after(:create) do |created_instance, evaluator|
+        create_list(
+          :badge,
+          ((rand * 10).to_i + 2),                   # total number of results
+          team:             created_instance.team,
+          team_affiliation: created_instance,
+          season:           created_instance.season,
+          category_type:    create(:category_type, season: created_instance.season)
+        )
+      end
+    end
   end
   # ---------------------------------------------------------------------------
 end
