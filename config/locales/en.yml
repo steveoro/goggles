@@ -752,10 +752,12 @@ en:
   maintenance_info: "The server is currently down for maintenance for data & site update, until {DATETIME} (hopefully; Italy time zone). Try again later! ;-)"
 
   championships:
+    championship: "Championship"
     title: "Championships"
     supermaster_fin: "FIN Supermaster"
     regional_er_csi: "CSI Regional Emilia Romagna"
     history: "History"
+    hall_of_fame: "Hall of fame"
     history_title: "Past championships history"
     position: "Pos."
     team: "Team"
@@ -770,3 +772,6 @@ en:
     females: "Fem"
     males: "Mal"
     relays: "Rel."
+    first_place: "First place"
+    second_place: "Second place"
+    third_place: "Third place"

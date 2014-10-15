@@ -752,9 +752,11 @@ it:
   maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (presumibilmente; ore italiane). Riprova piu' tardi! ;-)"
 
   championships:
+    championship: "Campionato"
     title: "Campionati"
     supermaster_fin: "FIN Supermaster"
     regional_er_csi: "CSI Regionale Emilia Romagna"
+    hall_of_fame: "Medagliere"
     history: "Storico"
     history_title: "Storico campionati conclusi"
     position: "Pos."
@@ -770,6 +772,9 @@ it:
     females: "Fem"
     males: "Mas"
     relays: "Staf."
+    first_place: "Primo posto"
+    second_place: "Secondo posto"
+    third_place: "Terzo posto"
 
   netzke:
     basepack:

@@ -3,23 +3,39 @@
 .row-fluid#regional_er_csi
   .goggles-category-gap#pageTop
 
-  - @championship_history_manager.each do |closed_season|
-    %h2= closed_season[:season].get_full_name
-    %table.table.table-striped.table-bordered.table-hover.table-condensed#closed_season.id
-      %tbody
-        %tr{'class'=>'info'}
-          %td.goggles-rightalign
-            %b= I18n.t('championships.position')
+  %h2= t('championships.history')
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#history
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= t('championships.championship')
+        %td.goggles-centeralign{ colspan: 2 }
+          %b= t('championships.first_place')
+        %td.goggles-centeralign{ colspan: 2 }
+          %b= t('championships.second_place')
+        %td.goggles-centeralign{ colspan: 2 }
+          %b= t('championships.third_place')
+      - @championship_history_manager.each do |closed_season|
+        %tr
           %td
-            %b= I18n.t('championships.team')
-          %td.goggles-rightalign
-            %b= I18n.t('championships.total_points')
-        - closed_season[:ranking].each do |computed_season_ranking|
-          %tr
-            %td.goggles-rightalign
-              = computed_season_ranking.rank
+            = closed_season[:season].header_year
+          - closed_season[:ranking].each do |computed_season_ranking|
             %td
               = computed_season_ranking.team.decorate.get_linked_name
             %td.goggles-rightalign
               = computed_season_ranking.total_points
-  
+
+.row-fluid#regional_er_csi
+  %h2= t('championships.hall_of_fame')
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#hall_of_fame
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= t('championships.team')
+        %td.goggles-rightalign
+          %b= t('championships.first_place')
+        %td.goggles-rightalign
+          %b= t('championships.second_place')
+        %td.goggles-rightalign
+          %b= t('championships.third_place')
+  .p= t('coming_soon')
