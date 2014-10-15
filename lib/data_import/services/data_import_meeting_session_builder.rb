@@ -43,7 +43,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
                                   scheduled_date,
                                   force_missing_meeting_creation = false )
 # DEBUG
-    puts "\r\nMeetingSession, build_from_parameters: meeting ID=#{meeting.instance_of?(Meeting) ? meeting.id : meeting.inspect}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao.inspect}"
+    puts "\r\nMeetingSession, build_from_parameters: meeting=#{meeting.inspect}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao.inspect}"
     self.build( data_import_session ) do
       entity  MeetingSession
 

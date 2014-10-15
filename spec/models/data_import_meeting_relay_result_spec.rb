@@ -17,6 +17,12 @@ describe DataImportMeetingRelayResult, :type => :model do
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
+    it "refers to a relay result" do
+      # Since the factory above assigns only data_import_meeting_program, we
+      # don't have much to choose:
+      expect( subject.data_import_meeting_program.event_type.is_a_relay ).to be true
+    end
+
     # TODO
     # Validated relations:
     # it_behaves_like( "(belongs_to required models)", [

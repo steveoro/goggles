@@ -2,6 +2,7 @@ require 'spec_helper'
 
 
 describe RecordCollection, :type => :model do
+
   # Use pre-loaded seeds:
   let( :results )   { MeetingIndividualResult.where( swimmer_id: 142 ) }
   let( :fixture )   { results.to_a[ rand * 200 ] } # Choose a random MIR among the first 200 ones

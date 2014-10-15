@@ -12,12 +12,29 @@ describe MeetingProgram, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
-  it "has a valid factory for individual result" do
-    expect( create(:meeting_program_individual) ).to be_valid
+  context "using a well formed factory for individual result," do
+    subject { create(:meeting_program_individual) }
+
+    it "is a valid istance" do
+      expect( subject ).to be_valid
+    end
+    it "refers to an individual result" do
+      expect( subject.event_type.is_a_relay ).to be false
+    end
   end
-  it "has a valid factory for relay result" do
-    expect( create(:meeting_program_relay) ).to be_valid
+
+  context "using a well formed factory for relay result," do
+    subject { create(:meeting_program_relay) }
+
+    it "is a valid istance" do
+      expect( subject ).to be_valid
+    end
+    it "refers to a relay result" do
+      expect( subject.event_type.is_a_relay ).to be true
+    end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # This section is separated from the context below because really it's
   # more of a functional test instead of normal unit test.

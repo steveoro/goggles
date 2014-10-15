@@ -3,6 +3,7 @@ require 'ffaker'
 
 
 FactoryGirl.define do
+
   factory :individual_record do
     meeting_individual_result
 
@@ -31,18 +32,25 @@ end
 #
 module IndividualRecordFactoryTools
 
-  # Leega version, forced to use events_by_pool_type
   # Creates (and returns) an Array of IndividualRecord rows associated
   # to the specified swimmer, each with an unique event_type_id and
   # with record_type_id forced to 1 (= "personal best").
-  def self.create_personal_best_list( swimmer, row_count = 5 )
+  #
+  # If the swimmer instance is +nil+, a new swimmer will be created each time,
+  # thus forcing the "personal best" list to become a list of completely
+  # different IndividualRecord (this allows us to create random lists of
+  # omogeneous records for diffent athletes, and test the results of any record grid
+  # builder instance.)
+  #
+  def self.create_personal_best_list( swimmer = nil, row_count = 5 )
     list = []
     event_list = EventsByPoolType.only_for_meetings.not_relays.select([:event_type_id, :pool_type_id]).sort{ rand() - 0.5 }[ 0.. row_count-1 ]
     event_list.each do |event_by_pool_type|
+      swimmer ||= FactoryGirl.create(:swimmer)      # use a random swimmer if none is provided
       list << FactoryGirl.create( :individual_record,
         swimmer_id: swimmer.id,
         meeting_individual_result: FactoryGirl.create( :meeting_individual_result,
-          swimmer_id:      swimmer.id,
+          swimmer_id: swimmer.id,
           meeting_program: FactoryGirl.create( :meeting_program,
             meeting_event: FactoryGirl.create( :meeting_event,
               meeting_session: FactoryGirl.create( :meeting_session,

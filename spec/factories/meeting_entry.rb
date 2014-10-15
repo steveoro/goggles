@@ -8,4 +8,6 @@ FactoryGirl.define do
     team_affiliation  { badge.team_affiliation }
     swimmer           { badge.swimmer }
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

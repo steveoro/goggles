@@ -30,22 +30,34 @@ group :specs do
     watch(%r{^lib\/(.+)\.rb$})                          { |m| "spec/lib/#{m[1]}_spec.rb" }
     watch('spec/spec_helper.rb')                        { "spec" }
 
-    # Rails example
     watch('spec/rails_helper.rb')                       { "spec" }
     watch('config/routes.rb')                           { "spec/routing" }
     watch('app/controllers/application_controller.rb')  { "spec/controllers" }
     watch(%r{^spec\/support\/(.+)\.rb$})                { "spec" }
 
+    # Watch any spec files for changes:
     watch(%r{^spec\/.+_spec\.rb$})
+
+    # Watch factories and launch the specs for their corresponding model:
+    watch(%r{^spec\/factories\/(.+)\.rb$}) do |m|
+#      puts "m1: '#{m[1]}'"
+      Dir[ "spec/models/#{m[1]}*spec.rb" ] +
+      # Include also data_import models, if the change involves a primary entity:
+      ( m[1] =~ /data_import/ ? [] : Dir[ "spec/models/data_import_#{m[1]}*spec.rb" ]  )
+    end
+
+    # Any App file with a matching spec:
     watch(%r{^app\/(.+)\.rb$})                           { |m| "spec/#{m[1]}_spec.rb" }
     watch(%r{^app\/(.*)(\.erb|\.haml|\.slim)$})          { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
+
+    # Lib files with a nesting depth > 1:
     watch(%r{^lib\/(.+\/)(.+)\.rb$}) do |m|
 #      puts "m1: '#{m[1]}', m2: '#{m[2]}'"
-      [
-        "spec/lib/#{m[1]}#{m[2]}_spec.rb"
-      ] +
+      [ "spec/lib/#{m[1]}#{m[2]}_spec.rb" ] +
       Dir[ "spec/integration/data_import/#{m[2]}*spec.rb" ]
     end
+
+    # Controller files:
     watch(%r{^app\/controllers\/(.+)_(controller)\.rb$}) do |m|
       [
         "spec/routing/#{m[1]}_routing_spec.rb",
@@ -55,10 +67,10 @@ group :specs do
       Dir[ 'spec/#{m[2]}s/#{m[1]}_#{m[2]}*spec.rb' ]
    	end
 
-    # Capybara features specs
+    # Capybara features specs:
     watch(%r{^app\/views\/(.+)/.*\.(erb|haml|slim)$})    { |m| "spec/features/#{m[1]}_spec.rb" }
 
-    # Turnip features and steps
+    # Turnip features and steps:
     watch(%r{^spec\/acceptance\/(.+)\.feature$})
     watch(%r{^spec\/acceptance\/steps\/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'spec/acceptance' }
   end

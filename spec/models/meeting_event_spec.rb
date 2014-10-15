@@ -12,6 +12,30 @@ describe MeetingEvent, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
+  context "using a well formed factory for individual result," do
+    subject { create(:meeting_event_individual) }
+
+    it "is a valid istance" do
+      expect( subject ).to be_valid
+    end
+    it "refers to an individual result" do
+      expect( subject.event_type.is_a_relay ).to be false
+    end
+  end
+
+  context "using a well formed factory for relay result," do
+    subject { create(:meeting_event_relay) }
+
+    it "is a valid istance" do
+      expect( subject ).to be_valid
+    end
+    it "refers to a relay result" do
+      expect( subject.event_type.is_a_relay ).to be true
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # This section is separated from the context below because really it's
   # more of a functional test instead of normal unit test.
   context "[a valid, pre-existing seeded domain]" do

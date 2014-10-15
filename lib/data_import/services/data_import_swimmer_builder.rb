@@ -7,7 +7,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportCityBuilder
 
-  - Goggles framework vers.:  4.00.561
+  - Goggles framework vers.:  4.00.567
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -28,7 +28,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
   #
   def self.build_from_parameters( data_import_session, swimmer_name, swimmer_year, gender_type )
 # DEBUG
-#    puts "\r\nSwimmer - build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}"
+    puts "\r\nSwimmer - build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}"
     self.build( data_import_session ) do
       entity      Swimmer
 
@@ -56,13 +56,13 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-#        puts "primary_search_ok!"   if primary_search_ok?
-#        puts "secondary_search_ok!" if secondary_search_ok?
+        puts "primary_search_ok!"   if primary_search_ok?
+        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
       if_not_found do
 # DEBUG
-#        puts "Search failed: preparing add_new..."
+        puts "Search failed: preparing add_new..."
         attributes_for_creation(
           data_import_session_id: data_import_session.id,
           import_text:            "#{swimmer_name}, #{swimmer_year}",

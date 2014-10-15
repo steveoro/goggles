@@ -3,6 +3,7 @@ require 'ffaker'
 
 
 FactoryGirl.define do
+
   factory :data_import_season do
     data_import_session
     conflicting_id            nil
@@ -16,4 +17,6 @@ FactoryGirl.define do
       created_instance.data_import_session.data_import_season_id = created_instance.id
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

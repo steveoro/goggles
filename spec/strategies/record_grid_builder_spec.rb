@@ -2,7 +2,11 @@ require 'spec_helper'
 
 
 describe RecordGridBuilder, type: :strategy do
-  let(:individual_record_list) { create_list(:individual_record, 5) }
+  let(:individual_record_list) do
+    # Force a list of completely different records, with random swimmers and
+    # random, unique events:
+    IndividualRecordFactoryTools.create_personal_best_list()
+  end
 
   # Using a pre-filled collector will speed-up the tests:
   subject { RecordGridBuilder.new( RecordCollector.new(list: individual_record_list) ) }
@@ -29,7 +33,7 @@ describe RecordGridBuilder, type: :strategy do
   describe "#initialize" do
     it "allows an instance of RecordCollector as a parameter" do
       expect( subject ).to be_an_instance_of( RecordGridBuilder )
-      expect( subject.count ).to eq(5)
+      expect( subject.count ).to eq( individual_record_list.size )
     end
   end
   #-- -------------------------------------------------------------------------

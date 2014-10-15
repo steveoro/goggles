@@ -36,6 +36,8 @@ describe PersonalBestCollector, type: :strategy do
       ]
     )
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe "#initialize" do

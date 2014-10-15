@@ -24,6 +24,8 @@ FactoryGirl.define do
     disqualification_code_type nil # { DisqualificationCodeType.all.sort{ rand - 0.5 }[0] }
     user
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   factory :data_import_meeting_relay_result do
@@ -31,7 +33,7 @@ FactoryGirl.define do
     conflicting_id            nil
     import_text               { Faker::Lorem.paragraph[0..250] }
     common_meeting_relay_result_fields
-    association :data_import_meeting_program, factory: :data_import_meeting_program_individual
+    association :data_import_meeting_program, factory: :data_import_meeting_program_relay
     meeting_program_id        nil
     data_import_team_id       nil
     team_affiliation_id       nil # (If needed, this must be set externally to work: too much hierachy-tree dependency between needed entities)
@@ -45,7 +47,7 @@ FactoryGirl.define do
 
 
   factory :meeting_relay_result do
-    association :meeting_program, factory: :meeting_program_individual
+    association :meeting_program, factory: :meeting_program_relay
     common_meeting_relay_result_fields
     team_affiliation_id       nil # (If needed, this must be set externally to work: too much hierachy-tree dependency between needed entities)
   end

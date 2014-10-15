@@ -17,10 +17,8 @@ FactoryGirl.define do
     pool_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: 25 and 50 meters type should exists
 
     city
-    # This will use the seeded values: (uncomment/use only with certified & *valid* data)
-#    city_id                 { ((rand * 100) % 40).to_i + 1 } # ASSERT: at least 40 cities
     user
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

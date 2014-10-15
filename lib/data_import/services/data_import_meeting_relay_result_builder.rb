@@ -4,13 +4,14 @@ require 'common/format'
 require 'data_import/strategies/result_time_parser'
 require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_team_builder'
+require 'data_import/services/data_import_meeting_individual_result_builder'
 
 
 =begin
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.563
+  - Goggles framework vers.:  4.00.567
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -38,6 +39,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
 # DEBUG
     puts "\r\n\r\nMRR - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
     puts "#{meeting_program.inspect}"
+    puts "=> #{meeting_program.get_full_name}"
 
     self.build( data_import_session ) do
       entity  MeetingRelayResult
@@ -70,28 +72,30 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         @standard_points   = result_score
         @meeting_points    = result_score
         @rank              = rank.to_i              # Note that 'Fuori gara'.to_i = 0
+        puts "Before search: @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..."
       end
 
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingRelayResult..." )
+        puts( "Seeking existing MeetingRelayResult (meeting_program.id: #{meeting_program.id}, @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..." )
+#        puts "==> List: #{MeetingRelayResult.where(team_id: @team.id).inspect}"
         primary     [
-          "(meeting_program_id = ?) AND (team_id = ?) AND (rank = ?) AND " +
+          "(meeting_program_id = ?) AND (team_id = ?) AND " +
           "(minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
           ( meeting_program.instance_of?(MeetingProgram) ? meeting_program.id : 0 ),
           ( @team.instance_of?(Team)                     ? @team.id           : 0 ),
-          @rank, @mins, @secs, @hds
+          @mins, @secs, @hds
         ]
         secondary   [
           "(data_import_session_id = ?) AND " +
           "(#{meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_'}meeting_program_id = ?) AND " +
           "(#{@team.instance_of?(Team)                     ? '' : 'data_import_'}team_id = ?) AND " +
-          "(rank = ?) AND (minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
+          "(minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
           data_import_session.id,
           meeting_program.id,
           @team.id,
-          @rank, @mins, @secs, @hds
+          @mins, @secs, @hds
         ]
         default_search
 # DEBUG

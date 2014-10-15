@@ -45,7 +45,7 @@ class Swimmer < ActiveRecord::Base
   has_many :meeting_sessions,       through: :meeting_individual_results
   has_many :meetings,               through: :meeting_individual_results
 
-  has_many :swimmer_results
+  has_many :user_results
 
   validates_presence_of :complete_name
   validates_length_of   :complete_name, within: 1..100, allow_nil: false

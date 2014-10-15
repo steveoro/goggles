@@ -10,7 +10,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.555
+  - Goggles framework vers.:  4.00.567
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -55,8 +55,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
     raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
     raise ArgumentError.new("'stroke_type' must be a valid instance of StrokeType!")     unless stroke_type.instance_of?(StrokeType)
 # DEBUG
-#    puts "\r\nMeetingProgram, build_from_parameters: #{header_row.inspect}\r\n=> length_in_meters: #{length_in_meters}"
-#    puts "=> #{gender_type.inspect}\r\n=> #{category_type.inspect}\r\n=> #{stroke_type.inspect}\r\n=> #{scheduled_date.inspect}"
+    puts "\r\nMeetingProgram, build_from_parameters: #{header_row.inspect}\r\n=> length_in_meters: #{length_in_meters}"
+    puts "=> #{gender_type.inspect}\r\n=> #{category_type.inspect}\r\n=> #{stroke_type.inspect}\r\n=> #{scheduled_date.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingProgram
@@ -74,8 +74,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         esteemed_meeting_mins = heat_number_approx * (@mins.to_i < 3 ? 2 : @mins.to_i + 2)
         esteemed_hours = 8 + (esteemed_meeting_mins / 60)
 # DEBUG
-#        puts( "\r\nMeeting program parsing: base_time='#{base_time}' ... #{@mins}:#{@secs}.#{@hds}, (#{header_row[:fields].inspect})" )
-#        puts( "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, esteemed_meeting_mins=#{esteemed_meeting_mins}" )
+        puts( "\r\nMeeting program parsing: base_time='#{base_time}' ... #{@mins}:#{@secs}.#{@hds}, (#{header_row[:fields].inspect})" )
+        puts( "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, esteemed_meeting_mins=#{esteemed_meeting_mins}" )
 #        @phase_1_log << "\r\nMeeting program parsing: base_time='#{base_time}' ... #{mins}:#{secs}.#{hds}, (#{header_row[:fields].inspect})\r\n"
 #        @phase_1_log << "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, @esteemed_meeting_mins=#{esteemed_meeting_mins}\r\n"
         @begin_time = Time.utc(
@@ -94,21 +94,21 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         ).first
         raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
 # DEBUG
-#        puts( "@event_type => #{@event_type.inspect}" )
+        puts( "@event_type => #{@event_type.inspect}" )
 
         # Find the parent MeetingEvent using the meeting_session:
         @meeting_event = MeetingEvent.where(
           [ "(meeting_session_id = ?) AND (event_type_id = ?)", meeting_session.id, @event_type.id ]
         ).first if meeting_session.instance_of?(MeetingSession)
 # DEBUG
-#        puts( "@meeting_event =>#{@meeting_event.inspect}" )
+        puts( "@meeting_event =>#{@meeting_event.inspect}" )
         # Get the pool type:
         @pool_type_id = ( meeting_session.swimming_pool ?
           meeting_session.swimming_pool.pool_type_id :
           PoolType::MT50_ID
         )
 # DEBUG
-#        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
+        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
         # Define also the base time or standard time, if any:
         @time_standard = DataImportTimeStandardBuilder.build_from_parameters(
           data_import_session,
@@ -122,13 +122,13 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           @hds
         ).result_row if ( @mins.to_i > 0 || @secs.to_i > 0 || @hds.to_i > 0 )
 # DEBUG
-#        puts( "@time_standard => #{@time_standard.inspect}" )
+        puts( "@time_standard => #{@time_standard.inspect}" )
       end
 
 
       search do
 # DEBUG
-#        puts( "Seeking existing MeetingProgram..." )
+        puts( "Seeking existing MeetingProgram..." )
 #        @phase_1_log << "Seeking existing MeetingProgram...\r\n"
         primary     [
           "(meeting_event_id = ?) AND (category_type_id = ?) AND (gender_type_id = ?)",
@@ -144,14 +144,14 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-#        puts "primary_search_ok!" if primary_search_ok?
-#        puts "secondary_search_ok!" if secondary_search_ok?
+        puts "primary_search_ok!" if primary_search_ok?
+        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-#        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
+        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
         attributes_for_creation(
           data_import_session_id:         data_import_session,
           import_text:                    @import_text,

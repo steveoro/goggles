@@ -32,6 +32,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
 
   let(:detail_row_idx)        { (rand * 50).to_i }  # Used to compute the esteemed heat begin time
   let(:detail_rows_size)      { (rand * 40).to_i }  # Used to compute the esteemed heat number
+  let(:random_score)          { (rand * 1000).to_i }
   # NOTE:
   # detail_row[:fields] => [
   #    :team_name, :team_code, :swimmer_name, :swimmer_year,
@@ -46,7 +47,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         swimmer_name:     build( :swimmer ).complete_name,
         swimmer_year:     build( :swimmer ).year_of_birth,
         result_time:      "0'#{((rand * 60) % 60).to_i}\"#{((rand * 100) % 100).to_i}",
-        result_score:     (rand * 1000).to_i.to_s,
+        result_score:     random_score.to_s,
         result_position:  (1 + (rand * 20).to_i % 20).to_s,
       }
     }
@@ -207,7 +208,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         mir_detail_row, detail_row_idx, detail_rows_size,
         mir.meeting_program.gender_type,
         mir.meeting_program.category_type,
-        true # force_missing_team_creation
+        false # force_missing_team_creation
       )
     end
 
@@ -265,7 +266,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         di_mir_detail_row, detail_row_idx, detail_rows_size,
         di_mir.data_import_meeting_program.gender_type,
         di_mir.data_import_meeting_program.category_type,
-        true # force_missing_team_creation
+        false # force_missing_team_creation
       )
     end
 
@@ -313,6 +314,38 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
-  # TODO Test DataImportMeetingIndividualResultBuilder.fix_missing_rank for DataImportMeetingRelayResult
 
+  describe "self.fix_missing_rank() for MIRs," do
+    it "returns the rank value of a matching MIR having the same program and score" do
+      result_rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+        DataImportMeetingIndividualResult,
+        data_import_session,
+        di_mir.data_import_meeting_program,
+        di_mir.standard_points
+      )
+      expect( result_rank ).to eq( di_mir.rank )
+    end
+
+    it "returns the tot.rows +1 as the rank value for a matching program, w/ MIRs and a new score" do
+      result_rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+        DataImportMeetingIndividualResult,
+        data_import_session,
+        di_mir.data_import_meeting_program,
+        di_mir.standard_points + random_score
+      )
+      expect( result_rank ).to be > 0
+    end
+
+    it "returns 1 as the rank value for a matching program and a new score but w/o MIRS" do
+      result_rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+        DataImportMeetingIndividualResult,
+        data_import_session,
+        meeting_program,
+        random_score
+      )
+      expect( result_rank ).to eq(1)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

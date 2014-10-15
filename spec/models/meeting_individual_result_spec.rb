@@ -14,6 +14,10 @@ describe MeetingIndividualResult, :type => :model do
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
+    it "refers to an individual result" do
+      expect( subject.meeting_program.event_type.is_a_relay ).to be false
+    end
+
     # Validated relations:
     it_behaves_like( "(belongs_to required models)", [
       :meeting_program,

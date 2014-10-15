@@ -8,7 +8,7 @@ require 'common/format'
 
 = ResultTimeParser
 
-  - Goggles framework vers.:  4.00.515
+  - Goggles framework vers.:  4.00.567
   - author: Steve A.
 
  Strategy class dedicated to extracting required Meeting result fields
@@ -71,7 +71,7 @@ class ResultTimeParser
       @disqualification_code_type_id = nil
     end
     # Get the actual result time:
-    if ( @result_token =~ /\d{1,2}'\d\d"\d\d/ui ).nil?
+    if ( @result_token =~ /\d{1,2}\'\d{1,2}\"\d{1,2}/ui ).nil?
       @mins_secs_hds_array = [0, 0, 0]
     else
       @mins_secs_hds_array = @result_token.split(/\'|\"/).collect!{ |e| e.to_i }

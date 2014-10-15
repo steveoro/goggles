@@ -15,6 +15,10 @@ describe DataImportSession, :type => :model do
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
+    it "has a valid season instance" do
+      expect( subject.season ).to be_valid
+    end
+
     # TODO
     # Validated relations:
     # it_behaves_like( "(belongs_to required models)", [

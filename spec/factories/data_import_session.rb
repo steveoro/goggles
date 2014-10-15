@@ -2,6 +2,7 @@ require 'ffaker'
 
 
 FactoryGirl.define do
+
   factory :data_import_session do
     file_name               { "#{ Faker::Internet.domain_word }.txt" }
     source_data             { Faker::Lorem.paragraph[0..250] }
@@ -15,4 +16,6 @@ FactoryGirl.define do
     phase_3_log             { Faker::Lorem.paragraph[0..250] }
     data_import_season_id   nil
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

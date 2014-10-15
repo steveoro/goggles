@@ -50,6 +50,8 @@ describe RecordCollector, type: :strategy do
       ]
     )
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe "#initialize" do

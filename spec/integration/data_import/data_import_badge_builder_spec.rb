@@ -15,7 +15,7 @@ describe DataImportBadgeBuilder, type: :integration do
     create(
       :data_import_badge,
       data_import_session: data_import_session,
-      season: data_import_session.season
+      season:              data_import_session.season
     )
   end
 

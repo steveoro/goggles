@@ -21,6 +21,7 @@ FactoryGirl.define do
     conflicting_id        nil
     import_text           { Faker::Lorem.paragraph[0..100] }
     random_city
+    user
   end
   #-- -------------------------------------------------------------------------
   #++

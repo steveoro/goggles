@@ -7,7 +7,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportCityBuilder
 
-  - Goggles framework vers.:  4.00.545
+  - Goggles framework vers.:  4.00.567
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -29,7 +29,7 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
   def self.build_from_parameters( data_import_session, badge_code, season, team, swimmer,
                                   category_type, entry_time_type )
 # DEBUG
-#    puts "\r\nBadge - build_from_parameters: data_import_session ID: #{data_import_session.id}, number: #{badge_code}, season: #{season.inspect}"
+    puts "\r\nBadge - build_from_parameters: data_import_session ID: #{data_import_session.id}, number: #{badge_code}, season: #{season.inspect}"
     self.build( data_import_session ) do
       entity      Badge
 
@@ -47,13 +47,13 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-#        puts "primary_search_ok!" if primary_search_ok?
-#        puts "secondary_search_ok!" if secondary_search_ok?
+        puts "primary_search_ok!" if primary_search_ok?
+        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
       if_not_found do
 # DEBUG
-#        puts "NOT found!"
+        puts "NOT found!"
         attributes_for_creation(
           data_import_session_id: data_import_session.id,
           import_text:            badge_code,

@@ -13,9 +13,13 @@ describe ResultTimeParser, type: :strategy do
     let(:mins)    { ((rand * 59) % 59).to_i }
     let(:secs)    { ((rand * 59) % 59).to_i }
     let(:hds)     { ((rand * 59) % 59).to_i }
+    let(:int9a)   { ((rand * 10) % 10).to_i }
+    let(:int9b)   { ((rand * 10) % 10).to_i }
     let(:rank)    { (rand * 99).to_i + 1 }
 
     let(:valid_result_time)   { "#{mins}'" + ("%02d" % secs.to_s) + ("\"%02d" % hds.to_s) }
+    let(:valid2_result_time)  { "#{mins}'#{int9a}\"#{int9b}" }
+
     let(:valid_disqualify)    { "Squalif." }
     let(:valid_withdrawal)    { "Ritir." }
     let(:valid_out_of_race)   { ["F.G.", "Fuori gara"].at(rand * 10 % 2) }
@@ -83,6 +87,25 @@ describe ResultTimeParser, type: :strategy do
       describe "#is_disqualified?" do
         it "returns false" do
           expect( subject.is_disqualified? ).to be false
+        end
+      end
+    end
+
+    context "after the parsing of a valid, alternative timing format," do
+      subject { ResultTimeParser.new( rank, valid2_result_time ).parse }
+
+      it "parses successfully the format" do
+        expect( subject ).to be_an_instance_of( ResultTimeParser )
+      end
+      describe "#mins_secs_hds_array," do
+        it "returns an instance of Array with 3 elements" do
+          puts "\r\n=>#{valid2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to be_an_instance_of( Array )
+          expect( subject.mins_secs_hds_array.size ).to eq(3)
+        end
+        it "has all the timing values in the token" do
+          puts "\r\n=>#{valid2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to contain_exactly( mins, int9a, int9b )
         end
       end
     end

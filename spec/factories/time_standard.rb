@@ -11,7 +11,9 @@ FactoryGirl.define do
     category_type_id          { ((rand * 100) % 20).to_i + 1 } # ASSERT: at least 20 category types
     event_type_id             { ((rand * 100) % 18).to_i + 1} # ASSERT: at least 18 event types
     minutes                   { ((rand * 10) % 10).to_i }
-    seconds                   { ((rand * 59) % 59).to_i }     # Force not to use 59 
+    seconds                   { ((rand * 59) % 59).to_i }     # Force not to use 59
     hundreds                  { ((rand * 99) % 99).to_i + 1}  # Force not to use 0 or 99
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end
