@@ -3,39 +3,61 @@
 .row-fluid#regional_er_csi
   .goggles-category-gap#pageTop
 
-  %h2= t('championships.history')
-  %table.table.table-striped.table-bordered.table-hover.table-condensed#history
-    %tbody
-      %tr{'class'=>'info'}
-        %td
-          %b= t('championships.championship')
-        %td.goggles-centeralign{ colspan: 2 }
-          %b= t('championships.first_place')
-        %td.goggles-centeralign{ colspan: 2 }
-          %b= t('championships.second_place')
-        %td.goggles-centeralign{ colspan: 2 }
-          %b= t('championships.third_place')
-      - @championship_history_manager.each do |closed_season|
-        %tr
+    -# --- Sub-legend for each gender + pool-type
+    .navbar
+      %ul.nav
+        %li
+          %a.goggles-nav-compact(href="#history")= t('championships.history')
+        %li
+          %a.goggles-nav-compact(href="#hall_of_fame")= t('championships.hall_of_fame')
+      .ghost-divider-vertical
+
+    %h3
+      = t('championships.history')
+      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+
+    %table.table.table-striped.table-bordered.table-hover.table-condensed#history
+      %tbody
+        %tr{'class'=>'info'}
           %td
-            = closed_season[:season].header_year
-          - closed_season[:ranking].each do |computed_season_ranking|
+            %b= t('championships.championship')
+          %td.goggles-centeralign{ colspan: 2 }
+            %b= t('championships.first_place')
+            = image_tag('medal_gold_3.png')
+          %td.goggles-centeralign{ colspan: 2 }
+            %b= t('championships.second_place')
+            = image_tag('medal_silver_3.png')
+          %td.goggles-centeralign{ colspan: 2 }
+            %b= t('championships.third_place')
+            = image_tag('medal_bronze_3.png')
+        - @championship_history_manager.each do |closed_season|
+          %tr
             %td
-              = computed_season_ranking.team.decorate.get_linked_name
-            %td.goggles-rightalign
-              = computed_season_ranking.total_points
+              = closed_season[:season].header_year
+            - closed_season[:ranking].each do |computed_season_ranking|
+              %td
+                = computed_season_ranking.team.decorate.get_linked_name
+              %td.goggles-rightalign
+                = computed_season_ranking.total_points
 
 .row-fluid#regional_er_csi
-  %h2= t('championships.hall_of_fame')
-  %table.table.table-striped.table-bordered.table-hover.table-condensed#hall_of_fame
-    %tbody
-      %tr{'class'=>'info'}
-        %td
-          %b= t('championships.team')
-        %td.goggles-rightalign
-          %b= t('championships.first_place')
-        %td.goggles-rightalign
-          %b= t('championships.second_place')
-        %td.goggles-rightalign
-          %b= t('championships.third_place')
-  .p= t('coming_soon')
+  .goggles-category-gap
+    %h3
+      = t('championships.hall_of_fame')
+      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+    %table.table.table-striped.table-bordered.table-hover.table-condensed#hall_of_fame
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            %b= t('championships.team')
+          %td.goggles-centeralign
+            = image_tag('medal_gold_3.png')
+          %td.goggles-centeralign
+            = image_tag('medal_silver_3.png')
+          %td.goggles-centeralign
+            = image_tag('medal_bronze_3.png')
+        %tr
+          %td{ colspan: 4 }
+            .p= t('coming_soon')
+
+.row-fluid.goggles-category-gap
