@@ -10,7 +10,9 @@ describe ChampionshipHistoryManager, type: :strategy do
     it_behaves_like( "(the existance of a method)",
       [
         :get_closed_seasons,
-        :get_season_ranking_history
+        :get_season_ranking_history,
+        :get_involved_teams,
+        :get_season_hall_of_fame
       ]
     )
   end
@@ -38,8 +40,7 @@ describe ChampionshipHistoryManager, type: :strategy do
       end
       it "returns an array of hash which responds to season and ranking" do
         subject.get_season_ranking_history.each do |closed_season|
-          expect( closed_season.keys ).to include(:season)
-          expect( closed_season.keys ).to include(:ranking)
+          expect( closed_season.keys ).to include(:season, :ranking)
         end
       end
       it "returns an array of hash which contains a season" do
@@ -65,6 +66,46 @@ describe ChampionshipHistoryManager, type: :strategy do
       it "returns maximum 3 elements per rankng" do
         subject.get_season_ranking_history.each do |closed_season|
           expect( closed_season[:ranking].count ).to be <= 3
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_involved_teams," do
+      it "returns a relation" do
+        expect( subject.get_involved_teams ).to be_a_kind_of( ActiveRecord::Relation )
+      end
+      it "returns a relation of Seasons" do
+        expect( subject.get_involved_teams ).to all(be_an_instance_of( Team ))
+      end
+      it "returns at least 3 teams for CSIMAS" do
+        expect( subject.get_involved_teams.count ).to be >= 3
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_season_hall_of_fame," do
+      it "returns an array" do
+        expect( subject.get_season_hall_of_fame ).to be_a_kind_of( Array )
+      end
+      it "returns an array of hash" do
+        expect( subject.get_season_hall_of_fame ).to all(be_a_kind_of( Hash ))
+      end
+      it "returns an array of hash which responds to season and ranking" do
+        subject.get_season_hall_of_fame.each do |ranked_team|
+          expect( ranked_team.keys ).to include(:team, :first_place, :second_place, :third_place)
+        end
+      end
+      it "returns an array of hash which contains a team" do
+        subject.get_season_hall_of_fame.each do |ranked_team|
+          expect( ranked_team[:team] ).to be_an_instance_of( Team )
+        end
+      end
+      it "returns an array of hash which contains numerical value on first_place" do
+        [:first_place, :second_place, :third_place].each do |rank_key|
+          subject.get_season_hall_of_fame.each do |ranked_team|
+            expect( ranked_team[rank_key] ).to be >= 0
+          end
         end
       end
     end

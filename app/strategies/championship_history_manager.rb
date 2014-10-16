@@ -24,10 +24,8 @@ class ChampionshipHistoryManager
   def get_closed_seasons
     @closed_seasons ||= retrieve_closed_seasons
   end
-  #-- --------------------------------------------------------------------------
-  #++
   
-  # Get stored ranking for the given sesason
+  # Get stored ranking for the given sesasons
   #
   # Parameters
   # rank_position => Number of rank positions to save (default first 3)
@@ -38,12 +36,26 @@ class ChampionshipHistoryManager
   #-- --------------------------------------------------------------------------
   #++
 
+  # Get teams involved in season ranking history (hall of fame)
+  # 
+  def get_involved_teams
+    @involved_teams ||= retrieve_involved_teams
+  end
+  
+  # Get the hall of fame (per team) of given seasons
+  #
+  def get_season_hall_of_fame
+    @seasons_hall_of_fame ||= retrieve_season_hall_of_fame
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
 
   private
 
   # Retrieves season closed
   # The season closed are those with... ?!?
-  # TODO Decide where a season is closed. Should be different from season end date
+  # TODO Decide when a season is closed. Should be different from season end date
   #      Has to indicate where season championship is over. 
   #      Maybe should store closed championship final ranking in a delegate structure
   # TODO Make it a scope of season
@@ -72,6 +84,39 @@ class ChampionshipHistoryManager
       seasons_ranking_history << season_ranking_history 
     end
     seasons_ranking_history 
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Retrieves teams involved in season ranking history
+  # The teams involved are those with at least one ranking in 
+  # computed season ranking /closed season hall of fame) of
+  # the given season type
+  #
+  def retrieve_involved_teams
+    Team.joins(computed_season_ranking: :season).where("seasons.season_type_id = #{@season_type.id}").uniq
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+  
+  # Retrieves closed season hall of fame (per team)
+  # and stores in an array of hashes
+  # with team and palces keys
+  #
+  def retrieve_season_hall_of_fame
+    seasons_hall_of_fame = []
+    get_involved_teams if not @involved_teams
+    
+    @involved_teams.each do |team|
+      team_placement = Hash.new
+      team_placement[:team] = team
+      ['first_place','second_place','third_place'].each_with_index do |rank,index|
+        placement = index + 1
+        team_placement[rank.to_sym] = team.computed_season_ranking.joins(:season).where("seasons.season_type_id = #{@season_type.id} AND computed_season_rankings.rank = #{placement}").count
+      end
+      seasons_hall_of_fame << team_placement 
+    end
+    seasons_hall_of_fame 
   end
   #-- --------------------------------------------------------------------------
   #++
