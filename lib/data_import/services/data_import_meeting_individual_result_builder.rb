@@ -12,7 +12,7 @@ require 'data_import/services/data_import_badge_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.567
+  - Goggles framework vers.:  4.00.569
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -126,9 +126,9 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         ]
         secondary   [
           "(data_import_session_id = ?) AND " +
-          "(#{meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_'}meeting_program_id = ?) AND " +
-          "(#{@swimmer.instance_of?(Swimmer)               ? '' : 'data_import_'}swimmer_id = ?) AND " +
-          "(#{@team.instance_of?(Team)                     ? '' : 'data_import_'}team_id = ?)",
+          "(#{meeting_program.class.name.underscore}_id = ?) AND " +
+          "(#{@swimmer.class.name.underscore}_id = ?) AND " +
+          "(#{@team.class.name.underscore}_id = ?)",
           data_import_session.id,
           meeting_program.id,
           @swimmer.id,
@@ -232,7 +232,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
     rank = 0
     prev_row = entity.where( [                      # Search for same-ranking result first:
       "(data_import_session_id = ?) AND " +
-      "(#{ meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_' }meeting_program_id = ?) AND " +
+      "(#{ meeting_program.class.name.underscore }_id = ?) AND " +
       "(standard_points = ?)",
         data_import_session.id, meeting_program.id, standard_points.to_i
     ] ).last
@@ -242,7 +242,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
     else                                            # Rank = tot. existing rows + 1 in same category/context:
       tot_rows = entity.where( [
         "(data_import_session_id = ?) AND " +
-        "(#{ meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_' }meeting_program_id = ?)",
+        "(#{ meeting_program.class.name.underscore }_id = ?)",
         data_import_session.id, meeting_program.id
       ] ).count
 # DEBUG

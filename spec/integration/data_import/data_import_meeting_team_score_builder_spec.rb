@@ -15,80 +15,30 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   # Non-existing (totally random) fixture params. Rebuild a plausible event & program
   # starting from the meeting session:
-  let(:meeting_program)       { create( :meeting_program_individual ) }
-  let(:season)                { meeting_program.season }  # (by ActiveRecord has_one)
-  let(:gender_type)           { meeting_program.gender_type }
-  let(:category_type)         { meeting_program.category_type }
-
-  let(:di_meeting_program) do
-    create(
-      :data_import_meeting_program_individual,
-      data_import_session: data_import_session
-    )
-  end
-  let(:di_season)             { di_meeting_program.meeting_session.meeting.season }
-  let(:di_gender_type)        { di_meeting_program.gender_type }
-  let(:di_category_type)      { di_meeting_program.category_type }
-
+  let(:meeting)               { create( :meeting ) }
+  let(:season)                { meeting.season }
   let(:detail_row_idx)        { (rand * 50).to_i }  # Used to compute the esteemed heat begin time
   let(:detail_rows_size)      { (rand * 40).to_i }  # Used to compute the esteemed heat number
   let(:random_score)          { (rand * 1000).to_i }
   # NOTE:
   # detail_row[:fields] => [
-  #    :team_name, :team_code, :swimmer_name, :swimmer_year,
-  #    :result_time, :result_score, :result_position
+  #   :team_code, :team_name, :result_score, :result_position
   # ]
   let(:detail_row) do
     {
       import_text: Faker::Lorem.paragraph[0..250],
       fields: {
-        team_name:        build( :data_import_team ).name,
         team_code:        build( :data_import_team ).badge_number,
-        swimmer_name:     build( :swimmer ).complete_name,
-        swimmer_year:     build( :swimmer ).year_of_birth,
-        result_time:      "0'#{((rand * 60) % 60).to_i}\"#{((rand * 100) % 100).to_i}",
+        team_name:        build( :data_import_team ).name,
         result_score:     random_score.to_s,
-        result_position:  (1 + (rand * 20).to_i % 20).to_s,
+        result_position:  (1 + (rand * 20).to_i % 20).to_s
       }
     }
   end
 
   # Existing or matching entities:
-  let(:mir)                   { create( :meeting_individual_result ) }
-  let(:mir_detail_row) do
-    {
-      import_text: Faker::Lorem.paragraph[0..250],
-      fields: {
-        team_name:        mir.team.name,
-        team_code:        mir.team_affiliation.number,
-        swimmer_name:     mir.swimmer.complete_name,
-        swimmer_year:     mir.swimmer.year_of_birth,
-        result_time:      "#{mir.minutes}'#{mir.seconds}\"#{mir.hundreds}",
-        result_score:     mir.standard_points.to_s,
-        result_position:  (1 + (rand * 20).to_i % 20).to_s
-      }
-    }
-  end
-  let(:di_mir) do
-    create(
-      :data_import_meeting_individual_result,
-      data_import_session: data_import_session
-    )
-  end
-  let(:di_mir_detail_row) do
-    {
-      import_text: Faker::Lorem.paragraph[0..250],
-      fields: {
-        team_name:        di_mir.team.name,
-        team_code:        di_mir.team_affiliation.number,
-        swimmer_name:     di_mir.swimmer.complete_name,
-        swimmer_year:     di_mir.swimmer.year_of_birth,
-        result_time:      "#{di_mir.minutes}'#{di_mir.seconds}\"#{di_mir.hundreds}",
-        result_score:     di_mir.standard_points.to_s,
-        result_position:  (1 + (rand * 20).to_i % 20).to_s
-      }
-    }
-  end
+  # TODO primary
+  # TODO secondary
   #-- -------------------------------------------------------------------------
   #++
 
@@ -98,9 +48,8 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
       DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         season,
-        meeting_program,
+        meeting,
         detail_row, detail_row_idx, detail_rows_size,
-        gender_type, category_type,
         true # force_missing_team_creation
       )
     end
@@ -119,13 +68,6 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
     end
     it "doesn't create any primary entity row" do
       expect{ subject }.not_to change{ MeetingTeamScore.count }
-    end
-    it "doesn't create any additional MeetingProgram row" do
-      # (+1 only from the factory creation in the subject)
-      expect{ subject }.to change{ MeetingProgram.count }.by(1)
-    end
-    it "doesn't create any DataImportMeetingProgram row" do
-      expect{ subject }.not_to change{ DataImportMeetingProgram.count }
     end
 
     describe "#result_row" do
@@ -161,6 +103,53 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
 
   context "after a self.build() with a matching secondary entity (w/ DataImportMeetingProgram)," do
+    # TODO
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "self.get_all_relay_results() for a Meeting with no Relay results," do
+    xit "returns and empty array" do
+      # TODO
+    end
+  end
+
+
+  describe "self.get_all_relay_results() for a Meeting with MRRs," do
+# TODO Either use pre-loaded seed or create a specific MRR-only meeting with at least a couple of teams
+    xit "returns the list of MRRs" do
+      mrr_list = DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+        data_import_session,
+        meeting,
+        team
+      )
+      expected_count = meeting.meeting_relay_results.where(
+        team_id: team.id,
+        is_out_of_race: false, is_disqualified: false
+      ).count
+      expect( mrr_list.size ).to eq( expected_count )
+    end
+  end
+
+
+  describe "self.get_all_relay_results() for a Meeting with DI-MRRs," do
+# TODO Either use pre-loaded seed or create a specific MRR-only meeting with at least a couple of teams
+    xit "returns the list of DI-MRRs" do
+    end
+  end
+
+
+  describe "self.get_all_relay_results() for a Meeting with both DI-MRRs & MRRs," do
+# TODO Either use pre-loaded seed or create a specific MRR-only meeting with at least a couple of teams
+    xit "returns the composed list of MRRs + DI-MRRs" do
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "self.fix_missing_rank()," do
     # TODO
   end
   #-- -------------------------------------------------------------------------

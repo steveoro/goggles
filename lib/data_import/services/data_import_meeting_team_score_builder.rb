@@ -32,71 +32,64 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
   #
   # @raise ArgumentError unless <tt>season</tt> and <tt>meeting_program</tt> are both not-nil.
   #
-  def self.build_from_parameters( data_import_session, season, meeting_program,
+  def self.build_from_parameters( data_import_session, season, meeting,
                                   detail_row, detail_row_idx, detail_rows_size,
                                   force_missing_team_creation = false )
-    raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting_program.nil?
+    raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting.nil?
 # DEBUG
-    puts "\r\n\r\nMeetingTeamScore - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
-    puts "#{meeting_program.inspect}"
-    puts "=> #{meeting_program.get_full_name}"
+    puts "\r\n\r\nMeetingTeamScore (Ranking) - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
+    puts "#{meeting.inspect}"
+    puts "=> #{meeting.get_full_name}"
 
     self.build( data_import_session ) do
       entity  MeetingTeamScore
 
       set_up do
-        # @import_text = detail_row[:import_text]
-        # @team_name   = detail_row[:fields][:team_name]
+        @import_text = detail_row[:import_text]
+        @team_code   = detail_row[:fields][:team_code]
+        @team_name   = detail_row[:fields][:team_name]
         # result_time  = detail_row[:fields][:result_time]
-        # result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
-        # team_builder = DataImportTeamBuilder.build_from_parameters(
-           # data_import_session,
-           # @team_name,
-           # season,
-           # force_missing_team_creation
-        # ) if @team_name
-        # @team = team_builder.result_row if @team_name && team_builder
-        # unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
-# #          @phase_1_log << "\r\DataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
-# #          logger.error( "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)" )
-# #          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
-          # set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
-        # end
-        # result_parser      = ResultTimeParser.new( rank, result_time ).parse
-        # @is_play_off       = true
-        # @is_out_of_race    = result_parser.is_out_of_race?
-        # @is_disqualified   = result_parser.is_disqualified?
-        # @dsq_code_type_id  = result_parser.disqualification_code_type_id
-        # @mins, @secs, @hds = result_parser.mins_secs_hds_array
-        # @standard_points   = result_score
-        # @meeting_points    = result_score
-        # @rank              = rank.to_i              # Note that 'Fuori gara'.to_i = 0
-        puts "Before search: @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..."
+        team_builder = DataImportTeamBuilder.build_from_parameters(
+           data_import_session,
+           @team_name,
+           season,
+           force_missing_team_creation
+        ) if @team_name
+        @team = team_builder.result_row if @team_name && team_builder
+        unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
+#          @phase_1_log << "\r\nDataImportMeetingTeamScoreBuilder: returned team_id IS nil! (And it can't be!)\r\n"
+#          logger.error( "\r\nDataImportMeetingTeamScoreBuilder: returned team_id IS nil! (And it can't be!)" )
+#          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
+          set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
+        end
+
+        relay_results = DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+          data_import_session,
+          meeting,
+          @team
+        )
+        relay_scores = relay_results.collect{ |row| row.meeting_points.to_f }
+        @total_relay_points = relay_scores.inject{ |sum, score| sum + score }
+        @result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
+        puts "Before search: @team.id: #{@team.id} ('#{@team_name}'), @total_relay_points: #{@total_relay_points}, @result_score: #{@result_score}..."
       end
 
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingTeamScore (meeting_program.id: #{meeting_program.id}, @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..." )
-#        puts "==> List: #{MeetingRelayResult.where(team_id: @team.id).inspect}"
-        # primary     [
-          # "(meeting_program_id = ?) AND (team_id = ?) AND " +
-          # "(minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
-          # ( meeting_program.instance_of?(MeetingProgram) ? meeting_program.id : 0 ),
-          # ( @team.instance_of?(Team)                     ? @team.id           : 0 ),
-          # @mins, @secs, @hds
-        # ]
-        # secondary   [
-          # "(data_import_session_id = ?) AND " +
-          # "(#{meeting_program.instance_of?(MeetingProgram) ? '' : 'data_import_'}meeting_program_id = ?) AND " +
-          # "(#{@team.instance_of?(Team)                     ? '' : 'data_import_'}team_id = ?) AND " +
-          # "(minutes = ?) AND (seconds = ?) AND (hundreds = ?)",
-          # data_import_session.id,
-          # meeting_program.id,
-          # @team.id,
-          # @mins, @secs, @hds
-        # ]
-        # default_search
+        puts( "Seeking existing MeetingTeamScore..." )
+        primary     [
+          "(meeting_id = ?) AND (team_id = ?)",
+          meeting.instance_of?(Meeting) ? meeting.id : 0,
+          @team.instance_of?(Team)      ? @team.id : 0
+        ]
+        secondary   [
+          "(data_import_session_id = ?) AND " +
+          "(#{meeting.instance_of?(Meeting) ? '' : 'data_import_'}meeting_id = ?) AND " +
+          "(#{@team.instance_of?(Team)      ? '' : 'data_import_'}team_id = ?)",
+          data_import_session, meeting.id, @team.id
+        ]
+        default_search
 # DEBUG
         puts "primary_search_ok!" if primary_search_ok?
         puts "secondary_search_ok!" if secondary_search_ok?
@@ -107,39 +100,149 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
 # DEBUG
         puts "Search failed: adding new MeetingTeamScore with: @team=#{@team.name}..."
                                                     # Fix possible blank or missing ranking values:
-        # @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
-          # DataImportMeetingRelayResult,
-          # data_import_session,
-          # meeting_program,
-          # @standard_points
-        # ) if ( @rank == 0 && @standard_points >= 0.0 && !@is_out_of_race )
-#
-        # attributes_for_creation(
-          # data_import_session_id:         data_import_session.id,
-          # import_text:                    @import_text,
-          # is_play_off:                    @is_play_off,
-          # is_out_of_race:                 @is_out_of_race,
-          # is_disqualified:                @is_disqualified,
-          # disqualification_code_type_id:  @dsq_code_type_id,
-          # standard_points:                @standard_points,
-          # meeting_points:                 @meeting_points,
-          # rank:                           @rank,
-          # minutes:                        @mins,
-          # seconds:                        @secs,
-          # hundreds:                       @hds,
-          # relay_header:                   @team_name,
-          # # TODO FUTURE DEV:
-          # reaction_time:                  0,
-# #          entry_time_type_id:            nil,
-          # user_id:                        1, # (don't care)
-          # meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id  : nil,
-          # data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id  : nil,
-          # team_id:                        @team.instance_of?(Team)                              ? @team.id            : nil,
-          # data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id            : nil
-        # )
-        # add_new
+        @rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
+          data_import_session,
+          meeting
+        ) if ( @rank == 0 )
+
+        attributes_for_creation(
+          data_import_session_id:         data_import_session.id,
+          import_text:                    @import_text,
+          sum_individual_points:          @result_score,
+          sum_relay_points:               @total_relay_points.to_f,
+          # sum_team_points:               TODO
+          # meeting_individual_points:     TODO
+          # meeting_relay_points:          TODO
+          # meeting_team_points:           TODO
+          # season_individual_points:      TODO
+          # season_relay_points:           TODO
+          # season_team_points:            TODO
+          # team_affiliation_id: nil # (it will be updated upon Team/TeamAffiliation commit)
+          rank:                           @rank.to_i,
+          season_id:                      season.id,
+          user_id:                        1, # (don't care)
+          meeting_id:                     meeting.instance_of?(Meeting)          ? meeting.id  : nil,
+          data_import_meeting_id:         meeting.instance_of?(DataImportMeeting)? meeting.id  : nil,
+          team_id:                        @team.instance_of?(Team)               ? @team.id    : nil,
+          data_import_team_id:            @team.instance_of?(DataImportTeam)     ? @team.id    : nil
+        )
+        add_new
       end
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Retrieves all the relay results available for a specific meeting, both from primary
+  # and from secondary entities, thus including both already committed and uncommitted
+  # results.
+  # (This is to support multiple sessions of data-import.)
+  #
+  # === Parameters:
+  # - data_import_session: the current DataImportSession being processed.
+  # - meeting: the Meeting instance to be processed.
+  # - team: the Team or DataImportTeam instance to be processed.
+  #
+  # === Returns:
+  # An array of MeetingRelayResult and/or DataImportMeetingRelayResult instances.
+  #
+  # === Internal notes:
+  # [Steve, 20131010]
+  # The convoluted method belown is an example on how to retrieve ALL relay results
+  # among different "destination" entities, even if we are importing *partial* results from other
+  # (additional) meeting_sessions while we have already committed previous ones.
+  # We want *all* the relay results, both from committed and uncommitted entites.
+  #
+  # Normally (not during a data-import use-case), a simple line as the following would be
+  # enough to get the seeked results:
+  #
+  #     relay_results = meeting.meeting_relay_results.where(
+  #         team_id: team.id,
+  #         is_out_of_race: false, is_disqualified: false
+  #     )
+  #
+  def self.get_all_relay_results( data_import_session, meeting, team )
+    relay_results = []
+                                                    # Collect ALL meeting_sessions IDs:
+    meeting_ss_ids = meeting.instance_of?(Meeting) ? MeetingSession.where( meeting_id: meeting.id ).map{ |row| row.id } : []
+    di_meeting_ss_ids = DataImportMeetingSession.where(
+      [
+        "(data_import_session_id = ?) AND (#{meeting.instance_of?(Meeting) ? '' : 'data_import_'}meeting_id = ?)",
+        data_import_session.id, meeting.id
+      ]
+    ).map{ |row| row.id }
+                                                    # Collect ALL meeting_programs IDs:
+    meeting_prgs_ids = MeetingProgram.includes(:meeting_session).only_relays.where(
+      '(meeting_events.meeting_session_id IN (?))',
+      meeting_ss_ids
+    ).map{ |row| row.id }
+
+    di_meeting_prgs_ids = DataImportMeetingProgram.only_relays.where(
+      [ '(meeting_session_id IN (?)) OR (data_import_meeting_session_id IN (?))',
+        meeting_ss_ids, di_meeting_ss_ids ]
+    ).map{ |row| row.id }
+                                                    # Collect ALL relay results:
+    relay_results += MeetingRelayResult.is_valid.where(
+      meeting_program_id: meeting_prgs_ids,
+      team_id: team.id
+    ) if team.instance_of?(Team)
+
+    relay_results += DataImportMeetingRelayResult.is_valid.where(
+      [
+        "(#{team.instance_of?(Team) ? '' : 'data_import_'}team_id = ?) AND " +
+        "( (meeting_program_id IN (?)) OR (data_import_meeting_program_id IN (?)) )",
+        team.id, meeting_prgs_ids, di_meeting_prgs_ids
+      ]
+    )
+    relay_results
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Assuming a missing or blank rank value, this method tries to fix it in two possible
+  # ways:
+  #
+  # 1) By searching the last assigned team score row and assigning the its rank to
+  #    the current.
+  # 2) In case no previous rows were found, the resulting rank is the total number
+  #    of team scores existing for this particural meeting, +1.
+  #
+  # This method does NOT try to insert scores inside a ranking result list, because all
+  # the rows with a blank or missing rank during parsing are either disqualified results
+  # (that have no rank at all) or other out-of-race cases.
+  #
+  # Since we do *need* the ranking for sorting the result lists, the approach is
+  # to count all existing rows to get the missing rank when a match is not found.
+  #
+  # === Parameters:
+  #
+  # - data_import_session:
+  #   the current data-import session instance.
+  #
+  # - meeting:
+  #   the Meeting or DataImportMeeting to which the team scores are referring.
+  #
+  def self.fix_missing_rank( data_import_session, meeting )
+# DEBUG
+    puts "Team scores: Rank == 0! Searching previous same-scored row to assign same rank (meeting ID: #{meeting.id})..."
+#    logger.info( "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank..." )
+#    @phase_1_log << "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank...\r\n"
+    rank = 0
+    existing_rows = DataImportMeetingTeamScore.where(
+      [
+        "(data_import_session_id = ?) AND " +
+        "(#{ meeting.class.name.underscore }_id = ?)",
+        data_import_session.id, meeting.id
+      ]
+    )
+    if existing_rows.last
+      rank = existing_rows.last.rank
+    else
+      rank = existing_rows.size + 1
+    end
+    rank
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.567
+  - Goggles framework vers.:  4.00.569
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -26,8 +26,8 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
   # == Returns
   # +nil+ in case of invalid parameters
   # #result_id as:
-  #     - positive (#id) for a freshly added row into DataImportMeetingIndividualResult;
-  #     - negative (- #id) for a matching existing or commited row in MeetingIndividualResult;
+  #     - positive (#id) for a freshly added row into the secondary entity;
+  #     - negative (- #id) for a matching existing or commited row in the primary entity;
   #     - 0 on error/unable to process.
   #
   # @raise ArgumentError unless <tt>season</tt> and <tt>meeting_program</tt> are both not-nil.

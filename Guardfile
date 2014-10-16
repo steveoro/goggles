@@ -36,13 +36,7 @@ end
 Pry::Commands.block_command 'integration-', "Excludes specs with tag type:integration" do
   options = ::Guard.guards(:rspec).first.runner.options
   options[:cmd] = options[:cmd] =~ /\-t \w+/ ? options[:cmd].sub(/\-\-tag \w+/, "--tag ~type:integration") : "#{options[:cmd]} --tag ~type:integration"
-  output.puts "Using -t ~type:integration."
-end
-
-Pry::Commands.block_command 'integration+', "Includes ONLY specs with tag type:integration" do
-  options = ::Guard.guards(:rspec).first.runner.options
-  options[:cmd] = options[:cmd] =~ /\-t \w+/ ? options[:cmd].sub(/\-\-tag \w+/, "--tag type:integration") : "#{options[:cmd]} --tag type:integration"
-  output.puts "Using -t type:integration."
+  output.puts "Ecluding tags with 'type:integration' (use 'reset' command to reverse this change)."
 end
 
 Pry::Commands.block_command 't', "Touch files in specified path (usage: 't path_name_with_wildchars')" do |file_path|
