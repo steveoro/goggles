@@ -21,11 +21,40 @@ guard :shell do
 end
 
 
+Pry::Commands.block_command 'doc', "Use documentation formatter in rspec" do
+  options = ::Guard.guards(:rspec).first.runner.options
+  options[:cmd] = options[:cmd] =~ /\-f \w+/ ? options[:cmd].sub(/\-\-format \w+/, '--format documentation') : '--format documentation'
+  output.puts "Using Documentation as RSpec formatter."
+end
+
+Pry::Commands.block_command 'prog', "Use progress formatter in rspec" do
+  options = ::Guard.guards(:rspec).first.runner.options
+  options[:cmd] = options[:cmd] =~ /\-f \w+/ ? options[:cmd].sub(/\-\-format \w+/, '--format progress') : '--format progress'
+  output.puts "Using Progress as RSpec formatter."
+end
+
+Pry::Commands.block_command 'integration-', "Excludes specs with tag type:integration" do
+  options = ::Guard.guards(:rspec).first.runner.options
+  options[:cmd] = options[:cmd] =~ /\-t \w+/ ? options[:cmd].sub(/\-\-tag \w+/, "--tag ~type:integration") : "#{options[:cmd]} --tag ~type:integration"
+  output.puts "Using -t ~type:integration."
+end
+
+Pry::Commands.block_command 'integration+', "Includes ONLY specs with tag type:integration" do
+  options = ::Guard.guards(:rspec).first.runner.options
+  options[:cmd] = options[:cmd] =~ /\-t \w+/ ? options[:cmd].sub(/\-\-tag \w+/, "--tag type:integration") : "#{options[:cmd]} --tag type:integration"
+  output.puts "Using -t type:integration."
+end
+
+Pry::Commands.block_command 't', "Touch files in specified path (usage: 't path_name_with_wildchars')" do |file_path|
+  output.puts "Updating modification time for files under '#{file_path}'..."
+  system( "touch -m #{file_path}" )
+end
+
+
 # Halt as soon as the first fail is found:
 #group :specs, halt_on_fail: true do
 group :specs do
-
-  guard :rspec, cmd: 'zeus rspec' do
+  guard :rspec, cmd: 'zeus rspec -f progress' do
     watch(%r{^spec\/.+_spec\.rb$})
     watch(%r{^lib\/(.+)\.rb$})                          { |m| "spec/lib/#{m[1]}_spec.rb" }
     watch('spec/spec_helper.rb')                        { "spec" }
@@ -82,3 +111,4 @@ group :specs do
 #    watch(%r{^features\/step_definitions\/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }
 #  end
 end
+

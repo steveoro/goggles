@@ -78,6 +78,11 @@ gem "rest-client"
 group :development do
   gem "better_errors"
   gem "binding_of_caller"
+  gem 'rails_best_practices'
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-shell'
+  gem 'rspec_api_blueprint', require: false
 end
 
 
@@ -103,12 +108,6 @@ group :development, :test do
 #  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
 
   gem "factory_girl_rails"
-  gem 'rails_best_practices'
-
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-shell'
-  gem 'rspec_api_blueprint', require: false
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', '~> 0.7.1', require: false
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
