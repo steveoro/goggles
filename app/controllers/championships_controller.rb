@@ -31,7 +31,7 @@ class ChampionshipsController < ApplicationController
   # Season calendar for a given regonal er CSI season
   #
   def calendar_regional_er_csi
-    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name     
+    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name    
   end
   #-- -------------------------------------------------------------------------
   #++
