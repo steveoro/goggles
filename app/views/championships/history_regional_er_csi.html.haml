@@ -1,3 +1,4 @@
+= render( partial: 'regional_er_csi_tabs' )
 = render( partial: 'title' )
 
 .row-fluid#history_regional_er_csi
@@ -40,7 +41,7 @@
               %td.goggles-rightalign
                 = computed_season_ranking.total_points
 
-.row-fluid
+.span7
   .goggles-category-gap
     %h3
       = t('championships.hall_of_fame')
@@ -56,8 +57,15 @@
             = image_tag('medal_silver_3.png')
           %td.goggles-centeralign
             = image_tag('medal_bronze_3.png')
-        %tr
-          %td{ colspan: 4 }
-            .p= t('coming_soon')
+        - @seasons_hall_of_fame.each do |ranked_team|
+          %tr
+            %td
+              = ranked_team[:team].decorate.get_linked_name
+            %td.goggles-rightalign
+              = ranked_team[:first_place]
+            %td.goggles-rightalign
+              = ranked_team[:second_place]
+            %td.goggles-rightalign
+              = ranked_team[:third_place]
 
 .row-fluid.goggles-category-gap

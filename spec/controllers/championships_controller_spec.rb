@@ -73,6 +73,7 @@ describe ChampionshipsController, :type => :controller do
         get :history_regional_er_csi
         expect( assigns(:title) ).to be_an_instance_of( String )
         expect( assigns(:championship_history_manager) ).to be_an_instance_of( Array )
+        expect( assigns(:seasons_hall_of_fame) ).to be_an_instance_of( Array )
       end
       it "renders the form template" do
         get :history_regional_er_csi

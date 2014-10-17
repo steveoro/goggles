@@ -116,7 +116,7 @@ class ChampionshipHistoryManager
       end
       seasons_hall_of_fame << team_placement 
     end
-    seasons_hall_of_fame 
+    seasons_hall_of_fame.sort{ |p,n| (n[:first_place]*10000 + n[:second_place] * 100 + n[:third_place]) <=> (p[:first_place]*10000 + p[:second_place] * 100 + p[:third_place]) } 
   end
   #-- --------------------------------------------------------------------------
   #++
