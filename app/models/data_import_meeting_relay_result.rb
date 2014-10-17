@@ -25,8 +25,8 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   belongs_to :disqualification_code_type
   belongs_to :entry_time_type
 
-  # The following helper is used only by data_importer_test:
-  has_one  :data_import_meeting,  through: :data_import_meeting_program
+  # This is used as an helper for the factory tests:
+  has_one  :meeting, through: :data_import_meeting_program
 
   validates_associated :entry_time_type
 
@@ -84,7 +84,7 @@ class DataImportMeetingRelayResult < ActiveRecord::Base
   end
 
   # Retrieves the scheduled_date of this result
-  def get_scheduled_date 
+  def get_scheduled_date
     self.meeting_program ? self.meeting_program.get_scheduled_date() : (self.data_import_meeting_program ? self.data_import_meeting_program.get_scheduled_date() : '?')
   end
 

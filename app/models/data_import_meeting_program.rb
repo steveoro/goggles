@@ -35,8 +35,8 @@ class DataImportMeetingProgram < ActiveRecord::Base
   has_many :meeting_relay_swimmers
   has_many :data_import_meeting_relay_swimmers
 
-  # The following helper is used only by data_importer_test:
-  has_one  :data_import_meeting,  through: :data_import_meeting_session
+  # This is used as an helper for the factory tests:
+  has_one  :meeting, through: :meeting_session
 
   validates_presence_of :event_order
   validates_length_of   :event_order, within: 1..3, allow_nil: false

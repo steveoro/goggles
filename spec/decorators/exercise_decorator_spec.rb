@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe ExerciseDecorator do
+describe ExerciseDecorator, type: :model do
   before :each do
     rnd_id = ((rand * 500) % Exercise.count).to_i + 1
     @random_seed_row = Exercise.find_by_id( rnd_id )
@@ -20,12 +20,12 @@ describe ExerciseDecorator do
 
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method returning a non-empty Hash)",
-      [ 
+      [
         :drop_down_attrs
       ]
     )
     it_behaves_like( "(the existance of a method returning non-empty strings)",
-      [ 
+      [
         :get_full_name
       ]
     )

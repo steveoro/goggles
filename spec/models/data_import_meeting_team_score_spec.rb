@@ -12,55 +12,54 @@ describe DataImportMeetingTeamScore, :type => :model do
   # This is mainly used to test the factory and its relationships:
   context "[Standard Factory]" do
     subject { create(:data_import_meeting_team_score) }
-
-    it "is a valid istance" do
-      expect( subject ).to be_valid
-    end
-    it "has a valid team instance" do
-      expect( subject.team ).to be_valid
-    end
-    it "has a valid season instance" do
-      expect( subject.season ).to be_valid
-    end
-    it "has a valid meeting instance" do
-      expect( subject.meeting ).to be_valid
-    end
-
-    # Validated relations:
-    it_behaves_like( "(belongs_to required models)", [
-      :team,
-      :team_affiliation,
-      :meeting,
-      :season
-    ])
+    it_behaves_like( "a valid instance having a valid Season, Meeting and Team (+Affiliation)" )
   end
 
 
-# TODO
-  # context "[Factory 'with_relay_results']" do
-    # subject { create(:data_import_meeting_team_score_with_relay_results) }
-#
-    # it "is a valid istance" do
-      # expect( subject ).to be_valid
-    # end
-    # it "has a valid team instance" do
-      # expect( subject.team ).to be_valid
-    # end
-    # it "has a valid season instance" do
-      # expect( subject.season ).to be_valid
-    # end
-    # it "has a valid meeting instance" do
-      # expect( subject.meeting ).to be_valid
-    # end
-#
-    # # Validated relations:
-    # it_behaves_like( "(belongs_to required models)", [
-      # :team,
-      # :team_affiliation,
-      # :meeting,
-      # :season
-    # ])
-  # end
+  context "[Factory 'with_relay_results']" do
+    subject { create(:data_import_meeting_team_score_with_relay_results) }
+    it_behaves_like( "a valid instance having a valid Season, Meeting and Team (+Affiliation)" )
+
+    it "creates at least 1 MeetingSession" do
+      expect( subject.meeting.meeting_sessions.count ).to be >= 1
+    end
+    it "creates only valid MeetingSessions" do
+      subject.meeting.meeting_sessions.each do |meeting_session|
+        expect( meeting_session ).to be_valid
+      end
+    end
+
+    it "creates at least 1 MeetingEvent" do
+      expect( subject.meeting.meeting_events.count ).to be >= 1
+    end
+    it "creates only valid MeetingEvents" do
+      subject.meeting.meeting_events.each do |meeting_event|
+        expect( meeting_event ).to be_valid
+      end
+    end
+
+    it "creates at least 1 DataImportMeetingProgram" do
+      di_mprgs = DataImportMeetingProgram.includes(:meeting).where( "meetings.id = ?", subject.meeting_id )
+      expect( di_mprgs.count ).to be >= 1
+    end
+    it "creates only valid DataImportMeetingPrograms" do
+      di_mprgs = DataImportMeetingProgram.includes(:meeting).where( "meetings.id = ?", subject.meeting_id )
+      di_mprgs.each do |di_mprg|
+        expect( di_mprg ).to be_valid
+      end
+    end
+
+    it "creates at least 1 DataImportMeetingRelayResult" do
+      di_mprgs = DataImportMeetingRelayResult.includes(:meeting).where( "meetings.id = ?", subject.meeting_id )
+      expect( di_mprgs.count ).to be >= 1
+    end
+    it "creates only valid DataImportMeetingRelayResult" do
+      di_mprgs = DataImportMeetingRelayResult.includes(:meeting).where( "meetings.id = ?", subject.meeting_id )
+      di_mprgs.each do |di_mprg|
+        expect( di_mprg ).to be_valid
+      end
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 end

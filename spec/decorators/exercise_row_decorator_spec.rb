@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe ExerciseRowDecorator do
+describe ExerciseRowDecorator, type: :model do
   before :each do
     rnd_id = ((rand * 500) % ExerciseRow.count).to_i + 1
     @random_seed_row = ExerciseRow.find_by_id( rnd_id )
@@ -20,12 +20,12 @@ describe ExerciseRowDecorator do
 
   context "[implemented methods]" do
     it_behaves_like( "(the existance of a method returning non-empty strings)",
-      [ 
+      [
         :get_full_name
       ]
     )
     it_behaves_like( "(the existance of a method returning strings)",
-      [ 
+      [
         :get_formatted_pause,
         :get_formatted_start_and_rest,
         :get_base_movement_full,

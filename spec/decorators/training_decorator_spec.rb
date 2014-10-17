@@ -72,7 +72,7 @@ end
 #++
 
 
-describe TrainingDecorator do
+describe TrainingDecorator, type: :model do
 
   context "when used with Training" do
     before :each do

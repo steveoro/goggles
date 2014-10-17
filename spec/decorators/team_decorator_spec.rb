@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe TeamDecorator do
+describe TeamDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
   subject { create( :team ).decorate }

@@ -18,7 +18,7 @@ shared_examples_for "(TrainingRowDecorator usable for both TrainingRow & UserTra
       ]
     )
     it_behaves_like( "(the existance of a method returning strings)",
-      [ 
+      [
         :get_formatted_pause,
         :get_formatted_start_and_rest,
         :get_formatted_part_order,
@@ -43,7 +43,7 @@ end
 #++
 
 
-describe TrainingRowDecorator do
+describe TrainingRowDecorator, type: :model do
 
   context "when used with TrainingRow" do
     before :each do

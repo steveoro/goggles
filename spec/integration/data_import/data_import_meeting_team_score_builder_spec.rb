@@ -13,8 +13,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
-  # Non-existing (totally random) fixture params. Rebuild a plausible event & program
-  # starting from the meeting session:
+  # Non-existing (totally random) fixture params.:
   let(:meeting)               { create( :meeting ) }
   let(:season)                { meeting.season }
   let(:detail_row_idx)        { (rand * 50).to_i }  # Used to compute the esteemed heat begin time
@@ -22,38 +21,23 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   let(:random_score)          { (rand * 1000).to_i }
   # NOTE:
   # detail_row[:fields] => [
-  #   :team_code, :team_name, :result_score, :result_position
+  #   :team_name, :result_score, :result_position
   # ]
-  let(:detail_row) do
+  let(:rand_detail_row) do
     {
       import_text: Faker::Lorem.paragraph[0..250],
       fields: {
-        team_code:        build( :data_import_team ).badge_number,
         team_name:        build( :data_import_team ).name,
         result_score:     random_score.to_s,
         result_position:  (1 + (rand * 20).to_i % 20).to_s
       }
     }
   end
-
-  # Existing or matching entities:
-  # TODO primary
-  # TODO secondary
   #-- -------------------------------------------------------------------------
   #++
 
 
-  context "after a self.build() with NO matching primary entity (but existing MeetingProgram)," do
-    subject do
-      DataImportMeetingTeamScoreBuilder.build_from_parameters(
-        data_import_session,
-        season,
-        meeting,
-        detail_row, detail_row_idx, detail_rows_size,
-        true # force_missing_team_creation
-      )
-    end
-
+  shared_examples_for( "(build process successfull)" ) do
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
@@ -62,12 +46,30 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
         expect( subject.data_import_session ).to eq( data_import_session )
       end
     end
+  end
+
+
+  context "after a self.build() with NO matching primary entity (and NO MRR nor DI_MRR)," do
+    subject do
+      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+        data_import_session,
+        season,
+        meeting,
+        rand_detail_row, detail_row_idx, detail_rows_size,
+        true # force_missing_team_creation
+      )
+    end
+
+    it_behaves_like( "(build process successfull)" )
 
     it "creates a new secondary entity row" do
       expect{ subject }.to change{ DataImportMeetingTeamScore.count }.by(1)
     end
     it "doesn't create any primary entity row" do
       expect{ subject }.not_to change{ MeetingTeamScore.count }
+    end
+    it "creates a new DataImportTeam row" do
+      expect{ subject }.to change{ DataImportTeam.count }.by(1)
     end
 
     describe "#result_row" do
@@ -88,69 +90,324 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with NO matching primary entity (but existing DataImportMeetingProgram)," do
-    # TODO
+  shared_examples_for( "NO matching primary entity (but existing MRR or DI-MRR)" ) do
+    it_behaves_like( "(build process successfull)" )
+
+    it "creates a new secondary entity row" do
+      expect{ subject }.to change{ DataImportMeetingTeamScore.count }.by(1)
+    end
+    it "doesn't create any primary entity row" do
+      expect{ subject }.not_to change{ MeetingTeamScore.count }
+    end
+    it "doesn't create any additional Team row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ Team.count }.by(1)
+    end
+    it "doesn't create any DataImportTeam row" do
+      expect{ subject }.not_to change{ DataImportTeam.count }
+    end
+
+    describe "#result_row" do
+      it "returns a data-import entity instance when the process is successful" do
+        expect( subject.result_row ).to be_an_instance_of( DataImportMeetingTeamScore )
+      end
+    end
+    describe "#result_id" do
+      it "returns a positive ID when the resulting row is a data-import entity" do
+        expect( subject.result_id ).to be > 0
+      end
+      it "is the ID of the resulting row" do
+        expect( subject.result_id ).to eq( subject.result_row.id )
+      end
+    end
+  end
+
+
+  # Non-existing (totally random) fixture params.:
+  let(:mrr) do
+    create( :meeting_relay_result )
+  end
+  let(:mrr_detail_row) do
+    {
+      import_text: Faker::Lorem.paragraph[0..250],
+      fields: {
+        team_name:        mrr.team.name,
+        result_score:     mrr.standard_points.to_s,
+        result_position:  mrr.rank
+      }
+    }
+  end
+
+
+  context "after a self.build() with NO matching primary entity (but existing MeetingRelayResult)," do
+    subject do
+      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+        data_import_session,
+        mrr.meeting.season,
+        mrr.meeting,
+        mrr_detail_row, detail_row_idx, detail_rows_size,
+        false # force_missing_team_creation
+      )
+    end
+    it_behaves_like( "NO matching primary entity (but existing MRR or DI-MRR)" )
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  context "after a self.build() with a matching primary entity (and its MeetingProgram)," do
-    # TODO
+  # Non-existing (totally random) fixture params.:
+  let(:di_mrr) do
+    create( :data_import_meeting_relay_result, data_import_session: data_import_session )
+  end
+  let(:di_mrr_detail_row) do
+    {
+      import_text: Faker::Lorem.paragraph[0..250],
+      fields: {
+        team_name:        di_mrr.team.name,
+        result_score:     di_mrr.standard_points.to_s,
+        result_position:  di_mrr.rank
+      }
+    }
+  end
+
+
+  context "after a self.build() with NO matching primary entity (but existing DataImportMeetingRelayResult)," do
+    subject do
+      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+        data_import_session,
+        di_mrr.meeting.season,
+        di_mrr.meeting,
+        di_mrr_detail_row, detail_row_idx, detail_rows_size,
+        false # force_missing_team_creation
+      )
+    end
+    it_behaves_like( "NO matching primary entity (but existing MRR or DI-MRR)" )
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  context "after a self.build() with a matching secondary entity (w/ DataImportMeetingProgram)," do
-    # TODO
+  # Existing or matching entities:
+  let(:primary_ts_with_mrrs) do
+    create( :meeting_team_score_with_relay_results )
+  end
+  let(:primary_detail_row) do
+    {
+      import_text: Faker::Lorem.paragraph[0..250],
+      fields: {
+        team_name:        primary_ts_with_mrrs.team.name,
+        # [Steve, 20141017] For the search of an existing MeetingTeamScore the actual
+        # score value is ignored (the examples should not create a new ranking row):
+        result_score:     primary_ts_with_mrrs.meeting_relay_points.to_s,
+        result_position:  primary_ts_with_mrrs.rank
+      }
+    }
+  end
+
+
+  context "after a self.build() with a matching primary entity (w/ MeetingRelayResults)," do
+    subject do
+      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+        data_import_session,
+        primary_ts_with_mrrs.meeting.season,
+        primary_ts_with_mrrs.meeting,
+        primary_detail_row, detail_row_idx, detail_rows_size,
+        false # force_missing_team_creation
+      )
+    end
+
+    it_behaves_like( "(build process successfull)" )
+
+    it "doesn't create any additional primary entity row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ MeetingTeamScore.count }.by(1)
+    end
+    it "doesn't create any secondary entity row" do
+      expect{ subject }.not_to change{ DataImportMeetingTeamScore.count }
+    end
+    it "doesn't create any additional Team row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ Team.count }.by(1)
+    end
+    it "doesn't create any DataImportTeam row" do
+      expect{ subject }.not_to change{ DataImportTeam.count }
+    end
+
+    describe "#result_row" do
+      it "returns a primary entity instance when the process is successful" do
+        expect( subject.result_row ).to be_an_instance_of( MeetingTeamScore )
+      end
+    end
+    describe "#result_id" do
+      it "returns a negative ID since the resulting row is a primary entity" do
+        expect( subject.result_id ).to be < 0
+      end
+      it "is the ID of the resulting row (with a minus sign)" do
+        expect( subject.result_id ).to eq( -subject.result_row.id )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Existing or matching entities:
+  let(:secondary_ts_with_mrrs) do
+    create( :data_import_meeting_team_score_with_relay_results, data_import_session: data_import_session )
+  end
+  let(:secondary_detail_row) do
+    {
+      import_text: Faker::Lorem.paragraph[0..250],
+      fields: {
+        team_name:        secondary_ts_with_mrrs.team.name,
+        # [Steve, 20141017] For the search of an existing MeetingTeamScore the actual
+        # score value is ignored (the examples should not create a new ranking row):
+        result_score:     secondary_ts_with_mrrs.meeting_relay_points.to_s,
+        result_position:  secondary_ts_with_mrrs.rank
+      }
+    }
+  end
+
+
+  context "after a self.build() with a matching secondary entity (w/ DataImportMeetingRelayResults)," do
+    subject do
+      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+        data_import_session,
+        secondary_ts_with_mrrs.meeting.season,
+        secondary_ts_with_mrrs.meeting,
+        secondary_detail_row, detail_row_idx, detail_rows_size,
+        false # force_missing_team_creation
+      )
+    end
+
+    it_behaves_like( "(build process successfull)" )
+
+    it "doesn't create any additional secondary entity row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ DataImportMeetingTeamScore.count }.by(1)
+    end
+    it "doesn't create any primary entity row" do
+      expect{ subject }.not_to change{ MeetingTeamScore.count }
+    end
+    it "doesn't create any additional Team row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ Team.count }.by(1)
+    end
+    it "doesn't create any DataImportTeam row" do
+      expect{ subject }.not_to change{ DataImportTeam.count }
+    end
+
+    describe "#result_row" do
+      it "returns a secondary entity instance when the process is successful" do
+        expect( subject.result_row ).to be_an_instance_of( DataImportMeetingTeamScore )
+      end
+    end
+    describe "#result_id" do
+      it "returns a positive ID since the resulting row is a secondary entity" do
+        expect( subject.result_id ).to be > 0
+      end
+      it "is the ID of the resulting row" do
+        expect( subject.result_id ).to eq( subject.result_row.id )
+      end
+    end
+  end
+  #-- =========================================================================
   #++
 
 
   describe "self.get_all_relay_results() for a Meeting with no Relay results," do
-    xit "returns and empty array" do
-      # TODO
+    subject do
+      DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+        data_import_session,
+        meeting,
+        create(:team)
+      )
+    end
+
+    it "returns a list" do
+      expect( subject ).to respond_to(:each)
+      expect( subject ).to respond_to(:size)
+    end
+    it "returns no items" do
+      expect( subject.size ).to eq(0)
     end
   end
 
 
   describe "self.get_all_relay_results() for a Meeting with MRRs," do
-# TODO Either use pre-loaded seed or create a specific MRR-only meeting with at least a couple of teams
-    xit "returns the list of MRRs" do
-      mrr_list = DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+    subject do
+      DataImportMeetingTeamScoreBuilder.get_all_relay_results(
         data_import_session,
-        meeting,
-        team
+        primary_ts_with_mrrs.meeting,
+        primary_ts_with_mrrs.team
       )
-      expected_count = meeting.meeting_relay_results.where(
-        team_id: team.id,
-        is_out_of_race: false, is_disqualified: false
+    end
+
+    it "returns a list" do
+      expect( subject ).to respond_to(:each)
+      expect( subject ).to respond_to(:size)
+    end
+    it "returns MRR items" do
+      expect( subject ).to all( be_an_instance_of(MeetingRelayResult) )
+    end
+    it "returns the items relative to a specific (team, meeting) tuple" do
+      expected_count = MeetingRelayResult.includes(:meeting).where(
+        team_id:          primary_ts_with_mrrs.team_id,
+        :"meetings.id" => primary_ts_with_mrrs.meeting_id,
+        is_out_of_race:   false,
+        is_disqualified:  false
       ).count
-      expect( mrr_list.size ).to eq( expected_count )
+      expect( subject.size ).to eq( expected_count )
     end
   end
 
 
   describe "self.get_all_relay_results() for a Meeting with DI-MRRs," do
-# TODO Either use pre-loaded seed or create a specific MRR-only meeting with at least a couple of teams
-    xit "returns the list of DI-MRRs" do
+    subject do
+      DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+        data_import_session,
+        secondary_ts_with_mrrs.meeting,
+        secondary_ts_with_mrrs.team
+      )
+    end
+
+    it "returns a list" do
+      expect( subject ).to respond_to(:each)
+      expect( subject ).to respond_to(:size)
+    end
+    it "returns DI-MRR items" do
+      expect( subject ).to all( be_an_instance_of(DataImportMeetingRelayResult) )
+    end
+    it "returns the items relative to a specific (team, meeting) tuple" do
+      expected_count = DataImportMeetingRelayResult.includes(:meeting).where(
+        team_id:          secondary_ts_with_mrrs.team_id,
+        :"meetings.id" => secondary_ts_with_mrrs.meeting_id,
+        is_out_of_race:   false,
+        is_disqualified:  false
+      ).count
+      expect( subject.size ).to eq( expected_count )
     end
   end
-
-
-  describe "self.get_all_relay_results() for a Meeting with both DI-MRRs & MRRs," do
-# TODO Either use pre-loaded seed or create a specific MRR-only meeting with at least a couple of teams
-    xit "returns the composed list of MRRs + DI-MRRs" do
-    end
-  end
-  #-- -------------------------------------------------------------------------
+  #-- =========================================================================
   #++
 
 
   describe "self.fix_missing_rank()," do
-    # TODO
+    it "returns the rank value of a meeting with existing DataImportTeamScores" do
+      result_rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
+        data_import_session,
+        secondary_ts_with_mrrs.meeting
+      )
+      expect( result_rank ).to eq( secondary_ts_with_mrrs.rank )
+    end
+
+    it "returns the tot.rows +1 as the rank value for a meeting w/ NO existing DataImportTeamScores" do
+      result_rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
+        data_import_session,
+        meeting
+      )
+      expect( result_rank ).to eq(1)
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

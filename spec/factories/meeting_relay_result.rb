@@ -20,6 +20,7 @@ FactoryGirl.define do
     entry_minutes             { ((rand * 4) % 4).to_i }
     entry_seconds             { ((rand * 60) % 60).to_i }
     entry_hundreds            { ((rand * 100) % 100).to_i }
+    entry_time_type_id        { EntryTimeType::LAST_RACE_ID }
     # No disqualify:
     disqualification_code_type nil # { DisqualificationCodeType.all.sort{ rand - 0.5 }[0] }
     user
@@ -49,7 +50,13 @@ FactoryGirl.define do
   factory :meeting_relay_result do
     association :meeting_program, factory: :meeting_program_relay
     common_meeting_relay_result_fields
-    team_affiliation_id       nil # (If needed, this must be set externally to work: too much hierachy-tree dependency between needed entities)
+    team_affiliation do
+      create(
+        :team_affiliation,
+        team:   team,
+        season: meeting_program.season # (by ActiveRecord relation)
+      )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
