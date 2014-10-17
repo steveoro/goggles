@@ -34,7 +34,7 @@
         - @championship_history_manager.each do |closed_season|
           %tr
             %td
-              = closed_season[:season].header_year
+              = closed_season[:season].decorate.get_linked_header_year
             - closed_season[:ranking].each do |computed_season_ranking|
               %td
                 = computed_season_ranking.team.decorate.get_linked_name

@@ -779,6 +779,7 @@ it:
     first_place: "Primo posto"
     second_place: "Secondo posto"
     third_place: "Terzo posto"
+    show_full_season: "Mostra i dati completi della stagione"
 
   netzke:
     basepack:

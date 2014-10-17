@@ -1,0 +1,30 @@
+= render( partial: 'regional_er_csi_tabs' )
+= render( partial: 'title' )
+
+.row-fluid#history_regional_er_csi
+  .goggles-category-gap#pageTop
+    %h3
+      = t('championships.calendar')
+      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+
+    %table.table.table-striped.table-bordered.table-hover.table-condensed#history
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            %b= t('championships.calendar.meeting')
+          %td
+            %b= t('championships.calendar.date')
+          %td
+            %b= t('championships.calendar.warm_up')
+          %td
+            %b= t('championships.calendar.begin')
+          %td
+            %b= t('championships.calendar.program')
+          %td
+            %b= t('championships.calendar.pool')
+
+          %tr
+            %td{ colspan: 6 }
+              .p= t('coming_soon')
+                 
+.row-fluid.goggles-category-gap

@@ -78,8 +78,8 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item( :key_championships,                    t('championships.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_supermaster_fin_path()
-      lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_regional_er_csi_path()
+      lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_supermaster_fin_path
+      lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_regional_er_csi_path
     end
 
     primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|

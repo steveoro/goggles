@@ -150,12 +150,12 @@ Goggles::Application.routes.draw do
       get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
 
       # === Championships ===
-      get  "championships/supermaster_fin",      to: "championships#supermaster_fin",          as: "championships_supermaster_fin"
-      get  "championships/regional_er_csi",      to: "championships#regional_er_csi",          as: "championships_regional_er_csi"
-      get  "championships/history_regional_er_csi",  to: "championships#history_regional_er_csi",  as: "championships_history_regional_er_csi"
-      get  "championships/history_supermaster_fin",  to: "championships#history_supermaster_fin",  as: "championships_history_supermaster_fin"
-      get  "championships/calendar_regional_er_csi", to: "championships#calendar_regional_er_csi", as: "championships_calendar_regional_er_csi"
-      get  "championships/calendar_supermaster_fin", to: "championships#calendar_supermaster_fin", as: "championships_calendar_supermaster_fin"
+      get  "championships/supermaster_fin(/:id)",          to: "championships#supermaster_fin",          as: "championships_supermaster_fin"
+      get  "championships/regional_er_csi(/:id)",          to: "championships#regional_er_csi",          as: "championships_regional_er_csi"
+      get  "championships/history_regional_er_csi(/:id)",  to: "championships#history_regional_er_csi",  as: "championships_history_regional_er_csi"
+      get  "championships/history_supermaster_fin(/:id)",  to: "championships#history_supermaster_fin",  as: "championships_history_supermaster_fin"
+      get  "championships/calendar_regional_er_csi(/:id)", to: "championships#calendar_regional_er_csi", as: "championships_calendar_regional_er_csi"
+      get  "championships/calendar_supermaster_fin(/:id)", to: "championships#calendar_supermaster_fin", as: "championships_calendar_supermaster_fin"
 
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do
