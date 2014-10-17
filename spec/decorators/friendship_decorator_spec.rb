@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe FriendshipDecorator do
+describe FriendshipDecorator, type: :model do
   before :each do
     friend_user = create( :user )
     user = create( :user )

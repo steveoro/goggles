@@ -46,7 +46,8 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
 
       set_up do
         @import_text = detail_row[:import_text]
-        @team_code   = detail_row[:fields][:team_code]
+        # [Steve, 20141017] This field is currently not used here:
+#        @team_code   = detail_row[:fields][:team_code]
         @team_name   = detail_row[:fields][:team_name]
         # result_time  = detail_row[:fields][:result_time]
         team_builder = DataImportTeamBuilder.build_from_parameters(
@@ -204,17 +205,21 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
   # Assuming a missing or blank rank value, this method tries to fix it in two possible
   # ways:
   #
-  # 1) By searching the last assigned team score row and assigning the its rank to
-  #    the current.
+  # 1) By searching the last assigned (data-import) team score row and assigning its rank
+  #    to the current processed row.
   # 2) In case no previous rows were found, the resulting rank is the total number
   #    of team scores existing for this particural meeting, +1.
+  #    (This fail-back case may generate wrong values in case there's at least a tie-in
+  #     or two same-ranking scores in between the existing rows.)
   #
   # This method does NOT try to insert scores inside a ranking result list, because all
-  # the rows with a blank or missing rank during parsing are either disqualified results
-  # (that have no rank at all) or other out-of-race cases.
+  # the rows with a blank or missing rank during parsing have been found to be either
+  # disqualified results or team with no points (that have no rank at all) or some
+  # other special "out-of-race" cases.
   #
-  # Since we do *need* the ranking for sorting the result lists, the approach is
-  # to count all existing rows to get the missing rank when a match is not found.
+  # Since we do *need* the ranking for sorting the result lists, basically the approach
+  # taken is to count all existing rows to get the missing rank when a match is not
+  # found.
   #
   # === Parameters:
   #
@@ -240,7 +245,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
     if existing_rows.last
       rank = existing_rows.last.rank
     else
-      rank = existing_rows.size + 1
+      rank = existing_rows.count + 1
     end
     rank
   end

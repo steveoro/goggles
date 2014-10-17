@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe SwimmingPoolDecorator do
+describe SwimmingPoolDecorator, type: :model do
   context "[implemented methods]" do
-    it_behaves_like "(the existance of a method returning non-empty strings)", [ 
+    it_behaves_like "(the existance of a method returning non-empty strings)", [
       :get_verbose_name,
       :get_city_name,
       :get_full_address,
@@ -15,7 +15,7 @@ describe SwimmingPoolDecorator do
     it_behaves_like "(the existance of a method)", [
       :get_maps_url
     ]
-    it_behaves_like "(the existance of a method returning numeric values)", [ 
+    it_behaves_like "(the existance of a method returning numeric values)", [
       :get_pool_length_in_meters,
       :get_pool_lanes_number
     ]
@@ -35,14 +35,14 @@ describe SwimmingPoolDecorator do
   describe "#get_pool_length_in_meters" do
     it "returns a number between 0 and 50" do
       expect( subject.get_pool_length_in_meters ).to be >= 0
-      expect( subject.get_pool_length_in_meters ).to be <= 50                
-    end    
+      expect( subject.get_pool_length_in_meters ).to be <= 50
+    end
   end
 
   describe "#get_pool_lanes_number" do
     it "returns a number between 0 and 10" do
       expect( subject.get_pool_lanes_number ).to be >= 0
-      expect( subject.get_pool_lanes_number ).to be <= 10        
-    end     
+      expect( subject.get_pool_lanes_number ).to be <= 10
+    end
   end
 end

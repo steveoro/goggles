@@ -9,12 +9,15 @@ require 'data_import/strategies/fin_result_parser'
 require 'data_import/strategies/fin_result_phase2'
 require 'data_import/strategies/fin_result_phase3'
 
+require 'data_import/services/data_import_meeting_builder'
+require 'data_import/services/data_import_meeting_session_builder'
+
 
 =begin
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.515
+  - Goggles framework vers.:  4.00.569
   - author: Steve A.
 
   Data-Import strategy class.
@@ -569,11 +572,23 @@ class DataImporter
         end
       end
 
+      meeting = nil
       if season && can_go_on                        # -- MEETING digest --
-        meeting_id = search_or_add_a_corresponding_meeting(
-            data_import_session, full_pathname, season_id, meeting_header_row,
-            meeting_dates, scheduled_date, header_fields_dao, force_missing_meeting_creation
+        meeting_builder = DataImportMeetingBuilder.build_from_parameters(
+          data_import_session,
+          season,
+          header_fields_dao,
+          meeting_header_row,
+          meeting_dates, # meeting_dates_text
+          force_missing_meeting_creation
         )
+        meeting    = meeting_builder.result_row
+        meeting_id = meeting_builder.result_id
+# Old method:
+        # meeting_id = search_or_add_a_corresponding_meeting(
+            # data_import_session, full_pathname, season_id, meeting_header_row,
+            # meeting_dates, scheduled_date, header_fields_dao, force_missing_meeting_creation
+        # )
       end
 
                                                     # --- TEAM RANKING/SCORES (digest part) --
@@ -590,12 +605,24 @@ class DataImporter
         )
       end
                                                     # -- MEETING SESSION (digest part) --
+      meeting_session = nil
       if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
-        meeting_session_id = search_or_add_a_corresponding_meeting_session(
-            full_pathname, session_id, meeting_id,
-            meeting_dates, scheduled_date,
-            header_fields_dao, force_missing_meeting_creation
+        meeting_session_builder = DataImportMeetingSessionBuilder.build_from_parameters(
+          data_import_session,
+          meeting,
+          header_fields_dao,
+          meeting_dates, # meeting_dates_text
+          scheduled_date,
+          force_missing_meeting_creation
         )
+        meeting_session    = meeting_session_builder.result_row
+        meeting_session_id = meeting_session_builder.result_id
+# Old method:
+#        meeting_session_id = search_or_add_a_corresponding_meeting_session(
+#            full_pathname, session_id, meeting_id,
+#            meeting_dates, scheduled_date,
+#            header_fields_dao, force_missing_meeting_creation
+#        )
       end
 
       unless (season_id > 0) && (season_type_id > 0) && can_go_on &&

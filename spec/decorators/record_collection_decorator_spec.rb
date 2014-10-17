@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe RecordCollectionDecorator do
+describe RecordCollectionDecorator, type: :model do
   before :each do
     team = Team.find(1)
     rc = RecordCollector.new( team: team )

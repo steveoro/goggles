@@ -34,7 +34,25 @@ FactoryGirl.define do
     common_meeting_team_score_fields
 
     factory :data_import_meeting_team_score_with_relay_results do
-      # TODO
+      after(:create) do |created_instance, evaluator|
+        ms  = create( :meeting_session, meeting: created_instance.meeting )
+        me  = create( :meeting_event_relay, meeting_session: ms )
+        mps = create_list(
+          :data_import_meeting_program_relay,
+          ((rand * 3) % 2).to_i + 1,
+          meeting_session: ms,
+          event_type: me.event_type
+        )
+        mps.each do |mp|
+          create_list(
+          :data_import_meeting_relay_result,
+            ((rand * 3) % 2).to_i + 1,
+            data_import_meeting_program: mp,
+            team: created_instance.team,
+            team_affiliation: created_instance.team_affiliation
+          )
+        end
+      end
     end
   end
 
@@ -59,6 +77,7 @@ FactoryGirl.define do
           create_list(
           :meeting_relay_result,
             ((rand * 3) % 2).to_i + 1,
+            meeting_program: mp,
             team: created_instance.team,
             team_affiliation: created_instance.team_affiliation
           )

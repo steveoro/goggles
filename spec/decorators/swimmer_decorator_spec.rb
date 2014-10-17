@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe SwimmerDecorator do
+describe SwimmerDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
   before :each do
