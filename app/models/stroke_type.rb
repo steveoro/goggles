@@ -4,7 +4,7 @@
 
 = StrokeType model
 
-  - version:  4.00.555
+  - version:  4.00.573
   - author:   Steve A.
 
 =end
@@ -69,21 +69,22 @@ class StrokeType < ActiveRecord::Base
 
 
   # Given a localized text description from an imported text,
-  # returns the corresponding StrokeType.id; 0 when unable to parse.
+  # returns the corresponding StrokeType or nil when not found or
+  # unable to parse.
   #
   def self.parse_stroke_type_from_import_text( style_token )
     if style_token =~ /(stile).*/ui
-      FREESTYLE_ID
+      StrokeType.find_by_id( FREESTYLE_ID )
     elsif style_token =~ /(farf).*/ui
-      BUTTERFLY_ID
+      StrokeType.find_by_id( BUTTERFLY_ID )
     elsif style_token =~ /(dorso).*/ui
-      BACKSTROKE_ID
+      StrokeType.find_by_id( BACKSTROKE_ID )
     elsif style_token =~ /(rana).*/ui
-      BREASTSTROKE_ID
+      StrokeType.find_by_id( BREASTSTROKE_ID )
     elsif style_token =~ /(mist).*/ui
-      MIXED_ID
+      StrokeType.find_by_id( MIXED_ID )
     else
-      0
+      nil
     end
   end
   # ----------------------------------------------------------------------------

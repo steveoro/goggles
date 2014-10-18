@@ -45,6 +45,11 @@ describe CategoryType, :type => :model do
       :are_not_relays
     ])
 
+    # Other class methods:
+    it_behaves_like( "(the existance of a class method)", [
+      :parse_category_type_from_import_text
+    ])
+
     context "[general methods]" do
 
       it_behaves_like( "(the existance of a method returning non-empty strings)", [
@@ -67,6 +72,23 @@ describe CategoryType, :type => :model do
       end
     end
 
-    # Add other method validations
+    describe "self.parse_category_type_from_import_text()" do
+      subject { create( :category_type) }
+
+      it "returns the corresponding category for the specified code" do
+        result = CategoryType.parse_category_type_from_import_text(
+          subject.season_id,
+          subject.code
+        )
+        expect( result ).to eq( subject )
+      end
+      it "returns nil for an unknown code" do
+        result = CategoryType.parse_category_type_from_import_text(
+          create( :season ).id,
+          'M20'
+        )
+        expect( result ).to be nil
+      end
+    end
   end
 end

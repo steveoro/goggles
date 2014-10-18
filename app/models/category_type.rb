@@ -7,7 +7,7 @@ require 'date'
 
 = CategoryType model
 
-  - version:  4.00.359.20140718
+  - version:  4.00.573
   - author:   Steve A.
 
 =end
@@ -56,26 +56,26 @@ class CategoryType < ActiveRecord::Base
   def get_short_name
     self.short_name
   end
-  
+
   # Computes the shortest possible description for the name associated with this data
   def get_full_name
     self.description
   end
-  
+
   # Computes the shortest possible description for the name associated with this data
   def get_verbose_name
     "#{self.federation_type.get_short_name} #{self.description} (#{self.age_begin}-#{self.age_end})"
   end
   # ----------------------------------------------------------------------------
-  
+
   # Check if a given age is in the category range
-  # True if the age is >= age_begin and <= age_end 
+  # True if the age is >= age_begin and <= age_end
   #
   def is_age_in_category( age_to_check )
-    (age_to_check >= self.age_begin and age_to_check <= self.age_end) 
-  end  
+    (age_to_check >= self.age_begin and age_to_check <= self.age_end)
+  end
   # ----------------------------------------------------------------------------
-  
+
   # Returns the corresponding id given season type id, year of birth and
   # chosen year for the result; 0 on error/not found.
   #
@@ -97,7 +97,7 @@ class CategoryType < ActiveRecord::Base
 # DEBUG
 #    puts "\r\n--- target_age = #{target_age}\r\n"
     category_type = CategoryType.includes( :season ).where(
-      [ 
+      [
         '(season_id = ?) AND ' +
         '(category_types.age_begin <= ?) AND ' +
         '(category_types.age_end >= ?)',
@@ -110,7 +110,8 @@ class CategoryType < ActiveRecord::Base
 
 
   # Given a localized text description from an imported text,
-  # returns the corresponding CategoryType.id; 0 when unable to parse.
+  # returns the corresponding CategoryType or nil when unable
+  # to parse or not found.
   #
   def self.parse_category_type_from_import_text( season_id, category_token )
     result_code = ''
@@ -128,11 +129,11 @@ class CategoryType < ActiveRecord::Base
       result_code = 'U25'
     end
 # DEBUG
-    puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
+#    puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
     category_type =  CategoryType.where(
       [ '(season_id = ?) AND (category_types.code = ?)', season_id, result_code ]
     ).first
-    category_type ? category_type.id : 0
+    category_type
   end
   # ----------------------------------------------------------------------------
 end
