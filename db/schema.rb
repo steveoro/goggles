@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141009084432) do
+ActiveRecord::Schema.define(:version => 20141018160236) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -506,8 +506,8 @@ ActiveRecord::Schema.define(:version => 20141009084432) do
   add_index "data_import_seasons", ["begin_date"], :name => "index_data_import_seasons_on_begin_date"
 
   create_table "data_import_sessions", :force => true do |t|
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at",                                               :null => false
+    t.datetime "updated_at",                                               :null => false
     t.string   "file_name"
     t.text     "source_data",           :limit => 16777215
     t.integer  "phase"
@@ -519,6 +519,8 @@ ActiveRecord::Schema.define(:version => 20141009084432) do
     t.integer  "data_import_season_id"
     t.integer  "season_id"
     t.integer  "user_id"
+    t.text     "sql_diff"
+    t.integer  "log_verbosity",                             :default => 0, :null => false
   end
 
   add_index "data_import_sessions", ["user_id"], :name => "user_id"
@@ -1742,6 +1744,9 @@ ActiveRecord::Schema.define(:version => 20141009084432) do
     t.string   "last_name",                       :limit => 50
     t.string   "first_name",                      :limit => 50
     t.integer  "year_of_birth",                                  :default => 1900
+    t.integer  "facebook_uid",                    :limit => 8
+    t.integer  "goggle_uid",                      :limit => 8
+    t.integer  "twitter_uid",                     :limit => 8
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

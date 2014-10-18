@@ -5,7 +5,7 @@
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.545
+  - Goggles framework vers.:  4.00.571
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required

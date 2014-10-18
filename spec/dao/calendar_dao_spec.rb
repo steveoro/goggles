@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 require 'spec_helper'
+require 'common/format'
+
 
 describe CalendarDAO, type: :model do
   #let(:meeting)         { create(:meeting_with_sessions) }
@@ -23,34 +25,34 @@ describe CalendarDAO, type: :model do
     end
     describe "#scheduled_date" do
       it "is the date of the session specified for the construction" do
-        expect( subject.scheduled_date ).to eq( meeting_session.scheduled_date )
+        expect( Format.a_date(subject.scheduled_date) ).to eq( Format.a_date(meeting_session.scheduled_date) )
       end
     end
     describe "#warm_up_time" do
       it "is the warm_up_time of the session specified for the construction" do
-        expect( subject.warm_up_time ).to eq( meeting_session.warm_up_time )
+        expect( Format.a_time(subject.warm_up_time) ).to eq( Format.a_time(meeting_session.warm_up_time) )
       end
     end
     describe "#begin_time" do
       it "is the begin_time of the session specified for the construction" do
-        expect( subject.begin_time ).to eq( meeting_session.begin_time )
+        expect( Format.a_time(subject.begin_time) ).to eq( Format.a_time(meeting_session.begin_time) )
       end
     end
     describe "#events_list" do
       it "is the events of the session specified for the construction" do
         expect( subject.events_list ).to eq( meeting_session.get_short_events )
       end
-    end   
+    end
     describe "#swimming_pool" do
       it "is the swimming_pool of the session specified for the construction" do
         expect( subject.swimming_pool ).to eq( meeting_session.swimming_pool )
       end
     end
-    
+
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
 
   context "as a valid instance," do
 

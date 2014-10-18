@@ -9,11 +9,39 @@ require 'data_import/services/data_import_city_builder'
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.567
+  - Goggles framework vers.:  4.00.571
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
  Team entity rows.
+
+ Normally the automatic Team creation procedure is disabled and requires a
+ separate pre-analysis stage, with a statistical report of the best-match
+ data before actual data insertion.
+
+=== Entity look-up order/algorithm:
+  1) Scan TeamAffiliation to seek affiliations created/inserted from
+     previous runs, which allegedly should have name just like '<team_name>%'.
+  => if found, Team must exist (due to validations)
+
+  2) If not found, scan if the wanted 'team_name' was just inserted into
+     DataImportTeam (due to be committed on next phase).
+
+  3) If not found, scan Team with some fuzzy-logic metric to seek for a
+     "best-match", but using a very-high bias score (>= 0.98).
+     This should be the last resort, since a positive match could be wrong
+     anyway if the bias is not high enough.
+
+  3.1) Additional (*integrity*) check on TeamAffiliation:
+     If a Team was found, we can actually create at this point the missing
+     TeamAffiliation using the searched <team_name>.
+     (NOTE: THIS IS THE ONLY STAGE AND SITUATION IN WHICH TeamAffiliations are
+      added when missing because their corresponding Team is already found!
+      During phase 3 TeamAffiliations are _always_ added because all the Teams
+      processed there are considered as "new" or missing.)
+
+  4) If all else fails, insert a new Team ONLY if its enabling flag has been
+     set to true (force_missing_team_creation).
 
 =end
 class DataImportTeamBuilder < DataImportEntityBuilder

@@ -419,7 +419,7 @@ class DataImporter
                                                     # -- FILE HEADER digest --
     header_fields_dao = FilenameParser.new( full_pathname ).parse
 
-    season_id = 0
+#    season_id = 0
     if season.nil?                                  # Try to detect which season from the path/name of the file
       container_dir_parts = File.dirname(full_pathname).split(File::SEPARATOR).last.split('.')
                                                     # Get the season override from the containing folder name, if present (must be: "<anything>.<ID>")
@@ -447,17 +447,17 @@ class DataImporter
           flash[:error] = "#{I18n.t(:season_not_found, { scope: [:admin_import] })} (DETECTED season_id=#{season_id})"
           return nil
         end
-        season_id = season.id
-        logger.info( "   Detected season ID=#{season_id} from file header date. Parsing file..." )
-        @phase_1_log = "Detected season ID=#{season_id} from file header date. Parsing file...\r\n"
+#        season_id = season.id
+        logger.info( "   Detected season ID=#{season.id} from file header date. Parsing file..." )
+        @phase_1_log = "Detected season ID=#{season.id} from file header date. Parsing file...\r\n"
       end
     else
-      season_id = season.id
-      logger.info( "   Specified season ID=#{season_id}. Parsing file..." )
-      @phase_1_log = "Specified season ID=#{season_id}. Parsing file...\r\n"
+#      season_id = season.id
+      logger.info( "   Specified season ID=#{season.id}. Parsing file..." )
+      @phase_1_log = "Specified season ID=#{season.id}. Parsing file...\r\n"
     end
     self.season = season                            # Update the internal reference member
-    @season_id  = season_id                         # Set the currently used season_id (this member variable is used just by its getter method)
+    @season_id  = season.id                         # Set the currently used season_id (this member variable is used just by its getter method)
                                                     # Get the remaining default values from the season instance:
     header_fields_dao.header_year     = season.header_year
     header_fields_dao.edition         = season.edition
@@ -501,13 +501,13 @@ class DataImporter
         result_hash[:full_text_file_contents],
         result_hash[:total_data_rows],
         file_type,
-        season_id,
+        season.id,
         @current_admin_id
     ) if data_import_session.nil?
     @created_data_import_session_id = data_import_session.id
 
     if ( data_import_session )                      # Create all the data-import rows from the parsed result:
-      session_id = data_import_session.id
+#      session_id = data_import_session.id
       # XXX [Steve, 20130826] ASSERT: Assuming each data_import session will be used to import
       # the results of only 1 MeetingProgram / MeetingSession at a time.
       #
@@ -515,11 +515,12 @@ class DataImporter
       # the results of only 1 day/session/program at a time, even if the event/meeting
       # is divided into more that 1 day.
                                                     # Create just one header row for each one of Meeting/Meeting Session entities:
-      meeting_id = meeting_session_id = 0
-      season_type_id = season_starting_year = 0     # This is needed by the individual results
+#      meeting_id = meeting_session_id = 0
+#      season_type_id = 0
+      season_starting_year = 0     # This is needed by the individual results
       meeting_header_row = meeting_dates = scheduled_date = nil
       @esteemed_meeting_mins = 0                    # Used to calc approx event duration for meeting programs
-      logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season_id}): parsing file done. Digesting..." )
+      logger.debug( "\r\n-- consume_txt_file(#{full_pathname}, #{season.id}): parsing file done. Digesting..." )
       @phase_1_log = "Parsing of '#{full_pathname}' done.\r\nDigesting data...\r\n"
                                                     # -- MEETING HEADER digest --
       if season
@@ -557,13 +558,15 @@ class DataImporter
       end
 
       if season                                     # -- PRE-SCAN TEAM Names --
-        season_type_id = season.season_type_id if season
+#        season_type_id = season.season_type_id if season
         season_starting_year = season.begin_date.year if season
 # DEBUG
-        logger.debug( "Found season '#{season.inspect}'; season_type_id=#{season_type_id}, season_starting_year=#{season_starting_year}" )
+        logger.debug( "Found season '#{season.inspect}'; #{season.season_type.inspect}, season_starting_year=#{season_starting_year}" )
                                                     # The prescan will abort the rest of the procedure when false:
         can_go_on = prescan_parse_result_for_unknown_team_names(
-            session_id, season_id, result_hash[:parse_result],
+            data_import_session,
+            season,
+            result_hash[:parse_result],
             force_missing_team_creation
         )
         unless can_go_on
@@ -582,8 +585,8 @@ class DataImporter
           meeting_dates, # meeting_dates_text
           force_missing_meeting_creation
         )
-        meeting    = meeting_builder.result_row
-        meeting_id = meeting_builder.result_id
+        meeting = meeting_builder.result_row
+#        meeting_id = meeting_builder.result_id
 # Old method:
         # meeting_id = search_or_add_a_corresponding_meeting(
             # data_import_session, full_pathname, season_id, meeting_header_row,
@@ -592,7 +595,7 @@ class DataImporter
       end
 
                                                     # --- TEAM RANKING/SCORES (digest part) --
-      if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
+      if meeting                                    # Retrieve default meeting session: (used only for new/missing meeting events or programs)
         logger.info( "-- consume_txt_file(#{full_pathname}): PHASE #1.1) processing TEAM RANKING...\r\n" )
         @phase_1_log << "PHASE #1.1: processing team_ranking...\r\n"
         ranking_headers = result_hash[:parse_result][:team_ranking]
@@ -600,13 +603,19 @@ class DataImporter
         ranking_headers_ids = ranking_headers.collect{|e| e[:id] }.compact.uniq.sort
 
         can_go_on = process_team_ranking(
-            full_pathname, data_import_session.id, season_id, meeting_id,
-            ranking_headers, ranking_headers_ids, ranking_details, force_missing_team_creation
+            full_pathname,
+            data_import_session,
+            season,
+            meeting,
+            ranking_headers,
+            ranking_headers_ids,
+            ranking_details,
+            force_missing_team_creation
         )
       end
                                                     # -- MEETING SESSION (digest part) --
       meeting_session = nil
-      if meeting_id != 0                            # Retrieve default meeting session: (used only for new/missing meeting events or programs)
+      if meeting                                    # Retrieve default meeting session: (used only for new/missing meeting events or programs)
         meeting_session_builder = DataImportMeetingSessionBuilder.build_from_parameters(
           data_import_session,
           meeting,
@@ -616,7 +625,7 @@ class DataImporter
           force_missing_meeting_creation
         )
         meeting_session    = meeting_session_builder.result_row
-        meeting_session_id = meeting_session_builder.result_id
+#        meeting_session_id = meeting_session_builder.result_id
 # Old method:
 #        meeting_session_id = search_or_add_a_corresponding_meeting_session(
 #            full_pathname, session_id, meeting_id,
@@ -625,8 +634,7 @@ class DataImporter
 #        )
       end
 
-      unless (season_id > 0) && (season_type_id > 0) && can_go_on &&
-             (meeting_id != 0) && (meeting_session_id != 0)
+      unless can_go_on && season && meeting && meeting_session
                                                     # Update the import log before exiting:
         @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
         return nil
@@ -640,10 +648,17 @@ class DataImporter
       category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
 
       can_go_on = process_category_headers(
-          full_pathname, data_import_session.id,
-          season_id, season_type_id, season_starting_year,
-          meeting_id, meeting_session_id, category_headers, category_headers_ids,
-          category_details, scheduled_date, force_missing_team_creation
+          full_pathname,
+          data_import_session,
+          season,
+          season_starting_year,
+          meeting,
+          meeting_session,
+          category_headers,
+          category_headers_ids,
+          category_details,
+          scheduled_date,
+          force_missing_team_creation
       )
       unless can_go_on                              # Update the import log before exiting:
         @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
@@ -657,10 +672,17 @@ class DataImporter
       relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
 
       can_go_on = process_relay_headers(
-          full_pathname, data_import_session.id,
-          season_id, season_type_id, season_starting_year,
-          meeting_id, meeting_session_id, relay_headers, relay_headers_ids,
-          relay_details, scheduled_date, force_missing_team_creation
+          full_pathname,
+          data_import_session,
+          season,
+          season_starting_year,
+          meeting,
+          meeting_session,
+          relay_headers,
+          relay_headers_ids,
+          relay_details,
+          scheduled_date,
+          force_missing_team_creation
       )
       unless can_go_on                              # Update the import log before exiting:
         @import_log = "--------------------[Phase #1 - DIGEST]--------------------\r\n" + @phase_1_log
