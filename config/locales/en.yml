@@ -779,3 +779,11 @@ en:
     second_place: "Second place"
     third_place: "Third place"
     show_full_season: "Show season full data"
+
+  calendars:
+    calendar: "Calendar"
+    date: "Date"
+    warm_up: "Warm up"
+    begin: "Begin"
+    events: "Session events"
+    pool: "Swimming"

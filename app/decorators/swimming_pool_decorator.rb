@@ -14,17 +14,22 @@ class SwimmingPoolDecorator < Draper::Decorator
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "'#{name}', #{get_full_address}"
+    "'#{get_full_name}', #{get_full_address}"
   end
 
   # Retrieves just the city name
-  def get_city_name
+  def get_city_full_name
     city ? city.get_full_name : ''
   end
 
   # Retrieves the full address
   def get_full_address
-    "#{address} #{get_city_name}"
+    "#{address} #{get_city_full_name}"
+  end
+
+  # Computes a verbose or formal description for the name associated with this data
+  def get_city_and_attributes
+    "#{city_name} #{get_pool_attributes}"
   end
   # ----------------------------------------------------------------------------
 

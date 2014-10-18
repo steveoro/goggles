@@ -781,6 +781,14 @@ it:
     third_place: "Terzo posto"
     show_full_season: "Mostra i dati completi della stagione"
 
+  calendars:
+    calendar: "Calendario"
+    date: "Data"
+    warm_up: "Risc."
+    begin: "Gare"
+    events: "Programma gare"
+    pool: "Piscina"
+
   netzke:
     basepack:
       grid_panel:

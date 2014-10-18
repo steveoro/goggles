@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 describe SwimmingPoolDecorator, type: :model do
+
+  subject { SwimmingPool.find(1).decorate }
+
   context "[implemented methods]" do
     it_behaves_like "(the existance of a method returning non-empty strings)", [
       :get_verbose_name,
-      :get_city_name,
+      :get_city_full_name,
       :get_full_address,
+      :get_city_and_attributes,
       :get_pool_type,
       :get_pool_attributes,
       :get_locker_cabinet_type,
@@ -27,8 +31,8 @@ describe SwimmingPoolDecorator, type: :model do
       expect( subject.get_maps_url ).to include('maps/')
     end
     it "returns nil for a pool with no address" do
-      pool = create(:swimming_pool, address: nil)
-      expect( SwimmingPoolDecorator.decorate(pool).get_maps_url ).to be_nil
+      fix_pool = create(:swimming_pool, address: nil)
+      expect( fix_pool.decorate.get_maps_url ).to be_nil
     end
   end
 

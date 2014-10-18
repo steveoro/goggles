@@ -4,26 +4,46 @@
 .row-fluid#history_regional_er_csi
   .goggles-category-gap#pageTop
     %h3
-      = t('championships.calendar')
+      = t('calendars.calendar')
 
     %table.table.table-striped.table-bordered.table-hover.table-condensed#history
       %tbody
         %tr{'class'=>'info'}
           %td
-            %b= t('championships.calendar.meeting')
+            %b= t('calendars.meeting')
+          %td.goggles-rightalign
+            %b= t('calendars.date')
+          %td.goggles-rightalign
+            %b= t('calendars.warm_up')
+          %td.goggles-rightalign
+            %b= t('calendars.begin')
           %td
-            %b= t('championships.calendar.date')
+            %b= t('calendars.events')
           %td
-            %b= t('championships.calendar.warm_up')
-          %td
-            %b= t('championships.calendar.begin')
-          %td
-            %b= t('championships.calendar.program')
-          %td
-            %b= t('championships.calendar.pool')
-
-          %tr
-            %td{ colspan: 6 }
-              .p= t('coming_soon')
+            %b= t('calendars.pool')
+        - @season_meetings_calendar.each do |meeting|
+          - session_number = meeting.meeting_sessions.count
+          - if session_number == 0
+            %tr
+              %td
+                = meeting.meeting.decorate.get_linked_name
+              %td{ colspan: 5 }
+                = t('to_be_defined')
+          - else
+            - meeting.meeting_sessions.each_with_index do |meeting_session, index|
+              %tr
+                - if index == 0
+                  %td{ rowspan: session_number }
+                    = meeting.meeting.decorate.get_linked_name
+                %td.goggles-rightalign
+                  = meeting_session.scheduled_date
+                %td.goggles-rightalign
+                  = meeting_session.warm_up_time
+                %td.goggles-rightalign
+                  = meeting_session.begin_time
+                %td
+                  = meeting_session.events_list
+                %td
+                  = meeting_session.swimming_pool.decorate.get_city_and_attributes
                  
 .row-fluid.goggles-category-gap

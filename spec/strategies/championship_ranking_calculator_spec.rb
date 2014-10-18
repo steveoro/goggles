@@ -91,7 +91,8 @@ describe ChampionshipRankingCalculator, type: :strategy do
         expect( subject.save_computed_season_rank( 2 ) ).to be true
       end
       it "increases the table size when persisting non existing records" do
-        expect{ subject.save_computed_season_rank }.to change{ ComputedSeasonRanking.count }
+        # Assumes anly the first three ranked team has been alreday stored
+        expect{ subject.save_computed_season_rank( 14 ) }.to change{ ComputedSeasonRanking.count }
       end
       it "doesn't increase the table size when persisting existing records" do
         subject.save_computed_season_rank  # make sure the record already persist

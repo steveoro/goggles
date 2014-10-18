@@ -50,6 +50,7 @@ class SwimmingPool < ActiveRecord::Base
 
 
   delegate :name, to: :user, prefix: true
+  delegate :name, to: :city, prefix: true
 
   attr_accessible :city_id, :pool_type_id, :shower_type_id, :hair_dryer_type_id,
                   :locker_cabinet_type_id, :name, :nick_name, :address,
@@ -69,10 +70,5 @@ class SwimmingPool < ActiveRecord::Base
 
   alias_method :i18n_short, :get_full_name
   alias_method :i18n_description, :get_verbose_name
-
-  # Retrieves the user name associated with this instance
-  def user_name
-    user ? user.name : ''
-  end
   # ----------------------------------------------------------------------------
 end

@@ -31,7 +31,13 @@ class ChampionshipsController < ApplicationController
   # Season calendar for a given regonal er CSI season
   #
   def calendar_regional_er_csi
-    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name    
+    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name
+    
+    # Collect calendarDAO for each season meetings
+    @season_meetings_calendar = []
+    @season.meetings.sort_by_date.each do |meeting|
+      @season_meetings_calendar << CalendarDAO.new( meeting )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -94,7 +100,7 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current FIN season
-    season_id = params[:id] ? params[:id].to_i : season_id = 142
+    season_id = ( params[:id] ? params[:id].to_i : 132 )
 
     set_season( season_id )
     unless ( @season )
@@ -119,7 +125,7 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current CSI season
-    season_id = params[:id] ? params[:id].to_i : season_id = 131
+    season_id = ( params[:id] ? params[:id].to_i : 131 )
 
     set_season( season_id )
     unless ( @season )

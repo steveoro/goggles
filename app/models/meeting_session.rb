@@ -44,6 +44,7 @@ class MeetingSession < ActiveRecord::Base
   scope :sort_meeting_session_by_user,          ->(dir) { order("users.name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
   scope :sort_meeting_session_by_meeting,       ->(dir) { order("meetings.description #{dir.to_s}, meeting_sessions.session_order #{dir.to_s}") }
   scope :sort_meeting_session_by_swimming_pool, ->(dir) { order("swimming_pools.nick_name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
+  scope :sort_by_order,                         ->(dir = 'ASC') { order("meeting_sessions.session_order #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

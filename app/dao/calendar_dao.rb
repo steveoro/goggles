@@ -14,19 +14,19 @@ class CalendarDAO
  
   class MeetingSessionDAO
     # These must be initialized on creation:
-    attr_reader :order, :date, :warm_up_time, :begin_time, :events, :swimming_pool
+    attr_reader :session_order, :scheduled_date, :warm_up_time, :begin_time, :events_list, :swimming_pool
     #-- -------------------------------------------------------------------------
     #++
   
     # Creates a new instance.
     #
     def initialize( meeting_session )
-      @order         = meeting_session.session_order
-      @date          = meeting_session.scheduled_date
-      @warm_up_time  = meeting_session.warm_up_time
-      @begin_time    = meeting_session.begin_time
-      @events        = meeting_session.get_short_events
-      @swimming_pool = meeting_session.swimming_pool
+      @session_order  = meeting_session.session_order
+      @scheduled_date = meeting_session.get_scheduled_date
+      @warm_up_time   = meeting_session.get_warm_up_time
+      @begin_time     = meeting_session.get_begin_time
+      @events_list    = meeting_session.get_short_events
+      @swimming_pool  = meeting_session.swimming_pool
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -42,18 +42,14 @@ class CalendarDAO
   # Needs to  be sure team_scores is an instance of TeamScoreDAO
   # to perform correcto sorting
   #
-  def initialize( meeting, meeting_sessions )
-    unless meeting_sessions.kind_of?( Array )
-      raise ArgumentError.new("Session item of CalendarDAO must be an array of MeetingSessionDAO element")
-    end
-    meeting_sessions.each do |meeting_session|
-      if not meeting_session.instance_of?( CalendarDAO::MeetingSessionDAO )
-        raise ArgumentError.new("Session item of CalendarDAO must be an array of MeetingSessionDAO element")
-      end
-    end
+  def initialize( meeting )
+    @meeting = meeting
 
-    @meeting          = meeting
-    @meeting_sessions = meeting_sessions
+    # Collect meeting sessions
+    @meeting_sessions = []
+    meeting.meeting_sessions.sort_by_order.includes(:meeting_programs, :swimming_pool).each do |meeting_session|
+      @meeting_sessions << MeetingSessionDAO.new( meeting_session )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
