@@ -164,8 +164,11 @@ class UserContentLogger
   # Returns a line of comment to be included in each resulting SQL operation
   # logged.
   def get_sql_comment( record )
-    user = record.user if record.respond_to?( :user )
     user = record if record.instance_of?( User )
+    # For UserSwimmerConfirmation the active subject is the :confirmator, not
+    # the :user. So we give it an higher precendence:
+    user ||= record.confirmator if record.respond_to?( :confirmator )
+    user ||= record.user if record.respond_to?( :user )
     "-- #{user}\r\n"
   end
 end
