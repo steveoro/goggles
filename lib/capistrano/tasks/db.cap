@@ -162,7 +162,7 @@ EOF
     task :sql_dump do
       puts "      > Launching db:remote:sql_dump..."
       zip_pipe = ' | bzip2 -c'
-      file_name = "#{fetch(:application)}-#{release_timestamp}-dump.sql.bz2"
+      file_name = "#{fetch(:application)}-#{release_timestamp}.sql.bz2"
       dest_path = fetch(:ask_dest_sql_path)
 
       run_locally do

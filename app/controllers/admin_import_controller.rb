@@ -190,8 +190,10 @@ class AdminImportController < ApplicationController
           @season_description = data_importer.season.description
         end
         DataImportSession.where(
-            id: data_importer.get_created_data_import_session_id
-        ).update_all( :phase_1_log => data_importer.get_phase_1_log() )
+            id: data_importer.data_import_session.id
+        ).update_all(
+          phase_1_log: data_importer.data_import_session.phase_1_log
+        )
         data_importer.clear_team_analysis_and_sql_log()
         data_importer.to_logfile()                  # Update the additional file-based logs
 
@@ -199,9 +201,9 @@ class AdminImportController < ApplicationController
           flash[:info] = I18n.t('admin_import.team_analysis_needed')
           redirect_to(
               goggles_di_step2_analysis_path(
-                  id: data_importer.get_created_data_import_session_id,
+                  id:                     data_importer.data_import_session.id,
                   force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
-                  force_team_creation: force_missing_team_creation ? '1' : nil
+                  force_team_creation:    force_missing_team_creation    ? '1' : nil
               )
           ) and return
         end
@@ -426,11 +428,11 @@ class AdminImportController < ApplicationController
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
-    data_importer = DataImporter.new( logger, flash, current_admin.id )
+    data_importer = DataImporter.new( logger, flash, current_admin.id, data_import_session )
     is_ok = data_importer.commit( data_import_session )
 
-    @phase_2_log  = data_importer.get_phase_2_log()
-    @import_log   = data_importer.get_import_log()
+    @phase_2_log  = data_importer.data_import_session.phase_2_log
+    @import_log   = data_importer.import_log  # (combined import log)
     @committed_data_rows = data_importer.get_committed_data_rows()
 
     unless is_ok

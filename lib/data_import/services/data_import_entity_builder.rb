@@ -1,11 +1,13 @@
 # encoding: utf-8
 
+require 'sql_converter'
+
 
 =begin
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.571
+  - Goggles framework vers.:  4.00.573
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required
@@ -91,6 +93,7 @@
 
 =end
 class DataImportEntityBuilder
+  include SqlConverter
 
   # Common basic scope builder
   class BasicScope
@@ -332,6 +335,9 @@ class DataImportEntityBuilder
   def add_new()
     @result_id = 0
     @result_row = nil
+    # Initialize log columns if found still undefined:
+    @data_import_session.phase_2_log = '' unless @data_import_session.phase_2_log.instance_of?( String )
+    @data_import_session.sql_diff    = '' unless @data_import_session.sql_diff.instance_of?( String )
 
     begin
       secondary_entity.transaction do
@@ -342,19 +348,27 @@ class DataImportEntityBuilder
 # DEBUG
 #      puts "\r\n#{secondary_entity.name} creation: exception caught during save!\r\n"
 #      puts "#{ $!.to_s }\r\n" if $!
-      @data_import_session.phase_1_log << "\r\n#{secondary_entity.name} creation: exception caught during save!\r\n"
-      @data_import_session.phase_1_log << "#{ $!.to_s }\r\n" if $!
+      @data_import_session.phase_2_log << "\r\n#{secondary_entity.name} creation: exception caught during save!\r\n"
+      @data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
     else
       if @result_row
         @result_id = @result_row.id
 # DEBUG
 #        puts "Added new #{secondary_entity.name}, ID:#{@result_id}.\r\n"
-        @data_import_session.phase_1_log << "Added new #{secondary_entity.name}, ID:#{@result_id}.\r\n"
+        @data_import_session.phase_2_log << "Added new #{secondary_entity.name}, ID:#{@result_id}.\r\n"
+        # Log the SQL diff statement only if the creation entity is not actually a
+        # "secondary" one, but the actual serialization destination for the attributes
+        # (During phase-2, this may happen only for meeting_events, time_standards
+        #  and data_import_team_aliases):
+        if (secondary_entity.name == 'data_import_team_aliases') ||
+           (secondary_entity.name =~ /data_import_/ ).nil?
+          @data_import_session.sql_diff << to_sql_insert( @result_row )
+        end
         @data_import_session.total_data_rows += 1
       else
 # DEBUG
 #        puts "ERROR: Add transaction block returned a nil row! (This will result in ID: 0)\r\n"
-        @data_import_session.phase_1_log << "ERROR: Add transaction block returned a nil row! (This will result in ID: 0)\r\n"
+        @data_import_session.phase_2_log << "ERROR: Add transaction block returned a nil row! (This will result in ID: 0)\r\n"
       end
     end
 

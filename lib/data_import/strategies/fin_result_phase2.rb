@@ -37,54 +37,8 @@ require 'data_import/services/data_import_time_standard_builder'
   - +logger+ (console Logger) instance
   - +flash+ (error report) Hash
 
-  === Defines:
-  - @current_admin_id ID of the current Admin instance
-
-  - @phase_1_log string (log text) variable
-  - @team_analysis_log string (additional log text) variable
-  - @sql_executable_log string (additional log text) variable
-
-  - @team_analysis_results an Array of DataImportTeamAnalysisResult
-    instances.
-
-  - @stored_data_rows integer (counter) variable
-  - @esteemed_meeting_mins integer (total minutes counter) variable
-
 =end
 module FinResultPhase2
-
-  # Certainty bias score result for "fuzzy name search".
-  FUZZY_SEARCH_BIAS_SCORE = 0.98
-
-  # Allowed minimum "fuzzy name search" bias score result,
-  # used as limit for an interative search if no matching
-  # candidates are found.
-  # If no match is found before reaching this limit, the
-  # name is declared as "not found".
-  MIN_FUZZY_SEARCH_BIAS_SCORE = 0.8
-
-  # Previous/current phase text log stored as an UTF-8 string
-  @phase_1_log = ''
-
-  # Team analysis/recognition log, stored as an UTF-8 string.
-  # Any uncertain team name match is always logged as well as all the
-  # existing possible "best-matches" for a minimun result bias score.
-  @team_analysis_log = ''
-
-  # Total of stored data rows
-  @stored_data_rows = 0
-
-  # Esteemed total minutes since the beginning of the current parsed meeting
-  @esteemed_meeting_mins = 0
-
-  # Current Admin instace
-  @current_admin_id = 0
-
-  # When not nil and not empty, contains the array of hash of
-  # results from the "team analysis" phase.
-  @team_analysis_results = []
-  # ---------------------------------------------------------------------------
-
 
   # Scans parse_result hash structure to collect all team_names found.
   #
@@ -121,8 +75,12 @@ module FinResultPhase2
       )
       team = team_builder.result_row
       if team
-        @phase_1_log << "\r\nPrescan Team names: '#{team_name}' (#{idx+1}/#{team_names.size}) needs the additional 'Team name Analysis' phase.\r\n"
-        logger.info( "\r\nPrescan Team names: '#{team_name}' (#{idx+1}/#{team_names.size}) needs the additional 'Team name Analysis' phase." )
+        msg = "\r\nPrescan Team names: '#{team_name}' (#{idx+1}/#{team_names.size}) needs the additional 'Team name Analysis' phase."
+        # Initialize log columns if found still undefined:
+        data_import_session.phase_1_log = '' unless data_import_session.phase_1_log.instance_of?( String )
+        data_import_session.phase_1_log << ( msg + "\r\n" )
+        data_import_session.save!
+        logger.info( msg )
         is_ok = false
       end
                                                     # Update progress on current session:
@@ -130,8 +88,8 @@ module FinResultPhase2
     }
     is_ok
   end
-  # -----------------------------------------------------------------------------
-  # -----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # "Digest" process for the :category_headers array extracted by the Parser
@@ -196,7 +154,8 @@ module FinResultPhase2
     }                                               # **** (END of HEADER) ****
     is_ok
   end
-  # -----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # "Digest" process for the :relay_headers array extracted by the Parser
@@ -262,7 +221,8 @@ module FinResultPhase2
     }                                               # **** (END of HEADER) ****
     is_ok
   end
-  # -----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # "Digest" process for the :team_ranking array extracted by the Parser

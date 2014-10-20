@@ -13,7 +13,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.529
+  - Goggles framework vers.:  4.00.573
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -21,7 +21,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.529'
+SCRIPT_VERSION = '4.00.573'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]

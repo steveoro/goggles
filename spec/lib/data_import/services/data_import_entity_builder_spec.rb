@@ -30,6 +30,9 @@ describe DataImportEntityBuilder, type: :service do
       :entity_for_creation, :attributes_for_creation, :add_new
     ] )
 
+    let(:record) { create(:user_training) }
+    it_behaves_like( "SqlConverter [param: let(:record)]" )
+
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
         expect( subject.data_import_session ).to eq( data_import_session )

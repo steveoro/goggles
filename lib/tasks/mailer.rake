@@ -4,7 +4,7 @@
 
 = Mailer Helper tasks
 
-  - Goggles framework vers.:  4.00.559
+  - Goggles framework vers.:  4.00.573
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -33,6 +33,9 @@ DESC
       meeting_array = Meeting.where( id: meeting_ids )
       involved_users = User.data_updates_newsletter_readers
       puts "Generating mail queue for a total of #{ involved_users.size } user(s)..."
+
+      # Force locale for NewsFeed generation to 'it-IT'
+      I18n.locale = :it
 
       involved_users.each_with_index do |user, index|
         puts "Processing #{user}, (#{index+1}/#{involved_users.size})..."
