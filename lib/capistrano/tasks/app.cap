@@ -1,7 +1,9 @@
+# encoding: utf-8
+
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.527
+# - vers. : 4.00.577
 #
 # This requires Capistrano v. >= 3.1
 require "erb"

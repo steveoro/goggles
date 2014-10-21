@@ -136,14 +136,18 @@ at the end to ensure that also the test DB is up-to-date.
     # Display some info:
     puts "DB host: #{db_host}"
     puts "DB user: #{db_user}"
-                                                    # Divide each file for destination DB:
+                                                    # Get which files are for which destination DB:
     diff_filenames = Dir.glob( [ File.join( diff_src_path, '*.sql') ] ).sort
     prod_filenames = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}prod_/ }
     dev_filenames  = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}dev_/ }
     any_filenames  = diff_filenames.reject{ |subpathname| prod_filenames.include?( subpathname ) || dev_filenames.include?( subpathname ) }
+    # Note that these arrays of names are used just to detect which destination
+    # DBs are involved in the update. The original sorted list of files must be
+    # used instead, if we want to honour the file order based on the timestamp
+    # in the name.
 
     if diff_filenames.size > 0
-      puts "\r\n- Found #{diff_filenames.size} files."
+      puts "\r\n- Found #{diff_filenames.size} files (they will be executed in order, though)."
       list_files_to_be_processed( prod_filenames, 'PRODUCTION-only' )
       list_files_to_be_processed( dev_filenames,  'DEVELOPMENT-only' )
       list_files_to_be_processed( any_filenames,  'GENERIC' )
@@ -155,10 +159,16 @@ at the end to ensure that also the test DB is up-to-date.
     if dev_filenames.size > 0 || any_filenames.size > 0
       rebuild_from_dump( 'development', 'development', db_host, db_user, db_pwd )
     end
-                                                    # Apply diffs (only if existing):
-    apply_diff_files_on_db( any_filenames,  db_host, db_user, db_pwd,  ['production', 'development'], 'GENERIC', diff_dest_path )
-    apply_diff_files_on_db( prod_filenames, db_host, db_user, db_pwd, 'production',  'PRODUCTION-only', diff_dest_path )
-    apply_diff_files_on_db( dev_filenames,  db_host, db_user, db_pwd, 'development', 'DEVELOPMENT-only', diff_dest_path )
+                                                    # Apply diffs, respecting order of execution:
+    diff_filenames.each do |filename|
+      if filename =~ /\d{12}prod_/
+        apply_diff_files_on_db( [filename], db_host, db_user, db_pwd, 'production',  'PRODUCTION-only', diff_dest_path )
+      elsif filename =~ /\d{12}dev_/
+        apply_diff_files_on_db( [filename],  db_host, db_user, db_pwd, 'development', 'DEVELOPMENT-only', diff_dest_path )
+      else
+        apply_diff_files_on_db( [filename],  db_host, db_user, db_pwd,  ['production', 'development'], 'GENERIC', diff_dest_path )
+      end
+    end
                                                     # Force a db:dump update for each involved DB:
     db_dump( db_host, db_user, db_pwd, 'production', 'production' )   if prod_filenames.size > 0 || any_filenames.size > 0
     db_dump( db_host, db_user, db_pwd, 'development', 'development' ) if dev_filenames.size > 0 || any_filenames.size > 0

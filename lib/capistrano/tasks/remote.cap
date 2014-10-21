@@ -1,7 +1,9 @@
+# encoding: utf-8
+
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.225.20140416
+# - vers. : 4.00.577
 #
 # This requires Capistrano v. >= 3.1
 
@@ -9,24 +11,15 @@
 namespace :remote do
   set :param_prompt, ask("\r\nEnter ALL parameters for the remote invocation (besides the command itself): ", nil)
 
-  desc "Returns webserver uptime." 
+  desc "Returns webserver uptime."
   task :uptime do
     on roles(:web) do |host|
       uptime = capture('uptime')
       info "Your webserver #{host} has uptime: #{uptime}"
     end
   end
-  # ---------------------------------------------------------------------------
-
-  desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory." 
-  task :sql_backup do
-    on roles(:app) do |host|
-      within release_path do
-        rake "RAILS_ENV=production sql:dump"
-      end
-    end
-  end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Remote Rake invocation tool.
@@ -34,11 +27,16 @@ namespace :remote do
     Invokes any rake command inside the remote app server directory (for the current
     release). This will also ask directly on the command line which parameters must
     be passed to the remote rake command.
+
+    Using 'RAILS_ENV=production' is not required anymore, since the production
+    environment is enforced by default.
   DESC
   task :rake do
     on roles(:app) do
       within release_path do
-        rake "#{fetch(:param_prompt)}"
+        with rails_env: :production do
+          rake "#{fetch(:param_prompt)}"
+        end
       end
     end
   end
@@ -54,14 +52,55 @@ namespace :remote do
   task :bundle do
     on roles(:app) do
       within release_path do
-        bundle "#{fetch(:param_prompt)}"
+        with rails_env: :production do
+          bundle "#{fetch(:param_prompt)}"
+        end
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
-  desc "Invokes bundler+rake inside the remote app server directory to execute assets precompile." 
+  desc "Invokes rake 'build:maintenance mode=1' into the remote app server."
+  task :maintenance_on do
+    on roles(:app) do
+      within release_path do
+        with rails_env: :production do
+          rake "build:maintenance mode=1"
+        end
+      end
+    end
+  end
+
+
+  desc "Invokes rake 'build:maintenance mode=0' into the remote app server."
+  task :maintenance_off do
+    on roles(:app) do
+      within release_path do
+        with rails_env: :production do
+          rake "build:maintenance mode=0"
+        end
+      end
+    end
+  end
+
+
+  desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory."
+  task :sql_backup do
+    on roles(:app) do |host|
+      within release_path do
+        with rails_env: :production do
+          rake "sql:dump"
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  desc "Invokes bundler+rake inside the remote app server directory to execute assets precompile."
   task :assets_precompile do
     on roles(:app) do
       within release_path do
@@ -71,5 +110,6 @@ namespace :remote do
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

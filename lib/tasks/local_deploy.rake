@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'date'
 require 'rubygems'
 require 'find'
@@ -13,7 +15,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.575
+  - Goggles framework vers.:  4.00.577
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -21,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.575'
+SCRIPT_VERSION = '4.00.577'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -57,7 +59,7 @@ end
 
 
 # Rotate backups inside a specific 'backup_folder' allowing only a maximum number of 'max_backups'
-# and deleting in rotation the oldest ones.
+# (for each backup type) and deleting in rotation the oldest ones.
 #
 def rotate_backups( backup_folder, max_backups )
     all_backups = Dir.glob(File.join(backup_folder, '*'), File::FNM_PATHNAME).sort.reverse
@@ -69,8 +71,8 @@ def rotate_backups( backup_folder, max_backups )
     end
     puts "Removed #{unwanted_backups.length} backups, #{all_backups.length - unwanted_backups.length} backups available."
 end
-# =============================================================================
-# =============================================================================
+#-- ===========================================================================
+#++
 
 
 # [Steve, 20130808] The following will remove the task db:test:prepare
@@ -430,7 +432,7 @@ desc <<-DESC
 Sets or resets maintenance mode for the whole app by setting a proper DB flag.
 
 If the end_date is not parsable or not provided, the default is the current time
-plus 4 hours.
+plus 2 hours.
 
     Options: [mode=<1>|0] [end_date=<restore_date_in_parsable_format>]
              [Rails.env=#{Rails.env}]
@@ -449,7 +451,7 @@ DESC
       begin
         versioning.a_date = DateTime.parse( end_date )
       rescue
-        versioning.a_date = DateTime.now + 4.hours
+        versioning.a_date = DateTime.now + 2.hours
       end
     end
     puts "Setting flag: #{ versioning.a_bool }, ending date: #{ Format.a_short_datetime( versioning.a_date ) }..."
