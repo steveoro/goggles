@@ -13,7 +13,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.573
+  - Goggles framework vers.:  4.00.575
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -21,7 +21,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.573'
+SCRIPT_VERSION = '4.00.575'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -173,18 +173,26 @@ Options: [Rails.env=#{Rails.env}]
     db_user       = rails_config.database_configuration[Rails.env]['username']
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
     db_host       = rails_config.database_configuration[Rails.env]['host']
+    db_dump( db_host, db_user, db_pwd, db_name, Rails.env )
+  end
+
+
+  # Performs the actual operations required for a DB dump update given the specified
+  # parameters.
+  #
+  def db_dump( db_host, db_user, db_pwd, db_name, dump_basename )
+    puts "\r\nUpdating recovery dump '#{ dump_basename }' (from #{db_name} DB)..."
     zip_pipe = ' | bzip2 -c'
-    file_ext = '.sql.bz2'
-                                                    # Display some info:
-    puts "DB name:          #{db_name}"
-    puts "DB user:          #{db_user}"
-    file_name     = File.join( File.join('db', 'dump'), "#{Rails.env}#{file_ext}" )
-    puts "\r\nProcessing #{db_name} => #{file_name} ...\r\n"
+    file_ext = '.sql.bz2'                           # Display some info:
+    puts "DB name: #{ db_name }"
+    puts "DB user: #{ db_user }"
+    file_name = File.join( File.join('db', 'dump'), "#{ dump_basename }#{ file_ext }" )
+    puts "\r\nProcessing #{ db_name } => #{ file_name } ...\r\n"
     # To disable extended inserts, add this option: --skip-extended-insert
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
-    sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{db_name} #{zip_pipe} > #{file_name}"
+    sh "mysqldump --host=#{ db_host } -u #{ db_user } -p#{ db_pwd } -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{ db_name } #{ zip_pipe } > #{ file_name }"
     puts "\r\nRecovery dump created.\r\n\r\n"
   end
   #-- -------------------------------------------------------------------------
@@ -215,29 +223,37 @@ Options: [Rails.env=#{Rails.env}]
     db_host       = rails_config.database_configuration[Rails.env]['host']
     dump_basename = ENV.include?("from") ? ENV["from"] : Rails.env
     output_db     = ENV.include?("to")   ? rails_config.database_configuration[ENV["to"]]['database'] : db_name
-    file_ext = '.sql.bz2'
-    zip_pipe = 'bunzip2'
-                                                    # Display some info:
-    puts "DB name: #{dump_basename} (dump) => #{output_db} (DEST)"
-    puts "DB user: #{db_user}"
+    file_ext      = '.sql.bz2'
 
-    file_name = File.join( File.join('db', 'dump'), "#{dump_basename}#{file_ext}" )
-    sql_file_name = File.join( 'tmp', "#{dump_basename}.sql" )
+    rebuild_from_dump( dump_basename, output_db, db_host, db_user, db_pwd, file_ext )
+  end
 
-    puts "\r\Uncompressing dump file '#{file_name}' => '#{sql_file_name}'..."
-    sh "bunzip2 -ck #{file_name} > #{sql_file_name}"
 
-    puts "\r\nDropping destination DB '#{output_db}'..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --execute=\"drop database if exists #{output_db}\""
+  # Performs the actual sequence of operations required by a single db:rebuild_from_dump
+  # task, given the specified parameters.
+  #
+  def rebuild_from_dump( source_basename, dest_basename, db_host, db_user, db_pwd, file_ext = '.sql.bz2' )
+    puts "\r\nRebuilding..."
+    puts "DB name: #{ source_basename } (dump) => #{ dest_basename } (DEST)"
+    puts "DB user: #{ db_user }"
+
+    file_name = File.join( File.join('db', 'dump'), "#{ source_basename }#{ file_ext }" )
+    sql_file_name = File.join( 'tmp', "#{ source_basename }.sql" )
+
+    puts "\r\nUncompressing dump file '#{ file_name }' => '#{ sql_file_name }'..."
+    sh "bunzip2 -ck #{ file_name } > #{ sql_file_name }"
+
+    puts "\r\nDropping destination DB '#{ dest_basename }'..."
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --execute=\"drop database if exists #{ dest_basename }\""
     puts "\r\nRecreating destination DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --execute=\"create database #{output_db}\""
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --execute=\"create database #{ dest_basename }\""
 
-    puts "\r\nExecuting '#{file_name}' on #{output_db}..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=#{db_pwd} --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
-    puts "Deleting uncompressed file '#{sql_file_name}'..."
+    puts "\r\nExecuting '#{ file_name }' on #{ dest_basename }..."
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --database=#{ dest_basename } --execute=\"\\. #{ sql_file_name }\""
+    puts "Deleting uncompressed file '#{ sql_file_name }'..."
     FileUtils.rm( sql_file_name )
 
-    puts "Rebuild from dump, done.\r\n\r\n"
+    puts "Rebuild from dump for '#{ source_basename }', done.\r\n\r\n"
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -286,6 +302,7 @@ Options: [Rails.env=#{Rails.env}]
   end
   #-- -------------------------------------------------------------------------
   #++
+
 end
 # =============================================================================
 
@@ -335,6 +352,7 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   desc <<-DESC
   Executes all the SQL scripts ('*.sql') found in a special directory (usually for data seed).
