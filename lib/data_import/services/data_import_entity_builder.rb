@@ -1,13 +1,13 @@
 # encoding: utf-8
 
-require 'sql_converter'
+require_relative '../../../app/strategies/sql_converter'
 
 
 =begin
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.573
+  - Goggles framework vers.:  4.00.575
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required

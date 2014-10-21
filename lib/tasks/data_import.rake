@@ -9,14 +9,13 @@ require 'framework/application_constants'
 
 require 'framework/console_logger'
 require 'data_import/strategies/data_importer'
-require 'sql_converter'
 
 
 =begin
 
 = Data-Import Helper tasks
 
-  - Goggles framework vers.:  4.00.519
+  - Goggles framework vers.:  4.00.575
   - author: Steve A.
 
   Data-Import rake tasks.
