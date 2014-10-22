@@ -206,7 +206,6 @@ Goggles::Application.routes.draw do
   # === Admin Interface / Data Import: ===
   scope "goggles_data_import" do
     scope "(:locale)", locale: /en|it/ do
-      match "get_step_progress",      controller: 'admin_import', action: 'get_step_progress',      as: :goggles_di_get_step_progress
       match "step1_status",           controller: 'admin_import', action: 'step1_status',           as: :goggles_di_step1_status
       match "step2_checkout",         controller: 'admin_import', action: 'step2_checkout',         as: :goggles_di_step2_checkout
       match "step3_commit",           controller: 'admin_import', action: 'step3_commit',           as: :goggles_di_step3_commit

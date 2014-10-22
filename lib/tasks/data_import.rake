@@ -15,7 +15,7 @@ require 'data_import/strategies/data_importer'
 
 = Data-Import Helper tasks
 
-  - Goggles framework vers.:  4.00.575
+  - Goggles framework vers.:  4.00.579
   - author: Steve A.
 
   Data-Import rake tasks.
@@ -32,14 +32,19 @@ namespace :dataimport do
 
   # Executes the DataImporter
   def launch_data_importer( pathname, season, force_meeting, force_team,
-                            do_not_consume_file, log_dir, logger, flash, delayed )
-    data_importer = DataImporter.new( logger, flash, 1 ) # default admin_id=1
-    data_importer.set_batch_parameters(
-        seasonpathname, season, force_meeting, force_team,
-        do_not_consume_file, log_dir
+                            do_not_consume_file, log_dir, logger, flash,
+                            delayed )
+    data_importer = DataImporter.new( logger, flash )
+    data_importer.set_up(
+        full_pathname:                  pathname,
+        season:                         season,
+        force_missing_meeting_creation: force_meeting,
+        force_missing_team_creation:    force_team,
+        do_not_consume_file:            do_not_consume_file,
+        log_dir:                        log_dir
     )
-    delayed ? data_importer.delay( queue: 'data-import').batch_import() :
-              data_importer.batch_import()
+    delayed ? data_importer.delay( queue: 'data-import' ).perform() :
+              data_importer.perform()
   end
   # ----------------------------------------------------------------------------
   #++

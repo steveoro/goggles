@@ -24,58 +24,23 @@ class AdminImportController < ApplicationController
   # Destroys an existing Data-import session
   #
   def kill_import_session
-    DataImporter.destroy_data_import_session( params[:id].to_i, logger ) if params[:id]
+    data_import_session = DataImportSession.find_by_id( params[:id].to_i )
+    if data_import_session
+      DataImporter.new( logger, flash, data_import_session ).destroy_data_import_session
+    end
     redirect_to( goggles_di_step1_status_path() )
   end
   # ---------------------------------------------------------------------------
 
 
   # Data Import Wizard: START / STATUS
-  # Phase #1: upload text (CSV) file / Select an existing Data-import session
+  # Phase #1: upload text file / Select an existing Data-import session
   #
   def step1_status                                   # Retrieve current sessions for the current user and list them:
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ admin_import::step1_status -----"
 #    logger.debug "current_admin: #{current_admin.inspect}"
     @existing_import_sessions = DataImportSession.where( user_id: current_admin.id )
-  end
-  # ---------------------------------------------------------------------------
-
-
-  # AJAX-only action to retrieve the step-2/step-3 progress updates of either the specified or the latest
-  # data-import session (being created or committed).
-  #
-  # == Params:
-  # - <tt>:id</tt> => when present, is id of the data-import session to be checked out;
-  #                   when missing, the last row created is used instead.
-  # == Returns:
-  # A DIV class containing the HTML representation of the updated progress bar.
-  #
-  def get_step_progress                             # Retrieve current sessions for the current user and list them:
-    if request.xhr?
-      data_import_session = nil
-      if params[:id]
-        data_import_session = DataImportSession.find_by_id( params[:id].to_i )
-      else
-        data_import_session = DataImportSession.last
-      end
-      percent = 0
-
-      if data_import_session                        # Retrieve current process steps and compute percentage:
-        # NOTE: format sample: "<label>:<current>/<total>"
-        tokens = data_import_session.phase_3_log.split(':') if data_import_session.phase_3_log
-        if tokens.instance_of?(Array) && tokens.size > 1
-          curr_label = tokens[0]
-          curr_value, curr_total = tokens[1].split('/')
-        end
-        percent = ( (curr_value.to_i.to_f / curr_total.to_i.to_f) * 100 ).to_i
-      end
-      render( text: "<span class=\"label label-info\">#{curr_label}</span><div class=\"bar\" style=\"width: #{percent}%;\"></div>" )
-
-    else
-      flash[:info] = I18n.t(:invalid_action_request)
-      redirect_to( goggles_di_step1_status_path() ) and return
-    end
   end
   # ---------------------------------------------------------------------------
 
@@ -194,8 +159,13 @@ class AdminImportController < ApplicationController
         ).update_all(
           phase_1_log: data_importer.data_import_session.phase_1_log
         )
-        data_importer.clear_team_analysis_and_sql_log()
-        data_importer.to_logfile()                  # Update the additional file-based logs
+
+        data_importer.to_logfile(                   # Write the main log file:
+          data_importer.import_log,
+          flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
+          nil, # (no additional footer)
+          '.phase_2.log'
+        )
 
         if data_importer.has_team_analysis_results
           flash[:info] = I18n.t('admin_import.team_analysis_needed')
@@ -238,7 +208,7 @@ class AdminImportController < ApplicationController
     confirmed_actions_ids = []
     overridden_alias_actions = {}
 
-# FIXME Create a dedicated Strategy/Service class for all this mess (keep it separate from the rest of the app -- for the moment "lib/parsers" may suffice)
+# FIXME Create a dedicated Strategy/Service class for all this mess
                                                     # Parse parameters:
     params.each{ |key, value|
       data_import_session_id = value.to_i if ( key.to_sym == :data_import_session_id)
@@ -257,15 +227,10 @@ class AdminImportController < ApplicationController
     logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
     logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}"
 
-    team_analysis_log  = ''
-    equivalent_sql_log = ''
-    team_analysis_ext  = '.team_commit.log'
-    equivalent_sql_ext = '.team_commit.sql'
     data_import_session = DataImportSession.find( data_import_session_id )
-    log_filename = File.join(                       # Compute log filename using data file as a start:
-      File.join(Rails.root, 'log'),
-      (File.basename(data_import_session.file_name).split('.')[0])
-    )
+    data_importer       = DataImporter.new( logger, flash, data_import_session )
+    team_analysis_log   = ''
+    equivalent_sql_log  = ''
                                                     # retrieve results from dedicated table:
     @all_results = DataImportTeamAnalysisResult.where( data_import_session_id: data_import_session_id )
     @all_results.each { |result|                    # For each confirmed result, do the suggested actions:
@@ -288,10 +253,10 @@ class AdminImportController < ApplicationController
           Team.transaction do                       # Let's make sure other threads have not already done what we want to do:
             if ( Team.where(name: team_name).none? )
               committed_row = Team.new(
-                name: team_name,
-                editable_name: team_name,     # (let's initialize this with the data-import name)
-                name_variations: team_name,
-                user_id: current_admin.id
+                name:             team_name,
+                editable_name:    team_name,        # (let's initialize this with the data-import name)
+                name_variations:  team_name,
+                user_id:          current_admin.id
                 # XXX Unable to guess city id (not filled-in, to be added by hand)
               )
               committed_row.save!                   # raise automatically an exception if save is not successful
@@ -314,8 +279,8 @@ class AdminImportController < ApplicationController
           DataImportTeamAlias.transaction do       # Let's make sure other threads have not already done what we want to do:
             if ( DataImportTeamAlias.where(name: team_name, team_id: team_id).none? )
               committed_row = DataImportTeamAlias.new(
-                name: team_name,
-                team_id: team_id
+                name:     team_name,
+                team_id:  team_id
               )
               committed_row.save!                   # raise automatically an exception if save is not successful
             else
@@ -335,16 +300,16 @@ class AdminImportController < ApplicationController
         begin
           TeamAffiliation.transaction do            # Let's make sure other threads have not already done what we want to do:
             if ( TeamAffiliation.where(
-                    team_id: team_id,
-                    season_id: season_id
+                    team_id:    team_id,
+                    season_id:  season_id
                  ).none? )
               committed_row = TeamAffiliation.new(
-                name: team_name,           # Use the actual provided (and searched) name instead of the result_row.name
-                team_id: team_id,
-                season_id: season_id,
-                is_autofilled: true,             # signal that we have guessed some of the values
-                must_calculate_goggle_cup: false,
-                user_id: current_admin.id
+                name:                       team_name, # Use the actual provided (and searched) name instead of the result_row.name
+                team_id:                    team_id,
+                season_id:                  season_id,
+                is_autofilled:              true,   # signal that we have guessed some of the values
+                must_calculate_goggle_cup:  false,
+                user_id:                    current_admin.id
                 # XXX Unable to guess team affiliation number (not filled-in, to be added by hand)
               )
               committed_row.save!                   # raise automatically an exception if save is not successful
@@ -371,6 +336,19 @@ class AdminImportController < ApplicationController
                               "    ('#{team_name}','#{team_name}','','','',1,CURDATE(),CURDATE());\r\n"
       end
     }
+                                                    # Write the log files, if there's any content:
+    data_importer.to_logfile(
+      team_analysis_log,
+      "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
+      nil, # (no footer)
+      is_ok ? '.team_commit.log.ok' : '.team_commit.log'
+    )
+    data_importer.to_logfile(
+      equivalent_sql_log,
+      "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n",
+      "\r\nCOMMIT;",
+      is_ok ? '.team_commit.sql.ok' : '.team_commit.sql'
+    )
 
     if is_ok
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
@@ -378,19 +356,14 @@ class AdminImportController < ApplicationController
       else                                          # Clear just the results from the session if everything is ok:
         DataImportTeamAnalysisResult.delete_all( data_import_session_id: data_import_session_id )
       end
-      team_analysis_ext  += '.ok'
-      equivalent_sql_ext += '.ok'
       flash[:info] = I18n.t('admin_import.team_analysis_completed')
     end
-                                                    # Write the log files, if there's any content:
-    DataImporter.to_analysis_logfile( log_filename, team_analysis_log, team_analysis_ext )
-    DataImporter.to_sql_executable_logfile( log_filename, equivalent_sql_log, equivalent_sql_ext )
                                                     # Either, go on with data-import or go back to the status page:
     if is_ok && (! must_go_back_on_commit)
       redirect_to( goggles_di_step2_checkout_path(
-          id: data_import_session_id,
-          force_meeting_creation: force_missing_meeting_creation ? '1' : '0',
-          force_team_creation: force_missing_team_creation ? '1' : '0'
+          id:                     data_import_session_id,
+          force_meeting_creation: force_missing_meeting_creation  ? '1' : '0',
+          force_team_creation:    force_missing_team_creation     ? '1' : '0'
       ) ) and return
     else
       redirect_to( goggles_di_step1_status_path() ) and return
