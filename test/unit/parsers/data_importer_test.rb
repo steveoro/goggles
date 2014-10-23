@@ -26,7 +26,7 @@ class DataImporterTest < ActiveSupport::TestCase
       'get_phase_1_log', 'get_phase_2_log',
       'get_import_log', 'get_esteemed_meeting_mins',
       'get_stored_data_rows', 'get_committed_data_rows',
-      'reset', 'consume_txt_file', 'commit'
+      'reset', 'phase_1_parse', 'commit'
     ].each do |method_name|
       assert( di.respond_to?(method_name), "doesn't respond to '#{method_name}'!" )
     end
@@ -64,7 +64,7 @@ class DataImporterTest < ActiveSupport::TestCase
       di = DataImporter.new( logger, flash, 1 )
       assert( di.instance_of?(DataImporter) )
 
-      data_import_session = di.consume_txt_file(
+      data_import_session = di.phase_1_parse(
         full_pathname,
         nil,                                        # Force auto-detect of the season from path/file name
         true,                                       # Force missing meeting creation

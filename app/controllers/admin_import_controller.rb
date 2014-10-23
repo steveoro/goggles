@@ -137,13 +137,13 @@ class AdminImportController < ApplicationController
       redirect_to( goggles_di_step1_status_path() ) and return
     end
 
-                                                    # === Re-launch consume_txt_file if we can/must do it:
+                                                    # === (Re-)Launch phase_1_parse if we can/must do it:
     if filename_to_be_parsed || ( data_import_session && (data_import_session.phase.to_i < 1) )
       filename_to_be_parsed = data_import_session.file_name if filename_to_be_parsed.nil? && data_import_session
                                                     # Create a new data-import session to consume the datafile:
       data_importer = DataImporter.new( logger, flash, current_admin.id )
                                                     # If data_import_session is existing, it will be "continued" (restarted, depending on last finished phase)
-      data_import_session = data_importer.consume_txt_file(
+      data_import_session = data_importer.phase_1_parse(
         filename_to_be_parsed, season,
         force_missing_meeting_creation, force_missing_team_creation,
         false,                                      # Do NOT consume local data files (this is the default value for server runs)

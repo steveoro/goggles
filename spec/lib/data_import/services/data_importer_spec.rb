@@ -23,7 +23,8 @@ describe DataImporter, type: :strategy do
       :to_logfile,
       :try_detect_season_from_file_path,
       :try_detect_season_from_header_fields,
-      :consume_txt_file
+      :phase_1_parse,
+      :phase_1_parse
     ] )
     #-- -----------------------------------------------------------------------
     #++
