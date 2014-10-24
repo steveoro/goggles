@@ -151,20 +151,6 @@ describe DataImporter, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
     #++
-
-
-    # Hi-level data-import "begin" command.
-    describe "#start" do
-      # TODO
-    end
-
-
-    # Hi-level data-import "end" command.
-    describe "#commit" do
-      # TODO
-    end
-    #-- -----------------------------------------------------------------------
-    #++
   end
 end
 

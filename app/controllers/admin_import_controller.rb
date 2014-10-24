@@ -141,42 +141,44 @@ class AdminImportController < ApplicationController
     if filename_to_be_parsed || ( data_import_session && (data_import_session.phase.to_i < 1) )
       filename_to_be_parsed = data_import_session.file_name if filename_to_be_parsed.nil? && data_import_session
                                                     # Create a new data-import session to consume the datafile:
-      data_importer = DataImporter.new( logger, flash, current_admin.id )
-                                                    # If data_import_session is existing, it will be "continued" (restarted, depending on last finished phase)
-      data_import_session = data_importer.phase_1_parse(
-        filename_to_be_parsed, season,
-        force_missing_meeting_creation, force_missing_team_creation,
-        false,                                      # Do NOT consume local data files (this is the default value for server runs)
-        data_import_session
+      data_importer = DataImporter.new( logger, flash, data_import_session )
+      data_importer.set_up(
+        full_pathname:                  filename_to_be_parsed,
+        season:                         season,
+        force_missing_meeting_creation: force_missing_meeting_creation,
+        force_missing_team_creation:    force_missing_team_creation,
+        # do_not_consume_file:           false, # (default)
+        current_admin_id:               current_admin.id
       )
-      if data_importer                              # First, update the DB-based phase log whenever possible:
-        if data_importer.season && (season_id.to_i < 0)
-          season_id = data_importer.season.id
-          @season_description = data_importer.season.description
-        end
-        DataImportSession.where(
-            id: data_importer.data_import_session.id
-        ).update_all(
-          phase_1_log: data_importer.data_import_session.phase_1_log
-        )
+                                                    # If data_import_session is existing, it will be "continued" (restarted, depending on last finished phase)
+      data_import_session = data_importer.phase_1_parse()
+                                                    # First, update the DB-based phase log whenever possible:
+      if data_importer.season && (season_id.to_i < 0)
+        season_id = data_importer.season.id
+        @season_description = data_importer.season.description
+      end
+      DataImportSession.where(
+          id: data_importer.data_import_session.id
+      ).update_all(
+        phase_1_log: data_importer.data_import_session.phase_1_log
+      )
 
-        data_importer.to_logfile(                   # Write the main log file:
-          data_importer.import_log,
-          flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
-          nil, # (no additional footer)
-          '.phase_2.log'
-        )
+      data_importer.to_logfile(                     # Write the main log file:
+        data_importer.import_log,
+        flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
+        nil, # (no additional footer)
+        '.phase_2.log'
+      )
 
-        if data_importer.has_team_analysis_results
-          flash[:info] = I18n.t('admin_import.team_analysis_needed')
-          redirect_to(
-              goggles_di_step2_analysis_path(
-                  id:                     data_importer.data_import_session.id,
-                  force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
-                  force_team_creation:    force_missing_team_creation    ? '1' : nil
-              )
-          ) and return
-        end
+      if data_importer.has_team_analysis_results
+        flash[:info] = I18n.t('admin_import.team_analysis_needed')
+        redirect_to(
+            goggles_di_step2_analysis_path(
+                id:                     data_importer.data_import_session.id,
+                force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
+                force_team_creation:    force_missing_team_creation    ? '1' : nil
+            )
+        ) and return
       end
     end
                                                     # Session successful? Head on to phase #2 and let the component handle the rest:
