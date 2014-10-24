@@ -7,7 +7,7 @@ require 'common/format'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.461
+  - Goggles framework vers.:  4.00.481
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -18,23 +18,16 @@ require 'common/format'
 
   Refactored from the original DataImportController implementation.
 
-  === Assumes the existance of:
-  - +logger+ instance
-  - +flash+ Hash
-
   === Defines:
-  - @phase_2_log string (log text) variable
   - @committed_data_rows integer variable
 
 =end
 module FinResultPhase3
 
-  # Previous/current phase text log stored as an UTF-8 string
-  @phase_2_log = ''
-
   # Total of committed data rows
   @committed_data_rows = 0
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportMeeting / Meeting.
@@ -44,8 +37,8 @@ module FinResultPhase3
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
-  def commit_data_import_meeting( data_import_session_id )
-    di_records = DataImportMeeting.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_meeting( data_import_session )
+    di_records = DataImportMeeting.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -97,22 +90,22 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
-          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
-          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
+#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
+          data_import_session.phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:1/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportMeetingSession / MeetingSession.
@@ -125,8 +118,8 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> meeting_session(meeting)
   #
-  def commit_data_import_meeting_session( data_import_session_id )
-    di_records = DataImportMeetingSession.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_meeting_session( data_import_session )
+    di_records = DataImportMeetingSession.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -159,83 +152,22 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
-          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
-          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
+#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'." )
+          data_import_session.phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.description}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:2/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
-
-
-  # MeetingEvent relation getter / adder.
-  # Searches for a corresponding / existing MeetingEvent row.
-  # Note that while all other search_or_add_a_XYZ methods create temporary rows
-  # on dedicated (temporary) entities, this method is one of the only 2 which commit
-  # directly to the destination entity (when a corresponding row is not found).
-  #
-  # == Returns: the corresponding id of searched entity row,
-  #   - positive when freshly added into MeetingEvent;
-  #   - negative IDs only for already existing/commited rows in MeetingEvent;
-  #   - 0 only on error/unable to process.
-  #
-  def search_or_add_a_corresponding_meeting_event( meeting_session_id, event_type_id,
-                                                   heat_type_id, event_order, begin_time,
-                                                   is_out_of_race )
-    result_id = 0
-    result_row = MeetingEvent.where(
-      meeting_session_id: meeting_session_id,
-      event_type_id:      event_type_id,
-      heat_type_id:       heat_type_id
-    ).first
-
-    if result_row
-      result_id = -result_row.id
-    else
-# DEBUG
-      logger.debug( "Adding new MeetingEvent having: meeting_session_id=#{meeting_session_id}, event_type_id=#{event_type_id}, heat_type_id=#{heat_type_id}..." )
-      begin                                         # --- BEGIN transaction ---
-        field_hash = {
-          meeting_session_id: meeting_session_id,
-          event_type_id:      event_type_id,
-          heat_type_id:       heat_type_id,
-          event_order:        event_order,
-          begin_time:         begin_time,
-          is_out_of_race:     is_out_of_race,
-          is_autofilled:      true
-          # TODO notes is not used
-        }
-        MeetingEvent.transaction do
-          result_row = MeetingEvent.new( field_hash )
-          result_row.save!                          # raise automatically an exception if save is not successful
-        end
-      rescue                                        # --- RESCUE (failed) transaction ---
-        @phase_2_log << "\r\nMeetingEvent creation: exception caught during save!\r\n"
-        @phase_2_log << "field_hash = #{ field_hash.inspect }\r\n" if field_hash
-        @phase_2_log << "#{ $!.to_s }\r\n" if $!
-        logger.error( "\r\n*** MeetingEvent creation: exception caught during save!" )
-        logger.error( "field_hash = #{ field_hash.inspect }\r\n" ) if field_hash
-        logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-        flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
-      else
-        result_id = result_row.id
-# DEBUG
-        logger.debug( "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'." )
-        @phase_2_log << "Created MeetingEvent, ID:'#{result_id}', '#{result_row.get_verbose_name}'.\r\n"
-        @committed_data_rows += 1
-      end                                           # --- END transaction ---
-    end
-    result_id
-  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportMeetingProgram / MeetingProgram.
@@ -248,38 +180,35 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> meeting_program(meeting_session)
   #
-  def commit_data_import_meeting_program( data_import_session_id )
-    di_records = DataImportMeetingProgram.where( data_import_session_id: data_import_session_id )
-    result_id  = 0
+  def commit_data_import_meeting_program( data_import_session )
+    di_records  = DataImportMeetingProgram.where( data_import_session_id: data_import_session.id )
+    result_id   = 0
     event_order = 1
-    is_ok = true
     committed_row = nil
+    is_ok = true
 
     if di_records
-      di_records.each do |di_row|
-                                                    # Create or retrieve the MeetingEvent
-        meeting_event_id = search_or_add_a_corresponding_meeting_event(
-          di_row.meeting_session_id,
-          di_row.event_type_id,
-          di_row.heat_type_id,
+      di_records.each do |di_row|                   # Create or retrieve the MeetingEvent
+        mev_builder = DataImportMeetingEventBuilder.build_from_parameters(
+          data_import_session,
+          di_row.meeting_session,
+          di_row.event_type,
+          di_row.heat_type,
           event_order,
           di_row.begin_time,
           di_row.is_out_of_race
         )
-        if meeting_event_id > 0                     # New MeetingEvent created?
-          event_order += 1                          # Increase event_order
-        else                                        # Otherwise, fix ID sign:
-          meeting_event_id = -meeting_event_id
-        end
+        meeting_event = mev_builder.result_row
+        event_order += 1 if meeting_event           # Increase event_order only after an event is created
 # DEBUG
-        logger.debug( "\r\nCommitting #{di_row.class.name} = '#{di_row.get_short_name}'..." )
+#        logger.debug( "\r\nCommitting #{ di_row.class.name } = '#{ di_row.get_short_name }'..." )
         begin                                       # --- BEGIN transaction ---
           MeetingProgram.transaction do
             committed_row = MeetingProgram.new(
               event_order:      di_row.event_order,
               category_type_id: di_row.category_type_id,
               gender_type_id:   di_row.gender_type_id,
-              pool_type_id:     ( di_row.meeting_session.swimming_pool ? di_row.meeting_session.swimming_pool.pool_type_id : nil ),
+              pool_type_id:     di_row.meeting_session.swimming_pool ? di_row.meeting_session.swimming_pool.pool_type_id : nil,
               time_standard_id: di_row.time_standard_id,
               meeting_event_id: meeting_event_id,
               begin_time:       di_row.begin_time,  # (wild-guessed)
@@ -305,21 +234,19 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "committed_row: #{ committed_row.inspect }\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "committed_row: #{ committed_row.inspect }" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "committed_row: #{ committed_row.inspect }\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
-          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'." )
-          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'.\r\n"
+#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'." )
+          data_import_session.phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.get_short_name}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:3/10"
+    data_import_session.save!
     is_ok
   end
   # ---------------------------------------------------------------------------
@@ -332,8 +259,8 @@ module FinResultPhase3
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
-  def commit_data_import_cities( data_import_session_id )
-    di_records = DataImportCity.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_cities( data_import_session )
+    di_records = DataImportCity.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -361,22 +288,22 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
-          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'." )
-          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'.\r\n"
+#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'." )
+          data_import_session.phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}'.\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:4/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportTeam / Team / TeamAffiliation.
@@ -389,8 +316,8 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> teams(city)
   #
-  def commit_data_import_teams( data_import_session_id, season_id )
-    di_records = DataImportTeam.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_teams( data_import_session, season )
+    di_records = DataImportTeam.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = additional_row = nil
@@ -414,39 +341,40 @@ module FinResultPhase3
                                                     # We must add also a new TeamAffiliation row for this season!
           TeamAffiliation.transaction do            # Create dependancy: |=> team_affiliations(team, season)
             additional_row = TeamAffiliation.new(
-              name: committed_row.name,
-              must_calculate_goggle_cup: false,
-              is_autofilled: true,              # signal that we have guessed some of the values
-              team_id: result_id,
-              season_id: season_id,
-              user_id: committed_row.user_id
+              name:                       committed_row.name,
+              must_calculate_goggle_cup:  false,
+              is_autofilled:              true,     # signal that we have guessed some of the values
+              team_id:                    result_id,
+              season_id:                  season.id,
+              user_id:                    committed_row.user_id
               # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
             )
             # (ASSERT: assuming TeamAffiliation DOES NOT exist if the Team row is missing)
             additional_row.save!                    # raise automatically an exception if save is not successful
           end
                                                     # Update dependancy: |=> data_import_badges(swimmer, team, category, season)
-          DataImportBadge.where(
-            data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
-          DataImportMeetingIndividualResult.where(
-            data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
+          DataImportBadge.where( data_import_team_id: di_row.id ).update_all(
+            team_id:              result_id,
+            team_affiliation_id:  additional_row.id
+          )
+          DataImportMeetingIndividualResult.where( data_import_team_id: di_row.id ).update_all(
+            team_id:              result_id,
+            team_affiliation_id:  additional_row.id
+          )
 
-          DataImportMeetingRelayResult.where(
-            data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
-          DataImportMeetingTeamScore.where(
-            data_import_team_id: di_row.id
-          ).update_all( team_id: result_id, team_affiliation_id: additional_row.id )
+          DataImportMeetingRelayResult.where( data_import_team_id: di_row.id ).update_all(
+            team_id:              result_id,
+            team_affiliation_id:  additional_row.id
+          )
+          DataImportMeetingTeamScore.where( data_import_team_id: di_row.id ).update_all(
+            team_id:              result_id,
+            team_affiliation_id:  additional_row.id
+          )
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{ di_row.class.name } commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
 #          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.name}' + #{additional_row.class.name} for Season ID #{season_id}." )
@@ -455,9 +383,12 @@ module FinResultPhase3
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:5/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportSwimmer / Swimmer.
@@ -467,8 +398,8 @@ module FinResultPhase3
   # == Returns:
   # +true+ if ok; +false+ on error/unable to save
   #
-  def commit_data_import_swimmers( data_import_session_id )
-    di_records = DataImportSwimmer.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_swimmers( data_import_session )
+    di_records = DataImportSwimmer.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -500,11 +431,8 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
 #          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.complete_name}'." )
@@ -513,8 +441,12 @@ module FinResultPhase3
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:6/10"
+    data_import_session.save!
     is_ok
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportBadge / Badge.
@@ -527,8 +459,8 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> badges(swimmer, team, category, season)
   #
-  def commit_data_import_badges( data_import_session_id )
-    di_records = DataImportBadge.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_badges( data_import_session )
+    di_records = DataImportBadge.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -559,11 +491,8 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
 #          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.number}'." )
@@ -572,9 +501,12 @@ module FinResultPhase3
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:7/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportMeetingIndividualResult / MeetingIndividualResult.
@@ -587,8 +519,8 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> meeting_individual_results(meeting_program)
   #
-  def commit_data_import_meeting_individual_results( data_import_session_id )
-    di_records = DataImportMeetingIndividualResult.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_meeting_individual_results( data_import_session )
+    di_records = DataImportMeetingIndividualResult.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -627,11 +559,8 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
 #          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, '#{committed_row.athlete_name}', pts. #{committed_row.meeting_individual_points}." )
@@ -640,9 +569,12 @@ module FinResultPhase3
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:8/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportMeetingRelayResult / MeetingRelayResult.
@@ -655,8 +587,8 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> meeting_relay_results(meeting_program)
   #
-  def commit_data_import_meeting_relay_results( data_import_session_id )
-    di_records = DataImportMeetingRelayResult.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_meeting_relay_results( data_import_session )
+    di_records = DataImportMeetingRelayResult.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -693,11 +625,8 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
 #          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, pts. #{committed_row.meeting_points}." )
@@ -706,9 +635,12 @@ module FinResultPhase3
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:9/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Commit method for DataImportMeetingTeamScore / MeetingTeamScore.
@@ -721,8 +653,8 @@ module FinResultPhase3
   # == Dependancy:
   #   |=> meeting_team_scores(meeting)
   #
-  def commit_data_import_meeting_team_score( data_import_session_id )
-    di_records = DataImportMeetingTeamScore.where( data_import_session_id: data_import_session_id )
+  def commit_data_import_meeting_team_score( data_import_session )
+    di_records = DataImportMeetingTeamScore.where( data_import_session_id: data_import_session.id )
     result_id  = 0
     is_ok = true
     committed_row = nil
@@ -755,21 +687,20 @@ module FinResultPhase3
 
         rescue                                      # --- RESCUE (failed) transaction ---
           is_ok = false
-          @phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
-          @phase_2_log << "#{ $!.to_s }\r\n" if $!
-          logger.error( "\r\n*** #{di_row.class.name} commit: exception caught during save!" )
-          logger.error( "*** #{ $!.to_s }\r\n" ) if $!
-          flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+          data_import_session.phase_2_log << "\r\n#{di_row.class.name} commit: exception caught during save!\r\n"
+          data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
         else
 # DEBUG
-          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}..." )
-          @phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}...\r\n"
+#          logger.debug( "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}..." )
+          data_import_session.phase_2_log << "Committed #{committed_row.class.name}, ID:#{result_id}, team_id: #{committed_row.team_id}, sum_indiv.=#{di_row.sum_individual_points} sum_team=#{di_row.sum_team_points} sum_relay=#{di_row.sum_relay_points}...\r\n"
           @committed_data_rows += 1
         end                                         # --- END transaction ---
       end
     end
+    data_import_session.phase_3_log = "COMMIT:10/10"
+    data_import_session.save!
     is_ok
   end
-  # ---------------------------------------------------------------------------
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

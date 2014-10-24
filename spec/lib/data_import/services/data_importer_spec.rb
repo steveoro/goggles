@@ -17,14 +17,16 @@ describe DataImporter, type: :strategy do
     # ] )
 
     it_behaves_like( "(the existance of a method)", [
-      :set_up, :destroy_data_import_session,
-      :perform,
-
+      :set_up,
+      :destroy_data_import_session,
       :to_logfile,
+      :perform, :display_name, :max_attempts,
+
       :try_detect_season_from_file_path,
       :try_detect_season_from_header_fields,
       :phase_1_parse,
-      :phase_1_parse
+      :phase_1_2_serialize,
+      :phase_3_commit
     ] )
     #-- -----------------------------------------------------------------------
     #++

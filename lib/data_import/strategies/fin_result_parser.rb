@@ -91,7 +91,7 @@ class FinResultParser
   def self.parse_txt_file( full_pathname, logger = nil )
     parsing_defs  = FinResultDefs.new( logger )
     service = TxtParseService.new( parsing_defs )
-    service.log_somehow( logger, "\r\n-- FinResultParser::parse_txt_file(#{full_pathname}):", true, :info )
+    service.log_somehow( logger, "\r\n-- FinResultParser::parse_txt_file(#{ full_pathname }):", true, :info )
     full_text_file_contents = ""
                                                     # Scan each line of the file until gets reaches EOF:
     File.open( full_pathname ) do |f|

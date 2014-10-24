@@ -231,7 +231,7 @@ class DataImporter
     container_dir_parts = File.dirname( @full_pathname ).split(File::SEPARATOR).last.split('.')
     if ( container_dir_parts.size == 2 )
       @season = Season.find_by_id( (container_dir_parts[1]).to_i )
-      update_logs( "Detected forced season ID=#{@season.id} from container folder name. Parsing file..." ) if @season
+      update_logs( "Detected forced season ID=#{ @season.id } from container folder name. Parsing file..." ) if @season
     end
     @season
   end
@@ -311,7 +311,7 @@ class DataImporter
       try_detect_season_from_file_path
       try_detect_season_from_header_fields
                                                     # (@season must be defined after this point)
-      flash[:error] = "#{I18n.t(:season_not_found, { scope: [:admin_import] })}\r\n#{ @header_fields_dao.inspect }" and return nil unless @season
+      @flash[:error] = "#{I18n.t(:season_not_found, { scope: [:admin_import] })}\r\n#{ @header_fields_dao.inspect }" and return nil unless @season
     else
       update_logs( "Specified season ID=#{@season.id}. Parsing file..." )
     end
@@ -351,13 +351,14 @@ class DataImporter
 
     @stored_data_rows = 0
                                                     # Store the raw text file into the data-import session:
-    @data_import_session.file_format      = file_type
-    @data_import_session.file_name        = full_pathname
-    @data_import_session.source_data      = @result_hash[:full_text_file_contents]
-    @data_import_session.total_data_rows  = @result_hash[:total_data_rows]
-    @data_import_session.season_id        = @season.id
-    @data_import_session.phase            = 10      # Update "last completed phase" indicator in session (10 = 1.0)
-    @data_import_session.phase_3_log      = '1'
+    @data_import_session.file_format            = file_type
+    @data_import_session.file_name              = full_pathname
+    @data_import_session.source_data            = @result_hash[:full_text_file_contents]
+    @data_import_session.total_data_rows        = @result_hash[:total_data_rows]
+    @data_import_session.data_import_season_id  = @season.id if @season.instance_of?( DataImportSeason )
+    @data_import_session.season_id              = @season.id if @season.instance_of?( Season )
+    @data_import_session.phase                  = 10      # Update "last completed phase" indicator in session (10 = 1.0)
+    @data_import_session.phase_3_log            = '1'
     @data_import_session.save ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------
@@ -540,47 +541,26 @@ class DataImporter
   # true on success; false on error.
   #
   def phase_3_commit()
-    flash[:info] = I18n.t(:missing_session_parameter, { scope: [:admin_import] }) if @data_import_session.nil?
+    @flash[:info] = I18n.t(:missing_session_parameter, { scope: [:admin_import] }) if @data_import_session.nil?
     return false unless @data_import_session.instance_of?( DataImportSession ) &&
                         ( @data_import_session.phase == 12 )
-# FIXME (we could also just check that @data_import_session.season == @season)
                                                     # Check season integrity
-    season_id = @data_import_session.season_id if ( @data_import_session && @data_import_session.respond_to?( :season_id ) )
-    flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] }) and return false if ( season_id.to_i < 1 )
+    @flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] }) and return false unless @season
 
     @logger.info( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ season_id }..." ) if @logger
     @data_import_session.phase_2_log = "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{season_id}...\r\n"
     @committed_data_rows = 0
-
-    is_ok = commit_data_import_meeting( @data_import_session.id )
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:1/10" )
-
-    is_ok = commit_data_import_meeting_session( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:2/10" )
-
-    is_ok = commit_data_import_meeting_program( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:3/10" )
-
-    is_ok = commit_data_import_cities( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:4/10" )
-
-    is_ok = commit_data_import_teams( @data_import_session.id, season_id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:5/10" )
-
-    is_ok = commit_data_import_swimmers( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:6/10" )
-
-    is_ok = commit_data_import_badges( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:7/10" )
-
-    is_ok = commit_data_import_meeting_individual_results( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:8/10" )
-
-    is_ok = commit_data_import_meeting_relay_results( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:9/10" )
-
-    is_ok = commit_data_import_meeting_team_score( @data_import_session.id ) if is_ok
-    DataImportSession.where( id: @data_import_session.id ).update_all( phase_3_log: "COMMIT:10/10" )
+                                                    # Bail out as soon as something is wrong:
+    is_ok = commit_data_import_meeting( @data_import_session )
+    is_ok = commit_data_import_meeting_session( @data_import_session ) if is_ok
+    is_ok = commit_data_import_meeting_program( @data_import_session ) if is_ok
+    is_ok = commit_data_import_cities( @data_import_session ) if is_ok
+    is_ok = commit_data_import_teams( @data_import_session, @season ) if is_ok
+    is_ok = commit_data_import_swimmers( @data_import_session ) if is_ok
+    is_ok = commit_data_import_badges( @data_import_session ) if is_ok
+    is_ok = commit_data_import_meeting_individual_results( @data_import_session ) if is_ok
+    is_ok = commit_data_import_meeting_relay_results( @data_import_session ) if is_ok
+    is_ok = commit_data_import_meeting_team_score( @data_import_session ) if is_ok
 
     if ( is_ok )
       @import_log << "\r\n\r\n--------------------[Phase #3 - COMMIT]--------------------\r\n\r\n" +
@@ -591,9 +571,13 @@ class DataImporter
                      "===========================================================\r\n"
       destroy_data_import_session()
     else                                            # Store data_import_session.phase_2_log if something goes awry:
+      if $! && @logger
+        @logger.error( "\r\n*** #{ data_import_session.phase_3_log }: exception caught during save!" )
+        @logger.error( "*** #{ $!.to_s }\r\n" )
+      end
+      @flash[:error] = "#{ I18n.t(:something_went_wrong) } [#{ data_import_session.phase_3_log }]" + ( $! ? ": '#{ $!.to_s }'" : '' )
       @data_import_session.phase = 30               # (30 = '3.0', but without successful ending, since the session in not nil)
       @data_import_session.save!
-      is_ok = false
     end
     is_ok
   end
