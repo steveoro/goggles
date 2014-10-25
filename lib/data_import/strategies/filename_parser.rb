@@ -10,7 +10,7 @@ require 'data_import/header_fields_dao'
 
 = FilenameParser
 
-  - Goggles framework vers.:  4.00.543
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Strategy class dedicated to extracting required Meeting fields
@@ -50,6 +50,11 @@ class FilenameParser
   #
   # This method updates the corresponding member variables.
   #
+  # Keep in mind that this assumes that most (if not all) Championships start in
+  # September. The parsing of the #header_year may fail for special Autumn events,
+  # like some FINA Championships during the years (they start in September but
+  # are relative to the previous academic year).
+  #
   # == Returns:
   # - an HeaderFieldsDAO DAO on header_date parsing success.
   #
@@ -67,7 +72,7 @@ class FilenameParser
     rescue
       raise ArgumentError.new("Unable to parse header_date!")
     end
-    year = header_date.month < 10 ? header_date.year - 1 : header_date.year
+    year = header_date.month < 9 ? header_date.year - 1 : header_date.year
     @header_year = "#{year}/#{year+1}"
 
     HeaderFieldsDAO.new( @full_pathname, @prefix, @header_date, @header_year, @code_name )

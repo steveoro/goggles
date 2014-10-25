@@ -17,7 +17,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.581
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
   Data-Import strategy class.
@@ -28,11 +28,12 @@ class DataImporter
   include FinResultPhase2
   include FinResultPhase3
 
-  attr_reader   :logger, :flash, :data_import_session, :import_log
+  attr_reader   :logger, :flash, :data_import_session,
+                :import_log,
+                :header_fields_dao,
+                :result_hash
 
   attr_accessor :full_pathname,
-                :header_fields_dao,
-                :result_hash,
                 :season,
                 :current_admin_id,
                 :force_missing_meeting_creation,
@@ -49,18 +50,19 @@ class DataImporter
   def initialize( logger = nil, flash = nil, data_import_session = nil )
     @logger = logger || Rails.logger
     @flash  = flash  || {}
-    @data_import_session = data_import_session || create_new_data_import_session()
-    @team_analysis_log  = ''                        # Full team analysis phase log
-    @sql_executable_log = ''                        # SQL 'suggested actions' from Team Analysis phase
-    @import_log         = ''                        # Combined import log
-    @team_analysis_results = []
+    @data_import_session    = data_import_session || create_new_data_import_session()
+    @team_analysis_log      = ''                    # Full team analysis phase log
+    @sql_executable_log     = ''                    # SQL 'suggested actions' from Team Analysis phase
+    @import_log             = ''                    # Combined import log
+    @team_analysis_results  = []
                                                     # Batch parameters' default
-    @full_pathname    = @data_import_session.file_name
-    @season           = @data_import_session.season
-    @current_admin_id = @data_import_session.user_id
+    @season                 = @data_import_session.season
+    @full_pathname          = @data_import_session.file_name
+    header_fields_dao_init_from_filename if @full_pathname
+    @current_admin_id       = @data_import_session.user_id
     @force_missing_meeting_creation = false
     @force_missing_team_creation    = false
-    @do_not_consume_file = false
+    @do_not_consume_file            = false
     @log_dir = File.join( Rails.root, 'log' )
   end
 
@@ -78,8 +80,11 @@ class DataImporter
   #  - :log_dir
   #
   def set_up( options = {} )
-    options.each { |key, value| send("#{key}=", value) }
-    @internal_phase = 'setup'
+    options.each do |key, value|
+      send("#{key}=", value)
+      # Force header_fields_dao init on filename change:
+      header_fields_dao_init_from_filename if key == :full_pathname
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -122,12 +127,17 @@ class DataImporter
   #++
 
 
+  # Returns the current (complete) #import_log filename
+  def import_log_filename
+    "#{ get_log_basename }#{ get_log_extension }"
+  end
+
   # Generic log-to-file dumper.
   # Stores the text contents specified to a chosen filename (assuming permissions
   # are correctly set for the current #log_dir).
   # If found, file is overwritten, otherwise is created.
   #
-  def to_logfile( log_contents, header_text = nil, footer_text = nil, extension = '.log' )
+  def to_logfile( log_contents, header_text = nil, footer_text = nil, extension = get_log_extension() )
     log_basename = get_log_basename()
     if log_contents.size > 0
       File.open( log_basename + extension, 'w' ) do |f|
@@ -137,11 +147,49 @@ class DataImporter
       end
     end
   end
+
+  # Writes the current, complete import log concerning all the Phases that have
+  # been successfully completed, up to the moment of the invocation.
+  #
+  def write_import_logfile
+    to_logfile( @import_log )
+  end
+
+  # Writes the current Team-Analysis to its dedicated logfile,
+  # plus its own "suggested SQL operations" list file, which
+  # is handled separately from the ultimate "SQL diff" produced
+  # at the end of the Phase-3.
+  #
+  def write_analysis_logfile
+    to_logfile(
+      @team_analysis_log,
+      header_text = nil,
+      footer_text = nil,
+      ".team.#{get_log_extension}"
+    )
+    to_logfile(
+      @sql_executable_log,
+      header_text = nil,
+      footer_text = nil,
+      ".team_sql.#{get_log_extension}"
+    )
+  end
+
+  # Writes the current Team-Analysis to its dedicated logfile,
+  # overwriting any existing file (or creating it if not already existing).
+  #
+  def write_sql_diff_logfile
+    to_logfile(
+      @data_import_session ? @data_import_session.sql_diff : '',
+      "-- *** SQL Diff file for #{ File.basename(@full_pathname) } ***\r\n-- Timestamp: #{ get_iso_timestamp }\r\n",
+      "\r\n\r\n-- Last completed phase code: %02d" % get_last_completed_phase,
+      ".diff.sql"
+    )
+  end
   #-- -------------------------------------------------------------------------
   #++
 
 
-####################################### WIP ####################à
   # Getter for @committed_data_rows
   def get_committed_data_rows
     @committed_data_rows
@@ -217,7 +265,7 @@ class DataImporter
   #
   # === Example:
   #
-  #     "upload"  [ / ] "season.132"  [ / ]  "ris20121123test.txt"
+  #     "uploads"  [ / ] "results.132"  [ / ]  "ris20121123test.txt"
   #
   # => This will force Season with ID #132 for all the files contained therein.
   #
@@ -245,23 +293,22 @@ class DataImporter
   # This method updates directly the internal #season member but it does nothing
   # if it has already a value.
   #
+  # === Params:
+  # The season_type_code (default: 'MASFIN')
+  #
   # === Returns
   # A Season instance when successfull or +nil+ when unable to parse the pathname.
   #
-  def try_detect_season_from_header_fields()
+  def try_detect_season_from_header_fields( season_type_code = 'MASFIN' )
     return @season if @season.instance_of?( Season )
 
-    seek_date = @header_fields_dao.header_date
-    mas_fin_season_type = SeasonType.find_by_code('MASFIN')
-
-    if mas_fin_season_type.instance_of?( SeasonType )
-      # [Steve, 20141022] This is an approximation, currently valid only for FIN result files:
-      @season = Season.where([
-        '(begin_date <= ?) AND (end_date >= ?) AND (season_type_id = ?)',
-        seek_date, seek_date, mas_fin_season_type.id
-      ]).first
-      update_logs( "Detected season ID=#{@season.id} from file header date. Parsing file..." ) if @season
-    end
+    header_year = @header_fields_dao.header_year
+    mas_fin_season_type = SeasonType.find_by_code( season_type_code )
+    @season = Season.where([
+      '(header_year = ?) AND (season_type_id = ?)',
+      header_year, mas_fin_season_type.id
+    ]).first
+    update_logs( "Detected season ID=#{@season.id} from file header date. Parsing file..." ) if @season
     @season
   end
   #-- -------------------------------------------------------------------------
@@ -293,7 +340,7 @@ class DataImporter
     @data_import_session.phase_1_log ||= ''         # Init phase log
     update_logs( "\r\n-- DataImporter.phase_1_parse() start..." )
     update_logs( "Parsing file: #{full_pathname}, force_missing_meeting_creation=#{force_missing_meeting_creation}, force_missing_team_creation=#{force_missing_team_creation}, do_not_consume_file=#{do_not_consume_file}.\r\n" )
-    header_fields_dao_init_from_filename()
+    header_fields_dao_init_from_filename()          # Make sure #header_fields_dao is defined
                                                     # Check if it's a "continuation session":
     if @data_import_session.phase > 0
       update_logs( "\r\n*** CONTINUING SESSION (after team name Analysis, stored in separate log file) ***" )
@@ -526,7 +573,7 @@ class DataImporter
       )
     end
                                                     # Update the global log with the whole phase 1 log
-    @import_log = "--------------------[Phase #1 - DIGEST/SERIALIZE]--------------------\r\n" << @data_import_session.phase_1_log
+    @import_log = "--------------------[Phase #1 - DIGEST/SERIALIZE]--------------------\r\n#{ @data_import_session.phase_1_log }"
     is_ok ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------
@@ -592,7 +639,7 @@ class DataImporter
   #
   def create_new_data_import_session( full_pathname = nil, full_text_file_contents = nil,
                                       total_data_rows = 0, file_format = nil,
-                                      season_id = 0, current_admin_id = 1 )
+                                      season_id = nil, current_admin_id = 1 )
     DataImportSession.create(
       phase:            0,
       total_data_rows:  0,
@@ -614,10 +661,15 @@ class DataImporter
 
   # Filename header digest.
   # This will initialize the internal #header_fields_dao member based on the current
-  # value of the #full_pathname of the parsed file. The #@result_hash member will
+  # value of the #full_pathname of the parsed file. The #result_hash member will
   # be set to +nil+.
   #
+  # This method does nothing if called when the header_fields_dao is
+  # already defined (it's non-destructive).
+  #
   def header_fields_dao_init_from_filename()
+    # Bail out if #header_fields_dao is already defined:
+    return if @header_fields_dao.instance_of?( HeaderFieldsDAO )
     @header_fields_dao = FilenameParser.new( @full_pathname ).parse
     @result_hash = nil
   end
@@ -626,6 +678,21 @@ class DataImporter
   # Getter for the log base file name (pathname + log filename w/o extension)
   def get_log_basename
     File.join( @log_dir, (File.basename(@full_pathname).split('.')[0]) )
+  end
+
+  # Getter for a string timestamp including the seconds.
+  def get_iso_timestamp
+    DateTime.now.strftime("%Y%m%d%H%M%S")
+  end
+
+  # Getter for the last completed phase
+  def get_last_completed_phase
+    @data_import_session ? @data_import_session.phase : 0
+  end
+
+  # Getter for the log extension
+  def get_log_extension
+    ".%02d.log" % get_last_completed_phase
   end
 
 

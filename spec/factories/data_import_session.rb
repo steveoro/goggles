@@ -4,7 +4,7 @@ require 'ffaker'
 FactoryGirl.define do
 
   factory :data_import_session do
-    file_name               { "#{ Faker::Internet.domain_word }.txt" }
+    file_name               { "ris#{(season.begin_date + 60.days).strftime("%Y%m%d")}#{ Faker::Internet.domain_word }.txt" }
     source_data             { Faker::Lorem.paragraph[0..250] }
     phase                   0
     total_data_rows         0
