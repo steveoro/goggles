@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.569
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -37,9 +37,9 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
                                   force_missing_team_creation = false )
     raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting.nil?
 # DEBUG
-    puts "\r\n\r\nMeetingTeamScore (Ranking) - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
-    puts "#{meeting.inspect}"
-    puts "=> #{meeting.get_full_name}"
+#    puts "\r\n\r\nMeetingTeamScore (Ranking) - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
+#    puts "#{meeting.inspect}"
+#    puts "=> #{meeting.get_full_name}"
 
     self.build( data_import_session ) do
       entity  MeetingTeamScore
@@ -72,13 +72,13 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
         relay_scores = relay_results.collect{ |row| row.meeting_points.to_f }
         @total_relay_points = relay_scores.inject{ |sum, score| sum + score }
         @result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
-        puts "Before search: @team.id: #{@team.id} ('#{@team_name}'), @total_relay_points: #{@total_relay_points}, @result_score: #{@result_score}..."
+#        puts "Before search: @team.id: #{@team.id} ('#{@team_name}'), @total_relay_points: #{@total_relay_points}, @result_score: #{@result_score}..."
       end
 
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingTeamScore..." )
+#        puts( "Seeking existing MeetingTeamScore..." )
         primary     [
           "(meeting_id = ?) AND (team_id = ?)",
           meeting.instance_of?(Meeting) ? meeting.id : 0,
@@ -92,14 +92,14 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-        puts "Search failed: adding new MeetingTeamScore with: @team=#{@team.name}..."
+#        puts "Search failed: adding new MeetingTeamScore with: @team=#{@team.name}..."
                                                     # Fix possible blank or missing ranking values:
         @rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
           data_import_session,

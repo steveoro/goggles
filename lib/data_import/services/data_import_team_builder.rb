@@ -50,7 +50,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
   #
   def self.build_from_parameters( data_import_session, team_name, season, force_missing_team_creation )
 # DEBUG
-    puts "\r\nSearching for team '#{team_name}'..."
+#    puts "\r\nSearching for team '#{team_name}'..."
     self.build( data_import_session ) do
       entity              TeamAffiliation
       entity_for_creation DataImportTeam
@@ -62,7 +62,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         entity      Team                          # reset primary entity after the search
         if primary_search_ok? # Force result to be a Team instance when it is found
 # DEBUG
-          puts "primary_search_ok!"
+#          puts "primary_search_ok!"
           set_result  @result_row.team
         end
       end
@@ -77,7 +77,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         entity      Team                          # reset primary entity after the search
         set_result  result_row
 # DEBUG
-        puts "FuzzyStringMatcher: result = #{result_row.inspect}"
+#        puts "FuzzyStringMatcher: result = #{result_row.inspect}"
       end
                                                   # 4) Additional TeamAffiliation check:
       # INTEGRITY Check: add a missing TeamAffiliation but only if we have a primary match.
@@ -146,7 +146,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           )
             result.save!
 # DEBUG
-            puts "Team analysis saved."
+#            puts "Team analysis saved."
           end
           # Result not found w/o Team creation => Do a manual review of the analysis data.
         end

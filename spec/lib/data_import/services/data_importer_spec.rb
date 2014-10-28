@@ -201,15 +201,70 @@ describe DataImporter, type: :strategy do
     # - Creation of the data-import session object.
     #
     describe "#phase_1_parse" do
+      # We need to parse the fixture file just once to speed-up tests:
+      before( :all ) do
+        file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+        @phase_1_session = create(
+          :data_import_session,
+          file_name: file_name,
+          season: Season.find_by_id( 132 )
+        )
+        @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+        @result = @phase_1_subject.phase_1_parse
+      end
+
       context "after successful completion," do
         it "returns the current (updated) #data_import_session" do
-          # TODO
-        end
-        it "updates the #result_hash member" do
-          # TODO
+          expect( @result ).to be_an_instance_of( DataImportSession )
+          expect( @result.id ).to eq( @phase_1_session.id )
         end
         it "sets the session #phase to '10'" do
-          # TODO
+          expect( @result.phase ).to eq(10)
+        end
+
+        describe "#result_hash member" do
+          it "is an Hash" do
+            expect( @phase_1_subject.result_hash ).to be_an_instance_of( Hash )
+          end
+          it "has the :parse_result, :line_count, :total_data_rows & :full_text_file_contents keys" do
+            expect( @phase_1_subject.result_hash.keys ).to contain_exactly(
+              :parse_result, :line_count, :total_data_rows, :full_text_file_contents
+            )
+          end
+
+          # [Steve, 201410128] The following numbers have all been hand-verified
+          it "has 1 [:parse_result][:meeting_header] item" do
+            expect( @phase_1_subject.result_hash[:parse_result][:meeting_header].size ).to eq( 1 )
+          end
+
+          it "has 36 [:parse_result][:category_header] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:category_header].size ).to eq( 36 )
+          end
+          it "has 222 [:parse_result][:result_row] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:result_row].size ).to eq( 222 )
+          end
+
+          it "has 5 [:parse_result][:relay_header] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:relay_header].size ).to eq( 5 )
+          end
+          it "has 18 [:parse_result][:relay_row] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:relay_row].size ).to eq( 18 )
+          end
+
+          it "has 1 [:parse_result][:team_ranking] item" do
+            expect( @phase_1_subject.result_hash[:parse_result][:team_ranking].size ).to eq( 1 )
+          end
+          it "has 45 [:parse_result][:ranking_row] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:ranking_row].size ).to eq( 45 )
+          end
+
+          it "has 1 [:parse_result][:stats] item" do
+            expect( @phase_1_subject.result_hash[:parse_result][:stats].size ).to eq( 1 )
+          end
+          # (The following single detail item has all the 8 recognized fields in it)
+          it "has 1 [:parse_result][:stats_details] item" do
+            expect( @phase_1_subject.result_hash[:parse_result][:stats_details].size ).to eq( 1 )
+          end
         end
       end
     end
@@ -223,23 +278,80 @@ describe DataImporter, type: :strategy do
     # - Creation of intermediate "secondary" entity rows for each parsed object,
     #   to allow manual review before the final phase-3 commit.
     #
-    describe "#phase_1_2_serialize" do
-      it "returns nil if the last completed phase is not '10'" do
-        # TODO
-      end
-
-      context "after successful completion," do
-        it "returns the current (updated) #data_import_session" do
-          # TODO
-        end
-        it "stores the parsed secondary entities" do
-          # TODO
-        end
-        it "sets the session #phase to 12 (if there's no need of the Team Analysis)" do
-          # TODO
-        end
-      end
-    end
+    # describe "#phase_1_2_serialize" do
+      # # We need to parse the fixture file just once to speed-up tests:
+      # before( :all ) do
+        # file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+        # @phase_1_session = create(
+          # :data_import_session,
+          # file_name: file_name,
+          # season: Season.find_by_id( 132 )
+        # )
+        # @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+      # end
+#
+      # it "returns nil if the last completed phase is not '10'" do
+        # expect( @phase_1_subject.phase_1_2_serialize ).to be nil
+      # end
+#
+#
+      # context "after successful completion, w/ FORCE team creation DISABLED," do
+        # before(:all) do
+          # @analysis_before_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
+          # @phase_1_subject.set_up( force_missing_meeting_creation: false, force_missing_team_creation: false )
+          # @phase_1_subject.phase_1_parse
+          # expect( @phase_1_subject.data_import_session.phase ).to eq(10)
+          # @result = @phase_1_subject.phase_1_2_serialize
+        # end
+#
+        # it "returns the current (updated) #data_import_session" do
+          # expect( @result ).to be_an_instance_of( DataImportSession )
+          # expect( @result.id ).to eq( @phase_1_session.id )
+        # end
+        # it "has team analysis results" do
+          # expect( @phase_1_subject.has_team_analysis_results ).to be true
+        # end
+        # it "has the session #phase still set to '10' since the Team Analysis phase is required" do
+          # expect( @phase_1_subject.data_import_session.phase ).to eq(10)
+        # end
+        # it "stores the temporary results of the team analysis, waiting for confirmation" do
+          # current_analysis_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
+          # # [20141028] Currently there should be "only" 41 (of a total of 45) unknown
+          # # Team names in the test DB but. since this is bound to change in the future,
+          # # we can only safely assume that the analysis count will be absolutely
+          # # lesser than 45 and greater than 0.
+          # #
+          # # (If, in the future, all teams for this result file will be inserted and
+          # # added to the DB seeds used for the tests, several of these examples may
+          # # fail, since the assumption is that a phase-1.1 is needed anyway.)
+          # expect( current_analysis_count ).to be > @analysis_before_count
+          # expect( current_analysis_count - @analysis_before_count ).to be < 45
+        # end
+      # end
+#
+#
+      # context "after successful completion, w/ FORCE team creation ENABLED," do
+        # before(:all) do
+          # @analysis_before_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
+          # @phase_1_subject.set_up( force_missing_meeting_creation: true, force_missing_team_creation: true )
+          # @phase_1_subject.phase_1_parse
+          # expect( @phase_1_subject.data_import_session.phase ).to eq(10)
+          # @result = @phase_1_subject.phase_1_2_serialize
+        # end
+#
+        # it "returns the current (updated) #data_import_session" do
+          # expect( @result ).to be_an_instance_of( DataImportSession )
+          # expect( @result.id ).to eq( @phase_1_session.id )
+        # end
+        # it "has team analysis results" do
+          # expect( @phase_1_subject.has_team_analysis_results ).to be false
+        # end
+        # it "has the session #phase set to '12'" do
+          # expect( @phase_1_subject.data_import_session.phase ).to eq(12)
+        # end
+        # # TODO test secondary entity creation
+      # end
+#    end
     #-- -----------------------------------------------------------------------
     #++
 

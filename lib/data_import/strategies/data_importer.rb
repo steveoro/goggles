@@ -5,6 +5,7 @@ require 'common/format'
 require 'data_import/header_fields_dao'
 require 'data_import/services/team_name_analizer'
 require 'data_import/strategies/filename_parser'
+require 'data_import/strategies/meeting_date_parser'
 require 'data_import/strategies/fin_result_parser'
 require 'data_import/strategies/fin_result_phase2'
 require 'data_import/strategies/fin_result_phase3'
@@ -97,10 +98,10 @@ class DataImporter
   #
   def destroy_data_import_session()
     if ( @data_import_session )                     # For a safety clean-up, check also if the file wasn't consumed properly after phase-1:
-      full_pathname = File.join( Dir.pwd, @data_import_session.file_name )
-      if ( FileTest.exists?(full_pathname) && !@do_not_consume_file )
+      fullpathname = File.join( Dir.pwd, @data_import_session.file_name )
+      if ( FileTest.exists?(fullpathname) && !@do_not_consume_file )
         update_logs( "-- destroy_data_import_session(#{ @data_import_session.id }): the import file wasn't consumed properly after phase-1. Erasing it..." )
-        FileUtils.rm( full_pathname )
+        FileUtils.rm( fullpathname )
       end
                                                     # For all data_import_... tables, delete rows for the corresponding data_import_session.id
       DataImportMeetingIndividualResult.delete_all( data_import_session_id: @data_import_session.id )
@@ -198,7 +199,7 @@ class DataImporter
   # +true+ if the team_analysis phase was executed
   # due to some problematic team name.
   def has_team_analysis_results
-    ( @team_analysis_results.instance_of?(Array) && (@team_analysis_results.size > 0) )
+    ( @team_analysis_results.respond_to?(:count) && (@team_analysis_results.count > 0) )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -339,7 +340,7 @@ class DataImporter
 
     @data_import_session.phase_1_log ||= ''         # Init phase log
     update_logs( "\r\n-- DataImporter.phase_1_parse() start..." )
-    update_logs( "Parsing file: #{full_pathname}, force_missing_meeting_creation=#{force_missing_meeting_creation}, force_missing_team_creation=#{force_missing_team_creation}, do_not_consume_file=#{do_not_consume_file}.\r\n" )
+    update_logs( "Parsing file: #{@full_pathname}, force_missing_meeting_creation=#{@force_missing_meeting_creation}, force_missing_team_creation=#{@force_missing_team_creation}, do_not_consume_file=#{@do_not_consume_file}.\r\n" )
     header_fields_dao_init_from_filename()          # Make sure #header_fields_dao is defined
                                                     # Check if it's a "continuation session":
     if @data_import_session.phase > 0
@@ -394,16 +395,14 @@ class DataImporter
     # > FinResultParser.field_list_for( context_sym )
     # returns the possible fields for either :category_header || :result_row
     #
-    @result_hash = FinResultParser.parse_txt_file( full_pathname, logger ) # (=> show_progress = false)
+    @result_hash = FinResultParser.parse_txt_file( @full_pathname, logger ) # (=> show_progress = false)
 
     @stored_data_rows = 0
                                                     # Store the raw text file into the data-import session:
-    @data_import_session.file_format            = file_type
-    @data_import_session.file_name              = full_pathname
     @data_import_session.source_data            = @result_hash[:full_text_file_contents]
     @data_import_session.total_data_rows        = @result_hash[:total_data_rows]
-    @data_import_session.data_import_season_id  = @season.id if @season.instance_of?( DataImportSeason )
-    @data_import_session.season_id              = @season.id if @season.instance_of?( Season )
+    @data_import_session.data_import_season_id  = @season.instance_of?( DataImportSeason ) ? @season.id : nil
+    @data_import_session.season_id              = @season.instance_of?( Season ) ? @season.id : nil
     @data_import_session.phase                  = 10      # Update "last completed phase" indicator in session (10 = 1.0)
     @data_import_session.phase_3_log            = '1'
     @data_import_session.save ? @data_import_session : nil
@@ -420,6 +419,12 @@ class DataImporter
   #
   # The current implementation is able to rebuild/import the results of only *one*
   # MeetingSession at a time.
+  #
+  # Returns +nil+ only on error; otherwise it returns the current #data_import_session
+  # instance.
+  #
+  # After a successful execution, remember to check the actual completion by peeking
+  # at the #data_import_session.phase and whether #has_team_analysis_results is +true+.
   #
   def phase_1_2_serialize()
     return nil unless @data_import_session.instance_of?( DataImportSession ) &&
@@ -442,7 +447,7 @@ class DataImporter
         #      (Marked as FUTUREDEV, since we assume all meeting sessions will be existing
         #       before each data-import execution.)
         scheduled_dates = MeetingDateParser.new.parse( meeting_dates )
-        scheduled_date  = scheduled_dates.first
+        scheduled_date  = scheduled_dates.first if scheduled_dates.instance_of?( Array )
         update_logs( "meeting_dates = '#{meeting_dates}' => #{scheduled_dates.inspect} (USING ONLY: #{scheduled_date})", :debug )
       end
                                                       # ...Otherwise, parse them from the filename/header:
@@ -471,7 +476,10 @@ class DataImporter
         @result_hash[:parse_result],
         @force_missing_team_creation
       )
-      update_logs( "PHASE #1.1: Team name Analysis/checkout needed or requested..." ) unless is_ok
+      unless is_ok
+        @team_analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
+        update_logs( "PHASE #1.1: Team name Analysis phase needed!" )
+      end
     end
 
     meeting = nil
@@ -574,7 +582,7 @@ class DataImporter
     end
                                                     # Update the global log with the whole phase 1 log
     @import_log = "--------------------[Phase #1 - DIGEST/SERIALIZE]--------------------\r\n#{ @data_import_session.phase_1_log }"
-    is_ok ? @data_import_session : nil
+    (is_ok || has_team_analysis_results) ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------
   #++

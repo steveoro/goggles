@@ -55,6 +55,9 @@ class FilenameParser
   # like some FINA Championships during the years (they start in September but
   # are relative to the previous academic year).
   #
+  # For the above reason the #header_year field can be edited or adjusted later on
+  # on the HeaderFieldsDAO instance returned.
+  #
   # == Returns:
   # - an HeaderFieldsDAO DAO on header_date parsing success.
   #

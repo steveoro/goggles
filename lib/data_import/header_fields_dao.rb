@@ -5,7 +5,7 @@
 
 = HeaderFieldsDAO
 
-  - Goggles framework vers.:  4.00.543
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  DAO class containing the required Meeting fields extracted from the filename
@@ -15,10 +15,10 @@
 class HeaderFieldsDAO
 
   # These must be initialized on creation:
-  attr_reader :full_pathname, :prefix, :header_date, :header_year, :code_name
+  attr_reader :full_pathname, :prefix, :header_date, :code_name
 
   # These can be edited later on:
-  attr_accessor :edition, :edition_type_id, :timing_type_id
+  attr_accessor :header_year, :edition, :edition_type_id, :timing_type_id
   #-- -------------------------------------------------------------------------
   #++
 
