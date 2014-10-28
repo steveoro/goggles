@@ -201,7 +201,9 @@ describe DataImporter, type: :strategy do
     # - Creation of the data-import session object.
     #
     describe "#phase_1_parse" do
-      # We need to parse the fixture file just once to speed-up tests:
+      # We need to parse the fixture file just once to speed-up tests.
+      # Let's create a shared "subject" instance variable with a session
+      # associated:
       before( :all ) do
         file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
         @phase_1_session = create(
@@ -210,10 +212,22 @@ describe DataImporter, type: :strategy do
           season: Season.find_by_id( 132 )
         )
         @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+        @phase_1_subject.set_up(
+          force_missing_meeting_creation: false,
+          force_missing_team_creation: false,
+          do_not_consume_file: true                 # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
+        )
         @result = @phase_1_subject.phase_1_parse
       end
 
-      context "after successful completion," do
+      # After everything has been tested in this context, clean up the
+      # session and its internal reference in the subject:
+      after(:all) do
+        @phase_1_session = nil
+        @phase_1_subject.destroy_data_import_session
+      end
+
+      context "after a successful completion," do
         it "returns the current (updated) #data_import_session" do
           expect( @result ).to be_an_instance_of( DataImportSession )
           expect( @result.id ).to eq( @phase_1_session.id )
@@ -278,80 +292,157 @@ describe DataImporter, type: :strategy do
     # - Creation of intermediate "secondary" entity rows for each parsed object,
     #   to allow manual review before the final phase-3 commit.
     #
-    # describe "#phase_1_2_serialize" do
-      # # We need to parse the fixture file just once to speed-up tests:
-      # before( :all ) do
-        # file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
-        # @phase_1_session = create(
-          # :data_import_session,
-          # file_name: file_name,
-          # season: Season.find_by_id( 132 )
-        # )
-        # @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
-      # end
-#
-      # it "returns nil if the last completed phase is not '10'" do
-        # expect( @phase_1_subject.phase_1_2_serialize ).to be nil
-      # end
-#
-#
-      # context "after successful completion, w/ FORCE team creation DISABLED," do
-        # before(:all) do
-          # @analysis_before_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
-          # @phase_1_subject.set_up( force_missing_meeting_creation: false, force_missing_team_creation: false )
-          # @phase_1_subject.phase_1_parse
-          # expect( @phase_1_subject.data_import_session.phase ).to eq(10)
-          # @result = @phase_1_subject.phase_1_2_serialize
-        # end
-#
-        # it "returns the current (updated) #data_import_session" do
-          # expect( @result ).to be_an_instance_of( DataImportSession )
-          # expect( @result.id ).to eq( @phase_1_session.id )
-        # end
-        # it "has team analysis results" do
-          # expect( @phase_1_subject.has_team_analysis_results ).to be true
-        # end
-        # it "has the session #phase still set to '10' since the Team Analysis phase is required" do
-          # expect( @phase_1_subject.data_import_session.phase ).to eq(10)
-        # end
-        # it "stores the temporary results of the team analysis, waiting for confirmation" do
-          # current_analysis_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
-          # # [20141028] Currently there should be "only" 41 (of a total of 45) unknown
-          # # Team names in the test DB but. since this is bound to change in the future,
-          # # we can only safely assume that the analysis count will be absolutely
-          # # lesser than 45 and greater than 0.
-          # #
-          # # (If, in the future, all teams for this result file will be inserted and
-          # # added to the DB seeds used for the tests, several of these examples may
-          # # fail, since the assumption is that a phase-1.1 is needed anyway.)
-          # expect( current_analysis_count ).to be > @analysis_before_count
-          # expect( current_analysis_count - @analysis_before_count ).to be < 45
-        # end
-      # end
-#
-#
-      # context "after successful completion, w/ FORCE team creation ENABLED," do
-        # before(:all) do
-          # @analysis_before_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
-          # @phase_1_subject.set_up( force_missing_meeting_creation: true, force_missing_team_creation: true )
-          # @phase_1_subject.phase_1_parse
-          # expect( @phase_1_subject.data_import_session.phase ).to eq(10)
-          # @result = @phase_1_subject.phase_1_2_serialize
-        # end
-#
-        # it "returns the current (updated) #data_import_session" do
-          # expect( @result ).to be_an_instance_of( DataImportSession )
-          # expect( @result.id ).to eq( @phase_1_session.id )
-        # end
-        # it "has team analysis results" do
-          # expect( @phase_1_subject.has_team_analysis_results ).to be false
-        # end
-        # it "has the session #phase set to '12'" do
-          # expect( @phase_1_subject.data_import_session.phase ).to eq(12)
-        # end
-        # # TODO test secondary entity creation
-      # end
-#    end
+    describe "#phase_1_2_serialize" do
+      context "when invoked not in the right sequence" do
+        before( :all ) do
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          @phase_1_session = create(
+            :data_import_session,
+            file_name: file_name,
+            season: Season.find_by_id( 132 )
+          )
+          @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+          @phase_1_subject.set_up(
+            force_missing_meeting_creation: false,
+            force_missing_team_creation: false,
+            do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
+          )
+        end
+
+        after(:all) do
+          @phase_1_session = nil
+          @phase_1_subject.destroy_data_import_session
+        end
+
+        it "returns nil if the last completed phase is not '10'" do
+          expect( @phase_1_subject.phase_1_2_serialize ).to be nil
+        end
+      end
+      #-- ---------------------------------------------------------------------
+      #++
+
+      context "after a successful completion, w/ force meeting & team creation DISABLED," do
+        before( :all ) do
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          @phase_1_session = create(
+            :data_import_session,
+            file_name: file_name,
+            season: Season.find_by_id( 132 )
+          )
+          @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+          @phase_1_subject.set_up(
+            force_missing_meeting_creation: false,
+            force_missing_team_creation: false,
+            do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
+          )
+          @analysis_before_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
+          @phase_1_subject.phase_1_parse
+          expect( @phase_1_subject.data_import_session.phase ).to eq(10)
+          @result = @phase_1_subject.phase_1_2_serialize
+        end
+
+        after(:all) do
+          @phase_1_session = nil
+          @phase_1_subject.destroy_data_import_session
+        end
+
+        it "returns the current (updated) #data_import_session" do
+          expect( @result ).to be_an_instance_of( DataImportSession )
+          expect( @result.id ).to eq( @phase_1_session.id )
+        end
+        it "has team analysis results" do
+          expect( @phase_1_subject.has_team_analysis_results ).to be true
+        end
+        it "has the session #phase still set to '10' since the Team Analysis phase is required" do
+          expect( @phase_1_subject.data_import_session.phase ).to eq(10)
+        end
+        it "stores the temporary results of the team analysis, waiting for confirmation" do
+          current_analysis_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
+          # [20141028] Currently there should be "only" 41 (of a total of 45) unknown
+          # Team names in the test DB but. since this is bound to change in the future,
+          # we can only safely assume that the analysis count will be absolutely
+          # lesser than 45 and greater than 0.
+          #
+          # (If, in the future, all teams for this result file will be inserted and
+          # added to the DB seeds used for the tests, several of these examples may
+          # fail, since the assumption is that a phase-1.1 is needed anyway.)
+          expect( current_analysis_count ).to be > @analysis_before_count
+          expect( current_analysis_count - @analysis_before_count ).to be < 45
+        end
+      end
+      #-- ---------------------------------------------------------------------
+      #++
+
+      context "after successful completion, w/ FORCE meeting & team creation ENABLED," do
+        before(:all) do
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          @phase_1_session = create(
+            :data_import_session,
+            file_name: file_name,
+            season: Season.find_by_id( 132 )
+          )
+          @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+          @phase_1_subject.set_up(
+            force_missing_meeting_creation: true,
+            force_missing_team_creation: true,
+            do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
+          )
+          @phase_1_subject.phase_1_parse
+          expect( @phase_1_subject.data_import_session.phase ).to eq(10)
+          @di_team_before_count     = DataImportTeam.where( data_import_session_id: @phase_1_session.id ).count
+          @di_swimmer_before_count  = DataImportSwimmer.where( data_import_session_id: @phase_1_session.id ).count
+          @di_mir_before_count      = DataImportMeetingIndividualResult.where( data_import_session_id: @phase_1_session.id ).count
+          @di_mrr_before_count      = DataImportMeetingRelayResult.where( data_import_session_id: @phase_1_session.id ).count
+          @di_score_before_count    = DataImportMeetingTeamScore.where( data_import_session_id: @phase_1_session.id ).count
+          @result = @phase_1_subject.phase_1_2_serialize
+        end
+
+        after(:all) do
+          @phase_1_session = nil
+          @phase_1_subject.destroy_data_import_session
+        end
+
+        it "returns the current (updated) #data_import_session" do
+          expect( @result ).to be_an_instance_of( DataImportSession )
+          expect( @result.id ).to eq( @phase_1_session.id )
+        end
+        it "has team analysis results" do
+          expect( @phase_1_subject.has_team_analysis_results ).to be false
+        end
+        it "has the session #phase set to '12'" do
+          expect( @phase_1_subject.data_import_session.phase ).to eq(12)
+        end
+
+        # (For sake of speed in execution, we'll just check that some of the main table sizes do increase)
+        it "stores the DataImportTeam parsed rows" do
+          expect(
+            DataImportTeam.where( data_import_session_id: @phase_1_session.id ).count
+          ).to be > @di_team_before_count
+        end
+        it "stores the DataImportSwimmer parsed rows" do
+          expect(
+            DataImportSwimmer.where( data_import_session_id: @phase_1_session.id ).count
+          ).to be > @di_swimmer_before_count
+        end
+        it "stores the DataImportMeetingIndividualResult parsed rows" do
+          expect(
+            DataImportMeetingIndividualResult.where( data_import_session_id: @phase_1_session.id ).count
+          ).to be > @di_mir_before_count
+        end
+        it "stores the DataImportMeetingRelayResult parsed rows" do
+          expect(
+            DataImportMeetingRelayResult.where( data_import_session_id: @phase_1_session.id ).count
+          ).to be > @di_mrr_before_count
+        end
+        it "stores the DataImportMeetingTeamScore parsed rows" do
+          expect(
+            DataImportMeetingTeamScore.where( data_import_session_id: @phase_1_session.id ).count
+          ).to be > @di_score_before_count
+        end
+      end
+      #-- ---------------------------------------------------------------------
+      #++
+    end
     #-- -----------------------------------------------------------------------
     #++
 
@@ -361,21 +452,41 @@ describe DataImporter, type: :strategy do
     # - Individual commit entity-by-entity for each of the intermediate rows found.
     #
     describe "#phase_3_commit" do
-      it "returns false if the last completed phase is not '12'" do
-        # TODO
+      context "when invoked not in the right sequence" do
+        before( :all ) do
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          @phase_1_session = create(
+            :data_import_session,
+            file_name: file_name,
+            season: Season.find_by_id( 132 )
+          )
+          @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
+          @phase_1_subject.set_up(
+            force_missing_meeting_creation: false,
+            force_missing_team_creation: false,
+            do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
+          )
+        end
+
+        after(:all) do
+          @phase_1_session = nil
+          @phase_1_subject.destroy_data_import_session
+        end
+
+        it "returns false if the last completed phase is not '12'" do
+          expect( @phase_1_subject.phase_3_commit ).to be false
+        end
       end
 
-      context "after successful completion," do
-        it "returns true" do
-          # TODO
-        end
-        it "stores the primary entities from the available secondary ones" do
-          # TODO
-        end
-      end
+      # [Steve, 20141028] We cannot fully test a successful, completed phase-3 here,
+      # because it will cause all previous examples for phases 1 & 2 to subsequently
+      # fail. (Persisting the temporary/secondary data-import entities into the
+      # primary tables will alter the outcome of the searches in the previous phases.)
+      #
+      # => We'll use dedicated integration tests instead, with transactional
+      #    storage of the resulting rows.
     end
     #-- -----------------------------------------------------------------------
     #++
   end
 end
-

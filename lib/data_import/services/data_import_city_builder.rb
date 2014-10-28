@@ -8,7 +8,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportCityBuilder
 
-  - Goggles framework vers.:  4.00.567
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)

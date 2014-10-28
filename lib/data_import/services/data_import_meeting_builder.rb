@@ -9,7 +9,7 @@ require 'data_import/services/data_import_season_builder'
 
 = DataImportMeetingBuilder
 
-  - Goggles framework vers.:  4.00.567
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -44,7 +44,7 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
                                   meeting_dates_text = nil,
                                   force_missing_meeting_creation = false )
 # DEBUG
-    puts "\r\nbuild_from_parameters: #{header_fields_dao.inspect}"
+#    puts "\r\n- DataImportMeetingBuilder.build_from_parameters: #{header_fields_dao.inspect}"
     self.build( data_import_session ) do
       entity      Meeting
 
@@ -52,7 +52,7 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
         @season = season
         if season.nil?
 # DEBUG
-          puts "Searching a missing Season..."
+#          puts "Searching a missing Season..."
           @season = DataImportSeasonBuilder.build_from_parameters(
             data_import_session,
             header_fields_dao.header_date,
@@ -116,7 +116,7 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
       if_not_found do
         if force_missing_meeting_creation
 # DEBUG
-          puts "Creating a new DataImportMeeting..."
+#          puts "Creating a new DataImportMeeting..."
           add_new
         else
           raise "Matching Meeting NOT found but meeting-data creation is disabled!"

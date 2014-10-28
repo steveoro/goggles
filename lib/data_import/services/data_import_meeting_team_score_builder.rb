@@ -9,7 +9,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 =begin
 
-= DataImportMeetingIndividualResultBuilder
+= DataImportMeetingTeamScoreBuilder
 
   - Goggles framework vers.:  4.00.583
   - author: Steve A.
@@ -37,7 +37,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
                                   force_missing_team_creation = false )
     raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting.nil?
 # DEBUG
-#    puts "\r\n\r\nMeetingTeamScore (Ranking) - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
+#    puts "\r\n\r\nMeetingTeamScore (Ranking) -- build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
 #    puts "#{meeting.inspect}"
 #    puts "=> #{meeting.get_full_name}"
 
@@ -231,7 +231,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
   #
   def self.fix_missing_rank( data_import_session, meeting )
 # DEBUG
-    puts "Team scores: Rank == 0! Searching previous same-scored row to assign same rank (meeting ID: #{meeting.id})..."
+#    puts "Team scores: Rank == 0! Searching previous same-scored row to assign same rank (meeting ID: #{meeting.id})..."
 #    logger.info( "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank..." )
 #    @phase_1_log << "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank...\r\n"
     rank = 0

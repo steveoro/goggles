@@ -9,7 +9,7 @@ require 'data_import/services/data_import_meeting_builder'
 
 = DataImportMeetingSessionBuilder
 
-  - Goggles framework vers.:  4.00.549
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -43,7 +43,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
                                   scheduled_date,
                                   force_missing_meeting_creation = false )
 # DEBUG
-    puts "\r\nMeetingSession, build_from_parameters: meeting=#{meeting.inspect}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao.inspect}"
+#    puts "\r\nMeetingSession -- build_from_parameters: meeting=#{meeting.inspect}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao.inspect}"
     self.build( data_import_session ) do
       entity  MeetingSession
 
@@ -51,7 +51,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
         @meeting = meeting
         if meeting.nil?
 # DEBUG
-          puts "Searching a missing Meeting..."
+#          puts "Searching a missing Meeting..."
           @meeting = DataImportMeetingBuilder.build_from_parameters(
             data_import_session,
             nil,  # season
@@ -88,8 +88,8 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
       custom_logic do
@@ -100,7 +100,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
 
       if_not_found do
 # DEBUG
-        puts "NOT found! meeting ID=#{@meeting.id}"
+#        puts "NOT found! meeting ID=#{@meeting.id}"
         if force_missing_meeting_creation           # Get swimming_pool first:
           swimming_pool = SwimmingPool.where([
             "(nick_name LIKE ?)", "#{header_fields_dao.code_name }%"
@@ -140,9 +140,9 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
     # [Steve, bugfix 2013115]: Make sure that the pre-existing meeting session
     # doesn't have an empty description:
     if meeting_session.instance_of?(MeetingSession) && meeting_session.description.to_s.empty?
-      logger.info( "Fixing meeting session empty description..." )
-      @phase_1_log ||= ''
-      @phase_1_log << "Fixing meeting session empty description...\r\n"
+#      logger.info( "Fixing meeting session empty description..." )
+#      @phase_1_log ||= ''
+#      @phase_1_log << "Fixing meeting session empty description...\r\n"
       meeting_session.description = meeting_session.get_order_with_date
       meeting_session.save!
     end

@@ -9,7 +9,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImportMeetingEventBuilder
 
-  - Goggles framework vers.:  4.00.549
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -45,7 +45,7 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
                                   heat_type, event_order, begin_time, is_out_of_race )
     raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!") unless meeting_session.instance_of?( MeetingSession )
 # DEBUG
-    puts "\r\nMeetingEvent -- build_from_parameters: #{meeting_session.inspect}"
+#    puts "\r\nMeetingEvent -- build_from_parameters: #{meeting_session.inspect}"
     self.build( data_import_session ) do
       entity              MeetingEvent
                                                   # Search conditions:
@@ -73,7 +73,7 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
 
       if_not_found do
 # DEBUG
-        puts "Creating a new MeetingEvent..."
+#        puts "Creating a new MeetingEvent..."
         add_new
       end
     end

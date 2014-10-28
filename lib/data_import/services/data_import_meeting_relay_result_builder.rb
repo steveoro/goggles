@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.569
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -37,9 +37,9 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
                                   force_missing_team_creation = false )
     raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting_program.nil?
 # DEBUG
-    puts "\r\n\r\nMRR - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
-    puts "#{meeting_program.inspect}"
-    puts "=> #{meeting_program.get_full_name}"
+#    puts "\r\n\r\nMRR -- build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
+#    puts "#{meeting_program.inspect}"
+#    puts "=> #{meeting_program.get_full_name}"
 
     self.build( data_import_session ) do
       entity  MeetingRelayResult
@@ -72,13 +72,13 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         @standard_points   = result_score
         @meeting_points    = result_score
         @rank              = rank.to_i              # Note that 'Fuori gara'.to_i = 0
-        puts "Before search: @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..."
+#        puts "Before search: @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..."
       end
 
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingRelayResult (meeting_program.id: #{meeting_program.id}, @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..." )
+#        puts( "Seeking existing MeetingRelayResult (meeting_program.id: #{meeting_program.id}, @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..." )
 #        puts "==> List: #{MeetingRelayResult.where(team_id: @team.id).inspect}"
         primary     [
           "(meeting_program_id = ?) AND (team_id = ?) AND " +
@@ -99,14 +99,14 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-        puts "Search failed: adding new MeetingRelayResult with: @team=#{@team.name}..."
+#        puts "Search failed: adding new MeetingRelayResult with: @team=#{@team.name}..."
                                                     # Fix possible blank or missing ranking values:
         @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
           DataImportMeetingRelayResult,

@@ -12,7 +12,7 @@ require 'data_import/services/data_import_badge_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.569
+  - Goggles framework vers.:  4.00.583
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -43,8 +43,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
     raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
 # DEBUG
-    puts "\r\n\r\nMIR - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
-    puts "#{meeting_program.inspect}"
+#    puts "\r\n\r\nMIR - build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
+#    puts "#{meeting_program.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingIndividualResult
@@ -116,7 +116,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingIndividualResult..." )
+#        puts( "Seeking existing MeetingIndividualResult..." )
 #        @phase_1_log << "Seeking existing MeetingIndividualResult...\r\n"
         primary     [
           "(meeting_program_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
@@ -136,14 +136,14 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-        puts "Search failed: adding new MeetingIndividualResult with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
+#        puts "Search failed: adding new MeetingIndividualResult with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
                                                     # Fix possible blank or missing ranking values:
         @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
           DataImportMeetingIndividualResult,
@@ -226,7 +226,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
   #
   def self.fix_missing_rank( entity, data_import_session, meeting_program, standard_points )
 # DEBUG
-    puts "#{entity.name}: Rank == 0! Searching previous same-scored (#{standard_points}) row to assign same rank (program ID: #{meeting_program.id})..."
+#    puts "#{entity.name}: Rank == 0! Searching previous same-scored (#{standard_points}) row to assign same rank (program ID: #{meeting_program.id})..."
 #    logger.info( "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank..." )
 #    @phase_1_log << "#{entity.name}: Rank == 0! Searching previous same-scored row to assign same rank...\r\n"
     rank = 0
@@ -246,7 +246,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         data_import_session.id, meeting_program.id
       ] ).count
 # DEBUG
-      puts "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})..."
+#      puts "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})..."
 #      logger.info( "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})..." )
 #      @phase_1_log << "Previous same-scored row not found. Rank will be the total rows found so far +1 (=#{tot_rows+1})...\r\n"
       rank = tot_rows + 1
