@@ -81,13 +81,13 @@ class DataImportSeasonBuilder < DataImportEntityBuilder
         ]
         secondary  [
           "(data_import_session_id = ?) AND (season_type_id = ?) AND (begin_date >= ?) AND (end_date <= ?)",
-          @data_import_session.id, @season_type_id, @begin_date, @end_date
+          data_import_session.id, @season_type_id, @begin_date, @end_date
         ]
         default_search
       end
 
       attributes_for_creation(
-        data_import_session_id: @data_import_session.id,
+        data_import_session_id: data_import_session.id,
         import_text:            @header_date,
         description:            @description,
         begin_date:             @begin_date,

@@ -10,7 +10,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.585
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -153,7 +153,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
         attributes_for_creation(
-          data_import_session_id:         data_import_session,
+          data_import_session_id:         data_import_session.id,
           import_text:                    @import_text,
           event_order:                    @event_order,
           begin_time:                     @begin_time,
