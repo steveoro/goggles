@@ -5,6 +5,9 @@ class DataImportTeamAnalysisResult < ActiveRecord::Base
   belongs_to            :data_import_session
   validates_associated  :data_import_session
 
+  belongs_to :season, foreign_key: "desired_season_id"
+  belongs_to :team,   foreign_key: "chosen_team_id"
+
   attr_accessible :analysis_log_text, :sql_text, :searched_team_name,
                   :desired_season_id, :chosen_team_id,
                   :team_match_name, :team_match_score,
@@ -18,18 +21,24 @@ class DataImportTeamAnalysisResult < ActiveRecord::Base
   # +true+ if one of the suggested action for this result
   # is the creation of a new "team alias" row.
   def can_insert_alias
-    self.chosen_team_id.to_i > 0 
+    # We can create a new team-alias only if we have an existing Team ID to choose
+    # from.
+    self.chosen_team_id.to_i > 0
   end
 
   # +true+ if one of the suggested action for this result
   # is the creation of a brand new team row.
   def can_insert_team
+    # We can create a new team only if NO pre-existing teams have already been
+    # selected or found.
     self.chosen_team_id.nil?
   end
 
   # +true+ if one of the suggested action for this result
   # is the creation of a new team affiliation row.
   def can_insert_affiliation
+    # We can create a new affiliation only if there are no best-matches among
+    # the existing ones.
     self.best_match_name.nil?
   end
   # ---------------------------------------------------------------------------
@@ -42,21 +51,18 @@ class DataImportTeamAnalysisResult < ActiveRecord::Base
   # The updated (and current) values of sql_text.
   #
   def rebuild_sql_text()
-    do_insert_alias = (self.chosen_team_id.to_i > 0)
-    do_insert_team = self.chosen_team_id.nil?
-    do_insert_affiliation = self.best_match_name.nil?
     self.sql_text = "\r\n"
-    if ( do_insert_team )
+    if can_insert_team
       self.sql_text << "INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES\r\n"
       self.sql_text << "    ('#{self.searched_team_name}','#{self.searched_team_name}','','','',1,CURDATE(),CURDATE());\r\n"
     end
-    if ( do_insert_alias )
+    if can_insert_alias
       self.sql_text << "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n"
       self.sql_text << "    ('#{self.searched_team_name}',#{self.chosen_team_id.to_i},CURDATE(),CURDATE());\r\n"
     end
-    if ( do_insert_affiliation )
+    if can_insert_affiliation
       self.sql_text << "INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES\r\n"
-      if do_insert_alias
+      if can_insert_alias
         self.sql_text << "    (#{self.desired_season_id},#{self.chosen_team_id.to_i},'#{self.searched_team_name}','',0,1,CURDATE(),CURDATE());\r\n"
       else
         self.sql_text << "    (#{self.desired_season_id},(select t.id from teams t where t.name = '#{self.searched_team_name}'),'#{self.searched_team_name}','',0,1,CURDATE(),CURDATE());\r\n"

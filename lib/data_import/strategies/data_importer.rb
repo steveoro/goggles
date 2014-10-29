@@ -191,7 +191,7 @@ class DataImporter
   #++
 
 
-  # Getter for @committed_data_rows
+  # Getter for the total of #committed_data_rows
   def get_committed_data_rows
     @committed_data_rows
   end

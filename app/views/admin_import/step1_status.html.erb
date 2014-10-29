@@ -1,7 +1,7 @@
 <ul class="nav nav-tabs">
     <%= content_tag( :li, link_to(t('admin_import.step_1'), goggles_di_step1_status_path()),     class: 'active' ) %>
-    <%= content_tag( :li, link_to(t('admin_import.step_2'), '#'),    class: 'disabled' ) %>
-    <%= content_tag( :li, link_to(t('admin_import.step_3'), '#'),     class: 'disabled' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_2'), '#'), class: 'disabled' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_3'), '#'), class: 'disabled' ) %>
 </ul>
 
 
@@ -16,7 +16,7 @@
             'Ext.form.*',
             'Ext.window.Window'
         ]);
-        var cntLog = Ext.get( containerId ); 
+        var cntLog = Ext.get( containerId );
 
         var form = Ext.create('Ext.form.Panel', {
             border: false,
@@ -56,7 +56,7 @@
         <div id='<%="spanFullLog#{s.id}"%>' hidden="true" >
             <%="#{s.phase_1_log}"%>
                 --- *** ---
-            <%="#{s.phase_3_log}"%>
+            <%="#{s.phase_2_log}"%>
         </div>
 
         <li>
