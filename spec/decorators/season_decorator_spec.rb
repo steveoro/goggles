@@ -21,7 +21,7 @@ describe SeasonDecorator do
       expect( subject.get_linked_header_year ).to include( 'href' )
     end
     it "returns an HTML link to the season path" do
-      expect( subject.get_linked_header_year ).to include( championships_regional_er_csi_path(id: subject.id) ).or include( championships_supermaster_fin_path(id: subject.id) ) 
+      expect( subject.get_linked_header_year ).to include( championships_ranking_regional_er_csi_path(id: subject.id) ).or include( championships_ranking_supermaster_fin_path(id: subject.id) ) 
     end
     it "returns a string containing the season header year" do
       expect( subject.get_linked_header_year ).to include( ERB::Util.html_escape(subject.header_year) )

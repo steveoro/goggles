@@ -52,8 +52,8 @@ describe ChampionshipsController, :type => :controller do
   # ===========================================================================
 
 
-  describe '[GET #supermaster_fin]' do
-    it_behaves_like( "(GET http action with or without parameters)", :supermaster_fin, 132 )
+  describe '[GET #ranking_supermaster_fin]' do
+    it_behaves_like( "(GET http action with or without parameters)", :ranking_supermaster_fin, 132 )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -70,15 +70,15 @@ describe ChampionshipsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #regional_er_csi]' do
-    it_behaves_like( "(GET http action with or without parameters)", :regional_er_csi, 131 )
+  describe '[GET #ranking_regional_er_csi]' do
+    it_behaves_like( "(GET http action with or without parameters)", :ranking_regional_er_csi, 131 )
 
     it "assigns the required variables when invoked without parameters" do
-      get :regional_er_csi
+      get :ranking_regional_er_csi
       expect( assigns(:championship_ranking) ).to be_an_instance_of( ChampionshipDAO )
     end
     it "assigns the required variables when invoked with valid id" do
-      get :regional_er_csi, id: 131
+      get :ranking_regional_er_csi, id: 131
       expect( assigns(:championship_ranking) ).to be_an_instance_of( ChampionshipDAO )
     end
   end

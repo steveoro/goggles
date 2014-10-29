@@ -1,10 +1,10 @@
 %ul.nav.nav-tabs#topOfPage
-  - is_active = ( params[:action] == 'regional_er_csi' )
-  %li{ class: is_active ? 'active' : '' }
-    = link_to( t('championships.team_ranking'),           is_active ? '#' : championships_regional_er_csi_path( id: @season.id ))
-  - is_active = ( params[:action] == 'calendar' )
+  - is_active = ( params[:action] == 'calendar_regional_er_csi' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('championships.calendar'), is_active ? '#' : championships_calendar_regional_er_csi_path( id: @season.id ))
+  - is_active = ( params[:action] == 'ranking_regional_er_csi' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('championships.team_ranking'), is_active ? '#' : championships_ranking_regional_er_csi_path( id: @season.id ))
   - is_active = ( params[:action] == 'history_regional_er_csi' )
   %li{ class: is_active ? 'active' : '' }
-    = link_to( t('championships.history'),   is_active ? '#' : championships_history_regional_er_csi_path( id: @season.id ))
+    = link_to( t('championships.history'), is_active ? '#' : championships_history_regional_er_csi_path( id: @season.id ))

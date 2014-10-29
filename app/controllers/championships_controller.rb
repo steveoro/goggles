@@ -12,14 +12,14 @@ require 'common/format'
 =end
 class ChampionshipsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_parameter_regional_er_csi, except: [:supermaster_fin, :calendar_supermaster_fin, :history_supermaster_fin]
-  before_filter :verify_parameter_supermaster_fin, except: [:regional_er_csi, :calendar_supermaster_csi, :history_regional_er_csi]
+  before_filter :verify_parameter_regional_er_csi, except: [:ranking_supermaster_fin, :calendar_supermaster_fin, :history_supermaster_fin]
+  before_filter :verify_parameter_supermaster_fin, except: [:ranking_regional_er_csi, :calendar_regional_er_csi, :history_regional_er_csi]
   #-- -------------------------------------------------------------------------
   #++
 
   # CSI Regional Emilia Romagna championship ranking data display manager
   #
-  def regional_er_csi
+  def ranking_regional_er_csi
     @title = I18n.t('championships.team_ranking') + ' ' + @season.get_full_name
 
     championship_calculator = ChampionshipRankingCalculator.new( @season )
@@ -55,7 +55,7 @@ class ChampionshipsController < ApplicationController
 
   # Supermaster FIN championship ranking data display manager
   #
-  def supermaster_fin
+  def ranking_supermaster_fin
     @title = @season.get_full_name
   end
   #-- -------------------------------------------------------------------------
@@ -100,7 +100,7 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current FIN season
-    season_id = ( params[:id] ? params[:id].to_i : 132 )
+    season_id = ( params[:id] ? params[:id].to_i : 142 )
 
     set_season( season_id )
     unless ( @season )
@@ -125,7 +125,7 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current CSI season
-    season_id = ( params[:id] ? params[:id].to_i : 131 )
+    season_id = ( params[:id] ? params[:id].to_i : 141 )
 
     set_season( season_id )
     unless ( @season )
@@ -139,7 +139,7 @@ class ChampionshipsController < ApplicationController
   # Params:
   # season_type_code: the code of the season type to process
   #
-  def set_season_type(season_type_code)
+  def set_season_type( season_type_code )
     @season_type = SeasonType.find_by_code(season_type_code)
   end
 
