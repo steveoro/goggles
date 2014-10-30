@@ -44,8 +44,8 @@ class UserSocializer
           .gsub("{BUDDY_NAME}", another_user.name)
           .gsub("{SWIMMER_NAME}", another_user.swimmer.get_full_name)
       )
-# FIXME This will make all unique @user's team-buddies as friends:
-      TeamBuddyLinker.new( @user ).socialize_with_team_mates
+# FIXME This will make all unique another_user's team-buddies as friends:
+      TeamBuddyLinker.new( another_user ).socialize_with_team_mates
       # TODO Create also achievement accordingly
     end
     result
