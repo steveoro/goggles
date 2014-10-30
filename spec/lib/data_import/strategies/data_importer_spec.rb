@@ -63,8 +63,7 @@ describe DataImporter, type: :strategy do
 
     describe "#set_up" do
       [
-        :full_pathname,
-        :season, :current_admin_id,
+        :current_admin_id,
         :force_missing_meeting_creation,
         :force_missing_team_creation,
         :do_not_consume_file,
@@ -84,6 +83,30 @@ describe DataImporter, type: :strategy do
           expect{
             subject.set_up( Faker::Lorem.word.to_sym => Faker::Lorem.word )
           }.to raise_error
+        end
+      end
+      context "when specifying a :full_pathname," do
+        it "stores the value in the corresponding :full_pathname member" do
+          file_name = "#{Faker::Lorem.word.downcase}.txt"
+          subject.set_up( full_pathname: file_name )
+          expect( subject.full_pathname ).to eq( file_name )
+        end
+        it "updates the field in the associated session" do
+          file_name = "#{Faker::Lorem.word.downcase}.txt"
+          subject.set_up( full_pathname: file_name )
+          expect( subject.data_import_session.file_name ).to eq( file_name )
+        end
+      end
+      context "when specifying a :season," do
+        it "stores the value in the corresponding :season member" do
+          season = build( :season )
+          subject.set_up( season: season )
+          expect( subject.season ).to eq( season )
+        end
+        it "updates the field in the associated session" do
+          season = build( :season )
+          subject.set_up( season: season )
+          expect( subject.data_import_session.season_id ).to eq( season.id )
         end
       end
     end

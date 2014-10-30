@@ -86,6 +86,13 @@ class DataImporter
       # Force header_fields_dao init on filename change:
       header_fields_dao_init_from_filename if key == :full_pathname
     end
+    # Synchronize any important member changes with the stored session:
+    if options[:full_pathname] || options[:season]
+      @data_import_session.file_name = @full_pathname
+      @data_import_session.data_import_season_id = @season.id if @season.instance_of?( DataImportSeason )
+      @data_import_session.season_id = @season.id if @season.instance_of?( Season )
+      @data_import_session.save!
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -98,10 +105,12 @@ class DataImporter
   #
   def destroy_data_import_session()
     if ( @data_import_session )                     # For a safety clean-up, check also if the file wasn't consumed properly after phase-1:
-      fullpathname = File.join( Dir.pwd, @data_import_session.file_name )
-      if ( FileTest.exists?(fullpathname) && !@do_not_consume_file )
-        update_logs( "-- destroy_data_import_session(#{ @data_import_session.id }): the import file wasn't consumed properly after phase-1. Erasing it..." )
-        FileUtils.rm( fullpathname )
+      unless @data_import_session.file_name.nil?
+        fullpathname = File.join( Dir.pwd, @data_import_session.file_name )
+        if ( FileTest.exists?(fullpathname) && !@do_not_consume_file )
+          update_logs( "-- destroy_data_import_session(#{ @data_import_session.id }): the import file wasn't consumed properly after phase-1. Erasing it..." )
+          FileUtils.rm( fullpathname )
+        end
       end
                                                     # For all data_import_... tables, delete rows for the corresponding data_import_session.id
       DataImportMeetingIndividualResult.delete_all( data_import_session_id: @data_import_session.id )

@@ -2,6 +2,7 @@
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 require 'data_import/strategies/data_importer'
+require 'data_import/strategies/team_analysis_result_processor'
 
 
 =begin

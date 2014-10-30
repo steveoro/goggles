@@ -61,7 +61,7 @@
 
         <li>
             <i>(ID: <%= s.id %>)</i>&nbsp;-&nbsp;
-            <b><%= h( File.basename( s.file_name ) ) %></b>,&nbsp;
+            <b><%= h( File.basename( s.file_name ) ) if s.file_name %></b>,&nbsp;
             <i><%=I18n.t(:last_phase)%>: <%= s.phase %>&nbsp;
             (<%=I18n.t(:data_rows)%>: <%= s.total_data_rows %>,&nbsp;
             <%=I18n.t(:data_format)%>: <%= s.file_format %></i>)&nbsp;
