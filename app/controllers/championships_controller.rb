@@ -100,7 +100,10 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current FIN season
-    season_id = ( params[:id] ? params[:id].to_i : 142 )
+    @current_season_id = 142
+    
+    # Use given season or, in no selection, current one 
+    season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
 
     set_season( season_id )
     unless ( @season )
@@ -125,7 +128,10 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current CSI season
-    season_id = ( params[:id] ? params[:id].to_i : 141 )
+    @current_season_id = 141
+    
+    # Use given season or, in no selection, current one 
+    season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
 
     set_season( season_id )
     unless ( @season )

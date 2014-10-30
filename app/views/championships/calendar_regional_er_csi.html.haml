@@ -2,6 +2,13 @@
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
+    
+    - if @season.id != @current_season_id
+      .navbar
+        %ul.nav
+          %li
+            = link_to( t('championships.back_to_current'), championships_calendar_regional_er_csi_path( id: @current_season_id ), {class: "goggles-nav-compact"})
+        .ghost-divider-vertical
 
     %table.table.table-striped.table-bordered.table-hover.table-condensed#history
       %tbody

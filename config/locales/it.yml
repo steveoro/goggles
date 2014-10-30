@@ -780,6 +780,7 @@ it:
     second_place: "Secondo posto"
     third_place: "Terzo posto"
     show_full_season: "Mostra i dati completi della stagione"
+    back_to_current: "Torna alla stagione corrente"
 
   calendars:
     calendar: "Calendario"

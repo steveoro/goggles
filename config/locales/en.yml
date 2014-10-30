@@ -779,6 +779,7 @@ en:
     second_place: "Second place"
     third_place: "Third place"
     show_full_season: "Show season full data"
+    back_to_current: "Back to current season"
 
   calendars:
     calendar: "Calendar"
@@ -789,3 +790,4 @@ en:
     events: "Session events"
     pool: "Swimming"
     remark: "N.B. Meetings without time scheduling should be considered as not confirmed"
+
