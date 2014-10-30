@@ -3,7 +3,7 @@
 
 = SocialsController
 
-  - version:  4.00.383
+  - version:  4.00.589
   - author:   Steve A.
 
 =end
@@ -43,7 +43,7 @@ class SocialsController < ApplicationController
                                                     # Choose a list with results:
       @possible_swimmers = second_list.size > 0 ? second_list : first_list
       @possible_swimmers.delete_if { |swimmer_row|  # Filter out the worst results:
-        (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? || 
+        (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? ||
         (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?
       }
       @possible_swimmers.sort!
@@ -186,7 +186,7 @@ class SocialsController < ApplicationController
       if SwimmerUserStrategy.new(@swimming_buddy.swimmer).is_approvable_by( current_user )
         @submit_title = I18n.t('social.approve')
         @friendship = current_user.find_any_friendship_with(@swimming_buddy)
-      else 
+      else
         flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( :back ) and return
@@ -223,7 +223,7 @@ class SocialsController < ApplicationController
         @submit_title = I18n.t('social.block_label').gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         @friendship = current_user.find_any_friendship_with(@swimming_buddy)
         @destination_path = social_block_path( id: @swimming_buddy.id )
-      else 
+      else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
         redirect_to( :back ) and return
@@ -392,18 +392,17 @@ class SocialsController < ApplicationController
 
   # Implementation of the confirm / unconfirm action.
   def toggle_confirmation( is_confirming )
+    result = nil
     if request.post?                                # === POST: ===
       if is_confirming
-        result = UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
+        result = UserSocializer.new( current_user ).confirm_with_notify( @swimming_buddy )
       else
-        result = UserSwimmerConfirmation.unconfirm_for( @swimming_buddy, @swimming_buddy.swimmer, current_user )
+        result = UserSocializer.new( current_user ).unconfirm_with_notify( @swimming_buddy )
       end
-      if result
-        flash[:info] = I18n.t( is_confirming ? 'social.confirm_successful' : 'social.unconfirm_successful' )
-      else
-        flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
-      end
-    else
+      flash[:info] = I18n.t( is_confirming ? 'social.confirm_successful' : 'social.unconfirm_successful' ) if result
+    end
+    if result.nil?
+      flash[:info] = nil
       flash[:error] = I18n.t(:invalid_action_request)
     end
   end

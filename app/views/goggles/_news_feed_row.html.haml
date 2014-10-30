@@ -3,4 +3,16 @@
 %small= "#{Format.a_datetime( feed.updated_at )}"
 %p
   %small= "#{t('newsfeed.go_to_friend')} " if feed.is_friend_activity && feed.friend
-  %small= link_to( feed.friend.name, swimmer_radio_path(id: feed.friend.swimmer_id) ) if feed.is_friend_activity && feed.friend && feed.friend.swimmer_id
+  - # This is needed just by the development legacy configuration: (strip the port part if present from the config)
+  - override_host = Goggles::Application.config.action_mailer.default_url_options[:host].gsub(/\:\d\d\d\d/, '')
+  - if feed.is_friend_activity && feed.friend && feed.friend.swimmer_id
+    %small= link_to(                                                            |
+      feed.friend.name,                                                         |
+      url_for(                                                                  |
+        controller: :swimmers,                                                  |
+        action:     :radio,                                                     |
+        id:         feed.friend.swimmer_id,                                     |
+        only_path:  false,                                                      |
+        host:       override_host                                               |
+      )                                                                         |
+    )                                                                           |

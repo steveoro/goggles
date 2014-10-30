@@ -3,9 +3,9 @@ require 'spec_helper'
 
 describe Team, :type => :model do
   describe "[a non-valid instance]" do
-    it_behaves_like( "(missing required values)", [ 
+    it_behaves_like( "(missing required values)", [
       :name, :editable_name
-    ])    
+    ])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -21,8 +21,9 @@ describe Team, :type => :model do
     it_behaves_like( "(belongs_to required models)", [ :city ] )
     # Test the existance of all the required has_many / has_one relationships:
     it_behaves_like( "(the existance of a method returning a collection of some kind of instances)",
-      [ 
+      [
         :badges,
+        :swimmers,
         :meeting_individual_results,
         :meetings,
         :seasons,
@@ -36,11 +37,11 @@ describe Team, :type => :model do
         :computed_season_ranking
       ],
       ActiveRecord::Base
-    )    
+    )
 
     context "[general methods]" do
-      it_behaves_like( "(the existance of a method returning non-empty strings)", 
-        [ 
+      it_behaves_like( "(the existance of a method returning non-empty strings)",
+        [
           :get_full_name,
           :get_verbose_name
         ]
@@ -74,7 +75,7 @@ describe Team, :type => :model do
     end
     # ---------------------------------------------------------------------------
     #++
-    
+
     describe "#get_current_goggle_cup_at" do
       it "responds to #get_current_goggle_cup_at" do
         expect( subject ).to respond_to( :get_current_goggle_cup_at )

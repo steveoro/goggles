@@ -4,7 +4,7 @@
 # Strategy/B-L incapsulator for User-social interactions with news-feed generation.
 #
 # @author   Steve A.
-# @version  4.00.531
+# @version  4.00.589
 #
 class UserSocializer
 
@@ -24,8 +24,12 @@ class UserSocializer
   # news feed for both the recipient (another_user, not-necessarily a friend yet) and
   # the sender (the current @user for this instance).
   #
+  # Returns the confirmation row on success, +nil+ otherwise.
+  #
   def confirm_with_notify( another_user )
-    if UserSwimmerConfirmation.confirm_for( another_user, another_user.swimmer, @user )
+    return nil unless another_user.instance_of?(User) && @user.has_associated_swimmer? && another_user.has_associated_swimmer?
+    result = UserSwimmerConfirmation.confirm_for( another_user, another_user.swimmer, @user )
+    if result
       NewsFeed.create_social_feed(
         another_user.id,
         @user.id,
@@ -40,8 +44,11 @@ class UserSocializer
           .gsub("{BUDDY_NAME}", another_user.name)
           .gsub("{SWIMMER_NAME}", another_user.swimmer.get_full_name)
       )
+# FIXME This will make all unique @user's team-buddies as friends:
+      TeamBuddyLinker.new( @user ).socialize_with_team_mates
       # TODO Create also achievement accordingly
     end
+    result
   end
 
   # De-Confirms (or un-confirms) another user as being associated to its current swimmer.
@@ -52,16 +59,22 @@ class UserSocializer
   # Works similarly to UserSwimmerConfirmator#unconfirm_for() but in addition it updates the
   # news feed for just the recipient (another_user, not-necessarily a friend yet).
   #
+  # Returns the confirmation row on success, +nil+ otherwise.
+  #
   def unconfirm_with_notify( another_user )
-    if UserSwimmerConfirmation.unconfirm_for( another_user, another_user.swimmer, @user )
+    return nil unless another_user.instance_of?(User) && @user.has_associated_swimmer? && another_user.has_associated_swimmer?
+    result = UserSwimmerConfirmation.unconfirm_for( another_user, another_user.swimmer, @user )
+    if result
       NewsFeed.create_social_feed(
         another_user.id,
         @user.id,
         I18n.t('newsfeed.unconfirm_title'),
         I18n.t('newsfeed.unconfirm_body').gsub("{SWIMMER_NAME}", another_user.swimmer.get_full_name)
       )
+      # TODO Block friendships also?
       # TODO Create also achievement accordingly
     end
+    result
   end
   #-- --------------------------------------------------------------------------
   #++

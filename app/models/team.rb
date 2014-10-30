@@ -17,10 +17,12 @@ class Team < ActiveRecord::Base
   belongs_to :city                                  # City can be null especially in Teams added by data-import
 
   has_many :badges
+  has_many :swimmers, through: :badges
+
   has_many :meeting_individual_results
   has_many :meetings, through: :meeting_individual_results
   has_many :meeting_relay_results
-  has_many :meeting_team_scores  
+  has_many :meeting_team_scores
   has_many :team_affiliations
   has_many :seasons,        through: :team_affiliations
   has_many :season_types,   through: :team_affiliations

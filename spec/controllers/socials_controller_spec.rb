@@ -23,12 +23,12 @@ describe SocialsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :show_all
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:friends) ).not_to be_nil 
-        expect( assigns(:pending_invited) ).not_to be_nil 
-        expect( assigns(:pending_invited_by) ).not_to be_nil 
-        expect( assigns(:invited) ).not_to be_nil 
-        expect( assigns(:blocked_friendships) ).not_to be_nil 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:friends) ).not_to be_nil
+        expect( assigns(:pending_invited) ).not_to be_nil
+        expect( assigns(:pending_invited_by) ).not_to be_nil
+        expect( assigns(:invited) ).not_to be_nil
+        expect( assigns(:blocked_friendships) ).not_to be_nil
       end
       it "renders the template" do
         get :show_all
@@ -57,33 +57,60 @@ describe SocialsController, :type => :controller do
       it "doesn't add a confirmation" do
         expect {
           post :association_confirm, id: @swimming_buddy.id
-        }.not_to change{ @swimming_buddy.confirmators.count } 
+        }.not_to change{ @swimming_buddy.confirmators.count }
       end
-      it "results in a redirect" do 
+      it "results in a redirect" do
         post :association_confirm, id: @swimming_buddy.id
         expect(response.status).to eq( 302 )
       end
     end
 
 
-    context "as a logged-in user" do
+    context "as a logged-in normal user" do
       before(:each) { login_user() }
+
+      it "handles the request, but does not add a confirmator" do
+        expect {
+          post :association_confirm, id: @swimming_buddy.id
+        }.not_to change{ @swimming_buddy.confirmators.count }
+      end
+      it "handles the request, but does not add a confirmation" do
+        expect {
+          post :association_confirm, id: @swimming_buddy.id
+        }.not_to change{ UserSwimmerConfirmation.count }
+      end
+      it "results in a redirect" do
+        post :association_confirm, id: @swimming_buddy.id
+        expect(response.status).to eq( 302 )
+      end
+      it "displays a flash error message" do
+        post :association_confirm, id: @swimming_buddy.id
+        expect( flash[:error] ).to include( I18n.t(:invalid_action_request) )
+      end
+    end
+
+
+    context "as a logged-in goggler (unconfirmed)" do
+      before(:each) do
+        login_user()
+        @user.set_associated_swimmer( create(:swimmer) )
+      end
 
       it "handles successfully the request by increasing the total confirmators" do
         expect {
           post :association_confirm, id: @swimming_buddy.id
-        }.to change{ @swimming_buddy.confirmators.count }.by(1) 
+        }.to change{ @swimming_buddy.confirmators.count }.by(1)
       end
       it "handles successfully the request by adding a confirmation row" do
         expect {
           post :association_confirm, id: @swimming_buddy.id
-        }.to change{ UserSwimmerConfirmation.count }.by(1) 
+        }.to change{ UserSwimmerConfirmation.count }.by(1)
       end
-      it "results in a redirect" do 
+      it "results in a redirect" do
         post :association_confirm, id: @swimming_buddy.id
         expect(response.status).to eq( 302 )
       end
-      it "displays a flash session info message" do 
+      it "displays a flash session info message" do
         post :association_confirm, id: @swimming_buddy.id
         expect( flash[:info] ).to include( I18n.t('social.confirm_successful') )
       end
@@ -101,34 +128,62 @@ describe SocialsController, :type => :controller do
     end
 
     context "as an unlogged user" do
-      it "results in a redirect" do 
+      it "results in a redirect" do
         post :association_unconfirm, id: @swimming_buddy.id
         expect(response.status).to eq( 302 )
       end
     end
 
 
-    context "as a logged-in user" do
+    context "as a logged-in normal user" do
       before(:each) do
         login_user()
+        UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimmer, @user )
+      end
+
+      it "handles the request, but does not delete a confirmator" do
+        expect {
+          post :association_unconfirm, id: @swimming_buddy.id
+        }.not_to change{ @swimming_buddy.confirmators.count }
+      end
+      it "handles the request, but does not delete a confirmation" do
+        expect {
+          post :association_unconfirm, id: @swimming_buddy.id
+        }.not_to change{ UserSwimmerConfirmation.count }
+      end
+      it "results in a redirect" do
+        post :association_unconfirm, id: @swimming_buddy.id
+        expect(response.status).to eq( 302 )
+      end
+      it "displays a flash error message" do
+        post :association_unconfirm, id: @swimming_buddy.id
+        expect( flash[:error] ).to include( I18n.t(:invalid_action_request) )
+      end
+    end
+
+
+    context "as a logged-in goggler (unconfirmed)" do
+      before(:each) do
+        login_user()
+        @user.set_associated_swimmer( create(:swimmer) )
         UserSwimmerConfirmation.confirm_for( @swimming_buddy, @swimmer, @user )
       end
 
       it "handles successfully the request by decreasing the total confirmators" do
         expect {
           post :association_unconfirm, id: @swimming_buddy.id
-        }.to change{ @swimming_buddy.confirmators.count }.by(-1) 
+        }.to change{ @swimming_buddy.confirmators.count }.by(-1)
       end
       it "handles successfully the request by removing a confirmation row" do
         expect {
           post :association_unconfirm, id: @swimming_buddy.id
-        }.to change{ UserSwimmerConfirmation.count }.by(-1) 
+        }.to change{ UserSwimmerConfirmation.count }.by(-1)
       end
-      it "results in a redirect" do 
+      it "results in a redirect" do
         post :association_unconfirm, id: @swimming_buddy.id
         expect(response.status).to eq( 302 )
       end
-      it "displays a flash session info message" do 
+      it "displays a flash session info message" do
         post :association_unconfirm, id: @swimming_buddy.id
         expect( flash[:info] ).to include( I18n.t('social.unconfirm_successful') )
       end
@@ -159,14 +214,14 @@ describe SocialsController, :type => :controller do
       end
       it "renders the template" do
         get :invite, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true
         expect(response).to render_template(:invite)
       end
       it "assigns the required variables" do
         get :invite, id: @swimming_buddy.id
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
-        expect( assigns(:submit_title) ).to be_an_instance_of(String) 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
+        expect( assigns(:submit_title) ).to be_an_instance_of(String)
       end
       it "redirects to :back for a non-yet valid goggler" do
         @user.set_associated_swimmer( nil )
@@ -185,10 +240,10 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #invite]' do
     context "as an unlogged user" do
-      it "doesn't create a new row" do 
+      it "doesn't create a new row" do
         expect {
           post :invite, id: @swimming_buddy.id
-        }.not_to change(@swimming_buddy.invited_by, :count) 
+        }.not_to change(@swimming_buddy.invited_by, :count)
       end
     end
 
@@ -203,15 +258,15 @@ describe SocialsController, :type => :controller do
       it "handles successfully the request for a new friendship" do
         expect {
           post :invite, id: @swimming_buddy.id
-        }.to change(@user.pending_invited, :count).by(1) 
+        }.to change(@user.pending_invited, :count).by(1)
       end
       it "assigns the required variables for a new friendship" do
         post :invite, id: @swimming_buddy.id
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
       end
       it "renders successfully the template for a new friendship" do
-        post :invite, id: @swimming_buddy.id 
+        post :invite, id: @swimming_buddy.id
         expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.invite_successful') )
       end
@@ -244,14 +299,14 @@ describe SocialsController, :type => :controller do
       it "assigns the required variables" do
         @swimming_buddy.invite( @user )
         get :approve, id: @swimming_buddy.id
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
-        expect( assigns(:submit_title) ).to be_an_instance_of(String) 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
+        expect( assigns(:submit_title) ).to be_an_instance_of(String)
       end
       it "renders the template" do
         @swimming_buddy.invite( @user )
         get :approve, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true
         expect(response).to render_template(:approve)
       end
       it "redirects to :back for a non-yet valid goggler" do
@@ -277,12 +332,12 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #approve]' do
     context "as an unlogged user" do
-      it "doesn't update existing rows" do 
+      it "doesn't update existing rows" do
         @unlogged_user = create( :user )
         @swimming_buddy.invite( @unlogged_user )
         expect {
           put :approve, id: @swimming_buddy.id
-        }.not_to change(@unlogged_user.pending_invited, :count) 
+        }.not_to change(@unlogged_user.pending_invited, :count)
       end
     end
 
@@ -297,14 +352,14 @@ describe SocialsController, :type => :controller do
 
       it "handles successfully the request for a pending friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.pending? ).to be true 
+        expect( friendship.pending? ).to be true
         expect {
           post :approve, id: @swimming_buddy.id
           friendship.reload
-        }.to change( friendship, :pending ).to( false ) 
+        }.to change( friendship, :pending ).to( false )
       end
       it "renders successfully the template for a pending friendship" do
-        post :approve, id: @swimming_buddy.id 
+        post :approve, id: @swimming_buddy.id
         expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.approve_successful') )
       end
@@ -342,16 +397,16 @@ describe SocialsController, :type => :controller do
       it "assigns the required variables for an approved friendship" do
         @user.approve( @swimming_buddy )
         get :block, id: @swimming_buddy.id
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
-        expect( assigns(:submit_title) ).to be_an_instance_of(String) 
-        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship) 
-        expect( assigns(:destination_path) ).to be_an_instance_of(String) 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
+        expect( assigns(:submit_title) ).to be_an_instance_of(String)
+        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship)
+        expect( assigns(:destination_path) ).to be_an_instance_of(String)
       end
       it "renders the template for an approved friendship" do
         @user.approve( @swimming_buddy )
         get :block, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true
         expect(response).to render_template( :ask_confirmation )
       end
       it "redirects to :back for an invalid friendable" do
@@ -372,12 +427,12 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #block]' do
     context "as an unlogged user" do
-      it "doesn't update existing rows" do 
+      it "doesn't update existing rows" do
         @swimming_buddy.invite( @unlogged_user )
         @unlogged_user.approve( @swimming_buddy )
         expect {
           put :block, id: @swimming_buddy.id
-        }.not_to change(@unlogged_user.blocked_friendships, :count) 
+        }.not_to change(@unlogged_user.blocked_friendships, :count)
       end
     end
 
@@ -394,15 +449,15 @@ describe SocialsController, :type => :controller do
 
       it "handles successfully the request for a non-blocked friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.approved? ).to be true 
-        expect( friendship.active? ).to be true 
+        expect( friendship.approved? ).to be true
+        expect( friendship.active? ).to be true
         expect {
           post :block, id: @swimming_buddy.id
           @user.reload
-        }.to change{ @user.blocked_friendships.count }.by(1) 
+        }.to change{ @user.blocked_friendships.count }.by(1)
       end
       it "renders successfully the template for a non-blocked friendship" do
-        post :block, id: @swimming_buddy.id 
+        post :block, id: @swimming_buddy.id
         expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.block_successful') )
       end
@@ -438,17 +493,17 @@ describe SocialsController, :type => :controller do
         @user.approve( @swimming_buddy )
         @user.block( @swimming_buddy )
         get :unblock, id: @swimming_buddy.id
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
-        expect( assigns(:submit_title) ).to be_an_instance_of(String) 
-        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship) 
-        expect( assigns(:destination_path) ).to be_an_instance_of(String) 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
+        expect( assigns(:submit_title) ).to be_an_instance_of(String)
+        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship)
+        expect( assigns(:destination_path) ).to be_an_instance_of(String)
       end
       it "renders the template" do
         @user.approve( @swimming_buddy )
         @user.block( @swimming_buddy )
         get :unblock, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true
         expect(response).to render_template( :ask_confirmation )
       end
       it "redirects to :back for an invalid friendable" do
@@ -471,14 +526,14 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #unblock]' do
     context "as an unlogged user" do
-      it "doesn't update existing rows" do 
+      it "doesn't update existing rows" do
         @unlogged_user = create( :user )
         @swimming_buddy.invite( @unlogged_user )
         @unlogged_user.approve( @swimming_buddy )
         @unlogged_user.block( @swimming_buddy )
         expect {
           put :unblock, id: @swimming_buddy.id
-        }.not_to change(@unlogged_user.blocked_friendships, :count) 
+        }.not_to change(@unlogged_user.blocked_friendships, :count)
       end
     end
 
@@ -496,14 +551,14 @@ describe SocialsController, :type => :controller do
 
       it "handles successfully the request for a blocked friendship" do
         friendship = @user.find_any_friendship_with(@swimming_buddy)
-        expect( friendship.blocked? ).to be true 
+        expect( friendship.blocked? ).to be true
         expect {
           post :unblock, id: @swimming_buddy.id
           @user.reload
-        }.to change{ @user.blocked_friendships.count }.by(-1) 
+        }.to change{ @user.blocked_friendships.count }.by(-1)
       end
       it "renders successfully the template for a blocked friendship" do
-        post :unblock, id: @swimming_buddy.id 
+        post :unblock, id: @swimming_buddy.id
         expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.unblock_successful') )
       end
@@ -535,15 +590,15 @@ describe SocialsController, :type => :controller do
       end
       it "assigns the required variables for an existing friendship" do
         get :remove, id: @swimming_buddy.id
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
-        expect( assigns(:submit_title) ).to be_an_instance_of(String) 
-        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship) 
-        expect( assigns(:destination_path) ).to be_an_instance_of(String) 
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
+        expect( assigns(:submit_title) ).to be_an_instance_of(String)
+        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship)
+        expect( assigns(:destination_path) ).to be_an_instance_of(String)
       end
       it "renders the template for an existing friendship" do
         get :remove, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true
         expect(response).to render_template( :ask_confirmation )
       end
       it "redirects to :back for an invalid friendable" do
@@ -558,12 +613,12 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #remove]' do
     context "as an unlogged user" do
-      it "doesn't update existing rows" do 
+      it "doesn't update existing rows" do
         @unlogged_user = create( :user )
         @swimming_buddy.invite( @unlogged_user )
         expect {
           put :remove, id: @swimming_buddy.id
-        }.not_to change(@unlogged_user.friendships, :count) 
+        }.not_to change(@unlogged_user.friendships, :count)
       end
     end
 
@@ -597,7 +652,7 @@ describe SocialsController, :type => :controller do
         expect( @user.find_any_friendship_with(@swimming_buddy) ).to be_nil
       end
       it "renders successfully the template for an existing friendship" do
-        post :remove, id: @swimming_buddy.id 
+        post :remove, id: @swimming_buddy.id
         expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
         expect( flash[:info] ).to include( I18n.t('social.remove_successful') )
       end
@@ -630,15 +685,15 @@ describe SocialsController, :type => :controller do
       it "assigns the required variables for an existing friendship" do
         @swimming_buddy.invite( @user )
         get :edit, id: @swimming_buddy.id
-        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User) 
-        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship) 
-        expect( assigns(:title) ).to be_an_instance_of(String) 
-        expect( assigns(:submit_title) ).to be_an_instance_of(String) 
+        expect( assigns(:swimming_buddy) ).to be_an_instance_of(User)
+        expect( assigns(:friendship) ).to be_an_instance_of(Amistad::Friendships::UserFriendship)
+        expect( assigns(:title) ).to be_an_instance_of(String)
+        expect( assigns(:submit_title) ).to be_an_instance_of(String)
       end
       it "renders the template for an existing friendship" do
         @swimming_buddy.invite( @user )
         get :edit, id: @swimming_buddy.id
-        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true 
+        expect( controller.params[:id].to_i == @swimming_buddy.id ).to be true
         expect(response).to render_template(:edit)
       end
       it "redirects to :show_all for an invalid friendable" do
@@ -710,7 +765,7 @@ describe SocialsController, :type => :controller do
   describe '[POST #edit]' do
 
     context "as an unlogged user" do
-      it "doesn't update existing rows" do 
+      it "doesn't update existing rows" do
                                         # passages, trainings, calendars
         @swimming_buddy.invite( @unlogged_user, true, true, true )
         @unlogged_user.approve( @swimming_buddy )
@@ -739,7 +794,7 @@ describe SocialsController, :type => :controller do
           @editor = @user
           @friend = @swimming_buddy
         end
-        
+
         it_behaves_like "(POST #edit ok) pending friendship editing shares:"
       end
       context "for an  requested pending friendship, when editing commonly-agreed share flags" do

@@ -5,7 +5,7 @@
 
 = TeamBuddyLinker
 
-  - Goggles framework vers.:  4.00.531
+  - Goggles framework vers.:  4.00.589
   - author: Steve A.
 
   Generic strategy/service class dedicated to link a specified user to
@@ -28,7 +28,7 @@
 class TeamBuddyLinker
 
   # These attribute getters are mainly used in specs and nothing more.
-  attr_reader :user, :associated_swimmer, :associated_teams
+  attr_reader :user, :associated_swimmer, :associated_teams, :uniq_team_mates
   #-- -------------------------------------------------------------------------
   #++
 
@@ -43,6 +43,12 @@ class TeamBuddyLinker
     @user = user
     @associated_swimmer = user.swimmer
     @associated_teams   = user.swimmer.teams
+    @uniq_team_mates    = []                        # Build up the team-mates list
+    @associated_teams.each do |team|
+      @uniq_team_mates += team.swimmers.uniq
+    end
+    @uniq_team_mates.reject!{ |swimmer| swimmer.id == @associated_swimmer.id }
+    @uniq_team_mates.uniq!
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -52,15 +58,10 @@ class TeamBuddyLinker
   # as "swimming buddies" with all sharing priviledges turned on.
   #
   def socialize_with_team_mates()
-    team_mates = []                                 # Build up the team-mates list
-    @associated_teams.each do |team|
-      team.badges.each do |badge|
-        team_mates << badge.swimmer unless badge.swimmer_id == @associated_swimmer.id
-      end
-    end
     # For each team mate which is already a registered goggler, create an automatic
-    # "whole-share" invitation together with its approval:
-    team_mates.each do |swimmer|
+    # "whole-share" invitation together with its approval (without generating a
+    # newsfeed row):
+    @uniq_team_mates.each do |swimmer|
       if swimmer.associated_user
         @user.invite( swimmer.associated_user, true, true, true )
         swimmer.associated_user.approve( @user, true, true, true )
