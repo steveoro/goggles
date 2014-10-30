@@ -21,11 +21,11 @@ INSERT INTO meetings (id,header_date,season_id,has_warm_up_pool,is_under_25_admi
 -- 
 INSERT INTO meeting_sessions (meeting_id,session_order,scheduled_date,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
 (14101,1,'2014-11-30',3,'14:15:00','15:00:00','0','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(14102,1,'2015-02-01',20,null,null,'0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
-(14103,1,'2015-02-22',33,null,null,'0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
-(14104,1,'2015-03-29',6,null,null,'0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
-(14105,1,'2015-04-19',2,null,null,'0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
-(14106,1,'2015-05-24',32,null,null,'0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE());
+(14102,1,'2015-02-01',20,'00:00:00','00:00:00','0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
+(14103,1,'2015-02-22',33,'00:00:00','00:00:00','0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
+(14104,1,'2015-03-29',6,'00:00:00','00:00:00','0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
+(14105,1,'2015-04-19',2,'00:00:00','00:00:00','0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE()),
+(14106,1,'2015-05-24',32,'00:00:00','00:00:00','0','FINALI',2,(select t.id from day_part_types t where t.code = '0'),0,CURDATE(),CURDATE());
 
 --
 -- Dump dei dati per la tabella meeting_events

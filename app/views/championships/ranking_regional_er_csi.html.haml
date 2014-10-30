@@ -1,11 +1,10 @@
-= render( partial: 'regional_er_csi_tabs' )
-= render( partial: 'title' )
-
 - col_x_meeting = @championship_ranking.columns.count + 1
 
 .row-fluid#regional_er_csi
   .goggles-category-gap#pageTop
-
+    = render( partial: 'regional_er_csi_tabs' )
+    = render( partial: 'title' )
+    
     -# --- Sub-legend for each gender + pool-type
     .navbar
       %ul.nav

@@ -783,11 +783,13 @@ it:
 
   calendars:
     calendar: "Calendario"
+    meeting: "Gara"
     date: "Data"
     warm_up: "Risc."
-    begin: "Gare"
-    events: "Programma gare"
+    begin: "Inizio"
+    events: "Programma"
     pool: "Piscina"
+    remark: "N.B. Le gare senza gli orari di riscaldamento ed inizio sono da cosiderarsi bozze non ufficiali"
 
   netzke:
     basepack:

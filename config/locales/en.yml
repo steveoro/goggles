@@ -782,8 +782,10 @@ en:
 
   calendars:
     calendar: "Calendar"
+    meeting: "Meeting"
     date: "Date"
     warm_up: "Warm up"
     begin: "Begin"
     events: "Session events"
     pool: "Swimming"
+    remark: "N.B. Meetings without time scheduling should be considered as not confirmed"

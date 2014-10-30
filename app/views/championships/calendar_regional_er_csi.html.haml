@@ -1,10 +1,7 @@
-= render( partial: 'regional_er_csi_tabs' )
-= render( partial: 'title' )
-
 .row-fluid#history_regional_er_csi
   .goggles-category-gap#pageTop
-    %h3
-      = t('calendars.calendar')
+    = render( partial: 'regional_er_csi_tabs' )
+    = render( partial: 'title' )
 
     %table.table.table-striped.table-bordered.table-hover.table-condensed#history
       %tbody
@@ -34,7 +31,10 @@
               %tr
                 - if index == 0
                   %td{ rowspan: session_number }
-                    = meeting.meeting.decorate.get_linked_name
+                    - if meeting.meeting.are_results_acquired
+                      = meeting.meeting.decorate.get_linked_name
+                    - else
+                      = meeting.meeting.get_short_name
                 %td.goggles-rightalign
                   = meeting_session.scheduled_date
                 %td.goggles-rightalign
@@ -46,4 +46,8 @@
                 %td
                   = meeting_session.swimming_pool.decorate.get_city_and_attributes
                  
+.row-fluid.goggles-category-gap#Remark
+  %p
+    %b= t('calendars.remark')
+
 .row-fluid.goggles-category-gap
