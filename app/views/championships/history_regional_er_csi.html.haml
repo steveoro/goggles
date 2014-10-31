@@ -6,6 +6,9 @@
     -# --- Sub-legend for each gender + pool-type
     .navbar
       %ul.nav
+        - if @season.id != @current_season_id
+          %li
+            = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "goggles-nav-compact"})
         %li
           %a.goggles-nav-compact(href="#history")= t('championships.history')
         %li
