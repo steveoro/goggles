@@ -17,6 +17,11 @@ describe DataImportMeetingIndividualResult, :type => :model do
     it "is a valid istance" do
       expect( subject ).to be_valid
     end
+
+    it "refers to a valid meeting" do
+      expect( subject.meeting ).to be_valid
+    end
+
     it "refers to an individual result" do
       # Since the factory above assigns only data_import_meeting_program, we
       # don't have much to choose:

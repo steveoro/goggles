@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs">
-    <%= content_tag( :li, link_to(t('admin_import.step_1'), goggles_di_step1_status_path()),     class: 'active' ) %>
+    <%= content_tag( :li, link_to(t('admin_import.step_1'), goggles_di_step1_status_path()), class: 'active' ) %>
     <%= content_tag( :li, link_to(t('admin_import.step_2'), '#'), class: 'disabled' ) %>
     <%= content_tag( :li, link_to(t('admin_import.step_3'), '#'), class: 'disabled' ) %>
 </ul>
@@ -118,46 +118,53 @@
 
 <br/>
 
-<div class="row">
-    <div class="span3 offset1">
-        <%= form_tag( 'step2_checkout',
-                :multipart => true, class: 'form-horizontal',
-                :onsubmit => "$('#loadingIndicator').show(); "
+<div class="row-fluid">
+    <%= form_tag( 'step2_checkout',
+            :multipart => true, class: 'form-horizontal',
+            :onsubmit => "$('#loadingIndicator').show(); "
 # TODO FUTURE DEV with worker thread:
 #                :onsubmit => "$('#loadingIndicator').show(); " +
 #                             "$('#divProgress').show(); setInterval( function(){ $('#divProgress').load('" +
 #                             goggles_di_get_step_progress_path() + "'); }, 3000);"
-            ) do -%>
-            <div class="control-group">
-                <label class="control-label" for="season[season_id]"><%= I18n.t(:season, { scope: [:activerecord, :models] }) %>:</label>
-                <div class="controls">
-                    <%= select( :season, :season_id,
-                                Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] },
-                                { :prompt => I18n.t(:please_select) },    # select options
-                                { class: 'input-xxlarge' } )    # html options
-                    %>
-                </div>
-                <label class="control-label" for="datafile"><%= I18n.t(:select_file) %>:</label>
-                <div class="controls">
-                    <%= file_field_tag( :datafile ) %>
-                </div>
-                <label class="control-label" for="force_meeting_creation"><%= I18n.t('admin_import.force_meeting_creation') %>:</label>
-                <div class="controls">
-                    <%= check_box_tag( :force_meeting_creation ) %>
-                </div>
-                <label class="control-label" for="force_team_creation"><%= I18n.t('admin_import.force_team_creation') %>:</label>
-                <div class="controls">
-                    <%= check_box_tag( :force_team_creation ) %>
-                </div>
+        ) do -%>
+        <div class="row-fluid control-group">
+            <label class="control-label" for="season[season_id]">
+                <%= I18n.t(:season, { scope: [:activerecord, :models] }) %>:
+            </label>
+            <div class="controls">
+                <%= select( :season, :season_id,
+                            Season.sort_season_by_begin_date('DESC').all.collect { |s| [s.get_full_name, s.id] },
+                            { :prompt => I18n.t(:please_select) },    # select options
+                            { class: 'input-xxlarge' } )    # html options
+                %>
             </div>
-
-            <div class="control-group">
-                <div class="controls">
-                      <%= submit_tag( I18n.t(:upload), data: {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' ) %>
-                      <span id='loadingIndicator' hidden='true'><%= image_tag( 'indicator.gif' ) %></span>
-                    <div id="divProgress" hidden='true' class="progress progress-striped active"></div>
-                </div>
+        </div>
+        <div class="row-fluid control-group">
+            <label class="control-label" for="datafile">
+                <%= I18n.t(:select_file) %>:
+            </label>
+            <div class="controls">
+                <%= file_field_tag( :datafile ) %>
             </div>
-        <% end %>
-    </div>
+        </div>
+        <div class="row-fluid control-group">
+            <label class="control-label" for="force_meeting_creation"><%= I18n.t('admin_import.force_meeting_creation') %>:</label>
+            <div class="controls">
+                <%= check_box_tag( :force_meeting_creation ) %>
+            </div>
+        </div>
+        <div class="row-fluid control-group">
+            <label class="control-label" for="force_team_creation"><%= I18n.t('admin_import.force_team_creation') %>:</label>
+            <div class="controls">
+                <%= check_box_tag( :force_team_creation ) %>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                  <%= submit_tag( I18n.t(:upload), data: {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' ) %>
+                  <span id='loadingIndicator' hidden='true'><%= image_tag( 'indicator.gif' ) %></span>
+                <div id="divProgress" hidden='true' class="progress progress-striped active"></div>
+            </div>
+        </div>
+    <% end %>
 </div>

@@ -28,9 +28,6 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   belongs_to :badge
   belongs_to :disqualification_code_type
 
-  # The following helper is used only by data_importer_test:
-  has_one  :data_import_meeting,  through: :data_import_meeting_program
-
   validates_presence_of :athlete_name
   validates_length_of   :athlete_name, within: 1..100, allow_nil: false
   validates_presence_of :team_name
@@ -84,7 +81,34 @@ class DataImportMeetingIndividualResult < ActiveRecord::Base
   def user_name
     self.user ? self.user.name : ''
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns the more "accessible" or "definitive" Meeting instance associated with this row.
+  # Precedence: 1) primary entity, 2) secondary entity.
+  #
+  # Returns either an instance of Meeting or DataImportMeeting, depending upon
+  # what has been linked to this row through the hierarchy.
+  def meeting
+    meeting = nil
+    session = nil
+    program = self.meeting_program ? self.meeting_program.meeting : self.data_import_meeting_program
+    if program.respond_to?( :meeting_session ) && program.meeting_session
+      session = program.meeting_session
+    elsif program.respond_to?( :data_import_meeting_session ) && program.data_import_meeting_session
+      session = program.data_import_meeting_session
+    end
+    if session.respond_to?( :meeting ) && session.meeting
+      meeting = session.meeting
+    elsif session.respond_to?( :data_import_meeting ) && session.data_import_meeting
+      meeting = session.data_import_meeting
+    end
+    meeting
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Retrieves the associated Swimmer full name
   def get_swimmer_name

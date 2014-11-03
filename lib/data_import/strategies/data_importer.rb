@@ -162,7 +162,12 @@ class DataImporter
   # been successfully completed, up to the moment of the invocation.
   #
   def write_import_logfile
-    to_logfile( @import_log )
+    to_logfile(
+      @import_log,
+      flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
+      nil, # (no additional footer)
+      '.log'
+    )
   end
 
   # Writes the current Team-Analysis to its dedicated logfile,
@@ -170,18 +175,18 @@ class DataImporter
   # is handled separately from the ultimate "SQL diff" produced
   # at the end of the Phase-3.
   #
-  def write_analysis_logfile
+  def write_analysis_logfile( is_ok = false )
     to_logfile(
       @team_analysis_log,
-      header_text = nil,
-      footer_text = nil,
-      ".team.#{get_log_extension}"
+      "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
+      nil, # (no footer)
+      is_ok ? '.team.#{get_log_extension}.ok' : '.team.#{get_log_extension}'
     )
     to_logfile(
       @sql_executable_log,
-      header_text = nil,
-      footer_text = nil,
-      ".team_sql.#{get_log_extension}"
+      "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n",
+      "\r\nCOMMIT;",
+      is_ok ? '.team.sql.ok' : '.team.sql'
     )
   end
 
@@ -591,7 +596,7 @@ class DataImporter
     end
                                                     # Update the global log with the whole phase 1 log
     @import_log = "--------------------[Phase #1 - DIGEST/SERIALIZE]--------------------\r\n#{ @data_import_session.phase_1_log }"
-    (is_ok || has_team_analysis_results) ? @data_import_session : nil
+    is_ok ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -611,8 +616,8 @@ class DataImporter
                                                     # Check season integrity
     @flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] }) and return false unless @season
 
-    @logger.info( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ season_id }..." ) if @logger
-    @data_import_session.phase_2_log = "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{season_id}...\r\n"
+    @logger.info( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ @season.id }..." ) if @logger
+    @data_import_session.phase_2_log = "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{@season.id}...\r\n"
     @committed_data_rows = 0
                                                     # Bail out as soon as something is wrong:
     is_ok = commit_data_import_meeting( @data_import_session )
