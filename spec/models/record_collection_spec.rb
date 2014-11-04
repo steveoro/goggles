@@ -291,8 +291,8 @@ describe RecordCollection, :type => :model do
     it "adds correctly 2 different records to the list" do
       subject.clear
       expect{
-        subject.add( create(:meeting_individual_result), record_type_code )
-        subject.add( create(:meeting_individual_result), record_type_code )
+        subject.add( create(:meeting_individual_result, seconds: (rand * 29).to_i ), record_type_code )
+        subject.add( create(:meeting_individual_result, seconds: 30 + (rand * 30).to_i), record_type_code )
       }.to change{ subject.count }.by(2)
     end
     it "adds both records having same-ranking results (tie-ins)" do

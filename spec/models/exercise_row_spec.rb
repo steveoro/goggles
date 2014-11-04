@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe ExerciseRow, :type => :model do
   context "[a well formed instance]" do
-    subject { ExerciseRow.find_by_id( ((rand * 500) % ExerciseRow.count).to_i + 1 ) }
+    subject { ExerciseRow.all.sort{ rand - 0.5 }[0] }
 
     it_behaves_like "DropDownListable"
 
@@ -28,12 +28,12 @@ describe ExerciseRow, :type => :model do
         ]
       )
       it_behaves_like( "(the existance of a method returning numeric values)",
-        [ 
+        [
           :compute_total_seconds
         ]
       )
       it_behaves_like( "(the existance of a method returning strings)",
-        [ 
+        [
           :compute_displayable_distance,
         ]
       )
@@ -49,10 +49,10 @@ describe ExerciseRow, :type => :model do
 
     it "returns an integer number of seconds" do
       expect( result ).to be_a_kind_of( Integer )
-    end 
+    end
     it "returns a zero or a positive number of seconds" do
       expect( result ).to be >= 0
-    end 
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

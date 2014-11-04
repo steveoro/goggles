@@ -8,7 +8,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.597
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -25,8 +25,7 @@ require 'data_import/services/data_import_entity_committer'
 =end
 module FinResultPhase3
 
-# FIXME:
-  # Total of committed data rows
+  # Total of committed data rows. Increased internally by each one of the following methods.
   @committed_data_rows = 0
   #-- -------------------------------------------------------------------------
   #++
@@ -76,15 +75,16 @@ module FinResultPhase3
           # (FUTURE DEV: source_row.tag is not yet used)
         )
         committed_row.save!
-      end
                                                     # Update dependancies:
-      DataImportMeetingSession.where( data_import_meeting_id: source_row.id )
-        .update_all( meeting_id: committed_row.id )
-      DataImportMeetingTeamScore.where( data_import_meeting_id: source_row.id )
-        .update_all( meeting_id: committed_row.id )
+        DataImportMeetingSession.where( data_import_meeting_id: source_row.id )
+          .update_all( meeting_id: committed_row.id )
+        DataImportMeetingTeamScore.where( data_import_meeting_id: source_row.id )
+          .update_all( meeting_id: committed_row.id )
 
-      committed_row                                 # Return the currently committed row
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -121,13 +121,14 @@ module FinResultPhase3
           # (notes is not used)
         )
         committed_row.save!
-      end
                                                     # Update dependancies:
-      DataImportMeetingProgram.where( data_import_meeting_session_id: source_row.id )
-        .update_all( meeting_session_id: committed_row.id )
+        DataImportMeetingProgram.where( data_import_meeting_session_id: source_row.id )
+          .update_all( meeting_session_id: committed_row.id )
 
-      committed_row                                 # Return the currently committed row
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -171,22 +172,23 @@ module FinResultPhase3
           gender_type_id:   source_row.gender_type_id,
           pool_type_id:     source_row.meeting_session.swimming_pool ? source_row.meeting_session.swimming_pool.pool_type_id : nil,
           time_standard_id: source_row.time_standard_id,
-          meeting_event_id: meeting_event_id,
+          meeting_event_id: meeting_event.id,
           begin_time:       source_row.begin_time,  # (wild-guessed)
           is_out_of_race:   source_row.is_out_of_race,
           is_autofilled:    true,                   # signal that we have guessed some of the values (for instance, the begin/scheduled times)
           user_id:          source_row.user_id
         )
         committed_row.save!
-      end
                                                     # Update dependancies:
-      DataImportMeetingIndividualResult.where( data_import_meeting_program_id: source_row.id )
-        .update_all( meeting_program_id: committed_row.id )
-      DataImportMeetingRelayResult.where( data_import_meeting_program_id: source_row.id )
-        .update_all( meeting_program_id: committed_row.id )
+        DataImportMeetingIndividualResult.where( data_import_meeting_program_id: source_row.id )
+          .update_all( meeting_program_id: committed_row.id )
+        DataImportMeetingRelayResult.where( data_import_meeting_program_id: source_row.id )
+          .update_all( meeting_program_id: committed_row.id )
 
-      committed_row                                 # Return the currently committed row
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   # ---------------------------------------------------------------------------
@@ -217,13 +219,14 @@ module FinResultPhase3
           user_id:      source_row.user_id
         )
         committed_row.save!
-      end
                                                     # Update dependancies:
-      DataImportTeam.where( data_import_city_id: source_row.id )
-        .update_all( city_id: committed_row.id )
+        DataImportTeam.where( data_import_city_id: source_row.id )
+          .update_all( city_id: committed_row.id )
 
-      committed_row                                 # Return the currently committed row
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -262,46 +265,53 @@ module FinResultPhase3
           # (notes is not used)
         )
         committed_row.save!
-      end
-                                                    # We must add also a new TeamAffiliation row for this season:
-      TeamAffiliation.transaction do                # Create dependancy: |=> team_affiliations(team, season)
-        @additional_row = TeamAffiliation.new(
-          name:                       committed_row.name,
-          must_calculate_goggle_cup:  false,
-          is_autofilled:              true,         # signal that we have guessed some of the values
-          team_id:                    committed_row.id,
-          season_id:                  season.id,
-          user_id:                    committed_row.user_id
-          # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
-        )
-        @additional_row.save!
-        # [Steve, 20141024] By using @additional_row we'll signal to the #commit method
-        # that we are actually committing another row beside the main result of the
-        # block.
-      end
+        # We must add also a new TeamAffiliation row for this season:
+        # Create dependancy: |=> team_affiliations(team, season)
+        @additional_row = TeamAffiliation.where( team_id: committed_row.id, season_id: season.id ).first
+        if @additional_row.nil?
+          @additional_row = TeamAffiliation.new(
+            name:                       committed_row.name,
+            must_calculate_goggle_cup:  false,
+            is_autofilled:              true,       # signal that we have guessed some of the values
+            team_id:                    committed_row.id,
+            season_id:                  season.id,
+            user_id:                    committed_row.user_id
+            # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
+          )
+          @additional_row.save!
+          # [Steve, 20141024] By using @additional_row we'll signal to the #commit method
+          # that we are actually committing another row beside the main result of the
+          # block.
+        else
+          data_import_session.phase_2_log << "\r\n*** commit_data_import_teams(): WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{source_row.name}', Team#id:#{committed_row.id}, Season#id:#{season.id}).\r\nUsing T"
+          data_import_session.phase_2_log << "\r\nUsing existing TeamAffiliation #ID: #{@additional_row.id}."
+        end
                                                     # Update dependancies:
-      DataImportBadge.where( data_import_team_id: source_row.id )
-        .update_all(
-          team_id:              committed_row.id,
-          team_affiliation_id:  @additional_row.id
-        )
-      DataImportMeetingIndividualResult.where( data_import_team_id: source_row.id )
-        .update_all(
-          team_id:              committed_row.id,
-          team_affiliation_id:  @additional_row.id
-        )
-      DataImportMeetingRelayResult.where( data_import_team_id: source_row.id )
-        .update_all(
-          team_id:              committed_row.id,
-          team_affiliation_id:  @additional_row.id
-        )
-      DataImportMeetingTeamScore.where( data_import_team_id: source_row.id )
-        .update_all(
-          team_id:              committed_row.id,
-          team_affiliation_id:  @additional_row.id
-        )
-      committed_row                                 # Return the currently committed row
+        DataImportBadge.where( data_import_team_id: source_row.id )
+          .update_all(
+            team_id:              committed_row.id,
+            team_affiliation_id:  @additional_row.id
+          )
+        DataImportMeetingIndividualResult.where( data_import_team_id: source_row.id )
+          .update_all(
+            team_id:              committed_row.id,
+            team_affiliation_id:  @additional_row.id
+          )
+        DataImportMeetingRelayResult.where( data_import_team_id: source_row.id )
+          .update_all(
+            team_id:              committed_row.id,
+            team_affiliation_id:  @additional_row.id
+          )
+        DataImportMeetingTeamScore.where( data_import_team_id: source_row.id )
+          .update_all(
+            team_id:              committed_row.id,
+            team_affiliation_id:  @additional_row.id
+          )
+
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -331,16 +341,17 @@ module FinResultPhase3
           user_id:        source_row.user_id
         )
         committed_row.save!
-      end
                                                     # Update dependancies:
-      DataImportBadge.where( data_import_swimmer_id: source_row.id )
-        .update_all( swimmer_id: committed_row.id )
+        DataImportBadge.where( data_import_swimmer_id: source_row.id )
+          .update_all( swimmer_id: committed_row.id )
 
-      DataImportMeetingIndividualResult.where( data_import_swimmer_id: source_row.id )
-        .update_all( swimmer_id: committed_row.id )
+        DataImportMeetingIndividualResult.where( data_import_swimmer_id: source_row.id )
+          .update_all( swimmer_id: committed_row.id )
 
-      committed_row                                 # Return the currently committed row
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -378,13 +389,14 @@ module FinResultPhase3
         )
         # ASSERT: assuming season.instance_of?( Season ) (chosen by admin during data-import)
         committed_row.save!
-      end
                                                     # Update dependancies:
-      DataImportMeetingIndividualResult.where( data_import_badge_id: source_row.id )
-        .update_all( badge_id: committed_row.id )
+        DataImportMeetingIndividualResult.where( data_import_badge_id: source_row.id )
+          .update_all( badge_id: committed_row.id )
 
-      committed_row                                 # Return the currently committed row
+        committed_row                               # Return the currently committed row
+      end
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -435,9 +447,10 @@ module FinResultPhase3
           user_id:                        source_row.user_id
         )
         committed_row.save!
+        committed_row                               # Return the currently committed row
       end
-      committed_row                                 # Return the currently committed row
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -484,9 +497,10 @@ module FinResultPhase3
           user_id:                        source_row.user_id
         )
         committed_row.save!
+        committed_row                               # Return the currently committed row
       end
-      committed_row                                 # Return the currently committed row
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------
@@ -530,9 +544,10 @@ module FinResultPhase3
           user_id:                      source_row.user_id
         )
         committed_row.save!
+        committed_row                               # Return the currently committed row
       end
-      committed_row                                 # Return the currently committed row
     end
+    @committed_data_rows += committer.committed_data_rows
     committer.is_ok?
   end
   #-- -------------------------------------------------------------------------

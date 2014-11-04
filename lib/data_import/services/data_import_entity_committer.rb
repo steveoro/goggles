@@ -130,7 +130,8 @@ class DataImportEntityCommitter
       end
     end
                                                     # Update the logs with current progress:
-    @data_import_session.phase_3_log = "COMMIT:#{ @phase_num }/10"
+    @data_import_session.phase_3_log = "COMMIT:#{ @phase_num }/10, rows: #{@committed_data_rows}/#{data_import_rows.count}"
+    @data_import_session.phase_3_log << " last error: #{ @last_error }" if @last_error
     @data_import_session.save!
     is_ok
   end
@@ -149,6 +150,7 @@ class DataImportEntityCommitter
     if resulting_row.kind_of?( ActiveRecord::Base )
       @data_import_session.phase_2_log << "Committed #{ resulting_row.class.name }, #{ resulting_row.inspect }.\r\n"
       @data_import_session.sql_diff    << to_sql_insert( resulting_row )
+      @data_import_session.save!
       @committed_data_rows += 1
     end
   end

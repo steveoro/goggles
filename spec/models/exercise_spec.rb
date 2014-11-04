@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Exercise, :type => :model do
   context "[a well formed instance]" do
-    subject { Exercise.find_by_id( ((rand * 500) % Exercise.count).to_i + 1 ) }
+    subject { Exercise.all.sort{ rand - 0.5 }[0] }
 
     it_behaves_like "DropDownListable"
 
@@ -36,7 +36,7 @@ describe Exercise, :type => :model do
         ]
       )
       it_behaves_like( "(the existance of a method returning numeric values)",
-        [ 
+        [
           :compute_total_distance,
           :compute_total_seconds
         ]
@@ -54,7 +54,7 @@ describe Exercise, :type => :model do
     it "returns a scoped enumberable of rows" do
       expect( result ).to be_a_kind_of( Enumerable )
       result.each { |row| expect( row ).to be_a_kind_of( Exercise ) }
-    end 
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

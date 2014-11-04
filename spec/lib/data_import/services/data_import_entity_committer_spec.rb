@@ -110,6 +110,36 @@ describe DataImportEntityCommitter, type: :service do
     end
 
 
+    context "with a commit block with an error inside," do
+      let(:perform_error_commit) { subject.commit { |src_row| raise "Forced error inside block!" } }
+
+      it "returns false when errors are raised" do
+        expect( perform_error_commit ).to be false
+      end
+      it "sets #committed_data_rows to 0" do
+        perform_error_commit
+        expect( subject.committed_data_rows ).to eq( 0 )
+      end
+      it "sets #is_ok? to false" do
+        perform_error_commit
+        expect( subject.is_ok? ).to be false
+      end
+      it "sets #last_error to the Error generated" do
+        perform_error_commit
+        expect( subject.last_error ).to be_an_instance_of(RuntimeError)
+      end
+      it "sets #last_error.message to the message of the Error" do
+        perform_error_commit
+        expect( subject.last_error.message ).to eq( "Forced error inside block!" )
+      end
+      it "updates #data_import_session.phase_2_log with the message of the Error" do
+        perform_error_commit
+        expect( subject.data_import_session.phase_2_log ).to include( "commit: exception caught during save!" )
+        expect( subject.data_import_session.phase_2_log ).to include( "Forced error inside block!" )
+      end
+    end
+
+
     context "with a fake commit block using the @additional_row variable," do
       # Any existing row will suffice, we just want to generate its SQL insert statement:
       let(:other_rows) { CategoryType.all.sort{ rand - 0.5 }[ 0.. total_detail_rows-1 ] }

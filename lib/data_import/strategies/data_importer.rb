@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.597
   - author: Steve A.
 
   Data-Import strategy class.
@@ -587,10 +587,10 @@ class DataImporter
       end
       @data_import_session.phase = 12               # Update "last completed phase" indicator (12 = '1.2')
       update_logs(
-        "\r\nFile '#{File.basename( @full_pathname )}', created session ID: #{ @data_import_session.id }\r\n" +
-        "Total file lines ....... : #{ @result_hash[:line_count] }\r\n" +
-        "Total data headers ..... : #{ @result_hash[:total_data_rows] }\r\n" +
-        "Actual stored rows ..... : #{ @stored_data_rows }\r\n" +
+        "\r\nFile '#{File.basename( @full_pathname )}', created session ID: #{ @data_import_session.id }\r\n" <<
+        "Total file lines ....... : #{ @result_hash[:line_count] }\r\n" <<
+        "Total data headers ..... : #{ @result_hash[:total_data_rows] }\r\n" <<
+        "Actual stored rows ..... : #{ @stored_data_rows }\r\n" <<
         "File processed.\r\nData-import PHASE #1.2 DONE."
       )
     end
@@ -617,7 +617,7 @@ class DataImporter
     @flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] }) and return false unless @season
 
     @logger.info( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ @season.id }..." ) if @logger
-    @data_import_session.phase_2_log = "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{@season.id}...\r\n"
+    @data_import_session.phase_2_log ||= "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{@season.id}...\r\n"
     @committed_data_rows = 0
                                                     # Bail out as soon as something is wrong:
     is_ok = commit_data_import_meeting( @data_import_session )
@@ -722,7 +722,7 @@ class DataImporter
   def update_logs( msg, method = :info, with_save = true )
     @logger.send( method, msg ) if @logger
     @data_import_session.phase_1_log << (msg + "\r\n")
-    @data_import_session.save! if @data_import_session
+    @data_import_session.save! if with_save
   end
   #-- -------------------------------------------------------------------------
   #++

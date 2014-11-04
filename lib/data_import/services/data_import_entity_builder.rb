@@ -336,8 +336,8 @@ class DataImportEntityBuilder
     @result_id = 0
     @result_row = nil
     # Initialize log columns if found still undefined:
-    @data_import_session.phase_2_log = '' unless @data_import_session.phase_2_log.instance_of?( String )
-    @data_import_session.sql_diff    = '' unless @data_import_session.sql_diff.instance_of?( String )
+    @data_import_session.phase_2_log ||= ''
+    @data_import_session.sql_diff    ||= ''
 
     begin
       secondary_entity.transaction do
