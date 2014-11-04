@@ -1,0 +1,107 @@
+-- Inizio script
+/*!40101 SET character_set_client = latin1 */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+
+SET AUTOCOMMIT=0;
+START TRANSACTION;
+
+--
+-- Dump dei dati per la tabella cities
+-- 
+
+/* VEROLANUOVA: censito nei seed di startup */
+/* FIRENZE: censito nei seed di startup */
+/* STRIANO: censito nei seed di startup */
+/* MILANO: censito nei seed di startup */
+/* CIVITAVECCHIA: censito nei seed di startup */
+/* STRIANO: censito nei seed di startup */
+/* GENOVA: censito nei seed di startup */
+/* SARONNO: censito nei seed di startup */
+/* BOLOGNA: censito nei seed di startup */
+/* L'AQUILA: censito nei seed di startup */
+/* PALERMO: censito nei seed di startup */
+/* VICENZA: censito nei seed di startup */
+/* INNSBRUCK: censito nei seed di startup */
+/* NOVARA: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('ANDRIA','?','BARI','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* OSIMO: censito nei seed di startup */
+/* VIMERCATE: censito nei seed di startup */
+/* ROMA: censito nei seed di startup */
+/* FORLI': censito nei seed di startup */
+/* POGGIBONSI: censito nei seed di startup */
+/* GIULIANO: censito nei seed di startup */
+/* ALBENGA: censito nei seed di startup */
+/* RAPALLO: censito nei seed di startup */
+/* PALERMO: censito nei seed di startup */
+/* CASALE MONFERRATO: censito nei seed di startup */
+/* BERGAMO: censito nei seed di startup */
+/* MASSAROSA: censito nei seed di startup */
+/* BOLZANO: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('VERONA','?','VERONA','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* RICCIONE: censito nei seed di startup */
+/* MODUGNO: censito nei seed di startup */
+/* ROMA: censito nei seed di startup */
+/* SONDRIO: censito nei seed di startup */
+/* PARMA: censito nei seed di startup */
+/* TORTONA: censito nei seed di startup */
+/* LIVORNO: censito nei seed di startup */
+/* BRESCIA: censito nei seed di startup */
+/* CAGLIARI: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('PAGANI','?','SALERNO','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* VIAREGGIO: censito nei seed di startup */
+/* AREZZO: censito nei seed di startup */
+/* MILANO: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('CONVERSANO','?','BARI','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* RAVENNA: censito nei seed di startup */
+/* ROMA: censito nei seed di startup */
+/* BUONCONVENTO: censito nei seed di startup */
+/* CORATO: censito nei seed di startup */
+/* SORI: censito nei seed di startup */
+/* BOLZANO: censito nei seed di startup */
+/* TAORMINA: censito nei seed di startup */
+/* PORTICI: censito nei seed di startup */
+/* ROMA: censito nei seed di startup */
+/* VITERBO: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('CERTALDO','?','FIRENZE','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* CATANIA: censito nei seed di startup */
+/* LIGNANO SABBIADORO: censito nei seed di startup */
+/* SEREGNO: censito nei seed di startup */
+/* LIGNANO SABBIADORO: censito nei seed di startup */
+/* BRESCIA: censito nei seed di startup */
+/* L'AQUILA: censito nei seed di startup */
+/* LIVORNO: censito nei seed di startup */
+/* NIBIONNO: censito nei seed di startup */
+/* TRENTO: censito nei seed di startup */
+/* BATTIPAGLIA: censito nei seed di startup */
+/* CATANIA: censito nei seed di startup */
+/* SENIGALLIA: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('LUMEZZANE','?','?','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* PADOVA: censito nei seed di startup */
+/* RAPALLO: censito nei seed di startup */
+/* BARI: censito nei seed di startup */
+/* CAGLIARI: censito nei seed di startup */
+/* ROMA: censito nei seed di startup */
+/* PAVIA: censito nei seed di startup */
+/* LUCCA: censito nei seed di startup */
+/* BOLOGNA: censito nei seed di startup */
+/* FOLLONICA: censito nei seed di startup */
+/* MOLINELLA: censito nei seed di startup */
+/* LEGNANO: censito nei seed di startup */
+/* CASTELLANA GROTTE: censito nei seed di startup */
+/* CAMPODIPIETRA: censito nei seed di startup */
+/* STRIANO: censito nei seed di startup */
+/* TRENTO: censito nei seed di startup */
+/* GUALDO TADINO: censito nei seed di startup */
+/* PALERMO: censito nei seed di startup */
+/* GENOVA: censito nei seed di startup */
+/* TRAVAGLIATO: censito nei seed di startup */
+/* S.DONA' DI PIAVE: censito nei seed di startup */
+/* VIAREGGIO: censito nei seed di startup */
+/* BARI: censito nei seed di startup */
+/* ROMA: censito nei seed di startup */
+insert into cities (name,zip,area,country,country_code,lock_version,created_at,updated_at) values ('CIVITANOVA MARCHE','?','?','ITALIA','ITA',0,CURDATE(),CURDATE());
+/* LECCO: censito nei seed di startup */
+/* MASSA LUBRENSE: censito nei seed di startup */
+
+COMMIT;
+-- Fine script
