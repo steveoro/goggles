@@ -148,7 +148,7 @@ class DataImportEntityCommitter
   #
   def update_session_commit_log( resulting_row )
     if resulting_row.kind_of?( ActiveRecord::Base )
-      @data_import_session.phase_2_log << "Committed #{ resulting_row.class.name }, #{ resulting_row.inspect }.\r\n"
+      @data_import_session.phase_2_log << "Committed #{ resulting_row.class.name }, id: #{ resulting_row.id }.\r\n"
       @data_import_session.sql_diff    << to_sql_insert( resulting_row )
       @data_import_session.save!
       @committed_data_rows += 1
