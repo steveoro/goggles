@@ -150,7 +150,7 @@ class DataImporter
   def to_logfile( log_contents, header_text = nil, footer_text = nil, extension = get_log_extension() )
     log_basename = get_log_basename()
     if log_contents.size > 0
-      File.open( log_basename + extension, 'w' ) do |f|
+      File.open( log_basename + extension, 'a' ) do |f|
         f.puts header_text if header_text
         f.puts log_contents
         f.puts footer_text if footer_text
