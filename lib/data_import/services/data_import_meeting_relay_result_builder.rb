@@ -58,7 +58,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         ) if @team_name
         @team = team_builder.result_row if @team_name && team_builder
         unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
-#          @phase_1_log << "\r\DataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
+#          @phase_1_log << "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
 #          logger.error( "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)" )
 #          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
           set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")

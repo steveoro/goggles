@@ -7,7 +7,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = DataImportEntityCommitter
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.599
   - author: Steve A.
 
   Service/DSL implementation oriented to commit data-import entities, required
@@ -149,7 +149,7 @@ class DataImportEntityCommitter
   def update_session_commit_log( resulting_row )
     if resulting_row.kind_of?( ActiveRecord::Base )
       @data_import_session.phase_2_log << "Committed #{ resulting_row.class.name }, id: #{ resulting_row.id }.\r\n"
-      @data_import_session.sql_diff    << to_sql_insert( resulting_row )
+      @data_import_session.sql_diff    << to_sql_insert( resulting_row, false ) # (No user comment)
       @data_import_session.save!
       @committed_data_rows += 1
     end

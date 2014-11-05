@@ -126,16 +126,14 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           # Not found & can't create a new team? => Do a full depth-first analyze of
           # the team name in search for a match and report the results via the builder
           # instance:
-          @team_analysis_log = ''
-          @sql_executable_log = ''
+          @team_analysis_log ||= ''
+          @sql_executable_log ||= ''
           result = TeamNameAnalizer.new.analyze(
               team_name, season.id,
-              @team_analysis_log,
-              @sql_executable_log,
+              @team_analysis_log,                   # The method will update these 2 variables in place
+              @sql_executable_log,                  # (it uses the << operator)
               0.99, 0.8
           )
-          @team_analysis_log  = result.analysis_log_text
-          @sql_executable_log = result.sql_text
           result.data_import_session_id = data_import_session.id
                                                     # Store the team analysis result:
           if ( DataImportTeamAnalysisResult.where(
@@ -147,6 +145,10 @@ class DataImportTeamBuilder < DataImportEntityBuilder
             result.save!
 # DEBUG
 #            puts "Team analysis saved."
+# FIXME
+#            data_import_session.phase_1_log << "#{ @team_analysis_log }\r\n"
+#            data_import_session.sql_diff    << "#{ @sql_executable_log }\r\n"
+#            data_import_session.save!
           end
           # Result not found w/o Team creation => Do a manual review of the analysis data.
         end

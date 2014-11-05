@@ -89,7 +89,7 @@ describe DataImportEntityCommitter, type: :service do
         expect( perform_fake_commit ).to be true
       end
       it "updates the SQL diff text log with an INSERT statement for each committed row" do
-        expected_statements = create_di_swimmers.map { |row| subject.to_sql_insert(row) }
+        expected_statements = create_di_swimmers.map { |row| subject.to_sql_insert(row, false) }
         perform_fake_commit
         expected_statements.each do |sql_statement|
           expect( data_import_session.sql_diff ).to include( sql_statement )
@@ -155,8 +155,8 @@ describe DataImportEntityCommitter, type: :service do
       end
 
       it "updates the SQL diff text log with an INSERT statement for each committed row" do
-        expected_statements = create_di_swimmers.map { |row| subject.to_sql_insert(row) } +
-                              other_rows.map { |row| subject.to_sql_insert(row) }
+        expected_statements = create_di_swimmers.map { |row| subject.to_sql_insert(row, false) } +
+                              other_rows.map { |row| subject.to_sql_insert(row, false) }
         perform_fake_commit
         expected_statements.each do |sql_statement|
           expect( data_import_session.sql_diff ).to include( sql_statement )

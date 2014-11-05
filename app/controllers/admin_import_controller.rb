@@ -54,144 +54,33 @@ class AdminImportController < ApplicationController
   #
   # This is actually displayed as "Phase 1.1 - Team Analysis" (Review/confirm not-found or dubious Team names)
   #
-  def step2_analysis
+  def step1_1_analysis
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ admin_import::step2_analysis -----"
-    logger.debug "PARAMS: #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_analysis -----"
+#    logger.debug "PARAMS: #{params.inspect}"
                                                     # Propagate forward (phase-3) the parameters from Phase-1, if any:
     @force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
     @force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
     if ( params[:id].to_i > 0 )
       @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
-      @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session_id )
+      @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
     else
       @data_import_session = nil
       @analysis_results = []
     end
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
 
-  # Data Import Wizard: from Phase 1.0 to => Phase #1.1 || #2.0 (depending on parsing)
-  #
-  # This action implements the full file parsing/digest of the datafile, with two
-  # possible outcomes:
-  #
-  # - Phase 1.1) Team Analysis ("fall-back" case)
-  # - Phase 2.0) Manual review of the data (best case scenario case and next step)
-  #
-  # The last completed phase in each one must be #1.2 ("serialization", which is executed
-  # nevertheless, even though a Team Analysis is found to be necessary with a consequent
-  # "fall back" to phase 1.1).
-  #
-  # This is also a "safe action": it does nothing if phase #2.0 has been already
-  # reached, yielding directly the edit/review grid if the selected data-import
-  # session has found as ready for phase 2.
-  #
-  # [Steve, 20141103]
-  # Keep in mind that the name of the action reflects the final view rendered at the
-  # end of the process (which is relative to the manual checkout at phase #2.0), but
-  # the implementation regards actually what has to be done *before* the manual
-  # review grid can be considered ready to be rendered.
-  # (So, yes, the name is actually confusing and the whole process requires a ton
-  # more of refactoring)
-  #
-  # == Params:
-  #
-  # - <tt>'season[season_id]'</tt> => id of the selected sport season for the data-import operation
-  # - <tt>:id</tt> => id of the data-import session in progress; when present, takes precedence over the +datafile+ parameter
-  # - <tt>:datafile</tt> => an uploaded datafile (an ActionDispatch::Http::UploadedFile object)
-  #
-  # - <tt>:force_meeting_creation</tt> => true/not nil to enable the creation of missing Meeting / MeetingSession rows (Season is assumed to be always pre-existent)
-  # - <tt>:force_team_creation</tt> => true/not nil to enable the creation of missing Team / TeamAssociation rows
-  #
-  def step2_checkout
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
-#    logger.debug "PARAMS: #{params.inspect}"
-#    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile] }"
-    filename_to_be_parsed = nil
-    @data_import_session  = nil
-    data_importer         = nil
-    season_id = 0
-                                                    # === CASE 1: CONTINUATION SESSION. Id parameter present? We then assume a session is already in progress.
-    if params[:id]                                  # Get season from the session:
-      @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
-      season_id = @data_import_session.season_id if @data_import_session.instance_of?( DataImportSession )
-      if ( season_id.to_i < 1 )
-        flash[:info] = I18n.t( 'admin_import.season_not_saved_in_session' )
-        redirect_to( goggles_di_step1_status_path() ) and return
-      end
-                                                    # === CASE 2: STARTING SESSION. Datafile parameter present? Copy the file to its destination.
-    elsif params[:datafile]                         # Get season from form parameters:
-      season_id = params[:season][:season_id].to_i if params[:season] # Retrieve season_id from parameters
-      tmp_file  = params[:datafile].tempfile        # (This is an ActionDispatch::Http::UploadedFile object)
-      filename_to_be_parsed = File.join( "public/uploads", params[:datafile].original_filename )
-      FileUtils.cp tmp_file.path, filename_to_be_parsed
-                                                    # === CASE ELSE: Error. Form not-fully completed.
-    else
-      flash[:info] = I18n.t( 'admin_import.nothing_to_do_upload_something' )
-      redirect_to( goggles_di_step1_status_path() ) and return
-    end
-
-                                                    # === (Re-)Launch phase_1_parse if we can/must do it:
-    if filename_to_be_parsed || ( @data_import_session && (@data_import_session.phase.to_i < 1) )
-      force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
-      force_missing_team_creation    = (params[:force_team_creation] == 'true')    || (params[:force_team_creation].to_i > 0)
-      filename_to_be_parsed          = @data_import_session.file_name if filename_to_be_parsed.nil? && @data_import_session
-                                                    # Create a new data-import session to consume the datafile:
-      data_importer = DataImporter.new( logger, flash, @data_import_session )
-      data_importer.set_up(
-        full_pathname:                  filename_to_be_parsed,
-        force_missing_meeting_creation: force_missing_meeting_creation,
-        force_missing_team_creation:    force_missing_team_creation,
-        # do_not_consume_file:           false, # (default)
-        current_admin_id:               current_admin.id
-      )
-      phase_1_digest( data_importer )               # -- PHASE 1.0:
-      phase_1_2_serialize( data_importer )          # -- PHASE 1.2:
-# DEBUG
-#      logger.debug("\r\n- data_import_session: #{@data_import_session.inspect}")
-#      logger.debug("\r\n- data_importer.data_import_session: #{data_importer.data_import_session.inspect}")
-      if data_importer.has_team_analysis_results
-        flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
-        redirect_to(
-            goggles_di_step2_analysis_path(
-                id:                     data_importer.data_import_session.id,
-                force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
-                force_team_creation:    force_missing_team_creation    ? '1' : nil
-            )
-        ) and return
-      end
-    end
-                                                    # -- CHECK OUTCOME: something went awfully wrong? Redirect:
-    redirect_to( goggles_di_step1_status_path() ) and return unless @data_import_session
-                                                    # Compute the filtering parameters:
-    ap = AppParameter.get_parameter_row_for( :data_import )
-    @max_view_height    = ap.get_view_height()
-    if @data_import_session.season
-      @season_description = @data_import_session.season.description
-    elsif @data_import_session.data_import_season
-      @season_description = @data_import_session.data_import_season.description
-    else
-      @season_description = '?'
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Data Import Wizard: Parallel Phase-3 Team-Analysis Commit Phase.
+  # Data Import Wizard: Parallel Phase-1.1 Team-Analysis Commit Phase.
   # (Invoked after the alternative phase-2 outcome, when the Team-Analysis
-  # phase has been triggered.)
+  # phase has been triggered. This action has no associated view.)
   #
   # This is called after "Phase 1.1 - Team Analysis" and before "Phase 2 - Manual check"
   #
-  def step3_analysis_commit
+  def step1_1_commit
 # DEBUG
-#    logger.debug "\r\n\r\n!! ------ admin_import::step3_analysis_commit -----"
-#    logger.debug "PARAMS: #{params.inspect}"
+    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_commit -----"
+    logger.debug "PARAMS: #{params.inspect}"
     overridden_alias_actions = {}
     confirmed_actions_ids    = []
     data_import_session_id   = 0
@@ -252,6 +141,116 @@ class AdminImportController < ApplicationController
       end
     else
       redirect_to( goggles_di_step1_status_path() ) and return
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Data Import Wizard: from Phase 1.0 to => Phase #1.1 || #2.0 (depending on parsing)
+  #
+  # This action implements the full file parsing/digest of the datafile, with two
+  # possible outcomes:
+  #
+  # - Phase 1.1) Team Analysis ("fall-back" case)
+  # - Phase 2.0) Manual review of the data (best case scenario case and next step)
+  #
+  # The last completed phase in each one must be #1.2 ("serialization", which is executed
+  # nevertheless, even though a Team Analysis is found to be necessary with a consequent
+  # "fall back" to phase 1.1).
+  #
+  # This is also a "safe action": it does nothing if phase #2.0 has been already
+  # reached, yielding directly the edit/review grid if the selected data-import
+  # session has found as ready for phase 2.
+  #
+  # [Steve, 20141103]
+  # Keep in mind that the name of the action reflects the final view rendered at the
+  # end of the process (which is relative to the manual checkout at phase #2.0), but
+  # the implementation regards actually what has to be done *before* the manual
+  # review grid can be considered ready to be rendered.
+  # (So, yes, the name is actually confusing and the whole process requires a ton
+  # more of refactoring)
+  #
+  # == Params:
+  #
+  # - <tt>'season[season_id]'</tt> => id of the selected sport season for the data-import operation
+  # - <tt>:id</tt> => id of the data-import session in progress; when present, takes precedence over the +datafile+ parameter
+  # - <tt>:datafile</tt> => an uploaded datafile (an ActionDispatch::Http::UploadedFile object)
+  #
+  # - <tt>:force_meeting_creation</tt> => true/not nil to enable the creation of missing Meeting / MeetingSession rows (Season is assumed to be always pre-existent)
+  # - <tt>:force_team_creation</tt> => true/not nil to enable the creation of missing Team / TeamAssociation rows
+  #
+  def step2_checkout
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ admin_import::step2_checkout -----"
+    logger.debug "PARAMS: #{params.inspect}"
+#    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile] }"
+    filename_to_be_parsed = nil
+    @data_import_session  = nil
+    data_importer         = nil
+    season_id = 0
+                                                    # === CASE 1: CONTINUATION SESSION. Id parameter present? We then assume a session is already in progress.
+    if params[:id]                                  # Get season from the session:
+      @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
+      season_id = @data_import_session.season_id if @data_import_session.instance_of?( DataImportSession )
+      if ( season_id.to_i < 1 )
+        flash[:info] = I18n.t( 'admin_import.season_not_saved_in_session' )
+        redirect_to( goggles_di_step1_status_path() ) and return
+      end
+                                                    # === CASE 2: STARTING SESSION. Datafile parameter present? Copy the file to its destination.
+    elsif params[:datafile]                         # Get season from form parameters:
+      season_id = params[:season][:season_id].to_i if params[:season] # Retrieve season_id from parameters
+      tmp_file  = params[:datafile].tempfile        # (This is an ActionDispatch::Http::UploadedFile object)
+      filename_to_be_parsed = File.join( "public/uploads", params[:datafile].original_filename )
+      FileUtils.cp tmp_file.path, filename_to_be_parsed
+                                                    # === CASE ELSE: Error. Form not-fully completed.
+    else
+      flash[:info] = I18n.t( 'admin_import.nothing_to_do_upload_something' )
+      redirect_to( goggles_di_step1_status_path() ) and return
+    end
+
+                                                    # === (Re-)Launch phase_1_parse if we can/must do it:
+    if filename_to_be_parsed || ( @data_import_session && (@data_import_session.phase.to_i < 12) )
+      force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
+      force_missing_team_creation    = (params[:force_team_creation] == 'true')    || (params[:force_team_creation].to_i > 0)
+      filename_to_be_parsed          = @data_import_session.file_name if filename_to_be_parsed.nil? && @data_import_session
+                                                    # Create a new data-import session to consume the datafile:
+      data_importer = DataImporter.new( logger, flash, @data_import_session )
+      data_importer.set_up(
+        full_pathname:                  filename_to_be_parsed,
+        force_missing_meeting_creation: force_missing_meeting_creation,
+        force_missing_team_creation:    force_missing_team_creation,
+        # do_not_consume_file:           false, # (default)
+        current_admin_id:               current_admin.id
+      )
+
+      phase_1_digest( data_importer )               # -- PHASE 1.0:
+      phase_1_2_serialize( data_importer )          # -- PHASE 1.2:
+# DEBUG
+#      logger.debug("\r\nAFTER PHASE 1.2\r\n- data_import_session: #{@data_import_session.id}")
+#      logger.debug("\r\n- data_importer.data_import_session: #{data_importer.data_import_session.id}")
+      if data_importer.has_team_analysis_results
+        flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
+        redirect_to(
+            goggles_di_step1_1_analysis_path(
+                id:                     data_importer.data_import_session.id,
+                force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
+                force_team_creation:    force_missing_team_creation    ? '1' : nil
+            )
+        ) and return
+      end
+    end
+                                                    # -- CHECK OUTCOME: something went awfully wrong? Redirect:
+    redirect_to( goggles_di_step1_status_path() ) and return unless @data_import_session
+                                                    # Compute the filtering parameters:
+    ap = AppParameter.get_parameter_row_for( :data_import )
+    @max_view_height    = ap.get_view_height()
+    if @data_import_session.season
+      @season_description = @data_import_session.season.description
+    elsif @data_import_session.data_import_season
+      @season_description = @data_import_session.data_import_season.description
+    else
+      @season_description = '?'
     end
   end
   #-- -------------------------------------------------------------------------

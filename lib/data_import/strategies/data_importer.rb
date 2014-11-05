@@ -150,7 +150,7 @@ class DataImporter
   def to_logfile( log_contents, header_text = nil, footer_text = nil, extension = get_log_extension() )
     log_basename = get_log_basename()
     if log_contents.size > 0
-      File.open( log_basename + extension, 'a' ) do |f|
+      File.open( log_basename + extension, 'w' ) do |f|
         f.puts header_text if header_text
         f.puts log_contents
         f.puts footer_text if footer_text
@@ -419,7 +419,9 @@ class DataImporter
     @data_import_session.season_id              = @season.instance_of?( Season ) ? @season.id : nil
     @data_import_session.phase                  = 10      # Update "last completed phase" indicator in session (10 = 1.0)
     @data_import_session.phase_3_log            = '1'
-    @data_import_session.save ? @data_import_session : nil
+    result = @data_import_session.save ? @data_import_session : nil
+    update_logs( "\r\nPHASE #1.0 END, returning #{ result ? '(current session)' : 'NIL'}." )
+    result
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -596,6 +598,7 @@ class DataImporter
     end
                                                     # Update the global log with the whole phase 1 log
     @import_log = "--------------------[Phase #1 - DIGEST/SERIALIZE]--------------------\r\n#{ @data_import_session.phase_1_log }"
+    update_logs( "\r\nPHASE #1.2 END, returning #{ is_ok ? '(current session)' : 'NIL'}." )
     is_ok ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------

@@ -5,7 +5,7 @@
 
 = SqlConverter
 
-  - Goggles framework vers.:  4.00.573
+  - Goggles framework vers.:  4.00.599
   - author: Steve A.
 
   Container module for methods or strategies to obtain complete SQL statements from
@@ -17,9 +17,10 @@ module SqlConverter
   # Re-creates an SQL INSERT statement using the attributes of the record instance specified.
   # (It assumes record.kind_of?(ActiveRecord::Base) is +true+).
   #
-  def to_sql_insert( record )
+  def to_sql_insert( record, with_comment = true )
     con = record.connection
-    sql_text = "#{ get_sql_comment(record) }INSERT INTO #{ con.quote_column_name( record.class.table_name ) } "
+    sql_text = with_comment ? get_sql_comment(record) : ''
+    sql_text << "INSERT INTO #{ con.quote_column_name( record.class.table_name ) } "
     columns = []
     values  = []
     record.attributes
@@ -36,9 +37,10 @@ module SqlConverter
   # Re-creates an SQL UPDATE statement using the attributes of the record instance specified.
   # (It assumes record.kind_of?(ActiveRecord::Base) is +true+).
   #
-  def to_sql_update( record )
+  def to_sql_update( record, with_comment = true )
     con = record.connection
-    sql_text = "#{ get_sql_comment(record) }UPDATE #{ con.quote_column_name( record.class.table_name ) }\r\n"
+    sql_text = with_comment ? get_sql_comment(record) : ''
+    sql_text << "UPDATE #{ con.quote_column_name( record.class.table_name ) }\r\n"
     sets = []
     record.attributes
       .reject{ |key| key == 'id' || key == 'lock_version' }
@@ -54,9 +56,10 @@ module SqlConverter
   # Re-creates an SQL DELETE statement using the attributes of the record instance specified.
   # (It assumes record.kind_of?(ActiveRecord::Base) is +true+).
   #
-  def to_sql_delete( record )
+  def to_sql_delete( record, with_comment = true )
     con = record.connection
-    sql_text = "#{ get_sql_comment(record) }DELETE FROM #{ con.quote_column_name( record.class.table_name ) } "
+    sql_text = with_comment ? get_sql_comment(record) : ''
+    sql_text << "DELETE FROM #{ con.quote_column_name( record.class.table_name ) } "
     columns = []
     values  = []
     sql_text << "WHERE (#{ con.quote_column_name('id') }=#{ record.id });\r\n\r\n"

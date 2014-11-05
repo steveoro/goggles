@@ -344,7 +344,7 @@ describe DataImporter, type: :strategy do
       #-- ---------------------------------------------------------------------
       #++
 
-      context "after a successful completion, w/ force meeting & team creation DISABLED," do
+      context "after a successful completion, w/ force meeting & team creation DISABLED (Team-Analysis required)," do
         before( :all ) do
           file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
           @phase_1_session = create(
@@ -369,12 +369,9 @@ describe DataImporter, type: :strategy do
           @phase_1_subject.destroy_data_import_session
         end
 
-# FIXME IT FAILS:
-        xit "returns the current (updated) #data_import_session" do
-          expect( @result ).to be_an_instance_of( DataImportSession )
-          expect( @result.id ).to eq( @phase_1_session.id )
+        it "returns nil" do
+          expect( @result ).to be nil
         end
-
         it "has team analysis results" do
           expect( @phase_1_subject.has_team_analysis_results ).to be true
         end
@@ -510,6 +507,12 @@ describe DataImporter, type: :strategy do
       #
       # => We'll use dedicated integration tests instead, with transactional
       #    storage of the resulting rows.
+
+      # [Steve, 20141105, update] We keep full tests separated tagged as integration for
+      # performance reasons, although situation has changed (different factories).
+      # (Currently, transactional results tests can be achieved simply by putting all
+      #  serialized changes inside blocks. These will be rolled back automagically
+      #  by FactoryGirl at the end of each RSpec example.)
     end
     #-- -----------------------------------------------------------------------
     #++
