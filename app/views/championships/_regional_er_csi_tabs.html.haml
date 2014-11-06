@@ -2,9 +2,14 @@
   - is_active = ( params[:action] == 'calendar_regional_er_csi' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('championships.calendar'), is_active ? '#' : championships_calendar_regional_er_csi_path( id: @season.id ))
-  - is_active = ( params[:action] == 'ranking_regional_er_csi' )
-  %li{ class: is_active ? 'active' : '' }
-    = link_to( t('championships.team_ranking'), is_active ? '#' : championships_ranking_regional_er_csi_path( id: @season.id ))
+  - if @season.meeting_individual_results.count > 0
+    - is_active = ( params[:action] == 'ranking_regional_er_csi' )
+    %li{ class: is_active ? 'active' : '' }
+      = link_to( t('championships.team_ranking'), is_active ? '#' : championships_ranking_regional_er_csi_path( id: @season.id ))
+  - if @season.rules
+    - is_active = ( params[:action] == 'rules_regional_er_csi' )
+    %li{ class: is_active ? 'active' : '' }
+      = link_to( t('championships.rules'), is_active ? '#' : championships_rules_regional_er_csi_path( id: @season.id ))
   - is_active = ( params[:action] == 'history_regional_er_csi' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('championships.history'), is_active ? '#' : championships_history_regional_er_csi_path( id: @season.id ))

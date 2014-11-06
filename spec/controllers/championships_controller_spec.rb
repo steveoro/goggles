@@ -52,8 +52,20 @@ describe ChampionshipsController, :type => :controller do
   # ===========================================================================
 
 
+  describe '[GET #calendar_supermaster_fin]' do
+    it_behaves_like( "(GET http action with or without parameters)", :calendar_supermaster_fin, 132 )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe '[GET #ranking_supermaster_fin]' do
     it_behaves_like( "(GET http action with or without parameters)", :ranking_supermaster_fin, 132 )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe '[GET #rules_supermaster_fin]' do
+    it_behaves_like( "(GET http action with or without parameters)", :rules_supermaster_fin, 132 )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -64,8 +76,20 @@ describe ChampionshipsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #calendar_supermaster_fin]' do
-    it_behaves_like( "(GET http action with or without parameters)", :calendar_supermaster_fin, 132 )
+
+  describe '[GET #calendar_regional_er_csi]' do
+    it_behaves_like( "(GET http action with or without parameters)", :calendar_regional_er_csi, 131 )
+
+    it "assigns the required variables when invoked without parameters" do
+      get :calendar_regional_er_csi
+      expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
+      expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
+    end
+    it "assigns the required variables when invoked with valid id" do
+      get :calendar_regional_er_csi, id: 131
+      expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
+      expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -85,6 +109,12 @@ describe ChampionshipsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe '[GET #rules_regional_er_csi]' do
+    it_behaves_like( "(GET http action with or without parameters)", :rules_regional_er_csi, 141 )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe '[GET #history_regional_er_csi]' do
     it_behaves_like( "(GET http action with or without parameters)", :history_regional_er_csi, 131 )
 
@@ -97,23 +127,6 @@ describe ChampionshipsController, :type => :controller do
       get :history_regional_er_csi, id: 131
       expect( assigns(:championship_history_manager) ).to be_an_instance_of( Array )
       expect( assigns(:seasons_hall_of_fame) ).to be_an_instance_of( Array )
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  describe '[GET #calendar_regional_er_csi]' do
-    it_behaves_like( "(GET http action with or without parameters)", :calendar_regional_er_csi, 131 )
-
-    it "assigns the required variables when invoked without parameters" do
-      get :calendar_regional_er_csi
-      expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
-      expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
-    end
-    it "assigns the required variables when invoked with valid id" do
-      get :calendar_regional_er_csi, id: 131
-      expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
-      expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
     end
   end
   #-- -------------------------------------------------------------------------

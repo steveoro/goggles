@@ -12,19 +12,8 @@ require 'common/format'
 =end
 class ChampionshipsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_parameter_regional_er_csi, except: [:ranking_supermaster_fin, :calendar_supermaster_fin, :history_supermaster_fin]
-  before_filter :verify_parameter_supermaster_fin, except: [:ranking_regional_er_csi, :calendar_regional_er_csi, :history_regional_er_csi]
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # CSI Regional Emilia Romagna championship ranking data display manager
-  #
-  def ranking_regional_er_csi
-    @title = I18n.t('championships.team_ranking') + ' ' + @season.get_full_name
-
-    championship_calculator = ChampionshipRankingCalculator.new( @season )
-    @championship_ranking = championship_calculator.get_season_ranking 
-  end
+  before_filter :verify_parameter_regional_er_csi, except: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
+  before_filter :verify_parameter_supermaster_fin, except: [:ranking_regional_er_csi, :calendar_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -42,6 +31,25 @@ class ChampionshipsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # CSI Regional Emilia Romagna championship ranking data display manager
+  #
+  def ranking_regional_er_csi
+    @title = I18n.t('championships.team_ranking') + ' ' + @season.get_full_name
+
+    championship_calculator = ChampionshipRankingCalculator.new( @season )
+    @championship_ranking = championship_calculator.get_season_ranking 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Season rules viewer for a given regonal er CSI season
+  #
+  def rules_regional_er_csi
+    @title = I18n.t('championships.rules') + ' ' + @season.get_full_name
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Past seasons championships ranking data display manager
   # for CSI regional ER championships (closed seasons)
   #
@@ -53,6 +61,15 @@ class ChampionshipsController < ApplicationController
     @seasons_hall_of_fame = championship_history_manager.get_season_hall_of_fame
   end
 
+
+  # Season calendar for a given supermaster season
+  #
+  def calendar_supermaster_fin
+    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name     
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Supermaster FIN championship ranking data display manager
   #
   def ranking_supermaster_fin
@@ -61,10 +78,10 @@ class ChampionshipsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
-  # Season calendar for a given supermaster season
+  # Supermaster FIN championship rules viewer
   #
-  def calendar_supermaster_fin
-    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name     
+  def rules_supermaster_fin
+    @title = @season.get_full_name
   end
   #-- -------------------------------------------------------------------------
   #++
