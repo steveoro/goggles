@@ -360,9 +360,9 @@ class DataImportEntityBuilder
         # "secondary" one, but the actual serialization destination for the attributes
         # (During phase-2, this may happen only for meeting_events, time_standards
         #  and data_import_team_aliases):
-        if (secondary_entity.name == 'data_import_team_aliases') ||
-           (secondary_entity.name =~ /data_import_/ ).nil?
-          @data_import_session.sql_diff << to_sql_insert( @result_row )
+        if (secondary_entity.name == 'DataImportTeamAlias') ||
+           (secondary_entity.name =~ /DataImport/ ).nil?
+          @data_import_session.sql_diff << to_sql_insert( @result_row, false ) # (No user comment)
         end
         @data_import_session.total_data_rows += 1
       else

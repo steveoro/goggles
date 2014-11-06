@@ -87,24 +87,29 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           actual_team_result = @result_row
 # DEBUG
 #          puts "actual_team_result: #{actual_team_result.inspect}"
-          # It should never happen that: (Team missing && TeamAffiliation found).
-          # In that case, we would have to search again for an existing TeamAffiliation
-          #  to make sure that the add_new below does not create duplicates. Like this:
-          #
-          #    search_for( TeamAffiliation, team_id: actual_team_result.id, season_id: season.id )
-          #
-          # ...And wrap the add_new below in a if_not_found block.
-          entity_for_creation TeamAffiliation
-          attributes_for_creation(
-            name:                       team_name,  # Use the actual provided (and searched) name instead of the result_row.name
-            team_id:                    actual_team_result.id,
-            season_id:                  season.id,
-            is_autofilled:              true,       # signal that we have guessed some of the values
-            must_calculate_goggle_cup:  false,
-            user_id:                    1           # (don't care)
-            # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
-          )
-          add_new                                   # this will reset the result_row, so we restore it by hand
+          # ASSERT: It should never happen that: (Team missing && TeamAffiliation found).
+
+          # Check the remote case in which we could have found a Team without its
+          # associated TeamAffiliation (it may happen for freshly created teams).
+          # To avoid mysql to complain about duplicate insertions, we test before
+          # the add if the TeamAffiliation is really missing (which is almost never
+          # the case when the Team has been found by the searches above).
+          search_for( TeamAffiliation, team_id: actual_team_result.id, season_id: season.id )
+          if_not_found do
+            entity_for_creation TeamAffiliation
+            attributes_for_creation(
+              name:                       team_name,# Use the actual provided (and searched) name instead of the result_row.name
+              team_id:                    actual_team_result.id,
+              season_id:                  season.id,
+              is_autofilled:              true,     # signal that we have guessed some of the values
+              must_calculate_goggle_cup:  false,
+              user_id:                    1         # (don't care)
+              # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
+            )
+            add_new
+          end
+          # We need to restore the result_row, in case the above procedure has changed the
+          # result value:
           set_result actual_team_result
         end
       end
@@ -146,9 +151,12 @@ class DataImportTeamBuilder < DataImportEntityBuilder
 # DEBUG
 #            puts "Team analysis saved."
 # FIXME
-#            data_import_session.phase_1_log << "#{ @team_analysis_log }\r\n"
-#            data_import_session.sql_diff    << "#{ @sql_executable_log }\r\n"
-#            data_import_session.save!
+            data_import_session.reload              # Make sure we are synch'ed with the DB
+            data_import_session.phase_1_log ||= ''
+            data_import_session.sql_diff    ||= ''
+            data_import_session.phase_1_log << "#{ @team_analysis_log }\r\n"
+            data_import_session.sql_diff    << "#{ @sql_executable_log }\r\n"
+            data_import_session.save!
           end
           # Result not found w/o Team creation => Do a manual review of the analysis data.
         end

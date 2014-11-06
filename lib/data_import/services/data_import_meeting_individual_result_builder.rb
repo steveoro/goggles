@@ -54,7 +54,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         swimmer_name  = detail_row[:fields][:swimmer_name]
         swimmer_year  = detail_row[:fields][:swimmer_year]
         team_name     = detail_row[:fields][:team_name]
-        athlete_badge = detail_row[:fields][:team_code]
+        athlete_badge = detail_row[:fields][:team_code] || '?' # (Make sure the badge is never nil)
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            team_name,

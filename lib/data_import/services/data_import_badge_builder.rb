@@ -7,7 +7,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportCityBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.601
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -34,9 +34,11 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
       entity      Badge
 
       set_up do
-        set_result( nil ) and return if badge_code.nil? || badge_code.size < 2
+        set_result( nil ) and return if badge_code.nil? || badge_code.size < 1
       end
 
+      # Do the search only if the badge code is not the placeholder for an unknown
+      # badge number ('?'). In that case, we have to add a new badge anyway.
       search do
         primary   [
           "(season_id = ?) AND (number = ?)", season.id, badge_code
@@ -49,7 +51,7 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "primary_search_ok!" if primary_search_ok?
 #        puts "secondary_search_ok!" if secondary_search_ok?
-      end
+      end if badge_code != '?'
 
       if_not_found do
 # DEBUG

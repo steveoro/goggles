@@ -9,7 +9,7 @@ require 'data_import/strategies/team_analysis_result_processor'
 
 = AdminImportController
 
-  - version:  4.00.585
+  - version:  4.00.601
   - author:   Steve A.
 
 =end
@@ -101,9 +101,9 @@ class AdminImportController < ApplicationController
     # params[:alias_ids] => { analysis_result.id.to_s => overridden_alias_team_id.to_s, ... }
     overridden_alias_actions = params[:alias_ids] if params[:alias_ids].instance_of?(Hash)
 # DEBUG
-    logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
-    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
-    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}"
+#    logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
+#    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
+#    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}"
 
     data_import_session = DataImportSession.find( data_import_session_id )
     data_importer       = DataImporter.new( logger, flash, data_import_session )
@@ -121,15 +121,20 @@ class AdminImportController < ApplicationController
                                                     # Execute the suggested actions:
       is_ok = result_processor.run( team_analysis_result, is_confirmed, team_alias_override_id )
     end
-    data_importer.write_analysis_logfile( is_ok )   # Write the log files anyway
+                                                    # Write the log files anyway:
+    data_importer.write_import_logfile
+    data_importer.write_analysis_logfile( is_ok )
+    data_importer.write_sql_diff_logfile
 # DEBUG
-    logger.debug("\r\n- is_ok: #{is_ok}, data_import_session_id: #{data_import_session_id}")
+#    logger.debug("\r\n- is_ok: #{is_ok}, data_import_session_id: #{data_import_session_id}")
                                                     # Redirect to next action accordingly:
     if is_ok
       flash[:info] = I18n.t('admin_import.team_analysis_completed')
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
         data_importer.destroy_data_import_session
       else                                          # Clear just the results from the session if everything is ok:
+        data_import_session.phase = 11              # Update "last completed phase" indicator in session (11 = 1.1)
+        data_import_session.save!
         DataImportTeamAnalysisResult.delete_all( data_import_session_id: data_import_session_id )
         redirect_to(
           goggles_di_step2_checkout_path(
@@ -223,9 +228,10 @@ class AdminImportController < ApplicationController
         # do_not_consume_file:           false, # (default)
         current_admin_id:               current_admin.id
       )
-
-      phase_1_digest( data_importer )               # -- PHASE 1.0:
-      phase_1_2_serialize( data_importer )          # -- PHASE 1.2:
+                                                    # -- PHASE 1.0:
+      data_importer.phase_1_parse
+                                                    # -- PHASE 1.2:
+      @data_import_session = data_importer.phase_1_2_serialize
 # DEBUG
 #      logger.debug("\r\nAFTER PHASE 1.2\r\n- data_import_session: #{@data_import_session.id}")
 #      logger.debug("\r\n- data_importer.data_import_session: #{data_importer.data_import_session.id}")
@@ -242,6 +248,7 @@ class AdminImportController < ApplicationController
     end
                                                     # -- CHECK OUTCOME: something went awfully wrong? Redirect:
     redirect_to( goggles_di_step1_status_path() ) and return unless @data_import_session
+                                                    # -- PHASE 2.0 (MANUAL REVIEW) BEGIN:
                                                     # Compute the filtering parameters:
     ap = AppParameter.get_parameter_row_for( :data_import )
     @max_view_height    = ap.get_view_height()
@@ -288,45 +295,11 @@ class AdminImportController < ApplicationController
     logger.debug("\r\n- data_import_session: #{data_import_session.inspect}")
 
     data_importer = DataImporter.new( logger, flash, data_import_session )
+                                                    # -- PHASE 3.0:
     is_ok = data_importer.phase_3_commit()
-    data_importer.write_import_logfile
-    data_importer.write_sql_diff_logfile
 
     redirect_to( goggles_di_step1_status_path() ) and return unless is_ok
     @import_log = data_importer.import_log          # (combined import log)
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  private
-
-
-  # Invokes the Phase #1 "digest" (parse) and logs the results.
-  # Raises an ArgumentError if +data_importer+ is not an instance of DataImporter.
-  #
-  def phase_1_digest( data_importer )
-    raise ArgumentError.new("an instance of DataImporter is required!") unless data_importer.instance_of?( DataImporter )
-    # Store the outcome in the local reference of the session:
-    @data_import_session = data_importer.phase_1_parse
-    is_ok = ! @data_import_session.nil?
-    data_importer.write_import_logfile
-    data_importer.write_analysis_logfile( is_ok )
-    data_importer.write_sql_diff_logfile
-  end
-
-
-  # Invokes the Phase #1.2 "serialize" (store temp data) and logs the results.
-  # Raises an ArgumentError if +data_importer+ is not an instance of DataImporter.
-  #
-  def phase_1_2_serialize( data_importer )
-    raise ArgumentError.new("an instance of DataImporter is required!") unless data_importer.instance_of?( DataImporter )
-    # Store the outcome in the local reference of the session:
-    @data_import_session = data_importer.phase_1_2_serialize
-    is_ok = ! @data_import_session.nil?
-    data_importer.write_import_logfile
-    data_importer.write_analysis_logfile( is_ok )
-    data_importer.write_sql_diff_logfile
   end
   #-- -------------------------------------------------------------------------
   #++

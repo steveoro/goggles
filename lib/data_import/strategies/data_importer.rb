@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.597
+  - Goggles framework vers.:  4.00.601
   - author: Steve A.
 
   Data-Import strategy class.
@@ -166,7 +166,7 @@ class DataImporter
       @import_log,
       flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
       nil, # (no additional footer)
-      '.log'
+      '.%02d.log' % get_last_completed_phase,
     )
   end
 
@@ -197,8 +197,8 @@ class DataImporter
     to_logfile(
       @data_import_session ? @data_import_session.sql_diff : '',
       "-- *** SQL Diff file for #{ File.basename(@full_pathname) } ***\r\n-- Timestamp: #{ get_iso_timestamp }\r\n",
-      "\r\n\r\n-- Last completed phase code: %02d" % get_last_completed_phase,
-      ".diff.sql"
+      "\r\n-- Last completed phase code: %02d" % get_last_completed_phase,
+      ".%02d.diff.sql" % get_last_completed_phase,
     )
   end
   #-- -------------------------------------------------------------------------
@@ -225,30 +225,32 @@ class DataImporter
   # If the internal +season+ member is not defined, it will be deduced from
   # the current pathname of the file.
   #
-  # With the delayed_job gem, use:
+  # With the delayed_job gem, (typically, inside a rake task) use:
   #
-  #        data_importer.delay( queue: 'data-import' ).perform()
+  #     data_importer = DataImporter.new( logger, flash )
+  #     data_importer.set_up(
+  #       full_pathname:                  filename_to_be_parsed,
+  #       force_missing_meeting_creation: force_missing_meeting_creation,
+  #       force_missing_team_creation:    force_missing_team_creation,
+  #       # do_not_consume_file:           false, # (default)
+  #       current_admin_id:               current_admin.id
+  #     )
+  #     data_importer.delay( queue: 'data-import' ).perform()
   #
   # ...To add this to the delayed_job queue on the database.
   #
   def perform()
-    full_log_filename = get_log_basename() +'.log'
-    data_import_session = phase_1_parse()
+    full_log_filename = get_log_basename() + get_log_extension()
+    phase_1_parse()
+    data_import_session = phase_1_2_serialize
+    write_import_logfile
     if data_import_session
-      is_ok = commit(
-        data_import_session,
-        !@do_not_consume_file                       # Remove left-over files?
-      )
-
-      unless is_ok                                  # Report error on commit phase
-        to_logfile( @import_log, nil, nil, '.perform.log' )
-        raise "Error during COMMIT phase! Check the log file: '#{full_log_filename}'."
-      end
-    else                                            # Report error on digest phase
-        to_logfile( @import_log, nil, nil, '.perform.log' )
-        raise "Error during DIGEST phase! Check the log file: '#{full_log_filename}'."
+      is_ok = phase_3_commit()
+      raise "Error during COMMIT phase! Check the log file: '#{full_log_filename}'." unless is_ok
+    else
+      raise "Error during SERIALIZE phase! Check the log file: '#{full_log_filename}'."
     end
-    to_logfile( @import_log, nil, nil, '.perform.log' )
+    write_import_logfile
     if FileTest.exists?( full_log_filename )
       @logger.info( "-- perform(): renaming log file as '.ok'..." ) if @logger
       File.rename( full_log_filename, full_log_filename+'.ok' )
@@ -353,7 +355,7 @@ class DataImporter
     return nil unless @data_import_session.instance_of?( DataImportSession )
 
     @data_import_session.phase_1_log ||= ''         # Init phase log
-    update_logs( "\r\n-- DataImporter.phase_1_parse() start..." )
+    update_logs( "--------------------[Phase #1.0 - PARSE]--------------------" )
     update_logs( "Parsing file: #{@full_pathname}, force_missing_meeting_creation=#{@force_missing_meeting_creation}, force_missing_team_creation=#{@force_missing_team_creation}, do_not_consume_file=#{@do_not_consume_file}.\r\n" )
     header_fields_dao_init_from_filename()          # Make sure #header_fields_dao is defined
                                                     # Check if it's a "continuation session":
@@ -418,9 +420,11 @@ class DataImporter
     @data_import_session.data_import_season_id  = @season.instance_of?( DataImportSeason ) ? @season.id : nil
     @data_import_session.season_id              = @season.instance_of?( Season ) ? @season.id : nil
     @data_import_session.phase                  = 10      # Update "last completed phase" indicator in session (10 = 1.0)
-    @data_import_session.phase_3_log            = '1'
+    @data_import_session.phase_3_log            = 'PHASE 1.0 PARSE'
     result = @data_import_session.save ? @data_import_session : nil
     update_logs( "\r\nPHASE #1.0 END, returning #{ result ? '(current session)' : 'NIL'}." )
+                                                    # Rewrite the logs & return the result:
+    write_import_logfile
     result
   end
   #-- -------------------------------------------------------------------------
@@ -445,10 +449,11 @@ class DataImporter
   def phase_1_2_serialize()
     return nil unless @data_import_session.instance_of?( DataImportSession ) &&
                       @result_hash.instance_of?(Hash) &&
-                      ( @data_import_session.phase == 10 )
+                      @data_import_session.phase >= 10 && @data_import_session.phase < 12
                                                     # Create just one header row for each one of Meeting/Meeting Session entities:
     season_starting_year = 0                        # This is needed by the individual results
     meeting_header_row = meeting_dates = scheduled_date = nil
+    update_logs( "\r\n\r\n--------------------[Phase #1.2 - DIGEST/SERIALIZE]--------------------" )
     update_logs( "Parsing of '#{full_pathname}' done.\r\nDigesting data...", :debug )
                                                     # -- MEETING HEADER digest --
     if @season
@@ -597,8 +602,10 @@ class DataImporter
       )
     end
                                                     # Update the global log with the whole phase 1 log
-    @import_log = "--------------------[Phase #1 - DIGEST/SERIALIZE]--------------------\r\n#{ @data_import_session.phase_1_log }"
     update_logs( "\r\nPHASE #1.2 END, returning #{ is_ok ? '(current session)' : 'NIL'}." )
+                                                    # Rewrite the logs & return the result:
+    write_import_logfile
+    write_sql_diff_logfile
     is_ok ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------
@@ -619,7 +626,8 @@ class DataImporter
                                                     # Check season integrity
     @flash[:info] = I18n.t(:season_not_saved_in_session, { scope: [:admin_import] }) and return false unless @season
 
-    @logger.info( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ @season.id }..." ) if @logger
+    update_logs( "\r\n\r\n--------------------[Phase #3 - COMMIT]--------------------" )
+    update_logs( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ @season.id }..." )
     @data_import_session.phase_2_log ||= "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{@season.id}...\r\n"
     @committed_data_rows = 0
                                                     # Bail out as soon as something is wrong:
@@ -633,24 +641,28 @@ class DataImporter
     is_ok = commit_data_import_meeting_individual_results( @data_import_session ) if is_ok
     is_ok = commit_data_import_meeting_relay_results( @data_import_session ) if is_ok
     is_ok = commit_data_import_meeting_team_score( @data_import_session ) if is_ok
+    @data_import_session.phase = 30                 # (30 = '3.0', but without successful ending, since the session in not nil)
+    @data_import_session.save!
 
     if ( is_ok )
-      @import_log << "\r\n\r\n--------------------[Phase #3 - COMMIT]--------------------\r\n\r\n" +
-                     @data_import_session.phase_2_log.to_s +
-                     "data-import PHASE #2 & #3 DONE.\r\n" +
-                     "\r\nTotal committed rows: #{ @committed_data_rows }\r\n" +
-                     "Data-import session destroyed successfully.\r\n" +
-                     "===========================================================\r\n"
-      destroy_data_import_session()
+      update_logs(
+        "data-import PHASE #2 & #3 DONE.\r\n\r\nTotal committed rows: #{ @committed_data_rows }\r\n" <<
+        "Data-import session destroyed successfully.\r\n" <<
+        "===========================================================\r\n"
+      )
     else                                            # Store data_import_session.phase_2_log if something goes awry:
-      if $! && @logger
-        @logger.error( "\r\n*** #{ data_import_session.phase_3_log }: exception caught during save!" )
-        @logger.error( "*** #{ $!.to_s }\r\n" )
+      if $!
+        update_logs(
+          "\r\n*** #{ data_import_session.phase_3_log }: exception caught during save!\r\n*** #{ $!.to_s }\r\n",
+          :error
+        )
       end
       @flash[:error] = "#{ I18n.t(:something_went_wrong) } [#{ data_import_session.phase_3_log }]" + ( $! ? ": '#{ $!.to_s }'" : '' )
-      @data_import_session.phase = 30               # (30 = '3.0', but without successful ending, since the session in not nil)
-      @data_import_session.save!
     end
+                                                    # Rewrite the logs & return the result:
+    write_import_logfile
+    write_sql_diff_logfile
+    destroy_data_import_session() if is_ok
     is_ok
   end
   #-- -------------------------------------------------------------------------
@@ -675,7 +687,7 @@ class DataImporter
       season_id:        season_id,
       phase_1_log:      '',
       phase_2_log:      '',
-      phase_3_log:      '0',                        # Let's use phase_3_log column to update the "current progress" (computed as "curr. data header"/"tot. data headers")
+      phase_3_log:      '',
       sql_diff:         '',                         # Actual SQL-diff resulting from the whole data-import procedure
       user_id:          current_admin_id
     )
@@ -726,6 +738,7 @@ class DataImporter
     @logger.send( method, msg ) if @logger
     @data_import_session.phase_1_log << (msg + "\r\n")
     @data_import_session.save! if with_save
+    @import_log = "#{@data_import_session.phase_1_log}\r\n#{@data_import_session.phase_2_log}\r\n"
   end
   #-- -------------------------------------------------------------------------
   #++
