@@ -27,6 +27,13 @@ class ChampionshipsController < ApplicationController
     @season.meetings.sort_by_date.each do |meeting|
       @season_meetings_calendar << CalendarDAO.new( meeting )
     end
+    
+    # TODO Maybe add a schema with events by meeting
+    #          50SL 100SL 200SL 400SL 800SL 50FA...
+    # 1a prova  X                 X
+    # 2a prova        X     X
+    # 3a prova                                X
+    # ...
   end
   #-- -------------------------------------------------------------------------
   #++
