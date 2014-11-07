@@ -67,13 +67,13 @@ class EventType < ActiveRecord::Base
 
 
   # Given a localized text description from an imported text plus other key
-  # parameters, returns the corresponding RelayType.id; 0 when unable to parse.
+  # parameters, returns the corresponding RelayType or +nil+ when unable to parse.
   #
-  def self.parse_event_type_from_import_text( stroke_type_id, type_text, phase_length_in_meters )
+  def self.parse_relay_event_type_from_import_text( stroke_type_id, type_text, phase_length_in_meters )
     is_mixed_gender = ( type_text =~ /mistaff/ui ? 1 : 0 )
                                                     # NOTE: assuming type_text has a format like => "mistaffetta NxLLL farf"
     idx = type_text =~ /\dx\d{2,3}\s/ui
-    raise "EventType.parse_event_type_from_import_text(): unsupported type_text parameter format!" if idx.nil?
+    raise "EventType.parse_relay_event_type_from_import_text(): unsupported type_text parameter format!" if idx.nil?
     phases = type_text[ idx ].to_i
 
     relay_type = EventType.where(
@@ -83,7 +83,7 @@ class EventType < ActiveRecord::Base
         stroke_type_id, is_mixed_gender, phases, phase_length_in_meters
       ]
     ).first
-    relay_type ? relay_type.id : 0
+    relay_type
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -42,7 +42,7 @@ describe DataImportMeetingProgramBuilder, type: :integration do
   end
   let(:header_row) do
     {
-      import_text: Faker::Lorem.paragraph,
+      import_text: Faker::Lorem.paragraph[0..99],
       fields: {
         distance:       length_in_meters.to_s,
         style:          stroke_type.code,
@@ -96,9 +96,15 @@ describe DataImportMeetingProgramBuilder, type: :integration do
     end
     describe "#result_id" do
       it "returns a positive ID when the resulting row is a data-import entity" do
+# DEBUG
+#        puts "\r\n- subject.result_id: #{subject.result_id.inspect}"
+#        puts "- subject.result_row: #{subject.result_row.inspect}"
         expect( subject.result_id ).to be > 0
       end
       it "is the ID of the resulting row" do
+# DEBUG
+#        puts "\r\n- subject.result_id: #{subject.result_id.inspect}"
+#        puts "- subject.result_row: #{subject.result_row.inspect}"
         expect( subject.result_id ).to eq( subject.result_row.id )
       end
     end

@@ -10,7 +10,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.585
+  - Goggles framework vers.:  4.00.603
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -63,7 +63,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 
       set_up do
         # NOTE:
-        # header_row[:fields] => [ :distance, :style, :gender, :category_group, :base_time ]
+        # header_row[:fields] => [ :type, :distance, :style, :gender, :category_group, :base_time ]
         @import_text = header_row[:import_text]
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
@@ -86,22 +86,6 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts( "begin_time: #{@begin_time}" )
 #        @phase_1_log << "begin_time=#{@begin_time}\r\n"
-#        puts( "Searching EventType where length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type.id}, is_a_relay: #{category_type.is_a_relay}..." )
-        @event_type  = EventType.where(
-          length_in_meters: length_in_meters,
-          stroke_type_id:   stroke_type.id,
-          is_a_relay:       category_type.is_a_relay
-        ).first
-        raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
-# DEBUG
-#        puts( "@event_type => #{@event_type.inspect}" )
-
-        # Find the parent MeetingEvent using the meeting_session:
-        @meeting_event = MeetingEvent.where(
-          [ "(meeting_session_id = ?) AND (event_type_id = ?)", meeting_session.id, @event_type.id ]
-        ).first if meeting_session.instance_of?(MeetingSession)
-# DEBUG
-#        puts( "@meeting_event =>#{@meeting_event.inspect}" )
         # Get the pool type:
         @pool_type_id = ( meeting_session.swimming_pool ?
           meeting_session.swimming_pool.pool_type_id :
@@ -109,6 +93,30 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         )
 # DEBUG
 #        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
+#        puts( "Searching EventType where length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type.id}, is_a_relay: #{category_type.is_a_relay}..." )
+        if category_type.is_a_relay
+          @event_type  = EventType.parse_relay_event_type_from_import_text(
+            stroke_type.id,
+            header_row[:fields][:type],
+            length_in_meters
+          )
+        else
+          @event_type  = EventType.where(
+            length_in_meters: length_in_meters,
+            stroke_type_id:   stroke_type.id,
+            is_a_relay:       false
+          ).first
+        end
+# DEBUG
+#        puts( "@event_type => #{@event_type.inspect}" )
+        raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
+
+        # Find the parent MeetingEvent using the meeting_session:
+        @meeting_event = MeetingEvent.where(
+          [ "(meeting_session_id = ?) AND (event_type_id = ?)", meeting_session.id, @event_type.id ]
+        ).first if meeting_session.instance_of?(MeetingSession)
+# DEBUG
+#        puts( "@meeting_event =>#{@meeting_event.inspect}" )
         # Define also the base time or standard time, if any:
         @time_standard = DataImportTimeStandardBuilder.build_from_parameters(
           data_import_session,
@@ -129,7 +137,6 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
       search do
 # DEBUG
 #        puts( "Seeking existing MeetingProgram..." )
-#        @phase_1_log << "Seeking existing MeetingProgram...\r\n"
         primary     [
           "(meeting_event_id = ?) AND (category_type_id = ?) AND (gender_type_id = ?)",
           ( @meeting_event.instance_of?(MeetingEvent) ? @meeting_event.id : 0 ),

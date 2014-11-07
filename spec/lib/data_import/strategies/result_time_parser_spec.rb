@@ -23,7 +23,7 @@ describe ResultTimeParser, type: :strategy do
     let(:valid_disqualify)    { "Squalif." }
     let(:valid_withdrawal)    { "Ritir." }
     let(:valid_out_of_race)   { ["F.G.", "Fuori gara"].at(rand * 10 % 2) }
-    let(:invalid_result)      { Faker::Lorem.paragraph }
+    let(:invalid_result)      { Faker::Lorem.paragraph[0..99] }
 
     subject { ResultTimeParser.new( rank, valid_result_time ) }
 

@@ -46,8 +46,8 @@ describe AgexMailer, :type => :mailer do
 
 
   context "#action_notify_mail()" do
-    let(:action_name)         { "#{Faker::Lorem.paragraph} action" }
-    let(:action_description)  { "#{Faker::Lorem.paragraph} description" }
+    let(:action_name)         { "#{Faker::Lorem.word} action" }
+    let(:action_description)  { "#{Faker::Lorem.word} description" }
     subject                   { AgexMailer.action_notify_mail( user, action_name, action_description ) }
 
     it 'renders the receiver email' do
@@ -86,7 +86,7 @@ describe AgexMailer, :type => :mailer do
     let(:user_involved) { create(:user) }
     let(:entity_name)   { "#{Faker::Lorem.word}EntityName" }
     let(:entity_id)     { ((rand * 100) % 100).to_i + 1 }
-    let(:entity_title)  { "#{Faker::Lorem.paragraph} title" }
+    let(:entity_title)  { "#{Faker::Lorem.word} title" }
     subject             { AgexMailer.report_abuse_mail( user, user_involved, entity_name, entity_id, entity_title ) }
 
     it 'renders the receiver email' do
