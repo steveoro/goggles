@@ -63,6 +63,9 @@ en:
     i18n_short_MX: "MX"
     i18n_description_MX: "MIXED"
     i18n_alternate_MX: "MR"
+    i18n_short_M: "MX"
+    i18n_description_M: "MIXED"
+    i18n_alternate_M: "MR"
 
   presence_types:
     code: "code"

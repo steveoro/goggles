@@ -31,6 +31,8 @@ class DataImporter
 
   attr_reader   :logger, :flash, :data_import_session,
                 :import_log,
+                :team_analysis_log,
+                :sql_executable_log,
                 :header_fields_dao,
                 :result_hash
 
@@ -145,12 +147,15 @@ class DataImporter
   # Generic log-to-file dumper.
   # Stores the text contents specified to a chosen filename (assuming permissions
   # are correctly set for the current #log_dir).
-  # If found, file is overwritten, otherwise is created.
   #
-  def to_logfile( log_contents, header_text = nil, footer_text = nil, extension = get_log_extension() )
+  # If found, file is overwritten, otherwise is created.
+  # Default #write_mode is 'a' (append); use 'w' to overwrite each time.
+  #
+  def to_logfile( log_contents, header_text = nil, footer_text = nil,
+                  extension = get_log_extension(), write_mode = 'a' )
     log_basename = get_log_basename()
     if log_contents.size > 0
-      File.open( log_basename + extension, 'w' ) do |f|
+      File.open( log_basename + extension, write_mode ) do |f|
         f.puts header_text if header_text
         f.puts log_contents
         f.puts footer_text if footer_text
@@ -166,7 +171,7 @@ class DataImporter
       @import_log,
       flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
       nil, # (no additional footer)
-      '.%02d.log' % get_last_completed_phase,
+      get_log_extension
     )
   end
 
@@ -180,7 +185,7 @@ class DataImporter
       @team_analysis_log,
       "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
       nil, # (no footer)
-      is_ok ? '.team.#{get_log_extension}.ok' : '.team.#{get_log_extension}'
+      is_ok ? ".team#{get_log_extension}.ok" : ".team#{get_log_extension}"
     )
     to_logfile(
       @sql_executable_log,
@@ -198,12 +203,17 @@ class DataImporter
       @data_import_session ? @data_import_session.sql_diff : '',
       "-- *** SQL Diff file for #{ File.basename(@full_pathname) } ***\r\n-- Timestamp: #{ get_iso_timestamp }\r\n",
       "\r\n-- Last completed phase code: %02d" % get_last_completed_phase,
-      ".%02d.diff.sql" % get_last_completed_phase,
+      ".%02d.diff.sql" % get_last_completed_phase
     )
   end
   #-- -------------------------------------------------------------------------
   #++
 
+  # Sets the internal log variables, dedicated to store the result of the external phase 1.1.
+  def set_team_analysis_logs( analysis_log, sql_diff_log )
+    @team_analysis_log  = analysis_log
+    @sql_executable_log = sql_diff_log
+  end
 
   # Getter for the total of #committed_data_rows
   def get_committed_data_rows
@@ -243,14 +253,12 @@ class DataImporter
     full_log_filename = get_log_basename() + get_log_extension()
     phase_1_parse()
     data_import_session = phase_1_2_serialize
-    write_import_logfile
     if data_import_session
       is_ok = phase_3_commit()
       raise "Error during COMMIT phase! Check the log file: '#{full_log_filename}'." unless is_ok
     else
       raise "Error during SERIALIZE phase! Check the log file: '#{full_log_filename}'."
     end
-    write_import_logfile
     if FileTest.exists?( full_log_filename )
       @logger.info( "-- perform(): renaming log file as '.ok'..." ) if @logger
       File.rename( full_log_filename, full_log_filename+'.ok' )
@@ -736,9 +744,9 @@ class DataImporter
   # Stores the text +msg+ into the logs (both on the logger & on the support table).
   def update_logs( msg, method = :info, with_save = true )
     @logger.send( method, msg ) if @logger
+    @import_log << (msg + "\r\n")
     @data_import_session.phase_1_log << (msg + "\r\n")
     @data_import_session.save! if with_save
-    @import_log = "#{@data_import_session.phase_1_log}\r\n#{@data_import_session.phase_2_log}\r\n"
   end
   #-- -------------------------------------------------------------------------
   #++

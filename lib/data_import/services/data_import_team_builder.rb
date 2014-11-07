@@ -150,8 +150,6 @@ class DataImportTeamBuilder < DataImportEntityBuilder
             result.save!
 # DEBUG
 #            puts "Team analysis saved."
-# FIXME
-            data_import_session.reload              # Make sure we are synch'ed with the DB
             data_import_session.phase_1_log ||= ''
             data_import_session.sql_diff    ||= ''
             data_import_session.phase_1_log << "#{ @team_analysis_log }\r\n"

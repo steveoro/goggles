@@ -121,8 +121,12 @@ class AdminImportController < ApplicationController
                                                     # Execute the suggested actions:
       is_ok = result_processor.run( team_analysis_result, is_confirmed, team_alias_override_id )
     end
+
+    data_importer.set_team_analysis_logs(
+      result_processor.process_log,
+      result_processor.sql_executable_log
+    )
                                                     # Write the log files anyway:
-    data_importer.write_import_logfile
     data_importer.write_analysis_logfile( is_ok )
     data_importer.write_sql_diff_logfile
 # DEBUG

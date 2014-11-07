@@ -13,9 +13,14 @@ describe DataImporter, type: :strategy do
     subject { DataImporter.new( nil, nil, existing_data_import_session ) }
 
     it_behaves_like( "(the existance of a method)", [
+      :data_import_session,
+      :import_log,
+      :team_analysis_log,
+      :sql_executable_log,
       :set_up,
       :destroy_data_import_session,
       :import_log_filename,
+      :set_team_analysis_logs,
       :to_logfile,
       :write_import_logfile,
       :write_analysis_logfile,
@@ -129,6 +134,45 @@ describe DataImporter, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
     #++
+
+
+    describe "#data_import_session" do
+      it "returns the DataImportSession associated with this instance" do
+        expect( subject.data_import_session ).to be_an_instance_of( DataImportSession )
+      end
+    end
+
+
+    describe "#import_log" do
+      it "returns a non empty string" do
+        expect( subject.import_log ).to be_an_instance_of( String )
+      end
+    end
+
+
+    describe "#team_analysis_log" do
+      it "returns a non empty string" do
+        expect( subject.team_analysis_log ).to be_an_instance_of( String )
+      end
+    end
+
+
+    describe "#sql_executable_log" do
+      it "returns a non empty string" do
+        expect( subject.sql_executable_log ).to be_an_instance_of( String )
+      end
+    end
+
+
+    describe "#set_team_analysis_logs" do
+      it "sets the internal team analysis log variables" do
+        process_log = Faker::Lorem.paragraph
+        sql_log = Faker::Lorem.paragraph
+        subject.set_team_analysis_logs( process_log, sql_log )
+        expect( subject.team_analysis_log ).to eq( process_log )
+        expect( subject.sql_executable_log ).to eq( sql_log )
+      end
+    end
 
 
     describe "#import_log_filename" do

@@ -63,6 +63,9 @@ it:
     i18n_short_MX: "MX"
     i18n_description_MX: "MISTA"
     i18n_alternate_MX: "MS"
+    i18n_short_M: "MX"
+    i18n_description_M: "MISTA"
+    i18n_alternate_M: "MX"
 
   presence_types:
     code: "Cod."
