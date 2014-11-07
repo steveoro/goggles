@@ -303,7 +303,7 @@ class AdminImportController < ApplicationController
     is_ok = data_importer.phase_3_commit()
 
     redirect_to( goggles_di_step1_status_path() ) and return unless is_ok
-    @import_log = data_importer.import_log          # (combined import log)
+    @import_log = data_importer.import_log          # (get combined import log)
   end
   #-- -------------------------------------------------------------------------
   #++

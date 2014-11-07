@@ -4,7 +4,7 @@ require 'drop_down_listable'
 
 = EventType model
 
-  - version:  4.00.409
+  - version:  4.00.605
   - author:   Steve A.
 
 =end
@@ -69,12 +69,17 @@ class EventType < ActiveRecord::Base
   # Given a localized text description from an imported text plus other key
   # parameters, returns the corresponding RelayType or +nil+ when unable to parse.
   #
-  def self.parse_relay_event_type_from_import_text( stroke_type_id, type_text, phase_length_in_meters )
-    is_mixed_gender = ( type_text =~ /mistaff/ui ? 1 : 0 )
+  # Keep in mind that this is used only to discriminate Mixed-gender relays
+  # from single-gender relays. It assumes that #stroke_type_id has already been
+  # parsed elsewhere.
+  #
+  def self.parse_relay_event_type_from_import_text( stroke_type_id, type_text )
+    is_mixed_gender = ( type_text =~ /mistaff|mix/ui ? 1 : 0 )
                                                     # NOTE: assuming type_text has a format like => "mistaffetta NxLLL farf"
-    idx = type_text =~ /\dx\d{2,3}\s/ui
-    raise "EventType.parse_relay_event_type_from_import_text(): unsupported type_text parameter format!" if idx.nil?
-    phases = type_text[ idx ].to_i
+    re = Regexp.new( /(\d)x(\d{2,3})\s/ui )
+    match = re.match( type_text )
+    raise "EventType.parse_relay_event_type_from_import_text(): unsupported type_text parameter format!" unless match.instance_of?( MatchData )
+    phases, phase_length_in_meters = match.captures.map{ |e| e.to_i }
 
     relay_type = EventType.where(
       [

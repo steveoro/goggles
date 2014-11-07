@@ -10,7 +10,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.603
+  - Goggles framework vers.:  4.00.605
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -64,6 +64,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
       set_up do
         # NOTE:
         # header_row[:fields] => [ :type, :distance, :style, :gender, :category_group, :base_time ]
+# DEBUG
+#        puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
         @import_text = header_row[:import_text]
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
@@ -93,12 +95,11 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         )
 # DEBUG
 #        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
-#        puts( "Searching EventType where length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type.id}, is_a_relay: #{category_type.is_a_relay}..." )
+#        puts( "\r\nSearching EventType where type='#{header_row[:fields][:type]}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type.id}, is_a_relay: #{category_type.is_a_relay}..." )
         if category_type.is_a_relay
           @event_type  = EventType.parse_relay_event_type_from_import_text(
             stroke_type.id,
-            header_row[:fields][:type],
-            length_in_meters
+            header_row[:fields][:type]
           )
         else
           @event_type  = EventType.where(

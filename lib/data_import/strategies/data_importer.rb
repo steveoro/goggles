@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.601
+  - Goggles framework vers.:  4.00.605
   - author: Steve A.
 
   Data-Import strategy class.
@@ -340,17 +340,11 @@ class DataImporter
   #++
 
 
-  # Data-import Phase #1: text parsing with result "digest" and serialization/storage
-  # into 'temporary support' tables (elsewhere referred as 'secondary' or 'data-import'
-  # tables).
+  # Data-import Phase #1: text parsing.
   #
   # Reads and parses the whole TXT file into a complex Hash result, stored in memory.
   # When all the data is transferred to the temporary tables, the file is consumed (killed)
   # from the upload directory.
-  #
-  # The "Phase #2" of the "data-import wizard" usually allows the user to manually
-  # review the digested data from the support tables, so that any mistakes or conflicts
-  # may be edited before the final commit (Phase #3).
   #
   # The #data_import_session member is required to be not +nil+ before invoking this
   # method.
@@ -427,12 +421,12 @@ class DataImporter
     @data_import_session.total_data_rows        = @result_hash[:total_data_rows]
     @data_import_session.data_import_season_id  = @season.instance_of?( DataImportSeason ) ? @season.id : nil
     @data_import_session.season_id              = @season.instance_of?( Season ) ? @season.id : nil
-    @data_import_session.phase                  = 10      # Update "last completed phase" indicator in session (10 = 1.0)
+    @data_import_session.phase                  = 10 if @data_import_session.phase < 10
     @data_import_session.phase_3_log            = 'PHASE 1.0 PARSE'
     result = @data_import_session.save ? @data_import_session : nil
-    update_logs( "\r\nPHASE #1.0 END, returning #{ result ? '(current session)' : 'NIL'}." )
-                                                    # Rewrite the logs & return the result:
-    write_import_logfile
+    update_logs( "\r\nPHASE #1.0 END, returning #{ result ? 'current session' : 'NIL'}." )
+                                                    # Update the logs only the first time the parsing phase is executed:
+    write_import_logfile if @data_import_session.phase == 10
     result
   end
   #-- -------------------------------------------------------------------------
@@ -453,6 +447,10 @@ class DataImporter
   #
   # After a successful execution, remember to check the actual completion by peeking
   # at the #data_import_session.phase and whether #has_team_analysis_results is +true+.
+  #
+  # The "Phase #2" of the "data-import wizard" allows the user to manually review
+  # the digested/serialized data from the support tables, so that any mistakes or
+  # conflicts may be edited (and solved) before the final commit phase (which is phase #3).
   #
   def phase_1_2_serialize()
     return nil unless @data_import_session.instance_of?( DataImportSession ) &&
@@ -613,7 +611,7 @@ class DataImporter
     update_logs( "\r\nPHASE #1.2 END, returning #{ is_ok ? '(current session)' : 'NIL'}." )
                                                     # Rewrite the logs & return the result:
     write_import_logfile
-    write_sql_diff_logfile
+    write_sql_diff_logfile if is_ok                 # (Dump the SQL diff file only if phase #1.1 is not required)
     is_ok ? @data_import_session : nil
   end
   #-- -------------------------------------------------------------------------
@@ -651,6 +649,8 @@ class DataImporter
     is_ok = commit_data_import_meeting_team_score( @data_import_session ) if is_ok
     @data_import_session.phase = 30                 # (30 = '3.0', but without successful ending, since the session in not nil)
     @data_import_session.save!
+    # Add the commit process log to the combined log for this phase:
+    @import_log << @data_import_session.phase_2_log
 
     if ( is_ok )
       update_logs(

@@ -53,12 +53,12 @@ class DataImportTeamAnalysisResult < ActiveRecord::Base
   def rebuild_sql_text()
     self.sql_text = "\r\n"
     if can_insert_team
-      self.sql_text << "INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES\r\n"
-      self.sql_text << "    ('#{self.searched_team_name}','#{self.searched_team_name}','','','',1,CURDATE(),CURDATE());\r\n"
+      self.sql_text << "INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES\r\n" <<
+                       "    ('#{self.searched_team_name}','#{self.searched_team_name}','','','',1,CURDATE(),CURDATE());\r\n"
     end
     if can_insert_alias
-      self.sql_text << "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n"
-      self.sql_text << "    ('#{self.searched_team_name}',#{self.chosen_team_id.to_i},CURDATE(),CURDATE());\r\n"
+      self.sql_text << "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n" <<
+                       "    ('#{self.searched_team_name}',#{self.chosen_team_id.to_i},CURDATE(),CURDATE());\r\n"
     end
     if can_insert_affiliation
       self.sql_text << "INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES\r\n"
