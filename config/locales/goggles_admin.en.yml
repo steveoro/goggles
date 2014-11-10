@@ -80,6 +80,7 @@ en:
     force_meeting_creation: "Create missing Meetings"
     force_team_creation: "Create missing Teams"
     continue_with_team_analysis: "Continue Team names Analysis"
+    continue_with_team_analysis_tooltip: "(This will re-launch Phase 1.1 with the GLOBAL flag for missing Team creation ENABLED)"
     team_analysis_results: "New Team names Analysis"
     team_analysis_needed: "The 'new Team names' Analysis is needed before proceeding."
     searched_team: "Searched Team"

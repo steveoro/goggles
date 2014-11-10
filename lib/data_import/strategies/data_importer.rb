@@ -180,18 +180,23 @@ class DataImporter
   # is handled separately from the ultimate "SQL diff" produced
   # at the end of the Phase-3.
   #
+  # Due to the fact that the phase 1.1 can be invoked just to get the resulting logs
+  # (without actually terminating the SQL statements required), the #is_ok flag
+  # signals whether the phase has been completed and executed without errors, and
+  # an '.ok' additional extension is added to the resulting log files (if #is_ok is +true+).
+  #
   def write_analysis_logfile( is_ok = false )
     to_logfile(
       @team_analysis_log,
       "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
       nil, # (no footer)
-      is_ok ? ".team#{get_log_extension}.ok" : ".team#{get_log_extension}"
+      is_ok ? ".team.ok#{get_log_extension}" : ".team#{get_log_extension}"
     )
     to_logfile(
       @sql_executable_log,
       "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n",
       "\r\nCOMMIT;",
-      is_ok ? '.team.sql.ok' : '.team.sql'
+      is_ok ? '.team.ok.sql' : '.team.sql'
     )
   end
 
@@ -496,11 +501,16 @@ class DataImporter
     if @season                                        # -- PRE-SCAN TEAM Names --
       season_starting_year = @season.begin_date.year
       update_logs( "Found season '#{@season.inspect}'; #{@season.season_type.inspect}, season_starting_year=#{season_starting_year}", :debug )
+      # [Steve, 20141110] If the Team-analysis phase has already been completed,
+      # we need to force the creation of missing teams, otherwise instead of
+      # generating data_import_teams rows another round of team analysis
+      # will be created by the Team builder inside this method.
                                                     # The prescan will abort the rest of the procedure when false:
       is_ok = prescan_parse_result_for_unknown_team_names(
         @data_import_session,
         @season,
         @result_hash[:parse_result],
+#        @data_import_session.phase >= 11 ? true : @force_missing_team_creation
         @force_missing_team_creation
       )
       unless is_ok
@@ -634,7 +644,7 @@ class DataImporter
 
     update_logs( "\r\n\r\n--------------------[Phase #3 - COMMIT]--------------------" )
     update_logs( "\r\n-- phase_3_commit: session ID:#{ @data_import_session.id }, season ID: #{ @season.id }..." )
-    @data_import_session.phase_2_log ||= "\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{@season.id}...\r\n"
+    @data_import_session.phase_2_log = "#{@data_import_session.phase_2_log}\r\nImporting data @ #{Format.a_short_datetime(DateTime.now)}.\r\nCommitting data_import_session ID:#{@data_import_session.id}, season ID: #{@season.id}...\r\n"
     @committed_data_rows = 0
                                                     # Bail out as soon as something is wrong:
     is_ok = commit_data_import_meeting( @data_import_session )
@@ -744,8 +754,8 @@ class DataImporter
   # Stores the text +msg+ into the logs (both on the logger & on the support table).
   def update_logs( msg, method = :info, with_save = true )
     @logger.send( method, msg ) if @logger
-    @import_log << (msg + "\r\n")
-    @data_import_session.phase_1_log << (msg + "\r\n")
+    @import_log << "#{msg}\r\n"
+    @data_import_session.phase_1_log = "#{@data_import_session.phase_1_log}\r\n#{msg}\r\n"
     @data_import_session.save! if with_save
   end
   #-- -------------------------------------------------------------------------

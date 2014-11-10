@@ -9,7 +9,7 @@ require 'data_import/services/data_import_city_builder'
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.571
+  - Goggles framework vers.:  4.00.607
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -131,12 +131,12 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           # Not found & can't create a new team? => Do a full depth-first analyze of
           # the team name in search for a match and report the results via the builder
           # instance:
-          @team_analysis_log ||= ''
-          @sql_executable_log ||= ''
+          team_analysis_log = ''
+          sql_executable_log = ''
           result = TeamNameAnalizer.new.analyze(
               team_name, season.id,
-              @team_analysis_log,                   # The method will update these 2 variables in place
-              @sql_executable_log,                  # (it uses the << operator)
+              team_analysis_log,                    # The method will update these 2 variables in place
+              sql_executable_log,                   # (it uses the << operator)
               0.99, 0.8
           )
           result.data_import_session_id = data_import_session.id
@@ -152,8 +152,8 @@ class DataImportTeamBuilder < DataImportEntityBuilder
 #            puts "Team analysis saved."
             data_import_session.phase_1_log ||= ''
             data_import_session.sql_diff    ||= ''
-            data_import_session.phase_1_log << "#{ @team_analysis_log }\r\n"
-            data_import_session.sql_diff    << "#{ @sql_executable_log }\r\n"
+            data_import_session.phase_1_log << "#{ team_analysis_log }\r\n"
+            data_import_session.sql_diff    << "#{ sql_executable_log }\r\n"
             data_import_session.save!
           end
           # Result not found w/o Team creation => Do a manual review of the analysis data.

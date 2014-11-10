@@ -119,7 +119,11 @@ class AdminImportController < ApplicationController
                                overridden_alias_actions[ team_analysis_result.id.to_s ].to_i :
                                nil
                                                     # Execute the suggested actions:
-      is_ok = result_processor.run( team_analysis_result, is_confirmed, team_alias_override_id )
+      is_ok = result_processor.run(
+        team_analysis_result,
+        is_confirmed,
+        team_alias_override_id
+      )
     end
 
     data_importer.set_team_analysis_logs(
@@ -137,6 +141,8 @@ class AdminImportController < ApplicationController
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
         data_importer.destroy_data_import_session
       else                                          # Clear just the results from the session if everything is ok:
+        data_import_session.phase_1_log << result_processor.process_log
+        data_import_session.sql_diff    << result_processor.sql_executable_log
         data_import_session.phase = 11              # Update "last completed phase" indicator in session (11 = 1.1)
         data_import_session.save!
         DataImportTeamAnalysisResult.delete_all( data_import_session_id: data_import_session_id )

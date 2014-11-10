@@ -54,6 +54,8 @@
 <ul>
     <% @existing_import_sessions.each do |s| %>
         <div id='<%="spanFullLog#{s.id}"%>' hidden="true" >
+            <%="Last status: #{s.phase_3_log}"%>
+                --- *** ---
             <%="#{s.phase_1_log}"%>
                 --- *** ---
             <%="#{s.phase_2_log}"%>

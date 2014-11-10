@@ -1,13 +1,14 @@
 # encoding: utf-8
 
 require 'data_import/services/data_import_entity_committer'
+require_relative '../../../app/strategies/sql_converter'
 
 
 =begin
 
 = TeamAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.585
+  - Goggles framework vers.:  4.00.607
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single TeamAnalysisResult
@@ -18,6 +19,7 @@ require 'data_import/services/data_import_entity_committer'
 
 =end
 class TeamAnalysisResultProcessor
+  include SqlConverter
 
   attr_reader :logger, :flash, :sql_executable_log, :process_log,
               :committed_rows
@@ -58,21 +60,42 @@ class TeamAnalysisResultProcessor
 
     team_id   = team_analysis_result.chosen_team_id
     season_id = team_analysis_result.desired_season_id
+    @sql_executable_log << "\r\n-- Processing '#{team_name}':\r\n"
                                                     # -- Can ADD new Team? (Default action for unconfirmed team_analysis_results)
     if (! is_confirmed) || team_analysis_result.can_insert_team
       begin
-        Team.transaction do                         # Let's make sure other threads have not already done what we want to do:
-          if ( Team.where(name: team_name).none? )
-            committed_row = Team.new(
-              name:             team_name,
-              editable_name:    team_name,          # (let's initialize this with the data-import name)
-              name_variations:  team_name,
+        DataImportTeam.transaction do               # Let's make sure other threads have not already done what we want to do:
+          if ( DataImportTeam.where(name: team_name).none? )
+            city_builder  = DataImportCityBuilder.build_from_parameters( data_import_session, team_name )
+            committed_row = DataImportTeam.new(
+              data_import_session_id: team_analysis_result.data_import_session_id,
+              import_text:            team_name,
+              name:                   team_name,
+              city_id:                city_builder.result_row.instance_of?(City)           ? city_builder.result_row.id : nil,
+              data_import_city_id:    city_builder.result_row.instance_of?(DataImportCity) ? city_builder.result_row.id : nil,
               user_id:          1                   # (don't care)
               # XXX Unable to guess city id (not filled-in, to be added by hand)
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
-            @committed_rows << committed_row
-            team_id = committed_row.id              # update the team_id with the actual value that shold be used probably also below
+            # Make sure a TeamAffiliation will be skipped for this phase of the
+            # analysis (we need to make sure that only actual Teams will be used
+            # not secondary/temporary entities):
+            team_analysis_result.best_match_name = nil
+            team_id = nil
+######### WIP Old method:
+          # if ( Team.where(name: team_name).none? )
+            # committed_row = Team.new(
+              # name:             team_name,
+              # editable_name:    team_name,          # (let's initialize this with the data-import name)
+              # name_variations:  team_name,
+              # user_id:          1                   # (don't care)
+              # # XXX Unable to guess city id (not filled-in, to be added by hand)
+            # )
+            # committed_row.save!                     # raise automatically an exception if save is not successful
+            # @committed_rows << committed_row
+            # @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
+#
+            # team_id = committed_row.id              # update the team_id with the actual value that shold be used probably also below
           else
             update_logs( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping Team creation because was (unexpectedly) found already existing! (Name:'#{team_name}')" )
           end
@@ -84,8 +107,14 @@ class TeamAnalysisResultProcessor
         is_ok = false
       end
     end
+                                                    # This happens when Team creation is disabled:
+#    if (team_id.to_i < 1)
+#      update_logs( "\r\n*** TeamAnalysisResultProcessor: Team creation disabled, aborting..." )
+#      @flash[:info] = "#{I18n.t(:something_went_wrong)} ['New Team creation disabled, process aborted. Some other team affiliations may have been created though.']"
+#      is_ok = false
+#    end
                                                     # -- Can ADD new Team Alias?
-    if ( is_confirmed && team_analysis_result.can_insert_alias )
+    if ( is_ok && is_confirmed && team_analysis_result.can_insert_alias )
       raise "DataImportTeamAlias creation: unable to proceed! 'team_id' unexpectedly zero or nil!" if team_id.to_i < 1
       begin
         DataImportTeamAlias.transaction do          # Let's make sure other threads have not already done what we want to do:
@@ -96,6 +125,7 @@ class TeamAnalysisResultProcessor
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
             @committed_rows << committed_row
+            @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
             @logger.info( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping DataImportTeamAlias creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id})" ) if @logger
           end
@@ -108,7 +138,7 @@ class TeamAnalysisResultProcessor
       end
     end
                                                     # -- Can ADD new TeamAffiliation?
-    if ( is_confirmed && team_analysis_result.can_insert_affiliation )
+    if ( is_ok && is_confirmed && team_analysis_result.can_insert_affiliation )
       raise "TeamAffiliation creation: unable to proceed! 'team_id' unexpectedly zero or nil!" if team_id.to_i < 1
       begin
         TeamAffiliation.transaction do              # Let's make sure other threads have not already done what we want to do:
@@ -127,6 +157,7 @@ class TeamAnalysisResultProcessor
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
             @committed_rows << committed_row
+            @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
             update_logs( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})", :error )
           end
@@ -141,12 +172,11 @@ class TeamAnalysisResultProcessor
                                                     # Rebuild corrected log files:
     if ( is_confirmed )
       @process_log << team_analysis_result.analysis_log_text
-      @sql_executable_log << team_analysis_result.sql_text
     else
       @process_log << "\r\n                    [[[ '#{team_name}' ]]]  -- search overridden:\r\n\r\n   => NOT FOUND.\r\n"
-      @sql_executable_log << "INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES\r\n" +
-                             "    ('#{team_name}','#{team_name}','','','',1,CURDATE(),CURDATE());\r\n"
     end
+    @process_log << "\r\n----8<---- (Original suggested statements:) ----" << team_analysis_result.sql_text
+    @process_log << "----8<----\r\n"
     is_ok
   end
   #-- -------------------------------------------------------------------------

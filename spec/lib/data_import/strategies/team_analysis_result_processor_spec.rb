@@ -55,7 +55,7 @@ describe TeamAnalysisResultProcessor, type: :strategy do
       context "when NOT CONFIRMED or can CREATE TEAM," do
         let(:team_analysis_result) { create( :data_import_team_analysis_result, data_import_session: data_import_session ) }
 
-        it "adds just a new Team row" do
+        it "adds just a new DataImportTeam row" do
           is_ok = nil
           new_team = build( :team )
           team_analysis_result.chosen_team_id = nil
@@ -71,7 +71,7 @@ describe TeamAnalysisResultProcessor, type: :strategy do
             is_ok = @subject.run( team_analysis_result, false, nil )
 # DEBUG
 #            puts @subject.process_log
-          }.to change{ Team.count }.by(1)
+          }.to change{ DataImportTeam.count }.by(1)
 
           expect( is_ok ).to be true
           expect( DataImportTeamAlias.count ).to eq( alias_count )
