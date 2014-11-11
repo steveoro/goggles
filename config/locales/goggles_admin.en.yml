@@ -92,4 +92,4 @@ en:
     confirm: Confirm
     on_commit_go_back_to_step1: "On commit, save the changes but go back to Step-1 (useful to import just the new Team names)"
     unconfirmed_results_will_be_added: "NOTE: Remember that all unconfirmed results will be treated as 'not-recognized' or MISSING and thus will be added as NEW TEAMS."
-    team_analysis_completed: "Team Analysis completed. Suggested actions successfully executed."
+    team_analysis_completed: "Team Analysis completed."

@@ -7,7 +7,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportCityBuilder
 
-  - Goggles framework vers.:  4.00.601
+  - Goggles framework vers.:  4.00.609
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -39,19 +39,49 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
 
       # Do the search only if the badge code is not the placeholder for an unknown
       # badge number ('?'). In that case, we have to add a new badge anyway.
-      search do
-        primary   [
-          "(season_id = ?) AND (number = ?)", season.id, badge_code
-        ]
-        secondary [
-          "(data_import_session_id = ?) AND (season_id = ?) AND (number = ?)",
-          data_import_session.id, season.id, badge_code
-        ]
-        default_search
+      if badge_code != '?'
+        search do
+          primary   [
+            "(season_id = ?) AND (number = ?)",
+            ( season.instance_of?(Season) ? season.id : 0 ),
+            badge_code
+          ]
+          secondary [
+            "(data_import_session_id = ?) AND " <<
+            "(#{season.instance_of?(Season) ? '' : 'data_import_'}season_id = ?) AND " <<
+            "(number = ?)",
+            data_import_session.id,
+            season.id,
+            badge_code
+          ]
+          default_search
 # DEBUG
-#        puts "primary_search_ok!" if primary_search_ok?
-#        puts "secondary_search_ok!" if secondary_search_ok?
-      end if badge_code != '?'
+#          puts "primary search by CODE ok!" if primary_search_ok?
+#          puts "secondary search by CODE ok!" if secondary_search_ok?
+        end
+      else
+        # TODO Search for an existing badge, but use swimmer, team and season instead
+          primary   [
+            "(season_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
+            ( season.instance_of?(Season) ? season.id : 0 ),
+            ( swimmer.instance_of?(Swimmer) ? swimmer.id : 0 ),
+            ( team.instance_of?(Team) ? team.id : 0 )
+          ]
+          secondary [
+            "(data_import_session_id = ?) AND " <<
+            "(#{season.instance_of?(Season) ? '' : 'data_import_'}season_id = ?) AND " <<
+            "(#{swimmer.instance_of?(Swimmer) ? '' : 'data_import_'}swimmer_id = ?) AND " <<
+            "(#{team.instance_of?(Team) ? '' : 'data_import_'}team_id = ?)",
+            data_import_session.id,
+            season.id,
+            swimmer.id,
+            team.id
+          ]
+          default_search
+# DEBUG
+#          puts "primary search by Swimmer,Team ok!" if primary_search_ok?
+#          puts "secondary search by Swimmer,Team ok!" if secondary_search_ok?
+      end
 
       if_not_found do
 # DEBUG

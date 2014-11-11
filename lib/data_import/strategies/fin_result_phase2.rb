@@ -24,7 +24,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.581
+  - Goggles framework vers.:  4.00.609
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -72,7 +72,6 @@ module FinResultPhase2
       team = team_builder.result_row
       unless team
         data_import_session.phase_1_log << "\r\nPrescan Team names: '#{ team_name }' (#{ idx+1 }/#{ team_names.size }) uncertain. 'Team name Analysis' needed.\r\n"
-        data_import_session.save!
         is_ok = false
       end
                                                     # Update progress on current session:

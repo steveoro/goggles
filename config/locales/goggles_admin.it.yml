@@ -92,4 +92,4 @@ it:
     confirm: Confermo
     on_commit_go_back_to_step1: "Su commit, salva modifiche ma torna al 'Passo 1' (utile per importare solo i nuovi Team)"
     unconfirmed_results_will_be_added: "NOTA: Ricorda che tutti i risultati non confermati saranno trattati come 'non-riconosciuti' o MANCANTI e perciò saranno aggiunti come NUOVI TEAM."
-    team_analysis_completed: "Analisi dei Team completata. Azioni suggerite eseguite con sucesso."
+    team_analysis_completed: "Analisi dei Team completata."

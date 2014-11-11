@@ -8,7 +8,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = TeamAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.607
+  - Goggles framework vers.:  4.00.609
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single TeamAnalysisResult
@@ -46,19 +46,26 @@ class TeamAnalysisResultProcessor
   def run( team_analysis_result, is_confirmed, team_alias_override_id )
     raise ArgumentError.new() unless team_analysis_result.instance_of?( DataImportTeamAnalysisResult )
     update_logs(
-      "\r\n-------------------------------------------------------------------------------------------------------------" +
+      "\r\n-------------------------------------------------------------------------------------------------------------\r\n" <<
       "\r\nProcessing #{is_confirmed ? 'CONFIRMED' : 'unconfirmed'} #{team_analysis_result}..."
     )
     is_ok = true
     team_name = team_analysis_result.searched_team_name
                                                     # Use the alias override, if set:
-    if team_alias_override_id
+    if team_alias_override_id.to_i > 0
       team_analysis_result.chosen_team_id = team_alias_override_id
+      # Make sure a TeamAffiliation will be skipped for this phase of the analysis
+      # (since there is a team ID override, the TeamAffiliation may be already existing):
+      team_analysis_result.best_match_name = ''
       team_analysis_result.rebuild_sql_text()       # (No need to save the instance, since rows will be deleted at the end -- and if something goes wrong, hopefully we still have the log files...)
       update_logs( "Using team_id alias override = #{team_alias_override_id} for '#{team_name}'..." )
     end
 
+    # NOTE: team_id will always refer to an instance of Team, not DataImportTeam!
+    #       (Thus, if it is not zero and a linked TeamAffiliation is missing, we'll know
+    #        that we can create one.)
     team_id   = team_analysis_result.chosen_team_id
+    # NOTE: season_id will always refer to an instance of Season, not DataImportSeason!
     season_id = team_analysis_result.desired_season_id
     @sql_executable_log << "\r\n-- Processing '#{team_name}':\r\n"
                                                     # -- Can ADD new Team? (Default action for unconfirmed team_analysis_results)
@@ -66,7 +73,10 @@ class TeamAnalysisResultProcessor
       begin
         DataImportTeam.transaction do               # Let's make sure other threads have not already done what we want to do:
           if ( DataImportTeam.where(name: team_name).none? )
-            city_builder  = DataImportCityBuilder.build_from_parameters( data_import_session, team_name )
+            city_builder  = DataImportCityBuilder.build_from_parameters(
+              team_analysis_result.data_import_session,
+              team_name
+            )
             committed_row = DataImportTeam.new(
               data_import_session_id: team_analysis_result.data_import_session_id,
               import_text:            team_name,
@@ -80,22 +90,7 @@ class TeamAnalysisResultProcessor
             # Make sure a TeamAffiliation will be skipped for this phase of the
             # analysis (we need to make sure that only actual Teams will be used
             # not secondary/temporary entities):
-            team_analysis_result.best_match_name = nil
             team_id = nil
-######### WIP Old method:
-          # if ( Team.where(name: team_name).none? )
-            # committed_row = Team.new(
-              # name:             team_name,
-              # editable_name:    team_name,          # (let's initialize this with the data-import name)
-              # name_variations:  team_name,
-              # user_id:          1                   # (don't care)
-              # # XXX Unable to guess city id (not filled-in, to be added by hand)
-            # )
-            # committed_row.save!                     # raise automatically an exception if save is not successful
-            # @committed_rows << committed_row
-            # @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
-#
-            # team_id = committed_row.id              # update the team_id with the actual value that shold be used probably also below
           else
             update_logs( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping Team creation because was (unexpectedly) found already existing! (Name:'#{team_name}')" )
           end
@@ -107,15 +102,8 @@ class TeamAnalysisResultProcessor
         is_ok = false
       end
     end
-                                                    # This happens when Team creation is disabled:
-#    if (team_id.to_i < 1)
-#      update_logs( "\r\n*** TeamAnalysisResultProcessor: Team creation disabled, aborting..." )
-#      @flash[:info] = "#{I18n.t(:something_went_wrong)} ['New Team creation disabled, process aborted. Some other team affiliations may have been created though.']"
-#      is_ok = false
-#    end
                                                     # -- Can ADD new Team Alias?
-    if ( is_ok && is_confirmed && team_analysis_result.can_insert_alias )
-      raise "DataImportTeamAlias creation: unable to proceed! 'team_id' unexpectedly zero or nil!" if team_id.to_i < 1
+    if ( is_ok && team_id.to_i > 0 && is_confirmed && team_analysis_result.can_insert_alias )
       begin
         DataImportTeamAlias.transaction do          # Let's make sure other threads have not already done what we want to do:
           if ( DataImportTeamAlias.where(name: team_name, team_id: team_id).none? )
@@ -138,8 +126,7 @@ class TeamAnalysisResultProcessor
       end
     end
                                                     # -- Can ADD new TeamAffiliation?
-    if ( is_ok && is_confirmed && team_analysis_result.can_insert_affiliation )
-      raise "TeamAffiliation creation: unable to proceed! 'team_id' unexpectedly zero or nil!" if team_id.to_i < 1
+    if ( is_ok && team_id.to_i > 0 && is_confirmed && team_analysis_result.can_insert_affiliation )
       begin
         TeamAffiliation.transaction do              # Let's make sure other threads have not already done what we want to do:
           if ( TeamAffiliation.where(

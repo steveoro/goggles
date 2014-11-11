@@ -21,7 +21,7 @@
                 = render( partial: 'show_full_individual_result', locals: { individual_result: individual_result, is_highlighted: is_highlighted } )
             -# --- Team Relay result rows:
             - if is_a_relay
-              - meeting_program.meeting_relay_results.order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
+              - meeting_program.meeting_relay_results.order('meeting_relay_results.rank ASC, meeting_relay_results.meeting_points DESC').each do |relay_result|
                 = render( partial: 'show_full_relay_result', locals: { relay_result: relay_result } )
 .row-fluid
   .span12

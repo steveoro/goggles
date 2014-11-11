@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.605
+  - Goggles framework vers.:  4.00.609
   - author: Steve A.
 
   Data-Import strategy class.
@@ -429,7 +429,10 @@ class DataImporter
     @data_import_session.phase                  = 10 if @data_import_session.phase < 10
     @data_import_session.phase_3_log            = 'PHASE 1.0 PARSE'
     result = @data_import_session.save ? @data_import_session : nil
-    update_logs( "\r\nPHASE #1.0 END, returning #{ result ? 'current session' : 'NIL'}." )
+    update_logs(
+      "\r\nPHASE #1.0 END, returning #{ result ? 'current session' : 'NIL'}.",
+      :info, true
+    )
                                                     # Update the logs only the first time the parsing phase is executed:
     write_import_logfile if @data_import_session.phase == 10
     result
@@ -609,6 +612,7 @@ class DataImporter
         FileUtils.rm( @full_pathname )
       end
       @data_import_session.phase = 12               # Update "last completed phase" indicator (12 = '1.2')
+      @data_import_session.save!
       update_logs(
         "\r\nFile '#{File.basename( @full_pathname )}', created session ID: #{ @data_import_session.id }\r\n" <<
         "Total file lines ....... : #{ @result_hash[:line_count] }\r\n" <<
@@ -618,7 +622,10 @@ class DataImporter
       )
     end
                                                     # Update the global log with the whole phase 1 log
-    update_logs( "\r\nPHASE #1.2 END, returning #{ is_ok ? '(current session)' : 'NIL'}." )
+    update_logs(
+      "\r\nPHASE #1.2 END, returning #{ is_ok ? '(current session)' : 'NIL'}.",
+      :info, true
+    )
                                                     # Rewrite the logs & return the result:
     write_import_logfile
     write_sql_diff_logfile if is_ok                 # (Dump the SQL diff file only if phase #1.1 is not required)
@@ -666,13 +673,14 @@ class DataImporter
       update_logs(
         "data-import PHASE #2 & #3 DONE.\r\n\r\nTotal committed rows: #{ @committed_data_rows }\r\n" <<
         "Data-import session destroyed successfully.\r\n" <<
-        "===========================================================\r\n"
+        "===========================================================\r\n",
+        :info, true
       )
     else                                            # Store data_import_session.phase_2_log if something goes awry:
       if $!
         update_logs(
           "\r\n*** #{ data_import_session.phase_3_log }: exception caught during save!\r\n*** #{ $!.to_s }\r\n",
-          :error
+          :error, true
         )
       end
       @flash[:error] = "#{ I18n.t(:something_went_wrong) } [#{ data_import_session.phase_3_log }]" + ( $! ? ": '#{ $!.to_s }'" : '' )
@@ -752,11 +760,16 @@ class DataImporter
 
 
   # Stores the text +msg+ into the logs (both on the logger & on the support table).
-  def update_logs( msg, method = :info, with_save = true )
+  def update_logs( msg, method = :info, with_save = false )
     @logger.send( method, msg ) if @logger
     @import_log << "#{msg}\r\n"
-    @data_import_session.phase_1_log = "#{@data_import_session.phase_1_log}\r\n#{msg}\r\n"
-    @data_import_session.save! if with_save
+    # FIXME The Log is too long & complex to be saved into the table:
+#    @data_import_session.phase_1_log_will_change! if with_save
+    @data_import_session.phase_1_log << "#{msg}\r\n"
+#    if with_save
+#      ActiveRecord::Base.verify_active_connections!
+#      @data_import_session.save!
+#    end
   end
   #-- -------------------------------------------------------------------------
   #++

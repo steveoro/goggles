@@ -99,11 +99,11 @@ class AdminImportController < ApplicationController
     force_missing_team_creation    = (params[:force_team_creation] == 'true')    || (params[:force_team_creation].to_i > 0)
     # [Steve] The following override hash has the structure:
     # params[:alias_ids] => { analysis_result.id.to_s => overridden_alias_team_id.to_s, ... }
-    overridden_alias_actions = params[:alias_ids] if params[:alias_ids].instance_of?(Hash)
+    overridden_alias_actions = params['alias_ids'] if params['alias_ids'].instance_of?( ActiveSupport::HashWithIndifferentAccess )
 # DEBUG
 #    logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
 #    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
-#    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}"
+#    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
 
     data_import_session = DataImportSession.find( data_import_session_id )
     data_importer       = DataImporter.new( logger, flash, data_import_session )
@@ -141,7 +141,9 @@ class AdminImportController < ApplicationController
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
         data_importer.destroy_data_import_session
       else                                          # Clear just the results from the session if everything is ok:
+#        data_import_session.phase_1_log_will_change!
         data_import_session.phase_1_log << result_processor.process_log
+#        data_import_session.sql_diff_will_change!
         data_import_session.sql_diff    << result_processor.sql_executable_log
         data_import_session.phase = 11              # Update "last completed phase" indicator in session (11 = 1.1)
         data_import_session.save!
@@ -150,7 +152,7 @@ class AdminImportController < ApplicationController
           goggles_di_step2_checkout_path(
             id:                     data_import_session_id,
             force_meeting_creation: force_missing_meeting_creation  ? '1' : '0',
-            force_team_creation:    force_missing_team_creation     ? '1' : '0'
+            force_team_creation:    '1' # After the Team analysis, we can serialize the missing teams (WAS: force_missing_team_creation     ? '1' : '0' )
           )
         ) and return
       end

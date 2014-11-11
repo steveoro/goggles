@@ -144,8 +144,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           category_type.id, gender_type.id
         ]
         secondary   [
-          "(data_import_session_id = ?) AND " +
-          "(#{meeting_session.instance_of?(MeetingSession) ? '' : 'data_import_'}meeting_session_id = ?) AND " +
+          "(data_import_session_id = ?) AND " <<
+          "(#{meeting_session.instance_of?(MeetingSession) ? '' : 'data_import_'}meeting_session_id = ?) AND " <<
           "(event_type_id = ?) AND (category_type_id = ?) AND (gender_type_id = ?)",
           data_import_session.id, meeting_session.id,
           @event_type.id, category_type.id, gender_type.id

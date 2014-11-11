@@ -9,7 +9,7 @@ require 'data_import/services/data_import_city_builder'
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.607
+  - Goggles framework vers.:  4.00.609
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -63,12 +63,13 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         if primary_search_ok? # Force result to be a Team instance when it is found
 # DEBUG
 #          puts "primary_search_ok!"
-          set_result  @result_row.team
+          set_result @result_row.team
         end
       end
-                                                  # 2) Search for a team alias:
+                                                  # 2) Search for a Team Alias:
       if_not_found  do
         search_for( DataImportTeamAlias, name: team_name )
+        set_result( @result_row.team ) if @result_row
       end
 
       if_not_found do                             # 3) Do a single-shot, "best-match" fuzzy search:
@@ -154,7 +155,6 @@ class DataImportTeamBuilder < DataImportEntityBuilder
             data_import_session.sql_diff    ||= ''
             data_import_session.phase_1_log << "#{ team_analysis_log }\r\n"
             data_import_session.sql_diff    << "#{ sql_executable_log }\r\n"
-            data_import_session.save!
           end
           # Result not found w/o Team creation => Do a manual review of the analysis data.
         end

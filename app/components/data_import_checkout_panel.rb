@@ -3,7 +3,7 @@
 # components in a tabbed view.
 #
 # - author: Steve A.
-# - vers. : 4.00.72.20131028
+# - vers. : 4.00.609
 #
 # == Params
 #
@@ -54,7 +54,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
           # title: I18n.t(:season, { scope: [:activerecord, :models] }),
           # add_form_window_config: { width: 500, title: "#{I18n.t(:add)} #{I18n.t(:season, { scope: [:activerecord, :models] })}" },
           # edit_form_window_config: { width: 500, title: "#{I18n.t(:edit)} #{I18n.t(:season, { scope: [:activerecord, :models] })}" },
-# 
+#
           # scope: [ "data_import_session_id = ?", super[:data_import_session_id] ],
           # columns: [
 # #              { name: :created_at,               label: I18n.t(:created_at), width: 80, read_only: true,
@@ -438,7 +438,12 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { name: :year_of_birth, label: I18n.t(:year_of_birth, { scope: [:activerecord, :attributes, :swimmer] }),
                 width: 40 },
               { name: :gender_type__i18n_short, label: I18n.t(:gender_type, { scope: [:activerecord, :attributes, :swimmer] }),
-                width: 110 }
+                width: 110,
+                # [20121121] For the combo-boxes to have a working query after the 4th char is entered in the edit widget,
+                # a lambda statement must be used. Using a pre-computed scope from the Model class prevents Netzke
+                # (as of this version) to append the correct WHERE clause to the scope itself (with an inline lambda, instead, it works).
+                scope: ->(rel) { rel.order("code ASC") }
+              }
           ],
           lazy_loading: true
         },
@@ -498,9 +503,19 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
               { name: :badge_number, label: I18n.t(:zip, { scope: [:activerecord, :attributes, :team] }),
                 width: 100 },
               { name: :data_import_city__name, label: I18n.t(:data_import_city, { scope: [:activerecord, :models] }),
-                width: 120 },
+                width: 200,
+                # [20121121] For the combo-boxes to have a working query after the 4th char is entered in the edit widget,
+                # a lambda statement must be used. Using a pre-computed scope from the Model class prevents Netzke
+                # (as of this version) to append the correct WHERE clause to the scope itself (with an inline lambda, instead, it works).
+                scope: ->(rel) { rel.order("name ASC") }
+              },
               { name: :city__get_full_name, label: I18n.t(:city, { scope: [:activerecord, :models] }),
-                width: 120 }
+                width: 200,
+                # [20121121] For the combo-boxes to have a working query after the 4th char is entered in the edit widget,
+                # a lambda statement must be used. Using a pre-computed scope from the Model class prevents Netzke
+                # (as of this version) to append the correct WHERE clause to the scope itself (with an inline lambda, instead, it works).
+                scope: ->(rel) { rel.order("name ASC") }
+              }
           ],
           lazy_loading: true
         },
@@ -586,7 +601,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
         this
       );
 */
-    }  
+    }
   JS
 
   # ---------------------------------------------------------------------------

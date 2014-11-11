@@ -52,7 +52,7 @@ describe TeamAnalysisResultProcessor, type: :strategy do
         end
       end
 
-      context "when NOT CONFIRMED or can CREATE TEAM," do
+      context "when NOT CONFIRMED or can CREATE TEAM (No chosen override + unconfirmed + same name best match to avoid affiliation)," do
         let(:team_analysis_result) { create( :data_import_team_analysis_result, data_import_session: data_import_session ) }
 
         it "adds just a new DataImportTeam row" do
@@ -66,24 +66,24 @@ describe TeamAnalysisResultProcessor, type: :strategy do
           alias_count = DataImportTeamAlias.count
           affiliation_count = TeamAffiliation.count
 # DEBUG
-#          puts "\r\ncount BEFORE: Team=#{Team.count}, DataImportTeamAlias=#{alias_count}, TeamAffiliation=#{affiliation_count}"
+#          puts "\r\n#{team_analysis_result}"
+#          puts "=> count BEFORE: Team=#{Team.count}, DataImportTeam=#{DataImportTeam.count}, DataImportTeamAlias=#{alias_count}, TeamAffiliation=#{affiliation_count}"
           expect{
             is_ok = @subject.run( team_analysis_result, false, nil )
 # DEBUG
 #            puts @subject.process_log
+#            puts "=> count AFTER:  Team=#{Team.count}, DataImportTeam=#{DataImportTeam.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
           }.to change{ DataImportTeam.count }.by(1)
 
           expect( is_ok ).to be true
           expect( DataImportTeamAlias.count ).to eq( alias_count )
           expect( TeamAffiliation.count ).to eq( affiliation_count )
-# DEBUG
-#          puts "count AFTER:  Team=#{Team.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
         end
       end
       #-- ---------------------------------------------------------------------
       #++
 
-      context "when CONFIRMED and can CREATE ALIAS," do
+      context "when CONFIRMED and can CREATE ALIAS (Team match + override with same ID + same name best match + confirm)," do
         let(:team_analysis_result) { create( :data_import_team_analysis_result, data_import_session: data_import_session ) }
 
         it "adds just a new DataImportTeamAlias row" do
@@ -92,22 +92,24 @@ describe TeamAnalysisResultProcessor, type: :strategy do
           team_count = Team.count
           affiliation_count = TeamAffiliation.count
 # DEBUG
-#          puts "\r\ncount BEFORE: Team=#{team_count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{affiliation_count}"
+#          puts "\r\n#{team_analysis_result}"
+#          puts "=> count BEFORE: Team=#{Team.count}, DataImportTeam=#{DataImportTeam.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
           expect{
-            is_ok = @subject.run( team_analysis_result, true, nil )
-          }.to change{ DataImportTeamAlias.count }.by(1)
+            is_ok = @subject.run( team_analysis_result, true, team_analysis_result.chosen_team_id )
+# DEBUG
+#            puts @subject.process_log
+#            puts "=> count AFTER:  Team=#{Team.count}, DataImportTeam=#{DataImportTeam.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
+           }.to change{ DataImportTeamAlias.count }.by(1)
 
           expect( is_ok ).to be true
           expect( Team.count ).to eq( team_count )
           expect( TeamAffiliation.count ).to eq( affiliation_count )
-# DEBUG
-#          puts "count AFTER:  Team=#{Team.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
         end
       end
       #-- ---------------------------------------------------------------------
       #++
 
-      context "when CONFIRMED and can CREATE AFFILIATION," do
+      context "when CONFIRMED and can CREATE AFFILIATION (Team match + no override + missing affiliation + confirmed)," do
         let(:team_analysis_result) { create( :data_import_team_analysis_result, data_import_session: data_import_session ) }
 
         it "adds a new TeamAffiliation row (w/ its own alias)" do
@@ -117,16 +119,17 @@ describe TeamAnalysisResultProcessor, type: :strategy do
           team_count = Team.count
           alias_count = DataImportTeamAlias.count
 # DEBUG
-#          puts "\r\ncount BEFORE: Team=#{team_count}, DataImportTeamAlias=#{alias_count}, TeamAffiliation=#{TeamAffiliation.count}"
+#          puts "\r\n#{team_analysis_result}"
+#          puts "=> count BEFORE: Team=#{Team.count}, DataImportTeam=#{DataImportTeam.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
           expect{
             is_ok = @subject.run( team_analysis_result, true, nil )
+#            puts @subject.process_log
+#            puts "=> count AFTER:  Team=#{Team.count}, DataImportTeam=#{DataImportTeam.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
           }.to change{ TeamAffiliation.count }.by(1)
 
           expect( is_ok ).to be true
           expect( Team.count ).to eq( team_count )
           expect( DataImportTeamAlias.count ).to eq( alias_count + 1 )
-# DEBUG
-#          puts "count AFTER:  Team=#{Team.count}, DataImportTeamAlias=#{DataImportTeamAlias.count}, TeamAffiliation=#{TeamAffiliation.count}"
         end
       end
       #-- ---------------------------------------------------------------------

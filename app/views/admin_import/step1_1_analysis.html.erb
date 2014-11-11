@@ -44,12 +44,10 @@
                     <b>"<%= result_row.searched_team_name %>"</b>
                 </div>
                 <div class="span4">
-                    <% if result_row.chosen_team_id -%>
-                        <%= select( :alias_ids, result_row.id, Team.to_dropdown(),
-                                    { :prompt => I18n.t(:please_select), :selected => result_row.chosen_team_id },    # select options
-                                    { class: 'input-xlarge' } )    # html options
-                        %>
-                    <% end -%>
+                    <%= select( :alias_ids, result_row.id, Team.to_dropdown(),
+                                { prompt: I18n.t(:please_select), selected: result_row.chosen_team_id }, # select options
+                                { class: 'input-xlarge' } )    # html options
+                    %>
                 </div>
                 <div class="span1">
                     <%= show_tag( do_insert_alias ) %>
