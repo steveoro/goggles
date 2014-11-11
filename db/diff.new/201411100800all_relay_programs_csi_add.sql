@@ -23,7 +23,7 @@ and et.is_a_relay
 and st.code = 'MASCSI'
 and me.id > 2000
 and ((gt.code = 'X' and et.is_mixed_gender) or (gt.code <> 'X' and not et.is_mixed_gender))
-order by m.header_date, et.code, ct.code, gt.code
+order by m.header_date, et.code, ct.code, gt.code;
 
 COMMIT;
 -- Fine script
