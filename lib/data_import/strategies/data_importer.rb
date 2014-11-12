@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.609
+  - Goggles framework vers.:  4.00.611
   - author: Steve A.
 
   Data-Import strategy class.
@@ -763,7 +763,18 @@ class DataImporter
   def update_logs( msg, method = :info, with_save = false )
     @logger.send( method, msg ) if @logger
     @import_log << "#{msg}\r\n"
-    # FIXME The Log is too long & complex to be saved into the table:
+    # The Log has become too long & complex to be saved into the table!
+
+    # [Steve, 20141111] We cannot save the log on table: the UPDATE statement will take
+    # a progressively longer time to complete, slowing the process considerably
+    # and eventually make the statement execution fail with MySQL disconnection error.
+    # A more quick, professional and permanent solution to obtain the logging serialized
+    # on DB it would be to add a separate table entity with a row for each single log
+    # event.
+    # As it is, the only viable solution is to keep the logging only on file.
+
+    # Quick hack: disregard any update to the log members and keep them just
+    # as variables:
 #    @data_import_session.phase_1_log_will_change! if with_save
     @data_import_session.phase_1_log << "#{msg}\r\n"
 #    if with_save

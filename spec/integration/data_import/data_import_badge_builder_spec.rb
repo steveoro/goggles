@@ -11,11 +11,20 @@ describe DataImportBadgeBuilder, type: :integration do
 
   # Existing or matching fixture params:
   let(:badge)                 { create( :badge, season: data_import_session.season ) }
+  let(:badge_unknown)         { create( :badge, season: data_import_session.season, number: '?' ) }
   let(:data_import_badge) do
     create(
       :data_import_badge,
       data_import_session: data_import_session,
       season:              data_import_session.season
+    )
+  end
+  let(:data_import_badge_unknown) do
+    create(
+      :data_import_badge,
+      data_import_session: data_import_session,
+      season:              data_import_session.season,
+      number:              '?'
     )
   end
 
@@ -105,19 +114,7 @@ describe DataImportBadgeBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with a matching primary entity row," do
-    subject do
-      DataImportBadgeBuilder.build_from_parameters(
-        data_import_session,
-        badge.number,
-        badge.season,
-        badge.team,
-        badge.swimmer,
-        badge.category_type,
-        badge.entry_time_type
-      )
-    end
-
+  shared_examples_for "(a build w/ a matching primary entity row)" do
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
@@ -151,25 +148,43 @@ describe DataImportBadgeBuilder, type: :integration do
       end
     end
   end
+
+
+  context "after a self.build() with a matching primary entity row (w/ Random BADGE CODE)," do
+    subject do
+      DataImportBadgeBuilder.build_from_parameters(
+        data_import_session,
+        badge.number,
+        badge.season,
+        badge.team,
+        badge.swimmer,
+        badge.category_type,
+        badge.entry_time_type
+      )
+    end
+    it_behaves_like "(a build w/ a matching primary entity row)"
+  end
+
+
+  context "after a self.build() with a matching primary entity row (w/ '?' BADGE CODE)," do
+    subject do
+      DataImportBadgeBuilder.build_from_parameters(
+        data_import_session,
+        badge_unknown.number,
+        badge_unknown.season,
+        badge_unknown.team,
+        badge_unknown.swimmer,
+        badge_unknown.category_type,
+        badge_unknown.entry_time_type
+      )
+    end
+    it_behaves_like "(a build w/ a matching primary entity row)"
+  end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  context "after a self.build() with a matching secondary entity row," do
-    subject do
-# DEBUG
-#      puts "\r\n#{data_import_badge.inspect}"
-      DataImportBadgeBuilder.build_from_parameters(
-        data_import_session,
-        data_import_badge.number,
-        data_import_badge.season,
-        data_import_badge.team,
-        data_import_badge.swimmer,
-        data_import_badge.category_type,
-        data_import_badge.entry_time_type
-      )
-    end
-
+  shared_examples_for "(a build w/ a matching secondary entity row)" do
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
@@ -202,6 +217,42 @@ describe DataImportBadgeBuilder, type: :integration do
         expect( subject.result_row.id ).to eq( subject.result_id )
       end
     end
+  end
+
+
+  context "after a self.build() with a matching secondary entity row (w/ Random BADGE CODE)," do
+    subject do
+# DEBUG
+#      puts "\r\n#{data_import_badge.inspect}"
+      DataImportBadgeBuilder.build_from_parameters(
+        data_import_session,
+        data_import_badge.number,
+        data_import_badge.season,
+        data_import_badge.team,
+        data_import_badge.swimmer,
+        data_import_badge.category_type,
+        data_import_badge.entry_time_type
+      )
+    end
+    it_behaves_like "(a build w/ a matching secondary entity row)"
+  end
+
+
+  context "after a self.build() with a matching secondary entity row (w/ '?' BADGE CODE)," do
+    subject do
+# DEBUG
+#      puts "\r\n#{data_import_badge_unknown.inspect}"
+      DataImportBadgeBuilder.build_from_parameters(
+        data_import_session,
+        data_import_badge_unknown.number,
+        data_import_badge_unknown.season,
+        data_import_badge_unknown.team,
+        data_import_badge_unknown.swimmer,
+        data_import_badge_unknown.category_type,
+        data_import_badge_unknown.entry_time_type
+      )
+    end
+    it_behaves_like "(a build w/ a matching secondary entity row)"
   end
   #-- -------------------------------------------------------------------------
   #++

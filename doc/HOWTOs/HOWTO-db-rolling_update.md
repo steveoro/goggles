@@ -33,7 +33,14 @@ on the app on the remote Server without losing your mind.
   Or:
   > bundle exec rake db:rebuild_from_dump from=production to=production
 
-4) Apply the DB diffs created locally:
+3.1) Run any pending migration on production DB:
+  > RAILS_ENV=production bundle exec rake db:migrate
+  (Assuming migrations have already been executed and tested on Dev. DB)
+
+3.2) Re-update the DB dumps:
+  > RAILS_ENV=production bundle exec rake db:dump
+
+4) Apply the DB diffs created locally (on all DBs):
   With Zeus server running:
   > zeus rake db:diff_apply
   Or:
@@ -41,6 +48,7 @@ on the app on the remote Server without losing your mind.
   This will also move successfully applied files to the 'consumed' dir. 'diff.applied'
   and update the local production dump.
 
+#  TODO ADD SUPPORT for **skip_rebuild=1** #
 
 
 ### Phase-3: Upload the updated dump and apply it remotely:

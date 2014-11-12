@@ -9,7 +9,7 @@ require 'data_import/strategies/team_analysis_result_processor'
 
 = AdminImportController
 
-  - version:  4.00.601
+  - version:  4.00.611
   - author:   Steve A.
 
 =end
@@ -141,6 +141,18 @@ class AdminImportController < ApplicationController
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
         data_importer.destroy_data_import_session
       else                                          # Clear just the results from the session if everything is ok:
+        # The Log has become too long & complex to be saved into the table!
+
+        # [Steve, 20141111] We cannot save the log on table: the UPDATE statement will take
+        # a progressively longer time to complete, slowing the process considerably
+        # and eventually make the statement execution fail with MySQL disconnection error.
+        # A more quick, professional and permanent solution to obtain the logging serialized
+        # on DB it would be to add a separate table entity with a row for each single log
+        # event.
+        # As it is, the only viable solution is to keep the logging only on file.
+
+        # Quick hack: disregard any update to the log members and keep them just
+        # as variables:
 #        data_import_session.phase_1_log_will_change!
         data_import_session.phase_1_log << result_processor.process_log
 #        data_import_session.sql_diff_will_change!

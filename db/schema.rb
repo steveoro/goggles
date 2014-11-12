@@ -15,40 +15,40 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
-    t.integer  "part_order",          :limit => 3,  :default => 0,     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "part_order",          :limit => 3,  :default => 0
     t.string   "achievement_value",   :limit => 10
-    t.boolean  "is_bracket_open",                   :default => false, :null => false
-    t.boolean  "is_or_operator",                    :default => false, :null => false
-    t.boolean  "is_not_operator",                   :default => false, :null => false
-    t.boolean  "is_bracket_closed",                 :default => false, :null => false
+    t.boolean  "is_bracket_open",                   :default => false
+    t.boolean  "is_or_operator",                    :default => false
+    t.boolean  "is_not_operator",                   :default => false
+    t.boolean  "is_bracket_closed",                 :default => false
     t.integer  "achievement_id"
     t.integer  "achievement_type_id"
   end
 
   create_table "achievement_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
   end
 
   add_index "achievement_types", ["code"], :name => "index_achievement_types_on_code", :unique => true
 
   create_table "achievements", :force => true do |t|
     t.integer  "lock_version",               :default => 0
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
-    t.string   "code",         :limit => 10,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 10
     t.integer  "user_id"
   end
 
   add_index "achievements", ["code"], :name => "index_achievements_on_code", :unique => true
 
   create_table "admins", :force => true do |t|
-    t.string   "email",                            :default => "", :null => false
-    t.string   "encrypted_password",               :default => "", :null => false
+    t.string   "email",                            :default => ""
+    t.string   "encrypted_password",               :default => ""
     t.integer  "sign_in_count",                    :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
@@ -58,10 +58,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.integer  "lock_version",                     :default => 0
-    t.string   "name",                                             :null => false
+    t.string   "name"
     t.string   "description",        :limit => 50
-    t.datetime "created_at",                                       :null => false
-    t.datetime "updated_at",                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "code"
     t.string   "controller_name"
     t.string   "action_name"
-    t.boolean  "is_a_post",                                                     :default => false, :null => false
+    t.boolean  "is_a_post",                                                     :default => false
     t.string   "confirmation_text"
     t.string   "a_string"
     t.boolean  "a_bool"
@@ -88,7 +88,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.string   "a_name"
     t.string   "a_filename"
     t.string   "tooltip_text"
-    t.integer  "view_height",                                                   :default => 0,     :null => false
+    t.integer  "view_height",                                                   :default => 0
     t.integer  "code_type_1",       :limit => 8
     t.integer  "code_type_2",       :limit => 8
     t.integer  "code_type_3",       :limit => 8
@@ -102,43 +102,43 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.boolean  "free_bool_3"
     t.boolean  "free_bool_4"
     t.text     "description"
-    t.datetime "created_at",                                                                       :null => false
-    t.datetime "updated_at",                                                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "app_parameters", ["code"], :name => "index_app_parameters_on_code", :unique => true
 
   create_table "arm_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
   end
 
   add_index "arm_aux_types", ["code"], :name => "index_arm_aux_types_on_code", :unique => true
 
   create_table "articles", :force => true do |t|
     t.integer  "lock_version",               :default => 0
-    t.string   "title",        :limit => 80,                    :null => false
-    t.text     "body",                                          :null => false
-    t.boolean  "is_sticky",                  :default => false, :null => false
+    t.string   "title",        :limit => 80
+    t.text     "body"
+    t.boolean  "is_sticky",                  :default => false
     t.integer  "user_id"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "articles", ["title"], :name => "index_articles_on_title"
 
   create_table "badges", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
-    t.string   "number",              :limit => 40,                :null => false
+    t.string   "number",              :limit => 40
     t.integer  "season_id"
     t.integer  "swimmer_id"
     t.integer  "team_id"
     t.integer  "category_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                       :null => false
-    t.datetime "updated_at",                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "entry_time_type_id"
     t.integer  "team_affiliation_id"
   end
@@ -153,13 +153,13 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "base_movements", :force => true do |t|
     t.integer  "lock_version",                        :default => 0
-    t.datetime "created_at",                                             :null => false
-    t.datetime "updated_at",                                             :null => false
-    t.string   "code",                   :limit => 6,                    :null => false
-    t.boolean  "is_arm_aux_allowed",                  :default => false, :null => false
-    t.boolean  "is_kick_aux_allowed",                 :default => false, :null => false
-    t.boolean  "is_body_aux_allowed",                 :default => false, :null => false
-    t.boolean  "is_breath_aux_allowed",               :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",                   :limit => 6
+    t.boolean  "is_arm_aux_allowed",                  :default => false
+    t.boolean  "is_kick_aux_allowed",                 :default => false
+    t.boolean  "is_body_aux_allowed",                 :default => false
+    t.boolean  "is_breath_aux_allowed",               :default => false
     t.integer  "movement_type_id"
     t.integer  "stroke_type_id"
     t.integer  "movement_scope_type_id"
@@ -173,36 +173,36 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "body_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
   end
 
   add_index "body_aux_types", ["code"], :name => "index_body_aux_types_on_code", :unique => true
 
   create_table "breath_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
   end
 
   add_index "breath_aux_types", ["code"], :name => "index_breath_aux_types_on_code", :unique => true
 
   create_table "category_types", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
-    t.string   "code",            :limit => 7,                      :null => false
-    t.string   "federation_code", :limit => 2,                      :null => false
+    t.string   "code",            :limit => 7
+    t.string   "federation_code", :limit => 2
     t.string   "description",     :limit => 100
     t.string   "short_name",      :limit => 50
     t.string   "group_name",      :limit => 50
     t.integer  "age_begin",       :limit => 3
     t.integer  "age_end",         :limit => 3
-    t.boolean  "is_a_relay",                     :default => false, :null => false
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.boolean  "is_a_relay",                     :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "season_id"
-    t.boolean  "is_out_of_race",                 :default => false, :null => false
+    t.boolean  "is_out_of_race",                 :default => false
   end
 
   add_index "category_types", ["federation_code", "is_a_relay"], :name => "federation_code"
@@ -210,13 +210,13 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "cities", :force => true do |t|
     t.integer  "lock_version",               :default => 0
-    t.string   "name",         :limit => 50,                :null => false
+    t.string   "name",         :limit => 50
     t.string   "zip",          :limit => 6
-    t.string   "area",         :limit => 50,                :null => false
-    t.string   "country",      :limit => 50,                :null => false
-    t.string   "country_code", :limit => 10,                :null => false
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.string   "area",         :limit => 50
+    t.string   "country",      :limit => 50
+    t.string   "country_code", :limit => 10
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "user_id"
   end
 
@@ -225,22 +225,22 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "coach_level_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
-    t.integer  "level",        :limit => 3, :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
+    t.integer  "level",        :limit => 3, :default => 0
   end
 
   add_index "coach_level_types", ["code"], :name => "index_coach_level_types_on_code", :unique => true
 
   create_table "comments", :force => true do |t|
     t.integer  "lock_version",            :default => 0
-    t.string   "entry_text",                             :null => false
+    t.string   "entry_text"
     t.integer  "user_id"
     t.integer  "swimming_pool_review_id"
     t.integer  "comment_id"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "comments", ["comment_id"], :name => "fk_comments_comments"
@@ -248,10 +248,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "computed_season_rankings", :force => true do |t|
     t.integer  "lock_version",                                :default => 0
-    t.datetime "created_at",                                                   :null => false
-    t.datetime "updated_at",                                                   :null => false
-    t.integer  "rank",                                        :default => 0,   :null => false
-    t.decimal  "total_points", :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "rank",                                        :default => 0
+    t.decimal  "total_points", :precision => 10, :scale => 2, :default => 0.0
     t.integer  "team_id"
     t.integer  "season_id"
   end
@@ -262,11 +262,11 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_badges", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",         :limit => 8,  :default => 0
-    t.string   "import_text",                                         :null => false
+    t.string   "import_text"
     t.string   "number",                 :limit => 40
     t.integer  "data_import_swimmer_id"
     t.integer  "data_import_team_id"
@@ -284,12 +284,12 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_cities", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",         :limit => 8,  :default => 0
-    t.string   "import_text",                                         :null => false
-    t.string   "name",                   :limit => 50,                :null => false
+    t.string   "import_text"
+    t.string   "name",                   :limit => 50
     t.string   "zip",                    :limit => 6
     t.string   "area",                   :limit => 50
     t.string   "country",                :limit => 50
@@ -302,25 +302,25 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_meeting_individual_results", :force => true do |t|
     t.integer  "lock_version",                                                                 :default => 0
-    t.datetime "created_at",                                                                                      :null => false
-    t.datetime "updated_at",                                                                                      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",                 :limit => 8,                                  :default => 0
-    t.string   "import_text",                                                                                     :null => false
-    t.string   "athlete_name",                   :limit => 100,                                                   :null => false
-    t.string   "team_name",                      :limit => 60,                                                    :null => false
+    t.string   "import_text"
+    t.string   "athlete_name",                   :limit => 100
+    t.string   "team_name",                      :limit => 60
     t.string   "athlete_badge_number",           :limit => 40
     t.string   "team_badge_number",              :limit => 40
-    t.integer  "year_of_birth",                                                                :default => 1900,  :null => false
-    t.integer  "rank",                                                                         :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                  :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                               :default => false, :null => false
-    t.boolean  "is_disqualified",                                                              :default => false, :null => false
-    t.decimal  "standard_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_individual_points",                     :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                        :limit => 3,                                  :default => 0,     :null => false
-    t.integer  "seconds",                        :limit => 2,                                  :default => 0,     :null => false
-    t.integer  "hundreds",                       :limit => 2,                                  :default => 0,     :null => false
+    t.integer  "year_of_birth",                                                                :default => 1900
+    t.integer  "rank",                                                                         :default => 0
+    t.boolean  "is_play_off",                                                                  :default => false
+    t.boolean  "is_out_of_race",                                                               :default => false
+    t.boolean  "is_disqualified",                                                              :default => false
+    t.decimal  "standard_points",                               :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_individual_points",                     :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "minutes",                        :limit => 3,                                  :default => 0
+    t.integer  "seconds",                        :limit => 2,                                  :default => 0
+    t.integer  "hundreds",                       :limit => 2,                                  :default => 0
     t.integer  "data_import_meeting_program_id"
     t.integer  "meeting_program_id"
     t.integer  "data_import_swimmer_id"
@@ -331,20 +331,20 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "badge_id"
     t.integer  "user_id"
     t.integer  "disqualification_code_type_id"
-    t.decimal  "goggle_cup_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "reaction_time",                                 :precision => 5,  :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "team_points",                                   :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "goggle_cup_points",                             :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "reaction_time",                                 :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "team_points",                                   :precision => 10, :scale => 2, :default => 0.0
     t.integer  "team_affiliation_id"
   end
 
   create_table "data_import_meeting_programs", :force => true do |t|
     t.integer  "lock_version",                                :default => 0
-    t.datetime "created_at",                                                     :null => false
-    t.datetime "updated_at",                                                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",                 :limit => 8, :default => 0
-    t.string   "import_text",                                                    :null => false
-    t.integer  "event_order",                    :limit => 3, :default => 0,     :null => false
+    t.string   "import_text"
+    t.integer  "event_order",                    :limit => 3, :default => 0
     t.time     "begin_time"
     t.integer  "data_import_meeting_session_id"
     t.integer  "meeting_session_id"
@@ -355,7 +355,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "minutes",                        :limit => 3, :default => 0
     t.integer  "seconds",                        :limit => 2, :default => 0
     t.integer  "hundreds",                       :limit => 2, :default => 0
-    t.boolean  "is_out_of_race",                              :default => false, :null => false
+    t.boolean  "is_out_of_race",                              :default => false
     t.integer  "heat_type_id"
     t.integer  "time_standard_id"
   end
@@ -367,28 +367,28 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_meeting_relay_results", :force => true do |t|
     t.integer  "lock_version",                                                                :default => 0
-    t.datetime "created_at",                                                                                     :null => false
-    t.datetime "updated_at",                                                                                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",                 :limit => 8,                                 :default => 0
-    t.string   "import_text",                                                                                    :null => false
-    t.integer  "rank",                                                                        :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                 :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                              :default => false, :null => false
-    t.boolean  "is_disqualified",                                                             :default => false, :null => false
-    t.decimal  "standard_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                        :limit => 3,                                 :default => 0,     :null => false
-    t.integer  "seconds",                        :limit => 2,                                 :default => 0,     :null => false
-    t.integer  "hundreds",                       :limit => 2,                                 :default => 0,     :null => false
+    t.string   "import_text"
+    t.integer  "rank",                                                                        :default => 0
+    t.boolean  "is_play_off",                                                                 :default => false
+    t.boolean  "is_out_of_race",                                                              :default => false
+    t.boolean  "is_disqualified",                                                             :default => false
+    t.decimal  "standard_points",                              :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_points",                               :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "minutes",                        :limit => 3,                                 :default => 0
+    t.integer  "seconds",                        :limit => 2,                                 :default => 0
+    t.integer  "hundreds",                       :limit => 2,                                 :default => 0
     t.integer  "data_import_team_id"
     t.integer  "team_id"
     t.integer  "user_id"
     t.integer  "data_import_meeting_program_id"
     t.integer  "meeting_program_id"
     t.integer  "disqualification_code_type_id"
-    t.string   "relay_header",                   :limit => 60,                                :default => "",    :null => false
-    t.decimal  "reaction_time",                                :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.string   "relay_header",                   :limit => 60,                                :default => ""
+    t.decimal  "reaction_time",                                :precision => 5,  :scale => 2, :default => 0.0
     t.integer  "entry_minutes",                  :limit => 3
     t.integer  "entry_seconds",                  :limit => 2
     t.integer  "entry_hundreds",                 :limit => 2
@@ -398,13 +398,13 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_meeting_sessions", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",         :limit => 8,   :default => 0
-    t.string   "import_text",                                          :null => false
-    t.integer  "session_order",          :limit => 2,   :default => 0, :null => false
-    t.date     "scheduled_date",                                       :null => false
+    t.string   "import_text"
+    t.integer  "session_order",          :limit => 2,   :default => 0
+    t.date     "scheduled_date"
     t.time     "warm_up_time"
     t.time     "begin_time"
     t.text     "notes"
@@ -412,7 +412,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "meeting_id"
     t.integer  "swimming_pool_id"
     t.integer  "user_id"
-    t.string   "description",            :limit => 100,                :null => false
+    t.string   "description",            :limit => 100
     t.integer  "day_part_type_id"
   end
 
@@ -420,37 +420,37 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_meeting_team_scores", :force => true do |t|
     t.integer  "lock_version",                                                          :default => 0
-    t.datetime "created_at",                                                                             :null => false
-    t.datetime "updated_at",                                                                             :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",            :limit => 8,                                :default => 0
-    t.string   "import_text",                                                                            :null => false
-    t.decimal  "sum_individual_points",                  :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "sum_relay_points",                       :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.string   "import_text"
+    t.decimal  "sum_individual_points",                  :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "sum_relay_points",                       :precision => 10, :scale => 2, :default => 0.0
     t.integer  "data_import_team_id"
     t.integer  "data_import_meeting_id"
     t.integer  "team_id"
     t.integer  "meeting_id"
-    t.integer  "rank",                                                                  :default => 0,   :null => false
+    t.integer  "rank",                                                                  :default => 0
     t.integer  "user_id"
-    t.decimal  "sum_team_points",                        :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_individual_points",              :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_relay_points",                   :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_team_points",                    :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_individual_points",               :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_relay_points",                    :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_team_points",                     :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_team_points",                        :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_individual_points",              :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_relay_points",                   :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_team_points",                    :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "season_individual_points",               :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "season_relay_points",                    :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "season_team_points",                     :precision => 10, :scale => 2, :default => 0.0
     t.integer  "season_id"
     t.integer  "team_affiliation_id"
   end
 
   create_table "data_import_meetings", :force => true do |t|
     t.integer  "lock_version",                                        :default => 0
-    t.datetime "created_at",                                                             :null => false
-    t.datetime "updated_at",                                                             :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",                       :limit => 8,   :default => 0
-    t.string   "import_text",                                                            :null => false
+    t.string   "import_text"
     t.string   "description",                          :limit => 100
     t.date     "entry_deadline"
     t.boolean  "has_warm_up_pool",                                    :default => false
@@ -465,15 +465,15 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.boolean  "are_results_acquired",                                :default => false
     t.integer  "max_individual_events",                :limit => 1,   :default => 2
     t.string   "configuration_file",                   :limit => 50
-    t.integer  "edition",                              :limit => 3,   :default => 0,     :null => false
+    t.integer  "edition",                              :limit => 3,   :default => 0
     t.integer  "data_import_season_id"
     t.integer  "season_id"
     t.integer  "user_id"
     t.date     "header_date"
-    t.string   "code",                                 :limit => 20,                     :null => false
-    t.string   "header_year",                          :limit => 9,                      :null => false
+    t.string   "code",                                 :limit => 20
+    t.string   "header_year",                          :limit => 9
     t.integer  "max_individual_events_per_session",    :limit => 2,   :default => 2
-    t.boolean  "is_out_of_season",                                    :default => false, :null => false
+    t.boolean  "is_out_of_season",                                    :default => false
     t.integer  "edition_type_id"
     t.integer  "timing_type_id"
     t.integer  "individual_score_computation_type_id"
@@ -488,17 +488,17 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_seasons", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",         :limit => 8,   :default => 0
-    t.string   "import_text",                                          :null => false
-    t.string   "description",            :limit => 100,                :null => false
-    t.date     "begin_date",                                           :null => false
+    t.string   "import_text"
+    t.string   "description",            :limit => 100
+    t.date     "begin_date"
     t.date     "end_date"
     t.integer  "season_type_id"
-    t.string   "header_year",            :limit => 9,                  :null => false
-    t.integer  "edition",                :limit => 3,   :default => 0, :null => false
+    t.string   "header_year",            :limit => 9
+    t.integer  "edition",                :limit => 3,   :default => 0
     t.integer  "edition_type_id"
     t.integer  "timing_type_id"
   end
@@ -506,8 +506,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
   add_index "data_import_seasons", ["begin_date"], :name => "index_data_import_seasons_on_begin_date"
 
   create_table "data_import_sessions", :force => true do |t|
-    t.datetime "created_at",                                               :null => false
-    t.datetime "updated_at",                                               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "file_name"
     t.text     "source_data",           :limit => 16777215
     t.integer  "phase"
@@ -520,24 +520,24 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "season_id"
     t.integer  "user_id"
     t.text     "sql_diff"
-    t.integer  "log_verbosity",                             :default => 0, :null => false
+    t.integer  "log_verbosity",                             :default => 0
   end
 
   add_index "data_import_sessions", ["user_id"], :name => "user_id"
 
   create_table "data_import_swimmers", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",         :limit => 8,   :default => 0
-    t.string   "import_text",                                             :null => false
+    t.string   "import_text"
     t.string   "last_name"
     t.string   "first_name"
-    t.integer  "year_of_birth",                         :default => 1900, :null => false
+    t.integer  "year_of_birth",                         :default => 1900
     t.integer  "gender_type_id"
     t.integer  "user_id"
-    t.string   "complete_name",          :limit => 100,                   :null => false
+    t.string   "complete_name",          :limit => 100
   end
 
   add_index "data_import_swimmers", ["complete_name"], :name => "index_data_import_swimmers_on_complete_name"
@@ -545,9 +545,9 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_team_aliases", :force => true do |t|
     t.integer  "lock_version",               :default => 0
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
-    t.string   "name",         :limit => 60,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name",         :limit => 60
     t.integer  "team_id"
   end
 
@@ -555,8 +555,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_team_analysis_results", :force => true do |t|
     t.integer  "lock_version",                                                              :default => 0
-    t.datetime "created_at",                                                                                 :null => false
-    t.datetime "updated_at",                                                                                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.text     "analysis_log_text",      :limit => 16777215
     t.text     "sql_text"
@@ -573,12 +573,12 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "data_import_teams", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",         :limit => 8,  :default => 0
-    t.string   "import_text",                                         :null => false
-    t.string   "name",                   :limit => 60,                :null => false
+    t.string   "import_text"
+    t.string   "name",                   :limit => 60
     t.string   "badge_number",           :limit => 40
     t.integer  "data_import_city_id"
     t.integer  "city_id"
@@ -591,45 +591,45 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "day_part_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 1,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 1
   end
 
   add_index "day_part_types", ["code"], :name => "index_day_part_types_on_code", :unique => true
 
   create_table "day_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 6,                :null => false
-    t.integer  "week_order",   :limit => 3, :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 6
+    t.integer  "week_order",   :limit => 3, :default => 0
   end
 
   add_index "day_types", ["code"], :name => "index_day_types_on_code", :unique => true
 
   create_table "delayed_jobs", :force => true do |t|
-    t.integer  "priority",   :default => 0, :null => false
-    t.integer  "attempts",   :default => 0, :null => false
-    t.text     "handler",                   :null => false
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
     t.text     "last_error"
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
     t.string   "queue"
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "disqualification_code_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
-    t.string   "code",           :limit => 4,                    :null => false
-    t.boolean  "is_a_relay",                  :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",           :limit => 4
+    t.boolean  "is_a_relay",                  :default => false
     t.integer  "stroke_type_id"
   end
 
@@ -638,32 +638,32 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "edition_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 1,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 1
   end
 
   add_index "edition_types", ["code"], :name => "index_edition_types_on_code", :unique => true
 
   create_table "entry_time_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 1,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "entry_time_types", ["code"], :name => "idx_entry_time_types_code", :unique => true
 
   create_table "event_types", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
-    t.string   "code",                   :limit => 10,                    :null => false
+    t.string   "code",                   :limit => 10
     t.integer  "length_in_meters",       :limit => 8
-    t.boolean  "is_a_relay",                           :default => false, :null => false
+    t.boolean  "is_a_relay",                           :default => false
     t.integer  "stroke_type_id"
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
-    t.integer  "style_order",            :limit => 2,  :default => 0,     :null => false
-    t.boolean  "is_mixed_gender",                      :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "style_order",            :limit => 2,  :default => 0
+    t.boolean  "is_mixed_gender",                      :default => false
     t.integer  "partecipants",           :limit => 2,  :default => 4
     t.integer  "phases",                 :limit => 2,  :default => 4
     t.integer  "phase_length_in_meters", :limit => 3,  :default => 50
@@ -678,8 +678,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "lock_version",  :default => 0
     t.integer  "pool_type_id"
     t.integer  "event_type_id"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "events_by_pool_types", ["event_type_id"], :name => "fk_events_by_pool_types_event_types"
@@ -687,26 +687,26 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "execution_note_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 3,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 3
   end
 
   add_index "execution_note_types", ["code"], :name => "index_execution_note_types_on_code", :unique => true
 
   create_table "exercise_rows", :force => true do |t|
     t.integer  "lock_version",                        :default => 0
-    t.datetime "created_at",                                         :null => false
-    t.datetime "updated_at",                                         :null => false
-    t.integer  "part_order",             :limit => 3, :default => 0, :null => false
-    t.integer  "percentage",             :limit => 3, :default => 0, :null => false
-    t.integer  "start_and_rest",                      :default => 0, :null => false
-    t.integer  "pause",                               :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "part_order",             :limit => 3, :default => 0
+    t.integer  "percentage",             :limit => 3, :default => 0
+    t.integer  "start_and_rest",                      :default => 0
+    t.integer  "pause",                               :default => 0
     t.integer  "exercise_id"
     t.integer  "base_movement_id"
     t.integer  "training_mode_type_id"
     t.integer  "execution_note_type_id"
-    t.integer  "distance",                            :default => 0, :null => false
+    t.integer  "distance",                            :default => 0
   end
 
   add_index "exercise_rows", ["base_movement_id"], :name => "fk_exercise_rows_base_movements"
@@ -716,9 +716,9 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "exercises", :force => true do |t|
     t.integer  "lock_version",                           :default => 0
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
-    t.string   "code",                     :limit => 6,                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",                     :limit => 6
     t.integer  "user_id"
     t.string   "training_step_type_codes", :limit => 50
   end
@@ -727,11 +727,11 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "federation_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
-    t.string   "code",         :limit => 4,                  :null => false
+    t.string   "code",         :limit => 4
     t.string   "description",  :limit => 100
     t.string   "short_name",   :limit => 10
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "federation_types", ["code"], :name => "index_federation_types_on_code", :unique => true
@@ -741,18 +741,18 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer "friend_id"
     t.integer "blocker_id"
     t.boolean "pending",          :default => true
-    t.boolean "shares_passages",  :default => false, :null => false
-    t.boolean "shares_trainings", :default => false, :null => false
-    t.boolean "shares_calendars", :default => false, :null => false
+    t.boolean "shares_passages",  :default => false
+    t.boolean "shares_trainings", :default => false
+    t.boolean "shares_calendars", :default => false
   end
 
   add_index "friendships", ["friendable_id", "friend_id"], :name => "index_friendships_on_friendable_id_and_friend_id", :unique => true
 
   create_table "gender_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 1,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "gender_types", ["code"], :name => "index_gender_types_on_code", :unique => true
@@ -761,8 +761,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "lock_version",  :default => 0
     t.integer  "goggle_cup_id"
     t.integer  "season_id"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "goggle_cup_definitions", ["goggle_cup_id"], :name => "fk_goggle_cup_definitions_goggle_cups"
@@ -770,14 +770,14 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "goggle_cup_standards", :force => true do |t|
     t.integer  "lock_version",                                             :default => 0
-    t.integer  "minutes",       :limit => 3,                               :default => 0,   :null => false
-    t.integer  "seconds",       :limit => 2,                               :default => 0,   :null => false
-    t.integer  "hundreds",      :limit => 2,                               :default => 0,   :null => false
+    t.integer  "minutes",       :limit => 3,                               :default => 0
+    t.integer  "seconds",       :limit => 2,                               :default => 0
+    t.integer  "hundreds",      :limit => 2,                               :default => 0
     t.integer  "event_type_id"
     t.integer  "pool_type_id"
-    t.datetime "created_at",                                                                :null => false
-    t.datetime "updated_at",                                                                :null => false
-    t.decimal  "reaction_time",              :precision => 5, :scale => 2, :default => 0.0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.decimal  "reaction_time",              :precision => 5, :scale => 2, :default => 0.0
     t.integer  "goggle_cup_id"
     t.integer  "swimmer_id"
   end
@@ -789,14 +789,14 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "goggle_cups", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
-    t.string   "description",     :limit => 60,                   :null => false
-    t.integer  "season_year",                   :default => 2010, :null => false
-    t.integer  "max_points",                    :default => 1000, :null => false
+    t.string   "description",     :limit => 60
+    t.integer  "season_year",                   :default => 2010
+    t.integer  "max_points",                    :default => 1000
     t.integer  "team_id"
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "user_id"
-    t.integer  "max_performance", :limit => 2,  :default => 5,    :null => false
+    t.integer  "max_performance", :limit => 2,  :default => 5
   end
 
   add_index "goggle_cups", ["season_year"], :name => "idx_season_year"
@@ -804,35 +804,35 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "hair_dryer_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 3,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "hair_dryer_types", ["code"], :name => "index_hair_dryer_types_on_code", :unique => true
 
   create_table "heat_types", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
-    t.string   "code",             :limit => 10,                    :null => false
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
-    t.boolean  "is_default_value",               :default => false, :null => false
+    t.string   "code",             :limit => 10
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_default_value",               :default => false
   end
 
   add_index "heat_types", ["code"], :name => "idx_heat_types_code", :unique => true
 
   create_table "individual_records", :force => true do |t|
     t.integer  "lock_version",                              :default => 0
-    t.datetime "created_at",                                                   :null => false
-    t.datetime "updated_at",                                                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "pool_type_id"
     t.integer  "event_type_id"
     t.integer  "category_type_id"
     t.integer  "gender_type_id"
-    t.integer  "minutes",                      :limit => 3, :default => 0,     :null => false
-    t.integer  "seconds",                      :limit => 2, :default => 0,     :null => false
-    t.integer  "hundreds",                     :limit => 2, :default => 0,     :null => false
-    t.boolean  "is_team_record",                            :default => false, :null => false
+    t.integer  "minutes",                      :limit => 3, :default => 0
+    t.integer  "seconds",                      :limit => 2, :default => 0
+    t.integer  "hundreds",                     :limit => 2, :default => 0
+    t.boolean  "is_team_record",                            :default => false
     t.integer  "swimmer_id"
     t.integer  "team_id"
     t.integer  "season_id"
@@ -845,27 +845,27 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "kick_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
   end
 
   add_index "kick_aux_types", ["code"], :name => "index_kick_aux_types_on_code", :unique => true
 
   create_table "locker_cabinet_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 3,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "locker_cabinet_types", ["code"], :name => "index_locker_cabinet_types_on_code", :unique => true
 
   create_table "medal_types", :force => true do |t|
     t.integer  "lock_version",               :default => 0
-    t.string   "code",         :limit => 1,                 :null => false
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.string   "code",         :limit => 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "rank",                       :default => 0
     t.integer  "weigth",                     :default => 0
     t.string   "image_uri",    :limit => 50
@@ -875,8 +875,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_entries", :force => true do |t|
     t.integer  "lock_version",                     :default => 0
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "start_list_number"
     t.integer  "lane_number",         :limit => 2
     t.integer  "heat_number"
@@ -895,12 +895,12 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_events", :force => true do |t|
     t.integer  "lock_version",                    :default => 0
-    t.datetime "created_at",                                         :null => false
-    t.datetime "updated_at",                                         :null => false
-    t.integer  "event_order",        :limit => 3, :default => 0,     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "event_order",        :limit => 3, :default => 0
     t.time     "begin_time"
-    t.boolean  "is_out_of_race",                  :default => false, :null => false
-    t.boolean  "is_autofilled",                   :default => false, :null => false
+    t.boolean  "is_out_of_race",                  :default => false
+    t.boolean  "is_autofilled",                   :default => false
     t.text     "notes"
     t.integer  "meeting_session_id"
     t.integer  "event_type_id"
@@ -914,26 +914,26 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_individual_results", :force => true do |t|
     t.integer  "lock_version",                                                              :default => 0
-    t.integer  "rank",                                                                      :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                               :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                            :default => false, :null => false
-    t.boolean  "is_disqualified",                                                           :default => false, :null => false
-    t.decimal  "standard_points",                            :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_individual_points",                  :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                       :limit => 3,                                :default => 0,     :null => false
-    t.integer  "seconds",                       :limit => 2,                                :default => 0,     :null => false
-    t.integer  "hundreds",                      :limit => 2,                                :default => 0,     :null => false
+    t.integer  "rank",                                                                      :default => 0
+    t.boolean  "is_play_off",                                                               :default => false
+    t.boolean  "is_out_of_race",                                                            :default => false
+    t.boolean  "is_disqualified",                                                           :default => false
+    t.decimal  "standard_points",                            :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_individual_points",                  :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "minutes",                       :limit => 3,                                :default => 0
+    t.integer  "seconds",                       :limit => 2,                                :default => 0
+    t.integer  "hundreds",                      :limit => 2,                                :default => 0
     t.integer  "meeting_program_id"
     t.integer  "swimmer_id"
     t.integer  "team_id"
     t.integer  "badge_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                                                                   :null => false
-    t.datetime "updated_at",                                                                                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "disqualification_code_type_id"
-    t.decimal  "goggle_cup_points",                          :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "reaction_time",                              :precision => 5,  :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "team_points",                                :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "goggle_cup_points",                          :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "reaction_time",                              :precision => 5,  :scale => 2, :default => 0.0
+    t.decimal  "team_points",                                :precision => 10, :scale => 2, :default => 0.0
     t.integer  "team_affiliation_id"
   end
 
@@ -945,14 +945,14 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_programs", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
-    t.integer  "event_order",      :limit => 3, :default => 0,     :null => false
+    t.integer  "event_order",      :limit => 3, :default => 0
     t.integer  "category_type_id"
     t.integer  "gender_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                       :null => false
-    t.datetime "updated_at",                                       :null => false
-    t.boolean  "is_autofilled",                 :default => false, :null => false
-    t.boolean  "is_out_of_race",                :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_autofilled",                 :default => false
+    t.boolean  "is_out_of_race",                :default => false
     t.time     "begin_time"
     t.integer  "meeting_event_id"
     t.integer  "pool_type_id"
@@ -968,23 +968,23 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_relay_results", :force => true do |t|
     t.integer  "lock_version",                                                               :default => 0
-    t.datetime "created_at",                                                                                    :null => false
-    t.datetime "updated_at",                                                                                    :null => false
-    t.integer  "rank",                                                                       :default => 0,     :null => false
-    t.boolean  "is_play_off",                                                                :default => false, :null => false
-    t.boolean  "is_out_of_race",                                                             :default => false, :null => false
-    t.boolean  "is_disqualified",                                                            :default => false, :null => false
-    t.decimal  "standard_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "minutes",                       :limit => 3,                                 :default => 0,     :null => false
-    t.integer  "seconds",                       :limit => 2,                                 :default => 0,     :null => false
-    t.integer  "hundreds",                      :limit => 2,                                 :default => 0,     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "rank",                                                                       :default => 0
+    t.boolean  "is_play_off",                                                                :default => false
+    t.boolean  "is_out_of_race",                                                             :default => false
+    t.boolean  "is_disqualified",                                                            :default => false
+    t.decimal  "standard_points",                             :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_points",                              :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "minutes",                       :limit => 3,                                 :default => 0
+    t.integer  "seconds",                       :limit => 2,                                 :default => 0
+    t.integer  "hundreds",                      :limit => 2,                                 :default => 0
     t.integer  "team_id"
     t.integer  "user_id"
     t.integer  "meeting_program_id"
     t.integer  "disqualification_code_type_id"
-    t.string   "relay_header",                  :limit => 60,                                :default => "",    :null => false
-    t.decimal  "reaction_time",                               :precision => 5,  :scale => 2, :default => 0.0,   :null => false
+    t.string   "relay_header",                  :limit => 60,                                :default => ""
+    t.decimal  "reaction_time",                               :precision => 5,  :scale => 2, :default => 0.0
     t.integer  "entry_minutes",                 :limit => 3
     t.integer  "entry_seconds",                 :limit => 2
     t.integer  "entry_hundreds",                :limit => 2
@@ -999,17 +999,17 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_relay_swimmers", :force => true do |t|
     t.integer  "lock_version",                                                       :default => 0
-    t.datetime "created_at",                                                                          :null => false
-    t.datetime "updated_at",                                                                          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "relay_order",             :limit => 3,                               :default => 0
     t.integer  "swimmer_id"
     t.integer  "badge_id"
     t.integer  "stroke_type_id"
     t.integer  "user_id"
-    t.decimal  "reaction_time",                        :precision => 5, :scale => 2, :default => 0.0, :null => false
-    t.integer  "minutes",                 :limit => 3,                               :default => 0,   :null => false
-    t.integer  "seconds",                 :limit => 2,                               :default => 0,   :null => false
-    t.integer  "hundreds",                :limit => 2,                               :default => 0,   :null => false
+    t.decimal  "reaction_time",                        :precision => 5, :scale => 2, :default => 0.0
+    t.integer  "minutes",                 :limit => 3,                               :default => 0
+    t.integer  "seconds",                 :limit => 2,                               :default => 0
+    t.integer  "hundreds",                :limit => 2,                               :default => 0
     t.integer  "meeting_relay_result_id"
   end
 
@@ -1021,18 +1021,18 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_sessions", :force => true do |t|
     t.integer  "lock_version",                    :default => 0
-    t.integer  "session_order",    :limit => 2,   :default => 0,     :null => false
-    t.date     "scheduled_date",                                     :null => false
+    t.integer  "session_order",    :limit => 2,   :default => 0
+    t.date     "scheduled_date"
     t.time     "warm_up_time"
     t.time     "begin_time"
     t.text     "notes"
     t.integer  "meeting_id"
     t.integer  "swimming_pool_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                         :null => false
-    t.datetime "updated_at",                                         :null => false
-    t.string   "description",      :limit => 100,                    :null => false
-    t.boolean  "is_autofilled",                   :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "description",      :limit => 100
+    t.boolean  "is_autofilled",                   :default => false
     t.integer  "day_part_type_id"
   end
 
@@ -1043,21 +1043,21 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meeting_team_scores", :force => true do |t|
     t.integer  "lock_version",                                             :default => 0
-    t.decimal  "sum_individual_points",     :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "sum_relay_points",          :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_individual_points",     :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "sum_relay_points",          :precision => 10, :scale => 2, :default => 0.0
     t.integer  "team_id"
     t.integer  "meeting_id"
-    t.datetime "created_at",                                                                :null => false
-    t.datetime "updated_at",                                                                :null => false
-    t.integer  "rank",                                                     :default => 0,   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "rank",                                                     :default => 0
     t.integer  "user_id"
-    t.decimal  "sum_team_points",           :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_individual_points", :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_relay_points",      :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "meeting_team_points",       :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_individual_points",  :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_relay_points",       :precision => 10, :scale => 2, :default => 0.0, :null => false
-    t.decimal  "season_team_points",        :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.decimal  "sum_team_points",           :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_individual_points", :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_relay_points",      :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_team_points",       :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "season_individual_points",  :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "season_relay_points",       :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "season_team_points",        :precision => 10, :scale => 2, :default => 0.0
     t.integer  "season_id"
     t.integer  "team_affiliation_id"
   end
@@ -1069,7 +1069,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "meetings", :force => true do |t|
     t.integer  "lock_version",                                             :default => 0
-    t.string   "description",                          :limit => 100,                         :null => false
+    t.string   "description",                          :limit => 100
     t.date     "entry_deadline"
     t.boolean  "has_warm_up_pool",                                         :default => false
     t.boolean  "is_under_25_admitted",                                     :default => false
@@ -1082,17 +1082,17 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.boolean  "are_results_acquired",                                     :default => false
     t.integer  "max_individual_events",                :limit => 1,        :default => 2
     t.string   "configuration_file"
-    t.integer  "edition",                              :limit => 3,        :default => 0,     :null => false
+    t.integer  "edition",                              :limit => 3,        :default => 0
     t.integer  "season_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                                                  :null => false
-    t.datetime "updated_at",                                                                  :null => false
-    t.boolean  "is_autofilled",                                            :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_autofilled",                                            :default => false
     t.date     "header_date"
-    t.string   "code",                                 :limit => 20,                          :null => false
-    t.string   "header_year",                          :limit => 9,                           :null => false
+    t.string   "code",                                 :limit => 20
+    t.string   "header_year",                          :limit => 9
     t.integer  "max_individual_events_per_session",    :limit => 2,        :default => 2
-    t.boolean  "is_out_of_season",                                         :default => false, :null => false
+    t.boolean  "is_out_of_season",                                         :default => false
     t.integer  "edition_type_id"
     t.integer  "timing_type_id"
     t.integer  "individual_score_computation_type_id"
@@ -1115,54 +1115,54 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "movement_scope_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 1,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 1
   end
 
   add_index "movement_scope_types", ["code"], :name => "index_movement_scope_types_on_code", :unique => true
 
   create_table "movement_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 1,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 1
   end
 
   add_index "movement_types", ["code"], :name => "index_movement_types_on_code", :unique => true
 
   create_table "news_feeds", :force => true do |t|
-    t.string   "title",              :limit => 150,                    :null => false
+    t.string   "title",              :limit => 150
     t.text     "body"
-    t.boolean  "is_read",                           :default => false, :null => false
-    t.boolean  "is_friend_activity",                :default => false, :null => false
-    t.boolean  "is_achievement",                    :default => false, :null => false
-    t.integer  "user_id",                                              :null => false
+    t.boolean  "is_read",                           :default => false
+    t.boolean  "is_friend_activity",                :default => false
+    t.boolean  "is_achievement",                    :default => false
+    t.integer  "user_id"
     t.integer  "friend_id"
-    t.datetime "created_at",                                           :null => false
-    t.datetime "updated_at",                                           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "passage_types", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
-    t.string   "code",             :limit => 6,                :null => false
+    t.string   "code",             :limit => 6
     t.integer  "length_in_meters", :limit => 3
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "passage_types", ["code"], :name => "index_passage_types_on_code", :unique => true
 
   create_table "passages", :force => true do |t|
     t.integer  "lock_version",                                                            :default => 0
-    t.integer  "minutes",                      :limit => 3,                               :default => 0,     :null => false
-    t.integer  "seconds",                      :limit => 2,                               :default => 0,     :null => false
-    t.integer  "hundreds",                     :limit => 2,                               :default => 0,     :null => false
+    t.integer  "minutes",                      :limit => 3,                               :default => 0
+    t.integer  "seconds",                      :limit => 2,                               :default => 0
+    t.integer  "hundreds",                     :limit => 2,                               :default => 0
     t.integer  "meeting_program_id"
     t.integer  "passage_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                                                                 :null => false
-    t.datetime "updated_at",                                                                                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.decimal  "reaction_time",                             :precision => 5, :scale => 2
     t.integer  "stroke_cycles",                :limit => 3
     t.integer  "not_swam_part_seconds",        :limit => 2
@@ -1173,7 +1173,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "minutes_from_start",           :limit => 3
     t.integer  "seconds_from_start",           :limit => 2
     t.integer  "hundreds_from_start",          :limit => 2
-    t.boolean  "is_native_from_start",                                                    :default => false, :null => false
+    t.boolean  "is_native_from_start",                                                    :default => false
     t.integer  "meeting_individual_result_id"
     t.integer  "meeting_entry_id"
     t.integer  "swimmer_id"
@@ -1185,21 +1185,21 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "pool_types", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
-    t.string   "code",                     :limit => 3,                   :null => false
+    t.string   "code",                     :limit => 3
     t.integer  "length_in_meters",         :limit => 3
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
-    t.boolean  "is_suitable_for_meetings",              :default => true, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_suitable_for_meetings",              :default => true
   end
 
   add_index "pool_types", ["code"], :name => "index_pool_types_on_code", :unique => true
 
   create_table "presence_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 1,                :null => false
+    t.string   "code",         :limit => 1
     t.integer  "value",        :limit => 3
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "presence_types", ["code"], :name => "index_presence_types_on_code", :unique => true
@@ -1211,35 +1211,35 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.string   "table"
     t.integer  "month",      :limit => 2
     t.integer  "year",       :limit => 8
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
 
   create_table "record_types", :force => true do |t|
     t.integer  "lock_version",                 :default => 0
-    t.string   "code",            :limit => 3,                    :null => false
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
-    t.boolean  "is_for_swimmers",              :default => false, :null => false
-    t.boolean  "is_for_teams",                 :default => false, :null => false
-    t.boolean  "is_for_seasons",               :default => false, :null => false
+    t.string   "code",            :limit => 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_for_swimmers",              :default => false
+    t.boolean  "is_for_teams",                 :default => false
+    t.boolean  "is_for_seasons",               :default => false
   end
 
   add_index "record_types", ["code"], :name => "index_record_types_on_code", :unique => true
 
   create_table "score_computation_type_rows", :force => true do |t|
     t.integer  "lock_version",                                                            :default => 0
-    t.datetime "created_at",                                                                               :null => false
-    t.datetime "updated_at",                                                                               :null => false
-    t.string   "class_name",                :limit => 100,                                                 :null => false
-    t.string   "method_name",               :limit => 100,                                                 :null => false
-    t.decimal  "default_score",                            :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "class_name",                :limit => 100
+    t.string   "method_name",               :limit => 100
+    t.decimal  "default_score",                            :precision => 10, :scale => 2, :default => 0.0
     t.integer  "score_computation_type_id"
     t.integer  "score_mapping_type_id"
-    t.integer  "computation_order",         :limit => 8,                                  :default => 0,   :null => false
-    t.integer  "position_limit",                                                          :default => 0,   :null => false
+    t.integer  "computation_order",         :limit => 8,                                  :default => 0
+    t.integer  "position_limit",                                                          :default => 0
   end
 
   add_index "score_computation_type_rows", ["computation_order"], :name => "idx_score_computation_type_rows_computation_order"
@@ -1247,39 +1247,39 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "score_computation_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 6,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 6
   end
 
   add_index "score_computation_types", ["code"], :name => "index_score_computation_types_on_code", :unique => true
 
   create_table "score_mapping_type_rows", :force => true do |t|
     t.integer  "lock_version",                                                      :default => 0
-    t.datetime "created_at",                                                                         :null => false
-    t.datetime "updated_at",                                                                         :null => false
-    t.integer  "position",              :limit => 8,                                :default => 0,   :null => false
-    t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "position",              :limit => 8,                                :default => 0
+    t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0
     t.integer  "score_mapping_type_id"
   end
 
   create_table "score_mapping_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 6,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 6
   end
 
   add_index "score_mapping_types", ["code"], :name => "index_score_mapping_types_on_code", :unique => true
 
   create_table "season_types", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
-    t.string   "code",               :limit => 10,                 :null => false
+    t.string   "code",               :limit => 10
     t.string   "description",        :limit => 100
     t.string   "short_name",         :limit => 40
     t.integer  "federation_type_id"
-    t.datetime "created_at",                                       :null => false
-    t.datetime "updated_at",                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "season_types", ["code"], :name => "index_season_types_on_code", :unique => true
@@ -1287,14 +1287,14 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "seasons", :force => true do |t|
     t.integer  "lock_version",                        :default => 0
-    t.string   "description",     :limit => 100,                     :null => false
-    t.date     "begin_date",                                         :null => false
+    t.string   "description",     :limit => 100
+    t.date     "begin_date"
     t.date     "end_date"
     t.integer  "season_type_id"
-    t.datetime "created_at",                                         :null => false
-    t.datetime "updated_at",                                         :null => false
-    t.string   "header_year",     :limit => 9,                       :null => false
-    t.integer  "edition",         :limit => 3,        :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "header_year",     :limit => 9
+    t.integer  "edition",         :limit => 3,        :default => 0
     t.integer  "edition_type_id"
     t.integer  "timing_type_id"
     t.text     "rules",           :limit => 16777215
@@ -1306,10 +1306,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
   add_index "seasons", ["timing_type_id"], :name => "fk_seasons_timing_types"
 
   create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
+    t.string   "session_id"
     t.text     "data"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
@@ -1317,19 +1317,19 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "shower_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 3,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "shower_types", ["code"], :name => "index_shower_types_on_code", :unique => true
 
   create_table "stroke_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 2,                    :null => false
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
-    t.boolean  "is_eventable",              :default => false, :null => false
+    t.string   "code",         :limit => 2
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_eventable",              :default => false
   end
 
   add_index "stroke_types", ["code"], :name => "index_stroke_types_on_code", :unique => true
@@ -1337,10 +1337,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "swimmer_level_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
-    t.string   "code",           :limit => 5,                :null => false
-    t.integer  "level",          :limit => 3, :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",           :limit => 5
+    t.integer  "level",          :limit => 3, :default => 0
     t.integer  "achievement_id"
   end
 
@@ -1350,7 +1350,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "lock_version",                      :default => 0
     t.string   "last_name",          :limit => 50
     t.string   "first_name",         :limit => 50
-    t.integer  "year_of_birth",                     :default => 1900, :null => false
+    t.integer  "year_of_birth",                     :default => 1900
     t.string   "phone_mobile",       :limit => 40
     t.string   "phone_number",       :limit => 40
     t.string   "e_mail",             :limit => 100
@@ -1358,9 +1358,9 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "associated_user_id", :limit => 8
     t.integer  "gender_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
-    t.string   "complete_name",      :limit => 100,                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "complete_name",      :limit => 100
   end
 
   add_index "swimmers", ["associated_user_id"], :name => "index_swimmers_on_associated_user_id"
@@ -1372,12 +1372,12 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "swimming_pool_reviews", :force => true do |t|
     t.integer  "lock_version",                    :default => 0
-    t.string   "title",            :limit => 100,                :null => false
-    t.text     "entry_text",                                     :null => false
+    t.string   "title",            :limit => 100
+    t.text     "entry_text"
     t.integer  "user_id"
     t.integer  "swimming_pool_id"
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "swimming_pool_reviews", ["swimming_pool_id"], :name => "fk_swimming_pool_reviews_swimming_pools"
@@ -1385,22 +1385,22 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "swimming_pools", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
-    t.string   "name",                   :limit => 100,                    :null => false
+    t.string   "name",                   :limit => 100
     t.string   "address",                :limit => 100
     t.string   "zip",                    :limit => 6
-    t.string   "nick_name",              :limit => 50,                     :null => false
+    t.string   "nick_name",              :limit => 50
     t.string   "phone_number",           :limit => 40
     t.string   "fax_number",             :limit => 40
     t.string   "e_mail",                 :limit => 100
     t.string   "contact_name",           :limit => 100
     t.string   "maps_uri"
-    t.integer  "lanes_number",           :limit => 2,   :default => 8,     :null => false
-    t.boolean  "has_multiple_pools",                    :default => false, :null => false
-    t.boolean  "has_open_area",                         :default => false, :null => false
-    t.boolean  "has_bar",                               :default => false, :null => false
-    t.boolean  "has_restaurant_service",                :default => false, :null => false
-    t.boolean  "has_gym_area",                          :default => false, :null => false
-    t.boolean  "has_children_area",                     :default => false, :null => false
+    t.integer  "lanes_number",           :limit => 2,   :default => 8
+    t.boolean  "has_multiple_pools",                    :default => false
+    t.boolean  "has_open_area",                         :default => false
+    t.boolean  "has_bar",                               :default => false
+    t.boolean  "has_restaurant_service",                :default => false
+    t.boolean  "has_gym_area",                          :default => false
+    t.boolean  "has_children_area",                     :default => false
     t.text     "notes"
     t.integer  "city_id"
     t.integer  "pool_type_id"
@@ -1408,8 +1408,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "hair_dryer_type_id"
     t.integer  "locker_cabinet_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                               :null => false
-    t.datetime "updated_at",                                               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "swimming_pools", ["city_id"], :name => "fk_swimming_pools_cities"
@@ -1421,10 +1421,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
   add_index "swimming_pools", ["shower_type_id"], :name => "fk_swimming_pools_shower_types"
 
   create_table "tag4_entities", :force => true do |t|
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.string   "entity_name", :null => false
-    t.integer  "entity_id",   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "entity_name"
+    t.integer  "entity_id"
     t.integer  "tag_id"
     t.integer  "user_id"
   end
@@ -1435,10 +1435,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "tags", :force => true do |t|
     t.integer  "lock_version",               :default => 0
-    t.string   "name",         :limit => 40,                :null => false
+    t.string   "name",         :limit => 40
     t.integer  "user_id"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
@@ -1446,14 +1446,14 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
   create_table "team_affiliations", :force => true do |t|
     t.integer  "lock_version",                             :default => 0
     t.string   "number",                    :limit => 20
-    t.string   "name",                      :limit => 100,                    :null => false
-    t.boolean  "must_calculate_goggle_cup",                :default => false, :null => false
+    t.string   "name",                      :limit => 100
+    t.boolean  "must_calculate_goggle_cup",                :default => false
     t.integer  "team_id"
     t.integer  "season_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                                  :null => false
-    t.datetime "updated_at",                                                  :null => false
-    t.boolean  "is_autofilled",                            :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_autofilled",                            :default => false
   end
 
   add_index "team_affiliations", ["name"], :name => "index_team_affiliations_on_name"
@@ -1463,8 +1463,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "team_managers", :force => true do |t|
     t.integer  "lock_version",        :default => 0
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "team_affiliation_id"
     t.integer  "user_id"
   end
@@ -1475,26 +1475,26 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "team_passage_templates", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
-    t.integer  "part_order",              :limit => 3, :default => 0,     :null => false
-    t.boolean  "has_subtotal",                         :default => false, :null => false
-    t.boolean  "has_cycle_count",                      :default => false, :null => false
-    t.boolean  "has_breath_count",                     :default => false, :null => false
-    t.boolean  "has_non_swam_part",                    :default => false, :null => false
-    t.boolean  "has_non_swam_kick_count",              :default => false, :null => false
-    t.boolean  "has_passage_position",                 :default => false, :null => false
+    t.integer  "part_order",              :limit => 3, :default => 0
+    t.boolean  "has_subtotal",                         :default => false
+    t.boolean  "has_cycle_count",                      :default => false
+    t.boolean  "has_breath_count",                     :default => false
+    t.boolean  "has_non_swam_part",                    :default => false
+    t.boolean  "has_non_swam_kick_count",              :default => false
+    t.boolean  "has_passage_position",                 :default => false
     t.integer  "team_id"
     t.integer  "event_type_id"
     t.integer  "pool_type_id"
     t.integer  "passage_type_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                              :null => false
-    t.datetime "updated_at",                                              :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "teams", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
-    t.string   "name",            :limit => 60,                 :null => false
-    t.string   "editable_name",   :limit => 60,                 :null => false
+    t.string   "name",            :limit => 60
+    t.string   "editable_name",   :limit => 60
     t.string   "address",         :limit => 100
     t.string   "zip",             :limit => 6
     t.string   "phone_mobile",    :limit => 40
@@ -1506,8 +1506,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.text     "name_variations"
     t.integer  "city_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "home_page_url",   :limit => 150
   end
 
@@ -1517,16 +1517,16 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "time_standards", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
-    t.integer  "minutes",          :limit => 3, :default => 0, :null => false
-    t.integer  "seconds",          :limit => 2, :default => 0, :null => false
-    t.integer  "hundreds",         :limit => 2, :default => 0, :null => false
+    t.integer  "minutes",          :limit => 3, :default => 0
+    t.integer  "seconds",          :limit => 2, :default => 0
+    t.integer  "hundreds",         :limit => 2, :default => 0
     t.integer  "season_id"
     t.integer  "gender_type_id"
     t.integer  "pool_type_id"
     t.integer  "event_type_id"
     t.integer  "category_type_id"
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "time_standards", ["category_type_id"], :name => "fk_time_standards_category_types"
@@ -1537,38 +1537,38 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "timing_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.string   "code",         :limit => 1,                :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "code",         :limit => 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "timing_types", ["code"], :name => "index_timing_types_on_code", :unique => true
 
   create_table "training_mode_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 5,                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 5
   end
 
   add_index "training_mode_types", ["code"], :name => "index_training_mode_types_on_code", :unique => true
 
   create_table "training_rows", :force => true do |t|
     t.integer  "lock_version",                       :default => 0
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
-    t.integer  "part_order",            :limit => 3, :default => 0, :null => false
-    t.integer  "times",                 :limit => 3, :default => 0, :null => false
-    t.integer  "distance",                           :default => 0, :null => false
-    t.integer  "start_and_rest",                     :default => 0, :null => false
-    t.integer  "pause",                              :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "part_order",            :limit => 3, :default => 0
+    t.integer  "times",                 :limit => 3, :default => 0
+    t.integer  "distance",                           :default => 0
+    t.integer  "start_and_rest",                     :default => 0
+    t.integer  "pause",                              :default => 0
     t.integer  "training_id"
     t.integer  "exercise_id"
     t.integer  "training_step_type_id"
-    t.integer  "group_id",              :limit => 3, :default => 0, :null => false
-    t.integer  "group_times",           :limit => 3, :default => 0, :null => false
-    t.integer  "group_start_and_rest",               :default => 0, :null => false
-    t.integer  "group_pause",                        :default => 0, :null => false
+    t.integer  "group_id",              :limit => 3, :default => 0
+    t.integer  "group_times",           :limit => 3, :default => 0
+    t.integer  "group_start_and_rest",               :default => 0
+    t.integer  "group_pause",                        :default => 0
     t.integer  "arm_aux_type_id"
     t.integer  "kick_aux_type_id"
     t.integer  "body_aux_type_id"
@@ -1586,10 +1586,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "training_step_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "code",         :limit => 1,                :null => false
-    t.integer  "step_order",   :limit => 3, :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "code",         :limit => 1
+    t.integer  "step_order",   :limit => 3, :default => 0
   end
 
   add_index "training_step_types", ["code"], :name => "index_training_step_types_on_code", :unique => true
@@ -1597,21 +1597,21 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "trainings", :force => true do |t|
     t.integer  "lock_version",                     :default => 0
-    t.datetime "created_at",                                       :null => false
-    t.datetime "updated_at",                                       :null => false
-    t.string   "title",             :limit => 100, :default => "", :null => false
-    t.text     "description",                                      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "title",             :limit => 100, :default => ""
+    t.text     "description"
     t.integer  "user_id"
-    t.integer  "min_swimmer_level", :limit => 3,   :default => 0,  :null => false
-    t.integer  "max_swimmer_level", :limit => 3,   :default => 0,  :null => false
+    t.integer  "min_swimmer_level", :limit => 3,   :default => 0
+    t.integer  "max_swimmer_level", :limit => 3,   :default => 0
   end
 
   add_index "trainings", ["title"], :name => "index_trainings_on_title", :unique => true
 
   create_table "user_achievements", :force => true do |t|
     t.integer  "lock_version",   :default => 0
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "user_id"
     t.integer  "achievement_id"
   end
@@ -1620,24 +1620,24 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "user_results", :force => true do |t|
     t.integer  "lock_version",                                                               :default => 0
-    t.decimal  "standard_points",                             :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.decimal  "meeting_points",                              :precision => 10, :scale => 2, :default => 0.0,   :null => false
-    t.integer  "rank",                          :limit => 8,                                 :default => 0,     :null => false
-    t.boolean  "is_disqualified",                                                            :default => false, :null => false
-    t.integer  "minutes",                       :limit => 3,                                 :default => 0,     :null => false
-    t.integer  "seconds",                       :limit => 2,                                 :default => 0,     :null => false
-    t.integer  "hundreds",                      :limit => 2,                                 :default => 0,     :null => false
+    t.decimal  "standard_points",                             :precision => 10, :scale => 2, :default => 0.0
+    t.decimal  "meeting_points",                              :precision => 10, :scale => 2, :default => 0.0
+    t.integer  "rank",                          :limit => 8,                                 :default => 0
+    t.boolean  "is_disqualified",                                                            :default => false
+    t.integer  "minutes",                       :limit => 3,                                 :default => 0
+    t.integer  "seconds",                       :limit => 2,                                 :default => 0
+    t.integer  "hundreds",                      :limit => 2,                                 :default => 0
     t.integer  "swimmer_id"
     t.integer  "category_type_id"
     t.integer  "pool_type_id"
     t.integer  "meeting_individual_result_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                                                                    :null => false
-    t.datetime "updated_at",                                                                                    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "disqualification_code_type_id"
-    t.string   "description",                   :limit => 60,                                :default => "",    :null => false
+    t.string   "description",                   :limit => 60,                                :default => ""
     t.date     "event_date"
-    t.decimal  "reaction_time",                               :precision => 10, :scale => 2, :default => 0.0,   :null => false
+    t.decimal  "reaction_time",                               :precision => 10, :scale => 2, :default => 0.0
     t.integer  "event_type_id"
   end
 
@@ -1649,8 +1649,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "user_swimmer_confirmations", :force => true do |t|
     t.integer  "lock_version",   :default => 0
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "swimmer_id"
     t.integer  "user_id"
     t.integer  "confirmator_id"
@@ -1661,17 +1661,17 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "user_training_rows", :force => true do |t|
     t.integer  "lock_version",                       :default => 0
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
-    t.integer  "part_order",            :limit => 3, :default => 0, :null => false
-    t.integer  "times",                 :limit => 3, :default => 0, :null => false
-    t.integer  "distance",                           :default => 0, :null => false
-    t.integer  "start_and_rest",                     :default => 0, :null => false
-    t.integer  "pause",                              :default => 0, :null => false
-    t.integer  "group_id",              :limit => 3, :default => 0, :null => false
-    t.integer  "group_times",           :limit => 3, :default => 0, :null => false
-    t.integer  "group_start_and_rest",               :default => 0, :null => false
-    t.integer  "group_pause",                        :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "part_order",            :limit => 3, :default => 0
+    t.integer  "times",                 :limit => 3, :default => 0
+    t.integer  "distance",                           :default => 0
+    t.integer  "start_and_rest",                     :default => 0
+    t.integer  "pause",                              :default => 0
+    t.integer  "group_id",              :limit => 3, :default => 0
+    t.integer  "group_times",           :limit => 3, :default => 0
+    t.integer  "group_start_and_rest",               :default => 0
+    t.integer  "group_pause",                        :default => 0
     t.integer  "user_training_id"
     t.integer  "exercise_id"
     t.integer  "training_step_type_id"
@@ -1686,10 +1686,10 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "user_training_stories", :force => true do |t|
     t.integer  "lock_version",                       :default => 0
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.date     "swam_date"
-    t.integer  "total_training_time",   :limit => 3, :default => 0, :null => false
+    t.integer  "total_training_time",   :limit => 3, :default => 0
     t.text     "notes"
     t.integer  "user_training_id"
     t.integer  "swimming_pool_id"
@@ -1701,9 +1701,9 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "user_trainings", :force => true do |t|
     t.integer  "lock_version",                :default => 0
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
-    t.string   "description",  :limit => 250, :default => "", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "description",  :limit => 250, :default => ""
     t.integer  "user_id"
   end
 
@@ -1711,13 +1711,13 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
 
   create_table "users", :force => true do |t|
     t.integer  "lock_version",                                   :default => 0
-    t.string   "name",                                                             :null => false
+    t.string   "name"
     t.string   "description",                     :limit => 100
     t.integer  "swimmer_id"
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
-    t.string   "email",                                          :default => "",   :null => false
-    t.string   "encrypted_password",                             :default => "",   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "email",                                          :default => ""
+    t.string   "encrypted_password",                             :default => ""
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -1733,16 +1733,16 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.integer  "failed_attempts",                                :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
-    t.boolean  "use_email_data_updates_notify",                  :default => true, :null => false
-    t.boolean  "use_email_achievements_notify",                  :default => true, :null => false
-    t.boolean  "use_email_newsletter_notify",                    :default => true, :null => false
-    t.boolean  "use_email_community_notify",                     :default => true, :null => false
+    t.boolean  "use_email_data_updates_notify",                  :default => true
+    t.boolean  "use_email_achievements_notify",                  :default => true
+    t.boolean  "use_email_newsletter_notify",                    :default => true
+    t.boolean  "use_email_community_notify",                     :default => true
     t.string   "avatar_resource_filename",        :limit => 250
     t.integer  "swimmer_level_type_id"
     t.integer  "coach_level_type_id"
     t.string   "authentication_token"
-    t.integer  "outstanding_goggle_score_bias",                  :default => 800,  :null => false
-    t.integer  "outstanding_standard_score_bias",                :default => 800,  :null => false
+    t.integer  "outstanding_goggle_score_bias",                  :default => 800
+    t.integer  "outstanding_standard_score_bias",                :default => 800
     t.string   "last_name",                       :limit => 50
     t.string   "first_name",                      :limit => 50
     t.integer  "year_of_birth",                                  :default => 1900
@@ -1767,8 +1767,8 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.boolean  "vote_flag"
     t.string   "vote_scope"
     t.integer  "vote_weight"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "votes", ["votable_id", "votable_type", "vote_scope"], :name => "index_votes_on_votable_id_and_votable_type_and_vote_scope"
