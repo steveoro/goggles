@@ -150,14 +150,18 @@ Goggles::Application.routes.draw do
       get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
 
       # === Championships ===
-      get  "championships/calendar_regional_er_csi(/:id)", to: "championships#calendar_regional_er_csi", as: "championships_calendar_regional_er_csi"
-      get  "championships/ranking_regional_er_csi(/:id)",  to: "championships#ranking_regional_er_csi",  as: "championships_ranking_regional_er_csi"
-      get  "championships/rules_regional_er_csi(/:id)",    to: "championships#rules_regional_er_csi",    as: "championships_rules_regional_er_csi"
-      get  "championships/history_regional_er_csi(/:id)",  to: "championships#history_regional_er_csi",  as: "championships_history_regional_er_csi"
-      get  "championships/calendar_supermaster_fin(/:id)", to: "championships#calendar_supermaster_fin", as: "championships_calendar_supermaster_fin"
-      get  "championships/ranking_supermaster_fin(/:id)",  to: "championships#ranking_supermaster_fin",  as: "championships_ranking_supermaster_fin"
-      get  "championships/rules_supermaster_fin(/:id)",    to: "championships#rules_supermaster_fin",    as: "championships_rules_supermaster_fin"
-      get  "championships/history_supermaster_fin(/:id)",  to: "championships#history_supermaster_fin",  as: "championships_history_supermaster_fin"
+      get  "championships/calendar_regional_er_csi(/:id)",  to: "championships#calendar_regional_er_csi",  as: "championships_calendar_regional_er_csi"
+      get  "championships/ranking_regional_er_csi(/:id)",   to: "championships#ranking_regional_er_csi",   as: "championships_ranking_regional_er_csi"
+      get  "championships/rules_regional_er_csi(/:id)",     to: "championships#rules_regional_er_csi",     as: "championships_rules_regional_er_csi"
+      get  "championships/history_regional_er_csi(/:id)",   to: "championships#history_regional_er_csi",   as: "championships_history_regional_er_csi"
+      get  "championships/calendar_regional_er_uisp(/:id)", to: "championships#calendar_regional_er_uisp", as: "championships_calendar_regional_er_uisp"
+      get  "championships/ranking_regional_er_uisp(/:id)",  to: "championships#ranking_regional_er_uisp",  as: "championships_ranking_regional_er_uisp"
+      get  "championships/rules_regional_er_uisp(/:id)",    to: "championships#rules_regional_er_uisp",    as: "championships_rules_regional_er_uisp"
+      get  "championships/history_regional_er_uisp(/:id)",  to: "championships#history_regional_er_uisp",  as: "championships_history_regional_er_uisp"
+      get  "championships/calendar_supermaster_fin(/:id)",  to: "championships#calendar_supermaster_fin",  as: "championships_calendar_supermaster_fin"
+      get  "championships/ranking_supermaster_fin(/:id)",   to: "championships#ranking_supermaster_fin",   as: "championships_ranking_supermaster_fin"
+      get  "championships/rules_supermaster_fin(/:id)",     to: "championships#rules_supermaster_fin",     as: "championships_rules_supermaster_fin"
+      get  "championships/history_supermaster_fin(/:id)",   to: "championships#history_supermaster_fin",   as: "championships_history_supermaster_fin"
 
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do

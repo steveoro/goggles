@@ -12,8 +12,9 @@ require 'common/format'
 =end
 class ChampionshipsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_parameter_regional_er_csi, except: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
-  before_filter :verify_parameter_supermaster_fin, except: [:ranking_regional_er_csi, :calendar_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
+  before_filter :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
+  before_filter :verify_parameter_regional_er_uisp, only: [:ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp, :history_regional_er_uisp]
+  before_filter :verify_parameter_supermaster_fin,  only: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -69,7 +70,7 @@ class ChampionshipsController < ApplicationController
   end
 
 
-  # Season calendar for a given supermaster season
+  # Season calendar for a given fin supermaster season
   #
   def calendar_supermaster_fin
     @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name     
@@ -104,6 +105,44 @@ class ChampionshipsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Season calendar for a given regional er uisp season
+  #
+  def calendar_regional_er_uisp
+    @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name     
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Supermaster FIN championship ranking data display manager
+  #
+  def ranking_regional_er_uisp
+    @title = @season.get_full_name
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Supermaster FIN championship rules viewer
+  #
+  def rules_regional_er_uisp
+    @title = @season.get_full_name
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Past seasons championships ranking data display manager
+  # for FIN supermaster championships (closed seasons)
+  #
+  def history_regional_er_uisp
+    @title = I18n.t('championships.history_title') + ' ' + @season_type.get_full_name     
+
+    #championship_history_manager = ChampionshipHistoryManager.new( current_season_type )
+    #@championship_history_manager = championship_history_manager.get_season_ranking_history 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   private
 
@@ -164,6 +203,35 @@ class ChampionshipsController < ApplicationController
     end
   end
 
+  # Verifies that a season id is provided as parameter; otherwise
+  # use the current season according to chosen season type 
+  # Assigns the @season instance.
+  # Use for UISP regional er
+  #
+  # == Params:
+  # id: the season id to be processed by most of the methods (see before filter above)
+  #
+  def verify_parameter_regional_er_uisp
+    set_season_type( 'MASUISP' )
+    unless ( @season_type )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+
+    # TODO Find current UISP season
+    @current_season_id = 145
+    
+    # Use given season or, in no selection, current one 
+    season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
+
+    set_season( season_id )
+    unless ( @season )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+  end
+  
+  
   # Sets season type instance
   #
   # Params:
