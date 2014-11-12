@@ -8,7 +8,7 @@ START TRANSACTION;
 --
 -- Correzione codici meeting per renderli univoci
 -- 
-update meetings m set m.code = 'solidarieta' where m.description like '%SOLIDARIETÀ%';
+update meetings m set m.code = 'solidarieta' where m.description like '%SOLIDARIET%';
 update meetings m set m.code = 'costoli' where m.description like '%COSTOLI%';
 update meetings m set m.code = 'blueteam' where m.description like '%BLUE TEAM%';
 update meetings m set m.code = 'cloro' where m.description like '%GIORNI DI CLORO%';
@@ -34,7 +34,7 @@ update meetings m set m.code = 'cattarinich' where m.description like '%CATTARIN
 update meetings m set m.code = 'ponente' where m.description like '%NUOTO PONENTE%';
 update meetings m set m.code = 'mysport' where m.description like '%MY SPORT%';
 update meetings m set m.code = 'repubblica' where m.description like '%REPUBBLICA%' and m.description like '%MARINO%';
-update meetings m set m.code = 'repubblica' where m.description like '%MEETING CITTA%' and m.description like '%DI SAN MARINO%';
+update meetings m set m.code = 'repubblica' where m.description like '%MEETING CITT%' and m.description like '%DI SAN MARINO%';
 update meetings m set m.code = 'agosti' where m.description like '%MEMORIAL AGOSTI%';
 update meetings m set m.code = 'crocera' where m.description like '%CROCERA%';
 

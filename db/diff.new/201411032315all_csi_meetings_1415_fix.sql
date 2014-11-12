@@ -6,7 +6,7 @@ SET AUTOCOMMIT=0;
 START TRANSACTION;
 
 -- Rimozione dati precedenti non corretti
-delete from meeting_events where meeting_session_id in /select id from meeting_sessions where meeting_id in (14101, 14102, 14103, 14104, 14105, 14106));
+delete from meeting_events where meeting_session_id in (select id from meeting_sessions where meeting_id in (14101, 14102, 14103, 14104, 14105, 14106));
 delete from meeting_sessions where meeting_id in (14101, 14102, 14103, 14104, 14105, 14106);
 delete from meetings where id in (14101, 14102, 14103, 14104, 14105, 14106);
 
