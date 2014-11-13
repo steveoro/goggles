@@ -85,6 +85,20 @@ describe EventType, :type => :model do
         ].each do |fixture_type_text|
           it "recognizes '#{fixture_type_text}'" do
             result = EventType.parse_relay_event_type_from_import_text(
+              StrokeType::MIXED_RELAY_ID,
+              fixture_type_text
+            )
+            expect( result ).to be_an_instance_of( EventType )
+          end
+        end
+
+        [
+          "mistaffetta 4x#{distance_in_meters} mista",
+          "staffetta 4x#{distance_in_meters} mista  Maschile",
+          "staffetta 4x#{distance_in_meters} mista  Femminile"
+        ].each do |fixture_type_text|
+          it "recognizes '#{fixture_type_text}'" do
+            result = EventType.parse_relay_event_type_from_import_text(
               StrokeType::MIXED_ID,
               fixture_type_text
             )

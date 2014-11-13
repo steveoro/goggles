@@ -24,7 +24,6 @@ on the app on the remote Server without losing your mind.
   (Default dir is ok; will store the dump under 'goggles.docs/backup.db/history.gold')
 
 
-
 ### Phase-2: Apply the dump locally:
 
 3) Rebuild the local DB.
@@ -35,20 +34,28 @@ on the app on the remote Server without losing your mind.
 
 3.1) Run any pending migration on production DB:
   > RAILS_ENV=production bundle exec rake db:migrate
-  (Assuming migrations have already been executed and tested on Dev. DB)
+  (Assuming migrations have been already executed and tested on Development DB. Do it also
+   for Dev. DB, if not)
 
-3.2) Re-update the DB dumps:
+3.2) Re-update the DB dumps when using the **rebuild** option of the task:
+  (See point (4) for an explanation -- currently the default is to skip the rebuild
+   from the dumps)
+
   > RAILS_ENV=production bundle exec rake db:dump
+  (Assuming dump has been already updated on Development DB. Do it also for Dev. DB, if not)
 
 4) Apply the DB diffs created locally (on all DBs):
   With Zeus server running:
   > zeus rake db:diff_apply
   Or:
   > bundle exec rake db:diff_apply
+
   This will also move successfully applied files to the 'consumed' dir. 'diff.applied'
   and update the local production dump.
 
-#  TODO ADD SUPPORT for **skip_rebuild=1** #
+  Note that the _db:diff_apply_ task supports also the **rebuild** option, to force
+  the initial rebuild_from_dump for all the involved databases. The default is to
+  skip this phase, assuming the dumps are currently updated.
 
 
 ### Phase-3: Upload the updated dump and apply it remotely:

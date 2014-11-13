@@ -23,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.613'
+SCRIPT_VERSION = '4.00.615'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]

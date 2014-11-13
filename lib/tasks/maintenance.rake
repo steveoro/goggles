@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = DB-maintenance tasks
 
-  - Goggles framework vers.:  4.00.613
+  - Goggles framework vers.:  4.00.615
   - author: Leega, Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -248,6 +248,8 @@ execution of the task.
       list_files_to_be_processed( dev_filenames,  'DEVELOPMENT-only' )
       list_files_to_be_processed( any_filenames,  'GENERIC' )
     end
+    puts "\r\nThe process, once started cannot be stopped. Please verify the above info or press CTRL-C to abort.\r\n==> Press Enter to continue <=="
+    dummy = STDIN.gets
                                                     # Force db:rebuild_from_dump for each involved DB:
     if rebuild && (prod_filenames.size > 0 || any_filenames.size > 0)
       db_name = rails_config.database_configuration[ 'production' ]['database']
@@ -268,8 +270,12 @@ execution of the task.
       end
     end
                                                     # Force a db:dump update for each involved DB:
-    db_dump( db_host, db_user, db_pwd, 'production', 'production' )   if prod_filenames.size > 0 || any_filenames.size > 0
-    db_dump( db_host, db_user, db_pwd, 'development', 'development' ) if dev_filenames.size > 0 || any_filenames.size > 0
+    if prod_filenames.size > 0 || any_filenames.size > 0
+      db_dump( db_host, db_user, db_pwd, rails_config.database_configuration[ 'production' ]['database'], 'production' )
+    end
+    if dev_filenames.size > 0 || any_filenames.size > 0
+      db_dump( db_host, db_user, db_pwd, rails_config.database_configuration[ 'development' ]['database'], 'development' )
+    end
                                                     # Force db:clone_to_test at the end when Dev DB is modified:
     # ( Assuming current RAILS_ENV == development )
     Rake::Task['db:clone_to_test'].invoke if dev_filenames.size > 0 || any_filenames.size > 0
