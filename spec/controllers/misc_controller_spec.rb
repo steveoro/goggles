@@ -72,6 +72,7 @@ describe MiscController, :type => :controller do
   # ===========================================================================
 
 
+=begin
   describe '[POST #fin_score_calculation]' do
 
     let(:minutes)  { ((rand * 10) % 10).to_i + 1 }
@@ -169,7 +170,6 @@ describe MiscController, :type => :controller do
   end
   # ===========================================================================
 
-=begin
     context "as a logged-in user," do
       let(:minutes)  { ((rand * 10) % 10).to_i + 1 }
       let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
