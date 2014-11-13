@@ -15,7 +15,7 @@ require 'framework/application_constants'
 = Local Deployment helper tasks
 
   - (p) FASAR Software 2007-2014
-  - Goggles framework vers.:  4.00.577
+  - Goggles framework vers.:  4.00.613
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -23,7 +23,7 @@ require 'framework/application_constants'
 =end
 
 # Script revision number
-SCRIPT_VERSION = '4.00.577'
+SCRIPT_VERSION = '4.00.613'
 
 # Gives current application name
 APP_NAME = Dir.pwd.to_s.split( File::SEPARATOR ).reverse[0]
@@ -182,6 +182,8 @@ Options: [Rails.env=#{Rails.env}]
   # Performs the actual operations required for a DB dump update given the specified
   # parameters.
   #
+  # Note that the dump takes the name of the Environment configuration section.
+  #
   def db_dump( db_host, db_user, db_pwd, db_name, dump_basename )
     puts "\r\nUpdating recovery dump '#{ dump_basename }' (from #{db_name} DB)..."
     zip_pipe = ' | bzip2 -c'
@@ -234,9 +236,12 @@ Options: [Rails.env=#{Rails.env}]
   # Performs the actual sequence of operations required by a single db:rebuild_from_dump
   # task, given the specified parameters.
   #
-  def rebuild_from_dump( source_basename, dest_basename, db_host, db_user, db_pwd, file_ext = '.sql.bz2' )
+  # The source_basename comes from the name of the file dump.
+  # Note that the dump takes the name of the Environment configuration section.
+  #
+  def rebuild_from_dump( source_basename, output_db, db_host, db_user, db_pwd, file_ext = '.sql.bz2' )
     puts "\r\nRebuilding..."
-    puts "DB name: #{ source_basename } (dump) => #{ dest_basename } (DEST)"
+    puts "DB name: #{ source_basename } (dump) => #{ output_db } (DEST)"
     puts "DB user: #{ db_user }"
 
     file_name = File.join( File.join('db', 'dump'), "#{ source_basename }#{ file_ext }" )
@@ -245,13 +250,13 @@ Options: [Rails.env=#{Rails.env}]
     puts "\r\nUncompressing dump file '#{ file_name }' => '#{ sql_file_name }'..."
     sh "bunzip2 -ck #{ file_name } > #{ sql_file_name }"
 
-    puts "\r\nDropping destination DB '#{ dest_basename }'..."
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --execute=\"drop database if exists #{ dest_basename }\""
+    puts "\r\nDropping destination DB '#{ output_db }'..."
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --execute=\"drop database if exists #{ output_db }\""
     puts "\r\nRecreating destination DB..."
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --execute=\"create database #{ dest_basename }\""
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --execute=\"create database #{ output_db }\""
 
-    puts "\r\nExecuting '#{ file_name }' on #{ dest_basename }..."
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --database=#{ dest_basename } --execute=\"\\. #{ sql_file_name }\""
+    puts "\r\nExecuting '#{ file_name }' on #{ output_db }..."
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --database=#{ output_db } --execute=\"\\. #{ sql_file_name }\""
     puts "Deleting uncompressed file '#{ sql_file_name }'..."
     FileUtils.rm( sql_file_name )
 
