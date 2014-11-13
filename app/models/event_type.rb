@@ -67,11 +67,12 @@ class EventType < ActiveRecord::Base
 
 
   # Given a localized text description from an imported text plus other key
-  # parameters, returns the corresponding RelayType or +nil+ when unable to parse.
+  # parameters, returns the corresponding EventType or +nil+ when unable to parse.
   #
-  # Keep in mind that this is used only to discriminate Mixed-gender relays
-  # from single-gender relays. It assumes that #stroke_type_id has already been
-  # parsed elsewhere.
+  # This can be used only to discriminate relays, not other event types.
+  #
+  # The #stroke_type_id can be parsed elsewhere, even with partial information,
+  # and it will be corrected if it is the case.
   #
   def self.parse_relay_event_type_from_import_text( stroke_type_id, type_text )
     is_mixed_gender = ( type_text =~ /mistaff|mix/ui ? 1 : 0 )
@@ -85,7 +86,13 @@ class EventType < ActiveRecord::Base
       [
         '(is_a_relay = 1) AND (stroke_type_id = ?) AND ' +
         '(is_mixed_gender = ?) AND (phases = ?) AND (phase_length_in_meters = ?)',
-        stroke_type_id, is_mixed_gender, phases, phase_length_in_meters
+        # [Steve, 20141113] Since the stroke type may be parsed with incomplete
+        # information, we need to correct the special case in which the Mixed style
+        # is recognized, and change it with the proper ID:
+        stroke_type_id == StrokeType::MIXED_ID ? StrokeType::MIXED_RELAY_ID : stroke_type_id,
+        is_mixed_gender,
+        phases,
+        phase_length_in_meters
       ]
     ).first
     relay_type

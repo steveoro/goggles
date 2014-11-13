@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.611
+  - Goggles framework vers.:  4.00.615
   - author: Steve A.
 
   Data-Import strategy class.
@@ -190,13 +190,13 @@ class DataImporter
       @team_analysis_log,
       "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
       nil, # (no footer)
-      is_ok ? ".team.ok#{get_log_extension}" : ".team#{get_log_extension}"
+      is_ok ? ".11.ok#{get_log_extension}" : ".11#{get_log_extension}"
     )
     to_logfile(
       @sql_executable_log,
       "--\r\n-- *** Suggested SQL actions: ***\r\n--\r\n\r\nSET AUTOCOMMIT = 0;\r\nSTART TRANSACTION;\r\n\r\n",
       "\r\nCOMMIT;",
-      is_ok ? '.team.ok.sql' : '.team.sql'
+      is_ok ? '.11.ok.sql' : '.11.sql'
     )
   end
 
