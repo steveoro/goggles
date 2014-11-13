@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingTeamScoreBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.619
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -56,7 +56,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
            season,
            force_missing_team_creation
         ) if @team_name
-        @team = team_builder.result_row if @team_name && team_builder
+        @team = team_builder.result_row if team_builder
         unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
 #          @phase_1_log << "\r\nDataImportMeetingTeamScoreBuilder: returned team_id IS nil! (And it can't be!)\r\n"
 #          logger.error( "\r\nDataImportMeetingTeamScoreBuilder: returned team_id IS nil! (And it can't be!)" )
