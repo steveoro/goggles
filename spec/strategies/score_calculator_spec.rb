@@ -8,34 +8,14 @@ describe ScoreCalculator, type: :strategy do
     # Leega
     # FIXME Data forced for FIN current season
     @fix_season        = Season.get_last_season_by_type( 'MASFIN' )
-    @fix_pool_type     = PoolType.only_for_meetings.find( ((rand * 2) % 2).to_i + 1 )
-    @fix_event_type    = EventType.are_not_relays.find( ((rand * 20) % 20).to_i + 1 )
     @fix_gender_type   = @fix_swimmer.gender_type
     @fix_category_type = @fix_swimmer.get_category_type_for_season( @fix_season.id )
+    @fix_pool_type     = PoolType.only_for_meetings.find( ((rand * 2) % 2).to_i + 1 )
+    @fix_event_type    = EventType.are_not_relays.find( ((rand * 20) % 20).to_i + 1 )
   end
 
   context "with requested parameters for given swimmer" do
-    subject { ScoreCalculator.new( @fix_swimmer, @fix_season, @fix_pool_type, @fix_event_type ) }
-
-    describe "#get_swimmer_gender," do
-      it "responds to get_swimmer_gender methods" do
-        expect(subject).to respond_to(:get_swimmer_gender)
-      end
-      it "returns a gender_type istance" do
-        expect( subject.get_swimmer_gender ).to be_an_instance_of( GenderType )
-      end
-    end
-    #-- -----------------------------------------------------------------------
-
-    describe "#get_swimmer_category," do
-      it "responds to get_swimmer_category methods" do
-        expect(subject).to respond_to(:get_swimmer_category)
-      end
-      it "returns a category_type istance" do
-        expect( subject.get_swimmer_category ).to be_an_instance_of( CategoryType )
-      end
-    end
-    #-- -----------------------------------------------------------------------
+    subject { ScoreCalculator.new( @fix_season, @fix_gender_type, @fix_category_type, @fix_pool_type, @fix_event_type ) }
 
     describe "#get_time_standard," do
       it "responds to get_time_standard methods" do
@@ -75,7 +55,7 @@ describe ScoreCalculator, type: :strategy do
 
       it "checks for correct calculation for no time standard present" do
         wrong_pool_type = PoolType.where(is_suitable_for_meetings: false).first
-        score_1000 = ScoreCalculator.new( @fix_swimmer, @fix_season, wrong_pool_type, @fix_event_type )
+        score_1000 = ScoreCalculator.new( @fix_season, @fix_gender_type, @fix_category_type, wrong_pool_type, @fix_event_type )
         expect( score_1000.get_fin_score(@fix_time_swam) ).to eq(1000)
       end
       it "checks for correct calculation for time standard present better than time swam" do

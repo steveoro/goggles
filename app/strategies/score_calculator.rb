@@ -11,27 +11,21 @@ class ScoreCalculator
   # Initialization within a swimmer
   #
   # == Params:
-  # An instance of swimmer
   # An instance of season
+  # An instance of gender
+  # An instance of category
   # An instance of pool_type
   # An instance of event_type
   #
-  def initialize( swimmer, season, pool_type, event_type )
-    @swimmer = swimmer
-    @season = season
-    @pool_type = pool_type
-    @event_type = event_type
+  def initialize( season, swimmer_gender, swimmer_category, pool_type, event_type )
+    @season           = season
+    @swimmer_gender   = swimmer_gender
+    @swimmer_category = swimmer_category
+    @pool_type        = pool_type
+    @event_type       = event_type
   end
   #-- --------------------------------------------------------------------------
   #++
-
-  def get_swimmer_gender
-    @swimmer_gender ||= retrieve_swimmer_gender
-  end
-
-  def get_swimmer_category
-    @swimmer_category ||= retrieve_swimmer_category
-  end
 
   def get_time_standard
     @current_time_standard ||= retrieve_time_standard
@@ -46,21 +40,6 @@ class ScoreCalculator
 
   private
 
-  # Retrieves the swimmer gender
-  #
-  def retrieve_swimmer_gender
-    @swimmer_gender = @swimmer.gender_type
-  end
-
-  # Retrieves the swimmer category for a given season
-  #
-  # == Params:
-  # season_id: id of the interested season
-  #
-  def retrieve_swimmer_category
-    @swimmer.get_category_type_for_season( @season.id )
-  end
-
   # Retrieves the swimmer category for a given season
   #
   # == Params:
@@ -71,11 +50,11 @@ class ScoreCalculator
     # @swimmer_category = get_swimmer_category
     # @swimmer_gender = get_swimmer_gender
     TimeStandard.where(
-        season_id:        @season ? @season.id : 0,
-        gender_type_id:   get_swimmer_gender ? get_swimmer_gender.id : 0,
-        category_type_id: get_swimmer_category ? get_swimmer_category.id : 0,
-        pool_type_id:     @pool_type ? @pool_type.id : 0,
-        event_type_id:    @event_type ? @event_type.id : 0
+        season_id:        @season           ? @season.id           : 0,
+        gender_type_id:   @swimmer_gender   ? @swimmer_gender.id   : 0,
+        category_type_id: @swimmer_category ? @swimmer_category.id : 0,
+        pool_type_id:     @pool_type        ? @pool_type.id        : 0,
+        event_type_id:    @event_type       ? @event_type.id       : 0
       ).first
   end
 
