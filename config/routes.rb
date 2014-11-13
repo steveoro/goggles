@@ -130,7 +130,6 @@ Goggles::Application.routes.draw do
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
-      match "swimmer/misc/:id",                 to: "swimmers#misc",                    as: "swimmer_misc",         via: [:get, :post]
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
 
       # === Teams ===
@@ -162,6 +161,9 @@ Goggles::Application.routes.draw do
       get  "championships/ranking_supermaster_fin(/:id)",   to: "championships#ranking_supermaster_fin",   as: "championships_ranking_supermaster_fin"
       get  "championships/rules_supermaster_fin(/:id)",     to: "championships#rules_supermaster_fin",     as: "championships_rules_supermaster_fin"
       get  "championships/history_supermaster_fin(/:id)",   to: "championships#history_supermaster_fin",   as: "championships_history_supermaster_fin"
+
+      # === Misc ===
+      match "misc/fin_score_calculation",       to: "misc#fin_score_calculation",               as: "misc_fin_score_calculation", via: [:get, :post]
 
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do

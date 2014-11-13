@@ -31,6 +31,7 @@ class Season < ActiveRecord::Base
   has_many :teams,                      through: :team_affiliations
   has_many :meeting_individual_results, through: :meetings
   has_many :computed_season_ranking
+  has_many :category_types
 
   validates_presence_of :header_year
   validates_length_of   :header_year, within: 1..9, allow_nil: false
