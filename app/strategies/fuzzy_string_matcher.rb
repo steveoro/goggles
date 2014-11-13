@@ -7,7 +7,7 @@ require 'fuzzystringmatch'
 
 = FuzzyStringMatcher
 
-  - Goggles framework vers.:  4.00.521
+  - Goggles framework vers.:  4.00.617
   - author: Steve A.
 
  Generic strategy class dedicated to find best fuzzy matches
@@ -46,15 +46,17 @@ class FuzzyStringMatcher
   # Creates a new instance.
   #
   # === Params:
-  # - <tt>array_of_rows</tt>:   a list of objects responding to #each and to the #getter_method
-  # - <tt>getter_method</tt>:   method called on each object in the #array_of_rows to get the matching value
+  # - <tt>array_of_rows</tt>: a list of objects responding to #each and to the #getter_method; allows even empty lists.
+  # - <tt>getter_method</tt>: method called on each object in the #array_of_rows to get the matching value
   # - <tt>alternative_getter_method</tt>: alternative method used to retrieve a second possible candidate value for the matching comparison (+nil+ as default)
   #
   def initialize( array_of_rows, getter_method, alternative_getter_method = nil )
-    raise "The array_of_rows does not support the :each enumerator!" unless array_of_rows.respond_to?(:each)
-    raise "The first element of array_of_rows does not respond to '#{getter_method}'!" unless array_of_rows.first.respond_to?( getter_method )
-    if alternative_getter_method
-      raise "The first element of array_of_rows does not respond to '#{alternative_getter_method}'!" unless array_of_rows.first.respond_to?( alternative_getter_method )
+    raise "The array_of_rows does not support the :each and :size enumerator!" unless array_of_rows.respond_to?(:each) && array_of_rows.respond_to?(:size)
+    if array_of_rows.size > 0
+      raise "The first element of array_of_rows does not respond to '#{getter_method}'!" unless array_of_rows.first.respond_to?( getter_method )
+      if alternative_getter_method
+        raise "The first element of array_of_rows does not respond to '#{alternative_getter_method}'!" unless array_of_rows.first.respond_to?( alternative_getter_method )
+      end
     end
     @array_of_rows     = array_of_rows
     @getter_method     = getter_method

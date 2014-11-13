@@ -8,7 +8,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = TeamAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.609
+  - Goggles framework vers.:  4.00.617
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single TeamAnalysisResult
@@ -71,32 +71,43 @@ class TeamAnalysisResultProcessor
                                                     # -- Can ADD new Team? (Default action for unconfirmed team_analysis_results)
     if (! is_confirmed) || team_analysis_result.can_insert_team
       begin
-        DataImportTeam.transaction do               # Let's make sure other threads have not already done what we want to do:
-          if ( DataImportTeam.where(name: team_name).none? )
-            city_builder  = DataImportCityBuilder.build_from_parameters(
-              team_analysis_result.data_import_session,
-              team_name
-            )
-            committed_row = DataImportTeam.new(
-              data_import_session_id: team_analysis_result.data_import_session_id,
-              import_text:            team_name,
-              name:                   team_name,
-              city_id:                city_builder.result_row.instance_of?(City)           ? city_builder.result_row.id : nil,
-              data_import_city_id:    city_builder.result_row.instance_of?(DataImportCity) ? city_builder.result_row.id : nil,
-              user_id:          1                   # (don't care)
-              # XXX Unable to guess city id (not filled-in, to be added by hand)
-            )
-            committed_row.save!                     # raise automatically an exception if save is not successful
-            # Make sure a TeamAffiliation will be skipped for this phase of the
-            # analysis (we need to make sure that only actual Teams will be used
-            # not secondary/temporary entities):
-            team_id = nil
-          else
-            update_logs( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping Team creation because was (unexpectedly) found already existing! (Name:'#{team_name}')" )
-          end
-        end
+        team_builder = DataImportTeamBuilder.build_from_parameters(
+          team_analysis_result.data_import_session,
+          team_name,
+          team_analysis_result.season,
+          true # During this phase, we have to force_missing_team_creation
+        )
+        committed_row = team_builder.result_row
+        update_logs( "Created new #{committed_row.class}, ID: #{committed_row.id}." ) if committed_row
+##################################### OLD WAY:
+        # DataImportTeam.transaction do               # Let's make sure other threads have not already done what we want to do:
+          # if ( DataImportTeam.where(name: team_name).none? )
+            # city_builder  = DataImportCityBuilder.build_from_parameters(
+              # team_analysis_result.data_import_session,
+              # team_name
+            # )
+            # committed_row = DataImportTeam.new(
+              # data_import_session_id: team_analysis_result.data_import_session_id,
+              # import_text:            team_name,
+              # name:                   team_name,
+              # city_id:                city_builder.result_row.instance_of?(City)           ? city_builder.result_row.id : nil,
+              # data_import_city_id:    city_builder.result_row.instance_of?(DataImportCity) ? city_builder.result_row.id : nil,
+              # user_id:          1                   # (don't care)
+              # # XXX Unable to guess city id (not filled-in, to be added by hand)
+            # )
+            # committed_row.save!                     # raise automatically an exception if save is not successful
+##################################### OLD WAY ^^^^^^^^
+
+        # Make sure a TeamAffiliation will be skipped for this phase of the
+        # analysis (we need to make sure that only actual Teams will be used
+        # not secondary/temporary entities):
+        team_id = nil if committed_row.instance_of?( DataImportTeam )
+#          else
+#            update_logs( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping Team creation because was (unexpectedly) found already existing! (Name:'#{team_name}')" )
+#          end
+ #       end
       rescue
-        update_logs( "\r\n*** TeamAnalysisResultProcessor: exception caught during Team save! (Name:'#{team_name}')", :error )
+        update_logs( "\r\n*** TeamAnalysisResultProcessor: exception caught during DataImportTeam building! (Name:'#{team_name}')", :error )
         update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
         @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         is_ok = false

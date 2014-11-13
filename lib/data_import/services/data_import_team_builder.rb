@@ -9,7 +9,7 @@ require 'data_import/services/data_import_city_builder'
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.609
+  - Goggles framework vers.:  4.00.617
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -72,13 +72,13 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         set_result( @result_row.team ) if @result_row
       end
 
-      if_not_found do                             # 3) Do a single-shot, "best-match" fuzzy search:
+      if_not_found do                             # 3) Do a single-shot, "best-match" fuzzy search on TEAMS:
         matcher     = FuzzyStringMatcher.new( Team.all, :name, :editable_name )
         result_row  = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
         entity      Team                          # reset primary entity after the search
         set_result  result_row
 # DEBUG
-#        puts "FuzzyStringMatcher: result = #{result_row.inspect}"
+#        puts "FuzzyStringMatcher on Team: result = #{result_row.inspect}"
       end
                                                   # 4) Additional TeamAffiliation check:
       # INTEGRITY Check: add a missing TeamAffiliation but only if we have a primary match.
@@ -113,6 +113,15 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           # result value:
           set_result actual_team_result
         end
+      end
+
+      if_not_found do                             # 5) Do another single-shot, "best-match" fuzzy search on DATA_IMPORT_TEAMS:
+        matcher     = FuzzyStringMatcher.new( DataImportTeam.all, :name )
+        result_row  = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
+        entity      DataImportTeam                # reset primary entity after the search
+        set_result  result_row
+# DEBUG
+#        puts "FuzzyStringMatcher on DataImportTeam: result = #{result_row.inspect}"
       end
 
       if_not_found do

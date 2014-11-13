@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.615
+  - Goggles framework vers.:  4.00.617
   - author: Steve A.
 
   Data-Import strategy class.
@@ -740,12 +740,12 @@ class DataImporter
 
   # Getter for the log base file name (pathname + log filename w/o extension)
   def get_log_basename
-    File.join( @log_dir, (File.basename(@full_pathname).split('.')[0]) )
+    File.join( @log_dir, "#{get_iso_timestamp}prod_" << (File.basename(@full_pathname).split('.')[0]) )
   end
 
   # Getter for a string timestamp including the seconds.
   def get_iso_timestamp
-    DateTime.now.strftime("%Y%m%d%H%M%S")
+    @data_import_session.created_at.strftime("%Y%m%d%H%M")
   end
 
   # Getter for the last completed phase

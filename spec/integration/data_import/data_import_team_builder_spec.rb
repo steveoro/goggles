@@ -115,16 +115,7 @@ describe DataImportTeamBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with a matching secondary entity row," do
-    subject do
-      DataImportTeamBuilder.build_from_parameters(
-        data_import_session,
-        data_import_team.name,
-        create(:season), # <== This implies a missing TeamAffiliation link
-        false # force_missing_team_creation
-      )
-    end
-
+  shared_examples_for "(a self.build() with a fuzzy-matching or equal secondary entity row)" do
     it "returns a DataImportEntityBuilder instance" do
       expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
     end
@@ -162,6 +153,34 @@ describe DataImportTeamBuilder, type: :integration do
         expect( subject.result_row.id ).to eq( subject.result_id )
       end
     end
+  end
+
+
+  context "after a self.build() with a matching secondary entity row," do
+    subject do
+      DataImportTeamBuilder.build_from_parameters(
+        data_import_session,
+        data_import_team.name,
+        create(:season), # <== This implies a missing TeamAffiliation link
+        false # force_missing_team_creation
+      )
+    end
+
+    it_behaves_like "(a self.build() with a fuzzy-matching or equal secondary entity row)"
+  end
+
+
+  context "after a self.build() with a fuzzy-matching secondary entity row," do
+    subject do
+      DataImportTeamBuilder.build_from_parameters(
+        data_import_session,
+        data_import_team.name + " ASD",
+        create(:season), # <== This implies a missing TeamAffiliation link
+        true # force_missing_team_creation
+      )
+    end
+
+    it_behaves_like "(a self.build() with a fuzzy-matching or equal secondary entity row)"
   end
   #-- -------------------------------------------------------------------------
   #++
