@@ -461,8 +461,8 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_position
     TokenExtractor.new(
       :result_position,
-      8,
-      7                                             # (max size)
+      /^\s*\d{0,6}°?\s+\w+/i,
+      /(?<=\d|\s{12})(°|\s)/i                   # (max size)
     )
   end
 
@@ -481,8 +481,9 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_team_name
     TokenExtractor.new(
       :team_name,
-      /(?<=(\w{3}-\d{6}\s{2})|(\d\s{6})|(\s{19}))\w+/i,
-      /\s\d{1,6}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
+      /(?<=\w{3}-\d{6}\s{2}|\d\s{6}|\s{19}|\d°\s)\w+/i,
+      /\s+(\d{1,6}[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
+#      /\s\d{1,6}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
     )
   end
 
@@ -491,8 +492,9 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_score
     TokenExtractor.new(
       :result_score,
-      /\s\d{1,6}[\,|\.]\d\d(\r\n|\n|$|\Z)/i,
-      /$/i
+      /\s+(\d{1,6}[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i,
+      /(?<=\d[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i  # \s+\d{1,6}[\,|\.]\d\d(\s+|\r\n|\n|$|\Z)
+#      /$/i  # \s+\d{1,6}[\,|\.]\d\d(\s+|\r\n|\n|$|\Z)
     )
   end
 

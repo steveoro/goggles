@@ -32,7 +32,16 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
       "                   ASOLA N                               0,00",
       "                   FIRENZE NUOTA MASTER A.S.D.           0,00",
       "                   TEAM EUGANEO                          0,00",
-      ""
+      "",
+      " 1° ESTENSE NUOTO CSI A.S. DILETT.  54412.09  67  812.12",
+      " 2° S.NUOTATORI PADOVANI A.S.D.     46729.03  53  881.68",
+      " 5° S.S.D. NATATORIUM TREVISO ar.l. 40754.42  56  727.76",
+      " 6° SSD STILE LIBERO SRL            26266.59  32  820.83",
+      "12° NUOTOPIU' ACADEMY A.S.DILETT. 18034.13  21  858.77",
+      "15° A.S.GYMNASIUM SPILIMBERGO 15442.72  20  772.14",
+      "17° A.S.D.B.N. Nuotatori Veneziani  13057.14  18  725.40",
+      "18° A.S.DILETT. JESOLONUOTO   12299.81  17  723.52",
+      "20° a.s.d. ROVIGONUOTO        10773.76  19  567.04"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -58,7 +67,16 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         '',
         '',
         '',
-        ''
+        '',
+        "1°",
+        "2°",
+        "5°",
+        "6°",
+        "12°",
+        "15°",
+        "17°",
+        "18°",
+        "20°"
       ]
     end
 
@@ -87,6 +105,15 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         '',
         '',
         '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
         ''
       ]
     end
@@ -95,6 +122,7 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   context "when tokenizing TEAM_NAME," do
     subject { dummy_wrapper.tokenizer_ranking_row_team_name }
@@ -116,7 +144,16 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "ASOLA N",
         "FIRENZE NUOTA MASTER A.S.D.",
         "TEAM EUGANEO",
-        ""
+        "",
+        "ESTENSE NUOTO CSI A.S. DILETT.",
+        "S.NUOTATORI PADOVANI A.S.D.",
+        "S.S.D. NATATORIUM TREVISO ar.l.",
+        "SSD STILE LIBERO SRL",
+        "NUOTOPIU' ACADEMY A.S.DILETT.",
+        "A.S.GYMNASIUM SPILIMBERGO",
+        "A.S.D.B.N. Nuotatori Veneziani",
+        "A.S.DILETT. JESOLONUOTO",
+        "a.s.d. ROVIGONUOTO"
       ]
     end
 
@@ -145,7 +182,16 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "0,00",
         "0,00",
         "0,00",
-        ""
+        "",
+        "54412.09",
+        "46729.03",
+        "40754.42",
+        "26266.59",
+        "18034.13",
+        "15442.72",
+        "13057.14",
+        "12299.81",
+        "10773.76"
       ]
     end
 

@@ -50,7 +50,13 @@ class TokenExtractor
   def get_start_index( text )
     return @computed_start unless @computed_start.nil?
     if starting_with.kind_of?( Regexp )
-      @computed_start = ( text =~ starting_with )
+#      matchdata = starting_with.match( text )
+#      if matchdata && matchdata.captures.size > 0
+#        @computed_start = matchdata.begin(0)
+#        @computed_end   = @computed_start + matchdata.captures.first.size
+#      else
+        @computed_start = ( text =~ starting_with )
+#      end
     elsif starting_with.kind_of?( Fixnum )
       @computed_start = starting_with
     else

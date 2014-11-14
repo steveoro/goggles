@@ -24,7 +24,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.609
+  - Goggles framework vers.:  4.00.619
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -57,11 +57,35 @@ module FinResultPhase2
     parse_result[:relay_row].each do |relay_row|
       team_names << relay_row[:fields][:team_name] if relay_row[:fields][:team_name]
     end
+    # Team names stored in Ranking may be a longer copy of the short version collected from
+    # the results before. So we process them apart, and we substitute the shorter names
+    # with the longer ones:
+    ranking_names = []
     parse_result[:ranking_row].each do |ranking_row|
-      team_names << ranking_row[:fields][:team_name] if ranking_row[:fields][:team_name]
+      ranking_names << ranking_row[:fields][:team_name] if ranking_row[:fields][:team_name]
+    end
+    team_names.uniq!                                # Clear the duplicates
+
+    team_names.map! do |team_name|
+      longer_name = ranking_names.select { |ranking_name| ranking_name[0 .. team_name.size-1] == team_name }.first
+      if longer_name                                # Subst the shorter names with the longer ones:
+        parse_result[:result_row].each do |result_row|
+          if result_row[:fields][:team_name] == team_name
+            result_row[:fields][:team_name] = longer_name
+          end
+        end
+        parse_result[:relay_row].each do |relay_row|
+          if relay_row[:fields][:team_name] == team_name
+            relay_row[:fields][:team_name] = longer_name
+          end
+        end
+        longer_name
+      else
+        team_name
+      end
     end
 
-    team_names.uniq!                                # Clear the duplicates
+    update_logs( "\r\n** Pre-scan Team names, collected names: **\r\n\r\n" << team_names.join("\r\n") )
     team_names.each_with_index do |team_name, idx|
       team_builder = DataImportTeamBuilder.build_from_parameters(
         data_import_session,
