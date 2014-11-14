@@ -223,7 +223,7 @@ it:
     timing: "Tempo di gara"
     wrong_timing: "Tempo non ammissimbile. Verifica il tempo immesso"
     wrong_event_or_pool: "Oh, no! La specialità non può essere noutata in questo tipo di vasca"
-    how_to_calculate: "Seleziona il tipo di vasca, la specialitò ed inserisci il tempo presunto, infine premi il pulsante Calcola punteggio FIN per ottenere il punteggio FIN"
+    how_to_calculate: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il tempo presunto, infine premi il pulsante Calcola punteggio FIN per ottenere il punteggio FIN"
     fin_standard_points: "Punteggio FIN"
     time_standard: "Tempo base"
     team_radio_tab_title: "{TEAM_NAME} secondo il Cronometro"

@@ -18,6 +18,8 @@ class GenderType < ActiveRecord::Base
   validates_presence_of   :code, length: { maximum: 1 }, allow_nil: false
   validates_uniqueness_of :code, message: :already_exists
 
+  scope :individual_only, where(['code <> ?', 'X'])
+
   # Unique ID used inside the DB to address the Male GenderType instance
   MALE_ID   = 1
 

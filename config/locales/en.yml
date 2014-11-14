@@ -223,7 +223,7 @@ en:
     timing: "Timing"
     wrong_timing: "Wrong timing. Please review timing inserted"
     wrong_event_or_pool: "Oh, no! It's not possible to swim that event in that kind of pool!"
-    how_to_calculate: "Select pool type and event and fill in the timing fields, than press calculate button to know the standard FIN points"
+    how_to_calculate: "Select gender, category, pool type and event and fill in the timing fields, than press calculate button to know the standard FIN points"
     fin_standard_points: "FIN standard points"
     time_standard: "Base time"
     team_radio_tab_title: "{TEAM_NAME} according to the Chronometer"

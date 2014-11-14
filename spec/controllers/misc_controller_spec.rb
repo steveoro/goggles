@@ -4,23 +4,36 @@ require 'wice_grid'
 
 describe MiscController, :type => :controller do
 
+  shared_examples_for "(Misc not restricted GET action)" do |action_sym|
+
+    before(:each) { get action_sym }
+
+    it "handles successfully the request" do
+      expect(response.status).to eq( 200 )
+    end
+    it "assigns the tab title" do
+      expect( assigns(:tab_title) ).to be_an_instance_of( String )
+    end
+    it "assigns a current season" do
+      expect( assigns(:current_season) ).to be_an_instance_of( Season )
+    end
+    it "assigns -1 value to standard points" do
+      expect( assigns(:standard_points) ).to eq( -1 )
+    end
+    it "renders the template" do
+      expect(response).to render_template( action_sym )
+    end
+  end
+  # ===========================================================================
+
+
   describe '[GET #fin_score_calculation]' do
 
     context "as an unlogged user" do
+      it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
+
       before(:each) { get :fin_score_calculation }
   
-      it "handles successfully the request" do
-        expect(response.status).to eq( 200 )
-      end
-      it "assigns the tab title" do
-        expect( assigns(:tab_title) ).to be_an_instance_of( String )
-      end
-      it "assigns a current season" do
-        expect( assigns(:current_season) ).to be_an_instance_of( Season )
-      end
-      it "assigns -1 value to standard points" do
-        expect( assigns(:standard_points) ).to eq( -1 )
-      end
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
       end
@@ -30,12 +43,28 @@ describe MiscController, :type => :controller do
       it "doesn't assign a gender_type" do
         expect( assigns(:swimmer_gender) ).to be_nil
       end
-      it "renders the template" do
-        expect(response).to render_template( :fin_score_calculation )
+    end
+
+    context "as logged but not associated user" do
+      before(:each) do
+        login_user()
+        get :fin_score_calculation
+      end
+
+      it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
+      
+      it "doesn't assign a swimmer" do
+        expect( assigns(:swimmer) ).to be_nil
+      end
+      it "doesn't assign a category_type" do
+        expect( assigns(:swimmer_category) ).to be_nil
+      end
+      it "doesn't assign a gender_type" do
+        expect( assigns(:swimmer_gender) ).to be_nil
       end
     end
 
-    context "as a logged-in associated user" do
+    context "as logged and swimmer associated user" do
       before(:each) do
         login_user()
         swimmer = create(:swimmer)
@@ -43,18 +72,8 @@ describe MiscController, :type => :controller do
         get :fin_score_calculation
       end
 
-      it "handles successfully the request" do
-        expect(response.status).to eq( 200 )
-      end
-      it "assigns the tab title" do
-        expect( assigns(:tab_title) ).to be_an_instance_of( String )
-      end
-      it "assigns a current season" do
-        expect( assigns(:current_season) ).to be_an_instance_of( Season )
-      end
-      it "assigns -1 value to standard points" do
-        expect( assigns(:standard_points) ).to eq( -1 )
-      end
+      it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
+
       it "assigns the required variables" do
         expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
       end
@@ -63,9 +82,6 @@ describe MiscController, :type => :controller do
       end
       it "assigns a gender_type" do
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
-      end
-      it "renders the template" do
-        expect(response).to render_template( :fin_score_calculation )
       end
     end
   end

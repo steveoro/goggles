@@ -1,3 +1,6 @@
+- default_gender = @swimmer_gender.id if @swimmer_gender
+- default_category = @swimmer_category.id if @swimmer_category
+
 .row-fluid#fin_score_calculation
   .goggles-category-gap#pageTop
 
@@ -11,15 +14,15 @@
       .control-group
         = label_tag( :season, I18n.t('activerecord.models.season'), :for => :season, class: 'control-label' )
         .controls
-          = select_tag( :season, options_for_select([@current_season.get_full_name]), disabled: true, class: 'input-xxlarge' )
+          = select_tag( :season_id, options_for_select([@current_season.get_full_name]), { disabled: true, class: 'input-xxlarge' })
       .control-group
         = label_tag( :gender_type, I18n.t('activerecord.models.gender_type'), :for => :gender_type, class: 'control-label' )
         .controls
-          = select( :gender_type, :id, GenderType.to_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
+          = select_tag( :gender_type_id, options_for_select(GenderType.individual_only.to_dropdown, default_gender), { prompt: I18n.t(:please_select), class: 'input-small' } )
       .control-group
         = label_tag( :category_type, I18n.t('activerecord.models.category_type'), :for => :category_type, class: 'control-label' )
         .controls
-          = select( :category_type, :id, @current_season.category_types.are_not_relays.is_valid.to_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
+          = select_tag( :category_type_id, options_for_select(@current_season.category_types.are_not_relays.is_valid.to_dropdown, default_category), { prompt: I18n.t(:please_select), class: 'input-small' } )
       .control-group
         = label_tag( :pool_type, I18n.t('activerecord.models.pool_type'), :for => :pool_type, class: 'control-label' )
         .controls
