@@ -1,17 +1,7 @@
 - team_id = @individual_result_list.first.team_id
 - team_name = @individual_result_list.first.team.get_full_name
 - cache( cache_key_for_meeting( 'show_swimmer_results', @meeting.id, @max_mir_updated_at, team_id, @swimmer.id) ) do
-  %ul.nav.nav-tabs#topOfPage
-    %li
-      = link_to(t(:results), meeting_show_full_path(:id=>@meeting.id, :team_id=>team_id))
-    %li
-      = link_to(t(:ranking), meeting_show_ranking_path(:id=>@meeting.id, :team_id=>team_id))
-    %li
-      = link_to(t(:stats), meeting_show_stats_path(:id=>@meeting.id, :team_id=>team_id))
-    %li
-      = link_to(t(:team_results), meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id))
-    %li.active
-      = link_to(t(:swimmer_results), '#')
+  = render( partial: 'tabs_and_radio_title' )
 
   = render( partial: 'meeting_header' )
 

@@ -1,0 +1,23 @@
+%ul.nav.nav-tabs#topOfPage
+  - if @meeting.invitation
+    - is_active = ( params[:action] == 'show_invitation' )
+    %li{ class: is_active ? 'active' : '' }
+      = link_to( t(:invitation), is_active ? '#' : meeting_show_invitation_path(:id=>@meeting.id, :team_id=>@preselected_team_id) )
+  - is_active = ( params[:action] == 'show_full' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t(:results), is_active ? '#' : meeting_show_full_path(:id=>@meeting.id, :team_id=>@preselected_team_id) )
+  - is_active = ( params[:action] == 'show_ranking' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t(:ranking), is_active ? '#' : meeting_show_ranking_path(:id=>@meeting.id, :team_id=>@preselected_team_id) )
+  - is_active = ( params[:action] == 'show_stats' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t(:stats), is_active ? '#' : meeting_show_stats_path(:id=>@meeting.id, :team_id=>@preselected_team_id) )
+
+  - is_active = ( params[:action] == 'show_team_results' )
+  %li{ class: is_active ? 'active' : (@preselected_team_id ? '' : 'disabled') }
+    = link_to( t(:team_results), is_active ? '#' : @preselected_team_id ? meeting_show_stats_path(:id=>@meeting.id, :team_id=>@preselected_team_id) : '#' )
+  
+  - is_active = ( params[:action] == 'show_swimmer_results' )
+  %li{ class: is_active ? 'active' : 'disabled' }
+    = link_to(t(:swimmer_results), '#')
+
