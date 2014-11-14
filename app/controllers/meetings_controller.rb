@@ -487,6 +487,7 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_current_path() ) and return
     end
+    @preselected_team_id = params[:team_id]
                                                     # Get the events filtered by team_id:
     mir = MeetingIndividualResult.includes(:meeting, :meeting_event).where(
       [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
@@ -580,6 +581,7 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( meetings_current_path() ) and return
     end
+    @preselected_team_id = params[:team_id]
 
     @individual_result_list = MeetingIndividualResult.includes(:meeting).where(
       [
@@ -598,6 +600,21 @@ class MeetingsController < ApplicationController
     else
       @meeting.updated_at
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Meeting invitation viewer
+  #
+  def show_invitation
+    meeting_id = params[:id].to_i
+    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
+    unless ( @meeting )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_current_path() ) and return
+    end
+    @preselected_team_id = params[:team_id]
   end
   #-- -------------------------------------------------------------------------
   #++

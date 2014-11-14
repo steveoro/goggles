@@ -1,0 +1,10 @@
+= render( partial: 'tabs_and_radio_title' )
+
+= render( partial: 'meeting_header' )
+
+.row-fluid
+  - if @meeting.invitation
+    - html_doc = Nokogiri::HTML( @meeting.invitation )
+    .row-fluid
+      = html_doc.css('style').to_html.html_safe
+      = html_doc.css('body').inner_html.html_safe

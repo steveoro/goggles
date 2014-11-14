@@ -38,7 +38,7 @@
               %tr
                 - if index == 0
                   %td{ rowspan: session_number }
-                    - if meeting.meeting.are_results_acquired
+                    - if meeting.meeting.are_results_acquired || meeting.meeting.invitation 
                       = meeting.meeting.decorate.get_linked_name
                     - else
                       = meeting.meeting.get_short_name
