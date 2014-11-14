@@ -105,7 +105,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_pools,                 t('swimming_pool.pools'),                   swimming_pools_path()
       lev2_nav.item :key_pool_reviews,          t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path()
       lev2_nav.item :key_separator4_0,         content_tag(:span, ''), class: 'divider' 
-      lev2_nav.item :key_fin_score_calc,        t('radiography.misc_tab'),                  misc_fin_score_calculation_path()
+      lev2_nav.item :key_fin_score_calc,        t('misc.fin_score_calculation'),            misc_fin_score_calculation_path()
       lev2_nav.item :key_separator4_1,         content_tag(:span, ''), class: 'divider' 
       lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()

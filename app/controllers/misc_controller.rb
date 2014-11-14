@@ -18,7 +18,7 @@ class MiscController < ApplicationController
   # suggests gender and category
   #
   def fin_score_calculation
-    @tab_title = I18n.t('radiography.misc_tab')
+    @tab_title = I18n.t('misc.fin_score_calculation')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                              # Init score with a non-displayable value
     
@@ -116,11 +116,11 @@ class MiscController < ApplicationController
             end
           end
         else
-          flash[:error] = I18n.t('radiography.wrong_event_or_pool')
+          flash[:error] = I18n.t('misc.wrong_event_or_pool')
           redirect_to( misc_fin_score_calculation_path ) and return
         end
       else
-        flash[:error] = I18n.t('radiography.wrong_timing')
+        flash[:error] = I18n.t('misc.wrong_timing')
         redirect_to( misc_fin_score_calculation_path ) and return
       end
     end

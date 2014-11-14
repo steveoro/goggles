@@ -32,7 +32,7 @@
         .controls
           = select( :event_type, :id, EventType.are_not_relays.for_fin_calculation.sort_by_style.to_unsorted_dropdown(), { :prompt => I18n.t(:please_select) }, { class: 'input-small' } )
       .control-group
-        = label_tag( :timing, t('radiography.timing'), :for => :timing, class: 'control-label' )
+        = label_tag( :timing, t('misc.timing'), :for => :timing, class: 'control-label' )
         .controls
           = text_field_tag( :minutes, 0, class: 'input-micro' )
           '
@@ -41,18 +41,18 @@
           = text_field_tag( :hundreds, 0, class: 'input-micro' )
           &nbsp;
           &nbsp;
-          = submit_tag( I18n.t('radiography.compute'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+          = submit_tag( I18n.t('misc.compute'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
           %span(id='loadingIndicator' hidden='true')
             = image_tag( 'indicator.gif' )
   - if @standard_points.to_i >= 0
     %table.table
       %tr
         %td.goggles-centeralign{ colspan: 6 }
-          = "#{I18n.t('radiography.compute_fin_score_for')} #{@swimmer_gender.code} - #{@swimmer_category.code}, #{@current_event.i18n_description} - #{@current_pool.i18n_description}: #{@timing.to_s} => "
+          = "#{I18n.t('misc.compute_fin_score_for')} #{@swimmer_gender.code} - #{@swimmer_category.code}, #{@current_event.i18n_description} - #{@current_pool.i18n_description}: #{@timing.to_s} => "
           %b= "#{@current_time_standard ? format_score(@standard_points) : I18n.t('not_computable') }".html_safe
       %tr
         %td.goggles-rightalign
-          = I18n.t('radiography.time_standard')
+          = I18n.t('misc.time_standard')
         %td
           = "#{@current_time_standard ? @current_time_standard.get_timing : I18n.t('not_present') }"
         %td.goggles-rightalign
@@ -87,5 +87,5 @@
               = team_record_html
   - else
     .row-fluid
-      = I18n.t('radiography.how_to_calculate')
+      = I18n.t('misc.how_to_calculate')
 
