@@ -33,7 +33,7 @@
                     = sprintf( "%02.2f", individual_result.meeting_individual_points )
           -# --- Team Relay result rows:
           - if is_a_relay
-            - meeting_event.meeting_relay_results.where(['meeting_relay_results.team_id = ?', @team_id]).order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
+            - meeting_event.meeting_relay_results.where(['meeting_relay_results.team_id = ?', @team.id]).order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
               %tr
                 %td.goggles-rightalign
                   = show_tag( relay_result.rank==1 && relay_result.is_valid_for_ranking, "medal_gold_3.png", '' )

@@ -11,6 +11,12 @@ require 'common/format'
 
 =end
 class MeetingsController < ApplicationController
+  # Parse parameters:
+  before_filter :verify_meeting,  only: [:show_full, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation]
+  before_filter :verify_team,     only: [:show_team_results, :show_swimmer_results]
+  before_filter :verify_swimmer,  only: [:show_swimmer_results]
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Index of the meetings for the current sport/academic year.
   #
@@ -201,12 +207,6 @@ class MeetingsController < ApplicationController
   # - team_id: Team id to be highlighted, defined only when prefiltered from previous search actions.
   #
   def show_full
-    meeting_id = params[:id].to_i
-    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
-    unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
 
@@ -234,12 +234,6 @@ class MeetingsController < ApplicationController
   # - team_id, to highlight a specific team
   #
   def show_ranking
-    meeting_id = params[:id].to_i
-    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
-    unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
     @preselected_team_id = params[:team_id]
 
     if ( @meeting.meeting_team_scores.count > 0 )
@@ -255,14 +249,14 @@ class MeetingsController < ApplicationController
       mrr = @meeting.meeting_relay_results.is_valid
                                                     # Sum all individual scores into each team score row:
       mir.each { |ind_result|
-        team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( team_id: ind_result.team_id, meeting_id: meeting_id )
+        team_score = team_scores_hash[ ind_result.team_id ] || MeetingTeamScore.new( team_id: ind_result.team_id, meeting_id: @meeting.id )
         team_score.meeting_individual_points += ind_result.standard_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ ind_result.team_id ] = team_score
       }
                                                     # Sum all relay scores into each team score row:
       mrr.each { |relay_result|
-        team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( team_id: relay_result.team_id, meeting_id: meeting_id )
+        team_score = team_scores_hash[ relay_result.team_id ] || MeetingTeamScore.new( team_id: relay_result.team_id, meeting_id: @meeting.id )
         team_score.meeting_relay_points += relay_result.standard_points
                                                     # Save the updated score into the collection Hash:
         team_scores_hash[ relay_result.team_id ] = team_score
@@ -306,12 +300,6 @@ class MeetingsController < ApplicationController
   #               just to highlight a specific team
   #
   def show_stats
-    meeting_id = params[:id].to_i
-    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
-    unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
     @preselected_team_id = params[:team_id]
 # DEBUG
 #    logger.debug "@preselected_team_id : #{params[:team_id] }"
@@ -475,25 +463,11 @@ class MeetingsController < ApplicationController
   # - team_id: Team id.
   #
   def show_team_results
-    @team_id = params[:team_id].to_i
-    meeting_id = params[:id].to_i
-    unless ( meeting_id > 0 && @team_id > 0 )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
-                                                    # Get the meeting:
-    @meeting = Meeting.find_by_id( meeting_id )
-    unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
-    @preselected_team_id = params[:team_id]
                                                     # Get the events filtered by team_id:
     mir = MeetingIndividualResult.includes(:meeting, :meeting_event).where(
       [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
-        meeting_id, @team_id ]
+        @meeting.id, @team.id ]
     )
-    @team = Team.find_by_id(@team_id)
                                                     # Get the swimmer list and some stats:
     @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order(
       'swimmers.complete_name ASC'
@@ -505,7 +479,7 @@ class MeetingsController < ApplicationController
     @team_ranks_2 = @meeting.meeting_individual_results.is_valid.has_rank(2).for_team(@team).count
     @team_ranks_3 = @meeting.meeting_individual_results.is_valid.has_rank(3).for_team(@team).count
     @team_ranks_4 = @meeting.meeting_individual_results.is_valid.has_rank(4).for_team(@team).count
-    @team_outstanding_scores = MeetingIndividualResult.count_team_results_for( meeting_id, @team_id, 800 )
+    @team_outstanding_scores = MeetingIndividualResult.count_team_results_for( @meeting.id, @team.id, 800 )
                                                     # Collect an Hash with the swimmer_id pointing to the description of all the events performed by each swimmer:
     meeting_team_swimmers_ids = @meeting_team_swimmers.collect{|row| row.id}
     @events_per_swimmers = {}
@@ -518,7 +492,7 @@ class MeetingsController < ApplicationController
     ind_event_ids = mir.collect{ |row| row.meeting_event.id }.uniq
     rel_event_ids = MeetingRelayResult.includes(:meeting, :meeting_event).where(
       [ 'meetings.id = ? AND meeting_relay_results.team_id = ?',
-        meeting_id, @team_id ]
+        @meeting.id, @team.id ]
     ).collect{ |row| row.meeting_event.id }.uniq
     event_ids = (ind_event_ids + rel_event_ids).uniq.sort
     @team_tot_events = event_ids.size
@@ -528,20 +502,20 @@ class MeetingsController < ApplicationController
       'event_types.is_a_relay, meeting_events.event_order'
     )
                                                     # Add to the stats the relay results:
-    @team_ranks_1 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 1 )
-    @team_ranks_2 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 2 )
-    @team_ranks_3 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 3 )
-    @team_ranks_4 += MeetingRelayResult.count_team_ranks_for( meeting_id, @team_id, 4 )
-    @team_outstanding_scores += MeetingRelayResult.count_team_results_for( meeting_id, @team_id, 800 )
+    @team_ranks_1 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 1 )
+    @team_ranks_2 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 2 )
+    @team_ranks_3 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 3 )
+    @team_ranks_4 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 4 )
+    @team_outstanding_scores += MeetingRelayResult.count_team_results_for( @meeting.id, @team.id, 800 )
 
     # Get the programs filtered by team_id:
     ind_prg_ids = MeetingIndividualResult.includes(:meeting, :meeting_program).where(
       [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
-        meeting_id, @team_id ]
+        @meeting.id, @team.id ]
     ).collect{ |row| row.meeting_program_id }.uniq
     rel_prg_ids = MeetingRelayResult.includes(:meeting, :meeting_program).where(
       [ 'meetings.id = ? AND meeting_relay_results.team_id = ?',
-        meeting_id, @team_id ]
+        @meeting.id, @team.id ]
     ).collect{ |row| row.meeting_program_id }.uniq
     prg_ids = (ind_prg_ids + rel_prg_ids).uniq.sort
     @meeting_programs_list = MeetingProgram.where( id: prg_ids ).includes(
@@ -568,25 +542,10 @@ class MeetingsController < ApplicationController
   # - swimmer_id: Swimmer id.
   #
   def show_swimmer_results
-    swimmer_id = params[:swimmer_id].to_i
-    meeting_id = params[:id].to_i
-    unless ( meeting_id > 0 && swimmer_id > 0 )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
-
-    @meeting = Meeting.find_by_id( meeting_id )
-    @swimmer = Swimmer.find_by_id( swimmer_id )
-    unless ( @meeting && @swimmer )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
-    @preselected_team_id = params[:team_id]
-
     @individual_result_list = MeetingIndividualResult.includes(:meeting).where(
       [
         'meetings.id = ? AND meeting_individual_results.swimmer_id = ?',
-        meeting_id, swimmer_id
+        @meeting.id, @swimmer.id
       ]
     )
     unless ( @individual_result_list.size > 0 )
@@ -608,12 +567,6 @@ class MeetingsController < ApplicationController
   # Meeting invitation viewer
   #
   def show_invitation
-    meeting_id = params[:id].to_i
-    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
-    unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( meetings_current_path() ) and return
-    end
     @preselected_team_id = params[:team_id]
   end
   #-- -------------------------------------------------------------------------
@@ -648,4 +601,57 @@ class MeetingsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+  private
+
+  # Verifies that a meeting id is provided as parameter; otherwise
+  # return an invalid action request 
+  # Assigns the meeting instance.
+  # Verifiy if user is logged and associated to a swimmer and sets preselection
+  # of team and swimmer
+  #
+  # == Params:
+  # id: the meeting id to be processed
+  #
+  def verify_meeting
+    meeting_id = params[:id].to_i
+    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
+    unless ( @meeting )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_current_path() ) and return
+    end
+  end
+
+  # Verifies that a team id is provided as parameter; otherwise
+  # return an invalid action request 
+  # Assigns the team instance.
+  #
+  # == Params:
+  # team_id: the team id to be processed
+  #
+  def verify_team
+    team_id = params[:team_id].to_i
+    @team = ( team_id > 0 ) ? Team.find_by_id(@team_id) : nil
+    unless ( @team )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_current_path() ) and return
+    end
+  end
+
+  # Verifies that a swimmer id is provided as parameter; otherwise
+  # return an invalid action request 
+  # Assigns the swimmer instance.
+  #
+  # == Params:
+  # team_id: the team id to be processed
+  #
+  def verify_swimmer
+    swimmer_id = params[:swimmer_id].to_i
+    @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
+    unless ( @swimmer )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( meetings_current_path() ) and return
+    end
+  end
+  
 end

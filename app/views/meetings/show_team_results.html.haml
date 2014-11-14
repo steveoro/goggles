@@ -1,4 +1,4 @@
-- cache( cache_key_for_meeting( 'show_team_results', @meeting.id, @max_mir_updated_at, @team_id) ) do
+- cache( cache_key_for_meeting( 'show_team_results', @meeting.id, @max_mir_updated_at, @team.id) ) do
   = render( partial: 'tabs_and_radio_title' )
 
   = render( partial: 'meeting_header' )
