@@ -35,18 +35,20 @@ class MiscController < ApplicationController
       gender_type_id   = params[:gender_type_id] ? params[:gender_type_id].to_i : 0
       pool_type_id     = params[:pool_type] && params[:pool_type][:id] ? params[:pool_type][:id].to_i : 0
       event_type_id    = params[:event_type] && params[:event_type][:id] ? params[:event_type][:id].to_i : 0
-      @swimmer_category = CategoryType.find_by_id( category_type_id ) if category_type_id > 0 
-      @swimmer_gender = GenderType.find_by_id( gender_type_id ) if gender_type_id > 0
-      @current_pool = PoolType.find_by_id( pool_type_id ) if pool_type_id > 0
-      @current_event = EventType.find_by_id( event_type_id ) if event_type_id > 0
-      minutes  = params[:minutes] ? params[:minutes].to_i : -1
-      seconds  = params[:seconds] ? params[:seconds].to_i : -1
-      hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
-      @timing = Timing.new( hundreds, seconds, minutes )
       unless ( gender_type_id > 0 && category_type_id > 0 && pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
         redirect_to( misc_fin_score_calculation_path ) and return
       end
+
+      @swimmer_category = CategoryType.find_by_id( category_type_id ) 
+      @swimmer_gender = GenderType.find_by_id( gender_type_id )
+      @current_pool = PoolType.find_by_id( pool_type_id )
+      @current_event = EventType.find_by_id( event_type_id )
+
+      minutes  = params[:minutes] ? params[:minutes].to_i : -1
+      seconds  = params[:seconds] ? params[:seconds].to_i : -1
+      hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
+      @timing = Timing.new( hundreds, seconds, minutes )
 
       if @timing && @timing.to_hundreds > 0
         # Verify event is ammissible for pool type

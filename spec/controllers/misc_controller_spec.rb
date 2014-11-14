@@ -98,13 +98,13 @@ describe MiscController, :type => :controller do
       before(:each) do
         post(
           :fin_score_calculation,
-          gender_type:   {id: 0},  # Force invalid event type and pool type
-          category_type: {id: 0},
-          event_type:    {id: 0},
-          pool_type:     {id: 0},
-          minutes:       minutes,
-          seconds:       seconds,
-          hundreds:      hundreds
+          gender_type_id:   0,  # Force invalid event type and pool type
+          category_type_id: 0,
+          event_type:       {id: 0},
+          pool_type:        {id: 0},
+          minutes:          minutes,
+          seconds:          seconds,
+          hundreds:         hundreds
         )
       end
       it "handles the request with a redirect" do
@@ -129,13 +129,13 @@ describe MiscController, :type => :controller do
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
         post(
           :fin_score_calculation,
-          gender_type:   {id: @fixture_gender.id},
-          category_type: {id: @fixture_category.id},
-          event_type:    {id: @fixture_events_by_pool_type.event_type_id},
-          pool_type:     {id: @fixture_events_by_pool_type.pool_type_id},
-          minutes:       -3,  # Force invalid timing
-          seconds:       -2,
-          hundreds:      -1
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type:       {id: @fixture_events_by_pool_type.event_type_id},
+          pool_type:        {id: @fixture_events_by_pool_type.pool_type_id},
+          minutes:          -3,  # Force invalid timing
+          seconds:          -2,
+          hundreds:         -1
         )
       end
       it "handles the request with a redirect" do
@@ -159,13 +159,13 @@ describe MiscController, :type => :controller do
         @fixture_category = CategoryType.find_by_code('M40')
         post(
           :fin_score_calculation,
-          gender_type:   {id: @fixture_gender.id},
-          category_type: {id: @fixture_category.id},
-          event_type:    {id: EventType.where(code: '100MI').first.id},
-          pool_type:     {id: PoolType.where(code: '50').first.id},
-          minutes:       minutes,
-          seconds:       seconds,
-          hundreds:      hundreds
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type:       {id: EventType.where(code: '100MI').first.id},
+          pool_type:        {id: PoolType.where(code: '50').first.id},
+          minutes:          minutes,
+          seconds:          seconds,
+          hundreds:         hundreds
         )
       end
       it "handles the request with a redirect" do
@@ -190,13 +190,13 @@ describe MiscController, :type => :controller do
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
         post(
           :fin_score_calculation,
-          gender_type:   {id: @fixture_gender.id},
-          category_type: {id: @fixture_category.id},
-          event_type:    {id: @fixture_events_by_pool_type.event_type_id},
-          pool_type:     {id: @fixture_events_by_pool_type.pool_type_id},
-          minutes:       minutes,
-          seconds:       seconds,
-          hundreds:      hundreds
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type:       {id: @fixture_events_by_pool_type.event_type_id},
+          pool_type:        {id: @fixture_events_by_pool_type.pool_type_id},
+          minutes:          minutes,
+          seconds:          seconds,
+          hundreds:         hundreds
         )
       end
       it "handles successfully the request" do
@@ -258,13 +258,13 @@ describe MiscController, :type => :controller do
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
         post(
           :fin_score_calculation,
-          gender_type:   {id: @fixture_gender.id},
-          category_type: {id: @fixture_category.id},
-          event_type:    {id: @fixture_events_by_pool_type.event_type_id},
-          pool_type:     {id: @fixture_events_by_pool_type.pool_type_id},
-          minutes:       minutes,
-          seconds:       seconds,
-          hundreds:      hundreds
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type:       {id: @fixture_events_by_pool_type.event_type_id},
+          pool_type:        {id: @fixture_events_by_pool_type.pool_type_id},
+          minutes:          minutes,
+          seconds:          seconds,
+          hundreds:         hundreds
         )
       end
 
