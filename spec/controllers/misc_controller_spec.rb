@@ -33,7 +33,7 @@ describe MiscController, :type => :controller do
       it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
 
       before(:each) { get :fin_score_calculation }
-  
+
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
       end
@@ -52,7 +52,7 @@ describe MiscController, :type => :controller do
       end
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
-      
+
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
       end
@@ -145,7 +145,7 @@ describe MiscController, :type => :controller do
         expect( response ).to redirect_to( misc_fin_score_calculation_path )
       end
       it "displays the flash error message" do
-        expect( flash[:error] ).to include( I18n.t('radiography.wrong_timing') )
+        expect( flash[:error] ).to include( I18n.t('misc.wrong_timing') )
       end
       it "assigns -1 value to standard points" do
         expect( assigns(:standard_points) ).to eq( -1 )
@@ -175,7 +175,7 @@ describe MiscController, :type => :controller do
         expect( response ).to redirect_to( misc_fin_score_calculation_path )
       end
       it "displays the flash error message" do
-        expect( flash[:error] ).to include( I18n.t('radiography.wrong_event_or_pool') )
+        expect( flash[:error] ).to include( I18n.t('misc.wrong_event_or_pool') )
       end
       it "assigns -1 value to standard points" do
         expect( assigns(:standard_points) ).to eq( -1 )
