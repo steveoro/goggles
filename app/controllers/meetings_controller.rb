@@ -622,10 +622,21 @@ class MeetingsController < ApplicationController
     end
     
     # Find preselected team and swimmer if user logged in and associated to a swimmer
-    # TODO and the swimmer or team partecipated to the meeting
+    # and the swimmer or team partecipated to the meeting
     if current_user && current_user.swimmer
-      @swimmer = current_user.swimmer
-      @team = @swimmer.teams.joins(:meetings).where(['meetings.id = ?', @meeting.id]).uniq.first
+      swimmer = current_user.swimmer
+      team = swimmer.teams.joins(:meetings).where(['meetings.id = ?', @meeting.id]).uniq.first
+      
+      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', swimmer.id]).count > 0
+        # The swimmer associated with the user parteciapte to the meeting
+        @swimmer = swimmer
+        @team = team
+      else
+        if team && @meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).count > 0
+          # The team of the swimmer associated with the user parteciapte to the meeting
+          @team = team
+        end
+      end
     end
   end
 

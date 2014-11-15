@@ -17,7 +17,7 @@
         link_to_if(
             meeting.meeting_individual_results.count + meeting.meeting_relay_results.count > 0,
             meeting.description,
-            meeting_show_full_path( id: meeting.id, team_id: @preselected_team_id, swimmer_id: @preselected_swimmer_id )
+            meeting_show_full_path( id: meeting.id )
         )
     end
 

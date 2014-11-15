@@ -17,7 +17,7 @@
           %b= I18n.t('meeting_team_score.total')
       - tot_swimmers = 0
       - @meeting_team_scores.each do |team_score|
-        - is_highlighted = (@preselected_team_id.to_i == team_score.team_id)
+        - is_highlighted = (@team.id.to_i == team_score.team_id)
         %tr{'class' => is_highlighted ? 'warning' : ''}
           %td.goggles-rightalign
             = team_score.rank
