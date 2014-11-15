@@ -617,8 +617,15 @@ class MeetingsController < ApplicationController
     meeting_id = params[:id].to_i
     @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
     unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request)
+      flash[:error] = I18n.t(:invalid_action_request) + ' - Meeting missing'
       redirect_to( meetings_current_path() ) and return
+    end
+    
+    # Find preselected team and swimmer if user logged in and associated to a swimmer
+    # TODO and the swimmer or team partecipated to the meeting
+    if current_user && current_user.swimmer
+      @swimmer = current_user.swimmer
+      @team = @swimmer.teams.joins(:meetings).where(['meetings.id = ?', @meeting.id]).uniq.first
     end
   end
 
@@ -631,9 +638,9 @@ class MeetingsController < ApplicationController
   #
   def verify_team
     team_id = params[:team_id].to_i
-    @team = ( team_id > 0 ) ? Team.find_by_id(@team_id) : nil
+    @team = ( team_id > 0 ) ? Team.find_by_id( team_id ) : nil
     unless ( @team )
-      flash[:error] = I18n.t(:invalid_action_request)
+      flash[:error] = I18n.t(:invalid_action_request) + ' - Team missing: ' + team_id.to_s
       redirect_to( meetings_current_path() ) and return
     end
   end
@@ -649,7 +656,7 @@ class MeetingsController < ApplicationController
     swimmer_id = params[:swimmer_id].to_i
     @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
     unless ( @swimmer )
-      flash[:error] = I18n.t(:invalid_action_request)
+      flash[:error] = I18n.t(:invalid_action_request) + ' - Swimmer missing'
       redirect_to( meetings_current_path() ) and return
     end
   end

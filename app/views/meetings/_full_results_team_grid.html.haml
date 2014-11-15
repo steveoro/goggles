@@ -19,7 +19,7 @@
                   = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
                   = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
                 %td.span4
-                  %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                  %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                     = individual_result.get_swimmer_name
                 %td.span1
                   = individual_result.category_type_short_name

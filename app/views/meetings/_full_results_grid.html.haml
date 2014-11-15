@@ -17,7 +17,7 @@
                 = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
             - unless is_a_relay
               - meeting_program.meeting_individual_results.order('meeting_individual_results.meeting_individual_points DESC, meeting_individual_results.rank ASC').each do |individual_result|
-                - is_highlighted = (@preselected_team_id.to_i == individual_result.team_id) || (@preselected_swimmer_id.to_i == individual_result.swimmer_id)
+                - is_highlighted = (@team.id.to_i == individual_result.team_id) || (@swimmer.id.to_i == individual_result.swimmer_id)
                 = render( partial: 'show_full_individual_result', locals: { individual_result: individual_result, is_highlighted: is_highlighted } )
             -# --- Team Relay result rows:
             - if is_a_relay
