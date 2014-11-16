@@ -115,7 +115,7 @@ group :development, :test do
 
   # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
   gem 'ffaker', require: false                      # Adds dummy names & fixture generator
-  gem 'did_you_mean'                                # Adds "Did you mean?" <possbile method name> to method_missing & name errors
+#  gem 'did_you_mean'                                # Adds "Did you mean?" <possbile method name> to method_missing & name errors
 end
 
 # gem 'rhc'                                           # [Steve, 20140426] For deployment to OpenShift (RedHat)
