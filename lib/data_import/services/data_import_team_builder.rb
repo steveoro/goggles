@@ -9,7 +9,7 @@ require 'data_import/services/data_import_city_builder'
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.617
+  - Goggles framework vers.:  4.00.623
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -69,6 +69,10 @@ class DataImportTeamBuilder < DataImportEntityBuilder
                                                   # 2) Search for a Team Alias:
       if_not_found  do
         search_for( DataImportTeamAlias, name: team_name )
+        unless @result_row                        # Try also a fuzzy search on alias, if a standard search fails:
+          matcher    = FuzzyStringMatcher.new( DataImportTeamAlias.all, :name, )
+          @result_row = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
+        end
         set_result( @result_row.team ) if @result_row
       end
 

@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.617
+  - Goggles framework vers.:  4.00.623
   - author: Steve A.
 
   Data-Import strategy class.
@@ -666,10 +666,15 @@ class DataImporter
     is_ok = commit_data_import_meeting_team_score( @data_import_session ) if is_ok
     @data_import_session.phase = 30                 # (30 = '3.0', but without successful ending, since the session in not nil)
     @data_import_session.save!
+    updated_meeting = update_results_acquired_flag( @data_import_session ) if is_ok
+    if updated_meeting
+      @data_import_session.sql_diff << "\r\n-- 'Results acquired' flag setting:" <<
+      "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{updated_meeting.id};"
+    end
     # Add the commit process log to the combined log for this phase:
     @import_log << @data_import_session.phase_2_log
 
-    if ( is_ok )
+    if is_ok
       update_logs(
         "data-import PHASE #2 & #3 DONE.\r\n\r\nTotal committed rows: #{ @committed_data_rows }\r\n" <<
         "Data-import session destroyed successfully.\r\n" <<

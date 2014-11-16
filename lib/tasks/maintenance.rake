@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = DB-maintenance tasks
 
-  - Goggles framework vers.:  4.00.615
+  - Goggles framework vers.:  4.00.623
   - author: Leega, Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -134,6 +134,7 @@ having the specified ID.
     puts "File size: #{text_file_contents.size}"
     puts "Processing..."
     meeting.invitation = text_file_contents
+    meeting.has_invitation = true
     meeting.save!
     puts "Done"
   end
@@ -316,7 +317,7 @@ execution of the task.
           end
                                                     # Single DB apply:
         else
-          db_name = Rails.configuration.database_configuration[ config_name ]['database']
+          db_name = Rails.configuration.database_configuration[ db_dest ]['database']
           puts "\r\nExecuting '#{filename}' on #{db_dest} DB (#{db_name})..."
           sh "mysql --host=#{ db_host } --user=#{ db_user } --password=#{ db_pwd } --database=#{ db_name } --execute=\"\\. #{ filename }\"" do |ok, res|
             if !ok

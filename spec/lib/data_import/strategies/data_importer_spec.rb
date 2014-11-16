@@ -30,7 +30,8 @@ describe DataImporter, type: :strategy do
       :try_detect_season_from_header_fields,
       :phase_1_parse,
       :phase_1_2_serialize,
-      :phase_3_commit
+      :phase_3_commit,
+      :update_results_acquired_flag
     ] )
     #-- -----------------------------------------------------------------------
     #++
@@ -557,6 +558,38 @@ describe DataImporter, type: :strategy do
       # (Currently, transactional results tests can be achieved simply by putting all
       #  serialized changes inside blocks. These will be rolled back automagically
       #  by FactoryGirl at the end of each RSpec example.)
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    describe "#update_results_acquired_flag" do
+      context "for an empty session (w/o a meeting)," do
+        it "returns nil" do
+          di_session = create( :data_import_session )
+          data_importer = DataImporter.new( nil, nil, di_session )
+          expect( data_importer.update_results_acquired_flag( di_session ) ).to be nil
+        end
+      end
+
+      context "for a session w/ a meeting," do
+        it "returns an instance of Meeting" do
+          di_prg = create( :data_import_meeting_program )
+          data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
+          expect( data_importer.update_results_acquired_flag( di_prg.data_import_session, true ) ).to be_an_instance_of( Meeting )
+        end
+
+        it "sets the 'results-acquired' flag for the associated meeting" do
+          di_prg = create( :data_import_meeting_program )
+          data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
+          result = data_importer.update_results_acquired_flag( di_prg.data_import_session, true )
+          expect( result ).to be_an_instance_of( Meeting )
+# DEBUG
+#          puts "- di_prg.meeting_session.meeting = #{di_prg.meeting_session.meeting.class} ##{di_prg.meeting_session.meeting_id}"
+#          puts "- di_prg.meeting_session.meeting.are_results_acquired: #{di_prg.meeting_session.meeting.are_results_acquired}"
+          expect( result.are_results_acquired ).to be true
+        end
+      end
     end
     #-- -----------------------------------------------------------------------
     #++

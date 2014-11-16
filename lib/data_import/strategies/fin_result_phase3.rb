@@ -8,7 +8,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.597
+  - Goggles framework vers.:  4.00.623
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -552,4 +552,45 @@ module FinResultPhase3
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Updates the #are_results_acquired flag for the Meeting instance associated with
+  # the #data_import_session specified.
+  #
+  # Returns the updated Meeting instance on success, +nil+ when unable to find the
+  # associated Meeting (it must be already committed by phase 3 for this to work).
+  #
+  # *WARNING:*
+  # This implementation will work ONLY if the data import session contains at least a
+  # data_import_meeting_programs row.
+  #
+  def update_results_acquired_flag( data_import_session, flag_status = true )
+    meeting = nil
+    mprg = DataImportMeetingProgram.where( data_import_session_id: data_import_session.id ).first
+# DEBUG
+#    puts "\r\n- update_results_acquired_flag:\r\n1) M.Program = #{mprg.class} ##{mprg ? mprg.id : ''}"
+    unless mprg
+      di_mir = DataImportMeetingIndividualResult.where( data_import_session_id: data_import_session.id ).first
+# DEBUG
+#      puts "2) MIR = #{di_mir.class} ##{di_mir ? di_mir.id : ''}"
+      mprg = di_mir && ( di_mir.meeting_program || di_mir.data_import_meeting_program )
+    end
+# DEBUG
+#    puts "3) M.Program = #{mprg.class} ##{mprg ? mprg.id : ''}"
+    ms = mprg && ( mprg.meeting_session || ( mprg.respond_to?(:data_import_meeting_session) && mprg.data_import_meeting_session ) )
+# DEBUG
+#    puts "4) M.Session = #{ms.class} ##{ms ? ms.id : ''}"
+    meeting = ms && ms.meeting
+# DEBUG
+#    puts "5) Meeting = #{meeting.class} ##{ms ? meeting.id : ''}"
+    if meeting.instance_of?( Meeting )
+      meeting.are_results_acquired = flag_status
+      meeting.save!
+# DEBUG
+#      puts "=> Meeting.are_results_acquired: #{meeting.are_results_acquired}"
+      meeting
+    else
+      nil
+    end
+  end
 end
