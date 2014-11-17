@@ -102,6 +102,7 @@ it:
     start_list_tooltip: "Vai alla pagina con la starting-list di questo Meeting"
     manifest_tooltip: "Vai alla pagina con la locandina di questo Meeting"
     invitation: "Locandina"
+    start_list: "Start-list"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -754,7 +755,7 @@ it:
     calendar: "Calendario"
     ranking: "Classifica"
     rules: "Regolamento"
-    hall_of_fame: "Medagliere"
+    hall_of_fame: "Medagliere di società complessivo (hall of fame)"
     history: "Storico"
     history_title: "Storico campionati conclusi"
     position: "Pos."

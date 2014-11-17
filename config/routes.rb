@@ -110,6 +110,7 @@ Goggles::Application.routes.draw do
       get "meetings/search_swimmer",            to: "meetings#search_swimmer"
       get "meetings/search_team",               to: "meetings#search_team"
       get "meeting/show_invitation/:id",        to: "meetings#show_invitation",         as: "meeting_show_invitation"
+      get "meeting/show_start_list/:id",        to: "meetings#show_start_list",         as: "meeting_show_start_list"
       get "meeting/show_full/:id",              to: "meetings#show_full",               as: "meeting_show_full"
       get "meeting/show_ranking/:id",           to: "meetings#show_ranking",            as: "meeting_show_ranking"
       get "meeting/show_stats/:id",             to: "meetings#show_stats",              as: "meeting_show_stats"

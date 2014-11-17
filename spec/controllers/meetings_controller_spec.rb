@@ -114,6 +114,16 @@ describe MeetingsController, :type => :controller do
   #++
 
 
+  describe '[GET #show_invitation]' do
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe '[GET #show_start_list]' do
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe '[GET #show_full]' do
   end
   #-- -------------------------------------------------------------------------

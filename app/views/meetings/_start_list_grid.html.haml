@@ -1,0 +1,17 @@
+.span10
+  - @meeting_events_list.each do |meeting_event|
+    .row-fluid.goggles-category-gap{'id'=>meeting_event.event_type.code}
+
+    - GenderType.individual_only.each do |gender_type|
+      - if meeting_event.meeting_entries.for_gender(gender_type.id).count > 0
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'info', 'id'=>"#{meeting_event.event_type.code}-#{gender_type.code}"}
+              %td{'colspan'=>'5'}
+                = meeting_event.event_type.i18n_description + ' ' + gender_type.i18n_description 
+            - meeting_event.meeting_entries.for_gender(gender_type.id).sort_by_number.each do |entry|
+              - is_highlighted = (@team && @team.id.to_i == entry.team_id) || (@swimmer && @swimmer.id.to_i == entry.swimmer_id)
+              = render( partial: 'show_entry', locals: { entry: entry, is_highlighted: is_highlighted } )
+
+.row-fluid
+  .span12

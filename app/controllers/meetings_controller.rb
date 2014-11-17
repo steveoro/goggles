@@ -12,7 +12,7 @@ require 'common/format'
 =end
 class MeetingsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_meeting,  only: [:show_full, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation]
+  before_filter :verify_meeting,  only: [:show_full, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list]
   before_filter :verify_team,     only: [:show_team_results, :show_swimmer_results]
   before_filter :verify_swimmer,  only: [:show_swimmer_results]
   #-- -------------------------------------------------------------------------
@@ -567,6 +567,30 @@ class MeetingsController < ApplicationController
   # Meeting invitation viewer
   #
   def show_invitation
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Meeting invitation viewer
+  #
+  def show_start_list
+    # TODO
+    # Prepare the start-list according to the meeting specs
+    # male/female joined and so on
+    # Need specific flags on meeting events
+    @meeting_events_list = @meeting.meeting_events.includes(
+      :event_type, :stroke_type
+    ).order(
+      'meeting_events.event_order'
+    )
+    # Get a timestamp for the cache key:
+    @max_entry_updated_at = if @meeting.meeting_entries.count > 0
+      @meeting.meeting_entries.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
