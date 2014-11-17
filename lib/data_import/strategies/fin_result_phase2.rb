@@ -24,7 +24,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.621
+  - Goggles framework vers.:  4.00.625
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -60,8 +60,6 @@ module FinResultPhase2
     team_names_from_results += parse_result[:relay_row].map { |row| row[:fields][:team_name] }.compact
     team_names_from_results.uniq!
     team_names_from_results.sort!
-    result_names_map = {}                           # Build a normalized map:
-    team_names_from_results.each { |name| result_names_map[ normalize(name) ] = name }
     update_logs(
       "\r\n** Team names collected from RESULTS: **\r\n" <<
       team_names_from_results.join("\r\n") << "\r\n==== Tot.: #{ team_names_from_results.size } ===="
@@ -70,81 +68,10 @@ module FinResultPhase2
     ranking_names = parse_result[:ranking_row].map { |row| row[:fields][:team_name] }.compact.sort
     if ranking_names.size == 0                      # If we don't have a Ranking, there's no problem:
       team_names = team_names_from_results
-    else                                            # Issues come from the hand-compiled rankings: ("uncle pork")
-      ranking_names_map = {}                        # Build a normalized map:
-      ranking_names.each { |name| ranking_names_map[ normalize(name) ] = name }
-      update_logs(
-        "\r\n** Team names collected from RANKINGS: **\r\n" <<
-        ranking_names.join("\r\n") << "\r\n==== Tot.: #{ ranking_names.size } ===="
-      )
-      # This matcher will work with normalized team names, that in turn will have to be
-      # compared to other normalized strings to get a normalized result (which will be
-      # the key to the name translation map):
-      result_matcher = FuzzyStringMatcher.new( result_names_map.keys.sort, :to_s )
-
-      # Find a possible corrispondence between two normalized "keys" by building an
-      # Alias Map, from the ranking list into the result names list:
-      alias_map = {}
-      unique_names_map = {}
-      update_logs( "\r\n** Alias map for Ranking (UNIQ [key]= value | ALIAS key): **" )
-      ranking_names_map.each do |ranking_key, team_name|
-        aliased_key = get_matching_normalized_key_for( team_name, result_matcher )
-        alias_map[ ranking_key ] = aliased_key
-        # We will always use the longer name from the rankings as resulting editable team name,
-        # even more when we don't have a corresponding match from the result (and the aliased
-        # key is equal to the starting ranking key):
-        unique_names_map[ ranking_key ] = team_name
-        # When the aliased key is different from the starting ranking key, it means that
-        # we have a match and we will use the ranking team name overwrite the aliased (destination)
-        # name with it (which should be allegedly longer and perhaps more 'complete').
-        update_logs(
-          "[%-30s]= '%-40s'  |  (%-25s) #{aliased_key != ranking_key ? '' :  '-- Not found in results or equal'}" %
-          [ ranking_key, unique_names_map[ ranking_key ], aliased_key ]
-        )
-      end
-
-      # List the remaining Result team names not found in the "Alias map". These,
-      # allegedly, are all the team names for which we haven't been able to find
-      # a corresponding Ranking team name (key):
-      result_diff_map = result_names_map.reject{ |key, val| alias_map.has_value?(key) }
-      if result_diff_map.size > 0
-        update_logs(
-          "\r\n** Result team names NOT found in Ranking: **\r\n" <<
-          result_diff_map.values.join("\r\n") << "\r\n==== Tot.: #{ result_diff_map.size } ====\r\n"
-        )
-        unique_names_map.merge!( result_diff_map )
-        result_diff_map.each do |result_key, team_name|
-          # Add the identity members to the alias map, so that we may recognize which names
-          # don't get to be changed:
-          alias_map[ result_key ] = result_key
-          update_logs(
-            "[%-30s]= '%-40s'  |  -- Added to alias as identity" % [ result_key, unique_names_map[ result_key ] ]
-          )
-        end
-        update_logs( "\r\nResulting sizes: ALIAS Map=#{alias_map.size}, UNIQUE Map=#{unique_names_map.size}" )
-      end
-
-      missing_name_keys = result_names_map.keys.reject{ |key| alias_map.values.include?( key ) }
-      if missing_name_keys.size > 0                 # This should never occur
-        update_logs(
-          "\r\n*** ERROR!! *** Some of the team normalized names from the results are MISSING from the alias values list for the translation! THIS SHOULD NEVER OCCUR!\r\n" <<
-          "Missing name keys: #{missing_name_keys.inspect}"
-        )
-        # Block data-import process returning false anyway:
-        is_ok = false
-      end
-
-      # Substitute original values ,so that we may have a unique team name
-      # among all the parsed results:
-      parse_result[:result_row].each do |row|
-        update_original_team_name( row, alias_map, unique_names_map )
-      end
-      parse_result[:relay_row].each do |row|
-        update_original_team_name( row, alias_map, unique_names_map )
-      end
+    else                                            # To avoid issues from the hand-compiled rankings: (says "uncle pork")
+      team_names = extract_unique_team_names( ranking_names, team_names_from_results, parse_result )
     end
 
-    team_names = unique_names_map.values.sort
     update_logs(
       "\r\n** Final collected UNIQUE names: **\r\n\r\n" <<
       team_names.join("\r\n") << "\r\n==== Tot.: #{ team_names.size } ====\r\n"
@@ -397,6 +324,8 @@ module FinResultPhase2
     end
     team_key
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Assuming +row+ is a result row, either from the parse_result[:result_row]
@@ -414,6 +343,104 @@ module FinResultPhase2
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Builds up and returns a unique array of team names, given:
+  #
+  # - ranking_names: the already compiled array of team names found in the ranking
+  #   section of the parse result structure;
+  #
+  # - team_names_from_results: similarly to the above, a pre-filled array of team names
+  #   extrated only from the results of the parse structure (either individual or relays);
+  #
+  # - parse_result: the full parse resulting structure from phase 1.0; this will be used
+  #   to update the actual team name strings contained therein with a unique team name
+  #   for each possible team name variation.
+  #   (this will be done only for team names that actually have more than one spelling
+  #    variation in their name among the same file)
+  #
+  def extract_unique_team_names( ranking_names, team_names_from_results, parse_result )
+    result_names_map = {}                           # Build a normalized map:
+    team_names_from_results.each { |name| result_names_map[ normalize(name) ] = name }
+
+    ranking_names_map = {}                          # Build a normalized map:
+    ranking_names.each { |name| ranking_names_map[ normalize(name) ] = name }
+    update_logs(
+      "\r\n** Team names collected from RANKINGS: **\r\n" <<
+      ranking_names.join("\r\n") << "\r\n==== Tot.: #{ ranking_names.size } ===="
+    )
+    # This matcher will work with normalized team names, that in turn will have to be
+    # compared to other normalized strings to get a normalized result (which will be
+    # the key to the name translation map):
+    result_matcher = FuzzyStringMatcher.new( result_names_map.keys.sort, :to_s )
+
+    # Find a possible corrispondence between two normalized "keys" by building an
+    # Alias Map, from the ranking list into the result names list:
+    alias_map = {}
+    unique_names_map = {}
+    update_logs( "\r\n** Alias map for Ranking (UNIQ [key]= value | ALIAS key): **" )
+    ranking_names_map.each do |ranking_key, team_name|
+      aliased_key = get_matching_normalized_key_for( team_name, result_matcher )
+      alias_map[ ranking_key ] = aliased_key
+      # We will always use the longer name from the rankings as resulting editable team name,
+      # even more when we don't have a corresponding match from the result (and the aliased
+      # key is equal to the starting ranking key):
+      unique_names_map[ ranking_key ] = team_name
+      # When the aliased key is different from the starting ranking key, it means that
+      # we have a match and we will use the ranking team name overwrite the aliased (destination)
+      # name with it (which should be allegedly longer and perhaps more 'complete').
+      update_logs(
+        "[%-30s]= '%-40s'  |  (%-25s) #{aliased_key != ranking_key ? '' :  '-- Not found in results or equal'}" %
+        [ ranking_key, unique_names_map[ ranking_key ], aliased_key ]
+      )
+    end
+
+    # List the remaining Result team names not found in the "Alias map". These,
+    # allegedly, are all the team names for which we haven't been able to find
+    # a corresponding Ranking team name (key):
+    result_diff_map = result_names_map.reject{ |key, val| alias_map.has_value?(key) }
+    if result_diff_map.size > 0
+      update_logs(
+        "\r\n** Result team names NOT found in Ranking: **\r\n" <<
+        result_diff_map.values.join("\r\n") << "\r\n==== Tot.: #{ result_diff_map.size } ====\r\n"
+      )
+      unique_names_map.merge!( result_diff_map )
+      result_diff_map.each do |result_key, team_name|
+        # Add the identity members to the alias map, so that we may recognize which names
+        # don't get to be changed:
+        alias_map[ result_key ] = result_key
+        update_logs(
+          "[%-30s]= '%-40s'  |  -- Added to alias as identity" % [ result_key, unique_names_map[ result_key ] ]
+        )
+      end
+      update_logs( "\r\nResulting sizes: ALIAS Map=#{alias_map.size}, UNIQUE Map=#{unique_names_map.size}" )
+    end
+
+    missing_name_keys = result_names_map.keys.reject{ |key| alias_map.values.include?( key ) }
+    if missing_name_keys.size > 0                 # This should never occur
+      update_logs(
+        "\r\n*** ERROR!! *** Some of the team normalized names from the results are MISSING from the alias values list for the translation! THIS SHOULD NEVER OCCUR!\r\n" <<
+        "Missing name keys: #{missing_name_keys.inspect}"
+      )
+      # Block data-import process returning false anyway:
+      is_ok = false
+    end
+
+    # Substitute original values ,so that we may have a unique team name
+    # among all the parsed results:
+    parse_result[:result_row].each do |row|
+      update_original_team_name( row, alias_map, unique_names_map )
+    end
+    parse_result[:relay_row].each do |row|
+      update_original_team_name( row, alias_map, unique_names_map )
+    end
+    # Return the array of unique team names, sorted alphabetically:
+    unique_names_map.values.sort
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
 #-- ---------------------------------------------------------------------------
 #++
