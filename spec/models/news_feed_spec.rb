@@ -118,6 +118,15 @@ describe NewsFeed, :type => :model do
       expect( news_feed.user ).to be_valid
       expect( news_feed.friend ).to be_valid
     end
+
+    # Filtering scopes:
+    it_behaves_like( "(the existance of a class method)", [
+      :unread,
+      :friend_activities,
+      :only_achievements,
+      :newsletter_activities,
+      :sort_by_user
+    ])
   end
   #-- -------------------------------------------------------------------------
   #++

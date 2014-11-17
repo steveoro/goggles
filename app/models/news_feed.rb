@@ -2,7 +2,7 @@
 
 = NewsFeed model
 
-  - version:  4.00.501
+  - version:  4.00.625
   - author:   Steve A.
 
 =end
@@ -13,11 +13,12 @@ class NewsFeed < ActiveRecord::Base
   validates_presence_of :user_id
   validates_presence_of :title, length: { within: 1..150 }, allow_nil: false
 
-  scope :unread,            -> { where(:is_read => false) }
-  scope :friend_activities, -> { where(:is_friend_activity => true) }
-  scope :only_achievements, -> { where(:is_achievement => true) }
+  scope :unread,                  -> { where( is_read: false ) }
+  scope :friend_activities,       -> { where( is_friend_activity: true ) }
+  scope :only_achievements,       -> { where( is_achievement: true ) }
+  scope :newsletter_activities,   -> { unread.where( is_achievement: false ) }
 
-  scope :sort_by_user,      ->(dir) { order("users.name #{dir.to_s}, news_feeds.created_at #{dir.to_s}") }
+  scope :sort_by_user,            ->(dir) { order("users.name #{dir.to_s}, news_feeds.created_at #{dir.to_s}") }
 
   attr_accessible :body, :user_id, :friend_id, :is_achievement, :is_friend_activity, :is_read, :title
 
@@ -51,6 +52,9 @@ class NewsFeed < ActiveRecord::Base
 
 
   # Creates a the social/approve News-Feed entry for both the user and the friend.
+  # This will also flag the newly created feed as belonging to the kind 'temp/achievement',
+  # which is skipped by the weekly newsletter of unread feeds.
+  #
   def self.create_social_approve_feed( user, friend )
     self.create_social_feed(
       user.id,
@@ -67,6 +71,9 @@ class NewsFeed < ActiveRecord::Base
   end
 
   # Creates a the social/remove News-Feed entry for only the user.
+  # This will also flag the newly created feed as belonging to the kind 'temp/achievement',
+  # which is skipped by the weekly newsletter of unread feeds.
+  #
   def self.create_social_remove_feed( user, friend )
     self.create_social_feed(
       user.id,
@@ -79,11 +86,16 @@ class NewsFeed < ActiveRecord::Base
 
 
   # Utility method for creating a new social feed row.
-  def self.create_social_feed( user_id, friend_id, title, body )
+  #
+  # When +is_achievement+ is +true+ (the default) this newsfeed will be skipped
+  # from the weekly newsletter of all unread feeds.
+  #
+  def self.create_social_feed( user_id, friend_id, title, body, is_achievement = true )
     NewsFeed.create!(
       user_id: user_id,
       friend_id: friend_id,
       is_friend_activity: true,
+      is_achievement: is_achievement,
       title: title,
       body: body
     )
@@ -93,6 +105,10 @@ class NewsFeed < ActiveRecord::Base
 
   # Creates a the achievement/confirm News-Feed entry for only the user.
   # The bias_value is the achievement unlock bias.
+  #
+  # Keep in mind that news feeds flagged as belonging to the kind 'is_achievement'
+  # won't be notified by the weekly newsletter of the unread feeds.
+  #
   def self.create_achievement_approve_feed( user, friend, bias_value )
     self.create_achievement_feed(
       user.id,
@@ -104,6 +120,10 @@ class NewsFeed < ActiveRecord::Base
 
   # Creates a the achievement/confirm News-Feed entry for only the user.
   # The bias_value is the achievement unlock bias.
+  #
+  # Keep in mind that news feeds flagged as belonging to the kind 'is_achievement'
+  # won't be notified by the weekly newsletter of the unread feeds.
+  #
   def self.create_achievement_confirm_feed( user, friend, bias_value )
     self.create_achievement_feed(
       user.id,
@@ -115,6 +135,10 @@ class NewsFeed < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Utility method for creating a new achievement feed row.
+  #
+  # Keep in mind that news feeds flagged as belonging to the kind 'is_achievement'
+  # won't be notified by the weekly newsletter of the unread feeds.
+  #
   def self.create_achievement_feed( user_id, friend_id, title, body )
     NewsFeed.create!(
       user_id: user_id,

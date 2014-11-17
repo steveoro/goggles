@@ -4,7 +4,7 @@
 # Strategy/B-L incapsulator for User-social interactions with news-feed generation.
 #
 # @author   Steve A.
-# @version  4.00.589
+# @version  4.00.625
 #
 class UserSocializer
 
@@ -93,7 +93,8 @@ class UserSocializer
         swimming_buddy.id,
         @user.id,
         I18n.t('newsfeed.invite_title'),
-        I18n.t('newsfeed.invite_body').gsub("{SWIMMER_NAME}", @user.get_full_name)
+        I18n.t('newsfeed.invite_body').gsub("{SWIMMER_NAME}", @user.get_full_name),
+        false # (This is no 'temp/achievement' kind of feed, so we'll generate a newsletter mail until it is read)
       )
       # Generate a nofify mail without delay:
       NewsletterMailer.community_mail( swimming_buddy, news_feed ).deliver
@@ -114,7 +115,7 @@ class UserSocializer
   def approve_with_notify( swimming_buddy, shares_passages = false, shares_trainings = false, shares_calendars = false )
     if @user.approve( swimming_buddy, shares_passages, shares_trainings, shares_calendars )
       NewsFeed.create_social_approve_feed( @user, swimming_buddy )
-      # TODO Create also achievement accordingly
+      # TODO Create also achievement row accordingly?
     end
   end
 
@@ -130,7 +131,7 @@ class UserSocializer
         I18n.t('newsfeed.remove_title'),
         I18n.t('newsfeed.remove_body').gsub("{SWIMMER_NAME}", swimming_buddy.get_full_name)
       )
-      # TODO Create also achievement accordingly
+      # TODO Create also achievement row accordingly?
     end
   end
   #-- --------------------------------------------------------------------------
