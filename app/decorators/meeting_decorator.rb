@@ -60,9 +60,21 @@ class MeetingDecorator < Draper::Decorator
 
   # Retrieves the meeting description
   # with link to meeting result show full
+  # If results are aquired the link should be to results
+  # Else if the invititation is present the link should be to invitation
+  # Otherwise returns the true name
   #
   def get_linked_name
-    h.link_to( get_short_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+    if are_results_acquired || meeting_individual_results.count > 0
+      linked_name = h.link_to( get_short_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+    else
+      if invitation
+        linked_name = h.link_to( get_short_name, meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
+      else
+        linked_name = get_short_name
+      end
+    end    
+    linked_name
   end
   #-- -------------------------------------------------------------------------
   #++

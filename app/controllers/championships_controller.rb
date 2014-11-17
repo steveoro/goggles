@@ -45,7 +45,8 @@ class ChampionshipsController < ApplicationController
     @title = I18n.t('championships.team_ranking') + ' ' + @season.get_full_name
 
     championship_calculator = ChampionshipRankingCalculator.new( @season )
-    @championship_ranking = championship_calculator.get_season_ranking 
+    @championship_ranking = championship_calculator.get_season_ranking
+    set_team
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -67,6 +68,7 @@ class ChampionshipsController < ApplicationController
     championship_history_manager = ChampionshipHistoryManager.new( @season_type )
     @championship_history_manager = championship_history_manager.get_season_ranking_history
     @seasons_hall_of_fame = championship_history_manager.get_season_hall_of_fame
+    @history_updated_at = @championship_history_manager.max{ |n,p| n[:max_updated_at] <=> p[:max_updated_at] }[:max_updated_at]
   end
 
 
@@ -228,6 +230,20 @@ class ChampionshipsController < ApplicationController
     unless ( @season )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
+    end
+  end
+
+
+  # Verifiy if user is logged and associated to a swimmer and sets preselection
+  # of team
+  # Assumes season_type already assigned
+  #
+  def set_team
+    # Find preselected team if user logged in and associated to a swimmer
+    # and the team associated to actual season_type
+    if current_user && current_user.swimmer
+      swimmer = current_user.swimmer
+      @team = swimmer.teams.joins(:seasons).where(['seasons.season_type_id = ?', @season_type.id]).uniq.first
     end
   end
   

@@ -101,6 +101,7 @@ en:
     start_list_and_manifest: "Start-list / Manifest"
     start_list_tooltip: "Go to the Start-list page for this meeting"
     manifest_tooltip: "Go to the Manifest page for this meeting"
+    invitation: "Manifest"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"

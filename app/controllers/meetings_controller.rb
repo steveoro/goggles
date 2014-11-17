@@ -567,7 +567,6 @@ class MeetingsController < ApplicationController
   # Meeting invitation viewer
   #
   def show_invitation
-    @preselected_team_id = params[:team_id]
   end
   #-- -------------------------------------------------------------------------
   #++

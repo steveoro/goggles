@@ -38,9 +38,9 @@ describe ChampionshipHistoryManager, type: :strategy do
       it "returns an array of hash" do
         expect( subject.get_season_ranking_history ).to all(be_a_kind_of( Hash ))
       end
-      it "returns an array of hash which responds to season and ranking" do
+      it "returns an array of hash which responds to season, ranking and max_updated_at" do
         subject.get_season_ranking_history.each do |closed_season|
-          expect( closed_season.keys ).to include(:season, :ranking)
+          expect( closed_season.keys ).to include(:season, :ranking, :max_updated_at)
         end
       end
       it "returns an array of hash which contains a season" do

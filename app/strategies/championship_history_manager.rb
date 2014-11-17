@@ -76,12 +76,13 @@ class ChampionshipHistoryManager
   def retrieve_season_ranking_history( rank_position )
     seasons_ranking_history = []
     get_closed_seasons if not @closed_seasons
-    
+
     @closed_seasons.each do |season|
       season_ranking_history = Hash.new
       season_ranking_history[:season] = season
       season_ranking_history[:ranking] = season.computed_season_ranking.includes(:team).sort_by_rank.limit(rank_position)
-      seasons_ranking_history << season_ranking_history 
+      season_ranking_history[:max_updated_at] = season.computed_season_ranking.select( :updated_at ).max.updated_at.to_i
+      seasons_ranking_history << season_ranking_history
     end
     seasons_ranking_history 
   end

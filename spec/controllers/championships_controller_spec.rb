@@ -122,11 +122,13 @@ describe ChampionshipsController, :type => :controller do
       get :history_regional_er_csi
       expect( assigns(:championship_history_manager) ).to be_an_instance_of( Array )
       expect( assigns(:seasons_hall_of_fame) ).to be_an_instance_of( Array )
+      expect( assigns(:history_updated_at) ).to be_a_kind_of( Numeric )
     end
     it "assigns the required variables when invoked with valid id" do
       get :history_regional_er_csi, id: 131
       expect( assigns(:championship_history_manager) ).to be_an_instance_of( Array )
       expect( assigns(:seasons_hall_of_fame) ).to be_an_instance_of( Array )
+      expect( assigns(:history_updated_at) ).to be_a_kind_of( Numeric )
     end
   end
   #-- -------------------------------------------------------------------------
