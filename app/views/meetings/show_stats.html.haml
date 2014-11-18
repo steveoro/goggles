@@ -5,4 +5,19 @@
 
   .row-fluid
     .span12
-      = render( partial: 'meeting_stats_grid' )
+      %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_teams'}
+        = render( partial: 'meeting_stats_teams' )
+  .row-fluid
+    .span12
+      %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_categories'}
+        = render( partial: 'meeting_stats_categories' )
+  .row-fluid
+    .span12
+      %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_events'}
+        = render( partial: 'meeting_stats_events' )
+  .row-fluid
+    .span12
+      %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_specials'}
+        = render( partial: 'meeting_stats_specials' )
+  .row-fluid
+

@@ -59,6 +59,34 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
+  shared_examples_for "(GET http action with an invalid meeting id)" do |action_sym|
+    before(:each) { get action_sym, id: 0}
+    
+    it "handles the request with a redirect" do
+      expect(response.status).to eq( 302 )
+    end
+    it "redirects to meeting current path" do
+      expect( response ).to redirect_to( meetings_current_path )
+      end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  shared_examples_for "(GET http action with a valid meeting id)" do |action_sym, fixture_id|
+    before(:each) { get action_sym, id: fixture_id }
+
+    it "handles successfully the request" do
+      expect(response.status).to eq( 200 )
+    end
+    it "assigns the meeting" do
+      expect( assigns(:meeting) ).to be_an_instance_of( Meeting )
+    end
+    it "renders the template" do
+      expect(response).to render_template(action_sym)
+    end
+  end
+  # ===========================================================================
+
 
   describe '[GET #current]' do
     context "without parameters," do
@@ -115,36 +143,75 @@ describe MeetingsController, :type => :controller do
 
 
   describe '[GET #show_invitation]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_invitation )
+    it_behaves_like( "(GET http action with a valid meeting id)", :show_invitation, 14101 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe '[GET #show_start_list]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_start_list )
+    it_behaves_like( "(GET http action with a valid meeting id)", :show_start_list, 13106 )
+
+    before(:each) do
+      @meeting = create(:meeting)
+      get :show_start_list, id: @meeting.id
+    end
+
+    it "assigns the meeting event list" do
+      expect( assigns(:meeting_events_list) ).to be_a_kind_of( ActiveRecord::Relation )
+    end
+    it "assigns the meeting event list" do
+      expect( assigns(:meeting_events_list) ).to all(be_an_instance_of( MeetingEvent ))
+    end
+    it "assigns the max updated timestamp" do
+      expect( assigns(:max_entry_updated_at) ).not_to be_nil
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe '[GET #show_full]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_full )
+    it_behaves_like( "(GET http action with a valid meeting id)", :show_full, 13106 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe '[GET #show_ranking]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_ranking )
+    it_behaves_like( "(GET http action with a valid meeting id)", :show_ranking, 13105 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe '[GET #show_stats]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_stats )
+    it_behaves_like( "(GET http action with a valid meeting id)", :show_stats, 13105 )
+
+    before(:each) do
+      @meeting = create(:meeting)
+      get :show_stats, id: @meeting.id
+    end
+
+    it "assigns the meeting stats" do
+      expect( assigns(:meeting_stats) ).to be_an_instance_of( MeetingStat )
+    end
+    it "assigns the max updated timestamp" do
+      expect( assigns(:max_mir_updated_at) ).not_to be_nil
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe '[GET #show_team_results]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_team_results )
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe '[GET #show_swimmer_results]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_swimmer_results )
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -59,7 +59,7 @@ class MeetingStat
 
   def set_meeting( meeting )
     # Meeting exist. Calculate stats
-    if meeting.instance_of?( Meeting ) && meeting.are_results_acquired
+    if meeting.instance_of?( Meeting ) && (meeting.are_results_acquired || meeting.meeting_individual_results.count > 0)
       @meeting = meeting
       self.swimmer_male_count = self.class.get_swimmer_count(meeting, :is_male)
       self.swimmer_female_count = self.class.get_swimmer_count(meeting, :is_female)

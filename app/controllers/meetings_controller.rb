@@ -300,6 +300,13 @@ class MeetingsController < ApplicationController
   #               just to highlight a specific team
   #
   def show_stats
+    # Using MeetingStat
+    @meeting_stats = MeetingStat.new(@meeting)
+    
+    
+    
+    
+    
     @preselected_team_id = params[:team_id]
 # DEBUG
 #    logger.debug "@preselected_team_id : #{params[:team_id] }"
