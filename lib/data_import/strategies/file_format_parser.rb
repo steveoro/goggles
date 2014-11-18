@@ -30,7 +30,7 @@ class FileFormatParser
   FIN1_RESULT_TYPEDEF = ContextTypeDef.new(
     :fin_result,
     [
-      /(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN)/i,
+      /^\s*(50|100|200|400|800|1500|Staff|MiStaff)\s?(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN)/i,
       /^\s*|\r\n|\n|$|\Z/i,
       /(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
       /^-{80}/,
@@ -71,16 +71,13 @@ class FileFormatParser
   #++
 
 
-  attr_reader :full_pathname
-  #-- -------------------------------------------------------------------------
-  #++
-
   # Creates a new instance.
   def initialize( full_pathname )
     @full_pathname = full_pathname
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Parses the text lines from the filename to detect which TxtResultDefs instance
   # has to be used to perform the actual parsing of the whole file.
@@ -104,7 +101,7 @@ class FileFormatParser
     detector_fin1_sta = ContextDetector.new( FIN1_STARTLIST_TYPEDEF, logger )
     detector_fin2_sta = ContextDetector.new( FIN2_STARTLIST_TYPEDEF, logger )
 
-    File.open( full_pathname ) do |f|
+    File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
         curr_line = EncodingTools.force_valid_encoding( curr_line )
         line_count += 1

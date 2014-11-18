@@ -19,7 +19,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.513
+  - Goggles framework vers.:  4.00.627
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -46,6 +46,9 @@ class FinResultParser
   # Read and parse a single txt file into a complex Hash structure in memory.
   # Returned data storage is divided into each "context" page found, whose format
   # is specified by @context_types, @tokenizer_types, @tokenizer_fields and @context_keys.
+  #
+  # It's possible to force a specific file format for the parsing by specifying
+  # an instance of a sibling of TxtResultDef as +parsing_defs+.
   #
   # === Returns:
   #
@@ -92,8 +95,8 @@ class FinResultParser
   #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each
   #   possible value found of the above fields.
   #
-  def self.parse_txt_file( full_pathname, logger = nil )
-    parsing_defs = FileFormatParser.new( full_pathname ).parse( logger )
+  def self.parse_txt_file( full_pathname, logger = nil, parsing_defs = nil )
+    parsing_defs = parsing_defs || FileFormatParser.new( full_pathname ).parse( logger )
     raise ArgumentError.new("File format for '#{full_pathname}' NOT recognized!") if parsing_defs.nil?
 
     service = TxtParseService.new( parsing_defs )

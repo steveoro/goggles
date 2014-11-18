@@ -25,7 +25,9 @@ describe FinResultParser, type: :strategy do
     describe "#parse_txt_file" do
       before(:all) do
         @result_hash = FinResultParser.parse_txt_file(
-          File.join(Rails.root, 'test/fixtures/samples/fixture0-nodata-sample.txt')
+          File.join(Rails.root, 'test/fixtures/samples/fixture0-nodata-sample.txt'),
+          nil,
+          FinResultDefs.new
         )
       end
       it "returns an Hash instance" do

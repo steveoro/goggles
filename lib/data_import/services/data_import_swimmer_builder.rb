@@ -7,7 +7,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportSwimmerBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.627
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -27,6 +27,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
   #     - 0 on error/unable to process.
   #
   def self.build_from_parameters( data_import_session, swimmer_name, swimmer_year, gender_type )
+    raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!") unless gender_type.instance_of?(GenderType)
 # DEBUG
 #    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}"
     self.build( data_import_session ) do
@@ -70,7 +71,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           first_name:             @first_name,
           complete_name:          @complete_name,
           year_of_birth:          swimmer_year,
-          gender_type_id:         gender_type ? gender_type.id : nil,
+          gender_type_id:         gender_type.id,
           user_id:                1 # (don't care)
         )
         add_new

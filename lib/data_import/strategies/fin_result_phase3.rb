@@ -8,7 +8,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.623
+  - Goggles framework vers.:  4.00.627
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -331,6 +331,8 @@ module FinResultPhase3
   def commit_data_import_swimmers( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportSwimmer, 6 )
     committer.commit do |source_row|
+      check_for_non_nil_links( source_row, [:gender_type_id] )
+      raise ArgumentError.new("DataImportSwimmer ID#{source_row.id} found with gender_type_id NULL during phase#3!") unless source_row.gender_type_id.to_i > 0
       Swimmer.transaction do
         committed_row = Swimmer.new(
           last_name:      source_row.last_name,
@@ -376,6 +378,7 @@ module FinResultPhase3
   def commit_data_import_badges( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportBadge, 7 )
     committer.commit do |source_row|
+      check_for_non_nil_links( source_row, [:swimmer_id, :team_id, :team_affiliation_id, :season_id] )
       Badge.transaction do
         committed_row = Badge.new(
           number:               source_row.number,
@@ -422,6 +425,10 @@ module FinResultPhase3
   def commit_data_import_meeting_individual_results( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingIndividualResult, 8 )
     committer.commit do |source_row|
+      check_for_non_nil_links(
+        source_row,
+        [:meeting_program_id, :swimmer_id, :team_id, :team_affiliation_id, :badge_id]
+      )
       MeetingIndividualResult.transaction do
         committed_row = MeetingIndividualResult.new(
           rank:                           source_row.rank,
@@ -474,6 +481,7 @@ module FinResultPhase3
   def commit_data_import_meeting_relay_results( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingRelayResult, 9 )
     committer.commit do |source_row|
+      check_for_non_nil_links( source_row, [:meeting_program_id, :team_id, :team_affiliation_id] )
       MeetingRelayResult.transaction do
         committed_row = MeetingRelayResult.new(
           meeting_program_id:             source_row.meeting_program_id,
@@ -525,6 +533,7 @@ module FinResultPhase3
   def commit_data_import_meeting_team_score( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingTeamScore, 10 )
     committer.commit do |source_row|
+      check_for_non_nil_links( source_row, [:meeting_id, :team_id, :team_affiliation_id, :season_id] )
       MeetingTeamScore.transaction do
         committed_row = MeetingTeamScore.new(
           meeting_id:                   source_row.meeting_id,
@@ -591,6 +600,24 @@ module FinResultPhase3
       meeting
     else
       nil
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Checks that +source_row+ does have a column for all the symbols specified in
+  # the array, and that its value is greater than zero.
+  # Raises an exception otherwise.
+  #
+  def check_for_non_nil_links( source_row, array_of_sym )
+    array_of_sym.each do |column_sym|
+      unless source_row.send( column_sym ).to_i > 0
+        raise ArgumentError.new("#{source_row.class} ID#{source_row.id} found with #{column_sym} NULL during phase#3 !")
+      end
     end
   end
 end
