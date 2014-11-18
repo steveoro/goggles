@@ -48,14 +48,6 @@ describe FinResultParser, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
     #++
-
-    describe "#force_valid_encoding" do
-      it "returns a string with a valid character sequence" do
-        expect( FinResultParser.force_valid_encoding( "CITTÀ SPORT VICENZA" ) ).to eq("CITTÀ SPORT VICENZA")
-      end
-    end
-    #-- -----------------------------------------------------------------------
-    #++
   end
   #-- -------------------------------------------------------------------------
   #++

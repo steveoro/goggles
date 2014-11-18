@@ -2,9 +2,13 @@
 
 require 'fileutils'
 require 'common/format'
+require 'common/encoding_tools'
 require 'data_import/services/context_detector'
 require 'data_import/services/token_extractor'
+require 'data_import/strategies/file_format_parser'
+require 'data_import/txt_result_defs'
 require 'data_import/fin_result_defs'
+require 'data_import/fin2_result_defs'
 require 'data_import/services/txt_parse_service'
                                                     # The following applies only to Ruby <= 1.9.2
 require 'iconv' unless String.method_defined?( :encode )
@@ -89,14 +93,16 @@ class FinResultParser
   #   possible value found of the above fields.
   #
   def self.parse_txt_file( full_pathname, logger = nil )
-    parsing_defs  = FinResultDefs.new( logger )
+    parsing_defs = FileFormatParser.new( full_pathname ).parse( logger )
+    raise ArgumentError.new("File format for '#{full_pathname}' NOT recognized!") if parsing_defs.nil?
+
     service = TxtParseService.new( parsing_defs )
     service.log_somehow( logger, "\r\n-- FinResultParser::parse_txt_file(#{ full_pathname }):", true, :info )
     full_text_file_contents = ""
                                                     # Scan each line of the file until gets reaches EOF:
     File.open( full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
-        curr_line = force_valid_encoding( curr_line )
+        curr_line = EncodingTools.force_valid_encoding( curr_line )
         service.log_somehow( logger, "Reading line #{service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE )
         full_text_file_contents << curr_line
         any_detection = false
@@ -125,41 +131,6 @@ class FinResultParser
       total_data_rows:          tot_data_rows,
       full_text_file_contents:  full_text_file_contents
     }
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Forces the character encoding a single string/line of text.
-  #
-  # This will handle file encoding & invalid char sequences using a
-  # forced encoding for the specified string, returning a new UTF-8
-  # string.
-  #
-  # === Returns:
-  # The same string forcibly encoded in UTF-8.
-  #
-  def self.force_valid_encoding( curr_line )
-    if String.method_defined?( :encode )
-      return curr_line if curr_line.valid_encoding?
-
-      if curr_line.force_encoding( "UTF-8" ).valid_encoding?
-        curr_line = curr_line.force_encoding("UTF-8").rstrip
-
-      elsif curr_line.force_encoding( "ISO-8859-1" ).valid_encoding?
-        curr_line = curr_line.force_encoding("ISO-8859-1")
-          .encode( "UTF-8", { invalid: :replace, undef: :replace, replace: '' } )
-          .rstrip
-
-      elsif curr_line.force_encoding( "UTF-16" ).valid_encoding?
-        curr_line = curr_line.force_encoding("UTF-16")
-          .encode( "UTF-8", { invalid: :replace, undef: :replace, replace: '' } )
-          .rstrip
-      end
-    else
-      ic = Iconv.new('UTF-8', 'UTF-8//IGNORE')
-      curr_line = ic.iconv(curr_line)
-    end
-    curr_line
   end
   #-- -------------------------------------------------------------------------
   #++
