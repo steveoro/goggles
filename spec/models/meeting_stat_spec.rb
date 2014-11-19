@@ -44,9 +44,12 @@ describe MeetingStat, :type => :model do
       :swimmer_male_count,
       :result_male_count,
       :disqualified_male_count,
+      :average_male_score,
       :swimmer_female_count,
       :result_female_count,
       :disqualified_female_count,
+      :average_female_score,
+      :average_total_score,
 
       # Methods
       :swimmer_count,
@@ -64,8 +67,12 @@ describe MeetingStat, :type => :model do
       # Methods
       :best_standard_male_scores,
       :worst_standard_male_scores,
+      :most_costant_male_swimmers,
+      :less_costant_male_swimmers,
       :best_standard_female_scores,
-      :worst_standard_female_scores
+      :worst_standard_female_scores,
+      :most_costant_female_swimmers,
+      :less_costant_female_swimmers
    ])
 
     it "has a valid meeting instance" do

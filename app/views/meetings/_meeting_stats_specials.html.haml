@@ -22,6 +22,30 @@
             %td.span1.goggles-rightalign
               %i= @meeting_stats.disqualified_count.to_s
 
+%div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_average'}
+  .row-fluid
+    .span3
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'success'}
+            %td.goggles-centeralign{'colspan'=>2}
+              %b= I18n.t('meeting_stats.average')
+          %tr
+            %td.span2
+              = I18n.t('meeting_stats.females')
+            %td.span1.goggles-rightalign
+              = sprintf( "%02.2f", @meeting_stats.average_female_score)
+          %tr
+            %td.span2
+              = I18n.t('meeting_stats.males')
+            %td.span1.goggles-rightalign
+              = sprintf( "%02.2f", @meeting_stats.average_male_score)
+          %tr
+            %td.span2
+              %i= I18n.t('meeting_stats.average_total')
+            %td.span1.goggles-rightalign
+              %i= sprintf( "%02.2f", @meeting_stats.average_total_score)
+
 %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_specials'}
   .row-fluid
     .span10

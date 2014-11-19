@@ -24,7 +24,8 @@ class MeetingStat
   attr_accessor :swimmer_male_count,         :swimmer_female_count, 
                 :result_male_count,          :result_female_count,
                 :disqualified_male_count,    :disqualified_female_count, 
-                :everage_male_score,         :everage_female_score, 
+                :average_male_score,         :average_female_score, 
+                :average_total_score,
                 :oldest_male_swimmers,       :oldest_female_swimmers,   
                 :best_standard_male_scores,  :best_standard_female_scores, 
                 :worst_standard_male_scores, :worst_standard_female_scores,
@@ -50,8 +51,9 @@ class MeetingStat
     self.result_female_count = 0
     self.disqualified_male_count = 0
     self.disqualified_female_count = 0
-    self.everage_male_score = 0
-    self.everage_female_score = 0
+    self.average_male_score = 0
+    self.average_female_score = 0
+    self.average_total_score = 0
     self.oldest_male_swimmers = []
     self.oldest_female_swimmers = []
     self.best_standard_male_scores = []
@@ -84,8 +86,11 @@ class MeetingStat
       self.worst_standard_female_scores = self.class.get_worst_standard_scores(meeting, :is_female, 3)
       
       #TODO Complete field calc
-      self.everage_male_score = 0
-      self.everage_female_score = 0
+      self.average_male_score = self.class.get_average(meeting, :is_male)
+      self.average_female_score = self.class.get_average(meeting, :is_female)
+      self.average_total_score = self.class.get_average(meeting, :has_points)
+      self.most_costant_female_swimmers = []    
+      self.most_costant_male_swimmers = []    
       self.less_costant_female_swimmers = []    
       self.less_costant_male_swimmers = []    
     else
@@ -121,6 +126,20 @@ class MeetingStat
   #
   def self.get_disqualified_count( meeting, scope_name = :is_male )
     meeting.meeting_individual_results.send(scope_name.to_sym).where(:is_disqualified).count
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation for the meeting average standard points
+  # Average is calculated considering only > 0 standard point results
+  #
+  def self.get_average( meeting, scope_name = :is_male )
+    result_count = meeting.meeting_individual_results.send(scope_name.to_sym).has_points.count
+    if result_count > 0
+      standard_points_sum = meeting.meeting_individual_results.send(scope_name.to_sym).sum(:standard_points)
+      (standard_points_sum / result_count).round(2)
+    else
+      result_count
+    end
   end
   # ---------------------------------------------------------------------------
 
@@ -167,4 +186,5 @@ class MeetingStat
   def disqualified_count
     disqualified_male_count + disqualified_female_count
   end  
+
 end
