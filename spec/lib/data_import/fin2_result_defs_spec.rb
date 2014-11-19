@@ -35,12 +35,12 @@ describe Fin2ResultDefs, type: :model do
 
       context "when called for :category_header," do
         it "has a only :result_row key" do
-          expect( subject.context_types_children_of(:category_header).keys ).to contain_exactly( :result_row )
+          expect( subject.context_types_children_of(:event_individual).keys ).to contain_exactly( :result_row )
         end
       end
       context "when called for :relay_header," do
         it "has a only :result_row key" do
-          expect( subject.context_types_children_of(:relay_header).keys ).to contain_exactly( :relay_row )
+          expect( subject.context_types_children_of(:event_relay).keys ).to contain_exactly( :relay_row )
         end
       end
       context "when called for :team_ranking," do

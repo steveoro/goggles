@@ -24,7 +24,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.625
+  - Goggles framework vers.:  4.00.631
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -55,6 +55,10 @@ module FinResultPhase2
                                                    parse_result, force_missing_team_creation = false )
     is_ok = true
     team_names = []
+    # The parse result will always contain an Array of Hash for each defined key field.
+    # In this case, whether or not the :relay_row section was found, the result
+    # will always be defined (as an Array of Hash), although empty in the worst case
+    # scenario.
                                                     # Collect all team names in the parsed file:
     team_names_from_results = parse_result[:result_row].map { |row| row[:fields][:team_name] }.compact
     team_names_from_results += parse_result[:relay_row].map { |row| row[:fields][:team_name] }.compact
@@ -116,9 +120,12 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_category_headers( full_pathname, data_import_session, season, season_starting_year,
-                                meeting, meeting_session, category_headers, category_headers_ids,
-                                category_details, scheduled_date, force_missing_team_creation = false )
+                                meeting, meeting_session, parse_result, scheduled_date,
+                                force_missing_team_creation = false )
     is_ok = true
+    category_headers = parse_result[:category_header]
+    category_details = parse_result[:result_row]
+    category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
                                                     # **** HEADER LOOP **** For each header row:...
     category_headers_ids.each_with_index do |category_id, header_index|
                                                     # For each category_details key, add import entities rows:
@@ -183,9 +190,12 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_relay_headers( full_pathname, data_import_session, season, season_starting_year,
-                             meeting, meeting_session, relay_headers, relay_headers_ids,
-                             relay_details, scheduled_date, force_missing_team_creation = false )
+                             meeting, meeting_session, parse_result, scheduled_date,
+                             force_missing_team_creation = false )
     is_ok = true
+    relay_headers = parse_result[:relay_header]
+    relay_details = parse_result[:relay_row]
+    relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
                                                     # **** HEADER LOOP **** For each header row:...
     relay_headers_ids.each_with_index do |relay_id, header_index|
 # DEBUG

@@ -32,7 +32,7 @@ class FileFormatParser
     [
       /^\s*|\r\n|\n|$|\Z/i,
       /(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
-      /^-{80}/,
+      /-{80}/,
       /(\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
     ]
   )
@@ -41,12 +41,13 @@ class FileFormatParser
   FIN2_RESULT_TYPEDEF = ContextTypeDef.new(
     :fin2_result,
     [
-      /^\s*|\r\n|\n|$|\Z/i,
-      /^-{80}/,
-      /^(-{80})|(\s{3}-{3}\s{1,3}4x|50\s|100\s|200\s|400\s|800\s|1500\s)/i,
-      /^\d{1,2}\s{2,3}\w|^\s*|^\r\n|^\n|$|^\Z/i,
-      /^\d{1,2}\s{2,3}\w|^\s*|^\r\n|^\n|$|^\Z|^\s{4}Atleta\s{20}Cat\.\sS\s{2}Societ/i,
-      /^\d{1,2}\s{2,3}\w|^\s*|^\r\n|^\n|$|^\Z|^-{80}/i
+      /^\s*|^\r\n|^\n|$|^\Z/i,
+      /-{80}/,
+      /\s{3}-{3}\s{1,3}4x|50\s|100\s|200\s|400\s|800\s|1500\s/i,
+      /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Atleta\s{20,24}Cat/i,
+      /\d{1,2}\s{2,3}\w\w|\s{2,4}Atleta\s{20,24}Cat|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+      /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+      /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
     ]
   )
 

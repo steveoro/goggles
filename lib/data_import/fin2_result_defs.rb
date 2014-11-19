@@ -11,7 +11,7 @@ require 'data_import/fin2_result_consts'
 
 = Fin2ResultDefs
 
-  - Goggles framework vers.:  4.00.627
+  - Goggles framework vers.:  4.00.631
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -59,8 +59,8 @@ class Fin2ResultDefs < TxtResultDefs
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
       meeting_header:   ContextDetector.new( context_type_meeting_header, logger ),
-      category_header:  ContextDetector.new( context_type_category_header, logger ),
-      relay_header:     ContextDetector.new( context_type_relay_header, logger ),
+      event_individual: ContextDetector.new( context_type_event_individual, logger ),
+      event_relay:      ContextDetector.new( context_type_event_relay, logger ),
       team_ranking:     ContextDetector.new( context_type_team_ranking, logger ),
       stats:            ContextDetector.new( context_type_stats, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
@@ -86,47 +86,52 @@ class Fin2ResultDefs < TxtResultDefs
     #
     @tokenizer_types = {
       meeting_header: [
-        # -- Fields to be extracted: :title OR :meeting_dates
+        # -- Fields to be extracted (whenever any are found): :title, :meeting_dates
         [
-          tokenizer_meeting_header_title,
           tokenizer_meeting_header_meeting_dates,
+          tokenizer_meeting_header_title,
         ],
-        # -- Fields to be extracted: :organization OR :title
+        # -- Fields to be extracted: :organization, :title
         [
+          tokenizer_meeting_header_meeting_dates,
           tokenizer_meeting_header_organization,
           tokenizer_meeting_header_title
         ],
-        # -- Fields to be extracted: :meeting_dates OR :organization
+        # -- Fields to be extracted: :meeting_dates, :organization
         [
           tokenizer_meeting_header_meeting_dates,
           tokenizer_meeting_header_organization,
         ]
       ],
 
-      category_header: [                              # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
+      event_individual: [                              # 7 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
+        nil,
         nil,
         # -- Fields to be extracted: :distance, :style, :gender, :category_group, :base_time
         [
           tokenizer_category_header_distance,
           tokenizer_category_header_style,
-          tokenizer_category_header_gender,
-          tokenizer_category_header_group,
-          tokenizer_category_header_base_time
+          tokenizer_category_header_gender
         ],
+        nil,
+        nil,
+        nil,
         nil
       ],
 
       # -- Fields to be extracted: :type, :distance, :style, :gender (can be nil), :category_group, :base_time
-      relay_header: [
+      event_relay: [
+        nil,
         nil,
         [
           tokenizer_relay_header_type,
           tokenizer_relay_header_distance,
           tokenizer_relay_header_style,
-          tokenizer_category_header_gender,
-          tokenizer_relay_header_category_group,
-          tokenizer_relay_header_base_time
+          tokenizer_category_header_gender
         ],
+        nil,
+        nil,
+        nil,
         nil
       ],
 
@@ -219,14 +224,22 @@ class Fin2ResultDefs < TxtResultDefs
         [ :organization, :title ],
         [ :meeting_dates, :organization ]
       ],
-      category_header: [                            # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
+      event_individual: [                           # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
         nil,
-        [ :distance, :style, :gender, :category_group, :base_time ],
+        nil,
+        [ :distance, :style, :gender ],
+        nil,
+        nil,
+        nil,
         nil
       ],
-      relay_header: [
+      event_relay: [
         nil,
-        [ :type, :distance, :style, :gender, :category_group, :base_time ],
+        nil,
+        [ :type, :distance, :style, :gender ],
+        nil,
+        nil,
+        nil,
         nil
       ],
 
@@ -298,9 +311,9 @@ class Fin2ResultDefs < TxtResultDefs
     # treated as unique and added to the result array of data pages.
     #
     @context_keys = {
-      meeting_header:  [:title],
-      category_header: [:distance, :style, :gender, :category_group],
-      relay_header:    [:type, :category_group]     # (type includes also the gender token)
+      meeting_header:   [:title],
+      event_individual: [:distance, :style, :gender],
+      event_relay:      [:type, :category_group]    # (type includes also the gender token)
     }
                                                     # === Internal structure integrity checks: ===
                                                     # Pre-check format type definition:

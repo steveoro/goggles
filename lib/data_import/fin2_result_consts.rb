@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.627
+  - Goggles framework vers.:  4.00.631
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -28,41 +28,50 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :meeting_header,
       [
-        /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
-        /(\s*Manifestazione organizzata da)|(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))/i,
-        /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|/i
+        /^\s*|^\r\n|^\n|$|^\Z|\s*(Distanze speciali|(\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Tr|Region))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
+        /\s*Manifestazione organizzata da|\s*(Distanze speciali|(\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Tr|Region))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
+        /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|^\s*|^\r\n|^\n|$|^\Z|(mistaff|50|100|200|400|800|1500)/i
       ],
       nil,                                          # parent context
       4                                             # line_timeout (line after which these checks will be skipped)
     )
   end
 
-  # "Category Header" context type definition.
+  # "Result/Category Header" context type definition.
   #
-  def context_type_category_header
+  def context_type_event_individual
     ContextTypeDef.new(
-      :category_header,
+      :event_individual,
       [
-        /^\s*(\r\n|\n|$|\Z)/i,  # matches any kind of newline, an empty line or a line with only invisible chars
-        /(?<!\dx)(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
-        /^-{25}/
+        /^\s*|^\r\n|^\n|$|^\Z/i,
+        /-{80}/,
+        /\s{3}-{3}\s{1,3}50\s|100\s|200\s|400\s|800\s|1500\s/i,
+        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Atleta\s{20,24}Cat/i,
+        /\d{1,2}\s{2,3}\w\w|\s{2,4}Atleta\s{20,24}Cat|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+        /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
       ]
     )
   end
 
   # "Relay Header" context type definition.
   #
-  def context_type_relay_header
+  def context_type_event_relay
     ContextTypeDef.new(
-      :relay_header,
+      :event_relay,
       [
-        /^\s*(\r\n|\n|$|\Z)/i,
-        /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx).*\s+-\s+cat/i,
-        /^-{25}/
+        /Torna a inizio pagina|^\s*|^\r\n|^\n|$|^\Z/i,
+        /(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w|-{80}/,
+        /^\s*|^\r\n|^\n|$|^\Z|\s{3}-{3}\s{1,3}(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w/i,
+        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Societ/i,
+        /\d{1,2}\s{2,3}\w\w|\s{2,4}Societ|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+        /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
       ]
     )
   end
 
+# TODO #################
   # "Team Ranking" (header) context type definition.
   #
   def context_type_team_ranking
@@ -95,7 +104,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       [
         /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
       ],
-      :category_header                              # parent context
+      :event_individual                              # parent context
     )
   end
 
@@ -107,7 +116,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       [
         /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)(\r\n|\n|$|\Z)/i
       ],
-      :relay_header
+      :event_relay
     )
   end
 
@@ -177,8 +186,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def get_context_types_list
     [
       context_type_meeting_header,
-      context_type_category_header,
-      context_type_relay_header,
+      context_type_event_individual,
+      context_type_event_relay,
       context_type_team_ranking,
       context_type_stats,
       context_type_result_row,
@@ -196,11 +205,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_meeting_header_title
     TokenExtractor.new(
       :title,
-      /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\w+|Trof)|Trofeo|Regionali|Campionati))/i,
-      # Alt. version: (define another constant if this turns out to be more efficient of the one above)
-      # /\s*(Distanze speciali|((\d{1,3}\D{1,2}|\s*[IXV]{1,8})\s(\S+|Trof)|Regionali|Campionati))/i,
+      /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Tr|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
       /$/i,
-      3                                             # line_timeout
+      4                                             # line_timeout
     )
   end
 
@@ -209,10 +216,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_meeting_header_meeting_dates
     TokenExtractor.new(
       :meeting_dates,
-  #    /\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/ui,
       /\d{0,2}((\/|-|\,)\d{0,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/i,
       /\z/i,
-      3                                             # line_timeout
+      4                                             # line_timeout
     )
   end
 
@@ -223,7 +229,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       :organization,
       /(?<=manifestazione organizzata da )/i,
       /\z/i,
-      3                                               # line_timeout
+      4                                               # line_timeout
     )
   end
   # ----------------------------------------------------------------------------

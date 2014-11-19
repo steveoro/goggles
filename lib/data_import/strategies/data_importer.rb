@@ -513,7 +513,6 @@ class DataImporter
         @data_import_session,
         @season,
         @result_hash[:parse_result],
-#        @data_import_session.phase >= 11 ? true : @force_missing_team_creation
         @force_missing_team_creation
       )
       unless is_ok
@@ -567,9 +566,6 @@ class DataImporter
                                                     # --- CATEGORY (digest/serialization) --
     if is_ok && meeting_session
       update_logs( "PHASE #1.2: processing CATEGORY headers..." )
-      category_headers = @result_hash[:parse_result][:category_header]
-      category_details = @result_hash[:parse_result][:result_row]
-      category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
       is_ok = process_category_headers(
           @full_pathname,
           @data_import_session,
@@ -577,9 +573,7 @@ class DataImporter
           season_starting_year,
           meeting,
           meeting_session,
-          category_headers,
-          category_headers_ids,
-          category_details,
+          @result_hash[:parse_result],
           scheduled_date,
           @force_missing_team_creation
       )
@@ -587,9 +581,6 @@ class DataImporter
                                                     # --- RELAY (digest/serialization) --
     if is_ok && meeting_session
       update_logs( "PHASE #1.2: processing RELAY headers..." )
-      relay_headers = @result_hash[:parse_result][:relay_header]
-      relay_details = @result_hash[:parse_result][:relay_row]
-      relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
       is_ok = process_relay_headers(
           @full_pathname,
           @data_import_session,
@@ -597,9 +588,7 @@ class DataImporter
           season_starting_year,
           meeting,
           meeting_session,
-          relay_headers,
-          relay_headers_ids,
-          relay_details,
+          @result_hash[:parse_result],
           scheduled_date,
           @force_missing_team_creation
       )
