@@ -222,16 +222,13 @@ describe RecordCollector, type: :strategy do
     it "clears the internal list" do
       expect{ subject.commit }.to change{ subject.count }.to(0)
     end
-    it "doesn't increase the table size when persisting existing records" do
+    it "doesn't alter the table size when persisting (just saving) existing records" do
       before_count = subject.count
       subject.save  # make sure the record persist, without clearing the list
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
     end
-    it "doesn't increase the table size when updating existing records" do
+    it "doesn't alter the table size when updating existing records" do
       before_count = subject.count
-      expect( subject.commit ).to be true
-      # Search again, with same params, but from results, to update existing records:
-      subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
       expect{ subject.commit }.not_to change{ IndividualRecord.count }
     end
   end
