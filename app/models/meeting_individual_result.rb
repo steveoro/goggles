@@ -70,7 +70,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :is_female,                   ->              { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
   scope :has_rank,                    ->(rank_filter) { where(rank: rank_filter) }
-  scope :has_points,                  ->(score_sym)   { where("#{score_sym.to_s} > 0") }
+  scope :has_points,                  ->(score_sym = 'standard_points') { where("#{score_sym.to_s} > 0") }
   scope :has_time,                    ->              { where("((minutes * 6000) + (seconds * 100) + hundreds > 0)") }
 
   scope :sort_by_user,                ->(dir = 'ASC') { order("users.name #{dir.to_s}, meeting_programs.meeting_session_id #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
