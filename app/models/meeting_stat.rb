@@ -24,9 +24,12 @@ class MeetingStat
   attr_accessor :swimmer_male_count,         :swimmer_female_count, 
                 :result_male_count,          :result_female_count,
                 :disqualified_male_count,    :disqualified_female_count, 
+                :everage_male_score,         :everage_female_score, 
                 :oldest_male_swimmers,       :oldest_female_swimmers,   
                 :best_standard_male_scores,  :best_standard_female_scores, 
-                :worst_standard_male_scores, :worst_standard_female_scores
+                :worst_standard_male_scores, :worst_standard_female_scores,
+                :most_costant_male_swimmers, :most_costant_female_swimmers,
+                :less_costant_male_swimmers, :less_costant_female_swimmers
 
   # Creates a new instance.
   # Note the ascending precision of the parameters, which allows to skip
@@ -47,12 +50,18 @@ class MeetingStat
     self.result_female_count = 0
     self.disqualified_male_count = 0
     self.disqualified_female_count = 0
+    self.everage_male_score = 0
+    self.everage_female_score = 0
     self.oldest_male_swimmers = []
     self.oldest_female_swimmers = []
     self.best_standard_male_scores = []
     self.best_standard_female_scores = []
     self.worst_standard_male_scores = []    
     self.worst_standard_female_scores = []    
+    self.most_costant_female_swimmers = []    
+    self.most_costant_male_swimmers = []    
+    self.less_costant_female_swimmers = []    
+    self.less_costant_male_swimmers = []    
     self
   end
   # ---------------------------------------------------------------------------
@@ -75,6 +84,10 @@ class MeetingStat
       self.worst_standard_female_scores = self.class.get_worst_standard_scores(meeting, :is_female, 3)
       
       #TODO Complete field calc
+      self.everage_male_score = 0
+      self.everage_female_score = 0
+      self.less_costant_female_swimmers = []    
+      self.less_costant_male_swimmers = []    
     else
       # The meeting does not exist. Clear all fields
       clear

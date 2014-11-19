@@ -404,32 +404,6 @@ class MeetingsController < ApplicationController
         evnt_arr[2] += male
         evnt_arr[3] += male_female
       end
-                                                    # Collect also the specials:
-      if ( male == 1 )
-        @specials_hash[ :oldest_male_athlete ] ||= swimmer
-        @specials_hash[ :best_1st_male_score ] ||= ind_result
-        @specials_hash[ :best_2nd_male_score ] ||= ind_result
-        @specials_hash[ :best_3rd_male_score ] ||= ind_result
-        @specials_hash[ :worst_male_score    ] ||= ind_result
-        @specials_hash[ :oldest_male_athlete ] = swimmer    if @specials_hash[ :oldest_male_athlete ].year_of_birth > swimmer.year_of_birth
-# FIXME: Use a sorted query to get first-3 best scores from ind. results!
-        @specials_hash[ :best_1st_male_score ] = ind_result if @specials_hash[ :best_1st_male_score ].standard_points.to_f < ind_result.standard_points.to_f
-        @specials_hash[ :best_2nd_male_score ] = ind_result if @specials_hash[ :best_2nd_male_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_1st_male_score ].standard_points.to_f
-        @specials_hash[ :best_3rd_male_score ] = ind_result if @specials_hash[ :best_3rd_male_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_2nd_male_score ].standard_points.to_f
-        @specials_hash[ :worst_male_score    ] = ind_result if @specials_hash[ :worst_male_score    ].standard_points.to_f > ind_result.standard_points.to_f && ind_result.standard_points.to_f > 0
-      else
-        @specials_hash[ :oldest_female_athlete ] ||= swimmer
-        @specials_hash[ :best_1st_female_score ] ||= ind_result
-        @specials_hash[ :best_2nd_female_score ] ||= ind_result
-        @specials_hash[ :best_3rd_female_score ] ||= ind_result
-        @specials_hash[ :worst_female_score    ] ||= ind_result
-        @specials_hash[ :oldest_female_athlete ] = swimmer    if @specials_hash[ :oldest_female_athlete ].year_of_birth > swimmer.year_of_birth
-# FIXME: Use a sorted query to get first-3 best scores from ind. results!
-        @specials_hash[ :best_1st_female_score ] = ind_result if @specials_hash[ :best_1st_female_score ].standard_points.to_f < ind_result.standard_points.to_f
-        @specials_hash[ :best_2nd_female_score ] = ind_result if @specials_hash[ :best_2nd_female_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_1st_female_score ].standard_points.to_f
-        @specials_hash[ :best_3rd_female_score ] = ind_result if @specials_hash[ :best_3rd_female_score ].standard_points.to_f < ind_result.standard_points.to_f && ind_result.standard_points.to_f < @specials_hash[ :best_2nd_female_score ].standard_points.to_f
-        @specials_hash[ :worst_female_score    ] = ind_result if @specials_hash[ :worst_female_score    ].standard_points.to_f > ind_result.standard_points.to_f && ind_result.standard_points.to_f > 0
-      end
     }
                                                     # Add also relay medals to the medal count:
     mrr = @meeting.meeting_relay_results.is_valid
