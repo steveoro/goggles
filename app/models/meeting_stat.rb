@@ -26,6 +26,10 @@ class MeetingStat
                 :disqualified_male_count,    :disqualified_female_count, 
                 :average_male_score,         :average_female_score, 
                 :average_total_score,
+                :over_1000_count,
+                :over_950_count,
+                :over_900_count,
+                :team_count,
                 :oldest_male_swimmers,       :oldest_female_swimmers,   
                 :best_standard_male_scores,  :best_standard_female_scores, 
                 :worst_standard_male_scores, :worst_standard_female_scores,
@@ -54,6 +58,10 @@ class MeetingStat
     self.average_male_score = 0
     self.average_female_score = 0
     self.average_total_score = 0
+    self.over_1000_count = 0
+    self.over_950_count = 0
+    self.over_900_count = 0
+    self.team_count = 0
     self.oldest_male_swimmers = []
     self.oldest_female_swimmers = []
     self.best_standard_male_scores = []
@@ -78,6 +86,9 @@ class MeetingStat
       self.result_female_count = self.class.get_result_count(meeting, :is_female)
       self.disqualified_male_count = self.class.get_disqualified_count(meeting, :is_male)
       self.disqualified_female_count = self.class.get_disqualified_count(meeting, :is_female)
+      self.average_male_score = self.class.get_average(meeting, :is_male)
+      self.average_female_score = self.class.get_average(meeting, :is_female)
+      self.average_total_score = self.class.get_average(meeting, :has_points)
       self.oldest_male_swimmers = self.class.get_oldest_swimmers(meeting, :is_male, 3)
       self.oldest_female_swimmers = self.class.get_oldest_swimmers(meeting, :is_female, 3)
       self.best_standard_male_scores = self.class.get_best_standard_scores(meeting, :is_male, 3)
@@ -86,9 +97,10 @@ class MeetingStat
       self.worst_standard_female_scores = self.class.get_worst_standard_scores(meeting, :is_female, 3)
       
       #TODO Complete field calc
-      self.average_male_score = self.class.get_average(meeting, :is_male)
-      self.average_female_score = self.class.get_average(meeting, :is_female)
-      self.average_total_score = self.class.get_average(meeting, :has_points)
+      self.over_1000_count = self.class.get_over_target_count( meeting, 1000 )
+      self.over_950_count = self.class.get_over_target_count( meeting, 950 ) - self.over_1000_count 
+      self.over_900_count = self.class.get_over_target_count( meeting, 900 ) - self.over_950_count
+      self.team_count = 0
       self.most_costant_female_swimmers = []    
       self.most_costant_male_swimmers = []    
       self.less_costant_female_swimmers = []    
@@ -126,6 +138,14 @@ class MeetingStat
   #
   def self.get_disqualified_count( meeting, scope_name = :is_male )
     meeting.meeting_individual_results.send(scope_name.to_sym).where(:is_disqualified).count
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation for the over target result count
+  # The target is intended as the standard points to beat
+  #
+  def self.get_over_target_count( meeting, target = 900 )
+    meeting.meeting_individual_results.where(['standard_points >= ?', target]).count
   end
   # ---------------------------------------------------------------------------
 

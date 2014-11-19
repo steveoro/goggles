@@ -1,4 +1,4 @@
-%ul.nav.nav-tabs#topOfPage
+%ul.nav.nav-tabs#pageTop
   - if @meeting.invitation
     - is_active = ( params[:action] == 'show_invitation' )
     %li{ class: is_active ? 'active' : '' }

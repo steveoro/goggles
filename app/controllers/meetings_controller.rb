@@ -326,15 +326,6 @@ class MeetingsController < ApplicationController
     # event_type_id => [ EventType name, Male count, female count, tot. count ],
     # Sort resulting list by event_type name, ASC
 
-    @specials_hash = {}
-    # Stores, for the current meeting:
-    # - :oldest_male_athlete
-    # - :oldest_female_athlete
-    # - :best_3_male_scores
-    # - :best_3_female_scores
-    # - :worst_male_score
-    # - :worst_female_score
-
     mir = @meeting.meeting_individual_results.is_valid
                                                     # Loop upon all individual results and count the athletes, without duplicates (each athlete may have more than 1 result for its own team):
     mir.each { |ind_result|                         # "1 loop to bind them all..."
@@ -342,9 +333,12 @@ class MeetingsController < ApplicationController
       female = swimmer.is_female ? 1 : 0
       male   = swimmer.is_male ? 1 : 0
       male_female = male + female
-      gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
-      silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
-      bronze = ( (ind_result.rank==3) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      #gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      #silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      #bronze = ( (ind_result.rank==3) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking ? 1 : 0 )
+      silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking ? 1 : 0 )
+      bronze = ( (ind_result.rank==3) && ind_result.is_valid_for_ranking ? 1 : 0 )
                                                     # Collect athletes' gender for each team:
       if teams_hash[ ind_result.team_id ].nil?
         teams_hash[ ind_result.team_id ] = [

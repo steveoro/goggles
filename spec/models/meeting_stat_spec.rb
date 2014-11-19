@@ -33,8 +33,8 @@ end
 
 describe MeetingStat, :type => :model do
   subject {
-    # Pre-loaded seeded last two years CSI season
-    seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106]
+    # Pre-loaded seeded last two years CSI season and acquired Osimo FIN
+    seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 13223]
     MeetingStat.new( Meeting.find(seeded_meets.at( ((rand * 100) % seeded_meets.size).to_i) ))
   }
 
@@ -50,6 +50,10 @@ describe MeetingStat, :type => :model do
       :disqualified_female_count,
       :average_female_score,
       :average_total_score,
+      :over_1000_count,
+      :over_950_count,
+      :over_900_count,
+      :team_count,
 
       # Methods
       :swimmer_count,

@@ -44,30 +44,30 @@
               = @team_outstanding_scores
 
       .accordion-inner
-        %div.span12
+        %div.span8
           %table.table.table-striped.table-bordered.table-hover.table-condensed.goggles-meeting-team-results-table
             %tbody
               %tr
-                %td{'colspan'=>'2'}
+                %td{'colspan'=>'8'}
                   %i= I18n.t(:team_total_athletes, { scope: [:meeting] }) + ": #{ @meeting_team_swimmers.size }"
               - @meeting_team_swimmers.each do |swimmer|
                 %tr
-                  %td{'colspan'=>'1'}
+                  %td.span3
                     %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                       = swimmer.get_full_name
-                  %td.goggles-border-right{'colspan'=>'1'}
+                  %td.goggles-border-right.span1
                     = (mir = @events_per_swimmers[swimmer.id].first) ? mir.category_type.code : '?'
                     = (mir && admin_signed_in? ? " (id=#{mir.category_type.id})" : '')
                   - @events_per_swimmers[swimmer.id].each do |row|
-                    %td.goggles-noborder.goggles-rightalign{'colspan'=>"2"}
+                    %td.goggles-noborder.goggles-rightalign.span2
                       - event_type = row.meeting_event.event_type
                       %a(href="\##{event_type.code}")= event_type.i18n_short
-                    %td.goggles-noborder.goggles-rightalign
+                    %td.goggles-noborder.goggles-rightalign.span1
                       = show_tag( row.rank==1 && row.is_valid_for_ranking, "medal_gold_3.png", '' )
                       = show_tag( row.rank==2 && row.is_valid_for_ranking, "medal_silver_3.png", '' )
                       = show_tag( row.rank==3 && row.is_valid_for_ranking, "medal_bronze_3.png", '' )
-                      = row.rank
-                    %td.goggles-border-onlyright.goggles-rightalign
+                      = row.rank > 0 ? row.rank : 'DSQ' 
+                    %td.goggles-border-onlyright.goggles-rightalign.span1
                       - if row.meeting_individual_points > 0
                         = (row.meeting_individual_points>800 ? "! " : '' )
                         = show_tag( row.meeting_individual_points>800, "asterisk_orange.png", '' )
