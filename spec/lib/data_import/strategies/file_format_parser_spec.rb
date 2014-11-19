@@ -13,7 +13,6 @@ describe FileFormatParser, type: :strategy do
 
   context "with a FIN(1) result file type," do
     [
-#      File.join(Rails.root, 'test/fixtures/samples/fixture0-nodata-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/fixture1-ris20120414molinella-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/fixture2-ris20111203riccione-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/fixture3-ris20120114ravenna-sample.txt'),
@@ -33,14 +32,27 @@ describe FileFormatParser, type: :strategy do
 
 
   context "with a FIN2 result file type," do
-    subject { FileFormatParser.new( File.join(Rails.root, 'test/fixtures/samples/ris20131117poggibonsi.txt') ) }
-
-    describe "#parse" do
-      it "returns the correct constant associated with the file type" do
-        expect( subject.parse ).to be_an_instance_of( Fin2ResultDefs )
+    [
+      File.join(Rails.root, 'test/fixtures/samples/ris20081221mussi-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20091213livorno-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20101212livorno-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20101219mussi-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20130513pontedera-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20131117poggibonsi-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/ris20140330lucca-sample.txt')
+    ].each do |filename|
+      describe "#parse" do
+        it "returns the correct constant associated with the file type for #{File.basename(filename)}" do
+          format_parser = FileFormatParser.new( filename )
+          expect( format_parser.parse ).to be_an_instance_of( Fin2ResultDefs )
+        end
       end
     end
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # TODO start list format recognition for file type FIN1
+  # TODO start list format recognition for file type FIN2
+
 end

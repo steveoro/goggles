@@ -1,0 +1,368 @@
+20° Tr Città di Firenze
+Manifestazione organizzata da Firenze Nuota Master
+100 FA50 DO100 MI200 SL50 FA100 SL50 RA400 MIStatistiche
+Avvertenze
+tabella oraria
+
+N_G  Gara  Batt.  TGara	TProgr  Fine_Gara	
+
+------------Turno 1 - 08 marzo 2014----------									
+
+1   100FA   12   0:24   0:24   14:24	
+2   50DO    30   0:41   1:05   15:05	
+3   100MX   31   1:05   2:11   16:11	
+4   200SL   28   1:35   3:47   17:47
+	
+------------Turno 2 - 09 marzo 2014----------									
+
+1   50FA    24	 0:32   0:32   09:17	
+2   100SL   42	 1:23   1:55   10:40	
+3   50RA    32	 0:44   2:39   11:24	
+4   400MX    6	 0:43   3:22   12:07	
+100 FA
+
+1   SOSTEGNI SIMONE           M  M 45  FIRENZE NUOTA MASTER                02.40.00 
+2   COLZI NICOLETTA           F  M 60  AMICI DEL NUOTO FIRENZE             02.08.00 
+3   MEINI ANDREA              M  M 50  FIRENZE NUOTA MASTER                01.55.00 
+4   NENCINI GIANLUCA          M  M 45  VIRTUS POGGIBONSI                   01.46.00 
+5   MASSAFRA PAOLO            M  M 45  VILLAGGIO SPORT. ESCHILO            01.45.00 
+6   LENZI ENRICO              M  M 45  AMICI DEL NUOTO FIRENZE             01.42.00 
+7   BIONDI NICOLETTA          F  M 35  SEVEN MASTER NUOTO ASD              01.40.00 
+8   MANCINI LUCILLA           F  M 45  NUOTO LUCCA CAPANNORI               01.40.00 
+9   FABRIZI EMANUELE          M  M 45  AMICI DEL NUOTO FIRENZE             01.40.00 
+10  MERCATELLI ALESSANDRO     M  M 35  AMICI DEL NUOTO FIRENZE             01.38.00 
+11  BOTTAINI FRANCA           F  M 45  NUOTO LIVORNO                       01.34.00 
+12  TUNG ROBERTO              M  M 45  01 ZEROUNO SSD - FIRENZE            01.33.00 
+13  ORTOLANI LUCIO            M  M 55  NANTES OSTIENSIS                    01.33.00 
+14  DESIDERI ELENA            F  M 45  NUOTO LIVORNO                       01.32.00 
+15  VELARDI EUGENIO           M  M 60  CIRCOLO CANOTTIERI ANIENE           01.31.70 
+16  MARIANI CLARISSA          F  U 25  NUOTO LIVORNO                       01.30.00 
+17  IAGATTA CHIARA            F  M 25  VILLAGGIO SPORT. ESCHILO            01.30.00 
+18  BETTARINI ROSSANO         M  M 40  H SPORT - PRATO                     01.30.00 
+19  CAPOBIANCO DONATO         M  M 50  POLISPORTIVA SANGIULIANESE          01.30.00 
+20  PIANESE GIUSEPPINA        F  M 40  IL GABBIANO NAPOLI                  01.29.00 
+21  MOLLO GIACOMO             M  M 60  DLF NUOTO LIVORNO                   01.29.00 
+22  PAOLESCHI ALESSIO         M  M 40  NUOTOPIU' ACADEMY                   01.28.00 
+23  CANTORE FABIO             M  M 45  CS MARINA MILITARE                  01.28.00 
+24  BARONTINI ILIO            M  M 60  DLF NUOTO LIVORNO                   01.28.00 
+25  BOCHICCHIO MARCO          M  M 55  ZERO9                               01.27.00 
+26  POMPIGNOLI MARCO          M  M 30  AMICI DEL NUOTO FIRENZE             01.25.00 
+27  ARDUINO GIOVANNI          M  M 30  AMATORI NUOTO FOLLONICA             01.25.00 
+28  LORINI ANDREA             M  M 45  AMICI DEL NUOTO FIRENZE             01.25.00 
+29  SCHIAVONI CECILIA         F  M 50  ROMA NUOTO MASTER                   01.22.00 
+30  PICCA RENATO              M  M 25  NETIUM                              01.20.00 
+31  TIEZZI GIULIA             F  M 25  AMATORI NUOTO FOLLONICA             01.20.00 
+32  FIORE GIUSEPPE            M  M 40  SONCINO SPORTING CLUB               01.20.00 
+33  GUERRINI EMANUELE         M  M 45  FIORENTINA NUOTO                    01.20.00 
+34  ZAZZETTA MASSIMO          M  M 45  DLF NUOTO LIVORNO                   01.20.00 
+35  CAPRINI PIERO             M  M 45  FIRENZE NUOTA MASTER                01.20.00 
+36  SARTORE FRANCESCO         M  M 45  S.S.D. STILELIBERO SRL              01.20.00 
+37  GILIBERTI CHIARA          F  U 25  NUOTO VALDINIEVOLE                  01.18.00 
+38  ARDITO ALESSANDRO         M  M 25  NETIUM                              01.18.00 
+39  DE VINCENTIS ANDREA       M  M 50  DLF NUOTO LIVORNO                   01.18.00 
+40  LAIS GIORGIO              M  M 50  FLAMINIO SPORTING CLUB              01.18.00 
+41  CORRIAS MARIO             M  M 45  NUOTO LUCCA CAPANNORI               01.17.00 
+42  GIBELLI AURORA            F  M 25  AQUATICA TORINO                     01.16.00 
+43  PASTORINO CARLO MICHELE   M  M 45  POLISPORTIVA SANGIULIANESE          01.16.00 
+44  WARD DANIEL JOSEPH        M  M 55  KLAB NUOTO MASTER                   01.15.20 
+45  CIALDINI GIULIA           F  U 25  DLF NUOTO LIVORNO                   01.15.00 
+46  ALFANO ARIANNA            F  M 25  SPORTING CLUB TUSCOLANO             01.15.00 
+47  PAGNINI CLAUDIO           M  M 25  CSI NUOTO PRATO                     01.15.00 
+48  SANTONI GIAMPIERO         M  M 50  FIRENZE NUOTA MASTER                01.15.00 
+49  GORGOSALICE NICOLA        M  M 45  LARUS NUOTO                         01.14.00 
+50  GUCCIARDI MASSIMO         M  M 45  SEVEN MASTER NUOTO ASD              01.14.00 
+51  FATTORINI MARIO           M  M 45  NUOTO LIVORNO                       01.13.20 
+52  MALCOTTI GIULIA           F  M 25  CSI NUOTO PRATO                     01.13.00 
+53  GUIDI GABRIELE            M  M 35  B2K SWIM TEAM ASD                   01.12.00 
+54  FERRANDO ELEONORA         F  M 45  NUOTATORI GENOVESI                  01.12.00 
+55  BALATRESI ELISA           F  M 25  NUOTOPIU' ACADEMY                   01.11.00 
+56  TONNI ANDREA              M  M 30  CSI NUOTO PRATO                     01.10.00 
+57  MALPAGANTI MATTEO         M  M 30  CSI NUOTO PRATO                     01.10.00 
+58  VALDISERRI SILVIA         F  M 30  NUOTOPIU' ACADEMY                   01.10.00 
+59  FORNASARI ANDREA          M  M 40  RINASCITA TEAM ROMAGNA              01.09.90 
+60  GENOVESE ALESSANDRO       M  M 35  NUOTATORI GENOVESI                  01.08.00 
+61  ADORNATO ALBERTO          M  M 30  NUOTATORI GENOVESI                  01.07.00 
+62  MAZZI JACOPO              M  U 25  CSI NUOTO PRATO                     01.06.00 
+63  PAPINI SARA               F  M 25  FIRENZE NUOTA MASTER                01.06.00 
+64  PIATTELLI DIEGO           M  M 25  DLF NUOTO LIVORNO                   01.05.00 
+65  SANESI RICCARDO           M  M 25  CSI NUOTO PRATO                     01.04.00 
+66  PELLEGRINI MARCO          M  M 35  RINASCITA TEAM ROMAGNA              01.04.00 
+67  LOPEZ MARTINEZ PASCUAL    M  M 35  KLAB NUOTO MASTER                   01.03.10 
+68  BORTOLOTTI SIMONE         M  U 25  CSI NUOTO PRATO                     01.02.00 
+69  VIGNAROLI RICCARDO        M  U 25  KLAB NUOTO MASTER                   01.01.60 
+70  STEFANORI ENRICO          M  M 30  KLAB NUOTO MASTER                   01.01.00 
+71  BORGHI MANUELE            M  M 35  NUOTO CLUB SASSUOLO                 01.01.00 
+72  MACCIANTI MARCO           M  M 30  FIRENZE NUOTA MASTER                00.57.00 
+Torna a inizio pagina
+50 FA
+
+1   BALLI MARIO               M  M 65  FIRENZE NUOTA MASTER                01.10.00 
+2   DE AMBRIS CHIARA          F  M 30  B2K SWIM TEAM ASD                   00.59.00 
+3   COLZI NICOLETTA           F  M 60  AMICI DEL NUOTO FIRENZE             00.56.00 
+4   COMASTRI VALERIA          F  U 25  NUOTO CLUB SASSUOLO                 00.55.00 
+5   MACCHIONI FIORELLA        F  M 65  AMICI DEL NUOTO FIRENZE             00.55.00 
+6   GIANNELLI MARTA           F  M 45  FIRENZE NUOTA MASTER                00.52.00 
+7   BESSI VERONICA            F  M 45  CSI NUOTO PRATO                     00.52.00 
+8   GHILARDUCCI RENZA         F  M 45  NUOTO LUCCA CAPANNORI               00.51.00 
+9   MUGNAINI FABRIZIO         M  M 50  CERTALDO NUOTO                      00.50.00 
+10  GAGLIARDI GABRIELE        M  M 55  DIMENSIONE NUOTO PONTEDERA          00.50.00 
+11  PACINOTTI ERIKA           F  M 35  FIRENZE NUOTA MASTER                00.49.00 
+12  DE MEO PAOLO              M  M 35  01 ZEROUNO SSD - FIRENZE            00.49.00 
+13  CANDI SIMONA              F  M 45  CSI NUOTO PRATO                     00.47.00 
+14  SARTI ANDREJ              M  M 25  BONDENO NUOTO 2012 ASD              00.46.00 
+15  GLORIA ALESSANDRA         F  M 25  NUOTO LIBERTAS ROSIGNANO            00.45.00 
+16  SAURA MARCO               M  M 25  H SPORT - PRATO                     00.45.00 
+17  BOSI ALESSANDRA           F  M 25  CHIMERA NUOTO                       00.45.00 
+18  PAGANI LAURA              F  M 25  NUOTATORI GENOVESI                  00.45.00 
+19  KILBOURN MEGAN            F  M 30  AMICI DEL NUOTO FIRENZE             00.45.00 
+20  FREDUCCI CINZIA           F  M 30  AMICI DEL NUOTO FIRENZE             00.45.00 
+21  BIANCHI TOMMASO           M  M 40  AMICI DEL NUOTO FIRENZE             00.45.00 
+22  ANSELMI SIMONE            M  M 45  FIRENZE NUOTA MASTER                00.45.00 
+23  DE ANGELIS LORETTA        F  M 50  VILLAGGIO SPORT. ESCHILO            00.45.00 
+24  FABBRI BRUNO              M  M 50  AMICI DEL NUOTO FIRENZE             00.45.00 
+25  GASPARRINI CLAUDIO        M  M 55  FIRENZE NUOTA MASTER                00.45.00 
+26  CALAMAI MONICA            F  M 55  FIRENZE NUOTA MASTER                00.45.00 
+27  CARRIERO VALERIA          F  M 25  NUOTO LIBERTAS ROSIGNANO            00.44.00 
+28  BONTADINI SANDRO          M  M 45  CENTRO NUOTO UISP BOLOGNA           00.44.00 
+29  CONTI ALESSANDRO          M  M 60  FIRENZE NUOTA MASTER                00.44.00 
+30  ROSSI MARCO               M  M 65  FIRENZE NUOTA MASTER                00.44.00 
+31  MERCOGLIANO ANTONIO       M  M 35  CSI NUOTO PRATO                     00.43.50 
+32  PINZAUTI LUCA             M  M 30  AMICI DEL NUOTO FIRENZE             00.43.00 
+33  MOLINARI VANNI            M  M 40  BONDENO NUOTO 2012 ASD              00.43.00 
+34  ORSINI ELENA              F  M 45  FIRENZE NUOTA MASTER                00.43.00 
+35  MONI MARCO                M  M 55  DIMENSIONE NUOTO PONTEDERA          00.42.50 
+36  BERTINI MARCO             M  M 40  NUOTO LUCCA CAPANNORI               00.42.00 
+37  PUGGELLI SERGIO           M  M 65  CSI NUOTO PRATO                     00.42.00 
+38  ORLANDI ERICA             F  M 30  BONDENO NUOTO 2012 ASD              00.41.00 
+39  BENVENUTI MASSIMO         M  M 45  CORSIA 8                            00.41.00 
+40  MATTIOLI CHIARA           F  U 25  KLAB NUOTO MASTER                   00.40.80 
+41  MECACCI LORENZO           M  U 25  KLAB NUOTO MASTER                   00.40.60 
+42  VASCHIERI VALERIO         M  U 25  NUOTO CLUB SASSUOLO                 00.40.00 
+43  CAPODARCA LUCIANO         M  M 45  CERTALDO NUOTO                      00.40.00 
+44  FERRARIS ANGELO           M  M 50  NUOTO LIBERTAS ROSIGNANO            00.40.00 
+45  CAMPOLMI MASSIMO          M  M 65  FIRENZE NUOTA MASTER                00.40.00 
+46  ZANI MARINA               F  M 50  RINASCITA TEAM ROMAGNA              00.39.70 
+47  FRATI ALESSIA             F  M 30  B2K SWIM TEAM ASD                   00.39.60 
+48  MEDICI DANIELE            M  U 25  NUOTO CLUB SASSUOLO                 00.39.00 
+49  BERNABEI CHIARA           F  M 25  NUOTO CLUB SASSUOLO                 00.39.00 
+50  BRACHI CLAUDIO            M  M 35  CSI NUOTO PRATO                     00.39.00 
+51  MICHELI MIRKO             M  M 35  CHIMERA NUOTO                       00.39.00 
+52  PIPPA GIOVANNI            M  M 45  CIRCOLO NUOTO LUCCA                 00.39.00 
+53  MEO ROCCO                 M  M 50  RN SARONNO                          00.38.80 
+54  MATUCCI CERNIC CATERINA   F  U 25  FIRENZE NUOTA MASTER                00.38.00 
+55  MEO SERGIO                M  U 25  RN SARONNO                          00.38.00 
+56  BELFASTI CECILIA          F  M 25  NUOTO CLUB SASSUOLO                 00.38.00 
+57  ROMANELLI VALERIA         F  M 25  U.S. DIL. NUOTO MONTEFELTRO         00.38.00 
+58  FARNETANO MARIA GIUSEPPIN F  M 40  NUOTOPIU' ACADEMY                   00.38.00 
+59  MANNORI SUELLEN           F  M 30  CSI NUOTO PRATO                     00.37.00 
+60  MORINI STEFANO            M  M 40  CIRCOLO NUOTO LUCCA                 00.37.00 
+61  LUCIANO' ANGELO           M  M 45  CSI NUOTO PRATO                     00.37.00 
+62  BOESGAARD VALDEMAR        M  M 45  NUOTATORI GENOVESI                  00.37.00 
+63  CAMANGI RAFFAELE          M  M 55  NUOVO NUOTO                         00.37.00 
+64  ACETI SILVIA              F  M 35  TEAM INSUBRIKA                      00.36.50 
+65  ZECCHI RITA               F  M 30  BONDENO NUOTO 2012 ASD              00.36.00 
+66  LISI GIACOMO              M  M 35  CSI NUOTO PRATO                     00.36.00 
+67  BOANINI MARCO             M  M 40  AMICI DEL NUOTO FIRENZE             00.36.00 
+68  MATRISCIANO MONICA        F  M 25  NUOTO LIBERTAS ROSIGNANO            00.35.50 
+69  DEL BINO FEDERICO         M  M 40  CORSIA 8                            00.35.50 
+70  SALUTELLI ELISA           F  U 25  NUOTO LIBERTAS ROSIGNANO            00.35.00 
+71  FERRARI MARTINA           F  U 25  AMICI DEL NUOTO FIRENZE             00.35.00 
+72  ROCCHI ELIA               M  U 25  NUOTO LUCCA CAPANNORI               00.35.00 
+73  LIBRALATO LUCA            M  M 25  DLF NUOTO LIVORNO                   00.35.00 
+74  ENGLE VALENTINA           F  M 30  CIRCOLO NUOTO LUCCA                 00.35.00 
+75  PELA RICCARDO             M  M 30  CHIMERA NUOTO                       00.35.00 
+76  ROCCHI DANIELE            M  M 35  VILLAGGIO SPORT. ESCHILO            00.35.00 
+77  ROMAGNOLI MAYA            F  M 35  RINASCITA TEAM ROMAGNA              00.35.00 
+78  BRENDAGLIA SERENA         F  M 35  NUOTO LIFE STYLE A.S.DILETT         00.35.00 
+79  MAZZONI RICCARDO          M  M 35  ESSECI NUOTO                        00.35.00 
+80  CECCATELLI ALAN           M  M 40  CSI NUOTO PRATO                     00.35.00 
+81  POZZI LUCA                M  M 45  DLF NUOTO LIVORNO                   00.35.00 
+82  MARZULLO STEFANO          M  M 55  NUOTO LUCCA CAPANNORI               00.34.90 
+83  MEINI SARA                F  U 25  NUOTO LIBERTAS ROSIGNANO            00.34.50 
+84  ANDREUCCI CAROLINA        F  U 25  KLAB NUOTO MASTER                   00.34.30 
+85  PADUANO ANTONIO           M  M 25  NUOTO LIBERTAS ROSIGNANO            00.34.00 
+86  CAMELLINI STEFANO         M  M 30  NUOTO CLUB SASSUOLO                 00.34.00 
+87  BALDI IDALGO              M  M 35  CHIMERA NUOTO                       00.34.00 
+88  SIGNORINI LUCA            M  M 35  DIMENSIONE NUOTO PONTEDERA          00.34.00 
+89  GALANTE MAURO             M  M 35  H SPORT - PRATO                     00.34.00 
+90  BRUGNOLI ALESSIO          M  M 50  VILLAGGIO SPORT. ESCHILO            00.34.00 
+91  PERINI SILVIA             F  M 30  RINASCITA TEAM ROMAGNA              00.33.90 
+92  GRILLI MARCO              M  M 40  RINASCITA TEAM ROMAGNA              00.33.90 
+93  BARDELLI SAMANTHA         F  M 35  NUOTOPIU' ACADEMY                   00.33.60 
+94  NARDI LEANDRO             M  M 25  01 ZEROUNO SSD - FIRENZE            00.33.50 
+95  CALVETTI LORENZO          M  M 35  CERTALDO NUOTO                      00.33.50 
+96  IAGATTA CHIARA            F  M 25  VILLAGGIO SPORT. ESCHILO            00.33.00 
+97  SEMPROLI SILVIA           F  M 25  POLISPORTIVA GARDEN SRL S.S. DILETT 00.33.00 
+98  BICHI ILARIA              F  M 25  AQUATICA TORINO                     00.33.00 
+99  PIANCASTELLI IRENE        F  M 40  NUOTOPIU' ACADEMY                   00.33.00 
+100 MANNUCCI DANIELE          M  M 45  DLF NUOTO LIVORNO                   00.33.00 
+101 GIROLAMI ALBERTO          M  M 55  SPORTING CLUB TUSCOLANO             00.33.00 
+102 CIANCIOSI LUCIO           M  M 55  FIRENZE NUOTA MASTER                00.33.00 
+103 RANDI STEFANO             M  M 50  RINASCITA TEAM ROMAGNA              00.32.90 
+104 WARD DANIEL JOSEPH        M  M 55  KLAB NUOTO MASTER                   00.32.50 
+105 LOPPI LAURA               F  M 25  AMICI DEL NUOTO FIRENZE             00.32.40 
+106 CAROTENUTO FRANCESCO      M  U 25  NUOTO LIBERTAS ROSIGNANO            00.32.00 
+107 MORRONE GIULIO            M  U 25  FIRENZE NUOTA MASTER                00.32.00 
+108 CAROTENUTO AGOSTINO       M  M 25  NUOTO LIBERTAS ROSIGNANO            00.32.00 
+109 SOLFANELLI LEONARDO       M  M 30  FIRENZE NUOTA MASTER                00.32.00 
+110 GARDALI ALAN              M  M 35  NUOTO CLUB SASSUOLO                 00.32.00 
+111 PAGNINI ALESSANDRO        M  M 35  CSI NUOTO PRATO                     00.32.00 
+112 TRICOLI CLAUDIO           M  M 40  CSI NUOTO PRATO                     00.32.00 
+113 FUSI MASSIMO              M  M 50  FIRENZE NUOTA MASTER                00.32.00 
+114 TOZZI DANIELE             M  U 25  KLAB NUOTO MASTER                   00.31.70 
+115 TOCCHINI ILARIA           F  M 45  NUOTOPIU' ACADEMY                   00.31.60 
+116 COLOMBINI ALESSIA         F  U 25  NUOTO UISP 2003                     00.31.50 
+117 GENESIO FRANCESCO         M  M 25  H SPORT - PRATO                     00.31.00 
+118 PAPINI SARA               F  M 25  FIRENZE NUOTA MASTER                00.31.00 
+119 BOLOGNESI DAMIANO         M  M 40  DIMENSIONE NUOTO PONTEDERA          00.31.00 
+120 FOLINI STEFANO            M  M 25  AMICI DEL NUOTO FIRENZE             00.30.50 
+121 FUCINI GIULIA             F  M 25  CHIMERA NUOTO                       00.30.50 
+122 SANNERIS FRANCESCO        M  M 25  01 ZEROUNO SSD - FIRENZE            00.30.50 
+123 SALUTELLI LUCA            M  M 25  NUOTO LIBERTAS ROSIGNANO            00.30.40 
+124 MANNOZZI KARIM            M  M 25  KLAB NUOTO MASTER                   00.30.00 
+125 TURINI ALBERTO            M  M 25  NUOTO LIBERTAS ROSIGNANO            00.30.00 
+126 ANDORLINI TOMMASO         M  M 25  AMICI DEL NUOTO FIRENZE             00.30.00 
+127 PUCCI MATTEO              M  M 25  ESSECI NUOTO                        00.30.00 
+128 ORSELLI MICHELE           M  M 30  RINASCITA TEAM ROMAGNA              00.30.00 
+129 BIANCHI MIRKO             M  M 35  CSI NUOTO PRATO                     00.30.00 
+130 MUSCOLO MICHELE           M  M 40  NUOTATORI GENOVESI                  00.30.00 
+131 MODUGNO MATTEO            M  M 40  RN LEGNANO                          00.29.90 
+132 MOROZZI OSCAR             M  M 25  01 ZEROUNO SSD - FIRENZE            00.29.10 
+133 BARGELLINI RICCARDO       M  M 25  NUOTO UISP 2003                     00.29.00 
+134 AGLIOTI GIORGIO           M  M 25  VILLAGGIO SPORT. ESCHILO            00.29.00 
+135 SPEPI ALESSIO             M  M 30  FIRENZE NUOTA MASTER                00.29.00 
+136 MORETTI ANDREA            M  M 35  NUOTO UISP 2003                     00.29.00 
+137 ATTUCCI MIRKO             M  M 35  AMICI DEL NUOTO FIRENZE             00.29.00 
+138 DE SANTIS EUGENIO         M  M 35  SPORTING CLUB TUSCOLANO             00.29.00 
+139 MEZZOLANI SAMUELE         M  U 25  U.S. DIL. NUOTO MONTEFELTRO         00.28.50 
+140 ALBANO CHRISTIAN          M  M 25  01 ZEROUNO SSD - FIRENZE            00.28.50 
+141 DE LAURENTIIS PAOLO       M  M 45  NUOTOPIU' ACADEMY                   00.28.00 
+142 VIGNAROLI RICCARDO        M  U 25  KLAB NUOTO MASTER                   00.27.80 
+143 FANTONI STEFANO           M  U 25  KLAB NUOTO MASTER                   00.27.70 
+144 CORSETTI LEONARDO         M  U 25  FIRENZE NUOTA MASTER                00.27.50 
+145 IPPOLITI LORENZO          M  U 25  H SPORT - PRATO                     00.27.00 
+146 BORGHI MANUELE            M  M 35  NUOTO CLUB SASSUOLO                 00.27.00 
+147 EROLI MASSIMILIANO        M  M 35  NUOTOPIU' ACADEMY                   00.26.00 
+Torna a inizio pagina
+400 MI
+
+1   NARDI MARINA              F  M 55  SPORTING CLUB TUSCOLANO             08.30.00 
+2   BIANCHI TOMMASO           M  M 40  AMICI DEL NUOTO FIRENZE             08.00.00 
+3   SANTELLI DANIELA          F  M 45  DLF NUOTO LIVORNO                   08.00.00 
+4   GENTILE ALESSANDRO        M  M 50  FIRENZE NUOTA MASTER                07.55.00 
+5   KILBOURN MEGAN            F  M 30  AMICI DEL NUOTO FIRENZE             07.45.00 
+6   NOVELLO CLAUDIO           M  M 35  AMICI DEL NUOTO FIRENZE             07.30.00 
+7   MERCATELLI ALESSANDRO     M  M 35  AMICI DEL NUOTO FIRENZE             07.30.00 
+8   DI LUCCIA COSTABILE       M  M 40  AMICI DEL NUOTO FIRENZE             07.30.00 
+9   LIBRALATO RICCARDO        M  M 50  DLF NUOTO LIVORNO                   07.00.00 
+10  HARMER JANET STUART       F  M 55  NUOTOPIU' ACADEMY                   06.50.00 
+11  GUSTINELLI PIETRO         M  M 45  FIRENZE NUOTA MASTER                06.45.00 
+12  JURINOVICH ROBERTO        M  M 55  DLF NUOTO LIVORNO                   06.45.00 
+13  CAMANGI RAFFAELE          M  M 55  NUOVO NUOTO                         06.35.00 
+14  FOLINI FRANCESCO          M  U 25  AMICI DEL NUOTO FIRENZE             06.30.00 
+15  GUERRINI EMANUELE         M  M 45  FIORENTINA NUOTO                    06.30.00 
+16  LORINI ANDREA             M  M 45  AMICI DEL NUOTO FIRENZE             06.30.00 
+17  HUOBER ALESSANDRO         M  M 55  H SPORT - PRATO                     06.30.00 
+18  FUSCO ISMAELE             M  M 50  H SPORT - PRATO                     06.18.00 
+19  CECCUTI VIOLA             F  M 25  NUOTO SCANDICCI 1982                06.15.00 
+20  ATTUCCI MIRKO             M  M 35  AMICI DEL NUOTO FIRENZE             06.15.00 
+21  PAGANO ANDREA             M  M 40  AMICI DEL NUOTO FIRENZE             06.15.00 
+22  PAPI GABRIELE             M  M 45  H SPORT - PRATO                     06.10.00 
+23  DE VINCENTIS ANDREA       M  M 50  DLF NUOTO LIVORNO                   06.10.00 
+24  ROMANELLI VALERIA         F  M 25  U.S. DIL. NUOTO MONTEFELTRO         06.00.00 
+25  FORTUNA ALESSANDRO        M  M 45  RINASCITA TEAM ROMAGNA              05.59.00 
+26  IPPOLITI LORENZO          M  U 25  H SPORT - PRATO                     05.55.00 
+27  MEONI LEONARDO            M  M 40  POL. AMATORI PRATO                  05.55.00 
+28  GERI MATTEO               M  M 35  NUOTOPIU' ACADEMY                   05.35.00 
+29  MODUGNO MATTEO            M  M 40  RN LEGNANO                          05.35.00 
+30  CORNACCHINI IURI          M  M 30  NUOTO SCANDICCI 1982                05.15.00 
+31  MEZZOLANI SAMUELE         M  U 25  U.S. DIL. NUOTO MONTEFELTRO         05.10.00 
+32  PUCCI MARCO               M  M 30  FIRENZE NUOTA MASTER                05.09.00 
+33  BONGINI FEDERICO          M  M 25  FIRENZE NUOTA MASTER                05.07.00 
+34  GIOVANNINI LORENZO        M  M 25  NUOTOPIU' ACADEMY                   04.59.90 
+35  TADDEI DIEGO              M  M 35  H SPORT - PRATO                     04.56.00 
+Statistiche
+
+Reg Societa                         NrF    NrM    TotI   GrF    GrM    TotG
+---------------------------------------------------------------------------
+
+AAS SSV  BRIXEN                     0      1      1      0      2      2 
+
+CAM A.S.DIL. RARI NANTES FLEGR      1      0      1      2      0      2 
+CAM IL GABBIANO NAPOLI              1      1      2      2      2      4 
+
+EMI BONDENO NUOTO 2012 ASD          4      8     12      8     16     24 
+EMI CENTRO NUOTO UISP BOLOGNA       0      1      1      0      2      2 
+EMI NUOTO CLUB SASSUOLO             4     11     15      8     21     29 
+EMI NUOVO NUOTO                     0      2      2      0      4      4 
+EMI POLISPORTIVA GARDEN SRL S.      1      4      5      2      7      9 
+EMI PRESIDENT NUOTO BOLOGNA         0      1      1      0      2      2 
+EMI RINASCITA TEAM ROMAGNA          3     12     15      6     22     28 
+EMI SEVEN MASTER NUOTO ASD          2      1      3      4      2      6 
+
+LAZ CIRCOLO CANOTTIERI ANIENE       0      1      1      0      2      2 
+LAZ DUE PONTI SPORTING CLUB         0      1      1      0      1      1 
+LAZ FLAMINIO SPORTING CLUB          0      2      2      0      4      4 
+LAZ GRUPPO PESCE                    0      1      1      0      2      2 
+LAZ LARUS NUOTO                     1      2      3      1      4      5 
+LAZ NANTES OSTIENSIS                0      1      1      0      2      2 
+LAZ ROMA NUOTO MASTER               1      1      2      2      2      4 
+LAZ SPORTING CLUB TUSCOLANO        11     14     25     22     28     50 
+LAZ VILLAGGIO SPORT. ESCHILO        5     10     15     10     18     28 
+LAZ ZERO9                           0      1      1      0      2      2 
+
+LIG ANDREA DORIA                    0      1      1      0      2      2 
+LIG CS MARINA MILITARE              0      1      1      0      2      2 
+LIG NUOTATORI GENOVESI              9     14     23     18     27     45 
+
+LOM RN LEGNANO                      0      1      1      0      2      2 
+LOM RN SARONNO                      0      3      3      0      6      6 
+LOM SONCINO SPORTING CLUB           0      1      1      0      2      2 
+LOM TEAM INSUBRIKA                  2      0      2      4      0      4 
+
+MAR U.S. DIL. NUOTO MONTEFELTR      1      1      2      2      2      4 
+
+PIE AQUATICA TORINO                 3      1      4      5      2      7 
+PIE RARI  NANTES  TORINO            0      1      1      0      2      2 
+
+PUG NETIUM                          4      5      9      8     10     18 
+
+TOS 01 ZEROUNO SSD - FIRENZE        3     12     15      6     24     30 
+TOS A.R. CECINA                     0      1      1      0      2      2 
+TOS AMATORI NUOTO FOLLONICA         3      3      6      6      4     10 
+TOS AMICI DEL NUOTO FIRENZE        20     36     56     40     72    112 
+TOS AQUATEMPRA                      2      6      8      4     10     14 
+TOS B2K SWIM TEAM ASD               6      3      9     12      6     18 
+TOS CERTALDO NUOTO                  0      8      8      0     13     13 
+TOS CHIMERA NUOTO                   2      5      7      4      9     13 
+TOS CIRCOLO NUOTO LUCCA             2      3      5      4      6     10 
+TOS COGIS                           0      1      1      0      2      2 
+TOS CORSIA 8                        4      4      8      8      8     16 
+TOS CSI NUOTO PRATO                10     29     39     20     58     78 
+TOS DIMENSIONE NUOTO PONTEDERA      3      9     12      6     18     24 
+TOS DLF NUOTO LIVORNO               9     17     26     15     32     47 
+TOS ESSECI NUOTO                    2     10     12      4     17     21 
+TOS FIORENTINA NUOTO                0      1      1      0      2      2 
+TOS FIRENZE NUOTA MASTER           25     79    104     46    142    188 
+TOS H SPORT - PRATO                 6     14     20     11     28     39 
+TOS KLAB NUOTO MASTER               7     17     24     14     34     48 
+TOS NUOTO LIBERTAS ROSIGNANO        6     12     18     12     24     36 
+TOS NUOTO LIFE STYLE A.S.DILET      2      4      6      4      7     11 
+TOS NUOTO LIVORNO                   4      2      6      8      4     12 
+TOS NUOTO LUCCA CAPANNORI           2      4      6      4      8     12 
+TOS NUOTO SCANDICCI 1982            1      1      2      2      2      4 
+TOS NUOTO UISP 2003                 1      2      3      2      4      6 
+TOS NUOTO VALDINIEVOLE              2      1      3      4      2      6 
+TOS NUOTOPIU' ACADEMY              15     20     35     30     40     70 
+TOS POL. AMATORI PRATO              1      4      5      2      8     10 
+TOS POLISPORTIVA SANGIULIANESE      0      5      5      0     10     10 
+TOS TESEO TESEI PORTOFERRAIO        0      1      1      0      2      2 
+TOS VERSILIANUOTO                   0      1      1      0      2      2 
+TOS VIRTUS POGGIBONSI               2      5      7      4      9     13 
+
+UMB CENTRO NUOTO BASTIA             0      1      1      0      2      2 
+
+VEN GIS-GEST IMPIANTI SPORTIVI      0      1      1      0      2      2 
+VEN S.S.D. STILELIBERO SRL          4     11     15      8     19     27 
+-------------------------------------------------------------------------------
+Totale società iscritte  67       197    438    635    384    834   1218 

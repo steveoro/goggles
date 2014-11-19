@@ -42,13 +42,12 @@ class FileFormatParser
   FIN2_RESULT_TYPEDEF = ContextTypeDef.new(
     :fin2_result,
     [
-      /(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN)/i,
       /^\s*|\r\n|\n|$|\Z/i,
       /^-{80}/,
-      /^\s{3}-{3}\s{1,3}(4x|50\s|100\s|200\s|400\s|800\s|1500\s)/i,
-      /^\s*|\r\n|\n|$|\Z/i,
-      /^\s{4}Atleta\s{20}Cat.\sS\s{2}Societ/i,
-      /^-{80}/
+      /^(-{80})|(\s{3}-{3}\s{1,3}4x|50\s|100\s|200\s|400\s|800\s|1500\s)/i,
+      /^\d{1,2}\s{2,3}\w|^\s*|^\r\n|^\n|$|^\Z/i,
+      /^\d{1,2}\s{2,3}\w|^\s*|^\r\n|^\n|$|^\Z|^\s{4}Atleta\s{20}Cat\.\sS\s{2}Societ/i,
+      /^\d{1,2}\s{2,3}\w|^\s*|^\r\n|^\n|$|^\Z|^-{80}/i
     ]
   )
 

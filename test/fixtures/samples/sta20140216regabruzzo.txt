@@ -1,0 +1,366 @@
+Regionali Abruzzo
+Manifestazione organizzata da CR Abruzzo
+100 FA100 DO100 RA100 SL100 MI200 FA200 DO200 RA200 SL200 MI400 SL400 MI50 FA50 DO50 RA50 SL800 SL1500 SLStatistiche
+100 FA
+
+  1   MARIANI  GAETANO               M60  LECCOLIMPICA NUOTO         1'38"00
+  2   BERARDI  FABRIZIO              M45  SIMPLY SPORT               1'29"00
+  3   MENGONI  ALESSANDRO            M25  TEAM OSIMO NUOTO AS        1'20"00
+  4   PASSERI  MIRIAM                M40  SIMPLY SPORT               1'18"00
+  5   PUCCI  MARCO                   M30  FIRENZE NUOTA MASTE        1'09"00
+  6   CORTI  LORENZO                 U25  PROGETTO ACQUA PESC        1'06"00
+  7   IANNETTI  ENRICO               M35  CO.GE.SE. S.BENEDET        1'04"00
+  8   BOZZELLI  PIETRO               M35  M.SPORT SAN SALVO S        1'04"00
+Torna a inizio pagina
+100 DO
+
+  1   BACCARINI  LAURA               M40  SIMPLY SPORT               1'50"00
+  2   DI DONATO  PAOLA               M35  AS ACQUAZZURRA ATR         1'35"00
+  3   MARCONE  LUANA                 M30  AS ACQUAZZURRA ATR         1'35"00
+  4   PIUNTI  PAOLO                  M50  CO.GE.SE. S.BENEDET        1'28"00
+  5   D`AMARIO  KATIA                M40  SIMPLY SPORT               1'26"00
+  6   CORRADO  SIMONA                M25  ASD CLUB L`AQUILA N        1'09"00
+  7   QUATRACCIONI  VALERIO          U25  NUOTO GIULIANOVA AS        1'05"00
+Torna a inizio pagina
+100 RA
+
+  1   CORRADO  VIRGILIO              M60  ASD CLUB L`AQUILA N        1'58"00
+  2   MANCINI FABIO                  U25  ASD BLU SPORT FOSSACESIA   1'45"00
+  3   SMARGIASSI  GIUSEPPE           M45  S.FRANCESCO HISTONI        1'40"00
+  4   DI PAOLO  ELSA                 M30  SIMPLY SPORT               1'38"00
+  5   ALCINI  MARTINA                M30  AS ACQUAZZURRA ATR         1'35"00
+  6   VERNA  ANDREA                  U25  PROGETTO ACQUA PESC        1'25"00
+  7   MASTROGIUSEPPE  MATTEO         M35  PROGETTO ACQUA PESC        1'21"00
+  8   TREVISI  ALESSANDRO            M35  AS ACQUAZZURRA ATR         1'19"00
+  9   FLORINDI  ALESSANDRO           M40  AS ACQUAZZURRA ATR         1'17"00
+ 10   POSSANZINI  RENATO             M50  SIMPLY SPORT               1'14"00
+Torna a inizio pagina
+100 SL
+
+  1   FIGLIOLA  PIETRO ANTONIO       M60  EMMEDUE SSD                2'30"00
+  2   CHELAZZI  ANDREA               M65  S.FRANCESCO HISTONI        2'00"00
+  3   STEFANINI  ANNA                M70  SIMPLY SPORT               1'45"00
+  4   CACCESE  DOMENICO              M50  S.FRANCESCO HISTONI        1'42"00
+  5   GRIGUOLI  ENZO                 M40  S.FRANCESCO HISTONI        1'35"00
+  6   PARIS  LUIGI LORENZO           M50  PINGUINO NUOTO - AV        1'30"00
+  7   MARINO  PAOLO                  M55  S.FRANCESCO HISTONI        1'28"00
+  8   REDOLFI  ELENA                 M45  SIMPLY SPORT               1'25"00
+  9   DI FOGLIO  MICHELE             M45  S.FRANCESCO HISTONI        1'25"00
+ 10   DEL CASALE  ROSSELLA           M25  S.FRANCESCO HISTONI        1'25"00
+ 11   DI BARTOLOMEO  AZZURRA         M40  SIMPLY SPORT               1'24"00
+ 12   POMPEI  VINCENZO               M30  AS ACQUAZZURRA ATR         1'20"00
+ 13   PETTINARI  DANIELE             M25  NUOTO GIULIANOVA AS        1'20"00
+ 14   MIGNOGNA  ELENA                M25  EMMEDUE SSD                1'19"00
+ 15   STOPPATO  STEFANO              M50  PROGETTO ACQUA PESC        1'15"00
+ 16   ANTONIOLI  MAURIZIO            M45  PROGETTO ACQUA PESC        1'15"00
+ 17   MADDALONI  CARMINE             M30  EMMEDUE SSD                1'15"00
+ 18   DI CARLO  FABIO                M40  PROGETTO ACQUA PESC        1'14"00
+ 19   DE DONATIS  FRANCO             M55  SIMPLY SPORT               1'12"00
+ 20   MATTIOLI  CLAUDIO              M50  SIMPLY SPORT               1'12"00
+ 21   TANCIONI  CLAUDIO              M35  PINGUINO NUOTO - AV        1'10"00
+ 22   MISERI  MIRKO                  M30  PROGETTO ACQUA PESC        1'10"00
+ 23   TROIANO  ALFREDO               M45  PROGETTO ACQUA PESC        1'07"00
+ 24   DE NICOLA  PIERFRANCO          M45  ASD CLUB L`AQUILA N        1'06"00
+ 25   FRAGASSI  MATTIA               M25  PROGETTO ACQUA PESC        1'06"00
+ 26   ZECCA  SANDRO                  M50  ASD CLUB L`AQUILA N        1'04"00
+ 27   LACHI LAURA                    U25  PROGETTO ACQUA PESC        1'04"00
+ 28   SCHIONA  STEFANO               M45  SIMPLY SPORT               1'03"00
+ 29   CIANFRONE  ALESSANDRO          M40  SIMPLY SPORT               1'03"00
+ 30   NEVICONI ANDREA                U25  PROGETTO ACQUA PESC        1'01"00
+ 31   PANNELLI  DARIO                M30  AS ACQUAZZURRA ATR         1'00"00
+ 32   DI NICOLA  GREGORIO            M25  AS ACQUAZZURRA ATR         1'00"00
+Torna a inizio pagina
+100 MI
+
+  1   TERLIZZI  GIACINTO             M30  FRAMAROSSPORT SSD          1'55"00
+  2   SALVATORELLI  DOMENICO         M25  PROGETTO ACQUA PESC        1'45"00
+  3   MURGIA  MARIA PAOLA            M45  ZERO9 SSD                  1'41"00
+  4   RETICO  ALFREDO                M45  PINGUINO NUOTO - AV        1'35"00
+  5   DI LULLO  IRENE                M35  EMMEDUE SSD                1'35"00
+  6   DI GENOVA  BEATRICE            M35  ZERO9 SSD                  1'34"00
+  7   CARUSO  GIANLUCA               M40  ASD CLUB L`AQUILA N        1'30"00
+  8   D`ALESSANDRO  VINCENZO         M55  SIMPLY SPORT               1'27"00
+  9   ALLEVI  MARIA LUDOVICA         M55  NUOTOPIÙ ACADEMY AS        1'25"00
+ 10   GAUDINI  DANIELE               M40  AS ACQUAZZURRA ATR         1'25"00
+ 11   DEL RE  STEFANO                M30  ASD CLUB L`AQUILA N        1'25"00
+ 12   LOSCHI  MONICA                 M35  SIMPLY SPORT               1'20"00
+ 13   MAZZETTA  ANTONIO              M30  AS ACQUAZZURRA ATR         1'20"00
+ 14   MANIERO  ROBERTO               M30  AS ACQUAZZURRA ATR         1'20"00
+ 15   NUSCA FIORELLA                 M30  SIMPLY SPORT               1'20"00
+ 16   CENTONZE  GIADA                M25  SIMPLY SPORT               1'20"00
+ 17   IANNETTI  ANDREA               M40  SIMPLY SPORT               1'13"00
+ 18   DEL BARONE  ANDREA             M40  SIMPLY SPORT               1'12"00
+ 19   DE LUCA  MATTIA                U25  PROGETTO ACQUA PESC        1'05"00
+Torna a inizio pagina
+200 FA
+
+  1   COLETTI  ARNALDO               M65  AZZURRA RACE TEAM          3'50"00
+  2   VELARDI  EUGENIO               M60  C.C. ANIENE ASD            3'35"00
+  3   GALEAZZI  ALESSANDRO           M50  ZERO9 SSD                  3'10"00
+  4   DE VITO  STEFANO               M50  FORUM SPORT CENTER         2'30"00
+  5   TENDERINI  MARCO               M45  FLAMINIO SPORTING C        2'19"00
+Torna a inizio pagina
+200 DO
+
+  1   SCAGLIUSO  CATERINA KATIA      M45  NADIR SSD - PUTIGNA        4'30"00
+  2   DI GENOVA  BEATRICE            M35  ZERO9 SSD                  3'48"00
+  3   COLITTI  MICHELE               M50  EMMEDUE SSD                3'30"00
+  4   PRESENZA MARCELLO              M45  ASD BLU SPORT FOSSACESIA   3'30"00
+  5   IZZI  ALESSANDRO               M35  EMMEDUE SSD                3'03"00
+  6   LANZA  EMANUELA                M45  NUOTOPIÙ ACADEMY AS        3'00"00
+  7   GIARDINO  RAFFAELLO            M45  ASD CLUB L`AQUILA N        2'45"00
+  8   BOZZELLI  PIETRO               M35  M.SPORT SAN SALVO S        2'20"00
+Torna a inizio pagina
+200 RA
+
+  1   MURGIA  MARIA PAOLA            M45  ZERO9 SSD                  4'30"00
+  2   IACONO  MARCO                  M45  EMMEDUE SSD                3'45"00
+  3   GRILLO  ROBERTO                M50  ASD CLUB L`AQUILA N        3'25"00
+  4   DELLE VEDOVE  ROSSELLA         M40  SIMPLY SPORT               3'25"00
+  5   ALCINI  MARTINA                M30  AS ACQUAZZURRA ATR         3'20"00
+  6   MANCINI FABIO                  U25  ASD BLU SPORT FOSSACESIA   3'20"00
+  7   MASTROGIUSEPPE  MATTEO         M35  PROGETTO ACQUA PESC        3'10"00
+Torna a inizio pagina
+200 SL
+
+  1   CHELAZZI  ANDREA               M65  S.FRANCESCO HISTONI        4'00"00
+  2   SMARGIASSI  GIUSEPPE           M45  S.FRANCESCO HISTONI        3'40"00
+  3   DE LISIO  GIUSEPPE             M30  S.FRANCESCO HISTONI        3'40"00
+  4   CASTALDI GIUSEPPE              U25  ASD BLU SPORT FOSSACESIA   3'16"00
+  5   GIULIANO DANILO                U25  ASD BLU SPORT FOSSACESIA   3'15"00
+  6   PARIS  LUIGI LORENZO           M50  PINGUINO NUOTO - AV        3'00"00
+  7   CARDONE  VANNI                 U25  AS ACQUAZZURRA ATR         2'45"00
+  8   D`AURIZIO  CLAUDIA             M40  ASD CLUB L`AQUILA N        2'40"00
+  9   NATALE  LUCA                   M40  PROGETTO ACQUA PESC        2'38"00
+ 10   FERRI  ATTILIO                 M50  ASD CLUB L`AQUILA N        2'35"00
+ 11   TROIANO  ALFREDO               M45  PROGETTO ACQUA PESC        2'35"00
+ 12   SPINELLA  ELIO                 M45  ALTAIR VULCANIA NUO        2'31"00
+ 13   TARICONE  EUGENIO              M35  PROGETTO ACQUA PESC        2'30"00
+ 14   PASSERI  MIRIAM                M40  SIMPLY SPORT               2'28"00
+ 15   LUCA  ALFONSO ANGELO           M25  PINGUINO NUOTO - AV        1'58"00
+Torna a inizio pagina
+200 MI
+
+  1   LALLA  MARIANO                 M70  IL GABBIANO NAPOLI         4'35"00
+  2   MASTRIANI  LUIGI               M45  NANTES CLUB MASTER         3'40"00
+  3   VELARDI  EUGENIO               M60  C.C. ANIENE ASD            3'19"00
+  4   PICCININI  FRANCESCO           M50  FRAMAROSSPORT SSD          3'15"00
+  5   MANIERO  ROBERTO               M30  AS ACQUAZZURRA ATR         3'00"00
+  6   SARDANO  GIANFRANCO            U25  FRAMAROSSPORT SSD          2'50"00
+  7   DI NICOLA  GREGORIO            M25  AS ACQUAZZURRA ATR         2'45"00
+  8   SANTUCCI  MATTEO               M25  CENTRO NUOTO CEPAGA        2'45"00
+  9   DE VITO  STEFANO               M50  FORUM SPORT CENTER         2'31"00
+Torna a inizio pagina
+400 SL
+
+  1   MOSCHETTA  AGATA               M25  FRAMAROSSPORT SSD          8'00"00
+  2   COPPOLELLI ANTONELLO           M25  ASD BLU SPORT FOSSACESIA   6'30"00
+  3   DI GIACINTO  MONIA             M40  SIMPLY SPORT               6'05"00
+  4   LANZA  EMANUELA                M45  NUOTOPIÙ ACADEMY AS        5'45"00
+  5   LUCIOTTI  EMANUEL              M40  AZZURRA RACE TEAM          5'40"00
+  6   MECELLA ANDREA                 M45  SIMPLY SPORT               5'20"00
+  7   PIRAS  PAOLO                   M35  ZERO9 SSD                  5'20"00
+  8   PUCCI  MARCO                   M30  FIRENZE NUOTA MASTE        4'30"00
+Torna a inizio pagina
+400 MI
+
+  1   RANIERI  GAETANO               M50  CO.GE.SE. S.BENEDET        8'00"00
+  2   CARPI  MASSIMILIANO            M45  ROMA NUOTO MASTER A        6'55"00
+  3   DELLE VEDOVE  ROSSELLA         M40  SIMPLY SPORT               6'50"00
+  4   TENDERINI  MARCO               M45  FLAMINIO SPORTING C        4'49"00
+Torna a inizio pagina
+50 FA
+
+  1   TERLIZZI  GIACINTO             M30  FRAMAROSSPORT SSD          0'55"00
+  2   MOSCHETTA  AGATA               M25  FRAMAROSSPORT SSD          0'50"00
+  3   LALLA  MARIANO                 M70  IL GABBIANO NAPOLI         0'46"00
+  4   NASCI  ALBERTO                 M50  AS LARUS NUOTO             0'43"00
+  5   D`AMARIO  KATIA                M40  SIMPLY SPORT               0'38"00
+  6   STOPPATO  STEFANO              M50  PROGETTO ACQUA PESC        0'37"00
+  7   LOSCHI  MONICA                 M35  SIMPLY SPORT               0'36"00
+  8   MELCHIORRE  PAOLO              M30  PROGETTO ACQUA PESC        0'36"00
+  9   BERARDI  FABRIZIO              M45  SIMPLY SPORT               0'35"00
+ 10   SCASTIGLIA  MARCO              M40  PROGETTO ACQUA PESC        0'35"00
+ 11   DEL RE  STEFANO                M30  ASD CLUB L`AQUILA N        0'33"00
+ 12   MECELLA ANDREA                 M45  SIMPLY SPORT               0'32"00
+ 13   PESCI  ANDREA                  M45  CO.GE.SE. S.BENEDET        0'31"00
+ 14   BRACCIALARGHE  LORIS           M40  PROGETTO ACQUA PESC        0'30"00
+ 15   LECCISI  PIERGIUSEPPE          M30  S.FRANCESCO HISTONI        0'29"00
+ 16   IANNETTI  ENRICO               M35  CO.GE.SE. S.BENEDET        0'28"50
+ 17   CORTI  LORENZO                 U25  PROGETTO ACQUA PESC        0'28"50
+ 18   SABLONE  ANDREA                U25  PROGETTO ACQUA PESC        0'28"00
+Torna a inizio pagina
+50 DO
+
+  1   ARMELLANI  LUCA                M30  PROGETTO ACQUA PESC        0'44"00
+  2   COLITTI  MICHELE               M50  EMMEDUE SSD                0'42"00
+  3   POMPEI  VINCENZO               M30  AS ACQUAZZURRA ATR         0'40"00
+  4   PIUNTI  PAOLO                  M50  CO.GE.SE. S.BENEDET        0'39"00
+  5   PIRAS  PAOLO                   M35  ZERO9 SSD                  0'39"00
+  6   CENTONZE  GIADA                M25  SIMPLY SPORT               0'39"00
+  7   NUSCA FIORELLA                 M30  SIMPLY SPORT               0'38"00
+  8   MALIZIA  SIMONA                M25  NUOTO GIULIANOVA AS        0'36"60
+  9   GIARDINO  RAFFAELLO            M45  ASD CLUB L`AQUILA N        0'36"50
+ 10   ALFONSI  SARA                  M30  NUOTO S.EGIDIO V.VI        0'36"00
+ 11   AQUILANO  MATTIA               U25  PROGETTO ACQUA PESC        0'35"00
+ 12   REFERZA  PIETRO                M55  SIMPLY SPORT               0'34"00
+ 13   IANNETTI  ANDREA               M40  SIMPLY SPORT               0'34"00
+ 14   D`EMIDIO  FERNANDO             M25  NUOTO GIULIANOVA AS        0'32"00
+ 15   CORRADO  SIMONA                M25  ASD CLUB L`AQUILA N        0'32"00
+ 16   QUATRACCIONI  VALERIO          U25  NUOTO GIULIANOVA AS        0'30"00
+Torna a inizio pagina
+50 RA
+
+  1   STEFANINI  ANNA                M70  SIMPLY SPORT               1'00"00
+  2   CORRADO  VIRGILIO              M60  ASD CLUB L`AQUILA N        0'53"00
+  3   MIGNOGNA  ELENA                M25  EMMEDUE SSD                0'50"00
+  4   PETTINARI  DANIELE             M25  NUOTO GIULIANOVA AS        0'46"00
+  5   IACONO  MARCO                  M45  EMMEDUE SSD                0'45"00
+  6   MASTRIANI  LUIGI               M45  NANTES CLUB MASTER         0'45"00
+  7   DI BARTOLOMEO  AZZURRA         M40  SIMPLY SPORT               0'45"00
+  8   LA GIOIA  VITTORE              M35  PINGUINO NUOTO - AV        0'45"00
+  9   DI PAOLO  ELSA                 M30  SIMPLY SPORT               0'45"00
+ 10   LOMBARDI  MATTEO               M25  AS ACQUAZZURRA ATR         0'45"00
+ 11   D`AURIZIO  CLAUDIA             M40  ASD CLUB L`AQUILA N        0'43"00
+ 12   CARUSO  GIANLUCA               M40  ASD CLUB L`AQUILA N        0'43"00
+ 13   BERTON  TERENCE                M25  PROGETTO ACQUA PESC        0'41"00
+ 14   RANIERI  GAETANO               M50  CO.GE.SE. S.BENEDET        0'40"00
+ 15   RETICO  ALFREDO                M45  PINGUINO NUOTO - AV        0'40"00
+ 16   DE DONATIS  FRANCO             M55  SIMPLY SPORT               0'39"00
+ 17   SCASTIGLIA  MARCO              M40  PROGETTO ACQUA PESC        0'39"00
+ 18   MAZZETTA  ANTONIO              M30  AS ACQUAZZURRA ATR         0'38"00
+ 19   GALLIANI  DANIELE              M30  PINGUINO NUOTO - AV        0'38"00
+ 20   SARDANO  GIANFRANCO            U25  FRAMAROSSPORT SSD          0'38"00
+ 21   PESCI  ANDREA                  M45  CO.GE.SE. S.BENEDET        0'37"50
+ 22   DE NICOLA  PIERFRANCO          M45  ASD CLUB L`AQUILA N        0'35"00
+ 23   POSSANZINI  RENATO             M50  SIMPLY SPORT               0'33"20
+ 24   CAMPITELLI  MARCO              M30  RARI NANTES TERAMO         0'33"00
+Torna a inizio pagina
+50 SL
+
+  1   FIGLIOLA  PIETRO ANTONIO       M60  EMMEDUE SSD                1'10"00
+  2   CACCESE  DOMENICO              M50  S.FRANCESCO HISTONI        0'44"00
+  3   GRIGUOLI  ENZO                 M40  S.FRANCESCO HISTONI        0'40"00
+  4   MARINO  PAOLO                  M55  S.FRANCESCO HISTONI        0'38"00
+  5   MERCANTE  ROBERTO              M40  RARI NANTES TERAMO         0'38"00
+  6   DI GIACINTO  MONIA             M40  SIMPLY SPORT               0'38"00
+  7   NUCCIOTTI  LIVIANO             M35  RARI NANTES TERAMO         0'38"00
+  8   DE LISIO  GIUSEPPE             M30  S.FRANCESCO HISTONI        0'38"00
+  9   DI GENNARO  MICHELA            M25  NUOTO GIULIANOVA AS        0'38"00
+ 10   DI FOGLIO  MICHELE             M45  S.FRANCESCO HISTONI        0'37"00
+ 11   BORSA  STEFANO FRANCESCO       M35  RARI NANTES TERAMO         0'37"00
+ 12   REDOLFI  ELENA                 M45  SIMPLY SPORT               0'36"00
+ 13   DI LULLO  IRENE                M35  EMMEDUE SSD                0'36"00
+ 14   PRESENZA MARCELLO              M45  ASD BLU SPORT FOSSACESIA   0'35"80
+ 15   GIULIANO DANILO                U25  ASD BLU SPORT FOSSACESIA   0'35"00
+ 16   D`ALESSANDRO  VINCENZO         M55  SIMPLY SPORT               0'34"00
+ 17   ALLEVI  MARIA LUDOVICA         M55  NUOTOPIÙ ACADEMY AS        0'34"00
+ 18   DI CARLO  FABIO                M40  PROGETTO ACQUA PESC        0'34"00
+ 19   LA GIOIA  VITTORE              M35  PINGUINO NUOTO - AV        0'34"00
+ 20   MADDALONI  CARMINE             M30  EMMEDUE SSD                0'34"00
+ 21   LOMBARDI  MATTEO               M25  AS ACQUAZZURRA ATR         0'34"00
+ 22   DEL CASALE  ROSSELLA           M25  S.FRANCESCO HISTONI        0'34"00
+ 23   CASTALDI GIUSEPPE              U25  ASD BLU SPORT FOSSACESIA   0'34"00
+ 24   MALIZIA  SIMONA                M25  NUOTO GIULIANOVA AS        0'33"80
+ 25   MELCHIORRE  PAOLO              M30  PROGETTO ACQUA PESC        0'33"70
+ 26   ARMELLANI  LUCA                M30  PROGETTO ACQUA PESC        0'33"70
+ 27   SALVATORELLI  DOMENICO         M25  PROGETTO ACQUA PESC        0'33"70
+ 28   BERTON  TERENCE                M25  PROGETTO ACQUA PESC        0'33"70
+ 29   FRAGASSI  MATTIA               M25  PROGETTO ACQUA PESC        0'33"70
+ 30   VERNA  ANDREA                  U25  PROGETTO ACQUA PESC        0'33"70
+ 31   AQUILANO  MATTIA               U25  PROGETTO ACQUA PESC        0'33"70
+ 32   ANTONIOLI  MAURIZIO            M45  PROGETTO ACQUA PESC        0'33"50
+ 33   AQUILANI  MARCO                M30  RARI NANTES TERAMO         0'33"50
+ 34   FERRI  ATTILIO                 M50  ASD CLUB L`AQUILA N        0'33"00
+ 35   MATTIOLI  CLAUDIO              M50  SIMPLY SPORT               0'33"00
+ 36   GALEAZZI  ALESSANDRO           M50  ZERO9 SSD                  0'32"50
+ 37   DI FRANCESCO  PAOLO            M45  RARI NANTES TERAMO         0'32"50
+ 38   CARDONE  VANNI                 U25  AS ACQUAZZURRA ATR         0'32"00
+ 39   REFERZA  PIETRO                M55  SIMPLY SPORT               0'31"00
+ 40   FALA`  SIMONE                  M25  NUOTO GIULIANOVA AS        0'31"00
+ 41   GUERRINI  FRANCESCO MARIA      M25  NUOTO GIULIANOVA AS        0'31"00
+ 42   DI SANZA  DARIO                M30  RARI NANTES TERAMO         0'30"50
+ 43   ALFONSI  SARA                  M30  NUOTO S.EGIDIO V.VI        0'30"00
+ 44   MISERI  MIRKO                  M30  PROGETTO ACQUA PESC        0'30"00
+ 45   GALLIANI  DANIELE              M30  PINGUINO NUOTO - AV        0'30"00
+ 46   SCUCCIMARRA  DONATO            M30  RARI NANTES TERAMO         0'30"00
+ 47   IZZI  ALESSANDRO               M35  EMMEDUE SSD                0'29"50
+ 48   PRIMOLI  LUCA                  M30  RARI NANTES TERAMO         0'29"50
+ 49   LACHI LAURA                    U25  PROGETTO ACQUA PESC        0'28"40
+ 50   ZECCA  SANDRO                  M50  ASD CLUB L`AQUILA N        0'28"00
+ 51   TANCIONI  CLAUDIO              M35  PINGUINO NUOTO - AV        0'28"00
+ 52   LECCISI  PIERGIUSEPPE          M30  S.FRANCESCO HISTONI        0'28"00
+ 53   SCHIONA  STEFANO               M45  SIMPLY SPORT               0'27"50
+ 54   BRACCIALARGHE  LORIS           M40  PROGETTO ACQUA PESC        0'27"50
+ 55   PANNELLI  DARIO                M30  AS ACQUAZZURRA ATR         0'27"00
+ 56   CAMPITELLI  MARCO              M30  RARI NANTES TERAMO         0'27"00
+ 57   D`EMIDIO  FERNANDO             M25  NUOTO GIULIANOVA AS        0'27"00
+ 58   SABLONE  ANDREA                U25  PROGETTO ACQUA PESC        0'27"00
+ 59   DE LUCA  MATTIA                U25  PROGETTO ACQUA PESC        0'25"50
+Torna a inizio pagina
+800 SL
+
+  1   TREGGIARI  GABRIELLA           M65  G.S. VV. F.  F. SOR       20'33"00
+  2   NASCI  ALBERTO                 M50  AS LARUS NUOTO            14'50"00
+  3   BACCARINI  LAURA               M40  SIMPLY SPORT              14'00"00
+  4   DI DONATO  PAOLA               M35  AS ACQUAZZURRA ATR        14'00"00
+  5   MARCONE  LUANA                 M30  AS ACQUAZZURRA ATR        14'00"00
+  6   CARPI  MASSIMILIANO            M45  ROMA NUOTO MASTER A       13'00"00
+  7   NATALE  LUCA                   M40  PROGETTO ACQUA PESC       12'20"00
+  8   GAUDINI  DANIELE               M40  AS ACQUAZZURRA ATR        12'00"00
+  9   LUCIOTTI  EMANUEL              M40  AZZURRA RACE TEAM         12'00"00
+ 10   TARICONE  EUGENIO              M35  PROGETTO ACQUA PESC       11'30"00
+ 11   MENGONI  ALESSANDRO            M25  TEAM OSIMO NUOTO AS       11'30"00
+ 12   CIANFRONE  ALESSANDRO          M40  SIMPLY SPORT              10'45"00
+ 13   NEVICONI ANDREA                U25  PROGETTO ACQUA PESC       10'00"00
+ 14   LUCA  ALFONSO ANGELO           M25  PINGUINO NUOTO - AV        9'08"00
+Torna a inizio pagina
+1500 SL
+
+  1   SCAGLIUSO  CATERINA KATIA      M45  NADIR SSD - PUTIGNA       34'00"00
+  2   MARIANI  GAETANO               M60  LECCOLIMPICA NUOTO        29'20"00
+  3   GIORGI  GIORGIO                M45  ADRIAKOS NM SENIGAL       28'30"00
+  4   COLETTI  ARNALDO               M65  AZZURRA RACE TEAM         25'10"00
+  5   PICCININI  FRANCESCO           M50  FRAMAROSSPORT SSD         25'00"00
+  6   SPINELLA  ELIO                 M45  ALTAIR VULCANIA NUO       22'30"00
+  7   FLORINDI  ALESSANDRO           M40  AS ACQUAZZURRA ATR        21'00"00
+  8   TREVISI  ALESSANDRO            M35  AS ACQUAZZURRA ATR        21'00"00
+  9   DEL BARONE  ANDREA             M40  SIMPLY SPORT              19'30"00
+Statistiche
+
+                                                        Femmine    Maschi    Totale
+
+              1      ASD CLUB L`AQUILA N                    2         8        10
+              2      PINGUINO NUOTO - AV                    0         6         6
+              3      NUOTO S.EGIDIO V.VI                    1         0         1
+              4      NUOTO GIULIANOVA AS                    2         5         7
+              5      RARI NANTES TERAMO                     0         9         9
+              6      AS ACQUAZZURRA ATR                     3        10        13
+              7      SIMPLY SPORT                          12        11        23
+              8      CENTRO NUOTO CEPAGA                    0         1         1
+              9      PROGETTO ACQUA PESC                    1        21        22
+             10      M.SPORT SAN SALVO S                    0         1         1
+             11      S.FRANCESCO HISTONI                    1         8         9
+             12      ASD BLU SPORT FOSSACESIA               0         5         5
+             13      NANTES CLUB MASTER                     0         1         1
+             14      IL GABBIANO NAPOLI                     0         1         1
+             15      C.C. ANIENE ASD                        0         1         1
+             16      FORUM SPORT CENTER                     0         1         1
+             17      AS LARUS NUOTO                         0         1         1
+             18      FLAMINIO SPORTING C                    0         1         1
+             19      G.S. VV. F.  F. SOR                    1         0         1
+             20      ZERO9 SSD                              2         2         4
+             21      ROMA NUOTO MASTER A                    0         1         1
+             22      LECCOLIMPICA NUOTO                     0         1         1
+             23      ADRIAKOS NM SENIGAL                    0         1         1
+             24      CO.GE.SE. S.BENEDET                    0         4         4
+             25      TEAM OSIMO NUOTO AS                    0         1         1
+             26      EMMEDUE SSD                            2         5         7
+             27      FRAMAROSSPORT SSD                      1         3         4
+             28      NADIR SSD - PUTIGNA                    1         0         1
+             29      ALTAIR VULCANIA NUO                    0         1         1
+             30      NUOTOPIÙ ACADEMY AS                    2         0         2
+             31      FIRENZE NUOTA MASTE                    0         1         1
+             32      AZZURRA RACE TEAM                      0         2         2
+
+                                                           31       113       144
