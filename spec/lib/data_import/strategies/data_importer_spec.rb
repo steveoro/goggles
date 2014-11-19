@@ -273,7 +273,7 @@ describe DataImporter, type: :strategy do
       # Let's create a shared "subject" instance variable with a session
       # associated:
       before( :all ) do
-        file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+        file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-fake.txt')
         @phase_1_session = create(
           :data_import_session,
           file_name: file_name,
@@ -320,24 +320,24 @@ describe DataImporter, type: :strategy do
           end
 
           it "has 36 [:parse_result][:category_header] items" do
-            expect( @phase_1_subject.result_hash[:parse_result][:category_header].size ).to eq( 36 )
+            expect( @phase_1_subject.result_hash[:parse_result][:category_header].size ).to eq( 6 )
           end
           it "has 222 [:parse_result][:result_row] items" do
-            expect( @phase_1_subject.result_hash[:parse_result][:result_row].size ).to eq( 222 )
+            expect( @phase_1_subject.result_hash[:parse_result][:result_row].size ).to eq( 30 )
           end
 
           it "has 5 [:parse_result][:relay_header] items" do
-            expect( @phase_1_subject.result_hash[:parse_result][:relay_header].size ).to eq( 5 )
+            expect( @phase_1_subject.result_hash[:parse_result][:relay_header].size ).to eq( 4 )
           end
           it "has 18 [:parse_result][:relay_row] items" do
-            expect( @phase_1_subject.result_hash[:parse_result][:relay_row].size ).to eq( 18 )
+            expect( @phase_1_subject.result_hash[:parse_result][:relay_row].size ).to eq( 16 )
           end
 
           it "has 1 [:parse_result][:team_ranking] item" do
             expect( @phase_1_subject.result_hash[:parse_result][:team_ranking].size ).to eq( 1 )
           end
           it "has 45 [:parse_result][:ranking_row] items" do
-            expect( @phase_1_subject.result_hash[:parse_result][:ranking_row].size ).to eq( 45 )
+            expect( @phase_1_subject.result_hash[:parse_result][:ranking_row].size ).to eq( 11 )
           end
 
           it "has 1 [:parse_result][:stats] item" do
@@ -363,7 +363,7 @@ describe DataImporter, type: :strategy do
     describe "#phase_1_2_serialize" do
       context "when invoked not in the right sequence" do
         before( :all ) do
-          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-fake.txt')
           @phase_1_session = create(
             :data_import_session,
             file_name: file_name,
@@ -391,7 +391,7 @@ describe DataImporter, type: :strategy do
 
       context "after a successful completion, w/ force meeting & team creation DISABLED (Team-Analysis required)," do
         before( :all ) do
-          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-fake.txt')
           @phase_1_session = create(
             :data_import_session,
             file_name: file_name,
@@ -425,16 +425,8 @@ describe DataImporter, type: :strategy do
         end
         it "stores the temporary results of the team analysis, waiting for confirmation" do
           current_analysis_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
-          # [20141028] Currently there should be "only" 41 (of a total of 45) unknown
-          # Team names in the test DB but. since this is bound to change in the future,
-          # we can only safely assume that the analysis count will be absolutely
-          # lesser than 45 and greater than 0.
-          #
-          # (If, in the future, all teams for this result file will be inserted and
-          # added to the DB seeds used for the tests, several of these examples may
-          # fail, since the assumption is that a phase-1.1 is needed anyway.)
-          expect( current_analysis_count ).to be > @analysis_before_count
-          expect( current_analysis_count - @analysis_before_count ).to be < 45
+          # [20141119] There are 12 different, unknown/new teams in fixture file 'ris20131110bologna-fake.txt'
+          expect( current_analysis_count ).to eq( 12 )
         end
       end
       #-- ---------------------------------------------------------------------
@@ -442,7 +434,7 @@ describe DataImporter, type: :strategy do
 
       context "after successful completion, w/ FORCE meeting & team creation ENABLED," do
         before(:all) do
-          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-fake.txt')
           @phase_1_session = create(
             :data_import_session,
             file_name: file_name,
@@ -521,7 +513,7 @@ describe DataImporter, type: :strategy do
     describe "#phase_3_commit" do
       context "when invoked not in the right sequence" do
         before( :all ) do
-          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-sample.txt')
+          file_name = File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-fake.txt')
           @phase_1_session = create(
             :data_import_session,
             file_name: file_name,

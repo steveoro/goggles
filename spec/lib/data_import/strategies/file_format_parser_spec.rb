@@ -13,6 +13,7 @@ describe FileFormatParser, type: :strategy do
 
   context "with a FIN(1) result file type," do
     [
+      File.join(Rails.root, 'test/fixtures/samples/ris20131110bologna-fake.txt'),
       File.join(Rails.root, 'test/fixtures/samples/fixture1-ris20120414molinella-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/fixture2-ris20111203riccione-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/fixture3-ris20120114ravenna-sample.txt'),

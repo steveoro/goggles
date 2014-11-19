@@ -13,7 +13,7 @@ require 'data_import/fin2_result_defs'
 
 = FileFormatParser
 
-  - Goggles framework vers.:  4.00.627
+  - Goggles framework vers.:  4.00.629
   - author: Steve A.
 
  Strategy class dedicated to detect which format a data-import text file
@@ -30,7 +30,6 @@ class FileFormatParser
   FIN1_RESULT_TYPEDEF = ContextTypeDef.new(
     :fin_result,
     [
-      /^\s*(50|100|200|400|800|1500|Staff|MiStaff)\s?(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN)/i,
       /^\s*|\r\n|\n|$|\Z/i,
       /(50\s|100\s|200\s|400\s|800\s|1500\s) *(stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN).*(maschi|femmi)/i,
       /^-{80}/,
