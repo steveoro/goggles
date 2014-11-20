@@ -103,6 +103,7 @@ it:
     manifest_tooltip: "Vai alla pagina con la locandina di questo Meeting"
     invitation: "Locandina"
     start_list: "Start-list"
+    start_list_by_category: "Start-list per categoria!"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"

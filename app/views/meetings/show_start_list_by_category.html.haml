@@ -1,4 +1,4 @@
-- cache( cache_key_for_meeting( 'show_start_list', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
+- cache( cache_key_for_meeting( 'show_start_list_by_category', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
   = render( partial: 'tabs_and_radio_title' )
 
   .row
@@ -10,5 +10,5 @@
           %a(href="\##{me.event_type.code}")= me.event_type.i18n_description
 
   = render( partial: 'meeting_header' )
-  = render( partial: 'start_list_grid' )
+  = render( partial: 'start_list_category_grid' )
 

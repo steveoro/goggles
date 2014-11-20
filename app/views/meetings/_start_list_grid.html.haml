@@ -13,5 +13,4 @@
               - is_highlighted = (@team && @team.id.to_i == entry.team_id) || (@swimmer && @swimmer.id.to_i == entry.swimmer_id)
               = render( partial: 'show_entry', locals: { entry: entry, is_highlighted: is_highlighted } )
 
-.row-fluid
-  .span12
+  .row-fluid.goggles-category-gap
