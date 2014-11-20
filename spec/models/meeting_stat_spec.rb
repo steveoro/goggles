@@ -162,7 +162,7 @@ describe MeetingStat, :type => :model do
       end
     end
     it "returns a list sorted by standard points descending" do
-      current_item_score = subject.best_standard_female_scores.first.standard_points if subject.best_standard_female_scores.first 
+      current_item_score = subject.best_standard_female_scores.first.standard_points if subject.best_standard_female_scores.first
       subject.best_standard_female_scores.each do |item|
         expect(item.standard_points).to be <= current_item_score
         current_item_score = item.standard_points
@@ -196,7 +196,7 @@ describe MeetingStat, :type => :model do
       end
     end
     it "returns a list sorted by standard points" do
-      current_item_score = subject.worst_standard_female_scores.first.standard_points if subject.worst_standard_female_scores.first 
+      current_item_score = subject.worst_standard_female_scores.first.standard_points if subject.worst_standard_female_scores.first
       subject.worst_standard_female_scores.each do |item|
         expect(item.standard_points).to be >= current_item_score
         current_item_score = item.standard_points

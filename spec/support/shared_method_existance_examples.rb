@@ -157,7 +157,7 @@ shared_examples_for "(the existance of a method returning numeric values)" do |m
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
     it "##{method_name} returns a numeric value" do
-      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Integer )
+      expect( subject.send(method_name.to_sym) ).to be_a_kind_of( Numeric ).or be_a_kind_of( BigDecimal )
     end
   end
 end
@@ -166,7 +166,7 @@ shared_examples_for "(the existance of a method with parameters, returning numer
   it_behaves_like "(the existance of a method)", method_name_array
   method_name_array.each do |method_name|
     it "##{method_name} returns a numeric value" do
-      expect( subject.send(method_name.to_sym, parameter) ).to be_a_kind_of( Integer )
+      expect( subject.send(method_name.to_sym, parameter) ).to be_a_kind_of( Numeric ).or be_a_kind_of( BigDecimal )
     end
   end
 end
