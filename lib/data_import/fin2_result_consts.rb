@@ -205,7 +205,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_meeting_header_title
     TokenExtractor.new(
       :title,
-      /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Tr|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
+      /\-?\s*(Distanze speciali|Campionat|((\d{1,3}|[IXVMCDL]{1,6})([°^�]|\.o)?\s?(Tr|Meeting|Region)?))/i,
       /$/i,
       4                                             # line_timeout
     )

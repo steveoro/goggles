@@ -1,63 +1,18 @@
 # encoding: utf-8
 require 'spec_helper'
 
-#require 'framework/console_logger'
-#require 'data_import/services/context_detector'
-#require 'data_import/fin_result_consts'
+require_relative './context_detector_checks_for_parsing'
 
 
 describe ContextDetector, type: :integration do
-
-  # Checks if the specified feed is successfully recognized after all rows have
-  # been checked.
-  #
-  # === Params:
-  #
-  # - after_n_feeds:
-  #   counter for the total number of conditions to be checked before the result
-  #   is assumed to be +true+.
-  #
-  # - feed_array:
-  #   list of all the text lines to be parsed in order.
-  #
-  # - prev_context_name:
-  #   name of the previously recognized contex. Defaults to +nil+.
-  #
-  def check_for_parsing_ok( after_n_feeds, feed_array, prev_context_name = nil )
-    subject.clear
-    feed_array[ 0 .. feed_array.size-2 ].each_with_index do | feed_line, line_idx |
-      expect( subject.feed_and_detect( feed_line, line_idx, prev_context_name ) ).to be false
-    end if after_n_feeds > 1
-    expect( subject.feed_and_detect( feed_array.last, feed_array.size-1, prev_context_name ) ).to be true
-  end
-
-  # Checks if the specified feed fails to be recognized after all rows have
-  # been checked.
-  #
-  # === Params:
-  #
-  # - feed_array:
-  #   list of all the text lines to be parsed in order.
-  #
-  # - fake_offset_index:
-  #   (fake) offset index for the current parsing. Defaults to 0.
-  #
-  # - prev_context_name:
-  #   name of the previously recognized contex. Defaults to +nil+.
-  #
-  def check_for_parsing_fail( feed_array, fake_offset_index = 0, prev_context_name = nil )
-    subject.clear
-    feed_array[ 0 .. feed_array.size-1 ].each_with_index do | feed_line, line_idx |
-      expect( subject.feed_and_detect( feed_line, fake_offset_index + line_idx, prev_context_name ) ).to be false
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
+  include ContextDetectorChecksForParsing
 
   let( :dummy_wrapper ) do
     class DummyWrapper; include FinResultConsts; end
     DummyWrapper.new
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   context "when parsing MEETING_HEADER," do
@@ -71,7 +26,7 @@ describe ContextDetector, type: :integration do
         "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      ",
         "                              Molinella - 15/16/17 Febbraio 2009                               "
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN Distanze speciali' format" do
@@ -80,7 +35,7 @@ describe ContextDetector, type: :integration do
         "                Manifestazione organizzata da San Marino Nuoto - Molinellanuoto                ",
         "                                 San Marino - 4 Novembre 2007                                  "
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ roman numerals at line 0' format" do
@@ -89,7 +44,7 @@ describe ContextDetector, type: :integration do
         "                         Manifestazione organizzata da ASD Nuovo Nuoto                         ",
         "                                    Bologna - 30 Marzo 2008                                    "
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ roman numerals at line 1' format" do
@@ -98,7 +53,7 @@ describe ContextDetector, type: :integration do
         "                                    VIII Trofeo Nuovo Nuoto                                    ",
         "                         Manifestazione organizzata da ASD Nuovo Nuoto                         "
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ title on top and bottom date' format (sample #1)" do
@@ -107,7 +62,7 @@ describe ContextDetector, type: :integration do
         "                        Manifestazione organizzata da POL. COM. RICCIONE                       ",
         "                                  RICCIONE - 3/4 Dicembre 2011                                 "
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ title on top and bottom date' format (sample #2)" do
@@ -116,7 +71,7 @@ describe ContextDetector, type: :integration do
           "                    Manifestazione organizzata da Rinascita Team Romagna asd                   ",
           "                                  Ravenna - 14/15 Gennaio 2012                                 "
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/o date but w/ title on line 0' format" do
@@ -125,7 +80,7 @@ describe ContextDetector, type: :integration do
         "Manifestazione organizzata da AICS Master - BS",
         ""
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ date on top and title on line 2' format" do
@@ -134,7 +89,7 @@ describe ContextDetector, type: :integration do
         "10° Trofeo De Akker Team ASI",
         "Manifestazione organizzata da De Akker"
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ a dual date on top and title on line 2' format (sample #1)" do
@@ -143,7 +98,7 @@ describe ContextDetector, type: :integration do
         "12° Trofeo Città  di Molinella",
         "Manifestazione organizzata da Molinellanuoto"
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ a dual date on top and title on line 2' format (sample #1)" do
@@ -152,7 +107,7 @@ describe ContextDetector, type: :integration do
         "17° Trof AICS città di Gussago",
         "Manifestazione organizzata da AICS Master - BS"
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ a dual date on top and title on line 2' format (sample #1)" do
@@ -161,7 +116,7 @@ describe ContextDetector, type: :integration do
         "Regionali Emilia",
         "Manifestazione organizzata da CR Emilia"
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ a dual date on top and title on line 2' format (sample #1)" do
@@ -170,7 +125,7 @@ describe ContextDetector, type: :integration do
         "28° Brixia Fidelis",
         "Manifestazione organizzata da NC Brescia"
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN meeting header w/ a dual date on top and title on line 2' format (sample #1)" do
@@ -179,7 +134,7 @@ describe ContextDetector, type: :integration do
         "1� Trofeo Coopernuoto",
         "Manifestazione organizzata da Coopernuoto Scsd"
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -223,7 +178,7 @@ describe ContextDetector, type: :integration do
         "        50 stile libero  maschile   -  Categoria  Master 45       Tempo Base   :  0'24\"09",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/ base time' format (sample #2)" do
@@ -232,7 +187,7 @@ describe ContextDetector, type: :integration do
         "        200 farfalla  femminile  -  Categoria  Master 25          Tempo Base   :  2'20\"95",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/ base time' format (sample #3)" do
@@ -241,7 +196,7 @@ describe ContextDetector, type: :integration do
         "        200 dorso  maschile   -  Categoria  Master 35             Tempo Base   :  2'06\"28",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/ base time' format (sample #4)" do
@@ -250,7 +205,7 @@ describe ContextDetector, type: :integration do
         "        1500 stile libero  femminile  -  Categoria  Master 45     Tempo Base   : 18'34\"18",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/ base time' format (sample #5)" do
@@ -259,7 +214,7 @@ describe ContextDetector, type: :integration do
         "        100 misti  femminile  -  Categoria  Master 40             Tempo Base   :  1'07\"68",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/ base time' format (sample #6)" do
@@ -268,7 +223,7 @@ describe ContextDetector, type: :integration do
         "        50 farfalla  maschile   -  Categoria  Master 55           Tempo Base   :  0'27\"75",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/o base time' format (sample #1)" do
@@ -277,7 +232,7 @@ describe ContextDetector, type: :integration do
         "        50 farfalla  femminile  -  Categoria  Under 25             ",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN category w/o base time' format (sample #2)" do
@@ -286,7 +241,7 @@ describe ContextDetector, type: :integration do
         "        50 rana  femminile  -  Categoria  Under 25                 ",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -344,7 +299,7 @@ describe ContextDetector, type: :integration do
         "        mistaffetta 4x50 stile libero  -  Categoria M100-119      Tempo Base   :  1'42\"99",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #2)" do
@@ -353,7 +308,7 @@ describe ContextDetector, type: :integration do
         "        mistaffetta 4x100 stile libero -  Categoria M120-159      Tempo Base   :  1'43\"07",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #3)" do
@@ -362,7 +317,7 @@ describe ContextDetector, type: :integration do
         "        mistaffetta 4x200 stile libero -  Categoria M160-199      Tempo Base   :  1'44\"97",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #4)" do
@@ -371,7 +326,7 @@ describe ContextDetector, type: :integration do
         "        mistaffetta 4x50 mista  -  Categoria M160-199             Tempo Base   :  1'57\"26",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #5)" do
@@ -380,7 +335,7 @@ describe ContextDetector, type: :integration do
         "        mistaffetta 4x50 stile libero  -  Categoria M240-279      Tempo Base   :  2'02\"17",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN relay w/ base time' format (sample #1)" do
@@ -389,7 +344,7 @@ describe ContextDetector, type: :integration do
         "        staffetta 4x50 mista  Maschile   -  Categoria M100-119    Tempo Base   :  1'49\"09",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN relay w/ base time' format (sample #2)" do
@@ -398,7 +353,7 @@ describe ContextDetector, type: :integration do
         "        staffetta 4x50 mista  Femminile  -  Categoria M160-199    Tempo Base   :  2'09\"12",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN relay w/ base time' format (sample #3)" do
@@ -407,7 +362,7 @@ describe ContextDetector, type: :integration do
         "        staffetta 4x50 stile libero  Maschile   -  Categoria M160-199Tempo Base   :  1'39\"09",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN relay w/ base time' format (sample #4)" do
@@ -416,7 +371,7 @@ describe ContextDetector, type: :integration do
         "        staffetta 4x50 stile libero  Femminile  -  Categoria M200-239Tempo Base   :  2'04\"15",
         '----------------------------------------------------------------------------------------------'
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -500,7 +455,7 @@ describe ContextDetector, type: :integration do
         "                                  Classifica Società                                 ",
         ''
       ]
-      check_for_parsing_ok( 2, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN team-ranking' format (sample #2)" do
@@ -508,7 +463,7 @@ describe ContextDetector, type: :integration do
         "                                  Classifica Societ�                                 ",
         ''
       ]
-      check_for_parsing_ok( 2, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN team-ranking' format (sample #3)" do
@@ -516,7 +471,7 @@ describe ContextDetector, type: :integration do
         "                                  Classifica Soc.",
         ''
       ]
-      check_for_parsing_ok( 2, feed )
+      check_for_parsing_ok( feed )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -533,7 +488,7 @@ describe ContextDetector, type: :integration do
         "                                Statistiche                                ",
         ''
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
 
     it "recognizes the 'FIN stats' format (sample #2)" do
@@ -541,7 +496,7 @@ describe ContextDetector, type: :integration do
         "Statistiche",
         ''
       ]
-      check_for_parsing_ok( 3, feed )
+      check_for_parsing_ok( feed )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -555,35 +510,35 @@ describe ContextDetector, type: :integration do
       feed = [
         "       1   SBIRULONI  FERRUCCIA           1982   N ALBINETANI                5'28\"30  0,00"
       ]
-      check_for_parsing_ok( 1, feed, :category_header )
+      check_for_parsing_ok( feed, :category_header )
     end
 
     it "recognizes the 'FIN result-row' format #1 (sample #2)" do
       feed = [
         "       2   MARAMOCCHI  FIORENZA           1972   N REGGIANI                  4'28\"30  0,00"
       ]
-      check_for_parsing_ok( 1, feed, :category_header )
+      check_for_parsing_ok( feed, :category_header )
     end
 
     it "recognizes the 'FIN result-row' format #2 (sample #1)" do
       feed = [
         "  3 EMI-012345 1978 BIANCHI  FILIPPA              NUOTO SUPER SPLASH          1'30\"60  828,15"
       ]
-      check_for_parsing_ok( 1, feed, :category_header )
+      check_for_parsing_ok( feed, :category_header )
     end
 
     it "recognizes the 'FIN result-row' format #2 (sample #2)" do
       feed = [
         "  4 EMI-012345 1978 ROSSI  MARIA LUIGIA           NUOTO SUPER SPLASH         Squalif.   828,15"
       ]
-      check_for_parsing_ok( 1, feed, :category_header )
+      check_for_parsing_ok( feed, :category_header )
     end
 
     it "recognizes the 'FIN result-row' format #2 (sample #3)" do
       feed = [
         "    EMI-012345 1983 MEGAFAKE JAMIE                OH-MY OH-MY                Ritirato    0,00"
       ]
-      check_for_parsing_ok( 1, feed, :category_header )
+      check_for_parsing_ok( feed, :category_header )
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -634,42 +589,42 @@ describe ContextDetector, type: :integration do
       feed = [
         "                        REGGIO NUOTO                       Squalif."
       ]
-      check_for_parsing_ok( 1, feed, :relay_header )
+      check_for_parsing_ok( feed, :relay_header )
     end
 
     it "recognizes the 'FIN relay-row' format #1 (sample #2)" do
       feed = [
         "         Fuori gara     ROMA A BAGNO                        1'51\"50  855,34"
       ]
-      check_for_parsing_ok( 1, feed, :relay_header )
+      check_for_parsing_ok( feed, :relay_header )
     end
 
     it "recognizes the 'FIN relay-row' format #1 (sample #3)" do
       feed = [
         "         Fuori gara     SPORTING CLUB ARBIZ                Squalif."
       ]
-      check_for_parsing_ok( 1, feed, :relay_header )
+      check_for_parsing_ok( feed, :relay_header )
     end
 
     it "recognizes the 'FIN relay-row' format #1 (sample #4)" do
       feed = [
         "                        CSI NUOTO OBER FERR                Ritir."
       ]
-      check_for_parsing_ok( 1, feed, :relay_header )
+      check_for_parsing_ok( feed, :relay_header )
     end
 
     it "recognizes the 'FIN relay-row' format #1 (sample #5)" do
       feed = [
         "                  4     MEROLANUOTO S.R.L.                  2'14\"12  874,29"
       ]
-      check_for_parsing_ok( 1, feed, :relay_header )
+      check_for_parsing_ok( feed, :relay_header )
     end
 
     it "recognizes the 'FIN relay-row' format #1 (sample #6)" do
       feed = [
         "         Fuori gara     CSI OBER MASTER NUOTO               2'18\"35  744,99"
       ]
-      check_for_parsing_ok( 1, feed, :relay_header )
+      check_for_parsing_ok( feed, :relay_header )
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -706,14 +661,14 @@ describe ContextDetector, type: :integration do
       feed = [
         "            1      N REGGIANI                        66495,23"
       ]
-      check_for_parsing_ok( 1, feed, :team_ranking )
+      check_for_parsing_ok( feed, :team_ranking )
     end
 
     it "recognizes the 'FIN ranking-row' format #1 (sample #2)" do
       feed = [
         "                   CSI NUOTO OBER FERR                   0,00"
       ]
-      check_for_parsing_ok( 1, feed, :team_ranking )
+      check_for_parsing_ok( feed, :team_ranking )
     end
     #-- -----------------------------------------------------------------------
     #++

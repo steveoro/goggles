@@ -34,7 +34,7 @@ class TxtParseService
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE       = true
+  DEBUG_VERBOSE       = false
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
