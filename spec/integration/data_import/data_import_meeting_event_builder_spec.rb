@@ -70,7 +70,7 @@ describe DataImportMeetingEventBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with a matching MeetingEvent row," do
+  context "after a self.build() with a matching MeetingEvent & MeetingSession row," do
     subject do
       DataImportMeetingEventBuilder.build_from_parameters(
         data_import_session,
@@ -107,6 +107,64 @@ describe DataImportMeetingEventBuilder, type: :integration do
     describe "#result_row" do
       it "returns the entity instance found when the primary search is successful" do
         expect( subject.result_row ).to be_an_instance_of( MeetingEvent )
+      end
+    end
+    describe "#result_id" do
+      it "returns a negative ID when the primary search is successful" do
+        expect( subject.result_id ).to be < 0
+      end
+      it "is the ID of the resulting row, with a minus sign" do
+        expect( subject.result_id ).to eq( -(subject.result_row.id) )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  context "after a self.build() with a matching MeetingEvent on != MeetingSession row," do
+    subject do
+# DEBUG
+#      puts "\r\nSEEKED meeting_event:  #{meeting_event.inspect}"
+      DataImportMeetingEventBuilder.build_from_parameters(
+        data_import_session,
+        # Default meeting session, in case the correct one on the actual event is not found
+        create( :meeting_session, meeting: meeting_event.meeting_session.meeting ),
+        meeting_event.event_type,
+        meeting_event.heat_type,
+        nil,
+        nil,
+        false # is_out_of_race,
+      )
+    end
+
+    it "returns a DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    end
+    describe "#data_import_session" do
+      it "is the DataImportSession specified for the build" do
+        expect( subject.data_import_session ).to eq( data_import_session )
+      end
+    end
+
+    it "does not create any additional primary entity row" do
+      # (+1 only from the factory creation in the subject)
+      expect{ subject }.to change{ MeetingEvent.count }.by(1)
+    end
+    it "does not create any additional MeetingSession row" do
+      # (+2 only from the factories creation in the subject)
+      expect{ subject }.to change{ MeetingSession.count }.by(2)
+    end
+    it "does not create a new DataImportMeetingSession row" do
+      expect{ subject }.not_to change{ DataImportMeetingSession.count }
+    end
+
+    describe "#result_row" do
+      it "returns the entity instance found when the primary search is successful" do
+        expect( subject.result_row ).to be_an_instance_of( MeetingEvent )
+      end
+      it "is the existing meeting_event row" do
+        expect( subject.result_row.id ).to eq( meeting_event.id )
       end
     end
     describe "#result_id" do

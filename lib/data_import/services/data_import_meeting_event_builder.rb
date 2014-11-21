@@ -9,7 +9,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImportMeetingEventBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.633
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -46,12 +46,20 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
     raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!") unless meeting_session.instance_of?( MeetingSession )
 # DEBUG
 #    puts "\r\nMeetingEvent -- build_from_parameters: #{meeting_session.inspect}"
+#    puts "- event_type:  #{event_type.inspect}"
+#    puts "- heat_type:   #{heat_type.inspect}"
+#    puts "- event_order: #{event_order.inspect}"
     self.build( data_import_session ) do
       entity              MeetingEvent
+
+      set_up do
+        @possible_meeting_session_ids = MeetingSession.where( meeting_id: meeting_session.meeting_id ).map{ |ms| ms.id }
+#        puts "\r\n- @possible_meeting_session_ids: #{@possible_meeting_session_ids.inspect}"
+      end
                                                   # Search conditions:
       search do
         primary(
-          meeting_session_id: meeting_session.id,
+          meeting_session_id: @possible_meeting_session_ids,
           event_type_id:      event_type.id,
           heat_type_id:       heat_type.id,
         )
@@ -68,7 +76,8 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
         event_order:        event_order,
         begin_time:         begin_time,
         is_out_of_race:     is_out_of_race,
-        is_autofilled:      true
+        is_autofilled:      true,
+        user_id:            1 # don't care
       )
 
       if_not_found do

@@ -4,7 +4,7 @@ require 'ffaker'
 
 FactoryGirl.define do
 
-  factory :meeting_session do
+  trait :common_meeting_session_fields do
     description               "FINALS"
     session_order             { ((rand * 100) % 4).to_i + 1}
     meeting
@@ -15,6 +15,22 @@ FactoryGirl.define do
     begin_time                { Time.now }
     swimming_pool # this will yield pools with type "only_for_meetings"
     user
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  factory :data_import_meeting_session do
+    data_import_session
+    conflicting_id            nil
+    import_text               { Faker::Lorem.paragraph[0..250] }
+    data_import_meeting_id    nil
+    common_meeting_session_fields
+  end
+
+
+  factory :meeting_session do
+    common_meeting_session_fields
   end
   #-- -------------------------------------------------------------------------
   #++
