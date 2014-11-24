@@ -1,6 +1,17 @@
 Data that needs to be fixed: (goggles, goggles_development)
 ----------------------------
 
+> rake db:check_dup_events meeting_ids=13201,13215
+(Halts on verolanuova for possibly duplicated MIRs -- MIR/MRR fixup still TODO)
+
+> rake db:check_dup_events meeting_ids=13230,13222,13223,13228,13221,13224,13226,13229,13225
+(Almost nothing to do)
+
+
+Old hand-made analysis:
+---------8<-----------
+
+
 ===  meeting_events issues:  ===
 => add_new on first meeting_sessions row found
 => event_order not progressing
@@ -36,13 +47,18 @@ Data that needs to be fixed: (goggles, goggles_development)
 
 
 ===  meetings (m) IDs:  ===
-- Corresponding to each one of the ms above:
-13201, 13215, 13230, 13222, 13223, 13228, 13221, 13224, 13226, 13229, 13225
+13201,13215,13230,13222,13223,13228,13221,13224,13226,13229,13225
 
-(MS 317)
+- Corresponding Meeting / MeetingSession:
+M:
+13201, 	13215, 	13230, 	13222, 	13223, 	13228, 	13221,	13224,	13226,	13229,	13225
+MS:
+317, 	359, 	372, 	401, 	402, 	403, 	442,	445,	446,	449,	535
+
+(M 13201, MS 317)
 -- SELECT * FROM goggles.meetings WHERE id = 13201
 -- SELECT * FROM goggles_development.meetings WHERE id = 13201
-13201, bologna
+=> 13201, bologna
 -- SELECT * FROM goggles.meeting_sessions WHERE meeting_id = 13201
 13201 => ms: 317, 318
 -- SELECT * FROM goggles.meeting_events WHERE meeting_session_id IN (317, 318)
@@ -57,23 +73,42 @@ me 2158 |=> me 944, ms 318
 ==> MRR idem!
 
 
-13215, verolanuova
+(M 13215, MS 359)
+=> 13215, verolanuova
 
-13230, albenga
 
-13222, speccampania
+(M 13230, MS 372)
+=> 13230, albenga
 
-13223, osimo
 
-13228, speclazio
+(M 13222, MS 401)
+=> 13222, speccampania
 
-13221, rovigo
 
+(M 13223, MS 402)
+=> 13223, osimo
+
+
+(M 13228, MS 403)
+=> 13228, speclazio
+
+
+(M 13221, MS 442)
+=> 13221, rovigo
+
+
+(M 13224, MS 445)
 13224, speclombardia
 
-13226, solidarieta
 
-13229, saronno
+(M 13226, MS 446)
+=> 13226, solidarieta
 
-13225  specliguria
+
+(M 13229, MS 449)
+=> 13229, saronno
+
+
+(M 13225, MS 535)
+=> 13225  specliguria
 
