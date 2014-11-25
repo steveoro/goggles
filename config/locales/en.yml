@@ -104,6 +104,7 @@ en:
     invitation: "Manifest"
     start_list: "Start-list"
     start_list_by_category: "Start-list by category"
+    team_entries: "Team entries"
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"

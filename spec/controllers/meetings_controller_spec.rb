@@ -172,6 +172,29 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe '[GET #show_team_entry]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_team_entry )
+    it_behaves_like( "(GET http action with a valid meeting id)", :show_team_entry, 13106 )
+
+    before(:each) do
+      #@meeting = create(:meeting)
+      #get :show_team_entry, id: @meeting.id
+      get :show_team_entry, id: 13106
+    end
+
+    it "assigns the meeting event list" do
+      expect( assigns(:meeting_events_list) ).to be_a_kind_of( ActiveRecord::Relation )
+    end
+    it "assigns the meeting event list" do
+      expect( assigns(:meeting_events_list) ).to all(be_an_instance_of( MeetingEvent ))
+    end
+    it "assigns the max updated timestamp" do
+      expect( assigns(:max_entry_updated_at) ).not_to be_nil
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   describe '[GET #show_start_list_by_category]' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_start_list_by_category )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_start_list_by_category, 13106 )

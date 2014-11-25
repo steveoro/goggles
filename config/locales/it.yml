@@ -104,6 +104,7 @@ it:
     invitation: "Locandina"
     start_list: "Start-list"
     start_list_by_category: "Start-list per categoria!"
+    team_entries: "Iscritti squadra"
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"

@@ -41,9 +41,11 @@ class MeetingEntry < ActiveRecord::Base
   scope :is_female,  -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
   scope :for_gender, ->(gender_type_id) { joins(:meeting_program).where(["meeting_programs.gender_type_id = ?", gender_type_id]) }
+  scope :for_team,   ->(team_id) { where(["team_id = ?", team_id]) }
 
   scope :sort_by_number,        -> { order('start_list_number ASC, (minutes*6000+seconds*100+hundreds) DESC ') }
   scope :sort_by_gender_number, -> { joins(:meeting_program).order('meeting_programs.gender_type_id DESC, start_list_number ASC, (minutes*6000+seconds*100+hundreds) DESC ') }
+  scope :sort_by_swimmer,       -> { joins(:swimmer).order('swimmer.complete_name)') }
 
   # ----------------------------------------------------------------------------
   # Base methods:

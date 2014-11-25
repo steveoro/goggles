@@ -12,8 +12,8 @@ require 'common/format'
 =end
 class MeetingsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_meeting,  only: [:show_full, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category]
-  before_filter :verify_team,     only: [:show_team_results, :show_swimmer_results]
+  before_filter :verify_meeting,  only: [:show_full, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category, :show_team_entries]
+  before_filter :verify_team,     only: [:show_team_results, :show_team_entries, :show_swimmer_results]
   before_filter :verify_swimmer,  only: [:show_swimmer_results]
   #-- -------------------------------------------------------------------------
   #++
@@ -576,6 +576,27 @@ class MeetingsController < ApplicationController
   def show_start_list_by_category
     @meeting_events_list = @meeting.meeting_events.includes(
       :event_type, :stroke_type
+    ).order(
+      'meeting_events.event_order'
+    )
+    # Get a timestamp for the cache key:
+    @max_entry_updated_at = if @meeting.meeting_entries.count > 0
+      @meeting.meeting_entries.select( :updated_at )
+        .max.updated_at.to_i
+    else
+      @meeting.updated_at
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Meeting start list for team
+  # Intended to show team swimmers distribution among sessions
+  #
+  def show_team_entries
+    @meeting_events_list = @meeting.meeting_events.includes(
+      :meeting_session, :event_type, :stroke_type
     ).order(
       'meeting_events.event_order'
     )
