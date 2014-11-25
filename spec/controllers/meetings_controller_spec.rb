@@ -172,14 +172,13 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_team_entry]' do
-    it_behaves_like( "(GET http action with an invalid meeting id)", :show_team_entry )
-    it_behaves_like( "(GET http action with a valid meeting id)", :show_team_entry, 13106 )
+  describe '[GET #show_team_entries]' do
+    it_behaves_like( "(GET http action with an invalid meeting id)", :show_team_entries )
 
     before(:each) do
       #@meeting = create(:meeting)
-      #get :show_team_entry, id: @meeting.id
-      get :show_team_entry, id: 13106
+      #get :show_team_entries, id: @meeting.id, team_id: @team.id
+      get :show_team_entries, id: 13106, team_id: 1
     end
 
     it "assigns the meeting event list" do

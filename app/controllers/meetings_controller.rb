@@ -596,7 +596,7 @@ class MeetingsController < ApplicationController
   #
   def show_team_entries
     @meeting_events_list = @meeting.meeting_events.includes(
-      :meeting_session, :event_type, :stroke_type
+      :event_type, :stroke_type
     ).order(
       'meeting_events.event_order'
     )
