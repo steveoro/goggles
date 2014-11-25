@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.489
+  - Goggles framework vers.:  4.00.635
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -219,77 +219,215 @@ def dump_seed_group( output_folder, seed_block_name, table_list, db_name, db_use
   sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} -c -e -t -i --no-autocommit --tables --single-transaction #{db_name} #{table_list} > #{file_name}"
 end
 #-- ---------------------------------------------------------------------------
+#++
 
 
-# Creates an SQL dump file in the specified folder.
+# Checks the specified meeting_id for duplicated MeetingEvents and tries to fix them
+# by searching for pre-existing MeetingEvents that are the "original" version of the same row.
+#
+# Normally, duplicated MeetingEvents may happen only due to errors during the data-import
+# process. Thus, this method assumes that the only possible ("fixable") duplicated M.E.
+# come from the data-import and have the +is_autofilled+ flag on.
+# These are the only one actually checked for duplication in the current implementation.
 #
 def check_and_fix_duplicated_events( meeting_id )
   ms_ids = MeetingSession.where( meeting_id: meeting_id ).map { |r| r.id }
   mes = MeetingEvent.where( "meeting_session_id IN (?)", ms_ids )
+  puts "-> Tot. events #{mes.size}, IDs: #{mes.map{ |r| r.id }.inspect}"
   # Find the list of possibly duplicated MeetingEvents (only the ones from data-import):
-  mes_duped = mes.select { |r| r.is_autofilled }
-  puts "-> Tot. possible duplicates #{mes_duped.size}, IDs: #{mes_duped.map{ |r| r.id }.inspect}"
-  puts "   Searching for existing MEs as candidates for fixing the MPRGs..."
+  mes_preexisting = mes.select { |r| !r.is_autofilled }
+  mes_duplicated  = mes.select { |r| r.is_autofilled }
+  puts "   pre-existing, non-autofilled ME: #{mes_preexisting.map{ |r| r.id }}"
+  puts "   autofilled with data-import  ME: #{mes_duplicated.map{ |r| r.id }}" if mes_duplicated.size > 0
+  if mes_preexisting.size > 0
+    puts "   Searching for possible duplicated MEs as candidates for removal..."
+  else
+    puts "   Everything seems fine..."
+  end
 
-  # Foreach "possibly duplicated" event, find a corresponding non-autofilled
-  # one, if existing:
-  mes_duped.each do |me_dup|
-    puts "\r\nFor ME #{me_dup.id}, event type #{me_dup.event_type_id}, heat: #{me_dup.heat_type_id}"
-    candidates = mes.select do |me|
-      ( me.event_type_id == me_dup.event_type_id ) &&
-      ( me.heat_type_id == me_dup.heat_type_id ) &&
-      !me.is_autofilled
+  # Foreach pre-existing row, find the extra rows among the possible duplicates:
+  mes_preexisting.each do |me_preexisting|
+    puts "\r\nChecking duplication for ME #{me_preexisting.id}, event type #{me_preexisting.event_type_id}, heat: #{me_preexisting.heat_type_id}"
+    mes_extra = mes_duplicated.select do |me_duplicated|
+      ( me_preexisting.event_type_id == me_duplicated.event_type_id ) &&
+      ( me_preexisting.heat_type_id == me_duplicated.heat_type_id )
     end
-    puts "-> Tot #{candidates.size}, IDs: #{candidates.map{ |r| r.id }.inspect}"
-    puts "   -- WARNING! -- More than 1 candidate found. You may need to run this task more than once to fix everything." if candidates.size > 1
-    candidate = candidates.first
+    puts "-> Duplication: #{mes_extra.size}, ME IDs: #{mes_extra.map{ |r| r.id }.inspect}"
+    puts "   -- WARNING! -- More than 1 candidate for removal found. You may need to run this task more than once to fix everything." if mes_extra.size > 1
+    me_candidate_for_removal = mes_extra.first
 # DEBUG
-#    puts "   first: #{candidate.inspect}"
-    if candidate
-      puts "   ME #{me_dup.id} (MS #{me_dup.meeting_session_id})  <==[ OVERWRITE with: ]  #{candidate.id} (MS #{candidate.meeting_session_id})"
-      mprg_existing  = MeetingProgram.where( meeting_event_id: candidate.id )
-      mprg_corrupted = MeetingProgram.where( meeting_event_id: me_dup.id )
-      puts "   pre-existing MPRG (@ MS #{candidate.meeting_session_id}): #{mprg_existing.map{ |r| r.id }}"
-      puts "   to-be-fixed  MPRG (@ MS #{me_dup.meeting_session_id}): #{mprg_corrupted.map{ |r| r.id }}"
-      if mprg_existing.size > 0
-        puts "   -- WARNING! -- Possible duplication of MIRs or MRRs!!"
-        puts "                  Unable to continue: MIR/MRR duplication fix still TODO. Aborting..."
-        # TODO Collect all pre-existing MIRs & MRRs
-        #      Compare each one with the rows linked to the duplicated MPRG
-        #      Foreach exact duplicate found, erase it.
-        #
-        # TODO For each one of these entities:
-        # - meeting_entries
-        # - meeting_individual_results
-        # - meeting_relay_results
-        # - passages
-        # [- data_import_meeting_individual_results]
-        # [- data_import_meeting_relay_results]
-        #
-        # - for each row linked to existing MPRG,
-        #   - search existing entity row (not autofilled)
-        #   - search possible duplicate (autofilled) with same attributes
-        #   - if found, it's a duplicate "leaf": destroy it
-        #   - if not found, possibly duplicated entity row must be assigned to correct MPRG (existing)
-        # - when all entities that have links to existing MPRG are updated & cleared,
-        #   destroy duplicate MPRG
-        exit
-      end
-
-      # Assign the correct (previously existing) MeetingEvent to the "corrupted" MPRGs:
-      puts "   Updating all MPRGs @ duplicated ME #{me_dup.id}  <==|  with pre-existing ME #{candidate.id}..."
-      mprg_corrupted.each do |mprg|
-        puts "   - MPRG #{mprg.id}"
-#          mprg.meeting_event_id = candidate.id
-#          mprg.save!
-      end
-      puts "   Destroying duplicated ME #{me_dup.id}"
-#        me_dup.destroy
+#    puts "   first: #{me_candidate_for_removal.inspect}"
+    if me_candidate_for_removal
+      check_and_fix_single_meeting_event( me_candidate_for_removal, me_preexisting )
     else
-      puts "   No existing ME candidates found: MPRGs are not duplicated, nothing to fix."
+      puts "   No existing duplicates found for this ME. MPRGs are not duplicated. Nothing else to fix here. :-)"
+    end
+  end
+end
+
+
+# Given a possibly duplicated MeetingEvent instance and another pre-existing MeetingEvent
+# (assumed to be pre-existing to the duplicate and, thus, a fit candidate for substitution
+# of the copy), this method checks any linked entities, updates the link to the
+# duplicate row with the pre-existing candidate and, at the end, removes the
+# duplicate.
+#
+# Entities to be checked for MeetingEvent:
+#
+# - MeetingProgram
+#
+def check_and_fix_single_meeting_event( me_duplicated, me_preexisting )
+  puts "   ME #{me_duplicated.id} (MS #{me_duplicated.meeting_session_id})  <==[ OVERWRITE with: ]  #{me_preexisting.id} (MS #{me_preexisting.meeting_session_id})"
+  # Find the list of possibly duplicated MeetingPrograms:
+  mprgs_preexisting = MeetingProgram.where( meeting_event_id: me_preexisting.id )
+  mprgs_duplicated  = MeetingProgram.where( meeting_event_id: me_duplicated.id )
+  puts "   pre-existing MPRG (@ MS #{me_preexisting.meeting_session_id}): #{mprgs_preexisting.map{ |r| r.id }}"
+  puts "   to-be-fixed  MPRG (@ MS #{me_duplicated.meeting_session_id}): #{mprgs_duplicated.map{ |r| r.id }}" if mprgs_duplicated.size > 0
+
+  # Assign the correct (previously existing) MeetingEvent to the "corrupted" MPRGs:
+  puts "   Updating all MPRGs @ duplicated ME #{me_duplicated.id}  <==|  " +
+       "with pre-existing ME #{me_preexisting.id}..." if mprgs_duplicated.size > 0
+  mprgs_duplicated.each do |mprg_duplicated|
+    puts "   - updating MPRG #{mprg_duplicated.id}"
+    mprg_duplicated.meeting_event_id = me_preexisting.id
+    mprg_duplicated.save!
+  end
+  puts "   -- Check for DELETION required: pre-existing MPRG found. --" if mprgs_preexisting.size > 0
+
+  # Foreach pre-existing row, find the extra rows among the possible duplicates:
+  mprgs_preexisting.each do |mprg_preexisting|
+    puts "\r\n\tChecking duplication for MPRG #{mprg_preexisting.id}, category_type #{mprg_preexisting.category_type_id}, gender_type: #{mprg_preexisting.gender_type_id}"
+    mprgs_extra = mprgs_duplicated.select do |mprg_duplicated|
+      ( mprg_preexisting.category_type_id == mprg_duplicated.category_type_id ) &&
+      ( mprg_preexisting.gender_type_id == mprg_duplicated.gender_type_id )
+    end
+    puts "\t-> Duplication: #{mprgs_extra.size}, MPRG IDs: #{mprgs_extra.map{ |r| r.id }.inspect}"
+    puts "\t   -- WARNING! -- More than 1 candidate for removal found. You may need to run this task more than once to fix everything." if mprgs_extra.size > 1
+    mprg_candidate_for_removal = mprgs_extra.first
+# DEBUG
+#    puts "   first: #{mprg_candidate_for_removal.inspect}"
+    if mprg_candidate_for_removal
+      check_and_fix_single_meeting_program( mprg_candidate_for_removal, mprg_preexisting )
+    else
+      puts "\t   No existing duplicates found for this MPRG. Good. :-)"
+    end
+  end
+
+  puts "-> Destroying duplicated ME #{me_duplicated.id}"
+  me_duplicated.destroy
+end
+#-- ---------------------------------------------------------------------------
+#++
+
+
+# Given a possibly duplicated MeetingProgram instance and another pre-existing MeetingProgram
+# (assumed to be pre-existing to the duplicate and, thus, a fit candidate for substitution
+# of the copy), this method checks any linked entities, updates the link to the
+# duplicate row with the pre-existing candidate and, at the end, removes the
+# duplicate.
+#
+# Entities to be checked for MeetingProgram:
+#
+# - MeetingEntry
+# - MeetingIndividualResult
+# - MeetingRelayResult
+# - Passages
+# - DataImportMeetingIndividualResult
+# - DataImportMeetingRelayResult
+#
+def check_and_fix_single_meeting_program( mprg_duplicated, mprg_preexisting )
+  puts "\t   MPRG #{mprg_duplicated.id} (cat.#{mprg_duplicated.category_type_id}, gender:#{mprg_duplicated.gender_type_id})  <==[ OVERWRITE with: ]  #{mprg_preexisting.id}  (cat.#{mprg_preexisting.category_type_id}, gender:#{mprg_preexisting.gender_type_id})"
+
+  check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, MeetingIndividualResult, 'MIR' ) do |mir_dup, mir_ok|
+    ( mir_ok.swimmer_id == mir_dup.swimmer_id ) && ( mir_ok.team_id == mir_dup.team_id ) &&
+    ( mir_ok.minutes == mir_dup.minutes ) && ( mir_ok.seconds == mir_dup.seconds ) &&
+    ( mir_ok.hundreds == mir_dup.hundreds )
+  end
+  check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, MeetingRelayResult, 'MRR' ) do |mrr_dup, mrr_ok|
+    ( mrr_ok.team_id == mrr_dup.team_id ) && ( mrr_ok.standard_points == mrr_dup.standard_points ) &&
+    ( mrr_ok.meeting_points == mrr_dup.meeting_points ) &&
+    ( mrr_ok.minutes == mrr_dup.minutes ) && ( mrr_ok.seconds == mrr_dup.seconds ) &&
+    ( mrr_ok.hundreds == mrr_dup.hundreds )
+  end
+  check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, MeetingEntry, 'MENT' ) do |ment_dup, ment_ok|
+    ( ment_ok.swimmer_id == ment_dup.swimmer_id ) && ( ment_ok.team_id == ment_dup.team_id ) &&
+    ( ment_ok.minutes == ment_dup.minutes ) && ( ment_ok.seconds == ment_dup.seconds ) &&
+    ( ment_ok.hundreds == ment_dup.hundreds )
+  end
+  check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, Passage, 'PAS' ) do |pas_dup, pas_ok|
+    ( pas_ok.swimmer_id == pas_dup.swimmer_id ) && ( pas_ok.team_id == pas_dup.team_id ) &&
+    ( pas_ok.minutes == pas_dup.minutes ) && ( pas_ok.seconds == pas_dup.seconds ) &&
+    ( pas_ok.hundreds == pas_dup.hundreds )
+  end
+
+  check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, DataImportMeetingIndividualResult, 'DI_MIR' ) do |dimir_dup, dimir_ok|
+    ( dimir_ok.swimmer_id == dimir_dup.swimmer_id ) && ( dimir_ok.team_id == dimir_dup.team_id ) &&
+    ( dimir_ok.minutes == dimir_dup.minutes ) && ( dimir_ok.seconds == dimir_dup.seconds ) &&
+    ( dimir_ok.hundreds == dimir_dup.hundreds )
+  end
+  check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, DataImportMeetingRelayResult, 'DI_MRR' ) do |dimrr_dup, dimrr_ok|
+    ( dimrr_ok.team_id == dimrr_dup.team_id ) && ( dimrr_ok.standard_points == dimrr_dup.standard_points ) &&
+    ( dimrr_ok.meeting_points == dimrr_dup.meeting_points ) &&
+    ( dimrr_ok.minutes == dimrr_dup.minutes ) && ( dimrr_ok.seconds == dimrr_dup.seconds ) &&
+    ( dimrr_ok.hundreds == dimrr_dup.hundreds )
+  end
+
+  puts "\t-> Destroying duplicated MPRG #{mprg_duplicated.id}"
+  mprg_duplicated.destroy
+end
+#-- ---------------------------------------------------------------------------
+#++
+
+
+# Check-and-fix submethod for any entity linked to a MeetingProgram.
+# Updates the rows with a correct MeetingProgram link. Erases the duplicates.
+#
+# The +block_condition+ defines what makes two rows equal and is yield as selecting
+# condition while looping among all the possible duplicate rows.
+# The +block_condition+ receives 2 parameters, +row_duplicated+ and +row_preexisting+,
+# and must return either +true+ or +false+, depending whether these 2 are considered
+# as equal or not.
+#
+def check_and_fix_linked_rows( mprg_duplicated, mprg_preexisting, entity, entity_nickname, &block_condition )
+  rows_preexisting = entity.where( meeting_program_id: mprg_preexisting.id )
+  rows_duplicated  = entity.where( meeting_program_id: mprg_duplicated.id )
+  puts "\t   pre-existing #{entity_nickname}s (@ MPRG #{mprg_preexisting.id}): #{rows_preexisting.map{ |r| r.id }}"
+  puts "\t   to-be-fixed  #{entity_nickname}s (@ MPRG #{mprg_duplicated.id}): #{rows_duplicated.map{ |r| r.id }}" if rows_duplicated.size > 0
+
+  # Assign the correct (previously existing) MPRG to the entity's links vs. the "extra" MPRGs:
+  puts "\t   Updating all #{entity_nickname}s @ duplicated MPRG #{mprg_duplicated.id}  <==|  " +
+       "with pre-existing MPRG #{mprg_preexisting.id}..." if rows_duplicated.size > 0
+  rows_duplicated.each do |row_duplicated|
+    puts "\t   - updating #{entity_nickname} #{row_duplicated.id}"
+    row_duplicated.meeting_program_id = mprg_preexisting.id
+    row_duplicated.save!
+  end
+  puts "\t   -- Check for DELETION required: pre-existing #{entity_nickname}s found. --" if rows_preexisting.size > 0
+
+  # Foreach pre-existing row, find the extra rows among the possible duplicates:
+  rows_preexisting.each do |row_preexisting|
+    puts "\t\tChecking duplication for #{entity_nickname} #{row_preexisting.id}, PRG #{row_preexisting.meeting_program_id}" +
+         ( row_preexisting.respond_to?(:swimmer_id) ? ", swimmer: #{row_preexisting.swimmer_id}" : '' ) +
+         ( row_preexisting.respond_to?(:team_id)    ? ", team: #{row_preexisting.team_id}" : '' ) +
+         ( row_preexisting.respond_to?(:get_timing) ? ", timing: #{row_preexisting.get_timing}" : '' )
+    rows_extra = rows_duplicated.select do |row_duplicated|
+      yield( row_duplicated, row_preexisting )
+    end
+    puts "\t\t-> Duplication: #{rows_extra.size}, #{entity_nickname} IDs: #{rows_extra.map{ |r| r.id }.inspect}"
+    puts "\t\t   -- WARNING! -- More than 1 candidate for removal found. You may need to run this task more than once to fix everything." if rows_extra.size > 1
+    row_candidate_for_removal = rows_extra.first
+# DEBUG
+#    puts "\t\t   first: #{row_candidate_for_removal.inspect}"
+    if row_candidate_for_removal
+      puts "\t\t   -> Destroying duplicated #{entity_nickname} #{row_candidate_for_removal.id}, PRG #{row_candidate_for_removal.meeting_program_id}" +
+           ( row_candidate_for_removal.respond_to?(:swimmer_id) ? ", swimmer: #{row_candidate_for_removal.swimmer_id}" : '' ) +
+           ( row_candidate_for_removal.respond_to?(:team_id)    ? ", team: #{row_candidate_for_removal.team_id}" : '' ) +
+           ( row_candidate_for_removal.respond_to?(:get_timing) ? ", timing: #{row_candidate_for_removal.get_timing}" : '' )
+      row_candidate_for_removal.destroy
+    else
+      puts "\t\t   No existing duplicates found for this #{entity_nickname}. Good. :-)"
     end
   end
 end
 #-- ---------------------------------------------------------------------------
-#++
 #++
