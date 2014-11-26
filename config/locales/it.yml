@@ -765,6 +765,8 @@ it:
     ranking: "Classifica"
     rules: "Regolamento"
     history: "Storico campionati conclusi"
+    event_ranking: "Ranking stagionale"
+    individual_rank: "Classifica individuale"
     history_tab: "Storico"
     hall_of_fame: "Medagliere"
     hall_of_fame_tab: "Medagliere di società complessivo (hall of fame)"
