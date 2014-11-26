@@ -766,6 +766,8 @@ en:
     history: "History"
     history_tab: "History"
     rules: "Rules"
+    event_ranking: "Seasonal ranking"
+    individual_rank: "Individual rank"
     hall_of_fame: "All time team medals (Hall of fame)"
     hall_of_fame_tab: "Hall of fame"
     history_title: "Past championships history"

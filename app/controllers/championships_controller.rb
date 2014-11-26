@@ -12,7 +12,7 @@ require 'common/format'
 =end
 class ChampionshipsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
+  before_filter :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
   before_filter :verify_parameter_regional_er_uisp, only: [:ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp, :history_regional_er_uisp]
   before_filter :verify_parameter_supermaster_fin,  only: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
   #-- -------------------------------------------------------------------------
@@ -69,6 +69,25 @@ class ChampionshipsController < ApplicationController
     @championship_history_manager = championship_history_manager.get_season_ranking_history
     @seasons_hall_of_fame = championship_history_manager.get_season_hall_of_fame
     @history_updated_at = @championship_history_manager.max{ |n,p| n[:max_updated_at] <=> p[:max_updated_at] }[:max_updated_at]
+  end
+
+  # Seasonal event ranking (gender, category, evet_type)
+  # for CSI regional ER championships
+  #
+  def event_ranking_regional_er_csi
+    @title = I18n.t('championships.event_ranking') + ' ' + @season_type.get_full_name
+    
+    # Check for different event types for the season
+    
+    # Check for different categories for the season
+    @category_types = @season.category_types      
+  end
+
+  # Seasonal individual ranking
+  # for CSI regional ER championships
+  #
+  def individual_rank_regional_er_csi
+    @title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name     
   end
 
 
