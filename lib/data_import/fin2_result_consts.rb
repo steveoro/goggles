@@ -71,7 +71,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     )
   end
 
-# TODO #################
+# TODO [BEGIN] #########################################################
   # "Team Ranking" (header) context type definition.
   #
   def context_type_team_ranking
@@ -180,6 +180,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   end
   # ----------------------------------------------------------------------------
   #++
+# TODO [END] #########################################################
 
   # Returns the list of all the ContextTypeDefs member objects defined.
   # (Commodity method used only inside specs.)
@@ -205,7 +206,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_meeting_header_title
     TokenExtractor.new(
       :title,
-      /\-?\s*(Distanze speciali|Campionat|((\d{1,3}|[IXVMCDL]{1,6})([°^�]|\.o)?\s?(Tr|Meeting|Region)?))/i,
+      /((?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)/i,
       /$/i,
       4                                             # line_timeout
     )
@@ -216,8 +217,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_meeting_header_meeting_dates
     TokenExtractor.new(
       :meeting_dates,
-      /\d{0,2}((\/|-|\,)\d{0,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/i,
-      /\z/i,
+      /(?<wholedate>(?<=\s\-\s|\s\-\-\-\s|\s\s|^)(?<weekday>(dom|lun|mar|mer|gio|ven|sab)\D*\s)?((?<twodigitsep>(\d{1,2})(\/|-|\,|\s)){1,4}(?<month>\d{1,2}|(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\D*))(\/|-|\,|\s)(?<year>\d{2,4}))/i,
+      /(?<=\d{2})(?<separator>\s+\-{1,3}\s+|\s\s|$|\r|\n)/i,
       4                                             # line_timeout
     )
   end
@@ -250,8 +251,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_category_header_style
     TokenExtractor.new(
       :style,
-      / *(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/i,
-      / *(maschi|femmi)/i
+      /\s*(stile|mi|do|ra|fa|sl|MX|DF|DS|RN)\D*/i,
+      /\s*(maschi|femmi)/i
     )
   end
 
@@ -260,9 +261,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_category_header_gender
     TokenExtractor.new(
       :gender,
-      / *(maschi|femmi)/i,
+      /\s*(maschi|femmi)/i,
       # Alt. vers.: /\s+(maschi|femmi)/ui
-      /\s+-\s+categoria/i
+      /(\s+\-\s+categoria|\s{3}\-{3}(\Z|\n))/i
     )
   end
 
@@ -294,7 +295,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :type,
       /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx)/i,
-      /\s+-\s+cat/i
+      /(\s+\-\s+categoria|\s{3}\-{3}(\Z|\n))/i
     )
   end
 
@@ -314,9 +315,11 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :style,
       /(?<=\d\s)\s*(stile|mi|sl|mx)/i,
-      /\s+(-\s+cat|masch|femm)/i
+      /(\s+\-\s+categoria|\s{3}\-{3}(\Z|\n)|\smista\s{3}\-{3}|\smasch|\sfemm)/i
     )
   end
+
+# TODO [BEGIN] #########################################################
 
   # "relay_header.category_group" token extractor definition
   #
@@ -346,8 +349,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_result_position
     TokenExtractor.new(
       :result_position,
-      / \d{1,3}(?= {1,3})/i,
-      / (?=[a-z]+)/i
+      /fc|fg|\d{1,3}(?=\s{1,3})/i,
+      /\s(?=[a-z]+)/i
     )
   end
 
@@ -356,8 +359,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_team_code
     TokenExtractor.new(
       :team_code,
-      /(\w\w\w-\d{6})/i,
-      10                                            # (max size)
+      /(\w{3}-?\d{6})/i,
+      /(?<=\w{3}\-\d{6}|\w{3}\d{6})\s/i
+#      10                                            # (max size)
     )
   end
 
@@ -366,8 +370,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_swimmer_name
     TokenExtractor.new(
       :swimmer_name,
-      /(?<=[\sa-z0-9-]{10}|[\sa-z0-9-]{18})\s(\D{25})/i,
-      29                                            # (max size)
+      /(?<=fc\s|fc\s\s|fg\s|fg\s\s|\d\s|\d\s\s|\D{3}\-\d{6}\s|\D{3}\d{6}\s)(\D{22})\D*\s/i,
+      22                                            # (max size)
     )
   end
 
@@ -376,7 +380,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_swimmer_year
     TokenExtractor.new(
       :swimmer_year,
-      /\b\d{4} +(?=\D+)/i,
+      /\s(\d{4}|u\s\d{1,2}|m\s\d{1,2})(?=\s\D+|\s\d{2}\s)/i,
       4                                             # (max size)
     )
   end
@@ -386,8 +390,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_team_name
     TokenExtractor.new(
       :team_name,
-      # [Steve, 20130809] Regexp is too slow!! (And doesn't work for team names with numbers in it.) Using Fixnum absolute index instead:
-      49,                                           # (starting idx)
+      /(?<=(\s\d{4}\s\d\d\s(f|m)\s\s)|(\s\d{4}\s0\s(f|m)\s\s)|((u|m)\s\d\d\s(f|m)\s)|(\s(u|m)\s\d\d))\s([\w0-9\.\']*)/i,
+#      /(?<=(?<year>\s\d{4}\s)(?<cat>((u|m)\s\d{2}|\s\d{2}\s)(f\s|m\s)|\s0\s(f|m)\s{2})|((u|m)\s\d{2}|\s\d{2}\s)(f\s|m\s)|\s0\s(f|m)\s{2})(\D+)/i,
+      # (?<=\s\d{4}\s\d{2}\s(f|m)|\s\d{4}\s\d{1}\s(f|m)|\s(u|m)\s\d{2}\s(f|m)\s|\s(u|m)\s\d{2})\s{1,3}([\w0-9\.\']+\s+)
       26                                            # (max size)
     )
   end
@@ -397,7 +402,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_result_time
     TokenExtractor.new(
       :result_time,
-      / (Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d)/i,
+      / (Ritir.*|Squal.*|\d{2}\s\d{2}\s\d{2})/i,
       # Alt. vers.: /(Ritirat|Squalif|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i,
       8                                             # (max size)
     )

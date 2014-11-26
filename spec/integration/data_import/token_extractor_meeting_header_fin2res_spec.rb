@@ -4,7 +4,7 @@ require 'spec_helper'
 #require 'framework/console_logger'
 #require 'data_import/services/context_detector'
 #require 'data_import/services/token_extractor'
-#require 'data_import/fin_result_consts'
+#require 'data_import/fin2_result_consts'
 
 
 describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :integration do
@@ -83,6 +83,7 @@ describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :int
   #-- -------------------------------------------------------------------------
   #++
 
+
   context "when tokenizing HEADER_TITLE," do
     subject { dummy_wrapper.tokenizer_meeting_header_title }
 
@@ -151,111 +152,156 @@ describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :int
       ]
     end
 
-# FIXME regexp must be corrected
-#    it_behaves_like( "(extracting tokens only for the matching feed lines)" )
+    it_behaves_like( "(extracting tokens only for the matching feed lines)" )
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  # context "when tokenizing MEETING_DATES," do
-    # subject { dummy_wrapper.tokenizer_meeting_header_meeting_dates }
-#
-    # let(:expected_tokens) do
-      # [ # field = :meeting_dates
-        # '',
-        # '',
-        # "3/4 Dicembre 2011",
-        # # False positive:
-# #          '',
-# #          '',
-# #          '',
-        # '',
-        # '',
-        # "14/15 Gennaio 2012",
-        # '',
-        # '',
-        # "8 Marzo 2008",
-        # '',
-        # '',
-        # "30 Marzo 2008",
-        # '',
-        # '',
-        # "26/27 Gennaio 2008",
-        # '',
-        # '',
-        # "15/16/17 Febbraio 2009",
-        # "11 novembre 2012",
-        # '',
-        # '',
-        # "20-21 aprile 2013",
-        # '',
-        # '',
-        # "26-27 gennaio 2013",
-        # '',
-        # '',
-        # "17-24 febbraio 2013",
-        # '',
-        # '',
-        # "02-03 marzo 2013",
-        # '',
-        # ''
-      # ]
-    # end
-#
-    # it_behaves_like( "(extracting tokens only for the matching feed lines)" )
-  # end
-  # #-- -------------------------------------------------------------------------
-  # #++
-#
-  # context "when tokenizing ORGANIZATION," do
-    # subject { dummy_wrapper.tokenizer_meeting_header_organization }
-#
-    # let(:expected_tokens) do
-      # [ # field = :organization
-        # '',
-        # 'POL. COM. RICCIONE',
-        # '',
-        # # False positive:
-# #          '',
-# #          '',
-# #          '',
-        # '',
-        # 'Rinascita Team Romagna asd',
-        # '',
-        # '',
-        # 'AS DIL RN SPEZIA',
-        # '',
-        # '',
-        # 'ASD Nuovo Nuoto',
-        # '',
-        # '',
-        # 'A.S.D. Master A.I.C.S. Brescia',
-        # '',
-        # '',
-        # 'a.s.d. Molinella Nuoto',
-        # '',
-        # '',
-        # '',
-        # "De Akker",
-        # '',
-        # '',
-        # "Molinellanuoto",
-        # '',
-        # '',
-        # "AICS Master - BS",
-        # '',
-        # '',
-        # "CR Emilia",
-        # '',
-        # '',
-        # "NC Brescia"
-      # ]
-    # end
-#
-    # it_behaves_like( "(extracting tokens only for the matching feed lines)" )
-  # end
-  # #-- -------------------------------------------------------------------------
-  # #++
+  context "when tokenizing MEETING_DATES," do
+    subject { dummy_wrapper.tokenizer_meeting_header_meeting_dates }
+
+    let(:expected_tokens) do
+      [ # field = :meeting_dates
+        '',
+        "Domenica 19 Dicembre 2010",
+        '',
+        '',
+        '',
+        '',
+        '',
+        "Domenica 21 Dicembre 2008",
+        '',
+        '',
+        "Domenica 13 Dicembre 2009",
+        '',
+        '',
+        '',
+        "12 DICEMBRE 2010",
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+
+        '',
+        '',
+        "3/4 Dicembre 2011",
+        # False positive:
+#          '',
+#          '',
+#          '',
+        '',
+        '',
+        "14/15 Gennaio 2012",
+        '',
+        '',
+        "8 Marzo 2008",
+        '',
+        '',
+        "30 Marzo 2008",
+        '',
+        '',
+        "26/27 Gennaio 2008",
+        '',
+        '',
+        "15/16/17 Febbraio 2009",
+        "11 novembre 2012",
+        '',
+        '',
+        "20-21 aprile 2013",
+        '',
+        '',
+        "26-27 gennaio 2013",
+        '',
+        '',
+        "17-24 febbraio 2013",
+        '',
+        '',
+        "02-03 marzo 2013",
+        '',
+        ''
+      ]
+    end
+
+    it_behaves_like( "(extracting tokens only for the matching feed lines)" )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "when tokenizing ORGANIZATION," do
+    subject { dummy_wrapper.tokenizer_meeting_header_organization }
+
+    let(:expected_tokens) do
+      [ # field = :organization
+        '',
+        '',
+        '',
+        '',
+        "Virtus Nuoto Poggibonsi",
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        "DN Pontedera",
+        '',
+        '',
+        "Circolo Nuoto Lucca",
+        '',
+
+        '',
+        'POL. COM. RICCIONE',
+        '',
+        # False positive:
+#          '',
+#          '',
+#          '',
+        '',
+        'Rinascita Team Romagna asd',
+        '',
+        '',
+        'AS DIL RN SPEZIA',
+        '',
+        '',
+        'ASD Nuovo Nuoto',
+        '',
+        '',
+        'A.S.D. Master A.I.C.S. Brescia',
+        '',
+        '',
+        'a.s.d. Molinella Nuoto',
+        '',
+        '',
+        '',
+        "De Akker",
+        '',
+        '',
+        "Molinellanuoto",
+        '',
+        '',
+        "AICS Master - BS",
+        '',
+        '',
+        "CR Emilia",
+        '',
+        '',
+        "NC Brescia"
+      ]
+    end
+
+    it_behaves_like( "(extracting tokens only for the matching feed lines)" )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
 #-- ---------------------------------------------------------------------------
 #++
