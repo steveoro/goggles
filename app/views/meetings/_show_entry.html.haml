@@ -2,10 +2,10 @@
   %td.span1.goggles-rightalign
     = entry.start_list_number
   %td.span4
-    = entry.get_swimmer_name
+    = entry.swimmer.decorate.get_linked_swimmer_name
   %td.span1
     = entry.get_category_type_code
   %td.span4
-    = entry.get_team_name
+    = entry.team.decorate.get_linked_name
   %td.span1.goggles-rightalign
     = entry.get_timing
