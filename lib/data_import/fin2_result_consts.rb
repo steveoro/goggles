@@ -488,8 +488,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_position
     TokenExtractor.new(
       :result_position,
-      0,                                            # (starting idx)
-      /(?<=\d|\s{12})(°|\s)/i
+      /(?<rank>^\s?\d{1,2})(?=\s\s|\)\s)/i,
+      /(?<=\d)(\)\s|°\s|\s\s)/i
     )
   end
 
@@ -498,8 +498,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_team_code
     TokenExtractor.new(
       :team_code,
-      /(?<=\s)\w\w\w-\d{6}/i,
-      10                                            # (max size)
+      /(?<=\s)(?<teamcode>\w\w\w\d{6})(?=\s)/i,
+      9                                             # (max size)
     )
   end
 
@@ -508,9 +508,12 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_team_name
     TokenExtractor.new(
       :team_name,
-      /(?<=\w{3}-\d{6}\s{2}|\d\s{6}|\s{19}|\d°\s)\w+/i,
-      /\s+(\d{1,6}[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
-#      /\s\d{1,6}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
+      /
+        (?<=\s\s|\d\s)
+        (?<teamname>.{2,31})
+        (?=\s{1,5}[\w\.\s]{14,16}\s{1,5}\d{1,6}\,\d{1,3})
+      /ix,
+      30                                            # (max size)
     )
   end
 
@@ -519,12 +522,13 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_score
     TokenExtractor.new(
       :result_score,
-      /\s+(\d{1,6}[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i,
-      /(?<=\d[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i  # \s+\d{1,6}[\,|\.]\d\d(\s+|\r\n|\n|$|\Z)
-#      /$/i  # \s+\d{1,6}[\,|\.]\d\d(\s+|\r\n|\n|$|\Z)
+      /(?<=\s\s)(?<score>\d{1,6}(?:\,|\.)\d{1,3})(?=\s\s)/i,
+      /
+        (?<=\d(?:\,|\.)\d\d\d|\d(?:\,|\.)\d\d|\d(?:\,|\.)\d)
+        (\s\s)
+      /ix
     )
   end
-
   # ----------------------------------------------------------------------------
   #++
 

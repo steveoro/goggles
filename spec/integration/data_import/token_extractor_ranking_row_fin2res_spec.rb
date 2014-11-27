@@ -55,31 +55,34 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :result_position
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '143',
-        '',
-        '',
-        '',
-        '',
-        '',
-        "1°",
-        "2°",
-        "5°",
-        "6°",
-        "12°",
-        "15°",
-        "17°",
-        "18°",
-        "20°"
+        "1",
+        "10",
+        "18",
+
+        "1",
+        "12",
+        "26",
+        "1",
+        "20",
+        "30",
+
+        "1)",
+        "11)",
+        "12)",
+        "14)",
+        "22)",
+        "26)",
+
+        "4",
+        "18",
+        "44",
+
+        "1",
+        "24",
+        "56",
+        "10",
+        "25",
+        "42"
       ]
     end
 
@@ -93,31 +96,34 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :team_code
-        "EMI-001444",
-        "EMI-001481",
-        "EMI-001451",
-        "EMI-001457",
-        "EMI-001452",
+        '',
+        '',
+        '',
+
         '',
         '',
         '',
         '',
         '',
         '',
+
         '',
         '',
         '',
         '',
         '',
         '',
+
         '',
         '',
         '',
-        '',
-        '',
-        '',
-        '',
-        ''
+
+        "TOS000538",
+        "EMI001454",
+        "FRI000424",
+        "TOS029877",
+        "EMI001454",
+        "EMI001447"
       ]
     end
 
@@ -126,37 +132,39 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
-
   context "when tokenizing TEAM_NAME," do
     subject { dummy_wrapper.tokenizer_ranking_row_team_name }
 
     let(:expected_tokens) do
       [ # field = :team_name
-        "ESTENSE NUOTO CSI",
-        "N MODENESI",
-        "RINASCITA TEAM ROMA",
-        "NUOTO CLUB 2000",
-        "AQUATIC TEAM RAVENN",
-        "N MODENESI",
-        "CN UISP BOLOGNA",
-        "NUOTO CLUB 2000",
-        "NUOVO NUOTO",
-        "AS MOLINELLA NUOTO",
-        "SEA SUB MODENA",
-        "ASD SANTA CLARA - G",
-        "ASOLA N",
-        "FIRENZE NUOTA MASTER A.S.D.",
-        "TEAM EUGANEO",
-        "",
-        "ESTENSE NUOTO CSI A.S. DILETT.",
-        "S.NUOTATORI PADOVANI A.S.D.",
-        "S.S.D. NATATORIUM TREVISO ar.l.",
-        "SSD STILE LIBERO SRL",
-        "NUOTOPIU' ACADEMY A.S.DILETT.",
-        "A.S.GYMNASIUM SPILIMBERGO",
-        "A.S.D.B.N. Nuotatori Veneziani",
-        "A.S.DILETT. JESOLONUOTO",
-        "a.s.d. ROVIGONUOTO"
+        "DIMENSIONE NUOTO PONTEDERA",
+        "NUOTO UISP 2003",
+        "PALLANUOTO BENFICA VIAREGGIO",
+
+        "FIRENZE NUOTA MASTER",
+        "AZZURRA RACE TEAM",
+        "POLISPORTIVA GARDEN SRL S.S. D",
+        "DIMENSIONE NUOTO PONTEDERA",
+        "AS DILET NUOTO CLUB AZZURRA 91",
+        "SPORT MANAGEMENT LOMBARDIA ASD",
+
+        "ASD DLF NUOTO LIVORNO",
+        "ASS NUOTO LUCCA CAPANNORI",
+        "CANOTTIERI ARNO PISA",
+        "ASD ALTO RENO DE AKKER",
+        "EUROPARADISE",
+        "VILLA BONELLI NUOTO",
+
+        "NUOTATORI MODENESI",
+        "DIMENSIONE NUOTO PONTEDERA",
+        "A.S.D.  NATATORIUM TREVISO",
+
+        "ASD DLF NUOTO LIVORNO",
+        "ASD CSI NUOTO OBER FERRARI",
+        "AS GORIZIA NUOTO",
+        "ASD MASSA NUOTO",
+        "ASD CSI NUOTO OBER FERRARI",
+        "NUOTO CLUB 91 PARMA"
       ]
     end
 
@@ -170,31 +178,34 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :result_score
-        "62525,95",
-        "58272,35",
-        "46753,95",
-        "37724,16",
-        "29332,89",
-        "66495,23",
-        "44667,70",
-        "37112,33",
-        "31562,33",
-        "24085,60",
-        "0,00",
-        "0,00",
-        "0,00",
-        "0,00",
-        "0,00",
-        "",
-        "54412.09",
-        "46729.03",
-        "40754.42",
-        "26266.59",
-        "18034.13",
-        "15442.72",
-        "13057.14",
-        "12299.81",
-        "10773.76"
+        "45923,00",
+        "16942,00",
+        "8960,83",
+
+        "62701,77",
+        "8392,52",
+        "1563,87",
+        "103932,25",
+        "6983,69",
+        "3290,31",
+
+        "49084,580",
+        "10960,530",
+        "8089,260",
+        "6972,720",
+        "4716,910",
+        "3268,840",
+
+        "37526,18",
+        "8232,30",
+        "1381,12",
+
+        "158426,41",
+        "7308,19",
+        "970,84",
+        "11580,82",
+        "3741,89",
+        "1761,95"
       ]
     end
 
