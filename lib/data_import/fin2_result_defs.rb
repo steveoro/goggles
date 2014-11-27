@@ -162,8 +162,8 @@ class Fin2ResultDefs < TxtResultDefs
         [                                             # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
           tokenizer_relay_row_result_position,
           tokenizer_relay_row_team_name,
-          tokenizer_relay_row_result_time,
-          tokenizer_relay_row_result_score
+          tokenizer_relay_row_category,
+          tokenizer_relay_row_result_time
         ]
       ],
 
