@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141105150001) do
+ActiveRecord::Schema.define(:version => 20141127151003) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1361,6 +1361,7 @@ ActiveRecord::Schema.define(:version => 20141105150001) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "complete_name",      :limit => 100
+    t.boolean  "is_year_guessed",                   :default => false, :null => false
   end
 
   add_index "swimmers", ["associated_user_id"], :name => "index_swimmers_on_associated_user_id"

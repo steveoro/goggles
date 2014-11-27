@@ -38,11 +38,19 @@ on the app on the remote Server without losing your mind.
    for Dev. DB, if not)
 
 3.2) Re-update the DB dumps when using the **rebuild** option of the task:
-  (See point (4) for an explanation -- currently the default is to skip the rebuild
+  When using the option "rebuild=1" of the db:diff_apply task, remember to update
+  the local dumps before invoking the task itself, since it will recreate the DBs
+  from scratch before applying the diff files.
+  (See also point (4) for more info -- currently the default is to skip the rebuild
    from the dumps)
 
   > RAILS_ENV=production bundle exec rake db:dump
-  (Assuming dump has been already updated on Development DB. Do it also for Dev. DB, if not)
+
+  (This is just for production, assuming the Devel. dump is almost always up-do-date.
+   But - obviously - it must be done also for the Dev. DB, if the dump it's outdated
+   in structure.)
+  As a safety precaution, do also a backup copy of the dump file at this stage, before
+  issuing the rake task.
 
 4) Apply the DB diffs created locally (on all DBs):
   With Zeus server running:
@@ -83,7 +91,7 @@ on the app on the remote Server without losing your mind.
     been updated locally but a new release of the app has not been scheduled for
     a while.
 
-    *(The alternative method to upload a recovery dump is to commit it in the repo
+    *(The alternative method to upload a recovery dump is to commit it in the repo*
     *and issue a cap deploy command + a separate remote db:rebuild_from_dump task*
     *afterwards.)*
     ---8<---
