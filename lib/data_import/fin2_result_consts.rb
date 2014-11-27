@@ -180,7 +180,6 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   end
   # ----------------------------------------------------------------------------
   #++
-# TODO [END] #########################################################
 
   # Returns the list of all the ContextTypeDefs member objects defined.
   # (Commodity method used only inside specs.)

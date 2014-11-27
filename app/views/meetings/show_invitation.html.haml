@@ -1,7 +1,5 @@
-= render( partial: 'tabs_and_radio_title' )
-
 = render( partial: 'meeting_header' )
-
+= render( partial: 'tabs_and_radio_title' )
 .row-fluid
   - if @meeting.invitation
     - html_doc = Nokogiri::HTML( @meeting.invitation )
