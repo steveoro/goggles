@@ -13,7 +13,7 @@
     - is_active = ( params[:action] == 'show_team_entries' )
     %li{ class: is_active ? 'active' : (@team ? '' : 'disabled') }
       = link_to( t('meeting.team_entries'), is_active ? '#' : @team ? meeting_show_team_entries_path(:id=>@meeting.id, :team_id=>@team.id) : '#' )
-  - if @meeting.are_results_acquired || @meeting.meeting_individual_results.count > 0
+  - if @meeting.are_results_acquired
     - is_active = ( params[:action] == 'show_full' )
     %li{ class: is_active ? 'active' : '' }
       = link_to( t(:results), is_active ? '#' : meeting_show_full_path(:id=>@meeting.id) )
