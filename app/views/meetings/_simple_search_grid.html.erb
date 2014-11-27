@@ -61,6 +61,6 @@
         link_to(
             image_tag('book_open.png', 'data-toggle' => 'tooltip', title: I18n.t('meeting.start_list_tooltip') ),
             meeting_show_start_list_path( id: meeting.id )
-        ) if (meeting.meeting_entries.count > 0)
+        ) if (meeting.has_start_list)
     end
 end -%>

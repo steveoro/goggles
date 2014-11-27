@@ -65,13 +65,17 @@ class MeetingDecorator < Draper::Decorator
   # Otherwise returns the true name
   #
   def get_linked_name
-    if are_results_acquired || meeting_individual_results.count > 0
+    if are_results_acquired
       linked_name = h.link_to( get_short_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
     else
-      if invitation
-        linked_name = h.link_to( get_short_name, meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
+      if has_start_list
+          linked_name = h.link_to( get_short_name, meeting_show_start_list_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') } )
       else
-        linked_name = get_short_name
+        if invitation
+          linked_name = h.link_to( get_short_name, meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
+        else
+          linked_name = get_short_name
+        end 
       end
     end    
     linked_name
