@@ -1,0 +1,46 @@
+%div{'class'=>"goggles-category-gap", 'id'=>'start_list_stats'}
+  .row-fluid
+    .span10
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'success'}
+            %td.span3.goggles-centeralign
+              %b
+                %i= I18n.t('Stats')
+            %td.span1.goggles-centeralign
+              %i= I18n.t('meeting_stats.females')
+            %td.span1.goggles-centeralign
+              %i= I18n.t('meeting_stats.males')
+            %td.span1.goggles-centeralign
+              %i= I18n.t('meeting_stats.total')
+          - gtot_name = gtot_fem = gtot_mal = gtot = 0
+          - @start_list_stats.each do |team_array|
+            - team_id = team_array[0]
+            - name    = team_array[1]
+            - tot_fem = team_array[2]
+            - tot_mal = team_array[3]
+            - sub_tot = team_array[4]
+            - is_highlighted = team_array[5]
+            - gtot_name += 1
+            - gtot_fem  += tot_fem
+            - gtot_mal  += tot_mal
+            - gtot      += sub_tot
+            %tr{'class' => is_highlighted ? 'warning' : ''}
+              %td.span3
+                %a{'id'=>"team#{team_id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+                  = name
+              %td.span1.goggles-rightalign
+                = tot_fem
+              %td.span1.goggles-rightalign
+                = tot_mal
+              %td.span1.goggles-rightalign
+                = sub_tot
+          %tr
+            %td.span3.goggles-rightalign
+              %i= gtot_name
+            %td.span1.goggles-rightalign
+              %i= gtot_fem
+            %td.span1.goggles-rightalign
+              %i= gtot_mal
+            %td.span1.goggles-rightalign
+              %i= gtot

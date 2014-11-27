@@ -566,6 +566,9 @@ class MeetingsController < ApplicationController
     else
       @meeting.updated_at
     end
+    
+    # TODO
+    # Prepares team stats
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -664,14 +667,16 @@ class MeetingsController < ApplicationController
     # and the swimmer or team partecipated to the meeting
     if current_user && current_user.swimmer
       swimmer = current_user.swimmer
-      team = swimmer.teams.joins(:meetings).where(['meetings.id = ?', @meeting.id]).uniq.first
+      team = swimmer.teams.joins(:badges).where(['badges.season_id = ?', @meeting.season_id]).first
       
-      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', swimmer.id]).count > 0
+      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', swimmer.id]).count > 0 ||
+        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', swimmer.id]).count > 0
         # The swimmer associated with the user parteciapte to the meeting
         @swimmer = swimmer
         @team = team
       else
-        if team && @meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).count > 0
+        if team && (@meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).count > 0 ||
+          @meeting.meeting_entries.where(['meeting_entries.team_id = ?', team.id]).count > 0)
           # The team of the swimmer associated with the user parteciapte to the meeting
           @team = team
         end
