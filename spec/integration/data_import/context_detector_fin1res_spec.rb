@@ -4,7 +4,7 @@ require 'spec_helper'
 require_relative './context_detector_checks_for_parsing'
 
 
-describe ContextDetector, type: :integration do
+describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration do
   include ContextDetectorChecksForParsing
 
   let( :dummy_wrapper ) do
@@ -15,6 +15,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === MEETING_HEADER examples ===
+  #
   context "when parsing MEETING_HEADER," do
     subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
 
@@ -167,6 +169,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === CATEGORY_HEADER examples ===
+  #
   context "when parsing CATEGORY_HEADER," do
     subject { ContextDetector.new( dummy_wrapper.context_type_category_header, nil ) }
 
@@ -288,6 +292,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === RELAY_HEADER examples ===
+  #
   context "when parsing RELAY_HEADER," do
     subject { ContextDetector.new( dummy_wrapper.context_type_relay_header, nil ) }
 
@@ -445,6 +451,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === TEAM_RANKING examples ===
+  #
   context "when parsing TEAM_RANKING," do
     subject { ContextDetector.new( dummy_wrapper.context_type_team_ranking, nil ) }
 
@@ -478,6 +486,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === STATS examples ===
+  #
   context "when parsing STATS," do
     subject { ContextDetector.new( dummy_wrapper.context_type_stats, nil ) }
 
@@ -503,6 +513,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === RESULT_ROW examples ===
+  #
   context "when parsing RESULT_ROW," do
     subject { ContextDetector.new( dummy_wrapper.context_type_result_row, nil ) }
 
@@ -582,6 +594,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === RELAY_ROW examples ===
+  #
   context "when parsing RELAY_ROW," do
     subject { ContextDetector.new( dummy_wrapper.context_type_relay_row, nil ) }
 
@@ -654,6 +668,8 @@ describe ContextDetector, type: :integration do
   #++
 
 
+  # === RANKING_ROW examples ===
+  #
   context "when parsing RANKING_ROW," do
     subject { ContextDetector.new( dummy_wrapper.context_type_ranking_row, nil ) }
 

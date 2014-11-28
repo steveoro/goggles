@@ -28,9 +28,24 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :meeting_header,
       [
-        /^\s*|^\r\n|^\n|$|^\Z|\s*(Distanze speciali|(\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Tr|Region))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
-        /\s*Manifestazione organizzata da|\s*(Distanze speciali|(\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Tr|Region))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
-        /(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})|(\s*Manifestazione organizzata da)|^\s*|^\r\n|^\n|$|^\Z|(mistaff|50|100|200|400|800|1500)/i
+        /
+          (?<empty>^\s*|^\r\n|^\n|$|^\Z)|
+          (?<organization>(?<=manifestazione organizzata da )(.+))|
+          (?<wholedate>(?<=\s\-\s|\s\-\-\-\s|\s\s|^)(?<weekday>(dom|lun|mar|mer|gio|ven|sab)\D*\s)?((?<twodigitsep>(\d{1,2})(\/|-|\,|\s)){1,4}(?<month>\d{1,2}|(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\D*))(\/|-|\,|\s)(?<year>\d{2,4}))|
+          (?<title>(?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)
+        /ix,
+        /
+          (?<empty>^\s*|^\r\n|^\n|$|^\Z)|
+          (?<organization>(?<=manifestazione organizzata da )(.+))|
+          (?<wholedate>(?<=\s\-\s|\s\-\-\-\s|\s\s|^)(?<weekday>(dom|lun|mar|mer|gio|ven|sab)\D*\s)?((?<twodigitsep>(\d{1,2})(\/|-|\,|\s)){1,4}(?<month>\d{1,2}|(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\D*))(\/|-|\,|\s)(?<year>\d{2,4}))|
+          (?<title>(?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)
+        /ix,
+        /
+          (?<empty>^\s*|^\r\n|^\n|$|^\Z)|
+          (?<organization>(?<=manifestazione organizzata da )(.+))|
+          (?<wholedate>(?<=\s\-\s|\s\-\-\-\s|\s\s|^)(?<weekday>(dom|lun|mar|mer|gio|ven|sab)\D*\s)?((?<twodigitsep>(\d{1,2})(\/|-|\,|\s)){1,4}(?<month>\d{1,2}|(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\D*))(\/|-|\,|\s)(?<year>\d{2,4}))|
+          (?<title>(?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)
+        /ix,
       ],
       nil,                                          # parent context
       4                                             # line_timeout (line after which these checks will be skipped)
@@ -43,13 +58,13 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :event_individual,
       [
-        /^\s*|^\r\n|^\n|$|^\Z/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
         /-{80}/,
-        /\s{3}-{3}\s{1,3}50\s|100\s|200\s|400\s|800\s|1500\s/i,
-        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Atleta\s{20,24}Cat/i,
-        /\d{1,2}\s{2,3}\w\w|\s{2,4}Atleta\s{20,24}Cat|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
-        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
-        /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
+        /(?<style>\s{3}-{3}\s{1,3}(?<distance>50|100|200|400|800|1500))\s(?<stroke>\w+)/i
+#        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Atleta\s{20,24}Cat/i,
+#        /\d{1,2}\s{2,3}\w\w|\s{2,4}Atleta\s{20,24}Cat|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+#        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+#        /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
       ]
     )
   end
@@ -62,11 +77,14 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       [
         /Torna a inizio pagina|^\s*|^\r\n|^\n|$|^\Z/i,
         /(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w|-{80}/,
-        /^\s*|^\r\n|^\n|$|^\Z|\s{3}-{3}\s{1,3}(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w/i,
-        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Societ/i,
-        /\d{1,2}\s{2,3}\w\w|\s{2,4}Societ|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
-        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
-        /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
+        /
+          (?<empty>^\s*\n|^\r\n|^\z)|
+          (?<relay>\s{3}-{3}\s{1,3}(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w)
+        /ix
+#        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Societ/i,
+#        /\d{1,2}\s{2,3}\w\w|\s{2,4}Societ|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+#        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
+#        /\d{1,2}\s{2,3}\w\w|^\s*|^\r\n|^\n|$|^\Z/i
       ]
     )
   end
@@ -79,7 +97,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       :team_ranking,
       [
         /classifica(\s+di)?(\s+societ)?/i,
-        /^\s*(\r\n|\n|$|\Z)/i
+        /(?<empty>^\s*\n|^\r\n|^\z)/i
       ]
     )
   end
@@ -91,7 +109,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       :stats,
       [
         /statistiche(?!\ssocie.+)/i,
-        /^\s*(\r\n|\n|$|\Z)/i
+        /(?<empty>^\s*\n|^\r\n|^\z)/i
       ]
     )
   end
@@ -142,7 +160,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
         /^.*/i,                                     # (anything)
         /numero di soc.+\spartecipanti\s/i,
 
-        /^\s*(\r\n|\n|$|\Z)/i,                      # (empty)
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
 
         /numero tot.+\sdi atleti iscritti\s/i,
         /^.*/i,
@@ -150,25 +168,25 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
         /^.*/i,
         /^.*/i,
 
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
 
         /numero di atleti partecipanti\s/i,
         /^.*/i,
         /^.*/i,
         /^.*/i,
 
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
 
         /numero tot.+\sdi iscrizioni alle gare\s/i,
         /^.*/i,
         /^.*/i,
 
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
 
         /numero tot.+\sdi gare disputate\s/i,
         /^.*/i,
 
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
 
         /^.*/i,
         /^.*/i,
