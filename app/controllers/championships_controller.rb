@@ -15,6 +15,7 @@ class ChampionshipsController < ApplicationController
   before_filter :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
   before_filter :verify_parameter_regional_er_uisp, only: [:ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp, :history_regional_er_uisp]
   before_filter :verify_parameter_supermaster_fin,  only: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
+  before_filter :set_team,                          only: [:ranking_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -46,7 +47,6 @@ class ChampionshipsController < ApplicationController
 
     championship_calculator = ChampionshipRankingCalculator.new( @season )
     @championship_ranking = championship_calculator.get_season_ranking
-    set_team
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -77,10 +77,10 @@ class ChampionshipsController < ApplicationController
   def event_ranking_regional_er_csi
     @title = I18n.t('championships.event_ranking') + ' ' + @season_type.get_full_name
     
-    # Check for different event types for the season
-    
-    # Check for different categories for the season
+    # Check for different event types and categories for the season and manage updates for the cache
+    @event_types = @season.event_types.are_not_relays.uniq
     @category_types = @season.category_types      
+    @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
   end
 
   # Seasonal individual ranking
@@ -88,6 +88,9 @@ class ChampionshipsController < ApplicationController
   #
   def individual_rank_regional_er_csi
     @title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name     
+
+    # Manage updates for cache
+    @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
   end
 
 
@@ -262,7 +265,7 @@ class ChampionshipsController < ApplicationController
     # and the team associated to actual season_type
     if current_user && current_user.swimmer
       swimmer = current_user.swimmer
-      @team = swimmer.teams.joins(:seasons).where(['seasons.season_type_id = ?', @season_type.id]).uniq.first
+      @team = swimmer.teams.joins(:badges).where(['badges.season_id = ?', @season.id]).first
     end
   end
   

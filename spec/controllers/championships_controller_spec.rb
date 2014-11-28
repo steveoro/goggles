@@ -133,4 +133,23 @@ describe ChampionshipsController, :type => :controller do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe '[GET #event_ranking_regional_er_csi]' do
+    it_behaves_like( "(GET http action with or without parameters)", :event_ranking_regional_er_csi, 131 )
+
+    it "assigns the required variables when invoked without parameters" do
+      get :event_ranking_regional_er_csi
+      expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
+      expect( assigns(:event_types) ).to all(be_an_instance_of( EventType ))
+      expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
+    end
+    it "assigns the required variables when invoked with valid id" do
+      get :event_ranking_regional_er_csi, id: 131
+      expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
+      expect( assigns(:event_types) ).to all(be_an_instance_of( EventType ))
+      expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
