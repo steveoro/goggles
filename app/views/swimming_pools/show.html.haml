@@ -20,11 +20,12 @@
             #mapsLink{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool.maps_link_tooltip')}= link_to( image_tag('gmaps_new_32.png'), decorated_pool.get_maps_url )
     .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
-            = 'ID:'
-          .span10
-            = @pool.id
+        - if admin_signed_in?
+          .row-fluid
+            .span2
+              = 'ID:'
+            .span10
+              = @pool.id
         .row-fluid
           .span12
         .row-fluid
@@ -32,6 +33,11 @@
             = I18n.t('activerecord.attributes.swimming_pool.nick_name') + ':'
           .span10
             = decorated_pool.nick_name
+        .row-fluid
+          .span2
+            = I18n.t('activerecord.models.pool_type') + ':'
+          .span10
+            = decorated_pool.get_pool_type
         .row-fluid
           .span2
             = I18n.t('activerecord.attributes.swimming_pool.lanes_number') + ':'
@@ -87,11 +93,6 @@
             = I18n.t('activerecord.attributes.swimming_pool.has_children_area') + ':'
           .span10
             = show_tag( decorated_pool.has_children_area )
-        .row-fluid
-          .span2
-            = I18n.t('activerecord.models.pool_type') + ':'
-          .span10
-            = decorated_pool.get_pool_type
         .row-fluid
           .span2
             = I18n.t('activerecord.models.locker_cabinet_type') + ':'

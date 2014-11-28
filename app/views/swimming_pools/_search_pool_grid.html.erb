@@ -26,7 +26,7 @@
         custom_filter: City.to_dropdown,
         detach_with_id: :flt_pool_city_id,
     ) do |pool|
-        SwimmingPoolDecorator.decorate(pool).get_city_name
+        SwimmingPoolDecorator.decorate(pool).get_city_full_name
     end
 
     g.column(
