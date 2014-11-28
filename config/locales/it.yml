@@ -55,97 +55,6 @@ it:
   season:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Stagioni'! (tab: 'seasons')"
 
-  meeting:
-    meeting: "Meeting"
-    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Meeting'! (tab: 'meetings')"
-    index_title: "Tutte le Gare - ricerca personalizzata"
-    simple_title: "Tutte le Gare - ricerca semplice"
-    current_title: "Cerca fra le Gare correnti"
-    index_menu: "Ricerca personalizzata"
-    simple_menu: "Ricerca semplice"
-    current_menu: "Tutte le gare correnti"
-    show_results_tooltip: "Mostra tutti i risultati di questo Meeting"
-    show_swimmer_results_tooltip: "Mostra tutti i risultati dell'atleta al Meeting"
-    show_team_results_tooltip: "Mostra tutti i risultati della squadra al Meeting"
-    team_total_athletes: "Tot. atleti gareggianti"
-    team_total_events: "Tot. gare effettuate"
-    team_total_gold_medals: "Tot. medaglie Oro"
-    team_total_silver_medals: "Tot. medaglie Argento"
-    team_total_bronze_medals: "Tot. medaglie Bronzo"
-    team_total_wooden_medals: "Tot. medaglie di Legno [:-)]"
-    team_total_outstanding_scores: "Tot. punteggi notevoli"
-    search_by_swimmer: "Cerca Gare per Atleta"
-    search_by_team: "Cerca Gare per Squadra"
-    total_attended_meetings: "Partecipaz. a Meeting"
-    total_results: "Risultati totali"
-    total_results_short: "Risult. tot."
-    ind_results_short: "Ris. indiv."
-    rel_results_short: "Ris. staff."
-    total_teams: "Squadre tot."
-    scores: "Punteggi"
-    personal_records: "Record personali"
-    rank: "Pos."
-    standard: "Std."
-    timing: "Tempo"
-    reaction_time: "R.T."
-    fin_score: "Punti"
-    goggle_score: "Goggle cup"
-    meeting_score: "Punteggio gara"
-    events_list: "Eventi"
-    planned_events: "Eventi in programma"
-    text_to_be_searched: "Testo da cercare"
-    simple_search_tooltip: "Inserisci direttamente il testo da ricercare all'interno delle gare e dei risultati (nomi persone o luoghi, descrizioni o parole come '50 FA' o '200 RA', ...)"
-    no_records_matching_search_text: "(Nessuna riga dati trovata contenente il testo di ricerca.)"
-    to_be_defined: '(Dati ancora mancanti)'
-    clear_prefiltering: "Azzera prefiltraggio"
-    start_list_and_manifest: "Start-list / Locandina"
-    start_list_tooltip: "Vai alla pagina con la starting-list di questo Meeting"
-    manifest_tooltip: "Vai alla pagina con la locandina di questo Meeting"
-    invitation: "Locandina"
-    start_list: "Start-list"
-    start_list_by_category: "Start-list per categoria!"
-    team_entries: "Iscritti squadra"
-
-  meeting_session:
-    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
-
-  meeting_program:
-    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_programs')"
-
-  meeting_individual_result:
-    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Risultati Individ. Meeting'! (tab: 'meeting_individual_results')"
-
-  meeting_relay:
-    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Staffette Meeting'! (tab: 'meeting_relays')"
-
-  meeting_relay_result:
-    unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Risultati Staff. Meeting'! (tab: 'meeting_relay_results')"
-
-  meeting_team_score:
-    ranking: "Classifica parziale società"
-    attending_teams: "Società partecipanti"
-    team_total_athletes: "Atleti"
-    total: "Totale"
-    sum_individual_points: "Individuali"
-    sum_relay_points: "Staffette"
-    sum_team_points: "Bonus"
-    meeting_individual_points: "Individuali"
-    meeting_relay_points: "Staffette"
-    meeting_team_points: "Bonus"
-    season_individual_points: "Individuali"
-    season_relay_points: "Staffette"
-    season_team_points: "Bonus"
-
-  meeting_calendar:
-    navigation: "Calendario"
-    index_title: "Ricerca Calendario Meeting"
-    year: "Anno"
-    filtering_tooltip: "Clicca sul titolo per mostrare o nascondere i comandi di filtraggio principali"
-    warm_up_time: "Risc."
-    start_up_time: "Inizio"
-    pool: "Piscina"
-    federation: "Federazione"
-
   swimming_pool:
     pools: "Piscine"
     index_title: "Ricerca Piscine"
@@ -180,33 +89,6 @@ it:
     world_record: "Record del mondo"
     national_record: "Record nazionale"
     team_record: "Record di squadra"
-
-  meeting_stats:
-    females: "Femmine"
-    males: "Maschi"
-    total: "Totale"
-    team_athletes: "Nuotatori per Squadra"
-    category_athletes: "Nuotatori per categoria"
-    event_athletes: "Presenze per gara"
-    disqualified: "Squalifiche"
-    average: "Punteggi medi"
-    oldest: "I diversamente giovani"
-    specials: "In evidenza"
-    numbers: "La gara in cifre"
-    male_athlete: "Nuotatori maschi"
-    female_athlete: "Nuotatrici femmine"
-    worst_male_score: "Peggiori punteggi maschili"
-    worst_female_score: "Peggiori punteggi femminili"
-    best_male_score: "Migliori prestazioni maschili"
-    best_female_score: "Migliori prestazioni femminili"
-    tot_athletes_by_event: "Tot. Atleti / Gara"
-    tot_swimmers: "Totale nuotatori"
-    tot_teams: "Totale squadre"
-    tot_average: "Media punteggi"
-    over_1000: "Punteggi oltre 1000"
-    over_950: "Punteggi oltre 950"
-    over_900: "Punteggi oltre 900"
-    tot_disqualified: "Totale squalifiche"
 
   relay_types:
     relay: "Staffetta"
@@ -550,6 +432,7 @@ it:
   user: Utente
   user_name: Nome utente
   login_to_proceed: "Per continuare e' necessario fare Log-in."
+  login_to_view_this_data: "Esegui il log-in per poter vedere queste informazioni!"
   login_tooltip: Accedi
   password: Password
   user_not_authenticated: 'Utente non registrato'

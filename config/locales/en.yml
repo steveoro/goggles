@@ -55,97 +55,6 @@ en:
   season:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'seasons'!"
 
-  meeting:
-    meeting: "Meeting"
-    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meetings')"
-    index_title: "All Meetings - custom search"
-    simple_title: "All Meetings - simple search"
-    current_title: "Search among current Meetings"
-    index_menu: "Custom search"
-    simple_menu: "Simple search"
-    current_menu: "All current meetings"
-    show_results_tooltip: "Show all the results for this Meeting"
-    show_swimmer_results_tooltip: "Show all the results for this swimmer at this Meeting"
-    show_team_results_tooltip: "Show all the results for this team at this Meeting"
-    team_total_athletes: "Tot. athletes involved"
-    team_total_events: "Tot. competing events"
-    team_total_gold_medals: "Tot. Gold medals"
-    team_total_silver_medals: "Tot. Silver medals"
-    team_total_bronze_medals: "Tot. Bronze medals"
-    team_total_wooden_medals: "Tot. 'Wooden' medals [:-)]"
-    team_total_outstanding_scores: "Tot. outstanding scores"
-    search_by_swimmer: "Search Meeting by Athlete"
-    search_by_team: "Search Meeting by Team"
-    total_attended_meetings: "Attended Meetings"
-    total_results: "Total Results"
-    total_results_short: "Tot. Results"
-    ind_results_short: "Indiv. results"
-    rel_results_short: "Relay results"
-    total_teams: "Tot. teams"
-    scores: "Scores"
-    personal_records: "Personal records"
-    rank: "Rank"
-    standard: "Std."
-    timing: "Timing"
-    reaction_time: "R.T."
-    fin_score: "FIN score"
-    goggle_score: "Goggle cup score"
-    meeting_score: "Meeting score"
-    events_list: "Events"
-    planned_events: "Planned Events"
-    text_to_be_searched: "Text to be searched"
-    simple_search_tooltip: "Type directly the text to be searched among all meetings and their results (persons' names or places, descriptions or words, like '50 FS' or '200 BS', ...)"
-    no_records_matching_search_text: "(No records were found matching the search text.)"
-    to_be_defined: '(Missing data)'
-    clear_prefiltering: "Clear pre-filtering"
-    start_list_and_manifest: "Start-list / Manifest"
-    start_list_tooltip: "Go to the Start-list page for this meeting"
-    manifest_tooltip: "Go to the Manifest page for this meeting"
-    invitation: "Manifest"
-    start_list: "Start-list"
-    start_list_by_category: "Start-list by category"
-    team_entries: "Team entries"
-
-  meeting_session:
-    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
-
-  meeting_program:
-    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_programs'!"
-
-  meeting_individual_result:
-    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_individual_results'!"
-
-  meeting_relay:
-    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_relays'!"
-
-  meeting_relay_result:
-    unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_relay_results'!"
-
-  meeting_team_score:
-    ranking: "Partial Team ranking"
-    attending_teams: "Attending teams"
-    team_total_athletes: "Athletes"
-    total: "Total"
-    sum_individual_points: "Individ. pts."
-    sum_relay_points: "Relay pts."
-    sum_team_points: "Bonus pts."
-    meeting_individual_points: "Individ. pts."
-    meeting_relay_points: "Relay pts."
-    meeting_team_points: "Bonus pts."
-    season_individual_points: "Individ. pts."
-    season_relay_points: "Relay pts."
-    season_team_points: "Bonus pts."
-
-  meeting_calendar:
-    navigation: "Calendar"
-    index_title: "Search Meeting Calendar"
-    year: "Year"
-    filtering_tooltip: "Click on the title bar to hide or show the main filtering controls"
-    warm_up_time: "Warm-up"
-    start_up_time: "Start"
-    pool: "Swimming Pool"
-    federation: "Federation"
-
   swimming_pool:
     pools: "Swimming-pools"
     index_title: "Search Swimming-pools"
@@ -180,34 +89,6 @@ en:
     world_record: "World record"
     national_record: "National record"
     team_record: "Team record"
-
-  meeting_stats:
-    females: "Females"
-    males: "Males"
-    total: "Total"
-    team_athletes: "Swimmers for Team"
-    category_athletes: "Swimmers by category"
-    event_athletes: "Athletes by event"
-    disqualified: "Disqualified"
-    average: "Average score"
-    oldest: "The most vintage"
-    specials: "Highlights"
-    numbers: "The meeting in numbers"
-    male_athlete: "Male swimmers"
-    female_athlete: "Female swimmers"
-    worst_male_score: "Worst male scores"
-    worst_female_score: "Worst female scores"
-    best_male_score: "Best male scores"
-    best_female_score: "Best female scores"
-    tot_athletes_by_event: "swimmers per event total"
-    tot_swimmers: "Swimmers total"
-    tot_teams: "Team presence"
-    tot_average: "Average scores total"
-    over_1000: "Over 1000 scores"
-    over_950: "Over 950 scores"
-    over_900: "Over 900 scores"
-    tot_disqualified: "Disqualifieds total"
-
 
   relay_types:
     relay: "Relay"
@@ -551,6 +432,7 @@ en:
   user_name: User name
   password: Password
   login_to_proceed: To proceed, a log-in is required.
+  login_to_view_this_data: "Log-in to view this information!"
   login_tooltip: Log in
   user_not_authenticated: 'User Not Yet Authenticated'
   invalid_user: "Invalid User / Password combination!"

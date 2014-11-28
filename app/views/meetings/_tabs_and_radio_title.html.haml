@@ -3,30 +3,34 @@
     - if @meeting.invitation
       - is_active = ( params[:action] == 'show_invitation' )
       %li{ class: is_active ? 'active' : '' }
-        = link_to( t('meeting.invitation'), is_active ? '#' : meeting_show_invitation_path(:id=>@meeting.id) )
+        = link_to( t('meeting.invitation'), is_active ? '#' : meeting_show_invitation_path( id: @meeting.id ) )
     - if @meeting.has_start_list
       - is_active = ( params[:action] == 'show_start_list' )
       %li{ class: is_active ? 'active' : '' }
-        = link_to( t('meeting.start_list'), is_active ? '#' : meeting_show_start_list_path(:id=>@meeting.id) )
+        = link_to( t('meeting.start_list'), is_active ? '#' : meeting_show_start_list_path( id: @meeting.id ) )
       - is_active = ( params[:action] == 'show_start_list_by_category' )
       %li{ class: is_active ? 'active' : '' }
-        = link_to( t('meeting.start_list_by_category'), is_active ? '#' : meeting_show_start_list_by_category_path(:id=>@meeting.id) )
+        = link_to( t('meeting.start_list_by_category'), is_active ? '#' : meeting_show_start_list_by_category_path( id: @meeting.id ) )
       - is_active = ( params[:action] == 'show_team_entries' )
-      %li{ class: is_active ? 'active' : (@team ? '' : 'disabled') }
-        = link_to( t('meeting.team_entries'), is_active ? '#' : @team ? meeting_show_team_entries_path(:id=>@meeting.id, :team_id=>@team.id) : '#' )
+      - if @team
+        %li{ class: is_active ? 'active' : '' }
+          = link_to( t('meeting.team_entries'), is_active ? '#' : meeting_show_team_entries_path( id: @meeting.id, team_id: @team.id ) )
+      - else
+        %li{ :class => (is_active ? 'active' : 'disabled'), 'data-toggle' => 'tooltip', 'title' => I18n.t(:login_to_view_this_data) }
+          = link_to( t('meeting.team_entries'), '#' )
     - if @meeting.are_results_acquired
       - is_active = ( params[:action] == 'show_full' )
       %li{ class: is_active ? 'active' : '' }
-        = link_to( t(:results), is_active ? '#' : meeting_show_full_path(:id=>@meeting.id) )
+        = link_to( t(:results), is_active ? '#' : meeting_show_full_path( id: @meeting.id ) )
       - is_active = ( params[:action] == 'show_ranking' )
       %li{ class: is_active ? 'active' : '' }
-        = link_to( t(:ranking), is_active ? '#' : meeting_show_ranking_path(:id=>@meeting.id) )
+        = link_to( t(:ranking), is_active ? '#' : meeting_show_ranking_path( id: @meeting.id ) )
       - is_active = ( params[:action] == 'show_stats' )
       %li{ class: is_active ? 'active' : '' }
-        = link_to( t(:stats), is_active ? '#' : meeting_show_stats_path(:id=>@meeting.id) )
+        = link_to( t(:stats), is_active ? '#' : meeting_show_stats_path( id: @meeting.id ) )
       - is_active = ( params[:action] == 'show_team_results' )
       %li{ class: is_active ? 'active' : (@team ? '' : 'disabled') }
-        = link_to( t(:team_results), is_active ? '#' : @team ? meeting_show_team_results_path(:id=>@meeting.id, :team_id=>@team.id) : '#' )
+        = link_to( t(:team_results), is_active ? '#' : @team ? meeting_show_team_results_path( id: @meeting.id, team_id: @team.id ) : '#' )
       - is_active = ( params[:action] == 'show_swimmer_results' )
       %li{ class: is_active ? 'active' : (@swimmer && @team ? '' : 'disabled') }
-        = link_to(t(:swimmer_results), @swimmer && @team ? meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>@swimmer.id) : '#' )
+        = link_to(t(:swimmer_results), @swimmer && @team ? meeting_show_swimmer_results_path( id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id ) : '#' )
