@@ -7,7 +7,39 @@ require_relative './context_detector_checks_for_parsing'
 
 
 shared_examples_for "(failing EVENT INDIVIDUAL)" do
-  # TODO
+  it "doesn't mistakenly recognize a RESULT context (type #1)" do
+    check_for_parsing_fail(
+      [
+        '',
+        '-------------------------------------------------------------------------------------------',
+        '   ---   200 Rana Femmine   ---',
+        '-------------------------------------------------------------------------------------------'
+      ]
+    )
+  end
+  it "doesn't mistakenly recognize a RESULT context (type #2)" do
+    check_for_parsing_fail(
+      [
+        '',
+        '---------------------------------------------------------------------------------------',
+        '   ---   200 Misti Femmine   ---',
+        '',
+        '    Atleta                    Cat. S  Societa                   Reg  Tempo   Punti',
+        '---------------------------------------------------------------------------------------'
+      ]
+    )
+  end
+  it "doesn't mistakenly recognize a RESULT context (type #3)" do
+    check_for_parsing_fail(
+      [
+        '',
+        '--------------------------------------------------------------------------------',
+        '   ---   200 Stile Libero Femmine   ---',
+        '   Atleta                    Cat Societa                   Reg Tempo    Punti',
+        '--------------------------------------------------------------------------------'
+      ]
+    )
+  end
 end
 
 
@@ -430,6 +462,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     #-- -------------------------------------------------------------------------
     #++
 
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
     it_behaves_like "(failing RANKING)"
     it_behaves_like "(failing STATS)"
     #-- -----------------------------------------------------------------------
