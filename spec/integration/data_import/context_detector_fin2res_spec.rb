@@ -470,6 +470,173 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # === TEAM_RANKING examples ===
+  #
+  context "when parsing TEAM_RANKING," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_team_ranking, nil ) }
+
+    it "recognizes the 'ris20081221mus' format" do
+      #              10        20        30        40        50        60        70        80        90
+      #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      check_for_parsing_ok(
+        [
+#          '',
+#          '----------------------------------------------------------------------------------------',
+          "                   ---   CLASSIFICA SOCIETA'   ---",
+          '',
+          "     Codice    Societa'                       Regione             Punt.  Oro    Ar.  Br.",
+          "----------------------------------------------------------------------------------------"
+        ]
+      )
+    end
+    # (ris20091213liv is equal)
+    it "recognizes the 'ris20101212liv' format" do
+      check_for_parsing_ok(
+        [
+#          '',
+#          "------------------------------------------------------------------------------",
+          "   ---   CLASSIFICA SOCIETA'   ---",
+          "                                    Regione               Punt.  Oro  Ar.  Br.",
+          "------------------------------------------------------------------------------"
+        ]
+      )
+    end
+    it "recognizes the 'ris20101219mus' format" do
+      check_for_parsing_ok(
+        [
+#          '',
+#          "-------------------------------------------------------------------------------------------",
+          "                   ---   CLASSIFICA SOCIETA'   ---",
+          '',
+          "              Societa'                       Regione             Punt.  Oro     Ar.     Br.",
+          "-------------------------------------------------------------------------------------------"
+        ]
+      )
+    end
+    it "recognizes the 'ris20130513pont' format" do
+      check_for_parsing_ok(
+        [
+#          "Torna a inizio pagina",
+          "Classifica societ�",
+          "",
+          "                                    Regione          Punt.   Oro  Arg Bro Nga   Med",
+          "------------------------------------------------------------------------------------"
+        ]
+      )
+    end
+    # (ris20131117pogg is equal)
+     it "recognizes the 'ris20140330lucc' format" do
+      check_for_parsing_ok(
+        [
+#          "Torna a inizio pagina",
+          "Classifica societ�",
+          "",
+          "--------------------------------------------------------------------------------",
+          "   ---   CLASSIFICA SOCIETA'   ---",
+          "                                    Regione     Punt.   Oro  Arg Bro Nga  Med",
+          "--------------------------------------------------------------------------------"
+        ]
+      )
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing STATS)"
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # === STATS examples ===
+  #
+  context "when parsing STATS," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_stats, nil ) }
+
+    it "recognizes the 'ris20081221mus' format" do
+      #              10        20        30        40        50        60        70        80        90
+      #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      check_for_parsing_ok(
+        [
+#          '',
+#          '----------------------------------------------------------------------------',
+          '   ---   STATISTICA FINALE     ---',
+          '----------------------------------------------------------------------------'
+        ]
+      )
+    end
+    # (ris20091213liv is equal)
+    # (ris20101212liv is equal)
+    it "recognizes the 'ris20101219mus' format" do
+      check_for_parsing_ok(
+        [
+#          '                                 ',
+          '                                         Statistiche',
+          ''
+        ]
+      )
+    end
+    it "recognizes the 'ris20130513pont' format" do
+      check_for_parsing_ok(
+        [
+#          '  ',
+          'Statistiche',
+          ''
+        ]
+      )
+    end
+    # (ris20131117pogg is equal)
+    it "recognizes the 'ris20140330lucc' format (whole)" do
+      check_for_parsing_ok(
+        [
+#          '  ',
+          'Statistiche',
+          '',
+          '----------------------------------------------------------------------------',
+          '   ---   STATISTICA FINALE     ---',
+          '----------------------------------------------------------------------------'
+        ]
+      )
+    end
+    it "recognizes the 'ris20140330lucc' format (half-1)" do
+      check_for_parsing_ok(
+        [
+#          '  ',
+          'Statistiche',
+          ''
+        ]
+      )
+    end
+    it "recognizes the 'ris20140330lucc' format (half-2)" do
+      check_for_parsing_ok(
+        [
+#          '----------------------------------------------------------------------------',
+          '   ---   STATISTICA FINALE     ---',
+          '----------------------------------------------------------------------------'
+        ]
+      )
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing RANKING)"
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # TODO Specs for DETAIL contexts
+
+
 end
 #-- ---------------------------------------------------------------------------
 #++

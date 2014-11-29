@@ -89,15 +89,14 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     )
   end
 
-# TODO [BEGIN] #########################################################
   # "Team Ranking" (header) context type definition.
   #
   def context_type_team_ranking
     ContextTypeDef.new(
       :team_ranking,
       [
-        /classifica(\s+di)?(\s+societ)?/i,
-        /(?<empty>^\s*\n|^\r\n|^\z)/i
+        /classifica(\s+di)?(\s+societ)/i
+#        /(?<empty>^\s*\n|^\r\n|^\z)/i
       ]
     )
   end
@@ -108,12 +107,13 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :stats,
       [
-        /statistiche(?!\ssocie.+)/i,
-        /(?<empty>^\s*\n|^\r\n|^\z)/i
+        /(statistiche(?!\ssocie.+)|statistica\sfinale)/i
+#        /(?<empty>^\s*\n|^\r\n|^\z)/i
       ]
     )
   end
                                                     # == DETAIL CONTEXT TYPES definitions: ==
+# TODO [BEGIN WIP] #########################################################
   # "Result row" (detail) context type definition.
   #
   def context_type_result_row
@@ -198,6 +198,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   end
   # ----------------------------------------------------------------------------
   #++
+# TODO [END WIP] #########################################################
 
   # Returns the list of all the ContextTypeDefs member objects defined.
   # (Commodity method used only inside specs.)

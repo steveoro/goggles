@@ -43,6 +43,12 @@ module ContextDetectorChecksForParsing
   # Checks if the specified feed fails or succeeds to be recognized after the minimum
   # amount of rows specified in the context definition have been checked out.
   #
+  # Note that this implementation is a more strict version of the actual algorithm
+  # used by the context detector and assumes that the feed of lines starts with the
+  # *actual* first line used in the recognition buffer.
+  # That is, the recognition loop will stop after the minimum required number of lines
+  # has been fed-in, even though the actual feed is several lines longer.
+  #
   # Assumes +subject+ is an instance of ContextDetector. Raises an error otherwise.
   #
   # === Params:
