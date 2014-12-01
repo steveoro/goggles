@@ -10,6 +10,8 @@
   %td.span1.goggles-rightalign
     = relay_result.get_timing
   %td.span1.goggles-rightalign
-    = sprintf( "%02.2f", relay_result.meeting_points )
+    - if relay_result.standard_points > 0
+      = sprintf( "%02.2f", relay_result.standard_points )
   %td.span1.goggles-rightalign
-    = sprintf( "%02.2f", relay_result.standard_points )
+    - if relay_result.meeting_points > 0
+      = sprintf( "%02.2f", relay_result.meeting_points )

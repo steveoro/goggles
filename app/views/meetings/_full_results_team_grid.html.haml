@@ -9,20 +9,23 @@
             %td{'colspan'=>'6'}
               %b= meeting_event.event_type.i18n_description
               = admin_signed_in? ? " (meeting_events.id=#{meeting_event.id}" : ''
+            - if @meeting.has_start_list and !is_a_relay
+              %td.goggles-rightalign
+                = '(' + t('meeting.entry_time') + ')'
           - # Individual results
           - unless is_a_relay
             - meeting_event.meeting_individual_results.for_team(@team).sort_by_swimmer.each do |individual_result|
               %tr
-                %td.span1.goggles-rightalign
-                  = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
-                  = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
-                  = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
-                  = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
                 %td.span4
                   %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                     = individual_result.get_swimmer_name
                 %td.span1
                   = individual_result.category_type_short_name
+                %td.span1.goggles-rightalign
+                  = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
+                  = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
+                  = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+                  = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
                 %td.span1.goggles-rightalign
                   = individual_result.get_timing
                 %td.span1.goggles-rightalign
@@ -31,24 +34,32 @@
                 %td.span1.goggles-rightalign
                   - if individual_result.meeting_individual_points > 0
                     = sprintf( "%02.2f", individual_result.meeting_individual_points )
+                - if @meeting.has_start_list
+                  %td.span1.goggles-rightalign
+                    - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', individual_result.swimmer_id, individual_result.meeting_program_id]).count > 0
+                      = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', individual_result.swimmer_id, individual_result.meeting_program_id]).first.get_timing
           -# --- Team Relay result rows:
           - if is_a_relay
-            - meeting_event.meeting_relay_results.where(['meeting_relay_results.team_id = ?', @team.id]).order('meeting_relay_results.meeting_points DESC, meeting_relay_results.rank ASC').each do |relay_result|
+            - meeting_event.meeting_relay_results.for_team(@team).sort_by_category.each do |relay_result|
               %tr
+                %td
+                  = relay_result.get_team_name
+                %td
+                  = relay_result.gender_type.code
+                  = '-'
+                  = relay_result.category_type.short_name
                 %td.goggles-rightalign
                   = show_tag( relay_result.rank==1 && relay_result.is_valid_for_ranking, "medal_gold_3.png", '' )
                   = show_tag( relay_result.rank==2 && relay_result.is_valid_for_ranking, "medal_silver_3.png", '' )
                   = show_tag( relay_result.rank==3 && relay_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
                   = relay_result.is_disqualified ? 'DSQ' : relay_result.rank
-                %td
-                  = relay_result.get_team_name
-                %td
-                  = '?'
                 %td.goggles-rightalign
                   = relay_result.get_timing
                 %td.goggles-rightalign
-                  = sprintf( "%02.2f", relay_result.meeting_points )
+                  - if relay_result.standard_points > 0
+                    = sprintf( "%02.2f", relay_result.standard_points )
                 %td.goggles-rightalign
-                  = sprintf( "%02.2f", relay_result.standard_points )
+                  - if relay_result.meeting_points > 0
+                    = sprintf( "%02.2f", relay_result.meeting_points )
 .row-fluid
   .span12
