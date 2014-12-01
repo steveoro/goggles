@@ -3,7 +3,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.577
+# - vers. : 4.00.649
 #
 # This requires Capistrano v. >= 3.1
 
@@ -54,6 +54,38 @@ namespace :remote do
       within release_path do
         with rails_env: :production do
           bundle "#{fetch(:param_prompt)}"
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Remote Rake tmp:clear invocation.
+  desc <<-DESC
+    Invokes remotely rake tmp:clear on the production environment.
+  DESC
+  task :tmp_clear do
+    on roles(:app) do
+      within release_path do
+        with rails_env: :production do
+          rake "tmp:clear"
+        end
+      end
+    end
+  end
+
+
+  # Remote Rake db:sessions:clear invocation.
+  desc <<-DESC
+    Invokes remotely rake db:sessions:clear on the production environment.
+  DESC
+  task :db_sessions_clear do
+    on roles(:app) do
+      within release_path do
+        with rails_env: :production do
+          rake "db:sessions:clear"
         end
       end
     end

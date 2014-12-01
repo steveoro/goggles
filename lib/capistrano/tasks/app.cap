@@ -185,3 +185,7 @@ end
 before 'deploy:check:linked_files', 'app:setup:prod_env'
 before 'deploy:check:linked_files', 'app:setup:shared_extjs'
 before 'deploy:check:linked_files', 'app:setup:common_output'
+
+before 'deploy:restart', 'remote:tmp_clear'
+# [Steve, 20141201] Warning: this may lead to errors on "cold" deploys, where the creation of the DB has been somehow skipped volontarily:
+before 'deploy:restart', 'remote:db_sessions_clear'
