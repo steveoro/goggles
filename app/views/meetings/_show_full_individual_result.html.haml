@@ -20,9 +20,15 @@
     - else
       = individual_result.get_timing
   %td.span1.goggles-rightalign
-    = sprintf( "%02.2f", individual_result.standard_points )
+    - if individual_result.standard_points > 0
+      = sprintf( "%02.2f", individual_result.standard_points )
   %td.span1.goggles-rightalign
-    = sprintf( "%02.2f", individual_result.meeting_individual_points )
+    - if individual_result.meeting_individual_points > 0
+      = sprintf( "%02.2f", individual_result.meeting_individual_points )
+  - if @meeting.has_start_list
+    %td.span1.goggles-rightalign
+      - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', individual_result.swimmer_id, individual_result.meeting_program_id]).count > 0
+        = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', individual_result.swimmer_id, individual_result.meeting_program_id]).first.get_timing
 
 - if has_passages
   %script
