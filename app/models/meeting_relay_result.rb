@@ -58,7 +58,8 @@ class MeetingRelayResult < ActiveRecord::Base
 
   scope :sort_by_user,           ->(dir) { order("users.name #{dir.to_s}, meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }
   scope :sort_by_meeting_relay,  ->(dir) { order("meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }
-  scope :sort_by_timing,         ->(dir = 'ASC') { order("is_disqualified, (hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
+#  scope :sort_by_timing,         ->(dir = 'ASC') { order("is_disqualified, (hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
+  scope :sort_by_timing,         ->(dir = 'ASC') { order("is_disqualified, rank #{dir.to_s}") }
   scope :for_team,               ->(team)                { where(team_id: team.id) }
   scope :sort_by_category,       ->(dir = 'ASC') { joins(:category_type, :gender_type).order("gender_types.code, category_types.code #{dir.to_s}") }
 
