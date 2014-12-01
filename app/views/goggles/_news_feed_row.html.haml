@@ -1,5 +1,5 @@
 %h4.text-info= feed.title
-%p= feed.body
+%p= feed.body.html_safe
 %small= "#{Format.a_datetime( feed.updated_at )}"
 %p
   %small= "#{t('newsfeed.go_to_friend')} " if feed.is_friend_activity && feed.friend

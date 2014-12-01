@@ -5,9 +5,8 @@
         &times;
       = content_tag( :h4, article.title, class:( article.is_sticky ? 'text-warning' : 'text-info') )
       %br
-      %p= article.body
+      %p= article.body.html_safe
       %small= "#{article.user_name}, #{Format.a_datetime( article.updated_at )}"
-
 - if @articles.nil? || (@articles && @articles.length == 0)
   %p{style: "text-align: center"}
     %i= t(:no_new_articles)
