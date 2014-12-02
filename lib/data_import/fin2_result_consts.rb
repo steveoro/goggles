@@ -354,6 +354,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   end
 
 # TODO [BEGIN] #########################################################
+# The following 2 are actually MISSING from the header and must be
+# extracted from the detail:
 
   # "relay_header.category_group" token extractor definition
   #
@@ -375,6 +377,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       9                                             # (max size)
     )
   end
+# TODO [END] #########################################################
   # ----------------------------------------------------------------------------
   #++
 
