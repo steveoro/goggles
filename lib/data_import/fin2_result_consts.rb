@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.631
+  - Goggles framework vers.:  4.00.655
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -149,7 +149,6 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     )
   end
 
-# TODO [BEGIN WIP] #########################################################
 
   # "Statistics details section" context type definition, format type #1.
   #
@@ -157,48 +156,31 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :stats_details_1,
       [
-        /numero di soc.+\siscritte\s/i,
+        /\ssociet.\siscritte\s/i,
         /^.*/i,                                     # (anything)
-        /numero di soc.+\spartecipanti\s/i,
+        /\ssociet.\spartecipanti\s/i,
+        /^.*/i,                                     # (anything)
 
-        /^\s*(\r\n|\n|$|\Z)/i,                      # (empty)
+        /\satleti\siscritti\s/i,
+        /^.*/i,
+        /^.*/i,                                     # (anything)
 
-        /numero tot.+\sdi atleti iscritti\s/i,
+        /\satleti\spartecipanti\s/i,
         /^.*/i,
-        /^.*/i,
-        /^.*/i,
-        /^.*/i,
+        /^.*/i,                                     # (anything)
 
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /\siscrizioni\salle\sgare\s/i,
+        /\sgare\sdisputate\s/i,
+        /^.*/i,
+        /^.*/i,                                     # (anything)
 
-        /numero di atleti partecipanti\s/i,
-        /^.*/i,
-        /^.*/i,
-        /^.*/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,
-
-        /numero tot.+\sdi iscrizioni alle gare\s/i,
-        /^.*/i,
-        /^.*/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,
-
-        /numero tot.+\sdi gare disputate\s/i,
-        /^.*/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,
-
-        /^.*/i,
-        /^.*/i,
-        /numero di squalifiche\s/i,
-        /numero di ritiri\s/i
+        /\ssqualifiche\s/i,
       ],
       :stats
     )
   end
 
-  # "Statistics details section" context type definition.
+  # "Statistics details section" context type definition, format type #2.
   #
   def context_type_stats_details_type2
     ContextTypeDef.new(
@@ -206,22 +188,22 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       [
         /\ssociet\D\siscritte\s/i,
         /\ssociet\D\spresenti\s/i,
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^.*/i,                                     # (anything)
 
         /\satleti\siscritti\s/i,
         /\satleti\spresenti\s/i,
         /\sPercentuale\sAssenti\s/i,
         /\sAtleta\sPresente\scon\suna\sgara\s/i,
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^.*/i,                                     # (anything)
 
         /\sIscrizioni\sGare\s/i,
         /\sGare\sDisputate\s/i,
         /\sAssenza\sGare\s/i,
         /\sPercentuale\sGare\sNon\sDisputate\s/i,
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^.*/i,                                     # (anything)
 
         /\sStaffette\sDisputate\s/i,
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^.*/i,                                     # (anything)
 
         /\sSqualifiche\s/i,
         /\sRitiri\s/i
@@ -231,7 +213,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   end
   # ----------------------------------------------------------------------------
   #++
-# TODO [END WIP] #########################################################
+
 
   # Returns the list of all the ContextTypeDefs member objects defined.
   # (Commodity method used only inside specs.)

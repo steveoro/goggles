@@ -11,7 +11,7 @@ require 'data_import/fin2_result_consts'
 
 = Fin2ResultDefs
 
-  - Goggles framework vers.:  4.00.631
+  - Goggles framework vers.:  4.00.655
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -68,7 +68,10 @@ class Fin2ResultDefs < TxtResultDefs
       relay_row:        ContextDetector.new( context_type_relay_row, logger ),
       ranking_row:      ContextDetector.new( context_type_ranking_row, logger ),
 
-      stats_details:    ContextDetector.new( context_type_stats_details, logger )
+      # [Steve, 20141202] Two different sub-formats are possible foe the stats deails:
+      # (Only the one actually found will be filled-in)
+      stats_details_1:  ContextDetector.new( context_type_stats_details_type1, logger ),
+      stats_details_2:  ContextDetector.new( context_type_stats_details_type2, logger )
     }
 
     # == String tokenizer type hash
@@ -180,20 +183,15 @@ class Fin2ResultDefs < TxtResultDefs
       # -- Fields to be extracted: :teams_tot, :teams_presence,
       #    :swimmer_tot, :swimmer_presence, :entries_tot, :entries_presence,
       #    :disqual_tot, :withdrawals_tot
-      stats_details: [
+      stats_details_1: [
         [ tokenizer_stats_teams_tot ],
         nil,
         [ tokenizer_stats_teams_presence ], nil,
 
         [ tokenizer_stats_swimmers_tot ],
-        nil,
-        nil,
-        nil,
         nil, nil,
 
         [ tokenizer_stats_swimmers_presence ],
-        nil,
-        nil,
         nil, nil,
 
         [ tokenizer_stats_entries_tot ],
@@ -203,8 +201,25 @@ class Fin2ResultDefs < TxtResultDefs
         [ tokenizer_stats_entries_presence ],
         nil, nil,
 
+        [ tokenizer_stats_disqual_tot ]
+      ],
+
+      stats_details_2: [
+        [ tokenizer_stats_teams_tot ],
+        [ tokenizer_stats_teams_presence ], nil,
+
+        [ tokenizer_stats_swimmers_tot ],
+        [ tokenizer_stats_swimmers_presence ],
         nil,
+        nil, nil,
+
+        [ tokenizer_stats_entries_tot ],
+        [ tokenizer_stats_entries_presence ],
         nil,
+        nil, nil,
+
+        nil, nil,
+
         [ tokenizer_stats_disqual_tot ],
         [ tokenizer_stats_withdrawals_tot ]
       ]
@@ -270,20 +285,15 @@ class Fin2ResultDefs < TxtResultDefs
         nil, nil
       ],
 
-      stats_details: [
+      stats_details_1: [
         [ :teams_tot ],
         nil,
         [ :teams_presence ], nil,
 
         [ :swimmer_tot ],
-        nil,
-        nil,
-        nil,
         nil, nil,
 
         [ :swimmer_presence ],
-        nil,
-        nil,
         nil, nil,
 
         [ :entries_tot ],
@@ -293,8 +303,24 @@ class Fin2ResultDefs < TxtResultDefs
         [ :entries_presence ],
         nil,  nil,
 
+        [ :disqual_tot ]
+      ],
+      stats_details_2: [
+        [ :teams_tot ],
+        [ :teams_presence ], nil,
+
+        [ :swimmer_tot ],
+        [ :swimmer_presence ],
         nil,
+        nil, nil,
+
+        [ :entries_tot ],
+        [ :entries_presence ],
         nil,
+        nil, nil,
+
+        nil,  nil,
+
         [ :disqual_tot ],
         [ :withdrawals_tot ]
       ]

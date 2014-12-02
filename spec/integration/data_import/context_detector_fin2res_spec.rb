@@ -996,7 +996,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   context "when parsing STATS_DETAILS (format 1)," do
     subject { ContextDetector.new( dummy_wrapper.context_type_stats_details_type1, nil ) }
 
-    xit "recognizes the 'ris20101219mus' format" do
+    it "recognizes the 'ris20101219mus' format" do
       check_for_parsing_ok(
         [
           "                Numero di societ� iscritte                   65",
