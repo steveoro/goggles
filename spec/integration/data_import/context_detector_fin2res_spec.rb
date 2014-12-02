@@ -634,7 +634,355 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   #++
 
 
-  # TODO Specs for DETAIL contexts
+  # *** Specs for DETAIL contexts ***
+
+
+  # === RESULT_ROW examples ===
+  #
+  context "when parsing RESULT_ROW," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_result_row, nil ) }
+
+    it "doesn't mistakenly recognize a empty line" do
+      check_for_parsing_fail(
+        [
+          ''
+        ], 0, :event_individual
+      )
+    end
+    it "doesn't mistakenly recognize a separator line" do
+      check_for_parsing_fail(
+        [
+          '-------------------------------------------------------------------------------------------'
+        ], 0, :event_individual
+      )
+    end
+
+    it "recognizes the 'ris20081221mus' format (M30)" do
+      #              10        20        30        40        50        60        70        80        90
+      #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      check_for_parsing_ok(
+        [
+          "1   LIG014209 OLIVERI FRANCESCA      1979 30 F  RN SPEZIA 86               03 32 76  654,92 "
+        ], :event_individual
+      )
+    end
+    it "recognizes the 'ris20081221mus' format (U25)" do
+      check_for_parsing_ok(
+        [
+          "1   EMI023180 ARTEAGA HECTOR ALESSAN 1988 0 M  ASD CSI NUOTO OBER FERRAR  02 53 82 "
+        ], :event_individual
+      )
+    end
+    it "recognizes the 'ris20081221mus' format (extra)" do
+      check_for_parsing_ok(
+        [
+          "1   LOM019717 MONTINI ALBERTO        1968 40 M  ACQUASPORT BY T D          02 15 95 1016,26 MO (M40)"
+        ], :event_individual
+      )
+    end
+
+    it "recognizes the 'ris20091213liv' format (M25)" do
+      check_for_parsing_ok(
+        [
+          "1   TOS033546 PINTO MARIL�           1982 25 F  ASD CIRCOLO NUOTO LUCCA    03 44 80  691,55 "
+        ], :event_individual
+      )
+    end
+    it "recognizes the 'ris20091213liv' format (U25)" do
+      check_for_parsing_ok(
+        [
+          "1   TOS001216 MALCOTTI GIULIA        1986 0 F  ASD CSI NUOTO PRATO        00 31 92 "
+        ], :event_individual
+      )
+    end
+    it "recognizes the 'ris20091213liv' format (extra)" do
+      check_for_parsing_ok(
+        [
+          "1   TOS004244 CANESSA LUCIANO        1919 90 M  ASD DLF NUOTO LIVORNO      05 07 48  763,92 IT (M90)"
+        ], :event_individual
+      )
+    end
+
+    it "recognizes the 'ris20101212liv' format (U25)" do
+      check_for_parsing_ok(
+        [
+          "1   BIANCHI VERONICA          U 25 F  CIRCOLO NUOTO LUCCA       TOS 00 39 42         "
+        ], :event_individual
+      )
+    end
+    it "recognizes the 'ris20101212liv' format (M40)" do
+      check_for_parsing_ok(
+        [
+          "2   SESENA BARBARA            M 40 F  CSI NUOTO OBER FERRARI    EMI 00 42 99  744,82 "
+        ], :event_individual
+      )
+    end
+    it "recognizes the 'ris20101212liv' format (extra)" do
+      check_for_parsing_ok(
+        [
+          "1   PAOLETTI GIORGIO          M 25 M  DLF NUOTO LIVORNO         TOS 02 14 16  967,05 IT (M25)"
+        ], :event_individual
+      )
+    end
+    # (ris20101219mus is equal to ris20081221mus)
+
+    it "recognizes the 'ris20130513pont' format (extra)" do
+      check_for_parsing_ok(
+        [
+          "1   DE GIAMPIETRO MARIO       M 90 M  POLISPORTIVA GARDEN SRL S EMI 06 04 00  973,24 IT (M90)"
+        ], :event_individual
+      )
+    end
+
+    it "recognizes the 'ris20131117pogg' format (fg)" do
+      check_for_parsing_ok(
+        [
+          "fg  MEINI SARA                U 25 F  NUOTO LIBERTAS ROSIGNANO  TOS 00 41 32       "
+        ], :event_individual
+      )
+    end
+
+    it "recognizes the 'ris20140330lucc' format (extra)" do
+      check_for_parsing_ok(
+        [
+          "1  BOSCHETTI ETTORE LUIGI    M 60 ANDREA DORIA              LIG 02 33 06 1006,93 IT (M60)"
+        ], :event_individual
+      )
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing RANKING)"
+    it_behaves_like "(failing STATS)"
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # === RELAY_ROW examples ===
+  #
+  context "when parsing RELAY_ROW," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_relay_row, nil ) }
+
+    it "doesn't mistakenly recognize a empty line" do
+      check_for_parsing_fail(
+        [
+          ''
+        ], 0, :event_relay
+      )
+    end
+    it "doesn't mistakenly recognize a separator line" do
+      check_for_parsing_fail(
+        [
+          '-------------------------------------------------------------------------------------------'
+        ], 0, :event_relay
+      )
+    end
+    it "doesn't mistakenly recognize a secondary relay row" do
+      check_for_parsing_fail(
+        [
+          '   Gino Pino Mariolino      00 00 00  '
+        ], 0, :event_relay
+      )
+    end
+
+    it "recognizes the 'ris20081221mus' format (280)" do
+      #              10        20        30        40        50        60        70        80        90
+      #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      check_for_parsing_ok(
+        [
+          "1   ASD DLF NUOTO LIVORNO      280 (F) 03 46 73  Noberini Nara          00 00 00  PR IT"
+        ], :event_relay
+      )
+    end
+    it "recognizes the 'ris20081221mus' format (160)" do
+      check_for_parsing_ok(
+        [
+          "1   ASD VERSILIANUOTO          160 (C) 01 52 73  De Martino Alberto     00 00 00  "
+        ], :event_relay
+      )
+    end
+
+    it "recognizes the 'ris20091213liv' format (119)" do
+      check_for_parsing_ok(
+        [
+          "1   ASD DLF NUOTO LIVORNO      119 (A) 01 46 07  Pancaccini Pablo       00 00 00  "
+        ], :event_relay
+      )
+    end
+    it "recognizes the 'ris20091213liv' format (159)" do
+      check_for_parsing_ok(
+        [
+          "8   CSI ROMA FLAMINIO          159 (B) 02 11 31  Villani Luciano        00 00 00  "
+        ], :event_relay
+      )
+    end
+    it "recognizes the 'ris20091213liv' format (279)" do
+      check_for_parsing_ok(
+        [
+          "1   ASD DLF NUOTO LIVORNO      279 (E) 01 55 59  Samaritani Dino  Barontini ILIO 00 00 00  RC IT"
+        ], :event_relay
+      )
+    end
+
+    it "recognizes the 'ris20101212liv' format (199)" do
+      check_for_parsing_ok(
+        [
+          "2   CANOTTIERI ARNO PISA      TOS 199 (C)  02 04 23  Licciardello Giacomo   00 00 00  "
+        ], :event_relay
+      )
+    end
+
+    it "recognizes the 'ris20130513pont' format (U25)" do
+      check_for_parsing_ok(
+        [
+          "1   NUOTO LIBERTAS ROSIGNANO  TOS 99 (U25) 02 02 82  Paladini Luca        00 00 00  "
+        ], :event_relay
+      )
+    end
+    it "recognizes the 'ris20130513pont' format (159)" do
+      check_for_parsing_ok(
+        [
+          "6   NUOTOPIU' ACADEMY         TOS 159 (B)  02 16 25  Vivian Nicola        00 00 00  "
+        ], :event_relay
+      )
+    end
+
+    it "recognizes the 'ris20140330lucc' format (119)" do
+      check_for_parsing_ok(
+        [
+          "1  CANOTTIERI ARNO PISA      TOS 119 (A)  02 20 11          "
+        ], :event_relay
+      )
+    end
+    it "recognizes the 'ris20140330lucc' format (319)" do
+      check_for_parsing_ok(
+        [
+          "1  NUOTO LUCCA CAPANNORI     TOS 319 (F)  04 12 99          "
+        ], :event_relay
+      )
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing RANKING)"
+    it_behaves_like "(failing STATS)"
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # === RANKING_ROW examples ===
+  #
+  context "when parsing RANKING_ROW," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_ranking_row, nil ) }
+
+    it "doesn't mistakenly recognize a empty line" do
+      check_for_parsing_fail(
+        [
+          ''
+        ], 0, :team_ranking
+      )
+    end
+    it "doesn't mistakenly recognize a separator line" do
+      check_for_parsing_fail(
+        [
+          '-------------------------------------------------------------------------------------------'
+        ], 0, :team_ranking
+      )
+    end
+    it "doesn't mistakenly recognize an header row" do
+      check_for_parsing_fail(
+        [
+          "     Codice    Societa'                       Regione             Punt.  Oro    Ar.  Br."
+        ], 0, :team_ranking
+      )
+    end
+
+    it "recognizes the 'ris20081221mus' format" do
+      #              10        20        30        40        50        60        70        80        90
+      #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      check_for_parsing_ok(
+        [
+          " 25  EMI001454 ASD CSI NUOTO OBER FERRARI     Emilia Romagna      3741,89    3    4    0"
+        ], :team_ranking
+      )
+    end
+
+    xit "recognizes the 'ris20091213liv' format (119)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+    xit "recognizes the 'ris20091213liv' format (159)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+    xit "recognizes the 'ris20091213liv' format (279)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+
+    xit "recognizes the 'ris20101212liv' format (199)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+
+    xit "recognizes the 'ris20130513pont' format (U25)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+    xit "recognizes the 'ris20130513pont' format (159)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+
+    xit "recognizes the 'ris20140330lucc' format (119)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+    xit "recognizes the 'ris20140330lucc' format (319)" do
+      check_for_parsing_ok(
+        [
+        ], :team_ranking
+      )
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing RANKING)"
+    it_behaves_like "(failing STATS)"
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+
 
 
 end

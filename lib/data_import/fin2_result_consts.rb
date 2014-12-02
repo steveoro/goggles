@@ -113,14 +113,13 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     )
   end
                                                     # == DETAIL CONTEXT TYPES definitions: ==
-# TODO [BEGIN WIP] #########################################################
   # "Result row" (detail) context type definition.
   #
   def context_type_result_row
     ContextTypeDef.new(
       :result_row,
       [
-        /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
+        /(?<timing>\d{1,2}\s\d\d\s\d\d)\s{1,2}+(?<score>\d{1,4}[\,|\.]\d\d)?/i
       ],
       :event_individual                              # parent context
     )
@@ -132,19 +131,20 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :relay_row,
       [
-        /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)(\r\n|\n|$|\Z)/i
+        /(?<=\(U25\)|\([A-Z]\))\s{1,2}(?<timing>\d{1,2}\s\d\d\s\d\d)\s{1,2}+/i
       ],
       :event_relay
     )
   end
 
+# TODO [BEGIN WIP] #########################################################
   # "Team Ranking detail row" context type definition.
   #
   def context_type_ranking_row
     ContextTypeDef.new(
       :ranking_row,
       [
-        /\s+\d{1,6}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
+        /\s+(?<score>\d{1,6}[\,|\.]\d\d)\s+/i
       ],
       :team_ranking
     )
