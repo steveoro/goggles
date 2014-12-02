@@ -26,6 +26,7 @@ class Badge < ActiveRecord::Base
   validates_associated :entry_time_type
 
   has_one  :season_type, through: :season
+  has_one  :gender_type, through: :swimmer
 
   has_many :meeting_individual_results
   has_many :swimmer_results
@@ -42,6 +43,9 @@ class Badge < ActiveRecord::Base
   scope :sort_by_team,          ->(dir)  { joins(:team).order("teams.name #{dir.to_s}") }
   scope :sort_by_swimmer,       ->(dir)  { joins(:swimmer).order("swimmers.complete_name #{dir.to_s}") }
   scope :sort_by_category_type, ->(dir)  { joins(:category_type).order("category_types.code #{dir.to_s}") }
+
+  scope :for_category_type,     ->(category_type) { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
+  scope :for_gender_type,       ->(gender_type)   { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
   #-- -------------------------------------------------------------------------
   #++
 

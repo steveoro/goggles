@@ -1,8 +1,8 @@
 - team_id = @individual_result_list.first.team_id
 - team_name = @individual_result_list.first.team.get_full_name
+= render( partial: 'meeting_header' )
+= render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_swimmer_results', @meeting.id, @max_mir_updated_at, team_id, @swimmer.id) ) do
-  = render( partial: 'meeting_header' )
-  = render( partial: 'tabs_and_radio_title' )
   .row-fluid.span12
     - season_id = @meeting.season_id
     - season_name = @meeting.season.get_full_name

@@ -1,8 +1,9 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
-.row-fluid
-  - if @meeting.invitation
-    - html_doc = Nokogiri::HTML( @meeting.invitation )
-    .row-fluid
-      = html_doc.css('style').to_html.html_safe
-      = html_doc.css('body').inner_html.html_safe
+- cache( cache_key_for_meeting( 'show_invitation', @meeting.id, @max_mir_updated_at ) ) do
+  .row-fluid
+    - if @meeting.invitation
+      - html_doc = Nokogiri::HTML( @meeting.invitation )
+      .row-fluid
+        = html_doc.css('style').to_html.html_safe
+        = html_doc.css('body').inner_html.html_safe

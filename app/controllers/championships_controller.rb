@@ -79,7 +79,7 @@ class ChampionshipsController < ApplicationController
     
     # Check for different event types and categories for the season and manage updates for the cache
     @event_types = @season.event_types.are_not_relays.uniq
-    @category_types = @season.category_types      
+    @category_types = @season.category_types.are_not_relays.sort_by_age     
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
   end
 
@@ -90,6 +90,7 @@ class ChampionshipsController < ApplicationController
     @title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name     
 
     # Manage updates for cache
+    @category_types = @season.category_types.are_not_relays.sort_by_age      
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
   end
 

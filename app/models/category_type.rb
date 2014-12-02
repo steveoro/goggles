@@ -34,6 +34,8 @@ class CategoryType < ActiveRecord::Base
   scope :is_valid,        -> { where(is_out_of_race: false) }
   scope :only_relays,     -> { where(is_a_relay: true) }
   scope :are_not_relays,  -> { where(is_a_relay: false) }
+
+  scope :sort_by_age,     ->(dir = 'ASC') { order("age_begin #{dir.to_s}") }
   # ----------------------------------------------------------------------------
 
 
