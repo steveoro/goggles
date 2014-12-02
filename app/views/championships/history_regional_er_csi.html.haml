@@ -1,8 +1,8 @@
-- cache( cache_key_for_meeting( 'history', @season.season_type_id, @history_updated_at, @team ? @team.id : 0 ) ) do
-  .row-fluid#history_regional_er_csi
-    .goggles-category-gap#pageTop
-      = render( partial: 'regional_er_csi_tabs' )
-      = render( partial: 'title' )
+.row-fluid#history_regional_er_csi
+  .goggles-category-gap#pageTop
+    = render( partial: 'regional_er_csi_tabs' )
+    = render( partial: 'title' )
+    - cache( cache_key_for_meeting( 'history', @season.season_type_id, @history_updated_at, @team ? @team.id : 0 ) ) do
   
       -# --- Sub-legend for each gender + pool-type
       .navbar

@@ -1,6 +1,6 @@
+= render( partial: 'meeting_header' )
+= render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_start_list_by_category', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
-  = render( partial: 'meeting_header' )
-  = render( partial: 'tabs_and_radio_title' )
   .row
     %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
       %li
