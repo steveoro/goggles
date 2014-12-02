@@ -137,30 +137,31 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     )
   end
 
-# TODO [BEGIN WIP] #########################################################
   # "Team Ranking detail row" context type definition.
   #
   def context_type_ranking_row
     ContextTypeDef.new(
       :ranking_row,
       [
-        /\s+(?<score>\d{1,6}[\,|\.]\d\d)\s+/i
+        /\s+(?<score>\d{1,6}[\,|\.]\d{2,3})\s+/i
       ],
       :team_ranking
     )
   end
 
-  # "Statistics details section" context type definition.
+# TODO [BEGIN WIP] #########################################################
+
+  # "Statistics details section" context type definition, format type #1.
   #
-  def context_type_stats_details
+  def context_type_stats_details_type1
     ContextTypeDef.new(
-      :stats_details,
+      :stats_details_1,
       [
         /numero di soc.+\siscritte\s/i,
         /^.*/i,                                     # (anything)
         /numero di soc.+\spartecipanti\s/i,
 
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^\s*(\r\n|\n|$|\Z)/i,                      # (empty)
 
         /numero tot.+\sdi atleti iscritti\s/i,
         /^.*/i,
@@ -168,30 +169,62 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
         /^.*/i,
         /^.*/i,
 
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^\s*(\r\n|\n|$|\Z)/i,
 
         /numero di atleti partecipanti\s/i,
         /^.*/i,
         /^.*/i,
         /^.*/i,
 
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^\s*(\r\n|\n|$|\Z)/i,
 
         /numero tot.+\sdi iscrizioni alle gare\s/i,
         /^.*/i,
         /^.*/i,
 
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^\s*(\r\n|\n|$|\Z)/i,
 
         /numero tot.+\sdi gare disputate\s/i,
         /^.*/i,
 
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /^\s*(\r\n|\n|$|\Z)/i,
 
         /^.*/i,
         /^.*/i,
         /numero di squalifiche\s/i,
         /numero di ritiri\s/i
+      ],
+      :stats
+    )
+  end
+
+  # "Statistics details section" context type definition.
+  #
+  def context_type_stats_details_type2
+    ContextTypeDef.new(
+      :stats_details_2,
+      [
+        /\ssociet\D\siscritte\s/i,
+        /\ssociet\D\spresenti\s/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+
+        /\satleti\siscritti\s/i,
+        /\satleti\spresenti\s/i,
+        /\sPercentuale\sAssenti\s/i,
+        /\sAtleta\sPresente\scon\suna\sgara\s/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+
+        /\sIscrizioni\sGare\s/i,
+        /\sGare\sDisputate\s/i,
+        /\sAssenza\sGare\s/i,
+        /\sPercentuale\sGare\sNon\sDisputate\s/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+
+        /\sStaffette\sDisputate\s/i,
+        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+
+        /\sSqualifiche\s/i,
+        /\sRitiri\s/i
       ],
       :stats
     )
@@ -212,7 +245,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       context_type_result_row,
       context_type_relay_row,
       context_type_ranking_row,
-      context_type_stats_details
+      context_type_stats_details_type1,
+      context_type_stats_details_type2
     ]
   end
   # ----------------------------------------------------------------------------

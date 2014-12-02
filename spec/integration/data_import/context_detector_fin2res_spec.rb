@@ -917,54 +917,63 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
       )
     end
 
-    xit "recognizes the 'ris20091213liv' format (119)" do
+    it "recognizes the 'ris20091213liv' format" do
       check_for_parsing_ok(
         [
-        ], :team_ranking
-      )
-    end
-    xit "recognizes the 'ris20091213liv' format (159)" do
-      check_for_parsing_ok(
-        [
-        ], :team_ranking
-      )
-    end
-    xit "recognizes the 'ris20091213liv' format (279)" do
-      check_for_parsing_ok(
-        [
+          " 1   TOS000538 ASD DLF NUOTO LIVORNO          Toscana           158426,41   66   38   39"
         ], :team_ranking
       )
     end
 
-    xit "recognizes the 'ris20101212liv' format (199)" do
+    it "recognizes the 'ris20101212liv' format" do
       check_for_parsing_ok(
         [
+          " 25  CSI NUOTO OBER FERRARI         Emilia Romagna      6117,39    1    3    0"
         ], :team_ranking
       )
     end
 
-    xit "recognizes the 'ris20130513pont' format (U25)" do
+    it "recognizes the 'ris20101219mus' format (#1)" do
       check_for_parsing_ok(
         [
+          "2)  POLISPORTIVA AMATORI PRATO       Toscana       36900,920  16  10   7"
         ], :team_ranking
       )
     end
-    xit "recognizes the 'ris20130513pont' format (159)" do
+    it "recognizes the 'ris20101219mus' format (#2)" do
       check_for_parsing_ok(
         [
+          "14)   ASD ALTO RENO DE AKKER               Emilia Romagna   6972,720   3   2   3"
         ], :team_ranking
       )
     end
 
-    xit "recognizes the 'ris20140330lucc' format (119)" do
+    it "recognizes the 'ris20130513pont' format (#1)" do
       check_for_parsing_ok(
         [
+          " 1   DIMENSIONE NUOTO PONTEDERA     Toscana        103932,25  24  22  23 144 721,75"
         ], :team_ranking
       )
     end
-    xit "recognizes the 'ris20140330lucc' format (319)" do
+    it "recognizes the 'ris20130513pont' format (#2)" do
       check_for_parsing_ok(
         [
+          " 25  CENTRO NUOTO UISP BOLOGNA      Emilia Romagna   4627,05   2   0   1   6 771,18"
+        ], :team_ranking
+      )
+    end
+
+    it "recognizes the 'ris20140330lucc' format (#1)" do
+      check_for_parsing_ok(
+        [
+          " 7   RINASCITA TEAM ROMAGNA         EMI         20702,57  11   4   4  26 796,25"
+        ], :team_ranking
+      )
+    end
+    it "recognizes the 'ris20140330lucc' format (#2)" do
+      check_for_parsing_ok(
+        [
+          " 38  SKY LINE NUOTO                 LOM           813,11   0   0   0   1 813,11"
         ], :team_ranking
       )
     end
@@ -982,8 +991,82 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   #++
 
 
+  # === STATS_DETAILS examples ===
+  #
+  context "when parsing STATS_DETAILS (format 1)," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_stats_details_type1, nil ) }
 
+    xit "recognizes the 'ris20101219mus' format" do
+      check_for_parsing_ok(
+        [
+          "                Numero di societ� iscritte                   65",
+          "                Societ� con iscrizioni online                54",
+          "                Numero di societ� partecipanti               51 ",
+          "",
+          "                Numero totale di atleti iscritti            508 ",
+          "                Numero di atleti iscritti online            421",
+          "                ",
+          "                Numero di atleti partecipanti               325",
+          "                Numero di atleti assenti                    183",
+          "                             ",
+          "                Numero di iscrizioni alle gare              976 ",
+          "                Numero di gare disputate                    606",
+          "                Numero di assenze dalle gare                370",
+          "                                    ",
+          "                Numero di squalifiche                        11"
+        ], :stats
+      )
+    end
 
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing RANKING)"
+    it_behaves_like "(failing STATS)"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "when parsing STATS_DETAILS (format 2)," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_stats_details_type2, nil ) }
+
+    it "recognizes the 'ris20081221mus' format" do
+      #              10        20        30        40        50        60        70        80        90
+      #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      check_for_parsing_ok(
+        [
+          " Societ� Iscritte                                     75",
+          " Societ� Presenti                                     67",
+          '',
+          " Atleti Iscritti                                     498",
+          " Atleti Presenti                                     413",
+          " Percentuale Assenti                                  17,07",
+          " Atleta Presente con una gara non effettuata          27",
+          '',
+          " Iscrizioni Gare                                     946",
+          " Gare Disputate                                      761",
+          " Assenza Gare                                        185",
+          " Percentuale Gare Non Disputate                       19,56",
+          '',
+          " Staffette Disputate                                   2",
+          '',
+          " Squalifiche                                          17",
+          " Ritiri                                                0"
+        ], :stats
+      )
+    end
+    # (ris20091213liv is equal to ris20081221mus)
+    # (ris20101212liv is equal to ris20081221mus)
+    # (ris20130513pont is equal to ris20081221mus)
+    # (ris20131117pogg is equal to ris20081221mus)
+    # (ris20140330lucc is equal to ris20081221mus)
+
+    it_behaves_like "(failing EVENT INDIVIDUAL)"
+    it_behaves_like "(failing EVENT RELAY)"
+    it_behaves_like "(failing RANKING)"
+    it_behaves_like "(failing STATS)"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 end
 #-- ---------------------------------------------------------------------------
