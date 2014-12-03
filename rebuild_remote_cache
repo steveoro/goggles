@@ -1,9 +1,9 @@
 #!/bin/bash
-echo ---[ master-goggles.org ]---
-echo Cache rebuild script -- Making some pre-emptive requests...
+echo "---[ master-goggles.org ]---"
+echo "Cache rebuild script -- Making some pre-emptive requests..."
 curl -# http://master-goggles.org > /dev/null
 
-echo - current CSI Championship:
+echo "- current CSI Championship:"
 curl -# http://master-goggles.org/it/championships/calendar_regional_er_csi > /dev/null
 curl -# http://master-goggles.org/it/championships/ranking_regional_er_csi/141 > /dev/null
 curl -# http://master-goggles.org/it/championships/individual_rank_regional_er_csi/141 > /dev/null
@@ -11,13 +11,13 @@ curl -# http://master-goggles.org/it/championships/event_ranking_regional_er_csi
 curl -# http://master-goggles.org/it/championships/rules_regional_er_csi/141 > /dev/null
 curl -# http://master-goggles.org/it/championships/history_regional_er_csi/141 > /dev/null
 
-echo - current CSI Championship's meetings:
+echo "- current CSI Championship's meetings:"
 curl -# http://master-goggles.org/it/meeting/show_invitation/14101 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_full/14101 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_ranking/14101 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_stats/14101 > /dev/null
 
-echo - current CSI Championship's Teams:
+echo "- current CSI Championship's Teams:"
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=14 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=32 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=1 > /dev/null
@@ -32,4 +32,4 @@ curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=5 >
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=4 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=10 > /dev/null
 
-echo TODO Championship history? (131, 121, 111, 101, 91, 14, 12, 10, 8, 6, 4, 3, 2, 1)
+echo "TODO Championship history? (131, 121, 111, 101, 91, 14, 12, 10, 8, 6, 4, 3, 2, 1)"

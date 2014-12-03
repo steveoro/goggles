@@ -38,7 +38,7 @@ class FinResultParser
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE  = false
+  DEBUG_VERY_VERBOSE  = true
   #-- -------------------------------------------------------------------------
   #++
 
@@ -108,21 +108,22 @@ class FinResultParser
         curr_line = EncodingTools.force_valid_encoding( curr_line )
         service.log_somehow( logger, "Reading line #{service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE )
         full_text_file_contents << curr_line
-        any_detection = false
+# FIXME [Steve WIP]
+#        any_children_detection = false
                                                     # -- DETAIL Context detection:
-        parsing_defs.context_types_children_of( service.previous_parent_context ).each do |context_name, detector|
-          service.log_somehow( logger, "Prioritizing on children of #{service.previous_parent_context.to_s.upcase}: checking #{context_name.to_s.upcase}...", DEBUG_VERY_VERBOSE )
-          any_detection = service.parse( detector, curr_line )
-        end unless service.previous_parent_context.nil?
+#        parsing_defs.context_types_children_of( service.previous_parent_context ).each do |context_name, detector|
+#          service.log_somehow( logger, "Prioritizing on children of #{service.previous_parent_context.to_s.upcase}: checking #{context_name.to_s.upcase}...", DEBUG_VERY_VERBOSE )
+#          any_children_detection = service.parse( detector, curr_line )
+#        end unless service.previous_parent_context.nil?
                                                     # Clear parent context only when no DETAIL are recognized:
-        if service.previous_parent_context && !any_detection
-          service.clear_parent_context
-          service.log_somehow( logger, "   No possible CHILDREN/DETAIL contexts recognized, parent context set to nil.", DEBUG_VERBOSE )
-        end
+#        if service.previous_parent_context && !any_children_detection
+#          service.clear_parent_context
+#          service.log_somehow( logger, "   No possible CHILDREN/DETAIL contexts recognized, parent context set to nil.", DEBUG_VERBOSE )
+#        end
                                                     # -- HEADER (& ALL) Context detection: for each context type defined...
         parsing_defs.context_types.each do |context_name, detector|
           service.parse( detector, curr_line )
-        end unless any_detection                    # Do not loop on all if we already have a matching child context
+        end # unless any_children_detection           # Do not loop on all if we already have a matching child context
         service.increase_line_count
       end
     end                                             # (automatically closes the file)

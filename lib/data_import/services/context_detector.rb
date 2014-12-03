@@ -60,11 +60,11 @@ class ContextDetector
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE                                     = false
+  DEBUG_VERBOSE                                     = true
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE                                = false
+  DEBUG_VERY_VERBOSE                                = true
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
@@ -154,10 +154,11 @@ class ContextDetector
       log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for NO conditions defined.", DEBUG_VERY_VERBOSE )
       return false
     end
-    if ( @context_type.parent_context_name != previous_context_name )
-      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context.", DEBUG_VERY_VERBOSE )
-      return false
-    end
+# FIXME [Steve WIP]
+#    if ( @context_type.parent_context_name != previous_context_name )
+#      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context.", DEBUG_VERY_VERBOSE )
+#      return false
+#    end
     is_context_detected = false
 
     condition_to_check = @context_type.condition_array[ @detection_index ]

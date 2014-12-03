@@ -10,12 +10,19 @@ require 'spec_helper'
 describe "FinResultParser parsing FIN Result file type 2,", type: :integration do
   # We need to parse the fixture file just once to speed-up tests:
   before( :all ) do
-    @result_hash = FinResultParser.parse_txt_file( File.join(Rails.root, 'test/fixtures/samples/ris20081221mussi-sample.txt') )
-    puts "- @result_hash[:parse_result] :meeting_header          #{@result_hash[:parse_result][:meeting_header].inspect}"
-    puts "- @result_hash[:parse_result] :event_individual_header #{@result_hash[:parse_result][:event_individual].inspect}"
-    puts "- @result_hash[:parse_result] :event_relay_header      #{@result_hash[:parse_result][:event_relay].inspect}"
-    puts "- @result_hash[:parse_result] :team_ranking            #{@result_hash[:parse_result][:team_ranking].inspect}"
-    puts "- @result_hash[:parse_result] :stats                   #{@result_hash[:parse_result][:stats].inspect}"
+    @result_hash = FinResultParser.parse_txt_file(
+      File.join(Rails.root, 'test/fixtures/samples/ris20081221mussi-sample.txt'),
+      nil,                                          # We don't care for logging, here
+      Fin2ResultDefs.new                            # This will forcibly plug-in the correct parsing engine
+    )
+# DEBUG
+    [
+      :meeting_header, :event_individual, :event_relay, :team_ranking, :stats,
+      :stats_details_1, :stats_details_2, :relay_row
+    ].each do |key|
+      puts "\r\n--- @result_hash[:parse_result][#{key}]:\r\n" <<
+           "[ #{@result_hash[:parse_result][key].map{|hash| hash.inspect }.join("\r\n")} ]"
+    end
   end
 
   it "returns an Hash" do
@@ -36,50 +43,61 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
     it "recognizes a list of :category_header data pages" do
       expect( subject.has_key?( :event_individual ) ).to be true
     end
-    xit "has the exact amount of :category_header data pages for this fixture" do
+    it "has the exact amount of :category_header data pages for this fixture" do
       expect( subject[:event_individual] ).to be_an_instance_of( Array )
       expect( subject[:event_individual].size ).to eq( 9 )
     end
 
-    # it "recognizes a list of :result_row data pages" do
-      # expect( subject.has_key?( :result_row ) ).to be true
-    # end
-    # it "has the exact amount of :result_rows for this fixture" do
-      # expect( subject[:result_row] ).to be_an_instance_of( Array )
-      # expect( subject[:result_row].size ).to eq( 0 )
-    # end
+    it "recognizes a list of :result_row data pages" do
+      expect( subject.has_key?( :result_row ) ).to be true
+    end
+    it "has the exact amount of :result_rows for this fixture" do
+      expect( subject[:result_row] ).to be_an_instance_of( Array )
+      expect( subject[:result_row].size ).to eq( 0 )
+    end
 
     it "recognizes a list of :relay_header data pages" do
       expect( subject.has_key?( :event_relay ) ).to be true
     end
-    xit "has the exact amount of :relay_header data pages for this fixture" do
+    it "has the exact amount of :relay_header data pages for this fixture" do
       expect( subject[:event_relay] ).to be_an_instance_of( Array )
       expect( subject[:event_relay].size ).to eq( 2 )
     end
 
-    # it "recognizes a list of :relay_row data pages" do
-      # expect( subject.has_key?( :relay_row ) ).to be true
-    # end
-    # it "has the exact amount of :relay_rows for this fixture" do
-      # expect( subject[:relay_row] ).to be_an_instance_of( Array )
-      # expect( subject[:relay_row].size ).to eq( 2 )
-    # end
+    it "recognizes a list of :relay_row data pages" do
+      expect( subject.has_key?( :relay_row ) ).to be true
+    end
+    it "has the exact amount of :relay_rows for this fixture" do
+      expect( subject[:relay_row] ).to be_an_instance_of( Array )
+      expect( subject[:relay_row].size ).to eq( 2 )
+    end
 
-    # it "recognizes a list of :stats data pages" do
-      # expect( subject.has_key?( :stats ) ).to be true
-    # end
-    # it "has just 1 :stat (header) data page" do
-      # expect( subject[:stats] ).to be_an_instance_of( Array )
-      # expect( subject[:stats].size ).to eq( 1 )
-    # end
-#
-    # it "recognizes a list of :stats details data pages" do
-      # expect( subject.has_key?( :stats_details ) ).to be true
-    # end
-    # it "has just 1 :stats detail data page for this fixture" do
-      # expect( subject[:stats_details] ).to be_an_instance_of( Array )
-      # expect( subject[:stats_details].size ).to eq( 1 )
-    # end
+    it "recognizes a list of :stats data pages" do
+      expect( subject.has_key?( :stats ) ).to be true
+    end
+    it "has just 1 :stat (header) data page" do
+      expect( subject[:stats] ).to be_an_instance_of( Array )
+      expect( subject[:stats].size ).to eq( 1 )
+    end
+
+    it "recognizes a list of :stats details data pages" do
+      expect( subject.has_key?( :stats_details ) ).to be false
+    end
+    it "recognizes a list of :stats details data pages" do
+      expect( subject.has_key?( :stats_details_1 ) ).to be true
+    end
+    it "has just 1 :stats detail data page for this fixture" do
+      expect( subject[:stats_details_1] ).to be_an_instance_of( Array )
+      expect( subject[:stats_details_1].size ).to eq( 0 )
+    end
+    it "recognizes a list of :stats details data pages" do
+      expect( subject.has_key?( :stats_details_2 ) ).to be true
+    end
+    it "has just 1 :stats detail data page for this fixture" do
+      expect( subject[:stats_details_2] ).to be_an_instance_of( Array )
+      expect( subject[:stats_details_2].size ).to eq( 1 )
+    end
+
     # context "for the :stats_details data page," do
       # it "has the exact values for all :stats_details of this fixture" do
         # data_page_field_hash = subject[:stats_details].first[:fields]

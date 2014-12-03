@@ -58,9 +58,11 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :event_individual,
       [
-        /(?<empty>^\s*\n|^\r\n|^\z)/i,
-        /-{80}/,
+#        /(?<anything>^.*)/i,
+#        /(?<empty>^\s*\n|^\r\n|^\z)/i,
+        /-{60}/,
         /(?<style>\s{3}-{3}\s{1,3}(?<distance>50|100|200|400|800|1500))\s(?<stroke>\w+)/i
+
 #        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Atleta\s{20,24}Cat/i,
 #        /\d{1,2}\s{2,3}\w\w|\s{2,4}Atleta\s{20,24}Cat|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
 #        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
@@ -75,12 +77,15 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :event_relay,
       [
-        /Torna a inizio pagina|^\s*|^\r\n|^\n|$|^\Z/i,
-        /(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w|-{80}/,
-        /
-          (?<empty>^\s*\n|^\r\n|^\z)|
-          (?<relay>\s{3}-{3}\s{1,3}(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w)
-        /ix
+        /(Mistaffetta|Staffetta)/,
+#        /Torna a inizio pagina|^\s*|^\r\n|^\n|$|^\Z/i,
+#        /(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w|-{80}/,
+#        /
+#          (?<empty>^\s*\n|^\r\n|^\z)|
+#          (?<relay>\s{3}-{3}\s{1,3}(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w)
+#        /ix
+#       OLD 2nd line above was: (?<empty>^\s*\n|^\r\n|^\z)|
+
 #        /-{80}|^\s*|^\r\n|^\n|$|^\Z|\s{2,4}Societ/i,
 #        /\d{1,2}\s{2,3}\w\w|\s{2,4}Societ|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
 #        /\d{1,2}\s{2,3}\w\w|-{80}|^\s*|^\r\n|^\n|$|^\Z/i,
@@ -160,20 +165,16 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
         /^.*/i,                                     # (anything)
         /\ssociet.\spartecipanti\s/i,
         /^.*/i,                                     # (anything)
-
         /\satleti\siscritti\s/i,
         /^.*/i,
         /^.*/i,                                     # (anything)
-
         /\satleti\spartecipanti\s/i,
         /^.*/i,
         /^.*/i,                                     # (anything)
-
         /\siscrizioni\salle\sgare\s/i,
         /\sgare\sdisputate\s/i,
         /^.*/i,
         /^.*/i,                                     # (anything)
-
         /\ssqualifiche\s/i,
       ],
       :stats
@@ -189,22 +190,18 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
         /\ssociet\D\siscritte\s/i,
         /\ssociet\D\spresenti\s/i,
         /^.*/i,                                     # (anything)
-
         /\satleti\siscritti\s/i,
         /\satleti\spresenti\s/i,
         /\sPercentuale\sAssenti\s/i,
         /\sAtleta\sPresente\scon\suna\sgara\s/i,
         /^.*/i,                                     # (anything)
-
         /\sIscrizioni\sGare\s/i,
         /\sGare\sDisputate\s/i,
         /\sAssenza\sGare\s/i,
         /\sPercentuale\sGare\sNon\sDisputate\s/i,
         /^.*/i,                                     # (anything)
-
         /\sStaffette\sDisputate\s/i,
         /^.*/i,                                     # (anything)
-
         /\sSqualifiche\s/i,
         /\sRitiri\s/i
       ],

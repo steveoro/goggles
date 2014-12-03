@@ -47,8 +47,8 @@ shared_examples_for "(failing EVENT RELAY)" do
   it "doesn't mistakenly recognize a RELAY context (type #1)" do
     check_for_parsing_fail(
       [
-        '',
-        '--------------------------------------------------------------------------------',
+#        '',
+#        '--------------------------------------------------------------------------------',
         '   ---   Staffetta 4x50 Misti Mista   ---',
         '    Societa                  Reg Categ    TempoTot    Punti',
         '--------------------------------------------------------------------------------'
@@ -58,8 +58,8 @@ shared_examples_for "(failing EVENT RELAY)" do
   it "doesn't mistakenly recognize a RELAY context (type #2)" do
     check_for_parsing_fail(
       [
-        '',
-        '-------------------------------------------------------------------------------------------',
+#        '',
+#        '-------------------------------------------------------------------------------------------',
         '   ---   Staffetta 4x50 Stile Libero Femmine   ---',
         '-------------------------------------------------------------------------------------------'
       ]
@@ -68,8 +68,8 @@ shared_examples_for "(failing EVENT RELAY)" do
   it "doesn't mistakenly recognize a RELAY context (type #3)" do
     check_for_parsing_fail(
       [
-        '',
-        '---------------------------------------------------------------------------------------',
+#        '',
+#        '---------------------------------------------------------------------------------------',
         '   ---   Staffetta 4x50 Stile Libero Maschi   ---',
         '',
         '    Societa                   Reg Categ   TempoTot  Primo frazionista      Tempo     Punti',
@@ -80,7 +80,7 @@ shared_examples_for "(failing EVENT RELAY)" do
   it "doesn't mistakenly recognize a RELAY context (type #4)" do
     check_for_parsing_fail(
       [
-        'Torna a inizio pagina',
+#        'Torna a inizio pagina',
         'Mistaffetta 4x50 SL',
         '',
         '    Societa                   Reg Categ   TempoTot  Primo frazionista      Tempo',
@@ -95,8 +95,8 @@ shared_examples_for "(failing RANKING)" do
   it "doesn't mistakenly recognize a RANKING context (type #1)" do
     check_for_parsing_fail(
       [
-        '',
-        '--------------------------------------------------------------------------------',
+#        '',
+#        '--------------------------------------------------------------------------------',
         "   ---   CLASSIFICA SOCIETA'   ---",
         "                                    Regione     Punt.   Oro  Arg Bro Nga  Med",
         "--------------------------------------------------------------------------------"
@@ -106,7 +106,7 @@ shared_examples_for "(failing RANKING)" do
   it "doesn't mistakenly recognize a RANKING context (type #2)" do
     check_for_parsing_fail(
       [
-        'Torna a inizio pagina',
+#        'Torna a inizio pagina',
         'Classifica societ�',
         '',
         '                                    Regione          Punt.   Oro  Arg Bro Nga   Med',
@@ -122,7 +122,7 @@ shared_examples_for "(failing STATS)" do
   it "doesn't mistakenly recognize a STATS context (type #1)" do
     check_for_parsing_fail(
       [
-        "  ",
+#        "  ",
         "Statistiche",
         ""
       ]
@@ -131,8 +131,8 @@ shared_examples_for "(failing STATS)" do
   it "doesn't mistakenly recognize a STATS context (type #2)" do
     check_for_parsing_fail(
       [
-        '',
-        '----------------------------------------------------------------------------',
+#        '',
+#        '----------------------------------------------------------------------------',
         '   ---   STATISTICA FINALE     ---',
         '----------------------------------------------------------------------------'
       ]
@@ -141,7 +141,7 @@ shared_examples_for "(failing STATS)" do
   it "doesn't mistakenly recognize a STATS context (type #3)" do
     check_for_parsing_fail(
       [
-        ' ',
+#        ' ',
         'Reg Societa                         NrF    NrM    TotI   GrF    GrM    TotG',
         '---------------------------------------------------------------------------',
         ''
@@ -281,7 +281,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
       #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '-------------------------------------------------------------------------------------------',
           '   ---   200 Farfalla Femmine   ---',
           '-------------------------------------------------------------------------------------------'
@@ -291,7 +291,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20091213liv' format" do
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '-------------------------------------------------------------------------------------------',
           '   ---   100 Stile Libero Femmine   ---',
           '-------------------------------------------------------------------------------------------'
@@ -301,7 +301,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20101212liv' format" do
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '---------------------------------------------------------------------------------------',
           '   ---   200 Stile Libero Femmine   ---',
           '',
@@ -313,7 +313,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20101219mus' format" do
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '-------------------------------------------------------------------------------------------',
           '   ---   50 Dorso Maschi   ---',
           '-------------------------------------------------------------------------------------------'
@@ -323,7 +323,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20130513pont' format" do
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '---------------------------------------------------------------------------------------',
           '   ---   50 Stile Libero Femmine   ---',
           '',
@@ -335,7 +335,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20131117pogg' format" do
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '---------------------------------------------------------------------------------------',
           '   ---   50 Rana Femmine   ---',
           '',
@@ -347,7 +347,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20140330lucc' format" do
       check_for_parsing_ok(
         [
-          '',
+#          '',
           '--------------------------------------------------------------------------------',
           '   ---   200 Dorso Femmine   ---',
           '   Atleta                    Cat Societa                   Reg Tempo    Punti',
@@ -378,8 +378,8 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
       #    0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
       check_for_parsing_ok(
         [
-          '',
-          '-------------------------------------------------------------------------------------------',
+#          '',
+#          '-------------------------------------------------------------------------------------------',
           '   ---   Staffetta 4x50 Stile Libero Femmine   ---',
           '-------------------------------------------------------------------------------------------'
         ]
@@ -388,8 +388,8 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20091213liv' format" do
       check_for_parsing_ok(
         [
-          '',
-          '-------------------------------------------------------------------------------------------',
+#          '',
+#          '-------------------------------------------------------------------------------------------',
           '   ---   Staffetta 4x50 Stile Libero Maschi   ---',
           '-------------------------------------------------------------------------------------------'
         ]
@@ -398,8 +398,8 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20091213liv' format (sample #2)" do
       check_for_parsing_ok(
         [
-          '',
-          '-------------------------------------------------------------------------------------------',
+#          '',
+#          '-------------------------------------------------------------------------------------------',
           '   ---   Staffetta 4x50 Misti Mista   ---',
           '-------------------------------------------------------------------------------------------'
         ]
@@ -408,8 +408,8 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20101212liv' format" do
       check_for_parsing_ok(
         [
-          '',
-          '---------------------------------------------------------------------------------------',
+#          '',
+#          '---------------------------------------------------------------------------------------',
           '   ---   Staffetta 4x50 Stile Libero Maschi   ---',
           '',
           '    Societa                   Reg Categ   TempoTot  Primo frazionista      Tempo     Punti',
@@ -420,7 +420,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20130513pont' format" do
       check_for_parsing_ok(
         [
-          'Torna a inizio pagina',
+#          'Torna a inizio pagina',
           'Mistaffetta 4x50 SL',
           ''
         ]
@@ -429,7 +429,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20140330lucc' format (whole)" do
       check_for_parsing_ok(
         [
-          'Torna a inizio pagina',
+#          'Torna a inizio pagina',
           'Mistaffetta 4x50 MI',
           '',
           '--------------------------------------------------------------------------------',
@@ -442,7 +442,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20140330lucc' format (half-1)" do
       check_for_parsing_ok(
         [
-          'Torna a inizio pagina',
+#          'Torna a inizio pagina',
           'Mistaffetta 4x50 MI',
           ''
         ]
@@ -451,8 +451,8 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
     it "recognizes the 'ris20140330lucc' format (half-2)" do
       check_for_parsing_ok(
         [
-          '',
-          '--------------------------------------------------------------------------------',
+#          '',
+#          '--------------------------------------------------------------------------------',
           '   ---   Staffetta 4x50 Misti Mista   ---',
           '    Societa                  Reg Categ    TempoTot    Punti',
           '--------------------------------------------------------------------------------'

@@ -34,11 +34,11 @@ class TxtParseService
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
-  DEBUG_VERBOSE       = false
+  DEBUG_VERBOSE       = true
 
   # Set this to true or false to enable or disable debugging output, L2.
   #
-  DEBUG_VERY_VERBOSE  = false
+  DEBUG_VERY_VERBOSE  = true
 
   # Set this to true or false to enable or disable debugging output, L3.
   #
@@ -126,33 +126,36 @@ class TxtParseService
 
       if detector.is_a_parent_context               # *** CONTEXT -is- PARENT: HEADER
         @previous_parent_context = context_name
+        if token_hash.instance_of?( Hash ) && ( token_hash.keys.size > 0 )
                                                     # There must be a unique key defined for this context
-        if ( @parsing_defs.required_keys( context_name ).size < 1 )
-          key_string = @line_count + 1              # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking)
-          log_somehow(
-            logger,
-            "---WARNING: missing unique key definition for context '#{context_name}'!\r\n" +
-            "            Using current line count (#{@line_count + 1}) as unique ID.",
-            DEBUG_VERBOSE, :warn
-          )
-        else                                        # Extract unique key and store new current context page
-          key_string = compose_memstorage_key( context_name, token_hash )
-        end
-        log_somehow( logger, "   Adding new context '#{context_name}', key_string='#{key_string}'.", DEBUG_VERBOSE )
+          if ( @parsing_defs.required_keys( context_name ).size < 1 )
+            key_string = @line_count + 1            # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking)
+            log_somehow(
+              logger,
+              "---WARNING: missing unique key definition for context '#{context_name}'!\r\n" +
+              "            Using current line count (#{@line_count + 1}) as unique ID.",
+              DEBUG_VERBOSE, :warn
+            )
+          else                                      # Extract unique key and store new current context page
+            key_string = compose_memstorage_key( context_name, token_hash )
+          end
+          log_somehow( logger, "   Adding new context '#{context_name}', key_string='#{key_string}'.", DEBUG_VERBOSE )
 
-        @result[ context_name ] << {
-          id:           key_string,
-          fields:       token_hash,
-          import_text:  cached_rows.join("\r\n")
-        }
-        @total_data_rows += 1                       # Increase data rows stat only when actually adding any data
+          @result[ context_name ] << {
+            id:           key_string,
+            fields:       token_hash,
+            import_text:  cached_rows.join("\r\n")
+          }
+          @total_data_rows += 1                     # Increase data rows stat only when actually adding any data
                                                     # Store new unique key in @previous_key hash linked by current context (which may be a new parent context for other sub-pages)
-        @previous_key[ context_name ] = key_string
+          @previous_key[ context_name ] = key_string
+        end
                                                     # *** CONTEXT -is- CHILD: DETAIL
       else                                          # Current context depends on another? ("L1" parse result)
         parent_context = detector.parent_context_name
                                                     # No change in parent context?
-        if ( parent_context == @previous_parent_context )
+        if ( parent_context == @previous_parent_context ) &&
+           token_hash.instance_of?( Hash ) && ( token_hash.keys.size > 0 )
           # [Steve, 20140919]
           # The "@previous_key" mechanism was used in the previous version of
           # this implementation as a fail-safe to detect whether a data storage
@@ -196,7 +199,12 @@ class TxtParseService
           # only correct method to uniquely identify two context with the same RegExp.
         end
       end
-      log_somehow( logger, "   @result fields = #{@result[ context_name ].last[:fields].inspect}", DEBUG_VERY_VERBOSE && @result[ context_name ].last )
+      if @result[ context_name ].last.instance_of?( Hash )
+        log_somehow( logger, "   @result fields = #{@result[ context_name ].last[:fields].inspect}", DEBUG_VERY_VERBOSE && @result[ context_name ].last )
+      else
+        log_somehow( logger, "   @result fields = NIL!", DEBUG_VERY_VERBOSE )
+        log_somehow( logger, "   @result import_text = <#{@result[:import_text].inspect}>", DEBUG_VERY_VERBOSE )
+      end
 
     else                                     # === DETECTION UNSUCCESSFUL (perhaps is "in progress") ===
       # We must report false only if we are sure nothing has been recognized
