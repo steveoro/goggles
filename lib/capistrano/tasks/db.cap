@@ -103,7 +103,9 @@ EOF
     task :sql_upload do
       puts "      > Launching db:remote:sql_upload..."
       on roles(:app) do
-        upload! File.read( fetch(:ask_src_sql_file_path) ), '/tmp/db_upload.sql'
+        file_name = fetch(:ask_src_sql_file_path)
+        info "Uploading file..."
+        upload! file_name, '/tmp/db_upload.sql'
         within release_path do
           execute :mysql, "-h#{primary(:db)} -u#{fetch(:db_user)} -p#{fetch(:db_password)} --database=#{fetch(:application)} -e \"\\. /tmp/db_upload.sql\""
         end
@@ -127,7 +129,9 @@ EOF
     task :sql_exec do
       puts "      > Launching db:remote:sql_exec..."
       on roles(:app) do
-        upload! File.read( fetch(:ask_src_sql_file_path) ), "/tmp/db_upload.sql"
+        file_name = fetch(:ask_src_sql_file_path)
+        info "Uploading file..."
+        upload! file_name, "/tmp/db_upload.sql"
         within release_path do
           execute :mysql, "-h#{primary(:db)} -u#{fetch(:db_user)} -p#{fetch(:db_password)} --database=#{fetch(:application)} -e \"\\. /tmp/db_upload.sql\""
         end

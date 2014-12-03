@@ -1,6 +1,7 @@
 #!/bin/bash
 echo ---[ master-goggles.org ]---
 echo Cache rebuild script -- Making some pre-emptive requests...
+curl -# http://master-goggles.org > /dev/null
 
 echo - current CSI Championship:
 curl -# http://master-goggles.org/it/championships/calendar_regional_er_csi > /dev/null

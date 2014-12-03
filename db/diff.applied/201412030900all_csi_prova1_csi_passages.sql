@@ -189,7 +189,7 @@ INSERT INTO passages (id,minutes,seconds,hundreds,swimmer_id,user_id,team_id,pas
 (2418,0,11,87,1421,2,1,(select t.id from passage_types t where t.length_in_meters = '50'),(select mp.id from meeting_programs mp join meeting_events me on me.id = mp.meeting_event_id join event_types et on et.id = me.event_type_id join meeting_sessions ms on ms.id = me.meeting_session_id join meetings m on m.id = ms.meeting_id where m.id = 14101 and et.code =  '50SL' and mp.gender_type_id = (select s.gender_type_id from swimmers s where s.id = 1421) and mp.category_type_id = (select b.category_type_id from badges b where b.swimmer_id = 1421 and b.season_id = 141) and mp.pool_type_id = (select p.id from pool_types p where p.code = '25')),(select mir.id from meeting_individual_results mir join meeting_programs mp on mp.id = mir.meeting_program_id join meeting_events me on me.id = mp.meeting_event_id join event_types et on et.id = me.event_type_id join meeting_sessions ms on ms.id = me.meeting_session_id join meetings m on m.id = ms.meeting_id where m.id = 14101 and et.code = '50SL' and mir.swimmer_id = 1421 and mp.gender_type_id = (select s.gender_type_id from swimmers s where s.id = 1421) and mp.category_type_id = (select b.category_type_id from badges b where b.swimmer_id = 1421 and b.season_id = 141) and mp.pool_type_id = (select p.id from pool_types p where p.code = '25')),0,CURDATE(),CURDATE());
 
 -- Aggiorano l'update time dei mir in modo da forzare il rinnovo della cache
-update meeting_individual_results set update_at = curdate() where id between 110532 and 110590;
+update meeting_individual_results set updated_at = curdate() where id between 110532 and 110590; 
 
 COMMIT;
 -- Fine script
