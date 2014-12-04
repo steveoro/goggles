@@ -7,7 +7,7 @@ require 'data_import/services/context_detector'
 
 = TxtParseService
 
-  - Goggles framework vers.:  4.00.511
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
  Service class delegated to the parsing of a single line of text,
@@ -129,7 +129,7 @@ class TxtParseService
         if token_hash.instance_of?( Hash ) && ( token_hash.keys.size > 0 )
                                                     # There must be a unique key defined for this context
           if ( @parsing_defs.required_keys( context_name ).size < 1 )
-            key_string = @line_count + 1            # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking)
+            key_string = @line_count + 1            # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking or :stats)
             log_somehow(
               logger,
               "---WARNING: missing unique key definition for context '#{context_name}'!\r\n" +
@@ -139,15 +139,10 @@ class TxtParseService
           else                                      # Extract unique key and store new current context page
             key_string = compose_memstorage_key( context_name, token_hash )
           end
-          log_somehow( logger, "   Adding new context '#{context_name}', key_string='#{key_string}'.", DEBUG_VERBOSE )
-
-          @result[ context_name ] << {
-            id:           key_string,
-            fields:       token_hash,
-            import_text:  cached_rows.join("\r\n")
-          }
-          @total_data_rows += 1                     # Increase data rows stat only when actually adding any data
-                                                    # Store new unique key in @previous_key hash linked by current context (which may be a new parent context for other sub-pages)
+          log_somehow( logger, "   Adding new PARENT context '#{context_name}', key_string='#{key_string}'.", DEBUG_VERBOSE )
+          add_a_data_row( context_name, key_string, token_hash, cached_rows )
+          # Store new unique key in @previous_key hash linked by current context
+          # (which may be a new parent context for other sub-pages)
           @previous_key[ context_name ] = key_string
         end
                                                     # *** CONTEXT -is- CHILD: DETAIL
@@ -165,28 +160,30 @@ class TxtParseService
 
           # FIXME Really seems that we keep result hashes with duplicated (:id=>key_string), without any compact()/reduce operation...
                                                     # There must be already a unique key stored for the other (parent) context
-          if @previous_key[ parent_context ].nil?
+          key_string = @previous_key[ parent_context ]
+          if key_string.nil?
+            # Since nil key definition arrays happens only inside already *unique* parent contexts,
+            # with no usable fields to be extracted (as in :team_ranking or :stats), we can safely
+            # use the current line number as the key ID.
+            key_string = @line_count + 1
+#            key_string = parent_context.to_s
             log_somehow(
               logger,
-              "---WARNING: missing unique key for parent context '#{parent_context}' (parent of '#{context_name}').\r\n" +
-              "            Cannot add '#{context_name}' data page.",
-              true, :warn
+              "---WARNING: missing unique key definition for context '#{context_name}'!\r\n" +
+              "            Using current line count (#{@line_count + 1}) as unique ID.",
+#              "            Using parent context name ('#{key_string}') as unique ID.",
+              DEBUG_VERBOSE, :warn
             )
           else                                      # Retrieve pre-stored unique key of parent context and store new current context page
             log_somehow(
               logger,
-              "   Found (parent) key_string='#{@previous_key[ parent_context ] }'." +
-              "   Adding new context '#{context_name}', key_string='#{@previous_key[ parent_context ] }'",
+              "   Found (parent) key_string='#{@previous_key[ parent_context ] }'.",
               DEBUG_VERBOSE
             )
-
-            @result[ context_name ] << {
-              id:           @previous_key[ parent_context ],
-              fields:       token_hash,
-              import_text:  cached_rows.join("\r\n")
-            }
-            @total_data_rows += 1                   # Increase data rows stat only when actually adding any data
           end
+          log_somehow( logger, "   Adding new CHILD row '#{context_name}', key_string='#{key_string}'", DEBUG_VERBOSE )
+          add_a_data_row( context_name, key_string, token_hash, cached_rows )
+
           # ELSE: parent context changed or different? => quietly skip the storing!
 
           # [Steve, 20130918]
@@ -270,6 +267,18 @@ class TxtParseService
       DEBUG_VERBOSE
     )
     ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join('-')
+  end
+
+
+  # Adds a new data row to the @result and increases the total data rows.
+  #
+  def add_a_data_row( context_name, key_string, token_hash, cached_rows )
+    @result[ context_name ] << {
+      id:           key_string,
+      fields:       token_hash,
+      import_text:  cached_rows.join("\r\n")
+    }
+    @total_data_rows += 1                     # Increase data rows stat only when actually adding any data
   end
 
 

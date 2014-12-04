@@ -18,7 +18,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.623
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
   Data-Import strategy class.
@@ -536,16 +536,12 @@ class DataImporter
                                                     # --- TEAM RANKING/SCORES (digest/serialization) --
     if meeting                                      # Retrieve default meeting session: (used only for new/missing meeting events or programs)
       update_logs( "PHASE #1.2: processing TEAM RANKING/SCORES..." )
-      ranking_headers = @result_hash[:parse_result][:team_ranking]
       ranking_details = @result_hash[:parse_result][:ranking_row]
-      ranking_headers_ids = ranking_headers.collect{|e| e[:id] }.compact.uniq.sort
       is_ok = process_team_ranking(
           @full_pathname,
           @data_import_session,
           @season,
           meeting,
-          ranking_headers,
-          ranking_headers_ids,
           ranking_details,
           @force_missing_team_creation
       )

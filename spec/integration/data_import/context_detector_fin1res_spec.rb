@@ -7,10 +7,8 @@ require_relative './context_detector_checks_for_parsing'
 describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration do
   include ContextDetectorChecksForParsing
 
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include FinResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper; include FinResultConsts; end
+  let( :dummy_wrapper ) { DummyWrapper.new }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -555,7 +553,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
     #-- -----------------------------------------------------------------------
     #++
 
-    it "doesn't recognize a relay-like feed (sample #1)" do
+    it "doesn't recognize a relay-like feed (DSQ sample #1)" do
       feed = [
         "                        CSI NUOTO OBER FERR                Squalif."
       ]
@@ -662,6 +660,48 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
         "       1   SBIRULONI  FERRUCCIA           1982   N ALBINETANI                5'28\"30  0,00"
       ]
       check_for_parsing_fail( feed, 0, :category_header )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # === STATS_DETAILS examples ===
+  #
+  context "when parsing STATS_DETAILS," do
+    subject { ContextDetector.new( dummy_wrapper.context_type_stats_details, nil ) }
+
+    it "recognizes the 'default' format" do
+      check_for_parsing_ok(
+        [
+          "                Numero di società iscritte                                41     ",
+          "                Società che hanno fatto iscrizioni online                 41     ",
+          "                Numero di società partecipanti                            40     ",
+          "",
+          "                Numero totale di atleti iscritti                         361     ",
+          "                Numero di atleti under 25 iscritti                        18     ",
+          "                Percentuale di atleti under 25 iscritti                 4,99 %   ",
+          "                Numero di atleti iscritti online                         356     ",
+          "                Percentuale di atleti iscritti online                  98,61 %   ",
+          "",
+          "                Numero di atleti partecipanti                            343     ",
+          "                Numero di atleti assenti                                  18     ",
+          "                Percentuale di atleti assenti                           4,99 %   ",
+          "                Numero di atleti assenti ad una gara                      11     ",
+          "",
+          "                Numero totale di iscrizioni alle gare                    717     ",
+          "                Numero di iscrizioni alle gare di atleti under 25         36     ",
+          "                Percentuale di gare di atleti under 25                  5,02 %   ",
+          "",
+          "                Numero totale di gare disputate                          672     ",
+          "                Numero di gare disputate da atleti under 25               33     ",
+          "",
+          "                Numero di assenze dalle gare                              45     ",
+          "                Percentuale di assenze                                  6,28 %   ",
+          "                Numero di squalifiche                                     20     ",
+          "                Numero di ritiri                                           2     "
+        ], :stats
+      )
     end
   end
   #-- -------------------------------------------------------------------------

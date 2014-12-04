@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include FinResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper; include FinResultConsts; end
+  let( :dummy_wrapper ) { DummyWrapper.new }
 
   let(:feed) do
     [

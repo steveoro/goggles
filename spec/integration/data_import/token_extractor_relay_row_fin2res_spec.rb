@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include Fin2ResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper2; include Fin2ResultConsts; end
+  let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
   let(:feed) do
     [
@@ -47,7 +45,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_POSITION," do
-    subject { dummy_wrapper.tokenizer_relay_row_result_position }
+    subject { dummy_wrapper2.tokenizer_relay_row_result_position }
 
     let(:expected_tokens) do
       [ # field = :result_position
@@ -84,7 +82,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing TEAM_NAME," do
-    subject { dummy_wrapper.tokenizer_relay_row_team_name }
+    subject { dummy_wrapper2.tokenizer_relay_row_team_name }
 
     let(:expected_tokens) do
       [ # field = :team_name
@@ -121,7 +119,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing CATEGORY," do
-    subject { dummy_wrapper.tokenizer_relay_row_category }
+    subject { dummy_wrapper2.tokenizer_relay_row_category }
 
     let(:expected_tokens) do
       [ # field = :result_time
@@ -158,7 +156,7 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_TIME," do
-    subject { dummy_wrapper.tokenizer_relay_row_result_time }
+    subject { dummy_wrapper2.tokenizer_relay_row_result_time }
 
     let(:expected_tokens) do
       [ # field = :result_time

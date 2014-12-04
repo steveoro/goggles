@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include FinResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper; include FinResultConsts; end
+  let( :dummy_wrapper ) { DummyWrapper.new }
 
   let(:feed) do
     [
@@ -31,6 +29,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   context "when tokenizing TYPE," do
     subject { dummy_wrapper.tokenizer_relay_header_type }

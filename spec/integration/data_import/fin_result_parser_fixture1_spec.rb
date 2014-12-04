@@ -62,9 +62,9 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
     it "recognizes a list of :stats data pages" do
       expect( subject.has_key?( :stats ) ).to be true
     end
-    it "has just 1 :stat (header) data page" do
+    it "has just 0 rows (no data extracted) for the :stat (header) data page" do
       expect( subject[:stats] ).to be_an_instance_of( Array )
-      expect( subject[:stats].size ).to eq( 1 )
+      expect( subject[:stats].size ).to eq( 0 )
     end
 
     it "recognizes a list of :stats details data pages" do

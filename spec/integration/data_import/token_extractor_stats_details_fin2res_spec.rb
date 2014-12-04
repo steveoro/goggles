@@ -8,16 +8,14 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for STATS_DETAILS-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include Fin2ResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper2; include Fin2ResultConsts; end
+  let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
   # [Steve, 20141203]
   # Since all tokenizer have the same formula, we can test a single Tokenizer instance
   # against all the rows and see if the expected token returned matches.
   context "when tokenizing <all rows> against '20101219muss' (sub-format type1)," do
-    subject { dummy_wrapper.tokenizer_stats_teams_tot }
+    subject { dummy_wrapper2.tokenizer_stats_teams_tot }
 
     let(:feed) do
       #            10        20        30        40        50        60        70        80        90
@@ -68,7 +66,7 @@ describe "TokenExtractor for STATS_DETAILS-type buffers,", type: :integration do
 
 
   context "when tokenizing <all rows> against '20081221muss' (sub-format type2)," do
-    subject { dummy_wrapper.tokenizer_stats_teams_presence }
+    subject { dummy_wrapper2.tokenizer_stats_teams_presence }
 
     let(:feed) do
       #            10        20        30        40        50        60        70        80        90
@@ -123,7 +121,7 @@ describe "TokenExtractor for STATS_DETAILS-type buffers,", type: :integration do
 
 
   context "when tokenizing <all rows> against '20130513pont' (sub-format type2)," do
-    subject { dummy_wrapper.tokenizer_stats_teams_presence }
+    subject { dummy_wrapper2.tokenizer_stats_teams_presence }
 
     let(:feed) do
       #            10        20        30        40        50        60        70        80        90

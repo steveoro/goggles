@@ -94,12 +94,14 @@ class TokenExtractor
       eidx = get_end_index( text )
       token = ( text[ sidx .. eidx ] ).strip if eidx
     end
+# DEBUG
+#    puts "-- after tokenize:  " << (@computed_start ? "cached: (#{@computed_start}.." : 'cached: (nil..') << (@computed_end ? "#{@computed_end})" : 'nil)')
     token
   end
 
   # Converts the current instance to a readable string
   def to_s
-    "[TokenExtractor: #{@field_name}, start=#{@starting_with}, end=#{@ending_with}]" +
+    "[TokenExtractor: #{@field_name}, start=#{@starting_with}, end=#{@ending_with}, timeout:#{@line_timeout}]" +
     (@computed_start ? " cached: (#{@computed_start}.." : ' cached: (nil..') +
     (@computed_end ? "#{@computed_end})" : 'nil)')
   end

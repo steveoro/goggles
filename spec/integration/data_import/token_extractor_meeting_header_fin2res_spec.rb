@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include Fin2ResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper2; include Fin2ResultConsts; end
+  let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
   let(:feed) do
     [
@@ -85,7 +83,7 @@ describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :int
 
 
   context "when tokenizing HEADER_TITLE," do
-    subject { dummy_wrapper.tokenizer_meeting_header_title }
+    subject { dummy_wrapper2.tokenizer_meeting_header_title }
 
     let(:expected_tokens) do
       [ # field = :title
@@ -158,7 +156,7 @@ describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :int
   #++
 
   context "when tokenizing MEETING_DATES," do
-    subject { dummy_wrapper.tokenizer_meeting_header_meeting_dates }
+    subject { dummy_wrapper2.tokenizer_meeting_header_meeting_dates }
 
     let(:expected_tokens) do
       [ # field = :meeting_dates
@@ -231,7 +229,7 @@ describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :int
   #++
 
   context "when tokenizing ORGANIZATION," do
-    subject { dummy_wrapper.tokenizer_meeting_header_organization }
+    subject { dummy_wrapper2.tokenizer_meeting_header_organization }
 
     let(:expected_tokens) do
       [ # field = :organization

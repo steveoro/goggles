@@ -6,7 +6,7 @@ require 'data_import/tools_logging'
 
 = ContextDetector
 
-  - Goggles framework vers.:  4.00.511
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
  Service class delegated to ContextType recognition.
@@ -154,11 +154,10 @@ class ContextDetector
       log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for NO conditions defined.", DEBUG_VERY_VERBOSE )
       return false
     end
-# FIXME [Steve WIP]
-#    if ( @context_type.parent_context_name != previous_context_name )
-#      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context.", DEBUG_VERY_VERBOSE )
-#      return false
-#    end
+    if !is_a_parent_context && ( @context_type.parent_context_name != previous_context_name )
+      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context (inside CHILD context).", DEBUG_VERY_VERBOSE )
+      return false
+    end
     is_context_detected = false
 
     condition_to_check = @context_type.condition_array[ @detection_index ]

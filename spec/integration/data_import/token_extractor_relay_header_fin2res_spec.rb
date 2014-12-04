@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include Fin2ResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper2; include Fin2ResultConsts; end
+  let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
   let(:feed) do
     [
@@ -47,7 +45,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing TYPE," do
-    subject { dummy_wrapper.tokenizer_relay_header_type }
+    subject { dummy_wrapper2.tokenizer_relay_header_type }
 
     let(:expected_tokens) do
       [ # field = :type
@@ -84,7 +82,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing DISTANCE," do
-    subject { dummy_wrapper.tokenizer_relay_header_distance }
+    subject { dummy_wrapper2.tokenizer_relay_header_distance }
 
     let(:expected_tokens) do
       [ # field = :distance
@@ -121,7 +119,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   #++
 
   context "when tokenizing STYLE," do
-    subject { dummy_wrapper.tokenizer_relay_header_style }
+    subject { dummy_wrapper2.tokenizer_relay_header_style }
 
     let(:expected_tokens) do
       [ # field = :style
@@ -160,7 +158,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
 # The following tokens are not available in fin2result format:
 
   # context "when tokenizing CATEGORY_GROUP," do
-    # subject { dummy_wrapper.tokenizer_relay_header_category_group }
+    # subject { dummy_wrapper2.tokenizer_relay_header_category_group }
 #
     # let(:expected_tokens) do
       # [ # field = :category_group
@@ -183,7 +181,7 @@ describe "TokenExtractor for RELAY_HEADER-type buffers,", type: :integration do
   # #++
 #
   # context "when tokenizing BASE_TIME," do
-    # subject { dummy_wrapper.tokenizer_relay_header_base_time }
+    # subject { dummy_wrapper2.tokenizer_relay_header_base_time }
 #
     # let(:expected_tokens) do
       # [ # field = :base_time

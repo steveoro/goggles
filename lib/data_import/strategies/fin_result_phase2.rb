@@ -24,7 +24,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.631
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -263,36 +263,27 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_team_ranking( full_pathname, data_import_session, season, meeting,
-                            ranking_headers, ranking_headers_ids, ranking_details,
-                            force_missing_team_creation = false )
+                            ranking_details, force_missing_team_creation = false )
     is_ok = true
-                                                    # **** HEADER LOOP **** For each header row (even if there's only one):...
-    ranking_headers_ids.each_with_index do |ranking_id, header_index|
-# DEBUG
-      data_import_session.phase_1_log << "\r\nTEAM RANKING HEADER: Processing ranking_id:'#{ ranking_id }', key #{ header_index+1 }/#{ ranking_headers_ids.size }..."
-                                                    # Extract header row with its details for current relay:
-      header_row  = ranking_headers.find({}) { |e| e[:id] == ranking_id }
-      detail_rows = ranking_details.find_all { |e| e[:id] == ranking_id }
-# DEBUG
-      data_import_session.phase_1_log << "Parsed TEAM RANKING header_row[:fields]=#{ header_row[:fields].inspect }...\r\n"
                                                     # **** DETAIL LOOP **** For each result row:...
-      detail_rows.each_with_index do |detail_row, detail_row_idx|
+    ranking_details.each_with_index do |detail_row, detail_row_idx|
+# DEBUG
+      data_import_session.phase_1_log << "\r\nTEAM RANKINGS: Processing ranking #{ detail_row_idx+1 }/#{ ranking_details.size }..."
                                                     # -- TEAM RANKING (digest part) --
-        mts_builder = DataImportMeetingTeamScoreBuilder.build_from_parameters(
-          data_import_session,
-          season,
-          meeting,
-          detail_row, detail_row_idx, detail_rows.size,
-          force_missing_team_creation
-        )
+      mts_builder = DataImportMeetingTeamScoreBuilder.build_from_parameters(
+        data_import_session,
+        season,
+        meeting,
+        detail_row, detail_row_idx, ranking_details.size,
+        force_missing_team_creation
+      )
                                                     # This will store the is_ok status up 'till the end (1 failure is enough)
-        is_ok = is_ok && (! mts_builder.result_row.nil?)
-      end                                           # **** (END of DETAIL) ****
+      is_ok = is_ok && (! mts_builder.result_row.nil?)
                                                     # Update current header count into "progress counter column"
       DataImportSession.where( id: data_import_session.id ).update_all(
-        phase_3_log: "1.2-RANK:#{ header_index+1 }/#{ ranking_headers_ids.size }"
+        phase_3_log: "1.2-RANK:#{ detail_row_idx+1 }/#{ ranking_details.size }"
       )
-    end                                             # **** (END of HEADER) ****
+    end                                             # **** (END loop) ****
     is_ok
   end
   #-- -------------------------------------------------------------------------

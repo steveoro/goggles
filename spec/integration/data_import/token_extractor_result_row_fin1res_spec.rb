@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include FinResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper; include FinResultConsts; end
+  let( :dummy_wrapper ) { DummyWrapper.new }
 
   let(:feed) do
     [
@@ -32,6 +30,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   context "when tokenizing POSITION," do
     subject { dummy_wrapper.tokenizer_result_row_result_position }

@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.655
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -77,7 +77,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :event_relay,
       [
-        /(Mistaffetta|Staffetta)/,
+        /(Mistaffetta|Staffetta)/
 #        /Torna a inizio pagina|^\s*|^\r\n|^\n|$|^\Z/i,
 #        /(Mistaffetta|Staffetta)\s\dx\d{2,4}\s\w|-{80}/,
 #        /
@@ -162,19 +162,23 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       :stats_details_1,
       [
         /\ssociet.\siscritte\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
         /\ssociet.\spartecipanti\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+
         /\satleti\siscritti\s/i,
-        /^.*/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+
         /\satleti\spartecipanti\s/i,
-        /^.*/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+
         /\siscrizioni\salle\sgare\s/i,
         /\sgare\sdisputate\s/i,
-        /^.*/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+
         /\ssqualifiche\s/i,
       ],
       :stats
@@ -189,19 +193,23 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       [
         /\ssociet\D\siscritte\s/i,
         /\ssociet\D\spresenti\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+
         /\satleti\siscritti\s/i,
         /\satleti\spresenti\s/i,
         /\sPercentuale\sAssenti\s/i,
         /\sAtleta\sPresente\scon\suna\sgara\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+
         /\sIscrizioni\sGare\s/i,
         /\sGare\sDisputate\s/i,
         /\sAssenza\sGare\s/i,
         /\sPercentuale\sGare\sNon\sDisputate\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+
         /\sStaffette\sDisputate\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
+
         /\sSqualifiche\s/i,
         /\sRitiri\s/i
       ],
@@ -346,7 +354,10 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :style,
       /(?<=\d\s)\s*(stile|mi|sl|mx)/i,
-      /(\s+\-\s+categoria|\s{3}\-{3}(\Z|\n)|\smista\s{3}\-{3}|\smasch|\sfemm)/i
+      /(
+        (\s+\-\s+categoria)|
+        (\s{3}\-{3}(\n|$)|\smista(\n|$|\s{3}\-{3})|\smasch|\sfemm)
+      )/ix
     )
   end
 

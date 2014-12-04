@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for STATS_DETAILS-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include FinResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper; include FinResultConsts; end
+  let( :dummy_wrapper ) { DummyWrapper.new }
 
   # [Steve, 20141203]
   # Since all tokenizer have the same formula, we can test a single Tokenizer instance

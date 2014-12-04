@@ -333,15 +333,15 @@ describe DataImporter, type: :strategy do
             expect( @phase_1_subject.result_hash[:parse_result][:relay_row].size ).to eq( 16 )
           end
 
-          it "has 1 [:parse_result][:team_ranking] item" do
-            expect( @phase_1_subject.result_hash[:parse_result][:team_ranking].size ).to eq( 1 )
+          it "has no [:parse_result][:team_ranking] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:team_ranking].size ).to eq( 0 )
           end
           it "has 45 [:parse_result][:ranking_row] items" do
             expect( @phase_1_subject.result_hash[:parse_result][:ranking_row].size ).to eq( 11 )
           end
 
-          it "has 1 [:parse_result][:stats] item" do
-            expect( @phase_1_subject.result_hash[:parse_result][:stats].size ).to eq( 1 )
+          it "has no [:parse_result][:stats] items" do
+            expect( @phase_1_subject.result_hash[:parse_result][:stats].size ).to eq( 0 )
           end
           # (The following single detail item has all the 8 recognized fields in it)
           it "has 1 [:parse_result][:stats_details] item" do
@@ -397,6 +397,8 @@ describe DataImporter, type: :strategy do
             file_name: file_name,
             season: Season.find_by_id( 132 )
           )
+          DataImportTeamAnalysisResult.delete_all
+          DataImportTeamAlias.delete_all
           @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
           @phase_1_subject.set_up(
             force_missing_meeting_creation: false,
@@ -448,11 +450,16 @@ describe DataImporter, type: :strategy do
           )
           @phase_1_subject.phase_1_parse
           expect( @phase_1_subject.data_import_session.phase ).to eq(10)
-          @di_team_before_count     = DataImportTeam.where( data_import_session_id: @phase_1_session.id ).count
-          @di_swimmer_before_count  = DataImportSwimmer.where( data_import_session_id: @phase_1_session.id ).count
-          @di_mir_before_count      = DataImportMeetingIndividualResult.where( data_import_session_id: @phase_1_session.id ).count
-          @di_mrr_before_count      = DataImportMeetingRelayResult.where( data_import_session_id: @phase_1_session.id ).count
-          @di_score_before_count    = DataImportMeetingTeamScore.where( data_import_session_id: @phase_1_session.id ).count
+          DataImportTeam.delete_all
+          DataImportSwimmer.delete_all
+          DataImportMeetingIndividualResult.delete_all
+          DataImportMeetingRelayResult.delete_all
+          DataImportMeetingTeamScore.delete_all
+          @di_team_before_count     = 0
+          @di_swimmer_before_count  = 0
+          @di_mir_before_count      = 0
+          @di_mrr_before_count      = 0
+          @di_score_before_count    = 0
           @result = @phase_1_subject.phase_1_2_serialize
         end
 
@@ -497,6 +504,92 @@ describe DataImporter, type: :strategy do
           expect(
             DataImportMeetingTeamScore.where( data_import_session_id: @phase_1_session.id ).count
           ).to be > @di_score_before_count
+        end
+
+        describe "the returned result_hash from parse phase (1.0)," do
+          subject { @phase_1_subject.result_hash[:parse_result] }
+
+          it "is an instance of Hash" do
+            expect( subject ).to be_an_instance_of( Hash )
+          end
+
+          it "recognizes a list of :category_header data pages" do
+            expect( subject.has_key?( :category_header ) ).to be true
+          end
+          it "has the exact amount of :category_header data pages for this fixture" do
+            expect( subject[:category_header] ).to be_an_instance_of( Array )
+            expect( subject[:category_header].size ).to eq( 6 )
+          end
+
+          it "recognizes a list of :result_row data pages" do
+            expect( subject.has_key?( :result_row ) ).to be true
+          end
+          it "has the exact amount of :result_rows for this fixture" do
+            expect( subject[:result_row] ).to be_an_instance_of( Array )
+            expect( subject[:result_row].size ).to eq( 30 )
+          end
+
+          it "recognizes a list of :relay_header data pages" do
+            expect( subject.has_key?( :relay_header ) ).to be true
+          end
+          it "has the exact amount of :relay_header data pages for this fixture" do
+            expect( subject[:relay_header] ).to be_an_instance_of( Array )
+            expect( subject[:relay_header].size ).to eq( 4 )
+          end
+
+          it "recognizes a list of :relay_row data pages" do
+            expect( subject.has_key?( :relay_row ) ).to be true
+          end
+          it "has the exact amount of :relay_rows for this fixture" do
+            expect( subject[:relay_row] ).to be_an_instance_of( Array )
+            expect( subject[:relay_row].size ).to eq( 16 )
+          end
+
+          it "recognizes a list of :team_ranking data pages" do
+            expect( subject.has_key?( :team_ranking ) ).to be true
+          end
+          it "has no rows for the :team_ranking (header) data page" do
+            expect( subject[:team_ranking] ).to be_an_instance_of( Array )
+            expect( subject[:team_ranking].size ).to eq( 0 )
+          end
+
+          it "recognizes a list of :ranking_row data pages" do
+            expect( subject.has_key?( :ranking_row ) ).to be true
+          end
+          it "has the exact amount of :ranking_rows for this fixture" do
+            expect( subject[:ranking_row] ).to be_an_instance_of( Array )
+            expect( subject[:ranking_row].size ).to eq( 11 )
+          end
+
+          it "recognizes a list of :stats data pages" do
+            expect( subject.has_key?( :stats ) ).to be true
+          end
+          it "has just 0 rows (no data extracted) for the :stat (header) data page" do
+            expect( subject[:stats] ).to be_an_instance_of( Array )
+            expect( subject[:stats].size ).to eq( 0 )
+          end
+
+          it "recognizes a list of :stats details data pages" do
+            expect( subject.has_key?( :stats_details ) ).to be true
+          end
+          it "has just 1 :stats detail data page for this fixture" do
+            expect( subject[:stats_details] ).to be_an_instance_of( Array )
+            expect( subject[:stats_details].size ).to eq( 1 )
+          end
+          context "for the :stats_details data page," do
+            it "has the exact values for all :stats_details of this fixture" do
+              data_page_field_hash = subject[:stats_details].first[:fields]
+              expect( data_page_field_hash ).to be_an_instance_of( Hash )
+              expect( data_page_field_hash[ :teams_tot ]        ).to eq( '11' )
+              expect( data_page_field_hash[ :teams_presence ]   ).to eq( '11' )
+              expect( data_page_field_hash[ :swimmer_tot ]      ).to eq( '396' )
+              expect( data_page_field_hash[ :swimmer_presence ] ).to eq( '367' )
+              expect( data_page_field_hash[ :entries_tot ]      ).to eq( '754' )
+              expect( data_page_field_hash[ :entries_presence ] ).to eq( '688' )
+              expect( data_page_field_hash[ :disqual_tot ]      ).to eq( '5' )
+              expect( data_page_field_hash[ :withdrawals_tot ]  ).to eq( '2' )
+            end
+          end
         end
       end
       #-- ---------------------------------------------------------------------

@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include Fin2ResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper2; include Fin2ResultConsts; end
+  let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
   let(:feed) do
     [
@@ -45,7 +43,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing POSITION," do
-    subject { dummy_wrapper.tokenizer_result_row_result_position }
+    subject { dummy_wrapper2.tokenizer_result_row_result_position }
 
     let(:expected_tokens) do
       [ # field = :result_position
@@ -80,7 +78,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing TEAM_CODE," do
-    subject { dummy_wrapper.tokenizer_result_row_team_code }
+    subject { dummy_wrapper2.tokenizer_result_row_team_code }
 
     let(:expected_tokens) do
       [ # field = :team_code
@@ -115,7 +113,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing SWIMMER_NAME," do
-    subject { dummy_wrapper.tokenizer_result_row_swimmer_name }
+    subject { dummy_wrapper2.tokenizer_result_row_swimmer_name }
 
     let(:expected_tokens) do
       [ # field = :swimmer_name
@@ -150,7 +148,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing SWIMMER_YEAR," do
-    subject { dummy_wrapper.tokenizer_result_row_swimmer_year }
+    subject { dummy_wrapper2.tokenizer_result_row_swimmer_year }
 
     let(:expected_tokens) do
       [ # field = :swimmer_year
@@ -185,7 +183,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing TEAM_NAME," do
-    subject { dummy_wrapper.tokenizer_result_row_team_name }
+    subject { dummy_wrapper2.tokenizer_result_row_team_name }
 
     let(:expected_tokens) do
       [ # field = :team_name
@@ -220,7 +218,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_TIME," do
-    subject { dummy_wrapper.tokenizer_result_row_result_time }
+    subject { dummy_wrapper2.tokenizer_result_row_result_time }
 
     let(:expected_tokens) do
       [ # field = :result_time
@@ -255,7 +253,7 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
   #++
 
   context "when tokenizing RESULT_SCORE," do
-    subject { dummy_wrapper.tokenizer_result_row_result_score }
+    subject { dummy_wrapper2.tokenizer_result_row_result_score }
 
     let(:expected_tokens) do
       [ # field = :result_score

@@ -53,7 +53,7 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
     end
     it "has the exact amount of :result_rows for this fixture" do
       expect( subject[:result_row] ).to be_an_instance_of( Array )
-      expect( subject[:result_row].size ).to eq( 0 )
+      expect( subject[:result_row].size ).to eq( 283 )
     end
 
     it "recognizes a list of :relay_header data pages" do
@@ -75,12 +75,12 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
     it "recognizes a list of :stats data pages" do
       expect( subject.has_key?( :stats ) ).to be true
     end
-    it "has just 1 :stat (header) data page" do
+    it "has no rows for the :stat (header) data page" do
       expect( subject[:stats] ).to be_an_instance_of( Array )
-      expect( subject[:stats].size ).to eq( 1 )
+      expect( subject[:stats].size ).to eq( 0 )
     end
 
-    it "recognizes a list of :stats details data pages" do
+    it "does not recognizes a list of :stats details data pages" do
       expect( subject.has_key?( :stats_details ) ).to be false
     end
     it "recognizes a list of :stats details data pages" do
@@ -98,43 +98,40 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
       expect( subject[:stats_details_2].size ).to eq( 1 )
     end
 
-    # context "for the :stats_details data page," do
-      # it "has the exact values for all :stats_details of this fixture" do
-        # data_page_field_hash = subject[:stats_details].first[:fields]
-        # expect( data_page_field_hash ).to be_an_instance_of( Hash )
-        # expect( data_page_field_hash[ :teams_tot ]        ).to eq( '107' )
-        # expect( data_page_field_hash[ :teams_presence ]   ).to eq( '99' )
-        # expect( data_page_field_hash[ :swimmer_tot ]      ).to eq( '702' )
-        # expect( data_page_field_hash[ :swimmer_presence ] ).to eq( '630' )
-        # expect( data_page_field_hash[ :entries_tot ]      ).to eq( '1263' )
-        # expect( data_page_field_hash[ :entries_presence ] ).to eq( '1091' )
-        # expect( data_page_field_hash[ :disqual_tot ]      ).to eq( '25' )
-        # expect( data_page_field_hash[ :withdrawals_tot ]  ).to eq( '3' )
-      # end
-    # end
-#
-    # # The key to the array of data-pages must always be present,
-    # # even though the array of data pages is empty:
-    # it "recognizes a list of :team_ranking data pages" do
-      # expect( subject.has_key?( :team_ranking ) ).to be true
-    # end
-    # # We want to be sure that the stats sub-page about the
-    # # enlisted Teams won't be mistaken for a :team_ranking
-    # # data-page:
-    # it "has no :team_ranking (header) data pages" do
-      # expect( subject[:team_ranking] ).to be_an_instance_of( Array )
-      # expect( subject[:team_ranking].size ).to eq( 0 )
-    # end
-#
-    # # The key to the array of data-pages must always be present,
-    # # even though the array of data pages is empty:
-    # it "recognizes a list of :ranking_row data pages" do
-      # expect( subject.has_key?( :ranking_row ) ).to be true
-    # end
-    # it "has no :ranking_rows" do
-      # expect( subject[:ranking_row] ).to be_an_instance_of( Array )
-      # expect( subject[:ranking_row].size ).to eq( 0 )
-    # end
+    context "for the :stats_details_2 data page," do
+      it "has the exact values for all :stats_details of this fixture" do
+        data_page_field_hash = subject[:stats_details_2].first[:fields]
+        expect( data_page_field_hash ).to be_an_instance_of( Hash )
+        expect( data_page_field_hash[ :teams_tot ]        ).to eq( '75' )
+        expect( data_page_field_hash[ :teams_presence ]   ).to eq( '67' )
+        expect( data_page_field_hash[ :swimmer_tot ]      ).to eq( '498' )
+        expect( data_page_field_hash[ :swimmer_presence ] ).to eq( '413' )
+        expect( data_page_field_hash[ :entries_tot ]      ).to eq( '946' )
+        expect( data_page_field_hash[ :entries_presence ] ).to eq( '761' )
+        expect( data_page_field_hash[ :disqual_tot ]      ).to eq( '17' )
+        expect( data_page_field_hash[ :withdrawals_tot ]  ).to eq( '0' )
+      end
+    end
+
+    # The key to the array of data-pages must always be present,
+    # even though the array of data pages is empty:
+    it "recognizes a list of :team_ranking data pages" do
+      expect( subject.has_key?( :team_ranking ) ).to be true
+    end
+    it "has no rows for the :team_ranking (header) data pages" do
+      expect( subject[:team_ranking] ).to be_an_instance_of( Array )
+      expect( subject[:team_ranking].size ).to eq( 0 )
+    end
+
+    # The key to the array of data-pages must always be present,
+    # even though the array of data pages is empty:
+    it "recognizes a list of :ranking_row data pages" do
+      expect( subject.has_key?( :ranking_row ) ).to be true
+    end
+    it "has the exact amount of :ranking_rows" do
+      expect( subject[:ranking_row] ).to be_an_instance_of( Array )
+      expect( subject[:ranking_row].size ).to eq( 63 )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

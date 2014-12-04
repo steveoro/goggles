@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.511
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -69,8 +69,10 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :team_ranking,
       [
-        /classifica(\s+di)?(\s+societ)?/i,
-        /^\s*(\r\n|\n|$|\Z)/i
+        /(classifica)(\s+di)?(\s+societ.)?/i
+#        /(?<anything>^.*)/i
+#        /(?<empty>^\s*\n|^\r\n|^\z)/i
+#        /^\s*(\r\n|\n|$|\Z)/i
       ]
     )
   end
@@ -81,8 +83,10 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :stats,
       [
-        /statistiche(?!\ssocie.+)/i,
-        /^\s*(\r\n|\n|$|\Z)/i
+        /statistiche(?!\ssocie.+)/i
+#        /(?<anything>^.*)/i
+#        /(?<empty>^\s*\n|^\r\n|^\z)/i
+#        /^\s*(\r\n|\n|$|\Z)/i
       ]
     )
   end
@@ -130,39 +134,34 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
       :stats_details,
       [
         /numero di soc.+\siscritte\s/i,
-        /^.*/i,                                     # (anything)
+        /(?<anything>^.*)/i,
         /numero di soc.+\spartecipanti\s/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,                      # (empty)
+        /(?<anything>^.*)/i,
 
         /numero tot.+\sdi atleti iscritti\s/i,
-        /^.*/i,
-        /^.*/i,
-        /^.*/i,
-        /^.*/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
 
         /numero di atleti partecipanti\s/i,
-        /^.*/i,
-        /^.*/i,
-        /^.*/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
 
         /numero tot.+\sdi iscrizioni alle gare\s/i,
-        /^.*/i,
-        /^.*/i,
-
-        /^\s*(\r\n|\n|$|\Z)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
 
         /numero tot.+\sdi gare disputate\s/i,
-        /^.*/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
 
-        /^\s*(\r\n|\n|$|\Z)/i,
-
-        /^.*/i,
-        /^.*/i,
+        /(?<anything>^.*)/i,
+        /(?<anything>^.*)/i,
         /numero di squalifiche\s/i,
         /numero di ritiri\s/i
       ],
@@ -414,8 +413,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :result_position,
       8,                                            # (starting idx)
-      /(?<=\s{3}\d|gara|\s{18})\s+\w+/i
-  #    12                                            # (max size)
+      10                                            # (max size)
     )
   end
 
@@ -460,8 +458,8 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_position
     TokenExtractor.new(
       :result_position,
-      /^\s*\d{0,6}°?\s+\w+/i,
-      /(?<=\d|\s{12})(°|\s)/i                   # (max size)
+      0,
+      /(.)(?=[a-z°])/i
     )
   end
 

@@ -74,7 +74,7 @@ module ContextDetectorChecksForParsing
     feed_array[ 0 .. after_n_feeds-1 ].each_with_index do | feed_line, line_idx |
       is_recognized = subject.feed_and_detect( feed_line, fake_offset_index + line_idx, prev_context_name )
 # DEBUG
-#      puts " #{fake_offset_index + line_idx}: #{is_recognized}"
+      puts " #{fake_offset_index + line_idx}: #{is_recognized}"
     end
     expect( is_recognized ).to eq( is_ok )
   end

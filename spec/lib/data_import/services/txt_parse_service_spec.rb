@@ -83,7 +83,7 @@ describe TxtParseService, type: :service do
         subject.clear                               # Clear the service and do a quick parsing:
         last_result = false
         detector    = ContextDetector.new( dummy_wrapper.context_type_stats )
-        ['', ' Statistiche ', ''].each do |curr_line|
+        [' Statistiche '].each do |curr_line|
           last_result = subject.parse( detector, curr_line )
           subject.increase_line_count
         end
@@ -105,7 +105,11 @@ describe TxtParseService, type: :service do
           expect( subject.result ).to eq( Hash.new )
         end
         it "clears the total data rows" do
-          expect{ subject.clear }.to change{ subject.total_data_rows }.to(0)
+          # Since data rows are increased only when parsing children lines and not
+          # context (parent) changes, we simply check that the total number of
+          # data rows is cleared out:
+          subject.clear
+          expect( subject.total_data_rows ).to eq( 0 )
         end
         it "clears the previous_parent_context" do
           subject.clear
@@ -124,7 +128,7 @@ describe TxtParseService, type: :service do
 
       describe "#line_count" do
         it "equals the sum of the parsed lines" do
-          expect( subject.line_count ).to eq(3)
+          expect( subject.line_count ).to eq(1)
         end
       end
       describe "#previous_parent_context" do

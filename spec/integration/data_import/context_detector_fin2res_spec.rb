@@ -157,10 +157,8 @@ end
 describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   include ContextDetectorChecksForParsing
 
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include Fin2ResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper2; include Fin2ResultConsts; end
+  let( :dummy_wrapper2 ) { DummyWrapper2.new }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -168,7 +166,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === MEETING_HEADER examples ===
   #
   context "when parsing MEETING_HEADER," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_meeting_header, nil ) }
 
     it "recognizes the 'ris20081221mus' format" do
       #              10        20        30        40        50        60        70        80        90
@@ -274,7 +272,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === EVENT_INDIVIDUAL examples ===
   #
   context "when parsing EVENT_INDIVIDUAL," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_event_individual, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_event_individual, nil ) }
 
     it "recognizes the 'ris20081221mus' format" do
       #              10        20        30        40        50        60        70        80        90
@@ -371,7 +369,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === EVENT_RELAY examples ===
   #
   context "when parsing EVENT_RELAY," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_event_relay, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_event_relay, nil ) }
 
     it "recognizes the 'ris20081221mus' format" do
       #              10        20        30        40        50        60        70        80        90
@@ -475,7 +473,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === TEAM_RANKING examples ===
   #
   context "when parsing TEAM_RANKING," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_team_ranking, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_team_ranking, nil ) }
 
     it "recognizes the 'ris20081221mus' format" do
       #              10        20        30        40        50        60        70        80        90
@@ -556,7 +554,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === STATS examples ===
   #
   context "when parsing STATS," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_stats, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_stats, nil ) }
 
     it "recognizes the 'ris20081221mus' format" do
       #              10        20        30        40        50        60        70        80        90
@@ -640,7 +638,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === RESULT_ROW examples ===
   #
   context "when parsing RESULT_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_result_row, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_result_row, nil ) }
 
     it "doesn't mistakenly recognize a empty line" do
       check_for_parsing_fail(
@@ -766,7 +764,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === RELAY_ROW examples ===
   #
   context "when parsing RELAY_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_relay_row, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_relay_row, nil ) }
 
     it "doesn't mistakenly recognize a empty line" do
       check_for_parsing_fail(
@@ -883,7 +881,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === RANKING_ROW examples ===
   #
   context "when parsing RANKING_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_ranking_row, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_ranking_row, nil ) }
 
     it "doesn't mistakenly recognize a empty line" do
       check_for_parsing_fail(
@@ -994,7 +992,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   # === STATS_DETAILS examples ===
   #
   context "when parsing STATS_DETAILS (format 1)," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_stats_details_type1, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_stats_details_type1, nil ) }
 
     it "recognizes the 'ris20101219mus' format" do
       check_for_parsing_ok(
@@ -1027,7 +1025,7 @@ describe "ContextDetector set for 'FIN2res' file types,", type: :integration do
   #++
 
   context "when parsing STATS_DETAILS (format 2)," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_stats_details_type2, nil ) }
+    subject { ContextDetector.new( dummy_wrapper2.context_type_stats_details_type2, nil ) }
 
     it "recognizes the 'ris20081221mus' format" do
       #              10        20        30        40        50        60        70        80        90

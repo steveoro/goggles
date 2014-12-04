@@ -78,9 +78,9 @@ describe "FinResultParser parsing fixture file 2,", type: :integration do
     it "recognizes a list of :team_ranking data pages" do
       expect( subject.has_key?( :team_ranking ) ).to be true
     end
-    it "has just 1 :team_ranking (header) data page" do
+    it "has no rows for the :team_ranking (header) data page" do
       expect( subject[:team_ranking] ).to be_an_instance_of( Array )
-      expect( subject[:team_ranking].size ).to eq( 1 )
+      expect( subject[:team_ranking].size ).to eq( 0 )
     end
 
     it "recognizes a list of :ranking_row data pages" do

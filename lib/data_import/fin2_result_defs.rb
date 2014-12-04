@@ -11,7 +11,7 @@ require 'data_import/fin2_result_consts'
 
 = Fin2ResultDefs
 
-  - Goggles framework vers.:  4.00.655
+  - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -107,45 +107,34 @@ class Fin2ResultDefs < TxtResultDefs
         ]
       ],
 
-      event_individual: [                              # 7 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
-        nil,
+      event_individual: [                              # 2 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
         nil,
         # -- Fields to be extracted: :distance, :style, :gender, :category_group, :base_time
         [
           tokenizer_category_header_distance,
           tokenizer_category_header_style,
           tokenizer_category_header_gender
-        ],
-        nil,
-        nil,
-        nil,
-        nil
+        ]
       ],
 
       # -- Fields to be extracted: :type, :distance, :style, :gender (can be nil), :category_group, :base_time
       event_relay: [
-        nil,
-        nil,
         [
           tokenizer_relay_header_type,
           tokenizer_relay_header_distance,
           tokenizer_relay_header_style,
           tokenizer_category_header_gender
-        ],
-        nil,
-        nil,
-        nil,
-        nil
+        ]
       ],
 
       # -- Fields to be extracted: (nothing, 2 lines in cache)
       team_ranking: [
-        nil, nil
+        nil
       ],
 
       # -- Fields to be extracted: (nothing, 2 lines in cache)
       stats: [
-        nil, nil
+        nil
       ],
 
       result_row: [                                 # 1 condition => 1 cached row
@@ -195,9 +184,6 @@ class Fin2ResultDefs < TxtResultDefs
         nil, nil,
 
         [ tokenizer_stats_entries_tot ],
-        nil,
-        nil, nil,
-
         [ tokenizer_stats_entries_presence ],
         nil, nil,
 
@@ -241,21 +227,10 @@ class Fin2ResultDefs < TxtResultDefs
       ],
       event_individual: [                           # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
         nil,
-        nil,
-        [ :distance, :style, :gender ],
-        nil,
-        nil,
-        nil,
-        nil
+        [ :distance, :style, :gender ]
       ],
       event_relay: [
-        nil,
-        nil,
-        [ :type, :distance, :style, :gender ],
-        nil,
-        nil,
-        nil,
-        nil
+        [ :type, :distance, :style, :gender ]
       ],
 
       result_row: [                                 # 1 condition => 1 cached row => the tokenizer list must have 1 element (which is 1 array)
@@ -273,16 +248,15 @@ class Fin2ResultDefs < TxtResultDefs
         [ :result_position, :team_name, :result_time, :result_score ]
       ],
 
-      team_ranking: [                               # 2 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
-        nil,
+      team_ranking: [                               # 1 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
         nil
       ],
       ranking_row: [
         [ :result_position, :team_code, :team_name, :result_score ]
       ],
 
-      stats: [                                      # 3 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
-        nil, nil
+      stats: [                                      # 1 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
+        nil
       ],
 
       stats_details_1: [
@@ -297,9 +271,6 @@ class Fin2ResultDefs < TxtResultDefs
         nil, nil,
 
         [ :entries_tot ],
-        nil,
-        nil, nil,
-
         [ :entries_presence ],
         nil,  nil,
 

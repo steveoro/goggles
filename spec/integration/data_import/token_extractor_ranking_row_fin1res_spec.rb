@@ -8,10 +8,8 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
-  let( :dummy_wrapper ) do
-    class DummyWrapper; include FinResultConsts; end
-    DummyWrapper.new
-  end
+  class DummyWrapper; include FinResultConsts; end
+  let( :dummy_wrapper ) { DummyWrapper.new }
 
   let(:feed) do
     [
@@ -22,11 +20,11 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
       "            3   EMI-001451  RINASCITA TEAM ROMA               46753,95",
       "            4   EMI-001457  NUOTO CLUB 2000                   37724,16",
       "            5   EMI-001452  AQUATIC TEAM RAVENN               29332,89",
-      "            1      N MODENESI                        66495,23",
-      "            2      CN UISP BOLOGNA                   44667,70",
-      "            3      NUOTO CLUB 2000                   37112,33",
-      "            4      NUOVO NUOTO                       31562,33",
-      "            5      AS MOLINELLA NUOTO                24085,60",
+      "            6      N MODENESI                        66495,23",
+      "            7      CN UISP BOLOGNA                   44667,70",
+      "            8      NUOTO CLUB 2000                   37112,33",
+      "            9      NUOVO NUOTO                       31562,33",
+      "           10      AS MOLINELLA NUOTO                24085,60",
       "          143      SEA SUB MODENA                        0,00",
       "                   ASD SANTA CLARA - G                   0,00",
       "                   ASOLA N                               0,00",
@@ -47,6 +45,7 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
+
   context "when tokenizing RESULT_POSITION," do
     subject { dummy_wrapper.tokenizer_ranking_row_result_position }
 
@@ -57,26 +56,26 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         '3',
         '4',
         '5',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        '10',
         '143',
         '',
         '',
         '',
         '',
         '',
-        "1°",
-        "2°",
-        "5°",
-        "6°",
-        "12°",
-        "15°",
-        "17°",
-        "18°",
-        "20°"
+        "1",
+        "2",
+        "5",
+        "6",
+        "12",
+        "15",
+        "17",
+        "18",
+        "20"
       ]
     end
 
