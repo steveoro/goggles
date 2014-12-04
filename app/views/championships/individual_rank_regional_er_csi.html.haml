@@ -44,7 +44,7 @@
                       - medal_bonus = 1 if badge.meeting_individual_results.where('rank = 3').count == 2
                       - medal_bonus = 8 if badge.meeting_individual_results.where('rank = 1').count == 1 && badge.meeting_individual_results.where('rank = 2').count == 1 
                       - medal_bonus = 6 if badge.meeting_individual_results.where('rank = 1').count == 1 && badge.meeting_individual_results.where('rank = 3').count == 1 
-                      - medal_bonus = 2 if badge.meeting_individual_results.where('rank = 2').count == 1 && badge.meeting_individual_results.where('rank = 1').count == 1
+                      - medal_bonus = 2 if badge.meeting_individual_results.where('rank = 2').count == 1 && badge.meeting_individual_results.where('rank = 3').count == 1
                       - if points > 0
                         - tot_points = points + hard_bonus + medal_bonus
                         - rank_array << [badge.swimmer, badge.swimmer.year_of_birth, badge.team, tot_points, points, hard_bonus, medal_bonus] 
