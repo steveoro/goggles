@@ -891,7 +891,7 @@ ActiveRecord::Schema.define(:version => 20141129180100) do
     t.integer  "minutes",             :limit => 3
     t.integer  "seconds",             :limit => 2
     t.integer  "hundreds",            :limit => 2
-    t.boolean  "is_no_time",                       :default => false, :null => false
+    t.boolean  "is_no_time",                       :default => false
   end
 
   create_table "meeting_events", :force => true do |t|
@@ -907,8 +907,8 @@ ActiveRecord::Schema.define(:version => 20141129180100) do
     t.integer  "event_type_id"
     t.integer  "heat_type_id"
     t.integer  "user_id"
-    t.boolean  "has_separate_gender_start_list",                :default => true,  :null => false
-    t.boolean  "has_separate_category_start_list",              :default => false, :null => false
+    t.boolean  "has_separate_gender_start_list",                :default => true
+    t.boolean  "has_separate_category_start_list",              :default => false
   end
 
   add_index "meeting_events", ["event_type_id"], :name => "fk_meeting_events_event_types"
@@ -1301,7 +1301,7 @@ ActiveRecord::Schema.define(:version => 20141129180100) do
     t.integer  "edition_type_id"
     t.integer  "timing_type_id"
     t.text     "rules",               :limit => 16777215
-    t.boolean  "has_individual_rank",                     :default => true, :null => false
+    t.boolean  "has_individual_rank",                     :default => true
   end
 
   add_index "seasons", ["begin_date"], :name => "index_seasons_on_begin_date"
@@ -1738,10 +1738,10 @@ ActiveRecord::Schema.define(:version => 20141129180100) do
     t.integer  "failed_attempts",                                :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
-    t.boolean  "use_email_data_updates_notify",                  :default => true
-    t.boolean  "use_email_achievements_notify",                  :default => true
-    t.boolean  "use_email_newsletter_notify",                    :default => true
-    t.boolean  "use_email_community_notify",                     :default => true
+    t.boolean  "use_email_data_updates_notify",                  :default => false
+    t.boolean  "use_email_achievements_notify",                  :default => false
+    t.boolean  "use_email_newsletter_notify",                    :default => false
+    t.boolean  "use_email_community_notify",                     :default => false
     t.string   "avatar_resource_filename",        :limit => 250
     t.integer  "swimmer_level_type_id"
     t.integer  "coach_level_type_id"

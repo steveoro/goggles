@@ -25,7 +25,7 @@ class HomeController < ApplicationController
       @news_feed = NewsFeed.unread.where( user: current_user )
       @teams = current_user.swimmer.get_badges_array_for_year.map do |badge|
         badge.team
-      end if current_user.has_associated_swimmer?
+      end.uniq if current_user.has_associated_swimmer?
     end
   end
   #-- -------------------------------------------------------------------------
