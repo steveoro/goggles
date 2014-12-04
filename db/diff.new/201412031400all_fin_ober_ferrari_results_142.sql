@@ -18,6 +18,12 @@ INSERT INTO swimming_pools (id,name,phone_number,lanes_number,address,nick_name,
 (152,'Jean Drapeau Park','',8,'','montrealdrapeau508','',1,1,1,1,1,1,'','','','','',2,(select t.id from cities t where t.name = 'MONTREAL'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 
 --
+-- Aggiunta dati FIN 14/15 dei dati per la tabella swimmers
+-- 
+INSERT INTO swimmers (id,complete_name,year_of_birth,last_name,first_name,user_id,gender_type_id,lock_version,created_at,updated_at) VALUES 
+(4862,'MAZZOLI ALESSANDRO',1974,'MAZZOLI','ALESSANDRO',2,(select t.id from gender_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+
+--
 -- Aggiunta dati FIN 14/15 per la tabella meetings
 -- 
 INSERT INTO meetings (id,header_date,season_id,entry_deadline,has_warm_up_pool,is_under_25_admitted,reference_phone,reference_e_mail,reference_name,notes,code,max_individual_events,max_individual_events_per_session,configuration_file,description,edition,header_year,user_id,edition_type_id,timing_type_id,individual_score_computation_type_id,relay_score_computation_type_id,meeting_score_computation_type_id,team_score_computation_type_id,lock_version,created_at,updated_at) VALUES 
@@ -435,7 +441,8 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (8414,142,1,550,'EMI-015589',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8415,142,1,468,'EMI-006827',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8416,142,1,500,'EMI-012506',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
-(8417,142,2,1775,'?',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 2 and ta.season_id = 142),0,CURDATE(),CURDATE());
+(8417,142,2,1775,'?',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 2 and ta.season_id = 142),0,CURDATE(),CURDATE()),
+(8418,142,2,4862,'?',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 2 and ta.season_id = 142),0,CURDATE(),CURDATE());
 
 --
 -- Aggiunta dati FIN 14/15 per la tabella meeting_individual_results
