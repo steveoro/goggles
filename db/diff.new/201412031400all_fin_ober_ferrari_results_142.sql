@@ -407,7 +407,8 @@ INSERT INTO meeting_programs (id,event_order,user_id,meeting_event_id,gender_typ
 -- Aggiunta dati FIN 14/15 per la tabella team_affiliations
 -- 
 INSERT INTO team_affiliations (id,season_id,team_id,name,number,must_calculate_goggle_cup,user_id,lock_version,created_at,updated_at) VALUES 
-(500,142,1,'CSI NUOTO OBER FERRARI','EMI-001454',1,2,0,CURDATE(),CURDATE());
+(500,142,1,'CSI NUOTO OBER FERRARI','EMI-001454',1,2,0,CURDATE(),CURDATE()),
+(501,142,2,'AS MOLINELLA NUOTO','?',0,2,0,CURDATE(),CURDATE());
 
 --
 -- Aggiunta dati FIN 14/15 per la tabella badges
@@ -424,7 +425,7 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (8404,142,1,1046,'EMI-012736',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8405,142,1,1016,'EMI-023179',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8406,142,1,1025,'FIN-055696',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
-(8407,142,1,1496,'EMI-005301',2,(select t.id from category_types t where t.code = 'M20' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
+(8407,142,1,1496,'EMI-005301',2,(select t.id from category_types t where t.code = 'U25' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8408,142,1,108,'EMI-014280',2,(select t.id from category_types t where t.code = 'M45' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8409,142,1,1541,'FIN-054100',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8410,142,1,1300,'EMI-025518',2,(select t.id from category_types t where t.code = 'M25' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
@@ -433,7 +434,8 @@ INSERT INTO badges (id,season_id,team_id,swimmer_id,number,user_id,category_type
 (8413,142,1,503,'EMI-015592',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8414,142,1,550,'EMI-015589',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
 (8415,142,1,468,'EMI-006827',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
-(8416,142,1,500,'EMI-012506',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE());
+(8416,142,1,500,'EMI-012506',2,(select t.id from category_types t where t.code = 'M35' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 1 and ta.season_id = 142),0,CURDATE(),CURDATE()),
+(8417,142,2,1775,'?',2,(select t.id from category_types t where t.code = 'M40' and t.season_id = 142),(select t.id from entry_time_types t where t.code = ''),(select ta.id from team_affiliations ta where ta.team_id = 2 and ta.season_id = 142),0,CURDATE(),CURDATE());
 
 --
 -- Aggiunta dati FIN 14/15 per la tabella meeting_individual_results
