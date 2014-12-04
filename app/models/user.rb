@@ -47,6 +47,10 @@ class User < ActiveRecord::Base
 
   validates_associated :swimmer_level_type
 
+  # FIXME [Steve, 20141204] We should really rename this table using a passive name,
+  # something like "managed_affiliations"
+  has_many :team_managers
+
   validates_presence_of   :name
   validates_uniqueness_of :name, message: :already_exists
 

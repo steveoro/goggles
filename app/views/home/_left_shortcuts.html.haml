@@ -1,0 +1,12 @@
+- if user_signed_in? && current_user && current_user.has_associated_swimmer?
+  .row-fluid
+    %p
+      .btn.btn-large.btn-block.btn-warning
+        = link_to( I18n.t('radiography.id_card_button'), swimmer_radio_path(id: current_user.swimmer_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.id_card_button_tooltip') } )
+
+- @teams.each do |team|
+  .row-fluid
+    %p
+      .btn.btn-large.btn-block.btn-warning
+        = link_to( team.get_full_name, team_radio_path(id: team.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.team_radio_tab_tooltip') } )
+

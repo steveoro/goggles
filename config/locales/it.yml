@@ -98,6 +98,8 @@ it:
 
   radiography:
     radio_tab: "Radiografia"
+    id_card_button: "La tua 'Radiografia'"
+    id_card_button_tooltip: "Vai alla tua Carta d'Identità ('Radiografia')"
     radio_tab_tooltip: "Vai alla 'Radiografia' per questo Atleta"
     radio_tab_title: "La storia di {SWIMMER_NAME} secondo il Cronometro"
     id_card: "Carta d'Identità"

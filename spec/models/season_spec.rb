@@ -144,12 +144,28 @@ describe Season, :type => :model do
       )
       expect( subject.get_last_season_by_type( subject.season_type.code ) ).to eq( seasonnewer )
     end
-    # --------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    describe "self.build_header_year_from_date" do
+      it "returns always a string" do
+        expect( Season.build_header_year_from_date ).to be_an_instance_of( String )
+      end
+      it "contains the year of the specified date in the result" do
+        date = Date.parse("#{ 2000 + ((rand * 100) % 15).to_i }-09-01")
+        expect( Season.build_header_year_from_date( date ) ).to include( date.year.to_s )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
 
     context "[season result methods]" do
       xit "has a method to determine the season athlete charts"
     end
-    # --------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
   end
   #-- -------------------------------------------------------------------------
   #++

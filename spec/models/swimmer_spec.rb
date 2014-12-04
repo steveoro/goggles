@@ -62,6 +62,21 @@ describe Swimmer, :type => :model do
     # ---------------------------------------------------------------------------
     #++
 
+
+    describe "#get_badges_array_for_year" do
+      it "returns always a processable list" do
+        expect( subject.get_badges_array_for_year ).to respond_to( :each )
+        expect( subject.get_badges_array_for_year ).to respond_to( :count )
+      end
+      it "returns a list of Badge rows for a Swimmer w/ badges" do
+        swimmer = Swimmer.find(142)
+        result = swimmer.get_badges_array_for_year
+        expect( result ).to all( be_an_instance_of( Badge ) )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
     # TODO Add more specs for all the other methods
 
   end

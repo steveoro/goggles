@@ -1,10 +1,16 @@
 - if user_signed_in?
-  - # Association request link:
-  = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
-  - # Articles/News flash list:
-  = render( partial: 'goggles/news_articles_list' )
-  - # Be patient with this very very work in progress creature!
-  = render( partial: 'forgive_us' )
+  .row-fluid
+    .row-fluid.span2
+      = render( partial: 'left_shortcuts' )
+    .row-fluid.span8
+      - # Association request link:
+      = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
+      - # Articles/News flash list:
+      = render( partial: 'goggles/news_articles_list' )
+      - # Be patient with this very very work in progress creature!
+      = render( partial: 'forgive_us' )
+    .row-fluid.span2
+      = render( partial: 'right_shortcuts' )
 - else
   - # Not-logged-in welcome part:
   .row-fluid

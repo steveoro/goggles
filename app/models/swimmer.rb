@@ -174,6 +174,13 @@ class Swimmer < ActiveRecord::Base
      all_badges = get_badges_array( season_id )
      all_badges.collect{ |row| "#{I18n.t('badge.short')} #{row.number}, #{row.team.editable_name}" }
   end
+
+  # Returns an +Array+ of Badge row instances linked to this Swimmer,
+  # filtered by season, having <tt>seasons.header_year = season_header_year</tt>.
+  #
+  def get_badges_array_for_year( season_header_year = Season.build_header_year_from_date )
+    badges.includes(:season, :team).where( 'seasons.header_year' => season_header_year )
+  end
   #-- -------------------------------------------------------------------------
   #++
 
