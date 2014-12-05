@@ -126,6 +126,7 @@ module FinResultPhase2
     category_headers = parse_result[:category_header]
     category_details = parse_result[:result_row]
     category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
+    previous_begin_time = nil
                                                     # **** HEADER LOOP **** For each header row:...
     category_headers_ids.each_with_index do |category_id, header_index|
                                                     # For each category_details key, add import entities rows:
@@ -155,10 +156,12 @@ module FinResultPhase2
         gender_type, category_type, stroke_type,
         length_in_meters,
         scheduled_date,
-        detail_rows.size
+        detail_rows.size,
+        previous_begin_time
       )
       meeting_program = meeting_program_builder.result_row
       is_ok = ! meeting_program.nil?
+      previous_begin_time = meeting_program.begin_time if meeting_program
       return unless is_ok                           # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index do |detail_row, detail_row_idx|
@@ -196,6 +199,7 @@ module FinResultPhase2
     relay_headers = parse_result[:relay_header]
     relay_details = parse_result[:relay_row]
     relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
+    previous_begin_time = nil
                                                     # **** HEADER LOOP **** For each header row:...
     relay_headers_ids.each_with_index do |relay_id, header_index|
 # DEBUG
@@ -228,10 +232,12 @@ module FinResultPhase2
         gender_type, category_type, stroke_type,
         length_in_meters,
         scheduled_date,
-        detail_rows.size
+        detail_rows.size,
+        previous_begin_time
       )
       meeting_program = meeting_program_builder.result_row
       is_ok = ! meeting_program.nil?
+      previous_begin_time = meeting_program.begin_time if meeting_program
       return unless is_ok
                                                     # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:

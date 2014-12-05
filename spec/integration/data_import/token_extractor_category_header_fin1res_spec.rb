@@ -15,6 +15,9 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
     [
     #            10        20        30        40        50        60        70        80        90
     #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      "        400 stile libero  femminile  -  Categoria  Master 25      Tempo Base   :  4'24\"58",
+      "        100 misti  femminile  -  Categoria  Master 55             Tempo Base   :  1'15\"72",
+
       "        50 stile libero  maschile   -  Categoria  Master 45       Tempo Base   :  0'24\"09",
       "        200 farfalla  femminile  -  Categoria  Master 25          Tempo Base   :  2'20\"95",
       "        50 farfalla  femminile  -  Categoria  Under 25             ",
@@ -40,6 +43,9 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
 
     let(:expected_tokens) do
       [ # field = :distance
+        "400",
+        "100",
+
         '50',
         '200',
         '50',
@@ -67,6 +73,9 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
 
     let(:expected_tokens) do
       [ # field = :style
+        "stile libero",
+        "misti",
+
         'stile libero',
         'farfalla',
         'farfalla',
@@ -94,6 +103,9 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
 
     let(:expected_tokens) do
       [ # field = :gender
+        "femminile",
+        "femminile",
+
         'maschile',
         'femminile',
         'femminile',
@@ -121,6 +133,9 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
 
     let(:expected_tokens) do
       [ # field = :category_group
+        "Master 25",
+        "Master 55",
+
         'Master 45',
         'Master 25',
         'Under 25',
@@ -148,6 +163,9 @@ describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration 
 
     let(:expected_tokens) do
       [ # field = :base_time
+        "4'24\"58",
+        "1'15\"72",
+
         "0'24\"09",
         "2'20\"95",
         "",

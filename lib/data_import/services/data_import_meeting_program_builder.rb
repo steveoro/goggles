@@ -10,7 +10,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.605
+  - Goggles framework vers.:  4.00.661
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -49,7 +49,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
                                   header_row, header_index,
                                   gender_type, category_type, stroke_type,
                                   length_in_meters, scheduled_date,
-                                  detail_rows_size )
+                                  detail_rows_size, previous_begin_time = nil )
     raise ArgumentError.new("Both season and meeting_session must be not nil!")          if season.nil? || meeting_session.nil?
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
     raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
@@ -65,29 +65,26 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         # NOTE:
         # header_row[:fields] => [ :type, :distance, :style, :gender, :category_group, :base_time ]
 # DEBUG
-#        puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
+        puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
         @import_text = header_row[:import_text]
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
         base_time    = header_row[:fields][:base_time]
         @mins, @secs, @hds = ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
-        # Quick'n'dirty trick: compute approx. begin_time using scheduled_date + header_index * (mins, secs, hds) of base time
-        heat_number_approx = ( detail_rows_size / 8 ) + 1
-        esteemed_meeting_mins = heat_number_approx * (@mins.to_i < 3 ? 2 : @mins.to_i + 2)
-        esteemed_hours = 8 + (esteemed_meeting_mins / 60)
-# DEBUG
-#        puts( "\r\nMeeting program parsing: base_time='#{base_time}' ... #{@mins}:#{@secs}.#{@hds}, (#{header_row[:fields].inspect})" )
-#        puts( "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, esteemed_meeting_mins=#{esteemed_meeting_mins}" )
-#        @phase_1_log << "\r\nMeeting program parsing: base_time='#{base_time}' ... #{mins}:#{secs}.#{hds}, (#{header_row[:fields].inspect})\r\n"
-#        @phase_1_log << "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, @esteemed_meeting_mins=#{esteemed_meeting_mins}\r\n"
-        @begin_time = Time.utc(
-          scheduled_date.year, scheduled_date.month, scheduled_date.day + (esteemed_hours/24),
-          esteemed_hours % 24,
-          esteemed_meeting_mins % 60
+        @begin_time = BeginTimeCalculator.compute(
+          scheduled_date,
+          @event_order,
+          detail_rows_size,                         # Athletes in total for this program
+          @mins,                                    # Base time minutes
+          previous_begin_time,
+          8,                                        # Average occupancy of pool lanes
+          8                                         # Starting hour for the meeting
         )
 # DEBUG
-#        puts( "begin_time: #{@begin_time}" )
-#        @phase_1_log << "begin_time=#{@begin_time}\r\n"
+        puts( "\r\nMeeting program parsing: base_time='#{base_time}' ... #{@mins}:#{'%02d' % @secs}.#{'%02d' % @hds}, (#{header_row[:fields].inspect})" )
+#        puts( "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, esteemed_meeting_mins=#{esteemed_meeting_mins}" )
+# DEBUG
+        puts( "begin_time: #{@begin_time}" )
         # Get the pool type:
         @pool_type_id = ( meeting_session.swimming_pool ?
           meeting_session.swimming_pool.pool_type_id :
