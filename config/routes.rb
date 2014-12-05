@@ -76,6 +76,7 @@ Goggles::Application.routes.draw do
       match "about",                            to: "home#about"
       match "contact_us",                       to: "home#contact_us"
       match "maintenance",                      to: "home#maintenance"
+      match "tutorials",                        to: "home#tutorials"
 
       # === Socials ===
       # A user associates himself/herself with a swimmer:

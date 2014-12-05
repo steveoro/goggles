@@ -626,6 +626,7 @@ en:
   fax: "Fax #"
   email: "E-mail"
   home_site: "Internet page"
+  tutorials: "Tutorials"
 
   title_wrong_meeting_result: "There's something wrong with some results of a certain Meeting..."
   title_feature_request: "'Feature request': I think you should really add this..."
