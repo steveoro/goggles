@@ -13,19 +13,35 @@ require 'common/format'
 class HomeController < ApplicationController
 
   def index
-    @articles  = []
-    @news_feed = []
-    @teams     = []
+    @articles    = []
+    @news_feed   = []
+    @teams       = []
+    @invitations = []
+    @start_lists = []
+    @results     = []
+    @seasons     = []
+    badges       = []
     if user_signed_in?
+      if current_user.has_associated_swimmer?
+        badges = current_user.swimmer.get_badges_array_for_year if current_user.has_associated_swimmer?
+        @teams = badges.map do |badge|
+          badge.team
+        end.uniq
+        @seasons = badges.map do |badge|
+          badge.season
+        end.uniq
+        @seasons.each do |season|
+          @invitations << season.meetings.has_only_invitation.sort_by_date.first if season.meetings.has_only_invitation.count > 0
+          @start_lists << season.meetings.has_only_start_list.sort_by_date.first if season.meetings.has_only_start_list.count > 0
+          @results     << season.meetings.has_results.sort_by_date.last if season.meetings.has_results.count > 0
+        end
+      end
       @articles  = Article.find(
         :all,
         order: "is_sticky DESC, updated_at DESC",
         :limit => AppParameter.get_default_pagination_rows_for( :articles )
       )
       @news_feed = NewsFeed.unread.where( user: current_user )
-      @teams = current_user.swimmer.get_badges_array_for_year.map do |badge|
-        badge.team
-      end.uniq if current_user.has_associated_swimmer?
     end
   end
   #-- -------------------------------------------------------------------------

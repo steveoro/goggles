@@ -72,6 +72,9 @@ class Meeting < ActiveRecord::Base
   scope :sort_meeting_by_season, ->(dir) { order("seasons.begin_date #{dir.to_s}, meetings.description #{dir.to_s}") }
   scope :sort_by_date,           ->(dir = 'ASC') { order("header_date #{dir.to_s}") }
 
+  scope :has_only_invitation,    -> { where("has_invitation and not are_results_acquired") }
+  scope :has_only_start_list,    -> { where("has_start_list and not are_results_acquired") }
+  scope :has_results,            -> { where("are_results_acquired") }
 
   # ----------------------------------------------------------------------------
   # Base methods:

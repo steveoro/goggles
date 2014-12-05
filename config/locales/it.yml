@@ -695,6 +695,7 @@ it:
     how_to_calculate: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il tempo presunto, infine premi il pulsante Calcola punteggio FIN per ottenere il punteggio FIN"
     fin_standard_points: "Punteggio FIN"
     time_standard: "Tempo base"
+    fin_score_calculation_tooltip: "Vai al calcolo del punteggio FIN ipotetico"
 
   netzke:
     basepack:

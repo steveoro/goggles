@@ -694,3 +694,4 @@ en:
     how_to_calculate: "Select gender, category, pool type and event and fill in the timing fields, than press calculate button to know the standard FIN points"
     fin_standard_points: "FIN standard points"
     time_standard: "Base time"
+    fin_score_calculation_tooltip: "Go to theoric FIN score computation"
