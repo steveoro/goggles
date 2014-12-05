@@ -18,12 +18,20 @@ describe HomeController, :type => :controller do
         expect( assigns(:articles) ).to be_an_instance_of( Array )
         expect( assigns(:news_feed) ).to be_an_instance_of( Array )
         expect( assigns(:teams) ).to be_an_instance_of( Array )
+        expect( assigns(:seasons) ).to be_an_instance_of( Array )
+        expect( assigns(:invitations) ).to be_an_instance_of( Array )
+        expect( assigns(:start_lists) ).to be_an_instance_of( Array )
+        expect( assigns(:results) ).to be_an_instance_of( Array )
       end
       it "sets the variables with empty lists" do
         get :index
         expect( assigns(:articles).size ).to eq(0)
         expect( assigns(:news_feed).size ).to eq(0)
         expect( assigns(:teams).size ).to eq(0)
+        expect( assigns(:seasons).size ).to eq(0)
+        expect( assigns(:invitations).size ).to eq(0)
+        expect( assigns(:start_lists).size ).to eq(0)
+        expect( assigns(:results).size ).to eq(0)
       end
       it "renders the template" do
         get :index
@@ -43,6 +51,10 @@ describe HomeController, :type => :controller do
         expect( assigns(:articles) ).to respond_to( :each )
         expect( assigns(:news_feed) ).to respond_to( :each )
         expect( assigns(:teams) ).to respond_to( :each )
+        expect( assigns(:seasons) ).to respond_to( :each )
+        expect( assigns(:invitations) ).to respond_to( :each )
+        expect( assigns(:start_lists) ).to respond_to( :each )
+        expect( assigns(:results) ).to respond_to( :each )
       end
       it "renders the template" do
         get :index

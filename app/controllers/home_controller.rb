@@ -16,10 +16,10 @@ class HomeController < ApplicationController
     @articles    = []
     @news_feed   = []
     @teams       = []
+    @seasons     = []
     @invitations = []
     @start_lists = []
     @results     = []
-    @seasons     = []
     badges       = []
     if user_signed_in?
       if current_user.has_associated_swimmer?
