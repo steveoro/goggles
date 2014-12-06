@@ -273,7 +273,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_category_header_base_time
     TokenExtractor.new(
       :base_time,
-      /\d{1,2}'\d\d"\d\d$/,
+      /\d{1,2}'\d\d"\d\d/,
       9                                             # (max size)
     )
   end

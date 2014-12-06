@@ -24,7 +24,8 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe "the :parse_result sub-member Hash," do
+
+  describe "[:parse_result] sub-member Hash," do
     subject { @result_hash[:parse_result] }
 
     it "recognizes a list of :category_header data pages" do
@@ -35,6 +36,162 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
       expect( subject[:category_header].size ).to eq( 16 )
     end
 
+    context "for :category_header rows," do
+      # (U25 has no base-time)
+      context "in '50-stile libero-femminile-Master 25'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][1][:fields]
+# DEBuG
+#          puts "\r\nMem keys: #{ subject[:category_header].map{|row_hash| row_hash[:id] }.join("\r\n") }"
+#          puts "\r\nCurrent: #{ data_page_field_hash.inspect }"
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 25' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'26\"26" )
+        end
+      end
+      context "in '50-stile libero-femminile-Master 30'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][2][:fields]
+# DEBuG
+#          puts "\r\nCurrent: #{ data_page_field_hash.inspect }"
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 30' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'26\"10" )
+        end
+      end
+      context "in '50-stile libero-maschile-Master 50'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][3][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'maschile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 50' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'24\"67" )
+        end
+      end
+      context "in '50-stile libero-maschile-Master 55'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][4][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'maschile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 55' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'25\"46" )
+        end
+      end
+      context "in '50-stile libero-maschile-Master 60'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][5][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'maschile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 60' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'26\"71" )
+        end
+      end
+      context "in '50-stile libero-maschile-Master 65'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][6][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'maschile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 65' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'27\"16" )
+        end
+      end
+      context "in '50-stile libero-maschile-Master 70'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][7][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'maschile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 70' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "0'29\"16" )
+        end
+      end
+      # (U25 has no base-time)
+      context "in '400-stile libero-femminile-Master 25'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][9][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '400' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 25' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "4'26\"77" )
+        end
+      end
+      context "in '400-stile libero-femminile-Master 30'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][10][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '400' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 30' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "4'26\"19" )
+        end
+      end
+      context "in '400-stile libero-femminile-Master 35'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][11][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '400' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 35' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "4'28\"94" )
+        end
+      end
+      # (U25 has no base-time)
+      context "in '100-misti-femminile-Master 25'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][13][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '100' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'misti' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 25' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "1'05\"40" )
+        end
+      end
+      context "in '100-misti-femminile-Master 30'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][14][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '100' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'misti' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 30' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "1'05\"11" )
+        end
+      end
+      context "in '100-misti-femminile-Master 35'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:category_header][15][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '100' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'misti' )
+          expect( data_page_field_hash[ :gender ]         ).to eq( 'femminile' )
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'Master 35' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "1'06\"87" )
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
     it "recognizes a list of :result_row data pages" do
       expect( subject.has_key?( :result_row ) ).to be true
     end
@@ -42,6 +199,8 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
       expect( subject[:result_row] ).to be_an_instance_of( Array )
       expect( subject[:result_row].size ).to eq( 69 )
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     it "recognizes a list of :relay_header data pages" do
       expect( subject.has_key?( :relay_header ) ).to be true
@@ -51,6 +210,64 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
       expect( subject[:relay_header].size ).to eq( 4 )
     end
 
+    context "for :relay_header rows," do
+      context "in 'mistaffetta 4x50 stile libero-M160-199'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:relay_header][0][:fields]
+# DEBuG
+#          puts "\r\nMem keys: #{ subject[:relay_header].map{|row_hash| row_hash[:id] }.join("\r\n") }"
+#          puts "\r\nCurrent: #{ data_page_field_hash.inspect }"
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :type ]           ).to eq( 'mistaffetta 4x50 stile libero' )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '4x50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to be nil
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'M160-199' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "1'45\"29" )
+        end
+      end
+      context "in 'mistaffetta 4x50 stile libero-M240-279'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:relay_header][1][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :type ]           ).to eq( 'mistaffetta 4x50 stile libero' )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '4x50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to be nil
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'M240-279' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "2'02\"17" )
+        end
+      end
+      # [Steve, 20141206] As per current implementation, same id-key rows will be parsed
+      # and added twice, even though they are duplicate rows.
+      context "in 'mistaffetta 4x50 stile libero-M160-199'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:relay_header][2][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :type ]           ).to eq( 'mistaffetta 4x50 stile libero' )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '4x50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to be nil
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'M160-199' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "1'45\"29" )
+        end
+      end
+      context "in 'mistaffetta 4x50 stile libero-M240-279'," do
+        it "has the exact values for this fixture" do
+          data_page_field_hash = subject[:relay_header][3][:fields]
+          expect( data_page_field_hash ).to be_an_instance_of( Hash )
+          expect( data_page_field_hash[ :type ]           ).to eq( 'mistaffetta 4x50 stile libero' )
+          expect( data_page_field_hash[ :distance ]       ).to eq( '4x50' )
+          expect( data_page_field_hash[ :style ]          ).to eq( 'stile libero' )
+          expect( data_page_field_hash[ :gender ]         ).to be nil
+          expect( data_page_field_hash[ :category_group ] ).to eq( 'M240-279' )
+          expect( data_page_field_hash[ :base_time ]      ).to eq( "2'02\"17" )
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
     it "recognizes a list of :relay_row data pages" do
       expect( subject.has_key?( :relay_row ) ).to be true
     end
@@ -58,6 +275,8 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
       expect( subject[:relay_row] ).to be_an_instance_of( Array )
       expect( subject[:relay_row].size ).to eq( 8 )
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     it "recognizes a list of :stats data pages" do
       expect( subject.has_key?( :stats ) ).to be true
@@ -88,6 +307,8 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
         expect( data_page_field_hash[ :withdrawals_tot ]  ).to eq( '3' )
       end
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     # The key to the array of data-pages must always be present,
     # even though the array of data pages is empty:
@@ -111,6 +332,8 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
       expect( subject[:ranking_row] ).to be_an_instance_of( Array )
       expect( subject[:ranking_row].size ).to eq( 0 )
     end
+    #-- -----------------------------------------------------------------------
+    #++
   end
   #-- -------------------------------------------------------------------------
   #++
