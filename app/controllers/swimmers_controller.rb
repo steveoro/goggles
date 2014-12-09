@@ -19,6 +19,7 @@ class SwimmersController < ApplicationController
   before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
   before_filter :verify_parameter, except: [:index]
+  before_filter :find_last_updated_mir, except: [:index, :trainings]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -447,6 +448,12 @@ class SwimmersController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
     end
+  end
+
+  # Find out the last update of meeting_individual result 
+  #
+  def find_last_updated_mir
+    @max_updated_at = @swimmer.meeting_individual_results.count > 0 ? @swimmer.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
   end
 
   # Verifies that a swimmer id is provided as a parameter to this controller.

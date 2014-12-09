@@ -49,6 +49,7 @@ describe SwimmersController, :type => :controller do
       end
       it "assigns the required variables" do
         expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
+        expect( assigns(:max_updated_at) ).to be >= 0
       end
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
@@ -107,6 +108,7 @@ describe SwimmersController, :type => :controller do
         end
         it "assigns the required variables" do
           expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
+        expect( assigns(:max_updated_at) ).to be >= 0
         end
         it "assigns the tab title" do
           expect( assigns(:tab_title) ).to be_an_instance_of( String )
@@ -134,7 +136,7 @@ describe SwimmersController, :type => :controller do
       it "retrieves the medal types" do
         expect( assigns(:medal_types) ).to all( be_an_instance_of( MedalType ) )
       end
-      it "assigns the required medal collection bu season" do
+      it "assigns the required medal collection by season" do
         expect( assigns(:seasonal_medal_collection) ).to be_an_instance_of( Array )
       end
       it "assigns the required medal collection by event" do
