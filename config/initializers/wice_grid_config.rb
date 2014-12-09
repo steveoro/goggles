@@ -1,3 +1,5 @@
+require 'extensions/wice_grid_column_string_regexped'
+
 if defined?(Wice::Defaults)
 
   # Default number of rows to show per page.
@@ -65,7 +67,6 @@ if defined?(Wice::Defaults)
   # Switch of the negation checkbox in all text filters
   Wice::Defaults::NEGATION_IN_STRING_FILTERS = false
 
-
   # Each WiceGrid filter column is defined in two classes, one used for rendering the filter, the other
   # for generating query conditions. All these columns are in lib/wice/columns/*.rb .
   # File lib/wice/columns/column_processor_index.rb lists all predefined processors.
@@ -78,10 +79,9 @@ if defined?(Wice::Defaults)
   #
   # It is also possible to define you own processors:
   #
-  #     Wice::Defaults::ADDITIONAL_COLUMN_PROCESSORS = {
-  #       some_key_identifying_new_column_type:  ['AViewColumnProcessorClass', 'ConditionsGeneratorClass'],
-  #       another_key_identifying_new_column_type:  ['AnotherViewColumnProcessorClass', 'AnotherConditionsGeneratorClass']
-  #     }
+  Wice::Defaults::ADDITIONAL_COLUMN_PROCESSORS = {
+    text_regexped_filter_type:  ['ViewColumnStringRegexped', 'ConditionsGeneratorColumnStringRegexped']
+  }
   #
   # Column processor keys/names should not coincide with the existing keys/names (see lib/wice/columns/column_processor_index.rb)
   # the value is a 2-element array with 2 strings, the first should be a name of view processor class inherited from

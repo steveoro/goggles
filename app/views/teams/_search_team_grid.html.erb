@@ -8,6 +8,7 @@
     g.column(
         name: I18n.t(:team, { scope: [:activerecord, :models] }),
         attribute: 'name',
+        filter_type:    :text_regexped_filter_type,
         detach_with_id: :flt_team_name
     ) do |team|
         link_to(

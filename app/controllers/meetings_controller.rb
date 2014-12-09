@@ -1,12 +1,13 @@
 # encoding: utf-8
 require 'common/format'
+require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_search query condition
 
 
 =begin
 
 = MeetingsController
 
-  - version:  4.00.401
+  - version:  4.00.663
   - author:   Steve A.
 
 =end
@@ -93,52 +94,56 @@ class MeetingsController < ApplicationController
     session[:text] = params[:text] = nil if params[:text] == '*'
     # Store the search text when it changes to something:
     session[:text] = params[:text] if params[:text].to_s.size > 0
-    saved_text = session[:text]
-    search_text = "%#{ saved_text }%" if saved_text.to_s.size > 0
+    search_text = session[:text]
+    query_swimmers_condition = nil
+    query_teams_condition    = nil
 
     # Build-up title:
-    @title = if saved_text.to_s.size > 0
-      I18n.t('meeting.simple_title') + " ('#{ saved_text }')"
+    @title = if search_text.to_s.size > 0
+      I18n.t('meeting.simple_title') + " ('#{ search_text }')"
     else
       I18n.t('meeting.simple_title')
+    end
+    if search_text
+      query_swimmers_condition = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'swimmers', 'complete_name', search_text )
+      query_teams_condition    = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'teams', 'name', search_text )
     end
 
     # Assign ID highlighters based on search text (when not provided):
     if params[:swimmer_id]
       @preselected_swimmer_id = params[:swimmer_id].to_i
-    elsif saved_text
-      serched_swimmer = Swimmer.where( ["swimmers.complete_name LIKE ?", search_text] ).first
+    elsif search_text
+      serched_swimmer = Swimmer.where( query_swimmers_condition ).first
       @preselected_swimmer_id = serched_swimmer.id if serched_swimmer
     end
     if params[:team_id]
       @preselected_team_id = params[:team_id].to_i
-    elsif saved_text
-      serched_team = Team.where( ["teams.name LIKE ?", search_text] ).first
+    elsif search_text
+      serched_team = Team.where( query_teams_condition ).first
       @preselected_team_id = serched_team.id if serched_team
     end
     ids = []
 
     # Avoid query build-up if no search text is given:
-    if saved_text.to_s.size > 0
-      search_text = "%#{ saved_text }%"
+    if search_text.to_s.size > 0
+      search_like_text = "%#{search_text}%"
       # Search among most-used text columns:
       ids << Meeting.where(
         [
           "(description LIKE ?) OR (header_year LIKE ?) OR (notes LIKE ?) OR (reference_name LIKE ?)",
-          search_text, search_text, search_text, search_text
+          search_like_text, search_like_text, search_like_text, search_like_text
         ]
       ).map{ |row| row.id }.uniq
 
       # Search among linked Swimmers:
-      ids << Meeting.includes( :swimmers ).where( ["swimmers.complete_name LIKE ?", search_text] ).map{ |row| row.id }.uniq
-
+      ids << Meeting.includes( :swimmers ).where( query_swimmers_condition ).map{ |row| row.id }.uniq
       # Search among linked Teams:
-      ids << Meeting.includes( :teams ).where( ["teams.name LIKE ?", search_text] ).map{ |row| row.id }.uniq
+      ids << Meeting.includes( :teams ).where( query_teams_condition ).map{ |row| row.id }.uniq
 
       # Search among linked EventTypes:
       event_type_ids = EventType.includes(:stroke_type).find_all do |row|
-        ( row.i18n_short =~ %r(#{saved_text})i ) ||
-        ( row.i18n_description =~ %r(#{saved_text})i )
+        ( row.i18n_short =~ %r(#{search_text})i ) ||
+        ( row.i18n_description =~ %r(#{search_text})i )
       end.map{ |row| row.id }
       ids << Meeting.includes( :meeting_events ).where( :'meeting_events.event_type_id' => event_type_ids ).map{ |row| row.id }.uniq
     end
@@ -302,11 +307,11 @@ class MeetingsController < ApplicationController
   def show_stats
     # Using MeetingStat
     @meeting_stats = MeetingStat.new(@meeting)
-    
-    
-    
-    
-    
+
+
+
+
+
     @preselected_team_id = params[:team_id]
 # DEBUG
 #    logger.debug "@preselected_team_id : #{params[:team_id] }"
@@ -447,7 +452,7 @@ class MeetingsController < ApplicationController
     @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order(
       'swimmers.complete_name ASC'
     ).collect{ |row| row.swimmer }
-    
+
     # TODO
     # Refactor with medal_types
     @team_ranks_1 = @meeting.meeting_individual_results.is_valid.has_rank(1).for_team(@team).count
@@ -498,7 +503,7 @@ class MeetingsController < ApplicationController
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
     )
-    
+
     # Get a timestamp for the cache key:
     @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
       @meeting.meeting_individual_results.select( :updated_at )
@@ -566,7 +571,7 @@ class MeetingsController < ApplicationController
     else
       @meeting.updated_at
     end
-    
+
     # TODO
     # Prepares team stats
   end
@@ -643,11 +648,11 @@ class MeetingsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
   private
 
   # Verifies that a meeting id is provided as parameter; otherwise
-  # return an invalid action request 
+  # return an invalid action request
   # Assigns the meeting instance.
   # Verifiy if user is logged and associated to a swimmer and sets preselection
   # of team and swimmer
@@ -662,13 +667,13 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request) + ' - Meeting missing'
       redirect_to( meetings_current_path() ) and return
     end
-    
+
     # Find preselected team and swimmer if user logged in and associated to a swimmer
     # and the swimmer or team partecipated to the meeting
     if current_user && current_user.swimmer
       swimmer = current_user.swimmer
       team = swimmer.teams.joins(:badges).where(['badges.season_id = ?', @meeting.season_id]).first
-      
+
       if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', swimmer.id]).count > 0 ||
         @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', swimmer.id]).count > 0
         # The swimmer associated with the user parteciapte to the meeting
@@ -685,7 +690,7 @@ class MeetingsController < ApplicationController
   end
 
   # Verifies that a team id is provided as parameter; otherwise
-  # return an invalid action request 
+  # return an invalid action request
   # Assigns the team instance.
   #
   # == Params:
@@ -701,7 +706,7 @@ class MeetingsController < ApplicationController
   end
 
   # Verifies that a swimmer id is provided as parameter; otherwise
-  # return an invalid action request 
+  # return an invalid action request
   # Assigns the swimmer instance.
   #
   # == Params:
@@ -715,5 +720,5 @@ class MeetingsController < ApplicationController
       redirect_to( meetings_current_path() ) and return
     end
   end
-  
+
 end

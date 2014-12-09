@@ -13,6 +13,7 @@
     g.column(
         name: I18n.t(:description),
         attribute: 'description',
+        filter_type:    :text_regexped_filter_type,
         detach_with_id: :flt_description
     ) do |meeting|
         link_to_if(

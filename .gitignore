@@ -31,6 +31,7 @@ zeus.json
 /public/extjs/*
 /public/output/*
 /public/uploads/*
+/public/dev-assets/*
 
 # Include or exclude precompiled assets into repository (to avoid precompiling on production/staging)
 #/public/assets/*

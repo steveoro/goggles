@@ -12,7 +12,7 @@
 
     g.column(
         name: I18n.t(:description),
-        attribute: 'description',
+        attribute:      'description'
     ) do |meeting|
         link_to_if(
             meeting.meeting_individual_results.count + meeting.meeting_relay_results.count > 0,
