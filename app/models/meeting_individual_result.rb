@@ -84,7 +84,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_goggle_cup,          ->(dir)         { order("goggle_cup_points #{dir.to_s}") }
   scope :sort_by_pool_and_event,      ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir.to_s}, event_types.style_order #{dir.to_s}") }
   scope :sort_by_gender_and_category, ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir.to_s}, category_types.code #{dir.to_s}") }
-  scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at, rank #{dir.to_s}") }
+  scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at #{dir.to_s}") }
 
   scope :for_event_by_pool_type,      ->(event_by_pool_type)  { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
   scope :for_pool_type,               ->(pool_type)           { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
