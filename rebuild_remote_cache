@@ -11,13 +11,86 @@ curl -# http://master-goggles.org/it/championships/event_ranking_regional_er_csi
 curl -# http://master-goggles.org/it/championships/rules_regional_er_csi/141 > /dev/null
 curl -# http://master-goggles.org/it/championships/history_regional_er_csi/141 > /dev/null
 
+echo "- most searched Teams' radio:"
+curl -# http://master-goggles.org/it/teams/index > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/1 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/4 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/5 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/39 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/35 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/32 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/290 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/21 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/18 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/11 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/10 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/17 > /dev/null
+curl -# http://master-goggles.org/it/teams/radio/233 > /dev/null
+
+echo "- Goggle Cup:"
+curl -# http://master-goggles.org/it/teams/goggle_cup/1 > /dev/null
+
+echo "- most searched Swimmers' radio:"
+curl -# http://master-goggles.org/it/swimmers/index > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/98 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/92 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/49 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/14 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/137 > /dev/null
+
+curl -# http://master-goggles.org/it/swimmers/radio/966 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/961 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/951 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/785 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/580 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/579 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4855 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4853 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4852 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4850 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/12 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/40 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/23 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/142 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/192 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1030 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1060 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1088 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1116 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1135 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1197 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1292 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1409 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1461 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1476 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1590 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1633 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1710 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1753 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1776 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1841 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/1851 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/2546 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4845 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4837 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4834 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4831 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4830 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4828 > /dev/null
+curl -# http://master-goggles.org/it/swimmers/radio/4821 > /dev/null
+
+echo "- current users' radio/medals: TODO"
+echo "- current users' radio/best_timings: TODO"
+echo "- current users' radio/full_history_1: TODO"
+echo "- current users' radio/full_history_2: TODO"
+
 echo "- current CSI Championship's meetings:"
 curl -# http://master-goggles.org/it/meeting/show_invitation/14101 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_full/14101 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_ranking/14101 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_stats/14101 > /dev/null
 
-echo "- current CSI Championship's Teams:"
+echo "- current CSI Championship's Teams result:"
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=14 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=32 > /dev/null
 curl -# http://master-goggles.org/it/meeting/show_team_results/14101?team_id=1 > /dev/null
