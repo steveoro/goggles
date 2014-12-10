@@ -1,7 +1,9 @@
 #!/bin/bash
 echo "---[ master-goggles.org ]---"
-echo "Cache rebuild script -- Making some pre-emptive requests..."
+echo "Cache rebuild script -- Making some pre-emptive requests to the main page..."
 curl -# http://master-goggles.org > /dev/null
+curl -# http://master-goggles.org/it/ > /dev/null
+curl -# http://master-goggles.org/en/ > /dev/null
 
 echo "- current CSI Championship:"
 curl -# http://master-goggles.org/it/championships/calendar_regional_er_csi > /dev/null
