@@ -1,3 +1,12 @@
 .row-fluid
-  - # Tutorials
-  = render( partial: 'how_to_register' )
+  - #index
+  .row-fluid.span2
+    %h2= 'Tutorial index'
+    %p= 'how to register'
+    %p= 'how to associate'
+    %p= 'check out passages'
+  
+  
+  .row-fluid.span10
+    - # Tutorials
+    = render( partial: 'how_to_register' )
