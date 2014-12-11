@@ -301,30 +301,30 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :gender,
       /\s*(maschi|femmi)/i,
-      # Alt. vers.: /\s+(maschi|femmi)/ui
-      /(\s+\-\s+categoria|\s{3}\-{3}(\Z|\n))/i
+      /(?<=ile|chi|ine)(\s+\-{3}|\s+\-\s+categoria)/i
     )
   end
 
-  # "category_header.category_group" token extractor definition
-  #
-  def tokenizer_category_header_group
-    TokenExtractor.new(
-      :category_group,
-      / *((master|under)\s\d\d|[MU]\d\d)/i,
-      / *tempo base */i
-    )
-  end
-
-  # "category_header.base_time" token extractor definition
-  #
-  def tokenizer_category_header_base_time
-    TokenExtractor.new(
-      :base_time,
-      /\d{1,2}'\d\d"\d\d$/,
-      9                                             # (max size)
-    )
-  end
+  # TODO Remove these 2 since they are not used in this format (so far)
+  # # "category_header.category_group" token extractor definition
+  # #
+  # def tokenizer_category_header_group
+    # TokenExtractor.new(
+      # :category_group,
+      # / *((master|under)\s\d\d|[MU]\d\d)/i,
+      # / *tempo base */i
+    # )
+  # end
+#
+  # # "category_header.base_time" token extractor definition
+  # #
+  # def tokenizer_category_header_base_time
+    # TokenExtractor.new(
+      # :base_time,
+      # /\d{1,2}'\d\d"\d\d$/,
+      # 9                                             # (max size)
+    # )
+  # end
   # ----------------------------------------------------------------------------
   #++
 
@@ -334,7 +334,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :type,
       /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx)/i,
-      /(\s+\-\s+categoria|\s{3}\-{3}(\Z|\n))/i
+      /(?<=ile|chi|ine|ero|sta|sti)(\s+\-{3}|\s+\-\s+categoria)/i
     )
   end
 
@@ -361,31 +361,27 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     )
   end
 
-# TODO [BEGIN] #########################################################
-# The following 2 are actually MISSING from the header and must be
-# extracted from the detail:
-
-  # "relay_header.category_group" token extractor definition
-  #
-  def tokenizer_relay_header_category_group
-    TokenExtractor.new(
-      :category_group,
-      /M\d\d0\-\d\d\d/i,
-      7                                             # (max size)
-      # Alt. vers. (instead of '7'): /\s*tempo base\s*/ui
-    )
-  end
-
-  # "relay_header.base_time" token extractor definition
-  #
-  def tokenizer_relay_header_base_time
-    TokenExtractor.new(
-      :base_time,
-      /\s\d{1,2}'\d\d"\d\d/i,
-      9                                             # (max size)
-    )
-  end
-# TODO [END] #########################################################
+  # TODO Remove these 2 since they are not used in this format (so far)
+  # # "relay_header.category_group" token extractor definition
+  # #
+  # def tokenizer_relay_header_category_group
+    # TokenExtractor.new(
+      # :category_group,
+      # /M\d\d0\-\d\d\d/i,
+      # 7                                             # (max size)
+      # # Alt. vers. (instead of '7'): /\s*tempo base\s*/ui
+    # )
+  # end
+#
+  # # "relay_header.base_time" token extractor definition
+  # #
+  # def tokenizer_relay_header_base_time
+    # TokenExtractor.new(
+      # :base_time,
+      # /\s\d{1,2}'\d\d"\d\d/i,
+      # 9                                             # (max size)
+    # )
+  # end
   # ----------------------------------------------------------------------------
   #++
 
