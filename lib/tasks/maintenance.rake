@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = DB-maintenance tasks
 
-  - Goggles framework vers.:  4.00.623
+  - Goggles framework vers.:  4.00.667
   - author: Leega, Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -114,7 +114,7 @@ having the specified ID.
     db_host       = rails_config.database_configuration[Rails.env]['host']
     # Verify parameters
     unless ENV.include?("meeting_id") && ENV.include?("file")
-      puts("Needs at least a 'meeting_id' and a 'file' parameter")
+      puts("It needs at least a 'meeting_id' and a 'file' parameter.")
       exit
     end
     puts "Requiring Rails environment to allow usage of any Model..."

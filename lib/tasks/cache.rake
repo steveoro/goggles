@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = Cache-maintenance tasks
 
-  - Goggles framework vers.:  4.00.665
+  - Goggles framework vers.:  4.00.667
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -22,6 +22,10 @@ require 'framework/console_logger'
 =end
 #-- ---------------------------------------------------------------------------
 #++
+
+
+SERVER_URL    = 'master-goggles.org'
+# -----------------------------------------------------------------------------
 
 
 namespace :cache do
@@ -35,6 +39,16 @@ copy of the production database, remember include the correct environment in the
 parameters ('RAILS_ENV=production') not before having issued also a:
     > rake db:rebuild_from_dump from=production to=production
 
+  Options: user_email=<user_email_for_login>
+           user_pwd=<password_for_user_email>
+           [site=#{SERVER_URL}]
+
+  - 'dump_forms'  => when set to a positive number it will skip the search
+    and dump the list of all form and field names found on the specified URL.
+
+  - 'site' => the search engine URL to be used, on which we are assuming there's
+    a search form to be invoked.
+
   DESC
   task :rebuild do
     puts "\r\n*** cache:rebuild ***"
@@ -45,31 +59,26 @@ parameters ('RAILS_ENV=production') not before having issued also a:
     db_user       = rails_config.database_configuration[Rails.env]['username']
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
     db_host       = rails_config.database_configuration[Rails.env]['host']
+    server_url    = ENV.include?("site") ? ENV["site"] : SERVER_URL
+    user_email    = ENV["user_email"]
+    user_pwd      = ENV["user_pwd"]
+                                                    # Verify parameters:
+    unless ENV.include?("user_email") && ENV.include?("user_pwd")
+      puts("It needs at least a 'user_email' and a 'user_pwd' parameter.")
+      exit
+    end
     puts "Requiring Rails environment to allow usage of any Model..."
     require 'rails/all'
     require File.join( Rails.root.to_s, 'config/environment' )
 
-# FIXME Log-in user:
-# curl -i -H "Accept: application/json" "http://master-goggles.org/api/v1/sessions/create?user_password=<password>&user_email=<user_email>"
-# - password must be URLencoded
-#
-# - retrieve token response( 'user_token' & 'user_name' )
-# - re-use token for pages which require a login
-#
-# Use mechanize or rest-client gem to do the job instead of curl
-
-# See:
-# - https://github.com/rest-client/rest-client
-# - http://docs.seattlerb.org/mechanize/EXAMPLES_rdoc.html
-# - http://readysteadycode.com/howto-scrape-websites-with-ruby-and-mechanize
-# - http://ruby.bastardsbook.com/chapters/mechanize/
-
     # Display some info:
-    puts "DB host: #{db_host}"
-    puts "DB name: #{db_name}"
-    puts "DB user: #{db_user}"
-    puts "\r\nTotals:"
-    puts "======="
+    puts "DB host...........: #{db_host}"
+    puts "DB name...........: #{db_name}"
+    puts "DB user...........: #{db_user}"
+    puts "Server URL........: #{server_url}"
+    puts "Server user e-mail: #{user_email}"
+    puts "Server pwd........: #{user_pwd}"
+
     swimmers = Swimmer.where( 'associated_user_id IS NOT NULL' )
     teams    = swimmers.map{ |swimmer| swimmer.get_badges_array.map{ |badge| badge.team } }.flatten.compact.uniq
     swimmer_count = swimmers.count
@@ -93,6 +102,8 @@ parameters ('RAILS_ENV=production') not before having issued also a:
       14101
     ]
 
+    puts "\r\nTotals:"
+    puts "======="
     puts "- Users: #{User.count}"
     puts "- Swimmers w/ associated users : #{swimmer_count}"
     puts "- Teams from the above swimmers: #{teams_count}"
@@ -102,84 +113,150 @@ parameters ('RAILS_ENV=production') not before having issued also a:
     puts "\r\nCache rebuild script start...\r\nExecution time:\r\n"
 
     Benchmark.bm do |exec|
-      exec.report( "\r\n---[ 1/8 - Home/misc ]---\r\n" ) do
+      exec.report( "\r\n---[ 1/10 - Home/misc ]---\r\n" ) do
         [
-          "curl -# http://master-goggles.org > /dev/null",
-          "curl -# http://master-goggles.org/it/ > /dev/null",
-          "curl -# http://master-goggles.org/en/ > /dev/null",
-
-          "curl -# http://master-goggles.org/meetings/current > /dev/null",
-          "curl -# http://master-goggles.org/it/meetings/current > /dev/null",
-          "curl -# http://master-goggles.org/en/meetings/current > /dev/null",
-
-          "curl -# http://master-goggles.org/it/teams/index > /dev/null",
-          "curl -# http://master-goggles.org/it/swimmers/index > /dev/null",
-
-          "curl -# http://master-goggles.org/it/championships/calendar_regional_er_csi > /dev/null"
-        ].each do |command|
-          system( "\"#{command}\"" )
+          "", "/it/", "/en/",
+          "/meetings/current", "/it/meetings/current", "/en/meetings/current",
+          "/it/teams/index", "/it/swimmers/index",
+          "/it/championships/calendar_regional_er_csi"
+        ].each do |request_url|
+          get_request_via_curl( server_url, request_url )
         end
       end
 
-      exec.report( "\r\n-------------[ 2/8 - Championships (for selected seasons) ]--------------\r\n" ) do
+      response = {}
+      exec.report( "\r\n---[ 2/10 - Login ]---\r\n" ) do
+        response = get_login_response( server_url, user_email, user_pwd )
+        puts "Response: #{response['message']}"
+      end
+      user_name  = response['user_name']
+      user_token = response['user_token']
+
+      exec.report( "\r\n-------------[ 3/10 - Championships (for selected seasons) ]--------------\r\n" ) do
         champ_season_ids.each_with_index do |season_id, index|
           puts "Processing: season ID #{season_id}, #{index+1}/#{champ_season_ids.size}"
-          system("curl -# http://master-goggles.org/it/championships/ranking_regional_er_csi/#{season_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/championships/individual_rank_regional_er_csi/#{season_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/championships/event_ranking_regional_er_csi/#{season_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/championships/rules_regional_er_csi/#{season_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/championships/history_regional_er_csi/#{season_id} > /dev/null")
-        end
-      end
-
-      exec.report( "\r\n-------------[ 3/8 - Swimmers (for gogglers) ]--------------\r\n" ) do
-        swimmers.each_with_index do |swimmer, index|
-          puts "Processing: #{swimmer.get_full_name}, #{index+1}/#{swimmer_count} (radio, medals, best_timings, full_history 1 & 2)"
-          system("curl -# http://master-goggles.org/it/swimmers/radio/#{swimmer.id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/swimmers/medals/#{swimmer.id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/swimmers/best_timings/#{swimmer.id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/swimmers/full_history_1/#{swimmer.id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/swimmers/full_history_2/#{swimmer.id} > /dev/null")
-        end
-      end
-
-      exec.report( "\r\n-------------[ 4/8 - Swimming Buddies (for gogglers) ]--------------\r\n" ) do
-        swimming_buddies.each_with_index do |swimmer, index|
-          puts "Processing: #{swimmer.get_full_name}, #{index+1}/#{swimming_buddies.size}"
-          system("curl -# http://master-goggles.org/it/swimmers/radio/#{swimmer.id} > /dev/null")
-        end
-      end
-
-      exec.report( "\r\n-------------[ 5/8 - Teams (for gogglers) ]--------------\r\n" ) do
-        teams.each_with_index do |team, index|
-          puts "Processing: #{team.get_full_name}, #{index+1}/#{teams_count}"
-          system("curl -# http://master-goggles.org/it/teams/radio/#{team.id} > /dev/null")
-        end
-      end
-
-      exec.report( "\r\n-------------[ 6/8 - Teams (public) ]--------------\r\n" ) do
-        public_teams.each_with_index do |team, index|
-          puts "Processing: #{team.get_full_name}, #{index+1}/#{public_teams.count}"
-          system("curl -# http://master-goggles.org/it/teams/radio/#{team.id} > /dev/null")
-        end
-      end
-
-      exec.report( "\r\n-------------[ 7/8 - Meetings (most recent) ]--------------\r\n" ) do
-        recent_meeting_ids.each_with_index do |meeting_id, index|
-          puts "Processing: meeting ID #{meeting_id}, #{index+1}/#{recent_meeting_ids.size}"
-          system("curl -# http://master-goggles.org/it/meeting/show_full/#{meeting_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/meeting/show_invitation/#{meeting_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/meeting/show_ranking/#{meeting_id} > /dev/null")
-          system("curl -# http://master-goggles.org/it/meeting/show_stats/#{meeting_id} > /dev/null")
-          public_teams.each_with_index do |team, team_index|
-            puts "Team results for: #{team.get_full_name}, #{index+1}/#{public_teams.count}"
-            system("curl -# http://master-goggles.org/it/meeting/show_team_results/{meeting_id}?team_id=#{team.id} > /dev/null")
+          [
+            "/it/championships/ranking_regional_er_csi/#{season_id}",
+            "/it/championships/individual_rank_regional_er_csi/#{season_id}",
+            "/it/championships/event_ranking_regional_er_csi/#{season_id}",
+            "/it/championships/rules_regional_er_csi/#{season_id}",
+            "/it/championships/history_regional_er_csi/#{season_id}"
+          ].each do |request_url|
+            get_request( server_url, request_url, user_name, user_token )
           end
         end
       end
 
-      exec.report("\r\n-------------[ 8/8 - hand-picked pages (from Analytics) ]--------------\r\n") do
-        system( "./rebuild_remote_cache" )
+      exec.report( "\r\n-------------[ 4/10 - Swimmers (for gogglers) ]--------------\r\n" ) do
+        swimmers.each_with_index do |swimmer, index|
+          puts "Processing: #{swimmer.get_full_name}, #{index+1}/#{swimmer_count} (radio, medals, best_timings, full_history 1 & 2)"
+          [
+            "/it/swimmer/radio/#{swimmer.id}",
+            "/it/swimmer/medals/#{swimmer.id}",
+            "/it/swimmer/best_timings/#{swimmer.id}",
+            "/it/swimmer/full_history_1/#{swimmer.id}",
+            "/it/swimmer/full_history_2/#{swimmer.id}"
+          ].each do |request_url|
+            get_request( server_url, request_url, user_name, user_token )
+          end
+        end
+      end
+
+      exec.report( "\r\n-------------[ 5/10 - Swimming Buddies (for gogglers) ]--------------\r\n" ) do
+        swimming_buddies.each_with_index do |swimmer, index|
+          puts "Processing: #{swimmer.get_full_name}, #{index+1}/#{swimming_buddies.size}"
+          get_request( server_url, "/it/swimmer/radio/#{swimmer.id}", user_name, user_token )
+        end
+      end
+
+      exec.report( "\r\n-------------[ 6/10 - Teams (for gogglers) ]--------------\r\n" ) do
+        teams.each_with_index do |team, index|
+          puts "Processing: #{team.get_full_name}, #{index+1}/#{teams_count}"
+          get_request( server_url, "/it/teams/radio/#{team.id}", user_name, user_token )
+        end
+      end
+
+      exec.report( "\r\n-------------[ 7/10 - Teams (public) ]--------------\r\n" ) do
+        public_teams.each_with_index do |team, index|
+          puts "Processing: #{team.get_full_name}, #{index+1}/#{public_teams.count}"
+          get_request( server_url, "/it/teams/radio/#{team.id}", user_name, user_token )
+        end
+      end
+
+      exec.report( "\r\n-------------[ 8/10 - Meetings (most recent) ]--------------\r\n" ) do
+        recent_meeting_ids.each_with_index do |meeting_id, index|
+          puts "Processing: meeting ID #{meeting_id}, #{index+1}/#{recent_meeting_ids.size}"
+          [
+            "/it/meeting/show_full/#{meeting_id}",
+            "/it/meeting/show_invitation/#{meeting_id}",
+            "/it/meeting/show_ranking/#{meeting_id}",
+            "/it/meeting/show_stats/#{meeting_id}"
+          ].each do |request_url|
+            get_request( server_url, request_url, user_name, user_token )
+          end
+          public_teams.each_with_index do |team, team_index|
+            puts "Team results for: #{team.get_full_name}, #{team_index+1}/#{public_teams.count}"
+            get_request( server_url, "/it/meeting/show_team_results/{meeting_id}?team_id=#{team.id}", user_name, user_token )
+          end
+        end
+      end
+
+      exec.report("\r\n-------------[ 9/10 - hand-picked pages (from Analytics) ]--------------\r\n") do
+        puts "- Goggle Cup:"
+        get_request( server_url, "/it/teams/goggle_cup/1", user_name, user_token )
+        puts "- Most searched Teams' & Swimmers radio:"
+        [
+          "/it/teams/radio/233",
+
+          "/it/swimmer/radio/12",
+          "/it/swimmer/radio/14",
+          "/it/swimmer/radio/40",
+          "/it/swimmer/radio/49",
+          "/it/swimmer/radio/92",
+          "/it/swimmer/radio/137",
+          "/it/swimmer/radio/579",
+          "/it/swimmer/radio/580",
+          "/it/swimmer/radio/785",
+          "/it/swimmer/radio/951",
+          "/it/swimmer/radio/961",
+          "/it/swimmer/radio/966",
+          "/it/swimmer/radio/1030",
+          "/it/swimmer/radio/1060",
+          "/it/swimmer/radio/1088",
+          "/it/swimmer/radio/1116",
+          "/it/swimmer/radio/1135",
+          "/it/swimmer/radio/1197",
+          "/it/swimmer/radio/1292",
+          "/it/swimmer/radio/1409",
+          "/it/swimmer/radio/1461",
+          "/it/swimmer/radio/1476",
+          "/it/swimmer/radio/1590",
+          "/it/swimmer/radio/1633",
+          "/it/swimmer/radio/1710",
+          "/it/swimmer/radio/1753",
+          "/it/swimmer/radio/1776",
+          "/it/swimmer/radio/1851",
+          "/it/swimmer/radio/2546",
+          "/it/swimmer/radio/4821",
+          "/it/swimmer/radio/4828",
+          "/it/swimmer/radio/4830",
+          "/it/swimmer/radio/4831",
+          "/it/swimmer/radio/4834",
+          "/it/swimmer/radio/4837",
+          "/it/swimmer/radio/4845",
+          "/it/swimmer/radio/4850",
+          "/it/swimmer/radio/4852",
+          "/it/swimmer/radio/4853",
+          "/it/swimmer/radio/4855",
+        ].each do |request_url|
+          puts "Processing: '#{request_url}'"
+          get_request( server_url, request_url, user_name, user_token )
+        end
+      end
+
+      exec.report( "\r\n---[ 10/10 - Logout ]---\r\n" ) do
+        response = do_logout( server_url, user_token )
+        puts "Response: #{response['message']}"
       end
     end
 
@@ -188,4 +265,78 @@ parameters ('RAILS_ENV=production') not before having issued also a:
   #-- -------------------------------------------------------------------------
   #++
 
+
+  # Retrieves the login response already parsed from JSON.
+  #
+  # == Params:
+  #
+  # - server_url: the server name (i.e.: "locahost:3000" or "master-goggles.org"), used as base URL for the request
+  # - user_email: the user e-mail
+  # - password: the user password
+  #
+  # == Returns:
+  # The response JSON-parsed page.body
+  #
+  def get_login_response( server_url, user_email, password )
+    a = Mechanize.new
+    page = a.get("http://#{server_url}/api/v1/sessions/create?user_password=#{password}&user_email=#{user_email}")
+    JSON.parse(page.body)
+  end
+
+
+  # Closes the login session given the user_token obtained from the login response hash (parsed from JSON).
+  #
+  # == Params:
+  #
+  # - server_url: the server name (i.e.: "locahost:3000" or "master-goggles.org"), used as base URL for the request
+  # - user_token: the login token obtained from the login response Hash.
+  #
+  # == Returns:
+  # The response JSON-parsed page.body
+  #
+  def do_logout( server_url, user_token )
+    a = Mechanize.new
+    page = a.get("http://#{server_url}/api/v1/sessions/destroy?user_token=#{user_token}")
+    JSON.parse(page.body)
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Retrieves a specific page using the response from the login API.
+  #
+  # == Params:
+  #
+  # - server_url:  the server name (i.e.: "locahost:3000" or "master-goggles.org"), used as base URL for the request
+  # - request_url: the page url for the actual request (for ex.: "/it/swimmer/radio/23").
+  # - user_name:   the user name (obtained from the login response Hash).
+  # - user_token:  the login token (obtained from the login response Hash).
+  #
+  # == Returns:
+  # The response page
+  #
+  def get_request( server_url, request_url, user_name, user_token )
+    a = Mechanize.new
+    a.get("http://#{server_url}#{request_url}?user_name=#{user_name}&user_token=#{user_token}")
+  end
+
+
+  # Retrieves a specific page using a system call to curl.
+  #
+  # == Params:
+  #
+  # - server_url:  the server name (i.e.: "locahost:3000" or "master-goggles.org"), used as base URL for the request
+  # - request_url: the page url for the actual request (for ex.: "/it/swimmer/radio/23").
+  # - user_email:  the user e-mail
+  # - user_token:  the login token (obtained from the login response Hash).
+  #
+  def get_request_via_curl( server_url, request_url, user_email = '', user_token = '' )
+    system(
+      "curl -i " <<
+      "-H \"X-User-Email: #{user_email}\" -H \"X-User-Token: #{user_token}\" " <<
+      "-# http://#{server_url}#{request_url} > /dev/null"
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
