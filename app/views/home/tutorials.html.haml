@@ -1,12 +1,20 @@
-.row-fluid
+.row-fluid#index
   - #index
   .row-fluid.span2
-    %h2= 'Tutorial index'
-    %p= 'how to register'
-    %p= 'how to associate'
-    %p= 'check out passages'
+    %h2= t('tutorial')
+    %ul
+      - if user_signed_in?
+        %li
+          %a(href="#how_to_register")= t('tutorials.how_to_register')
+      %li
+        %a(href="#what_can_i_do")= t('tutorials.what_can_i_do')
+      %li
+        %a(href="#how_to_view_passages")= t('tutorials.how_to_view_passages')
+      %li
+        %a(href="#how_to_calculate_fin_score")= t('tutorials.how_to_calculate_fin_score')
   
   
   .row-fluid.span10
-    - # Tutorials
-    = render( partial: 'how_to_register' )
+    - if user_signed_in?
+      = render( partial: 'how_to_register' )
+    = render( partial: 'what_can_i_do' )

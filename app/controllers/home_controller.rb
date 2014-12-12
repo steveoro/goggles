@@ -20,6 +20,7 @@ class HomeController < ApplicationController
     @invitations = []
     @start_lists = []
     @results     = []
+    @goggle_cups = []
     badges       = []
     if user_signed_in?
       if current_user.has_associated_swimmer?
@@ -34,6 +35,9 @@ class HomeController < ApplicationController
           @invitations << season.meetings.has_only_invitation.sort_by_date.first if season.meetings.has_only_invitation.count > 0
           @start_lists << season.meetings.has_only_start_list.sort_by_date.first if season.meetings.has_only_start_list.count > 0
           @results     << season.meetings.has_results.sort_by_date.last if season.meetings.has_results.count > 0
+        end
+        @teams.each do |team|
+          @goggle_cups << team.get_current_goggle_cup_at if team.has_goggle_cup_at?
         end
       end
       @articles  = Article.find(

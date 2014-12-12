@@ -13,3 +13,11 @@
         = image_tag( 'user-group-128.png', class: 'img-circle', style: "width: 50%;" )
         %br
         = team.get_full_name
+
+- @goggle_cups.each do |goggle_cup|
+  .row-fluid
+    %p
+      %a.btn.btn-large.btn-block.btn-info.thumbnail{ :href => team_goggle_cup_path(id: goggle_cup.team_id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') }
+        = image_tag( 'trophy-128.png', class: 'img-circle', style: "width: 50%;" )
+        %br
+        = goggle_cup.get_full_name

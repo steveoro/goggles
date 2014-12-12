@@ -5,6 +5,16 @@
       %br
       = t('misc.fin_score_calculation')
 
+- @seasons.each do |season|
+  - # Only for CSI Regiona ER at this time
+  - if season.season_type.code == 'MASCSI'
+    .row-fluid
+      %p
+        %a.btn.btn-large.btn-block.btn-primary.thumbnail{ :href => championships_calendar_regional_er_csi_path( id: season.id ), 'data-toggle'=>'tooltip', 'title'=>I18n.t('championships.calendar') }
+          = image_tag( 'date-128.png', class: 'img-circle', style: "width: 50%;" )
+          %br
+          = season.get_full_name
+
 - @results.each do |meeting|
   .row-fluid
     %p

@@ -22,6 +22,7 @@ describe HomeController, :type => :controller do
         expect( assigns(:invitations) ).to be_an_instance_of( Array )
         expect( assigns(:start_lists) ).to be_an_instance_of( Array )
         expect( assigns(:results) ).to be_an_instance_of( Array )
+        expect( assigns(:goggle_cups) ).to be_an_instance_of( Array )
       end
       it "sets the variables with empty lists" do
         get :index
@@ -32,6 +33,7 @@ describe HomeController, :type => :controller do
         expect( assigns(:invitations).size ).to eq(0)
         expect( assigns(:start_lists).size ).to eq(0)
         expect( assigns(:results).size ).to eq(0)
+        expect( assigns(:goggle_cups).size ).to eq(0)
       end
       it "renders the template" do
         get :index
@@ -55,6 +57,7 @@ describe HomeController, :type => :controller do
         expect( assigns(:invitations) ).to respond_to( :each )
         expect( assigns(:start_lists) ).to respond_to( :each )
         expect( assigns(:results) ).to respond_to( :each )
+        expect( assigns(:goggle_cups) ).to respond_to( :each )
       end
       it "renders the template" do
         get :index
