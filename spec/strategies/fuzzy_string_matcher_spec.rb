@@ -45,6 +45,7 @@ describe FuzzyStringMatcher, type: :strategy do
     #-- -----------------------------------------------------------------------
     #++
 
+
     describe "#find" do
       context "when scanning a list of city names," do
         it "returns the object from the list with the best match when successful" do
@@ -58,9 +59,9 @@ describe FuzzyStringMatcher, type: :strategy do
         end
       end
 
+
       context "when scanning a list of team names," do
         subject { FuzzyStringMatcher.new( team_names, :name ) }
-
         [
           'CSI NUOTO OBER FERR',  'CSINuoto Ober Ferrari',
           'CSI O.Ferrari',        'C.S.I. Nuoto O FERRARI',
@@ -75,6 +76,34 @@ describe FuzzyStringMatcher, type: :strategy do
 
         it "returns nil when a match is not found" do
           result_row = subject.find( 'Another failure', FuzzyStringMatcher::BIAS_SCORE_BEST )
+          expect( result_row ).to be nil
+        end
+      end
+
+
+      context "when scanning a list of swimmer names," do
+        subject { FuzzyStringMatcher.new( Swimmer.all, :complete_name ) }
+        [
+          [ 'ORLANDINI IDO PIRALDO',      "ORLANDINI IDO PIERALDO" ],
+          [ 'ORLANDINI IDO PIER ALDO',    "ORLANDINI IDO PIERALDO" ],
+
+          # This is a mis-match due to a much different length between the correct candidate
+          # and the supplied search value;
+          [ 'ORLANDINI IDO',              "ORLANDINI EDO" ]
+
+          # [Steve, 20141212] Using FuzzyStringMatcher::BIAS_SCORE_BEST is necessary to be sure of
+          # the match, but this will inevitably fail due to different length:
+#          [ 'ARTEAGA HECTOR ALESSAN',     'ARTEAGA HECTOR' ]
+        ].each do |matching_string, expected_string|
+          it "returns the best-match object from the list searching for '#{matching_string}'" do
+            result_row = subject.find( matching_string, FuzzyStringMatcher::BIAS_SCORE_BEST )
+            expect( result_row ).to be_an_instance_of( Swimmer )
+            expect( result_row.complete_name ).to eq( expected_string )
+          end
+        end
+
+        it "returns nil when a match is not found" do
+          result_row = subject.find( 'XYZYGY GYXYZY', FuzzyStringMatcher::BIAS_SCORE_BEST )
           expect( result_row ).to be nil
         end
       end

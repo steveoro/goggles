@@ -304,27 +304,6 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       /(?<=ile|chi|ine)(\s+\-{3}|\s+\-\s+categoria)/i
     )
   end
-
-  # TODO Remove these 2 since they are not used in this format (so far)
-  # # "category_header.category_group" token extractor definition
-  # #
-  # def tokenizer_category_header_group
-    # TokenExtractor.new(
-      # :category_group,
-      # / *((master|under)\s\d\d|[MU]\d\d)/i,
-      # / *tempo base */i
-    # )
-  # end
-#
-  # # "category_header.base_time" token extractor definition
-  # #
-  # def tokenizer_category_header_base_time
-    # TokenExtractor.new(
-      # :base_time,
-      # /\d{1,2}'\d\d"\d\d$/,
-      # 9                                             # (max size)
-    # )
-  # end
   # ----------------------------------------------------------------------------
   #++
 
@@ -360,28 +339,6 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
       )/ix
     )
   end
-
-  # TODO Remove these 2 since they are not used in this format (so far)
-  # # "relay_header.category_group" token extractor definition
-  # #
-  # def tokenizer_relay_header_category_group
-    # TokenExtractor.new(
-      # :category_group,
-      # /M\d\d0\-\d\d\d/i,
-      # 7                                             # (max size)
-      # # Alt. vers. (instead of '7'): /\s*tempo base\s*/ui
-    # )
-  # end
-#
-  # # "relay_header.base_time" token extractor definition
-  # #
-  # def tokenizer_relay_header_base_time
-    # TokenExtractor.new(
-      # :base_time,
-      # /\s\d{1,2}'\d\d"\d\d/i,
-      # 9                                             # (max size)
-    # )
-  # end
   # ----------------------------------------------------------------------------
   #++
 
@@ -400,9 +357,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_team_code
     TokenExtractor.new(
       :team_code,
-      /(\w{3}-?\d{6})/i,
-      /(?<=\w{3}\-\d{6}|\w{3}\d{6})\s/i
-#      10                                            # (max size)
+      /(?<team_code>\w{3}\-.\d{5}|\w{3}.\d{5})\s/i,
+#      /(?<=\w{3}\-.\d{5}|\w{3}.\d{5}\s)/i
+      9                                             # (max size)
     )
   end
 
@@ -411,7 +368,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_swimmer_name
     TokenExtractor.new(
       :swimmer_name,
-      /(?<=fc\s|fc\s\s|fg\s|fg\s\s|\d\s|\d\s\s|\D{3}\-\d{6}\s|\D{3}\d{6}\s)(\D{22})\D*\s/i,
+      /(?<=fc\s|fc\s\s|fg\s|fg\s\s|\d\s|\d\s\s|\D{3}\-.\d{5}\s|\D{3}.\d{5}\s)(\D{22})\D*\s/i,
       /
         (?=
           (\s\d{4}\s\d\d\s(f|m)\s)|
@@ -430,7 +387,9 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :swimmer_year,
       /\s(?<year>\d{4}|(u|m)\s\d{1,2})(?=\s\d{1,2}\s|\s|(f|m)\s)/i,
-      4                                             # (max size)
+      /(?<=\d{3}\s0|\d{2}\s\d{2}|\s(u|m)\s\d{2})(?<end>\s.)/i
+#      /(?<=\d{3}\s0\s|\d{2}\s\d{2}\s|\s(u|m)\s\d{2}\s)(?<end>\D)/i
+#      4                                             # (max size)
     )
   end
 
@@ -515,7 +474,8 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :result_time,
       /
-        (?<=\s\d{3}\s\(\D\)\s\s|\s\d{3}\s\(\D\)\s)
+        (?<=\s\d{3}\s\(\D\)\s|\s\d{3}\s\(\D\)\s)
+        \s?
         (?<timing>Ritir.*|Squal.*|\d{2}\s\d{2}\s\d{2})
       /ix,
       8                                             # (max size)
@@ -539,7 +499,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_team_code
     TokenExtractor.new(
       :team_code,
-      /(?<=\s)(?<teamcode>\w\w\w\d{6})(?=\s)/i,
+      /(?<=\s)(?<teamcode>\w{3}.\d{5})(?=\s)/i,
       9                                             # (max size)
     )
   end

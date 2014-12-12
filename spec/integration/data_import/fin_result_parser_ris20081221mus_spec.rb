@@ -88,8 +88,50 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
 
     context "for :result_row rows," do
       [
-        [ 0, '1', 'TOS000695', 'MAGNELLI SAMUELA', '1981', 'FIORENTINA NUOTO',  '02 27 98', '926,68' ]
-#        [ 1, '', '', '', '', '', '', '', '' ]
+        # '200 Farfalla' samples
+        [ 0, '1', 'TOS000695', 'MAGNELLI SAMUELA', '1981 25', 'FIORENTINA NUOTO',  '02 27 98', '926,68' ],
+        [ 1, '2', 'LAZ037772', 'NASSO MARTINA', '1981 25', 'EUROPARADISE', '03 26 84', '662,98' ],
+        [ 2, '1', 'LIG014209', 'OLIVERI FRANCESCA', '1979 30', 'RN SPEZIA 86', '03 32 76', '654,92' ],
+        [ 3, '2', 'CAM006154', 'SORRENTINO ANNA', '1975 30', 'IL GABBIANO NAPOLI', '05 08 95', '451,01' ],
+
+        [ 10, '1', 'EMI023180', 'ARTEAGA HECTOR ALESSAN', '1988 0', 'ASD CSI NUOTO OBER FERRAR', '02 53 82', nil ],
+        [ 11, '1', 'TOS002054', 'CACCIATORE ALESSANDRO', '1981 25', 'NUOTO CLUB FIRENZE', '02 18 87', '863,54' ],
+        [ 15, '2', 'TOS031905', 'BETTI SIMONE', '1975 30', 'ASD NUOTO UISP 2003', '04 17 64', '466,58' ],
+        [ 18, '3', 'LAZ030299', 'FONTANA RENATO', '1974 35', 'NUOTO CLUB 91 PARMA', '02 19 98', '889,41' ],
+        [ 21, '1', 'LIG002114', 'MUSCARÀ FRANCO', '1967 40', 'CS MARINA MILITARE', '02 48 05', '731,75' ],
+        # '100 Misti' samples
+        [ 38, '1', 'TOS007835', 'LUSCHI MARTINA', '1985 0', 'ASD LIBERTAS NUOTO ROSIGN', '01 29 40', nil ],
+        [ 43, '5', 'TOS033546', 'PINTO MARILÙ', '1982 25', 'ASD CIRCOLO NUOTO LUCCA', '01 32 23', '690,34' ],
+        [ 53, '5', 'TOS033064', 'PRATICÒ LAURA', '1970 35', 'SRL SD NUOTO COLLESALVETT', '01 40 98', '647,65' ],
+        [ 61, '6', 'TOS016010', 'BINDI FIAMMETTA', '1965 40', 'SSD AMICI DEL NUOTO FIREN', '01 45 32', '617,83' ],
+        [ 63, '2', 'TOS004246', 'CIONI ALESSANDRA', '1960 45', 'ASD DLF NUOTO LIVORNO', '01 38 64', '684,21' ],
+
+        [ 66, '2', 'SIC012489', 'ROMANO GIULIO ORAZIO', '1986 0', 'NUOTO CLUB FIRENZE', '01 42 95', nil ],
+        [ 78, '12', 'TOS028935', 'BAIOCCHI DEEPAK', '1980 25', 'CENTRO NUOTO MONTECATINI', '01 27 38', '631,72' ],
+        [ 96, '1', 'LOM019717', 'MONTINI ALBERTO', '1968 40', 'ACQUASPORT BY T D', '00 58 28', '1013,90' ],
+        [ 99,  '4', 'PIE000312', 'BO ROBERTO', '1966 40', 'ASD RARI NANTES GERBIDO', '01 16 97', '767,70' ],
+        [ 100, '4', 'TOS033632', 'LANDI ANDREA', '1965 40', 'ASD PALLANUOTO VIAREGGIO', '01 16 97', '767,70' ],
+        [ 118, '2', 'TOS002799', 'BENVENUTTI MARIO', '1937 70', 'ASD DLF NUOTO LIVORNO', '01 47 79', '704,33' ],
+        # '200 Rana' samples
+        [ 126, '4', 'CAM016321', 'NEGRI DORITA', '1972 35', 'ASD ALTA IRPINIA NUOTO', '04 05 14', '636,53' ],
+        [ 129, '3', 'TOS000756', 'CAROTI GHELLI CRISTINA', '1966 40', 'CANOTTIERI ARNO PISA', '03 43 45', '697,47' ],
+        [ 131, '1', 'EMI014135', 'GUGLIELMI GUJA', '1956 50', 'ASS AMICI DEL NUOTO MODEN', '03 52 21', '764,35' ],
+
+        [ 134, '1', 'LIG015520', 'BUSSONE MATTEO', '1985 0', 'ASD LAVAGNA 90', '03 23 62', nil ],
+        [ 146, '6', 'TOS032158', 'MAGNANI EMILIANO', '1978 30', 'ASD NUOTO UISP 2003', '03 15 03', '700,41' ],
+        [ 156, '1', 'LOM019717', 'MONTINI ALBERTO', '1968 40', 'ACQUASPORT BY T D', '02 15 95', '1016,26' ],
+        # '50 Farfalla' samples
+        [ 185, '2', 'TOS031610', 'BARACANI SERENA', '1982 25', 'SSD AMICI DEL NUOTO FIREN', '00 34 40', '810,47' ],
+        [ 193, '5', 'TOS004099', 'GIOVANNETTI BARBARA', '1970 35', 'ASS NUOTO LUCCA CAPANNORI', '00 55 74', '514,53' ],
+        [ 198, '5', 'TOS018854', 'GHILARDUCCI RENZA', '1969 40', 'ASS NUOTO LUCCA CAPANNORI', '00 49 73', '567,26' ],
+
+        [ 199, '1', 'EMI004745', 'BONDI ANDREA', '1989 0', 'ASD CSI NUOTO OBER FERRAR', '00 30 76', nil ],
+        [ 222, '6', 'EMI014278', 'LIGABUE MARCO', '1971 35', 'ASD CSI NUOTO OBER FERRAR', '00 33 27', '735,80' ],
+        [ 246, '5', 'EMI015624', 'ORLANDINI IDO PIRALDO', '1957 50', 'ASD CSI NUOTO OBER FERRAR', '00 35 66', '732,47' ],
+        # '50 Dorso' samples
+        [ 257, '2', 'TOSX06357', 'NIGLETTO CHIARA', '1986 0', 'FIORENTINA NUOTO', '00 43 42', nil ],
+        [ 261, '3', 'LAZ045960', 'MARINO GIULIA', '1977 30', 'GS VV. F. F . SORGINI', '00 45 94', '631,04' ],
+        [ 274, '10', 'TOSX06102', 'MALDERA MICHELA', '1969 40', 'ASS NUOTO VIAREGGIO', '01 02 44', '496,00' ]
       ].each do |event_index, result_position, team_code, swimmer_name, swimmer_year, team_name, result_time, result_score|
         context "in (#{event_index})'#{result_position}-#{team_code}-#{result_time}'," do
           it "has the exact values for this fixture" do
@@ -150,6 +192,27 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
     it "has the exact amount of :relay_rows for this fixture" do
       expect( subject[:relay_row] ).to be_an_instance_of( Array )
       expect( subject[:relay_row].size ).to eq( 2 )
+    end
+
+    context "for :relay_row rows," do
+      [
+        [ 0, '1', 'ASD DLF NUOTO LIVORNO', '280 (F)', '03 46 73' ],
+        [ 1, '1', 'ASD VERSILIANUOTO',     '160 (C)', '01 52 73' ]
+      ].each do |event_index, result_position, team_name, category, result_time|
+        context "in (#{event_index})'#{category}-#{result_position}-#{team_name}'," do
+          it "has the exact values for this fixture" do
+            data_page_field_hash = subject[:relay_row][event_index][:fields]
+# DEBuG
+#            puts "\r\nMem keys: #{ subject[:relay_row].map{|row_hash| row_hash[:id] }.join("\r\n") }"
+#            puts "\r\nCurrent: #{ data_page_field_hash.inspect }"
+            expect( data_page_field_hash ).to be_an_instance_of( Hash )
+            expect( data_page_field_hash[ :result_position ] ).to eq( result_position )
+            expect( data_page_field_hash[ :team_name ]       ).to eq( team_name )
+            expect( data_page_field_hash[ :category ]        ).to eq( category )
+            expect( data_page_field_hash[ :result_time ]     ).to eq( result_time )
+          end
+        end
+      end
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -221,31 +284,40 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
       expect( subject[:ranking_row] ).to be_an_instance_of( Array )
       expect( subject[:ranking_row].size ).to eq( 63 )
     end
+
+    context "for :ranking_row rows," do
+      [
+        [  0,  '1', 'TOS001351', 'FIORENTINA NUOTO', '47068,97' ],
+        [  5,  '6', 'TOS002435', 'ASS NUOTO VIAREGGIO', '20953,30' ],
+        [ 10, '11', 'TOS002726', 'CANOTTIERI ARNO PISA', '9553,88' ],
+        [ 15, '16', 'LIG086123', 'ANDREA DORIA GENOVA', '7335,92' ],
+        [ 20, '21', 'CAM020133', 'IL GABBIANO NAPOLI', '5617,92' ],
+        [ 24, '25', 'EMI001454', 'ASD CSI NUOTO OBER FERRARI', '3741,89' ],
+        [ 30, '31', 'TOS000421', 'CENTRO NUOTO MONTECATINI', '3017,61' ],
+        [ 41, '42', 'EMI001447', 'NUOTO CLUB 91 PARMA', '1761,95' ],
+        [ 50, '51', 'LAZ000908', 'USD VIS NOVA', '1450,54' ],
+        [ 55, '56', 'EMI001428', 'REGGIANA NUOTO', '1115,26' ],
+        [ 59, '60', 'EMI001436', 'AS MOLINELLA NUOTO', '726,56' ],
+        [ 61, '62', 'LAZ042987', 'GS VV. F. F . SORGINI', '631,04' ]
+      ].each do |event_index, result_position, team_code, team_name, result_score|
+        context "in (#{event_index})'#{result_position}-#{team_code}-#{team_name}'," do
+          it "has the exact values for this fixture" do
+            data_page_field_hash = subject[:ranking_row][event_index][:fields]
+# DEBuG
+#            puts "\r\nMem keys: #{ subject[:ranking_row].map{|row_hash| row_hash[:id] }.join("\r\n") }"
+#            puts "\r\nCurrent: #{ data_page_field_hash.inspect }"
+            expect( data_page_field_hash ).to be_an_instance_of( Hash )
+            expect( data_page_field_hash[ :result_position ] ).to eq( result_position )
+            expect( data_page_field_hash[ :team_code ]        ).to eq( team_code )
+            expect( data_page_field_hash[ :team_name ]       ).to eq( team_name )
+            expect( data_page_field_hash[ :result_score ]     ).to eq( result_score )
+          end
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
   end
-  #-- -------------------------------------------------------------------------
-  #++
-
-# FIXME We store duplicated rows even if the memstore ID is the same, and this is surely a waste of memory...
-
-  # In-depth check for each RELAY_HEADER found:
-  # [
-    # "mistaffetta 4x50 stile libero-M160-199",
-    # "mistaffetta 4x50 stile libero-M240-279",
-    # "mistaffetta 4x50 stile libero-M160-199",
-    # "mistaffetta 4x50 stile libero-M240-279"
-  # ].each do |string_key|
-    # it "recognizes a '#{string_key}' relay header" do
-      # headers_list = @result_hash[:parse_result][:relay_header]
-      # recognized_result = headers_list.find_all { |relay_hdr_hash|
-        # relay_hdr_hash[:id] == string_key
-      # }.first
-#
-      # expect( recognized_result ).to be_an_instance_of( Hash )
-      # expect( recognized_result[:fields] ).to be_an_instance_of( Hash )
-      # expect( recognized_result[:fields].keys ).to include( :type, :category_group )
-      # expect( recognized_result[:import_text] ).to be_an_instance_of( String )
-    # end
-  # end
   #-- -------------------------------------------------------------------------
   #++
 end

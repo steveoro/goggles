@@ -245,7 +245,7 @@ class Fin2ResultDefs < TxtResultDefs
         ]
       ],
       relay_row: [
-        [ :result_position, :team_name, :result_time, :result_score ]
+        [ :result_position, :team_name, :category, :result_time ]
       ],
 
       team_ranking: [                               # 1 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
