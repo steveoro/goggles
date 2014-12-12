@@ -107,7 +107,14 @@ class AdminImportController < ApplicationController
 
     data_import_session = DataImportSession.find( data_import_session_id )
     data_importer       = DataImporter.new( logger, flash, data_import_session )
+# TODO /WIP ****** ADD  DataImportSwimmerAnalysisResult generation sub-phase to DataImporter!
+
     result_processor    = TeamAnalysisResultProcessor.new( logger, flash )
+
+# TODO /WIP ****** ADD HERE the invocation to a new SwimmerAnalysisResultProcessor
+# TODO - SwimmerAnalysisResultProcessor
+# TODO - DataImportSwimmerAnalysisResult rendering is separate form (as for DataImportTeamAnalysisResult)
+
                                                     # retrieve results from dedicated table:
     @all_results = DataImportTeamAnalysisResult.where( data_import_session_id: data_import_session_id )
 
