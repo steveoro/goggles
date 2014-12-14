@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = Cache-maintenance tasks
 
-  - Goggles framework vers.:  4.00.667
+  - Goggles framework vers.:  4.00.669
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -172,6 +172,13 @@ parameters ('RAILS_ENV=production') not before having issued also a:
       exec.report( "\r\n-------------[ 6/10 - Teams (for gogglers) ]--------------\r\n" ) do
         teams.each_with_index do |team, index|
           puts "Processing: #{team.get_full_name}, #{index+1}/#{teams_count}"
+          [
+            "/it/teams/current_swimmers/#{team.id}",
+            "/it/teams/best_timings/#{team.id}",
+            "/it/teams/palmares/#{team.id}"
+          ].each do |request_url|
+            get_request( server_url, request_url, user_name, user_token )
+          end
           get_request( server_url, "/it/teams/radio/#{team.id}", user_name, user_token )
         end
       end

@@ -2,17 +2,17 @@
 require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../../lib/data_import/services/team_name_analizer'
+require_relative '../../../../lib/data_import/services/swimmer_name_analyzer'
 
 
-describe TeamNameAnalizer, type: :service, data_import: true do
+describe SwimmerNameAnalyzer, type: :service, data_import: true do
 
   context "for a well-defined instance," do
-    subject { TeamNameAnalizer.new() }
+    subject { SwimmerNameAnalyzer.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :all_teams, :all_affiliations,
-      :team_matcher, :affiliation_matcher,
+      :all_swimmers,
+      :matcher,
       :analysis_text_log, :sql_text_log,
       :analyze
     ] )
@@ -21,31 +21,20 @@ describe TeamNameAnalizer, type: :service, data_import: true do
 
 
     describe "#initialize" do
-      it "returns a TeamNameAnalizer instance" do
-        expect( subject ).to be_an_instance_of( TeamNameAnalizer )
+      it "returns a TeamNameAnalyzer instance" do
+        expect( subject ).to be_an_instance_of( SwimmerNameAnalyzer )
       end
     end
 
-    describe "#all_teams" do
+    describe "#all_swimmers" do
       it "returns the list of all Teams" do
-        expect( subject.all_teams ).to all( be_an_instance_of(Team) )
+        expect( subject.all_swimmers ).to all( be_an_instance_of(Swimmer) )
       end
     end
 
-    describe "#all_affiliations" do
-      it "returns the list of all Teams" do
-        expect( subject.all_affiliations ).to all( be_an_instance_of(TeamAffiliation) )
-      end
-    end
-
-    describe "#team_matcher" do
-      it "returns the internal FuzzyStringMatcher dedicated to Teams scanning" do
-        expect( subject.team_matcher ).to be_an_instance_of(FuzzyStringMatcher)
-      end
-    end
-    describe "#affiliation_matcher" do
-      it "returns the internal FuzzyStringMatcher dedicated to TeamAffiliation scanning" do
-        expect( subject.team_matcher ).to be_an_instance_of(FuzzyStringMatcher)
+    describe "#matcher" do
+      it "returns the internal FuzzyStringMatcher dedicated to Swimmer scanning" do
+        expect( subject.matcher ).to be_an_instance_of(FuzzyStringMatcher)
       end
     end
     #-- -----------------------------------------------------------------------
@@ -67,12 +56,13 @@ describe TeamNameAnalizer, type: :service, data_import: true do
     #++
 
     describe "#analyze" do
-      it "returns a DataImportTeamAnalysisResult instance" do
+# TODO
+      xit "returns a DataImportSwimmerAnalysisResult instance" do
         analysys_log = ''
         sql_log = ''
         expect(
-          subject.analyze( "CSI OBER FERRARI", 132, analysys_log, sql_log )
-        ).to be_an_instance_of(DataImportTeamAnalysisResult)
+          subject.analyze( "MARCO LIGABUE", 132, analysys_log, sql_log )
+        ).to be_an_instance_of(DataImportSwimmerAnalysisResult)
         expect( analysys_log ).not_to eq('')
         expect( sql_log ).not_to eq('')
       end

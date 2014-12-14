@@ -3,7 +3,7 @@ require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 
 require 'data_import/header_fields_dao'
-require 'data_import/services/team_name_analizer'
+require 'data_import/services/team_name_analyzer'
 require 'data_import/strategies/filename_parser'
 require 'data_import/strategies/meeting_date_parser'
 require 'data_import/strategies/fin_result_parser'

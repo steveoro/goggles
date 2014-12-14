@@ -147,7 +147,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           # instance:
           team_analysis_log = ''
           sql_executable_log = ''
-          result = TeamNameAnalizer.new.analyze(
+          result = TeamNameAnalyzer.new.analyze(
               team_name, season.id,
               team_analysis_log,                    # The method will update these 2 variables in place
               sql_executable_log,                   # (it uses the << operator)

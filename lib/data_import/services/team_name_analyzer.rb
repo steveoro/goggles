@@ -7,7 +7,7 @@ require_relative '../../../lib/data_import/analysis_report_dao'
 
 =begin
 
-= TeamNameAnalizer
+= TeamNameAnalyzer
 
   - Goggles framework vers.:  4.00.521
   - author: Steve A.
@@ -30,7 +30,7 @@ require_relative '../../../lib/data_import/analysis_report_dao'
    by calling the dedicated getter methods.
 
 =end
-class TeamNameAnalizer
+class TeamNameAnalyzer
 
   # Memoized getter for all the Team instances.
   #
@@ -53,7 +53,7 @@ class TeamNameAnalizer
   # Returns the internal FuzzyStringMatcher dedicated to scanning all TeamAffiliation instances.
   #
   def affiliation_matcher
-    @teams_matcher ||= FuzzyStringMatcher.new( all_affiliations, :name )
+    @affiliations_matcher ||= FuzzyStringMatcher.new( all_affiliations, :name )
   end
   # ----------------------------------------------------------------------------
   #++
