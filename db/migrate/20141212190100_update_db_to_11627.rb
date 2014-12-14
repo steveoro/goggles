@@ -1,4 +1,4 @@
-class UpdateDbTo11626 < ActiveRecord::Migration
+class UpdateDbTo11627 < ActiveRecord::Migration
   def up
     AppParameter.update(
       AppParameter::PARAM_VERSIONING_CODE,
