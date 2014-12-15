@@ -17,7 +17,7 @@ describe BeginTimeCalculator, type: :strategy do
     let(:scheduled_date)              { Date.parse( scheduled_date_string ) }
     let(:event_order)                 { (1 + rand * 100).to_i }
     let(:athletes_tot)                { (1 + rand * 50).to_i }
-    let(:base_time_mins)              { (rand * 10).to_i }
+    let(:base_time_mins)              { 1 + (rand * 15).to_i }
     let(:result) do
       subject.class.compute(
         scheduled_date,
@@ -65,7 +65,7 @@ describe BeginTimeCalculator, type: :strategy do
 # DEBUG
 #      puts "\r\nEvent ##{event_order}, athletes_tot: #{athletes_tot}, base_time_mins: #{base_time_mins}"
 #      puts "=> result: #{result}, optimistic_guess: #{optimistic_guess}, pessimistic_guess: #{pessimistic_guess}"
-      expect( result.to_f ).to be < pessimistic_guess.to_f
+      expect( result.to_f ).to be <= pessimistic_guess.to_f
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -82,10 +82,10 @@ describe BeginTimeCalculator, type: :strategy do
         )
       end
 
-      it "returns a guess that is not below the previous begin time" do
+      it "returns a guess that is greater than the previous begin time" do
 # DEBUG
-#        puts "\r\nEvent ##{event_order}, athletes_tot: #{athletes_tot}, base_time_mins: #{base_time_mins}"
-#        puts "=> result: #{result_with_prev_begin_time}, previous_begin_time: #{previous_begin_time}, optimistic_guess: #{optimistic_guess}, pessimistic_guess: #{pessimistic_guess}"
+        puts "\r\nEvent ##{event_order}, athletes_tot: #{athletes_tot}, base_time_mins: #{base_time_mins}"
+        puts "=> result: #{result_with_prev_begin_time}, previous_begin_time: #{previous_begin_time}, optimistic_guess: #{optimistic_guess}, pessimistic_guess: #{pessimistic_guess}"
         expect( result_with_prev_begin_time.to_f ).to be > previous_begin_time.to_f
       end
     end

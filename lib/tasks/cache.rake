@@ -286,8 +286,12 @@ parameters ('RAILS_ENV=production') not before having issued also a:
   #
   def get_login_response( server_url, user_email, password )
     a = Mechanize.new
-    page = a.get("http://#{server_url}/api/v1/sessions/create?user_password=#{password}&user_email=#{user_email}")
-    JSON.parse(page.body)
+    begin
+      page = a.get("http://#{server_url}/api/v1/sessions/create?user_password=#{ CGI::escape(password) }&user_email=#{ CGI::escape(user_email) }")
+      JSON.parse(page.body)
+    rescue
+      puts $!
+    end
   end
 
 
@@ -303,8 +307,12 @@ parameters ('RAILS_ENV=production') not before having issued also a:
   #
   def do_logout( server_url, user_token )
     a = Mechanize.new
-    page = a.get("http://#{server_url}/api/v1/sessions/destroy?user_token=#{user_token}")
-    JSON.parse(page.body)
+    begin
+      page = a.get("http://#{server_url}/api/v1/sessions/destroy?user_token=#{ CGI::escape(user_token) }")
+      JSON.parse(page.body)
+    rescue
+      puts $!
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -324,7 +332,11 @@ parameters ('RAILS_ENV=production') not before having issued also a:
   #
   def get_request( server_url, request_url, user_name, user_token )
     a = Mechanize.new
-    a.get("http://#{server_url}#{request_url}?user_name=#{user_name}&user_token=#{user_token}")
+    begin
+      a.get("http://#{server_url}#{request_url}?user_name=#{ CGI::escape(user_name) }&user_token=#{ CGI::escape(user_token) }")
+    rescue
+      puts $!
+    end
   end
 
 
