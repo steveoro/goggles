@@ -1,0 +1,20 @@
+.row-fluid#how_to_view_passages
+  %h2= t('tutorial.how_to_view_passages')
+
+.row-fluid
+  %p= t('coming_soon') 
+
+.row-fluid.goggles-category-gap 
+  .row-fluid.span6
+    .row-fluid.span1
+      = image_tag( "spiral-128.png")
+    .row-fluid.span11
+      %a(href="#TopOfPage")= t('tutorial.argument_index')
+  .row-fluid.span6
+    .row-fluid.span11.text-right
+      = t('tutorial.next_argument')
+      %a(href="#what_about_trainings")= t('tutorial.what_about_trainings')
+    .row-fluid.span1
+      = image_tag( "document-128.png")
+
+.row-fluid.goggles-category-gap 

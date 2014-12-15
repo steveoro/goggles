@@ -1,5 +1,5 @@
 .row-fluid#what_can_i_do
-  %h2= t('tutorials.what_can_i_do')
+  %h2= t('tutorial.what_can_i_do')
 
 .row-fluid 
   .row-fluid.span4
@@ -40,11 +40,11 @@
     .row-fluid.span1
       = image_tag( "spiral-128.png")
     .row-fluid.span11
-      %a(href="#TopOfPage")= 'Indice argomenti'
+      %a(href="#TopOfPage")= t('tutorial.argument_index')
   .row-fluid.span6
     .row-fluid.span11.text-right
-      = 'Prossimo argomento: '
-      %a(href="#how_to_view_passages")= t('tutorials.how_to_view_passages')
+      = t('tutorial.next_argument')
+      %a(href="#what_about_meetings")= t('tutorial.what_about_meetings')
     .row-fluid.span1
       = image_tag( "document-128.png")
 
