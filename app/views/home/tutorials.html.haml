@@ -1,9 +1,9 @@
-.row-fluid#index
+.row-fluid#TopOfPage
   - #index
   .row-fluid.span2
-    %h2= t('tutorial')
+    %h3= t('tutorial')
     %ul
-      - if user_signed_in?
+      - if not user_signed_in?
         %li
           %a(href="#how_to_register")= t('tutorials.how_to_register')
       %li
@@ -15,6 +15,6 @@
   
   
   .row-fluid.span10
-    - if user_signed_in?
+    - if not user_signed_in?
       = render( partial: 'how_to_register' )
     = render( partial: 'what_can_i_do' )
