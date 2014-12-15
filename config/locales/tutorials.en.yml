@@ -1,8 +1,12 @@
 en:
-  tutorial: "Tutorials"
+  tutorials_title: "Tutorials"
 
-  tutorials:
+  tutorial:
     how_to_register: "The registration"
     what_can_i_do: "What can I do with Goggles?!?"
+    what_about_meetings: "What about meetings"
     how_to_view_passages: "The performance passages"
+    what_about_trainings: "What about trainings"
     how_to_calculate_fin_score: "FIN score calculation"
+    next_argument: 'Next argument: '
+    argument_index: 'Indice argomenti'
