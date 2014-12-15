@@ -8,7 +8,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportTimeStandardBuilder
 
-  - Goggles framework vers.:  4.00.661
+  - Goggles framework vers.:  4.00.671
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -36,7 +36,7 @@ class DataImportTimeStandardBuilder < DataImportEntityBuilder
         )
         default_search
 # DEBUG
-        puts "TimeStandard: primary_search_ok!" if primary_search_ok?
+#        puts "TimeStandard: primary_search_ok!" if primary_search_ok?
 #        puts "TimeStandard: secondary_search_ok!" if secondary_search_ok?
       end
 
@@ -56,7 +56,7 @@ class DataImportTimeStandardBuilder < DataImportEntityBuilder
 
       if_not_found do
 # DEBUG
-        puts "NOT found! Adding new TimeStandard with: #{mins}'#{secs}\"#{hds}, season:#{season.id}, event type:#{event_type_id}, category:#{category_type_id}, gender:#{gender_type_id}, pool_type:#{pool_type_id}..."
+#        puts "NOT found! Adding new TimeStandard with: #{mins}'#{secs}\"#{hds}, season:#{season.id}, event type:#{event_type_id}, category:#{category_type_id}, gender:#{gender_type_id}, pool_type:#{pool_type_id}..."
         add_new
       end
     end

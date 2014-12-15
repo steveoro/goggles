@@ -221,11 +221,11 @@ describe DataImportMeetingProgramBuilder, type: :integration do
     end
 
     context "after a self.build() with existing MeetingProgram data (#{meeting_program.meeting.get_full_name}, #{meeting_program.get_full_name})," do
-      before(:all) do
 # DEBUG
-        puts "\r\n\r\n----------------------8<-----------------------[#{index}]"
-        puts "*** #{meeting_program.event_type.i18n_short} ***"
-      end
+#      before(:all) do
+#        puts "\r\n\r\n----------------------8<-----------------------[#{index}]"
+#        puts "*** #{meeting_program.event_type.i18n_short} ***"
+#      end
       it "returns a DataImportEntityBuilder instance" do
         expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
       end
@@ -234,16 +234,14 @@ describe DataImportMeetingProgramBuilder, type: :integration do
           expect( subject.data_import_session ).to eq( data_import_session )
         end
       end
-      it "doesn't create any additional primary entity row" do
-        # (+1 only from the factory creation in the subject)
-        expect{ subject }.to change{ MeetingProgram.count }.by(1)
+      it "doesn't create any primary entity row" do
+        expect{ subject }.not_to change{ MeetingProgram.count }
       end
       it "doesn't create a new secondary entity row" do
         expect{ subject }.not_to change{ DataImportMeetingProgram.count }
       end
-      it "doesn't create any additional MeetingEvent row" do
-        # (+1 only from the factory creation in the subject)
-        expect{ subject }.to change{ MeetingEvent.count }.by(1)
+      it "doesn't create any MeetingEvent row" do
+        expect{ subject }.not_to change{ MeetingEvent.count }
       end
       describe "#result_row" do
         it "returns a primary entity instance when the process is successful" do

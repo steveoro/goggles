@@ -284,3 +284,4 @@ it:
           attributes:
             current_password:
               blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"

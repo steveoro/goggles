@@ -10,7 +10,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.661
+  - Goggles framework vers.:  4.00.671
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -62,8 +62,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
     raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!")      unless category_type.instance_of?(CategoryType)
     raise ArgumentError.new("'stroke_type' must be a valid instance of StrokeType!")          unless stroke_type.instance_of?(StrokeType)
 # DEBUG
-    puts "\r\nMeetingProgram -- build_from_parameters: #{header_row.inspect}\r\n=> length_in_meters: #{length_in_meters}"
-    puts "=> #{gender_type.inspect}\r\n=> #{category_type.inspect}\r\n=> #{stroke_type.inspect}\r\n=> #{scheduled_date.inspect}"
+#    puts "\r\nMeetingProgram -- build_from_parameters: #{header_row.inspect}\r\n=> length_in_meters: #{length_in_meters}"
+#    puts "=> #{gender_type.inspect}\r\n=> #{category_type.inspect}\r\n=> #{stroke_type.inspect}\r\n=> #{scheduled_date.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingProgram
@@ -72,7 +72,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         # NOTE:
         # header_row[:fields] => [ :type, :distance, :style, :gender, :category_group, :base_time ]
 # DEBUG
-        puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
+#        puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
         @import_text = header_row[:import_text]
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
@@ -106,7 +106,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           PoolType::MT50_ID
         )
 # DEBUG
-        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
+#        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
 
         # Define also the base time or standard time, if any:
         @time_standard = DataImportTimeStandardBuilder.build_from_parameters(
@@ -121,13 +121,13 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           @hds
         ).result_row if ( @mins.to_i > 0 || @secs.to_i > 0 || @hds.to_i > 0 )
 # DEBUG
-        puts( "@time_standard => #{@time_standard.inspect}" )
+#        puts( "@time_standard => #{@time_standard.inspect}" )
       end
 
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingProgram..." )
+#        puts( "Seeking existing MeetingProgram..." )
         primary     [
           "(meeting_event_id = ?) AND (category_type_id = ?) AND (gender_type_id = ?)",
           ( @meeting_event.instance_of?(MeetingEvent) ? @meeting_event.id : 0 ),
@@ -144,14 +144,14 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
+#        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
         attributes_for_creation(
           data_import_session_id:         data_import_session.id,
           import_text:                    @import_text,
@@ -200,11 +200,11 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
       8                                           # Starting hour for the meeting
     )
 # DEBUG
-    puts(
-      "\r\nMeeting program parsing: base_time='#{base_time}' => #{mins}:#{'%02d' % secs}.#{'%02d' % hds}" <<
-      "\r\n- scheduled_date=#{scheduled_date}, event_order: #{event_order}, total_entries=#{total_entries}, previous_begin_time='#{previous_begin_time}'" <<
-      "\r\n=> resulting begin_time: #{begin_time}"
-    )
+#    puts(
+#      "\r\nMeeting program parsing: base_time='#{base_time}' => #{mins}:#{'%02d' % secs}.#{'%02d' % hds}" <<
+#      "\r\n- scheduled_date=#{scheduled_date}, event_order: #{event_order}, total_entries=#{total_entries}, previous_begin_time='#{previous_begin_time}'" <<
+#      "\r\n=> resulting begin_time: #{begin_time}"
+#    )
     [
       begin_time, mins, secs, hds
     ]
@@ -215,7 +215,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
   #
   def self.get_event_type( category_type, length_in_meters, stroke_type_id, type_text_token )
 # DEBUG
-    puts( "\r\nSearching EventType where type='#{type_text_token}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type_id}, is_a_relay: #{category_type.is_a_relay}..." )
+#    puts( "\r\nSearching EventType where type='#{type_text_token}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type_id}, is_a_relay: #{category_type.is_a_relay}..." )
     event_type = category_type.is_a_relay ?
       EventType.parse_relay_event_type_from_import_text( stroke_type_id, type_text_token ) :
       EventType.where(
@@ -224,7 +224,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         is_a_relay:       false
       ).first
 # DEBUG
-    puts( "=> event_type: #{event_type.inspect}" )
+#    puts( "=> event_type: #{event_type.inspect}" )
     event_type
   end
 
@@ -240,10 +240,10 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
       heat_type_id:       HeatType::FINALS_ID
     ).first
 # DEBUG
-    puts(
-      "- possible_meeting_session_ids: #{possible_meeting_session_ids.inspect}" <<
-      "\r\n=> meeting_event: #{meeting_event.inspect}"
-    )
+#    puts(
+#      "- possible_meeting_session_ids: #{possible_meeting_session_ids.inspect}" <<
+#      "\r\n=> meeting_event: #{meeting_event.inspect}"
+#    )
     meeting_event
   end
   #-- -------------------------------------------------------------------------
