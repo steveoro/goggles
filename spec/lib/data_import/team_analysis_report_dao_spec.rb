@@ -4,14 +4,14 @@ require 'spec_helper'
 require 'ffaker'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../lib/data_import/analysis_report_dao'
+require_relative '../../../lib/data_import/team_analysis_report_dao'
 require_relative '../../../app/strategies/fuzzy_string_matcher'
 
 
-describe AnalysisReportDAO, type: :model do
+describe TeamAnalysisReportDAO, type: :model do
 
   context "as an empty, valid instance," do
-    subject { AnalysisReportDAO.new( nil, nil, nil, nil, nil, '' ) }
+    subject { TeamAnalysisReportDAO.new( nil, nil, nil, nil, nil, '' ) }
 
     it_behaves_like( "(the existance of a method)", [
       :team_match, :team_id, :affiliation_match,
@@ -23,7 +23,7 @@ describe AnalysisReportDAO, type: :model do
     let(:team_affiliation) { create(:team_affiliation) }
 
     subject do
-      AnalysisReportDAO.new(
+      TeamAnalysisReportDAO.new(
         { score: 0.9, row: team_affiliation.team },
         team_affiliation.team_id,
         { score: 0.9, row: team_affiliation },

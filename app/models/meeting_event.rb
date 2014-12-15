@@ -34,12 +34,12 @@ class MeetingEvent < ActiveRecord::Base
 
   # Computes a shorter description for the name associated with this data
   def get_full_name
-    "#{get_meeting_session_name} (#{get_scheduled_date})"
+    "#{event_type.i18n_short} (#{get_scheduled_date})"
   end
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "#{get_meeting_session_verbose_name} (#{event_order} @ #{get_scheduled_date})"
+    "#{event_type.i18n_description} (#{event_order} @ #{get_scheduled_date})"
   end
   # ----------------------------------------------------------------------------
 

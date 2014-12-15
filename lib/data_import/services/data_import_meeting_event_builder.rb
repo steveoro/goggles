@@ -45,10 +45,10 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
                                   heat_type, event_order, begin_time, is_out_of_race )
     raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!") unless meeting_session.instance_of?( MeetingSession )
 # DEBUG
-#    puts "\r\nMeetingEvent -- build_from_parameters: #{meeting_session.inspect}"
-#    puts "- event_type:  #{event_type.inspect}"
-#    puts "- heat_type:   #{heat_type.inspect}"
-#    puts "- event_order: #{event_order.inspect}"
+    puts "\r\nMeetingEvent -- build_from_parameters: #{meeting_session.inspect}"
+    puts "- event_type:  #{event_type.inspect}"
+    puts "- heat_type:   #{heat_type.inspect}"
+    puts "- event_order: #{event_order.inspect}"
     self.build( data_import_session ) do
       entity              MeetingEvent
 
@@ -82,7 +82,8 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
 
       if_not_found do
 # DEBUG
-#        puts "Creating a new MeetingEvent..."
+        puts "Creating a new MeetingEvent..."
+        puts "\r\n- meeting_session.id: #{meeting_session.id}"
         add_new
       end
     end

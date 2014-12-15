@@ -2,7 +2,7 @@
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../app/strategies/fuzzy_string_matcher'
-require_relative '../../../lib/data_import/analysis_report_dao'
+require_relative '../../../lib/data_import/team_analysis_report_dao'
 
 
 =begin
@@ -205,9 +205,9 @@ class TeamNameAnalyzer
   # Prepares the report of best-matches text given the result hash.
   #
   # === Returns:
-  # An +AnalysisReportDAO+ object containing all the result fields.
+  # An +TeamAnalysisReportDAO+ object containing all the result fields.
   #
-  # @see #AnalysisReportDAO
+  # @see #TeamAnalysisReportDAO
   #
   def prepare_analysis_report( matching_string, desired_season_id, analysis_text_log,
                                result_list, min_bias_score )
@@ -275,7 +275,7 @@ class TeamNameAnalyzer
     end
     analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id
 
-    AnalysisReportDAO.new(
+    TeamAnalysisReportDAO.new(
       team_match, team_id, affiliation_match,
       hiscoring_match, best_match, analysis_text_log
     )

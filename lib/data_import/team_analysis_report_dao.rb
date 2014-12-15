@@ -3,7 +3,7 @@
 
 =begin
 
-= AnalysisReportDAO
+= TeamAnalysisReportDAO
 
   - Goggles framework vers.:  4.00.521
   - author: Steve A.
@@ -35,7 +35,7 @@
  - text_log: resulting verbose text log of the analysis (never +nil+).
 
 =end
-class AnalysisReportDAO
+class TeamAnalysisReportDAO
 
   # These must be initialized on creation:
   attr_reader :team_match, :team_id, :affiliation_match,
@@ -54,5 +54,4 @@ class AnalysisReportDAO
   end
   #-- -------------------------------------------------------------------------
   #++
-
 end

@@ -2,7 +2,7 @@
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../app/strategies/fuzzy_string_matcher'
-require_relative '../../../lib/data_import/analysis_report_dao'
+require_relative '../../../lib/data_import/swimmer_analysis_report_dao'
 
 
 =begin
@@ -190,9 +190,9 @@ class SwimmerNameAnalyzer
   # Prepares the report of best-matches text given the result hash.
   #
   # === Returns:
-  # An +AnalysisReportDAO+ object containing all the result fields.
+  # An +TeamAnalysisReportDAO+ object containing all the result fields.
   #
-  # @see #AnalysisReportDAO
+  # @see #TeamAnalysisReportDAO
   #
   def prepare_analysis_report( matching_string, desired_season_id, analysis_text_log,
                                result_list, min_bias_score )
@@ -201,15 +201,15 @@ class SwimmerNameAnalyzer
     # team_id = nil
     # best_match = nil
     # hiscoring_match = nil                           # Overall hi-scoring result (either Team or TeamAff.)
-# 
+#
     # result_list = result_list.sort!{ |x,y| x[ :score ] <=> y[ :score ] }
     # result_list.each { |result|
       # analysis_text_log << "   - " << format_result_row( result[:row], result[:score] )
-# 
+#
       # if result[:row].instance_of?( Team )
         # # We will store only the highest matches per class, while looping on the results:
         # team_match = result if team_match.nil? || (team_match && team_match[:score] < result[:score])
-# 
+#
       # elsif result[:row].instance_of?( TeamAffiliation )
         # if ( desired_season_id == result[:row].season_id )
           # analysis_text_log << " (SEASON OK)"
@@ -235,13 +235,13 @@ class SwimmerNameAnalyzer
     # end
                                                     # # Result team_id not set yet?:
     # team_id = team_match[:row].id if team_id.nil? && team_match && team_match[:row]
-# 
+#
     # if (result_list.size > 0)
       # analysis_text_log << "\r\n   ==> #{result_list.size} results tot., min. bias: #{sprintf("%1.4f", min_bias_score)}\r\n"
     # else
       # analysis_text_log << "   (no results)\r\n"
     # end
-# 
+#
     # if team_match
       # analysis_text_log << "   Team   BEST...: " << format_result_row( team_match[:row], team_match[:score] )
       # analysis_text_log << "\r\n"
@@ -259,8 +259,8 @@ class SwimmerNameAnalyzer
       # analysis_text_log << "\r\n"
     # end
     # analysis_text_log << "   Chosen team_id = #{team_id}, season_id = #{desired_season_id}\r\n" if team_id
-# 
-    # AnalysisReportDAO.new(
+#
+    # SwimmerAnalysisReportDAO.new(
       # team_match, team_id, affiliation_match,
       # hiscoring_match, best_match, analysis_text_log
     # )
