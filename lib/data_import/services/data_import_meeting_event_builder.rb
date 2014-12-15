@@ -61,7 +61,7 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
         primary(
           meeting_session_id: @possible_meeting_session_ids,
           event_type_id:      event_type.id,
-          heat_type_id:       heat_type.id,
+          heat_type_id:       heat_type.id
         )
         default_search
       end

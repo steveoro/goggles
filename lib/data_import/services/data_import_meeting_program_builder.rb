@@ -32,7 +32,12 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
   # (In other words, this won't create a missing MeetingEvent when a match is not found.)
   #
   # Note that both <tt>season</tt> and <tt>meeting_session</tt> must be not +nil+ and
-  # can be either a primary or secondary entity row.
+  # must correspond only to a primary entity row. In this implementation an error is raised
+  # if they contain any secondary entity rows.
+  #
+  # This is due to the fact that the association towards MeetingEvent(s) is not possibile
+  # at this stage unless the MeetingSession(s) are already committed.
+  # (Consequently, they can only represent primary entities.)
   #
   # == Returns
   #   #result_id as:
@@ -40,7 +45,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
   #     - negative (- #id) for a matching existing or commited row in MeetingProgram;
   #     - 0 on error/unable to process.
   #
-  # @raise ArgumentError unless <tt>season</tt> and <tt>meeting_session</tt> are both not-nil.
+  # @raise ArgumentError unless <tt>season</tt> is a valid Season.
+  # @raise ArgumentError unless <tt>meeting_session</tt> is a valid MeetingSession.
   # @raise ArgumentError unless <tt>gender_type</tt> is a valid GenderType.
   # @raise ArgumentError unless <tt>category_type</tt> is a valid CategoryType.
   # @raise ArgumentError unless <tt>stroke_type</tt> is a valid StrokeType.
@@ -50,13 +56,14 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
                                   gender_type, category_type, stroke_type,
                                   length_in_meters, scheduled_date,
                                   detail_rows_size, previous_begin_time = nil )
-    raise ArgumentError.new("Both season and meeting_session must be not nil!")          if season.nil? || meeting_session.nil?
-    raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
-    raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
-    raise ArgumentError.new("'stroke_type' must be a valid instance of StrokeType!")     unless stroke_type.instance_of?(StrokeType)
+    raise ArgumentError.new("'season' must be a valid instance of Season!")                   unless season.instance_of?(Season)
+    raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!")  unless meeting_session.instance_of?(MeetingSession)
+    raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")          unless gender_type.instance_of?(GenderType)
+    raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!")      unless category_type.instance_of?(CategoryType)
+    raise ArgumentError.new("'stroke_type' must be a valid instance of StrokeType!")          unless stroke_type.instance_of?(StrokeType)
 # DEBUG
-#    puts "\r\nMeetingProgram -- build_from_parameters: #{header_row.inspect}\r\n=> length_in_meters: #{length_in_meters}"
-#    puts "=> #{gender_type.inspect}\r\n=> #{category_type.inspect}\r\n=> #{stroke_type.inspect}\r\n=> #{scheduled_date.inspect}"
+    puts "\r\nMeetingProgram -- build_from_parameters: #{header_row.inspect}\r\n=> length_in_meters: #{length_in_meters}"
+    puts "=> #{gender_type.inspect}\r\n=> #{category_type.inspect}\r\n=> #{stroke_type.inspect}\r\n=> #{scheduled_date.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingProgram
@@ -70,51 +77,37 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
         base_time    = header_row[:fields][:base_time]
-        @mins, @secs, @hds = ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
-        @begin_time = BeginTimeCalculator.compute(
+
+        @begin_time, @mins, @secs, @hds = DataImportMeetingProgramBuilder.get_begin_time_and_base_time_members(
           scheduled_date,
           @event_order,
-          detail_rows_size,                         # Athletes in total for this program
-          @mins,                                    # Base time minutes
+          detail_rows_size,
           previous_begin_time,
-          8,                                        # Average occupancy of pool lanes
-          8                                         # Starting hour for the meeting
+          base_time
         )
-# DEBUG
-        puts( "\r\nMeeting program parsing: base_time='#{base_time}' ... #{@mins}:#{'%02d' % @secs}.#{'%02d' % @hds}, (#{header_row[:fields].inspect})" )
-#        puts( "scheduled_date=#{scheduled_date}, header_index=#{header_index} * heat_number_approx='#{heat_number_approx}', esteemed_hours=#{esteemed_hours}, esteemed_meeting_mins=#{esteemed_meeting_mins}" )
-# DEBUG
-        puts( "begin_time: #{@begin_time}" )
-        # Get the pool type:
-        @pool_type_id = ( meeting_session.swimming_pool ?
-          meeting_session.swimming_pool.pool_type_id :
+
+        @event_type = DataImportMeetingProgramBuilder.get_event_type(
+          category_type,
+          length_in_meters,
+          stroke_type.id,
+          header_row[:fields][:type]
+        )
+        raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
+
+        # Retrieve the parent MeetingEvent, if possible, just to get to the correct session:
+        @meeting_event = DataImportMeetingProgramBuilder.get_meeting_event( meeting_session.meeting_id, @event_type.id )
+
+        # Use the correct MeetingSession or fallback to the default (specified as a parameter):
+        @meeting_session = @meeting_event ? @meeting_event.meeting_session : meeting_session
+
+        # Get the pool type or fallback to a default:
+        @pool_type_id = ( @meeting_session.swimming_pool ?
+          @meeting_session.swimming_pool.pool_type_id :
           PoolType::MT50_ID
         )
 # DEBUG
-#        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
-#        puts( "\r\nSearching EventType where type='#{header_row[:fields][:type]}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type.id}, is_a_relay: #{category_type.is_a_relay}..." )
-        if category_type.is_a_relay
-          @event_type  = EventType.parse_relay_event_type_from_import_text(
-            stroke_type.id,
-            header_row[:fields][:type]
-          )
-        else
-          @event_type  = EventType.where(
-            length_in_meters: length_in_meters,
-            stroke_type_id:   stroke_type.id,
-            is_a_relay:       false
-          ).first
-        end
-# DEBUG
-#        puts( "@event_type => #{@event_type.inspect}" )
-        raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
+        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
 
-        # Find the parent MeetingEvent using the meeting_session:
-        @meeting_event = MeetingEvent.where(
-          [ "(meeting_session_id = ?) AND (event_type_id = ?)", meeting_session.id, @event_type.id ]
-        ).first if meeting_session.instance_of?(MeetingSession)
-# DEBUG
-#        puts( "@meeting_event =>#{@meeting_event.inspect}" )
         # Define also the base time or standard time, if any:
         @time_standard = DataImportTimeStandardBuilder.build_from_parameters(
           data_import_session,
@@ -128,35 +121,37 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           @hds
         ).result_row if ( @mins.to_i > 0 || @secs.to_i > 0 || @hds.to_i > 0 )
 # DEBUG
-#        puts( "@time_standard => #{@time_standard.inspect}" )
+        puts( "@time_standard => #{@time_standard.inspect}" )
       end
 
 
       search do
 # DEBUG
-#        puts( "Seeking existing MeetingProgram..." )
+        puts( "Seeking existing MeetingProgram..." )
         primary     [
           "(meeting_event_id = ?) AND (category_type_id = ?) AND (gender_type_id = ?)",
           ( @meeting_event.instance_of?(MeetingEvent) ? @meeting_event.id : 0 ),
           category_type.id, gender_type.id
         ]
+
         secondary   [
           "(data_import_session_id = ?) AND " <<
-          "(#{meeting_session.instance_of?(MeetingSession) ? '' : 'data_import_'}meeting_session_id = ?) AND " <<
+          "(#{@meeting_session.instance_of?(MeetingSession) ? '' : 'data_import_'}meeting_session_id = ?) AND " <<
           "(event_type_id = ?) AND (category_type_id = ?) AND (gender_type_id = ?)",
-          data_import_session.id, meeting_session.id,
+          data_import_session.id, @meeting_session.id,
           @event_type.id, category_type.id, gender_type.id
         ]
+
         default_search
 # DEBUG
-#        puts "primary_search_ok!" if primary_search_ok?
-#        puts "secondary_search_ok!" if secondary_search_ok?
+        puts "primary_search_ok!" if primary_search_ok?
+        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-#        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
+        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
         attributes_for_creation(
           data_import_session_id:         data_import_session.id,
           import_text:                    @import_text,
@@ -173,12 +168,83 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           heat_type_id:                   HeatType::FINALS_ID,
           time_standard_id:               @time_standard ? @time_standard.id : nil,
           user_id:                        1, # (don't care)
-          meeting_session_id:             meeting_session.instance_of?(MeetingSession)           ? meeting_session.id : nil,
-          data_import_meeting_session_id: meeting_session.instance_of?(DataImportMeetingSession) ? meeting_session.id : nil
+          meeting_session_id:             @meeting_session.instance_of?(MeetingSession)           ? @meeting_session.id : nil,
+          data_import_meeting_session_id: @meeting_session.instance_of?(DataImportMeetingSession) ? @meeting_session.id : nil
         )
         add_new
       end
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Prepares and returns the list of values for the internal members (in this order):
+  #
+  # - @begin_time, the esteemation Program start, as a Time instance.
+  # - @mins, @secs, @hds integer values used in the base time search/create step
+  #
+  def self.get_begin_time_and_base_time_members( scheduled_date, event_order, total_entries,
+                                                 previous_begin_time, base_time )
+    mins, secs, hds = ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
+    begin_time = BeginTimeCalculator.compute(
+      scheduled_date,
+      event_order,
+      total_entries,                              # Athletes in total for this program
+      mins,                                       # Base time minutes
+      previous_begin_time,
+      8,                                          # Average occupancy of pool lanes
+      8                                           # Starting hour for the meeting
+    )
+# DEBUG
+    puts(
+      "\r\nMeeting program parsing: base_time='#{base_time}' => #{mins}:#{'%02d' % secs}.#{'%02d' % hds}" <<
+      "\r\n- scheduled_date=#{scheduled_date}, event_order: #{event_order}, total_entries=#{total_entries}, previous_begin_time='#{previous_begin_time}'" <<
+      "\r\n=> resulting begin_time: #{begin_time}"
+    )
+    [
+      begin_time, mins, secs, hds
+    ]
+  end
+
+
+  # Returns the correct EventType, or +nil+ when none is found.
+  #
+  def self.get_event_type( category_type, length_in_meters, stroke_type_id, type_text_token )
+# DEBUG
+    puts( "\r\nSearching EventType where type='#{type_text_token}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type_id}, is_a_relay: #{category_type.is_a_relay}..." )
+    event_type = category_type.is_a_relay ?
+      EventType.parse_relay_event_type_from_import_text( stroke_type_id, type_text_token ) :
+      EventType.where(
+        length_in_meters: length_in_meters,
+        stroke_type_id:   stroke_type_id,
+        is_a_relay:       false
+      ).first
+# DEBUG
+    puts( "=> event_type: #{event_type.inspect}" )
+    event_type
+  end
+
+
+  # Returns the parent MeetingEvent using the meeting ID and the event type, or +nil+
+  # when none is found
+  #
+  def self.get_meeting_event( meeting_id, event_type_id )
+    possible_meeting_session_ids = MeetingSession.where( meeting_id: meeting_id ).map{ |ms| ms.id }
+    meeting_event = MeetingEvent.where(
+      meeting_session_id: possible_meeting_session_ids,
+      event_type_id:      event_type_id,
+      heat_type_id:       HeatType::FINALS_ID
+    ).first
+# DEBUG
+    puts(
+      "- possible_meeting_session_ids: #{possible_meeting_session_ids.inspect}" <<
+      "\r\n=> meeting_event: #{meeting_event.inspect}"
+    )
+    meeting_event
   end
   #-- -------------------------------------------------------------------------
   #++

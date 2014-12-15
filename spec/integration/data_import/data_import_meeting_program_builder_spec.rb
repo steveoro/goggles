@@ -10,9 +10,6 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
-  # Existing or matching fixture params:
-  let(:meeting_program)       { create( :meeting_program ) }
-
   # Non-existing (random, NOT-RELAY) fixture params. Rebuild a plausible event & program
   # starting from the meeting session:
   let(:meeting_session)       { create( :meeting_session ) }
@@ -204,7 +201,8 @@ describe DataImportMeetingProgramBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with a matching MeetingProgram (and its MeetingEvent)," do
+  # Execute on actual real data: (ID 14216: FIN Parma 2014-12-14)
+  Meeting.find( 14216 ).meeting_programs.each_with_index do |meeting_program, index|
     subject do
       DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
@@ -222,38 +220,43 @@ describe DataImportMeetingProgramBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
-    end
-    describe "#data_import_session" do
-      it "is the DataImportSession specified for the build" do
-        expect( subject.data_import_session ).to eq( data_import_session )
+    context "after a self.build() with existing MeetingProgram data (#{meeting_program.meeting.get_full_name}, #{meeting_program.get_full_name})," do
+      before(:all) do
+# DEBUG
+        puts "\r\n\r\n----------------------8<-----------------------[#{index}]"
+        puts "*** #{meeting_program.event_type.i18n_short} ***"
       end
-    end
-
-    it "doesn't create any additional primary entity row" do
-      # (+1 only from the factory creation in the subject)
-      expect{ subject }.to change{ MeetingProgram.count }.by(1)
-    end
-    it "doesn't create a new secondary entity row" do
-      expect{ subject }.not_to change{ DataImportMeetingProgram.count }
-    end
-    it "doesn't create any additional MeetingEvent row" do
-      # (+1 only from the factory creation in the subject)
-      expect{ subject }.to change{ MeetingEvent.count }.by(1)
-    end
-
-    describe "#result_row" do
-      it "returns a primary entity instance when the process is successful" do
-        expect( subject.result_row ).to be_an_instance_of( MeetingProgram )
+      it "returns a DataImportEntityBuilder instance" do
+        expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
       end
-    end
-    describe "#result_id" do
-      it "returns a negative ID when the resulting row is a primary entity" do
-        expect( subject.result_id ).to be < 0
+      describe "#data_import_session" do
+        it "is the DataImportSession specified for the build" do
+          expect( subject.data_import_session ).to eq( data_import_session )
+        end
       end
-      it "is the ID of the resulting row (with a minus sign)" do
-        expect( subject.result_id ).to eq( -subject.result_row.id )
+      it "doesn't create any additional primary entity row" do
+        # (+1 only from the factory creation in the subject)
+        expect{ subject }.to change{ MeetingProgram.count }.by(1)
+      end
+      it "doesn't create a new secondary entity row" do
+        expect{ subject }.not_to change{ DataImportMeetingProgram.count }
+      end
+      it "doesn't create any additional MeetingEvent row" do
+        # (+1 only from the factory creation in the subject)
+        expect{ subject }.to change{ MeetingEvent.count }.by(1)
+      end
+      describe "#result_row" do
+        it "returns a primary entity instance when the process is successful" do
+          expect( subject.result_row ).to be_an_instance_of( MeetingProgram )
+        end
+      end
+      describe "#result_id" do
+        it "returns a negative ID when the resulting row is a primary entity" do
+          expect( subject.result_id ).to be < 0
+        end
+        it "is the ID of the resulting row (with a minus sign)" do
+          expect( subject.result_id ).to eq( -subject.result_row.id )
+        end
       end
     end
   end
