@@ -33,8 +33,17 @@
   .row-fluid.span3
     = image_tag( "tutorial/associate.png")
 
-.row-fluid 
-  .row-fluid.span1
-    = image_tag( "spiral-128.png")
-  .row-fluid.span8
-    %h4= 'Vai al prossimo interessantissimo argomento'
+.row-fluid.goggles-category-gap 
+  .row-fluid.span6
+    .row-fluid.span1
+      = image_tag( "spiral-128.png")
+    .row-fluid.span11
+      %a(href="#TopOfPage")= 'Indice argomenti'
+  .row-fluid.span6
+    .row-fluid.span11.text-right
+      = 'Prossimo argomento: '
+      %a(href="#what_can_i_do")= t('tutorials.what_can_i_do')
+    .row-fluid.span1
+      = image_tag( "document-128.png")
+
+.row-fluid.goggles-category-gap 
