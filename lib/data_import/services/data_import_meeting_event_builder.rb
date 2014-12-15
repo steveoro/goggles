@@ -54,7 +54,7 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
 
       set_up do
         @possible_meeting_session_ids = MeetingSession.where( meeting_id: meeting_session.meeting_id ).map{ |ms| ms.id }
-#        puts "\r\n- @possible_meeting_session_ids: #{@possible_meeting_session_ids.inspect}"
+        puts "\r\n- @possible_meeting_session_ids: #{@possible_meeting_session_ids.inspect}"
       end
                                                   # Search conditions:
       search do
