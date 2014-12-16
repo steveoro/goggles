@@ -1,4 +1,4 @@
-.row-fluid#how_to_register
+.row-fluid.goggles-category-gap#how_to_register
   %h2= t('tutorial.how_to_register')
 
 .row-fluid 
@@ -28,31 +28,24 @@
       %p
         %b= t('tutorial.how_to_register_text.line10') 
     .row-fluid
-      .row-fluid.span6
+      .row-fluid.offset6.span6
         %p= t('tutorial.how_to_register_text.line11')
         = image_tag( "tutorial/welcome.png")
-      .row-fluid.span6
+      .row-fluid.offset6.span6
         %p= t('tutorial.how_to_register_text.line12')
         = image_tag( "tutorial/register_form.png")
     .row-fluid.goggles-category-gap
-      .row-fluid.span6
+      .row-fluid.offset6.span6
         %p= t('tutorial.how_to_register_text.line13')
         = image_tag( "tutorial/jump_forward.png")
-      .row-fluid.span6
+      .row-fluid.offset6.span6
         %p= t('tutorial.how_to_register_text.line14')
         = image_tag( "tutorial/associate.png")
 
 .row-fluid.goggles-category-gap 
-  .row-fluid.span6
-    .row-fluid.span1
-      = image_tag( "spiral-128.png")
-    .row-fluid.span11
-      %a(href="#TopOfPage")= t('tutorial.argument_index')
-  .row-fluid.span6
+  .row-fluid.offset6.span6
     .row-fluid.span11.text-right
       = t('tutorial.next_argument')
       %a(href="#what_can_i_do")= t('tutorial.what_can_i_do')
     .row-fluid.span1
       = image_tag( "document-128.png")
-
-.row-fluid.goggles-category-gap 

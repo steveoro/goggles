@@ -1,29 +1,34 @@
 .row-fluid#TopOfPage
   - #index
-  .row-fluid.span2.bs-docs-sidebar
-    %h3= t('tutorials_title')
-    %ul.nav.nav-list.bs-docs-sidenav
-      - if not user_signed_in?
+  .row-fluid
+    .span3
+      %ul.nav.nav-list.navbar-fixed-bottom.span3
         %li
-          %a(href="#how_to_register")= t('tutorial.how_to_register')
-      %li
-        %a(href="#what_can_i_do")= t('tutorial.what_can_i_do')
-      %li
-        %a(href="#how_to_view_passages")= t('tutorial.what_about_meetings')
-      %li
-        %a(href="#how_to_view_passages")= t('tutorial.how_to_view_passages')
-      %li
-        %a(href="#how_to_view_passages")= t('tutorial.what_about_trainings')
-      %li
-        %a(href="#how_to_calculate_fin_score")= t('tutorial.how_to_calculate_fin_score')
-  
-  
-  .row-fluid.span10
-    - if not user_signed_in?
-      = render( partial: 'how_to_register' )
-    = render( partial: 'what_can_i_do' )
-    = render( partial: 'what_about_meetings' )
-    = render( partial: 'how_to_view_passages' )
-    = render( partial: 'what_about_trainings' )
-    = render( partial: 'how_to_calculate_fin_score' )
+          %h3= t('tutorials_title')
+        - if not user_signed_in?
+          %li
+            %a(href="#how_to_register")= t('tutorial.how_to_register')
+        %li
+          %a(href="#what_can_i_do")= t('tutorial.what_can_i_do')
+        %li
+          %a(href="#how_to_view_passages")= t('tutorial.what_about_meetings')
+        %li
+          %a(href="#how_to_view_passages")= t('tutorial.how_to_view_passages')
+        %li
+          %a(href="#how_to_view_passages")= t('tutorial.what_about_trainings')
+        %li
+          %a(href="#how_to_calculate_fin_score")= t('tutorial.how_to_calculate_fin_score')
+    .span9
+      - if not user_signed_in?
+        = render( partial: 'how_to_register' )
+      %hr
+      = render( partial: 'what_can_i_do' )
+      %hr
+      = render( partial: 'what_about_meetings' )
+      %hr
+      = render( partial: 'how_to_view_passages' )
+      %hr
+      = render( partial: 'what_about_trainings' )
+      %hr
+      = render( partial: 'how_to_calculate_fin_score' )
 
