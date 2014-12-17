@@ -252,7 +252,7 @@ Options: [output_path=#{LOCALCOPY_DIR}]
         results_link   = row_hash['results']
         startlist_link = results_link.gsub('risultati','startlist') if results_link
                                                     # Retrieve meeting_dates from the manifest URL:
-        manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('circuito-supermaster/').last.to_s.split('?').first : nil
+        manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
         puts "\r\n- (#{index+1}/#{total_rows}) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
 
         title, meeting_dates = retrieve_title_and_manifest_dates( manifest_page_name ) if manifest_page_name
