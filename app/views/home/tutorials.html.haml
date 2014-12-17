@@ -1,6 +1,6 @@
-.row-fluid#TopOfPage
-  - #index
+.container-fluid#TopOfPage
   .row-fluid
+    - # index column
     .span3
       %ul.nav.nav-list.navbar-fixed-bottom.span3
         %li
@@ -18,6 +18,7 @@
           %a(href="#how_to_view_passages")= t('tutorial.what_about_trainings')
         %li
           %a(href="#how_to_calculate_fin_score")= t('tutorial.how_to_calculate_fin_score')
+    - # content column
     .span9
       - if not user_signed_in?
         = render( partial: 'how_to_register' )
@@ -31,4 +32,3 @@
       = render( partial: 'what_about_trainings' )
       %hr
       = render( partial: 'how_to_calculate_fin_score' )
-

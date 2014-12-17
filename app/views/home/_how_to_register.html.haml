@@ -1,32 +1,31 @@
+
 .row-fluid.goggles-category-gap#how_to_register
   %h2= t('tutorial.how_to_register')
 
-.row-fluid 
-  .row-fluid.span8
-    .row-fluid 
-      .row-fluid.span9
-        %p
-          %b= t('tutorial.how_to_register_text.line1') 
-        %p= t('tutorial.how_to_register_text.line2')
-        %p= t('tutorial.how_to_register_text.line3')
-        %p= t('tutorial.how_to_register_text.line4')
-      .row-fluid.span3
-        = image_tag( "tutorial/disorder.jpg")
-    .row-fluid 
-      .row-fluid.span4
-        = image_tag( "jumbotron/timertable.png")
-      .row-fluid.span8
-        %p= t('tutorial.how_to_register_text.line5')
-        %p= t('tutorial.how_to_register_text.line6')
-    .row-fluid 
-      %p= t('tutorial.how_to_register_text.line7')
-      %p= t('tutorial.how_to_register_text.line8')
-      %p= t('tutorial.how_to_register_text.line9')
-  
+.row-fluid
+  .row-fluid
+    %h4= t('tutorial.how_to_register_text.line1')
+    %p= t('tutorial.how_to_register_text.line2')
+    %p= t('tutorial.how_to_register_text.line3')
+    %p= t('tutorial.how_to_register_text.line4')
+    .offset3.span4
+      = image_tag( "tutorial/disorder.jpg", class: "img-rounded" )
+  .row-fluid
+    %p
+  .row-fluid
+    %p= t('tutorial.how_to_register_text.line5')
+    %p= t('tutorial.how_to_register_text.line6')
+  .row-fluid
+    = image_tag( "jumbotron/timertable.png")
+  .row-fluid
+    %p= t('tutorial.how_to_register_text.line7')
+    %p= t('tutorial.how_to_register_text.line8')
+    %p= t('tutorial.how_to_register_text.line9')
+
   .row-fluid.span4
     .row-fluid
       %p
-        %b= t('tutorial.how_to_register_text.line10') 
+        %b= t('tutorial.how_to_register_text.line10')
     .row-fluid
       .row-fluid.offset6.span6
         %p= t('tutorial.how_to_register_text.line11')
@@ -42,7 +41,7 @@
         %p= t('tutorial.how_to_register_text.line14')
         = image_tag( "tutorial/associate.png")
 
-.row-fluid.goggles-category-gap 
+.row-fluid.goggles-category-gap
   .row-fluid.offset6.span6
     .row-fluid.span11.text-right
       = t('tutorial.next_argument')
