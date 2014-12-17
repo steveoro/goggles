@@ -1,0 +1,43 @@
+- default_gender = @swimmer_gender.id if @swimmer_gender
+- default_category = @swimmer_category.id if @swimmer_category
+- default_pool = @current_pool.id if @current_pool
+- default_event = @current_event.id if @current_event
+- default_minutes = @timing ? @timing.minutes : 0
+- default_seconds = @timing ? @timing.seconds : 0
+- default_hundreds = @timing ? @timing.hundreds : 0
+
+.row-fluid
+  = form_tag( :misc_fin_score_calculation, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+    .control-group
+      = label_tag( :season, I18n.t('activerecord.models.season'), :for => :season, class: 'control-label' )
+      .controls
+        = select_tag( :season_id, options_for_select([@current_season.get_full_name]), { disabled: true, class: 'input-xxlarge' })
+    .control-group
+      = label_tag( :gender_type, I18n.t('activerecord.models.gender_type'), :for => :gender_type, class: 'control-label' )
+      .controls
+        = select_tag( :gender_type_id, options_for_select(GenderType.individual_only.to_dropdown, default_gender), { prompt: I18n.t(:please_select), class: 'input-small' } )
+    .control-group
+      = label_tag( :category_type, I18n.t('activerecord.models.category_type'), :for => :category_type, class: 'control-label' )
+      .controls
+        = select_tag( :category_type_id, options_for_select(@current_season.category_types.are_not_relays.is_valid.to_dropdown, default_category), { prompt: I18n.t(:please_select), class: 'input-small' } )
+    .control-group
+      = label_tag( :pool_type, I18n.t('activerecord.models.pool_type'), :for => :pool_type, class: 'control-label' )
+      .controls
+        = select_tag( :pool_type_id, options_for_select(PoolType.only_for_meetings.to_dropdown, default_pool), { prompt: I18n.t(:please_select), class: 'input-small' } )
+    .control-group
+      = label_tag( :event_type, I18n.t('activerecord.models.event_type'), :for => :event_type, class: 'control-label' )
+      .controls
+        = select_tag( :event_type_id, options_for_select(EventType.are_not_relays.for_fin_calculation.sort_by_style.to_unsorted_dropdown, default_event), { prompt: I18n.t(:please_select), class: 'input-small' } )
+    .control-group
+      = label_tag( :timing, t('misc.timing'), :for => :timing, class: 'control-label' )
+      .controls
+        = text_field_tag( :minutes, default_minutes, class: 'input-micro' )
+        '
+        = text_field_tag( :seconds, default_seconds, class: 'input-micro' )
+        "
+        = text_field_tag( :hundreds, default_hundreds, class: 'input-micro' )
+        &nbsp;
+        &nbsp;
+        = submit_tag( I18n.t('misc.compute'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+        %span(id='loadingIndicator' hidden='true')
+          = image_tag( 'indicator.gif' )

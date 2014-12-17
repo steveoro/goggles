@@ -30,11 +30,14 @@ class MiscController < ApplicationController
       @swimmer_gender = @swimmer.gender_type
     end
 
+    # TODO
+    # Leave parameters if presents
+
     if request.post?                                # === POST: ===
       category_type_id = params[:category_type_id] ? params[:category_type_id].to_i : 0
       gender_type_id   = params[:gender_type_id] ? params[:gender_type_id].to_i : 0
-      pool_type_id     = params[:pool_type] && params[:pool_type][:id] ? params[:pool_type][:id].to_i : 0
-      event_type_id    = params[:event_type] && params[:event_type][:id] ? params[:event_type][:id].to_i : 0
+      pool_type_id     = params[:pool_type_id] ? params[:pool_type_id].to_i : 0
+      event_type_id    = params[:event_type_id] ? params[:event_type_id].to_i : 0
       unless ( gender_type_id > 0 && category_type_id > 0 && pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
         redirect_to( misc_fin_score_calculation_path ) and return

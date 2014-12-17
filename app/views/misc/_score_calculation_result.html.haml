@@ -1,0 +1,56 @@
+.row.fluid
+  .row.fluid.span8.text-right
+    %h3= "#{@swimmer_gender.i18n_alternate}, #{@swimmer_category.code}, #{@current_event.i18n_description}, #{@current_pool.i18n_description}: #{@timing.to_s} =>"
+  - if @current_time_standard
+    .row.fluid.span4.alert-info.text-center
+      %h3= format_score(@standard_points).html_safe
+  - else
+    .row.fluid.span4.text-center
+      %h3.text-warning= t('not_computable')
+
+.row.fluid
+  .goggles-category-gap
+
+  %table.table
+    %tr
+      %td.goggles-rightalign
+        = I18n.t('misc.time_standard')
+      %td
+        = "#{@current_time_standard ? @current_time_standard.get_timing : I18n.t('not_present') }"
+      %td.goggles-rightalign
+        = I18n.t('records.world_record')
+      %td
+        = @world_record
+      %td.goggles-rightalign
+        = I18n.t('records.national_record')
+      %td
+        = @national_record
+    - if @swimmer
+      %tr
+        %td.goggles-rightalign
+          = I18n.t('records.seasonal_best')
+        %td
+          = @seasonal_record
+        %td.goggles-rightalign
+          = I18n.t('records.personal_best')
+        %td
+          = @personal_best
+        %td.goggles-rightalign
+          = I18n.t('records.seasonal_personal_best')
+        %td
+          = @seasonal_best
+
+.row.fluid.span8
+  .goggles-category-gap
+
+  - if @available_team_records.count > 0
+    %table.table
+      %tr
+        %td{ colspan: 2 }
+          = I18n.t('records.team_record')
+      - @available_team_records.each do |team, team_record_html|
+        %tr
+          %td
+            = link_to( team.get_full_name, team_radio_path(id: team.id), { 'data-toggle' => 'tooltip', title: I18n.t('radiography.team_radio_tab_tooltip') } )
+          %td
+            = team_record_html
