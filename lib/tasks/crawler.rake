@@ -249,23 +249,26 @@ Options: [output_path=#{LOCALCOPY_DIR}]
         days = row_hash['days']
         row_title      = row_hash['manifest']['text']
         manifest_link  = row_hash['manifest']['href']
-        results_link   = row_hash['results']
+        results_link   = row_hash['results'].instance_of?(Hash) ? row_hash['results']['href'] : row_hash['results']
         startlist_link = results_link.gsub('risultati','startlist') if results_link
                                                     # Retrieve meeting_dates from the manifest URL:
         manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
         puts "\r\n- (#{index+1}/#{total_rows}) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
 
         title, meeting_dates = retrieve_title_and_manifest_dates( manifest_page_name ) if manifest_page_name
-        iso_date = get_iso_date_from_meeting_dates( meeting_dates )
-        base_filename = "#{ iso_date }#{ city.gsub(/[\s']/,'').downcase }"
-        puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
-        puts "  results_link: #{results_link}"
+                                                    # Skip file save for cancelled meetings (w/o dates):
+        if meeting_dates
+          iso_date = get_iso_date_from_meeting_dates( meeting_dates )
+          base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
+          puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
+          puts "  results_link: #{results_link}"
                                                     # For each meeting, get the result and the manifest page:
-        store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}.html") )
-        store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}.txt"), meeting_dates )
-        store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}.txt"), meeting_dates )
-# XXX TEMP DEBUG uncomment to process just the first entry:
-#        exit
+          store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
+          store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
+          store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}"), meeting_dates )
+        else
+          puts "  Not found (probably cancelled)."
+        end
       end
     else
       puts "'#{output_path}' not found: aborting..."
@@ -326,7 +329,7 @@ Options: [output_path=#{LOCALCOPY_DIR}]
     else
       0
     end
-    "%04d%02d%02d" % [ year, month, day ]
+    "%04d%02d%02d" % [ year.to_i, month, day.to_i ]
   end
 
 
@@ -337,8 +340,15 @@ Options: [output_path=#{LOCALCOPY_DIR}]
       web_response = RestClient.get( page_link )
       html_doc = Nokogiri::HTML( web_response ).css('#content')
       html_doc.css('.stampa-loca').unlink           # Remove non-working external href to PDF print preview
+                                                    # Retrieve the Organizer name to be added as a suffix:
+      description = html_doc.css('.organizzazione').text
+      organizer   = description.to_s =~ /\s+Manifestazione\sorganizzata\sda.\s+/i ?
+        description.split(/Manifestazione organizzata da.\s+/i).last
+          .split(/\<br\/?\>|\n/i).first.gsub(/[\s'`\:\.]/i, '').downcase :
+        "unknown"
+      puts "  Organizer code from manifest: #{organizer}"
                                                     # Save to file with a minimal header:
-      File.open( output_filename, 'w' ) do |f|
+      File.open( output_filename + "_#{organizer}.html", 'w' ) do |f|
         f.puts "<head>"
         f.puts "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">"
         f.puts "</head>"
@@ -358,10 +368,15 @@ Options: [output_path=#{LOCALCOPY_DIR}]
       html_doc = Nokogiri::HTML( web_response ).css('#content')
       title       = html_doc.css( 'h1' ).text
       description = html_doc.css( 'h3' ).text
+                                                    # Retrieve the Organizer name to be added as a suffix:
+      organizer   = description.to_s =~ /manifestazione organizzata da /i ?
+        description.split(/manifestazione organizzata da /i).last.gsub(/[\s'`\:\.]/i, '').downcase :
+        "unknown"
+      puts "  Organizer code for res./sta.: #{organizer}"
       event_list  = html_doc.css( '.gara h2' ).map { |node| node.text }
       result_list = html_doc.css( '.gara pre' ).map { |node| node.text }
                                                     # Extract the contents on file:
-      File.open( output_filename, 'w' ) do |f|
+      File.open( output_filename + "_#{organizer}.txt", 'w' ) do |f|
         f.puts title
         f.puts description
         f.puts meeting_dates
