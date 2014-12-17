@@ -692,7 +692,7 @@ it:
     compute: "Calcola punteggio FIN"
     timing: "Tempo di gara"
     wrong_timing: "Tempo non ammissimbile. Verifica il tempo immesso"
-    wrong_event_or_pool: "Oh, no! La specialità non può essere noutata in questo tipo di vasca"
+    wrong_event_or_pool: "Oh, no! La specialità non può essere nuotata in questo tipo di vasca"
     how_to_calculate: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il tempo presunto, infine premi il pulsante Calcola punteggio FIN per ottenere il punteggio FIN"
     fin_standard_points: "Punteggio FIN"
     time_standard: "Tempo base"

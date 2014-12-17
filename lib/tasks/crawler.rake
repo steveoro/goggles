@@ -213,12 +213,18 @@ This task uses the following Kimono APIs:
   - 'FIN_manifest_dates', to read the meeting dates from each manifest header.
 
 Options: [output_path=#{LOCALCOPY_DIR}]
+         [start_from=0]
 
   - 'output_path' the path where the files will be stored.
+
+  - 'start_from' allows the crawling loop to start from a different offset than 0,
+    computed among all the results found from the FIN_supermasters_meetings API.
+
   DESC
   task :get_fin_data do |t|
     puts "\r\n*** Crawler:::get_fin_data ***"
-    output_path     = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
+    output_path = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
+    start_from  = ENV.include?("start_from")  ? ENV["start_from"].to_i : 0
     puts "output_path:  #{output_path}"
     puts "\r\n"
 
@@ -244,7 +250,7 @@ Options: [output_path=#{LOCALCOPY_DIR}]
       )
       total_rows = response['results']['collection2'].size
 
-      response['results']['collection2'].each_with_index do |row_hash, index|
+      response['results']['collection2'][ start_from .. total_rows ].each_with_index do |row_hash, index|
         city = row_hash['city']
         days = row_hash['days']
         row_title      = row_hash['manifest']['text']
@@ -253,7 +259,7 @@ Options: [output_path=#{LOCALCOPY_DIR}]
         startlist_link = results_link.gsub('risultati','startlist') if results_link
                                                     # Retrieve meeting_dates from the manifest URL:
         manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
-        puts "\r\n- (#{index+1}/#{total_rows}) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
+        puts "\r\n- (#{ start_from + index + 1 }/#{ total_rows }) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
 
         title, meeting_dates = retrieve_title_and_manifest_dates( manifest_page_name ) if manifest_page_name
                                                     # Skip file save for cancelled meetings (w/o dates):
@@ -261,7 +267,6 @@ Options: [output_path=#{LOCALCOPY_DIR}]
           iso_date = get_iso_date_from_meeting_dates( meeting_dates )
           base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
           puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
-          puts "  results_link: #{results_link}"
                                                     # For each meeting, get the result and the manifest page:
           store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
           store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
@@ -279,18 +284,38 @@ Options: [output_path=#{LOCALCOPY_DIR}]
   #++
 
 
+  # Returns the web response for a specified page link using RestClient.
+  # Note that this method may halt the program in case of errors.
+  #
+  def get_web_response( page_link )
+    web_response = RestClient.get( page_link ) do |response, request, result, &block|
+      case response.code
+      when 200
+        response
+      when 503
+        puts " The API got frozen! (Try again later; error code: 503)"
+        nil
+      else
+        response.return!(request, result, &block) # Do the defaul behaviour
+      end
+    end
+    exit if web_response.nil?                     # Bail out in case of errors
+    web_response
+  end
+
+
   # Returns the manifest title string and the text representing the dates, assuming
   # the specified manifest_page_name is the name of a manifest page linked to FIN results
   # of any type.
   #
   def retrieve_title_and_manifest_dates( manifest_page_name )
-    response = JSON.parse(
-      RestClient.get(
-        # API FIN_manifest_dates:
-        "https://www.kimonolabs.com/api/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
-      )
-    )
-    result_hash = response['results']['collection1'].first
+    puts "  Retrieving manifest dates from API..."
+    # API FIN_manifest_dates:
+    page_link = "https://www.kimonolabs.com/api/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
+    web_response = get_web_response( page_link )
+
+    response      = JSON.parse( web_response )
+    result_hash   = response['results']['collection1'].first
     puts "  response: #{result_hash.inspect}"
     [ result_hash['title'], result_hash['meeting_dates'] ]
   end
@@ -336,8 +361,10 @@ Options: [output_path=#{LOCALCOPY_DIR}]
   # Retrieves and stores the specified page_link to the destination output_filename.
   #
   def store_web_manifest( page_link, output_filename )
-    if page_link
-      web_response = RestClient.get( page_link )
+    if page_link.instance_of?(String) && page_link.size > 1
+      puts "  Retrieving '#{page_link}'..."
+      web_response = get_web_response( page_link )
+
       html_doc = Nokogiri::HTML( web_response ).css('#content')
       html_doc.css('.stampa-loca').unlink           # Remove non-working external href to PDF print preview
                                                     # Retrieve the Organizer name to be added as a suffix:
@@ -356,6 +383,8 @@ Options: [output_path=#{LOCALCOPY_DIR}]
         f.puts html_doc.to_html
         f.puts "</body>"
       end
+    else
+      puts "  Manifest link seems to be still undefined. 'Skipping."
     end
   end
 
@@ -363,8 +392,10 @@ Options: [output_path=#{LOCALCOPY_DIR}]
   # Retrieves and stores the specified page_link to the destination output_filename.
   #
   def store_web_results( page_link, output_filename, meeting_dates )
-    if page_link
-      web_response = RestClient.get( page_link )
+    if page_link.instance_of?(String) && page_link.size > 1
+      puts "  Retrieving '#{page_link}'..."
+      web_response = get_web_response( page_link )
+
       html_doc = Nokogiri::HTML( web_response ).css('#content')
       title       = html_doc.css( 'h1' ).text
       description = html_doc.css( 'h3' ).text
@@ -400,6 +431,8 @@ Options: [output_path=#{LOCALCOPY_DIR}]
           f.puts html_doc.css( '.statistiche pre' ).text
         end
       end
+    else
+      puts "  Results or Start-List link seems to be still undefined. 'Skipping."
     end
   end
   #-- -------------------------------------------------------------------------
