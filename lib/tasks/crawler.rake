@@ -12,7 +12,7 @@ require 'framework/console_logger'
 
 = Web-Crawling Helper tasks
 
-  - Goggles framework vers.:  4.00.463
+  - Goggles framework vers.:  4.00.673
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -202,48 +202,39 @@ namespace :crawler do
   #++
 
 
-# == Task FUTUREDEV ideas:
-# TODO - store link results as text files for editing
-# TODO - crawl task: accept text files containing 1 url per row for batch-crawling of each url
-# TODO - parse task: dump css selectors or fields found in page (dump forms evolved)
-# TODO - select task: extract specific css selectors from page
-# TODO - combine site|search + crawl|parse tasks
-
-# Current:
-# http://www.federnuoto.it/discipline/master/circuito-supermaster.html
-
-# History:
-# http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
-# http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
-
-
   desc <<-DESC
-  Crawls the web to retrieve either swimmer result pages or meeting entries.
-  Resulting log files are stored into '#{LOG_DIR}'.
+  Crawls the web to retrieve currently available FIN Championship result pages,
+meeting entries and manifests.
 
-  Options: [output_path=#{LOCALCOPY_DIR}]
-           [log_dir=#{LOG_DIR}]
+This task uses the following Kimono APIs:
 
-  - 'output_path' the path where the found files will be stored.
-  - 'log_dir'   allows to override the default log dir destination.
+  - 'FIN_supermasters_meetings', to retrieve all the available links of the pages
+    to be scraped;
+  - 'FIN_manifest_dates', to read the meeting dates from each manifest header.
 
+Options: [output_path=#{LOCALCOPY_DIR}]
+
+  - 'output_path' the path where the files will be stored.
   DESC
-  task :get_results do |t|
-    puts "\r\n*** Crawler:::get_results ***"
+  task :get_fin_data do |t|
+    puts "\r\n*** Crawler:::get_fin_data ***"
     output_path     = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
-    log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
     puts "output_path:  #{output_path}"
-    puts "log_dir:      #{log_dir}"
     puts "\r\n"
 
-# FIN_result_single_page:
-#########################
-#    response = RestClient.get 'https://www.kimonolabs.com/api/7mryftbu?apikey=e1e82989ef91e6287ae417ede85f9ed2'
-    # &kimpath4=newvalue (stagione-2012-2013.html)
-    # &view=newvalue  (risultati|startlist)
-    # &codice=newvalue (D26A)
-    # &anno=newvalue (2013)
-
+    # [Steve, 20141216] Links used by the APIs below:
+    #
+    # Current FIN championships:
+    # - http://www.federnuoto.it/discipline/master/circuito-supermaster.html
+    #
+    # Previous FIN championships:
+    # - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
+    # - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
+    #
+    # To change or update the above links, edit directly the Kimono APIs.
+    # (It is possible to set the FIN_supermasters_meetings API to return everything that is available
+    # or just the individual rows that have changed.)
+    #
     if File.directory?( output_path )
       response = JSON.parse(
         RestClient.get(
@@ -266,15 +257,15 @@ namespace :crawler do
 
         title, meeting_dates = retrieve_title_and_manifest_dates( manifest_page_name ) if manifest_page_name
         iso_date = get_iso_date_from_meeting_dates( meeting_dates )
-        base_filename = "#{ iso_date }#{ city.gsub(/[\s']/,'').downcase }.txt"
+        base_filename = "#{ iso_date }#{ city.gsub(/[\s']/,'').downcase }"
         puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
         puts "  results_link: #{results_link}"
                                                     # For each meeting, get the result and the manifest page:
-        store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
-        store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}") )
-        store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}") )
-# TODO
-        exit
+        store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}.html") )
+        store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}.txt"), meeting_dates )
+        store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}.txt"), meeting_dates )
+# XXX TEMP DEBUG uncomment to process just the first entry:
+#        exit
       end
     else
       puts "'#{output_path}' not found: aborting..."
@@ -344,23 +335,56 @@ namespace :crawler do
   def store_web_manifest( page_link, output_filename )
     if page_link
       web_response = RestClient.get( page_link )
-      html_doc = Nokogiri::HTML( web_response ).css('#content').wrap("<body></body>")
-      File.open( output_filename, 'w' ) { |f| f.puts html_doc.to_html }
+      html_doc = Nokogiri::HTML( web_response ).css('#content')
+      html_doc.css('.stampa-loca').unlink           # Remove non-working external href to PDF print preview
+                                                    # Save to file with a minimal header:
+      File.open( output_filename, 'w' ) do |f|
+        f.puts "<head>"
+        f.puts "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">"
+        f.puts "</head>"
+        f.puts "<body>"
+        f.puts html_doc.to_html
+        f.puts "</body>"
+      end
     end
   end
 
 
   # Retrieves and stores the specified page_link to the destination output_filename.
   #
-  def store_web_results( page_link, output_filename )
+  def store_web_results( page_link, output_filename, meeting_dates )
     if page_link
       web_response = RestClient.get( page_link )
       html_doc = Nokogiri::HTML( web_response ).css('#content')
-      # TODO extract h1 class="nome"
-      # TODO extract h3 as description
-      # TODO extract div class="sommario" for event list
-      # TODO extract each <pre> nodes as part of the result list
-      File.open( output_filename, 'w' ) { |f| f.puts html_doc.inner_html.to_s }
+      title       = html_doc.css( 'h1' ).text
+      description = html_doc.css( 'h3' ).text
+      event_list  = html_doc.css( '.gara h2' ).map { |node| node.text }
+      result_list = html_doc.css( '.gara pre' ).map { |node| node.text }
+                                                    # Extract the contents on file:
+      File.open( output_filename, 'w' ) do |f|
+        f.puts title
+        f.puts description
+        f.puts meeting_dates
+        f.puts "\r\n#{ event_list.join(', ') }"
+        f.puts "\r\n"
+                                                    # Rebuild result list w/ titles:
+        result_list.each_with_index do |result_text, index|
+          f.puts "#{ event_list[ index ] }"
+          f.puts "\r\n"
+          f.puts result_text
+          f.puts "\r\n"
+        end
+        if html_doc.css( '.classifica pre' ).size > 0
+          f.puts "\r\nClassifica"
+          f.puts "\r\n"
+          f.puts html_doc.css( '.classifica pre' ).text
+        end
+        if html_doc.css( '.statistiche pre' ).size > 0
+          f.puts "\r\nStatistiche"
+          f.puts "\r\n"
+          f.puts html_doc.css( '.statistiche pre' ).text
+        end
+      end
     end
   end
   #-- -------------------------------------------------------------------------
