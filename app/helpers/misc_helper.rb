@@ -21,10 +21,16 @@ module MiscHelper
                                                     # For each defined option couple:
     rendered_html += "<div data-toggle=\"buttons-radio\">\r\n".html_safe
     array_of_labels_and_keys_couples.each do |label, key|
-      rendered_html += button_to_function(
-        label,
-        "$('##{field_name}').val(#{key}); $('##{display_field_name}').val('#{label}')",
-        { class: 'btn' }
+      rendered_html += link_to(
+        content_tag( :span, get_image_tag_for( field_name, key, label ) ),
+        '#',
+        {
+          id: "btn_#{field_name}",
+          class: 'btn',
+          'onclick' => "$('##{field_name}').val(#{key}); $('##{display_field_name}').val('#{label}')",
+          'data-toggle' => 'tooltip',
+          title: label
+        }
       )
       rendered_html += "\r\n".html_safe
     end
@@ -37,4 +43,36 @@ module MiscHelper
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Returns an image_tag (or an alternative display label when not available)
+  # for a spacified field_name, key_id pair.
+  #
+  def get_image_tag_for( field_name, key_id, alt_display_label )
+    case field_name.to_s
+
+    when 'gender_type_id'
+      case key_id
+      when 1
+        image_tag('user_suit.png') + "<br/>#{alt_display_label}".html_safe
+      when 2
+        image_tag('user_female.png') + "<br/>#{alt_display_label}".html_safe
+      else
+        alt_display_label.html_safe
+      end
+
+# TODO Images
+    # when 'pool_type_id'
+      # case key_id
+      # when 1
+        # image_tag('user_suit.png') + "<br/>#{alt_display_label}".html_safe
+      # # ...
+      # else
+        # alt_display_label.html_safe
+      # end
+
+    else
+      alt_display_label.html_safe
+    end
+  end
 end
