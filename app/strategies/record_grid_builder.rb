@@ -94,7 +94,7 @@ class RecordGridBuilder
   def cache_key
     if @collector.swimmer
       # "RGB" stands for "RecordGridBuilder", to uniquely identify this type of cache key
-      "RGB:#{I18n.locale.to_s}:#{@collector.swimmer_id}:#{@collector.collection.cache_key}"
+      "RGB:#{I18n.locale.to_s}:#{@collector.swimmer.id}:#{@collector.collection.cache_key}"
     else
       "RGB:#{I18n.locale.to_s}:#{@collector.collection.cache_key}"
     end

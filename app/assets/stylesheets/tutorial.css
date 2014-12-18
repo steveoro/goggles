@@ -299,7 +299,7 @@ hr {
 .intro {
 	width:100%;
 	position:relative;	
-	background: url(../img/bg1.jpg) no-repeat top center;
+	background: url(./images/water.jpg) no-repeat top center;
 	background-size: cover;
 }
 
@@ -448,19 +448,22 @@ footer a:hover {
 Parallax
 ============================= */
 
-#separator {	
-	background-image: url(../img/parallax-bg.jpg);
-}
-
-#separator .icon {
-	margin-bottom: 20px;
-}
-
-#separator span {
+#how_to_register_steps {	
+	width: 100%;
+	background: url(./images/water.jpg) no-repeat top center;
+	background-size: cover;
 	color: #fff;
 }
 
-#separator:after {	
+#how_to_register_steps .icon {
+	margin-bottom: 20px;
+}
+
+#how_to_register_steps span {
+	color: #fff;
+}
+
+#how_to_register_steps:after {	
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVQImWNgYGD4z0AswK4SAFXuAf8EPy+xAAAAAElFTkSuQmCC);
 	content: "";
 	position: absolute;
