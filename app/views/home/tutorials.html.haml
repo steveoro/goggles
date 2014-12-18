@@ -1,5 +1,5 @@
 .container-fluid#TopOfPage
-  .row-fluid
+  .row-fluid.span12
     - if not user_signed_in?
       = render( partial: 'how_to_register' )
     %hr

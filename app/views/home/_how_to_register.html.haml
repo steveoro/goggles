@@ -1,70 +1,79 @@
+%script
+  new WOW().init();
+
 %section.home-section#how_to_register
   .container
-    .fluid-row
-      .span6.offset2
-        .section-heading.text-center
-          .wow.bounceInDown( data-wow-delay="0.5s" )
-            %h2= t('tutorial.how_to_register')
-          %p.wow.bounceInUp( data-wow-delay="0.5s" )
-            = t('tutorial.how_to_register_text.line1')
+    .fluid-row.span12
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorial.how_to_register')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('tutorial.how_to_register_text.line1')
   .container
-    .fluid-row
+    .fluid-row.span12
       .span4
         = image_tag( "tutorial/disorder.jpg", class: "img-responsive img-rounded" )
-      .span5
+      .span8
         %p= t('tutorial.how_to_register_text.line2')
         %p= t('tutorial.how_to_register_text.line3')
-    .fluid-row.span9
+    .fluid-row.span12
       %p= t('tutorial.how_to_register_text.line4')
       %p= t('tutorial.how_to_register_text.line5')
 
-    .fluid-row
-      .span4
+    .fluid-row.span12
+      .span7
         %p= t('tutorial.how_to_register_text.line6')
+        %p= t('tutorial.how_to_register_text.line7')
       .span5
         = image_tag( "jumbotron/timertable.png", class: "img-responsive img-rounded" )
-    .fluid-row.span9
-      %p= t('tutorial.how_to_register_text.line7')
+    .fluid-row.span12
       %p= t('tutorial.how_to_register_text.line8')
       %p= t('tutorial.how_to_register_text.line9')
 
+
 %section.home-section.parallax.text-center{ :id=>'how_to_register_steps', 'data-stellar-background-ratio'=>"0.5" }
   .container
-    .fluid-row.span6.offset2
+    .fluid-row.span12
       .section-heading.text-center
-        %p.wow.bounceInDown( data-wow-delay="0.5s" )
+        %p.wow.lightSpeedIn( data-wow-delay="0.5s" )
           %b= t('tutorial.how_to_register_text.line10')
 
-    .fluid-row
-      .span6
+    .fluid-row.span12
+      .span5.wow.rollIn( data-wow-delay="1s" )
         = image_tag( "tutorial/welcome.png", class: "img-responsive img-rounded" )
       .span6
         %p
           &nbsp;
-        %p= t('tutorial.how_to_register_text.line11')
+        .wow.bounceInRight( data-wow-delay="1s" )
+          %p= t('tutorial.how_to_register_text.line11')
 
-    .fluid-row
+    .fluid-row.span12
       .span6
         %p
           &nbsp;
-        %p= t('tutorial.how_to_register_text.line12')
-      .span6
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          %p= t('tutorial.how_to_register_text.line12')
+      .span5.wow.rollIn( data-wow-delay="1s" )
         = image_tag( "tutorial/register_form.png", class: "img-responsive img-rounded" )
 
-    .fluid-row
-      .span6
+    .fluid-row.span12
+      .span5.wow.rollIn( data-wow-delay="1s" )
         = image_tag( "tutorial/jump_forward.png", class: "img-responsive img-rounded" )
       .span6
         %p
           &nbsp;
-        %p= t('tutorial.how_to_register_text.line13')
-    .fluid-row
+        .wow.bounceInRight( data-wow-delay="1s" )
+          %p= t('tutorial.how_to_register_text.line13')
+
+    .fluid-row.span12
       .span6
         %p
           &nbsp;
-        %p= t('tutorial.how_to_register_text.line14')
-      .span6
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          %p= t('tutorial.how_to_register_text.line14')
+      .span5.wow.rollIn( data-wow-delay="1s" )
         = image_tag( "tutorial/associate.png", class: "img-responsive img-rounded" )
+
 
 .row-fluid.goggles-category-gap
   .row-fluid.offset6.span6

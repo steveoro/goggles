@@ -13,7 +13,7 @@ it:
 
     how_to_register_text:
       line1: "Sei un nuotatore master?"
-      line2: "E magari vorresti vedere ricostruita la tua carriera natatoria master degli ultimi dodici anni, con anche quelle prime gare di cui non avevi tenuto i risultati, quando ancora si gareggiava in slip?"
+      line2: "...E magari vorresti vedere ricostruita la tua carriera natatoria master degli ultimi dodici anni, con anche quelle prime gare di cui non avevi tenuto i risultati, quando ancora si gareggiava in slip?"
       line3: "O anche poter consultare con orgoglio il tuo medagliere virtuale aggiornato senza perdere un pomeriggio a sciogliere i nodi dei cordoni per contare le medaglie nello scatolone sull'ultimo ripiano della libreria?"
       line4: "O ancora, perché no, paragonare fra loro le tue prestazioni, confrontando i passaggi ed i parziali raccolti alle gare e che stanno sbiadendo sui fogli ingialliti nel terzo cassetto del mobile dello studio?"
       line5: "Ecco, allora probabilmente Goggles potrebbe aiutarti. Mentre stai leggendo queste poche righe Goggles sta lentamente, ma inesorabilmente acquisendo i dati della varie gare master per poterli poi presentare finalmente ordinati e riuniti. FIN, UISP, CSI. Probabilmente già ora Goggles consosce alcuni dei tuoi risultati e porebbe mostrarteli in ordine temporale o per prestazione, fornendoti dati statistici, punteggi, piazzamenti e medaglie."
@@ -23,10 +23,10 @@ it:
       line9: "In qualsiasi momento potrai annullare la registrazione e tornare a risultati cartacei e fogli excel. ;-p"
       line10: "Segui questi semplici passi (davvero, promesso, nessuno cercherà di venderti una batteria di pentole):"
       line11: "Vai alla pagina di registrazione"
-      line12: "Compila il tuo profilo"      
-      line13: "Non accontentarti e vai all'associazione col nuotatore"            
+      line12: "Compila il tuo profilo"
+      line13: "Non accontentarti e vai all'associazione col nuotatore"
       line14: "Lascia che Goggles ti associ ad un nuotatore che conosce"
-      
+
     what_can_i_do_text:
       line1: "In Goggles puoi trovare i risultati delle gare master dei vari circuiti ufficiali attivi: FIN, CSI, UISP."
       line2: "Nelle pagine dei risultati potrai vedere evidenziati i tuoi risultati, quelli dei tuoi compagni di squadra ed amici."
@@ -45,4 +45,3 @@ it:
       line15: "E per finire, Goggles sa che il nuoto è anche scienza, metodo, costanza, oltre che naturalmente talento, faticose cene per organizzare le traferte ed estenuanti pranzi del dopo gara."
       line16: "Mentre sul versante poranzi e cene siamo già tutti fortisismi, e ci applichiamo senza riserve, per la parte scientifica, tenere controllati i propri allenamenti, cercare di costruirli dando un senso generale alla preparazione e cercando di non trascurare nessun aspetto, sia un punto di arrivo non scontato."
       line17: "Per questo Goggles ti offre la possibilità di memorizzare i tuoi allenamenti e rivederli nel breve e medio periodo analizzandone i volumi, la composizione e la qualità."
-                              
