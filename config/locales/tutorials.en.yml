@@ -3,12 +3,32 @@ en:
 
   tutorial:
     how_to_register: "Registration"
-    what_can_i_do: "What can I do with Goggles?!?"
-    what_about_meetings: "What about meetings"
-    how_to_view_passages: "The performance passages"
-    what_about_trainings: "What about trainings"
-    how_to_calculate_fin_score: "FIN score calculation"
-    back_argument: "Back to the previous topic"
-    next_argument: 'Skip to the next topic'
+    what_can_i_do: "What can I do with Goggles?"
+    what_about_meetings: "What about meetings?"
+    how_to_view_passages: "Performance passages"
+    what_about_trainings: "What about trainings?"
+    how_to_calculate_fin_score: "FIN score computation"
+    back_argument: "Back to previous topic"
+    next_argument: 'Skip to next topic'
     back_to_start: "Back to the beginning"
     argument_index: 'Topics'
+
+    how_to_register_text:
+      line1: "Are You a Master Swimmer? (Duh!)"
+      line2: "...And maybe You'd like to see reconstructed your swimming career of the last twelve years. You know... Even for those times where you were swimming in cloth briefs and you didn't event think about keeping record of what you did."
+      line3: "Or, maybe, You'd love to peek a proud look at your virtual medal count without loosing an afternoon to untangle your medal cords, all stuffed inside a lost box somewhere in your library?"
+      line4: "Or, even yet and why not, You'd love to compare your performances and your achievements, checking the lap passage times collected at the meetings, although they are all fading to yellow on an ancient piece of paper on the bottom of the third drawer of some furniture in your living room?"
+      line5: "Can You relate to all this? Well, then surely Goggles can help. While you're reading this stuff, Goggles is slowly but unrelentingly acquiring data from various Master's Meetings, to eventually be able to show them all cleaned, ordered and grouped together. Probably, even now Goggles knows some of Your results and it could show them to you in chronological order or by performance achievements, presenting you with statistical data, rankings and medals."
+      line6: "In order for Goggles to do so, You just need to register and create your profile. Click on 'Sign-up!' on the welcome page. We'll ask You just enough data to match Your profile with an existing swimmer (surname, name, date of birth) and an e-mail address to authenticate yourself and - only if You whish - to receive notifies and updates on your results and your team mates'"
+      line7: "Once You've registered, You'll be able to associate Yourself to a matching Swimmer and visit your 'ID-Card' page (your 'Radiography')... And then the fun begins!"
+      line8: "Goggles is totally free and we promise we never give access to Your personal data to others. We guarantee that we won't ever contact You for commercial purposes. If You're interested and want to know more, just give a read to Goggles' history"
+      line9: "You can cancel Your registration in any moment and go back to keeping results on paper and spreadsheets, anytime. ;-P"
+
+      line10: "Follow these easy steps: (really, promise: no one's gonna try to sell you a cookware set!)"
+      line11: "Go to Registration/Sign-up page"
+      line12: "Compile Your profile"
+      line13: "Don't give up easily, and click also on the link to the Swimmer association (because you're an athlete, right?)"
+      line14: "Follow Goggles lead to match you with a swimmer, or chose one manually (contact us if your name isn't in the list!)"
+
+    what_can_i_do_text:
+      line0: "A short overview"
