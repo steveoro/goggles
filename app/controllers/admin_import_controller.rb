@@ -282,7 +282,7 @@ class AdminImportController < ApplicationController
                                                     # -- PHASE 2.0 (MANUAL REVIEW) BEGIN:
                                                     # Compute the filtering parameters:
     ap = AppParameter.get_parameter_row_for( :data_import )
-    @max_view_height    = ap.get_view_height()
+    @max_view_height = ap.get_view_height()
     if @data_import_session.season
       @season_description = @data_import_session.season.description
     elsif @data_import_session.data_import_season
@@ -290,6 +290,12 @@ class AdminImportController < ApplicationController
     else
       @season_description = '?'
     end
+
+    # [Steve, 20141219] Retrieve the associated Meeting#id, if available, used in
+    # grid filtering for some of the drop-down combo lists (specifically, which
+    # meeting session are enlisted, for example):
+    di_prg = DataImportMeetingProgram.where( data_import_session_id: @data_import_session.id ).first
+    @meeting_id = di_prg.meeting_session ? di_prg.meeting_session.meeting_id : 0
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -40,10 +40,11 @@ class DataImportMeetingProgramGrid < EntityGrid
         },
         { name: :notes, label: I18n.t(:notes) },
 
-        { name: :data_import_meeting_session__get_full_name, width: 160,
+        { name: :data_import_meeting_session__get_full_name, width: 100,
           label: I18n.t('activerecord.models.data_import_meeting_session')
         },
-        { name: :meeting_session__get_full_name, width: 110,
+        { name: :meeting_session__get_short_name, width: 160,
+          scope: lambda { |rel| rel.where( meeting_id: super[:meeting_id] ) },
           label: I18n.t('activerecord.models.meeting_session')
         },
         { name: :event_type__i18n_short, width: 110,

@@ -56,7 +56,7 @@ class MeetingSession < ActiveRecord::Base
   # Eg MNG: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_short_name
-    "#{get_day_part_type(:i18n_short)}: #{get_short_events}"
+    "#{get_scheduled_date} #{get_day_part_type(:i18n_short)}: #{get_short_events}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part and event list

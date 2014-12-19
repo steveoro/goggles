@@ -7,7 +7,7 @@ require 'localizable'
 
 = GenderType model
 
-  - version:  4.00.573
+  - version:  4.00.681
   - author:   Steve A.
 
 =end
@@ -18,8 +18,8 @@ class GenderType < ActiveRecord::Base
   validates_presence_of   :code, length: { maximum: 1 }, allow_nil: false
   validates_uniqueness_of :code, message: :already_exists
 
-  scope :individual_only, where(['code <> ?', 'X'])
-  scope :sort_by_courtesy, order('code')
+  scope :individual_only, where( "(gender_types.code != 'X')" )
+  scope :sort_by_courtesy, order( 'code' )
 
   # Unique ID used inside the DB to address the Male GenderType instance
   MALE_ID   = 1

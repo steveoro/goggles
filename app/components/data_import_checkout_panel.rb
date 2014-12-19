@@ -59,14 +59,14 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
 #          title: I18n.t('activerecord.models.data_import_meeting'),
           enable_pagination: true,
           # [Steve, 20120914] It seems that the LIMIT parameter used during column sort can't be toggled off even when pagination is false, so we put an arbitrary 10Tera row count limit per page to get all the rows:
-          rows_per_page: 1000000000000,
+          rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id]
         },
         {
           class_name: "DataImportMeetingSessionGrid",
           title: I18n.t('activerecord.models.data_import_meeting_session'),
           enable_pagination: true,
-          rows_per_page: 1000000000000,
+          rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id],
           lazy_loading: true
         },
@@ -74,15 +74,16 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
           class_name: "DataImportMeetingProgramGrid",
           title: I18n.t('activerecord.models.data_import_meeting_program'),
           enable_pagination: true,
-          rows_per_page: 1000000000000,
+          rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id],
+          meeting_id: super[:meeting_id],
           lazy_loading: true
         },
         {
           class_name: "DataImportMeetingIndividualResultGrid",
           title: I18n.t('activerecord.models.data_import_meeting_individual_result'),
           enable_pagination: true,
-          rows_per_page: 1000000000000,
+          rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id],
           lazy_loading: true
         },
@@ -109,7 +110,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
           class_name: "DataImportSwimmerGrid",
           title: I18n.t('activerecord.models.data_import_swimmer'),
           enable_pagination: true,
-          rows_per_page: 1000000000000,
+          rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id],
           lazy_loading: true
         },
@@ -133,7 +134,7 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
           class_name: "DataImportBadgeGrid",
           title: I18n.t('activerecord.models.data_import_badge'),
           enable_pagination: true,
-          rows_per_page: 1000000000000,
+          rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id],
           lazy_loading: true
         }

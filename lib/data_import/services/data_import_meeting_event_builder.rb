@@ -46,9 +46,10 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
     raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!") unless meeting_session.instance_of?( MeetingSession )
 # DEBUG
     puts "\r\nMeetingEvent -- build_from_parameters: #{meeting_session.inspect}"
+    puts "- event_order: #{event_order.inspect}"
+    puts "- begin_time:  #{begin_time.inspect}"
     puts "- event_type:  #{event_type.inspect}"
     puts "- heat_type:   #{heat_type.inspect}"
-    puts "- event_order: #{event_order.inspect}"
     self.build( data_import_session ) do
       entity              MeetingEvent
 
@@ -70,6 +71,9 @@ class DataImportMeetingEventBuilder < DataImportEntityBuilder
       entity_for_creation MeetingEvent
 
       attributes_for_creation(
+        # [Steve, 201412] We'll always create a missing MeetingEvents using the default
+        # MeetingSession, since we have no way of knowing which one is right among all
+        # the possibile values:
         meeting_session_id: meeting_session.id,
         event_type_id:      event_type.id,
         heat_type_id:       heat_type.id,
