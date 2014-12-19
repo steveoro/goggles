@@ -1,44 +1,54 @@
-.row-fluid.goggles-category-gap#what_can_i_do
-  %h2= t('tutorial.what_can_i_do')
+%section.home-section#what_can_i_do
+  .container-fluid
+    .fluid-row.span12
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorial.what_can_i_do')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('coming_soon')
 
-.row-fluid 
-  .row-fluid.span4
-    %p= t('tutorial.what_can_i_do_text.line1') 
-    %p= t('tutorial.what_can_i_do_text.line2')
-    %p= t('tutorial.what_can_i_do_text.line3')
-    %p= t('tutorial.what_can_i_do_text.line4')
-    %p= image_tag( "tutorial/show_full.png")
-  .row-fluid.span4
-    %p= image_tag( "tutorial/passages.jpg")
-    %p= t('tutorial.what_can_i_do_text.line5')
-    %p= t('tutorial.what_can_i_do_text.line6')
-  .row-fluid.span4
-    %p= t('tutorial.what_can_i_do_text.line7')
-    %p= t('tutorial.what_can_i_do_text.line8')
-    %p= t('tutorial.what_can_i_do_text.line9')
-    %p= image_tag( "tutorial/performances.png")
-.row-fluid.goggles-category-gap 
-.row-fluid 
-  .row-fluid.span4
-    %p= image_tag( "tutorial/team_radio.png")
-    %p= t('tutorial.what_can_i_do_text.line10')
-    %p= t('tutorial.what_can_i_do_text.line11')
-    %p= t('tutorial.what_can_i_do_text.line12')
-  .row-fluid.span4
-    %p= t('tutorial.what_can_i_do_text.line13')
-    %p= t('tutorial.what_can_i_do_text.line14')
-    %p= image_tag( "tutorial/fin_score_calculation.png")
-  .row-fluid.span4
-    %p= image_tag( "tutorial/trainings.png")
-    %p= t('tutorial.what_can_i_do_text.line15')
-    %p= t('tutorial.what_can_i_do_text.line16')
-    %p= t('tutorial.what_can_i_do_text.line17')
+  .container-fluid
+    .fluid-row.span12
+      .span6
+        %p= t('tutorial.what_can_i_do_text.line1') 
+        %p= t('tutorial.what_can_i_do_text.line2')
+        %p= t('tutorial.what_can_i_do_text.line3')
+        %p= t('tutorial.what_can_i_do_text.line4')
+      .span6
+        %p= image_tag( "tutorial/show_full.png")
 
+    .fluid-row.span12
+      .span6
+        %p= image_tag( "tutorial/passages.jpg")
+      .span6
+        %p= t('tutorial.what_can_i_do_text.line5')
+        %p= t('tutorial.what_can_i_do_text.line6')
 
-.row-fluid.goggles-category-gap 
-  .row-fluid.offset6.span6
-    .row-fluid.span11.text-right
-      = t('tutorial.next_argument')
-      %a(href="#what_about_meetings")= t('tutorial.what_about_meetings')
-    .row-fluid.span1
-      = image_tag( "document-128.png")
+    .fluid-row.span12
+      .span6
+        %p= t('tutorial.what_can_i_do_text.line7')
+        %p= t('tutorial.what_can_i_do_text.line8')
+        %p= t('tutorial.what_can_i_do_text.line9')
+      .span6
+        %p= image_tag( "tutorial/performances.png")
+
+    .fluid-row.span12
+      .span6
+        %p= image_tag( "tutorial/team_radio.png")
+      .span6
+        %p= t('tutorial.what_can_i_do_text.line10')
+        %p= t('tutorial.what_can_i_do_text.line11')
+        %p= t('tutorial.what_can_i_do_text.line12')
+    .fluid-row.span12
+      .span6
+        %p= t('tutorial.what_can_i_do_text.line13')
+        %p= t('tutorial.what_can_i_do_text.line14')
+      .span6
+        %p= image_tag( "tutorial/fin_score_calculation.png")
+    .fluid-row.span12
+      .span6
+        %p= image_tag( "tutorial/trainings.png")
+      .span6
+        %p= t('tutorial.what_can_i_do_text.line15')
+        %p= t('tutorial.what_can_i_do_text.line16')
+      %p= t('tutorial.what_can_i_do_text.line17')

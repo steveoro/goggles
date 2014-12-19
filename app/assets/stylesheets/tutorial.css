@@ -256,6 +256,7 @@ hr {
 }
 
 .section-heading {
+	margin-top: 50px;
 	margin-bottom: 50px;
 }
 
@@ -299,7 +300,7 @@ hr {
 .intro {
 	width:100%;
 	position:relative;	
-	background: url(./images/water.jpg) no-repeat top center;
+	background: url(./images/emptylanes2k.jpg) no-repeat top center;
 	background-size: cover;
 }
 
@@ -348,6 +349,37 @@ hr {
 .intro .slogan h4 {
 	color: #fff;
 	text-shadow: -1px 1px 1px #000;
+}
+
+/* ==========================
+Parallax
+============================= */
+
+.parallax {	
+	width: 100%;
+	background: url(./images/water2k.jpg) no-repeat top center;
+	background-size: cover;
+	color: #fff;
+}
+
+.parallax .icon {
+	margin-bottom: 20px;
+}
+
+.parallax span {
+	color: #fff;
+}
+
+.parallax:after {	
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVQImWNgYGD4z0AswK4SAFXuAf8EPy+xAAAAAElFTkSuQmCC);
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	opacity: 0.7;
+	z-index: -1;
 }
 
 
@@ -442,37 +474,6 @@ footer a {
 
 footer a:hover {
 	color: #ccc;
-}
-
-/* ==========================
-Parallax
-============================= */
-
-#how_to_register_steps {	
-	width: 100%;
-	background: url(./images/water.jpg) no-repeat top center;
-	background-size: cover;
-	color: #fff;
-}
-
-#how_to_register_steps .icon {
-	margin-bottom: 20px;
-}
-
-#how_to_register_steps span {
-	color: #fff;
-}
-
-#how_to_register_steps:after {	
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVQImWNgYGD4z0AswK4SAFXuAf8EPy+xAAAAAElFTkSuQmCC);
-	content: "";
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	top: 0;
-	opacity: 0.7;
-	z-index: -1;
 }
 
 /* ===========================

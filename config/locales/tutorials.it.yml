@@ -8,7 +8,9 @@ it:
     how_to_view_passages: "I passaggi delle gare"
     what_about_trainings: "Goggles e gli allenamenti"
     how_to_calculate_fin_score: "Il calcolo del punteggio FIN"
-    next_argument: 'Prossimo argomento: '
+    back_argument: "Torna all'argomento precedente"
+    next_argument: 'Passa al prossimo argomento'
+    back_to_start: "Torna all'inizio"
     argument_index: 'Indice argomenti'
 
     how_to_register_text:
@@ -43,5 +45,5 @@ it:
       line13: "Vuoi sapere quanti punti tabellari FIN varrebbe una certa prestazione che ti senti già nelle btraccia?"
       line14: "Goggles ti mette a disposizione il simulatore del calcolo del punteggio tabellare FIN, con le tabelle federali aggiornate per tutte le categoire e specialità, mantenendo sempre un occhio sulle tue prestazioni stagionali e sui record di società, giusto per darti uno stimolo in più!"
       line15: "E per finire, Goggles sa che il nuoto è anche scienza, metodo, costanza, oltre che naturalmente talento, faticose cene per organizzare le traferte ed estenuanti pranzi del dopo gara."
-      line16: "Mentre sul versante poranzi e cene siamo già tutti fortisismi, e ci applichiamo senza riserve, per la parte scientifica, tenere controllati i propri allenamenti, cercare di costruirli dando un senso generale alla preparazione e cercando di non trascurare nessun aspetto, sia un punto di arrivo non scontato."
+      line16: "Mentre sul versante pranzi e cene siamo già tutti fortisismi, e ci applichiamo senza riserve, per la parte scientifica, tenere controllati i propri allenamenti, cercare di costruirli dando un senso generale alla preparazione e cercando di non trascurare nessun aspetto, sia un punto di arrivo non scontato."
       line17: "Per questo Goggles ti offre la possibilità di memorizzare i tuoi allenamenti e rivederli nel breve e medio periodo analizzandone i volumi, la composizione e la qualità."

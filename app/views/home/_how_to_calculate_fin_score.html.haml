@@ -1,5 +1,8 @@
-.row-fluid.goggles-category-gap#how_to_calculate_fin_score
-  %h2= t('tutorial.how_to_calculate_fin_score')
-
-.row-fluid
-  %p= t('coming_soon') 
+%section.home-section#how_to_calculate_fin_score
+  .container-fluid
+    .fluid-row.span12
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorial.how_to_calculate_fin_score')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('coming_soon')

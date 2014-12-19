@@ -1,15 +1,13 @@
-%script
-  new WOW().init();
-
 %section.home-section#how_to_register
-  .container
+  .container-fluid
     .fluid-row.span12
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.how_to_register')
         %p.wow.bounceInUp( data-wow-delay="0.5s" )
           = t('tutorial.how_to_register_text.line1')
-  .container
+
+  .container-fluid
     .fluid-row.span12
       .span4
         = image_tag( "tutorial/disorder.jpg", class: "img-responsive img-rounded" )
@@ -30,9 +28,8 @@
       %p= t('tutorial.how_to_register_text.line8')
       %p= t('tutorial.how_to_register_text.line9')
 
-
 %section.home-section.parallax.text-center{ :id=>'how_to_register_steps', 'data-stellar-background-ratio'=>"0.5" }
-  .container
+  .container-fluid
     .fluid-row.span12
       .section-heading.text-center
         %p.wow.lightSpeedIn( data-wow-delay="0.5s" )
@@ -73,12 +70,3 @@
           %p= t('tutorial.how_to_register_text.line14')
       .span5.wow.rollIn( data-wow-delay="1s" )
         = image_tag( "tutorial/associate.png", class: "img-responsive img-rounded" )
-
-
-.row-fluid.goggles-category-gap
-  .row-fluid.offset6.span6
-    .row-fluid.span11.text-right
-      = t('tutorial.next_argument')
-      %a(href="#what_can_i_do")= t('tutorial.what_can_i_do')
-    .row-fluid.span1
-      = image_tag( "document-128.png")
