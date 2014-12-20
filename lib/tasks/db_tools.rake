@@ -8,13 +8,14 @@ require 'framework/version'
 require 'framework/application_constants'
 
 require 'framework/console_logger'
+require 'common/validation_error_tools'
 
 
 =begin
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.635
+  - Goggles framework vers.:  4.00.683
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -25,37 +26,6 @@ require 'framework/console_logger'
 
 
 DB_SEED_DIR = File.join( Dir.pwd, 'db/seed' ) unless defined? DB_SEED_DIR
-
-
-# Scans recursively the ActiveRecord row instance specified for validation errors,
-# returning the full error message found.
-#
-# Whenever any errors are found, the standard error message is (as of Rails 3.2)
-# in the format:
-#
-#   { 'invalid_member_name_1' => ['error_msg_1', 'error_msg_2', ...], ... }
-#
-# This allows us to perform a standard AI depth-first scan of the error keys,
-# until no errors are found or the only members with errors are not of the
-# ActiveRecord::Base kind (a leaf is reached).
-#
-def recursive_validation( member, error_msg = '' )
-  if member.invalid?
-    member.errors.messages.keys.each do | sub_member_sym |
-      sub_member = member.send( sub_member_sym )
-      if sub_member.kind_of?( ActiveRecord::Base )  # Recurse!
-        # Go deep until we found a "leaf" (an atomic or non-active_record member)
-        error_msg << recursive_validation( sub_member, "#{member.class.name} ID:#{member.id} => " )
-      else                                          # Leaf reached!
-        error_msg << "#{member.class.name} ID:#{member.id}, " <<
-                     "#{sub_member_sym}: #{member.errors.messages[ sub_member_sym ].join(', ')}"
-      end
-    end
-  end
-  error_msg
-end
-#-- ---------------------------------------------------------------------------
-#++
 
 
 namespace :db do
@@ -98,7 +68,7 @@ namespace :db do
         puts "" unless prev_error_at == index-1
         puts "ID: #{row.id} => #{row.errors().messages.to_json}"
         puts "Backtracing source of error..."
-        puts '=> ' + recursive_validation( row, '' )
+        puts '=> ' + ValidationErrorTools.recursive_error_for( row )
         puts ''
         errors_found += 1
         prev_error_at = index

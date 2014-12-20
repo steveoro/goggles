@@ -14,7 +14,7 @@ require 'singleton'
 
 === Typical usage:
 
-    EncodingTools.( any_string )
+    EncodingTools.force_valid_encoding( any_string )
 
 =end
 class EncodingTools

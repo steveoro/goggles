@@ -1,6 +1,8 @@
 # encoding: utf-8
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
+require 'common/validation_error_tools'
+
 require 'data_import/services/data_import_entity_committer'
 
 
@@ -8,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.627
+  - Goggles framework vers.:  4.00.683
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -150,6 +152,8 @@ module FinResultPhase3
   #
   def commit_data_import_meeting_program( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingProgram, 3 )
+# FIXME COMPUTE starting value for event_num_memo, must be equal to last MeetingEvent found for this Meeting
+#      (this way we'll append new meeting_events at the end of the existing ones)
     event_num_memo = 1
     committer.commit( event_num_memo ) do |source_row, event_order|
       MeetingProgram.transaction do                 # Create the MeetingEvent first, if missing:
@@ -163,8 +167,19 @@ module FinResultPhase3
           source_row.is_out_of_race
         )
         meeting_event = mev_builder.result_row
-# TODO This must be tested:
-        event_order += 1 if meeting_event           # Increase event_order only after an event is created
+        raise ArgumentError.new("MeetingEvent was not found or not created!") unless meeting_event.instance_of?(MeetingEvent)
+        event_order += 1                            # Increase the internal counter for the MeetingEvents
+
+        if meeting_event.invalid?                   # Check validation for meeting events first:
+          msg = "\r\n*** commit_data_import_meeting_program(): ERROR: validation failed during MeetingEvent creation!\r\n" <<
+            "- event_order.....: #{event_order}\r\n" <<
+            "- source_row......: #{source_row.inspect}\r\n" <<
+            "- meeting_event...: #{meeting_event.inspect}.\r\n" <<
+            ValidationErrorTools.recursive_error_for( meeting_event )
+          data_import_session.phase_2_log << msg
+# DEBUG
+          puts msg
+        end
 
         committed_row = MeetingProgram.new(
           event_order:      source_row.event_order,

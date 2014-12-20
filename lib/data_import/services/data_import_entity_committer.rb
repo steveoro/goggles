@@ -7,7 +7,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = DataImportEntityCommitter
 
-  - Goggles framework vers.:  4.00.599
+  - Goggles framework vers.:  4.00.683
   - author: Steve A.
 
   Service/DSL implementation oriented to commit data-import entities, required
@@ -117,7 +117,9 @@ class DataImportEntityCommitter
         @committed_row = instance_exec( source_row, *args, &block )
       rescue
         is_ok = false
-        @data_import_session.phase_2_log << "\r\n#{ @source_row.class.name } commit: exception caught during save!\r\n"
+        @data_import_session.phase_2_log << "\r\nDataImportCommitter: #{ source_row.class.name } commit: exception caught during save!\r\n"
+        @data_import_session.phase_2_log << "- Returned @committed_row: #{ @committed_row.inspect }\r\n"
+        @data_import_session.phase_2_log << "- source_row: #{ source_row.inspect }\r\n"
         if $!
           @last_error = $!
           @data_import_session.phase_2_log << "#{ $!.to_s }\r\n" if $!
