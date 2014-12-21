@@ -79,7 +79,7 @@ class FilenameParser
     rescue
       raise ArgumentError.new("Unable to parse header_date!")
     end
-    year = header_date.month < 9 ? header_date.year - 1 : header_date.year
+    year = @header_date.month < 9 ? @header_date.year - 1 : @header_date.year
     @header_year = "#{year}/#{year+1}"
 
     HeaderFieldsDAO.new( @full_pathname, @prefix, @header_date, @header_year, @code_name )

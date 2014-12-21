@@ -10,6 +10,7 @@ require 'data_import/strategies/fin_result_parser'
 require 'data_import/strategies/fin_result_phase2'
 require 'data_import/strategies/fin_result_phase3'
 
+require 'data_import/services/meeting_header_year_checker'
 require 'data_import/services/data_import_meeting_builder'
 require 'data_import/services/data_import_meeting_session_builder'
 
@@ -18,7 +19,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.657
+  - Goggles framework vers.:  4.00.685
   - author: Steve A.
 
   Data-Import strategy class.
@@ -534,7 +535,14 @@ class DataImporter
       meeting = meeting_builder.result_row
     end
                                                     # --- TEAM RANKING/SCORES (digest/serialization) --
-    if meeting                                      # Retrieve default meeting session: (used only for new/missing meeting events or programs)
+    if meeting                                      # Check for possible validation failures:
+      update_logs( "PHASE #1.2: checking possible Meeting validation failures..." )
+      sql_diff = MeetingHeaderYearChecker.check_and_fix( meeting )
+      if sql_diff.size > 0
+        @data_import_session.sql_diff << sql_diff
+        update_logs( "PHASE #1.2: associated Meeting corrected." )
+      end
+                                                    # Retrieve default meeting session: (used only for new/missing meeting events or programs)
       update_logs( "PHASE #1.2: processing TEAM RANKING/SCORES..." )
       ranking_details = @result_hash[:parse_result][:ranking_row]
       is_ok = process_team_ranking(

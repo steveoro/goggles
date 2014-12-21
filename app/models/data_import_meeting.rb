@@ -19,19 +19,19 @@ class DataImportMeeting < ActiveRecord::Base
   validates_associated :timing_type
 
   belongs_to( :individual_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "individual_score_computation_type_id"
   )
   belongs_to( :relay_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "relay_score_computation_type_id"
   )
   belongs_to( :team_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "team_score_computation_type_id"
   )
   belongs_to( :meeting_score_computation_type,
-              class_name: "ScoreComputationType", 
+              class_name: "ScoreComputationType",
               foreign_key: "meeting_score_computation_type_id"
   )
 
@@ -59,7 +59,7 @@ class DataImportMeeting < ActiveRecord::Base
   validates_length_of :reference_e_mail, maximum: 50
   validates_length_of :reference_name, maximum: 50
 
-  validates_length_of :header_year, maximum: 9
+  validates_length_of :header_year, maximum: 9, allow_nil: false
   validates_length_of :configuration_file, maximum: 255
 
   validates_length_of :max_individual_events, maximum: 1

@@ -9,7 +9,7 @@ require 'data_import/strategies/team_analysis_result_processor'
 
 = AdminImportController
 
-  - version:  4.00.611
+  - version:  4.00.683
   - author:   Steve A.
 
 =end
@@ -98,13 +98,16 @@ class AdminImportController < ApplicationController
     force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
     force_missing_team_creation    = (params[:force_team_creation] == 'true')    || (params[:force_team_creation].to_i > 0)
     # [Steve] The following override hash has the structure:
-    # params[:alias_ids] => { analysis_result.id.to_s => overridden_alias_team_id.to_s, ... }
+    #
+    # params[:alias_ids] => {
+    #   analysis_result.id.to_s => overridden_alias_team_id.to_s,
+    #   #...
+    # }
     overridden_alias_actions = params['alias_ids'] if params['alias_ids'].instance_of?( ActiveSupport::HashWithIndifferentAccess )
 # DEBUG
 #    logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
 #    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
 #    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
-
     data_import_session = DataImportSession.find( data_import_session_id )
     data_importer       = DataImporter.new( logger, flash, data_import_session )
 # TODO /WIP ****** ADD  DataImportSwimmerAnalysisResult generation sub-phase to DataImporter!

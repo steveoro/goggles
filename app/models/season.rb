@@ -139,6 +139,12 @@ class Season < ActiveRecord::Base
     year = evaluation_date.month < 9 ? evaluation_date.year - 1 : evaluation_date.year
     "#{year}/#{year+1}"
   end
+
+  # Returns the exact +header_year+ string given the current instance of Season.
+  #
+  def build_header_year()
+    "#{self.begin_date.year}/#{self.end_date.year}"
+  end
   #-- -------------------------------------------------------------------------
   #++
 

@@ -47,106 +47,118 @@ describe Season, :type => :model do
       :sort_season_by_season_type,
       :sort_season_by_user
     ])
+    it_behaves_like( "(the existance of a method)", [
+      :get_full_name,
+      :get_verbose_name,
+      :is_season_ended_at,
+      :is_season_started_at,
+      :get_season_type,
+      :get_federation_type,
+      :get_last_season_by_type,
+      :build_header_year
+    ])
 
-    it "has a method to return full description of the season" do
-      expect( subject ).to respond_to( :get_full_name )
-    end
-    it "#get_full_name should return correct full description" do
-      expect( subject.get_full_name ).to be_an_instance_of( String )
-      expect( subject.get_full_name ).not_to eq( '' )
-      expect( subject.get_full_name ).not_to eq( '?' )
-    end
-    it "has a method to return verbose description of the season" do
-      expect( subject ).to respond_to( :get_verbose_name )
-    end
-    it "#get_verbose_name should return correct verbose description" do
-      expect( subject.get_verbose_name ).to be_an_instance_of( String )
-      expect( subject.get_verbose_name ).not_to eq( '' )
-      expect( subject.get_verbose_name ).not_to eq( '?' )
-    end
-    it "has a method to return if a season is ended at a certain date" do
-      expect( subject ).to respond_to( :is_season_ended_at )
+    describe "#get_full_name" do
+      it "returns the correct full description" do
+        expect( subject.get_full_name ).to be_an_instance_of( String )
+        expect( subject.get_full_name ).not_to eq( '' )
+        expect( subject.get_full_name ).not_to eq( '?' )
+      end
     end
 
-    it "#is_season_ended_at should evaluate dates" do
-      expect( subject.is_season_ended_at( subject.end_date + 365 ) ).to be true
-      expect( subject.is_season_ended_at( subject.end_date - 365 ) ).to be false
-
-      subject.begin_date = Date.today - 465
-      subject.end_date = Date.today - 100
-      expect( subject.is_season_ended_at() ).to be true
-
-      subject.begin_date = Date.today - 265
-      subject.end_date = Date.today + 100
-      expect( subject.is_season_ended_at() ).to be false
-
-      subject.end_date = nil
-      expect( subject.is_season_ended_at(Date.parse('2025-12-31')) ).to be false
-      expect( subject.is_season_ended_at(Date.parse('1999-01-01')) ).to be false
-      expect( subject.is_season_ended_at() ).to be false
+    describe "#get_verbose_name" do
+      it "returns the correct verbose description" do
+        expect( subject.get_verbose_name ).to be_an_instance_of( String )
+        expect( subject.get_verbose_name ).not_to eq( '' )
+        expect( subject.get_verbose_name ).not_to eq( '?' )
+      end
     end
 
-    it "has a method to return if a season is started at a certain date" do
-      expect( subject ).to respond_to( :is_season_started_at )
+    describe "#is_season_ended_at" do
+      it "evaluates the given date" do
+        expect( subject.is_season_ended_at( subject.end_date + 365 ) ).to be true
+        expect( subject.is_season_ended_at( subject.end_date - 365 ) ).to be false
+
+        subject.begin_date = Date.today - 465
+        subject.end_date = Date.today - 100
+        expect( subject.is_season_ended_at() ).to be true
+
+        subject.begin_date = Date.today - 265
+        subject.end_date = Date.today + 100
+        expect( subject.is_season_ended_at() ).to be false
+
+        subject.end_date = nil
+        expect( subject.is_season_ended_at(Date.parse('2025-12-31')) ).to be false
+        expect( subject.is_season_ended_at(Date.parse('1999-01-01')) ).to be false
+        expect( subject.is_season_ended_at() ).to be false
+      end
     end
 
-    it "#is_season_started_at should evaluate dates" do
-      expect( subject.is_season_started_at( subject.begin_date + 365 ) ).to be true
-      expect( subject.is_season_started_at( subject.begin_date - 365 ) ).to be false
+    describe "#is_season_started_at" do
+      it "evaluates the given date" do
+        expect( subject.is_season_started_at( subject.begin_date + 365 ) ).to be true
+        expect( subject.is_season_started_at( subject.begin_date - 365 ) ).to be false
 
-      subject.begin_date = Date.today - 200
-      expect( subject.is_season_started_at() ).to be true
+        subject.begin_date = Date.today - 200
+        expect( subject.is_season_started_at() ).to be true
 
-      subject.begin_date = Date.today + 100
-      expect( subject.is_season_started_at() ).to be false
+        subject.begin_date = Date.today + 100
+        expect( subject.is_season_started_at() ).to be false
+      end
     end
 
-    it "has a method to return the season type" do
-      expect( subject ).to respond_to( :get_season_type )
+    describe "#get_season_type" do
+      it "returns the correct season type" do
+        expect( subject.get_season_type ).to be_an_instance_of( String )
+        expect( subject.get_season_type ).not_to eq( '' )
+        expect( subject.get_season_type ).not_to eq( '?' )
+      end
     end
 
-    it "#get_season_type should return correct season type" do
-      expect( subject.get_season_type ).to be_an_instance_of( String )
-      expect( subject.get_season_type ).not_to eq( '' )
-      expect( subject.get_season_type ).not_to eq( '?' )
+    describe "#get_federation_type" do
+      it "returns the correct fedeation type" do
+        expect( subject.get_federation_type ).to be_an_instance_of( String )
+        expect( subject.get_federation_type ).not_to eq( '' )
+        expect( subject.get_federation_type ).not_to eq( '?' )
+      end
     end
 
-    it "has a method to return the federation type" do
-      expect( subject ).to respond_to( :get_federation_type )
-    end
-    it "#get_federation_type should return the correct fedeation type" do
-      expect( subject.get_federation_type ).to be_an_instance_of( String )
-      expect( subject.get_federation_type ).not_to eq( '' )
-      expect( subject.get_federation_type ).not_to eq( '?' )
-    end
-
-    it "has a method to return the last season for a certain season type" do
-      expect( subject ).to respond_to( :get_last_season_by_type )
-    end
-
-    it "#get_last_season_by_type returns a season, that should be the last one for the season_type" do
-      expect( subject.get_last_season_by_type( subject.season_type.code ) ).to be_a( Season )
-      create(
-        :season,
-        description: "Older season",
-        edition: subject.edition - 1,
-        begin_date: subject.begin_date - 365,
-        end_date: subject.end_date - 365,
-        season_type: subject.season_type
-      )
-      seasonnewer = create(
-        :season,
-        description: "Newer season",
-        edition: subject.edition + 1,
-        begin_date: subject.begin_date + 365,
-        end_date: subject.end_date + 365,
-        season_type: subject.season_type
-      )
-      expect( subject.get_last_season_by_type( subject.season_type.code ) ).to eq( seasonnewer )
+    describe "#get_last_season_by_type" do
+      it "returns the latest season according to current season_type" do
+        expect( subject.get_last_season_by_type( subject.season_type.code ) ).to be_a( Season )
+        create(
+          :season,
+          description: "Older season",
+          edition: subject.edition - 1,
+          begin_date: subject.begin_date - 365,
+          end_date: subject.end_date - 365,
+          season_type: subject.season_type
+        )
+        seasonnewer = create(
+          :season,
+          description: "Newer season",
+          edition: subject.edition + 1,
+          begin_date: subject.begin_date + 365,
+          end_date: subject.end_date + 365,
+          season_type: subject.season_type
+        )
+        expect( subject.get_last_season_by_type( subject.season_type.code ) ).to eq( seasonnewer )
+      end
     end
     #-- -----------------------------------------------------------------------
     #++
 
+    describe "#build_header_year" do
+      it "returns always a string" do
+        expect( subject.build_header_year ).to be_an_instance_of( String )
+      end
+      it "contains the begin year and the end year in the result" do
+        expect( subject.build_header_year ).to include( subject.begin_date.year.to_s )
+        expect( subject.build_header_year ).to include( subject.end_date.year.to_s )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
 
     describe "self.build_header_year_from_date" do
       it "returns always a string" do
