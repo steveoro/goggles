@@ -619,20 +619,4 @@ module FinResultPhase3
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
-  private
-
-
-  # Checks that +source_row+ does have a column for all the symbols specified in
-  # the array, and that its value is greater than zero.
-  # Raises an exception otherwise.
-  #
-  def check_for_non_nil_links( source_row, array_of_sym )
-    array_of_sym.each do |column_sym|
-      unless source_row.send( column_sym ).to_i > 0
-        raise ArgumentError.new("#{source_row.class} ID#{source_row.id} found with #{column_sym} NULL during phase#3 !")
-      end
-    end
-  end
 end

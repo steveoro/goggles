@@ -21,7 +21,8 @@ describe DataImportEntityCommitter, type: :service do
   it_behaves_like( "(the existance of a method)", [
     :data_import_session, :committed_data_rows, :last_error,
     :is_ok?,
-    :commit
+    :commit,
+    :check_for_non_nil_links
   ] )
 
 

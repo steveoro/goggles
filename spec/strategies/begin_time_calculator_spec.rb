@@ -12,6 +12,7 @@ describe BeginTimeCalculator, type: :strategy do
   #-- -------------------------------------------------------------------------
   #++
 
+
   describe "self.compute" do
     let(:scheduled_date_string)       { "#{ 2000 + ((rand * 100) % 15).to_i }-11-01" }
     let(:scheduled_date)              { Date.parse( scheduled_date_string ) }
@@ -31,9 +32,10 @@ describe BeginTimeCalculator, type: :strategy do
       ( (event_order - 1) + (athletes_tot < 8 ? 8 : athletes_tot) / 8 ) *
       (base_time_mins.to_i < 2 ? 2 : base_time_mins.to_i)
     end
-    let(:optimistic_duration_hours)   { optimistic_duration_mins / 60 + 8 }
-    let(:pessimistic_duration_mins)   { optimistic_duration_mins * 3 + 2 }
-    let(:pessimistic_duration_hours)  { pessimistic_duration_mins / 60 + 8 }
+    let(:optimistic_duration_hours)   { optimistic_duration_mins / 60 }
+
+    let(:pessimistic_duration_mins)   { optimistic_duration_mins * 1.5 }
+    let(:pessimistic_duration_hours)  { pessimistic_duration_mins / 60 }
 
     let(:optimistic_guess) do
       Time.utc(
@@ -84,9 +86,41 @@ describe BeginTimeCalculator, type: :strategy do
 
       it "returns a guess that is greater than the previous begin time" do
 # DEBUG
-        puts "\r\nEvent ##{event_order}, athletes_tot: #{athletes_tot}, base_time_mins: #{base_time_mins}"
-        puts "=> result: #{result_with_prev_begin_time}, previous_begin_time: #{previous_begin_time}, optimistic_guess: #{optimistic_guess}, pessimistic_guess: #{pessimistic_guess}"
+#        puts "\r\nEvent ##{event_order}, athletes_tot: #{athletes_tot}, base_time_mins: #{base_time_mins}"
+#        puts "=> result: #{result_with_prev_begin_time}, previous_begin_time: #{previous_begin_time}, optimistic_guess: #{optimistic_guess}, pessimistic_guess: #{pessimistic_guess}"
         expect( result_with_prev_begin_time.to_f ).to be > previous_begin_time.to_f
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "self.get_esteemed_heat_number()" do
+    [
+      [ 80, 8, 1, 10 ],
+      [ 63, 8, 1,  6 ]
+    ].each do |total_athletes, pool_lanes_total, event_order, min_accepted_result|
+      it "returns a value not below than the min. accepted (#{min_accepted_result})" do
+        expect(
+          subject.class.get_esteemed_heat_number( total_athletes, pool_lanes_total, event_order )
+        ).to be >= min_accepted_result
+      end
+    end
+  end
+
+
+  describe "self.get_esteemed_duration_in_mins()" do
+    [
+      [ 1,  2,  2 ],
+      [ 2,  2,  4 ],
+      [ 2, 10, 20 ],
+      [ 3, 15, 45 ]
+    ].each do |base_time_mins, heat_number_approx, min_accepted_result|
+      it "returns a value not below than the min. accepted (#{min_accepted_result})" do
+        expect(
+          subject.class.get_esteemed_duration_in_mins( base_time_mins, heat_number_approx )
+        ).to be >= min_accepted_result
       end
     end
   end

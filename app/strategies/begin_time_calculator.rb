@@ -30,27 +30,52 @@ class BeginTimeCalculator
   #
   def self.compute( scheduled_date, event_order, total_athletes, base_time_mins,
                     previous_begin_time = nil, pool_lanes_total = 8, starting_hour = 8 )
-    heat_number_approx =  (
-      previous_begin_time ?
-      ( total_athletes / pool_lanes_total ) :
-      ( total_athletes / pool_lanes_total ) + event_order
+                                                    # Compute heat number:
+    heat_number_approx = self.get_esteemed_heat_number(
+      total_athletes,
+      pool_lanes_total,
+      event_order
     )
-    esteemed_duration_mins  = (
-      base_time_mins.to_i < 3 ?
-      heat_number_approx * 2 :
-      heat_number_approx * base_time_mins.to_i + 2
+                                                    # Compute esteemed duration:
+    esteemed_duration_in_mins = self.get_esteemed_duration_in_mins(
+      base_time_mins,
+      heat_number_approx
     )
-    esteemed_duration_hours = (
-      previous_begin_time ?
-      previous_begin_time.hour + (previous_begin_time.min + esteemed_duration_mins) / 60 :
-      starting_hour + esteemed_duration_mins / 60
-    )
+    if previous_begin_time                          # Add a begin_time, when given:
+      esteemed_duration_in_mins += previous_begin_time.min
+    end
+    esteemed_duration_in_hours = esteemed_duration_in_mins / 60
+    if previous_begin_time                          # Add a begin_time, when given:
+      esteemed_duration_in_hours += previous_begin_time.hour
+    end
+                                                    # Prepare the result:
     Time.utc(
-      scheduled_date.year, scheduled_date.month, scheduled_date.day + (esteemed_duration_hours/24),
-      esteemed_duration_hours % 24,
-      esteemed_duration_mins % 60
+      scheduled_date.year,
+      scheduled_date.month,
+      scheduled_date.day + (esteemed_duration_in_hours / 24),
+      esteemed_duration_in_hours % 24,
+      esteemed_duration_in_mins % 60
     )
   end
   #-- --------------------------------------------------------------------------
   #++
+
+
+  # Computes an esteemed heat number given the parameters.
+  #
+  def self.get_esteemed_heat_number( total_athletes, pool_lanes_total, event_order )
+    event_order = event_order.to_i > 0 ? event_order.to_i : 1
+    ( total_athletes / pool_lanes_total ) + event_order
+  end
+
+
+  # Computes an esteemed event duration in minutes given the parameters.
+  #
+  def self.get_esteemed_duration_in_mins( base_time_mins, heat_number_approx )
+    if base_time_mins.to_i < 3
+      heat_number_approx * 2
+    else
+      heat_number_approx * base_time_mins.to_i + 2
+    end
+  end
 end
