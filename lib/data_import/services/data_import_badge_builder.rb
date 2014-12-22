@@ -86,6 +86,13 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
       if_not_found do
 # DEBUG
 #        puts "NOT found!"
+
+############################################
+# FIXME RETRIEVE HERE team_affiliation_id, using team + season, or create one if missing
+
+# FIXME Here we can add also the backtracking check to avoid mis-matched swimmer names to be
+#       created as duplicates!
+
         attributes_for_creation(
           data_import_session_id: data_import_session.id,
           import_text:            badge_code,

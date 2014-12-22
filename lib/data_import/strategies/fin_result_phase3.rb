@@ -393,6 +393,8 @@ module FinResultPhase3
   def commit_data_import_badges( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportBadge, 7 )
     committer.commit do |source_row|
+# FIXME Having season & team we could add here a fix if :team_affiliation_id is found missing
+# (instead of raising an error like the following method does)
       check_for_non_nil_links( source_row, [:swimmer_id, :team_id, :team_affiliation_id, :season_id] )
       Badge.transaction do
         committed_row = Badge.new(

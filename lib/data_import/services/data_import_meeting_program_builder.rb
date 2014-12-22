@@ -55,7 +55,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
                                   header_row, header_index,
                                   gender_type, category_type, stroke_type,
                                   length_in_meters, scheduled_date,
-                                  detail_rows_size, previous_begin_time = nil )
+                                  detail_rows_size, previous_begin_time = nil,
+                                  previous_duration_in_secs = 120 )
     raise ArgumentError.new("'season' must be a valid instance of Season!")                   unless season.instance_of?(Season)
     raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!")  unless meeting_session.instance_of?(MeetingSession)
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")          unless gender_type.instance_of?(GenderType)
@@ -82,8 +83,9 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           scheduled_date,
           @event_order,
           detail_rows_size,
+          base_time,
           previous_begin_time,
-          base_time
+          previous_duration_in_secs
         )
 
         @event_type = DataImportMeetingProgramBuilder.get_event_type(
@@ -188,7 +190,8 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
   # - @mins, @secs, @hds integer values used in the base time search/create step
   #
   def self.get_begin_time_and_base_time_members( scheduled_date, event_order, total_entries,
-                                                 previous_begin_time, base_time )
+                                                 base_time, previous_begin_time,
+                                                 previous_duration_in_secs )
     mins, secs, hds = ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
     begin_time = BeginTimeCalculator.compute(
       scheduled_date,
@@ -196,6 +199,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
       total_entries,                              # Athletes in total for this program
       mins,                                       # Base time minutes
       previous_begin_time,
+      previous_duration_in_secs,
       8,                                          # Average occupancy of pool lanes
       8                                           # Starting hour for the meeting
     )

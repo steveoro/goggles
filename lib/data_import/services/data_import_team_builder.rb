@@ -70,7 +70,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
       if_not_found  do
         search_for( DataImportTeamAlias, name: team_name )
         unless @result_row                        # Try also a fuzzy search on alias, if a standard search fails:
-          matcher    = FuzzyStringMatcher.new( DataImportTeamAlias.all, :name, )
+          matcher = FuzzyStringMatcher.new( DataImportTeamAlias.all, :name, )
           @result_row = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
         end
         set_result( @result_row.team ) if @result_row

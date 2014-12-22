@@ -127,6 +127,7 @@ module FinResultPhase2
     category_details = parse_result[:result_row]
     category_headers_ids = category_headers.collect{|e| e[:id] }.compact.uniq.sort
     previous_begin_time = nil
+    previous_duration_in_secs = 120
                                                     # **** HEADER LOOP **** For each header row:...
     category_headers_ids.each_with_index do |category_id, header_index|
                                                     # For each category_details key, add import entities rows:
@@ -157,11 +158,17 @@ module FinResultPhase2
         length_in_meters,
         scheduled_date,
         detail_rows.size,
-        previous_begin_time
+        previous_begin_time,
+        previous_duration_in_secs
       )
       meeting_program = meeting_program_builder.result_row
       is_ok = ! meeting_program.nil?
-      previous_begin_time = meeting_program.begin_time if meeting_program
+      if meeting_program                            # Update prev. begin & duration times:
+        begin_time = meeting_program.begin_time ? meeting_program.begin_time :
+                                                  scheduled_date.to_time + (8 * 3600)
+        previous_duration_in_secs = previous_begin_time ? begin_time - previous_begin_time : 120
+        previous_begin_time = begin_time
+      end
       return unless is_ok                           # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index do |detail_row, detail_row_idx|
@@ -200,6 +207,13 @@ module FinResultPhase2
     relay_details = parse_result[:relay_row]
     relay_headers_ids = relay_headers.collect{|e| e[:id] }.compact.uniq.sort
     previous_begin_time = nil
+    previous_duration_in_secs = 120
+                                                    # Adjust begin time esteem, continuing from individual result programs:
+    if data_import_session.data_import_meeting_programs.last
+      last_prg = data_import_session.data_import_meeting_programs.last
+      previous_begin_time = last_prg.begin_time
+      previous_duration_in_secs = last_prg.minutes.to_i * 60 + last_prg.seconds.to_i + 30
+    end
                                                     # **** HEADER LOOP **** For each header row:...
     relay_headers_ids.each_with_index do |relay_id, header_index|
 # DEBUG
@@ -233,12 +247,19 @@ module FinResultPhase2
         length_in_meters,
         scheduled_date,
         detail_rows.size,
-        previous_begin_time
+        previous_begin_time,
+        previous_duration_in_secs
       )
       meeting_program = meeting_program_builder.result_row
       is_ok = ! meeting_program.nil?
-      previous_begin_time = meeting_program.begin_time if meeting_program
       return unless is_ok
+
+      if meeting_program                            # Update prev. begin & duration times:
+        begin_time = meeting_program.begin_time ? meeting_program.begin_time :
+                                                  scheduled_date.to_time + (8 * 3600)
+        previous_duration_in_secs = previous_begin_time ? begin_time - previous_begin_time : 120
+        previous_begin_time = begin_time
+      end
                                                     # **** DETAIL LOOP **** For each result row:...
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index do |detail_row, detail_row_idx|
