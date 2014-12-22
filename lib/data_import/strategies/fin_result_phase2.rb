@@ -132,12 +132,12 @@ module FinResultPhase2
     category_headers_ids.each_with_index do |category_id, header_index|
                                                     # For each category_details key, add import entities rows:
 # DEBUG
-      data_import_session.phase_1_log << "\r\nCATEGORY HEADER: Processing category.id:'#{ category_id }', key #{ header_index+1 }/#{ category_headers_ids.size }..."
+#      data_import_session.phase_1_log << "\r\nCATEGORY HEADER: Processing category.id:'#{ category_id }', key #{ header_index+1 }/#{ category_headers_ids.size }..."
                                                     # Extract header row with its details for current category:
       header_row  = category_headers.find({}) { |e| e[:id] == category_id }
       detail_rows = category_details.find_all { |e| e[:id] == category_id }
 # DEBUG
-      data_import_session.phase_1_log << "                 Parsed CATEGORY header_row[:fields]=#{ header_row[:fields].inspect }...\r\n"
+#      data_import_session.phase_1_log << "                 Parsed CATEGORY header_row[:fields]=#{ header_row[:fields].inspect }...\r\n"
 
                                                     # -- MEETING PROGRAM (digest part) --
       gender_type   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
@@ -148,7 +148,7 @@ module FinResultPhase2
       raise "Unrecognized StrokeType in category headers! (token='#{ header_row[:fields][:style] }')" unless stroke_type
       length_in_meters = header_row[:fields][:distance].to_i
 # DEBUG
-      data_import_session.phase_1_log << "CATEGORY HEADER: Current header_row: #{ header_row.inspect }\r\nResulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }, data_import_session ID=#{ data_import_session.id }"
+#      data_import_session.phase_1_log << "CATEGORY HEADER: Current header_row: #{ header_row.inspect }\r\nResulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }, data_import_session ID=#{ data_import_session.id }"
 
       meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
@@ -166,7 +166,14 @@ module FinResultPhase2
       if meeting_program                            # Update prev. begin & duration times:
         begin_time = meeting_program.begin_time ? meeting_program.begin_time :
                                                   scheduled_date.to_time + (8 * 3600)
-        previous_duration_in_secs = previous_begin_time ? begin_time - previous_begin_time : 120
+        previous_duration_in_secs = previous_begin_time ? (begin_time - previous_begin_time).abs : 120
+# DEBUG
+        puts "\r\nBEGIN TIME DELTA for M.PRGs(MIR): order:#{meeting_program.event_order} " <<
+             "- meeting_program.begin_time: #{meeting_program.begin_time}\r\n" <<
+             "- scheduled_date.to_time: #{scheduled_date.to_time}\r\n" <<
+             "- previous_begin_time: #{previous_begin_time} |=> begin_time: #{begin_time}" <<
+             "- DELTA in secs: #{ begin_time - previous_begin_time }" <<
+             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
         previous_begin_time = begin_time
       end
       return unless is_ok                           # **** DETAIL LOOP **** For each result row:...
@@ -217,12 +224,12 @@ module FinResultPhase2
                                                     # **** HEADER LOOP **** For each header row:...
     relay_headers_ids.each_with_index do |relay_id, header_index|
 # DEBUG
-      data_import_session.phase_1_log << "\r\nRELAY HEADER: Processing relay_id:'#{relay_id}', key #{header_index+1}/#{relay_headers_ids.size}..."
+#      data_import_session.phase_1_log << "\r\nRELAY HEADER: Processing relay_id:'#{relay_id}', key #{header_index+1}/#{relay_headers_ids.size}..."
                                                     # Extract header row with its details for current relay:
       header_row  = relay_headers.find({}) { |e| e[:id] == relay_id }
       detail_rows = relay_details.find_all { |e| e[:id] == relay_id }
 # DEBUG
-      data_import_session.phase_1_log << "              Parsed RELAY header_row[:fields]=#{header_row[:fields].inspect}...\r\n"
+#      data_import_session.phase_1_log << "              Parsed RELAY header_row[:fields]=#{header_row[:fields].inspect}...\r\n"
 
                                                     # -- MEETING PROGRAM (digest part) -- (add also a Program entry for each found Relay)
       gender_type   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
@@ -235,8 +242,8 @@ module FinResultPhase2
       phase_length     = header_row[:fields][:distance][2..4].to_i  # "NxMM "  |=> "MM ".to_i
       length_in_meters = phases * phase_length
 # DEBUG
-      data_import_session.phase_1_log << "RELAY HEADER: Current header_row: #{ header_row.inspect }\r\n" <<
-        "Resulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }"
+#      data_import_session.phase_1_log << "RELAY HEADER: Current header_row: #{ header_row.inspect }\r\n" <<
+#        "Resulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }"
 
       meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
@@ -257,7 +264,14 @@ module FinResultPhase2
       if meeting_program                            # Update prev. begin & duration times:
         begin_time = meeting_program.begin_time ? meeting_program.begin_time :
                                                   scheduled_date.to_time + (8 * 3600)
-        previous_duration_in_secs = previous_begin_time ? begin_time - previous_begin_time : 120
+        previous_duration_in_secs = previous_begin_time ? (begin_time - previous_begin_time).abs : 120
+# DEBUG
+        puts "\r\nBEGIN TIME DELTA for M.PRGs(Rel.): order:#{meeting_program.event_order} " <<
+             "- meeting_program.begin_time: #{meeting_program.begin_time}\r\n" <<
+             "- scheduled_date.to_time: #{scheduled_date.to_time}\r\n" <<
+             "- previous_begin_time: #{previous_begin_time} |=> begin_time: #{begin_time}" <<
+             "- DELTA in secs: #{ begin_time - previous_begin_time }" <<
+             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
         previous_begin_time = begin_time
       end
                                                     # **** DETAIL LOOP **** For each result row:...
@@ -295,7 +309,7 @@ module FinResultPhase2
                                                     # **** DETAIL LOOP **** For each result row:...
     ranking_details.each_with_index do |detail_row, detail_row_idx|
 # DEBUG
-      data_import_session.phase_1_log << "\r\nTEAM RANKINGS: Processing ranking #{ detail_row_idx+1 }/#{ ranking_details.size }..."
+#      data_import_session.phase_1_log << "\r\nTEAM RANKINGS: Processing ranking #{ detail_row_idx+1 }/#{ ranking_details.size }..."
                                                     # -- TEAM RANKING (digest part) --
       mts_builder = DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,

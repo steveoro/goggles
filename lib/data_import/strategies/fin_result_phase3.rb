@@ -152,10 +152,10 @@ module FinResultPhase3
   #
   def commit_data_import_meeting_program( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingProgram, 3 )
-# FIXME COMPUTE starting value for event_num_memo, must be equal to last MeetingEvent found for this Meeting
-#      (this way we'll append new meeting_events at the end of the existing ones)
-    event_num_memo = 1
-    committer.commit( event_num_memo ) do |source_row, event_order|
+    committer.commit do |source_row|                # Get previously stored meeting event, if available
+      last_event  = source_row.meeting_session.meeting.meeting_events.order(:event_order).last
+      event_order = last_event ? last_event.event_order + 1 : 1
+
       MeetingProgram.transaction do                 # Create the MeetingEvent first, if missing:
         mev_builder = DataImportMeetingEventBuilder.build_from_parameters(
           data_import_session,
@@ -168,7 +168,6 @@ module FinResultPhase3
         )
         meeting_event = mev_builder.result_row
         raise ArgumentError.new("MeetingEvent was not found or not created!") unless meeting_event.instance_of?(MeetingEvent)
-        event_order += 1                            # Increase the internal counter for the MeetingEvents
 
         if meeting_event.invalid?                   # Check validation for meeting events first:
           msg = "\r\n*** commit_data_import_meeting_program(): ERROR: validation failed during MeetingEvent creation!\r\n" <<
@@ -178,7 +177,7 @@ module FinResultPhase3
             ValidationErrorTools.recursive_error_for( meeting_event )
           data_import_session.phase_2_log << msg
 # DEBUG
-          puts msg
+#          puts msg
         end
 
         committed_row = MeetingProgram.new(
@@ -288,51 +287,26 @@ module FinResultPhase3
           season
         )
         @team_affiliation = ta_builder.result_row
-
-## WIP OLD METHOD:
-#        @additional_row = TeamAffiliation.where( team_id: committed_row.id, season_id: season.id ).first
-#        if @additional_row.nil?
-#          @additional_row = TeamAffiliation.new(
-#            name:                       committed_row.name,
-#            must_calculate_goggle_cup:  false,
-#            is_autofilled:              true,       # signal that we have guessed some of the values
-#            team_id:                    committed_row.id,
-#            season_id:                  season.id,
-#            user_id:                    committed_row.user_id
-#            # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
-#          )
-#          @additional_row.save!
-          # [Steve, 20141024] By using @additional_row we'll signal to the #commit method
-          # that we are actually committing another row beside the main result of the
-          # block.
-#        else
-#          data_import_session.phase_2_log << "\r\n*** commit_data_import_teams(): WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{source_row.name}', Team#id:#{committed_row.id}, Season#id:#{season.id}).\r\nUsing T"
-#          data_import_session.phase_2_log << "\r\nUsing existing TeamAffiliation #ID: #{@additional_row.id}."
-#        end
                                                     # Update dependancies:
         DataImportBadge.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
             team_affiliation_id:  @team_affiliation.id
-#            team_affiliation_id:  @additional_row.id
           )
         DataImportMeetingIndividualResult.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
             team_affiliation_id:  @team_affiliation.id
-#            team_affiliation_id:  @additional_row.id
           )
         DataImportMeetingRelayResult.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
             team_affiliation_id:  @team_affiliation.id
-#            team_affiliation_id:  @additional_row.id
           )
         DataImportMeetingTeamScore.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
             team_affiliation_id:  @team_affiliation.id
-#            team_affiliation_id:  @additional_row.id
           )
 
         committed_row                               # Return the currently committed row
