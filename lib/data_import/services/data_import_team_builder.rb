@@ -3,13 +3,14 @@
 require 'data_import/strategies/city_comparator'
 require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_city_builder'
+require 'data_import/services/data_import_team_affiliation_builder'
 
 
 =begin
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.623
+  - Goggles framework vers.:  4.00.689
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -76,11 +77,11 @@ class DataImportTeamBuilder < DataImportEntityBuilder
         set_result( @result_row.team ) if @result_row
       end
 
-      if_not_found do                             # 3) Do a single-shot, "best-match" fuzzy search on TEAMS:
+      if_not_found do                             # 3) Do a single-shot, "manually-driven" "best-match" fuzzy search on TEAMS:
         matcher     = FuzzyStringMatcher.new( Team.all, :name, :editable_name )
         result_row  = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
         entity      Team                          # reset primary entity after the search
-        set_result  result_row
+        set_result  result_row                    # This will set the result so to simulate a search_for() execution
 # DEBUG
 #        puts "FuzzyStringMatcher on Team: result = #{result_row.inspect}"
       end
@@ -89,33 +90,20 @@ class DataImportTeamBuilder < DataImportEntityBuilder
       # (Cannot add a TeamAffiliation if the Team doesn't exist yet.)
       custom_logic do
         if primary_search_ok?
-          actual_team_result = @result_row
 # DEBUG
-#          puts "actual_team_result: #{actual_team_result.inspect}"
+#          puts "actual_team_result: #{@result_row.inspect}"
           # ASSERT: It should never happen that: (Team missing && TeamAffiliation found).
 
-          # Check the remote case in which we could have found a Team without its
-          # associated TeamAffiliation (it may happen for freshly created teams).
-          # To avoid mysql to complain about duplicate insertions, we test before
-          # the add if the TeamAffiliation is really missing (which is almost never
-          # the case when the Team has been found by the searches above).
-          search_for( TeamAffiliation, team_id: actual_team_result.id, season_id: season.id )
-          if_not_found do
-            entity_for_creation TeamAffiliation
-            attributes_for_creation(
-              name:                       team_name,# Use the actual provided (and searched) name instead of the result_row.name
-              team_id:                    actual_team_result.id,
-              season_id:                  season.id,
-              is_autofilled:              true,     # signal that we have guessed some of the values
-              must_calculate_goggle_cup:  false,
-              user_id:                    1         # (don't care)
-              # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
-            )
-            add_new
-          end
-          # We need to restore the result_row, in case the above procedure has changed the
-          # result value:
-          set_result actual_team_result
+          # Check & fix the case in which we could have found a Team without its
+          # associated TeamAffiliation (it may happen for freshly created teams or
+          # at the beginning of a new season). Since we do not actually need the
+          # affiliation at this stage, we just search for it and create it if missing,
+          # without storing the result:
+          DataImportTeamAffiliationBuilder.build_from_parameters(
+            data_import_session,
+            @result_row,
+            season
+          )
         end
       end
 

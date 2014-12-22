@@ -87,13 +87,15 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           EntryTimeType.find_by_code( EntryTimeType::TYPES_HASH[EntryTimeType::LAST_RACE_ID] )
         )
         @badge = badge_builder.result_row if @team && badge_builder
+                                                    # Search or add a TeamAffiliation:
+        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+          data_import_session,
+          @team,
+          season
+        )
+        @team_affiliation   = ta_builder.result_row
 
-        # If there's an affiliation, use it to get the team badge number:
-        ta = TeamAffiliation.where(
-          team_id:   @team.id,
-          season_id: season.id
-        ).first if @team.instance_of?(Team) && season.instance_of?(Season)
-        @team_badge_number  = ta ? ta.number : nil
+        @team_badge_number  = @team_affiliation ? @team_affiliation.number : nil
         @rank               = detail_row[:fields][:result_position]
         @result_time        = detail_row[:fields][:result_time]
         result_score        = ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f
@@ -174,14 +176,16 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           hundreds:                       @hds,
           reaction_time:                  0,
           user_id:                        1, # (don't care)
-          meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id  : nil,
-          data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id  : nil,
-          swimmer_id:                     @swimmer.instance_of?(Swimmer)                        ? @swimmer.id         : nil,
-          data_import_swimmer_id:         @swimmer.instance_of?(DataImportSwimmer)              ? @swimmer.id         : nil,
-          team_id:                        @team.instance_of?(Team)                              ? @team.id            : nil,
-          data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id            : nil,
-          badge_id:                       @badge.instance_of?(Badge)                            ? @badge.id           : nil,
-          data_import_badge_id:           @badge.instance_of?(DataImportBadge)                  ? @badge.id           : nil
+
+          team_affiliation_id:            @team_affiliation.instance_of?(TeamAffiliation)       ? @team_affiliation.id  : nil,
+          meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id    : nil,
+          data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id    : nil,
+          swimmer_id:                     @swimmer.instance_of?(Swimmer)                        ? @swimmer.id           : nil,
+          data_import_swimmer_id:         @swimmer.instance_of?(DataImportSwimmer)              ? @swimmer.id           : nil,
+          team_id:                        @team.instance_of?(Team)                              ? @team.id              : nil,
+          data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id              : nil,
+          badge_id:                       @badge.instance_of?(Badge)                            ? @badge.id             : nil,
+          data_import_badge_id:           @badge.instance_of?(DataImportBadge)                  ? @badge.id             : nil
         )
         add_new
       end

@@ -10,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.683
+  - Goggles framework vers.:  4.00.689
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -282,45 +282,57 @@ module FinResultPhase3
         committed_row.save!
         # We must add also a new TeamAffiliation row for this season:
         # Create dependancy: |=> team_affiliations(team, season)
-        @additional_row = TeamAffiliation.where( team_id: committed_row.id, season_id: season.id ).first
-        if @additional_row.nil?
-          @additional_row = TeamAffiliation.new(
-            name:                       committed_row.name,
-            must_calculate_goggle_cup:  false,
-            is_autofilled:              true,       # signal that we have guessed some of the values
-            team_id:                    committed_row.id,
-            season_id:                  season.id,
-            user_id:                    committed_row.user_id
-            # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
-          )
-          @additional_row.save!
+        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+          data_import_session,
+          committed_row,
+          season
+        )
+        @team_affiliation = ta_builder.result_row
+
+## WIP OLD METHOD:
+#        @additional_row = TeamAffiliation.where( team_id: committed_row.id, season_id: season.id ).first
+#        if @additional_row.nil?
+#          @additional_row = TeamAffiliation.new(
+#            name:                       committed_row.name,
+#            must_calculate_goggle_cup:  false,
+#            is_autofilled:              true,       # signal that we have guessed some of the values
+#            team_id:                    committed_row.id,
+#            season_id:                  season.id,
+#            user_id:                    committed_row.user_id
+#            # FIXME Unable to guess team affiliation number (not filled-in, to be added by hand)
+#          )
+#          @additional_row.save!
           # [Steve, 20141024] By using @additional_row we'll signal to the #commit method
           # that we are actually committing another row beside the main result of the
           # block.
-        else
-          data_import_session.phase_2_log << "\r\n*** commit_data_import_teams(): WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{source_row.name}', Team#id:#{committed_row.id}, Season#id:#{season.id}).\r\nUsing T"
-          data_import_session.phase_2_log << "\r\nUsing existing TeamAffiliation #ID: #{@additional_row.id}."
-        end
+#        else
+#          data_import_session.phase_2_log << "\r\n*** commit_data_import_teams(): WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{source_row.name}', Team#id:#{committed_row.id}, Season#id:#{season.id}).\r\nUsing T"
+#          data_import_session.phase_2_log << "\r\nUsing existing TeamAffiliation #ID: #{@additional_row.id}."
+#        end
                                                     # Update dependancies:
         DataImportBadge.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @additional_row.id
+            team_affiliation_id:  @team_affiliation.id
+#            team_affiliation_id:  @additional_row.id
           )
         DataImportMeetingIndividualResult.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @additional_row.id
+            team_affiliation_id:  @team_affiliation.id
+#            team_affiliation_id:  @additional_row.id
           )
         DataImportMeetingRelayResult.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @additional_row.id
+            team_affiliation_id:  @team_affiliation.id
+#            team_affiliation_id:  @additional_row.id
           )
         DataImportMeetingTeamScore.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @additional_row.id
+            team_affiliation_id:  @team_affiliation.id
+#            team_affiliation_id:  @additional_row.id
           )
 
         committed_row                               # Return the currently committed row

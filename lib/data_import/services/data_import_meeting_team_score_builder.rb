@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingTeamScoreBuilder
 
-  - Goggles framework vers.:  4.00.619
+  - Goggles framework vers.:  4.00.689
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -72,6 +72,13 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
         relay_scores = relay_results.collect{ |row| row.meeting_points.to_f }
         @total_relay_points = relay_scores.inject{ |sum, score| sum + score }
         @result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
+
+        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+          data_import_session,
+          @team,
+          season
+        )
+        @team_affiliation = ta_builder.result_row
 #        puts "Before search: @team.id: #{@team.id} ('#{@team_name}'), @total_relay_points: #{@total_relay_points}, @result_score: #{@result_score}..."
       end
 
@@ -111,21 +118,23 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
           import_text:                    @import_text,
           sum_individual_points:          @result_score,
           sum_relay_points:               @total_relay_points.to_f,
-          # sum_team_points:               TODO
-          # meeting_individual_points:     TODO
-          # meeting_relay_points:          TODO
-          # meeting_team_points:           TODO
-          # season_individual_points:      TODO
-          # season_relay_points:           TODO
-          # season_team_points:            TODO
+          # sum_team_points:              TODO
+          # meeting_individual_points:    TODO
+          # meeting_relay_points:         TODO
+          # meeting_team_points:          TODO
+          # season_individual_points:     TODO
+          # season_relay_points:          TODO
+          # season_team_points:           TODO
           # team_affiliation_id: nil # (it will be updated upon Team/TeamAffiliation commit)
           rank:                           @rank.to_i,
           season_id:                      season.id,
           user_id:                        1, # (don't care)
-          meeting_id:                     meeting.instance_of?(Meeting)          ? meeting.id  : nil,
-          data_import_meeting_id:         meeting.instance_of?(DataImportMeeting)? meeting.id  : nil,
-          team_id:                        @team.instance_of?(Team)               ? @team.id    : nil,
-          data_import_team_id:            @team.instance_of?(DataImportTeam)     ? @team.id    : nil
+
+          team_affiliation_id:            @team_affiliation.instance_of?(TeamAffiliation) ? @team_affiliation.id  : nil,
+          meeting_id:                     meeting.instance_of?(Meeting)                   ? meeting.id            : nil,
+          data_import_meeting_id:         meeting.instance_of?(DataImportMeeting)         ? meeting.id            : nil,
+          team_id:                        @team.instance_of?(Team)                        ? @team.id              : nil,
+          data_import_team_id:            @team.instance_of?(DataImportTeam)              ? @team.id              : nil
         )
         add_new
       end

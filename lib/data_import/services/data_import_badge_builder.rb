@@ -86,12 +86,15 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
       if_not_found do
 # DEBUG
 #        puts "NOT found!"
-
-############################################
-# FIXME RETRIEVE HERE team_affiliation_id, using team + season, or create one if missing
-
 # FIXME Here we can add also the backtracking check to avoid mis-matched swimmer names to be
 #       created as duplicates!
+                                                    # Search or add a TeamAffiliation:
+        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+          data_import_session,
+          team,
+          season
+        )
+        ta = ta_builder.result_row
 
         attributes_for_creation(
           data_import_session_id: data_import_session.id,
@@ -100,6 +103,7 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
           category_type_id:       category_type.id,
           entry_time_type_id:     entry_time_type.id,
 
+          team_affiliation_id:    ta.instance_of?(TeamAffiliation)        ? ta.id      : nil,
           swimmer_id:             swimmer.instance_of?(Swimmer)           ? swimmer.id : nil,
           data_import_swimmer_id: swimmer.instance_of?(DataImportSwimmer) ? swimmer.id : nil,
           team_id:                team.instance_of?(Team)                 ? team.id    : nil,

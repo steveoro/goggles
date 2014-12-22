@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.689
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -72,6 +72,12 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         @standard_points   = result_score
         @meeting_points    = result_score
         @rank              = rank.to_i              # Note that 'Fuori gara'.to_i = 0
+        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+          data_import_session,
+          @team,
+          season
+        )
+        @team_affiliation  = ta_builder.result_row
 #        puts "Before search: @team.id: #{@team.id}, @rank: #{@rank}, @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds})..."
       end
 
@@ -133,10 +139,12 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
           reaction_time:                  0,
 #          entry_time_type_id:            nil,
           user_id:                        1, # (don't care)
-          meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id  : nil,
-          data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id  : nil,
-          team_id:                        @team.instance_of?(Team)                              ? @team.id            : nil,
-          data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id            : nil
+
+          team_affiliation_id:            @team_affiliation.instance_of?(TeamAffiliation)       ? @team_affiliation.id : nil,
+          meeting_program_id:             meeting_program.instance_of?(MeetingProgram)          ? meeting_program.id   : nil,
+          data_import_meeting_program_id: meeting_program.instance_of?(DataImportMeetingProgram)? meeting_program.id   : nil,
+          team_id:                        @team.instance_of?(Team)                              ? @team.id             : nil,
+          data_import_team_id:            @team.instance_of?(DataImportTeam)                    ? @team.id             : nil
         )
         add_new
       end
