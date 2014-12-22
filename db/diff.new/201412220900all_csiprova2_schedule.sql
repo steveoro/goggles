@@ -12,5 +12,8 @@ begin_time = '14:50:00',
 day_part_type_id = (select dpt.id from day_part_types dpt where dpt.code = 'P') 
 where meeting_id = 14102;
 
+-- Set meeting invitation (assumes the invitation file has been copied into the filed
+update meetings set has_invitation = true where id = 14102;
+
 COMMIT;
 -- Fine script
