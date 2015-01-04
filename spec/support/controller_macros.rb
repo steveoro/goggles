@@ -41,10 +41,10 @@ module ControllerMacros
   #
   # Assigns an @admin User instance with the currently logged-in admin.
   #
-  def login_admin
-    @request.env["devise.mapping"] = :admin
-    @admin = create(:admin)
-    sign_in @admin
+  def login_admin( chosen_admin = nil )
+    @request.env["devise.mapping"] = Devise.mappings[:admin]
+    @admin = chosen_admin || create(:admin)
+    sign_in :user, @admin # sign_in(scope, resource)
   end
 
 
@@ -60,6 +60,7 @@ module ControllerMacros
     fill_in "user_email", with: @admin.email
     fill_in "user_password", with: @admin.password
     click_button I18n.t('devise.new_session_submit')
+
 #    expect(response.status).to eq(200)
 #    controller.stub current_user: @admin
   end
@@ -73,9 +74,9 @@ module ControllerMacros
   #
   # Assigns an @user User instance with the currently logged-in user.
   #
-  def login_user()
-    @request.env["devise.mapping"] = :user
-    @user = create(:user)
+  def login_user( chosen_user = nil )
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    @user = chosen_user || create(:user)
     sign_in @user
   end
 
@@ -92,6 +93,7 @@ module ControllerMacros
     fill_in "user_email", with: @user.email
     fill_in "user_password", with: @user.password
     click_button I18n.t('devise.new_session_submit')
+
 #    expect( response.status ).to eq(200)
 #    controller.stub current_user: @user
   end

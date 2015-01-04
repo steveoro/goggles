@@ -50,7 +50,10 @@ RSpec.configure do |config|
   # (Use #extend to access them at the class level: outside examples, as in "#before".)
   config.include( ControllerMacros, type: :controller )
   config.include( ControllerMacros, type: :features )
+
+  config.extend( ControllerMacros, :type => :controller )
   config.extend( CustomMatchers::Routing, type: :controller )
+
   # [Steve, 20140226] Configure FactoryGirl to work with RSpec
   config.include( FactoryGirl::Syntax::Methods )
 

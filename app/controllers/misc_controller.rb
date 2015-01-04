@@ -21,7 +21,7 @@ class MiscController < ApplicationController
     @tab_title = I18n.t('misc.fin_score_calculation')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                              # Init score with a non-displayable value
-    
+
     # if user is logged in and associated to a swimmer
     # determinates default gender and category
     if current_user && current_user.swimmer
@@ -43,7 +43,7 @@ class MiscController < ApplicationController
         redirect_to( misc_fin_score_calculation_path ) and return
       end
 
-      @swimmer_category = CategoryType.find_by_id( category_type_id ) 
+      @swimmer_category = CategoryType.find_by_id( category_type_id )
       @swimmer_gender = GenderType.find_by_id( gender_type_id )
       @current_pool = PoolType.find_by_id( pool_type_id )
       @current_event = EventType.find_by_id( event_type_id )
@@ -91,7 +91,7 @@ class MiscController < ApplicationController
                 'SPB'
               )
             ).to_short_meeting_html_list
-  
+
             # Retrieves seasonal best for swimmer for all current seasons
             seasonal_best_pb = PersonalBestCollector.new( @swimmer, start_date: @current_season.begin_date, end_date: @current_season.end_date )
             @seasonal_best = PersonalBestCollectionDecorator.decorate(
@@ -100,7 +100,7 @@ class MiscController < ApplicationController
                 'SSB'
               )
             ).to_short_meeting_html_list
-  
+
             # Retrieve team records:
             available_teams = @swimmer.get_teams
             @available_team_records = Hash.new

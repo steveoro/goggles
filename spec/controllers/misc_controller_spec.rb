@@ -5,9 +5,6 @@ require 'wice_grid'
 describe MiscController, :type => :controller do
 
   shared_examples_for "(Misc not restricted GET action)" do |action_sym|
-
-    before(:each) { get action_sym }
-
     it "handles successfully the request" do
       expect(response.status).to eq( 200 )
     end
@@ -31,9 +28,9 @@ describe MiscController, :type => :controller do
   describe '[GET #fin_score_calculation]' do
 
     context "as an unlogged user" do
-      it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
-
       before(:each) { get :fin_score_calculation }
+
+      it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
 
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
@@ -49,6 +46,7 @@ describe MiscController, :type => :controller do
     context "as logged but not associated user" do
       before(:each) do
         login_user()
+        expect( subject.current_user ).to be_an_instance_of( User )
         get :fin_score_calculation
       end
 
@@ -65,11 +63,14 @@ describe MiscController, :type => :controller do
       end
     end
 
+
     context "as logged and swimmer-associated user" do
       before(:each) do
-        login_user()
+        @user = create(:user)
         swimmer = create(:swimmer)
         @user.set_associated_swimmer( swimmer )
+        login_user( @user )
+        expect( subject.current_user ).to be_an_instance_of( User )
         get :fin_score_calculation
       end
 
@@ -135,8 +136,8 @@ describe MiscController, :type => :controller do
           :fin_score_calculation,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
-          event_type:       {id: @fixture_events_by_pool_type.event_type_id},
-          pool_type:        {id: @fixture_events_by_pool_type.pool_type_id},
+          event_type_id:    @fixture_events_by_pool_type.event_type_id,
+          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
           minutes:          -3,  # Force invalid timing
           seconds:          -2,
           hundreds:         -1
@@ -148,8 +149,7 @@ describe MiscController, :type => :controller do
       it "redirects to #misc" do
         expect( response ).to redirect_to( misc_fin_score_calculation_path )
       end
-# FIXME
-      xit "displays the flash error message" do
+      it "displays the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_timing') )
       end
       it "assigns -1 value to standard points" do
@@ -168,8 +168,8 @@ describe MiscController, :type => :controller do
           :fin_score_calculation,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
-          event_type:       { id: EventType.where(code: '100MI').first.id },
-          pool_type:        { id: PoolType.where(code: '50').first.id },
+          event_type_id:    EventType.where(code: '100MI').first.id,
+          pool_type_id:     PoolType.where(code: '50').first.id,
           minutes:          minutes,
           seconds:          seconds,
           hundreds:         hundreds
@@ -181,8 +181,7 @@ describe MiscController, :type => :controller do
       it "redirects to #misc" do
         expect( response ).to redirect_to( misc_fin_score_calculation_path )
       end
-# FIXME
-      xit "displays the flash error message" do
+      it "displays the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_event_or_pool') )
       end
       it "assigns -1 value to standard points" do
@@ -202,57 +201,57 @@ describe MiscController, :type => :controller do
           :fin_score_calculation,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
-          event_type:       {id: @fixture_events_by_pool_type.event_type_id},
-          pool_type:        {id: @fixture_events_by_pool_type.pool_type_id},
+          event_type_id:    @fixture_events_by_pool_type.event_type_id,
+          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
           minutes:          minutes,
           seconds:          seconds,
           hundreds:         hundreds
         )
       end
-# FIXME
-      xit "handles successfully the request" do
+
+      it "handles successfully the request" do
         expect(response.status).to eq( 200 )
       end
-      xit "assigns the tab title" do
+      it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
-      xit "renders the template" do
+      it "renders the template" do
         expect(response).to render_template(:fin_score_calculation)
       end
-      xit "assigns a current season" do
+      it "assigns a current season" do
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
       end
-      xit "assigns a category_type" do
+      it "assigns a category_type" do
         expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )
       end
-      xit "assigns a gender_type" do
+      it "assigns a gender_type" do
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
       end
-      xit "assigns a pool_type" do
+      it "assigns a pool_type" do
         expect( assigns(:current_pool) ).to be_an_instance_of( PoolType )
       end
-      xit "assigns a event_type" do
+      it "assigns a event_type" do
         expect( assigns(:current_event) ).to be_an_instance_of( EventType )
       end
-      xit "accepts event type which is in event_by_pool_type for current season" do
+      it "accepts event type which is in event_by_pool_type for current season" do
         expect( assigns(:current_event).events_by_pool_types.where(pool_type_id: @fixture_events_by_pool_type.pool_type_id).count ).to be > 0
       end
-      xit "assigns timing data" do
+      it "assigns timing data" do
         expect( assigns(:timing) ).to be_an_instance_of( Timing )
       end
-      xit "accepts timing data which is a valid timing" do
+      it "accepts timing data which is a valid timing" do
         expect( assigns(:timing).to_hundreds ).to be > 0
       end
-      xit "assigns a positive result score" do
+      it "assigns a positive result score" do
         expect( assigns(:standard_points) ).to be >= 0
       end
       it "assigns current time standard" do
         expect( assigns(:current_time_standard) ).to be_an_instance_of( TimeStandard ).or be_nil
       end
-      xit "assigns world record" do
+      it "assigns world record" do
         expect( assigns(:world_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
-      xit "assigns national record" do
+      it "assigns national record" do
         expect( assigns(:national_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
     end
@@ -262,19 +261,21 @@ describe MiscController, :type => :controller do
 
     context "with a correct request for a logged user with associated swimmer" do
       before(:each) do
-        login_user()
+        @user = create(:user)
         swimmer = create(:swimmer)
         @user.set_associated_swimmer( swimmer )
         @fixture_season = Season.get_last_season_by_type( 'MASFIN' )
         @fixture_gender = swimmer.gender_type
         @fixture_category = swimmer.get_category_type_for_season( @fixture_season.id )
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
+        login_user( @user )
+        expect( subject.current_user ).to be_an_instance_of( User )
         post(
           :fin_score_calculation,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
-          event_type:       {id: @fixture_events_by_pool_type.event_type_id},
-          pool_type:        {id: @fixture_events_by_pool_type.pool_type_id},
+          event_type_id:    @fixture_events_by_pool_type.event_type_id,
+          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
           minutes:          minutes,
           seconds:          seconds,
           hundreds:         hundreds
@@ -284,25 +285,24 @@ describe MiscController, :type => :controller do
       it "assigns the required variables" do
         expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
       end
-# FIXME
-      xit "assigns season record" do
+      it "assigns season record" do
         expect( assigns(:seasonal_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
-      xit "assigns swimmer record" do
+      it "assigns swimmer record" do
         expect( assigns(:personal_best) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
-      xit "assigns season record" do
+      it "assigns season record" do
         expect( assigns(:seasonal_best) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
 
       describe "while assigning team records," do
-        xit "assigns an hash" do
+        it "assigns an hash" do
           expect( assigns(:available_team_records) ).to be_an_instance_of( Hash ).or be_an_instance_of( ActiveSupport::HashWithIndifferentAccess )
         end
-        xit "has Team instances as keys" do
+        it "has Team instances as keys" do
           expect( assigns(:available_team_records).keys ).to all( be_an_instance_of( Team ) )
         end
-        xit "has html record as element" do
+        it "has html record as element" do
           expect( assigns(:available_team_records).values ).to all( be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String ) )
         end
       end
@@ -312,5 +312,4 @@ describe MiscController, :type => :controller do
   end
   #-- =========================================================================
   #++
-
 end
