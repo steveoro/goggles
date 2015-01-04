@@ -19,7 +19,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.685
+  - Goggles framework vers.:  4.00.693
   - author: Steve A.
 
   Data-Import strategy class.
@@ -35,6 +35,7 @@ class DataImporter
                 :team_analysis_log,
                 :sql_executable_log,
                 :header_fields_dao,
+                :meeting,                           # serialized meeting
                 :result_hash
 
   attr_accessor :full_pathname,
@@ -522,7 +523,7 @@ class DataImporter
       end
     end
 
-    meeting = nil
+    @meeting = nil
     if is_ok && @season                             # -- MEETING (digest/serialization) --
       meeting_builder = DataImportMeetingBuilder.build_from_parameters(
         @data_import_session,
@@ -532,12 +533,12 @@ class DataImporter
         meeting_dates,
         @force_missing_team_creation
       )
-      meeting = meeting_builder.result_row
+      @meeting = meeting_builder.result_row
     end
                                                     # --- TEAM RANKING/SCORES (digest/serialization) --
-    if meeting                                      # Check for possible validation failures:
+    if @meeting                                     # Check for possible validation failures:
       update_logs( "PHASE #1.2: checking possible Meeting validation failures..." )
-      sql_diff = MeetingHeaderYearChecker.check_and_fix( meeting )
+      sql_diff = MeetingHeaderYearChecker.check_and_fix( @meeting )
       if sql_diff.size > 0
         @data_import_session.sql_diff << sql_diff
         update_logs( "PHASE #1.2: associated Meeting corrected." )
@@ -549,17 +550,17 @@ class DataImporter
           @full_pathname,
           @data_import_session,
           @season,
-          meeting,
+          @meeting,
           ranking_details,
           @force_missing_team_creation
       )
     end
                                                     # -- MEETING SESSION (digest/serialization) --
     meeting_session = nil
-    if meeting                                      # Retrieve default meeting session: (used only for new/missing meeting events or programs)
+    if @meeting                                     # Retrieve default meeting session: (used only for new/missing meeting events or programs)
       meeting_session_builder = DataImportMeetingSessionBuilder.build_from_parameters(
         @data_import_session,
-        meeting,
+        @meeting,
         @header_fields_dao,
         meeting_dates, # meeting_dates_text
         scheduled_date,
@@ -575,7 +576,7 @@ class DataImporter
           @data_import_session,
           @season,
           season_starting_year,
-          meeting,
+          @meeting,
           meeting_session,
           @result_hash[:parse_result],
           scheduled_date,
@@ -590,7 +591,7 @@ class DataImporter
           @data_import_session,
           @season,
           season_starting_year,
-          meeting,
+          @meeting,
           meeting_session,
           @result_hash[:parse_result],
           scheduled_date,
@@ -659,17 +660,24 @@ class DataImporter
     is_ok = commit_data_import_meeting_team_score( @data_import_session ) if is_ok
     @data_import_session.phase = 30                 # (30 = '3.0', but without successful ending, since the session in not nil)
     @data_import_session.save!
-    updated_meeting = update_results_acquired_flag( @data_import_session ) if is_ok
-    if updated_meeting
-      @data_import_session.sql_diff << "\r\n-- 'Results acquired' flag setting:" <<
-      "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{updated_meeting.id};"
-    end
-    # Add the commit process log to the combined log for this phase:
+                                                    # Add the commit process log to the combined log for this phase:
     @import_log << @data_import_session.phase_2_log
+                                                    # *** SET 'results aquired' flag. This will return the committed/updated meeting:
+    @meeting = update_results_acquired_flag( @data_import_session ) if is_ok
+    if @meeting && is_ok
+      @data_import_session.sql_diff << "\r\n-- 'Results acquired' flag setting:" <<
+      "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{@meeting.id};"
+                                                    # *** FIX-UP committed meeting program's begin times:
+      is_begin_time_fixed = BeginTimeCalculator.compute_for_all( @meeting, @data_import_session.sql_diff )
+      update_logs(
+        "\r\nBegin time re-computed for all meeting programs and updated directly on committed entities.\r\n",
+        :info, true
+      ) if is_begin_time_fixed
+    end
 
     if is_ok
       update_logs(
-        "data-import PHASE #2 & #3 DONE.\r\n\r\nTotal committed rows: #{ @committed_data_rows }\r\n" <<
+        "data-import PHASES #2 & #3 DONE.\r\n\r\nTotal committed rows: #{ @committed_data_rows }\r\n" <<
         "Data-import session destroyed successfully.\r\n" <<
         "===========================================================\r\n",
         :info, true

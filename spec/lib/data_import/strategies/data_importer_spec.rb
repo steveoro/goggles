@@ -13,10 +13,14 @@ describe DataImporter, type: :strategy do
     subject { DataImporter.new( nil, nil, existing_data_import_session ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :data_import_session,
+      :logger, :flash, :data_import_session,
       :import_log,
       :team_analysis_log,
       :sql_executable_log,
+      :header_fields_dao,
+      :meeting,
+      :result_hash,
+
       :set_up,
       :destroy_data_import_session,
       :import_log_filename,

@@ -168,12 +168,12 @@ module FinResultPhase2
                                                   scheduled_date.to_time + (8 * 3600)
         previous_duration_in_secs = previous_begin_time ? (begin_time - previous_begin_time).abs : 120
 # DEBUG
-        puts "\r\nBEGIN TIME DELTA for M.PRGs(MIR): order:#{meeting_program.event_order} " <<
-             "- meeting_program.begin_time: #{meeting_program.begin_time}\r\n" <<
-             "- scheduled_date.to_time: #{scheduled_date.to_time}\r\n" <<
-             "- previous_begin_time: #{previous_begin_time} |=> begin_time: #{begin_time}\r\n" <<
-             "- DELTA in secs: #{ begin_time.to_f - previous_begin_time.to_f }" <<
-             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
+#        puts "\r\nBEGIN TIME DELTA for M.PRGs(MIR): order:#{meeting_program.event_order} " <<
+#             "- meeting_program.begin_time: #{meeting_program.begin_time}\r\n" <<
+#             "- scheduled_date.to_time: #{scheduled_date.to_time}\r\n" <<
+#             "- previous_begin_time: #{previous_begin_time} |=> begin_time: #{begin_time}\r\n" <<
+#             "- DELTA in secs: #{ begin_time.to_f - previous_begin_time.to_f }" <<
+#             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
         previous_begin_time = begin_time
       end
       return unless is_ok                           # **** DETAIL LOOP **** For each result row:...
@@ -266,12 +266,12 @@ module FinResultPhase2
                                                   scheduled_date.to_time + (8 * 3600)
         previous_duration_in_secs = previous_begin_time ? (begin_time - previous_begin_time).abs : 120
 # DEBUG
-        puts "\r\nBEGIN TIME DELTA for M.PRGs(Rel.): order:#{meeting_program.event_order} " <<
-             "- meeting_program.begin_time: #{meeting_program.begin_time}\r\n" <<
-             "- scheduled_date.to_time: #{scheduled_date.to_time}\r\n" <<
-             "- previous_begin_time: #{previous_begin_time} |=> begin_time: #{begin_time}" <<
-             "- DELTA in secs: #{ begin_time.to_f - previous_begin_time.to_f }" <<
-             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
+#        puts "\r\nBEGIN TIME DELTA for M.PRGs(Rel.): order:#{meeting_program.event_order} " <<
+#             "- meeting_program.begin_time: #{meeting_program.begin_time}\r\n" <<
+#             "- scheduled_date.to_time: #{scheduled_date.to_time}\r\n" <<
+#             "- previous_begin_time: #{previous_begin_time} |=> begin_time: #{begin_time}" <<
+#             "- DELTA in secs: #{ begin_time.to_f - previous_begin_time.to_f }" <<
+#             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
         previous_begin_time = begin_time
       end
                                                     # **** DETAIL LOOP **** For each result row:...

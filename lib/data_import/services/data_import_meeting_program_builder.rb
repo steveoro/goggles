@@ -193,7 +193,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
                                                  base_time, previous_begin_time,
                                                  previous_duration_in_secs )
     mins, secs, hds = ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
-    begin_time = BeginTimeCalculator.compute(
+    begin_time = BeginTimeCalculator.compute_from_previous(
       scheduled_date,
       event_order,
       total_entries,                              # Athletes in total for this program
