@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141212190100) do
+ActiveRecord::Schema.define(:version => 20150104212756) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -537,21 +537,23 @@ ActiveRecord::Schema.define(:version => 20141212190100) do
 
   create_table "data_import_swimmer_analysis_results", :force => true do |t|
     t.integer  "lock_version",                                                              :default => 0
-    t.datetime "created_at",                                                                                 :null => false
-    t.datetime "updated_at",                                                                                 :null => false
+    t.datetime "created_at",                                                                                  :null => false
+    t.datetime "updated_at",                                                                                  :null => false
     t.integer  "data_import_session_id"
     t.text     "analysis_log_text",      :limit => 16777215
     t.text     "sql_text",               :limit => 16777215
     t.string   "searched_swimmer_name",  :limit => 100
-    t.integer  "desired_season_id"
     t.integer  "chosen_swimmer_id"
     t.string   "match_name",             :limit => 60
     t.decimal  "match_score",                                :precision => 10, :scale => 4, :default => 0.0
     t.string   "best_match_name",        :limit => 60
     t.decimal  "best_match_score",                           :precision => 10, :scale => 4, :default => 0.0
+    t.integer  "desired_year_of_birth",                                                     :default => 1900, :null => false
+    t.integer  "desired_gender_type_id", :limit => 8
   end
 
-  add_index "data_import_swimmer_analysis_results", ["data_import_session_id", "searched_swimmer_name", "desired_season_id"], :name => "idx_di_session_name_and_season", :unique => true
+  add_index "data_import_swimmer_analysis_results", ["data_import_session_id", "searched_swimmer_name", "desired_year_of_birth", "desired_gender_type_id"], :name => "idx_di_session_swimmer_name", :unique => true
+  add_index "data_import_swimmer_analysis_results", ["desired_gender_type_id"], :name => "idx_di_swimmer_gender_type"
 
   create_table "data_import_swimmers", :force => true do |t|
     t.integer  "lock_version",                          :default => 0

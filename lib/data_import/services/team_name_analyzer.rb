@@ -165,8 +165,6 @@ class TeamNameAnalyzer
     # The data_import_team_aliases table does just that, and is checked only during
     # the first phase of the data-import procedure.
 
-    matching_string.gsub!("'", "''")              # Escape single quotes in names in case we have to write SQL statements:
-
     team_analysis_result = DataImportTeamAnalysisResult.new({
       analysis_log_text:  analysis_text_log,
       searched_team_name: matching_string,
@@ -197,7 +195,7 @@ class TeamNameAnalyzer
     output << ", ID: #{sprintf("%4s", result_row.id)}" if (!result_row.nil?) && result_row.respond_to?(:id)
     output << ", season_id: #{sprintf("%4s", result_row.season_id)}" if result_row.respond_to?(:season_id)
     output << "\t=> Team ID: #{sprintf("%4s", result_row.team_id)}"  if result_row.respond_to?(:team_id)
-    output << " >> 100% ! <<" if result_score >= 0.9999
+    output << " >> ~100% ! <<" if result_score >= FuzzyStringMatcher::BIAS_SCORE_MAX
     output
   end
 
