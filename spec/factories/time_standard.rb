@@ -1,6 +1,8 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
@@ -13,6 +15,13 @@ FactoryGirl.define do
     minutes                   { ((rand * 10) % 10).to_i }
     seconds                   { ((rand * 59) % 59).to_i }     # Force not to use 59
     hundreds                  { ((rand * 99) % 99).to_i + 1}  # Force not to use 0 or 99
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

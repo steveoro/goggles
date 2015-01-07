@@ -33,20 +33,52 @@ Pry::Commands.block_command 'prog', "Use progress formatter in rspec" do
   output.puts "Using Progress as RSpec formatter."
 end
 
+Pry::Commands.block_command 't', "Touch files in specified path (usage: 't path_name_with_wildchars')" do |file_path|
+  output.puts "Updating modification time for files under '#{file_path}'..."
+  system( "touch -m #{file_path}" )
+end
+
 Pry::Commands.block_command 'integration-', "Excludes specs with tag type:integration" do
   options = ::Guard.guards(:rspec).first.runner.options
   options[:cmd] = options[:cmd] =~ /\-t \w+/ ? options[:cmd].sub(/\-\-tag \w+/, "--tag ~type:integration") : "#{options[:cmd]} --tag ~type:integration"
   output.puts "Ecluding tags with 'type:integration' (use 'reset' command to reverse this change)."
 end
 
-Pry::Commands.block_command 't', "Touch files in specified path (usage: 't path_name_with_wildchars')" do |file_path|
-  output.puts "Updating modification time for files under '#{file_path}'..."
-  system( "touch -m #{file_path}" )
+                                                    # === Specific Scopes: ===
+group :model do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:model'
+end
+group :controller do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:controller'
+end
+group :strategy do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:strategy'
+end
+group :service do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:service'
+end
+group :request do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:request'
+end
+group :acceptance do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:acceptance'
+end
+group :mailer do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:mailer'
+end
+group :helper do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:helper'
+end
+group :feature do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:feature'
 end
 
-
 # Halt as soon as the first fail is found:
-#group :specs, halt_on_fail: true do
+group :integration, halt_on_fail: true do
+  guard :rspec, cmd: 'zeus rspec -f progress --tag type:integration'
+end
+
+                                                    # === Scope (GENERIC) Specs: ===
 group :specs do
   guard :rspec, cmd: 'zeus rspec -f progress' do
     watch(%r{^spec\/.+_spec\.rb$})

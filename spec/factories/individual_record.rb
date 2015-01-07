@@ -1,6 +1,8 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
@@ -22,6 +24,13 @@ FactoryGirl.define do
     team                { meeting_individual_result.team }
     season_id           { meeting_individual_result.season.id }
     federation_type     { season.season_type.federation_type }
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
+    end
   end
 end
 #-- ---------------------------------------------------------------------------

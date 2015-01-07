@@ -1,6 +1,8 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
@@ -79,6 +81,13 @@ FactoryGirl.define do
       CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
     end
     pool_type                 { meeting_event.meeting_session.swimming_pool.pool_type }
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
+    end
 
     # This should yield only valid MeetingProgram rows, for individual results (not relays):
     factory :meeting_program_individual do

@@ -1,6 +1,8 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
@@ -56,6 +58,13 @@ FactoryGirl.define do
         team:   team,
         season: meeting_program.season # (by ActiveRecord relation)
       )
+    end
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
     end
   end
   #-- -------------------------------------------------------------------------

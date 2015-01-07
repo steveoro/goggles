@@ -1,6 +1,8 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
@@ -30,6 +32,13 @@ FactoryGirl.define do
     e_mail                    { Faker::Internet.email }
     nickname                  { Faker::Internet.user_name  }
     associated_user_id        nil
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
+    end
 
     factory :swimmer_with_results do
       after(:create) do |created_instance, evaluator|

@@ -1,11 +1,13 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
   trait :random_season do
-    sequence( :edition )
+    edition                   { ((rand * 1000) % 1000).to_i } # mediumint(9), using a sequence yields validation errors
     sequence( :description )  { |n| "Fake Season #{n}/#{edition}" }
 
     season_type               { SeasonType.all.sort{ rand - 0.5 }[0] }
@@ -22,6 +24,13 @@ FactoryGirl.define do
 
   factory :season do
     random_season
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

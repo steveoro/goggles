@@ -1,6 +1,8 @@
 require 'date'
 require 'ffaker'
 
+require 'common/validation_error_tools'
+
 
 FactoryGirl.define do
 
@@ -22,6 +24,13 @@ FactoryGirl.define do
 
   factory :meeting_event do
     meeting_event_random
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
+        puts built_instance.inspect
+      end
+    end
 
     # This should yield only valid MeetingEvent rows, for individual results (not relays):
     factory :meeting_event_individual do
