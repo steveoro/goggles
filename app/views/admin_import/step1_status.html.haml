@@ -68,8 +68,14 @@
           - if s.data_import_team_analysis_results.any?
             = link_to(                                               |
                  I18n.t('admin_import.continue_with_team_analysis'), |
-                 goggles_di_step1_1_analysis_path( id: s.id )        |
+                 goggles_di_step1_1_team_analysis_path( id: s.id )   |
               )                                                      |
+            \
+          - if s.data_import_swimmer_analysis_results.any?
+            = link_to(                                                  |
+                 I18n.t('admin_import.continue_with_swimmer_analysis'), |
+                 goggles_di_step1_1_swimmer_analysis_path( id: s.id )   |
+              )                                                         |
             \
           - if (s.phase.to_i > 0)
             = link_to(                                       |

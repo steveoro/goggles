@@ -221,12 +221,14 @@ Goggles::Application.routes.draw do
   # === Admin Interface / Data Import: ===
   scope "goggles_data_import" do
     scope "(:locale)", locale: /en|it/ do
-      match "step1_status",           controller: 'admin_import', action: 'step1_status',           as: :goggles_di_step1_status
-      match "step1_1_analysis",       controller: 'admin_import', action: 'step1_1_analysis',       as: :goggles_di_step1_1_analysis
-      match "step1_1_commit",         controller: 'admin_import', action: 'step1_1_commit',         as: :goggles_di_step1_1_commit, method: :post
-      match "step2_checkout",         controller: 'admin_import', action: 'step2_checkout',         as: :goggles_di_step2_checkout
-      match "step3_commit",           controller: 'admin_import', action: 'step3_commit',           as: :goggles_di_step3_commit
-      match "kill_import_session",    controller: 'admin_import', action: 'kill_import_session',    as: :goggles_di_kill_import_session, method: :post
+      match "step1_status",                     controller: 'admin_import', action: 'step1_status',                     as: :goggles_di_step1_status
+      match "step1_1_team_analysis",            controller: 'admin_import', action: 'step1_1_team_analysis',            as: :goggles_di_step1_1_team_analysis
+      match "step1_1_team_analysis_commit",     controller: 'admin_import', action: 'step1_1_team_analysis_commit',     as: :goggles_di_step1_1_team_analysis_commit, method: :post
+      match "step1_1_swimmer_analysis",         controller: 'admin_import', action: 'step1_1_swimmer_analysis',         as: :goggles_di_step1_1_swimmer_analysis
+      match "step1_1_swimmer_analysis_commit",  controller: 'admin_import', action: 'step1_1_swimmer_analysis_commit',  as: :goggles_di_step1_1_swimmer_analysis_commit, method: :post
+      match "step2_checkout",                   controller: 'admin_import', action: 'step2_checkout',                   as: :goggles_di_step2_checkout
+      match "step3_commit",                     controller: 'admin_import', action: 'step3_commit',                     as: :goggles_di_step3_commit
+      match "kill_import_session",              controller: 'admin_import', action: 'kill_import_session',              as: :goggles_di_kill_import_session, method: :post
     end
   end
 

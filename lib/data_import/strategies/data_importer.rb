@@ -226,12 +226,6 @@ class DataImporter
   def get_committed_data_rows
     @committed_data_rows
   end
-
-  # +true+ if the team_analysis phase was executed
-  # due to some problematic team name.
-  def has_team_analysis_results
-    ( @team_analysis_results.respond_to?(:count) && (@team_analysis_results.count > 0) )
-  end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -456,7 +450,10 @@ class DataImporter
   # instance.
   #
   # After a successful execution, remember to check the actual completion by peeking
-  # at the #data_import_session.phase and whether #has_team_analysis_results is +true+.
+  # at the #data_import_session.phase and whether...
+  #   @data_import_session.data_import_team_analysis_results.any?
+  #   @data_import_session.data_import_swimmer_analysis_results.any?
+  # ... Are both +true+.
   #
   # The "Phase #2" of the "data-import wizard" allows the user to manually review
   # the digested/serialized data from the support tables, so that any mistakes or
@@ -506,10 +503,8 @@ class DataImporter
     if @season                                        # -- PRE-SCAN TEAM Names --
       season_starting_year = @season.begin_date.year
       update_logs( "Found season '#{@season.inspect}'; #{@season.season_type.inspect}, season_starting_year=#{season_starting_year}", :debug )
-      # [Steve, 20141110] If the Team-analysis phase has already been completed,
-      # we need to force the creation of missing teams, otherwise instead of
-      # generating data_import_teams rows another round of team analysis
-      # will be created by the Team builder inside this method.
+      # [Steve, 20150112] The existance of Season is the minimum requirement before
+      # starting the Team & Swimmer name analysis sub-phases.
                                                     # The prescan will abort the rest of the procedure when false:
       is_ok = prescan_parse_result_for_unknown_team_names(
         @data_import_session,
@@ -521,6 +516,8 @@ class DataImporter
         @team_analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
         update_logs( "PHASE #1.1: Team name Analysis phase needed!" )
       end
+
+      # TODO ADD HERE prescan_parse_result_for_unknown_swimmer_names( ... )
     end
 
     @meeting = nil

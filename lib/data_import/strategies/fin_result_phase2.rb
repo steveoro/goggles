@@ -41,15 +41,15 @@ module FinResultPhase2
   BIAS_FOR_PRESCAN_FUZZY_SEARCH = 0.75
 
 
-  # Scans parse_result hash structure to collect all team_names found.
+  # Scans parse_result hash structure to collect all team names found.
   #
-  # For each team_name found, the search_or_add_a_corresponding_team
-  # method is executed. If the team is not found or some problem arise,
-  # that same method will also run the team name analysis (which will
-  # then require human supervision before commit).
+  # For each team name found, a DataImportTeamBuilder instance is executed.
+  # If the Team is not found or some problem arises, that same class will delegate to
+  # a strategy class to perform the team name analysis (which will then require human
+  #`supervision before commit).
   #
   # == Returns: when +false+, the additional "Team name analysis" phase must be
-  #    run; +true+ if the "standard" data-import phase can go on.
+  #    executed; +true+ if the "standard" data-import phase can go on.
   #
   def prescan_parse_result_for_unknown_team_names( data_import_session, season,
                                                    parse_result, force_missing_team_creation = false )
@@ -109,6 +109,29 @@ module FinResultPhase2
         phase_3_log: "1-TEAM-CHECK:#{ idx+1 }/#{ team_names.size }"
       )
     end
+    is_ok
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Scans parse_result hash structure to collect all swimmer names found.
+  #
+  # For each swimmer name found, a DataImportSwimmerBuilder instance is executed.
+  # If the Swimmer is not found or some problem arises, that same class will delegate to
+  # a strategy class to perform the swimmer name analysis (which will then require human
+  #`supervision before commit).
+  #
+  # == Returns: when +false+, the additional "Swimmer name analysis" phase must be
+  #    executed; +true+ if the "standard" data-import phase can go on.
+  #
+  def prescan_parse_result_for_unknown_swimmer_names( data_import_session, season,
+                                                      parse_result, force_missing_swimmer_creation = false )
+    is_ok = true
+    swimmer_names = []
+
+    # TODO
+
     is_ok
   end
   #-- -------------------------------------------------------------------------

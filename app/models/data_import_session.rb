@@ -10,6 +10,7 @@ class DataImportSession < ActiveRecord::Base
   has_many :data_import_meeting_individual_results
 
   has_many :data_import_team_analysis_results
+  has_many :data_import_swimmer_analysis_results
 
   belongs_to :data_import_season
   belongs_to :season

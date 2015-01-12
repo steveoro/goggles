@@ -49,14 +49,12 @@ class AdminImportController < ApplicationController
   #++
 
 
-  # Data Import Wizard: Phase-1.1, called only if some problematic team names
-  # are found dubious or mis-matched.
+  # Data Import Wizard: Phase-1.1 - Team Names Analysis, called only when some problematic
+  # team names are found dubious or mis-matched.
   #
-  # This is actually displayed as "Phase 1.1 - Team Analysis" (Review/confirm not-found or dubious Team names)
-  #
-  def step1_1_analysis
+  def step1_1_team_analysis
 # DEBUG
-#    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_analysis -----"
+#    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_team_analysis -----"
 #    logger.debug "PARAMS: #{params.inspect}"
                                                     # Propagate forward (phase-3) the parameters from Phase-1, if any:
     @force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
@@ -72,14 +70,13 @@ class AdminImportController < ApplicationController
 
 
   # Data Import Wizard: Parallel Phase-1.1 Team-Analysis Commit Phase.
-  # (Invoked after the alternative phase-2 outcome, when the Team-Analysis
-  # phase has been triggered. This action has no associated view.)
+  # (Invoked after the alternative phase-2 outcome, #step1_1_team_analysis, when
+  # the Team-Analysis phase has been triggered.)
+  # This action has no associated view.
   #
-  # This is called after "Phase 1.1 - Team Analysis" and before "Phase 2 - Manual check"
-  #
-  def step1_1_commit
+  def step1_1_team_analysis_commit
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_commit -----"
+    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_team_analysis_commit -----"
     logger.debug "PARAMS: #{params.inspect}"
     overridden_alias_actions = {}
     confirmed_actions_ids    = []
@@ -186,6 +183,44 @@ class AdminImportController < ApplicationController
   #++
 
 
+  # Data Import Wizard: Phase-1.1 - Swimmer Names Analysis, called only when some problematic
+  # swimmer names are found dubious or mis-matched.
+  #
+  def step1_1_swimmer_analysis
+    # TODO
+
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_swimmer_analysis -----"
+#    logger.debug "PARAMS: #{params.inspect}"
+                                                    # Propagate forward (phase-3) the parameters from Phase-1, if any:
+#    @force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
+#    @force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
+#    if ( params[:id].to_i > 0 )
+#      @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
+#      @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
+#    else
+#      @data_import_session = nil
+#      @analysis_results = []
+#    end
+  end
+
+
+  # Data Import Wizard: Parallel Phase-1.1 Swimmer-Analysis Commit Phase.
+  # (Invoked after the alternative phase-2 outcome, #step1_1_swimmer_analysis, when
+  # the Swimmer-Analysis phase has been triggered.)
+  # This action has no associated view.
+  #
+  def step1_1_swimmer_analysis_commit
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_swimmer_analysis_commit -----"
+    logger.debug "PARAMS: #{params.inspect}"
+
+    # TODO
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # Data Import Wizard: from Phase 1.0 to => Phase #1.1 || #2.0 (depending on parsing)
   #
   # This action implements the full file parsing/digest of the datafile, with two
@@ -250,8 +285,10 @@ class AdminImportController < ApplicationController
 
                                                     # === (Re-)Launch phase_1_parse if we can/must do it:
     if filename_to_be_parsed || ( @data_import_session && (@data_import_session.phase.to_i < 12) )
-      force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
-      force_missing_team_creation    = (params[:force_team_creation] == 'true')    || (params[:force_team_creation].to_i > 0)
+      force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') ||
+                                       (params[:force_meeting_creation].to_i > 0)
+      force_missing_team_creation    = (params[:force_team_creation] == 'true')    ||
+                                       (params[:force_team_creation].to_i > 0)
       filename_to_be_parsed          = @data_import_session.file_name if filename_to_be_parsed.nil? && @data_import_session
                                                     # Create a new data-import session to consume the datafile:
       data_importer = DataImporter.new( logger, flash, @data_import_session )
@@ -269,16 +306,19 @@ class AdminImportController < ApplicationController
 # DEBUG
 #      logger.debug("\r\nAFTER PHASE 1.2\r\n- data_import_session: #{@data_import_session.id}")
 #      logger.debug("\r\n- data_importer.data_import_session: #{data_importer.data_import_session.id}")
-      if data_importer.has_team_analysis_results
+      if @data_import_session && @data_import_session.data_import_team_analysis_results.any?
         flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
         redirect_to(
-            goggles_di_step1_1_analysis_path(
+            goggles_di_step1_1_team_analysis_path(
                 id:                     data_importer.data_import_session.id,
                 force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
                 force_team_creation:    force_missing_team_creation    ? '1' : nil
             )
         ) and return
       end
+
+# TODO Add here redirect to phase 1.1 swimmer name analysis, if @data_import_session && @data_import_session.data_import_swimmer_analysis_results.any?
+
     end
                                                     # -- CHECK OUTCOME: something went awfully wrong? Redirect:
     redirect_to( goggles_di_step1_status_path() ) and return unless @data_import_session

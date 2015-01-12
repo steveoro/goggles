@@ -424,7 +424,7 @@ describe DataImporter, type: :strategy do
           expect( @result ).to be nil
         end
         it "has team analysis results" do
-          expect( @phase_1_subject.has_team_analysis_results ).to be true
+          expect( @phase_1_session.data_import_team_analysis_results.any? ).to be true
         end
         it "has the session #phase still set to '10' since the Team Analysis phase is required" do
           expect( @phase_1_subject.data_import_session.phase ).to eq(10)
@@ -477,7 +477,7 @@ describe DataImporter, type: :strategy do
           expect( @result.id ).to eq( @phase_1_session.id )
         end
         it "has team analysis results" do
-          expect( @phase_1_subject.has_team_analysis_results ).to be false
+          expect( @phase_1_session.data_import_team_analysis_results.any? ).to be false
         end
         it "has the session #phase set to '12'" do
           expect( @phase_1_subject.data_import_session.phase ).to eq(12)
