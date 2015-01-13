@@ -11,7 +11,7 @@ require_relative '../../../app/strategies/sql_converter'
   - Goggles framework vers.:  4.00.618
   - author: Steve A.
 
- Strategy class delegated to process (check & serialize) a single TeamAnalysisResult
+ Strategy class delegated to process (check & serialize) a single DataImportTeamAnalysisResult
  instance.
 
  Produces a detailed verbose text log of the analysis as well as a list of

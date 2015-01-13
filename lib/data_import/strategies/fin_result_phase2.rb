@@ -129,9 +129,38 @@ module FinResultPhase2
                                                       parse_result, force_missing_swimmer_creation = false )
     is_ok = true
     swimmer_names = []
+                                                    # Collect all swimmer names in the parsed file:
+    swimmer_names_from_results = parse_result[:result_row].map do |row|
+      {
+        name:   row[:fields][:swimmer_name],
+        year:   row[:fields][:swimmer_year]
+        # FIXME Missing gender from category:
+#        gender: row[:fields][:gender]
+      }
+    end.compact
+    return false
 
-    # TODO
+    swimmer_names_from_results.uniq!
+    swimmer_names_from_results.sort!
+    update_logs(
+      "\r\n** Swimmer names collected from RESULTS: **\r\n" <<
+      swimmer_names_from_results.join("\r\n") << "\r\n==== Tot.: #{ swimmer_names_from_results.size } ===="
+    )
 
+    swimmer_names_from_results.each_with_index do |swimmer_name, idx|
+      swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+        data_import_session, swimmer_name, swimmer_year, gender_type
+      )
+      swimmer = swimmer_builder.result_row
+      unless swimmer
+        data_import_session.phase_1_log << "\r\nPrescan Swimmer names: '#{ swimmer_name }' (#{swimmer_year}, gender: #{gender_type}, #{ idx+1 }/#{ team_names.size }) uncertain. 'Swimmer name Analysis' needed.\r\n"
+        is_ok = false
+      end
+                                                    # Update progress on current session:
+      DataImportSession.where( id: data_import_session.id ).update_all(
+        phase_3_log: "1-SWIMMER-CHECK:#{ idx+1 }/#{ swimmer_names_from_results.size }"
+      )
+    end
     is_ok
   end
   #-- -------------------------------------------------------------------------

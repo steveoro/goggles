@@ -1,0 +1,177 @@
+# encoding: utf-8
+
+require 'data_import/services/data_import_entity_committer'
+require_relative '../../../app/strategies/sql_converter'
+
+
+=begin
+
+= SwimmerAnalysisResultProcessor
+
+  - Goggles framework vers.:  4.00.701
+  - author: Steve A.
+
+ Strategy class delegated to process (check & serialize) a single DataImportSwimmerAnalysisResult
+ instance.
+
+ Produces a detailed verbose text log of the analysis as well as a list of
+ any SQL actions that that have been carried out during the serialization.
+
+=end
+class SwimmerAnalysisResultProcessor
+  include SqlConverter
+
+  attr_reader :logger, :flash, :sql_executable_log, :process_log,
+              :committed_rows
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Creates a new instance.
+  # When the logger is not given the default is to use the current Rails.logger.
+  #
+  def initialize( logger = nil, flash = nil )
+    @logger = logger || Rails.logger
+    @flash  = flash  || {}
+    @sql_executable_log = ''                        # SQL diff log
+    @process_log        = ''                        # Full process log
+    @committed_rows     = []                        # Array of committed rows (currently used only in specs)
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Processes an instance of DataImportSwimmerAnalysisResult.
+  # Returns +true+ on success; +false+ otherwise.
+  #
+  def run( swimmer_analysis_result, is_confirmed, swimmer_alias_override_id )
+    raise ArgumentError.new() unless swimmer_analysis_result.instance_of?( DataImportSwimmerAnalysisResult )
+    update_logs(
+      "\r\n-------------------------------------------------------------------------------------------------------------\r\n" <<
+      "\r\nProcessing #{is_confirmed ? 'CONFIRMED' : 'unconfirmed'} #{swimmer_analysis_result}..."
+    )
+    is_ok = true
+    swimmer_name = swimmer_analysis_result.searched_swimmer_name
+                                                    # Use the alias override, if set:
+    if swimmer_alias_override_id.to_i > 0
+      swimmer_analysis_result.chosen_swimmer_id = swimmer_alias_override_id
+      # Make sure a SwimmerAffiliation will be skipped for this phase of the analysis
+      # (since there is a swimmer ID override, the SwimmerAffiliation may be already existing):
+      swimmer_analysis_result.best_match_name = ''
+      swimmer_analysis_result.rebuild_sql_text()       # (No need to save the instance, since rows will be deleted at the end -- and if something goes wrong, hopefully we still have the log files...)
+      update_logs( "Using swimmer_id alias override = #{swimmer_alias_override_id} for '#{swimmer_name}'..." )
+    end
+
+    # NOTE: swimmer_id will always refer to an instance of Swimmer, not DataImportSwimmer!
+    #       (Thus, if it is not zero and a linked SwimmerAffiliation is missing, we'll know
+    #        that we can create one.)
+    swimmer_id   = swimmer_analysis_result.chosen_swimmer_id
+
+# FIXME USE desired_year_of_birth
+# FIXME USE desired_gender_type_id
+
+    # NOTE: season_id will always refer to an instance of Season, not DataImportSeason!
+    season_id = swimmer_analysis_result.desired_season_id
+    @sql_executable_log << "\r\n-- Processing '#{swimmer_name}':\r\n"
+                                                    # -- Can ADD new Swimmer? (Default action for unconfirmed swimmer_analysis_results)
+    if (! is_confirmed) || swimmer_analysis_result.can_insert_swimmer
+      begin
+        swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+          swimmer_analysis_result.data_import_session,
+          swimmer_name,
+          swimmer_analysis_result.season,
+          true # During this phase, we have to force_missing_swimmer_creation
+        )
+        committed_row = swimmer_builder.result_row
+        update_logs( "Created new #{committed_row.class}, ID: #{committed_row.id}." ) if committed_row
+        # Make sure a SwimmerAffiliation will be skipped for this phase of the
+        # analysis (we need to make sure that only actual Swimmers will be used
+        # not secondary/temporary entities):
+        swimmer_id = nil if committed_row.instance_of?( DataImportSwimmer )
+      rescue
+        update_logs( "\r\n*** SwimmerAnalysisResultProcessor: exception caught during DataImportSwimmer building! (Name:'#{swimmer_name}')", :error )
+        update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
+        @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+        is_ok = false
+      end
+    end
+                                                    # -- Can ADD new Swimmer Alias?
+    if ( is_ok && swimmer_id.to_i > 0 && is_confirmed && swimmer_analysis_result.can_insert_alias )
+      begin
+        DataImportSwimmerAlias.transaction do          # Let's make sure other threads have not already done what we want to do:
+          if ( DataImportSwimmerAlias.where(name: swimmer_name, swimmer_id: swimmer_id).none? )
+            committed_row = DataImportSwimmerAlias.new(
+              name:        swimmer_name,
+              swimmer_id:  swimmer_id
+            )
+            committed_row.save!                     # raise automatically an exception if save is not successful
+            @committed_rows << committed_row
+            @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
+          else
+            @logger.info( "\r\n*** SwimmerAnalysisResultProcessor: WARNING: skipping DataImportSwimmerAlias creation because was (unexpectedly) found already existing! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})" ) if @logger
+          end
+        end
+      rescue
+        update_logs( "\r\n*** SwimmerAnalysisResultProcessor: exception caught during DataImportSwimmerAlias save! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})", :error )
+        update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
+        @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+        is_ok = false
+      end
+    end
+# FIXME
+                                                    # -- Can ADD new SwimmerAffiliation?
+    # if ( is_ok && swimmer_id.to_i > 0 && is_confirmed && swimmer_analysis_result.can_insert_affiliation )
+      # begin
+        # SwimmerAffiliation.transaction do              # Let's make sure other threads have not already done what we want to do:
+          # if ( SwimmerAffiliation.where(
+                  # swimmer_id:    swimmer_id,
+                  # season_id:  season_id
+               # ).none? )
+            # committed_row = SwimmerAffiliation.new(
+              # name:                       swimmer_name,# Use the actual provided name instead of the result_row.name
+              # swimmer_id:                    swimmer_id,
+              # season_id:                  season_id,
+              # is_autofilled:              true,     # signal that we have guessed some of the values
+              # must_calculate_goggle_cup:  false,
+              # user_id:                    1         # (don't care)
+              # # XXX Unable to guess swimmer affiliation number (not filled-in, to be added by hand)
+            # )
+            # committed_row.save!                     # raise automatically an exception if save is not successful
+            # @committed_rows << committed_row
+            # @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
+          # else
+            # update_logs( "\r\n*** SwimmerAnalysisResultProcessor: WARNING: skipping SwimmerAffiliation creation because was (unexpectedly) found already existing! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id}, season_id:#{season_id})", :error )
+          # end
+        # end
+      # rescue
+        # update_logs( "\r\n*** SwimmerAnalysisResultProcessor: exception caught during SwimmerAffiliation save! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id}, season_id:#{season_id})", :error )
+        # update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
+        # @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
+        # is_ok = false
+      # end
+    # end
+                                                    # Rebuild corrected log files:
+    if ( is_confirmed )
+      @process_log << swimmer_analysis_result.analysis_log_text
+    else
+      @process_log << "\r\n                    [[[ '#{swimmer_name}' ]]]  -- search overridden:\r\n\r\n   => NOT FOUND.\r\n"
+    end
+    @process_log << "\r\n----8<---- (Original suggested statements:) ----" << swimmer_analysis_result.sql_text
+    @process_log << "----8<----\r\n"
+    is_ok
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Stores the text +msg+ into the log & logger.
+  def update_logs( msg, method = :info )
+    @logger.send( method, msg ) if @logger
+    @process_log << (msg + "\r\n")
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+end
+

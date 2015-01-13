@@ -57,8 +57,12 @@ class AdminImportController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_team_analysis -----"
 #    logger.debug "PARAMS: #{params.inspect}"
                                                     # Propagate forward (phase-3) the parameters from Phase-1, if any:
-    @force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
-    @force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
+    @force_missing_meeting_creation = (
+      (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
+    )
+    @force_missing_team_creation = (
+      (params[:force_team_creation] == 'true')    || (params[:force_team_creation].to_i > 0)
+    )
     if ( params[:id].to_i > 0 )
       @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
       @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
@@ -107,13 +111,7 @@ class AdminImportController < ApplicationController
 #    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
     data_import_session = DataImportSession.find( data_import_session_id )
     data_importer       = DataImporter.new( logger, flash, data_import_session )
-# TODO /WIP ****** ADD  DataImportSwimmerAnalysisResult generation sub-phase to DataImporter!
-
     result_processor    = TeamAnalysisResultProcessor.new( logger, flash )
-
-# TODO /WIP ****** ADD HERE the invocation to a new SwimmerAnalysisResultProcessor
-# TODO - SwimmerAnalysisResultProcessor
-# TODO - DataImportSwimmerAnalysisResult rendering is separate form (as for DataImportTeamAnalysisResult)
 
                                                     # retrieve results from dedicated table:
     @all_results = DataImportTeamAnalysisResult.where( data_import_session_id: data_import_session_id )
@@ -187,21 +185,23 @@ class AdminImportController < ApplicationController
   # swimmer names are found dubious or mis-matched.
   #
   def step1_1_swimmer_analysis
-    # TODO
-
 # DEBUG
 #    logger.debug "\r\n\r\n!! ------ admin_import::step1_1_swimmer_analysis -----"
 #    logger.debug "PARAMS: #{params.inspect}"
                                                     # Propagate forward (phase-3) the parameters from Phase-1, if any:
-#    @force_missing_meeting_creation = ( (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0) )
-#    @force_missing_team_creation    = ( (params[:force_team_creation] == 'true') || (params[:force_team_creation].to_i > 0) )
-#    if ( params[:id].to_i > 0 )
-#      @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
-#      @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
-#    else
-#      @data_import_session = nil
-#      @analysis_results = []
-#    end
+    @force_missing_meeting_creation = (
+      (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
+    )
+    @force_missing_team_creation = (
+      (params[:force_swimmer_creation] == 'true') || (params[:force_swimmer_creation].to_i > 0)
+    )
+    if ( params[:id].to_i > 0 )
+      @data_import_session = DataImportSession.find_by_id( params[:id].to_i )
+      @analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
+    else
+      @data_import_session = nil
+      @analysis_results = []
+    end
   end
 
 
@@ -214,8 +214,106 @@ class AdminImportController < ApplicationController
 # DEBUG
     logger.debug "\r\n\r\n!! ------ admin_import::step1_1_swimmer_analysis_commit -----"
     logger.debug "PARAMS: #{params.inspect}"
+    overridden_alias_actions = {}
+    confirmed_actions_ids    = []
+    data_import_session_id   = 0
+    must_go_back_on_commit   = false
+    is_ok = true
+                                                    # Parse parameters:
+    params.each do |key, value|
+      data_import_session_id = value.to_i if ( key.to_sym == :data_import_session_id)
+      if ( key.to_s =~ /id_/i )
+        confirmed_actions_ids << ( key.to_s.split('id_')[1] ).to_i
+      end
+      must_go_back_on_commit = value.to_i > 0 if ( key.to_sym == :must_go_back)
+    end
 
-    # TODO
+    force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') || (params[:force_meeting_creation].to_i > 0)
+    force_missing_swimmer_creation = (params[:force_swimmer_creation] == 'true') || (params[:force_swimmer_creation].to_i > 0)
+    # [Steve] The following override hash has the structure:
+    #
+    # params[:alias_ids] => {
+    #   analysis_result.id.to_s => overridden_alias_team_id.to_s,
+    #   #...
+    # }
+    overridden_alias_actions = params['alias_ids'] if params['alias_ids'].instance_of?( ActiveSupport::HashWithIndifferentAccess )
+# DEBUG
+#    logger.debug "\r\ndata_import_session_id: #{data_import_session_id}"
+#    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
+#    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
+    data_import_session = DataImportSession.find( data_import_session_id )
+    data_importer       = DataImporter.new( logger, flash, data_import_session )
+# TODO /WIP ****** ADD  DataImportSwimmerAnalysisResult generation sub-phase to DataImporter!
+
+    result_processor    = SwimmerAnalysisResultProcessor.new( logger, flash )
+
+# TODO /WIP ****** ADD HERE the invocation to a new SwimmerAnalysisResultProcessor
+# TODO - SwimmerAnalysisResultProcessor
+# TODO - DataImportSwimmerAnalysisResult rendering is separate form (as for DataImportTeamAnalysisResult)
+
+                                                    # retrieve results from dedicated table:
+    @all_results = DataImportSwimmerAnalysisResult.where( data_import_session_id: data_import_session_id )
+
+    # For each confirmed result, execute the suggested actions (either the team
+    # alias is confirmed, or a new Team w/ affiliation must be created from scratch):
+    @all_results.each do |team_analysis_result|
+      is_confirmed = confirmed_actions_ids.include?( team_analysis_result.id )
+      team_alias_override_id = overridden_alias_actions.has_key?( team_analysis_result.id.to_s ) ?
+                               overridden_alias_actions[ team_analysis_result.id.to_s ].to_i :
+                               nil
+                                                    # Execute the suggested actions:
+      is_ok = result_processor.run(
+        team_analysis_result,
+        is_confirmed,
+        team_alias_override_id
+      )
+    end
+
+    data_importer.set_team_analysis_logs(
+      result_processor.process_log,
+      result_processor.sql_executable_log
+    )
+                                                    # Write the log files anyway:
+    data_importer.write_analysis_logfile( is_ok )
+    data_importer.write_sql_diff_logfile
+# DEBUG
+#    logger.debug("\r\n- is_ok: #{is_ok}, data_import_session_id: #{data_import_session_id}")
+                                                    # Redirect to next action accordingly:
+    if is_ok
+      flash[:info] = I18n.t('admin_import.team_analysis_completed')
+      if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
+        data_importer.destroy_data_import_session
+      else                                          # Clear just the results from the session if everything is ok:
+        # The Log has become too long & complex to be saved into the table!
+
+        # [Steve, 20141111] We cannot save the log on table: the UPDATE statement will take
+        # a progressively longer time to complete, slowing the process considerably
+        # and eventually make the statement execution fail with MySQL disconnection error.
+        # A more quick, professional and permanent solution to obtain the logging serialized
+        # on DB it would be to add a separate table entity with a row for each single log
+        # event.
+        # As it is, the only viable solution is to keep the logging only on file.
+
+        # Quick hack: disregard any update to the log members and keep them just
+        # as variables:
+#        data_import_session.phase_1_log_will_change!
+        data_import_session.phase_1_log << result_processor.process_log
+#        data_import_session.sql_diff_will_change!
+        data_import_session.sql_diff    << result_processor.sql_executable_log
+        data_import_session.phase = 11              # Update "last completed phase" indicator in session (11 = 1.1)
+        data_import_session.save!
+        DataImportTeamAnalysisResult.delete_all( data_import_session_id: data_import_session_id )
+        redirect_to(
+          goggles_di_step2_checkout_path(
+            id:                     data_import_session_id,
+            force_meeting_creation: force_missing_meeting_creation  ? '1' : '0',
+            force_team_creation:    '1' # After the Team analysis, we can serialize the missing teams (WAS: force_missing_team_creation     ? '1' : '0' )
+          )
+        ) and return
+      end
+    else
+      redirect_to( goggles_di_step1_status_path() ) and return
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -306,19 +404,28 @@ class AdminImportController < ApplicationController
 # DEBUG
 #      logger.debug("\r\nAFTER PHASE 1.2\r\n- data_import_session: #{@data_import_session.id}")
 #      logger.debug("\r\n- data_importer.data_import_session: #{data_importer.data_import_session.id}")
-      if @data_import_session && @data_import_session.data_import_team_analysis_results.any?
-        flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
-        redirect_to(
-            goggles_di_step1_1_team_analysis_path(
-                id:                     data_importer.data_import_session.id,
-                force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
-                force_team_creation:    force_missing_team_creation    ? '1' : nil
-            )
-        ) and return
+      if @data_import_session
+        if @data_import_session.data_import_team_analysis_results.any?
+          flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
+          redirect_to(
+              goggles_di_step1_1_team_analysis_path(
+                  id:                     data_importer.data_import_session.id,
+                  force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
+                  force_team_creation:    force_missing_team_creation    ? '1' : nil
+              )
+          ) and return
+        end
+        if @data_import_session.data_import_swimmer_analysis_results.any?
+          flash[:info] = I18n.t( 'admin_import.swimmer_analysis_needed' )
+          redirect_to(
+              goggles_di_step1_1_swimmer_analysis_path(
+                  id:                     data_importer.data_import_session.id,
+                  force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
+                  force_swimmer_creation: force_swimmer_creation         ? '1' : nil
+              )
+          ) and return
+        end
       end
-
-# TODO Add here redirect to phase 1.1 swimmer name analysis, if @data_import_session && @data_import_session.data_import_swimmer_analysis_results.any?
-
     end
                                                     # -- CHECK OUTCOME: something went awfully wrong? Redirect:
     redirect_to( goggles_di_step1_status_path() ) and return unless @data_import_session
