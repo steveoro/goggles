@@ -64,22 +64,19 @@ class SwimmerAnalysisResultProcessor
     # NOTE: swimmer_id will always refer to an instance of Swimmer, not DataImportSwimmer!
     #       (Thus, if it is not zero and a linked SwimmerAffiliation is missing, we'll know
     #        that we can create one.)
-    swimmer_id   = swimmer_analysis_result.chosen_swimmer_id
-
-# FIXME USE desired_year_of_birth
-# FIXME USE desired_gender_type_id
-
-    # NOTE: season_id will always refer to an instance of Season, not DataImportSeason!
-    season_id = swimmer_analysis_result.desired_season_id
-    @sql_executable_log << "\r\n-- Processing '#{swimmer_name}':\r\n"
+    swimmer_id     = swimmer_analysis_result.chosen_swimmer_id
+    year_of_birth  = swimmer_analysis_result.desired_year_of_birth
+    gender_type_id = swimmer_analysis_result.desired_gender_type_id
+    @sql_executable_log << "\r\n-- Processing '#{swimmer_name}' (#{year_of_birth}, gender: #{gender_type_id})\r\n"
+    gender_type    = GenderType.find( gender_type_id )
                                                     # -- Can ADD new Swimmer? (Default action for unconfirmed swimmer_analysis_results)
     if (! is_confirmed) || swimmer_analysis_result.can_insert_swimmer
       begin
         swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
           swimmer_analysis_result.data_import_session,
           swimmer_name,
-          swimmer_analysis_result.season,
-          true # During this phase, we have to force_missing_swimmer_creation
+          year_of_birth,
+          gender_type
         )
         committed_row = swimmer_builder.result_row
         update_logs( "Created new #{committed_row.class}, ID: #{committed_row.id}." ) if committed_row
@@ -100,8 +97,8 @@ class SwimmerAnalysisResultProcessor
         DataImportSwimmerAlias.transaction do          # Let's make sure other threads have not already done what we want to do:
           if ( DataImportSwimmerAlias.where(name: swimmer_name, swimmer_id: swimmer_id).none? )
             committed_row = DataImportSwimmerAlias.new(
-              name:        swimmer_name,
-              swimmer_id:  swimmer_id
+              complete_name:  swimmer_name,
+              swimmer_id:     swimmer_id
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
             @committed_rows << committed_row
@@ -117,38 +114,6 @@ class SwimmerAnalysisResultProcessor
         is_ok = false
       end
     end
-# FIXME
-                                                    # -- Can ADD new SwimmerAffiliation?
-    # if ( is_ok && swimmer_id.to_i > 0 && is_confirmed && swimmer_analysis_result.can_insert_affiliation )
-      # begin
-        # SwimmerAffiliation.transaction do              # Let's make sure other threads have not already done what we want to do:
-          # if ( SwimmerAffiliation.where(
-                  # swimmer_id:    swimmer_id,
-                  # season_id:  season_id
-               # ).none? )
-            # committed_row = SwimmerAffiliation.new(
-              # name:                       swimmer_name,# Use the actual provided name instead of the result_row.name
-              # swimmer_id:                    swimmer_id,
-              # season_id:                  season_id,
-              # is_autofilled:              true,     # signal that we have guessed some of the values
-              # must_calculate_goggle_cup:  false,
-              # user_id:                    1         # (don't care)
-              # # XXX Unable to guess swimmer affiliation number (not filled-in, to be added by hand)
-            # )
-            # committed_row.save!                     # raise automatically an exception if save is not successful
-            # @committed_rows << committed_row
-            # @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
-          # else
-            # update_logs( "\r\n*** SwimmerAnalysisResultProcessor: WARNING: skipping SwimmerAffiliation creation because was (unexpectedly) found already existing! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id}, season_id:#{season_id})", :error )
-          # end
-        # end
-      # rescue
-        # update_logs( "\r\n*** SwimmerAnalysisResultProcessor: exception caught during SwimmerAffiliation save! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id}, season_id:#{season_id})", :error )
-        # update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
-        # @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
-        # is_ok = false
-      # end
-    # end
                                                     # Rebuild corrected log files:
     if ( is_confirmed )
       @process_log << swimmer_analysis_result.analysis_log_text
