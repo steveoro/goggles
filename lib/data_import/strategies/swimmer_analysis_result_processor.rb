@@ -95,7 +95,7 @@ class SwimmerAnalysisResultProcessor
     if ( is_ok && swimmer_id.to_i > 0 && is_confirmed && swimmer_analysis_result.can_insert_alias )
       begin
         DataImportSwimmerAlias.transaction do          # Let's make sure other threads have not already done what we want to do:
-          if ( DataImportSwimmerAlias.where(name: swimmer_name, swimmer_id: swimmer_id).none? )
+          if ( DataImportSwimmerAlias.where(complete_name: swimmer_name, swimmer_id: swimmer_id).none? )
             committed_row = DataImportSwimmerAlias.new(
               complete_name:  swimmer_name,
               swimmer_id:     swimmer_id

@@ -90,8 +90,7 @@ describe SwimmerAnalysisResultProcessor, type: :strategy do
       context "when CONFIRMED and can CREATE ALIAS (Swimmer match + override with same ID + same name best match + confirm)," do
         let(:swimmer_analysis_result) { create( :data_import_swimmer_analysis_result, data_import_session: data_import_session ) }
 
-# FIXME
-        xit "adds just a new DataImportSwimmerAlias row" do
+        it "adds just a new DataImportSwimmerAlias row" do
           is_ok = nil
           # Force and check conditions for aliasing:
           swimmer_analysis_result.searched_swimmer_name = build( :swimmer ).complete_name
@@ -100,8 +99,8 @@ describe SwimmerAnalysisResultProcessor, type: :strategy do
           expect( swimmer_analysis_result.can_insert_alias ).to be true
           swimmer_count = Swimmer.count
 # DEBUG
-          puts "\r\n#{swimmer_analysis_result}"
-          puts "=> count BEFORE: Swimmer=#{Swimmer.count}, DataImportSwimmer=#{DataImportSwimmer.count}, DataImportSwimmerAlias=#{DataImportSwimmerAlias.count}"
+#          puts "\r\n#{swimmer_analysis_result}"
+#          puts "=> count BEFORE: Swimmer=#{Swimmer.count}, DataImportSwimmer=#{DataImportSwimmer.count}, DataImportSwimmerAlias=#{DataImportSwimmerAlias.count}"
           expect{
             is_ok = @subject.run(
               swimmer_analysis_result,
@@ -109,8 +108,8 @@ describe SwimmerAnalysisResultProcessor, type: :strategy do
               swimmer_analysis_result.chosen_swimmer_id
             )
 # DEBUG
-            puts @subject.process_log
-            puts "=> count AFTER:  Swimmer=#{Swimmer.count}, DataImportSwimmer=#{DataImportSwimmer.count}, DataImportSwimmerAlias=#{DataImportSwimmerAlias.count}"
+#            puts @subject.process_log
+#            puts "=> count AFTER:  Swimmer=#{Swimmer.count}, DataImportSwimmer=#{DataImportSwimmer.count}, DataImportSwimmerAlias=#{DataImportSwimmerAlias.count}"
            }.to change{ DataImportSwimmerAlias.count }.by(1)
 
           expect( is_ok ).to be true
