@@ -7,7 +7,7 @@ require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_
 
 = MeetingsController
 
-  - version:  4.00.663
+  - version:  4.00.705
   - author:   Steve A.
 
 =end
@@ -220,13 +220,9 @@ class MeetingsController < ApplicationController
     ).order(
       'event_types.is_a_relay, meeting_events.event_order'
     )
+
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
-      @meeting.meeting_individual_results.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -283,13 +279,9 @@ class MeetingsController < ApplicationController
       team_score.rank = index + 1
       @total_team_bonus += team_score.meeting_team_points
     }
+
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
-      @meeting.meeting_individual_results.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -307,10 +299,6 @@ class MeetingsController < ApplicationController
   def show_stats
     # Using MeetingStat
     @meeting_stats = MeetingStat.new(@meeting)
-
-
-
-
 
     @preselected_team_id = params[:team_id]
 # DEBUG
@@ -424,13 +412,9 @@ class MeetingsController < ApplicationController
     @categories_array = categories_hash.keys.sort.collect{ |k| categories_hash[k] }
                                                   # Prepare the event type gender count list and sort it by name:
     @event_types_array = event_types_hash.values.sort{ |a, b|  a[0] <=> b[0] }
+
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
-      @meeting.meeting_individual_results.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -505,12 +489,7 @@ class MeetingsController < ApplicationController
     )
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
-      @meeting.meeting_individual_results.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -532,13 +511,9 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
+
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = if @meeting.meeting_individual_results.count > 0
-      @meeting.meeting_individual_results.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -547,6 +522,8 @@ class MeetingsController < ApplicationController
   # Meeting invitation viewer
   #
   def show_invitation
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -564,16 +541,12 @@ class MeetingsController < ApplicationController
     ).order(
       'meeting_events.event_order'
     )
-    # Get a timestamp for the cache key:
-    @max_entry_updated_at = if @meeting.meeting_entries.count > 0
-      @meeting.meeting_entries.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
 
     # TODO
     # Prepares team stats
+
+    # Get a timestamp for the cache key:
+    @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -587,13 +560,9 @@ class MeetingsController < ApplicationController
     ).order(
       'meeting_events.event_order'
     )
+
     # Get a timestamp for the cache key:
-    @max_entry_updated_at = if @meeting.meeting_entries.count > 0
-      @meeting.meeting_entries.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -608,13 +577,9 @@ class MeetingsController < ApplicationController
     ).order(
       'meeting_events.event_order'
     )
+
     # Get a timestamp for the cache key:
-    @max_entry_updated_at = if @meeting.meeting_entries.count > 0
-      @meeting.meeting_entries.select( :updated_at )
-        .max.updated_at.to_i
-    else
-      @meeting.updated_at
-    end
+    @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -649,7 +614,22 @@ class MeetingsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+
   private
+
+
+  # Returns an integer timestamp usable as additional cache key, sending the specified
+  # message to the current instance of @meeting (assumed to be an instance of Meeting).
+  #
+  def get_timestamp_from_relation_chain( relation_to_send = :meeting_individual_results )
+    if @meeting.send( relation_to_send ).count > 0
+      timestamp = @meeting.send( relation_to_send ).select( :updated_at ).max.updated_at.to_i
+      timestamp > @meeting.updated_at.to_i ? timestamp : @meeting.updated_at.to_i
+    else
+      @meeting.updated_at.to_i
+    end
+  end
+
 
   # Verifies that a meeting id is provided as parameter; otherwise
   # return an invalid action request

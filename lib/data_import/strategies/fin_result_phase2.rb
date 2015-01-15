@@ -130,15 +130,17 @@ module FinResultPhase2
     is_ok = true
     swimmer_names = []
                                                     # Collect all swimmer names in the parsed file:
-    swimmer_names_from_results = parse_result[:result_row].map do |row|
+    swimmer_names_from_results = parse_result[:result_row].map do |result_row|
+      header_row  = parse_result[:category_header].find({}) { |category_row| category_row[:id] == result_row[:id] }
+# FIXME / TODO Gender May not be accessible for certain File format types!
+# FIXME / TODO Update below method with support for FIN2 file format!
+      gender_type = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
       {
-        name:   row[:fields][:swimmer_name],
-        year:   row[:fields][:swimmer_year]
-        # FIXME Missing gender from category:
-#        gender: row[:fields][:gender]
+        name:   result_row[:fields][:swimmer_name],
+        year:   result_row[:fields][:swimmer_year],
+        gender: gender_type
       }
     end.compact
-    return false
 
     swimmer_names_from_results.uniq!
     swimmer_names_from_results.sort!
@@ -147,13 +149,16 @@ module FinResultPhase2
       swimmer_names_from_results.join("\r\n") << "\r\n==== Tot.: #{ swimmer_names_from_results.size } ===="
     )
 
-    swimmer_names_from_results.each_with_index do |swimmer_name, idx|
+    swimmer_names_from_results.each_with_index do |swimmer_hash, idx|
       swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
-        data_import_session, swimmer_name, swimmer_year, gender_type
+        data_import_session,
+        swimmer_hash[:name],
+        swimmer_hash[:year],
+        swimmer_hash[:gender]
       )
       swimmer = swimmer_builder.result_row
       unless swimmer
-        data_import_session.phase_1_log << "\r\nPrescan Swimmer names: '#{ swimmer_name }' (#{swimmer_year}, gender: #{gender_type}, #{ idx+1 }/#{ team_names.size }) uncertain. 'Swimmer name Analysis' needed.\r\n"
+        data_import_session.phase_1_log << "\r\nPrescan Swimmer names: '#{ swimmer_hash[:name] }' (#{swimmer_hash[:year]}, gender: #{swimmer_hash[:gender]}, #{ idx+1 }/#{ swimmer_names_from_results.size }) uncertain. 'Swimmer name Analysis' needed.\r\n"
         is_ok = false
       end
                                                     # Update progress on current session:
