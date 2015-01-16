@@ -75,7 +75,7 @@ class TeamAnalysisResultProcessor
           team_analysis_result.data_import_session,
           team_name,
           team_analysis_result.season,
-          true # During this phase, we have to force_missing_team_creation
+          true # During this phase, we have to force_team_or_swimmer_creation
         )
         committed_row = team_builder.result_row
         update_logs( "Created new #{committed_row.class}, ID: #{committed_row.id}." ) if committed_row

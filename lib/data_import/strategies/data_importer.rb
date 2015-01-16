@@ -19,7 +19,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.693
+  - Goggles framework vers.:  4.00.707
   - author: Steve A.
 
   Data-Import strategy class.
@@ -32,7 +32,7 @@ class DataImporter
 
   attr_reader   :logger, :flash, :data_import_session,
                 :import_log,
-                :team_analysis_log,
+                :analysis_log,
                 :sql_executable_log,
                 :header_fields_dao,
                 :meeting,                           # serialized meeting
@@ -42,7 +42,7 @@ class DataImporter
                 :season,
                 :current_admin_id,
                 :force_missing_meeting_creation,
-                :force_missing_team_creation,
+                :force_team_or_swimmer_creation,
                 :do_not_consume_file,
                 :log_dir
   #-- -------------------------------------------------------------------------
@@ -56,17 +56,16 @@ class DataImporter
     @logger = logger || Rails.logger
     @flash  = flash  || {}
     @data_import_session    = data_import_session || create_new_data_import_session()
-    @team_analysis_log      = ''                    # Full team analysis phase log
+    @analysis_log           = ''                    # Full team analysis phase log
     @sql_executable_log     = ''                    # SQL 'suggested actions' from Team Analysis phase
     @import_log             = ''                    # Combined import log
-    @team_analysis_results  = []
                                                     # Batch parameters' default
     @season                 = @data_import_session.season
     @full_pathname          = @data_import_session.file_name
     header_fields_dao_init_from_filename if @full_pathname
     @current_admin_id       = @data_import_session.user_id
     @force_missing_meeting_creation = false
-    @force_missing_team_creation    = false
+    @force_team_or_swimmer_creation    = false
     @do_not_consume_file            = false
     @log_dir = File.join( Rails.root, 'log' )
   end
@@ -80,7 +79,7 @@ class DataImporter
   #  - :season
   #  - :current_admin_id
   #  - :force_missing_meeting_creation
-  #  - :force_missing_team_creation
+  #  - :force_team_or_swimmer_creation
   #  - :do_not_consume_file
   #  - :log_dir
   #
@@ -129,6 +128,7 @@ class DataImporter
       DataImportBadge.delete_all( data_import_session_id: @data_import_session.id )
       DataImportCity.delete_all( data_import_session_id: @data_import_session.id )
       DataImportTeamAnalysisResult.delete_all( data_import_session_id: @data_import_session.id )
+      DataImportSwimmerAnalysisResult.delete_all( data_import_session_id: @data_import_session.id )
       DataImportSession.delete( @data_import_session.id )
       @logger.info(  ) if @logger
       update_logs( "-- destroy_data_import_session(#{ @data_import_session.id }): data-import session clean-up done.\r\n" )
@@ -189,9 +189,9 @@ class DataImporter
   #
   def write_analysis_logfile( is_ok = false )
     to_logfile(
-      @team_analysis_log,
-      "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n",
-      nil, # (no footer)
+      @analysis_log,
+      nil, # (no additional header)
+      nil, # (no additional footer)
       is_ok ? ".11.ok#{get_log_extension}" : ".11#{get_log_extension}"
     )
     to_logfile(
@@ -217,8 +217,8 @@ class DataImporter
   #++
 
   # Sets the internal log variables, dedicated to store the result of the external phase 1.1.
-  def set_team_analysis_logs( analysis_log, sql_diff_log )
-    @team_analysis_log  = analysis_log
+  def set_analysis_logs( analysis_log, sql_diff_log )
+    @analysis_log       = analysis_log
     @sql_executable_log = sql_diff_log
   end
 
@@ -242,7 +242,7 @@ class DataImporter
   #     data_importer.set_up(
   #       full_pathname:                  filename_to_be_parsed,
   #       force_missing_meeting_creation: force_missing_meeting_creation,
-  #       force_missing_team_creation:    force_missing_team_creation,
+  #       force_team_or_swimmer_creation:    force_team_or_swimmer_creation,
   #       # do_not_consume_file:           false, # (default)
   #       current_admin_id:               current_admin.id
   #     )
@@ -359,7 +359,7 @@ class DataImporter
 
     @data_import_session.phase_1_log ||= ''         # Init phase log
     update_logs( "--------------------[Phase #1.0 - PARSE]--------------------" )
-    update_logs( "Parsing file: #{@full_pathname}, force_missing_meeting_creation=#{@force_missing_meeting_creation}, force_missing_team_creation=#{@force_missing_team_creation}, do_not_consume_file=#{@do_not_consume_file}.\r\n" )
+    update_logs( "Parsing file: #{@full_pathname}, force_missing_meeting_creation=#{@force_missing_meeting_creation}, force_team_or_swimmer_creation=#{@force_team_or_swimmer_creation}, do_not_consume_file=#{@do_not_consume_file}.\r\n" )
     header_fields_dao_init_from_filename()          # Make sure #header_fields_dao is defined
                                                     # Check if it's a "continuation session":
     if @data_import_session.phase > 0
@@ -500,24 +500,28 @@ class DataImporter
     end
 
     is_ok = true
-    if @season                                        # -- PRE-SCAN TEAM Names --
+    if @season                                        # -- PRE-SCAN TEAM & SWIMMER Names --
       season_starting_year = @season.begin_date.year
       update_logs( "Found season '#{@season.inspect}'; #{@season.season_type.inspect}, season_starting_year=#{season_starting_year}", :debug )
       # [Steve, 20150112] The existance of Season is the minimum requirement before
       # starting the Team & Swimmer name analysis sub-phases.
-                                                    # The prescan will abort the rest of the procedure when false:
-      is_ok = prescan_parse_result_for_unknown_team_names(
+                                                    # Any required prescan will abort the rest of the procedure:
+      are_team_names_ok = prescan_parse_result_for_unknown_team_names(
         @data_import_session,
         @season,
         @result_hash[:parse_result],
-        @force_missing_team_creation
+        @force_team_or_swimmer_creation
       )
-      unless is_ok
-        @team_analysis_results = DataImportTeamAnalysisResult.where( data_import_session_id: @data_import_session.id )
-        update_logs( "PHASE #1.1: Team name Analysis phase needed!" )
-      end
+      update_logs( "PHASE #1.1: Team name Analysis phase needed!" ) unless are_team_names_ok
 
-      # TODO ADD HERE prescan_parse_result_for_unknown_swimmer_names( ... )
+      are_swimmer_names_ok = prescan_parse_result_for_unknown_swimmer_names(
+        @data_import_session,
+        @result_hash[:parse_result],
+        @force_team_or_swimmer_creation
+      )
+      update_logs( "PHASE #1.1: Swimmer name Analysis phase needed!" ) unless are_swimmer_names_ok
+                                                    # Update is_ok status flag:
+      is_ok = are_team_names_ok && are_swimmer_names_ok
     end
 
     @meeting = nil
@@ -528,7 +532,7 @@ class DataImporter
         @header_fields_dao,
         meeting_header_row,
         meeting_dates,
-        @force_missing_team_creation
+        @force_team_or_swimmer_creation
       )
       @meeting = meeting_builder.result_row
     end
@@ -549,7 +553,7 @@ class DataImporter
           @season,
           @meeting,
           ranking_details,
-          @force_missing_team_creation
+          @force_team_or_swimmer_creation
       )
     end
                                                     # -- MEETING SESSION (digest/serialization) --
@@ -577,7 +581,7 @@ class DataImporter
           meeting_session,
           @result_hash[:parse_result],
           scheduled_date,
-          @force_missing_team_creation
+          @force_team_or_swimmer_creation
       )
     end
                                                     # --- RELAY (digest/serialization) --
@@ -592,7 +596,7 @@ class DataImporter
           meeting_session,
           @result_hash[:parse_result],
           scheduled_date,
-          @force_missing_team_creation
+          @force_team_or_swimmer_creation
       )
     end
                                                     # After having successfully stored the contents, remove the file

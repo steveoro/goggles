@@ -42,14 +42,14 @@ require 'data_import/services/data_import_team_affiliation_builder'
       processed there are considered as "new" or missing.)
 
   4) If all else fails, insert a new Team ONLY if its enabling flag has been
-     set to true (force_missing_team_creation).
+     set to true (force_team_or_swimmer_creation).
 
 =end
 class DataImportTeamBuilder < DataImportEntityBuilder
 
   # Searches for an existing Team given the parameters, or it adds a new one, if not found.
   #
-  def self.build_from_parameters( data_import_session, team_name, season, force_missing_team_creation )
+  def self.build_from_parameters( data_import_session, team_name, season, force_team_or_swimmer_creation )
 # DEBUG
 #    puts "\r\nSearching for team '#{team_name}'..."
     self.build( data_import_session ) do
@@ -70,7 +70,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
                                                   # 2) Search for a Team Alias:
       if_not_found  do
         search_for( DataImportTeamAlias, name: team_name )
-        unless @result_row                        # Try also a fuzzy search on alias, if a standard search fails:
+        unless @result_row                        # 2.1) Additional Fuzzy search on Team Aliases:
           matcher = FuzzyStringMatcher.new( DataImportTeamAlias.all, :name, )
           @result_row = matcher.find( team_name, FuzzyStringMatcher::BIAS_SCORE_BEST )
         end
@@ -117,7 +117,7 @@ class DataImportTeamBuilder < DataImportEntityBuilder
       end
 
       if_not_found do
-        if force_missing_team_creation              # Guess city name & setup fields:
+        if force_team_or_swimmer_creation              # Guess city name & setup fields:
           city_builder = DataImportCityBuilder.build_from_parameters( data_import_session, team_name )
           entity_for_creation DataImportTeam
           attributes_for_creation(

@@ -9,7 +9,7 @@ require_relative '../../../lib/data_import/team_analysis_report_dao'
 
 = TeamNameAnalyzer
 
-  - Goggles framework vers.:  4.00.521
+  - Goggles framework vers.:  4.00.707
   - author: Steve A.
 
  Service class delegated to analize the Team name matches.
@@ -63,7 +63,7 @@ class TeamNameAnalyzer
   # It is never +nil+, empty at first.
   #
   def analysis_text_log
-    @analysis_text_log ||= ''
+    @analysis_text_log ||= "\t*****************************\r\n\t  Team Analysis Report\r\n\t*****************************\r\n"
   end
 
   # Returns the overall SQL log for all the "suggested" SQL operations that should

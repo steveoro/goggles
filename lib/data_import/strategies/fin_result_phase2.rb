@@ -52,7 +52,7 @@ module FinResultPhase2
   #    executed; +true+ if the "standard" data-import phase can go on.
   #
   def prescan_parse_result_for_unknown_team_names( data_import_session, season,
-                                                   parse_result, force_missing_team_creation = false )
+                                                   parse_result, force_team_or_swimmer_creation = false )
     is_ok = true
     team_names = []
     # The parse result will always contain an Array of Hash for each defined key field.
@@ -97,7 +97,7 @@ module FinResultPhase2
         data_import_session,
         team_name,
         season,
-        force_missing_team_creation
+        force_team_or_swimmer_creation
       )
       team = team_builder.result_row
       unless team
@@ -125,10 +125,9 @@ module FinResultPhase2
   # == Returns: when +false+, the additional "Swimmer name analysis" phase must be
   #    executed; +true+ if the "standard" data-import phase can go on.
   #
-  def prescan_parse_result_for_unknown_swimmer_names( data_import_session, season,
-                                                      parse_result, force_missing_swimmer_creation = false )
+  def prescan_parse_result_for_unknown_swimmer_names( data_import_session, parse_result,
+                                                      force_team_or_swimmer_creation = false )
     is_ok = true
-    swimmer_names = []
                                                     # Collect all swimmer names in the parsed file:
     swimmer_names_from_results = parse_result[:result_row].map do |result_row|
       header_row  = parse_result[:category_header].find({}) { |category_row| category_row[:id] == result_row[:id] }
@@ -143,7 +142,10 @@ module FinResultPhase2
     end.compact
 
     swimmer_names_from_results.uniq!
-    swimmer_names_from_results.sort!
+    swimmer_names_from_results.sort! do |hash_a, hash_b|
+      hash_a[:swimmer_name] <=> hash_b[:swimmer_name]
+    end
+
     update_logs(
       "\r\n** Swimmer names collected from RESULTS: **\r\n" <<
       swimmer_names_from_results.join("\r\n") << "\r\n==== Tot.: #{ swimmer_names_from_results.size } ===="
@@ -154,7 +156,8 @@ module FinResultPhase2
         data_import_session,
         swimmer_hash[:name],
         swimmer_hash[:year],
-        swimmer_hash[:gender]
+        swimmer_hash[:gender],
+        force_team_or_swimmer_creation
       )
       swimmer = swimmer_builder.result_row
       unless swimmer
@@ -178,7 +181,7 @@ module FinResultPhase2
   #
   def process_category_headers( full_pathname, data_import_session, season, season_starting_year,
                                 meeting, meeting_session, parse_result, scheduled_date,
-                                force_missing_team_creation = false )
+                                force_team_or_swimmer_creation = false )
     is_ok = true
     category_headers = parse_result[:category_header]
     category_details = parse_result[:result_row]
@@ -243,7 +246,7 @@ module FinResultPhase2
           meeting_program,
           detail_row, detail_row_idx, detail_rows.size,
           gender_type, category_type,
-          force_missing_team_creation
+          force_team_or_swimmer_creation
         )
         is_ok = ! mir_builder.result_row.nil?
         return unless is_ok
@@ -265,7 +268,7 @@ module FinResultPhase2
   #
   def process_relay_headers( full_pathname, data_import_session, season, season_starting_year,
                              meeting, meeting_session, parse_result, scheduled_date,
-                             force_missing_team_creation = false )
+                             force_team_or_swimmer_creation = false )
     is_ok = true
     relay_headers = parse_result[:relay_header]
     relay_details = parse_result[:relay_row]
@@ -340,7 +343,7 @@ module FinResultPhase2
           season,
           meeting_program,
           detail_row, detail_row_idx, detail_rows.size,
-          force_missing_team_creation
+          force_team_or_swimmer_creation
         )
         is_ok = ! mrr_builder.result_row.nil?
         return unless is_ok
@@ -361,7 +364,7 @@ module FinResultPhase2
   # == Returns: false on error
   #
   def process_team_ranking( full_pathname, data_import_session, season, meeting,
-                            ranking_details, force_missing_team_creation = false )
+                            ranking_details, force_team_or_swimmer_creation = false )
     is_ok = true
                                                     # **** DETAIL LOOP **** For each result row:...
     ranking_details.each_with_index do |detail_row, detail_row_idx|
@@ -373,7 +376,7 @@ module FinResultPhase2
         season,
         meeting,
         detail_row, detail_row_idx, ranking_details.size,
-        force_missing_team_creation
+        force_team_or_swimmer_creation
       )
                                                     # This will store the is_ok status up 'till the end (1 failure is enough)
       is_ok = is_ok && (! mts_builder.result_row.nil?)

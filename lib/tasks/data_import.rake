@@ -39,7 +39,7 @@ namespace :dataimport do
         full_pathname:                  pathname,
         season:                         season,
         force_missing_meeting_creation: force_meeting,
-        force_missing_team_creation:    force_team,
+        force_team_or_swimmer_creation:    force_team,
         do_not_consume_file:            do_not_consume_file,
         log_dir:                        log_dir
     )

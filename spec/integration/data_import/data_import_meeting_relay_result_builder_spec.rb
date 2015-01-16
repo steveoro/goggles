@@ -87,7 +87,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
         season,     # (the data_import_session.season won't be checked inside)
         meeting_program,
         detail_row, detail_row_idx, detail_rows_size,
-        true        # force_missing_team_creation
+        true        # force_team_or_swimmer_creation
       )
     end
 
@@ -139,7 +139,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
         di_season,      # (the data_import_session.season won't be checked inside)
         di_meeting_program,
         detail_row, detail_row_idx, detail_rows_size,
-        true            # force_missing_team_creation
+        true            # force_team_or_swimmer_creation
       )
     end
 
@@ -191,7 +191,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
         mrr.meeting_program.season, # (by ActiveRecord has_one; the data_import_session.season won't be checked inside)
         mrr.meeting_program,
         mrr_detail_row, detail_row_idx, detail_rows_size,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 
@@ -247,7 +247,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
         di_mrr.data_import_meeting_program.meeting_session.season, # (data_import_session.season won't be checked inside)
         di_mrr.data_import_meeting_program,
         di_mrr_detail_row, detail_row_idx, detail_rows_size,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 

@@ -15,7 +15,7 @@ describe DataImporter, type: :strategy do
     it_behaves_like( "(the existance of a method)", [
       :logger, :flash, :data_import_session,
       :import_log,
-      :team_analysis_log,
+      :analysis_log,
       :sql_executable_log,
       :header_fields_dao,
       :meeting,
@@ -24,7 +24,7 @@ describe DataImporter, type: :strategy do
       :set_up,
       :destroy_data_import_session,
       :import_log_filename,
-      :set_team_analysis_logs,
+      :set_analysis_logs,
       :to_logfile,
       :write_import_logfile,
       :write_analysis_logfile,
@@ -75,7 +75,7 @@ describe DataImporter, type: :strategy do
       [
         :current_admin_id,
         :force_missing_meeting_creation,
-        :force_missing_team_creation,
+        :force_team_or_swimmer_creation,
         :do_not_consume_file,
         :log_dir
       ].each do |member_symbol|
@@ -155,9 +155,9 @@ describe DataImporter, type: :strategy do
     end
 
 
-    describe "#team_analysis_log" do
+    describe "#analysis_log" do
       it "returns a non empty string" do
-        expect( subject.team_analysis_log ).to be_an_instance_of( String )
+        expect( subject.analysis_log ).to be_an_instance_of( String )
       end
     end
 
@@ -169,12 +169,12 @@ describe DataImporter, type: :strategy do
     end
 
 
-    describe "#set_team_analysis_logs" do
+    describe "#set_analysis_logs" do
       it "sets the internal team analysis log variables" do
         process_log = Faker::Lorem.paragraph
         sql_log = Faker::Lorem.paragraph
-        subject.set_team_analysis_logs( process_log, sql_log )
-        expect( subject.team_analysis_log ).to eq( process_log )
+        subject.set_analysis_logs( process_log, sql_log )
+        expect( subject.analysis_log ).to eq( process_log )
         expect( subject.sql_executable_log ).to eq( sql_log )
       end
     end
@@ -286,7 +286,7 @@ describe DataImporter, type: :strategy do
         @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
         @phase_1_subject.set_up(
           force_missing_meeting_creation: false,
-          force_missing_team_creation: false,
+          force_team_or_swimmer_creation: false,
           do_not_consume_file: true                 # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
         )
         @result = @phase_1_subject.phase_1_parse
@@ -376,7 +376,7 @@ describe DataImporter, type: :strategy do
           @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
           @phase_1_subject.set_up(
             force_missing_meeting_creation: false,
-            force_missing_team_creation: false,
+            force_team_or_swimmer_creation: false,
             do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
           )
         end
@@ -406,7 +406,7 @@ describe DataImporter, type: :strategy do
           @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
           @phase_1_subject.set_up(
             force_missing_meeting_creation: false,
-            force_missing_team_creation: false,
+            force_team_or_swimmer_creation: false,
             do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
           )
           @analysis_before_count = DataImportTeamAnalysisResult.where( data_import_session_id: @phase_1_session.id ).count
@@ -449,7 +449,7 @@ describe DataImporter, type: :strategy do
           @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
           @phase_1_subject.set_up(
             force_missing_meeting_creation: true,
-            force_missing_team_creation: true,
+            force_team_or_swimmer_creation: true,
             do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
           )
           @phase_1_subject.phase_1_parse
@@ -619,7 +619,7 @@ describe DataImporter, type: :strategy do
           @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
           @phase_1_subject.set_up(
             force_missing_meeting_creation: false,
-            force_missing_team_creation: false,
+            force_team_or_swimmer_creation: false,
             do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
           )
         end

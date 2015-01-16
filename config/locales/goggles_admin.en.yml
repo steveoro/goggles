@@ -77,8 +77,8 @@ en:
     missing_session_parameter: "The session ID parameter is missing!"
     season_not_found: "Unable to find the required season in the database!"
     season_type_not_found: "Unable to find a required season_type in the database!"
-    force_meeting_creation: "Create missing Meetings"
-    force_team_creation: "Create missing Teams"
+    force_meeting_creation: "Force missing Meeting creation"
+    force_team_or_swimmer_creation: "Force missing Teams or Swimmers creation"
     continue_with_team_analysis: "Continue Team names Analysis"
     continue_with_team_analysis_tooltip: "(This will re-launch Phase 1.1 with a DISABLED global flag for forced creation of missing Teams, in order to perform the manual analysis of the existing results.)"
     team_analysis_results: "New Team names Analysis"
@@ -93,7 +93,6 @@ en:
     on_commit_go_back_to_step1: "On commit, save the changes but go back to Step-1 (useful to import just the brand new names, without updating the existing ones.)"
     unconfirmed_results_will_be_added: "NOTE: Remember that all unconfirmed results will be treated as 'not-recognized' or MISSING and thus will be added as NEW names."
     team_analysis_completed: "Team Analysis completed."
-    force_team_creation: "Create missing Teams"
 
     continue_with_swimmer_analysis: "Continue Swimmer names Analysis"
     continue_with_swimmer_analysis_tooltip: "(This will re-launch Phase 1.1 with a DISABLED global flag for forced creation of missing Swimmers, in order to perform the manual analysis of the existing results.)"

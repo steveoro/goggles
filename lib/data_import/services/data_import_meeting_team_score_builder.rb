@@ -34,7 +34,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
   #
   def self.build_from_parameters( data_import_session, season, meeting,
                                   detail_row, detail_row_idx, detail_rows_size,
-                                  force_missing_team_creation = false )
+                                  force_team_or_swimmer_creation = false )
     raise ArgumentError.new("Both season and meeting_program must be not nil!") if season.nil? || meeting.nil?
 # DEBUG
 #    puts "\r\n\r\nMeetingTeamScore (Ranking) -- build_from_parameters: data_import_session ID: #{data_import_session.id}, parsed detail_row: #{detail_row.inspect}"
@@ -54,7 +54,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
            data_import_session,
            @team_name,
            season,
-           force_missing_team_creation
+           force_team_or_swimmer_creation
         ) if @team_name
         @team = team_builder.result_row if team_builder
         unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)

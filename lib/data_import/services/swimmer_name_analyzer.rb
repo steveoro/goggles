@@ -9,7 +9,7 @@ require_relative '../../../lib/data_import/swimmer_analysis_report_dao'
 
 = SwimmerNameAnalyzer
 
-  - Goggles framework vers.:  4.00.669
+  - Goggles framework vers.:  4.00.707
   - author: Steve A.
 
  Service class delegated to analize the Swimmer name matches.
@@ -54,7 +54,7 @@ class SwimmerNameAnalyzer
   # It is never +nil+, empty at first.
   #
   def analysis_text_log
-    @analysis_text_log ||= ''
+    @analysis_text_log ||= "\t*****************************\r\n\t Swimmer Analysis Report\r\n\t*****************************\r\n"
   end
 
   # Returns the overall SQL log for all the "suggested" SQL operations that should

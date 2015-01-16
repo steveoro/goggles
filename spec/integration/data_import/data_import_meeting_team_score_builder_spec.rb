@@ -56,7 +56,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
         season,
         meeting,
         rand_detail_row, detail_row_idx, detail_rows_size,
-        true # force_missing_team_creation
+        true # force_team_or_swimmer_creation
       )
     end
 
@@ -146,7 +146,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
         mrr.meeting.season,
         mrr.meeting,
         mrr_detail_row, detail_row_idx, detail_rows_size,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
     it_behaves_like( "NO matching primary entity (but existing MRR or DI-MRR)" )
@@ -178,7 +178,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
         di_mrr.meeting.season,
         di_mrr.meeting,
         di_mrr_detail_row, detail_row_idx, detail_rows_size,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
     it_behaves_like( "NO matching primary entity (but existing MRR or DI-MRR)" )
@@ -212,7 +212,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
         primary_ts_with_mrrs.meeting.season,
         primary_ts_with_mrrs.meeting,
         primary_detail_row, detail_row_idx, detail_rows_size,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 
@@ -276,7 +276,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
         secondary_ts_with_mrrs.meeting.season,
         secondary_ts_with_mrrs.meeting,
         secondary_detail_row, detail_row_idx, detail_rows_size,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 

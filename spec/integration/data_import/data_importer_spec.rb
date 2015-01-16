@@ -25,7 +25,7 @@ describe DataImporter, type: :integration do
         # @phase_1_subject = DataImporter.new( nil, nil, @phase_1_session )
         # @phase_1_subject.set_up(
           # force_missing_meeting_creation: true,
-          # force_missing_team_creation: true,
+          # force_team_or_swimmer_creation: true,
           # do_not_consume_file: true               # THIS IS MANDATORY! (Otherwise the sample file will be destroyed by the tests)
         # )
         # @phase_1_subject.phase_1_parse

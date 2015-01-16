@@ -20,7 +20,7 @@ describe DataImportTeamBuilder, type: :integration do
         data_import_session,
         "#{create(:city).name} swimming club ASD",
         create(:season),
-        true # force_missing_team_creation
+        true # force_team_or_swimmer_creation
       )
     end
 
@@ -71,7 +71,7 @@ describe DataImportTeamBuilder, type: :integration do
         data_import_session,
         team.name,
         create(:season), # <== This implies a missing TeamAffiliation link
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 
@@ -162,7 +162,7 @@ describe DataImportTeamBuilder, type: :integration do
         data_import_session,
         data_import_team.name,
         create(:season), # <== This implies a missing TeamAffiliation link
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 
@@ -176,7 +176,7 @@ describe DataImportTeamBuilder, type: :integration do
         data_import_session,
         data_import_team.name + " ASD",
         create(:season), # <== This implies a missing TeamAffiliation link
-        true # force_missing_team_creation
+        true # force_team_or_swimmer_creation
       )
     end
 

@@ -18,7 +18,7 @@
     ) do                                               |
     = hidden_field_tag( :data_import_session_id, @data_import_session.id )
     = hidden_field_tag( :force_meeting_creation, @force_missing_meeting_creation ? '1' : '0' )
-    = hidden_field_tag( :force_swimmer_creation, @force_missing_swimmer_creation ? '1' : '0' )
+    = hidden_field_tag( :force_team_or_swimmer_creation, @force_team_or_swimmer_creation ? '1' : '0' )
     .row.span11
       .span3.control-label.goggles-div-centeralign= I18n.t('admin_import.searched_swimmer')
       .span4.control-label.goggles-div-centeralign= I18n.t('admin_import.swimmer_match_name')

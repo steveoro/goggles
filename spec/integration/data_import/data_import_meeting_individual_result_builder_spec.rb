@@ -102,7 +102,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         meeting_program,
         detail_row, detail_row_idx, detail_rows_size,
         gender_type, category_type,
-        true # force_missing_team_creation
+        true # force_team_or_swimmer_creation
       )
     end
 
@@ -155,7 +155,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         di_meeting_program,
         detail_row, detail_row_idx, detail_rows_size,
         di_gender_type, di_category_type,
-        true # force_missing_team_creation
+        true # force_team_or_swimmer_creation
       )
     end
 
@@ -209,7 +209,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         mir_detail_row, detail_row_idx, detail_rows_size,
         mir.meeting_program.gender_type,
         mir.meeting_program.category_type,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 
@@ -267,7 +267,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
         di_mir_detail_row, detail_row_idx, detail_rows_size,
         di_mir.data_import_meeting_program.gender_type,
         di_mir.data_import_meeting_program.category_type,
-        false # force_missing_team_creation
+        false # force_team_or_swimmer_creation
       )
     end
 
