@@ -142,9 +142,7 @@ module FinResultPhase2
     end.compact
 
     swimmer_names_from_results.uniq!
-    swimmer_names_from_results.sort! do |hash_a, hash_b|
-      hash_a[:swimmer_name] <=> hash_b[:swimmer_name]
-    end
+    swimmer_names_from_results.sort! { |a, b| a[:name] <=> b[:name] }
 
     update_logs(
       "\r\n** Swimmer names collected from RESULTS: **\r\n" <<

@@ -3,13 +3,14 @@ require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 require 'data_import/strategies/data_importer'
 require 'data_import/strategies/team_analysis_result_processor'
+require 'data_import/strategies/swimmer_analysis_result_processor'
 
 
 =begin
 
 = AdminImportController
 
-  - version:  4.00.683
+  - version:  4.00.709
   - author:   Steve A.
 
 =end

@@ -9,7 +9,7 @@ require_relative '../../../lib/data_import/team_analysis_report_dao'
 
 = TeamNameAnalyzer
 
-  - Goggles framework vers.:  4.00.707
+  - Goggles framework vers.:  4.00.709
   - author: Steve A.
 
  Service class delegated to analize the Team name matches.
@@ -24,7 +24,8 @@ require_relative '../../../lib/data_import/team_analysis_report_dao'
  - create and memoize an instance of the analyzer;
 
  - for each available team name to be searched:
-   - call #analyze( searched_team_name ) and get the result for the current team
+   - call #analyze( searched_team_name, desired_season_id ) and get the result
+     for the specified team name:
 
  - at the end of all the scanning a full text log and sql log is available
    by calling the dedicated getter methods.

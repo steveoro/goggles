@@ -28,14 +28,13 @@
     - @analysis_results.each_with_index do |result_row, idx|
       - do_insert_alias = result_row.can_insert_alias
       - do_insert_swimmer = result_row.can_insert_swimmer
-      - do_insert_affiliation = result_row.can_insert_affiliation
       %div{:class => "row span11 #{(idx%2 == 0) ? 'goggles-divlist-even' : 'goggles-divlist-odd'}"}
         .control-group
           .span3
             %b
               "#{result_row.searched_swimmer_name}"
           .span4
-            = select( :alias_ids, result_row.id, Team.to_dropdown(),                   |
+            = select( :alias_ids, result_row.id, Swimmer.to_dropdown(),                   |
               { prompt: I18n.t(:please_select), selected: result_row.chosen_swimmer_id }, |
               { class: 'input-xlarge combobox' } )                                              |
           .span1

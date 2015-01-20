@@ -74,33 +74,84 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
 
 
     shared_examples_for "(a DataImportSwimmerAnalysisResult with a PERFECT match)" do
-      it "logs the exact match"
-      it "doesn't allow the creation of a new swimmer"
-      it "doesn't allow the creation of a new alias"
-      it "doesn't log any suggested SQL statements"
+      it "logs the expected name as the exact match" do
+        expect( @result.analysis_log_text ).to include( @expected_name )
+      end
+      it "logs that is a perfect match" do
+        expect( @result.analysis_log_text ).to include( '100%' )
+      end
+      it "doesn't allow the creation of a new swimmer" do
+        expect( @result.can_insert_swimmer ).to be false
+      end
+      it "doesn't allow the creation of a new alias" do
+        expect( @result.can_insert_alias ).to be false
+      end
+      it "doesn't log any suggested SQL statements" do
+        expect( @result.sql_text ).not_to include('INSERT INTO')
+      end
     end
 
 
     shared_examples_for "(a DataImportSwimmerAnalysisResult with a SINGLE match)" do
-      it "logs the single choice"
-      it "doesn't allow the creation of a new swimmer"
-      it "allows the creation of a new alias"
-      it "logs a suggested SQL alias row creation"
+      it "logs the expected name as the single choice" do
+# DEBUG
+#        puts "\r\n\r\n" << @analysis_log
+#        puts "\r\n\r\n" << @sql_log
+        expect( @result.analysis_log_text ).to include( @expected_name )
+      end
+      it "logs that is a single match" do
+        expect( @result.analysis_log_text ).to include( 'SINGLE MATCH' )
+      end
+      it "doesn't allow the creation of a new swimmer" do
+        expect( @result.can_insert_swimmer ).to be false
+      end
+      it "allows the creation of a new alias" do
+        expect( @result.can_insert_alias ).to be true
+      end
+      it "logs a suggested SQL alias row creation" do
+        expect( @result.sql_text ).to include( 'INSERT INTO data_import_swimmer_aliases' )
+        expect( @result.sql_text ).to include( @searched_name )
+      end
     end
 
 
     shared_examples_for "(a DataImportSwimmerAnalysisResult with MULTIPLE matches)" do
-      it "logs the multiple choices"
-      it "doesn't allow the creation of a new swimmer"
-      it "allows the creation of a new alias"
-      it "logs a suggested SQL alias row creation"
+      it "logs the expected name among the multiple choices" do
+# DEBUG
+#        puts "\r\n\r\n" << @analysis_log
+#        puts "\r\n\r\n" << @sql_log
+        expect( @result.analysis_log_text ).to include( @expected_name )
+      end
+      it "logs that there are multiple matches" do
+        expect( @result.analysis_log_text ).to include( 'MULTIPLE CHOICES' )
+      end
+      it "doesn't allow the creation of a new swimmer" do
+        expect( @result.can_insert_swimmer ).to be false
+      end
+      it "allows the creation of a new alias" do
+        expect( @result.can_insert_alias ).to be true
+      end
+      it "logs a suggested SQL alias row creation" do
+        expect( @result.sql_text ).to include( 'INSERT INTO data_import_swimmer_aliases' )
+        expect( @result.sql_text ).to include( @searched_name )
+      end
     end
 
 
     shared_examples_for "(a DataImportSwimmerAnalysisResult with NO match)" do
-      it "allows the creation of a new swimmer"
-      it "doesn't allow the creation of a new alias"
-      it "logs a suggested SQL swimmers row creation"
+      it "logs that there are no matches" do
+        expect( @result.analysis_log_text ).to include( 'NOT FOUND' )
+      end
+      it "allows the creation of a new swimmer" do
+        expect( @result.can_insert_swimmer ).to be true
+      end
+      it "doesn't allow the creation of a new alias" do
+        expect( @result.can_insert_alias ).to be false
+      end
+      it "logs a suggested SQL swimmers row creation" do
+        expect( @result.sql_text ).to include( 'INSERT INTO swimmers' )
+        expect( @result.sql_text ).to include( @searched_name )
+      end
     end
 
 
@@ -110,9 +161,13 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
           before(:each) do
             @analysis_log = ''
             @sql_log = ''
+            @searched_name  = 'MARCO LIGABUE'
+            @desired_year   = 1971
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'LIGABUE MARCO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%LIGABUE%'")
-            @result = subject.analyze( "MARCO LIGABUE", 1971, GenderType::MALE_ID, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
@@ -122,11 +177,15 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
           before(:each) do
             @analysis_log = ''
             @sql_log = ''
+            @searched_name  = 'ROSSI GABRIELE'
+            @desired_year   = 1961
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'ROSSI GABRIELE'
             subject.swimmers = Swimmer.where("complete_name LIKE '%ROSSI%'")
-            @result = subject.analyze( "ROSSI GABRIELE", 1961, GenderType::MALE_ID, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
-          it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
+          it_behaves_like "(a DataImportSwimmerAnalysisResult with a PERFECT match)"
         end
       end
 
@@ -134,26 +193,51 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
       context "for existing but vaguely similar swimmer names," do
         # [Steve, 20150105] 'PIERALDO ORLANDINI' & 'IDO ORLANDINI' fail miserably
 
-        # This should give at least 2 results:
+        # This should give at least 2 results, 1 for name+surname & 1 (apparently identical)
+        # for surname+name:
         context "['IDO PIERALDO ORLANDINI']" do
           before(:each) do
             @analysis_log = ''
             @sql_log = ''
+            @searched_name  = 'IDO PIERALDO ORLANDINI'
+            @desired_year   = 1957
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'ORLANDINI IDO PIERALDO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%ORLANDINI%'")
-            @result = subject.analyze( "IDO PIERALDO ORLANDINI", 1957, GenderType::MALE_ID, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with MULTIPLE matches)"
+        end
+
+        context "['ORLANDINI IDO PIER ALBERTO']" do
+          before(:each) do
+            @analysis_log = ''
+            @sql_log = ''
+            @searched_name  = 'ORLANDINI IDO PIER ALBERTO'
+            @desired_year   = 1957
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'ORLANDINI IDO PIERALDO'
+            # This pre-filter will speed-up the tests
+            subject.swimmers = Swimmer.where("complete_name LIKE '%ORLANDINI%'")
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+          end
+          it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
+          it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
         end
 
         context "['SADDI JAVIER FRANCISCO']" do
           before(:each) do
             @analysis_log = ''
             @sql_log = ''
+            @searched_name  = 'SADDI JAVIER FRANCISCO'
+            @desired_year   = 1989
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'SADDI JAVIER FRANCISCO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%SADDI%'")
-            @result = subject.analyze( "SADDI JAVIER FRANCISCO", 1989, GenderType::MALE_ID, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
@@ -167,9 +251,13 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
           before(:each) do
             @analysis_log = ''
             @sql_log = ''
+            @searched_name  = 'ROSSI MARIO'
+            @desired_year   = 1815
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'ROSSI MARIO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%ROSSI%'")
-            @result = subject.analyze( "ROSSI MARIO", 1815, GenderType::MALE_ID, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with NO match)"

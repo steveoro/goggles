@@ -9,7 +9,7 @@ require_relative '../../../lib/data_import/swimmer_analysis_report_dao'
 
 = SwimmerNameAnalyzer
 
-  - Goggles framework vers.:  4.00.707
+  - Goggles framework vers.:  4.00.709
   - author: Steve A.
 
  Service class delegated to analize the Swimmer name matches.
@@ -24,7 +24,8 @@ require_relative '../../../lib/data_import/swimmer_analysis_report_dao'
  - create and memoize an instance of the analyzer;
 
  - for each available swimmer name to be searched:
-   - call #analyze( searched_name ) and get the result for the current swimmer
+   - call #analyze( matching_string, desired_year_of_birth, desired_gender_type_id )
+     and get the result for the specified swimmer name:
 
  - at the end of all the scanning a full text log and sql log is available
    by calling the dedicated getter methods.
@@ -201,8 +202,8 @@ class SwimmerNameAnalyzer
     hiscoring_match = nil                           # Overall hi-scoring result (either Team or TeamAff.)
 
     result_list.each do |result|                    # Clear score of any result with a mis-matched gender or year of birth:
-      result[ :score ] = 0 if (result[:row].gender_type_id != desired_gender_type_id) ||
-                              (result[:row].year_of_birth != desired_year_of_birth)
+      result[ :score ] = 0 if (result[:row].gender_type_id.to_i != desired_gender_type_id.to_i) ||
+                              (result[:row].year_of_birth.to_i != desired_year_of_birth.to_i)
     end
                                                     # Sort the result list by scores DESC:
     result_list.sort!{ |x,y| y[ :score ] <=> x[ :score ] }

@@ -14,7 +14,7 @@ describe DataImportTeamBuilder, type: :integration do
   #-- -------------------------------------------------------------------------
   #++
 
-  context "after a self.build() with NO matching Team row," do
+  context "after a self.build() with NO matching entity rows," do
     subject do
       DataImportTeamBuilder.build_from_parameters(
         data_import_session,
@@ -125,6 +125,9 @@ describe DataImportTeamBuilder, type: :integration do
       end
     end
 
+    it "does not create a new primary entity row" do
+      expect{ subject }.not_to change{ Team.count }
+    end
     it "does not create any additional secondary entity row" do
       # 1 is from the calling factory create
       expect{ subject }.to change{ DataImportTeam.count }.by(1)
@@ -133,9 +136,6 @@ describe DataImportTeamBuilder, type: :integration do
     # only when the primary search is successful:
     it "does not create a missing TeamAffiliation row" do
       expect{ subject }.not_to change{ TeamAffiliation.count }
-    end
-    it "does not create a new primary entity row" do
-      expect{ subject }.not_to change{ Team.count }
     end
 
     describe "#result_row" do

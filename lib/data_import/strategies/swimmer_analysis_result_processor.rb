@@ -76,7 +76,8 @@ class SwimmerAnalysisResultProcessor
           swimmer_analysis_result.data_import_session,
           swimmer_name,
           year_of_birth,
-          gender_type
+          gender_type,
+          true # During this phase, we have to force_team_or_swimmer_creation
         )
         committed_row = swimmer_builder.result_row
         update_logs( "Created new #{committed_row.class}, ID: #{committed_row.id}." ) if committed_row

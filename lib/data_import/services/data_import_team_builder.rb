@@ -10,7 +10,7 @@ require 'data_import/services/data_import_team_affiliation_builder'
 
 = DataImportTeamBuilder
 
-  - Goggles framework vers.:  4.00.689
+  - Goggles framework vers.:  4.00.709
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -19,6 +19,9 @@ require 'data_import/services/data_import_team_affiliation_builder'
  Normally the automatic Team creation procedure is disabled and requires a
  separate pre-analysis stage, with a statistical report of the best-match
  data before actual data insertion.
+
+ For this reason, the +force_team_or_swimmer_creation+ parameter should be set
+ to +true+ only after the analysis phase while processing the analysis result rows.
 
 === Entity look-up order/algorithm:
   1) Scan TeamAffiliation to seek affiliations created/inserted from
@@ -41,15 +44,27 @@ require 'data_import/services/data_import_team_affiliation_builder'
       During phase 3 TeamAffiliations are _always_ added because all the Teams
       processed there are considered as "new" or missing.)
 
-  4) If all else fails, insert a new Team ONLY if its enabling flag has been
+  4) If all else fails, insert a new Team ONLY if the force creation flag has been
      set to true (force_team_or_swimmer_creation).
+     Else, save the analysis' result and return +nil+, thus signaling the need of
+     a manual review/selection of the candidates found.
 
 =end
 class DataImportTeamBuilder < DataImportEntityBuilder
 
-  # Searches for an existing Team given the parameters, or it adds a new one, if not found.
+  # Searches for an existing Team given the parameters, or it adds a new one,
+  # if not found.
   #
-  def self.build_from_parameters( data_import_session, team_name, season, force_team_or_swimmer_creation )
+  # == Returns
+  # +nil+ in case of invalid parameters
+  # #result_id as:
+  #     - positive (#id) for a freshly added row into DataImportTeam;
+  #     - negative (- #id) for a matching existing or commited row in Team;
+  #     - 0 on error/unable to process.
+  #
+  #
+  def self.build_from_parameters( data_import_session, team_name, season,
+                                  force_team_or_swimmer_creation )
 # DEBUG
 #    puts "\r\nSearching for team '#{team_name}'..."
     self.build( data_import_session ) do
@@ -130,19 +145,20 @@ class DataImportTeamBuilder < DataImportEntityBuilder
           )
           add_new
         else
-          # Not found & can't create a new team? => Do a full depth-first analyze of
+          # Not found & can't create a new row? => Do a full depth-first analyze of
           # the team name in search for a match and report the results via the builder
           # instance:
-          team_analysis_log = ''
+          analysis_log = ''
           sql_executable_log = ''
           result = TeamNameAnalyzer.new.analyze(
-              team_name, season.id,
-              team_analysis_log,                    # The method will update these 2 variables in place
+              team_name,
+              season.id,
+              analysis_log,                         # The method will update these 2 variables in place
               sql_executable_log,                   # (it uses the << operator)
               0.99, 0.8
           )
           result.data_import_session_id = data_import_session.id
-                                                    # Store the team analysis result:
+                                                    # Store the analysis result (if there aren't any yet):
           if ( DataImportTeamAnalysisResult.where(
                 data_import_session_id: result.data_import_session_id,
                 searched_team_name:     result.searched_team_name,
@@ -154,10 +170,10 @@ class DataImportTeamBuilder < DataImportEntityBuilder
 #            puts "Team analysis saved."
             data_import_session.phase_1_log ||= ''
             data_import_session.sql_diff    ||= ''
-            data_import_session.phase_1_log << "#{ team_analysis_log }\r\n"
+            data_import_session.phase_1_log << "#{ analysis_log }\r\n"
             data_import_session.sql_diff    << "#{ sql_executable_log }\r\n"
           end
-          # Result not found w/o Team creation => Do a manual review of the analysis data.
+          # Result not found w/o row creation => force a manual review of the analysis data.
         end
       end
     end

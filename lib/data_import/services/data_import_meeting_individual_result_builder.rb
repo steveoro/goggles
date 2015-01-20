@@ -12,7 +12,7 @@ require 'data_import/services/data_import_badge_builder'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.709
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -73,7 +73,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           data_import_session,
           swimmer_name,
           swimmer_year,
-          gender_type
+          gender_type,
+          force_team_or_swimmer_creation
         )
         @swimmer = swimmer_builder.result_row if swimmer_builder
 

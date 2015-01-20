@@ -5,11 +5,14 @@
 
 = TeamAnalysisReportDAO
 
-  - Goggles framework vers.:  4.00.669
+  - Goggles framework vers.:  4.00.709
   - author: Steve A.
 
- DAO class containing the fields composed during the "team name analysis" phase
+ DAO class containing the fields composed during the "name analysis" phase
  of the data-import procedure.
+
+ Mainly used internally just by the name analyzer class itself before serializing
+ the values on a dedicated data-import table.
 
  === Members:
 

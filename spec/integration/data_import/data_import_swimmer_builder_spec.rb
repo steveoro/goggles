@@ -27,7 +27,8 @@ describe DataImportSwimmerBuilder, type: :integration do
         data_import_session,
         nil,
         swimmer_year,
-        gender_type
+        gender_type,
+        true # force_team_or_swimmer_creation
       )
     end
 
@@ -39,13 +40,14 @@ describe DataImportSwimmerBuilder, type: :integration do
   #++
 
 
-  context "after a self.build() with a NON-matching entity row," do
+  context "after a self.build() with a NO matching entity rows," do
     subject do
       DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         swimmer_name,
         swimmer_year,
-        gender_type
+        gender_type,
+        true # force_team_or_swimmer_creation
       )
     end
 
@@ -91,7 +93,8 @@ describe DataImportSwimmerBuilder, type: :integration do
         data_import_session,
         swimmer.complete_name,
         swimmer.year_of_birth,
-        swimmer.gender_type
+        swimmer.gender_type,
+        false # force_team_or_swimmer_creation
       )
     end
 
@@ -104,12 +107,12 @@ describe DataImportSwimmerBuilder, type: :integration do
       end
     end
 
-    it "does not create a new secondary entity row" do
-      expect{ subject }.not_to change{ DataImportSwimmer.count }
-    end
     it "does not create any additional primary entity row" do
       # (+1 only from the factory creation in the subject)
       expect{ subject }.to change{ Swimmer.count }.by(1)
+    end
+    it "does not create a new secondary entity row" do
+      expect{ subject }.not_to change{ DataImportSwimmer.count }
     end
 
     describe "#result_row" do
@@ -138,7 +141,8 @@ describe DataImportSwimmerBuilder, type: :integration do
         data_import_session,
         data_import_swimmer.complete_name,
         data_import_swimmer.year_of_birth,
-        data_import_swimmer.gender_type
+        data_import_swimmer.gender_type,
+        false # force_team_or_swimmer_creation
       )
     end
 

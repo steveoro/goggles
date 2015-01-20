@@ -8,8 +8,11 @@ class DataImportSwimmerAnalysisResult < ActiveRecord::Base
   belongs_to :swimmer, foreign_key: "chosen_swimmer_id"
   belongs_to :gender_type, foreign_key: "desired_gender_type_id"
 
-  attr_accessible :analysis_log_text, :sql_text, :searched_swimmer_name,
-                  :chosen_swimmer_id, :desired_year_of_birth, :desired_gender_type_id,
+  attr_accessible :analysis_log_text, :sql_text,
+                  :searched_swimmer_name,
+                  :chosen_swimmer_id,
+                  :desired_year_of_birth,
+                  :desired_gender_type_id,
                   :match_name, :match_score,
                   :best_match_name, :best_match_score
 
