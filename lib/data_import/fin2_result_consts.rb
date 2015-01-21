@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.657
+  - Goggles framework vers.:  4.00.711
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -463,7 +463,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
   def tokenizer_relay_row_category
     TokenExtractor.new(
       :category,
-      /(?<=\s)(?<category>\d{3}\s\(\D\))/i,
+      /(?<=\s)(?<category>\d{2,3}\s\((\D|U25)\))/i,
       7                                             # (max size)
     )
   end
@@ -474,7 +474,7 @@ module Fin2ResultConsts                             # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :result_time,
       /
-        (?<=\s\d{3}\s\(\D\)\s|\s\d{3}\s\(\D\)\s)
+        (?<=\s\d{3}\s\(\D\)\s|\s\d{2}\s\(U25\)\s)
         \s?
         (?<timing>Ritir.*|Squal.*|\d{2}\s\d{2}\s\d{2})
       /ix,

@@ -310,7 +310,7 @@ class Fin2ResultDefs < TxtResultDefs
     @context_keys = {
       meeting_header:   [:title],
       event_individual: [:distance, :style, :gender],
-      event_relay:      [:type, :category_group]    # (type includes also the gender token)
+      event_relay:      [:type]                     # (type includes also the gender token)
     }
                                                     # === Internal structure integrity checks: ===
                                                     # Pre-check format type definition:

@@ -131,8 +131,6 @@ module FinResultPhase2
                                                     # Collect all swimmer names in the parsed file:
     swimmer_names_from_results = parse_result[:result_row].map do |result_row|
       header_row  = parse_result[:category_header].find({}) { |category_row| category_row[:id] == result_row[:id] }
-# FIXME / TODO Gender May not be accessible for certain File format types!
-# FIXME / TODO Update below method with support for FIN2 file format!
       gender_type = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
       {
         name:   result_row[:fields][:swimmer_name],
