@@ -13,10 +13,6 @@ FactoryGirl.define do
     team_points               { ((rand * 10) % 10).to_i + 1 }
     goggle_cup_points         { (rand * 1000).to_i }
     reaction_time             { rand.round(2) }
-    badge
-    team                      { badge.team }
-    team_affiliation          { badge.team_affiliation }
-    swimmer                   { badge.swimmer }
     minutes                   0
     seconds                   { ((rand * 60) % 60).to_i }
     hundreds                  { ((rand * 100) % 100).to_i }
@@ -37,6 +33,12 @@ FactoryGirl.define do
     data_import_swimmer_id    nil
     data_import_team_id       nil
     data_import_badge_id      nil
+
+    swimmer                   { create(:swimmer, gender_type: data_import_meeting_program.gender_type) }
+    badge                     { create(:badge, swimmer: swimmer) }
+    team                      { badge.team }
+    team_affiliation          { badge.team_affiliation }
+
     athlete_name              { swimmer.complete_name }
     team_name                 { team.name }
     athlete_badge_number      { badge.number }
@@ -56,13 +58,16 @@ FactoryGirl.define do
     association :meeting_program, factory: :meeting_program_individual
     common_meeting_individual_result_fields
 
+    swimmer                   { create(:swimmer, gender_type: meeting_program.gender_type) }
+    badge                     { create(:badge, swimmer: swimmer) }
+    team                      { badge.team }
+    team_affiliation          { badge.team_affiliation }
+
     before(:create) do |built_instance|
       if built_instance.invalid?
         puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
         puts built_instance.inspect
       end
-                                                    # Force swimmer gender_type to be the same as the expected by the program:
-      built_instance.swimmer.gender_type_id = built_instance.meeting_program.gender_type_id
     end
 
     factory :meeting_individual_result_with_passages do

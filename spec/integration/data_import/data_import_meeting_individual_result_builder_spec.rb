@@ -203,9 +203,11 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
   context "after a self.build() with a matching primary entity (and its MeetingProgram)," do
     subject do
 # DEBUG
-      puts "\r\n\r\n========================================================================================================================="
-      puts " --- Subject MIR: " << mir.inspect
-      puts " --- Subject swimmer: " << mir.swimmer.inspect
+#      puts "\r\n\r\n========================================================================================================================="
+#      puts " --- Subject MIR: " << mir.inspect
+#      puts " --- Subject swimmer: " << mir.swimmer.inspect
+#      possible_swimmers = Swimmer.where( "complete_name LIKE \"%#{mir.swimmer.last_name}%\"" ).reload
+#      possible_swimmers.each{ |row| puts " --- id: #{row.id}, #{row.complete_name}, gender: #{row.gender_type_id}, #{row.year_of_birth}"}
       DataImportMeetingIndividualResultBuilder.build_from_parameters(
         data_import_session,
         mir.meeting_program.season, # (by ActiveRecord has_one)

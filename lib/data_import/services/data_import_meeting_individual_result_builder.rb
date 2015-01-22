@@ -43,11 +43,11 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
     raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
 # DEBUG
-    puts "\r\n========================================================================================================================="
-    puts "MIR - build_from_parameters: data_import_session ID: #{data_import_session.id}"
-    puts "    - parsed detail_row: #{detail_row.inspect}"
-    puts "    - gender_type: #{gender_type.inspect}"
-    puts "    - MPRG: #{meeting_program.inspect}"
+#    puts "\r\n========================================================================================================================="
+#    puts "MIR - build_from_parameters: data_import_session ID: #{data_import_session.id}"
+#    puts "    - parsed detail_row: #{detail_row.inspect}"
+#    puts "    - gender_type: #{gender_type.inspect}"
+#    puts "    - MPRG: #{meeting_program.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingIndividualResult
@@ -80,7 +80,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           force_team_or_swimmer_creation
         )
 # DEBUG
-        puts "\r\n- swimmer_builder: #{swimmer_builder.inspect}"
+#        puts "\r\n- swimmer_builder: #{swimmer_builder.inspect}"
         @swimmer = swimmer_builder.result_row if swimmer_builder
 
         badge_builder = DataImportBadgeBuilder.build_from_parameters(
@@ -124,7 +124,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingIndividualResult..." )
+#        puts( "Seeking existing MeetingIndividualResult..." )
 #        @phase_1_log << "Seeking existing MeetingIndividualResult...\r\n"
         primary     [
           "(meeting_program_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
@@ -144,14 +144,14 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-        puts "Search failed: adding new MeetingIndividualResult with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
+#        puts "Search failed: adding new MeetingIndividualResult with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
                                                     # Fix possible blank or missing ranking values:
         @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
           DataImportMeetingIndividualResult,

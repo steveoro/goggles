@@ -59,7 +59,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
                                   force_team_or_swimmer_creation )
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!") unless gender_type.instance_of?(GenderType)
 # DEBUG
-    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}, gender_type_id: #{gender_type.id}"
+#    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}, gender_type_id: #{gender_type.id}"
     self.build( data_import_session ) do
       entity      Swimmer
 
@@ -87,8 +87,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!"   if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!"   if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
                                                   # 2) Search for a Swimmer ALIAS:
       if_not_found  do
@@ -103,7 +103,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
       if_not_found do
         unless force_team_or_swimmer_creation
 # DEBUG
-          puts "Search failed: analyzing name (prefilter: '#{@last_name}', gender: #{gender_type.id})..."
+#          puts "Search failed: analyzing name (prefilter: '#{@last_name}', gender: #{gender_type.id})..."
 
           # Not found & can't create a new row? => Do a full depth-first analyze of
           # the swimmer name in search for a match and report the results via the builder
@@ -113,6 +113,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           analyzer = SwimmerNameAnalyzer.new
           # Pre-filter swimmers to speed-up the searches:
           analyzer.swimmers = Swimmer.where( "complete_name LIKE \"%#{@last_name}%\"" ).reload if @last_name.to_s.length > 0
+# DEBUG
+#          analyzer.swimmers.each{ |row| puts "\r\n- id: #{row.id}, #{row.complete_name}, gender: #{row.gender_type_id}, #{row.year_of_birth}"}
           result = analyzer.analyze(
               @complete_name,
               swimmer_year,
@@ -122,8 +124,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
               0.99, 0.8
           )
 # DEBUG
-          puts analysis_log
-          puts "\r\n#{ result }"
+#          puts analysis_log
+#          puts "\r\n#{ result }"
                                                     # Serialize the analysis result, if it's the case:
           if result.can_insert_alias || (! result.can_insert_swimmer)
             result.data_import_session_id = data_import_session.id
@@ -137,7 +139,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
             )
               result.save!
 # DEBUG
-              puts "Swimmer analysis saved."
+#              puts "Swimmer analysis saved."
               data_import_session.phase_1_log ||= ''
               data_import_session.sql_diff    ||= ''
               data_import_session.phase_1_log << "#{ analysis_log }\r\n"
@@ -154,7 +156,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         # If we are authorized to create a brand new entity row, we'll do it now:
         if force_team_or_swimmer_creation
 # DEBUG
-          puts "Search failed: preparing add_new..."
+#          puts "Search failed: preparing add_new..."
           attributes_for_creation(
             data_import_session_id: data_import_session.id,
             import_text:            "#{swimmer_name}, #{swimmer_year}",
