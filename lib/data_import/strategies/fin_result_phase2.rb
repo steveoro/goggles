@@ -3,9 +3,12 @@
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 require 'data_import/header_fields_dao'
+require 'data_import/services/team_name_analyzer'
+require 'data_import/services/swimmer_name_analyzer'
+
 require 'data_import/strategies/city_comparator'
 require 'data_import/strategies/fin_result_parser'
-require 'data_import/services/team_name_analyzer'
+
 require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_meeting_builder'
 require 'data_import/services/data_import_meeting_event_builder'

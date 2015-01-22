@@ -4,11 +4,14 @@ require 'common/format'
 
 require 'data_import/header_fields_dao'
 require 'data_import/services/team_name_analyzer'
+require 'data_import/services/swimmer_name_analyzer'
+
 require 'data_import/strategies/filename_parser'
 require 'data_import/strategies/meeting_date_parser'
 require 'data_import/strategies/fin_result_parser'
 require 'data_import/strategies/fin_result_phase2'
 require 'data_import/strategies/fin_result_phase3'
+require 'data_import/strategies/parse_result_converter'
 
 require 'data_import/services/meeting_header_year_checker'
 require 'data_import/services/data_import_meeting_builder'
@@ -19,7 +22,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.707
+  - Goggles framework vers.:  4.00.713
   - author: Steve A.
 
   Data-Import strategy class.
@@ -415,6 +418,12 @@ class DataImporter
     # returns the possible fields for either :category_header || :result_row
     #
     @result_hash = FinResultParser.parse_txt_file( @full_pathname, logger ) # (=> show_progress = false)
+                                                    # Make sure the :parse_result member is in 'standard' form:
+    @result_hash[:parse_result] = ParseResultConverter.new.to_parse_result(
+      @result_hash[:parse_result],
+      @result_hash[:parsing_defs],
+      @season
+    )
 
     @stored_data_rows = 0
                                                     # Store the raw text file into the data-import session:

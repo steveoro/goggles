@@ -314,7 +314,8 @@ describe DataImporter, type: :strategy do
           end
           it "has the :parse_result, :line_count, :total_data_rows & :full_text_file_contents keys" do
             expect( @phase_1_subject.result_hash.keys ).to contain_exactly(
-              :parse_result, :line_count, :total_data_rows, :full_text_file_contents
+              :parse_result, :parsing_defs, :line_count, :total_data_rows,
+              :full_text_file_contents
             )
           end
 

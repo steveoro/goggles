@@ -19,7 +19,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.627
+  - Goggles framework vers.:  4.00.713
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -71,9 +71,11 @@ class FinResultParser
   #           ... (at least, one Hash for each single <category_header_id>, which acts as a "context page index")
   #         ]
   #       },
-  #       line_count: tot_file_lines_read,
-  #       total_data_rows: sum_of_data_pages_sizes,
-  #       full_text_file_contents: full_text_file_contents
+  #
+  #       parsing_defs:             parsing_defs_used_for_the_parsing,
+  #       line_count:               tot_file_lines_read,
+  #       total_data_rows:          sum_of_data_pages_sizes,
+  #       full_text_file_contents:  full_text_file_contents
   #     }
   #
   #
@@ -131,6 +133,7 @@ class FinResultParser
 
     {
       parse_result:             service.result,
+      parsing_defs:             parsing_defs,
       line_count:               service.line_count,
       total_data_rows:          tot_data_rows,
       full_text_file_contents:  full_text_file_contents

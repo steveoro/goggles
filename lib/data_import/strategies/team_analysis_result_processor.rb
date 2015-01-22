@@ -8,7 +8,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = TeamAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.618
+  - Goggles framework vers.:  4.00.713
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single DataImportTeamAnalysisResult
@@ -67,7 +67,7 @@ class TeamAnalysisResultProcessor
     team_id   = team_analysis_result.chosen_team_id
     # NOTE: season_id will always refer to an instance of Season, not DataImportSeason!
     season_id = team_analysis_result.desired_season_id
-    @sql_executable_log << "\r\n-- Processing '#{team_name}':\r\n"
+    @sql_executable_log << "\r\n-- Processing:...'#{team_name}':\r\n"
                                                     # -- Can ADD new Team? (Default action for unconfirmed team_analysis_results)
     if (! is_confirmed) || team_analysis_result.can_insert_team
       begin
@@ -101,6 +101,7 @@ class TeamAnalysisResultProcessor
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
             @committed_rows << committed_row
+            @sql_executable_log << "\r\n-- aliased with: '#{team_analysis_result.team_match_name}' (ID:#{team_id})\r\n"
             @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
             @logger.info( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping DataImportTeamAlias creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id})" ) if @logger

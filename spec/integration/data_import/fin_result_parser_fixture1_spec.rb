@@ -18,7 +18,7 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
   end
   it "has the :parse_result, :line_count, :total_data_rows & :full_text_file_contents keys" do
     expect( @result_hash.keys ).to contain_exactly(
-      :parse_result, :line_count, :total_data_rows, :full_text_file_contents
+      :parse_result, :parsing_defs, :line_count, :total_data_rows, :full_text_file_contents
     )
   end
   #-- -------------------------------------------------------------------------
@@ -27,6 +27,16 @@ describe "FinResultParser parsing fixture file 1,", type: :integration do
 
   describe "[:parse_result] sub-member Hash," do
     subject { @result_hash[:parse_result] }
+
+    it "recognizes a list of :meeting_header data pages" do
+      expect( subject.has_key?( :meeting_header ) ).to be true
+    end
+    it "has no rows for the :meeting_header (header) data page" do
+      expect( subject[:meeting_header] ).to be_an_instance_of( Array )
+      expect( subject[:meeting_header].size ).to eq( 0 )
+    end
+    #-- -----------------------------------------------------------------------
+    #++
 
     it "recognizes a list of :category_header data pages" do
       expect( subject.has_key?( :category_header ) ).to be true

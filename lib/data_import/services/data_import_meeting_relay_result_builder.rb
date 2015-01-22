@@ -9,9 +9,9 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 =begin
 
-= DataImportMeetingIndividualResultBuilder
+= DataImportMeetingRelayResultBuilder
 
-  - Goggles framework vers.:  4.00.689
+  - Goggles framework vers.:  4.00.713
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -49,7 +49,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         rank         = detail_row[:fields][:result_position]
         @team_name   = detail_row[:fields][:team_name]
         result_time  = detail_row[:fields][:result_time]
-        result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
+        result_score = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
         team_builder = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            @team_name,

@@ -37,6 +37,9 @@ describe FinResultParser, type: :strategy do
         it "has the :parse_result key" do
           expect( @result_hash.has_key?( :parse_result ) ).to be true
         end
+        it "has the :parsing_defs key" do
+          expect( @result_hash.has_key?( :parsing_defs ) ).to be true
+        end
         it "has the :line_count key" do
           expect( @result_hash.has_key?( :line_count ) ).to be true
         end

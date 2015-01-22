@@ -202,6 +202,10 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity (and its MeetingProgram)," do
     subject do
+# DEBUG
+      puts "\r\n\r\n========================================================================================================================="
+      puts " --- Subject MIR: " << mir.inspect
+      puts " --- Subject swimmer: " << mir.swimmer.inspect
       DataImportMeetingIndividualResultBuilder.build_from_parameters(
         data_import_session,
         mir.meeting_program.season, # (by ActiveRecord has_one)

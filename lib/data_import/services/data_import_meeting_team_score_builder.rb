@@ -11,7 +11,7 @@ require 'data_import/services/data_import_meeting_individual_result_builder'
 
 = DataImportMeetingTeamScoreBuilder
 
-  - Goggles framework vers.:  4.00.689
+  - Goggles framework vers.:  4.00.713
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -71,7 +71,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
         )
         relay_scores = relay_results.collect{ |row| row.meeting_points.to_f }
         @total_relay_points = relay_scores.inject{ |sum, score| sum + score }
-        @result_score = detail_row[:fields][:result_score] ? ( detail_row[:fields][:result_score] ).gsub(/\,/, '.').to_f : 0.0
+        @result_score = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
 
         ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,

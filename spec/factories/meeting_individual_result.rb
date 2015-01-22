@@ -61,6 +61,8 @@ FactoryGirl.define do
         puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
         puts built_instance.inspect
       end
+                                                    # Force swimmer gender_type to be the same as the expected by the program:
+      built_instance.swimmer.gender_type_id = built_instance.meeting_program.gender_type_id
     end
 
     factory :meeting_individual_result_with_passages do

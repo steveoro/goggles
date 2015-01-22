@@ -16,13 +16,13 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
       Fin2ResultDefs.new                            # This will forcibly plug-in the correct parsing engine
     )
 # DEBUG
-    [
-      :meeting_header, :event_individual, :event_relay, :team_ranking, :stats,
-      :stats_details_1, :stats_details_2, :relay_row
-    ].each do |key|
-      puts "\r\n--- @result_hash[:parse_result][#{key}]:\r\n" <<
-           "[ #{@result_hash[:parse_result][key].map{|hash| hash.inspect }.join("\r\n")} ]"
-    end
+#    [
+#      :meeting_header, :event_individual, :event_relay, :team_ranking, :stats,
+#      :stats_details_1, :stats_details_2, :relay_row
+#    ].each do |key|
+#      puts "\r\n--- @result_hash[:parse_result][#{key}]:\r\n" <<
+#           "[ #{@result_hash[:parse_result][key].map{|hash| hash.inspect }.join("\r\n")} ]"
+#    end
   end
 
   it "returns an Hash" do
@@ -30,7 +30,7 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
   end
   it "has the :parse_result, :line_count, :total_data_rows & :full_text_file_contents keys" do
     expect( @result_hash.keys ).to contain_exactly(
-      :parse_result, :line_count, :total_data_rows, :full_text_file_contents
+      :parse_result, :parsing_defs, :line_count, :total_data_rows, :full_text_file_contents
     )
   end
   #-- -------------------------------------------------------------------------
@@ -39,6 +39,28 @@ describe "FinResultParser parsing FIN Result file type 2,", type: :integration d
 
   describe "the :parse_result sub-member Hash," do
     subject { @result_hash[:parse_result] }
+
+    it "recognizes a list of :meeting_header data pages" do
+      expect( subject.has_key?( :meeting_header ) ).to be true
+    end
+    it "has just 1 :meeting_header data page for this fixture" do
+      expect( subject[:meeting_header] ).to be_an_instance_of( Array )
+      expect( subject[:meeting_header].size ).to eq( 1 )
+    end
+    context "for the :meeting_header data page," do
+      it "has the exact values for all :meeting_header fields of this fixture" do
+        data_page_field_hash = subject[:meeting_header].first[:fields]
+# DEBuG
+#        puts "\r\nMem keys: #{ subject[:meeting_header].map{|row_hash| row_hash[:id] }.join("\r\n") }"
+#        puts "\r\nCurrent: #{ data_page_field_hash.inspect }"
+        expect( data_page_field_hash ).to be_an_instance_of( Hash )
+        expect( data_page_field_hash[ :title ]         ).to eq( 'III° Trofeo Mussi Lombardi Femiano III° Memorial Francesco Rizzo' )
+        expect( data_page_field_hash[ :meeting_dates ] ).to eq( 'Domenica 21 Dicembre 2008' )
+        expect( data_page_field_hash[ :organization ]  ).to be nil
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
 
     it "recognizes a list of :category_header data pages" do
       expect( subject.has_key?( :event_individual ) ).to be true

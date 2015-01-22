@@ -221,8 +221,8 @@ class Fin2ResultDefs < TxtResultDefs
     #
     @tokenizer_fields = {
       meeting_header: [                             # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
-        [ :title, :meeting_dates ],
-        [ :organization, :title ],
+        [ :meeting_dates, :title ],
+        [ :meeting_dates, :organization, :title ],
         [ :meeting_dates, :organization ]
       ],
       event_individual: [                           # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements

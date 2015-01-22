@@ -9,7 +9,7 @@ require 'data_import/fin2_result_defs'
 
 = ParseResultConverter
 
-  - Goggles framework vers.:  4.00.711
+  - Goggles framework vers.:  4.00.713
   - author: Steve A.
 
  Strategy class. It adapts and converts any secondary or sibling format of the
@@ -46,8 +46,11 @@ class ParseResultConverter
   # Converts the specified parse result Hash into the common FIN(1) result
   # hash structure.
   #
+  # It does nothing in any other unsupported case or if the supplied source
+  # parsing defs do not require any conversion.
+  #
   # Beware that since no deep-copy is used the original Hash will be modified
-  # and converted by this method.
+  # and converted by this method (when the conversion is applied).
   #
   # == Params:
   # - source_parse_result_hash => the source :parse_result sub-hash in a secondary
@@ -67,13 +70,13 @@ class ParseResultConverter
     # (This following will create a shallow copy of the object, so even the original
     # will get any update)
     parse_result_hash = source_parse_result_hash.clone
-                                                    # === vs. FIN2 format ===
+                                                    # === From FIN2-result format: ===
     if source_parsing_defs.instance_of?( Fin2ResultDefs )
       rebuild_category_headers( parse_result_hash )
       rebuild_relay_headers( parse_result_hash, season )
       rebuild_stats_details( parse_result_hash )
-    else
-      raise ArgumentError.new('Unsupported parsing defs (#{source_parsing_defs.class}) for ParseResultConverter!')
+
+    # TODO Add other cases (FIN-startlist, FIN2-startlist, ...)
     end
 
     parse_result_hash

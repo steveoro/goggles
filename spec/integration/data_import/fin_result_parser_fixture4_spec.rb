@@ -18,7 +18,7 @@ describe "FinResultParser parsing fixture file 4,", type: :integration do
   end
   it "has the :parse_result, :line_count, :total_data_rows & :full_text_file_contents keys" do
     expect( @result_hash.keys ).to contain_exactly(
-      :parse_result, :line_count, :total_data_rows, :full_text_file_contents
+      :parse_result, :parsing_defs, :line_count, :total_data_rows, :full_text_file_contents
     )
   end
   #-- -------------------------------------------------------------------------
@@ -43,6 +43,8 @@ describe "FinResultParser parsing fixture file 4,", type: :integration do
         expect( data_page_field_hash[ :organization ]  ).to eq( 'De Akker' )
       end
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     it "recognizes a list of :category_header data pages" do
       expect( subject.has_key?( :category_header ) ).to be true
