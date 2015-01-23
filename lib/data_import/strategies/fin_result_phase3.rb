@@ -10,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.689
+  - Goggles framework vers.:  4.00.717
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -335,13 +335,18 @@ module FinResultPhase3
       check_for_non_nil_links( source_row, [:gender_type_id] )
       raise ArgumentError.new("DataImportSwimmer ID#{source_row.id} found with gender_type_id NULL during phase#3!") unless source_row.gender_type_id.to_i > 0
       Swimmer.transaction do
+                                                    # Check for year range in import-text:
+        year_range = source_row.import_text.to_s.split(',').last
+        is_year_guessed = ( year_range.to_s.split('-').size > 1 )
+                                                    # Prepare & commit the row:
         committed_row = Swimmer.new(
-          last_name:      source_row.last_name,
-          first_name:     source_row.first_name,
-          complete_name:  source_row.complete_name,
-          year_of_birth:  source_row.year_of_birth,
-          gender_type_id: source_row.gender_type_id,
-          user_id:        source_row.user_id
+          last_name:        source_row.last_name,
+          first_name:       source_row.first_name,
+          complete_name:    source_row.complete_name,
+          year_of_birth:    source_row.year_of_birth,
+          gender_type_id:   source_row.gender_type_id,
+          is_year_guessed:  is_year_guessed,
+          user_id:          source_row.user_id
         )
         committed_row.save!
                                                     # Update dependancies:

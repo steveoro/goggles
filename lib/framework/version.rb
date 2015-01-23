@@ -22,7 +22,7 @@ module Version
   MAJOR   = '4.00'
 
   # Minor version.
-  MINOR   = '715'
+  MINOR   = '717'
 
   # Current build version.
   BUILD   = '20150123'

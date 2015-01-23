@@ -9,7 +9,7 @@ require_relative '../../../lib/data_import/swimmer_analysis_report_dao'
 
 = SwimmerNameAnalyzer
 
-  - Goggles framework vers.:  4.00.715
+  - Goggles framework vers.:  4.00.717
   - author: Steve A.
 
  Service class delegated to analize the Swimmer name matches.
@@ -133,7 +133,7 @@ class SwimmerNameAnalyzer
     analysis_text_log << "- Desired YoB: #{desired_year_of_birth}, gender: #{desired_gender_type_id}\r\n\r\n"
     report_dao = prepare_analysis_report(
       matching_string, desired_year_of_birth, desired_gender_type_id,
-      max_year_of_birth, category_type,
+      max_year_of_birth,
       analysis_text_log, result_list, bias_score
     )
 
@@ -192,9 +192,14 @@ class SwimmerNameAnalyzer
   def format_result_row( result_row, result_score )
     output = "(#{sprintf("%-10s", result_row.class.name)})"
     output << " #{sprintf("%-30s", result_row.complete_name) } - " if result_row.respond_to?(:complete_name)
-# FIXME ************* DETECT RANGE OF YEARS AND use it here: *****************
-    output << "YoB: #{result_row.year_of_birth}, " if result_row.respond_to?(:year_of_birth)
+    if result_row.respond_to?(:max_year_of_birth) && result_row.respond_to?(:year_of_birth) &&
+       result_row.max_year_of_birth.to_i > 0
+      output << "YoB: #{result_row.year_of_birth}-#{result_row.max_year_of_birth}, "
+    elsif result_row.respond_to?(:year_of_birth)
+      output << "YoB: #{result_row.year_of_birth}, "
+    end
     output << "gender: #{result_row.gender_type_id}, " if result_row.respond_to?(:gender_type_id)
+    output << "category: #{result_row.category_type_id}, " if result_row.respond_to?(:category_type_id)
     output << "score #{sprintf("%1.4f", result_score)}"
     output << " * SKIPPED * (mismatched by year or gender)" if result_score == 0.0
     output << ", ID: #{sprintf("%4s", result_row.id)}" if (!result_row.nil?) && result_row.respond_to?(:id)
@@ -211,19 +216,24 @@ class SwimmerNameAnalyzer
   # @see #TeamAnalysisReportDAO
   #
   def prepare_analysis_report( matching_string, desired_year_of_birth, desired_gender_type_id,
-                               max_year_of_birth, category_type,
+                               max_year_of_birth,
                                analysis_text_log, result_list, min_bias_score )
     swimmer_match = nil
     swimmer_id = nil
     best_match = nil
     hiscoring_match = nil                           # Overall hi-scoring result (either Team or TeamAff.)
-
-# FIXME ************* DETECT RANGE OF YEARS AND use it here: *****************
-#       reset score only if year is outside of possible range, if range is given
-#       otherwise: do the EQ search as it is:
-    result_list.each do |result|                    # Clear score of any result with a mis-matched gender or year of birth:
-      result[ :score ] = 0 if (result[:row].gender_type_id.to_i != desired_gender_type_id.to_i) ||
-                              (result[:row].year_of_birth.to_i != desired_year_of_birth.to_i)
+                                                    # Clear score of any result with a mis-matched gender or year of birth:
+    result_list.each do |result|                    # Different gender or year out of range?
+      if max_year_of_birth.to_i > desired_year_of_birth.to_i
+        result[ :score ] = 0 if (result[:row].gender_type_id.to_i != desired_gender_type_id.to_i) ||
+                                (
+                                  (result[:row].year_of_birth.to_i < desired_year_of_birth.to_i) &&
+                                  (result[:row].year_of_birth.to_i > max_year_of_birth.to_i)
+                                )
+      else                                          # Different gender or different year?
+        result[ :score ] = 0 if (result[:row].gender_type_id.to_i != desired_gender_type_id.to_i) ||
+                                (result[:row].year_of_birth.to_i != desired_year_of_birth.to_i)
+      end
     end
                                                     # Sort the result list by scores DESC:
     result_list.sort!{ |x,y| y[ :score ] <=> x[ :score ] }
