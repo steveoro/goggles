@@ -8,7 +8,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = SwimmerAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.713
+  - Goggles framework vers.:  4.00.715
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single DataImportSwimmerAnalysisResult
@@ -75,8 +75,11 @@ class SwimmerAnalysisResultProcessor
         swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
           swimmer_analysis_result.data_import_session,
           swimmer_name,
-          year_of_birth,
+          # [Steve] If we have a range of years, signal to the builder that the
+          # birth year must be (re-)guessed from the category type:
+          swimmer_analysis_result.max_year_of_birth? ? nil : year_of_birth,
           gender_type,
+          swimmer_analysis_result.category_type,
           true # During this phase, we have to force_team_or_swimmer_creation
         )
         committed_row = swimmer_builder.result_row

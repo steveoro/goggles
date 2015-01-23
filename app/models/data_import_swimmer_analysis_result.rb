@@ -7,6 +7,7 @@ class DataImportSwimmerAnalysisResult < ActiveRecord::Base
 
   belongs_to :swimmer, foreign_key: "chosen_swimmer_id"
   belongs_to :gender_type, foreign_key: "desired_gender_type_id"
+  belongs_to :category_type
 
   attr_accessible :analysis_log_text, :sql_text,
                   :searched_swimmer_name,
@@ -14,6 +15,8 @@ class DataImportSwimmerAnalysisResult < ActiveRecord::Base
                   :desired_year_of_birth,
                   :desired_gender_type_id,
                   :match_name, :match_score,
+                  :max_year_of_birth,
+                  :category_type_id,
                   :best_match_name, :best_match_score
 
   validates_length_of :searched_swimmer_name, maximum: 60
@@ -70,7 +73,9 @@ class DataImportSwimmerAnalysisResult < ActiveRecord::Base
   def to_s
     "[DataImportSwimmerAnalysisResult: data_import_session_id=#{data_import_session_id}, '#{searched_swimmer_name}' -" <<
     " match_name: '#{match_name}' (ID:#{chosen_swimmer_id}) score: #{match_score}," <<
-    " year_of_birth: #{desired_year_of_birth}, gender: #{desired_gender_type_id}," <<
+    " year_of_birth: #{max_year_of_birth ? desired_year_of_birth.to_s + '-' + max_year_of_birth.to_s : desired_year_of_birth}," <<
+    " gender: #{desired_gender_type_id}," <<
+    " category: #{category_type_id}," <<
     " best match: '#{best_match_name}' score: #{best_match_score}]"
   end
   #-- -------------------------------------------------------------------------

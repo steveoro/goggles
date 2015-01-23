@@ -22,7 +22,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.713
+  - Goggles framework vers.:  4.00.715
   - author: Steve A.
 
   Data-Import strategy class.
@@ -525,6 +525,7 @@ class DataImporter
 
       are_swimmer_names_ok = prescan_parse_result_for_unknown_swimmer_names(
         @data_import_session,
+        @season,
         @result_hash[:parse_result],
         @force_team_or_swimmer_creation
       )

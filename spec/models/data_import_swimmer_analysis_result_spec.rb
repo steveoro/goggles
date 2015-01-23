@@ -17,7 +17,9 @@ describe DataImportSwimmerAnalysisResult, :type => :model do
     it_behaves_like( "(belongs_to required models)",
       [
         :data_import_session,
-        :swimmer
+        :swimmer,
+        :gender_type,
+        :category_type
       ]
     )
 
@@ -27,6 +29,9 @@ describe DataImportSwimmerAnalysisResult, :type => :model do
         :chosen_swimmer_id,
         :desired_year_of_birth,
         :desired_gender_type_id,
+
+        :category_type_id,
+        :max_year_of_birth,
 
         :match_name, :match_score,
         :best_match_name, :best_match_score,

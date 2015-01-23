@@ -27,7 +27,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.657
+  - Goggles framework vers.:  4.00.715
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -128,17 +128,19 @@ module FinResultPhase2
   # == Returns: when +false+, the additional "Swimmer name analysis" phase must be
   #    executed; +true+ if the "standard" data-import phase can go on.
   #
-  def prescan_parse_result_for_unknown_swimmer_names( data_import_session, parse_result,
+  def prescan_parse_result_for_unknown_swimmer_names( data_import_session, season, parse_result,
                                                       force_team_or_swimmer_creation = false )
     is_ok = true
                                                     # Collect all swimmer names in the parsed file:
     swimmer_names_from_results = parse_result[:result_row].map do |result_row|
-      header_row  = parse_result[:category_header].find({}) { |category_row| category_row[:id] == result_row[:id] }
-      gender_type = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
+      header_row    = parse_result[:category_header].find({}) { |category_row| category_row[:id] == result_row[:id] }
+      gender_type   = GenderType.parse_gender_type_from_import_text( header_row[:fields][:gender] )
+      category_type = CategoryType.parse_category_type_from_import_text( season, header_row[:fields][:category_group] )
       {
-        name:   result_row[:fields][:swimmer_name],
-        year:   result_row[:fields][:swimmer_year],
-        gender: gender_type
+        name:     result_row[:fields][:swimmer_name],
+        year:     result_row[:fields][:swimmer_year],
+        category: category_type,
+        gender:   gender_type
       }
     end.compact
 
@@ -156,6 +158,7 @@ module FinResultPhase2
         swimmer_hash[:name],
         swimmer_hash[:year],
         swimmer_hash[:gender],
+        swimmer_hash[:category],
         force_team_or_swimmer_creation
       )
       swimmer = swimmer_builder.result_row

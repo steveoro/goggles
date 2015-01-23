@@ -8,7 +8,7 @@ require 'data_import/services/swimmer_name_analyzer'
 
 = DataImportSwimmerBuilder
 
-  - Goggles framework vers.:  4.00.713
+  - Goggles framework vers.:  4.00.715
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -20,6 +20,7 @@ require 'data_import/services/swimmer_name_analyzer'
 
  For this reason, the +force_team_or_swimmer_creation+ parameter should be set
  to +true+ only after the analysis phase while processing the analysis result rows.
+
 
 === Entity look-up order/algorithm:
   1) Scan Swimmer to seek rows matching:
@@ -48,6 +49,15 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
   # Searches for an existing Swimmer given the parameters, or it adds a new one,
   # if no matches are found.
   #
+  # The +category_type+ parameter is not required, but it may be used to retrieve or
+  # confirm the birth year of the seeked swimmer.
+  # In some remotely used datafile formats, it may be possibile to find a +nil+
+  # year of birth for the current swimmer, with the only reference to his/her own
+  # category.  In these cases, a custom search is performed using the age range of
+  # the category; if no existing swimmer in the specified age range is found (with
+  # same name and gender), then year_of_birth is marked as "guessed" and it must be
+  # treated accordingly by all other classes referencing to this row.
+  #
   # == Returns
   # +nil+ in case of invalid parameters
   # #result_id as:
@@ -56,10 +66,10 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
   #     - 0 on error/unable to process.
   #
   def self.build_from_parameters( data_import_session, swimmer_name, swimmer_year, gender_type,
-                                  force_team_or_swimmer_creation )
+                                  category_type, force_team_or_swimmer_creation )
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!") unless gender_type.instance_of?(GenderType)
 # DEBUG
-#    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}, gender_type_id: #{gender_type.id}"
+    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}, gender_type_id: #{gender_type.id}"
     self.build( data_import_session ) do
       entity      Swimmer
 
@@ -74,21 +84,41 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           @last_name  = splitted_name[0]
           @first_name = splitted_name.reject{ |s| s == @last_name }.join(' ')
         end
+        @is_year_guessed = swimmer_year.nil? ? true : false
       end
                                                   # 1) Default search: Swimmer + DataImportSwimmer:
       search do
-        primary   [
-          "(year_of_birth = ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
-          swimmer_year, gender_type.id, @complete_name+'%'
-        ]
-        secondary [
-          "(data_import_session_id = ?) AND (year_of_birth = ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
-          data_import_session.id, swimmer_year, gender_type.id, @complete_name+'%'
-        ]
+        if @is_year_guessed
+          raise ArgumentError.new("'category_type' not given for a nil swimmer_year: unable to guess its value!") unless category_type.instance_of?(CategoryType)
+          swimmer_year = category_type.season.begin_date.year - category_type.age_end
+          @max_year    = category_type.season.end_date.year - category_type.age_begin
+# DEBUG
+          puts "\r\n- swimmer_year guessed! Range: #{swimmer_year}..#{@max_year}, setting default (for creation, in case search fails) as min."
+          primary   [
+            "(year_of_birth > ?) AND (year_of_birth < ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
+            swimmer_year-1, @max_year+1, gender_type.id, @complete_name+'%'
+          ]
+          secondary [
+            "(data_import_session_id = ?) AND (year_of_birth > ?) AND (year_of_birth < ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
+            data_import_session.id, swimmer_year-1, @max_year+1, gender_type.id, @complete_name+'%'
+          ]
+        else
+# DEBUG
+          puts "Search params: '#{@complete_name}', #{swimmer_year}, gender: #{gender_type.id})"
+          @max_year = nil
+          primary   [
+            "(year_of_birth = ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
+            swimmer_year, gender_type.id, @complete_name+'%'
+          ]
+          secondary [
+            "(data_import_session_id = ?) AND (year_of_birth = ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
+            data_import_session.id, swimmer_year, gender_type.id, @complete_name+'%'
+          ]
+        end
         default_search
 # DEBUG
-#        puts "primary_search_ok!"   if primary_search_ok?
-#        puts "secondary_search_ok!" if secondary_search_ok?
+        puts "primary_search_ok!"   if primary_search_ok?
+        puts "secondary_search_ok!" if secondary_search_ok?
       end
                                                   # 2) Search for a Swimmer ALIAS:
       if_not_found  do
@@ -103,7 +133,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
       if_not_found do
         unless force_team_or_swimmer_creation
 # DEBUG
-#          puts "Search failed: analyzing name (prefilter: '#{@last_name}', gender: #{gender_type.id})..."
+          puts "Search failed: analyzing name (prefilter: '#{@last_name}', gender: #{gender_type.id})..."
 
           # Not found & can't create a new row? => Do a full depth-first analyze of
           # the swimmer name in search for a match and report the results via the builder
@@ -119,6 +149,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
               @complete_name,
               swimmer_year,
               gender_type.id,
+              @max_year,
+              category_type,
               analysis_log,                         # The method will update these 2 variables in place
               sql_executable_log,                   # (it uses the << operator)
               0.99, 0.8
@@ -139,7 +171,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
             )
               result.save!
 # DEBUG
-#              puts "Swimmer analysis saved."
+              puts "Swimmer analysis saved."
               data_import_session.phase_1_log ||= ''
               data_import_session.sql_diff    ||= ''
               data_import_session.phase_1_log << "#{ analysis_log }\r\n"
@@ -156,10 +188,14 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         # If we are authorized to create a brand new entity row, we'll do it now:
         if force_team_or_swimmer_creation
 # DEBUG
-#          puts "Search failed: preparing add_new..."
+          puts "Search failed: preparing add_new..."
           attributes_for_creation(
             data_import_session_id: data_import_session.id,
-            import_text:            "#{swimmer_name}, #{swimmer_year}",
+            # [Steve] By splitting the import_text with can detect later if the
+            # swimmer_year was guessed or not.
+            # If the @max_year part will result having the format '<begin>-<end>',
+            # during the final commit phase we'll set the column is_year_guessed to true.
+            import_text:            "#{swimmer_name},#{swimmer_year}-#{@max_year}",
             last_name:              @last_name,
             first_name:             @first_name,
             complete_name:          @complete_name,

@@ -14,7 +14,7 @@ describe DataImportSwimmerBuilder, type: :integration do
   let(:data_import_swimmer)   { create( :data_import_swimmer, data_import_session: data_import_session ) }
 
   # Non-existing (totally random) fixture params:
-  let(:swimmer_name)          { "#{Faker::Name.first_name} {Faker::Name.last_name}" }
+  let(:swimmer_name)          { "#{ Faker::Name.first_name } #{ Faker::Name.last_name }" }
   let(:swimmer_year)          { 18.year.ago.year - ((rand * 100) % 60).to_i }
   let(:gender_type)           { GenderType.where( code: ['M','F']).sort{ rand - 0.5 }[0] }
   #-- -------------------------------------------------------------------------
@@ -28,6 +28,7 @@ describe DataImportSwimmerBuilder, type: :integration do
         nil,
         swimmer_year,
         gender_type,
+        nil,
         true # force_team_or_swimmer_creation
       )
     end
@@ -47,6 +48,7 @@ describe DataImportSwimmerBuilder, type: :integration do
         swimmer_name,
         swimmer_year,
         gender_type,
+        nil,
         true # force_team_or_swimmer_creation
       )
     end
@@ -94,6 +96,7 @@ describe DataImportSwimmerBuilder, type: :integration do
         swimmer.complete_name,
         swimmer.year_of_birth,
         swimmer.gender_type,
+        nil,
         false # force_team_or_swimmer_creation
       )
     end
@@ -142,6 +145,7 @@ describe DataImportSwimmerBuilder, type: :integration do
         data_import_swimmer.complete_name,
         data_import_swimmer.year_of_birth,
         data_import_swimmer.gender_type,
+        nil,
         false # force_team_or_swimmer_creation
       )
     end

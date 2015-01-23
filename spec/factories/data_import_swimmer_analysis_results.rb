@@ -8,8 +8,10 @@ FactoryGirl.define do
 
     chosen_swimmer_id         nil
     desired_year_of_birth     1900
+    max_year_of_birth         nil
     desired_gender_type_id    nil
     searched_swimmer_name     nil
+    category_type
 
     match_name                nil
     match_score               9.9

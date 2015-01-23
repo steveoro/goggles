@@ -9,7 +9,7 @@ require_relative '../../../lib/data_import/swimmer_analysis_report_dao'
 
 = SwimmerNameAnalyzer
 
-  - Goggles framework vers.:  4.00.709
+  - Goggles framework vers.:  4.00.715
   - author: Steve A.
 
  Service class delegated to analize the Swimmer name matches.
@@ -87,6 +87,16 @@ class SwimmerNameAnalyzer
   #
   # - desired_gender_type_id: the gender type of the Swimmer that must be seeked
   #
+  # - max_year_of_birth: when not +nil+, it will be serialized in the resulting
+  #   analysis row as the upper range of the birth year of the searched swimmer;
+  #   this implies that the desired_year_of_birth is in fact a lower boundary for
+  #   a range of years in which we have to search the target.
+  #   (It can be +nil+.)
+  #
+  # - category_type: a valid instance of CategoryType, is serialized in case the
+  #   search fails and the year must be guessed from the boundaries of the category
+  #   itself. (It can be +nil+.)
+  #
   # - analysis_text_log: the string holding the resulting analysis log
   #
   # - sql_text_log: the string holding the executable SQL stament log, which
@@ -101,6 +111,7 @@ class SwimmerNameAnalyzer
   # A #DataImportTeamAnalysisResult instance.
   #
   def analyze( matching_string, desired_year_of_birth, desired_gender_type_id,
+               max_year_of_birth, category_type,
                analysis_text_log, sql_text_log,
                starting_bias_score = FuzzyStringMatcher::BIAS_SCORE_MAX,
                ending_bias_score   = FuzzyStringMatcher::BIAS_SCORE_MIN )
@@ -122,6 +133,7 @@ class SwimmerNameAnalyzer
     analysis_text_log << "- Desired YoB: #{desired_year_of_birth}, gender: #{desired_gender_type_id}\r\n\r\n"
     report_dao = prepare_analysis_report(
       matching_string, desired_year_of_birth, desired_gender_type_id,
+      max_year_of_birth, category_type,
       analysis_text_log, result_list, bias_score
     )
 
@@ -156,6 +168,9 @@ class SwimmerNameAnalyzer
       desired_year_of_birth:  desired_year_of_birth,
       desired_gender_type_id: desired_gender_type_id,
 
+      max_year_of_birth:      max_year_of_birth,
+      category_type_id:       category_type ? category_type.id : nil,
+
       match_name:             ( swimmer_match && swimmer_match[:row] ? swimmer_match[:row].complete_name : nil ),
       match_score:            ( swimmer_match ? swimmer_match[:score] : nil ),
       best_match_name:        ( best_match && best_match[:row] ? best_match[:row].complete_name : nil ),
@@ -177,6 +192,7 @@ class SwimmerNameAnalyzer
   def format_result_row( result_row, result_score )
     output = "(#{sprintf("%-10s", result_row.class.name)})"
     output << " #{sprintf("%-30s", result_row.complete_name) } - " if result_row.respond_to?(:complete_name)
+# FIXME ************* DETECT RANGE OF YEARS AND use it here: *****************
     output << "YoB: #{result_row.year_of_birth}, " if result_row.respond_to?(:year_of_birth)
     output << "gender: #{result_row.gender_type_id}, " if result_row.respond_to?(:gender_type_id)
     output << "score #{sprintf("%1.4f", result_score)}"
@@ -195,12 +211,16 @@ class SwimmerNameAnalyzer
   # @see #TeamAnalysisReportDAO
   #
   def prepare_analysis_report( matching_string, desired_year_of_birth, desired_gender_type_id,
+                               max_year_of_birth, category_type,
                                analysis_text_log, result_list, min_bias_score )
     swimmer_match = nil
     swimmer_id = nil
     best_match = nil
     hiscoring_match = nil                           # Overall hi-scoring result (either Team or TeamAff.)
 
+# FIXME ************* DETECT RANGE OF YEARS AND use it here: *****************
+#       reset score only if year is outside of possible range, if range is given
+#       otherwise: do the EQ search as it is:
     result_list.each do |result|                    # Clear score of any result with a mis-matched gender or year of birth:
       result[ :score ] = 0 if (result[:row].gender_type_id.to_i != desired_gender_type_id.to_i) ||
                               (result[:row].year_of_birth.to_i != desired_year_of_birth.to_i)

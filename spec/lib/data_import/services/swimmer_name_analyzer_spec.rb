@@ -167,7 +167,7 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
             @expected_name  = 'LIGABUE MARCO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%LIGABUE%'")
-            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
@@ -182,7 +182,7 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
             @desired_gender = GenderType::MALE_ID
             @expected_name  = 'ROSSI GABRIELE'
             subject.swimmers = Swimmer.where("complete_name LIKE '%ROSSI%'")
-            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a PERFECT match)"
@@ -205,7 +205,7 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
             @expected_name  = 'ORLANDINI IDO PIERALDO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%ORLANDINI%'")
-            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with MULTIPLE matches)"
@@ -221,7 +221,7 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
             @expected_name  = 'ORLANDINI IDO PIERALDO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%ORLANDINI%'")
-            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
@@ -237,7 +237,7 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
             @expected_name  = 'SADDI JAVIER FRANCISCO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%SADDI%'")
-            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
@@ -257,7 +257,7 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
             @expected_name  = 'ROSSI MARIO'
             # This pre-filter will speed-up the tests
             subject.swimmers = Swimmer.where("complete_name LIKE '%ROSSI%'")
-            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, @analysis_log, @sql_log )
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
           end
           it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
           it_behaves_like "(a DataImportSwimmerAnalysisResult with NO match)"
