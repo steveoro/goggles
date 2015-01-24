@@ -24,18 +24,17 @@ describe ResultTimeParser, type: :strategy do
     let(:valid_withdrawal)    { "Ritir." }
     let(:valid_out_of_race)   { ["F.G.", "Fuori gara"].at(rand * 10 % 2) }
     let(:invalid_result)      { Faker::Lorem.paragraph[0..99] }
-
-    subject { ResultTimeParser.new( rank, valid_result_time ) }
-
-
-    it_behaves_like( "(the existance of a method)", [
-      :disqualification_code_type_id, :mins_secs_hds_array,
-      :is_out_of_race?, :is_disqualified?, :parse
-    ] )
     #-- -----------------------------------------------------------------------
     #++
 
     context "before any parsing," do
+      subject { ResultTimeParser.new( rank, valid_result_time ) }
+
+      it_behaves_like( "(the existance of a method)", [
+        :disqualification_code_type_id, :mins_secs_hds_array,
+        :is_out_of_race?, :is_disqualified?, :parse
+      ] )
+
       describe "#disqualification_code_type_id" do
         it "returns nil" do
           expect( subject.disqualification_code_type_id ).to be nil
@@ -60,23 +59,14 @@ describe ResultTimeParser, type: :strategy do
     #-- -----------------------------------------------------------------------
     #++
 
-    context "after the parsing of a valid timing," do
-      before(:each) do
-        expect( subject.parse ).to be_an_instance_of( ResultTimeParser )
-      end
 
+    shared_examples_for "sucessful parsing of a valid timing string" do
+      it "returns an instance of ResultTimeParser" do
+        expect( subject ).to be_an_instance_of( ResultTimeParser )
+      end
       describe "#disqualification_code_type_id" do
         it "returns nil" do
           expect( subject.disqualification_code_type_id ).to be nil
-        end
-      end
-      describe "#mins_secs_hds_array," do
-        it "returns an instance of Array with 3 elements" do
-          expect( subject.mins_secs_hds_array ).to be_an_instance_of( Array )
-          expect( subject.mins_secs_hds_array.size ).to eq(3)
-        end
-        it "has all the timing values in the token" do
-          expect( subject.mins_secs_hds_array ).to contain_exactly( mins, secs, hds )
         end
       end
       describe "#is_out_of_race?" do
@@ -91,26 +81,95 @@ describe ResultTimeParser, type: :strategy do
       end
     end
 
-    context "after the parsing of a valid, alternative timing format," do
-      subject { ResultTimeParser.new( rank, valid2_result_time ).parse }
 
-      it "parses successfully the format" do
-        expect( subject ).to be_an_instance_of( ResultTimeParser )
-      end
+    context "after the parsing of a valid timing (FIN1, fixture 1)," do
+      subject { ResultTimeParser.new( rank, valid_result_time ).parse }
+
+      it_behaves_like "sucessful parsing of a valid timing string"
+
       describe "#mins_secs_hds_array," do
         it "returns an instance of Array with 3 elements" do
-          puts "\r\n=>#{valid2_result_time}<="
+# DEBUG
+#          puts "\r\n=>#{valid_result_time}<="
           expect( subject.mins_secs_hds_array ).to be_an_instance_of( Array )
           expect( subject.mins_secs_hds_array.size ).to eq(3)
         end
         it "has all the timing values in the token" do
-          puts "\r\n=>#{valid2_result_time}<="
+# DEBUG
+#          puts "\r\n=>#{valid_result_time}<="
+          expect( subject.mins_secs_hds_array ).to contain_exactly( mins, secs, hds )
+        end
+      end
+    end
+
+    context "after the parsing of a valid timing (FIN1, fixture 2)," do
+      subject { ResultTimeParser.new( rank, valid2_result_time ).parse }
+
+      it_behaves_like "sucessful parsing of a valid timing string"
+
+      describe "#mins_secs_hds_array," do
+        it "returns an instance of Array with 3 elements" do
+# DEBUG
+#          puts "\r\n=>#{valid2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to be_an_instance_of( Array )
+          expect( subject.mins_secs_hds_array.size ).to eq(3)
+        end
+        it "has all the timing values in the token" do
+# DEBUG
+#          puts "\r\n=>#{valid2_result_time}<="
           expect( subject.mins_secs_hds_array ).to contain_exactly( mins, int9a, int9b )
         end
       end
     end
     #-- -----------------------------------------------------------------------
     #++
+
+    let(:valid_fin2_result_time)   { "#{mins} " + ("%02d" % secs.to_s) + (" %02d" % hds.to_s) }
+    let(:valid2_fin2_result_time)  { "#{mins} #{int9a} #{int9b}" }
+
+
+    context "after the parsing of a valid timing (FIN2, fixture 1)," do
+      subject { ResultTimeParser.new( rank, valid_fin2_result_time ).parse }
+
+      it_behaves_like "sucessful parsing of a valid timing string"
+
+      describe "#mins_secs_hds_array," do
+        it "returns an instance of Array with 3 elements" do
+# DEBUG
+#          puts "\r\n=>#{valid_fin2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to be_an_instance_of( Array )
+          expect( subject.mins_secs_hds_array.size ).to eq(3)
+        end
+        it "has all the timing values in the token" do
+# DEBUG
+#          puts "\r\n=>#{valid_fin2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to contain_exactly( mins, secs, hds )
+        end
+      end
+    end
+
+    context "after the parsing of a valid timing (FIN2, fixture 2)," do
+      subject { ResultTimeParser.new( rank, valid2_fin2_result_time ).parse }
+
+      it_behaves_like "sucessful parsing of a valid timing string"
+
+      describe "#mins_secs_hds_array," do
+        it "returns an instance of Array with 3 elements" do
+# DEBUG
+#          puts "\r\n=>#{valid2_fin2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to be_an_instance_of( Array )
+          expect( subject.mins_secs_hds_array.size ).to eq(3)
+        end
+        it "has all the timing values in the token" do
+# DEBUG
+#          puts "\r\n=>#{valid2_fin2_result_time}<="
+          expect( subject.mins_secs_hds_array ).to contain_exactly( mins, int9a, int9b )
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
 
     context "after the parsing of a valid disqualify," do
       subject { ResultTimeParser.new( rank, valid_disqualify ) }

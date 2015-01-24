@@ -132,8 +132,9 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
 
       if_not_found do
         unless force_team_or_swimmer_creation
+          prefilter = @complete_name.split(/\s/).first
 # DEBUG
-          puts "Search failed: analyzing name (prefilter: '#{@last_name}', gender: #{gender_type.id})..."
+          puts "Search failed: analyzing name (prefilter: '#{prefilter}', gender: #{gender_type.id})..."
 
           # Not found & can't create a new row? => Do a full depth-first analyze of
           # the swimmer name in search for a match and report the results via the builder
@@ -142,7 +143,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           sql_executable_log = ''
           analyzer = SwimmerNameAnalyzer.new
           # Pre-filter swimmers to speed-up the searches:
-          analyzer.swimmers = Swimmer.where( "complete_name LIKE \"%#{@last_name}%\"" ).reload if @last_name.to_s.length > 0
+          analyzer.swimmers = Swimmer.where( "complete_name LIKE \"%#{prefilter}%\"" ).reload
 # DEBUG
 #          analyzer.swimmers.each{ |row| puts "\r\n- id: #{row.id}, #{row.complete_name}, gender: #{row.gender_type_id}, #{row.year_of_birth}"}
           result = analyzer.analyze(
@@ -156,8 +157,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
               0.99, 0.8
           )
 # DEBUG
-#          puts analysis_log
-#          puts "\r\n#{ result }"
+          puts analysis_log
+          puts "\r\n#{ result }"
                                                     # Serialize the analysis result, if it's the case:
           if result.can_insert_alias || (! result.can_insert_swimmer)
             result.data_import_session_id = data_import_session.id

@@ -7,7 +7,7 @@ require 'date'
 
 = CategoryType model
 
-  - version:  4.00.573
+  - version:  4.00.719
   - author:   Steve A.
 
 =end
@@ -117,9 +117,14 @@ class CategoryType < ActiveRecord::Base
   #
   def self.parse_category_type_from_import_text( season_id, category_token )
     result_code = ''
+    query = '(season_id = ?) AND (category_types.code = ?)'
                                                     # NOTE: assuming 'Master YY'|'Under 25' format is used:
     if idx = (category_token =~ /\d\d\d\-\d\d\d/ui)
       result_code = category_token[ idx .. idx+6 ]
+
+    elsif idx = (category_token =~ /\d\d\d/ui)
+      result_code = "%#{ category_token[ idx .. idx+2 ] }%"
+      query = '(season_id = ?) AND (category_types.code LIKE ?)'
 
     elsif idx = category_token =~ /m/ui
       result_code = 'M'
@@ -132,9 +137,7 @@ class CategoryType < ActiveRecord::Base
     end
 # DEBUG
 #    puts "=> CategoryType.parse_category_type_from_import_text( #{season_id}, '#{category_token}' ):\t\tresult_code='#{result_code}'"
-    category_type =  CategoryType.where(
-      [ '(season_id = ?) AND (category_types.code = ?)', season_id, result_code ]
-    ).first
+    category_type =  CategoryType.where( [ query, season_id, result_code ] ).first
     category_type
   end
   # ----------------------------------------------------------------------------

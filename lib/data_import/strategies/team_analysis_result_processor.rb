@@ -101,7 +101,8 @@ class TeamAnalysisResultProcessor
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
             @committed_rows << committed_row
-            @sql_executable_log << "\r\n-- aliased with: '#{team_analysis_result.team_match_name}' (ID:#{team_id})\r\n"
+            team_alias = Team.find_by_id( team_id )
+            @sql_executable_log << "-- aliased with: '#{team_alias.name}' (ID:#{team_alias.id})\r\n" if team_alias
             @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
             @logger.info( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping DataImportTeamAlias creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id})" ) if @logger

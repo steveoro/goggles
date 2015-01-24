@@ -71,10 +71,10 @@ class ResultTimeParser
       @disqualification_code_type_id = nil
     end
     # Get the actual result time:
-    if ( @result_token =~ /\d{1,2}\'\d{1,2}\"\d{1,2}/ui ).nil?
+    if ( @result_token =~ /(?<mins>\d{1,2})(\'|\s)(?<secs>\d{1,2})(\"|\s)(?<hds>\d{1,2})/ui ).nil?
       @mins_secs_hds_array = [0, 0, 0]
     else
-      @mins_secs_hds_array = @result_token.split(/\'|\"/).collect!{ |e| e.to_i }
+      @mins_secs_hds_array = @result_token.split(/\'|\"|\s/).collect!{ |e| e.to_i }
     end
     self
   end

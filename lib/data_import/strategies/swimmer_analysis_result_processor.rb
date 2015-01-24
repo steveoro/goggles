@@ -8,7 +8,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = SwimmerAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.715
+  - Goggles framework vers.:  4.00.719
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single DataImportSwimmerAnalysisResult
@@ -67,7 +67,7 @@ class SwimmerAnalysisResultProcessor
     swimmer_id     = swimmer_analysis_result.chosen_swimmer_id
     year_of_birth  = swimmer_analysis_result.desired_year_of_birth
     gender_type_id = swimmer_analysis_result.desired_gender_type_id
-    @sql_executable_log << "\r\n-- Processing:...'#{swimmer_name}' (#{year_of_birth}, gender: #{gender_type_id})"
+    @sql_executable_log << "\r\n-- Processing:...'#{swimmer_name}' (#{year_of_birth}, gender: #{gender_type_id})\r\n"
     gender_type    = GenderType.find( gender_type_id )
                                                     # -- Can ADD new Swimmer? (Default action for unconfirmed swimmer_analysis_results)
     if (! is_confirmed) || swimmer_analysis_result.can_insert_swimmer
@@ -106,7 +106,8 @@ class SwimmerAnalysisResultProcessor
             )
             committed_row.save!                     # raise automatically an exception if save is not successful
             @committed_rows << committed_row
-            @sql_executable_log << "\r\n-- aliased with: '#{swimmer_analysis_result.match_name}' (ID:#{swimmer_id})\r\n"
+            swimmer_alias = Swimmer.find_by_id( swimmer_id )
+            @sql_executable_log << "-- aliased with: '#{swimmer_alias.complete_name}' (ID:#{swimmer_alias.id})\r\n" if swimmer_alias
             @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
             @logger.info( "\r\n*** SwimmerAnalysisResultProcessor: WARNING: skipping DataImportSwimmerAlias creation because was (unexpectedly) found already existing! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})" ) if @logger
