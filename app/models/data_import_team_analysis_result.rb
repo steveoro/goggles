@@ -19,6 +19,15 @@ class DataImportTeamAnalysisResult < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
+  # +true+ if we have a perfect match with equal names (and no suggested actions).
+  def is_a_perfect_match
+    ( self.chosen_team_id.to_i > 0 ) &&
+    ( self.searched_team_name == self.team_match_name ) &&
+    ( self.searched_team_name == self.best_match_name ) &&
+    ( self.best_match_score >= 0.99 )
+
+  end
+
   # +true+ if one of the suggested action for this result
   # is the creation of a new "team alias" row.
   def can_insert_alias

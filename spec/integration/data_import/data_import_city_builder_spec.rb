@@ -13,7 +13,7 @@ describe DataImportCityBuilder, type: :integration do
   let(:primary_team_name)       { "#{city.name} swimming club ASD" }
   let(:secondary_city)          { create( :data_import_city, data_import_session: data_import_session ) }
   let(:secondary_team_name)     { "#{secondary_city.name} swimming club ASD" }
-  let(:non_matching_team_name)  { "#{Faker::Lorem.word.camelcase} Club ASD" }
+  let(:non_matching_team_name)  { "#{Faker::Lorem.word.camelcase}fake#{Faker::Lorem.word.camelcase} Club ASD" }
   #-- -------------------------------------------------------------------------
   #++
 

@@ -80,6 +80,9 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
       it "logs that is a perfect match" do
         expect( @result.analysis_log_text ).to include( '100%' )
       end
+      it "reports the the result is a perfect match" do
+        expect( @result.is_a_perfect_match ).to be true
+      end
       it "doesn't allow the creation of a new swimmer" do
         expect( @result.can_insert_swimmer ).to be false
       end
@@ -101,6 +104,9 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
       end
       it "logs that is a single match" do
         expect( @result.analysis_log_text ).to include( 'SINGLE MATCH' )
+      end
+      it "reports the the result is NOT a perfect match" do
+        expect( @result.is_a_perfect_match ).to be false
       end
       it "doesn't allow the creation of a new swimmer" do
         expect( @result.can_insert_swimmer ).to be false
@@ -125,6 +131,9 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
       it "logs that there are multiple matches" do
         expect( @result.analysis_log_text ).to include( 'MULTIPLE CHOICES' )
       end
+      it "reports the the result is NOT a perfect match" do
+        expect( @result.is_a_perfect_match ).to be false
+      end
       it "doesn't allow the creation of a new swimmer" do
         expect( @result.can_insert_swimmer ).to be false
       end
@@ -141,6 +150,9 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
     shared_examples_for "(a DataImportSwimmerAnalysisResult with NO match)" do
       it "logs that there are no matches" do
         expect( @result.analysis_log_text ).to include( 'NOT FOUND' )
+      end
+      it "reports the the result is NOT a perfect match" do
+        expect( @result.is_a_perfect_match ).to be false
       end
       it "allows the creation of a new swimmer" do
         expect( @result.can_insert_swimmer ).to be true

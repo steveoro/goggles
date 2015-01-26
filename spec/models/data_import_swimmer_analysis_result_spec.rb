@@ -36,6 +36,7 @@ describe DataImportSwimmerAnalysisResult, :type => :model do
         :match_name, :match_score,
         :best_match_name, :best_match_score,
 
+        :is_a_perfect_match,
         :can_insert_alias,
         :can_insert_swimmer,
         :rebuild_sql_text,

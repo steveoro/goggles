@@ -8,7 +8,7 @@ require 'data_import/services/swimmer_name_analyzer'
 
 = DataImportSwimmerBuilder
 
-  - Goggles framework vers.:  4.00.715
+  - Goggles framework vers.:  4.00.721
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -69,7 +69,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
                                   category_type, force_team_or_swimmer_creation )
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!") unless gender_type.instance_of?(GenderType)
 # DEBUG
-    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}, gender_type_id: #{gender_type.id}"
+#    puts "\r\nSwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, swimmer_name: #{swimmer_name}, swimmer_year: #{swimmer_year}, gender_type_id: #{gender_type.id}"
     self.build( data_import_session ) do
       entity      Swimmer
 
@@ -93,7 +93,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           swimmer_year = category_type.season.begin_date.year - category_type.age_end
           @max_year    = category_type.season.end_date.year - category_type.age_begin
 # DEBUG
-          puts "\r\n- swimmer_year guessed! Range: #{swimmer_year}..#{@max_year}, setting default (for creation, in case search fails) as min."
+#          puts "=> swimmer_year guessed! Range: #{swimmer_year}..#{@max_year}, setting default (for creation, in case search fails) as min."
           primary   [
             "(year_of_birth > ?) AND (year_of_birth < ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
             swimmer_year-1, @max_year+1, gender_type.id, @complete_name+'%'
@@ -104,7 +104,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           ]
         else
 # DEBUG
-          puts "Search params: '#{@complete_name}', #{swimmer_year}, gender: #{gender_type.id})"
+#          puts "Search params: '#{@complete_name}', #{swimmer_year}, gender: #{gender_type.id})"
           @max_year = nil
           primary   [
             "(year_of_birth = ?) AND (gender_type_id = ?) AND (complete_name LIKE ?)",
@@ -117,8 +117,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         end
         default_search
 # DEBUG
-        puts "primary_search_ok!"   if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!"   if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
                                                   # 2) Search for a Swimmer ALIAS:
       if_not_found  do
@@ -134,7 +134,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         unless force_team_or_swimmer_creation
           prefilter = @complete_name.split(/\s/).first
 # DEBUG
-          puts "Search failed: analyzing name (prefilter: '#{prefilter}', gender: #{gender_type.id})..."
+#          puts "Search failed: analyzing name (prefilter: '#{prefilter}', gender: #{gender_type.id})..."
 
           # Not found & can't create a new row? => Do a full depth-first analyze of
           # the swimmer name in search for a match and report the results via the builder
@@ -157,8 +157,10 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
               0.99, 0.8
           )
 # DEBUG
-          puts analysis_log
-          puts "\r\n#{ result }"
+#          puts analysis_log
+#          puts "\r\n#{ result }"
+                                                    # If we have a perfect match, we can report it right away:
+          set_result( result.swimmer ) if result.is_a_perfect_match
                                                     # Serialize the analysis result, if it's the case:
           if result.can_insert_alias || (! result.can_insert_swimmer)
             result.data_import_session_id = data_import_session.id
@@ -172,7 +174,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
             )
               result.save!
 # DEBUG
-              puts "Swimmer analysis saved."
+#              puts "Swimmer analysis saved."
               data_import_session.phase_1_log ||= ''
               data_import_session.sql_diff    ||= ''
               data_import_session.phase_1_log << "#{ analysis_log }\r\n"
@@ -189,7 +191,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
         # If we are authorized to create a brand new entity row, we'll do it now:
         if force_team_or_swimmer_creation
 # DEBUG
-          puts "Search failed: preparing add_new..."
+#          puts "Search failed: preparing add_new..."
           attributes_for_creation(
             data_import_session_id: data_import_session.id,
             # [Steve] By splitting the import_text with can detect later if the

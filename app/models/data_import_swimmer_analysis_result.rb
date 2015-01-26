@@ -25,6 +25,12 @@ class DataImportSwimmerAnalysisResult < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
+  # +true+ if we have a perfect match with equal names (and no suggested actions).
+  def is_a_perfect_match
+    ( self.chosen_swimmer_id.to_i > 0 ) &&
+    ( self.searched_swimmer_name == self.match_name )
+  end
+
   # +true+ if the suggested action for this result
   # is the creation of a new "swimmer alias" row.
   def can_insert_alias

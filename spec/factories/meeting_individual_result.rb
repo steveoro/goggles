@@ -28,16 +28,21 @@ FactoryGirl.define do
     conflicting_id            nil
     import_text               { Faker::Lorem.paragraph[0..250] }
     common_meeting_individual_result_fields
-    association :data_import_meeting_program, factory: :data_import_meeting_program_individual
     meeting_program_id        nil
     data_import_swimmer_id    nil
     data_import_team_id       nil
     data_import_badge_id      nil
 
-    swimmer                   { create(:swimmer, gender_type: data_import_meeting_program.gender_type) }
-    badge                     { create(:badge, swimmer: swimmer) }
+    badge                     { create(:badge) }
+    swimmer                   { badge.swimmer }
     team                      { badge.team }
     team_affiliation          { badge.team_affiliation }
+    data_import_meeting_program do
+      create(
+        :data_import_meeting_program_individual,
+        gender_type_id: swimmer.gender_type_id
+      )
+    end
 
     athlete_name              { swimmer.complete_name }
     team_name                 { team.name }
@@ -55,13 +60,17 @@ FactoryGirl.define do
 
 
   factory :meeting_individual_result do
-    association :meeting_program, factory: :meeting_program_individual
     common_meeting_individual_result_fields
-
-    swimmer                   { create(:swimmer, gender_type: meeting_program.gender_type) }
-    badge                     { create(:badge, swimmer: swimmer) }
+    badge                     { create(:badge) }
+    swimmer                   { badge.swimmer }
     team                      { badge.team }
     team_affiliation          { badge.team_affiliation }
+    meeting_program do
+      create(
+        :meeting_program_individual,
+        gender_type_id: swimmer.gender_type_id
+      )
+    end
 
     before(:create) do |built_instance|
       if built_instance.invalid?

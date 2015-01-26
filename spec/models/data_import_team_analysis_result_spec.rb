@@ -29,6 +29,7 @@ describe DataImportTeamAnalysisResult, :type => :model do
         :team_match_name, :team_match_score,
         :best_match_name, :best_match_score,
 
+        :is_a_perfect_match,
         :can_insert_alias,
         :can_insert_team,
         :can_insert_affiliation,

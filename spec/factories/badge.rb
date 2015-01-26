@@ -13,7 +13,6 @@ FactoryGirl.define do
   trait :common_badge_fields do
     random_badge_code
     team
-    swimmer
     entry_time_type           { EntryTimeType.all.sort{ rand - 0.5 }[0] }
     user
   end
@@ -26,6 +25,15 @@ FactoryGirl.define do
     common_badge_fields
     season                    { data_import_session.season }
     category_type             { create(:category_type, season: season) }
+    data_import_swimmer_id    nil
+    data_import_team_id       nil
+    data_import_season_id     nil
+
+    swimmer do                # This will create a swimmer coherent with the category of the badge:
+      swimmer_year = category_type.season.begin_date.year - category_type.age_end
+      create( :swimmer, year_of_birth: swimmer_year )
+    end
+
     import_text               { number }
   end
 
@@ -35,6 +43,10 @@ FactoryGirl.define do
     team_affiliation          { create(:team_affiliation, team: team) }
     season                    { team_affiliation.season }
     category_type             { create(:category_type, season: team_affiliation.season) }
+    swimmer do                # This will create a swimmer coherent with the category of the badge:
+      swimmer_year = category_type.season.begin_date.year - category_type.age_end
+      create( :swimmer, year_of_birth: swimmer_year )
+    end
 
     before(:create) do |built_instance|
       if built_instance.invalid?
