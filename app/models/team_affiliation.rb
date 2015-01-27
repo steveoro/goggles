@@ -23,7 +23,7 @@ class TeamAffiliation < ActiveRecord::Base
   validates_length_of   :number, maximum: 20
 
   has_one  :season_type, through: :season
-  
+
   has_many :meeting_individual_results
   has_many :team_managers
 

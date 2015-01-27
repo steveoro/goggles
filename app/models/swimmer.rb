@@ -157,9 +157,14 @@ class Swimmer < ActiveRecord::Base
   # possibly filtered by season, if the parameter is given.
   #
   def get_badges_array( season_id = nil )
-     all_badges = self.badges.includes(:season, :team)
-     all_badges = all_badges.where( season_id: season_id ) if season_id
-     all_badges
+    # Also possibile with:
+    #
+    #   Badge.joins( :team, :swimmer ).where(
+    #    'badges.season_id' => season_id, swimmer_id: self.id
+    #   )
+    all_badges = self.badges.includes(:season, :team)
+    all_badges = all_badges.where( season_id: season_id ) if season_id
+    all_badges
   end
 
   # Similarly to <tt>self.get_team_names( swimmer_id )</tt>, returns an +Array+

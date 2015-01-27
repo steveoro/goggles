@@ -36,3 +36,30 @@ FactoryGirl.define do
   #-- -------------------------------------------------------------------------
   #++
 end
+
+
+# Quick NameSpace container for creation-tools regarding this factory.
+#
+module TeamAffiliationFactoryTools
+
+  # Creates a single TeamAffiliation with the specified number of Badges (and Swimmers)
+  # associated with it.
+  #
+  # (Works essentially as the :team_affiliation_with_badges factory, but it allows
+  #  to specify both the Team instance and the number of Swimmer/Badges created.)
+  #
+  def self.create_affiliation_with_badge_list( team, swimmer_count = 5 )
+    affiliation = FactoryGirl.create( :team_affiliation, team: team )
+    FactoryGirl.create_list(
+      :badge,
+      swimmer_count,
+      team:             team,
+      team_affiliation: affiliation,
+      season:           affiliation.season,
+      category_type:    FactoryGirl.create(:category_type, season: affiliation.season)
+    )
+    affiliation
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
