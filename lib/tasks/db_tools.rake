@@ -244,12 +244,12 @@ duplicate Badges/TeamAffiliations for the same season.
     puts "DB name: #{db_name}"
     puts "DB user: #{db_user}"
     seasons = season_id ? [Season.find( season_id )] : Season.all
-    dup_teams = []
 
     seasons.each do |season|
       puts "\r\n\r\nChecking season ##{season.id}..."
       puts "---------------- 8< -------------------"
       dup_swimmers = BadgeDuplicateChecker.get_swimmers_with_duplicates( season )
+      dup_teams = []
       if dup_swimmers.size == 0
         puts "No problems found."
       else
@@ -270,13 +270,17 @@ duplicate Badges/TeamAffiliations for the same season.
           dup_teams << dup_teams_for_single_swimmer
         end
       end
-      puts"\r\n*** Summary ***\r\n==============="
       dup_teams.uniq!
-      puts"\r\nTeams found linked to duplicates (possibly duplicates themselves):"
-      dup_teams.each do |dup_team_row|
-        puts dup_team_row.map{ |team| ("%8s" % "##{team.id}:") + ("%-40s" % " '#{team.name}'") }.inspect
+      if dup_teams.size > 0
+        puts"\r\n*** Summary ***\r\n==============="
+        puts"\r\nTeams found linked to duplicates (possibly duplicates themselves):"
+        dup_teams.each do |dup_team_row|
+          puts dup_team_row.map{ |team| ("%8s" % "##{team.id}:") + ("%-40s" % " '#{team.name}'") }.inspect
+        end
+        puts "\r\nEither #{dup_teams.size} possible team-merge(s) to be done or issue(s) of same-named Swimmers!"
+        puts "Whenever the team affiliation IDs are equal in the above list for the same swimmer, it is a case of genuine Badge duplication."
+        puts "Check out the results and take action."
       end
-      puts "\r\n#{dup_teams.size} possible team-merge to be done! Check out the results and take action."
       puts "---------------- 8< -------------------"
     end
     puts "\r\nDone."
