@@ -9,13 +9,14 @@ require 'framework/application_constants'
 
 require 'framework/console_logger'
 require 'common/validation_error_tools'
+require 'data_import/services/badge_duplicate_checker'
 
 
 =begin
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.697
+  - Goggles framework vers.:  4.00.725
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -205,6 +206,80 @@ DESC
     end
 
     puts "\r\nDone.\r\n\r\n"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+desc <<-DESC
+  Checks a specific Season or the whole seasons set in search of Swimmers with
+duplicate Badges/TeamAffiliations for the same season.
+
+(Each Swimmer can have only 1 team affiliation per season, since each season
+ may belong to just one single Federation -- that is, each athlete may compete for
+ only 1 Team inside the same Season/Federation.)
+
+  Options: [season=<season_id>]
+           [log_dir=#{LOG_DIR}]
+
+  - season => the Season.id to be used for the search; when not set, all
+    Seasons are scanned.
+
+  - 'log_dir' => allows to override the default log dir destination.
+  DESC
+  task :check_dup_badges do |t|
+    puts "\r\n*** db:check_dup_badges ***"
+    season_id = ENV.include?("season") ? ENV["season"].to_i : nil
+    rails_config  = Rails.configuration             # Prepare & check configuration:
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+    db_host       = rails_config.database_configuration[Rails.env]['host']
+    log_dir       = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
+    puts "Requiring Rails environment to allow usage of any Model..."
+    require 'rails/all'
+    require File.join( Rails.root.to_s, 'config/environment' )
+                                                    # Display some info:
+    puts "DB host: #{db_host}"
+    puts "DB name: #{db_name}"
+    puts "DB user: #{db_user}"
+    seasons = season_id ? [Season.find( season_id )] : Season.all
+    dup_teams = []
+
+    seasons.each do |season|
+      puts "\r\n\r\nChecking season ##{season.id}..."
+      puts "---------------- 8< -------------------"
+      dup_swimmers = BadgeDuplicateChecker.get_swimmers_with_duplicates( season )
+      if dup_swimmers.size == 0
+        puts "No problems found."
+      else
+        puts "#{dup_swimmers.size} Swimmer(s) with duplicate badges found!"
+        swimmer_ids = dup_swimmers.map{ |swimmer| swimmer.id }
+        puts swimmer_ids.inspect
+                                                    # For each dup_swimmer found:
+        dup_swimmers.each do |swimmer|
+          dup_teams_for_single_swimmer = []
+          dup_badges = swimmer.get_badges_array( season )
+          puts "\r\n- Swimmer ##{swimmer.id}, #{swimmer.complete_name} => #{dup_badges.size} badges for season #{season.id}:"
+                                                    # For each dup_badge of a swimmer:
+          dup_badges.each do |badge|
+            puts "  => Badge ##{badge.id}, Team '#{badge.team.name}', T.Aff. ##{badge.team_affiliation_id}"
+            dup_teams_for_single_swimmer << badge.team
+          end
+                                                    # Add possible team dup. tuple to the list:
+          dup_teams << dup_teams_for_single_swimmer
+        end
+      end
+      puts"\r\n*** Summary ***\r\n==============="
+      dup_teams.uniq!
+      puts"\r\nTeams found linked to duplicates (possibly duplicates themselves):"
+      dup_teams.each do |dup_team_row|
+        puts dup_team_row.map{ |team| ("%8s" % "##{team.id}:") + ("%-40s" % " '#{team.name}'") }.inspect
+      end
+      puts "\r\n#{dup_teams.size} possible team-merge to be done! Check out the results and take action."
+      puts "---------------- 8< -------------------"
+    end
+    puts "\r\nDone."
   end
   #-- -------------------------------------------------------------------------
   #++

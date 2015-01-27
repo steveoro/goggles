@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 
 = BadgeDuplicateChecker
 
-  - Goggles framework vers.:  4.00.723
+  - Goggles framework vers.:  4.00.725
   - author: Steve A.
 
   Checker service class for Swimmers/Badges duplicates.
@@ -49,7 +49,7 @@ class BadgeDuplicateChecker
     having count(badges.id) > 1
 =end
     Swimmer.joins(:badges).where( 'badges.season_id' => season.id )
-      .group('swimmers.id').having('COUNT(badges.id) > 1')
+      .group('swimmers.id').having('COUNT(badges.id) > 1').to_a
   end
   #-- -------------------------------------------------------------------------
   #++

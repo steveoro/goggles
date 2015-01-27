@@ -49,6 +49,29 @@ describe BadgeDuplicateChecker, type: :service do
     #-- -----------------------------------------------------------------------
     #++
   end
+
+
+  describe "self.get_swimmers_with_duplicates()" do
+    it "responds to self.get_swimmers_with_duplicates()" do
+      expect( BadgeDuplicateChecker ).to respond_to( :get_swimmers_with_duplicates )
+    end
+
+    context "for a valid Season instance without duplicates," do
+      it "returns an empty list" do
+        result = BadgeDuplicateChecker.get_swimmers_with_duplicates(season)
+        expect( result.count ).to eq(0)
+      end
+    end
+
+    context "for a Season instance with duplicate badges," do
+      it "returns an empty list" do
+        result = BadgeDuplicateChecker.get_swimmers_with_duplicates( duplicate_badge.season )
+        expect( result.count ).to be > 0
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+  end
   #-- -------------------------------------------------------------------------
   #++
 end
