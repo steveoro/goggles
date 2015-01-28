@@ -5,7 +5,7 @@
 
 = SqlConverter
 
-  - Goggles framework vers.:  4.00.599
+  - Goggles framework vers.:  4.00.727
   - author: Steve A.
 
   Container module for methods or strategies to obtain complete SQL statements from
@@ -60,8 +60,6 @@ module SqlConverter
     con = record.connection
     sql_text = with_comment ? get_sql_comment(record) : ''
     sql_text << "DELETE FROM #{ con.quote_column_name( record.class.table_name ) } "
-    columns = []
-    values  = []
     sql_text << "WHERE (#{ con.quote_column_name('id') }=#{ record.id });\r\n\r\n"
     sql_text
   end
