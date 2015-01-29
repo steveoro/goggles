@@ -23,12 +23,15 @@ describe BadgeDuplicateChecker, type: :service do
     create(
       :badge,
       team_affiliation: duplicate_affiliation,
-      swimmer: swimmer
+      swimmer:          swimmer,
+      season:           duplicate_affiliation.season,
+      # Force a random category type among the ones available for the
+      # pre-built & selected season:
+      category_type:    duplicate_affiliation.season.category_types.sort{ rand() - 0.5 }[0]
     )
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   describe "self.is_ok?()" do
     it "responds to self.is_ok?()" do

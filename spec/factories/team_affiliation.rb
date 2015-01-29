@@ -21,6 +21,16 @@ FactoryGirl.define do
     end
 
     factory :team_affiliation_with_badges do
+      season do
+        # 1) Extract pre-built fixtures that already have categories:
+        season_ids_with_categories = Season.joins(:category_types)
+          .select('seasons.id')
+          .group('seasons.id')
+          .having( 'count(category_types.season_id) > 0' )
+        # 2) Choose a random season among the above list of IDs:
+        Season.where( id: season_ids_with_categories ).sort{ rand() - 0.5 }[0]
+      end
+
       after(:create) do |created_instance, evaluator|
         create_list(
           :badge,
@@ -28,7 +38,9 @@ FactoryGirl.define do
           team:             created_instance.team,
           team_affiliation: created_instance,
           season:           created_instance.season,
-          category_type:    create(:category_type, season: created_instance.season)
+          # Force a random category type among the ones available for the
+          # pre-built & selected season:
+          category_type:    created_instance.season.category_types.sort{ rand() - 0.5 }[0]
         )
       end
     end
@@ -49,14 +61,28 @@ module TeamAffiliationFactoryTools
   #  to specify both the Team instance and the number of Swimmer/Badges created.)
   #
   def self.create_affiliation_with_badge_list( team, swimmer_count = 5 )
-    affiliation = FactoryGirl.create( :team_affiliation, team: team )
+    # 1) Extract pre-built fixtures that already have categories:
+    season_ids_with_categories = Season.joins(:category_types)
+      .select('seasons.id')
+      .group('seasons.id')
+      .having( 'count(category_types.season_id) > 0' )
+    # 2) Choose a random season among the above list of IDs:
+    rand_season = Season.where( id: season_ids_with_categories ).sort{ rand() - 0.5 }[0]
+
+    affiliation = FactoryGirl.create(
+      :team_affiliation,
+      team:   team,
+      season: rand_season
+    )
     FactoryGirl.create_list(
       :badge,
       swimmer_count,
       team:             team,
       team_affiliation: affiliation,
-      season:           affiliation.season,
-      category_type:    FactoryGirl.create(:category_type, season: affiliation.season)
+      season:           rand_season,
+      # Force a random category type among the ones available for the
+      # pre-built & selected season:
+      category_type:    rand_season.category_types.sort{ rand() - 0.5 }[0]
     )
     affiliation
   end
