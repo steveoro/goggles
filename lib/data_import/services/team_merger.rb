@@ -1,11 +1,12 @@
 # encoding: utf-8
+require 'sql_converter'
 
 
 =begin
 
 = TeamMerger
 
-  - Goggles framework vers.:  4.00.727
+  - Goggles framework vers.:  4.00.729
   - author: Steve A.
 
   Service class delegated to merge a source/slave Team into a destination/master one.
@@ -27,6 +28,7 @@
 
 =end
 class TeamMerger
+  include SqlConverter
 
   # Returns the overall text log for all the operations performed with this instance.
   # It is never +nil+, empty at first.
@@ -122,6 +124,23 @@ class TeamMerger
     #     => MeetingRelayResult and update them (:team_id, :team_affiliation_id)
     #     => MeetingTeamScore and update them (:team_id, :team_affiliation_id)
 
+=begin
+ TODO
+ - Refactor the following shit this way:
+
+    - 1 method to get the duplicate rows && / || non-duplicate rows
+    - send to both the condition for selection as param or block
+    - FIXME BEWARE of cases in which the dest_rows are empty
+        => reject doesn't remove anything and you get both list equal (dups & non-dups)
+
+    - factorize all 4 phases into methods:
+      1) collect shit
+      2) update stuff
+      3) create alias
+      4) delete stuff
+
+  TODO create more poignant specs BEFORE refactoring, for the love of god!
+=end
                                                     # ===  TeamAffiliation  ===
     dest_taffs = TeamAffiliation.where( team_id: master_team.id )
     dest_season_ids = dest_taffs.collect{ |row| row.season_id }
@@ -242,13 +261,14 @@ class TeamMerger
 
     nonduplicates_src_mrrs = src_mrrs.reject do |src_row|
       dest_mrrs.any? do |dest_row|
-        (dest_row.meeting_program_id == src_row.meeting_program_id)
+        (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+        (dest_row.rank == src_row.rank)
       end
     end
     duplicates_src_mrrs = src_mrrs.reject do |src_row|
       nonduplicates_src_mirs.any?{ |nondup_row| nondup_row.id == src_row.id }
     end
-    log_row_sizes( MeetingRelayResult, :get_full_name, duplicates_src_mrrs, nonduplicates_src_mrrs )
+    log_row_sizes( MeetingRelayResult, :get_full_name, duplicates_src_mrrs, nonduplicates_src_mrrs, true ) # log also non-duplicates (these should be few, usually)
 
                                                     # ===  MeetingTeamScore (:team_id, :team_affiliation_id)  ===
     src_mtss  = MeetingTeamScore.where( team_id: slave_team.id )
@@ -307,9 +327,140 @@ class TeamMerger
       nonduplicates_src_gcstds.any?{ |nondup_row| nondup_row.id == src_row.id }
     end
     log_row_sizes( GoggleCupStandard, :get_full_name, duplicates_src_gcstds, nonduplicates_src_gcstds )
+
+                                                    # ===  MeetingEntry (Ref.: affiliation, team. badge, swimmer - all W/O FK)  ===
+    src_mentries  = MeetingEntry.where( team_id: slave_team.id )
+    dest_mentries = MeetingEntry.where( team_id: master_team.id )
+
+    duplicates_src_mentries     = MeetingEntry.where( badge_id: duplicates_src_badges_ids )
+    nonduplicates_src_mentries  = MeetingEntry.where( badge_id: nonduplicates_src_badges_ids )
+    log_row_sizes( MeetingEntry, :get_verbose_name, duplicates_src_mentries, nonduplicates_src_mentries )
+
+                                                    # ===  TeamManager (Ref.: affiliation) ===
+    src_teaman  = TeamManager.includes(:team_affiliation).where( 'team_affiliations.team_id' => slave_team.id )
+    dest_teaman = TeamManager.includes(:team_affiliation).where( 'team_affiliations.team_id' => master_team.id )
+
+    nonduplicates_src_teaman = src_teaman.reject do |src_row|
+      # To get the unique, non-duplicate src rows, reject all the rows from the source
+      # that are equal to any destination:
+      dest_teaman.any? do |dest_row|
+        (dest_row.team_affiliation_id == src_row.team_affiliation_id) &&
+        (dest_row.user_id == src_row.user_id)
+      end
+    end
+    duplicates_src_teaman = src_teaman.reject do |src_row|
+      nonduplicates_src_teaman.any?{ |nondup_row| nondup_row.id == src_row.id }
+    end
+    log_row_sizes( TeamManager, :inspect, duplicates_src_teaman, nonduplicates_src_teaman )
+
+                                                    # ===  TeamPassageTemplate (Ref.: team) ===
+    src_teampass  = TeamPassageTemplate.where( team_id: slave_team.id )
+    dest_teampass = TeamPassageTemplate.where( team_id: master_team.id )
+
+    nonduplicates_src_teampass = src_teampass.reject do |src_row|
+      # To get the unique, non-duplicate src rows, reject all the rows from the source
+      # that are equal to any destination: (we don't check the individual bool flags just)
+      dest_teampass.any? do |dest_row|
+        (dest_row.team_id == src_row.team_id) &&
+        (dest_row.event_type_id == src_row.event_type_id) &&
+        (dest_row.pool_type_id == src_row.pool_type_id) &&
+        (dest_row.passage_type_id == src_row.passage_type_id) &&
+        (dest_row.part_order == src_row.part_order) &&
+        (dest_row.has_subtotal == src_row.has_subtotal) &&
+        (dest_row.has_cycle_count == src_row.has_cycle_count) &&
+        (dest_row.has_breath_count == src_row.has_breath_count) &&
+        (dest_row.has_non_swam_part == src_row.has_non_swam_part) &&
+        (dest_row.has_non_swam_kick_count == src_row.has_non_swam_kick_count) &&
+        (dest_row.has_passage_position == src_row.has_passage_position)
+      end
+    end
+    duplicates_src_teampass = src_teampass.reject do |src_row|
+      nonduplicates_src_teampass.any?{ |nondup_row| nondup_row.id == src_row.id }
+    end
+    log_row_sizes( TeamPassageTemplate, :inspect, duplicates_src_teampass, nonduplicates_src_teampass )
+
+                                                    # ===  ComputedSeasonRanking (Ref.: team) ===
+    src_comprank  = ComputedSeasonRanking.where( team_id: slave_team.id )
+    dest_comprank = ComputedSeasonRanking.where( team_id: master_team.id )
+
+    nonduplicates_src_comprank = src_comprank.reject do |src_row|
+      # To get the unique, non-duplicate src rows, reject all the rows from the source
+      # that are equal to any destination:
+      dest_comprank.any? do |dest_row|
+        (dest_row.team_id == src_row.team_id) &&
+        (dest_row.season_id == src_row.season_id) &&
+        (dest_row.rank == src_row.rank) &&
+        (dest_row.total_points == src_row.total_points)
+      end
+    end
+    duplicates_src_comprank = src_comprank.reject do |src_row|
+      nonduplicates_src_comprank.any?{ |nondup_row| nondup_row.id == src_row.id }
+    end
+    log_row_sizes( ComputedSeasonRanking, :get_verbose_name, duplicates_src_comprank, nonduplicates_src_comprank )
+
+                                                    # ===  IndividualRecord (Ref.: team) ===
+    src_indivrec  = IndividualRecord.where( team_id: slave_team.id )
+    dest_indivrec = IndividualRecord.where( team_id: master_team.id )
+
+    nonduplicates_src_indivrec = src_indivrec.reject do |src_row|
+      # To get the unique, non-duplicate src rows, reject all the rows from the source
+      # that are equal to any destination:
+      dest_indivrec.any? do |dest_row|
+        (dest_row.team_id == src_row.team_id) &&
+        (dest_row.season_id == src_row.season_id) &&
+        (dest_row.federation_type_id == src_row.federation_type_id) &&
+        (dest_row.record_type_id == src_row.record_type_id) &&
+        (dest_row.pool_type_id == src_row.pool_type_id) &&
+        (dest_row.event_type_id == src_row.event_type_id) &&
+        (dest_row.category_type_id == src_row.category_type_id) &&
+        (dest_row.gender_type_id == src_row.gender_type_id)
+      end
+    end
+    duplicates_src_indivrec = src_indivrec.reject do |src_row|
+      nonduplicates_src_indivrec.any?{ |nondup_row| nondup_row.id == src_row.id }
+    end
+    log_row_sizes( IndividualRecord, :inspect, duplicates_src_indivrec, nonduplicates_src_indivrec )
     process_text_log << "\r\n"
 
                                                     # *** UPDATE PHASE starts here ***
+    is_ok = execute_update_operation( MeetingIndividualResult, nonduplicates_src_mirs,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( MeetingRelaySwimmer, nonduplicates_src_mrss,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( MeetingRelayResult, nonduplicates_src_mrrs,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( MeetingTeamScore, nonduplicates_src_mtss,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+
+    is_ok = execute_update_operation( MeetingEntry, nonduplicates_src_mentries,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( TeamManager, nonduplicates_src_teaman,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( TeamPassageTemplate, nonduplicates_src_teampass,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( ComputedSeasonRanking, nonduplicates_src_comprank,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update_operation( IndividualRecord, nonduplicates_src_indivrec,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
+
     is_ok = execute_update_operation( Badge, nonduplicates_src_badges,
       master_team.id, duplicate_taff_matrix_ids,
       duplicate_badge_matrix_ids
@@ -318,27 +469,7 @@ class TeamMerger
       master_team.id, duplicate_taff_matrix_ids,
       duplicate_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( MeetingTeamScore, nonduplicates_src_mtss,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( MeetingRelayResult, nonduplicates_src_mrrs,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( MeetingRelaySwimmer, nonduplicates_src_mrss,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( MeetingIndividualResult, nonduplicates_src_mirs,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
     is_ok = execute_update_operation( Passage, nonduplicates_src_pass,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( GoggleCup, nonduplicates_src_gcups,
       master_team.id, duplicate_taff_matrix_ids,
       duplicate_badge_matrix_ids
     ) if is_ok
@@ -346,38 +477,50 @@ class TeamMerger
       master_team.id, duplicate_taff_matrix_ids,
       duplicate_badge_matrix_ids
     ) if is_ok
+    is_ok = execute_update_operation( GoggleCup, nonduplicates_src_gcups,
+      master_team.id, duplicate_taff_matrix_ids,
+      duplicate_badge_matrix_ids
+    ) if is_ok
     is_ok = execute_update_operation( TeamAffiliation, nonduplicates_src_taffs,
       master_team.id, duplicate_taff_matrix_ids,
       duplicate_badge_matrix_ids
     ) if is_ok
-                                                    # *** DELETE PHASE starts here ***
-    is_ok = execute_delete_operation( TeamAffiliation, duplicates_src_taffs ) if is_ok
-    is_ok = execute_delete_operation( Badge, duplicates_src_badges ) if is_ok
-    is_ok = execute_delete_operation( DataImportTeamAlias, duplicates_src_di_tals ) if is_ok
-    is_ok = execute_delete_operation( GoggleCup, duplicates_src_gcups ) if is_ok
-    is_ok = execute_delete_operation( MeetingIndividualResult, duplicates_src_mirs ) if is_ok
-    is_ok = execute_delete_operation( MeetingRelayResult, duplicates_src_mrrs ) if is_ok
-    is_ok = execute_delete_operation( MeetingTeamScore, duplicates_src_mtss ) if is_ok
-    is_ok = execute_delete_operation( MeetingRelaySwimmer, duplicates_src_mrss ) if is_ok
-    is_ok = execute_delete_operation( Passage, duplicates_src_pass ) if is_ok
-    is_ok = execute_delete_operation( GoggleCupStandard, duplicates_src_gcstds ) if is_ok
-                                                    # Final act: create alias if missing + original source Team destroy:
+                                                    # *** ALIAS CREATION PHASE starts here ***
     if is_ok
       begin                                         # Add an alias for the original team name if missing:
-        if DataImportTeamAlias.where( team_id: master_team.id, name: slave_team.name ).count == 0
-          DataImportTeamAlias.create( team_id: master_team.id, name: slave_team.name )
-        end
-        slave_team.destroy
-        con = slave_team.connection
-        sql_diff_text_log << "\r\n-- Final delete for Team (merged/slave team only):\r\n"
-        sql_diff_text_log << "DELETE FROM #{ con.quote_column_name( slave_team.class.table_name ) } "
-        sql_diff_text_log << "WHERE (#{ con.quote_column_name('id') }=#{ slave_team.id });\r\n"
+        record = DataImportTeamAlias.create(
+          team_id:  master_team.id,
+          name:     slave_team.name
+        ) if DataImportTeamAlias.where( team_id: master_team.id, name: slave_team.name ).count == 0
+        sql_diff_text_log << "\r\n-- Alias creation for master Team:\r\n"
+        sql_diff_text_log << to_sql_insert( record, false ) # no additional comment
       rescue
         process_text_log << "\r\n*** Team Merge: exception caught!\r\n"
-        process_text_log << "*** Final phase 'SOURCE Team DELETE': #{ $!.to_s }\r\n" if $!
+        process_text_log << "*** Alias creation phase: #{ $!.to_s }\r\n" if $!
         is_ok = false
       end
     end
+                                                    # *** DELETE PHASE starts here ***
+    is_ok = execute_delete_operation( MeetingIndividualResult, duplicates_src_mirs ) if is_ok   # Refers: affiliation, badge, team, swimmer
+    is_ok = execute_delete_operation( MeetingRelaySwimmer, duplicates_src_mrss ) if is_ok       # Refers: relay_result, badge, swimmer
+    is_ok = execute_delete_operation( MeetingRelayResult, duplicates_src_mrrs ) if is_ok        # Refers: affiliation, team
+    is_ok = execute_delete_operation( MeetingTeamScore, duplicates_src_mtss ) if is_ok          # Refers: affiliation, team
+
+    is_ok = execute_delete_operation( MeetingEntry, duplicates_src_mentries ) if is_ok          # Refers: affiliation, team. badge, swimmer (all W/O FK)
+    is_ok = execute_delete_operation( TeamManager, duplicates_src_teaman ) if is_ok             # Refers: affiliation
+    is_ok = execute_delete_operation( TeamPassageTemplate, duplicates_src_teampass ) if is_ok   # Refers: team
+    is_ok = execute_delete_operation( ComputedSeasonRanking, duplicates_src_comprank ) if is_ok # Refers: team
+    is_ok = execute_delete_operation( IndividualRecord, duplicates_src_indivrec ) if is_ok      # Refers: team
+
+    is_ok = execute_delete_operation( Badge, duplicates_src_badges ) if is_ok                   # Refers: affiliation, team, swimmer
+    is_ok = execute_delete_operation( DataImportTeamAlias, duplicates_src_di_tals ) if is_ok    # Refers: team
+    is_ok = execute_delete_operation( GoggleCupStandard, duplicates_src_gcstds ) if is_ok       # Refers: goggle_cup, swimmer
+    is_ok = execute_delete_operation( GoggleCup, duplicates_src_gcups ) if is_ok                # Refers: team
+
+    is_ok = execute_delete_operation( Passage, duplicates_src_pass ) if is_ok                   # Refers: team, swimmer, indiv.result (no FK)
+    is_ok = execute_delete_operation( TeamAffiliation, duplicates_src_taffs ) if is_ok          # Refers: team
+
+    is_ok = execute_delete_operation( Team, [ slave_team ] ) if is_ok
 
     is_ok
   end
@@ -390,15 +533,23 @@ class TeamMerger
 
   # Logs what was found during the collection phase.
   #
-  def log_row_sizes( activerecord_class, display_sym, duplicate_rows, nonduplicate_rows )
+  def log_row_sizes( activerecord_class, display_sym, duplicate_rows, nonduplicate_rows,
+                     show_also_non_duplicates = false )
     process_text_log << (
-      "- " +
+      "\r\n- " +
       ("%25s" % "#{activerecord_class.name}:") +
       ("%20s" % "duplicate rows = #{duplicate_rows.size},") +
       ("%30s" % "non-duplicate rows = #{nonduplicate_rows.size}.\r\n")
     )
     if (duplicate_rows.size > 0)
+      process_text_log << "    Duplicates:\r\n"
       duplicate_rows.each do |row|
+        process_text_log << "    - id:#{row.id}) #{row.send( display_sym )}\r\n"
+      end
+    end
+    if show_also_non_duplicates && (nonduplicate_rows.size > 0)
+      process_text_log << "    Non-duplicates:\r\n"
+      nonduplicate_rows.each do |row|
         process_text_log << "    - id:#{row.id}) #{row.send( display_sym )}\r\n"
       end
     end
@@ -413,7 +564,9 @@ class TeamMerger
   #
   # The duplicate team affiliation & duplicate badge matrixes are actually Hash(es)
   # indexed respectively by the team_affiliation_id & badge_id values of the
-  # "non-duplicate" row that has to be updated.
+  # "non-duplicate" row that has to be updated. They serve the purpose of a
+  # translating table for source field values into correct destination values for
+  # the update operation.
   #
   # Beside updating the team_id link, the team_affiliation & badge ID links from
   # the specified "non duplicate" source rows are updated only if the currently
@@ -422,7 +575,8 @@ class TeamMerger
   # Traps and logs any exception raised. Returns false only in case of errors.
   #
   def execute_update_operation( activerecord_class, nonduplicates_src,
-                                dest_team_id, duplicate_taff_matrix_ids,
+                                dest_team_id,
+                                duplicate_taff_matrix_ids,
                                 duplicate_badge_matrix_ids )
     process_text_log << "Updating #{activerecord_class.name}...\r\n"
     sql_diff_text_log << "\r\n-- Updates for #{activerecord_class.name}:\r\n"
