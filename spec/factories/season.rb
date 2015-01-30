@@ -35,3 +35,24 @@ FactoryGirl.define do
   #-- -------------------------------------------------------------------------
   #++
 end
+
+
+# Quick NameSpace container for creation-tools regarding this factory.
+#
+module SeasonFactoryTools
+
+  # Chooses randomly among the already existing fixtures a Season that has at
+  # least a minimum number of category_types already defined.
+  #
+  def self.get_season_with_full_categories( min_category_types_count = 5 )
+    # 1) Extract pre-built fixtures that already have categories:
+    season_ids_with_categories = Season.joins(:category_types)
+      .select('seasons.id')
+      .group('seasons.id')
+      .having( ['count(category_types.season_id) > ?', min_category_types_count] )
+    # 2) Choose a random season among the above list of IDs:
+    Season.where( id: season_ids_with_categories ).sort{ rand() - 0.5 }[0]
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++

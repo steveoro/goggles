@@ -1,12 +1,15 @@
 # encoding: utf-8
-require 'sql_converter'
+
+# [Steve, 20140925] we must use a relative path for sake of CI server happyness:
+require_relative '../../../app/strategies/sql_converter'
+require_relative '../../../app/strategies/entity_row_dup_collector'
 
 
 =begin
 
 = TeamMerger
 
-  - Goggles framework vers.:  4.00.729
+  - Goggles framework vers.:  4.00.731
   - author: Steve A.
 
   Service class delegated to merge a source/slave Team into a destination/master one.
@@ -128,110 +131,73 @@ class TeamMerger
  TODO
  - Refactor the following shit this way:
 
-    - 1 method to get the duplicate rows && / || non-duplicate rows
-    - send to both the condition for selection as param or block
-    - FIXME BEWARE of cases in which the dest_rows are empty
-        => reject doesn't remove anything and you get both list equal (dups & non-dups)
+    - use member variables for each collector
+    - use member variables for each translation hash
+    - remove useless parameters from method calls
 
-    - factorize all 4 phases into methods:
-      1) collect shit
-      2) update stuff
+    - divide into 4 phases/methods
+      1) collect
+      2) update
       3) create alias
-      4) delete stuff
-
-  TODO create more poignant specs BEFORE refactoring, for the love of god!
+      4) delete
 =end
                                                     # ===  TeamAffiliation  ===
     dest_taffs = TeamAffiliation.where( team_id: master_team.id )
-    dest_season_ids = dest_taffs.collect{ |row| row.season_id }
+    src_taffs = TeamAffiliation.where( team_id: slave_team.id )
                                                     # Separate duplicates from new (updatable) rows:
+    dest_season_ids = dest_taffs.collect{ |row| row.season_id }
     duplicates_src_taffs = TeamAffiliation.where( team_id: slave_team.id, season_id: dest_season_ids )
     duplicates_src_taffs_ids = duplicates_src_taffs.collect{ |row| row.id }
 
-    src_taffs = TeamAffiliation.where( team_id: slave_team.id )
     src_taffs_ids = src_taffs.collect { |row| row.id }
-
     nonduplicates_src_taffs_ids = src_taffs_ids.reject { |id| duplicates_src_taffs_ids.member?(id) }
     nonduplicates_src_taffs = src_taffs.reject { |row| duplicates_src_taffs_ids.member?(row.id) }
     # Compose a duplicate-translation hash, with the src TeamAffiliation.id as key
     # and destination TeamAffiliation.id as value:
-    duplicate_taff_matrix_ids = {}                  # This will allow: src key id |=> dest value id
+    dup_taff_matrix_ids = {}                  # This will allow: src key id |=> dest value id
     duplicates_src_taffs.each do |src_taff_row|
       # ASSERT: there's only 1 TeamAffiliation for each (team_id, season_id) pair
       dest_taffs_candidate = dest_taffs.find{ |r| src_taff_row.season_id == r.season_id }
-      duplicate_taff_matrix_ids[ src_taff_row.id ] = dest_taffs_candidate.id
+      dup_taff_matrix_ids[ src_taff_row.id ] = dest_taffs_candidate.id
     end
     log_row_sizes( TeamAffiliation, :name, duplicates_src_taffs, nonduplicates_src_taffs )
 
                                                     # ===  Badge  ===
-    src_badges  = Badge.where( team_id: slave_team.id )
-    dest_badges = Badge.where( team_id: master_team.id )
-                                                    # Separate future non-duplicate, updatable rows from the duplicate ones:
-    nonduplicates_src_badges = src_badges.reject do |src_row|
-      # Reject all badges that have same swimmer and season from the source list
-      # to obtain non-duplicate badges:
-      dest_badges.any? do |dest_row|
-        (dest_row.swimmer_id == src_row.swimmer_id) &&
-        (dest_row.season_id == src_row.season_id)
-      end
-    end
-    duplicates_src_badges = src_badges.reject do |src_row|
-      # Obtain duplicate badges by removing the non-duplicates from the source list:
-      nonduplicates_src_badges.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    nonduplicates_src_badges_ids = nonduplicates_src_badges.collect{ |row| row.id }
-    duplicates_src_badges_ids    = duplicates_src_badges.collect{ |row| row.id }
+    badge_collector = EntityRowDupCollector.new( Badge )
+    team_filter = ->(id) { where( team_id: id ) }
 
-    src_badges_ids  = src_badges.collect{ |row| row.id }
-    dest_badges_ids = dest_badges.collect{ |row| row.id }
-
-    duplicate_badge_matrix_ids = {}                 # This will allow: src key id |=> dest value id
-    duplicates_src_badges.each do |src_badge_row|
-      dest_badge_candidate = dest_badges.find do |r|
-        (src_badge_row.swimmer_id == r.swimmer_id) &&
-        (src_badge_row.season_id == r.season_id)
-      end
-      duplicate_badge_matrix_ids[ src_badge_row.id ] = dest_badge_candidate.id
+    badge_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.swimmer_id == src_row.swimmer_id) &&
+      (dest_row.season_id == src_row.season_id)
     end
-    log_row_sizes( Badge, :get_full_name, duplicates_src_badges, nonduplicates_src_badges )
+
+    dup_badge_matrix_ids = {}                 # This will allow: src key id |=> dest value id
+    badge_collector.duplicate_rows.each do |src_badge_row|
+      dest_badge_candidate = badge_collector.dest_rows.find do |dest_row|
+        (src_badge_row.swimmer_id == dest_row.swimmer_id) &&
+        (src_badge_row.season_id == dest_row.season_id)
+      end
+      dup_badge_matrix_ids[ src_badge_row.id ] = dest_badge_candidate.id
+    end
+    log_row_sizes( Badge, :get_full_name, badge_collector.duplicate_rows, badge_collector.non_duplicates_rows )
 
                                                     # ===  Swimmers  ===
-    src_swimmers_ids  = src_badges.collect{ |row| row.swimmer_id }
-    dest_swimmers_ids = dest_badges.collect{ |row| row.swimmer_id }
+    src_swimmers_ids  = badge_collector.source_rows.collect{ |row| row.swimmer_id }
+    dest_swimmers_ids = badge_collector.dest_rows.collect{ |row| row.swimmer_id }
 
                                                     # ===  DataImportTeamAlias (:team_id)  ===
-    src_di_tals  = DataImportTeamAlias.where( team_id: slave_team.id )
-    dest_di_tals = DataImportTeamAlias.where( team_id: master_team.id )
-    nonduplicates_src_di_tals = src_di_tals.reject do |src_row|
-      # Reject all source aliases that have the same name as a destination alias
-      # (thus are duplicates because they would refer to the same IDs after the
-      #  update phase):
-      dest_di_tals.any?{ |dest_row| dest_row.name == src_row.name }
+    alias_collector = EntityRowDupCollector.new( DataImportTeamAlias )
+    alias_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.name == src_row.name)
     end
-    duplicates_src_di_tals = src_di_tals.reject do |src_row|
-      # Removing all non-duplicate aliases from the source list will yield the
-      # list of duplicate alieses to be deleted:
-      nonduplicates_src_di_tals.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( DataImportTeamAlias, :name, duplicates_src_di_tals, nonduplicates_src_di_tals )
+    log_row_sizes( DataImportTeamAlias, :name, alias_collector.duplicate_rows, alias_collector.non_duplicates_rows )
 
                                                     # ===  GoggleCup (:team_id)  ===
-    src_gcups  = GoggleCup.where( team_id: slave_team.id )
-    dest_gcups = GoggleCup.where( team_id: master_team.id )
-
-    nonduplicates_src_gcups = src_gcups.reject do |src_row|
-      dest_gcups.any?{ |dest_row| dest_row.year == src_row.year }
+    gcup_collector = EntityRowDupCollector.new( GoggleCup )
+    gcup_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.year == src_row.year)
     end
-    duplicates_src_gcups = src_gcups.reject do |src_row|
-      nonduplicates_src_gcups.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-
-    nonduplicates_src_gcup_ids = nonduplicates_src_gcups.collect{ |row| row.id }
-    duplicates_src_gcup_ids    = duplicates_src_gcups.collect{ |row| row.id }
-
-    src_gcups_ids  = src_gcups.collect{ |row| row.id }
-    dest_gcups_ids = dest_gcups.collect{ |row| row.id }
-    log_row_sizes( GoggleCup, :year, duplicates_src_gcups, nonduplicates_src_gcups )
+    log_row_sizes( GoggleCup, :year, gcup_collector.duplicate_rows, gcup_collector.non_duplicates_rows )
 
     # [Steve, 20131128] The remaining linked entites (MeetingRelaySwimmer, MeetingIndividualResult,
     # MeetingRelayResult, ...) may contain rows that have been added separately from the creation
@@ -241,249 +207,210 @@ class TeamMerger
     # them for possible duplicate after update; if the row will result in a duplicate, it must be
     # deleted.
                                                     # ===  MeetingIndividualResult (:badge_id, :team_id, :team_affiliation_id)  ===
-    src_mirs  = MeetingIndividualResult.where( team_id: slave_team.id )
-    dest_mirs = MeetingIndividualResult.where( team_id: master_team.id )
-
-    nonduplicates_src_mirs = src_mirs.reject do |src_row|
-      dest_mirs.any? do |dest_row|
-        (dest_row.meeting_program_id == src_row.meeting_program_id) &&
-        (dest_row.swimmer_id == src_row.swimmer_id)
-      end
+    mir_collector = EntityRowDupCollector.new( MeetingIndividualResult )
+    mir_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+      (dest_row.swimmer_id == src_row.swimmer_id)
     end
-    duplicates_src_mirs = src_mirs.reject do |src_row|
-      nonduplicates_src_mirs.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( MeetingIndividualResult, :get_full_name, duplicates_src_mirs, nonduplicates_src_mirs )
+    log_row_sizes( MeetingIndividualResult, :get_full_name, mir_collector.duplicate_rows, mir_collector.non_duplicates_rows )
 
                                                     # ===  MeetingRelayResult (:team_id, :team_affiliation_id)  ===
-    src_mrrs  = MeetingRelayResult.where( team_id: slave_team.id )
-    dest_mrrs = MeetingRelayResult.where( team_id: master_team.id )
-
-    nonduplicates_src_mrrs = src_mrrs.reject do |src_row|
-      dest_mrrs.any? do |dest_row|
-        (dest_row.meeting_program_id == src_row.meeting_program_id) &&
-        (dest_row.rank == src_row.rank)
-      end
+    mrr_collector = EntityRowDupCollector.new( MeetingRelayResult )
+    mrr_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+      (dest_row.swimmer_id == src_row.swimmer_id)
     end
-    duplicates_src_mrrs = src_mrrs.reject do |src_row|
-      nonduplicates_src_mirs.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( MeetingRelayResult, :get_full_name, duplicates_src_mrrs, nonduplicates_src_mrrs, true ) # log also non-duplicates (these should be few, usually)
+    log_row_sizes( MeetingRelayResult, :get_full_name, mrr_collector.duplicate_rows, mrr_collector.non_duplicates_rows, true ) # log also non-duplicates (these should be few, usually)
 
                                                     # ===  MeetingTeamScore (:team_id, :team_affiliation_id)  ===
-    src_mtss  = MeetingTeamScore.where( team_id: slave_team.id )
-    dest_mtss = MeetingTeamScore.where( team_id: master_team.id )
-    nonduplicates_src_mtss = src_mtss.reject do |src_row|
-      dest_mtss.any? do |dest_row|
-        (dest_row.meeting_id == src_row.meeting_id)
-      end
+    mts_collector = EntityRowDupCollector.new( MeetingRelayResult )
+    mts_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.meeting_id == src_row.meeting_id)
     end
-    duplicates_src_mtss = src_mtss.reject do |src_row|
-      nonduplicates_src_mtss.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( MeetingTeamScore, :get_full_name, duplicates_src_mtss, nonduplicates_src_mtss )
+    log_row_sizes( MeetingTeamScore, :get_full_name, mts_collector.duplicate_rows, mts_collector.non_duplicates_rows )
 
                                                     # ===  MeetingRelaySwimmer (:badge_id)  ===
-    src_mrss  = MeetingRelaySwimmer.includes(:badge).where( badge_id: src_badges_ids )
-    dest_mrss = MeetingRelaySwimmer.includes(:badge).where( badge_id: dest_badges_ids )
+    src_badges_ids  = badge_collector.source_rows.collect{ |row| row.id }
+    dest_badges_ids = badge_collector.dest_rows.collect{ |row| row.id }
+    mrs_collector = EntityRowDupCollector.new( MeetingRelaySwimmer )
+    badge_filter = ->(badges_ids) { includes(:badge).where( badge_id: badges_ids ) }
 
-    nonduplicates_src_mrss = src_mrss.reject do |src_row|
-      dest_mrss.any? do |dest_row|
-        (dest_row.meeting_relay_result_id == src_row.meeting_relay_result_id) &&
-        (dest_row.swimmer_id == src_row.swimmer_id)
-      end
+    mrs_collector.process( src_badges_ids, badge_filter, dest_badges_ids, badge_filter ) do |src_row, dest_row|
+      (dest_row.meeting_relay_result_id == src_row.meeting_relay_result_id) &&
+      (dest_row.swimmer_id == src_row.swimmer_id)
     end
-    duplicates_src_mrss = src_mrss.reject do |src_row|
-      nonduplicates_src_mrss.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( MeetingRelaySwimmer, :get_full_name, duplicates_src_mrss, nonduplicates_src_mrss )
+    log_row_sizes( MeetingRelaySwimmer, :get_full_name, mrs_collector.duplicate_rows, mrs_collector.non_duplicates_rows )
 
                                                     # ===  Passage (:swimmer_id, :team_id)  ===
-    src_pass  = Passage.where( team_id: slave_team.id, swimmer_id: src_swimmers_ids )
-    dest_pass = Passage.where( team_id: master_team.id, swimmer_id: dest_swimmers_ids )
-
-    nonduplicates_src_pass = src_pass.reject do |src_row|
-      dest_pass.any? do |dest_row|
-        (dest_row.meeting_program_id == src_row.meeting_program_id) &&
-        (dest_row.swimmer_id == src_row.swimmer_id)
-      end
+    pass_collector = EntityRowDupCollector.new( Passage )
+    pass_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+      (dest_row.swimmer_id == src_row.swimmer_id)
     end
-    duplicates_src_pass = src_pass.reject do |src_row|
-      nonduplicates_src_pass.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( Passage, :get_full_name, duplicates_src_pass, nonduplicates_src_pass )
+#################### TODO TEST the above (removed swimmer dependency, which shuold be useless) -- follows old version:
+    # src_pass  = Passage.where( team_id: slave_team.id, swimmer_id: src_swimmers_ids )
+    # dest_pass = Passage.where( team_id: master_team.id, swimmer_id: dest_swimmers_ids )
+    # nonduplicates_src_pass = src_pass.reject do |src_row|
+      # dest_pass.any? do |dest_row|
+        # (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+        # (dest_row.swimmer_id == src_row.swimmer_id)
+      # end
+    # end
+    # duplicates_src_pass = src_pass.reject do |src_row|
+      # nonduplicates_src_pass.any?{ |nondup_row| nondup_row.id == src_row.id }
+    # end
+#    log_row_sizes( Passage, :get_full_name, duplicates_src_pass, nonduplicates_src_pass )
+    log_row_sizes( Passage, :get_full_name, pass_collector.duplicate_rows, pass_collector.non_duplicates_rows )
 
                                                     # ===  GoggleCupStandard (:badge_id)  ===
-    src_gcstds  = GoggleCupStandard.includes(:goggle_cup).where( goggle_cup_id: src_gcups_ids )
-    dest_gcstds = GoggleCupStandard.includes(:goggle_cup).where( goggle_cup_id: dest_gcups_ids )
+    src_gcups_ids  = gcup_collector.source_rows.collect{ |row| row.id }
+    dest_gcups_ids = gcup_collector.dest_rows.collect{ |row| row.id }
+    gcstds_collector = EntityRowDupCollector.new( GoggleCupStandard )
+    gcup_filter = ->(gcup_ids) { includes(:goggle_cup).where( goggle_cup_id: gcup_ids ) }
 
-    nonduplicates_src_gcstds = src_gcstds.reject do |src_row|
-      dest_gcstds.any? do |dest_row|
-        (dest_row.goggle_cup.year == src_row.goggle_cup.year) &&
-        (dest_row.badge_id == src_row.badge_id)
-      end
+    gcstds_collector.process( src_gcups_ids, gcup_filter, dest_gcups_ids, gcup_filter ) do |src_row, dest_row|
+      (dest_row.goggle_cup.year == src_row.goggle_cup.year) &&
+      (dest_row.badge_id == src_row.badge_id)
     end
-    duplicates_src_gcstds = src_gcstds.reject do |src_row|
-      nonduplicates_src_gcstds.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( GoggleCupStandard, :get_full_name, duplicates_src_gcstds, nonduplicates_src_gcstds )
+    log_row_sizes( GoggleCupStandard, :get_full_name, gcstds_collector.duplicate_rows, gcstds_collector.non_duplicates_rows )
 
                                                     # ===  MeetingEntry (Ref.: affiliation, team. badge, swimmer - all W/O FK)  ===
-    src_mentries  = MeetingEntry.where( team_id: slave_team.id )
-    dest_mentries = MeetingEntry.where( team_id: master_team.id )
-
-    duplicates_src_mentries     = MeetingEntry.where( badge_id: duplicates_src_badges_ids )
-    nonduplicates_src_mentries  = MeetingEntry.where( badge_id: nonduplicates_src_badges_ids )
-    log_row_sizes( MeetingEntry, :get_verbose_name, duplicates_src_mentries, nonduplicates_src_mentries )
+    mentries_collector = EntityRowDupCollector.new( MeetingEntry )
+    mentries_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.meeting_program_id == src_row.meeting_program_id) &&
+      (dest_row.swimmer_id == src_row.swimmer_id)
+    end
+    log_row_sizes( MeetingEntry, :get_verbose_name, mentries_collector.duplicate_rows, mentries_collector.non_duplicates_rows )
 
                                                     # ===  TeamManager (Ref.: affiliation) ===
-    src_teaman  = TeamManager.includes(:team_affiliation).where( 'team_affiliations.team_id' => slave_team.id )
-    dest_teaman = TeamManager.includes(:team_affiliation).where( 'team_affiliations.team_id' => master_team.id )
+    teaman_collector = EntityRowDupCollector.new( TeamManager )
+    taff_filter = ->(team_id) { includes(:team_affiliation).where( 'team_affiliations.team_id' => team_id ) }
 
-    nonduplicates_src_teaman = src_teaman.reject do |src_row|
-      # To get the unique, non-duplicate src rows, reject all the rows from the source
-      # that are equal to any destination:
-      dest_teaman.any? do |dest_row|
-        (dest_row.team_affiliation_id == src_row.team_affiliation_id) &&
-        (dest_row.user_id == src_row.user_id)
-      end
+    teaman_collector.process( slave_team.id, taff_filter, master_team.id, taff_filter ) do |src_row, dest_row|
+      (dest_row.team_affiliation_id == src_row.team_affiliation_id) &&
+      (dest_row.user_id == src_row.user_id)
     end
-    duplicates_src_teaman = src_teaman.reject do |src_row|
-      nonduplicates_src_teaman.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( TeamManager, :inspect, duplicates_src_teaman, nonduplicates_src_teaman )
+    log_row_sizes( TeamManager, :inspect, teaman_collector.duplicate_rows, teaman_collector.non_duplicates_rows )
 
                                                     # ===  TeamPassageTemplate (Ref.: team) ===
-    src_teampass  = TeamPassageTemplate.where( team_id: slave_team.id )
-    dest_teampass = TeamPassageTemplate.where( team_id: master_team.id )
-
-    nonduplicates_src_teampass = src_teampass.reject do |src_row|
-      # To get the unique, non-duplicate src rows, reject all the rows from the source
-      # that are equal to any destination: (we don't check the individual bool flags just)
-      dest_teampass.any? do |dest_row|
-        (dest_row.team_id == src_row.team_id) &&
-        (dest_row.event_type_id == src_row.event_type_id) &&
-        (dest_row.pool_type_id == src_row.pool_type_id) &&
-        (dest_row.passage_type_id == src_row.passage_type_id) &&
-        (dest_row.part_order == src_row.part_order) &&
-        (dest_row.has_subtotal == src_row.has_subtotal) &&
-        (dest_row.has_cycle_count == src_row.has_cycle_count) &&
-        (dest_row.has_breath_count == src_row.has_breath_count) &&
-        (dest_row.has_non_swam_part == src_row.has_non_swam_part) &&
-        (dest_row.has_non_swam_kick_count == src_row.has_non_swam_kick_count) &&
-        (dest_row.has_passage_position == src_row.has_passage_position)
-      end
+    teampass_collector = EntityRowDupCollector.new( TeamPassageTemplate )
+    teampass_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.team_id == src_row.team_id) &&
+      (dest_row.event_type_id == src_row.event_type_id) &&
+      (dest_row.pool_type_id == src_row.pool_type_id) &&
+      (dest_row.passage_type_id == src_row.passage_type_id) &&
+      (dest_row.part_order == src_row.part_order) &&
+      (dest_row.has_subtotal == src_row.has_subtotal) &&
+      (dest_row.has_cycle_count == src_row.has_cycle_count) &&
+      (dest_row.has_breath_count == src_row.has_breath_count) &&
+      (dest_row.has_non_swam_part == src_row.has_non_swam_part) &&
+      (dest_row.has_non_swam_kick_count == src_row.has_non_swam_kick_count) &&
+      (dest_row.has_passage_position == src_row.has_passage_position)
     end
-    duplicates_src_teampass = src_teampass.reject do |src_row|
-      nonduplicates_src_teampass.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( TeamPassageTemplate, :inspect, duplicates_src_teampass, nonduplicates_src_teampass )
+    log_row_sizes( TeamPassageTemplate, :inspect, teampass_collector.duplicate_rows, teampass_collector.non_duplicates_rows )
 
                                                     # ===  ComputedSeasonRanking (Ref.: team) ===
-    src_comprank  = ComputedSeasonRanking.where( team_id: slave_team.id )
-    dest_comprank = ComputedSeasonRanking.where( team_id: master_team.id )
-
-    nonduplicates_src_comprank = src_comprank.reject do |src_row|
-      # To get the unique, non-duplicate src rows, reject all the rows from the source
-      # that are equal to any destination:
-      dest_comprank.any? do |dest_row|
-        (dest_row.team_id == src_row.team_id) &&
-        (dest_row.season_id == src_row.season_id) &&
-        (dest_row.rank == src_row.rank) &&
-        (dest_row.total_points == src_row.total_points)
-      end
+    comprank_collector = EntityRowDupCollector.new( ComputedSeasonRanking )
+    comprank_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.team_id == src_row.team_id) &&
+      (dest_row.season_id == src_row.season_id) &&
+      (dest_row.rank == src_row.rank) &&
+      (dest_row.total_points == src_row.total_points)
     end
-    duplicates_src_comprank = src_comprank.reject do |src_row|
-      nonduplicates_src_comprank.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( ComputedSeasonRanking, :get_verbose_name, duplicates_src_comprank, nonduplicates_src_comprank )
+    log_row_sizes( ComputedSeasonRanking, :get_verbose_name, comprank_collector.duplicate_rows, comprank_collector.non_duplicates_rows )
 
                                                     # ===  IndividualRecord (Ref.: team) ===
-    src_indivrec  = IndividualRecord.where( team_id: slave_team.id )
-    dest_indivrec = IndividualRecord.where( team_id: master_team.id )
-
-    nonduplicates_src_indivrec = src_indivrec.reject do |src_row|
-      # To get the unique, non-duplicate src rows, reject all the rows from the source
-      # that are equal to any destination:
-      dest_indivrec.any? do |dest_row|
-        (dest_row.team_id == src_row.team_id) &&
-        (dest_row.season_id == src_row.season_id) &&
-        (dest_row.federation_type_id == src_row.federation_type_id) &&
-        (dest_row.record_type_id == src_row.record_type_id) &&
-        (dest_row.pool_type_id == src_row.pool_type_id) &&
-        (dest_row.event_type_id == src_row.event_type_id) &&
-        (dest_row.category_type_id == src_row.category_type_id) &&
-        (dest_row.gender_type_id == src_row.gender_type_id)
-      end
+    indivrec_collector = EntityRowDupCollector.new( IndividualRecord )
+    indivrec_collector.process( slave_team.id, team_filter, master_team.id, team_filter ) do |src_row, dest_row|
+      (dest_row.team_id == src_row.team_id) &&
+      (dest_row.season_id == src_row.season_id) &&
+      (dest_row.federation_type_id == src_row.federation_type_id) &&
+      (dest_row.record_type_id == src_row.record_type_id) &&
+      (dest_row.pool_type_id == src_row.pool_type_id) &&
+      (dest_row.event_type_id == src_row.event_type_id) &&
+      (dest_row.category_type_id == src_row.category_type_id) &&
+      (dest_row.gender_type_id == src_row.gender_type_id)
     end
-    duplicates_src_indivrec = src_indivrec.reject do |src_row|
-      nonduplicates_src_indivrec.any?{ |nondup_row| nondup_row.id == src_row.id }
-    end
-    log_row_sizes( IndividualRecord, :inspect, duplicates_src_indivrec, nonduplicates_src_indivrec )
+    log_row_sizes( IndividualRecord, :inspect, indivrec_collector.duplicate_rows, indivrec_collector.non_duplicates_rows )
     process_text_log << "\r\n"
 
                                                     # *** UPDATE PHASE starts here ***
-    is_ok = execute_update_operation( MeetingIndividualResult, nonduplicates_src_mirs,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( MeetingIndividualResult, mir_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( MeetingRelaySwimmer, nonduplicates_src_mrss,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( MeetingRelaySwimmer, mrs_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( MeetingRelayResult, nonduplicates_src_mrrs,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( MeetingRelayResult, mrr_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( MeetingTeamScore, nonduplicates_src_mtss,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-
-    is_ok = execute_update_operation( MeetingEntry, nonduplicates_src_mentries,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( TeamManager, nonduplicates_src_teaman,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( TeamPassageTemplate, nonduplicates_src_teampass,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( ComputedSeasonRanking, nonduplicates_src_comprank,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
-    ) if is_ok
-    is_ok = execute_update_operation( IndividualRecord, nonduplicates_src_indivrec,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( MeetingTeamScore, mts_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
 
-    is_ok = execute_update_operation( Badge, nonduplicates_src_badges,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( MeetingEntry, mentries_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( DataImportTeamAlias, nonduplicates_src_di_tals,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( TeamManager, teaman_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( Passage, nonduplicates_src_pass,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( TeamPassageTemplate, teampass_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( GoggleCupStandard, nonduplicates_src_gcstds,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( ComputedSeasonRanking, comprank_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( GoggleCup, nonduplicates_src_gcups,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+    is_ok = execute_update( IndividualRecord, indivrec_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
-    is_ok = execute_update_operation( TeamAffiliation, nonduplicates_src_taffs,
-      master_team.id, duplicate_taff_matrix_ids,
-      duplicate_badge_matrix_ids
+
+    is_ok = execute_update( Badge, badge_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update( DataImportTeamAlias, alias_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update( Passage, pass_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update( GoggleCupStandard, gcstds_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update( GoggleCup, gcup_collector.non_duplicates_rows,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
+    ) if is_ok
+    is_ok = execute_update( TeamAffiliation, nonduplicates_src_taffs,
+      master_team.id,
+      dup_taff_matrix_ids,
+      dup_badge_matrix_ids
     ) if is_ok
                                                     # *** ALIAS CREATION PHASE starts here ***
     if is_ok
@@ -501,26 +428,26 @@ class TeamMerger
       end
     end
                                                     # *** DELETE PHASE starts here ***
-    is_ok = execute_delete_operation( MeetingIndividualResult, duplicates_src_mirs ) if is_ok   # Refers: affiliation, badge, team, swimmer
-    is_ok = execute_delete_operation( MeetingRelaySwimmer, duplicates_src_mrss ) if is_ok       # Refers: relay_result, badge, swimmer
-    is_ok = execute_delete_operation( MeetingRelayResult, duplicates_src_mrrs ) if is_ok        # Refers: affiliation, team
-    is_ok = execute_delete_operation( MeetingTeamScore, duplicates_src_mtss ) if is_ok          # Refers: affiliation, team
+    is_ok = execute_delete( MeetingIndividualResult,  mir_collector.duplicate_rows ) if is_ok   # Refers: affiliation, badge, team, swimmer
+    is_ok = execute_delete( MeetingRelaySwimmer,      mrs_collector.duplicate_rows ) if is_ok       # Refers: relay_result, badge, swimmer
+    is_ok = execute_delete( MeetingRelayResult,       mrr_collector.duplicate_rows ) if is_ok        # Refers: affiliation, team
+    is_ok = execute_delete( MeetingTeamScore,         mts_collector.duplicate_rows ) if is_ok          # Refers: affiliation, team
 
-    is_ok = execute_delete_operation( MeetingEntry, duplicates_src_mentries ) if is_ok          # Refers: affiliation, team. badge, swimmer (all W/O FK)
-    is_ok = execute_delete_operation( TeamManager, duplicates_src_teaman ) if is_ok             # Refers: affiliation
-    is_ok = execute_delete_operation( TeamPassageTemplate, duplicates_src_teampass ) if is_ok   # Refers: team
-    is_ok = execute_delete_operation( ComputedSeasonRanking, duplicates_src_comprank ) if is_ok # Refers: team
-    is_ok = execute_delete_operation( IndividualRecord, duplicates_src_indivrec ) if is_ok      # Refers: team
+    is_ok = execute_delete( MeetingEntry,             mentries_collector.duplicate_rows ) if is_ok          # Refers: affiliation, team. badge, swimmer (all W/O FK)
+    is_ok = execute_delete( TeamManager,              teaman_collector.duplicate_rows ) if is_ok             # Refers: affiliation
+    is_ok = execute_delete( TeamPassageTemplate,      teampass_collector.duplicate_rows ) if is_ok   # Refers: team
+    is_ok = execute_delete( ComputedSeasonRanking,    comprank_collector.duplicate_rows ) if is_ok # Refers: team
+    is_ok = execute_delete( IndividualRecord,         indivrec_collector.duplicate_rows ) if is_ok      # Refers: team
 
-    is_ok = execute_delete_operation( Badge, duplicates_src_badges ) if is_ok                   # Refers: affiliation, team, swimmer
-    is_ok = execute_delete_operation( DataImportTeamAlias, duplicates_src_di_tals ) if is_ok    # Refers: team
-    is_ok = execute_delete_operation( GoggleCupStandard, duplicates_src_gcstds ) if is_ok       # Refers: goggle_cup, swimmer
-    is_ok = execute_delete_operation( GoggleCup, duplicates_src_gcups ) if is_ok                # Refers: team
+    is_ok = execute_delete( Badge,                    badge_collector.duplicate_rows ) if is_ok                 # Refers: affiliation, team, swimmer
+    is_ok = execute_delete( DataImportTeamAlias,      alias_collector.duplicate_rows ) if is_ok  # Refers: team
+    is_ok = execute_delete( GoggleCupStandard,        gcstds_collector.duplicate_rows ) if is_ok       # Refers: goggle_cup, swimmer
+    is_ok = execute_delete( GoggleCup,                gcup_collector.duplicate_rows ) if is_ok                # Refers: team
 
-    is_ok = execute_delete_operation( Passage, duplicates_src_pass ) if is_ok                   # Refers: team, swimmer, indiv.result (no FK)
-    is_ok = execute_delete_operation( TeamAffiliation, duplicates_src_taffs ) if is_ok          # Refers: team
+    is_ok = execute_delete( Passage,                  pass_collector.duplicate_rows ) if is_ok                   # Refers: team, swimmer, indiv.result (no FK)
+    is_ok = execute_delete( TeamAffiliation,          duplicates_src_taffs ) if is_ok          # Refers: team
 
-    is_ok = execute_delete_operation( Team, [ slave_team ] ) if is_ok
+    is_ok = execute_delete( Team, [ slave_team ] ) if is_ok
 
     is_ok
   end
@@ -574,11 +501,9 @@ class TeamMerger
   #
   # Traps and logs any exception raised. Returns false only in case of errors.
   #
-  def execute_update_operation( activerecord_class, nonduplicates_src,
-                                dest_team_id,
-                                duplicate_taff_matrix_ids,
-                                duplicate_badge_matrix_ids )
-    process_text_log << "Updating #{activerecord_class.name}...\r\n"
+  def execute_update( activerecord_class, nonduplicates_src, dest_team_id,
+                      dup_taff_matrix_ids, dup_badge_matrix_ids )
+  process_text_log << "Updating #{activerecord_class.name}...\r\n"
     sql_diff_text_log << "\r\n-- Updates for #{activerecord_class.name}:\r\n"
     is_ok = true
     begin
@@ -589,13 +514,13 @@ class TeamMerger
           sql_attributes['team_id'] = dest_team_id
         end
                                                     # Correct the affiliation link, when included in the matrix:
-        if row.respond_to?(:team_affiliation_id) && duplicate_taff_matrix_ids.has_key?( row.team_affiliation_id )
-          row.team_affiliation_id = duplicate_taff_matrix_ids[ row.team_affiliation_id ]
+        if row.respond_to?(:team_affiliation_id) && dup_taff_matrix_ids.has_key?( row.team_affiliation_id )
+          row.team_affiliation_id = dup_taff_matrix_ids[ row.team_affiliation_id ]
           sql_attributes['team_affiliation_id'] = row.team_affiliation_id
         end
                                                     # Correct the badge link, when included in the matrix:
-        if row.respond_to?(:badge_id) && duplicate_badge_matrix_ids.has_key?( row.badge_id )
-          row.badge_id = duplicate_badge_matrix_ids[ row.badge_id ]
+        if row.respond_to?(:badge_id) && dup_badge_matrix_ids.has_key?( row.badge_id )
+          row.badge_id = dup_badge_matrix_ids[ row.badge_id ]
           sql_attributes['badge_id'] = row.badge_id
         end
         row.save!
@@ -625,7 +550,7 @@ class TeamMerger
   # Executes a single group of delete operations for the team-merge process
   # Traps and logs any exception raised. Returns false only in case of errors.
   #
-  def execute_delete_operation( activerecord_class, duplicates_src )
+  def execute_delete( activerecord_class, duplicates_src )
     process_text_log << "Deleting #{activerecord_class.name} #{duplicates_src.size} duplicates...\r\n"
     sql_diff_text_log << "\r\n-- Deletes for #{activerecord_class.name}:\r\n"
     is_ok = true

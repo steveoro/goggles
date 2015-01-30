@@ -21,15 +21,7 @@ FactoryGirl.define do
     end
 
     factory :team_affiliation_with_badges do
-      season do
-        # 1) Extract pre-built fixtures that already have categories:
-        season_ids_with_categories = Season.joins(:category_types)
-          .select('seasons.id')
-          .group('seasons.id')
-          .having( 'count(category_types.season_id) > 0' )
-        # 2) Choose a random season among the above list of IDs:
-        Season.where( id: season_ids_with_categories ).sort{ rand() - 0.5 }[0]
-      end
+      season { SeasonFactoryTools.get_season_with_full_categories() }
 
       after(:create) do |created_instance, evaluator|
         create_list(
@@ -61,14 +53,7 @@ module TeamAffiliationFactoryTools
   #  to specify both the Team instance and the number of Swimmer/Badges created.)
   #
   def self.create_affiliation_with_badge_list( team, swimmer_count = 5 )
-    # 1) Extract pre-built fixtures that already have categories:
-    season_ids_with_categories = Season.joins(:category_types)
-      .select('seasons.id')
-      .group('seasons.id')
-      .having( 'count(category_types.season_id) > 0' )
-    # 2) Choose a random season among the above list of IDs:
-    rand_season = Season.where( id: season_ids_with_categories ).sort{ rand() - 0.5 }[0]
-
+    rand_season = SeasonFactoryTools.get_season_with_full_categories()
     affiliation = FactoryGirl.create(
       :team_affiliation,
       team:   team,

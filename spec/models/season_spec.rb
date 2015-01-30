@@ -29,6 +29,23 @@ describe Season, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
+
+  describe "[SeasonFactoryTools.get_season_with_full_categories()]" do
+    subject do
+      SeasonFactoryTools.get_season_with_full_categories()
+    end
+
+    it "is a valid istance" do
+      expect( subject ).to be_valid
+    end
+    it "has several category_types" do
+      expect( subject.category_types.count ).to be > 0
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   describe "[a well formed instance]" do
     subject { create( :season ) }
 

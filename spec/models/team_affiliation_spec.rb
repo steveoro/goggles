@@ -46,6 +46,9 @@ describe TeamAffiliation, :type => :model do
     it "has a valid Season" do
       expect( subject.season ).to be_valid
     end
+    it "has a Season with several CategoryTypes" do
+      expect( subject.season.category_types.count ).to be > 1
+    end
 
     it "has more than 1 Badge" do
       expect( subject.team.badges.count ).to be > 1
@@ -75,6 +78,9 @@ describe TeamAffiliation, :type => :model do
     end
     it "has a valid Season" do
       expect( subject.season ).to be_valid
+    end
+    it "has a Season with several CategoryTypes" do
+      expect( subject.season.category_types.count ).to be > 1
     end
 
     it "has exactly 3 Badges" do
