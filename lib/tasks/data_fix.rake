@@ -81,8 +81,8 @@ This task creates an SQL diff file and a process log at the end.
     puts "\r\nThe process, once started cannot be stopped. Please verify the above info or press CTRL-C to abort.\r\n==> Press Enter to continue <=="
     dummy = STDIN.gets
 
-    merger = TeamMerger.new
-    merger.process( slave_team, master_team )
+    merger = TeamMerger.new( slave_team, master_team )
+    merger.process
     puts merger.process_text_log
 
     file_name = File.join(

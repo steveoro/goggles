@@ -16,8 +16,8 @@ describe TeamMerger, type: :integration do
       @slave_affiliation  = TeamAffiliationFactoryTools.create_affiliation_with_badge_list( @slave_team )
       @slave_affiliation_badges_count = @slave_team.badges.count
                                                     # Prepare the subject:
-      @subject = TeamMerger.new
-      @result = @subject.process( @slave_team, @master_team )
+      @subject = TeamMerger.new( @slave_team, @master_team )
+      @result = @subject.process
     end
 
     it "returns true" do
@@ -67,8 +67,8 @@ describe TeamMerger, type: :integration do
       )
       @slave_affiliation_badges_count = @slave_team.badges.count
                                                     # Prepare the subject:
-      @subject = TeamMerger.new
-      @result = @subject.process( @slave_team, @master_team )
+      @subject = TeamMerger.new( @slave_team, @master_team )
+      @result = @subject.process
     end
 
     it "returns true" do

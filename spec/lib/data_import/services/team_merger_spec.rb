@@ -10,7 +10,7 @@ describe TeamMerger, type: :service do
 
 
   context "for a valid instance," do
-    subject { TeamMerger.new }
+    subject { TeamMerger.new( team, team ) }
 
     it "responds to #process_text_log" do
       expect( subject ).to respond_to( :process_text_log )
@@ -27,22 +27,20 @@ describe TeamMerger, type: :service do
 
 
   describe "#process" do
-    subject { TeamMerger.new }
-
     it "raises an ArgumentError for an invalid source/slave Team parameter" do
-      expect{ subject.process(nil, team) }.to raise_error( ArgumentError )
+      expect{ TeamMerger.new(nil, team).process }.to raise_error( ArgumentError )
     end
     it "raises an ArgumentError for an invalid source/slave Team parameter" do
-      expect{ subject.process(team, nil) }.to raise_error( ArgumentError )
+      expect{ TeamMerger.new(team, nil).process }.to raise_error( ArgumentError )
     end
     #-- -----------------------------------------------------------------------
     #++
 
     it "returns true for a process that does not yield errors" do
-      expect( subject.process(team, create(:team)) ).to be true
+      expect( TeamMerger.new(team, create(:team)).process ).to be true
     end
     it "returns true for a process that does nothing (src==dest)" do
-      expect( subject.process(team, team) ).to be true
+      expect( TeamMerger.new(team, team).process ).to be true
     end
     #-- -----------------------------------------------------------------------
     #++
