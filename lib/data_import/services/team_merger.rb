@@ -9,7 +9,7 @@ require_relative '../../../app/strategies/entity_row_dup_collector'
 
 = TeamMerger
 
-  - Goggles framework vers.:  4.00.731
+  - Goggles framework vers.:  4.00.733
   - author: Steve A.
 
   Service class delegated to merge a source/slave Team into a destination/master one.
@@ -466,15 +466,8 @@ class TeamMerger
         end
         row.save!
                                                     # Build-up SQL-diff:
-        if sql_attributes.size > 0
-          con = row.connection
-          sets = []
-          sql_diff_text_log << "UPDATE #{ con.quote_column_name( row.class.table_name ) } "
-          sql_attributes.each do |key, value|
-            sets << "#{ con.quote_column_name(key) }=#{ con.quote(value) }"
-          end
-          sql_diff_text_log << "SET #{ sets.join(', ') } "
-          sql_diff_text_log << "WHERE (#{ con.quote_column_name('id') }=#{ row.id });\r\n"
+        if sql_attributes.size > 0                  # (false = no additional comment)
+          sql_diff_text_log << to_sql_update( row, false, sql_attributes, "\r\n" )
         end
       end
     rescue
@@ -502,11 +495,8 @@ class TeamMerger
     is_ok = true
     begin
       dup_rows.each do |row|
-        row.destroy
-                                                    # Build-up SQL-diff:
-        con = row.connection
-        sql_diff_text_log << "DELETE FROM #{ con.quote_column_name( row.class.table_name ) } "
-        sql_diff_text_log << "WHERE (#{ con.quote_column_name('id') }=#{ row.id });\r\n"
+        row.destroy                                 # Build-up SQL-diff:
+        sql_diff_text_log << to_sql_delete( row, false ) # no additional comment
       end
     rescue
       process_text_log << "\r\n*** Team Merge: exception caught!\r\n"

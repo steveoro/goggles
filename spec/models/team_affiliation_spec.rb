@@ -85,6 +85,7 @@ describe TeamAffiliation, :type => :model do
 
     it "has exactly 3 Badges" do
       expect( subject.team.badges.count ).to eq(3)
+      expect( subject.badges.count ).to eq(3)
     end
     it "has exactly 3 Swimmers" do
       expect( subject.team.swimmers.count ).to eq(3)

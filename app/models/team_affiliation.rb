@@ -24,6 +24,7 @@ class TeamAffiliation < ActiveRecord::Base
 
   has_one  :season_type, through: :season
 
+  has_many :badges
   has_many :meeting_individual_results
   has_many :team_managers
 

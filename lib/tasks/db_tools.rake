@@ -16,7 +16,7 @@ require 'data_import/services/badge_duplicate_checker'
 
 = DB-utility tasks
 
-  - Goggles framework vers.:  4.00.725
+  - Goggles framework vers.:  4.00.733
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -278,8 +278,10 @@ duplicate Badges/TeamAffiliations for the same season.
           puts dup_team_row.map{ |team| ("%8s" % "##{team.id}:") + ("%-40s" % " '#{team.name}'") }.inspect
         end
         puts "\r\nEither #{dup_teams.size} possible team-merge(s) to be done or issue(s) of same-named Swimmers!"
-        puts "Whenever the team affiliation IDs are equal in the above list for the same swimmer, it is a case of genuine Badge duplication."
-        puts "Check out the results and take action."
+        puts "\r\nKeep in mind:"
+        puts "Every Swimmer MUST HAVE A SINGLE AFFILIATION per Season (since Seasons are divided by type & Federation)."
+        puts "Whenever a reported badge duplication in the list above refers to a couple of teams that are actually the same but with a slightly different name, then it is a genuine case of Badge duplication."
+        puts "Check out the results and take action.\r\nDO NOT MERGE TEAMS if you are not sure they are actually the same!"
       end
       puts "---------------- 8< -------------------"
     end
