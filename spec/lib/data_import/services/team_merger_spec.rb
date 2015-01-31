@@ -27,20 +27,22 @@ describe TeamMerger, type: :service do
 
 
   describe "#process" do
-    it "raises an ArgumentError for an invalid source/slave Team parameter" do
-      expect{ TeamMerger.new(nil, team).process }.to raise_error( ArgumentError )
+    context "when given invalid parameters," do
+      it "raises an ArgumentError for a nil slave parameter" do
+        expect{ TeamMerger.new(nil, team).process }.to raise_error( ArgumentError )
+      end
+      it "raises an ArgumentError for a nil master parameter" do
+        expect{ TeamMerger.new(team, nil).process }.to raise_error( ArgumentError )
+      end
     end
-    it "raises an ArgumentError for an invalid source/slave Team parameter" do
-      expect{ TeamMerger.new(team, nil).process }.to raise_error( ArgumentError )
-    end
-    #-- -----------------------------------------------------------------------
-    #++
 
-    it "returns true for a process that does not yield errors" do
-      expect( TeamMerger.new(team, create(:team)).process ).to be true
-    end
-    it "returns true for a process that does nothing (src==dest)" do
-      expect( TeamMerger.new(team, team).process ).to be true
+    context "when given valid parameters," do
+      it "returns true for a process that does not yield errors" do
+        expect( TeamMerger.new(team, create(:team)).process ).to be true
+      end
+      it "returns true for a process that does nothing (src==dest)" do
+        expect( TeamMerger.new(team, team).process ).to be true
+      end
     end
     #-- -----------------------------------------------------------------------
     #++
