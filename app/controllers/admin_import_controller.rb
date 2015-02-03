@@ -389,7 +389,7 @@ class AdminImportController < ApplicationController
     if filename_to_be_parsed || ( @data_import_session && (@data_import_session.phase.to_i < 12) )
       force_missing_meeting_creation = (params[:force_meeting_creation] == 'true') ||
                                        (params[:force_meeting_creation].to_i > 0)
-      force_team_or_swimmer_creation    = (params[:force_team_or_swimmer_creation] == 'true')    ||
+      force_team_or_swimmer_creation = (params[:force_team_or_swimmer_creation] == 'true')    ||
                                        (params[:force_team_or_swimmer_creation].to_i > 0)
       filename_to_be_parsed          = @data_import_session.file_name if filename_to_be_parsed.nil? && @data_import_session
                                                     # Create a new data-import session to consume the datafile:
@@ -397,7 +397,7 @@ class AdminImportController < ApplicationController
       data_importer.set_up(
         full_pathname:                  filename_to_be_parsed,
         force_missing_meeting_creation: force_missing_meeting_creation,
-        force_team_or_swimmer_creation:    force_team_or_swimmer_creation,
+        force_team_or_swimmer_creation: force_team_or_swimmer_creation,
         # do_not_consume_file:           false, # (default)
         current_admin_id:               current_admin.id
       )
@@ -412,9 +412,9 @@ class AdminImportController < ApplicationController
         flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
         redirect_to(
             goggles_di_step1_1_team_analysis_path(
-                id:                     data_importer.data_import_session.id,
-                force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
-                force_team_or_swimmer_creation:    force_team_or_swimmer_creation    ? '1' : nil
+                id:                             data_importer.data_import_session.id,
+                force_meeting_creation:         force_missing_meeting_creation ? '1' : nil,
+                force_team_or_swimmer_creation: force_team_or_swimmer_creation ? '1' : nil
             )
         ) and return
       end

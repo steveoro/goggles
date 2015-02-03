@@ -5,7 +5,7 @@
 
 = HeaderFieldsDAO
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
  DAO class containing the required Meeting fields extracted from the filename
@@ -33,6 +33,15 @@ class HeaderFieldsDAO
     @edition         = 0
     @edition_type_id = nil
     @timing_type_id  = nil
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Displays the current instance as a String.
+  def to_s
+    "[HeaderFieldsDAO: '#{@full_pathname}' (prefix: #{@prefix}), header:#{@header_date}=>#{@header_year}, code:#{@code_name}]: " <<
+    "edition: #{@edition}, ed.type:#{@edition_type_id}, timing_type_id: #{@timing_type_id})"
   end
   #-- -------------------------------------------------------------------------
   #++

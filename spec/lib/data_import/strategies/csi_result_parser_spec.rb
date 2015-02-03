@@ -14,9 +14,10 @@ describe CsiResultParser, type: :strategy do
     subject { CsiResultParser.new( fixture_filename ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :full_pathname, :dao_list,
+      :full_pathname, :dao_list, :data_import_session,
       :process_text_log, :sql_diff_text_log,
-      :parse
+      :parse, :phase_1_2_serialize,
+      :logger, :do_not_consume_file
     ] )
 
 
@@ -44,17 +45,50 @@ describe CsiResultParser, type: :strategy do
         expect( subject.sql_diff_text_log ).to include(fixture_filename)
       end
     end
+
+    describe "#dao_list" do
+      it "is a valid instance of Array before any parsing" do
+        expect( subject.dao_list ).to be_an_instance_of( Array )
+      end
+    end
+    describe "#data_import_session" do
+      it "is nil before any parsing" do
+        expect( subject.data_import_session ).to be nil
+      end
+    end
+    describe "#logger" do
+      it "is nil before any parsing" do
+        expect( subject.logger ).to be nil
+      end
+    end
+    describe "#do_not_consume_file" do
+      it "is false before any parsing" do
+        expect( subject.do_not_consume_file ).to be false
+      end
+    end
     #-- -----------------------------------------------------------------------
     #++
 
     describe "#parse" do
       context "for a successful parsing," do
-# FIXME / WIP
-        xit "returns true" do
+        it "sets the associated data_import_session" do
+
+        end
+        it "returns false if any pre-analysis phase fails, true otherwise" do
+          analysis_result_count = DataImportTeamAnalysisResult.count + DataImportSwimmerAnalysisResult.count
+          result = subject.parse
 # DEBUG
           puts "\r\n" << subject.process_text_log
           puts "\r\n" << subject.sql_diff_text_log
-          expect( subject.parse ).to be true
+          if result == false
+            expect(
+              DataImportTeamAnalysisResult.count + DataImportSwimmerAnalysisResult.count
+            ).to be > analysis_result_count
+          else
+            expect(
+              DataImportTeamAnalysisResult.count + DataImportSwimmerAnalysisResult.count
+            ).to eq( analysis_result_count )
+          end
         end
       end
     end

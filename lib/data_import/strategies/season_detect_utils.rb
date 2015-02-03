@@ -5,7 +5,7 @@
 
 = SeasonDetectUtils
 
-  - Goggles framework vers.:  4.00.735
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all season detector utility methods,
@@ -13,9 +13,13 @@
 
   Extracted from the original DataImporter implementation.
 
-  == Defines:
-  @season: a valid instance of Season. Returned and defined after calling any of
-           the included methods.
+  == Defines / assumes the existance of:
+  - @full_pathname: the source datafile path name
+
+  - @season: a valid instance of Season. Returned and defined after calling any of
+             the included methods.
+
+  - @header_fields_dao: HeaderFieldsDAO instance obtained from parsing the @full_pathname
 
 =end
 module SeasonDetectUtils
@@ -42,7 +46,12 @@ module SeasonDetectUtils
     container_dir_parts = File.dirname( @full_pathname ).split(File::SEPARATOR).last.split('.')
     if ( container_dir_parts.size == 2 )
       @season = Season.find_by_id( (container_dir_parts[1]).to_i )
-#      update_logs( "Detected forced season ID=#{ @season.id } from container folder name. Parsing file..." ) if @season
+      update_logs( "Detected forced season ID=#{ @season.id } from container folder name. Parsing file..." ) if @season
+    end
+    if @season
+      update_logs( "Detected forced season ID=#{ @season.id } from container folder name. Parsing file..." )
+    else
+      update_logs( "Season non forced by data-file path ('#{ @full_pathname }')..." )
     end
     @season
   end
@@ -66,12 +75,16 @@ module SeasonDetectUtils
     return @season if @season.instance_of?( Season )
 
     header_year = @header_fields_dao.header_year
-    mas_fin_season_type = SeasonType.find_by_code( season_type_code )
+    mas_season_type = SeasonType.find_by_code( season_type_code )
     @season = Season.where([
       '(header_year = ?) AND (season_type_id = ?)',
-      header_year, mas_fin_season_type.id
+      header_year, mas_season_type.id
     ]).first
-#    update_logs( "Detected season ID=#{@season.id} from file header date. Parsing file..." ) if @season
+    if @season
+      update_logs( "Detected season ID=#{@season.id} from file header date. Parsing file..." )
+    else
+      update_logs( "Un-detected season for #{@header_fields_dao}." )
+    end
     @season
   end
   #-- -------------------------------------------------------------------------

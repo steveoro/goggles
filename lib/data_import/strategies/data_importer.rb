@@ -23,7 +23,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.735
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
   Data-Import strategy class.
@@ -70,7 +70,7 @@ class DataImporter
     header_fields_dao_init_from_filename if @full_pathname
     @current_admin_id       = @data_import_session.user_id
     @force_missing_meeting_creation = false
-    @force_team_or_swimmer_creation    = false
+    @force_team_or_swimmer_creation = false
     @do_not_consume_file            = false
     @log_dir = File.join( Rails.root, 'log' )
   end
@@ -325,7 +325,7 @@ class DataImporter
       try_detect_season_from_file_path
       try_detect_season_from_header_fields
                                                     # (@season must be defined after this point)
-      @flash[:error] = "#{I18n.t(:season_not_found, { scope: [:admin_import] })}\r\n#{ @header_fields_dao.inspect }" and return nil unless @season
+      @flash[:error] = "#{ I18n.t('admin_import.season_not_found') })}\r\n#{ @header_fields_dao }" and return nil unless @season
     else
       update_logs( "Specified season ID=#{@season.id}. Parsing file..." )
     end
@@ -334,7 +334,7 @@ class DataImporter
     @header_fields_dao.edition         = @season.edition
     @header_fields_dao.edition_type_id = @season.edition_type_id
     @header_fields_dao.timing_type_id  = @season.timing_type_id
-    update_logs( "\r\nParsed header_fields_dao: #{@header_fields_dao.inspect}", :debug )
+    update_logs( "\r\nParsed header fields: #{@header_fields_dao}", :debug )
 
     # Parse the file and store the results in memory, inside the @result_hash member.
     #

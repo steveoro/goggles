@@ -9,7 +9,7 @@ require 'data_import/services/data_import_meeting_builder'
 
 = DataImportMeetingSessionBuilder
 
-  - Goggles framework vers.:  4.00.583
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -43,7 +43,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
                                   scheduled_date,
                                   force_missing_meeting_creation = false )
 # DEBUG
-#    puts "\r\nMeetingSession -- build_from_parameters: meeting=#{meeting.inspect}, scheduled_date=#{scheduled_date}, header_fields_dao=#{header_fields_dao.inspect}"
+#    puts "\r\nMeetingSession -- build_from_parameters: meeting=#{meeting.inspect}, scheduled_date=#{scheduled_date}, #{header_fields_dao}"
     self.build( data_import_session ) do
       entity  MeetingSession
 
