@@ -2,13 +2,14 @@
 
 require 'fileutils'
 require 'common/format'
+require 'data_import/csi_result_dao'
 
 
 =begin
 
 = ResultTimeParser
 
-  - Goggles framework vers.:  4.00.567
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
  Strategy class dedicated to extracting required Meeting result fields
@@ -26,10 +27,22 @@ class ResultTimeParser
   # === Params:
   # - rank_token: the text token referring to the ranking position of the result
   # - result_time_token: the text token referring to the actual result timing
+  # - result_dao: (default +nil+), a full DAO object storing the whole result row;
+  #               when present, it may override the other two parameters with its values.
   #
-  def initialize( rank_token, result_time_token )
-    @rank_token   = rank_token
-    @result_token = result_time_token
+  def initialize( rank_token, result_time_token, result_dao = nil )
+    if result_dao
+      raise ArgumentError.new(
+        "Unrecognized type for result_dao parameter"
+      ) unless result_dao.instance_of?( CsiResultDao )
+      @result_dao   = result_dao
+      @rank_token   = result_dao.rank
+      @result_token = result_dao.decorated_result_time
+    else
+      @result_dao   = nil
+      @rank_token   = rank_token
+      @result_token = result_time_token
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -38,7 +51,11 @@ class ResultTimeParser
   # "out of race" code. +false+ otherwise.
   #
   def is_out_of_race?
-    ! ( @rank_token =~ /Fuori gara|F\.G\./i ).nil?
+    if @result_dao
+      false # no out-of-race information inside CSI result DAO!
+    else
+      ! ( @rank_token =~ /Fuori gara|F\.G\./i ).nil?
+    end
   end
 
   # Returns +true+ if the text token specified in the constructor contains the
@@ -46,7 +63,11 @@ class ResultTimeParser
   # This will return +true+ also for a "withdrawal" result code.
   #
   def is_disqualified?
-    ! ( @result_token =~ /Ritir|Squal/i ).nil?
+    if @result_dao
+      @result_dao.is_disqualified
+    else
+      ! ( @result_token =~ /Ritir|Squal/i ).nil?
+    end
   end
 
   # Given the text token specified in the constructor, it parses:
@@ -62,14 +83,26 @@ class ResultTimeParser
   def parse()
 # DEBUG
 #    puts("ResultTimeParser.parse(), rank: #{@rank_token}, result: '#{@result_token}' ) called.")
+
     # Get the disqualification code ID:
-    if @result_token =~ /Ritir/i
-      @disqualification_code_type_id = DisqualificationCodeType::DSQ_RETIRED_ID
-    elsif @result_token =~ /Squal/i
-      @disqualification_code_type_id = DisqualificationCodeType::DSQ_FALSE_START_ID
+    if @result_dao
+      if @result_dao.is_retired
+        @disqualification_code_type_id = DisqualificationCodeType::DSQ_RETIRED_ID
+      elsif @result_dao.is_disqualified
+        @disqualification_code_type_id = DisqualificationCodeType::DSQ_FALSE_START_ID
+      else
+        @disqualification_code_type_id = nil
+      end
     else
-      @disqualification_code_type_id = nil
+      if @result_token =~ /Ritir/i
+        @disqualification_code_type_id = DisqualificationCodeType::DSQ_RETIRED_ID
+      elsif @result_token =~ /Squal/i
+        @disqualification_code_type_id = DisqualificationCodeType::DSQ_FALSE_START_ID
+      else
+        @disqualification_code_type_id = nil
+      end
     end
+
     # Get the actual result time:
     if ( @result_token =~ /(?<mins>\d{1,2})(\'|\s)(?<secs>\d{1,2})(\"|\s)(?<hds>\d{1,2})/ui ).nil?
       @mins_secs_hds_array = [0, 0, 0]

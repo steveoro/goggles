@@ -78,9 +78,9 @@ describe CsiResultDAO, type: :model do
       end
       it "contains a single quote when condensed size > 4 (else: no)" do
         if subject.result_timing.size > 4
-          expect( subject.decorated_result_time ).to include('"')
+          expect( subject.decorated_result_time ).to include("'")
         else
-          expect( subject.decorated_result_time ).not_to include('"')
+          expect( subject.decorated_result_time ).not_to include("'")
         end
       end
     end
@@ -94,9 +94,9 @@ describe CsiResultDAO, type: :model do
       end
       it "contains a single quote when condensed size > 4 (else: no)" do
         if subject.entry_timing.size > 4
-          expect( subject.decorated_entry_time ).to include('"')
+          expect( subject.decorated_entry_time ).to include("'")
         else
-          expect( subject.decorated_entry_time ).not_to include('"')
+          expect( subject.decorated_entry_time ).not_to include("'")
         end
       end
     end

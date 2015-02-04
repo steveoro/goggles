@@ -6,13 +6,14 @@ require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_team_builder'
 require 'data_import/services/data_import_swimmer_builder'
 require 'data_import/services/data_import_badge_builder'
+require 'data_import/csi_result_dao'
 
 
 =begin
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.715
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -53,11 +54,35 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
       entity  MeetingIndividualResult
 
       set_up do
-        @import_text  = detail_row[:import_text]
-        swimmer_name  = detail_row[:fields][:swimmer_name]
-        swimmer_year  = detail_row[:fields][:swimmer_year]
-        team_name     = detail_row[:fields][:team_name]
-        athlete_badge = detail_row[:fields][:team_code] || '?' # (Make sure the badge is never nil)
+        @import_text  = nil
+        swimmer_name  = nil
+        swimmer_year  = nil
+        team_name     = nil
+        athlete_badge = nil
+        result_score  = nil
+        result_time   = nil
+
+        if detail_row.instance_of?( Hash )
+          @import_text  = detail_row[:import_text]
+          swimmer_name  = detail_row[:fields][:swimmer_name]
+          swimmer_year  = detail_row[:fields][:swimmer_year]
+          team_name     = detail_row[:fields][:team_name]
+          athlete_badge = detail_row[:fields][:team_code] || '?' # (Make sure the badge is never nil)
+          @rank         = detail_row[:fields][:result_position]
+          result_time   = detail_row[:fields][:result_time]
+          result_score  = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
+        elsif detail_row.instance_of?( CsiResultDao )
+          @import_text  = detail_row.to_s
+          swimmer_name  = detail_row.complete_name
+          swimmer_year  = detail_row.year_of_birth
+          team_name     = detail_row.team_name
+          athlete_badge = detail_row.badge_code || '?' # (Make sure the badge is never nil)
+          @rank         = detail_row.rank
+          result_time   = detail_row.decorated_result_time
+          result_score  = 100 - ( @rank.to_i - 1 ) * 5
+          result_score  = 0 if result_score < 0
+        end
+
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            team_name,
@@ -103,11 +128,14 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         @team_affiliation   = ta_builder.result_row
 
         @team_badge_number  = @team_affiliation ? @team_affiliation.number : nil
-        @rank               = detail_row[:fields][:result_position]
-        @result_time        = detail_row[:fields][:result_time]
-        result_score        = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
         @is_play_off        = true
-        result_parser       = ResultTimeParser.new( @rank, @result_time ).parse
+        result_parser       = nil
+
+        if detail_row.instance_of?( Hash )
+          result_parser = ResultTimeParser.new( @rank, result_time ).parse
+        elsif detail_row.instance_of?( CsiResultDao )
+          result_parser = ResultTimeParser.new( @rank, result_time, detail_row ).parse
+        end
         @is_out_of_race     = result_parser.is_out_of_race?
         @is_disqualified    = result_parser.is_disqualified?
         @dsq_code_type_id   = result_parser.disqualification_code_type_id

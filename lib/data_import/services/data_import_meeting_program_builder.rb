@@ -4,13 +4,14 @@ require 'common/format'
 require 'data_import/strategies/result_time_parser'
 require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_time_standard_builder'
+require 'data_import/csi_result_dao'
 
 
 =begin
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.671
+  - Goggles framework vers.:  4.00.737
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -70,14 +71,25 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
       entity  MeetingProgram
 
       set_up do
-        # NOTE:
-        # header_row[:fields] => [ :type, :distance, :style, :gender, :category_group, :base_time ]
+        @import_text     = nil
+        base_time        = nil
+        relay_type_token = nil
+
+        if header_row.instance_of?( Hash )
+          # NOTE:
+          # header_row[:fields] => [ :type, :distance, :style, :gender, :category_group, :base_time ]
 # DEBUG
-#        puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
-        @import_text = header_row[:import_text]
+#          puts( "\r\n- header_row[:fields] => #{header_row[:fields].inspect}" )
+          @import_text     = header_row[:import_text]
+          base_time        = header_row[:fields][:base_time]
+          relay_type_token = header_row[:fields][:type]
+        elsif header_row.instance_of?( CsiResultDao )
+          @import_text = header_row.to_s
+          # No base time in CSI result data
+          # FIXME Missing relay info for CSI result data
+        end
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
-        base_time    = header_row[:fields][:base_time]
 
         @begin_time, @mins, @secs, @hds = DataImportMeetingProgramBuilder.get_begin_time_and_base_time_members(
           scheduled_date,
@@ -92,7 +104,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           category_type,
           length_in_meters,
           stroke_type.id,
-          header_row[:fields][:type]
+          relay_type_token
         )
         raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
 
@@ -217,11 +229,11 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 
   # Returns the correct EventType, or +nil+ when none is found.
   #
-  def self.get_event_type( category_type, length_in_meters, stroke_type_id, type_text_token )
+  def self.get_event_type( category_type, length_in_meters, stroke_type_id, relay_type_text_token )
 # DEBUG
-#    puts( "\r\nSearching EventType where type='#{type_text_token}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type_id}, is_a_relay: #{category_type.is_a_relay}..." )
+#    puts( "\r\nSearching EventType where type='#{relay_type_text_token}', length_in_meters=#{length_in_meters}, stroke_type_id=#{stroke_type_id}, is_a_relay: #{category_type.is_a_relay}..." )
     event_type = category_type.is_a_relay ?
-      EventType.parse_relay_event_type_from_import_text( stroke_type_id, type_text_token ) :
+      EventType.parse_relay_event_type_from_import_text( stroke_type_id, relay_type_text_token ) :
       EventType.where(
         length_in_meters: length_in_meters,
         stroke_type_id:   stroke_type_id,

@@ -108,6 +108,15 @@ class CsiResultParser
       @data_import_session.phase = 10
       @data_import_session.save!
     end
+
+    # If everything is ok, no team or swimmer analysis phase will be required.
+    # If the result is false but @data_import_session && @season are defined,
+    # then the analysis phase must be resolved first.
+    # (E.g. check: data_import_session.data_import_team_analysis_results.any?)
+    #
+    # Keep in mind that this implementation generates both results for team & swimmer
+    # analysis at the same time: there's no need to re-launch the #parse method
+    # a second time (DataImporter works differently).
     is_ok
   end
   #-- -------------------------------------------------------------------------
@@ -119,6 +128,11 @@ class CsiResultParser
   # This should be called only after a successful Phase 1.0.
   # (It checks for the last completed phase indicator in session and it returns +nil+
   # unless everything is ok.)
+  #
+  # The method at least requires (to return a non-nil result):
+  # - @season to be set (to a valid instance of Season)
+  # - @data_import_session to be set
+  # - @data_import_session.phase between 10..12
   #
   # The current implementation is able to rebuild/import the results of only *one*
   # MeetingSession at a time.
@@ -139,8 +153,12 @@ class CsiResultParser
   def phase_1_2_serialize( force_team_or_swimmer_creation = true )
     return nil unless @data_import_session.instance_of?( DataImportSession ) &&
                       @dao_list.instance_of?(Array) &&
+                      @season.instance_of?(Season) &&
                       @data_import_session.phase >= 10 && @data_import_session.phase < 12
     is_ok = false
+    season_starting_year = 0                        # This is needed by the individual results
+    update_logs( "\r\n\r\n--------------------[Phase #1.2 - DIGEST/SERIALIZE]--------------------" )
+    update_logs( "Parsing of '#{full_pathname}' done.\r\nDigesting data...", :debug )
 
     @meeting = nil
     # [Steve, 20150203] We assume Meeting & MeetingSession will ALWAYS be ALREADY EXISTING.
@@ -159,6 +177,9 @@ class CsiResultParser
     scheduled_date  = scheduled_dates.first if scheduled_dates.instance_of?( Array )
 
     if is_ok && @season                             # -- MEETING (digest/serialization) --
+      season_starting_year = @season.begin_date.year
+      update_logs( "Found season '#{@season.inspect}'; #{@season.season_type.inspect}, season_starting_year=#{season_starting_year}", :debug )
+
       meeting_builder = DataImportMeetingBuilder.build_from_parameters(
         @data_import_session,
         @season,
@@ -201,7 +222,7 @@ class CsiResultParser
         force_team_or_swimmer_creation
       )
     end
-# TODO MISSING INFO!
+# TODO MISSING RELAY INFO!
                                                     # --- RELAY (digest/serialization) --
     # if is_ok && meeting_session
       # update_logs( "PHASE #1.2: processing RELAY headers..." )
@@ -408,9 +429,6 @@ class CsiResultParser
   #-- -------------------------------------------------------------------------
   #++
 
-# FIXME ********************************************************
-# FIXME ********************************************************
-# FIXME ********************************************************
 
   # "Digest" process for the :category_headers array extracted by the Parser
   #
@@ -419,8 +437,13 @@ class CsiResultParser
   def process_category_headers( season_starting_year, meeting_session, scheduled_date,
                                 force_team_or_swimmer_creation = false )
     is_ok = true
-# TODO REWRITE using dao_list & existing member variables
-    @dao_list.each do |dao|
+    previous_begin_time = nil
+    previous_duration_in_secs = 120
+                                                    # Collect an header event list from the DAO list:
+    header_event_list = @dao_list.map{ |dao| "#{dao.event_types_code}-#{dao.category_type_code}" }.uniq
+    update_logs( "Process category headers, header event list: #{header_event_list.join(', ')}\r\nTot.: #{header_event_list.size}" )
+
+    @dao_list.each_with_index do |dao, dao_index|
       gender_type   = gender_type.find_by_id( dao.gender_type_id )
       raise "Unrecognized GenderType in result dao! (id=#{ dao.gender_type_id }, #{dao})" unless gender_type
       category_type = CategoryType.where( season_id: @season.id, code: dao.category_type_code ).first
@@ -428,23 +451,22 @@ class CsiResultParser
       stroke_type   = StrokeType.find_by_code( dao.stroke_type_code, is_eventable: true )
       raise "Unrecognized StrokeType in result dao! (code='#{ dao.stroke_type_code }', #{dao})" unless stroke_type
       length_in_meters = dao.length_in_metres.to_i
-
-# FIXME ********************************************************
-# FIXME ********************************************************
-# FIXME ********************************************************
+                                                    # Get the header event index (used for event order)
+      header_index = header_event_list.index( "#{dao.event_types_code}-#{dao.category_type_code}" )
 # DEBUG
-#      data_import_session.phase_1_log << "CATEGORY HEADER: Current header_row: #{ header_row.inspect }\r\nResulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }, data_import_session ID=#{ data_import_session.id }"
+#      @data_import_session.phase_1_log << "CATEGORY HEADER: Current DAO: #{ dao }\r\n" <<
+#                                          "Resulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }, data_import_session ID=#{ @data_import_session.id }"
 
       meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
         @data_import_session,
         @season,
         meeting_session,
-        header_row,
+        dao,
         header_index,
         gender_type, category_type, stroke_type,
         length_in_meters,
         scheduled_date,
-        detail_rows.size,
+        @dao_list.size,
         previous_begin_time,
         previous_duration_in_secs
       )
@@ -463,21 +485,20 @@ class CsiResultParser
 #             "=> resulting duration_in_secs: #{ previous_duration_in_secs }"
         previous_begin_time = begin_time
       end
-      return unless is_ok                           # **** DETAIL LOOP **** For each result row:...
-                                                    # Store each detail into the dedicated temp DB table:
-      detail_rows.each_with_index do |detail_row, detail_row_idx|
+      return unless is_ok
                                                     # -- MEETING INDIVIDUAL RESULT (digest part) --
-        mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
-          data_import_session,
-          season,
-          meeting_program,
-          detail_row, detail_row_idx, detail_rows.size,
-          gender_type, category_type,
-          force_team_or_swimmer_creation
-        )
-        is_ok = ! mir_builder.result_row.nil?
-        return unless is_ok
-      end                                           # **** (END of DETAIL) ****
+      mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
+        @data_import_session,
+        @season,
+        meeting_program,
+        dao,
+        dao_index,
+        @dao_list.size,
+        gender_type, category_type,
+        force_team_or_swimmer_creation
+      )
+      is_ok = ! mir_builder.result_row.nil?
+      return unless is_ok
                                                     # Update current header count into "progress counter column"
       DataImportSession.where( id: data_import_session.id ).update_all(
         phase_3_log: "1.2-CAT:#{header_index+1}/#{category_headers_ids.size}"
