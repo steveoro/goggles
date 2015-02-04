@@ -5,6 +5,12 @@
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 
+-- Sistemazione ordine eventi
+update meeting_events set event_order = 1 where id = 1575;
+update meeting_events set event_order = 2 where id = 1572;
+update meeting_events set event_order = 3 where id = 1573;
+update meeting_events set event_order = 4 where id = 1574;
+
 --
 -- Prova 2. Aggiunta dei dati per la tabella teams
 -- 
