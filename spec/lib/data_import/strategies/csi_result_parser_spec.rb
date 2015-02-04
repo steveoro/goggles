@@ -16,8 +16,9 @@ describe CsiResultParser, type: :strategy do
     it_behaves_like( "(the existance of a method)", [
       :full_pathname, :dao_list, :data_import_session,
       :process_text_log, :sql_diff_text_log,
-      :parse, :phase_1_2_serialize,
-      :logger, :do_not_consume_file
+      :phase_1_parse, :phase_1_2_serialize,
+      :logger, :flash, :do_not_consume_file,
+      :force_team_or_swimmer_creation
     ] )
 
 
@@ -61,25 +62,39 @@ describe CsiResultParser, type: :strategy do
         expect( subject.logger ).to be nil
       end
     end
+    describe "#flash" do
+      it "is an empty Hash before any parsing" do
+        expect( subject.flash ).to eq( {} )
+      end
+    end
     describe "#do_not_consume_file" do
       it "is false before any parsing" do
         expect( subject.do_not_consume_file ).to be false
       end
     end
+    describe "#force_team_or_swimmer_creation" do
+      it "is false before any parsing" do
+        expect( subject.force_team_or_swimmer_creation ).to be false
+      end
+    end
     #-- -----------------------------------------------------------------------
     #++
 
-    describe "#parse" do
+
+    describe "#phase_1_parse" do
       context "for a successful parsing," do
         it "sets the associated data_import_session" do
-
+          subject.do_not_consume_file = true
+          subject.phase_1_parse
+          expect( subject.data_import_session ).to be_an_instance_of( DataImportSession )
         end
         it "returns false if any pre-analysis phase fails, true otherwise" do
           analysis_result_count = DataImportTeamAnalysisResult.count + DataImportSwimmerAnalysisResult.count
-          result = subject.parse
+          subject.do_not_consume_file = true
+          result = subject.phase_1_parse
 # DEBUG
-          puts "\r\n" << subject.process_text_log
-          puts "\r\n" << subject.sql_diff_text_log
+#          puts "\r\n" << subject.process_text_log
+#          puts "\r\n" << subject.sql_diff_text_log
           if result == false
             expect(
               DataImportTeamAnalysisResult.count + DataImportSwimmerAnalysisResult.count
@@ -90,6 +105,21 @@ describe CsiResultParser, type: :strategy do
             ).to eq( analysis_result_count )
           end
         end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    describe "#phase_1_2_serialize, when 'forced'," do
+      it "adds new temp swimmer entities" do
+        expect{
+          subject.force_team_or_swimmer_creation = true
+          subject.do_not_consume_file = true
+          subject.phase_1_parse
+          subject.phase_1_2_serialize
+          subject.force_team_or_swimmer_creation = false
+        }.to change{ DataImportSwimmer.count }
       end
     end
     #-- -----------------------------------------------------------------------

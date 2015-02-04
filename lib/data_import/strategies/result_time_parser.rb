@@ -34,7 +34,7 @@ class ResultTimeParser
     if result_dao
       raise ArgumentError.new(
         "Unrecognized type for result_dao parameter"
-      ) unless result_dao.instance_of?( CsiResultDao )
+      ) unless result_dao.instance_of?( CsiResultDAO )
       @result_dao   = result_dao
       @rank_token   = result_dao.rank
       @result_token = result_dao.decorated_result_time

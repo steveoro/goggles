@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.737
+  - Goggles framework vers.:  4.00.741
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -71,7 +71,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           @rank         = detail_row[:fields][:result_position]
           result_time   = detail_row[:fields][:result_time]
           result_score  = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
-        elsif detail_row.instance_of?( CsiResultDao )
+        elsif detail_row.instance_of?( CsiResultDAO )
           @import_text  = detail_row.to_s
           swimmer_name  = detail_row.complete_name
           swimmer_year  = detail_row.year_of_birth
@@ -82,6 +82,9 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           result_score  = 100 - ( @rank.to_i - 1 ) * 5
           result_score  = 0 if result_score < 0
         end
+# DEBUG
+#        puts "\r\n-detail_row: #{detail_row}"
+#        puts "\r\n-team_name:  '#{team_name}'"
 
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
@@ -94,7 +97,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 #          @phase_1_log << "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
 #          logger.error( "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)" )
 #          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
-          set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
+          set_result( nil ) and raise ArgumentError.new("Team '#{team_name}' not found or unable to create it!\r\ndetail_row: #{detail_row.inspect}")
         end
 
         swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
@@ -133,7 +136,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 
         if detail_row.instance_of?( Hash )
           result_parser = ResultTimeParser.new( @rank, result_time ).parse
-        elsif detail_row.instance_of?( CsiResultDao )
+        elsif detail_row.instance_of?( CsiResultDAO )
           result_parser = ResultTimeParser.new( @rank, result_time, detail_row ).parse
         end
         @is_out_of_race     = result_parser.is_out_of_race?

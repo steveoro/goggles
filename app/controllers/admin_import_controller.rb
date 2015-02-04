@@ -2,6 +2,7 @@
 require 'fileutils'                                 # Used to process filenames
 require 'common/format'
 require 'data_import/strategies/data_importer'
+require 'data_import/strategies/csi_result_parser'
 require 'data_import/strategies/team_analysis_result_processor'
 require 'data_import/strategies/swimmer_analysis_result_processor'
 
@@ -10,7 +11,7 @@ require 'data_import/strategies/swimmer_analysis_result_processor'
 
 = AdminImportController
 
-  - version:  4.00.709
+  - version:  4.00.741
   - author:   Steve A.
 
 =end
@@ -111,7 +112,7 @@ class AdminImportController < ApplicationController
 #    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
 #    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
     data_import_session = DataImportSession.find( data_import_session_id )
-    data_importer       = DataImporter.new( logger, flash, data_import_session )
+    importer            = DataImporter.new( logger, flash, data_import_session )
     result_processor    = TeamAnalysisResultProcessor.new( logger, flash )
                                                     # retrieve results from dedicated table:
     all_results = DataImportTeamAnalysisResult.where( data_import_session_id: data_import_session_id )
@@ -131,20 +132,20 @@ class AdminImportController < ApplicationController
       )
     end
 
-    data_importer.set_analysis_logs(
+    importer.set_analysis_logs(
       result_processor.process_log,
       result_processor.sql_executable_log
     )
                                                     # Write the log files anyway:
-    data_importer.write_analysis_logfile( is_ok )
-    data_importer.write_sql_diff_logfile
+    importer.write_analysis_logfile( is_ok )
+    importer.write_sql_diff_logfile
 # DEBUG
 #    logger.debug("\r\n- is_ok: #{is_ok}, data_import_session_id: #{data_import_session_id}")
                                                     # Redirect to next action accordingly:
     if is_ok
       flash[:info] = I18n.t('admin_import.team_analysis_completed')
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
-        data_importer.destroy_data_import_session
+        importer.destroy_data_import_session
       else                                          # Clear just the results from the session if everything is ok:
         # The Log has become too long & complex to be saved into the table!
 
@@ -170,7 +171,7 @@ class AdminImportController < ApplicationController
           flash[:info] = I18n.t( 'admin_import.swimmer_analysis_needed' )
           redirect_to(
               goggles_di_step1_1_swimmer_analysis_path(
-                  id: data_importer.data_import_session.id,
+                  id: importer.data_import_session.id,
                   force_meeting_creation: force_missing_meeting_creation ? '1' : nil
               )
           ) and return
@@ -253,7 +254,7 @@ class AdminImportController < ApplicationController
 #    logger.debug "Confirmed IDs: #{confirmed_actions_ids.inspect}"
 #    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
     data_import_session = DataImportSession.find( data_import_session_id )
-    data_importer       = DataImporter.new( logger, flash, data_import_session )
+    importer            = DataImporter.new( logger, flash, data_import_session )
     result_processor    = SwimmerAnalysisResultProcessor.new( logger, flash )
                                                     # retrieve results from dedicated table:
     all_results = DataImportSwimmerAnalysisResult.where( data_import_session_id: data_import_session_id )
@@ -273,20 +274,20 @@ class AdminImportController < ApplicationController
       )
     end
 
-    data_importer.set_analysis_logs(
+    importer.set_analysis_logs(
       result_processor.process_log,
       result_processor.sql_executable_log
     )
                                                     # Write the log files anyway:
-    data_importer.write_analysis_logfile( is_ok )
-    data_importer.write_sql_diff_logfile
+    importer.write_analysis_logfile( is_ok )
+    importer.write_sql_diff_logfile
 # DEBUG
 #    logger.debug("\r\n- is_ok: #{is_ok}, data_import_session_id: #{data_import_session_id}")
                                                     # Redirect to next action accordingly:
     if is_ok
       flash[:info] = I18n.t('admin_import.swimmer_analysis_completed')
       if must_go_back_on_commit                     # Since we are aborting full-data import, we need to clean up the broken session:
-        data_importer.destroy_data_import_session
+        importer.destroy_data_import_session
       else                                          # Clear just the results from the session if everything is ok:
         # The Log has become too long & complex to be saved into the table!
 
@@ -363,7 +364,7 @@ class AdminImportController < ApplicationController
 #    logger.debug "FILENAME...: #{params[:datafile].original_filename if params[:datafile] }"
     filename_to_be_parsed = nil
     @data_import_session  = nil
-    data_importer         = nil
+    importer  = nil
     season_id = 0
                                                     # === CASE 1: CONTINUATION SESSION. Id parameter present? We then assume a session is already in progress.
     if params[:id]                                  # Get season from the session:
@@ -391,38 +392,47 @@ class AdminImportController < ApplicationController
                                        (params[:force_meeting_creation].to_i > 0)
       force_team_or_swimmer_creation = (params[:force_team_or_swimmer_creation] == 'true')    ||
                                        (params[:force_team_or_swimmer_creation].to_i > 0)
-      filename_to_be_parsed          = @data_import_session.file_name if filename_to_be_parsed.nil? && @data_import_session
-                                                    # Create a new data-import session to consume the datafile:
-      data_importer = DataImporter.new( logger, flash, @data_import_session )
-      data_importer.set_up(
-        full_pathname:                  filename_to_be_parsed,
-        force_missing_meeting_creation: force_missing_meeting_creation,
-        force_team_or_swimmer_creation: force_team_or_swimmer_creation,
-        # do_not_consume_file:           false, # (default)
-        current_admin_id:               current_admin.id
-      )
+      filename_to_be_parsed = @data_import_session.file_name if filename_to_be_parsed.nil? && @data_import_session
+                                                    # Crude data-file macro-format detector:
+      if filename_to_be_parsed =~ /csiprova/i       # *** CSI-Result/Start-list datafiles? *** => Use CsiResultParser for phases < 2.0
+        importer = CsiResultParser.new( filename_to_be_parsed, @data_import_session )
+        importer.logger = logger
+        importer.flash  = flash
+        importer.force_team_or_swimmer_creation = force_team_or_swimmer_creation
+        # importer.do_not_consume_file = false # (default: false)
+      else                                          # *** FIN-Result/Start-list datafiles? *** => Use DataImporter for phases < 2.0
+        importer = DataImporter.new( logger, flash, @data_import_session )
+        importer.set_up(
+          full_pathname:                  filename_to_be_parsed,
+          force_missing_meeting_creation: force_missing_meeting_creation,
+          force_team_or_swimmer_creation: force_team_or_swimmer_creation,
+          # do_not_consume_file:           false, # (default)
+          current_admin_id:               current_admin.id
+        )
+      end
                                                     # -- PHASE 1.0:
-      data_importer.phase_1_parse
+      importer.phase_1_parse
                                                     # -- PHASE 1.2: (returns nil on error)
-      @data_import_session = data_importer.phase_1_2_serialize
+      @data_import_session = importer.phase_1_2_serialize
 # DEBUG
-#      logger.debug("\r\nAFTER PHASE 1.2\r\n- data_import_session: #{@data_import_session.id}")
-#      logger.debug("\r\n- data_importer.data_import_session: #{data_importer.data_import_session.id}")
-      if data_importer.data_import_session.data_import_team_analysis_results.any?
+      logger.debug("\r\nAFTER PHASE 1.2\r\n- data_import_session: #{@data_import_session.inspect}")
+      logger.debug("\r\n- importer.data_import_session: #{importer.data_import_session.id}")
+                                                    # Create a new data-import session to consume the datafile:
+      if importer.data_import_session.data_import_team_analysis_results.any?
         flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
         redirect_to(
             goggles_di_step1_1_team_analysis_path(
-                id:                             data_importer.data_import_session.id,
+                id:                             importer.data_import_session.id,
                 force_meeting_creation:         force_missing_meeting_creation ? '1' : nil,
                 force_team_or_swimmer_creation: force_team_or_swimmer_creation ? '1' : nil
             )
         ) and return
       end
-      if data_importer.data_import_session.data_import_swimmer_analysis_results.any?
+      if importer.data_import_session.data_import_swimmer_analysis_results.any?
         flash[:info] = I18n.t( 'admin_import.swimmer_analysis_needed' )
         redirect_to(
             goggles_di_step1_1_swimmer_analysis_path(
-                id:                     data_importer.data_import_session.id,
+                id:                     importer.data_import_session.id,
                 force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
                 force_swimmer_creation: force_swimmer_creation         ? '1' : nil
             )
@@ -430,7 +440,10 @@ class AdminImportController < ApplicationController
       end
     end
                                                     # -- REDIRECT ON ERROR:
-    redirect_to( goggles_di_step1_status_path() ) and return if @data_import_session.nil?
+    if @data_import_session.nil?
+      flash[:error] = importer.flash[:error] if importer && importer.flash.instance_of?(Hash)
+      redirect_to( goggles_di_step1_status_path() ) and return
+    end
                                                     # -- PHASE 2.0 (MANUAL REVIEW) BEGIN:
                                                     # Compute the filtering parameters:
     ap = AppParameter.get_parameter_row_for( :data_import )
@@ -483,12 +496,12 @@ class AdminImportController < ApplicationController
 # DEBUG
     logger.debug("\r\n- data_import_session: #{data_import_session.inspect}")
 
-    data_importer = DataImporter.new( logger, flash, data_import_session )
+    importer = DataImporter.new( logger, flash, data_import_session )
                                                     # -- PHASE 3.0:
-    is_ok = data_importer.phase_3_commit()
+    is_ok = importer.phase_3_commit()
 
     redirect_to( goggles_di_step1_status_path() ) and return unless is_ok
-    @import_log = data_importer.import_log          # (get combined import log)
+    @import_log = importer.import_log          # (get combined import log)
   end
   #-- -------------------------------------------------------------------------
   #++

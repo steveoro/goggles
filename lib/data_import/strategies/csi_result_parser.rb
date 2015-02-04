@@ -6,8 +6,23 @@ require 'common/encoding_tools'
 require 'data_import/csi_result_dao'
 require 'data_import/header_fields_dao'
 require 'data_import/strategies/season_detect_utils'
-require 'data_import/services/data_import_team_builder'
+
+require 'data_import/services/team_name_analyzer'
+require 'data_import/services/swimmer_name_analyzer'
+require 'data_import/strategies/city_comparator'
+
+require 'data_import/services/data_import_entity_builder'
+require 'data_import/services/data_import_meeting_builder'
+require 'data_import/services/data_import_meeting_event_builder'
+require 'data_import/services/data_import_meeting_individual_result_builder'
+require 'data_import/services/data_import_meeting_program_builder'
+require 'data_import/services/data_import_meeting_relay_result_builder'
+require 'data_import/services/data_import_meeting_session_builder'
+require 'data_import/services/data_import_meeting_team_score_builder'
+require 'data_import/services/data_import_season_builder'
 require 'data_import/services/data_import_swimmer_builder'
+require 'data_import/services/data_import_team_builder'
+require 'data_import/services/data_import_time_standard_builder'
 
 require_relative '../../../app/strategies/sql_converter'
                                                     # The following applies only to Ruby <= 1.9.2
@@ -18,7 +33,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = CsiResultParser
 
-  - Goggles framework vers.:  4.00.737
+  - Goggles framework vers.:  4.00.741
   - author: Steve A.
 
  Strategy class delegated to parse result or entry datafiles for CSI Meetings.
@@ -26,7 +41,7 @@ require 'iconv' unless String.method_defined?( :encode )
  The datafiles are in CSV format, separated by ';'. Structure is quite fixed and
  the fields are almost always the same.
 
- For each CSV row a single CsiResultDao is produced. Each DAO is the parsed into
+ For each CSV row a single CsiResultDAO is produced. Each DAO is the parsed into
  database entities, where possible.
 
 =end
@@ -37,19 +52,23 @@ class CsiResultParser
   attr_reader :full_pathname, :dao_list, :data_import_session
 
   # These can be set later on:
-  attr_accessor :logger,
+  attr_accessor :logger, :flash,
+                :force_team_or_swimmer_creation,
                 :do_not_consume_file  # default: false, when true the source datafile will be erased at the end of phase 1.2
   #-- -------------------------------------------------------------------------
   #++
 
   # Creates a new instance.
+  # As DataImporter class, it may resume a session by specifying it.
   #
-  def initialize( full_pathname )
+  def initialize( full_pathname, data_import_session = nil )
     @full_pathname = full_pathname
     @logger = nil
+    @flash  = {}
     tot_rows = 0
     @dao_list = []
-    @data_import_session = nil
+    @data_import_session = data_import_session
+    @force_team_or_swimmer_creation = false
     @do_not_consume_file = false
     update_logs( "Datafile: #{full_pathname}" )
                                                     # Scan each line of the file until gets reaches EOF:
@@ -98,14 +117,14 @@ class CsiResultParser
 
 
   # Parses the acquired list of DAOs into importable entities.
-  def parse()
+  def phase_1_parse()
     setup_data_import_session
     is_team_analysis_ok    = prescan_dao_list_for_unknown_team_names
     is_swimmer_analysis_ok = prescan_dao_list_for_unknown_swimmer_names
     is_ok = is_team_analysis_ok && is_swimmer_analysis_ok
                                                     # Update "last completed phase" indicator (10 = '1.0', parse):
     if @data_import_session.instance_of?( DataImportSession )
-      @data_import_session.phase = 10
+      @data_import_session.phase = is_ok ? 11 : 10
       @data_import_session.save!
     end
 
@@ -150,12 +169,11 @@ class CsiResultParser
   # the digested/serialized data from the support tables, so that any mistakes or
   # conflicts may be edited (and solved) before the final commit phase (which is phase #3).
   #
-  def phase_1_2_serialize( force_team_or_swimmer_creation = true )
+  def phase_1_2_serialize()
     return nil unless @data_import_session.instance_of?( DataImportSession ) &&
                       @dao_list.instance_of?(Array) &&
                       @season.instance_of?(Season) &&
                       @data_import_session.phase >= 10 && @data_import_session.phase < 12
-    is_ok = false
     season_starting_year = 0                        # This is needed by the individual results
     update_logs( "\r\n\r\n--------------------[Phase #1.2 - DIGEST/SERIALIZE]--------------------" )
     update_logs( "Parsing of '#{full_pathname}' done.\r\nDigesting data...", :debug )
@@ -171,12 +189,10 @@ class CsiResultParser
         organization: ""
       }
     }
+    meeting_dates = @header_fields_dao.header_date.to_s
+    scheduled_date = @header_fields_dao.header_date
 
-    meeting_dates = @header_fields_dao.header_date
-    scheduled_dates = MeetingDateParser.new.parse( meeting_dates )
-    scheduled_date  = scheduled_dates.first if scheduled_dates.instance_of?( Array )
-
-    if is_ok && @season                             # -- MEETING (digest/serialization) --
+    if @season                                      # -- MEETING (digest/serialization) --
       season_starting_year = @season.begin_date.year
       update_logs( "Found season '#{@season.inspect}'; #{@season.season_type.inspect}, season_starting_year=#{season_starting_year}", :debug )
 
@@ -186,7 +202,7 @@ class CsiResultParser
         @header_fields_dao,
         meeting_header_row,
         meeting_dates,
-        force_team_or_swimmer_creation
+        @force_team_or_swimmer_creation
       )
       @meeting = meeting_builder.result_row
     end
@@ -208,18 +224,18 @@ class CsiResultParser
         @header_fields_dao,
         meeting_dates, # meeting_dates_text
         scheduled_date,
-        force_missing_meeting_creation
+        @force_team_or_swimmer_creation
       )
       meeting_session = meeting_session_builder.result_row
     end
                                                     # --- CATEGORY (digest/serialization) --
-    if is_ok && meeting_session
+    is_ok = false                                   # (can proceed only if the following loop is successful:)
+    if meeting_session
       update_logs( "PHASE #1.2: processing CATEGORY headers..." )
       is_ok = process_category_headers(
         season_starting_year,
         meeting_session,
-        scheduled_date,
-        force_team_or_swimmer_creation
+        scheduled_date
       )
     end
 # TODO MISSING RELAY INFO!
@@ -235,7 +251,7 @@ class CsiResultParser
           # meeting_session,
           # @result_hash[:parse_result],
           # scheduled_date,
-          # force_team_or_swimmer_creation
+          # @force_team_or_swimmer_creation
       # )
     # end
                                                     # After having successfully stored the contents, remove the file
@@ -249,9 +265,7 @@ class CsiResultParser
       @data_import_session.save!
       update_logs(
         "\r\nFile '#{File.basename( @full_pathname )}', created session ID: #{ @data_import_session.id }\r\n" <<
-        "Total file lines ....... : #{ @result_hash[:line_count] }\r\n" <<
-        "Total data headers ..... : #{ @result_hash[:total_data_rows] }\r\n" <<
-        "Actual stored rows ..... : #{ @stored_data_rows }\r\n" <<
+        "Actual stored rows ..... : #{ @dao_list.size }\r\n" <<
         "File processed.\r\nData-import PHASE #1.2 DONE."
       )
     end
@@ -274,13 +288,83 @@ class CsiResultParser
 
 
   # Stores the text +msg+ into the logs (both on the logger & on the support table).
-  def update_logs( msg, method = :info )
+  def update_logs( msg, method = :info, with_save = true )
     @logger.send( method, msg ) if @logger
     if @data_import_session
       @data_import_session.phase_1_log = @data_import_session.phase_1_log + "#{msg}\r\n"
+      @data_import_session.save if with_save
     end
 
     process_text_log << "#{msg}\r\n"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Generic log-to-file dumper.
+  # Stores the text contents specified to a chosen filename (assuming permissions
+  # are correctly set for the current #log_dir).
+  #
+  # If found, file is overwritten, otherwise is created.
+  # Default #write_mode is 'a' (append); use 'w' to overwrite each time.
+  #
+  def to_logfile( log_contents, header_text = nil, footer_text = nil,
+                  extension = get_log_extension(), write_mode = 'a' )
+    log_basename = get_log_basename()
+    if log_contents.size > 0
+      File.open( log_basename + extension, write_mode ) do |f|
+        f.puts header_text if header_text
+        f.puts log_contents
+        f.puts footer_text if footer_text
+      end
+    end
+  end
+
+  # Getter for the log base file name (pathname + log filename w/o extension)
+  def get_log_basename
+    File.join(
+      File.join( Rails.root, 'log' ),
+      "#{get_iso_timestamp}prod_#{ File.basename(@full_pathname).split('.')[0] }"
+    )
+  end
+
+  # Getter for a string timestamp including the seconds.
+  def get_iso_timestamp
+    @data_import_session.created_at.strftime("%Y%m%d%H%M")
+  end
+
+  # Getter for the last completed phase
+  def get_last_completed_phase
+    @data_import_session ? @data_import_session.phase : 0
+  end
+
+  # Getter for the log extension
+  def get_log_extension
+    ".%02d.log" % get_last_completed_phase
+  end
+
+  # Writes the current, complete import log concerning all the Phases that have
+  # been successfully completed, up to the moment of the invocation.
+  #
+  def write_import_logfile
+    to_logfile(
+      process_text_log,
+      @flash[:error] ? "               *** Latest flash[:error]: ***\r\n#{@flash[:error] }\r\n-----------------------------------------------------------\r\n" : nil,
+      nil, # (no additional footer)
+      get_log_extension
+    )
+  end
+
+  # Writes the current Team-Analysis to its dedicated logfile,
+  # overwriting any existing file (or creating it if not already existing).
+  #
+  def write_sql_diff_logfile
+    to_logfile(
+      @data_import_session ? @data_import_session.sql_diff : '',
+      "-- *** SQL Diff file for #{ File.basename(@full_pathname) } ***\r\n-- Timestamp: #{ get_iso_timestamp }\r\n",
+      "\r\n-- Last completed phase code: %02d" % get_last_completed_phase,
+      ".%02d.diff.sql" % get_last_completed_phase
+    )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -327,7 +411,7 @@ class CsiResultParser
     @header_fields_dao.timing_type_id  = @season.timing_type_id
     update_logs( "Parsed header fields: #{@header_fields_dao}\r\n" )
 
-    @data_import_session = create_new_data_import_session( @season.id )
+    @data_import_session = create_new_data_import_session( @season.id ) if @data_import_session.nil?
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -434,8 +518,7 @@ class CsiResultParser
   #
   # == Returns: false on error
   #
-  def process_category_headers( season_starting_year, meeting_session, scheduled_date,
-                                force_team_or_swimmer_creation = false )
+  def process_category_headers( season_starting_year, meeting_session, scheduled_date )
     is_ok = true
     previous_begin_time = nil
     previous_duration_in_secs = 120
@@ -444,11 +527,11 @@ class CsiResultParser
     update_logs( "Process category headers, header event list: #{header_event_list.join(', ')}\r\nTot.: #{header_event_list.size}" )
 
     @dao_list.each_with_index do |dao, dao_index|
-      gender_type   = gender_type.find_by_id( dao.gender_type_id )
+      gender_type   = GenderType.find_by_id( dao.gender_type_id )
       raise "Unrecognized GenderType in result dao! (id=#{ dao.gender_type_id }, #{dao})" unless gender_type
       category_type = CategoryType.where( season_id: @season.id, code: dao.category_type_code ).first
       raise "Unrecognized CategoryType in result dao! (season.id=#{ season.id }, code='#{ dao.category_type_code }', #{dao})" unless category_type
-      stroke_type   = StrokeType.find_by_code( dao.stroke_type_code, is_eventable: true )
+      stroke_type   = StrokeType.where( code: dao.stroke_type_code, is_eventable: true ).first
       raise "Unrecognized StrokeType in result dao! (code='#{ dao.stroke_type_code }', #{dao})" unless stroke_type
       length_in_meters = dao.length_in_metres.to_i
                                                     # Get the header event index (used for event order)
@@ -486,6 +569,11 @@ class CsiResultParser
         previous_begin_time = begin_time
       end
       return unless is_ok
+
+                                                    # -- MEETING ENTRY (digest part) --
+# TODO create builder class for MeetingEntries
+# => As for MeetingEvents, we don't have a temporary/secondary entity to use for Entries!
+
                                                     # -- MEETING INDIVIDUAL RESULT (digest part) --
       mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
         @data_import_session,
@@ -495,13 +583,13 @@ class CsiResultParser
         dao_index,
         @dao_list.size,
         gender_type, category_type,
-        force_team_or_swimmer_creation
+        @force_team_or_swimmer_creation
       )
       is_ok = ! mir_builder.result_row.nil?
       return unless is_ok
                                                     # Update current header count into "progress counter column"
-      DataImportSession.where( id: data_import_session.id ).update_all(
-        phase_3_log: "1.2-CAT:#{header_index+1}/#{category_headers_ids.size}"
+      DataImportSession.where( id: @data_import_session.id ).update_all(
+        phase_3_log: "1.2-MIR:#{dao_index+1}/#{@dao_list.size}"
       )
     end
 

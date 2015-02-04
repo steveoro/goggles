@@ -11,7 +11,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.737
+  - Goggles framework vers.:  4.00.741
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -83,7 +83,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           @import_text     = header_row[:import_text]
           base_time        = header_row[:fields][:base_time]
           relay_type_token = header_row[:fields][:type]
-        elsif header_row.instance_of?( CsiResultDao )
+        elsif header_row.instance_of?( CsiResultDAO )
           @import_text = header_row.to_s
           # No base time in CSI result data
           # FIXME Missing relay info for CSI result data

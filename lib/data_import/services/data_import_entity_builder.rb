@@ -7,7 +7,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.689
+  - Goggles framework vers.:  4.00.741
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required
