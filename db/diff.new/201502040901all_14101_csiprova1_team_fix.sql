@@ -6,7 +6,7 @@ SET AUTOCOMMIT=0;
 START TRANSACTION;
 
 -- Elimino i dati vecchi
-delete from meeting_team_scores where meeting_id = 14102;
+delete from meeting_team_scores where meeting_id = 14101;
 
 --
 -- Dump dei dati per la tabella meeting_team_scores
