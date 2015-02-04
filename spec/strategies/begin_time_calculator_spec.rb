@@ -32,7 +32,7 @@ describe BeginTimeCalculator, type: :strategy do
       ( (event_order - 1) + (athletes_tot < 8 ? 8 : athletes_tot) / 8 ) *
       (base_time_mins.to_i < 2 ? 2 : base_time_mins.to_i)
     end
-    let(:pessimistic_duration_mins)   { optimistic_duration_mins * 1.5 }
+    let(:pessimistic_duration_mins)   { optimistic_duration_mins.to_f * 1.6 }
 
     let(:optimistic_guess) do
       Time.utc(
@@ -164,6 +164,7 @@ describe BeginTimeCalculator, type: :strategy do
       # [Steve, 20150103] There is no fixture data for Meetings with only
       # entries and NO results. So, the case where the entries are used for
       # heat computation instead of the results it cannot be recreated easily.
+      # (still missing a complete meeting entry factory)
     end
   end
   #-- -------------------------------------------------------------------------
