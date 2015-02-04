@@ -151,7 +151,7 @@ class CsiResultParser
   # The method at least requires (to return a non-nil result):
   # - @season to be set (to a valid instance of Season)
   # - @data_import_session to be set
-  # - @data_import_session.phase between 10..12
+  # - @data_import_session.phase == 11 (true only after a successful analysis phase)
   #
   # The current implementation is able to rebuild/import the results of only *one*
   # MeetingSession at a time.
@@ -173,7 +173,7 @@ class CsiResultParser
     return nil unless @data_import_session.instance_of?( DataImportSession ) &&
                       @dao_list.instance_of?(Array) &&
                       @season.instance_of?(Season) &&
-                      @data_import_session.phase >= 10 && @data_import_session.phase < 12
+                      @data_import_session.phase == 11
     season_starting_year = 0                        # This is needed by the individual results
     update_logs( "\r\n\r\n--------------------[Phase #1.2 - DIGEST/SERIALIZE]--------------------" )
     update_logs( "Parsing of '#{full_pathname}' done.\r\nDigesting data...", :debug )

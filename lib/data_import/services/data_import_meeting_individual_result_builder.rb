@@ -94,10 +94,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         ) if team_name
         @team = team_builder.result_row if team_name && team_builder
         unless @team.instance_of?(Team) || @team.instance_of?(DataImportTeam)
-#          @phase_1_log << "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)\r\n"
-#          logger.error( "\r\nDataImportTeamBuilder: returned team_id IS nil! (And it can't be!)" )
-#          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
-          set_result( nil ) and raise ArgumentError.new("Team '#{team_name}' not found or unable to create it!\r\ndetail_row: #{detail_row.inspect}")
+          set_result( nil )
+          raise ArgumentError.new("Team '#{team_name}' not found or unable to create it!\r\ndetail_row: #{detail_row.inspect}")
         end
 
         swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
@@ -111,6 +109,10 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "\r\n- swimmer_builder: #{swimmer_builder.inspect}"
         @swimmer = swimmer_builder.result_row if swimmer_builder
+        unless @swimmer
+          set_result( nil )
+          raise ArgumentError.new("Swimmer '#{swimmer_name}' not found or unable to create it!\r\ndetail row: #{detail_row.inspect}")
+        end
 
         badge_builder = DataImportBadgeBuilder.build_from_parameters(
           data_import_session,
