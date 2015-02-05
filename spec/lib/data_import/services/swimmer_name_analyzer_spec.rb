@@ -239,6 +239,24 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
           it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
         end
 
+        context "['AGOSTO MICHELE']" do
+          before(:each) do
+            @analysis_log = ''
+            @sql_log = ''
+            @searched_name  = 'AGOSTO MICHELE'
+            @desired_year   = 1991
+            @desired_gender = GenderType::MALE_ID
+            @expected_name  = 'AGOSTO MICHELE'
+            subject.swimmers = Swimmer.where("complete_name LIKE '%G%STO%'")
+            @result = subject.analyze( @searched_name, @desired_year, @desired_gender, nil, nil, @analysis_log, @sql_log )
+# DEBUG
+#            puts "\r\n\r\n" << @analysis_log
+#            puts "\r\n\r\n" << @sql_log
+          end
+          it_behaves_like "(a valid DataImportSwimmerAnalysisResult)"
+          it_behaves_like "(a DataImportSwimmerAnalysisResult with a SINGLE match)"
+        end
+
         context "['SADDI JAVIER FRANCISCO']" do
           before(:each) do
             @analysis_log = ''

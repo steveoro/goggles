@@ -8,7 +8,7 @@ require 'data_import/services/swimmer_name_analyzer'
 
 = DataImportSwimmerBuilder
 
-  - Goggles framework vers.:  4.00.721
+  - Goggles framework vers.:  4.00.743
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -132,9 +132,9 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
 
       if_not_found do
         unless force_team_or_swimmer_creation
-          prefilter = @complete_name.split(/\s/).first
+          prefilter = @complete_name.split(/\s/)
 # DEBUG
-#          puts "Search failed: analyzing name (prefilter: '#{prefilter}', gender: #{gender_type.id})..."
+#          puts "Search failed: analyzing name (prefilter: #{prefilter.inspect}, gender: #{gender_type.id})..."
 
           # Not found & can't create a new row? => Do a full depth-first analyze of
           # the swimmer name in search for a match and report the results via the builder
@@ -143,7 +143,10 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           sql_executable_log = ''
           analyzer = SwimmerNameAnalyzer.new
           # Pre-filter swimmers to speed-up the searches:
-          analyzer.swimmers = Swimmer.where( "complete_name LIKE \"%#{prefilter}%\"" ).reload
+          analyzer.swimmers = Swimmer.where(
+            "(gender_type_id = #{gender_type.id}) AND " <<
+            "(complete_name LIKE \"%#{prefilter.first}%\" OR complete_name LIKE \"%#{prefilter.last}%\")"
+          ).reload
 # DEBUG
 #          analyzer.swimmers.each{ |row| puts "\r\n- id: #{row.id}, #{row.complete_name}, gender: #{row.gender_type_id}, #{row.year_of_birth}"}
           result = analyzer.analyze(
@@ -157,8 +160,8 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
               0.99, 0.8
           )
 # DEBUG
-#          puts analysis_log
-#          puts "\r\n#{ result }"
+          puts analysis_log
+          puts "\r\n#{ result }"
                                                     # If we have a perfect match, we can report it right away:
           set_result( result.swimmer ) if result.is_a_perfect_match
                                                     # Serialize the analysis result, if it's the case:
@@ -174,7 +177,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
             )
               result.save!
 # DEBUG
-#              puts "Swimmer analysis saved."
+              puts "Swimmer analysis saved."
               data_import_session.phase_1_log ||= ''
               data_import_session.sql_diff    ||= ''
               data_import_session.phase_1_log << "#{ analysis_log }\r\n"

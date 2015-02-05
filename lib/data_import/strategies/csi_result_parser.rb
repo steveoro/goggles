@@ -477,7 +477,7 @@ class CsiResultParser
         name:       dao.complete_name,
         year:       dao.year_of_birth,
         category:   CategoryType.parse_category_type_from_import_text( @season, dao.category_code ),
-        gender:     GenderType.find_by_id( dao.gender_type_id.to_i )
+        gender:     GenderType.find_by_id( dao.gender_type_id )
       }
     end.compact.uniq.sort{ |a, b| a[:name] <=> b[:name] }
 

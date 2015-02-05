@@ -7,7 +7,7 @@ require 'data_import/services/data_import_entity_builder'
 
 = DataImportCityBuilder
 
-  - Goggles framework vers.:  4.00.609
+  - Goggles framework vers.:  4.00.743
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -60,7 +60,7 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
 #          puts "secondary search by CODE ok!" if secondary_search_ok?
         end
       else
-        # TODO Search for an existing badge, but use swimmer, team and season instead
+          # Search for an existing badge, but use swimmer, team and season:
           primary   [
             "(season_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
             ( season.instance_of?(Season) ? season.id : 0 ),
@@ -79,15 +79,36 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
           ]
           default_search
 # DEBUG
-#          puts "primary search by Swimmer,Team ok!" if primary_search_ok?
-#          puts "secondary search by Swimmer,Team ok!" if secondary_search_ok?
+#          puts "primary search by Season, Swimmer & Team ok!" if primary_search_ok?
+#          puts "secondary search by Season, Swimmer & Team ok!" if secondary_search_ok?
+      end
+
+      if_not_found do                               # Still not found?
+        search do
+          # Search for an existing badge, but use just season & swimmer instead:
+          primary   [
+            "(season_id = ?) AND (swimmer_id = ?)",
+            ( season.instance_of?(Season) ? season.id : 0 ),
+            ( swimmer.instance_of?(Swimmer) ? swimmer.id : 0 )
+          ]
+          secondary [
+            "(data_import_session_id = ?) AND " <<
+            "(#{season.instance_of?(Season) ? '' : 'data_import_'}season_id = ?) AND " <<
+            "(#{swimmer.instance_of?(Swimmer) ? '' : 'data_import_'}swimmer_id = ?)",
+            data_import_session.id,
+            season.id,
+            swimmer.id
+          ]
+          default_search
+# DEBUG
+#          puts "primary search by Season & Swimmer ok!" if primary_search_ok?
+#          puts "secondary search by Season & Swimmer ok!" if secondary_search_ok?
+        end
       end
 
       if_not_found do
 # DEBUG
 #        puts "NOT found!"
-# FIXME Here we can add also the backtracking check to avoid mis-matched swimmer names to be
-#       created as duplicates!
                                                     # Search or add a TeamAffiliation:
         ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,

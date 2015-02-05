@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.741
+  - Goggles framework vers.:  4.00.743
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -67,7 +67,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           swimmer_name  = detail_row[:fields][:swimmer_name]
           swimmer_year  = detail_row[:fields][:swimmer_year]
           team_name     = detail_row[:fields][:team_name]
-          athlete_badge = detail_row[:fields][:team_code] || '?' # (Make sure the badge is never nil)
+          # Make sure the badge code is never nil:
+          athlete_badge = detail_row[:fields][:team_code].to_s.size < 1 ? '?' : detail_row[:fields][:team_code]
           @rank         = detail_row[:fields][:result_position]
           result_time   = detail_row[:fields][:result_time]
           result_score  = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
@@ -76,15 +77,17 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           swimmer_name  = detail_row.complete_name
           swimmer_year  = detail_row.year_of_birth
           team_name     = detail_row.team_name
-          athlete_badge = detail_row.badge_code || '?' # (Make sure the badge is never nil)
+          # Make sure the badge code is never nil:
+          athlete_badge = detail_row.badge_code.to_s.size < 1 ? '?' : detail_row.badge_code
           @rank         = detail_row.rank
           result_time   = detail_row.decorated_result_time
           result_score  = 100 - ( @rank.to_i - 1 ) * 5
           result_score  = 0 if result_score < 0
         end
 # DEBUG
-#        puts "\r\n-detail_row: #{detail_row}"
-#        puts "\r\n-team_name:  '#{team_name}'"
+#        puts "\r\n- detail_row...: #{detail_row}"
+#        puts "- team_name........: '#{team_name}'"
+#        puts "- athlete_badge....: '#{athlete_badge}'"
 
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
@@ -97,6 +100,13 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           set_result( nil )
           raise ArgumentError.new("Team '#{team_name}' not found or unable to create it!\r\ndetail_row: #{detail_row.inspect}")
         end
+                                                    # Search or add a TeamAffiliation:
+        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+          data_import_session,
+          @team,
+          season
+        )
+        @team_affiliation   = ta_builder.result_row
 
         swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
           data_import_session,
@@ -124,13 +134,11 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           EntryTimeType.find_by_code( EntryTimeType::TYPES_HASH[EntryTimeType::LAST_RACE_ID] )
         )
         @badge = badge_builder.result_row if @team && badge_builder
-                                                    # Search or add a TeamAffiliation:
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
-          data_import_session,
-          @team,
-          season
-        )
-        @team_affiliation   = ta_builder.result_row
+        unless @badge
+          set_result( nil )
+          raise ArgumentError.new("Badge '#{athlete_badge}' not found or unable to create it!\r\ndetail row: #{detail_row.inspect}\r\n@swimmer: #{@swimmer.inspect}\r\n@team #{@team.inspect}")
+        end
+        # >> ASSERT: @team, @swimmer & @badge must ALL be defined after this point <<
 
         @team_badge_number  = @team_affiliation ? @team_affiliation.number : nil
         @is_play_off        = true
