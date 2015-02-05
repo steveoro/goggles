@@ -10,6 +10,10 @@ FactoryGirl.define do
     team_affiliation  { badge.team_affiliation }
     swimmer           { badge.swimmer }
 
+    minutes                   0
+    seconds                   { ((rand * 60) % 60).to_i }
+    hundreds                  { ((rand * 100) % 100).to_i }
+
     before(:create) do |built_instance|
       if built_instance.invalid?
         puts "\r\nFactory def. error => " << ValidationErrorTools.recursive_error_for( built_instance )
