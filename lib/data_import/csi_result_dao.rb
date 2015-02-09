@@ -137,10 +137,19 @@ class CsiResultDAO
   end
 
 
+  # Returns a corresponding value in the internal format for the "combo category code",
+  # which represents stroke, category and length types all in one string.
+  def CsiResultDAO.get_combo_category_code( length_in_meters, stroke_type_code, category_type_code )
+    CsiResultDAO::CATEGORY_TYPE_CODES.key( category_type_code ) +
+    CsiResultDAO::STROKE_TYPE_CODES.key( stroke_type_code ) +
+    CsiResultDAO::LENGTH_TYPE_CODES.key( length_in_meters )
+  end
+
+
   # Displays the current instance as a String.
   def to_s
     "[CsiResultDAO: '#{@complete_name}' (#{@year_of_birth}, g:#{@gender_type_id})=> '#{@team_name}' b:#{@badge_code}]: " <<
-    "#{event_types_code}, #{@category_type_code}, #{@rank}) " <<
+    "event: #{event_types_code}, cat. #{@category_type_code}, rank: #{@rank}) " <<
     "#{decorated_result_time} (entry: #{decorated_entry_time})"
   end
   #-- -------------------------------------------------------------------------
@@ -163,9 +172,9 @@ class CsiResultDAO
     when 4
       "#{condensed_timing[0..1]}\"#{condensed_timing[2..3]}"
     when 5
-      "#{condensed_timing[0]}'#{condensed_timing[1..2]}\"#{condensed_timing[3..4]}"
+      "#{condensed_timing[0]}\'#{condensed_timing[1..2]}\"#{condensed_timing[3..4]}"
     when 6
-      "#{condensed_timing[0..1]}'#{condensed_timing[2..3]}\"#{condensed_timing[4..5]}"
+      "#{condensed_timing[0..1]}\'#{condensed_timing[2..3]}\"#{condensed_timing[4..5]}"
     else                                            # Any other unsupported format:
       condensed_timing
     end

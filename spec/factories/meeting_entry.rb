@@ -5,10 +5,14 @@ require 'common/validation_error_tools'
 FactoryGirl.define do
   factory :meeting_entry do
     meeting_program
-    badge
+    badge do
+      create( :badge, season: SeasonFactoryTools.get_season_with_full_categories() )
+    end
     team              { badge.team }
     team_affiliation  { badge.team_affiliation }
     swimmer           { badge.swimmer }
+
+    sequence( :start_list_number )
 
     minutes                   0
     seconds                   { ((rand * 60) % 60).to_i }

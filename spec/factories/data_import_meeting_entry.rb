@@ -8,6 +8,8 @@ FactoryGirl.define do
     conflicting_id            nil
     import_text               { Faker::Lorem.paragraph[0..250] }
 
+    sequence( :start_list_number )
+
     minutes                   0
     seconds                   { ((rand * 60) % 60).to_i }
     hundreds                  { ((rand * 100) % 100).to_i }
@@ -19,7 +21,9 @@ FactoryGirl.define do
     data_import_badge_id      nil
     user_id                   1
 
-    badge                     { create(:badge) }
+    badge do
+      create( :badge, season: SeasonFactoryTools.get_season_with_full_categories() )
+    end
     swimmer                   { badge.swimmer }
     team                      { badge.team }
     team_affiliation          { badge.team_affiliation }

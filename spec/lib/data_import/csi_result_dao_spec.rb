@@ -8,6 +8,26 @@ require_relative '../../../lib/data_import/csi_result_dao'
 
 
 describe CsiResultDAO, type: :model do
+
+  describe "self.get_combo_category_code()" do
+    [
+      [ 100, 'FA', 'M35', '513' ],
+      [  50, 'DO', 'M25', '322' ],
+      [  50, 'RA', 'M45', '732' ],
+      [ 200, 'SL', 'M50', '844' ],
+      [ 100, 'MI', 'SEN', '153' ]
+    ].each do |fixture_length, fixture_stroke, fixture_category, expected_result|
+      it "returns the expected code" do
+        expect(
+          CsiResultDAO.get_combo_category_code( fixture_length, fixture_stroke, fixture_category )
+        ).to eq(expected_result)
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   [
     "ALLORO STEFANO;1969;CSInuoto OberFerrari;999997;10750;4;AT04205036;2;1743;ALLORO STEFANO                M69CSInuoto OberFerrari;65;0;0;0;0;0;0;0;0;0;0;  0",
     "ATTOLINI FEDERICO;1962;CSInuoto OberFerrari;11440;999998;2;AT04205055;2;1843;ATTOLINI FEDERICO             M62CSInuoto OberFerrari;66;0;0;0;0;0;0;0;0;0;0;  0",
@@ -55,6 +75,7 @@ describe CsiResultDAO, type: :model do
         :to_s
       ] )
 
+
       describe "#to_s" do
         it "is a non empty string" do
           expect( subject.to_s.size ).to be > 0
@@ -81,6 +102,8 @@ describe CsiResultDAO, type: :model do
       end
       describe "#decorated_entry_time" do
         it "contains a double quote when non-zero (else: empty string)" do
+# DEBUG
+#          puts "\r\n" << subject.decorated_entry_time
           unless subject.is_entry_no_time
             expect( subject.decorated_entry_time ).to include('"')
           else
@@ -88,6 +111,8 @@ describe CsiResultDAO, type: :model do
           end
         end
         it "contains a single quote when condensed size > 4 (else: no)" do
+# DEBUG
+#          puts "\r\n" << subject.decorated_entry_time
           if subject.entry_timing.size > 4
             expect( subject.decorated_entry_time ).to include("'")
           else
