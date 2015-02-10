@@ -168,15 +168,21 @@ class CsiResultDAO
     return '' if condensed_timing == '0'
     case condensed_timing.size
     when 1..2
-      "0\"#{condensed_timing}"
+      "00\'00\"%02d" % condensed_timing.to_i
     when 3
-      "#{condensed_timing[0]}\"#{condensed_timing[1..2]}"
+      ("00\'%02d\"" % condensed_timing[0].to_i) +
+      ("%02d"       % condensed_timing[1..2].to_i)
     when 4
-      "#{condensed_timing[0..1]}\"#{condensed_timing[2..3]}"
+      ("00\'%02d\"" % condensed_timing[0..1].to_i) +
+      ("%02d"       % condensed_timing[2..3].to_i)
     when 5
-      "#{condensed_timing[0]}\'#{condensed_timing[1..2]}\"#{condensed_timing[3..4]}"
+      ("%02d\'" % condensed_timing[0].to_i) +
+      ("%02d\"" % condensed_timing[1..2].to_i) +
+      ("%02d"   % condensed_timing[3..4].to_i)
     when 6
-      "#{condensed_timing[0..1]}\'#{condensed_timing[2..3]}\"#{condensed_timing[4..5]}"
+      ("%02d\'" % condensed_timing[0..1].to_i) +
+      ("%02d\"" % condensed_timing[2..3].to_i) +
+      ("%02d"   % condensed_timing[4..5].to_i)
     else                                            # Any other unsupported format:
       condensed_timing
     end

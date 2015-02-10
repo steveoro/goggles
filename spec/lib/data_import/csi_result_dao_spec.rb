@@ -97,11 +97,11 @@ describe CsiResultDAO, type: :model do
             expect( subject.decorated_result_time ).to eq('')
           end
         end
-        it "contains a single quote when condensed size > 4 (else: no)" do
-          if subject.result_timing.size > 4
+        it "contains always a single quote when non-zero (else: empty string)" do
+          unless subject.is_disqualified || subject.is_retired
             expect( subject.decorated_result_time ).to include("'")
           else
-            expect( subject.decorated_result_time ).not_to include("'")
+            expect( subject.decorated_result_time ).to eq('')
           end
         end
       end
@@ -115,13 +115,13 @@ describe CsiResultDAO, type: :model do
             expect( subject.decorated_entry_time ).to eq('')
           end
         end
-        it "contains a single quote when condensed size > 4 (else: no)" do
+        it "contains always a single quote when non-zero (else: empty string)" do
 # DEBUG
 #          puts "\r\n" << subject.decorated_entry_time
-          if subject.entry_timing.size > 4
+          unless subject.is_entry_no_time
             expect( subject.decorated_entry_time ).to include("'")
           else
-            expect( subject.decorated_entry_time ).not_to include("'")
+            expect( subject.decorated_entry_time ).to eq('')
           end
         end
       end

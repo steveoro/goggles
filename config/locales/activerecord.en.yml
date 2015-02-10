@@ -17,6 +17,8 @@ en:
       data_import_meeting_session: "(Temp.) Meeting Session"
       meeting_program: "Meeting Program"
       data_import_meeting_program: "(Temp.) Meeting Program"
+      meeting_entry: "Meeting Entry"
+      data_import_meeting_entry: "(Temp.) Meeting Entry"
       meeting_individual_result: "Meeting Individ. Result"
       data_import_meeting_individual_result: "(Temp.) Meeting Ind. Result"
       swimmer: "Swimmer"
@@ -131,6 +133,12 @@ en:
         seconds: "Sec."
         hundreds: "Hnd."
         is_autofilled: "Auto-filled?"
+      meeting_entry:
+        start_list_number: "Start-list #"
+        is_no_time: "No-time?"
+        lane_number: "Lane #"
+        heat_number: "Heat #"
+        heat_arrival_order: "Heat arrival"
       meeting_individual_result:
         athlete_name: "Athlete"
         team_name: "Team"

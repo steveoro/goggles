@@ -85,9 +85,11 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           result_score  = 0 if result_score < 0
         end
 # DEBUG
-#        puts "\r\n- detail_row...: #{detail_row}"
+#        puts "\r\n- detail_row...: #{detail_row.inspect}"
 #        puts "- team_name........: '#{team_name}'"
 #        puts "- athlete_badge....: '#{athlete_badge}'"
+#        puts "- result_time......: #{result_time}"
+#        puts "- result_score.....: #{result_score}"
 
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,

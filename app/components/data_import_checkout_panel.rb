@@ -3,7 +3,7 @@
 # components in a tabbed view.
 #
 # - author: Steve A.
-# - vers. : 4.00.611
+# - vers. : 4.00.747
 #
 # == Params
 #
@@ -77,6 +77,14 @@ class DataImportCheckoutPanel < Netzke::Basepack::TabPanel
           rows_per_page: 25,
           data_import_session_id: super[:data_import_session_id],
           meeting_id: super[:meeting_id],
+          lazy_loading: true
+        },
+        {
+          class_name: "DataImportMeetingEntryGrid",
+          title: I18n.t('activerecord.models.data_import_meeting_entry'),
+          enable_pagination: true,
+          rows_per_page: 25,
+          data_import_session_id: super[:data_import_session_id],
           lazy_loading: true
         },
         {
