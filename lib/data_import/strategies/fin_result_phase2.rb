@@ -13,6 +13,7 @@ require 'data_import/services/data_import_entity_builder'
 require 'data_import/services/data_import_meeting_builder'
 require 'data_import/services/data_import_meeting_event_builder'
 require 'data_import/services/data_import_meeting_individual_result_builder'
+require 'data_import/services/data_import_meeting_entry_builder'
 require 'data_import/services/data_import_meeting_program_builder'
 require 'data_import/services/data_import_meeting_relay_result_builder'
 require 'data_import/services/data_import_meeting_session_builder'
@@ -27,7 +28,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.715
+  - Goggles framework vers.:  4.00.747
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods

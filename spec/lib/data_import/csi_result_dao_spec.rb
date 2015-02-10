@@ -11,15 +11,20 @@ describe CsiResultDAO, type: :model do
 
   describe "self.get_combo_category_code()" do
     [
-      [ 100, 'FA', 'M35', '513' ],
-      [  50, 'DO', 'M25', '322' ],
-      [  50, 'RA', 'M45', '732' ],
-      [ 200, 'SL', 'M50', '844' ],
-      [ 100, 'MI', 'SEN', '153' ]
-    ].each do |fixture_length, fixture_stroke, fixture_category, expected_result|
+      [ 100, 'FA', 'M35', true,   '1513' ],
+      [ 100, 'FA', 'M35', false,   '513' ],
+      [  50, 'DO', 'M25', false,   '322' ],
+      [  50, 'DO', 'M25', true,   '1322' ],
+      [  50, 'RA', 'M45', false,   '732' ],
+      [  50, 'RA', 'M45', true,   '1732' ],
+      [ 200, 'SL', 'M50', false,   '844' ],
+      [ 200, 'SL', 'M50', true,   '1844' ],
+      [ 100, 'MI', 'SEN', true,   '1153' ],
+      [ 100, 'MI', 'SEN', false,   '153' ]
+    ].each do |fixture_length, fixture_stroke, fixture_category, is_male, expected_result|
       it "returns the expected code" do
         expect(
-          CsiResultDAO.get_combo_category_code( fixture_length, fixture_stroke, fixture_category )
+          CsiResultDAO.get_combo_category_code( fixture_length, fixture_stroke, fixture_category, is_male )
         ).to eq(expected_result)
       end
     end

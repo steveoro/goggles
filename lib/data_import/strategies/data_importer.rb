@@ -23,7 +23,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.737
+  - Goggles framework vers.:  4.00.747
   - author: Steve A.
 
   Data-Import strategy class.
@@ -122,6 +122,7 @@ class DataImporter
       end
                                                     # For all data_import_... tables, delete rows for the corresponding data_import_session.id
       DataImportMeetingIndividualResult.delete_all( data_import_session_id: @data_import_session.id )
+      DataImportMeetingEntry.delete_all( data_import_session_id: @data_import_session.id )
       DataImportMeetingProgram.delete_all( data_import_session_id: @data_import_session.id )
       DataImportMeetingRelayResult.delete_all( data_import_session_id: @data_import_session.id )
       DataImportMeetingSession.delete_all( data_import_session_id: @data_import_session.id )
@@ -610,6 +611,7 @@ class DataImporter
     is_ok = commit_data_import_teams( @data_import_session, @season ) if is_ok
     is_ok = commit_data_import_swimmers( @data_import_session ) if is_ok
     is_ok = commit_data_import_badges( @data_import_session ) if is_ok
+    is_ok = commit_data_import_meeting_entries( @data_import_session ) if is_ok
     is_ok = commit_data_import_meeting_individual_results( @data_import_session ) if is_ok
     is_ok = commit_data_import_meeting_relay_results( @data_import_session ) if is_ok
     is_ok = commit_data_import_meeting_team_score( @data_import_session ) if is_ok

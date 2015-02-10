@@ -10,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.717
+  - Goggles framework vers.:  4.00.747
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -147,6 +147,7 @@ module FinResultPhase3
   #     => MeetingSession
   #
   #   === Children:
+  #     => DataImportMeetingEntry
   #     => DataImportMeetingIndividualResult
   #     => DataImportMeetingRelayResult
   #
@@ -194,8 +195,12 @@ module FinResultPhase3
         )
         committed_row.save!
                                                     # Update dependancies:
+        DataImportMeetingEntry.where( data_import_meeting_program_id: source_row.id )
+          .update_all( meeting_program_id: committed_row.id )
+
         DataImportMeetingIndividualResult.where( data_import_meeting_program_id: source_row.id )
           .update_all( meeting_program_id: committed_row.id )
+
         DataImportMeetingRelayResult.where( data_import_meeting_program_id: source_row.id )
           .update_all( meeting_program_id: committed_row.id )
 
@@ -260,6 +265,7 @@ module FinResultPhase3
   #
   #   === Children:
   #     => DataImportBadge
+  #     => DataImportMeetingEntry
   #     => DataImportMeetingIndividualResult
   #     => DataImportMeetingRelayResult
   #     => DataImportMeetingTeamScore
@@ -289,6 +295,11 @@ module FinResultPhase3
         @team_affiliation = ta_builder.result_row
                                                     # Update dependancies:
         DataImportBadge.where( data_import_team_id: source_row.id )
+          .update_all(
+            team_id:              committed_row.id,
+            team_affiliation_id:  @team_affiliation.id
+          )
+        DataImportMeetingEntry.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
             team_affiliation_id:  @team_affiliation.id
@@ -327,6 +338,7 @@ module FinResultPhase3
   # == Dependancies:
   #   === Children:
   #     => DataImportBadge
+  #     => DataImportMeetingEntry
   #     => DataImportMeetingIndividualResult
   #
   def commit_data_import_swimmers( data_import_session )
@@ -351,6 +363,9 @@ module FinResultPhase3
         committed_row.save!
                                                     # Update dependancies:
         DataImportBadge.where( data_import_swimmer_id: source_row.id )
+          .update_all( swimmer_id: committed_row.id )
+
+        DataImportMeetingEntry.where( data_import_swimmer_id: source_row.id )
           .update_all( swimmer_id: committed_row.id )
 
         DataImportMeetingIndividualResult.where( data_import_swimmer_id: source_row.id )
@@ -379,6 +394,7 @@ module FinResultPhase3
   #     => Season
   #
   #   === Children:
+  #     => DataImportMeetingEntry
   #     => DataImportMeetingIndividualResult
   #
   def commit_data_import_badges( data_import_session )
@@ -401,6 +417,9 @@ module FinResultPhase3
         # ASSERT: assuming season.instance_of?( Season ) (chosen by admin during data-import)
         committed_row.save!
                                                     # Update dependancies:
+        DataImportMeetingEntry.where( data_import_badge_id: source_row.id )
+          .update_all( badge_id: committed_row.id )
+
         DataImportMeetingIndividualResult.where( data_import_badge_id: source_row.id )
           .update_all( badge_id: committed_row.id )
 
@@ -430,8 +449,62 @@ module FinResultPhase3
   #   === Children:
   #     - none (hierachy leaf)
   #
+  def commit_data_import_meeting_entries( data_import_session )
+    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingEntry, 8 )
+    committer.commit do |source_row|
+      check_for_non_nil_links(
+        source_row,
+        [:meeting_program_id, :swimmer_id, :team_id, :team_affiliation_id, :badge_id]
+      )
+      MeetingEntry.transaction do
+        committed_row = MeetingEntry.new(
+          start_list_number:              source_row.start_list_number,
+          lane_number:                    source_row.lane_number,
+          heat_number:                    source_row.heat_number,
+          heat_arrival_order:             source_row.heat_arrival_order,
+          entry_time_type_id:             source_row.entry_time_type_id,
+
+          minutes:                        source_row.minutes,
+          seconds:                        source_row.seconds,
+          hundreds:                       source_row.hundreds,
+          is_no_time:                     source_row.is_no_time,
+
+          meeting_program_id:             source_row.meeting_program_id,
+          swimmer_id:                     source_row.swimmer_id,
+          team_id:                        source_row.team_id,
+          team_affiliation_id:            source_row.team_affiliation_id,
+          badge_id:                       source_row.badge_id,
+          user_id:                        source_row.user_id
+        )
+        committed_row.save!
+        committed_row                               # Return the currently committed row
+      end
+    end
+    @committed_data_rows += committer.committed_data_rows
+    committer.is_ok?
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Commit method for DataImportMeetingIndividualResult |=> MeetingIndividualResult.
+  #
+  # == Returns:
+  # +true+ if ok; +false+ on error/unable to save
+  #
+  # == Dependancies:
+  #   === Direct Parents:
+  #     => MeetingProgram
+  #     => Swimmer
+  #     => Team
+  #     => TeamAffiliation
+  #     => Badge
+  #
+  #   === Children:
+  #     - none (hierachy leaf)
+  #
   def commit_data_import_meeting_individual_results( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingIndividualResult, 8 )
+    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingIndividualResult, 9 )
     committer.commit do |source_row|
       check_for_non_nil_links(
         source_row,
@@ -487,7 +560,7 @@ module FinResultPhase3
   #     - none (hierachy leaf)
   #
   def commit_data_import_meeting_relay_results( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingRelayResult, 9 )
+    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingRelayResult, 10 )
     committer.commit do |source_row|
       check_for_non_nil_links( source_row, [:meeting_program_id, :team_id, :team_affiliation_id] )
       MeetingRelayResult.transaction do
@@ -539,7 +612,7 @@ module FinResultPhase3
   #     - none (hierachy leaf)
   #
   def commit_data_import_meeting_team_score( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingTeamScore, 10 )
+    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingTeamScore, 11 )
     committer.commit do |source_row|
       check_for_non_nil_links( source_row, [:meeting_id, :team_id, :team_affiliation_id, :season_id] )
       MeetingTeamScore.transaction do

@@ -33,7 +33,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = CsiResultParser
 
-  - Goggles framework vers.:  4.00.741
+  - Goggles framework vers.:  4.00.747
   - author: Steve A.
 
  Strategy class delegated to parse result or entry datafiles for CSI Meetings.
@@ -571,10 +571,21 @@ class CsiResultParser
       return unless is_ok
 
                                                     # -- MEETING ENTRY (digest part) --
-# TODO create builder class for MeetingEntries
-# => As for MeetingEvents, we don't have a temporary/secondary entity to use for Entries!
+# FIXME TEST w/ only MIRs available => this must return is_ok == true, nevertheless
+      mentry_builder = DataImportMeetingEntryBuilder.build_from_parameters(
+        @data_import_session,
+        @season,
+        meeting_program,
+        dao,
+        dao_index,
+        @dao_list.size,
+        gender_type,
+        @force_team_or_swimmer_creation
+      )
+      is_ok = ! mentry_builder.result_row.nil?
 
                                                     # -- MEETING INDIVIDUAL RESULT (digest part) --
+# FIXME TEST w/ only MeetingEntries available => this must return is_ok == true, nevertheless
       mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
         @data_import_session,
         @season,

@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingEntryBuilder
 
-  - Goggles framework vers.:  4.00.745
+  - Goggles framework vers.:  4.00.747
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -43,11 +43,11 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
     raise ArgumentError.new("Both season and meeting_program must be not nil!")          if season.nil? || meeting_program.nil?
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
 # DEBUG
-    puts "\r\n========================================================================================================================="
-    puts "MENTRY - build_from_parameters: data_import_session ID: #{data_import_session.id}"
-    puts "- parsed detail_row: #{detail_row.inspect}"
-    puts "- gender_type: #{gender_type.inspect}"
-    puts "- MPRG: #{meeting_program.inspect}"
+#    puts "\r\n========================================================================================================================="
+#    puts "MENTRY - build_from_parameters: data_import_session ID: #{data_import_session.id}"
+#    puts "- parsed detail_row: #{detail_row.inspect}"
+#    puts "- gender_type: #{gender_type.inspect}"
+#    puts "- MPRG: #{meeting_program.inspect}"
 
     self.build( data_import_session ) do
       entity  MeetingEntry
@@ -89,9 +89,9 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           @is_entry_no_time = detail_row.is_entry_no_time
         end
 # DEBUG
-        puts "\r\n- detail_row...: #{detail_row}"
-        puts "- team_name........: '#{team_name}'"
-        puts "- entry_time.......: #{entry_time}"
+#        puts "\r\n- detail_row...: #{detail_row.inspect}"
+#        puts "- team_name........: '#{team_name}'"
+#        puts "- entry_time.......: #{entry_time}"
 
         @category_type = CategoryType.where( season_id: season.id, code: category_group ).first
         raise "Unrecognized CategoryType code in detail row! (season.id=#{ season.id }, token='#{ category_group }')\r\ndetail_row: #{detail_row.inspect}" unless @category_type
@@ -162,7 +162,7 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
 
       search do
 # DEBUG
-        puts( "Seeking existing MeetingEntry..." )
+#        puts( "Seeking existing MeetingEntry..." )
         primary     [
           "(meeting_program_id = ?) AND (swimmer_id = ?) AND (team_id = ?)",
           ( meeting_program.instance_of?(MeetingProgram) ? meeting_program.id : 0 ),
@@ -181,14 +181,14 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
         ]
         default_search
 # DEBUG
-        puts "primary_search_ok!" if primary_search_ok?
-        puts "secondary_search_ok!" if secondary_search_ok?
+#        puts "primary_search_ok!" if primary_search_ok?
+#        puts "secondary_search_ok!" if secondary_search_ok?
       end
 
 
       if_not_found do
 # DEBUG
-        puts "Search failed: adding new MeetingEntry with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
+#        puts "Search failed: adding new MeetingEntry with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
 
         attributes_for_creation(
           data_import_session_id:         data_import_session.id,

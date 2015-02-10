@@ -26,6 +26,8 @@ class DataImportMeetingProgram < ActiveRecord::Base
   validates_associated :event_type
   validates_associated :heat_type
 
+  has_one  :stroke_type, through: :event_type
+
   has_many :meeting_individual_results
   has_many :data_import_meeting_individual_results
 
