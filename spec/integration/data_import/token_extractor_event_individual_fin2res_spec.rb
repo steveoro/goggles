@@ -7,7 +7,7 @@ require 'spec_helper'
 #require 'data_import/fin2_result_consts'
 
 
-describe "TokenExtractor for CATEGORY_HEADER-type buffers,", type: :integration do
+describe "TokenExtractor for EVENT INDIVIDUAL-type buffers,", type: :integration do
   class DummyWrapper2; include Fin2ResultConsts; end
   let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
