@@ -12,16 +12,21 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
     [
     #            10        20        30        40        50        60        70        80        90
     #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      " 16   OSTROGOTI RUGGERO LAURO        M30  MILANO CHENUOTA ASD        6'30\"00",
+      " 20   MAZZANTI VIEN DAL MARE PAOLA   U25  LABELVA UMANA SPORT CLUB   0'34\"00",
+      "53  BRUNAZZI ROMUALDA ROSAMUN F  M 25  NUOTOMENO ASD                       00.34.00",
+      "42  RODRIGHIERI LUCANIA       F  M 35  NUOTO SEMPRE A.S.DILETANT           03.02.00",
+
       "       1   BIBBIBBI  FRANCESCA            1981   MILANO  NUOTO CSI           1'19\"58",
       "       2   DIDDIEFFIGGI  FEDERICA         1980   ROMA  NUOTO SSD  AR         1'17\"73",
       "       3   D`ALAMBERTO  MARUGONA          1982   A.S.D. RICCIO               1'20\"63",
-      "           FAKE  MARIAPINA GINA LINA      1983   NEVAH.S.C.A.RL.            00.00.00",
-      "           SUPAFAKE  CAMILLA              1982   SOC. 2001 SRL - PAD        00:00:00",
-      "  3  DANIELI FILIPPA         M35      NUOTO MASTER        0'00\"00",
-      "  4  SABINI  PAOLETTA        M 60      ACQUASPORT 2010 ASD        ",
-      "     LEGGI  ROMANA        M 25   FAKESPORT ASD         00",
-      "     MEGAFAKE JAMIE         M 45       OH-MY OH-MY                ",
-      "  6  MATTIOLI BERTACCHINI  EMANUEL     M60    N MODENESI                    0'40\"01"
+      "  11      FAKE  MARIAPINA GINA LINA       1983   NEVAH.S.C.A.RL.            00.00.00",
+      "  53      SUPAFAKE  CAMILLA               1982   SOC. 2001 SRL - PAD        00:00:00",
+      "  3  DANIELI FILIPPA              M35      NUOTO MASTER             0'00\"00",
+      "  4  SABINI  PAOLETTA             M 60      ACQUASPORT 2010 ASD     00 00 00 ",
+      "     LEGGI  ROMANA                M 25   FAKESPORT ASD              00 00 00",
+      " 27  MEGAFAKE JAMIE               M 45       OH-MY OH-MY            00.00.00",
+      "  6  MATTIOLI BERTACCHINI  EMANUEL     M60    N MODENESI                     0'40\"01"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -33,15 +38,20 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :entry_order
+        "16",
+        "20",
+        "53",
+        "42",
+
         '1',
         '2',
         '3',
-        '',
-        '',
+        '11',
+        '53',
         '3',
         '4',
         '',
-        '',
+        '27',
         '6'
       ]
     end
@@ -56,6 +66,11 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :swimmer_name
+        "OSTROGOTI RUGGERO LAURO",
+        "MAZZANTI VIEN DAL MARE PAOLA",
+        "BRUNAZZI ROMUALDA ROSAMUN",
+        "RODRIGHIERI LUCANIA",
+
         "BIBBIBBI  FRANCESCA",
         "DIDDIEFFIGGI  FEDERICA",
         "D`ALAMBERTO  MARUGONA",
@@ -79,6 +94,11 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :category_group
+        "M30",
+        "U25",
+        "M 25",
+        "M 35",
+
         "1981",
         "1980",
         "1982",
@@ -102,6 +122,11 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :team_name
+        "MILANO CHENUOTA ASD",
+        "LABELVA UMANA SPORT CLUB",
+        "NUOTOMENO ASD",
+        "NUOTO SEMPRE A.S.DILETANT",
+
         "MILANO  NUOTO CSI",
         "ROMA  NUOTO SSD  AR",
         "A.S.D. RICCIO",
@@ -125,15 +150,20 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :entry_time
+        "6'30\"00",
+        "0'34\"00",
+        "00.34.00",
+        "03.02.00",
+
         "1'19\"58",
         "1'17\"73",
         "1'20\"63",
         "00.00.00",
         "00:00:00",
         "0'00\"00",
-        "",
-        "",
-        "",
+        "00 00 00",
+        "00 00 00",
+        "00.00.00",
         "0'40\"01"
       ]
     end

@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.747
+  - Goggles framework vers.:  4.00.749
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -140,7 +140,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   def tokenizer_entry_row_entry_order
     TokenExtractor.new(
       :entry_order,
-      /\s\d{1,3}(?= {1,3})/i,
+      /\s*\d{1,3}(?= {1,3})/i,
       /\s(?=[a-z]+)/i
     )
   end
@@ -150,8 +150,22 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   def tokenizer_entry_row_swimmer_name
     TokenExtractor.new(
       :swimmer_name,
-      /\s+(?<swimmer_name>\D{25})/i,
-      26                                            # (max size)
+      /
+        (?<=\s\s)
+        (?<swimmer_name>\D{28})
+        \D*
+        (?=\s)
+      /uix,
+      /
+        \s
+        ((?<gender>m|f)\s\s)?
+        (?<year>
+          \d{4}|
+          (u|m)\s\d{1,2}|
+          (u|m)\d{1,2}
+        )
+        (?=\s\d{1,2}\s|\s|(f|m)\s)
+      /uix
     )
   end
 
@@ -161,14 +175,14 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :category_group,
       /\s
-      (?<year>
-      \d{4}|
-      (u|m)\s\d{1,2}|
-      (u|m)\d{1,2}
-      )
-      (?=\s\d{1,2}\s|\s|(f|m)\s)
+        (?<year>
+          \d{4}|
+          (u|m)\s\d{1,2}|
+          (u|m)\d{1,2}
+        )
+        (?=\s\d{1,2}\s|\s|(f|m)\s)
       /ix,
-      /(?<=\d{3}\s0|\d{2}\s\d{2}|\s(u|m)\s\d{2})(?<end>\s.)/i
+      /(?<=\d{4}\s|\d{2}\s\d{2}|\s(u|m)\s\d{2}|\s(u|m)\d{2}\s)(?<end>\s.)/i
     )
   end
 
@@ -178,11 +192,11 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :team_name,
       /
-      (?<=\d\d\s\s)
-      (?<team_name>.{25})
-      (?=\s+(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d))
+        (?<=\d\d\s)\s*
+        (?<team_name>.{25})\s*
+        (?=(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d))
       /uix,
-      25                                            # (max size)
+      25 # max size
     )
   end
 
