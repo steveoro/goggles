@@ -7,13 +7,14 @@ require 'common/encoding_tools'
 require 'data_import/context_type_def'
 require 'data_import/fin_result_defs'
 require 'data_import/fin2_result_defs'
+require 'data_import/fin_startlist_defs'
 
 
 =begin
 
 = FileFormatParser
 
-  - Goggles framework vers.:  4.00.629
+  - Goggles framework vers.:  4.00.749
   - author: Steve A.
 
  Strategy class dedicated to detect which format a data-import text file
@@ -55,15 +56,9 @@ class FileFormatParser
   FIN1_STARTLIST_TYPEDEF = ContextTypeDef.new(
     :fin_startlist,
     [
-      # TODO
-    ]
-  )
-
-  # ContextTypeDef definition for detecting "FIN2 starting list"-type files.
-  FIN2_STARTLIST_TYPEDEF = ContextTypeDef.new(
-    :fin2_startlist,
-    [
-      # TODO
+      /^\s*|^\r\n|^\n|$|^\Z/i,
+      /(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)(?=\s\n|\s\r|\s$|\r|\n|$)/i,
+      /(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)(?=\s\n|\s\r|\s$|\r|\n|$)/i,
     ]
   )
   #-- -------------------------------------------------------------------------
@@ -98,7 +93,6 @@ class FileFormatParser
     detector_fin1_res = ContextDetector.new( FIN1_RESULT_TYPEDEF, logger )
     detector_fin2_res = ContextDetector.new( FIN2_RESULT_TYPEDEF, logger )
     detector_fin1_sta = ContextDetector.new( FIN1_STARTLIST_TYPEDEF, logger )
-    detector_fin2_sta = ContextDetector.new( FIN2_STARTLIST_TYPEDEF, logger )
 
     File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
@@ -114,10 +108,8 @@ class FileFormatParser
           break
 
         elsif detector_fin1_sta.feed_and_detect( curr_line, line_count, nil )
-          result = nil # TODO
-
-        elsif detector_fin2_sta.feed_and_detect( curr_line, line_count, nil )
-          result = nil # TODO
+          result = FinStartListDefs.new( logger )
+          break
 
         else
           nil

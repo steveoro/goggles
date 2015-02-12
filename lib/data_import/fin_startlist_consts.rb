@@ -151,8 +151,9 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :swimmer_name,
       /
-        (?<=\s\s)
-        (?<swimmer_name>\D{28})
+        (?<=\d\s)
+        \s*
+        (?<swimmer_name>\D{25,28})
         \D*
         (?=\s)
       /uix,
@@ -192,11 +193,13 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :team_name,
       /
-        (?<=\d\d\s)\s*
-        (?<team_name>.{25})\s*
+        (?<=\d\d\s)
+        \s*
+        (?<team_name>.{25,36})
+        \s*
         (?=(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d))
       /uix,
-      25 # max size
+      /(?<timing>\s\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)/i
     )
   end
 

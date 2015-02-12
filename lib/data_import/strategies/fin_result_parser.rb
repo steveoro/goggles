@@ -9,6 +9,7 @@ require 'data_import/strategies/file_format_parser'
 require 'data_import/txt_result_defs'
 require 'data_import/fin_result_defs'
 require 'data_import/fin2_result_defs'
+require 'data_import/fin_startlist_defs'
 require 'data_import/services/txt_parse_service'
                                                     # The following applies only to Ruby <= 1.9.2
 require 'iconv' unless String.method_defined?( :encode )
@@ -19,7 +20,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = FinResultParser
 
-  - Goggles framework vers.:  4.00.713
+  - Goggles framework vers.:  4.00.749
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -110,18 +111,6 @@ class FinResultParser
         curr_line = EncodingTools.force_valid_encoding( curr_line )
         service.log_somehow( logger, "Reading line #{service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE )
         full_text_file_contents << curr_line
-# FIXME [Steve WIP]
-#        any_children_detection = false
-                                                    # -- DETAIL Context detection:
-#        parsing_defs.context_types_children_of( service.previous_parent_context ).each do |context_name, detector|
-#          service.log_somehow( logger, "Prioritizing on children of #{service.previous_parent_context.to_s.upcase}: checking #{context_name.to_s.upcase}...", DEBUG_VERY_VERBOSE )
-#          any_children_detection = service.parse( detector, curr_line )
-#        end unless service.previous_parent_context.nil?
-                                                    # Clear parent context only when no DETAIL are recognized:
-#        if service.previous_parent_context && !any_children_detection
-#          service.clear_parent_context
-#          service.log_somehow( logger, "   No possible CHILDREN/DETAIL contexts recognized, parent context set to nil.", DEBUG_VERBOSE )
-#        end
                                                     # -- HEADER (& ALL) Context detection: for each context type defined...
         parsing_defs.context_types.each do |context_name, detector|
           service.parse( detector, curr_line )

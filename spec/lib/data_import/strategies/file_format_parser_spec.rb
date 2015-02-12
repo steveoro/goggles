@@ -53,7 +53,27 @@ describe FileFormatParser, type: :strategy do
   #-- -------------------------------------------------------------------------
   #++
 
-  # TODO start list format recognition for file type FIN1
-  # TODO start list format recognition for file type FIN2
+
+  context "with a FIN startlist file type," do
+    [
+      File.join(Rails.root, 'test/fixtures/samples/sta20121027verolanuova.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131102osimo.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131103specliguria.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131116albenga.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131117poggibonsi-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20140208regtoscana-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20140216regabruzzo.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20140308firenze-sample.txt')
+    ].each do |filename|
+      describe "#parse" do
+        it "returns the correct constant associated with the file type for #{File.basename(filename)}" do
+          format_parser = FileFormatParser.new( filename )
+          expect( format_parser.parse ).to be_an_instance_of( FinStartListDefs )
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 end

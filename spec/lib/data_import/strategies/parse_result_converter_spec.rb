@@ -22,7 +22,16 @@ describe ParseResultConverter, type: :strategy do
       File.join(Rails.root, 'test/fixtures/samples/ris20101219mussi-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/ris20130513pontedera-sample.txt'),
       File.join(Rails.root, 'test/fixtures/samples/ris20131117poggibonsi-sample.txt'),
-      File.join(Rails.root, 'test/fixtures/samples/ris20140330lucca-sample.txt')
+      File.join(Rails.root, 'test/fixtures/samples/ris20140330lucca-sample.txt'),
+
+      File.join(Rails.root, 'test/fixtures/samples/sta20121027verolanuova.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131102osimo.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131103specliguria.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131116albenga.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20131117poggibonsi-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20140208regtoscana-sample.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20140216regabruzzo.txt'),
+      File.join(Rails.root, 'test/fixtures/samples/sta20140308firenze-sample.txt')
     ].sort{ rand - 0.5 }[0]
     source_parsing_defs = Fin2ResultDefs.new
     result_hash = FinResultParser.parse_txt_file(

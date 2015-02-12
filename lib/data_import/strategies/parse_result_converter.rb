@@ -3,13 +3,14 @@
 require 'data_import/txt_result_defs'
 require 'data_import/fin_result_defs'
 require 'data_import/fin2_result_defs'
+require 'data_import/fin_startlist_defs'
 
 
 =begin
 
 = ParseResultConverter
 
-  - Goggles framework vers.:  4.00.713
+  - Goggles framework vers.:  4.00.749
   - author: Steve A.
 
  Strategy class. It adapts and converts any secondary or sibling format of the
@@ -75,6 +76,9 @@ class ParseResultConverter
       rebuild_category_headers( parse_result_hash )
       rebuild_relay_headers( parse_result_hash, season )
       rebuild_stats_details( parse_result_hash )
+                                                    # === From FIN-startlist format: ===
+    elsif source_parsing_defs.instance_of?( FinStartListDefs )
+      rebuild_category_headers( parse_result_hash )
 
     # TODO Add other cases (FIN-startlist, FIN2-startlist, ...)
     end
@@ -94,12 +98,12 @@ class ParseResultConverter
   def rebuild_category_headers( parse_result_hash )
     parse_result_hash[:category_header] = [] if parse_result_hash[ :category_header ].nil?
     parse_result_hash[:result_row].each do |result_row|
-                                                  # Retrieve the original header row:
+                                                    # Retrieve the original header row:
       old_header_row  = parse_result_hash[:event_individual].find({}) do |event_individual|
         event_individual[:id] == result_row[:id]
       end
       birth_year, category = extract_swimmer_year_and_category( result_row[:fields][:swimmer_year] )
-                                                  # Compose the correct header row:
+                                                    # Compose the correct header row:
       new_header_row = {
         distance:       old_header_row[:fields][:distance],
         style:          old_header_row[:fields][:style],
@@ -108,10 +112,10 @@ class ParseResultConverter
         base_time:      nil # (not available in FIN2)
       }
       new_id_key = "#{ result_row[:id] }-#{ category }"
-                                                # Update result_row and its ID link:
+                                                    # Update result_row and its ID link:
       result_row[:fields][:swimmer_year] = birth_year
       result_row[:id] = new_id_key
-                                                # Check that we do not insert twice the same header row:
+                                                    # Check that we do not insert twice the same header row:
       parse_result_hash[:category_header] << {
         id:           new_id_key,
         fields:       new_header_row,
@@ -183,6 +187,50 @@ class ParseResultConverter
       import_text: old_stats_row[:import_text]
     }
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Rebuilds directly into +parse_result_hash+ all the missing :category_header
+  # data pages and re-links all the detail data pages to each corresponding header.
+  #
+  def rebuild_category_headers_for_entries( parse_result_hash )
+    parse_result_hash[:category_header] = [] if parse_result_hash[ :category_header ].nil?
+    parse_result_hash[:result_row]      = [] if parse_result_hash[ :result_row ].nil?
+    parse_result_hash[:entry_row].each do |entry_row|
+                                                  # Retrieve the original header row:
+      old_header_row  = parse_result_hash[:event_individual].find({}) do |event_individual|
+        event_individual[:id] == entry_row[:id]
+      end
+      birth_year, category = extract_swimmer_year_and_category( entry_row[:fields][:category_group] )
+                                                    # Compose the correct header row:
+      new_header_row = {
+        distance:       old_header_row[:fields][:distance],
+        style:          old_header_row[:fields][:style],
+        gender:         nil, # (not available in FIN-sta -- most of the times)
+        category_group: category,
+        base_time:      nil # (not available in FIN-sta)
+      }
+      new_id_key = "#{ entry_row[:id] }-#{ category }"
+                                                    # Update entry_row and its ID link:
+      entry_row[:fields][:swimmer_year] = birth_year
+      entry_row[:id] = new_id_key
+                                                    # Check that we do not insert twice the same header row:
+      parse_result_hash[:category_header] << {
+        id:           new_id_key,
+        fields:       new_header_row,
+        import_text:  old_header_row[:import_text]
+      } unless parse_result_hash[:category_header].any?{ |category_row| category_row[:id] == new_id_key }
+                                                    # Add a fake result_row so that the struct will be processed almost "normally":
+      parse_result_hash[:result_row] << {
+        id:           new_id_key,
+        fields:       entry_row[:fields],
+        import_text:  entry_row[:import_text]
+      }
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Accepts a compound text of swimmer_year and/or category, as in the FIN2 datafile
