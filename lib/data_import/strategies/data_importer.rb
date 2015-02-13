@@ -15,6 +15,7 @@ require 'data_import/strategies/parse_result_converter'
 require 'data_import/strategies/season_detect_utils'
 
 require 'data_import/services/meeting_header_year_checker'
+require 'data_import/services/meeting_notes_organization_checker'
 require 'data_import/services/data_import_meeting_builder'
 require 'data_import/services/data_import_meeting_session_builder'
 
@@ -23,7 +24,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.747
+  - Goggles framework vers.:  4.00.751
   - author: Steve A.
 
   Data-Import strategy class.
@@ -498,6 +499,17 @@ class DataImporter
       if sql_diff.size > 0
         @data_import_session.sql_diff << sql_diff
         update_logs( "PHASE #1.2: associated Meeting corrected." )
+      end
+
+      update_logs( "PHASE #1.2: checking possible missing Meeting notes/organization..." )
+      sql_diff = MeetingNotesOrganizationChecker.check_and_fix(
+        @meeting,
+        meeting_dates,
+        meeting_header_row[:fields][:organization]
+      )
+      if sql_diff.size > 0
+        @data_import_session.sql_diff << sql_diff
+        update_logs( "PHASE #1.2: associated Meeting#notes updated with missing value." )
       end
                                                     # Retrieve default meeting session: (used only for new/missing meeting events or programs)
       update_logs( "PHASE #1.2: processing TEAM RANKING/SCORES..." )

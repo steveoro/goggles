@@ -17,6 +17,7 @@ class MeetingHeaderYearChecker
 
   # Checks if the specified instance of Meeting or DataImportMeeting has
   # the #header_year.
+  #
   # When found +nil+ or empty, the associated Season is used to build
   # the correct header_year, the instance is updated and an SQL diff text
   # is returned.

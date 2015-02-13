@@ -251,7 +251,7 @@ describe DataImporter, type: :strategy do
         importer = DataImporter.new()
         importer.set_up( full_pathname: file_name )
 # DEBUG
-        # puts "\r\n- #{importer.header_fields_dao.inspect}"
+#        puts "\r\n- #{importer.header_fields_dao.inspect}"
         expect(
           importer.try_detect_season_from_header_fields( fixture_season.season_type.code )
         ).to eq( fixture_season )
