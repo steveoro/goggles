@@ -7,7 +7,7 @@ require_relative '../../../app/strategies/sql_converter'
 
 = DataImportEntityBuilder
 
-  - Goggles framework vers.:  4.00.741
+  - Goggles framework vers.:  4.00.751
   - author: Steve A.
 
   Service/DSL implementation oriented to build data-import entities, required
@@ -356,12 +356,32 @@ class DataImportEntityBuilder
 # DEBUG
 #        puts "Added new #{secondary_entity.name}, ID:#{@result_id}.\r\n"
         @data_import_session.phase_2_log << "Added new #{secondary_entity.name}, ID:#{@result_id}.\r\n"
+
         # Log the SQL diff statement only if the creation entity is not actually a
         # "secondary" one, but the actual serialization destination for the attributes
         # (During phase-2, this may happen only for meeting_events, time_standards
         #  and data_import_team_aliases):
-        if (secondary_entity.name == 'DataImportTeamAlias') ||
-           (secondary_entity.name =~ /DataImport/ ).nil?
+        #
+        # Also, TeamAffiliation SQL diff creation is skipped during pre-commit phase
+        # (which corresponds to last completed phase == 12), because we need to
+        # store the SQL diff *after* the Team creation using the @additional_row
+        # feature of the DataImportEntityCommitter, which allows to specify which
+        # additional row should be processed as an additional SQL-diff creation parameter.
+        #
+        # [Convoluted explanation of the reason why:]
+        # (...Otherwise, in some rare cases in which the TeamAffiliation gets created
+        # only during phase 3, we may produce an SQL which is not executable due
+        # to the affiliation INSERT statement referencing the Team ID created on
+        # the next line, because in the implementation we need to launch the builder
+        # for the affiliation *before* the Team is actually committed.)
+        if ( secondary_entity.name =~ /Alias/ ) ||
+           (
+             (@data_import_session.phase == 12) &&
+             (secondary_entity.name =~ /DataImport|TeamAffiliation/).nil?
+           ) ||
+           ( (@data_import_session.phase != 12) &&
+             (secondary_entity.name =~ /DataImport/).nil?
+           )
           @data_import_session.sql_diff << to_sql_insert( @result_row, false ) # (No user comment)
         end
         @data_import_session.total_data_rows += 1

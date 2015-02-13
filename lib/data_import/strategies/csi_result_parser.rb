@@ -33,7 +33,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = CsiResultParser
 
-  - Goggles framework vers.:  4.00.747
+  - Goggles framework vers.:  4.00.751
   - author: Steve A.
 
  Strategy class delegated to parse result or entry datafiles for CSI Meetings.
@@ -49,7 +49,8 @@ class CsiResultParser
   include SeasonDetectUtils
 
   # These must be initialized on creation:
-  attr_reader :full_pathname, :dao_list, :data_import_session
+  attr_reader :full_pathname, :dao_list, :data_import_session,
+              :meeting                              # serialized meeting
 
   # These can be set later on:
   attr_accessor :logger, :flash,

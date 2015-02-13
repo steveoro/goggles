@@ -15,6 +15,7 @@ describe CsiResultParser, type: :strategy do
 
     it_behaves_like( "(the existance of a method)", [
       :full_pathname, :dao_list, :data_import_session,
+      :meeting,
       :process_text_log, :sql_diff_text_log,
       :phase_1_parse, :phase_1_2_serialize,
       :logger, :flash, :do_not_consume_file,

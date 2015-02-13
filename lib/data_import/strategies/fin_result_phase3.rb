@@ -10,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.747
+  - Goggles framework vers.:  4.00.751
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -292,34 +292,35 @@ module FinResultPhase3
           committed_row,
           season
         )
-        @team_affiliation = ta_builder.result_row
+        team_affiliation = ta_builder.result_row
                                                     # Update dependancies:
         DataImportBadge.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @team_affiliation.id
+            team_affiliation_id:  team_affiliation.id
           )
         DataImportMeetingEntry.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @team_affiliation.id
+            team_affiliation_id:  team_affiliation.id
           )
         DataImportMeetingIndividualResult.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @team_affiliation.id
+            team_affiliation_id:  team_affiliation.id
           )
         DataImportMeetingRelayResult.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @team_affiliation.id
+            team_affiliation_id:  team_affiliation.id
           )
         DataImportMeetingTeamScore.where( data_import_team_id: source_row.id )
           .update_all(
             team_id:              committed_row.id,
-            team_affiliation_id:  @team_affiliation.id
+            team_affiliation_id:  team_affiliation.id
           )
 
+        @additional_row = team_affiliation          # Set the additional row that we'll be added to the SQL diff
         committed_row                               # Return the currently committed row
       end
     end

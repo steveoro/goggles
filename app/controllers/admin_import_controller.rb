@@ -459,8 +459,7 @@ class AdminImportController < ApplicationController
     # [Steve, 20141219] Retrieve the associated Meeting#id, if available, used in
     # grid filtering for some of the drop-down combo lists (specifically, which
     # meeting session are enlisted, for example):
-    di_prg = DataImportMeetingProgram.where( data_import_session_id: @data_import_session.id ).first
-    @meeting_id = di_prg.meeting_session ? di_prg.meeting_session.meeting_id : 0
+    @meeting_id = importer && importer.meeting.respond_to?(:id) ? importer.meeting.id : 0
   end
   #-- -------------------------------------------------------------------------
   #++
