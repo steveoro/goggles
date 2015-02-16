@@ -51,8 +51,9 @@ class Team < ActiveRecord::Base
   delegate :name, to: :user, prefix: true
 
   attr_accessible :name, :name_variations, :user_id,
-                  :editable_name, :address, :phone_mobile, :phone_number,
-                  :fax_number, :e_mail, :contact_name, :home_page_url
+                  :editable_name, :address, :zip, :phone_mobile, :phone_number,
+                  :fax_number, :e_mail, :contact_name, :home_page_url, :notes,
+                  :city_id
   #-- -------------------------------------------------------------------------
   #++
 

@@ -37,6 +37,12 @@ class MeetingProgram < ActiveRecord::Base
   validates_presence_of :event_order
   validates_length_of   :event_order, within: 1..3, allow_nil: false
 
+
+  attr_accessible :event_order, :category_type_id, :gender_type_id, :user_id,
+                  :is_autofilled, :is_out_of_race, :begin_time, :meeting_event_id,
+                  :pool_type_id, :time_standard_id
+
+
   scope :only_relays,     includes(:event_type).where('event_types.is_a_relay' => true)
   scope :are_not_relays,  includes(:event_type).where('event_types.is_a_relay' => false)
 

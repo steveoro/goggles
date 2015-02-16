@@ -28,6 +28,11 @@ class MeetingEvent < ActiveRecord::Base
   has_many :category_types, through: :meeting_programs
 
 
+  attr_accessible :event_order, :begin_time, :is_out_of_race, :is_autofilled, :notes,
+                  :meeting_session_id, :event_type_id, :heat_type_id, :has_separate_gender_start_list,
+                  :has_separate_category_start_list, :user_id
+
+
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------

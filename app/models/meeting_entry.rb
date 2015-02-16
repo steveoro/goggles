@@ -35,6 +35,11 @@ class MeetingEntry < ActiveRecord::Base
   belongs_to :swimmer
   belongs_to :entry_time_type
 
+
+  attr_accessible :start_list_number, :lane_number, :heat_number, :heat_arrival_order, :meeting_program_id,
+                  :swimmer_id, :team_id, :team_affiliation_id, :badge_id, :entry_time_type_id,
+                  :minutes, :seconds, :hundreds, :is_no_time, :user_id
+
   scope :is_male,    -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,  -> { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 

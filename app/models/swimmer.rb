@@ -64,10 +64,10 @@ class Swimmer < ActiveRecord::Base
 
   delegate :name, to: :user, prefix: true
 
-  attr_accessible :associated_user, :user,
-                  :gender_type, :complete_name, :last_name, :first_name,
+  attr_accessible :associated_user, :user, :user_id,
+                  :gender_type, :gender_type_id, :complete_name, :last_name, :first_name,
                   :year_of_birth, :phone_mobile, :phone_number, :e_mail,
-                  :nickname
+                  :nickname, :is_year_guessed
 
   scope :is_male,             -> { where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,           -> { where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }

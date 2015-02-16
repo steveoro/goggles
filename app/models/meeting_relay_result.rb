@@ -54,6 +54,15 @@ class MeetingRelayResult < ActiveRecord::Base
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
 
+
+  attr_accessible :rank, :is_play_off, :is_out_of_race, :is_disqualified, :standard_points,
+                  :meeting_points, :minutes, :seconds, :hundreds,
+                  :meeting_program_id, :team_id, :user_id,
+                  :disqualification_code_type_id, :relay_header, :reaction_time,
+                  :entry_minutes, :entry_seconds, :entry_hundreds, :team_affiliation_id,
+                  :entry_time_type_id
+
+
   scope :is_valid, -> { where(is_out_of_race: false, is_disqualified: false) }
 
   scope :sort_by_user,           ->(dir) { order("users.name #{dir.to_s}, meeting_program_id #{dir.to_s}, rank #{dir.to_s}") }

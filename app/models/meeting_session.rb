@@ -41,6 +41,11 @@ class MeetingSession < ActiveRecord::Base
   validates_length_of :description, maximum: 100, allow_nil: false
 
 
+  attr_accessible :session_order, :scheduled_date, :warm_up_time, :begin_time,
+                  :notes, :meeting_id, :swimming_pool_id, :user_id, :description,
+                  :is_autofilled, :day_part_type_id
+
+
   scope :sort_meeting_session_by_user,          ->(dir) { order("users.name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }
   scope :sort_meeting_session_by_meeting,       ->(dir) { order("meetings.description #{dir.to_s}, meeting_sessions.session_order #{dir.to_s}") }
   scope :sort_meeting_session_by_swimming_pool, ->(dir) { order("swimming_pools.nick_name #{dir.to_s}, meeting_sessions.scheduled_date #{dir.to_s}") }

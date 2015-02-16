@@ -345,6 +345,8 @@ module FinResultPhase3
   def commit_data_import_swimmers( data_import_session )
     committer = DataImportEntityCommitter.new( data_import_session, DataImportSwimmer, 6 )
     committer.commit do |source_row|
+# DEBUG
+#      puts "\r\nCommitting #{source_row.inspect}\r\n- source_row.gender_type_id: #{source_row.gender_type_id}"
       check_for_non_nil_links( source_row, [:gender_type_id] )
       raise ArgumentError.new("DataImportSwimmer ID#{source_row.id} found with gender_type_id NULL during phase#3!") unless source_row.gender_type_id.to_i > 0
       Swimmer.transaction do
@@ -372,6 +374,8 @@ module FinResultPhase3
         DataImportMeetingIndividualResult.where( data_import_swimmer_id: source_row.id )
           .update_all( swimmer_id: committed_row.id )
 
+# DEBUG
+#        puts "=> returning: #{committed_row.inspect}"
         committed_row                               # Return the currently committed row
       end
     end

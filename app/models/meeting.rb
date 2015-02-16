@@ -68,6 +68,17 @@ class Meeting < ActiveRecord::Base
   validates_length_of :max_individual_events, maximum: 2
   validates_length_of :max_individual_events_per_session, maximum: 1
 
+  attr_accessible :description, :entry_deadline, :has_warm_up_pool, :is_under_25_admitted,
+                  :reference_phone, :reference_e_mail, :reference_name, :notes, :has_invitation,
+                  :has_start_list, :are_results_acquired, :max_individual_events, :configuration_file,
+                  :edition, :season_id, :user_id, :is_autofilled, :header_date, :code, :header_year,
+                  :max_individual_events_per_session, :is_out_of_season,
+                  :edition_type_id, :timing_type_id, :individual_score_computation_type_id,
+                  :relay_score_computation_type_id, :team_score_computation_type_id,
+                  :meeting_score_computation_type_id,
+                  :invitation
+
+
   scope :sort_meeting_by_user,   ->(dir) { order("users.name #{dir.to_s}, meetings.description #{dir.to_s}") }
   scope :sort_meeting_by_season, ->(dir) { order("seasons.begin_date #{dir.to_s}, meetings.description #{dir.to_s}") }
   scope :sort_by_date,           ->(dir = 'ASC') { order("header_date #{dir.to_s}") }

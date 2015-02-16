@@ -19,6 +19,9 @@ class City < ActiveRecord::Base
   validates_presence_of   :area, length: { within: 1..50 }, allow_nil: false
   validates_presence_of   :country, length: { within: 1..50 }, allow_nil: false
   validates_presence_of   :country_code, length: { within: 1..10 }, allow_nil: false
+
+
+  attr_accessible :name, :zip, :area, :country, :country_code, :user_id
   #-- -------------------------------------------------------------------------
   #++
 

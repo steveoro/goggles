@@ -62,6 +62,14 @@ class MeetingIndividualResult < ActiveRecord::Base
   validates_presence_of     :reaction_time
   validates_numericality_of :reaction_time
 
+
+  attr_accessible :rank, :is_play_off, :is_out_of_race, :is_disqualified, :standard_points,
+                  :meeting_individual_points, :minutes, :seconds, :hundreds,
+                  :meeting_program_id, :swimmer_id, :team_id, :badge_id, :user_id,
+                  :disqualification_code_type_id, :goggle_cup_points, :reaction_time,
+                  :team_points, :team_affiliation_id
+
+
   delegate :short_name, to: :category_type, prefix: true
   delegate :code,       to: :event_type, prefix: true
 
