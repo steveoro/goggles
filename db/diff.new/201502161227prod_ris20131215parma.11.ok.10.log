@@ -1,0 +1,303 @@
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'A.S.D. LARUS NUOTO', season_id=132 - team match: 'AS LARUS NUOTO' (ID:116) score: 0.93, best match: '' score: 0.93]...
+Using team_id alias override = 116 for 'A.S.D. LARUS NUOTO'...
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'A.S.D. LARUS NUOTO' ]]]  -- season_id: 132, best-match search:
+
+   - (Team            ) 'AS LARUS NUOTO', score 0.9300, ID:  116
+   - (TeamAffiliation ) 'AS LARUS NUOTO', score 0.9300, ID:  309, season_id:  132	=> Team ID:  116 (SEASON OK)
+
+   ==> 2 results tot., min. bias: 0.9300
+   Team   BEST...: (Team            ) 'AS LARUS NUOTO', score 0.9300, ID:  116
+   Affil. BEST...: (TeamAffiliation ) 'AS LARUS NUOTO', score 0.9300, ID:  309, season_id:  132	=> Team ID:  116
+   Hi-scoring....: (TeamAffiliation ) 'AS LARUS NUOTO', score 0.9300, ID:  309, season_id:  132	=> Team ID:  116
+   - Preferred - : (TeamAffiliation ) 'AS LARUS NUOTO', score 0.9300, ID:  309, season_id:  132	=> Team ID:  116
+   Chosen team_id = 116, season_id = 132
+   --- MULTIPLE CHOICES ---
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES
+    ('A.S.D. LARUS NUOTO',116,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'ALTAIR VULCANIA NUO', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 31.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'ALTAIR VULCANIA NUO' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('ALTAIR VULCANIA NUO','ALTAIR VULCANIA NUO','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'ALTAIR VULCANIA NUO'),'ALTAIR VULCANIA NUO','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'AS SOGEIS', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 32.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'AS SOGEIS' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('AS SOGEIS','AS SOGEIS','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'AS SOGEIS'),'AS SOGEIS','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'ASOLA N', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 33.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'ASOLA N' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('ASOLA N','ASOLA N','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'ASOLA N'),'ASOLA N','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'BENFICA PALLANUOTO', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 34.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'BENFICA PALLANUOTO' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('BENFICA PALLANUOTO','BENFICA PALLANUOTO','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'BENFICA PALLANUOTO'),'BENFICA PALLANUOTO','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'FOLTZER N.', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 35.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'FOLTZER N.' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('FOLTZER N.','FOLTZER N.','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'FOLTZER N.'),'FOLTZER N.','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing unconfirmed [DataImportTeamAnalysisResult: data_import_session_id=2, 'LERICI NUOTO MASTER', season_id=132 - team match: 'AICS NUOTO MASTER' (ID:250) score: 0.8906, best match: '' score: 0.8906]...
+Using team_id alias override = 250 for 'LERICI NUOTO MASTER'...
+Created new DataImportTeam, ID: 36.
+
+                    [[[ 'LERICI NUOTO MASTER' ]]]  -- search overridden:
+
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES
+    ('LERICI NUOTO MASTER',250,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'MASTERNUOTOFIDENZA', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 37.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'MASTERNUOTOFIDENZA' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('MASTERNUOTOFIDENZA','MASTERNUOTOFIDENZA','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'MASTERNUOTOFIDENZA'),'MASTERNUOTOFIDENZA','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing unconfirmed [DataImportTeamAnalysisResult: data_import_session_id=2, 'NUOTO LIVORNO SSD', season_id=132 - team match: 'NUOTO LIFE STYLE' (ID:110) score: 0.8612, best match: '' score: 0.8612]...
+Using team_id alias override = 110 for 'NUOTO LIVORNO SSD'...
+Created new DataImportTeam, ID: 38.
+
+                    [[[ 'NUOTO LIVORNO SSD' ]]]  -- search overridden:
+
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES
+    ('NUOTO LIVORNO SSD',110,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'POL.MIMMO FERRITO S', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 39.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'POL.MIMMO FERRITO S' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('POL.MIMMO FERRITO S','POL.MIMMO FERRITO S','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'POL.MIMMO FERRITO S'),'POL.MIMMO FERRITO S','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'POL.SPORTEVOLUTION', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 40.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'POL.SPORTEVOLUTION' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('POL.SPORTEVOLUTION','POL.SPORTEVOLUTION','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'POL.SPORTEVOLUTION'),'POL.SPORTEVOLUTION','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'QUANTA SPORT VILLAG', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 41.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'QUANTA SPORT VILLAG' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('QUANTA SPORT VILLAG','QUANTA SPORT VILLAG','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'QUANTA SPORT VILLAG'),'QUANTA SPORT VILLAG','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'SETTEFRATI LIBERTAS', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 42.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'SETTEFRATI LIBERTAS' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('SETTEFRATI LIBERTAS','SETTEFRATI LIBERTAS','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'SETTEFRATI LIBERTAS'),'SETTEFRATI LIBERTAS','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'SPM SPORT - PAULLO', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 43.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'SPM SPORT - PAULLO' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('SPM SPORT - PAULLO','SPM SPORT - PAULLO','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'SPM SPORT - PAULLO'),'SPM SPORT - PAULLO','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'ULYSSE ASD', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 44.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'ULYSSE ASD' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('ULYSSE ASD','ULYSSE ASD','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'ULYSSE ASD'),'ULYSSE ASD','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing CONFIRMED [DataImportTeamAnalysisResult: data_import_session_id=2, 'VIADANA NUOTO LIBER', season_id=132 - team match: '' (ID:) score: , best match: '' score: ]...
+Created new DataImportTeam, ID: 45.
+
+-------------------------------------------------------------------------------------------------------------
+                    [[[ 'VIADANA NUOTO LIBER' ]]]  -- season_id: 132, best-match search:
+
+   (no results)
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO teams (name,editable_name,address,e_mail,contact_name,user_id,created_at,updated_at) VALUES
+    ('VIADANA NUOTO LIBER','VIADANA NUOTO LIBER','','','',1,CURDATE(),CURDATE());
+INSERT INTO team_affiliations (season_id,team_id,name,number,must_calculate_goggle_cup,user_id,created_at,updated_at) VALUES
+    (132,(select t.id from teams t where t.name = 'VIADANA NUOTO LIBER'),'VIADANA NUOTO LIBER','',0,1,CURDATE(),CURDATE());
+----8<----
+
+-------------------------------------------------------------------------------------------------------------
+
+Processing unconfirmed [DataImportTeamAnalysisResult: data_import_session_id=2, 'ZEROUNO SSD ARL', season_id=132 - team match: 'ZERO9 SSD' (ID:213) score: 0.8588, best match: '' score: 0.8588]...
+Using team_id alias override = 213 for 'ZEROUNO SSD ARL'...
+Created new DataImportTeam, ID: 46.
+
+                    [[[ 'ZEROUNO SSD ARL' ]]]  -- search overridden:
+
+   => NOT FOUND.
+
+----8<---- (Original suggested statements:) ----
+INSERT INTO data_import_team_aliases (name,team_id,created_at,updated_at) VALUES
+    ('ZEROUNO SSD ARL',213,CURDATE(),CURDATE());
+----8<----

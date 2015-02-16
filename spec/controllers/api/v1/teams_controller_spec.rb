@@ -26,7 +26,7 @@ describe Api::V1::TeamsController, :type => :controller do
         expect(response.status).to eq( 200 )
       end
       it "returns a positive integer for a team with meetings" do
-        result_count = response.body.to_i 
+        result_count = response.body.to_i
         expect( result_count > 0 ).to be true
       end
     end
@@ -53,7 +53,7 @@ describe Api::V1::TeamsController, :type => :controller do
         expect(response.status).to eq( 200 )
       end
       it "returns a positive integer for a team with results" do
-        result_count = response.body.to_i 
+        result_count = response.body.to_i
         expect( result_count > 0 ).to be true
       end
     end
@@ -87,7 +87,37 @@ describe Api::V1::TeamsController, :type => :controller do
   # ===========================================================================
 
 
-  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "teams" )    
+  describe '[GET api/v1/team/current_swimmers]' do
+    context "with a non-JSON request" do
+      before :each do
+        get :current_swimmers, id: 1, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "refuses the request" do
+        expect(response.status).to eq( 406 )
+      end
+    end
+
+    context "with valid parameters and credentials" do
+      before :each do
+        get :current_swimmers, format: :json, id: 1, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a non-empty body" do
+        expect( response.body ).not_to be_empty
+      end
+
+      it "returns a JSON array" do
+        result = JSON.parse(response.body)
+        expect( result ).to be_an_instance_of( Array )
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "teams" )
 
 
   describe '[GET teams/index]' do

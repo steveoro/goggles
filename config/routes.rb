@@ -47,6 +47,7 @@ Goggles::Application.routes.draw do
       get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
       get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
       get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
+      get    "team/current_swimmers/:id",     to: "teams#current_swimmers", as: "team_current_swimmers"
       get    "teams/index",                   to: "teams#index",            as: "teams"
       get    "teams/show/:id",                to: "teams#show",             as: "team_show"
 

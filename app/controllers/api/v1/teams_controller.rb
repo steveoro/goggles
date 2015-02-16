@@ -62,7 +62,27 @@ class Api::V1::TeamsController < ApplicationController
       render( json: '' )
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns the JSON array of all the Swimmers found for the specified Team id.
+  # (The JSON array contains all the swimmers found for all the badges, indipendently
+  # from the season.)
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def current_swimmers
+    team = Team.find_by_id( params[:id] )
+    if team
+      render( json: team.swimmers.uniq.to_a )
+    else
+      render( json: [] )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns a JSON-encoded Array of all the rows.
