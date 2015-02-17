@@ -33,12 +33,21 @@
       %div{:class => "row span11 #{(idx%2 == 0) ? 'goggles-divlist-even' : 'goggles-divlist-odd'}"}
         .control-group
           .span3
-            %b
-              "#{result_row.searched_team_name}"
+            .dropdown
+              %a.dropdown-toggle{ 'data-toggle' => "dropdown", href: "#" }
+                %b="#{result_row.searched_team_name}"
+              %ul.dropdown-menu
+                - if @data_import_session
+                  - lines_with_curr_team = @data_import_session.source_data.split("\r\n")
+                  - lines_with_curr_team = lines_with_curr_team.map{ |line| line =~ Regexp.new(result_row.searched_team_name, 'ui') ? line[(line =~ /([a-z]+)/i).to_i .. 76] : nil }.compact.uniq
+                  - 2.times{ lines_with_curr_team.delete_at( lines_with_curr_team.find_index( lines_with_curr_team.last ) ) }
+                  - lines_with_curr_team.each do |line|
+                    %li
+                      %pre.imported_swimmer= line
           .span4
             = select( :alias_ids, result_row.id, Team.to_dropdown(),                   |
               { prompt: I18n.t(:please_select), selected: result_row.chosen_team_id }, |
-              { class: 'input-xlarge combobox' } )                                              |
+              { class: 'input-xlarge combobox' } )                                     |
           .span1
             = show_tag( do_insert_alias )
           .span1
@@ -59,6 +68,37 @@
       %span#loadingIndicator{:hidden => "true"}
         = image_tag( 'indicator.gif' )
       #divProgress.progress.progress-striped.active{:hidden => "true"}
-
 %script
   $('.combobox').combobox();
+  $('span.ui-combobox').on( 'autocompleteselect', function() {  |
+    var selectBox  = $(this).siblings()[0];                     |
+    var teamId     = selectBox.value;                           |
+    console.log( "team ID: " + teamId );                        |
+    $.ajax({                                                    |
+      url: "/api/v1/team/current_swimmers/" + teamId,           |
+      dataType: "json"                                          |
+    }).done( function( data_array ) {                           |
+      var match_count = 0;                                      |
+      var matched_lines = "";                                   |
+      for ( index = 0; index < data_array.length; index++ ) {   |
+        var swimmerName = data_array[index].complete_name;      |
+        var lastname    = swimmerName.split(/\s+/)[0];          |
+        var firstname   = swimmerName.split(/\s+/)[1];          |
+        $('.imported_swimmer').each( function(i, element) {     |
+          var matcher_1 = new RegExp( lastname, 'i' );          |
+          var matcher_2 = new RegExp( firstname, 'i' );         |
+          if ( matcher_1.test($(element).text()) && matcher_2.test($(element).text()) ) { |
+            match_count++;                                      |
+            matched_lines += $(element).text() + "\r\n";        |
+            $(element).addClass('text-info');                   |
+            console.log( "MATCHED: " + lastname + " " + firstname + " => " + $(element).text() ); |
+            console.log( "year_of_birth: " + data_array[index].year_of_birth ); |
+          }                                                     |
+        });                                                     |
+      }                                                         |
+      if ( match_count > 0 ) {                                  |
+        var msg = "Found " + match_count + " matching Swimmer!\r\n\r\n" + matched_lines; |
+        alert( msg );                                           |
+      }                                                         |
+    });                                                         |
+  });                                                           |

@@ -1,3 +1,13 @@
+
+
+=begin
+
+= Admin model
+
+  - version:  4.00.755
+  - author:   Steve A.
+
+=end
 class Admin < ActiveRecord::Base
   include Rails.application.routes.url_helpers
 

@@ -90,7 +90,7 @@ describe Api::V1::TeamsController, :type => :controller do
   describe '[GET api/v1/team/current_swimmers]' do
     context "with a non-JSON request" do
       before :each do
-        get :current_swimmers, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :current_swimmers, id: 1
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -99,7 +99,8 @@ describe Api::V1::TeamsController, :type => :controller do
 
     context "with valid parameters and credentials" do
       before :each do
-        get :current_swimmers, format: :json, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        login_admin()
+        get :current_swimmers, format: :json, id: 1
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
