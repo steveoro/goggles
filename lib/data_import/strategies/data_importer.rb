@@ -501,15 +501,17 @@ class DataImporter
         update_logs( "PHASE #1.2: associated Meeting corrected." )
       end
 
-      update_logs( "PHASE #1.2: checking possible missing Meeting notes/organization..." )
-      sql_diff = MeetingNotesOrganizationChecker.check_and_fix(
-        @meeting,
-        meeting_dates,
-        meeting_header_row[:fields][:organization]
-      )
-      if sql_diff.size > 0
-        @data_import_session.sql_diff << sql_diff
-        update_logs( "PHASE #1.2: associated Meeting#notes updated with missing value." )
+      if meeting_header_row.instance_of?( Hash ) && meeting_header_row.has_key?(:fields)
+        update_logs( "PHASE #1.2: checking possible missing Meeting notes/organization..." )
+        sql_diff = MeetingNotesOrganizationChecker.check_and_fix(
+          @meeting,
+          meeting_dates,
+          meeting_header_row[:fields][:organization]
+        )
+        if sql_diff.size > 0
+          @data_import_session.sql_diff << sql_diff
+          update_logs( "PHASE #1.2: associated Meeting#notes updated with missing value." )
+        end
       end
                                                     # Retrieve default meeting session: (used only for new/missing meeting events or programs)
       update_logs( "PHASE #1.2: processing TEAM RANKING/SCORES..." )
