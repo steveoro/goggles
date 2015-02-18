@@ -34,7 +34,7 @@
             %b
               "#{result_row.searched_swimmer_name} (#{result_row.desired_year_of_birth})"
           .span4
-            = select( :alias_ids, result_row.id, Swimmer.to_dropdown(nil, :id, :get_verbose_name),  |
+            = select( :alias_ids, result_row.id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
               { prompt: I18n.t(:please_select), selected: result_row.chosen_swimmer_id },           |
               { class: 'input-xlarge combobox' } )                                                  |
           .span1

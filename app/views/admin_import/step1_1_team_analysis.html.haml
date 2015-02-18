@@ -38,10 +38,12 @@
                 %b="#{result_row.searched_team_name}"
               %ul.dropdown-menu
                 - if @data_import_session
-                  - lines_with_curr_team = @data_import_session.source_data.split("\r\n")
-                  - lines_with_curr_team = lines_with_curr_team.map{ |line| line =~ Regexp.new(result_row.searched_team_name, 'ui') ? line[(line =~ /([a-z]+)/i).to_i .. 76] : nil }.compact.uniq
-                  - 2.times{ lines_with_curr_team.delete_at( lines_with_curr_team.find_index( lines_with_curr_team.last ) ) }
-                  - lines_with_curr_team.each do |line|
+                  - data_lines = @data_import_session.source_data.split("\r\n")
+                  - data_lines = data_lines.map { |line| ( line =~ Regexp.new(result_row.searched_team_name, 'ui') ) ? line[(line =~ /([a-z]+)/i).to_i .. 76] : nil }.compact.uniq
+                  - 2.times { data_lines.delete_at(                           |
+                      data_lines.find_index( data_lines.last )                |
+                    ) } if data_lines && data_lines.size > 2                  |
+                  - data_lines.each do |line|
                     %li
                       %pre.imported_swimmer= line
           .span4
