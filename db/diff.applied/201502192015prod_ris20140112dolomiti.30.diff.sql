@@ -2758,7 +2758,7 @@ INSERT INTO `meeting_team_scores` (`id`, `sum_individual_points`, `sum_relay_poi
 -- Meeting 13255
 -- 'Results acquired' flag setting:
 UPDATE meetings SET are_results_acquired = '1' WHERE id = 13255;
-ß
+
 -- --- BeginTimeCalculator: compute_for_all( 13255 )
 -- ----------------------------------------------------
 -- Using RESULTS to compute heat length.
