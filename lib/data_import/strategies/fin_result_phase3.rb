@@ -690,7 +690,7 @@ module FinResultPhase3
         data_import_session.sql_diff ||= ''
         data_import_session.sql_diff << "\r\n-- Meeting #{meeting.id}" <<
           "\r\n-- 'Results acquired' flag setting:" <<
-          "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{meeting.id};"
+          "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{meeting.id};\r\n\r\n"
 # DEBUG
 #        puts "=> Meeting.are_results_acquired: #{meeting.are_results_acquired}"
       end
