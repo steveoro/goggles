@@ -33,7 +33,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = CsiResultParser
 
-  - Goggles framework vers.:  4.00.751
+  - Goggles framework vers.:  4.00.757
   - author: Steve A.
 
  Strategy class delegated to parse result or entry datafiles for CSI Meetings.
@@ -266,7 +266,9 @@ class CsiResultParser
       @data_import_session.save!
       update_logs(
         "\r\nFile '#{File.basename( @full_pathname )}', created session ID: #{ @data_import_session.id }\r\n" <<
-        "Actual stored rows ..... : #{ @dao_list.size }\r\n" <<
+        "Actual stored rows ...: #{ @dao_list.size }\r\n" <<
+        "Meeting ID:...........: #{ @meeting ? @meeting.id : '(nil)' }\r\n" <<
+        "Season ID:............: #{ @season ? @season.id : '(nil)' }\r\n" <<
         "File processed.\r\nData-import PHASE #1.2 DONE."
       )
     end
@@ -289,11 +291,24 @@ class CsiResultParser
 
 
   # Stores the text +msg+ into the logs (both on the logger & on the support table).
-  def update_logs( msg, method = :info, with_save = true )
+  def update_logs( msg, method = :info, with_save = false )
     @logger.send( method, msg ) if @logger
+    # The Log has become too long & complex to be saved into the table!
+
+    # [Steve, 20141111] We cannot save the log on table: the UPDATE statement will take
+    # a progressively longer time to complete, slowing the process considerably
+    # and eventually make the statement execution fail with MySQL disconnection error.
+    # A more quick, professional and permanent solution to obtain the logging serialized
+    # on DB it would be to add a separate table entity with a row for each single log
+    # event.
+    # As it is, the only viable solution is to keep the logging only on file.
     if @data_import_session
-      @data_import_session.phase_1_log = @data_import_session.phase_1_log + "#{msg}\r\n"
-      @data_import_session.save if with_save
+      @data_import_session.phase_1_log_will_change! if with_save
+      @data_import_session.phase_1_log << "#{msg}\r\n"
+#      if with_save
+#        ActiveRecord::Base.verify_active_connections!
+#        @data_import_session.save!
+#      end
     end
 
     process_text_log << "#{msg}\r\n"
@@ -572,7 +587,6 @@ class CsiResultParser
       return unless is_ok
 
                                                     # -- MEETING ENTRY (digest part) --
-# FIXME TEST w/ only MIRs available => this must return is_ok == true, nevertheless
       mentry_builder = DataImportMeetingEntryBuilder.build_from_parameters(
         @data_import_session,
         @season,
@@ -586,19 +600,20 @@ class CsiResultParser
       is_ok = ! mentry_builder.result_row.nil?
 
                                                     # -- MEETING INDIVIDUAL RESULT (digest part) --
-# FIXME TEST w/ only MeetingEntries available => this must return is_ok == true, nevertheless
-      mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
-        @data_import_session,
-        @season,
-        meeting_program,
-        dao,
-        dao_index,
-        @dao_list.size,
-        gender_type, category_type,
-        @force_team_or_swimmer_creation
-      )
-      is_ok = ! mir_builder.result_row.nil?
-      return unless is_ok
+      unless dao.is_result_missing
+        mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
+          @data_import_session,
+          @season,
+          meeting_program,
+          dao,
+          dao_index,
+          @dao_list.size,
+          gender_type, category_type,
+          @force_team_or_swimmer_creation
+        )
+        is_ok = ! mir_builder.result_row.nil?
+        return unless is_ok
+      end
                                                     # Update current header count into "progress counter column"
       DataImportSession.where( id: @data_import_session.id ).update_all(
         phase_3_log: "1.2-MIR:#{dao_index+1}/#{@dao_list.size}"

@@ -17,6 +17,8 @@
           .controls
             = text_field_tag( :data_import_session_id, @data_import_session.id, disabled: true, class: "span1" )
             = hidden_field_tag( :data_import_session_id, @data_import_session.id )
+            - if @meeting
+              %span.help-inline.strong= "#{@meeting.class.name} ID: #{@meeting.id} (#{@meeting.code}) - "
             %span.help-inline.strong= @season_description
             \
             \#{submit_tag( I18n.t(:commit_rows), id: "btnSubmit", class: 'btn' )}
@@ -30,7 +32,7 @@
         height: @max_view_height,                                               |
         border: true,                                                           |
         data_import_session_id: @data_import_session.id,                        |
-        meeting_id: @meeting_id,                                                |
+        meeting_id: @meeting ? @meeting.id : 0,                                 |
         view_config: { force_fit: true }                                        |
     }                                                                           |
 - else

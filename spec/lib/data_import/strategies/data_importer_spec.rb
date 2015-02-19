@@ -669,10 +669,18 @@ describe DataImporter, type: :strategy do
           expect( data_importer.update_results_acquired_flag( di_prg.data_import_session, true ) ).to be_an_instance_of( Meeting )
         end
 
-        it "sets the 'results-acquired' flag for the associated meeting" do
+        it "does not set the 'results-acquired' flag for the meeting when no MIRs are imported" do
           di_prg = create( :data_import_meeting_program )
           data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
           result = data_importer.update_results_acquired_flag( di_prg.data_import_session, true )
+          expect( result ).to be_an_instance_of( Meeting )
+          expect( result.are_results_acquired ).to be false
+        end
+
+        it "sets the 'results-acquired' flag for the meeting when MIRs are imported" do
+          di_mir = create( :data_import_meeting_individual_result )
+          data_importer = DataImporter.new( nil, nil, di_mir.data_import_session )
+          result = data_importer.update_results_acquired_flag( di_mir.data_import_session, true )
           expect( result ).to be_an_instance_of( Meeting )
 # DEBUG
 #          puts "- di_prg.meeting_session.meeting = #{di_prg.meeting_session.meeting.class} ##{di_prg.meeting_session.meeting_id}"

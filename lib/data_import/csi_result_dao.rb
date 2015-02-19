@@ -5,7 +5,7 @@
 
 = CsiResultDAO
 
-  - Goggles framework vers.:  4.00.735
+  - Goggles framework vers.:  4.00.757
   - author: Steve A.
 
  DAO class containing the extracted from the data files from C.S.I. results or entry
@@ -21,6 +21,9 @@ class CsiResultDAO
 
   # Text code contained in the result datafile if the swimmer has subscribed himself without specifying any entry time
   ENTRY_NOTIME_RAW_CODE = '999998'
+
+  # Text code contained in the result datafile if the result is missing
+  RESULT_NOTIME_RAW_CODE = '999999'
 
   # Translation hash for the combined category_code supplied by the datafile: category_types.code
   # (@ category_code[last_position-2])
@@ -63,7 +66,7 @@ class CsiResultDAO
               :rank, :badge_code, :total_events, :category_code, :combined_key,
               :entry_order,
               # These will be computed from the above fields:
-              :is_disqualified, :is_retired, :is_entry_no_time,
+              :is_disqualified, :is_retired, :is_entry_no_time, :is_result_missing,
               :length_in_metres, :stroke_type_code, :category_type_code, :gender_type_id
   #-- -------------------------------------------------------------------------
   #++
@@ -82,30 +85,30 @@ class CsiResultDAO
     @category_code    = category_code
     @combined_key     = combined_key
     @entry_order      = entry_order
+    @entry_timing     = '0'
+    @result_timing    = '0'
+    @rank             = '0'
+    @is_disqualified  = false
+    @is_retired       = false
+    @is_entry_no_time = false
+    @is_result_missing= false
                                                     # Handle special codes:
     case result_timing
     when DSQ_RAW_CODE
       @is_disqualified = true
-      @is_retired = false
-      @result_timing = '0'
-      @rank = '0'
     when RET_RAW_CODE
-      @is_disqualified = false
       @is_retired = true
-      @result_timing = '0'
-      @rank = '0'
+    when RESULT_NOTIME_RAW_CODE
+      @is_result_missing = true
     else
-      @is_disqualified = false
-      @is_retired = false
       @result_timing = result_timing
       @rank = rank
     end
+
     case entry_timing
     when ENTRY_NOTIME_RAW_CODE
       @is_entry_no_time = true
-      @entry_timing = '0'
     else
-      @is_entry_no_time = false
       @entry_timing = entry_timing
     end
                                                     # Divide the combined fields:
@@ -152,7 +155,8 @@ class CsiResultDAO
   def to_s
     "[CsiResultDAO: '#{@complete_name}' (#{@year_of_birth}, g:#{@gender_type_id})=> '#{@team_name}' b:#{@badge_code}]: " <<
     "event: #{event_types_code}, cat. #{@category_type_code}, rank: #{@rank}) " <<
-    "#{decorated_result_time} (entry: #{decorated_entry_time})"
+    "#{decorated_result_time} (entry: #{decorated_entry_time})" <<
+    (@is_disqualified ? ' DSQ' : '') << (@is_retired ? ' RET' : '')
   end
   #-- -------------------------------------------------------------------------
   #++

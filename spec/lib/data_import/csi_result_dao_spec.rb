@@ -35,22 +35,32 @@ describe CsiResultDAO, type: :model do
 
   [
     "ALLORO STEFANO;1969;CSInuoto OberFerrari;999997;10750;4;AT04205036;2;1743;ALLORO STEFANO                M69CSInuoto OberFerrari;65;0;0;0;0;0;0;0;0;0;0;  0",
+
+    "INCERTI TELANI JOHNATAN;1982;Calypso;999999;3400;0;AT4226921;2;1112;INCERTI TELANI JOHNATAN       M82Calypso;17;0;0;0;0;0;0;0;0;0;0;",
+    "TARABINI RICCARDO;1972;ScuolaNuoto CsiCarpi;999999;3280;0;;2;1112;TARABINI RICCARDO             M72ScuolaNuoto CsiCarpi;51;0;0;0;0;0;0;0;0;0;0;",
+    "CARAMASCHI FABRIZIO;1992;ScuolaNuoto CsiCarpi;999999;24440;0;;2;1154;CARAMASCHI FABRIZIO           M92ScuolaNuoto CsiCarpi;65;0;0;0;0;0;0;0;0;0;0;",
+    "DI PASQUALE MARCO;1979;ScuolaNuoto CsiCarpi;999999;30500;0;;2;1154;DI PASQUALE MARCO             M79ScuolaNuoto CsiCarpi;66;0;0;0;0;0;0;0;0;0;0;",
+    "FORNETTI DAVIDE;1981;ScuolaNuoto CsiCarpi;999999;30910;0;;2;1154;FORNETTI DAVIDE               M81ScuolaNuoto CsiCarpi;67;0;0;0;0;0;0;0;0;0;0;",
+    "GATTI LUCA;1979;ScuolaNuoto CsiCarpi;999999;3870;0;;2;1132;GATTI LUCA                    M79ScuolaNuoto CsiCarpi;68;0;0;0;0;0;0;0;0;0;0;",
+    "GUIDETTI FRANCESCO;1982;ScuolaNuoto CsiCarpi;999999;4400;0;;2;1132;GUIDETTI FRANCESCO            M82ScuolaNuoto CsiCarpi;69;0;0;0;0;0;0;0;0;0;0;",
+    "LEONI ALESSANDRO;1989;ScuolaNuoto CsiCarpi;999999;24440;0;;2;1154;LEONI ALESSANDRO              M89ScuolaNuoto CsiCarpi;70;0;0;0;0;0;0;0;0;0;0;",
+
     "ATTOLINI FEDERICO;1962;CSInuoto OberFerrari;11440;999998;2;AT04205055;2;1843;ATTOLINI FEDERICO             M62CSInuoto OberFerrari;66;0;0;0;0;0;0;0;0;0;0;  0",
     "BERTOZZI ORLANDO;1968;CSInuoto OberFerrari;10390;10420;2;AT04227916;2;1743;BERTOZZI ORLANDO              M68CSInuoto OberFerrari;67;0;0;0;0;0;0;0;0;0;0;  0",
     "BIANCHI ELENA;1967;CSInuoto OberFerrari;13080;12980;4;AT04205106;1;743;BIANCHI ELENA                 F67CSInuoto OberFerrari;68;0;0;0;0;0;0;0;0;0;0;  0",
     "BONACINI MONICA;1969;CSInuoto OberFerrari;25420;25300;1;AT04205127;2;744;BONACINI MONICA               F69CSInuoto OberFerrari;69;0;0;0;0;0;0;0;0;0;0;  0",
     "BUDASSI VALENTINA;1990;CSInuoto OberFerrari;11740;11838;5;AT04205174;2;343;BUDASSI VALENTINA             F90CSInuoto OberFerrari;71;0;0;0;0;0;0;0;0;0;0;  0",
-    "FORMENTINI DAVIDE;1988;CSInuoto OberFerrari;4330;4180;4;AT04205413;2;1322;FORMENTINI DAVIDE             M88CSInuoto OberFerrari;74;0;0;0;0;0;0;0;0;0;0;  0",
+    "FORMENTINI DAVIDE;1988;CSInuoto OberFerrari;999999;4180;4;AT04205413;2;1322;FORMENTINI DAVIDE             M88CSInuoto OberFerrari;74;0;0;0;0;0;0;0;0;0;0;  0",
     "FRANCESCHINI STEFANO;1973;CSInuoto OberFerrari;25340;24982;7;AT04202946;2;1644;FRANCESCHINI STEFANO          M73CSInuoto OberFerrari;75;0;0;0;0;0;0;0;0;0;0;  0",
     "GANGAROSSA DAVIDE;1966;CSInuoto OberFerrari;12130;11940;11;AT04205436;1;1743;GANGAROSSA DAVIDE             M66CSInuoto OberFerrari;76;0;0;0;0;0;0;0;0;0;0;  0",
     "LEONARDI ELISA;1975;CSInuoto OberFerrari;31580;30250;3;AT04205537;2;644;LEONARDI ELISA                F75CSInuoto OberFerrari;77;0;0;0;0;0;0;0;0;0;0;  0",
     "LIGABUE MARCO;1971;CSInuoto OberFerrari;3190;3241;2;AT04227648;2;1612;LIGABUE MARCO                 M71CSInuoto OberFerrari;79;0;0;0;0;0;0;0;0;0;0;  0",
     "MARTIGNANI ALBERTO;1961;CSInuoto OberFerrari;4020;4030;1;AT04227918;2;1822;MARTIGNANI ALBERTO            M61CSInuoto OberFerrari;80;0;0;0;0;0;0;0;0;0;0;  0",
     "NASI NICOLE;1994;CSInuoto OberFerrari;10280;10100;1;AT04218743;1;243;NASI NICOLE                   F94CSInuoto OberFerrari;81;0;0;0;0;0;0;0;0;0;0;  0",
-    "PESARE REBECCA;1995;CSInuoto OberFerrari;10570;10500;2;AT04205708;2;243;PESARE REBECCA                F95CSInuoto OberFerrari;82;0;0;0;0;0;0;0;0;0;0;  0",
+    "PESARE REBECCA;1995;CSInuoto OberFerrari;999999;10500;2;AT04205708;2;243;PESARE REBECCA                F95CSInuoto OberFerrari;82;0;0;0;0;0;0;0;0;0;0;  0",
     "PEZZI STEFANIA;1981;CSInuoto OberFerrari;24320;24890;2;AT04205712;2;444;PEZZI STEFANIA                F81CSInuoto OberFerrari;83;0;0;0;0;0;0;0;0;0;0;  0",
     "ROSCA IOAN STELIAN;1974;CSInuoto OberFerrari;21770;22000;1;AT04231262;2;1644;ROSCA IOAN STELIAN            M74CSInuoto OberFerrari;84;0;0;0;0;0;0;0;0;0;0;  0",
-    "SARAVO CRISTIAN;1977;CSInuoto OberFerrari;3760;3800;2;AT04216859;2;1522;SARAVO CRISTIAN               M77CSInuoto OberFerrari;85;0;0;0;0;0;0;0;0;0;0;  0",
+    "SARAVO CRISTIAN;1977;CSInuoto OberFerrari;999999;3800;2;AT04216859;2;1522;SARAVO CRISTIAN               M77CSInuoto OberFerrari;85;0;0;0;0;0;0;0;0;0;0;  0",
     "SESENA BARBARA;1971;CSInuoto OberFerrari;30510;25600;1;AT04206799;2;644;SESENA BARBARA                F71CSInuoto OberFerrari;86;0;0;0;0;0;0;0;0;0;0;  0",
     "STROZZI PIERANTONIO;1963;CSInuoto OberFerrari;31190;30140;3;AT04227650;2;1844;STROZZI PIERANTONIO           M63CSInuoto OberFerrari;87;0;0;0;0;0;0;0;0;0;0;  0",
     "VEZZANI GIORGIA;1995;CSInuoto OberFerrari;4290;4000;6;AT04211437;2;222;VEZZANI GIORGIA               F95CSInuoto OberFerrari;89;0;0;0;0;0;0;0;0;0;0;  0",
@@ -74,7 +84,7 @@ describe CsiResultDAO, type: :model do
         :complete_name, :year_of_birth, :team_name, :result_timing, :entry_timing,
         :rank, :badge_code, :total_events, :category_code, :combined_key,
         :entry_order,
-        :is_disqualified, :is_retired, :is_entry_no_time,
+        :is_disqualified, :is_retired, :is_entry_no_time, :is_result_missing,
         :length_in_metres, :stroke_type_code, :category_type_code, :gender_type_id,
         :event_types_code, :decorated_result_time, :decorated_entry_time,
         :to_s
@@ -91,14 +101,19 @@ describe CsiResultDAO, type: :model do
 
       describe "#decorated_result_time" do
         it "contains a double quote when non-zero (else: empty string)" do
-          unless subject.is_disqualified || subject.is_retired
+# DEBUG
+          puts "\r\ndecorated_result_time: " << subject.decorated_result_time <<
+               (subject.is_disqualified ? ' DSQ' : '') <<
+               (subject.is_retired ? ' RET' : '') <<
+               (subject.is_result_missing ? ' ---' : '')
+          unless subject.is_disqualified || subject.is_retired || subject.is_result_missing
             expect( subject.decorated_result_time ).to include('"')
           else
             expect( subject.decorated_result_time ).to eq('')
           end
         end
         it "contains always a single quote when non-zero (else: empty string)" do
-          unless subject.is_disqualified || subject.is_retired
+          unless subject.is_disqualified || subject.is_retired || subject.is_result_missing
             expect( subject.decorated_result_time ).to include("'")
           else
             expect( subject.decorated_result_time ).to eq('')
@@ -108,7 +123,8 @@ describe CsiResultDAO, type: :model do
       describe "#decorated_entry_time" do
         it "contains a double quote when non-zero (else: empty string)" do
 # DEBUG
-#          puts "\r\n" << subject.decorated_entry_time
+          puts "\r\ndecorated_entry_time: " << subject.decorated_entry_time <<
+               (subject.is_entry_no_time ? ' ---' : '')
           unless subject.is_entry_no_time
             expect( subject.decorated_entry_time ).to include('"')
           else
@@ -196,10 +212,10 @@ describe CsiResultDAO, type: :model do
 
       describe "#result_timing" do
         it "is extracted from the fixture (when not disqualified or retired)" do
-          expect( fixture_row ).to include( subject.result_timing ) unless subject.is_disqualified || subject.is_retired
+          expect( fixture_row ).to include( subject.result_timing ) unless subject.is_disqualified || subject.is_retired || subject.is_result_missing
         end
         it "is the result_timing of the swimmer (when not disqualified or retired)" do
-          expect( subject.result_timing ).to include( @result_timing ) unless subject.is_disqualified || subject.is_retired
+          expect( subject.result_timing ).to include( @result_timing ) unless subject.is_disqualified || subject.is_retired || subject.is_result_missing
         end
       end
       describe "#entry_timing" do
@@ -212,10 +228,10 @@ describe CsiResultDAO, type: :model do
       end
       describe "#rank" do
         it "is extracted from the fixture (when not disqualified or retired)" do
-          expect( fixture_row ).to include( subject.rank ) unless subject.is_disqualified || subject.is_retired
+          expect( fixture_row ).to include( subject.rank ) unless subject.is_disqualified || subject.is_retired || subject.is_result_missing
         end
         it "is the rank of the swimmer (when not disqualified or retired)" do
-          expect( subject.rank ).to include( @rank ) unless subject.is_disqualified || subject.is_retired
+          expect( subject.rank ).to include( @rank ) unless subject.is_disqualified || subject.is_retired || subject.is_result_missing
         end
       end
 

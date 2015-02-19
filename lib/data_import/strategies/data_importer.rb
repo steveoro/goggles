@@ -24,7 +24,7 @@ require 'data_import/services/data_import_meeting_session_builder'
 
 = DataImporter
 
-  - Goggles framework vers.:  4.00.751
+  - Goggles framework vers.:  4.00.757
   - author: Steve A.
 
   Data-Import strategy class.
@@ -579,9 +579,11 @@ class DataImporter
       @data_import_session.save!
       update_logs(
         "\r\nFile '#{File.basename( @full_pathname )}', created session ID: #{ @data_import_session.id }\r\n" <<
-        "Total file lines ....... : #{ @result_hash[:line_count] }\r\n" <<
-        "Total data headers ..... : #{ @result_hash[:total_data_rows] }\r\n" <<
-        "Actual stored rows ..... : #{ @stored_data_rows }\r\n" <<
+        "Total file lines .....: #{ @result_hash[:line_count] }\r\n" <<
+        "Total data headers ...: #{ @result_hash[:total_data_rows] }\r\n" <<
+        "Actual stored rows ...: #{ @stored_data_rows }\r\n" <<
+        "Meeting ID:...........: #{ @meeting ? @meeting.id : '(nil)' }\r\n" <<
+        "Season ID:............: #{ @season ? @season.id : '(nil)' }\r\n" <<
         "File processed.\r\nData-import PHASE #1.2 DONE."
       )
     end
@@ -635,10 +637,8 @@ class DataImporter
     @import_log << @data_import_session.phase_2_log
                                                     # *** SET 'results aquired' flag. This will return the committed/updated meeting:
     @meeting = update_results_acquired_flag( @data_import_session ) if is_ok
-    if @meeting && is_ok
-      @data_import_session.sql_diff << "\r\n-- 'Results acquired' flag setting:" <<
-      "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{@meeting.id};"
-                                                    # *** FIX-UP committed meeting program's begin times:
+
+    if @meeting && is_ok                            # *** FIX-UP committed meeting program's begin times:
       is_begin_time_fixed = BeginTimeCalculator.compute_for_all( @meeting, @data_import_session.sql_diff )
       update_logs(
         "\r\nBegin time re-computed for all meeting programs and updated directly on committed entities.\r\n",

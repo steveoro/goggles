@@ -456,10 +456,10 @@ class AdminImportController < ApplicationController
       @season_description = '?'
     end
 
-    # [Steve, 20141219] Retrieve the associated Meeting#id, if available, used in
+    # [Steve, 20141219] We need the associated Meeting#id, if available, used in
     # grid filtering for some of the drop-down combo lists (specifically, which
     # meeting session are enlisted, for example):
-    @meeting_id = importer && importer.meeting.respond_to?(:id) ? importer.meeting.id : 0
+    @meeting = importer ? importer.meeting : nil
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -11,7 +11,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingProgramBuilder
 
-  - Goggles framework vers.:  4.00.741
+  - Goggles framework vers.:  4.00.757
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -47,7 +47,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
   #     - 0 on error/unable to process.
   #
   # @raise ArgumentError unless <tt>season</tt> is a valid Season.
-  # @raise ArgumentError unless <tt>meeting_session</tt> is a valid MeetingSession.
+  # @raise ArgumentError unless <tt>meeting_session</tt> is a valid MeetingSession or DataImportMeetingSession.
   # @raise ArgumentError unless <tt>gender_type</tt> is a valid GenderType.
   # @raise ArgumentError unless <tt>category_type</tt> is a valid CategoryType.
   # @raise ArgumentError unless <tt>stroke_type</tt> is a valid StrokeType.
@@ -59,7 +59,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
                                   detail_rows_size, previous_begin_time = nil,
                                   previous_duration_in_secs = 120 )
     raise ArgumentError.new("'season' must be a valid instance of Season!")                   unless season.instance_of?(Season)
-    raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession!")  unless meeting_session.instance_of?(MeetingSession)
+    raise ArgumentError.new("'meeting_session' must be a valid instance of MeetingSession or DataImportMeetingSession!")  unless meeting_session.instance_of?(MeetingSession) || meeting_session.instance_of?(DataImportMeetingSession)
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")          unless gender_type.instance_of?(GenderType)
     raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!")      unless category_type.instance_of?(CategoryType)
     raise ArgumentError.new("'stroke_type' must be a valid instance of StrokeType!")          unless stroke_type.instance_of?(StrokeType)
@@ -109,7 +109,13 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         raise "Event type not found for length_in_meters: #{length_in_meters}, stroke_type.code: #{stroke_type.code}, is_a_relay: #{category_type.is_a_relay}!" unless @event_type
 
         # Retrieve the parent MeetingEvent, if possible, just to get to the correct session:
-        @meeting_event = DataImportMeetingProgramBuilder.get_meeting_event( meeting_session.meeting_id, @event_type.id )
+        meeting_id = ( ( meeting_session.respond_to?( :meeting ) && meeting_session.meeting ) ? meeting_session.meeting : nil )
+        unless meeting_id
+          meeting_id = ( ( meeting_session.respond_to?( :data_import_meeting ) && meeting_session.data_import_meeting ) ?
+                         meeting_session.data_import_meeting : nil )
+        end
+        # This will result always in a nil MeetingEvent if the Meeting ID comes from a DataImportMeetingSession:
+        @meeting_event = DataImportMeetingProgramBuilder.get_meeting_event( meeting_id, @event_type.id )
 
         # Use the correct MeetingSession or fallback to the default (specified as a parameter):
         @meeting_session = @meeting_event ? @meeting_event.meeting_session : meeting_session
@@ -246,7 +252,9 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 
 
   # Returns the parent MeetingEvent using the meeting ID and the event type, or +nil+
-  # when none is found
+  # when none is found.
+  # This works only for already serialized Meetings, with existing MeetingSessions and
+  # events.
   #
   def self.get_meeting_event( meeting_id, event_type_id )
     possible_meeting_session_ids = MeetingSession.where( meeting_id: meeting_id ).map{ |ms| ms.id }

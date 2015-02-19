@@ -10,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.751
+  - Goggles framework vers.:  4.00.757
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -650,10 +650,12 @@ module FinResultPhase3
 
 
   # Updates the #are_results_acquired flag for the Meeting instance associated with
-  # the #data_import_session specified.
+  # the #data_import_session specified, but only if any individual results were
+  # actully imported.
   #
-  # Returns the updated Meeting instance on success, +nil+ when unable to find the
-  # associated Meeting (it must be already committed by phase 3 for this to work).
+  # Returns the updated Meeting instance on success (even when no actions are done),
+  # +nil+ when unable to find the associated Meeting (it must be already committed by
+  # phase 3 for this to work).
   #
   # *WARNING:*
   # This implementation will work ONLY if the data import session contains at least a
@@ -678,11 +680,20 @@ module FinResultPhase3
     meeting = ms && ms.meeting
 # DEBUG
 #    puts "5) Meeting = #{meeting.class} ##{ms ? meeting.id : ''}"
+
     if meeting.instance_of?( Meeting )
-      meeting.are_results_acquired = flag_status
-      meeting.save!
+      # Update the are_results_acquired flag ONLY if results where actually imported
+      # and the Meeting is already committed:
+      if meeting.meeting_individual_results.count > 0
+        meeting.are_results_acquired = flag_status
+        meeting.save!
+        data_import_session.sql_diff ||= ''
+        data_import_session.sql_diff << "\r\n-- Meeting #{meeting.id}" <<
+          "\r\n-- 'Results acquired' flag setting:" <<
+          "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{meeting.id};"
 # DEBUG
-#      puts "=> Meeting.are_results_acquired: #{meeting.are_results_acquired}"
+#        puts "=> Meeting.are_results_acquired: #{meeting.are_results_acquired}"
+      end
       meeting
     else
       nil

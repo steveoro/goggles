@@ -9,7 +9,7 @@ require 'data_import/csi_result_dao'
 
 = ResultTimeParser
 
-  - Goggles framework vers.:  4.00.737
+  - Goggles framework vers.:  4.00.757
   - author: Steve A.
 
  Strategy class dedicated to extracting required Meeting result fields
@@ -28,7 +28,7 @@ class ResultTimeParser
   # - rank_token: the text token referring to the ranking position of the result
   # - result_time_token: the text token referring to the actual result timing
   # - result_dao: (default +nil+), a full DAO object storing the whole result row;
-  #               when present, it may override the other two parameters with its values.
+  #               when present, it may override the rank parameter with its value.
   #
   def initialize( rank_token, result_time_token, result_dao = nil )
     if result_dao
@@ -37,7 +37,7 @@ class ResultTimeParser
       ) unless result_dao.instance_of?( CsiResultDAO )
       @result_dao   = result_dao
       @rank_token   = result_dao.rank
-      @result_token = result_dao.decorated_result_time
+      @result_token = result_time_token
     else
       @result_dao   = nil
       @rank_token   = rank_token

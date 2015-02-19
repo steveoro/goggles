@@ -157,6 +157,8 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           end
           @mins, @secs, @hds = result_parser.mins_secs_hds_array
         end
+# DEBUG
+#        puts "\r\n- @mins: #{@mins}, @secs: #{@secs}, @hds: #{@hds}"
       end
 
 
