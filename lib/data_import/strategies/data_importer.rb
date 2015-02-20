@@ -636,7 +636,7 @@ class DataImporter
                                                     # Add the commit process log to the combined log for this phase:
     @import_log << @data_import_session.phase_2_log
                                                     # *** SET 'results aquired' flag. This will return the committed/updated meeting:
-    @meeting = update_results_acquired_flag( @data_import_session ) if is_ok
+    @meeting = update_meeting_flags( @data_import_session ) if is_ok
 
     if @meeting && is_ok                            # *** FIX-UP committed meeting program's begin times:
       is_begin_time_fixed = BeginTimeCalculator.compute_for_all( @meeting, @data_import_session.sql_diff )

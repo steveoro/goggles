@@ -10,7 +10,7 @@ require 'data_import/services/data_import_entity_committer'
 
 = FinResultPhase3
 
-  - Goggles framework vers.:  4.00.757
+  - Goggles framework vers.:  4.00.759
   - author: Steve A.
 
   Data-Import/Commit Module incapsulating all committing methods
@@ -649,23 +649,24 @@ module FinResultPhase3
   #++
 
 
-  # Updates the #are_results_acquired flag for the Meeting instance associated with
-  # the #data_import_session specified, but only if any individual results were
-  # actully imported.
+  # This method updates the #are_results_acquired flag and #has_start_list flags
+  # for the Meeting instance associated with the #data_import_session specified,
+  # but only if any individual results or meeting entries are associated to the
+  # Meeting found.
   #
-  # Returns the updated Meeting instance on success (even when no actions are done),
-  # +nil+ when unable to find the associated Meeting (it must be already committed by
-  # phase 3 for this to work).
+  # Returns the Meeting instance on success (even when no actions are done), or
+  # +nil+ when it's unable to find the associated Meeting (which should be already
+  # committed by phase 3 in orderfor this to work).
   #
   # *WARNING:*
   # This implementation will work ONLY if the data import session contains at least a
   # data_import_meeting_programs row.
   #
-  def update_results_acquired_flag( data_import_session, flag_status = true )
+  def update_meeting_flags( data_import_session, flag_status = true )
     meeting = nil
     mprg = DataImportMeetingProgram.where( data_import_session_id: data_import_session.id ).first
 # DEBUG
-#    puts "\r\n- update_results_acquired_flag:\r\n1) M.Program = #{mprg.class} ##{mprg ? mprg.id : ''}"
+#    puts "\r\n- update_meeting_flags:\r\n1) M.Program = #{mprg.class} ##{mprg ? mprg.id : ''}"
     unless mprg
       di_mir = DataImportMeetingIndividualResult.where( data_import_session_id: data_import_session.id ).first
 # DEBUG
@@ -693,6 +694,19 @@ module FinResultPhase3
           "\r\nUPDATE meetings SET are_results_acquired = '1' WHERE id = #{meeting.id};\r\n\r\n"
 # DEBUG
 #        puts "=> Meeting.are_results_acquired: #{meeting.are_results_acquired}"
+      end
+
+      # Update the has_start_list flag ONLY if entries where actually imported
+      # and the Meeting is already committed:
+      if meeting.meeting_entries.count > 0
+        meeting.has_start_list = flag_status
+        meeting.save!
+        data_import_session.sql_diff ||= ''
+        data_import_session.sql_diff << "\r\n-- Meeting #{meeting.id}" <<
+          "\r\n-- 'has_start_list' flag setting:" <<
+          "\r\nUPDATE meetings SET has_start_list = '1' WHERE id = #{meeting.id};\r\n\r\n"
+# DEBUG
+#        puts "=> Meeting.has_start_list: #{meeting.has_start_list}"
       end
       meeting
     else

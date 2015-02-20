@@ -35,7 +35,7 @@ describe DataImporter, type: :strategy do
       :phase_1_parse,
       :phase_1_2_serialize,
       :phase_3_commit,
-      :update_results_acquired_flag
+      :update_meeting_flags
     ] )
     #-- -----------------------------------------------------------------------
     #++
@@ -653,12 +653,12 @@ describe DataImporter, type: :strategy do
     #++
 
 
-    describe "#update_results_acquired_flag" do
+    describe "#update_meeting_flags" do
       context "for an empty session (w/o a meeting)," do
         it "returns nil" do
           di_session = create( :data_import_session )
           data_importer = DataImporter.new( nil, nil, di_session )
-          expect( data_importer.update_results_acquired_flag( di_session ) ).to be nil
+          expect( data_importer.update_meeting_flags( di_session ) ).to be nil
         end
       end
 
@@ -666,15 +666,23 @@ describe DataImporter, type: :strategy do
         it "returns an instance of Meeting" do
           di_prg = create( :data_import_meeting_program )
           data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
-          expect( data_importer.update_results_acquired_flag( di_prg.data_import_session, true ) ).to be_an_instance_of( Meeting )
+          expect( data_importer.update_meeting_flags( di_prg.data_import_session, true ) ).to be_an_instance_of( Meeting )
         end
 
         it "does not set the 'results-acquired' flag for the meeting when no MIRs are imported" do
           di_prg = create( :data_import_meeting_program )
           data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
-          result = data_importer.update_results_acquired_flag( di_prg.data_import_session, true )
+          result = data_importer.update_meeting_flags( di_prg.data_import_session, true )
           expect( result ).to be_an_instance_of( Meeting )
           expect( result.are_results_acquired ).to be false
+        end
+
+        it "does not set the 'has_start_list' flag for the meeting when no M.Entries are imported" do
+          di_prg = create( :data_import_meeting_program )
+          data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
+          result = data_importer.update_meeting_flags( di_prg.data_import_session, true )
+          expect( result ).to be_an_instance_of( Meeting )
+          expect( result.has_start_list ).to be false
         end
 
         it "sets the 'results-acquired' flag for the meeting when MIRs are imported" do
@@ -684,12 +692,24 @@ describe DataImporter, type: :strategy do
             meeting_session: mir.meeting_session
           )
           data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
-          result = data_importer.update_results_acquired_flag( di_prg.data_import_session, true )
+          result = data_importer.update_meeting_flags( di_prg.data_import_session, true )
           expect( result ).to be_an_instance_of( Meeting )
 # DEBUG
 #          puts "- di_prg.meeting_session.meeting = #{di_prg.meeting_session.meeting.class} ##{di_prg.meeting_session.meeting_id}"
 #          puts "- di_prg.meeting_session.meeting.are_results_acquired: #{di_prg.meeting_session.meeting.are_results_acquired}"
           expect( result.are_results_acquired ).to be true
+        end
+
+        it "sets the 'has_start_list' flag for the meeting when M.Entries are imported" do
+          mentry = create( :meeting_entry )
+          di_prg = create(
+            :data_import_meeting_program,
+            meeting_session: mentry.meeting_session
+          )
+          data_importer = DataImporter.new( nil, nil, di_prg.data_import_session )
+          result = data_importer.update_meeting_flags( di_prg.data_import_session, true )
+          expect( result ).to be_an_instance_of( Meeting )
+          expect( result.has_start_list ).to be true
         end
       end
     end
