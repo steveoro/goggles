@@ -171,7 +171,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 
       if_not_found do
 # DEBUG
-#        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row[:fields][:distance].to_i} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
+#        puts "NOT found! Adding new DataImportMeetingProgram with: event_type=#{@event_type.inspect}, order=#{header_index}, #{header_row.inspect} mt., stroke_type_id=#{stroke_type.id}, category_type_id=#{category_type.id}..."
         attributes_for_creation(
           data_import_session_id:         data_import_session.id,
           import_text:                    @import_text,

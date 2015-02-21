@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingEntryBuilder
 
-  - Goggles framework vers.:  4.00.747
+  - Goggles framework vers.:  4.00.761
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -38,15 +38,17 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
   #
   def self.build_from_parameters( data_import_session, season, meeting_program,
                                   detail_row, detail_row_idx, detail_rows_size,
-                                  gender_type,
+                                  gender_type, category_type,
                                   force_team_or_swimmer_creation = false )
     raise ArgumentError.new("Both season and meeting_program must be not nil!")          if season.nil? || meeting_program.nil?
     raise ArgumentError.new("'gender_type' must be a valid instance of GenderType!")     unless gender_type.instance_of?(GenderType)
+    raise ArgumentError.new("'category_type' must be a valid instance of CategoryType!") unless category_type.instance_of?(CategoryType)
 # DEBUG
 #    puts "\r\n========================================================================================================================="
 #    puts "MENTRY - build_from_parameters: data_import_session ID: #{data_import_session.id}"
 #    puts "- parsed detail_row: #{detail_row.inspect}"
 #    puts "- gender_type: #{gender_type.inspect}"
+#    puts "- category_type: #{category_type.inspect}"
 #    puts "- MPRG: #{meeting_program.inspect}"
 
     self.build( data_import_session ) do
@@ -54,7 +56,6 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
 
       set_up do
         @import_text   = nil
-        category_group = nil
         swimmer_name   = nil
         swimmer_year   = nil
         team_name      = nil
@@ -67,8 +68,8 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           #    :entry_order, :swimmer_name, :category_code, :team_name, entry_time
           # ]
           @import_text    = detail_row[:import_text]
+          # FIXME Do we have to ignore entry order for FIN entries too, like we do for CSI entries?
           @entry_order    = detail_row[:fields][:entry_order]
-          category_group  = detail_row[:fields][:category_group]
           swimmer_name    = detail_row[:fields][:swimmer_name]
           swimmer_year    = detail_row[:fields][:swimmer_year]
           team_name       = detail_row[:fields][:team_name]
@@ -78,8 +79,7 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           @is_entry_no_time = entry_time.nil? || entry_time == ''
         elsif detail_row.instance_of?( CsiResultDAO )
           @import_text    = detail_row.to_s
-          @entry_order    = detail_row.entry_order
-          category_group  = detail_row.category_type_code
+          @entry_order    = nil
           swimmer_name    = detail_row.complete_name
           swimmer_year    = detail_row.year_of_birth
           team_name       = detail_row.team_name
@@ -92,9 +92,6 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
 #        puts "\r\n- detail_row...: #{detail_row.inspect}"
 #        puts "- team_name........: '#{team_name}'"
 #        puts "- entry_time.......: #{entry_time}"
-
-        @category_type = CategoryType.where( season_id: season.id, code: category_group ).first
-        raise "Unrecognized CategoryType code in detail row! (season.id=#{ season.id }, token='#{ category_group }')\r\ndetail_row: #{detail_row.inspect}" unless @category_type
 
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
@@ -120,7 +117,7 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           swimmer_name,
           swimmer_year,
           gender_type,
-          @category_type,
+          category_type,
           force_team_or_swimmer_creation
         )
         @swimmer = swimmer_builder.result_row if swimmer_builder
@@ -135,7 +132,7 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           season,
           @team,
           @swimmer,
-          @category_type,
+          category_type,
           EntryTimeType.find_by_code( EntryTimeType::TYPES_HASH[EntryTimeType::LAST_RACE_ID] )
         )
         @badge = badge_builder.result_row if @team && badge_builder

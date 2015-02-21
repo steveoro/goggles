@@ -141,7 +141,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           season,
           meeting_program,
           detail_row, detail_row_idx, detail_rows_size,
-          gender_type,
+          gender_type, badge.category_type,
           true # force_team_or_swimmer_creation
         )
       end
@@ -155,7 +155,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           season_csi,
           meeting_program_csi,
           detail_row_csi, detail_row_idx, detail_rows_size,
-          gender_type_csi,
+          gender_type_csi, badge_csi.category_type,
           true # force_team_or_swimmer_creation
         )
       end
@@ -259,7 +259,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           season,
           di_meeting_program,
           detail_row, detail_row_idx, detail_rows_size,
-          di_gender_type,
+          di_gender_type, badge.category_type,
           true # force_team_or_swimmer_creation
         )
       end
@@ -273,7 +273,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           season_csi,
           di_meeting_program_csi,
           di_detail_row_csi, detail_row_idx, detail_rows_size,
-          di_gender_type_csi,
+          di_gender_type_csi, badge_csi.category_type,
           true # force_team_or_swimmer_creation
         )
       end
@@ -390,6 +390,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           mentry.meeting_program,
           mentry_detail_row, detail_row_idx, detail_rows_size,
           mentry.swimmer.gender_type,
+          mentry.badge.category_type,
           false # force_team_or_swimmer_creation
         )
       end
@@ -415,6 +416,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           mentry_csi.meeting_program,
           mentry_detail_row_csi, detail_row_idx, detail_rows_size,
           mentry_csi.swimmer.gender_type,
+          badge_csi.category_type,
           false # force_team_or_swimmer_creation
         )
       end
@@ -538,6 +540,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           di_mentry.data_import_meeting_program,
           di_mentry_detail_row, detail_row_idx, detail_rows_size,
           di_mentry.swimmer.gender_type,
+          di_mentry.badge.category_type,
           false # force_team_or_swimmer_creation
         )
       end
@@ -563,6 +566,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
           di_mentry_csi.data_import_meeting_program,
           di_mentry_detail_row_csi, detail_row_idx, detail_rows_size,
           di_mentry_csi.swimmer.gender_type,
+          badge_csi.category_type,
           false # force_team_or_swimmer_creation
         )
       end

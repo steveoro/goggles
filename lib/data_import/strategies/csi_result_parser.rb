@@ -33,7 +33,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = CsiResultParser
 
-  - Goggles framework vers.:  4.00.757
+  - Goggles framework vers.:  4.00.759
   - author: Steve A.
 
  Strategy class delegated to parse result or entry datafiles for CSI Meetings.
@@ -552,9 +552,22 @@ class CsiResultParser
       length_in_meters = dao.length_in_metres.to_i
                                                     # Get the header event index (used for event order)
       header_index = header_event_list.index( "#{dao.event_types_code}-#{dao.category_type_code}" )
+
+      # Check & fix a possible category mis-match in the source data-file, assuming
+      # the parsed year_of_birth is correct:
+      category_type = CategoryType.get_category_from(
+        @season.id,
+        dao.year_of_birth,
+        scheduled_date
+      ) unless category_type.is_age_in_category( dao.year_of_birth.to_i )
+
 # DEBUG
-#      @data_import_session.phase_1_log << "CATEGORY HEADER: Current DAO: #{ dao }\r\n" <<
-#                                          "Resulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }, data_import_session ID=#{ @data_import_session.id }"
+      update_logs(
+        "\r\nCATEGORY HEADER: Current DAO: #{ dao }\r\n" <<
+        "    - Resulting category_type_id=#{ category_type.id } (#{ category_type.get_full_name }),\r\n" <<
+        "    - gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id } (#{length_in_meters} #{ stroke_type.code }),\r\n" <<
+        "    - data_import_session ID=#{ @data_import_session.id }"
+      )
 
       meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
         @data_import_session,
@@ -594,7 +607,7 @@ class CsiResultParser
         dao,
         dao_index,
         @dao_list.size,
-        gender_type,
+        gender_type, category_type,
         @force_team_or_swimmer_creation
       )
       is_ok = ! mentry_builder.result_row.nil?

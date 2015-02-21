@@ -422,9 +422,9 @@ class AdminImportController < ApplicationController
         flash[:info] = I18n.t( 'admin_import.team_analysis_needed' )
         redirect_to(
             goggles_di_step1_1_team_analysis_path(
-                id:                             importer.data_import_session.id,
-                force_meeting_creation:         force_missing_meeting_creation ? '1' : nil,
-                force_team_or_swimmer_creation: force_team_or_swimmer_creation ? '1' : nil
+              id:                             importer.data_import_session.id,
+              force_meeting_creation:         force_missing_meeting_creation ? '1' : nil,
+              force_team_or_swimmer_creation: force_team_or_swimmer_creation ? '1' : nil
             )
         ) and return
       end
@@ -432,9 +432,9 @@ class AdminImportController < ApplicationController
         flash[:info] = I18n.t( 'admin_import.swimmer_analysis_needed' )
         redirect_to(
             goggles_di_step1_1_swimmer_analysis_path(
-                id:                     importer.data_import_session.id,
-                force_meeting_creation: force_missing_meeting_creation ? '1' : nil,
-                force_swimmer_creation: force_swimmer_creation         ? '1' : nil
+              id:                             importer.data_import_session.id,
+              force_meeting_creation:         force_missing_meeting_creation ? '1' : nil,
+              force_team_or_swimmer_creation: force_team_or_swimmer_creation ? '1' : nil
             )
         ) and return
       end
