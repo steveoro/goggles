@@ -106,7 +106,9 @@ class SwimmersController < ApplicationController
       # FIXME this has not been tested yet:
       seasonal_medals[:tot_season_records] = 0
       all_championships_records.each{ | mir |
-        seasonal_medals[:tot_season_records] += 1 if (mir.swimmer_id == @swimmer.id && mir.season_type.id == season_type.id)
+        if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
+          seasonal_medals[:tot_season_records] += 1
+        end
       }
 
       @seasonal_medal_collection << seasonal_medals
@@ -450,7 +452,7 @@ class SwimmersController < ApplicationController
     end
   end
 
-  # Find out the last update of meeting_individual result 
+  # Find out the last update of meeting_individual result
   #
   def find_last_updated_mir
     @max_updated_at = @swimmer.meeting_individual_results.count > 0 ? @swimmer.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
