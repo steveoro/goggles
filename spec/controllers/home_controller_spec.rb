@@ -8,7 +8,7 @@ describe HomeController, :type => :controller do
   end
 
   describe '[GET #index]' do
-    context "as an unlogged user" do
+    context "as an unlogged user," do
       it "handles successfully the request" do
         get :index
         expect( response.status ).to eq(200)
@@ -41,9 +41,18 @@ describe HomeController, :type => :controller do
       end
     end
 
-    context "as a logged-in user" do
+
+    context "as a logged-in user (NOT associated w/ swimmer)," do
       before(:each) { login_user() }
 
+      it "redirects to associate_path()" do
+        get :index
+        expect( response ).to redirect_to( associate_path )
+      end
+    end
+
+
+    shared_examples_for "(Home page for a Goggler or a user that temporary skips the swimmer association)" do
       it "handles successfully the request" do
         get :index
         expect( response.status ).to eq(200)
@@ -63,6 +72,27 @@ describe HomeController, :type => :controller do
         get :index
         expect(response).to render_template(:index)
       end
+    end
+
+
+    context "as a logged-in goggler (already associated w/ swimmer)," do
+      before(:each) do
+        login_user()
+        @user.set_associated_swimmer( create(:swimmer) )
+      end
+
+      it_behaves_like "(Home page for a Goggler or a user that temporary skips the swimmer association)"
+    end
+
+
+    context "as a logged-in user who temporary skips the swimmer association," do
+      before(:each) do
+        login_user()
+        @user.goggle_uid = 1
+        @user.save
+      end
+
+      it_behaves_like "(Home page for a Goggler or a user that temporary skips the swimmer association)"
     end
   end
   # ===========================================================================

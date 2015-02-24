@@ -6,7 +6,7 @@ require 'common/format'
 
 = HomeController
 
-  - version:  4.00.659
+  - version:  4.00.763
   - author:   Steve A.
 
 =end
@@ -38,6 +38,15 @@ class HomeController < ApplicationController
         end
         @teams.each do |team|
           @goggle_cups << team.get_current_goggle_cup_at if team.has_goggle_cup_at?
+        end
+      else
+        # [Steve, 20150224] We use goggle_uid as a special flag for temporary conditions
+        # regarding the "Goggler": mainly, if the UID corresponds to an integer > 0,
+        # it's a flag for temporary skipping the forced swimmer-user association
+        # (condition that can be requested by the user by clicking on a dedicated link
+        #  in the association view: "skip association for now").
+        unless current_user.goggle_uid.to_i > 0
+          redirect_to( associate_path ) and return
         end
       end
       @articles  = Article.find(

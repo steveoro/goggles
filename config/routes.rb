@@ -84,6 +84,9 @@ Goggles::Application.routes.draw do
       match "associate",                        to: "socials#associate",  via: [:get, :post]
       match "dissociate",                       to: "socials#dissociate", via: :post
 
+      # A user temporary skips the requested association with a swimmer:
+      post "social/skip_associate",             to: "socials#skip_associate",           as: "social_skip_associate"
+
       # A user confirms or unconfirms another user's association with a swimmer:
       post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
       post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"

@@ -1,4 +1,8 @@
-%h3= I18n.t('user_association.link_yourself_to_an_existing_swimmer')
+.row-fluid
+  .span8
+    %h3= I18n.t('user_association.link_yourself_to_an_existing_swimmer')
+  .span4
+    = link_to( I18n.t('user_association.not_now_temporary_skip'), social_skip_associate_path(), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
 
 - if admin_signed_in?
   .row-fluid

@@ -45,6 +45,38 @@ describe SocialsController, :type => :controller do
   # ===========================================================================
 
 
+  describe '[POST #skip_associate]' do
+    before :each do
+      # We need to set this to make the redirect_to(:back) pass the tests:
+      request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'home', action: 'about', only_path: false )
+    end
+
+    context "as an unlogged user" do
+      it "redirects to back" do
+        post :skip_associate
+        expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'
+        expect(response.status).to eq( 302 )            # must redirect to the login page
+      end
+    end
+
+    context "as a logged-in normal user" do
+      before(:each) { login_user() }
+
+      it "sets the temporary skip flag on" do
+        expect( @user.goggle_uid ).to be nil
+        post :skip_associate
+        @user.reload
+        expect( @user.goggle_uid ).to eq( 1 )
+      end
+      it "redirects to Home" do
+        post :skip_associate
+        expect( response ).to redirect_to( root_path )
+      end
+    end
+  end
+  # ===========================================================================
+
+
   describe '[POST #association_confirm]' do
     before :each do
       @swimmer = create(:swimmer)

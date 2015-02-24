@@ -233,6 +233,7 @@ it:
     upgrade_your_experience: "Fai fare un salto in avanti alla tua esperienza su Goggles!"
     you_are_not_linked_to_a_swimmer_yet: "Non sei ancora associato a nessuno degli atleti Nuotatori presenti nel database:"
     link_yourself_to_an_existing_swimmer: "Associati ad un nuotatore!"
+    not_now_temporary_skip: "Non adesso! (Salta questo momentariamente)"
     possible_swimmers: "Nuotatori che sembrano avere a che fare con la tua descrizione:"
     you_are: "Tu sei"
     you_are_or_you_said_it: "Tu sei (o hai detto di essere)"

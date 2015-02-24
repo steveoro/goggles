@@ -3,7 +3,7 @@
 
 = SocialsController
 
-  - version:  4.00.589
+  - version:  4.00.765
   - author:   Steve A.
 
 =end
@@ -13,8 +13,9 @@ class SocialsController < ApplicationController
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:associate, :dissociate, :show_all]
-  # ---------------------------------------------------------------------------
+  before_filter :verify_parameter, except: [:associate, :dissociate, :show_all, :skip_associate]
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Associate action for a logged-in user. Handles both GET + POST
@@ -30,7 +31,7 @@ class SocialsController < ApplicationController
           flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
         end
       end
-      redirect_to( :back ) and return
+      redirect_to( root_path ) and return
                                                     # === GET: ===
     else                                            # Scompose the description in tokens:
       first_name, last_name = current_user.get_first_and_last_name()
@@ -62,10 +63,25 @@ class SocialsController < ApplicationController
     end
     redirect_to( :back ) and return
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
-  # Endorse/confirm user association with a goggler (POST only).
+  # Remove endorsement/unconfirm user association with a goggler (POST only, see routes).
+  # === Params:
+  # - the :id of the associated *user* of the swimmer (see :verify_parameter)
+  #
+  def skip_associate
+    # Set the temporary flag on into the current user's dedicated column:
+    current_user.goggle_uid = 1
+    current_user.save!
+    redirect_to( root_path ) and return
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Endorse/confirm user association with a goggler (POST only, see routes).
   # === Params:
   # - the :id of the associated *user* of the swimmer (see :verify_parameter)
   #
@@ -75,7 +91,7 @@ class SocialsController < ApplicationController
 #    redirect_to( request.env["HTTP_REFERER"] ) and return
   end
 
-  # Remove endorsement/unconfirm user association with a goggler (POST only).
+  # Remove endorsement/unconfirm user association with a goggler (POST only, see routes).
   # === Params:
   # - the :id of the associated *user* of the swimmer (see :verify_parameter)
   #
@@ -84,7 +100,8 @@ class SocialsController < ApplicationController
     redirect_to( :back ) and return
 #    redirect_to( request.env["HTTP_REFERER"] ) and return
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Show all friendships action.
@@ -96,7 +113,8 @@ class SocialsController < ApplicationController
     @invited = current_user.invited
     @blocked_friendships = current_user.blocked_friendships
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Invite friends action.
@@ -144,7 +162,8 @@ class SocialsController < ApplicationController
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Accept/edit friends action.
@@ -193,7 +212,8 @@ class SocialsController < ApplicationController
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Block friends action.
@@ -231,7 +251,8 @@ class SocialsController < ApplicationController
       render :ask_confirmation
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Un-block friends action.
@@ -269,7 +290,8 @@ class SocialsController < ApplicationController
       render :ask_confirmation
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Remove friendship action.
@@ -307,7 +329,8 @@ class SocialsController < ApplicationController
       render :ask_confirmation
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Edit a single friendship.
@@ -364,7 +387,8 @@ class SocialsController < ApplicationController
       redirect_to( socials_show_all_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private
@@ -387,7 +411,8 @@ class SocialsController < ApplicationController
 #      redirect_to( socials_show_all_path() ) and return
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Implementation of the confirm / unconfirm action.
@@ -406,5 +431,6 @@ class SocialsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end
