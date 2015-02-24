@@ -5,6 +5,16 @@
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 
+-- Cancellazione risultati della gara presenti
+delete from meeting_individual_results
+where (
+	select ms.meeting_id
+	from meeting_programs mp
+		join meeting_events me on me.id = mp.meeting_event_id
+		join meeting_sessions ms on ms.id = me.meeting_session_id
+	where mp.id = meeting_program_id
+) = 14103;
+
 --
 -- Dump dei dati per la tabella meeting_individual_results
 -- 
@@ -441,4 +451,4 @@ INSERT INTO meeting_relay_results (rank,meeting_points,minutes,seconds,hundreds,
 update meetings set are_results_acquired = true where id = 14103;
 
 commit;
-- Fine script
+-- Fine script
