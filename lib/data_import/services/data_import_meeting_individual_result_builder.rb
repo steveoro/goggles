@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.743
+  - Goggles framework vers.:  4.00.763
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -59,7 +59,6 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         swimmer_year  = nil
         team_name     = nil
         athlete_badge = nil
-        result_score  = nil
         result_time   = nil
 
         if detail_row.instance_of?( Hash )
@@ -72,6 +71,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           @rank         = detail_row[:fields][:result_position]
           result_time   = detail_row[:fields][:result_time]
           result_score  = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
+          @standard_points = result_score
+          @meeting_points  = result_score
         elsif detail_row.instance_of?( CsiResultDAO )
           @import_text  = detail_row.to_s
           swimmer_name  = detail_row.complete_name
@@ -83,13 +84,15 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           result_time   = detail_row.decorated_result_time
           result_score  = 100 - ( @rank.to_i - 1 ) * 5
           result_score  = 0 if result_score < 0
+          @standard_points = 0
+          @meeting_points  = result_score
         end
 # DEBUG
 #        puts "\r\n- detail_row...: #{detail_row.inspect}"
 #        puts "- team_name........: '#{team_name}'"
 #        puts "- athlete_badge....: '#{athlete_badge}'"
 #        puts "- result_time......: #{result_time}"
-#        puts "- result_score.....: #{result_score}"
+#        puts "- @meeting_points..: #{@meeting_points}"
 
         team_builder  = DataImportTeamBuilder.build_from_parameters(
            data_import_session,
@@ -156,13 +159,10 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         @dsq_code_type_id   = result_parser.disqualification_code_type_id
         @mins, @secs, @hds  = result_parser.mins_secs_hds_array
 # DEBUG
-#        logger.debug( "\r\nIndividual Result parsing: rank:'#{rank}', result_time:'#{result_time}', result_score:'#{result_score}'" )
+#        logger.debug( "\r\nIndividual Result parsing: rank:'#{rank}', result_time:'#{result_time}', @meeting_points:'#{@meeting_points}'" )
 #        logger.debug( "is_out_of_race:'#{is_out_of_race}', is_disqualified:'#{is_disqualified}'\r\n" )
-#        @phase_1_log << "\r\nIndividual Result parsing: rank:'#{rank}', result_time:'#{result_time}', result_score:'#{result_score}'\r\n"
+#        @phase_1_log << "\r\nIndividual Result parsing: rank:'#{rank}', result_time:'#{result_time}', @meeting_points:'#{@meeting_points}'\r\n"
 #        @phase_1_log << "is_out_of_race:'#{is_out_of_race}', is_disqualified:'#{is_disqualified}'\r\n\r\n"
-# TODO Not sure about this:
-        @standard_points = result_score
-        @meeting_points  = result_score
       end
 
 
