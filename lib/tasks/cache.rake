@@ -263,7 +263,7 @@ parameters ('RAILS_ENV=production') not before having issued also a:
 
       exec.report( "\r\n---[ 10/10 - Logout ]---\r\n" ) do
         response = do_logout( server_url, user_token )
-        puts "Response: #{response['message']}"
+        puts "Response: #{response['message']}" if response.instance_of?(Hash)
       end
     end
 
