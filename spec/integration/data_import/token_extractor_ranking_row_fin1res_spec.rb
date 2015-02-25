@@ -39,7 +39,10 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
       "15° A.S.GYMNASIUM SPILIMBERGO 15442.72  20  772.14",
       "17° A.S.D.B.N. Nuotatori Veneziani  13057.14  18  725.40",
       "18° A.S.DILETT. JESOLONUOTO   12299.81  17  723.52",
-      "20° a.s.d. ROVIGONUOTO        10773.76  19  567.04"
+      "20° a.s.d. ROVIGONUOTO        10773.76  19  567.04",
+      "    1)   Flaminio Sporting Club                   203120,20",
+      "    4)   Due Ponti ssd                            111513,50",
+      "    5)   Circolo Canottieri Aniene                110270,70"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -75,7 +78,10 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "15",
         "17",
         "18",
-        "20"
+        "20",
+        "1",
+        "4",
+        "5"
       ]
     end
 
@@ -94,6 +100,9 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "EMI-001451",
         "EMI-001457",
         "EMI-001452",
+        '',
+        '',
+        '',
         '',
         '',
         '',
@@ -152,7 +161,10 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "A.S.GYMNASIUM SPILIMBERGO",
         "A.S.D.B.N. Nuotatori Veneziani",
         "A.S.DILETT. JESOLONUOTO",
-        "a.s.d. ROVIGONUOTO"
+        "a.s.d. ROVIGONUOTO",
+        "Flaminio Sporting Club",
+        "Due Ponti ssd",
+        "Circolo Canottieri Aniene"
       ]
     end
 
@@ -190,7 +202,10 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "15442.72",
         "13057.14",
         "12299.81",
-        "10773.76"
+        "10773.76",
+        "203120,20",
+        "111513,50",
+        "110270,70"
       ]
     end
 

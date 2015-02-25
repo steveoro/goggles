@@ -5,7 +5,7 @@ require 'common/format'
 
 = BeginTimeCalculator
 
-  - Goggles framework vers.:  4.00.693
+  - Goggles framework vers.:  4.00.767
   - author: Steve A.
 
  Allows to compute an esteemed begin time for any Meeting program or event given
@@ -133,7 +133,9 @@ class BeginTimeCalculator
 
       # For each program, recreate a possible heat list:
       meeting.meeting_programs.order(:event_order).map do |mprg|
-        lanes_number = mprg.meeting_session.swimming_pool.lanes_number
+        lanes_number = mprg.meeting_session.swimming_pool.lanes_number.to_i
+        # Set a default value for unknown swimming pools:
+        lanes_number = 8 if lanes_number < 1
         athlete_rows = (
           results_count == 0 ?
           mprg.meeting_entries.order('minutes DESC, seconds DESC, hundreds DESC').to_ary :
