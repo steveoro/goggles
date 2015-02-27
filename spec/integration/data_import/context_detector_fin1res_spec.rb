@@ -638,6 +638,14 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
       ]
       check_for_parsing_ok( feed, :relay_header )
     end
+
+    it "recognizes the 'FIN relay-row' format #1 (sample #6)" do
+      feed = [
+        "                        FLAMINIO SPORTING CLUB \"B\"          Squalificata"
+      ]
+      check_for_parsing_ok( feed, :relay_header )
+    end
+
     #-- -----------------------------------------------------------------------
     #++
 

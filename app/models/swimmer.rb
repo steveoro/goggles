@@ -140,7 +140,7 @@ class Swimmer < ActiveRecord::Base
   # names associated with this instance.
   #
   def get_team_names
-     self.teams.collect{ |row| row.name }.uniq.join(', ')
+     self.teams ? self.teams.collect{ |row| row.name }.uniq.join(', ') : ''
   end
   #-- -------------------------------------------------------------------------
   #++

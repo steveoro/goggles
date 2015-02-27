@@ -1,5 +1,6 @@
 .row-fluid
-  %h3= I18n.t('user_association.upgrade_your_experience')
-  %p
+  .animated.shake
+    %h3= I18n.t('user_association.upgrade_your_experience')
+  %p.animated.flash
     = I18n.t('user_association.you_are_not_linked_to_a_swimmer_yet')
     = link_to( I18n.t('user_association.link_yourself_to_an_existing_swimmer'), associate_path() )

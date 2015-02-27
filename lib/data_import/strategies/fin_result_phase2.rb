@@ -28,7 +28,7 @@ require 'data_import/services/data_import_time_standard_builder'
 
 = FinResultPhase2
 
-  - Goggles framework vers.:  4.00.747
+  - Goggles framework vers.:  4.00.767
   - author: Steve A.
 
   Data-Import/Digest Module incapsulating all "record search/add" methods
@@ -89,11 +89,15 @@ module FinResultPhase2
     # the "longer name" substitution phase:
     if team_names_from_results.size > team_names.size
       update_logs(
-        "\r\n*** ERROR! *** The Fuzzy search may have merged two different Team names and this should NOT occur!\r\n" <<
-        "This means that the bias value is too low and permissive (currently: #{BIAS_FOR_PRESCAN_FUZZY_SEARCH}).\r\n" <<
-        "==> Do NOT continue with data-import and try to change the bias value! <=="
+        "\r\n*** WARNING! *** The Fuzzy search may have merged two different Team names!\r\n" <<
+        "This may be a signal that the bias value is too low and permissive (currently: #{BIAS_FOR_PRESCAN_FUZZY_SEARCH}).\r\n" <<
+        "==> CHECK THE ABOVE TEAM NAMES in Alias Map for lines with NO comment, to see if the aliased team names are referring to the same one! <==\r\n" <<
+        "==> PROCEED WITH THE COMMIT OF PHASE 2 ONLY AFTER THIS MANUAL CHECK! <==\r\n"
       )
-      is_ok = false
+      flash[:error] = "*** WARNING *** Possible excessive Team name merge done by pre-analysis!\r\n" <<
+                      "CHECK TEAM NAMES in ALIAS MAP inside Log file from phase 1.1 and look for lines WITHOUT comments:\r\n" <<
+                      "these are the Team names aliased automatically that need to be checked; if they refer to the same Team, the COMMIT for phase 2 is safe.\r\n" <<
+                      "Otherwise, set a higher bias inside FinResultPhase2 module."
     end
 
     team_names.each_with_index do |team_name, idx|
@@ -458,7 +462,7 @@ module FinResultPhase2
   #   section of the parse result structure;
   #
   # - team_names_from_results: similarly to the above, a pre-filled array of team names
-  #   extrated only from the results of the parse structure (either individual or relays);
+  #   extracted only from the results of the parse structure (either individual or relays);
   #
   # - parse_result: the full parse resulting structure from phase 1.0; this will be used
   #   to update the actual team name strings contained therein with a unique team name

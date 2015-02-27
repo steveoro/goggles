@@ -6,20 +6,25 @@
 
 - if admin_signed_in?
   .row-fluid
-    .span2
-      = 'ID:'
+    .span1
+      = 'User ID:'
     .span10
       = current_user.id
 
 .row-fluid
-  = I18n.t('user_association.possible_swimmers')
-- @possible_swimmers.each do |swimmer|
+  %b= I18n.t('user_association.possible_swimmers')
   .row-fluid
-    .span12
-      = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
-- if @possible_swimmers.length < 1
-  %p{style: "text-align: center"}
-    %i= t(:no_data_found)
+    %i= I18n.t('user_association.click_on_yourself')
+  .row-fluid
+    %ul
+      - @possible_swimmers.each do |swimmer|
+        %li
+          = link_to( swimmer.get_verbose_name, associate_path( id: swimmer.id ), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
+          = " (#{ swimmer.get_team_names }) "
+          %i= swimmer.is_year_guessed ? I18n.t('user_association.year_guessed_from_results') : ''
+    - if @possible_swimmers.length < 1
+      %p{style: "text-align: center"}
+        %i= t(:no_data_found)
 
 .row-fluid
   %hr

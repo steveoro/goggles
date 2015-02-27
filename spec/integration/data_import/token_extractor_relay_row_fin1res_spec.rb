@@ -43,7 +43,11 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
       "                  8  EMI-001430   ASS.SPORTIVA DINAMI              2'24\"32  752,01",
       "         Fuori gara  XSM-000102   SAN MARINO MASTER                2'10\"10  834,20",
       "         Fuori gara  MAR-000566   POLISP. PIAN DEL BR              2'10\"61  830,95",
-      "         Fuori gara  MAR-000465   IL GRILLO                        2'24\"58  750,66"
+      "         Fuori gara  MAR-000465   IL GRILLO                        2'24\"58  750,66",
+
+      "                        FLAMINIO SPORTING CLUB \"B\"          Squalificata",
+      "                 15     FLAMINIO SPORTING CLUB \"B\"          2'51\"06  685,49",
+      "                  7     ROMA NUOTO MASTER \"B\"               2'30\"35  832,72"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -83,7 +87,11 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
         '8',
         'Fuori gara',
         'Fuori gara',
-        'Fuori gara'
+        'Fuori gara',
+
+        "",
+        "15",
+        "7"
       ]
     end
 
@@ -125,7 +133,11 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
         "ASS.SPORTIVA DINAMI",
         "SAN MARINO MASTER",
         "POLISP. PIAN DEL BR",
-        "IL GRILLO"
+        "IL GRILLO",
+
+        "FLAMINIO SPORTING CLUB \"",
+        "FLAMINIO SPORTING CLUB \"",
+        "ROMA NUOTO MASTER \"B\""
       ]
     end
 
@@ -167,7 +179,11 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
         "2'24\"32",
         "2'10\"10",
         "2'10\"61",
-        "2'24\"58"
+        "2'24\"58",
+
+        "Squalificata",
+        "2'51\"06",
+        "2'30\"35"
       ]
     end
 
@@ -209,7 +225,11 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
         "752,01",
         "834,20",
         "830,95",
-        "750,66"
+        "750,66",
+
+        "",
+        "685,49",
+        "832,72"
       ]
     end
 
