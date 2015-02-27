@@ -42,7 +42,11 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
       "20° a.s.d. ROVIGONUOTO        10773.76  19  567.04",
       "    1)   Flaminio Sporting Club                   203120,20",
       "    4)   Due Ponti ssd                            111513,50",
-      "    5)   Circolo Canottieri Aniene                110270,70"
+      "    5)   Circolo Canottieri Aniene                110270,70",
+      " 1 LAZ-074109 - EMPIRE ROMA SSD  \t43.049,36",
+      "46 LAZ-039648 - FERRATELLA SPORT SR   1.251,19",
+      "47\tCAM-020133 - IL GABBIANO NAPOLI \t   990,19",
+      "49 LAZ-042987 - G.S. VV. F.  F. SOR     670,74"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -81,7 +85,11 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "20",
         "1",
         "4",
-        "5"
+        "5",
+        "1",
+        "46",
+        "47",
+        "49"
       ]
     end
 
@@ -122,7 +130,11 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         '',
         '',
         '',
-        ''
+        '',
+        "LAZ-074109",
+        "LAZ-039648",
+        "CAM-020133",
+        "LAZ-042987"
       ]
     end
 
@@ -164,7 +176,11 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "a.s.d. ROVIGONUOTO",
         "Flaminio Sporting Club",
         "Due Ponti ssd",
-        "Circolo Canottieri Aniene"
+        "Circolo Canottieri Aniene",
+        "EMPIRE ROMA SSD",
+        "FERRATELLA SPORT SR",
+        "IL GABBIANO NAPOLI",
+        "G.S. VV. F.  F. SOR"
       ]
     end
 
@@ -205,7 +221,11 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "10773.76",
         "203120,20",
         "111513,50",
-        "110270,70"
+        "110270,70",
+        "43.049,36",
+        "1.251,19",
+        "990,19",
+        "670,74"
       ]
     end
 

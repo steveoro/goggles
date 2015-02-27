@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.657
+  - Goggles framework vers.:  4.00.667
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -121,7 +121,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :ranking_row,
       [
-        /\s+\d{1,6}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
+        /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
       ],
       :team_ranking
     )
@@ -480,12 +480,13 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
       :team_name,
       /
         (?<=\w{3}-\d{6}\s\s)\w|
+        (?<=\w{3}-\d{6}\s-\s)\w|
         (?<=\d°\s)\w|
         (?<=\s{19})\w|
         (?<=\d\s{6})\w|
         (?<=\d\)\s{3})\w
       /uix,
-      /\s+(\d{1,6}[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
+      /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
     )
   end
 
@@ -494,9 +495,8 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_score
     TokenExtractor.new(
       :result_score,
-      /\s+(\d{1,6}[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i,
-      /(?<=\d[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i  # \s+\d{1,6}[\,|\.]\d\d(\s+|\r\n|\n|$|\Z)
-#      /$/i  # \s+\d{1,6}[\,|\.]\d\d(\s+|\r\n|\n|$|\Z)
+      /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i,
+      /(?<=\d[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
     )
   end
 

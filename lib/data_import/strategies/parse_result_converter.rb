@@ -10,7 +10,7 @@ require 'data_import/fin_startlist_defs'
 
 = ParseResultConverter
 
-  - Goggles framework vers.:  4.00.749
+  - Goggles framework vers.:  4.00.767
   - author: Steve A.
 
  Strategy class. It adapts and converts any secondary or sibling format of the
@@ -240,7 +240,7 @@ class ParseResultConverter
   # The swimmer_year may be +nil+ when not provided.
   #
   def extract_swimmer_year_and_category( compound_year_or_category )
-    parts = compound_year_or_category.split(/\s+/)
+    parts = compound_year_or_category.to_s.split(/\s+/)
     if (parts[0] =~ /\d{4}/) && (parts[1] =~ /\d{2}/)
       [ parts[0] , "M#{parts[1]}" ]
 
@@ -262,7 +262,7 @@ class ParseResultConverter
   # Returns the category code string according to the main FIN(1) format.
   #
   def extract_category_for_relays( compound_category, season )
-    category_ending = compound_category.split(/\s+/).first
+    category_ending = compound_category.to_s.split(/\s+/).first
     category_type = CategoryType.where( season_id: season.id, age_end: category_ending.to_i ).first
     category_type ? category_type.code : category_ending
   end
