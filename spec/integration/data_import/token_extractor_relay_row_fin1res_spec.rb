@@ -47,7 +47,9 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
       "                        FLAMINIO SPORTING CLUB \"B\"          Squalificata",
       "                 15     FLAMINIO SPORTING CLUB \"B\"          2'51\"06  685,49",
-      "                  7     ROMA NUOTO MASTER \"B\"               2'30\"35  832,72"
+      "                  7     ROMA NUOTO MASTER \"B\"               2'30\"35  832,72",
+      "                  1     POLISPORTIVA MIMMO FERRITO SS       2'14\"31  849,97",
+      "                        POLISPORTIVA MIMMO FERRITO SS      Squalif."
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -91,7 +93,9 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         "",
         "15",
-        "7"
+        "7",
+        "1",
+        ""
       ]
     end
 
@@ -137,7 +141,9 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         "FLAMINIO SPORTING CLUB \"",
         "FLAMINIO SPORTING CLUB \"",
-        "ROMA NUOTO MASTER \"B\""
+        "ROMA NUOTO MASTER \"B\"",
+        "POLISPORTIVA MIMMO FERRI",
+        "POLISPORTIVA MIMMO FERRI"
       ]
     end
 
@@ -183,7 +189,9 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         "Squalificata",
         "2'51\"06",
-        "2'30\"35"
+        "2'30\"35",
+        "2'14\"31",
+        "Squalif."
       ]
     end
 
@@ -229,7 +237,9 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
         "",
         "685,49",
-        "832,72"
+        "832,72",
+        "849,97",
+        ""
       ]
     end
 

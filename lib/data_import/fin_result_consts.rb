@@ -422,8 +422,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_relay_row_team_name
     TokenExtractor.new(
       :team_name,
-      /(?<=\s{3})(.{25,28}\s{8,12})(?=Ritir|Squal|\d{1,2}'\d{2}"\d{2})/i,
-#      /(\s{3,5}.{25,28}\s{8,12})(?=Ritir|Squal|\d{1,2}'\d{2}"\d{2})/i,
+      /(?<=\s{3})(.{25,29}\s{6,12})(?=Ritir|Squal|\d{1,2}'\d{2}"\d{2})/i,
       25                                            # (max size)
     )
   end
