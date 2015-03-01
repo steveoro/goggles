@@ -121,7 +121,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :ranking_row,
       [
-        /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
+        /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})([\,|\.]\d\d)?)(\s+|\r\n|\n|$|\Z)/i
       ],
       :team_ranking
     )
@@ -338,8 +338,18 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_result_position
     TokenExtractor.new(
       :result_position,
-      / \d{1,3}(?= {1,3})/i,
-      / (?=[a-z]+)/i
+      0,
+      /
+        (?<team_code>
+          \s(\w\w\w-\d{6})
+        )|
+        (?<swimmer_name>
+          (
+            (?<=[\sa-z0-9-]{10})|
+            (?<=[\sa-z0-9-]{18})
+          )\s(\D{25})
+        )
+      /uix
     )
   end
 
@@ -358,7 +368,12 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_result_row_swimmer_name
     TokenExtractor.new(
       :swimmer_name,
-      /(?<=[\sa-z0-9-]{10}|[\sa-z0-9-]{18})\s(\D{25})/i,
+      /
+        (
+          (?<=[\sa-z0-9-]{10})|
+          (?<=[\sa-z0-9-]{18})
+        )\s(\D{25})
+      /uix,
       29                                            # (max size)
     )
   end
@@ -486,7 +501,27 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
         (?<=\d\s{6})\w|
         (?<=\d\)\s{3})\w
       /uix,
-      /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
+     /
+        (?<=\s)
+        (?<decimal_score>
+          (?<thousand>\d{1,3}\.)*\d{1,3}
+          (?<decimals>[\,|\.]\d\d)
+          (?<endline>\s+|\r\n|\n|$|\Z)
+          (?!\D+)
+        )|
+        (?<score_comma>
+          \s+\d+[\,|\.]\d\d
+          (?!\s\s\d\d\s\s)
+        )|
+        (?<score_stats>
+          \s+\d+[\,|\.]\d\d
+          (?=\s\s\d\d\s\s)
+        )|
+        (?<=\s\s\s\s)(?<integer_score>
+          \s+\d+(?=\r|\n|$|\Z)
+        )
+     /iux
+#      /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
     )
   end
 
@@ -495,8 +530,33 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_ranking_row_result_score
     TokenExtractor.new(
       :result_score,
-      /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i,
-      /(?<=\d[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
+      /
+        (?<=\s)
+        (?<decimal_score>
+          (?<thousand>\d{1,3}\.)*\d{1,3}
+          (?<decimals>[\,|\.]\d\d)
+          (?<endline>\s+|\r\n|\n|$|\Z)
+          (?!\D+)
+        )|
+        (?<score_comma>
+          \s+\d+[\,|\.]\d\d
+          (?!\s\s\d\d\s\s)
+        )|
+        (?<score_stats>
+          \s+\d+[\,|\.]\d\d
+          (?=\s\s\d\d\s\s)
+        )|
+        (?<=\s\s\s\s)(?<integer_score>
+          \s+\d+(?=\r|\n|$|\Z)
+        )
+      /iux,
+      /
+        (
+          (?<=\d\n)|
+          (?<=\d[\,|\.]\d\d)
+        )
+        (\s+|\r\n|\r|\n|$|\Z)
+      /iux
     )
   end
 

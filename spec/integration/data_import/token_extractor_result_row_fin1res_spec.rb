@@ -25,7 +25,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
       "    EMI-024761 1982 GAMBETTI  FRANCESCA           ACQUAMBIENTE SSD -         Squalif.    0,00",
       "    EMI-012345 1983 MEGAFAKE JAMIE                OH-MY OH-MY                Ritirato    0,00",
 
-      "  6 EMI-001040 1963 MATTIOLI BERTACCHINI  EMANUEL N MODENESI                  0'40\"01  690,83"
+      "  6 EMI-001040 1963 MATTIOLI BERTACCHINI  EMANUEL N MODENESI                  0'40\"01  690,83",
+      " fg EMI-123456 1963 ROSSI MAZZANTI VIEN DAL MARE  SWIMROAM 2001               1'34\"02  789,12",
+      "      fg   SPAZIALI ROSTRO                1979   A.S.D. STICA                0'24\"99  900,01"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -46,7 +48,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         '4',
         '',
         '',
-        '6'
+        '6',
+        "fg",
+        "fg"
       ]
     end
 
@@ -69,7 +73,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         'VEN-002165',
         'EMI-024761',
         'EMI-012345',
-        "EMI-001040"
+        "EMI-001040",
+        "EMI-123456",
+        ""
       ]
     end
 
@@ -92,7 +98,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         'SAMBIN  SILVIA',
         'GAMBETTI  FRANCESCA',
         'MEGAFAKE JAMIE',
-        "MATTIOLI BERTACCHINI  EMANUEL"
+        "MATTIOLI BERTACCHINI  EMANUEL",
+        "ROSSI MAZZANTI VIEN DAL MARE",
+        "SPAZIALI ROSTRO"
       ]
     end
 
@@ -115,7 +123,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         '1979',
         '1982',
         '1983',
-        "1963"
+        "1963",
+        "1963",
+        "1979"
       ]
     end
 
@@ -138,7 +148,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         'ACQUAVIVA 2001 SRL',
         'ACQUAMBIENTE SSD -',
         'OH-MY OH-MY',
-        "N MODENESI"
+        "N MODENESI",
+        "SWIMROAM 2001",
+        "A.S.D. STICA"
       ]
     end
 
@@ -161,7 +173,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         "1'36\"99",
         "Squalif.",
         "Ritirato",
-        "0'40\"01"
+        "0'40\"01",
+        "1'34\"02",
+        "0'24\"99"
       ]
     end
 
@@ -184,7 +198,9 @@ describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
         '773,58',
         '0,00',
         '0,00',
-        "690,83"
+        "690,83",
+        "789,12",
+        "900,01"
       ]
     end
 

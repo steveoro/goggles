@@ -54,7 +54,7 @@ class ResultTimeParser
     if @result_dao
       false # no out-of-race information inside CSI result DAO!
     else
-      ! ( @rank_token =~ /Fuori gara|F\.G\./i ).nil?
+      ! ( @rank_token =~ /Fuori gara|fg|F\.G\./i ).nil?
     end
   end
 

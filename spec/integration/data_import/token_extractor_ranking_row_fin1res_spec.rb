@@ -46,7 +46,8 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
       " 1 LAZ-074109 - EMPIRE ROMA SSD  \t43.049,36",
       "46 LAZ-039648 - FERRATELLA SPORT SR   1.251,19",
       "47\tCAM-020133 - IL GABBIANO NAPOLI \t   990,19",
-      "49 LAZ-042987 - G.S. VV. F.  F. SOR     670,74"
+      "49 LAZ-042987 - G.S. VV. F.  F. SOR     670,74",
+      "            1      CAN VITTORINO                      369"
     ]
   end
   #-- -------------------------------------------------------------------------
@@ -89,7 +90,8 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "1",
         "46",
         "47",
-        "49"
+        "49",
+        "1"
       ]
     end
 
@@ -134,7 +136,8 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "LAZ-074109",
         "LAZ-039648",
         "CAM-020133",
-        "LAZ-042987"
+        "LAZ-042987",
+        ""
       ]
     end
 
@@ -180,7 +183,8 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "EMPIRE ROMA SSD",
         "FERRATELLA SPORT SR",
         "IL GABBIANO NAPOLI",
-        "G.S. VV. F.  F. SOR"
+        "G.S. VV. F.  F. SOR",
+        "CAN VITTORINO"
       ]
     end
 
@@ -225,7 +229,8 @@ describe "TokenExtractor for RANKING_ROW-type buffers,", type: :integration do
         "43.049,36",
         "1.251,19",
         "990,19",
-        "670,74"
+        "670,74",
+        "369"
       ]
     end
 

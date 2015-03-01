@@ -741,6 +741,13 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
       ]
       check_for_parsing_ok( feed, :team_ranking )
     end
+
+    it "recognizes the 'FIN ranking-row' format #1 (sample #4)" do
+      feed = [
+        "            4      SWIMMING CLUB ALESS                133"
+      ]
+      check_for_parsing_ok( feed, :team_ranking )
+    end
     #-- -----------------------------------------------------------------------
     #++
 
