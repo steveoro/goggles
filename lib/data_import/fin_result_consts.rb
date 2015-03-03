@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.767
+  - Goggles framework vers.:  4.00.769
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -77,7 +77,18 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     )
   end
 
-  # "Statistics" (header) context type definition.
+  # "Team Stats" (header) context type definition.
+  #
+  def context_type_team_stats
+    ContextTypeDef.new(
+      :team_stats,
+      [
+        /statistiche\s+societ./i
+      ]
+    )
+  end
+
+  # "Meeting Statistics" (header) context type definition.
   #
   def context_type_stats
     ContextTypeDef.new(
@@ -121,7 +132,28 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :ranking_row,
       [
-        /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})([\,|\.]\d\d)?)(\s+|\r\n|\n|$|\Z)/i
+       /
+          (?<=\s)
+          (?<decimal_score>
+            (?<thousand>\d{1,3}\.)*\d{1,3}
+            (?<decimals>[\,|\.]\d\d)
+            (?<endline>\s+|\r\n|\n|$|\Z)
+            (?!\D+)
+          )|
+          (?<score_comma>
+            \s+\d+[\,|\.]\d\d
+            (?!\s\s\d\d\s\s)
+          )|
+          (?<score_stats>
+            \s+\d+[\,|\.]\d\d
+            (?=\s\s\d\d\s\s)
+          )|
+          (?<=\s\s\s\s)(?<integer_score>
+            \s+\d+(?=\r|\n|$|\Z)
+          )
+       /iux
+       # This one looks for a siplyfied version of the ranking score:
+#        /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})([\,|\.]\d\d)?)(\s+|\r\n|\n|$|\Z)/i
       ],
       :team_ranking
     )
@@ -179,6 +211,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
       context_type_category_header,
       context_type_relay_header,
       context_type_team_ranking,
+      context_type_team_stats,
       context_type_stats,
       context_type_result_row,
       context_type_relay_row,
@@ -494,14 +527,23 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     TokenExtractor.new(
       :team_name,
       /
-        (?<=\w{3}-\d{6}\s\s)\w|
-        (?<=\w{3}-\d{6}\s-\s)\w|
-        (?<=\d°\s)\w|
-        (?<=\s{19})\w|
-        (?<=\d\s{6})\w|
-        (?<=\d\)\s{3})\w
+        (?!\w{3}-\d{6}\s\s)
+        (
+          (?<=\w{3}-\d{6}\s\s)\w|
+          (?<=\w{3}-\d{6}\s-\s)\w|
+          (?<=\d°\s)\w|
+          (?<=\d°\s\s)\w|
+          (?<=\s{19})\w|
+          (?<=\d\s{3})\w|
+          (?<=\d\s{4})\w|
+          (?<=\d\s{5})\w|
+          (?<=\d\s{6})\w|
+          (?<=\d\s{7})\w|
+          (?<=\d\s{8})\w|
+          (?<=\d\)\s{3})\w
+        )
       /uix,
-     /
+      /
         (?<=\s)
         (?<decimal_score>
           (?<thousand>\d{1,3}\.)*\d{1,3}
@@ -519,7 +561,8 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
         )|
         (?<=\s\s\s\s)(?<integer_score>
           \s+\d+(?=\r|\n|$|\Z)
-        )
+        )|
+        (Squalif.)
      /iux
 #      /\s+(((\d{1,3}\.)*\d{1,3}|\d{1,})[\,|\.]\d\d)(\s+|\r\n|\n|$|\Z)/i
     )

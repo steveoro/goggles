@@ -139,11 +139,12 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
         "POLISP. PIAN DEL BR",
         "IL GRILLO",
 
-        "FLAMINIO SPORTING CLUB \"",
+        # [Steve, 20150303] Regexp output varies due to spacing and row format:
+        "FLAMINIO SPORTING CLUB",
         "FLAMINIO SPORTING CLUB \"",
         "ROMA NUOTO MASTER \"B\"",
-        "POLISPORTIVA MIMMO FERRI",
-        "POLISPORTIVA MIMMO FERRI"
+        "POLISPORTIVA MIMMO FERRITO",
+        "POLISPORTIVA MIMMO FERRITO"
       ]
     end
 

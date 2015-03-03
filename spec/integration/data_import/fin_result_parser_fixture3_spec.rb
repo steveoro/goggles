@@ -78,6 +78,14 @@ describe "FinResultParser parsing fixture file 3,", type: :integration do
       expect( subject[:relay_row].size ).to eq( 0 )
     end
 
+    it "recognizes a list of :team_stats data pages" do
+      expect( subject.has_key?( :team_stats ) ).to be true
+    end
+    it "has no rows for the :team_stats (header) data page" do
+      expect( subject[:team_stats] ).to be_an_instance_of( Array )
+      expect( subject[:team_stats].size ).to eq( 0 )
+    end
+
     it "recognizes a list of :stats data pages" do
       expect( subject.has_key?( :stats ) ).to be true
     end
@@ -121,6 +129,9 @@ describe "FinResultParser parsing fixture file 3,", type: :integration do
     end
     it "has the exact amount of :ranking_rows for this fixture" do
       expect( subject[:ranking_row] ).to be_an_instance_of( Array )
+# DEBUG
+#      team_name_list = subject[:ranking_row].map{ |row| row[:fields][:team_name] }
+#      puts "\r\n\r\n" << team_name_list.inspect
       expect( subject[:ranking_row].size ).to eq( 88 )
     end
   end

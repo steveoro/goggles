@@ -751,6 +751,13 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
     #-- -----------------------------------------------------------------------
     #++
 
+    it "doesn't recognize an end of page" do
+      feed = [
+        "Torna a inizio pagina"
+      ]
+      check_for_parsing_fail( feed, 0, :team_ranking )
+    end
+
     it "doesn't recognize a relay-like feed (sample #1)" do
       feed = [
         "                  4     MEROLANUOTO S.R.L.                  2'14\"12  874,29"

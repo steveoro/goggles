@@ -11,7 +11,7 @@ require 'data_import/fin_result_consts'
 
 = FinResultDefs
 
-  - Goggles framework vers.:  4.00.657
+  - Goggles framework vers.:  4.00.769
   - author: Steve A.
 
  Value object/Container class for the lists of ContextDetector and TokenExtractor
@@ -62,6 +62,8 @@ class FinResultDefs < TxtResultDefs
       category_header:  ContextDetector.new( context_type_category_header, logger ),
       relay_header:     ContextDetector.new( context_type_relay_header, logger ),
       team_ranking:     ContextDetector.new( context_type_team_ranking, logger ),
+
+      team_stats:       ContextDetector.new( context_type_team_stats, logger ),
       stats:            ContextDetector.new( context_type_stats, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
       result_row:       ContextDetector.new( context_type_result_row, logger ),
@@ -132,6 +134,11 @@ class FinResultDefs < TxtResultDefs
 
       # -- Fields to be extracted: (nothing, 1 line in cache)
       team_ranking: [
+        nil
+      ],
+
+      # -- Fields to be extracted: (nothing, 1 line in cache)
+      team_stats: [
         nil
       ],
 
@@ -245,14 +252,18 @@ class FinResultDefs < TxtResultDefs
         [ :result_position, :team_name, :result_time, :result_score ]
       ],
 
-      team_ranking: [                               # 1 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
+      team_ranking: [                               # 1 row-type conditions => 1 cached rows => the tokenizer list must have 1 element
         nil
       ],
       ranking_row: [
         [ :result_position, :team_code, :team_name, :result_score ]
       ],
 
-      stats: [                                      # 1 row-type conditions => 2 cached rows => the tokenizer list must have 3 elements
+      team_stats: [
+        nil
+      ],
+
+      stats: [
         nil
       ],
 
