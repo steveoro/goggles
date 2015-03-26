@@ -6,6 +6,9 @@ require 'capistrano/rails/assets'
 require 'capistrano/rails/migrations'
 require 'capistrano/console'
 
+# [Steve, 20150325] Custom formatter for Capistrano output: CURRENTLY BROKEN
+# require "airbrussh/capistrano"
+
 # Includes tasks from other gems included in your Gemfile
 #
 # For documentation on these, see for example:

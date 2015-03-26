@@ -20,7 +20,7 @@ This toggles on maintenance mode, with a custom end_date message:
     > ROLES=app cap staging remote:rake
     _(wait for console prompt)_
 
-    > RAILS_ENV=production build:maintenance end_date="2014-11-27 20:59"
+    > RAILS_ENV=production build:maintenance end_date="2015-03-26 08:00"
 
 
                             --- O ---

@@ -1,3 +1,8 @@
+if RUBY_VERSION =~ /1.9/
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
+
 source 'https://rubygems.org'
 
 gem 'rails', '= 3.2.19'
@@ -83,6 +88,7 @@ group :development do
   gem 'guard-rspec'
   gem 'guard-shell'
   gem 'rspec_api_blueprint', require: false
+#  gem "airbrussh", :require => false
 end
 
 
@@ -91,10 +97,10 @@ group :development, :test do
   # including them into the test environment also allows Semaphore CI to
   # perform automated deployment from a test build without changing the current
   # Rails environment.
-  gem 'capistrano',  '~> 3.2'                       # Deploy with Capistrano
+  gem 'capistrano',  '~> 3.4'                       # Deploy with Capistrano
   gem 'capistrano-rvm'
-  gem 'capistrano-bundler', '~> 1.1.2'
-  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano-bundler' #, '~> 1.1.2'
+  gem 'capistrano-rails' #, '~> 1.1'
   gem 'seed_dump', '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
   gem "rspec", '~> 3'

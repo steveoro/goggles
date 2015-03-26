@@ -391,7 +391,7 @@ class CsiResultParser
   def create_new_data_import_session( season_id = nil, current_admin_id = 1 )
     DataImportSession.create(
       phase:            0,
-      file_format:      'ris-csi',
+      file_format:      "csi-#{@header_fields_dao.prefix}",
       file_name:        @full_pathname,
       source_data:      @dao_list.join("\r\n"),
       total_data_rows:  @dao_list.size,

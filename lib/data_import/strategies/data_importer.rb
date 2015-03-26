@@ -318,7 +318,9 @@ class DataImporter
     unless @data_import_session.file_format
       case @header_fields_dao.prefix
       when 'ris'
-        @data_import_session.file_format = 'fin_results'
+        @data_import_session.file_format = 'fin-results'
+      when /sta|stl/
+        @data_import_session.file_format = 'fin-startlist'
       end
       @data_import_session.save!
     end

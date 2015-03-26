@@ -302,11 +302,11 @@ ActiveRecord::Schema.define(:version => 20150205184853) do
 
   create_table "data_import_meeting_entries", :force => true do |t|
     t.integer  "lock_version",                                  :default => 0
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "data_import_session_id"
     t.integer  "conflicting_id",                 :limit => 8,   :default => 0
-    t.string   "import_text",                                                      :null => false
+    t.string   "import_text"
     t.string   "athlete_name",                   :limit => 100
     t.string   "team_name",                      :limit => 60
     t.string   "athlete_badge_number",           :limit => 40
