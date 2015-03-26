@@ -101,6 +101,7 @@ group :development, :test do
   gem 'capistrano-rvm'
   gem 'capistrano-bundler' #, '~> 1.1.2'
   gem 'capistrano-rails' #, '~> 1.1'
+  gem 'capistrano-passenger'
   gem 'seed_dump', '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
   gem "rspec", '~> 3'
