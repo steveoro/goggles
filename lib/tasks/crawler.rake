@@ -12,7 +12,7 @@ require 'framework/console_logger'
 
 = Web-Crawling Helper tasks
 
-  - Goggles framework vers.:  4.00.673
+  - Goggles framework vers.:  4.00.771
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -231,23 +231,30 @@ Options: [output_path=#{LOCALCOPY_DIR}]
     # [Steve, 20141216] Links used by the APIs below:
     #
     # Current FIN championships:
-    # - http://www.federnuoto.it/discipline/master/circuito-supermaster.html
+    # (1) - http://www.federnuoto.it/discipline/master/circuito-supermaster.html
     #
     # Previous FIN championships:
-    # - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
-    # - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
+    # (2) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
+    # (3) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
     #
     # To change or update the above links, edit directly the Kimono APIs.
     # (It is possible to set the FIN_supermasters_meetings API to return everything that is available
     # or just the individual rows that have changed.)
     #
     if File.directory?( output_path )
-      response = JSON.parse(
-        RestClient.get(
-          # API FIN_supermasters_meetings:
-          'https://www.kimonolabs.com/api/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
-        )
+      response = RestClient.get(
+        # API FIN_supermasters_meetings:
+        'https://www.kimonolabs.com/api/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+
+        # On-Demand API:
+        #
+        # Add these to the below URL to get something different from (1)
+        # &kimpath1=newvalue (default: 'discipline')
+        # &kimpath2=newvalue (default: 'master')
+        # &kimpath3=newvalue (default: 'circuito-supermaster')
+#          'https://www.kimonolabs.com/api/ondemand/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
       )
+      response = JSON.parse( response )
       total_rows = response['results']['collection2'].size
 
       response['results']['collection2'][ start_from .. total_rows ].each_with_index do |row_hash, index|
@@ -312,6 +319,10 @@ Options: [output_path=#{LOCALCOPY_DIR}]
     puts "  Retrieving manifest dates from API..."
     # API FIN_manifest_dates:
     page_link = "https://www.kimonolabs.com/api/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
+
+    # On-Demand API:
+    #
+#    page_link = "https://www.kimonolabs.com/api/ondemand/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
     web_response = get_web_response( page_link )
 
     response      = JSON.parse( web_response )
@@ -400,9 +411,19 @@ Options: [output_path=#{LOCALCOPY_DIR}]
       title       = html_doc.css( 'h1' ).text
       description = html_doc.css( 'h3' ).text
                                                     # Retrieve the Organizer name to be added as a suffix:
-      organizer   = description.to_s =~ /manifestazione organizzata da /i ?
-        description.split(/manifestazione organizzata da /i).last.gsub(/[\s'`\:\.]/i, '').downcase :
-        "unknown"
+      organizer   = "unknown"
+      if description.to_s =~ /manifestazione organizzata da /i
+        organizer_token = description.split(/manifestazione organizzata da /i).last
+        unless organizer_token.nil?
+          organizer = organizer_token.gsub(/[\s'`\:\.]/i, '')
+            .gsub('à', 'a')
+            .gsub(/[èé]/, 'e')
+            .gsub('ì', 'i')
+            .gsub('ò', 'o')
+            .gsub('ù', 'ù')
+            .downcase
+        end
+      end
       puts "  Organizer code for res./sta.: #{organizer}"
       event_list  = html_doc.css( '.gara h2' ).map { |node| node.text }
       result_list = html_doc.css( '.gara pre' ).map { |node| node.text }
