@@ -14,7 +14,7 @@ require 'framework/console_logger'
 
 = DB-maintenance tasks
 
-  - Goggles framework vers.:  4.00.667
+  - Goggles framework vers.:  4.00.773
   - author: Leega, Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -103,6 +103,12 @@ having the specified ID.
 
   Options: meeting_id=<meeting_id>
            file=<path_to_file>
+           [warm_up=<warm_up_time> begin=<begin_time> [day_part=<day_part_type.code>]]
+
+If 'warm_up' and 'begin' are specified, the first meeting_session of
+the meeting will be updated with the specified values.
+
+'day_part' defaults to 'P'.
   DESC
   task :store_meeting_invitation do
     puts "\r\n*** db:store_meeting_invitation ***"
@@ -132,10 +138,23 @@ having the specified ID.
     puts "Full pathname: #{full_pathname}"
     text_file_contents = File.read( full_pathname )
     puts "File size: #{text_file_contents.size}"
-    puts "Processing..."
+    puts "Processing meeting row..."
     meeting.invitation = text_file_contents
     meeting.has_invitation = true
     meeting.save!
+
+    warm_up_time = ENV.include?("warm_up") ? ENV["warm_up"] : nil
+    begin_time = ENV.include?("begin") ? ENV["begin"] : nil
+    day_part_type_code = ENV.include?("day_part") ? ENV["day_part"] : 'P'
+
+    unless( warm_up_time.nil? || begin_time.nil? )
+      puts "Updating also warm_up, begin_time & day_part_type_id (just for the 1st session)..."
+      ms = meeting.meeting_sessions.first
+      ms.warm_up_time = warm_up_time
+      ms.begin_time = begin_time
+      ms.day_part_type_id = DayPartType.find_by_code( day_part_type_code ).id
+      ms.save!
+    end
     puts "Done"
   end
 
