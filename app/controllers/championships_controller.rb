@@ -81,6 +81,33 @@ class ChampionshipsController < ApplicationController
     @event_types = @season.event_types.are_not_relays.uniq
     @category_types = @season.category_types.are_not_relays.sort_by_age     
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
+    
+    # Calculate ranking for each event/category/gender types
+    @season_ranking = []
+    GenderType.individual_only.sort_by_courtesy.each do |gender_type|
+      gender_ranking = {}
+      gender_ranking[:gender_type] = gender_type
+      gender_ranking[:categories] = []
+      @category_types.each do |category_type|
+        category_ranking = {}
+        category_ranking[:category_type] = category_type
+        category_ranking[:events] = []
+        @event_types.each do |event_type|
+          event_ranking = {}
+          event_ranking[:event_type] = event_type
+          event_ranking[:mirs] = []
+          @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.each do |mir|
+            # TODO skip swimmers already ranked
+            
+            # TODO convert 50 meters to 25 meters
+            event_ranking[:mirs] << mir
+          end
+          category_ranking[:events] << event_ranking
+        end
+        gender_ranking[:categories] << category_ranking
+      end
+      @season_ranking << gender_ranking
+    end
   end
 
   # Seasonal individual ranking

@@ -2,25 +2,44 @@
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
+
+    %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
+      %li
+        %a(href="#pageTop")= I18n.t(:top_of_page)
+      - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
+        %li
+          %a(href="\##{gender_type.code}")= gender_type.i18n_description 
+        - @category_types.each do |category_type|
+          %li
+            %a(href="\##{gender_type.code}-#{category_type.code}")= "- #{category_type.get_full_name}"
   
     .span10
-      - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
-        .row-fluid.goggles-category-gap#gender_type.code
+      - @season_ranking.each do |gender|
+        .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}"}
           .h3
-            = gender_type.i18n_description
+            = gender[:gender_type].i18n_description
             %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-        - @category_types.each do |category_type|
-          .row-fluid.goggles-category-gap#category_type.code
+        - gender[:categories].each do |category|
+          .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}-#{category[:category_type].code}"}
             .h3
-              = category_type.get_full_name
+              = category[:category_type].get_full_name
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
               
-              - @event_types.each do |event_type|
+              - category[:events].each do |event|
                 %table.table.table-striped.table-bordered.table-hover.table-condensed
                   %tbody
                     %tr{'class'=>'info'}
-                      %td{ colspan: 3 }
-                        %b= event_type.i18n_description
+                      %td{ colspan: 4 }
+                        %b
+                          = event[:event_type].i18n_description
+                          %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+                    - event[:mirs].each_with_index do |mir, counter|
+                      %tr
+                        %td.span1= counter + 1
+                        %td.span3= mir.swimmer.complete_name
+                        %td.span2= mir.get_timing
+                        %td.span4
+                   
             
 
 .row-fluid.goggles-category-gap
