@@ -100,6 +100,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_team,                    ->(team)                { where(team_id: team.id) }
   scope :for_category_type,           ->(category_type)       { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
   scope :for_gender_type,             ->(gender_type)         { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
+  scope :for_event_type,              ->(event_type)          { joins(:event_type).where(["event_types.id = ?", event_type.id]) }
 
   # ----------------------------------------------------------------------------
   # Base methods:
