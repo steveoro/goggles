@@ -22,24 +22,25 @@
         - gender[:categories].each do |category|
           .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}-#{category[:category_type].code}"}
             .h3
-              = category[:category_type].get_full_name
+              = gender[:gender_type].i18n_description + ' ' + category[:category_type].get_full_name
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
               
               - category[:events].each do |event|
                 %table.table.table-striped.table-bordered.table-hover.table-condensed
                   %tbody
                     %tr{'class'=>'info'}
-                      %td{ colspan: 4 }
+                      %td{ colspan: 6 }
                         %b
                           = event[:event_type].i18n_description
                           %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
                     - event[:mirs].each_with_index do |mir, counter|
-                      %tr
-                        %td.span1= counter + 1
-                        %td.span3= mir.swimmer.complete_name
-                        %td.span2= mir.get_timing
-                        %td.span4
-                   
-            
+                      - is_highlighted = (@team && @team.id == mir.team_id)
+                      %tr{ 'class' => is_highlighted ? 'warning' : '' }
+                        %td.goggles-rightalign.span1= counter + 1
+                        %td.span3= mir.swimmer.decorate.get_linked_swimmer_name
+                        %td.goggles-rightalign.span1= mir.swimmer.year_of_birth
+                        %td.goggles-rightalign.span1= mir.get_timing
+                        %td.span3= mir.team.decorate.get_linked_name
+                        %td.goggles-rightalign.span1
 
 .row-fluid.goggles-category-gap

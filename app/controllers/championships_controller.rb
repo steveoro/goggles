@@ -96,11 +96,14 @@ class ChampionshipsController < ApplicationController
           event_ranking = {}
           event_ranking[:event_type] = event_type
           event_ranking[:mirs] = []
+          #best_result = @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.first
+          #top_timing = Timing.new(best_result.minutes, best_result.seconds, best_result.hundreds) if best_result
           @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.each do |mir|
-            # TODO skip swimmers already ranked
-            
-            # TODO convert 50 meters to 25 meters
-            event_ranking[:mirs] << mir
+            # Skip swimmers already ranked
+            if not event_ranking[:mirs].any?{ |collected_mir| collected_mir.swimmer_id == mir.swimmer_id }
+              # TODO convert 50 meters to 25 meters timing
+              event_ranking[:mirs] << mir
+            end
           end
           category_ranking[:events] << event_ranking
         end
