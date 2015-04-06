@@ -142,12 +142,14 @@ describe ChampionshipsController, :type => :controller do
       expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
       expect( assigns(:event_types) ).to all(be_an_instance_of( EventType ))
       expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
+      expect( assigns(:season_ranking) ).to be_a_kind_of( Array )
     end
     it "assigns the required variables when invoked with valid id" do
       get :event_ranking_regional_er_csi, id: 131
       expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
       expect( assigns(:event_types) ).to all(be_an_instance_of( EventType ))
       expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
+      expect( assigns(:season_ranking) ).to be_a_kind_of( Array )
     end
   end
   #-- -------------------------------------------------------------------------
