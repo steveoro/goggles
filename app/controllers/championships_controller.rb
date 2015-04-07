@@ -96,6 +96,11 @@ class ChampionshipsController < ApplicationController
           event_ranking = {}
           event_ranking[:event_type] = event_type
           event_ranking[:mirs] = []
+          
+          # Find out total events in championship (season), count and swam
+          event_ranking[:event_count] = @season.event_types.where(['event_types.code = ?', event_type.code]).count
+          event_ranking[:event_swam]  = @season.event_types.where(['event_types.code = ? and meetings.are_results_acquired', event_type.code]).count
+          
           #best_result = @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.first
           #top_timing = Timing.new(best_result.minutes, best_result.seconds, best_result.hundreds) if best_result
           @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.each do |mir|
