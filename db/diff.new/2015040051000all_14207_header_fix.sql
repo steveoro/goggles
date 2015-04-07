@@ -5,28 +5,28 @@ whee m.id = 14207;
 
 update meeting_sessions ms
 set ms.scheduled_date = '20150215', 
-  ms.warm_up_time = '7.45',
+  ms.warm_up_time = '8.00',
   ms.begin_time = '8.45',
   ms.day_part_type_id = (select dpt.id from day_part_types dpt where dpt.code = 'M')
 where ms.meeting_id = 14207 and ms.session_order = 1;
 
 update meeting_sessions ms
 set ms.scheduled_date = '20150215', 
-  ms.warm_up_time = '13.45',
+  ms.warm_up_time = '14.00',
   ms.begin_time = '14.45',
   ms.day_part_type_id = (select dpt.id from day_part_types dpt where dpt.code = 'P')
 where ms.meeting_id = 14207 and ms.session_order = 2;
 
 update meeting_sessions ms
 set ms.scheduled_date = '20150222', 
-  ms.warm_up_time = '7.45',
+  ms.warm_up_time = '8.00',
   ms.begin_time = '8.45',
   ms.day_part_type_id = (select dpt.id from day_part_types dpt where dpt.code = 'M')
 where ms.meeting_id = 14207 and ms.session_order = 3;
 
 update meeting_sessions ms
 set ms.scheduled_date = '20150222', 
-  ms.warm_up_time = '13.45',
+  ms.warm_up_time = '14.00',
   ms.begin_time = '14.45',
   ms.day_part_type_id = (select dpt.id from day_part_types dpt where dpt.code = 'P')
 where ms.meeting_id = 14207 and ms.session_order = 4;
