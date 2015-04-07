@@ -55,7 +55,7 @@ gem 'simple-navigation-bootstrap'
 
 gem "fuzzy-string-match_pure"                       # [Steve, 20131106] Used for Team/Swimmer names comparison & existence checking
 
-gem "wice_grid", '~> 3.4'
+gem "wice_grid", '3.4.8'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git'    # This version has more verbose exception reporting instead of YAML trace
@@ -80,10 +80,10 @@ gem "rest-client"
 
 
 group :development do
-  gem "better_errors"
+  gem "better_errors", '~> 1.1.0'
   gem "binding_of_caller"
   gem 'rails_best_practices'
-  gem 'guard'
+  gem 'guard', '~> 2.6'
   gem 'guard-rspec'
   gem 'guard-shell'
   gem 'rspec_api_blueprint', require: false
@@ -106,6 +106,7 @@ group :development, :test do
   gem "rspec", '~> 3'
   gem "rspec-rails", '~> 3'
   gem "factory_girl_rails"
+  gem 'ffaker', '~> 2'                              # Adds dummy names & fixture generator
 
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   # The driver for browser testing may be switched back to the default (:rack_test,
@@ -118,7 +119,6 @@ group :development, :test do
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
   gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
   # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
-  gem 'ffaker', require: false                      # Adds dummy names & fixture generator
 #  gem 'did_you_mean'                                # Adds "Did you mean?" <possbile method name> to method_missing & name errors
 end
 
