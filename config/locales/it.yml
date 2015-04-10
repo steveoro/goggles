@@ -23,7 +23,7 @@ it:
     last_attended_meeting: "Ultima gara disputata"
     best_score_ever: "Miglior punteggio di sempre"
     worst_score_ever: "Peggior punteggio di sempre (non nullo)"
-    total_team_records: "Record di Federazione detenuti"
+    total_team_records: "Record di Federazione detenuti (stando ai dati inseriti)"
     records_by_team: "Record per affiliazione"
     total_disqualifications: "Squalifiche subite"
     no_disqualifications: "Nessuna !!"
