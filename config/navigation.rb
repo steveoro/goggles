@@ -154,7 +154,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled'
-    primary.item( :key_locale,         content_tag(:span, t('language') ), '#'
+    primary.item( :key_locale,         content_tag(:span, image_tag('it.png') +"/"+ image_tag('us.png') ), '#'
     ) do |lev2_nav|
       lev2_nav.item :key_locale_it,    image_tag('it.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'it') )
       lev2_nav.item :key_locale_en,    image_tag('us.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'en') )
