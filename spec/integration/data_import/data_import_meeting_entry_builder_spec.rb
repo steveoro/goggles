@@ -101,7 +101,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
   # ]
   let(:detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         entry_order:    build( :meeting_entry ).start_list_number,
         swimmer_name:   badge.swimmer.complete_name,
@@ -335,7 +335,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
   end
   let(:mentry_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         entry_order:    mentry.start_list_number,
         swimmer_name:   mentry.badge.swimmer.complete_name,
@@ -484,7 +484,7 @@ describe DataImportMeetingEntryBuilder, type: :integration do
   end
   let(:di_mentry_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         entry_order:    di_mentry.start_list_number,
         swimmer_name:   di_mentry.swimmer.complete_name,

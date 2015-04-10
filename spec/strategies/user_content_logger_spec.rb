@@ -68,7 +68,7 @@ describe UserContentLogger, type: :strategy do
 
 
     describe "#to_logfile" do
-      let(:contents) { Faker::Lorem.paragraph }
+      let(:contents) { FFaker::Lorem.paragraph }
 
       it "writes the contents to a logfile" do
         subject.to_logfile( contents )

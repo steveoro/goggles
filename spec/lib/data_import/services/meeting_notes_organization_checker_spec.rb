@@ -29,7 +29,7 @@ end
 
 
 describe MeetingNotesOrganizationChecker, type: :service do
-  let(:organization)        { "#{Faker::Address.city} Swimming Team" }
+  let(:organization)        { "#{FFaker::Address.city} Swimming Team" }
   let(:year)                { ((rand * 100) % 50).to_i + 1945 }
   let(:month)               { ((rand * 100) % 12).to_i + 1 }
   let(:day)                 { ((rand * 100) % 28).to_i + 1 }
@@ -67,7 +67,7 @@ describe MeetingNotesOrganizationChecker, type: :service do
         month          = ((rand * 100) % 12).to_i + 1
         day            = ((rand * 100) % 28).to_i + 1
         @meeting_dates = "%04d-%02d-%02d" % [year, month, day]
-        @organization  = "#{Faker::Address.city} Swimming Team"
+        @organization  = "#{FFaker::Address.city} Swimming Team"
         @result = MeetingNotesOrganizationChecker.check_and_fix(@fixture, @meeting_dates, @organization)
 # DEBUG
 #        puts "\r\n- Checking @fixture: #{@fixture.inspect}"
@@ -84,7 +84,7 @@ describe MeetingNotesOrganizationChecker, type: :service do
         month          = ((rand * 100) % 12).to_i + 1
         day            = ((rand * 100) % 28).to_i + 1
         @meeting_dates = "%04d-%02d-%02d" % [year, month, day]
-        @organization  = "#{Faker::Address.city} Swimming Team"
+        @organization  = "#{FFaker::Address.city} Swimming Team"
         @result = MeetingNotesOrganizationChecker.check_and_fix(@fixture, @meeting_dates, @organization)
 # DEBUG
 #        puts "\r\n- Checking @fixture: #{@fixture.inspect}"
@@ -101,7 +101,7 @@ describe MeetingNotesOrganizationChecker, type: :service do
         month          = ((rand * 100) % 12).to_i + 1
         day            = ((rand * 100) % 28).to_i + 1
         @meeting_dates = "%04d-%02d-%02d" % [year, month, day]
-        @organization  = "#{Faker::Address.city} Swimming Team"
+        @organization  = "#{FFaker::Address.city} Swimming Team"
         @result = MeetingNotesOrganizationChecker.check_and_fix(@fixture, @meeting_dates, @organization)
       end
       it_behaves_like( "[a successful #notes correction]" )
@@ -115,7 +115,7 @@ describe MeetingNotesOrganizationChecker, type: :service do
         month          = ((rand * 100) % 12).to_i + 1
         day            = ((rand * 100) % 28).to_i + 1
         @meeting_dates = "%04d-%02d-%02d" % [year, month, day]
-        @organization  = "#{Faker::Address.city} Swimming Team"
+        @organization  = "#{FFaker::Address.city} Swimming Team"
         @result = MeetingNotesOrganizationChecker.check_and_fix(@fixture, @meeting_dates, @organization)
       end
       it_behaves_like( "[a successful #notes correction]" )

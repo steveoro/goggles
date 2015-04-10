@@ -3,7 +3,7 @@
 FactoryGirl.define do
   factory :data_import_swimmer_analysis_result do
     data_import_session
-    analysis_log_text         { Faker::Lorem.paragraph[0..128] }
+    analysis_log_text         { FFaker::Lorem.paragraph[0..128] }
     sql_text                  ''
 
     chosen_swimmer_id         nil

@@ -36,7 +36,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
   # ]
   let(:detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        build( :data_import_team ).name,
         result_time:      "#{((rand * 4) % 4).to_i}'#{((rand * 60) % 60).to_i}\"#{((rand * 100) % 100).to_i}",
@@ -50,7 +50,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
   let(:mrr)                   { create( :meeting_relay_result ) }
   let(:mrr_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        mrr.team.name,
         result_time:      "#{mrr.minutes}'#{mrr.seconds}\"#{mrr.hundreds}",
@@ -67,7 +67,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
   end
   let(:di_mrr_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        di_mrr.team.name,
         result_time:      "#{di_mrr.minutes}'#{di_mrr.seconds}\"#{di_mrr.hundreds}",

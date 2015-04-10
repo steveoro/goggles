@@ -47,8 +47,8 @@ describe User, :type => :model do
         expect( Regexp.new(result[1]) ).to match( subject.description )
       end
       it "returns names extracted from the dedicated fields, when present" do
-        subject.first_name = Faker::Name.first_name
-        subject.last_name  = Faker::Name.last_name
+        subject.first_name = FFaker::Name.first_name
+        subject.last_name  = FFaker::Name.last_name
         result = subject.get_first_and_last_name
         expect( Regexp.new(result[0]) ).to match( subject.first_name )
         expect( Regexp.new(result[1]) ).to match( subject.last_name )

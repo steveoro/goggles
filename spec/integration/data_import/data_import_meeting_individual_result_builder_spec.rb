@@ -41,7 +41,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
   # ]
   let(:detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        build( :data_import_team ).name,
         team_code:        build( :data_import_team ).badge_number,
@@ -58,7 +58,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
   let(:mir)                   { create( :meeting_individual_result ) }
   let(:mir_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        mir.team.name,
         team_code:        mir.team_affiliation.number,
@@ -78,7 +78,7 @@ describe DataImportMeetingIndividualResultBuilder, type: :integration do
   end
   let(:di_mir_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        di_mir.team.name,
         team_code:        di_mir.team_affiliation.number,

@@ -28,7 +28,7 @@ describe SwimmerAnalysisReportDAO, type: :model do
         swimmer.id,
         { score: 0.9, row: swimmer },
         { score: 0.9, row: swimmer },
-        "...Whatever...\r\n#{Faker::Lorem.paragraph[0..99]}\r\n#{Faker::Lorem.paragraph[0..99]}"
+        "...Whatever...\r\n#{FFaker::Lorem.paragraph[0..99]}\r\n#{FFaker::Lorem.paragraph[0..99]}"
       )
     end
 

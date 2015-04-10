@@ -44,7 +44,7 @@ describe StrokeType, :type => :model do
     end
 
     it "returns nil for an unknown code" do
-      result = StrokeType.parse_stroke_type_from_import_text( Faker::Lorem.word )
+      result = StrokeType.parse_stroke_type_from_import_text( FFaker::Lorem.word )
       expect( result ).to be nil
     end
   end

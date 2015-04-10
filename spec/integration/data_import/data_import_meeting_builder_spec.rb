@@ -11,22 +11,22 @@ describe DataImportMeetingBuilder, type: :integration do
   let(:data_import_session)   { create( :data_import_session ) }
 
   # Non-existing (totally random) fixture params:
-  let(:pathname)            { File.join(Faker::Lorem.word, Faker::Lorem.word) }
-  let(:prefix)              { Faker::Lorem.word[0..2] }
+  let(:pathname)            { File.join(FFaker::Lorem.word, FFaker::Lorem.word) }
+  let(:prefix)              { FFaker::Lorem.word[0..2] }
   let(:year)                { ((rand * 100) % 50).to_i + 1945 }
   let(:month)               { ((rand * 100) % 12).to_i + 1 }
   let(:day)                 { ((rand * 100) % 28).to_i + 1 }
   let(:header_text_date)    { "%04d%02d%02d" % [year, month, day] }
-  let(:code_name)           { Faker::Lorem.word }
+  let(:code_name)           { FFaker::Lorem.word }
   let(:full_pathname)       { File.join( pathname, "#{ prefix }#{ header_text_date }#{ code_name }.txt" ) }
   let(:meeting_dates_text)  { "%04d-%02d-%02d" % [year, month, day] }
   let(:header_fields_dao)   { FilenameParser.new( full_pathname ).parse }
   let(:meeting_header_row) do
     {
-      import_text: "#{Faker::Lorem.word} meeting - organized by #{Faker::Lorem.word} team",
+      import_text: "#{FFaker::Lorem.word} meeting - organized by #{FFaker::Lorem.word} team",
       fields: {
-        title: "#{Faker::Lorem.word} meeting",
-        organization: "#{Faker::Lorem.word} team"
+        title: "#{FFaker::Lorem.word} meeting",
+        organization: "#{FFaker::Lorem.word} team"
       }
     }
   end

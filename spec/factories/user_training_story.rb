@@ -7,7 +7,7 @@ FactoryGirl.define do
   factory :user_training_story do
     swam_date                 { Date.today }
     total_training_time       65
-    notes                     { "Dude, that was hard!\r\n#{ Faker::Lorem.paragraph }" }
+    notes                     { "Dude, that was hard!\r\n#{ FFaker::Lorem.paragraph }" }
     user
     user_training
     swimming_pool

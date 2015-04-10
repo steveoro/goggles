@@ -5,7 +5,7 @@ require 'ffaker'
 FactoryGirl.define do
 
   trait :training_header do
-    sequence( :description )  { |n| "#{ Faker::Lorem.word } workout n.#{n}" }
+    sequence( :description )  { |n| "#{ FFaker::Lorem.word } workout n.#{n}" }
     user
   end
   #-- -------------------------------------------------------------------------

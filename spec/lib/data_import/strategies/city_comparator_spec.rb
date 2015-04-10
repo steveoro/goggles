@@ -82,7 +82,7 @@ describe CityComparator, type: :strategy do
           end
         end
         it "returns nil when no matches are found" do
-          expect( subject.search_composed_name( "Asdfgh#{Faker::Lorem.word.camelcase}Qwerty Team") ).to be nil
+          expect( subject.search_composed_name( "Asdfgh#{FFaker::Lorem.word.camelcase}Qwerty Team") ).to be nil
         end
       end
     end

@@ -47,7 +47,7 @@ describe MeetingsController, :type => :controller do
 
   shared_examples_for "(GET search index with a text added to the title)" do |action_sym|
     before(:each) do
-      @text = Faker::Lorem.paragraph[0..99]
+      @text = FFaker::Lorem.paragraph[0..99]
       get action_sym, text: @text
     end
     it_behaves_like( "(response ok with index grid rendering)", action_sym )
@@ -116,7 +116,7 @@ describe MeetingsController, :type => :controller do
       it_behaves_like( "(GET search index with a text added to the title)", :simple_search )
 
       it "stores the search text in the session" do
-        @text = Faker::Lorem.paragraph[0..99]
+        @text = FFaker::Lorem.paragraph[0..99]
         get :simple_search, text: @text, team_id: 1, swimmer_id: 142
         expect( session[:text] ).to include( @text )
       end

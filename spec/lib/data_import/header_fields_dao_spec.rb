@@ -10,14 +10,14 @@ require_relative '../../../lib/data_import/header_fields_dao'
 describe HeaderFieldsDAO, type: :model do
 
   context "as a valid instance," do
-    let(:pathname)      { File.join(Faker::Lorem.word, Faker::Lorem.word) }
-    let(:prefix)        { Faker::Lorem.word[0..2] }
+    let(:pathname)      { File.join(FFaker::Lorem.word, FFaker::Lorem.word) }
+    let(:prefix)        { FFaker::Lorem.word[0..2] }
     let(:year)          { ((rand * 100) % 10).to_i + 2007 }
     let(:month)         { ((rand * 100) % 12).to_i + 1 }
     let(:day)           { ((rand * 100) % 28).to_i + 1 }
     let(:header_date)   { "%04d%02d%02d" % [year, month, day] }
     let(:header_year)   { "%04d/%04d" % [year, year+1] }
-    let(:code_name)     { Faker::Lorem.word }
+    let(:code_name)     { FFaker::Lorem.word }
     let(:full_pathname) { File.join( pathname, "#{ prefix }#{ header_date }#{ code_name }.txt" ) }
 
     subject { HeaderFieldsDAO.new( full_pathname, prefix, header_date, header_year, code_name ) }

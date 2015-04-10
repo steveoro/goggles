@@ -29,7 +29,7 @@ describe TeamAnalysisReportDAO, type: :model do
         { score: 0.9, row: team_affiliation },
         { score: 0.9, row: team_affiliation.team },
         nil,
-        "...Whatever...\r\n#{Faker::Lorem.paragraph[0..99]}\r\n#{Faker::Lorem.paragraph[0..99]}"
+        "...Whatever...\r\n#{FFaker::Lorem.paragraph[0..99]}\r\n#{FFaker::Lorem.paragraph[0..99]}"
       )
     end
 

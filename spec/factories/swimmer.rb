@@ -7,8 +7,8 @@ require 'common/validation_error_tools'
 FactoryGirl.define do
 
   trait :common_swimmer_fields do
-    first_name                { Faker::Name.first_name }
-    last_name                 { Faker::Name.last_name }
+    first_name                { FFaker::Name.first_name }
+    last_name                 { FFaker::Name.last_name }
     gender_type_id            { (rand * 10).to_i.even? ? GenderType::FEMALE_ID : GenderType::MALE_ID }
     year_of_birth             { 18.year.ago.year - ((rand * 100) % 60).to_i } # was Date.today.year -
     complete_name             { "#{last_name} #{first_name}" }
@@ -29,8 +29,8 @@ FactoryGirl.define do
   factory :swimmer do
     common_swimmer_fields
     fake_phone_numbers
-    e_mail                    { Faker::Internet.email }
-    nickname                  { Faker::Internet.user_name  }
+    e_mail                    { FFaker::Internet.email }
+    nickname                  { FFaker::Internet.user_name  }
     associated_user_id        nil
 
     before(:create) do |built_instance|

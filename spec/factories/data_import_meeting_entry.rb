@@ -6,7 +6,7 @@ FactoryGirl.define do
   factory :data_import_meeting_entry do
     data_import_session
     conflicting_id            nil
-    import_text               { Faker::Lorem.paragraph[0..250] }
+    import_text               { FFaker::Lorem.paragraph[0..250] }
 
     sequence( :start_list_number )
 

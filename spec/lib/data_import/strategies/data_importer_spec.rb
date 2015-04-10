@@ -81,28 +81,28 @@ describe DataImporter, type: :strategy do
       ].each do |member_symbol|
         it "accepts the :#{member_symbol} key" do
           expect{
-            subject.set_up( member_symbol => Faker::Lorem.word )
+            subject.set_up( member_symbol => FFaker::Lorem.word )
           }.not_to raise_error
         end
         it "stores the value in the corresponding ##{member_symbol} member" do
-          value = Faker::Lorem.word
+          value = FFaker::Lorem.word
           subject.set_up( member_symbol => value )
           expect( subject.send(member_symbol) ).to eq( value )
         end
         it "raises an error for any other unknown symbol" do
           expect{
-            subject.set_up( Faker::Lorem.word.to_sym => Faker::Lorem.word )
+            subject.set_up( FFaker::Lorem.word.to_sym => FFaker::Lorem.word )
           }.to raise_error
         end
       end
       context "when specifying a :full_pathname," do
         it "stores the value in the corresponding :full_pathname member" do
-          file_name = "#{Faker::Lorem.word.downcase}.txt"
+          file_name = "#{FFaker::Lorem.word.downcase}.txt"
           subject.set_up( full_pathname: file_name )
           expect( subject.full_pathname ).to eq( file_name )
         end
         it "updates the field in the associated session" do
-          file_name = "#{Faker::Lorem.word.downcase}.txt"
+          file_name = "#{FFaker::Lorem.word.downcase}.txt"
           subject.set_up( full_pathname: file_name )
           expect( subject.data_import_session.file_name ).to eq( file_name )
         end
@@ -171,8 +171,8 @@ describe DataImporter, type: :strategy do
 
     describe "#set_analysis_logs" do
       it "sets the internal team analysis log variables" do
-        process_log = Faker::Lorem.paragraph
-        sql_log = Faker::Lorem.paragraph
+        process_log = FFaker::Lorem.paragraph
+        sql_log = FFaker::Lorem.paragraph
         subject.set_analysis_logs( process_log, sql_log )
         expect( subject.analysis_log ).to eq( process_log )
         expect( subject.sql_executable_log ).to eq( sql_log )
@@ -188,7 +188,7 @@ describe DataImporter, type: :strategy do
 
 
     describe "#to_logfile" do
-      let(:contents) { Faker::Lorem.paragraph }
+      let(:contents) { FFaker::Lorem.paragraph }
 
       it "writes the contents to a logfile" do
         subject.to_logfile( contents )

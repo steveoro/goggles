@@ -224,8 +224,8 @@ describe DataImportEntityBuilder, type: :service do
 
     describe "#attributes_for_creation" do
       it "sets the attributes used for the creation process" do
-        name    = Faker::Address.city
-        country = Faker::Address.country
+        name    = FFaker::Address.city
+        country = FFaker::Address.country
         expect(
           subject.attributes_for_creation( id: 1, name: name, country: country )
         ).to eq( id: 1, name: name, country: country )

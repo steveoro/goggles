@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 FactoryGirl.define do
 
   factory :goggle_cup do
-    description               { "#{Faker::Name.suffix} #{Faker::Address.city} Fun Cup" }
+    description               { "#{FFaker::Name.suffix} #{FFaker::Address.city} Fun Cup" }
     team
     season_year               { ((rand * 100) % 10).to_i + 2007 }
     max_points                1000

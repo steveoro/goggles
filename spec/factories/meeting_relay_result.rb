@@ -17,7 +17,7 @@ FactoryGirl.define do
     seconds                   { ((rand * 60) % 60).to_i }
     hundreds                  { ((rand * 100) % 100).to_i }
     team
-    relay_header              { Faker::Lorem.paragraph[0..50] }
+    relay_header              { FFaker::Lorem.paragraph[0..50] }
     reaction_time             { rand.round(2) }
     entry_minutes             { ((rand * 4) % 4).to_i }
     entry_seconds             { ((rand * 60) % 60).to_i }
@@ -34,7 +34,7 @@ FactoryGirl.define do
   factory :data_import_meeting_relay_result do
     data_import_session
     conflicting_id            nil
-    import_text               { Faker::Lorem.paragraph[0..250] }
+    import_text               { FFaker::Lorem.paragraph[0..250] }
     common_meeting_relay_result_fields
     association :data_import_meeting_program, factory: :data_import_meeting_program_relay
     meeting_program_id        nil

@@ -29,7 +29,7 @@ describe ApplicationHelper, :type => :helper do
 
 
   describe "#format_longtext" do
-    let(:long_text)  { Faker::Lorem.paragraph }
+    let(:long_text)  { FFaker::Lorem.paragraph }
 
     it "returns an ActiveSupport::SafeBuffer" do
       expect( subject.format_longtext(long_text) ).to be_an_instance_of(ActiveSupport::SafeBuffer)

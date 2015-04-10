@@ -7,10 +7,10 @@ FactoryGirl.define do
   factory :data_import_meeting do
     data_import_session
     conflicting_id            nil
-    import_text               { Faker::Lorem.paragraph[0..200] }
+    import_text               { FFaker::Lorem.paragraph[0..200] }
 
     sequence( :code )         { |n| "meeting#(n)" }
-    description               { "#{Faker::Name.suffix} #{Faker::Address.city} Meeting" }
+    description               { "#{FFaker::Name.suffix} #{FFaker::Address.city} Meeting" }
 
     edition                   { ((rand * 100) % 40).to_i }
     season                    { data_import_session.season }

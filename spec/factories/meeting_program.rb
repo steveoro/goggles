@@ -19,7 +19,7 @@ FactoryGirl.define do
     data_import_session
     common_meeting_program_fields
     conflicting_id            nil
-    import_text               { Faker::Lorem.paragraph[0..250] }
+    import_text               { FFaker::Lorem.paragraph[0..250] }
     data_import_meeting_session_id nil
     meeting_session
     event_type do

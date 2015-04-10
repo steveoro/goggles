@@ -8,7 +8,7 @@ FactoryGirl.define do
 
   factory :meeting do
     sequence( :code )         { |n| "meeting#(n)" }
-    description               { "#{Faker::Name.suffix} #{Faker::Address.city} Meeting" }
+    description               { "#{FFaker::Name.suffix} #{FFaker::Address.city} Meeting" }
     edition                   { ((rand * 100) % 40).to_i }
     season #                    { Season.all.sort{ rand - 0.5 }[0] } # Get all Season rows, choose a random one
     header_date               { season.begin_date + (rand * 100).to_i.days }

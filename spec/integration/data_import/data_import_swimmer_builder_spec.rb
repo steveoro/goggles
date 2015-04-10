@@ -124,7 +124,7 @@ describe DataImportSwimmerBuilder, type: :integration do
   let(:category_type)         { create( :category_type ) }
 
   # Non-existing (totally random) fixture params:
-  let(:swimmer_name)          { "#{ Faker::Name.first_name } #{ Faker::Name.last_name }" }
+  let(:swimmer_name)          { "#{ FFaker::Name.first_name } #{ FFaker::Name.last_name }" }
   let(:swimmer_year)          { 18.year.ago.year - ((rand * 100) % 60).to_i }
   let(:gender_type)           { GenderType.where( code: ['M','F']).sort{ rand - 0.5 }[0] }
   #-- -------------------------------------------------------------------------

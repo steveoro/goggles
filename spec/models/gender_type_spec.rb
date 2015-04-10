@@ -31,7 +31,7 @@ describe GenderType, :type => :model do
     end
 
     it "returns a non-specific GenderType instance for any other token" do
-      result = GenderType.parse_gender_type_from_import_text( Faker::Lorem.word )
+      result = GenderType.parse_gender_type_from_import_text( FFaker::Lorem.word )
       expect( result ).to be_an_instance_of( GenderType )
       expect( result.is_female ).to be false
       expect( result.is_male ).to be false

@@ -15,7 +15,7 @@ describe DataImportMeetingSessionBuilder, type: :integration do
   let(:month)                 { ((rand * 100) % 12).to_i + 1 }
   let(:day)                   { ((rand * 100) % 28).to_i + 1 }
   let(:header_text_date)      { "%04d%02d%02d" % [year, month, day] }
-  let(:code_name)             { Faker::Lorem.word }
+  let(:code_name)             { FFaker::Lorem.word }
   let(:full_pathname)         { "ris#{ header_text_date }#{ code_name }.txt" }
   let(:meeting_dates_text)    { "%04d-%02d-%02d" % [year, month, day] }
   let(:header_fields_dao)     { FilenameParser.new( full_pathname ).parse }

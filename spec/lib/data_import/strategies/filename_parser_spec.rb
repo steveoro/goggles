@@ -11,14 +11,14 @@ require_relative '../../../../lib/data_import/header_fields_dao'
 describe FilenameParser, type: :strategy do
 
   context "as a valid instance," do
-    let(:pathname)      { File.join(Faker::Lorem.word, Faker::Lorem.word) }
-    let(:prefix)        { Faker::Lorem.word[0..2] }
+    let(:pathname)      { File.join(FFaker::Lorem.word, FFaker::Lorem.word) }
+    let(:prefix)        { FFaker::Lorem.word[0..2] }
     let(:year)          { ((rand * 100) % 10).to_i + 2007 }
     let(:month)         { ((rand * 100) % 12).to_i + 1 }
     let(:day)           { ((rand * 100) % 28).to_i + 1 }
     let(:header_date)   { "%04d%02d%02d" % [year, month, day] }
     let(:invalid_date)  { "%04d%02d%02d" % [year, month, day+31] }
-    let(:code_name)     { Faker::Lorem.word }
+    let(:code_name)     { FFaker::Lorem.word }
 
     subject do
       FilenameParser.new(

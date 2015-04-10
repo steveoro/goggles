@@ -4,11 +4,11 @@ require 'ffaker'
 FactoryGirl.define do
 
   trait :random_city do
-    name                    { Faker::Address.city }
-    zip                     { Faker::AddressFR.postal_code }
-    area                    { Faker::AddressUS.state }
-    country                 { Faker::Address.country }
-    country_code            { Faker::Address.country_code }
+    name                    { FFaker::Address.city }
+    zip                     { FFaker::AddressFR.postal_code }
+    area                    { FFaker::AddressUS.state }
+    country                 { FFaker::Address.country }
+    country_code            { FFaker::Address.country_code }
   end
 
 
@@ -19,7 +19,7 @@ FactoryGirl.define do
   factory :data_import_city do
     data_import_session
     conflicting_id        nil
-    import_text           { Faker::Lorem.paragraph[0..100] }
+    import_text           { FFaker::Lorem.paragraph[0..100] }
     random_city
     user
   end

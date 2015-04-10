@@ -25,7 +25,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   # ]
   let(:rand_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        build( :data_import_team ).name,
         result_score:     random_score.to_s,
@@ -129,7 +129,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   end
   let(:mrr_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        mrr.team.name,
         result_score:     mrr.standard_points.to_s,
@@ -161,7 +161,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   end
   let(:di_mrr_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        di_mrr.team.name,
         result_score:     di_mrr.standard_points.to_s,
@@ -193,7 +193,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   end
   let(:primary_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        primary_ts_with_mrrs.team.name,
         # [Steve, 20141017] For the search of an existing MeetingTeamScore the actual
@@ -257,7 +257,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
   end
   let(:secondary_detail_row) do
     {
-      import_text: Faker::Lorem.paragraph[0..250],
+      import_text: FFaker::Lorem.paragraph[0..250],
       fields: {
         team_name:        secondary_ts_with_mrrs.team.name,
         # [Steve, 20141017] For the search of an existing MeetingTeamScore the actual

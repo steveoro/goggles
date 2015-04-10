@@ -80,7 +80,7 @@ describe NewsletterMailer, :type => :mailer do
   #++
 
   context "#application_mail()" do
-    let(:contents) { "<p><b>#{Faker::Lorem.paragraph}</b></p><p>#{Faker::Lorem.paragraph}</p>" }
+    let(:contents) { "<p><b>#{FFaker::Lorem.paragraph}</b></p><p>#{FFaker::Lorem.paragraph}</p>" }
     subject { NewsletterMailer.application_mail( user, contents ) }
 
     it 'renders the receiver email' do

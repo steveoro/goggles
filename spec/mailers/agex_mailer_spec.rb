@@ -7,8 +7,8 @@ describe AgexMailer, :type => :mailer do
   let(:admin) { Admin.find_by_name('steve') }
 
   context "#exception_mail()" do
-    let(:description) { "#{Faker::Lorem.paragraph} error intercepted!" }
-    let(:backtrace)   { ["#{Faker::Lorem.paragraph} row1", "#{Faker::Lorem.paragraph} row2", "#{Faker::Lorem.paragraph} row3"] }
+    let(:description) { "#{FFaker::Lorem.paragraph} error intercepted!" }
+    let(:backtrace)   { ["#{FFaker::Lorem.paragraph} row1", "#{FFaker::Lorem.paragraph} row2", "#{FFaker::Lorem.paragraph} row3"] }
     subject           { AgexMailer.exception_mail( user, description, backtrace ) }
 
     it 'renders the receiver email' do
@@ -46,8 +46,8 @@ describe AgexMailer, :type => :mailer do
 
 
   context "#action_notify_mail()" do
-    let(:action_name)         { "#{Faker::Lorem.word} action" }
-    let(:action_description)  { "#{Faker::Lorem.word} description" }
+    let(:action_name)         { "#{FFaker::Lorem.word} action" }
+    let(:action_description)  { "#{FFaker::Lorem.word} description" }
     subject                   { AgexMailer.action_notify_mail( user, action_name, action_description ) }
 
     it 'renders the receiver email' do
@@ -84,9 +84,9 @@ describe AgexMailer, :type => :mailer do
 
   context "#report_abuse_mail()" do
     let(:user_involved) { create(:user) }
-    let(:entity_name)   { "#{Faker::Lorem.word}EntityName" }
+    let(:entity_name)   { "#{FFaker::Lorem.word}EntityName" }
     let(:entity_id)     { ((rand * 100) % 100).to_i + 1 }
-    let(:entity_title)  { "#{Faker::Lorem.word} title" }
+    let(:entity_title)  { "#{FFaker::Lorem.word} title" }
     subject             { AgexMailer.report_abuse_mail( user, user_involved, entity_name, entity_id, entity_title ) }
 
     it 'renders the receiver email' do

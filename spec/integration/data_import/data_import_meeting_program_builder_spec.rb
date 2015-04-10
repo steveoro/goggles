@@ -34,7 +34,7 @@ describe DataImportMeetingProgramBuilder, type: :integration do
   #
   def compose_header_row( type_text, distance_text, stroke_text, gender_text, category_text )
     {
-      import_text: Faker::Lorem.paragraph[0..99],
+      import_text: FFaker::Lorem.paragraph[0..99],
       fields: {
         type:           type_text,
         distance:       distance_text,

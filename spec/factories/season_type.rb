@@ -11,7 +11,7 @@ FactoryGirl.define do
     # federation_type { FederationType.all.sort{ rand - 0.5 }[0] }
     # Let's use a completely random Federation:
     federation_type
-    description               { "MASTER #{federation_type.code} #{ Faker::Lorem.word.upcase }"[0..99] }
+    description               { "MASTER #{federation_type.code} #{ FFaker::Lorem.word.upcase }"[0..99] }
     short_name                { "MASTER #{federation_type.code}"[0..39] }
   end
   #-- -------------------------------------------------------------------------
