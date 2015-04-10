@@ -25,8 +25,8 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :index
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
-        expect( assigns(:reviews_grid) ).not_to be_nil 
+        expect( assigns(:title) ).to be_an_instance_of( String )
+        expect( assigns(:reviews_grid) ).not_to be_nil
       end
       it "renders the template" do
         get :index
@@ -75,7 +75,10 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "redirects to #index" do
         get :show, id: 0
-        expect( response ).to redirect_to( swimming_pool_reviews_path()) 
+        expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect( response ).to redirect_to( swimming_pool_reviews_path())
       end
     end
     context "with an HTML request and an existing id," do
@@ -88,8 +91,8 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :show, id: @review.id
-        expect( assigns(:title) ).to be_an_instance_of( String ) 
-        expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview ) 
+        expect( assigns(:title) ).to be_an_instance_of( String )
+        expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview )
       end
       it "renders the template" do
         get :show, id: @review.id
@@ -137,8 +140,8 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :for_swimming_pool, id: @pool1.id
-        expect( assigns(:swimming_pool_id) ).not_to be_nil 
-        expect( assigns(:reviews) ).to respond_to( :each ) 
+        expect( assigns(:swimming_pool_id) ).not_to be_nil
+        expect( assigns(:reviews) ).to respond_to( :each )
       end
       it "renders the template" do
         get :for_swimming_pool, id: @pool1.id
@@ -186,8 +189,8 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "assigns the required variables" do
         get :for_user, id: @user.id
-        expect( assigns(:user_id) ).not_to be_nil 
-        expect( assigns(:reviews) ).to respond_to( :each ) 
+        expect( assigns(:user_id) ).not_to be_nil
+        expect( assigns(:reviews) ).to respond_to( :each )
       end
       it "renders the template" do
         get :for_user, id: @user.id
@@ -207,12 +210,12 @@ describe SwimmingPoolReviewsController, :type => :controller do
       it "doesn't send an abuse report with an HTML request" do
         expect {
           post :report_abuse, id: @review.id
-        }.not_to change{ ActionMailer::Base.deliveries.count } 
+        }.not_to change{ ActionMailer::Base.deliveries.count }
       end
-      it "doesn't send an abuse report with with a JSON request" do 
+      it "doesn't send an abuse report with with a JSON request" do
         expect {
           post :report_abuse, format: :json, id: @review.id
-        }.not_to change{ ActionMailer::Base.deliveries.count } 
+        }.not_to change{ ActionMailer::Base.deliveries.count }
       end
     end
 
@@ -234,11 +237,11 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "redirects to root path after an HTML request" do
         post :report_abuse, id: @review.id
-        expect( response ).to redirect_to( root_path ) 
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
       it "redirects to root path after a JSON request" do
         post :report_abuse, format: :json, id: @review.id
-        expect( response ).to redirect_to( root_path ) 
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
     end
   end
@@ -255,25 +258,25 @@ describe SwimmingPoolReviewsController, :type => :controller do
         expect {
           post :vote, id: @review.id, vote: 1
           @review.reload
-        }.not_to change{ @review.votes_for.size } 
+        }.not_to change{ @review.votes_for.size }
       end
       it "doesn't cast a downvote with an HTML request" do
         expect {
           post :vote, id: @review.id, vote: -1
           @review.reload
-        }.not_to change{ @review.votes_for.size } 
+        }.not_to change{ @review.votes_for.size }
       end
       it "doesn't cast an upvote with a JSON request" do
         expect {
           post :vote, format: :json, id: @review.id, vote: 1
           @review.reload
-        }.not_to change{ @review.votes_for.size } 
+        }.not_to change{ @review.votes_for.size }
       end
       it "doesn't cast a downvote with a JSON request" do
         expect {
           post :vote, format: :json, id: @review.id, vote: -1
           @review.reload
-        }.not_to change{ @review.votes_for.size } 
+        }.not_to change{ @review.votes_for.size }
       end
     end
 
@@ -305,11 +308,11 @@ describe SwimmingPoolReviewsController, :type => :controller do
       end
       it "redirects to root path after an HTML request" do
         post :vote, id: @review.id, vote: 1
-        expect( response ).to redirect_to( root_path ) 
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
       it "redirects to root path after a JSON request" do
         post :vote, format: :json, id: @review.id, vote: 1
-        expect( response ).to redirect_to( root_path ) 
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
     end
   end
@@ -337,7 +340,7 @@ describe SwimmingPoolReviewsController, :type => :controller do
       context "with an HTML request," do
         it "refuses the request and redirects to app root" do
           get :new
-          expect( response ).to redirect_to( root_path ) 
+          expect( response ).to redirect_to( controller: :home, action: :index )
         end
       end
 
@@ -347,7 +350,7 @@ describe SwimmingPoolReviewsController, :type => :controller do
           get :new, swimming_pool_id: @pool.id
         end
         it "refuses the request and redirects to app root" do
-          expect( response ).to redirect_to( root_path ) 
+          expect( response ).to redirect_to( controller: :home, action: :index )
         end
       end
     end
@@ -375,9 +378,9 @@ describe SwimmingPoolReviewsController, :type => :controller do
         end
         it "assigns the required variables" do
           get :new
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview ) 
-          expect( assigns(:review).user_id ).to eq( @user.id ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview )
+          expect( assigns(:review).user_id ).to eq( @user.id )
         end
         it "renders the template" do
           get :new
@@ -394,10 +397,10 @@ describe SwimmingPoolReviewsController, :type => :controller do
           expect(response.status).to eq( 200 )
         end
         it "assigns the required variables, pre-setting also the swimming pool ID" do
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview ) 
-          expect( assigns(:review).user_id ).to eq( @user.id ) 
-          expect( assigns(:review).swimming_pool_id ).to eq( @pool.id ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview )
+          expect( assigns(:review).user_id ).to eq( @user.id )
+          expect( assigns(:review).swimming_pool_id ).to eq( @pool.id )
         end
         it "renders the template" do
           expect(response).to render_template(:new)
@@ -417,15 +420,15 @@ describe SwimmingPoolReviewsController, :type => :controller do
     end
 
     context "as an unlogged user" do
-      it "doesn't create a new row with an HTML request" do 
+      it "doesn't create a new row with an HTML request" do
         expect {
           post :create, swimming_pool_review: @review.attributes
-        }.not_to change( SwimmingPoolReview, :count ) 
+        }.not_to change( SwimmingPoolReview, :count )
       end
-      it "doesn't create a new row with a JSON request" do 
+      it "doesn't create a new row with a JSON request" do
         expect {
           post :create, format: :json, swimming_pool_review: @review.attributes
-        }.not_to change( SwimmingPoolReview, :count ) 
+        }.not_to change( SwimmingPoolReview, :count )
       end
     end
     # -------------------------------------------------------------------------
@@ -435,19 +438,19 @@ describe SwimmingPoolReviewsController, :type => :controller do
         login_user()
         @review.user_id = @user.id
       end
-      it "doesn't create a new row with an HTML request" do 
+      it "doesn't create a new row with an HTML request" do
         expect {
           post :create, swimming_pool_review: @review.attributes
-        }.not_to change( SwimmingPoolReview, :count ) 
+        }.not_to change( SwimmingPoolReview, :count )
       end
-      it "doesn't create a new row with a JSON request" do 
+      it "doesn't create a new row with a JSON request" do
         expect {
           post :create, format: :json, swimming_pool_review: @review.attributes
-        }.not_to change( SwimmingPoolReview, :count ) 
+        }.not_to change( SwimmingPoolReview, :count )
       end
       it "refuses the request and redirects to app root after an HTML request" do
         post :create, swimming_pool_review: @review.attributes
-        expect( response ).to redirect_to( root_path ) 
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
     end
     # -------------------------------------------------------------------------
@@ -464,22 +467,22 @@ describe SwimmingPoolReviewsController, :type => :controller do
       it "handles successfully the request with HTML" do
         expect {
           post :create, swimming_pool_review: @review.attributes
-        }.to change(SwimmingPoolReview, :count).by(1) 
+        }.to change(SwimmingPoolReview, :count).by(1)
       end
       it "handles successfully the request with JSON" do
         expect {
           post :create, format: :json, swimming_pool_review: @review.attributes
-        }.to change(SwimmingPoolReview, :count).by(1) 
+        }.to change(SwimmingPoolReview, :count).by(1)
       end
 
       it "redirects to #show after creation" do
         post :create, swimming_pool_review: @review.attributes
-        expect( response ).to redirect_to( swimming_pool_review_path( SwimmingPoolReview.last )) 
+        expect( response ).to redirect_to(  controller: :swimming_pool_reviews, action: :show, id: SwimmingPoolReview.last )
       end
       it "assigns the required variables" do
         post :create, swimming_pool_review: @review.attributes
-        expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview ) 
-        expect( assigns(:review).user_id ).to eq( @user.id ) 
+        expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview )
+        expect( assigns(:review).user_id ).to eq( @user.id )
       end
     end
   end
@@ -514,12 +517,12 @@ describe SwimmingPoolReviewsController, :type => :controller do
         end
         it "assigns the required variables" do
           get :edit, id: @review.id
-          expect( assigns(:title) ).to be_an_instance_of( String ) 
-          expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview ) 
-          expect( assigns(:review).title ).to eq( @review.title ) 
-          expect( assigns(:review).entry_text ).to eq( @review.entry_text ) 
-          expect( assigns(:review).user_id ).to eq( @user.id ) 
-          expect( assigns(:review).swimming_pool_id ).to eq( @review.swimming_pool_id ) 
+          expect( assigns(:title) ).to be_an_instance_of( String )
+          expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview )
+          expect( assigns(:review).title ).to eq( @review.title )
+          expect( assigns(:review).entry_text ).to eq( @review.entry_text )
+          expect( assigns(:review).user_id ).to eq( @user.id )
+          expect( assigns(:review).swimming_pool_id ).to eq( @review.swimming_pool_id )
         end
         it "renders the template" do
           get :edit, id: @review.id
@@ -530,7 +533,10 @@ describe SwimmingPoolReviewsController, :type => :controller do
       context "with an HTML request and a non-existing id," do
         it "redirects to #index" do
           get :edit, id: 0
-          expect(response).to redirect_to( swimming_pool_reviews_path() )
+          expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :index )
+          # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+          # and we have just set defaul locale to :it
+#          expect(response).to redirect_to( swimming_pool_reviews_path() )
         end
       end
     end
@@ -546,17 +552,17 @@ describe SwimmingPoolReviewsController, :type => :controller do
     end
 
     context "as an unlogged user" do
-      it "doesn't update an existing row for with a HTML request" do 
+      it "doesn't update an existing row for with a HTML request" do
         put :update, id: @review.id, swimming_pool_review: {title: @new_title, entry_text: @new_entry}
         @review.reload
-        expect( @review.title ).not_to eq(@new_title) 
-        expect( @review.entry_text ).not_to eq(@new_entry) 
+        expect( @review.title ).not_to eq(@new_title)
+        expect( @review.entry_text ).not_to eq(@new_entry)
       end
-      it "doesn't update an existing row for with a JSON request" do 
+      it "doesn't update an existing row for with a JSON request" do
         put :update, format: :json, id: @review.id, swimming_pool_review: {title: @new_title, entry_text: @new_entry}
         @review.reload
-        expect( @review.title ).not_to eq(@new_title) 
-        expect( @review.entry_text ).not_to eq(@new_entry) 
+        expect( @review.title ).not_to eq(@new_title)
+        expect( @review.entry_text ).not_to eq(@new_entry)
       end
     end
 
@@ -573,27 +579,30 @@ describe SwimmingPoolReviewsController, :type => :controller do
         edited_review.entry_text = @new_entry
         put :update, id: edited_review.id, swimming_pool_review: edited_review.attributes
         @review.reload
-        expect( @review.title ).to eq(@new_title) 
-        expect( @review.entry_text ).to eq(@new_entry) 
+        expect( @review.title ).to eq(@new_title)
+        expect( @review.entry_text ).to eq(@new_entry)
       end
       it "handles successfully the request with JSON" do
         put :update, format: :json, id: @review.id, swimming_pool_review: {title: @new_title, entry_text: @new_entry}
         @review.reload
-        expect( @review.title ).to eq(@new_title) 
-        expect( @review.entry_text ).to eq(@new_entry) 
+        expect( @review.title ).to eq(@new_title)
+        expect( @review.entry_text ).to eq(@new_entry)
       end
 
       it "redirects to #show after saving" do
         put :update, id: @review.id, swimming_pool_review: @review.attributes
-        expect( response ).to redirect_to( swimming_pool_review_path( @review.id )) 
+        expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :show, id: @review.id )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect( response ).to redirect_to( swimming_pool_review_path( @review.id ))
       end
       it "assigns the required variables" do
         put :update, id: @review.id, swimming_pool_review: @review.attributes
-        expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview ) 
-        expect( assigns(:review).title ).to eq( @review.title ) 
-        expect( assigns(:review).entry_text ).to eq( @review.entry_text ) 
-        expect( assigns(:review).swimming_pool_id ).to eq( @review.swimming_pool_id ) 
-        expect( assigns(:review).user_id ).to eq( @user.id ) 
+        expect( assigns(:review) ).to be_an_instance_of( SwimmingPoolReview )
+        expect( assigns(:review).title ).to eq( @review.title )
+        expect( assigns(:review).entry_text ).to eq( @review.entry_text )
+        expect( assigns(:review).swimming_pool_id ).to eq( @review.swimming_pool_id )
+        expect( assigns(:review).user_id ).to eq( @user.id )
       end
     end
   end
@@ -606,15 +615,15 @@ describe SwimmingPoolReviewsController, :type => :controller do
     end
 
     context "as an unlogged user" do
-      it "doesn't delete an existing row with an HTML request" do 
+      it "doesn't delete an existing row with an HTML request" do
         expect {
           delete :destroy, id: @review.id
-        }.not_to change( SwimmingPoolReview, :count ) 
+        }.not_to change( SwimmingPoolReview, :count )
       end
-      it "doesn't delete an existing row with a JSON request" do 
+      it "doesn't delete an existing row with a JSON request" do
         expect {
           delete :destroy, format: :json, id: @review.id
-        }.not_to change( SwimmingPoolReview, :count ) 
+        }.not_to change( SwimmingPoolReview, :count )
       end
     end
 
@@ -628,17 +637,20 @@ describe SwimmingPoolReviewsController, :type => :controller do
       it "handles successfully the request with HTML" do
         expect {
           delete :destroy, id: @review.id
-        }.to change(SwimmingPoolReview, :count).by(-1) 
+        }.to change(SwimmingPoolReview, :count).by(-1)
       end
       it "handles successfully the request with JSON" do
         expect {
           delete :destroy, format: :json, id: @review.id
-        }.to change(SwimmingPoolReview, :count).by(-1) 
+        }.to change(SwimmingPoolReview, :count).by(-1)
       end
 
       it "redirects to #index after creation" do
         delete :destroy, id: @review.id
-        expect( response ).to redirect_to( swimming_pool_reviews_path()) 
+        expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect( response ).to redirect_to( swimming_pool_reviews_path())
       end
     end
   end

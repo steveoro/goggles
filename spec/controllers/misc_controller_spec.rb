@@ -114,7 +114,7 @@ describe MiscController, :type => :controller do
         expect(response.status).to eq( 302 )
       end
       it "redirects to #fin_score_calculation" do
-        expect( response ).to redirect_to( misc_fin_score_calculation_path )
+        expect( response ).to redirect_to( controller: :misc, action: :fin_score_calculation )
       end
       it "displays the flash error message" do
         expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) )
@@ -147,7 +147,7 @@ describe MiscController, :type => :controller do
         expect(response.status).to eq( 302 )
       end
       it "redirects to #misc" do
-        expect( response ).to redirect_to( misc_fin_score_calculation_path )
+        expect( response ).to redirect_to( controller: :misc, action: :fin_score_calculation )
       end
       it "displays the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_timing') )
@@ -179,7 +179,7 @@ describe MiscController, :type => :controller do
         expect(response.status).to eq( 302 )
       end
       it "redirects to #misc" do
-        expect( response ).to redirect_to( misc_fin_score_calculation_path )
+        expect( response ).to redirect_to( controller: :misc, action: :fin_score_calculation )
       end
       it "displays the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_event_or_pool') )

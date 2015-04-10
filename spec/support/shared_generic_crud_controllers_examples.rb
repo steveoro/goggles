@@ -292,7 +292,10 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       it "redirects to #index" do
         delete :destroy, id: @fixture.id
-        expect(response).to redirect_to( url_to_action_for(table_name) )
+        expect( response ).to redirect_to( controller: table_name, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( url_to_action_for(table_name) )
       end
     end
   end

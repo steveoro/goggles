@@ -47,7 +47,7 @@ describe HomeController, :type => :controller do
 
       it "redirects to associate_path()" do
         get :index
-        expect( response ).to redirect_to( associate_path )
+        expect( response ).to redirect_to( controller: :socials, action: :associate )
       end
     end
 

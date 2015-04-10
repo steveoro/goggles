@@ -34,12 +34,18 @@ describe TrainingsController, :type => :controller do
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
         get :edit, id: fixture.id
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
       it "refuses the request for an unshared training" do
         fixture = create( :training )
         get :edit, id: fixture.id
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
 
       context "with some existing rows," do
@@ -81,12 +87,18 @@ describe TrainingsController, :type => :controller do
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
         put :update, id: fixture.id, training: attributes_for( :training )
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
       it "refuses the request for an unshared training" do
         fixture = create( :training )
         put :update, id: fixture.id, training: attributes_for( :training )
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
     end
   end
@@ -104,12 +116,18 @@ describe TrainingsController, :type => :controller do
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
         delete :destroy, id: fixture.id
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
       it "refuses the request for an unshared training" do
         fixture = create( :training )
         delete :destroy, id: fixture.id
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
     end
   end
@@ -131,7 +149,10 @@ describe TrainingsController, :type => :controller do
 
       it "refuses the request with invalid parameters" do
         get :printout, id: 0
-        expect(response.status).to redirect_to( trainings_path ) # url_to_action_for('trainings')
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response.status).to redirect_to( trainings_path ) # url_to_action_for('trainings')
       end
       it "handles the request with valid parameters" do
         fixture = create( :training_with_rows )
@@ -146,7 +167,10 @@ describe TrainingsController, :type => :controller do
       it "refuses the request for a training with no rows" do
         fixture = create( :training, user: @user )
         get :printout, id: fixture.id
-        expect(response).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
     end
   end
@@ -170,7 +194,10 @@ describe TrainingsController, :type => :controller do
 
       it "refuses the request with invalid parameters" do
         post :duplicate, id: 0
-        expect(response.status).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
 
       context "(having an accessible training with rows)" do
@@ -185,7 +212,10 @@ describe TrainingsController, :type => :controller do
 
         it "handles the request with valid parameters, redirecting to #edit" do
           post :duplicate, id: @fixture.id
-          expect(response.status).to redirect_to( edit_training_path(Training.last) )
+        expect( response ).to redirect_to( controller: :trainings, action: :edit, id: Training.last )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#          expect(response.status).to redirect_to( edit_training_path(Training.last) )
         end
         it "adds another header row" do
           expect { post :duplicate, id: @fixture.id }.to change( Training, :count ).by(1)
@@ -255,7 +285,10 @@ describe TrainingsController, :type => :controller do
 
       it "refuses the request with invalid parameters" do
         post :create_user_training, id: 0
-        expect(response.status).to redirect_to( trainings_path() )
+        expect( response ).to redirect_to( controller: :trainings, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( trainings_path() )
       end
 
       context "(having an accessible training with rows)" do
@@ -270,7 +303,10 @@ describe TrainingsController, :type => :controller do
 
         it "handles the request with valid parameters, redirecting to #edit" do
           post :create_user_training, id: @fixture.id
-          expect(response.status).to redirect_to( edit_user_training_path(UserTraining.last) )
+        expect( response ).to redirect_to( controller: :user_trainings, action: :edit, id: UserTraining.last )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#          expect(response).to redirect_to( edit_user_training_path(UserTraining.last) )
         end
         it "adds a UserTraining row" do
           expect { post :create_user_training, id: @fixture.id }.to change( UserTraining, :count ).by(1)

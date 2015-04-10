@@ -22,7 +22,10 @@ describe UserTrainingStoriesController, :type => :controller do
       it "refuses the request for an unshared story" do
         fixture = create( :user_training_story )
         get :show, id: fixture.id
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
     end
   end
@@ -40,12 +43,18 @@ describe UserTrainingStoriesController, :type => :controller do
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
         get :edit, id: fixture.id
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
       it "refuses the request for an unshared story" do
         fixture = create( :user_training_story )
         get :edit, id: fixture.id
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
     end
   end
@@ -63,12 +72,18 @@ describe UserTrainingStoriesController, :type => :controller do
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
         put :update, id: fixture.id, training: attributes_for( :user_training_story )
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training_story )
         put :update, id: fixture.id, training: attributes_for( :user_training_story )
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
     end
   end
@@ -86,12 +101,18 @@ describe UserTrainingStoriesController, :type => :controller do
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
         delete :destroy, id: fixture.id
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training_story )
         delete :destroy, id: fixture.id
-        expect(response).to redirect_to( user_training_stories_path() )
+        expect( response ).to redirect_to( controller: :user_training_stories, action: :index )
+        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
+        # and we have just set defaul locale to :it
+#        expect(response).to redirect_to( user_training_stories_path() )
       end
     end
   end

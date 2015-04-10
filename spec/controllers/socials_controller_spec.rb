@@ -70,7 +70,7 @@ describe SocialsController, :type => :controller do
       end
       it "redirects to Home" do
         post :skip_associate
-        expect( response ).to redirect_to( root_path )
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
     end
   end
@@ -299,7 +299,7 @@ describe SocialsController, :type => :controller do
       end
       it "renders successfully the template for a new friendship" do
         post :invite, id: @swimming_buddy.id
-        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
+        expect(response).to redirect_to( controller: :swimmers, action: :radio, id: @swimming_buddy.swimmer_id )
         expect( flash[:info] ).to include( I18n.t('social.invite_successful') )
       end
     end
@@ -392,7 +392,7 @@ describe SocialsController, :type => :controller do
       end
       it "renders successfully the template for a pending friendship" do
         post :approve, id: @swimming_buddy.id
-        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
+        expect(response).to redirect_to( controller: :swimmers, action: :radio, id: @swimming_buddy.swimmer_id )
         expect( flash[:info] ).to include( I18n.t('social.approve_successful') )
       end
     end
@@ -490,7 +490,7 @@ describe SocialsController, :type => :controller do
       end
       it "renders successfully the template for a non-blocked friendship" do
         post :block, id: @swimming_buddy.id
-        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
+        expect(response).to redirect_to( controller: :swimmers, action: :radio, id: @swimming_buddy.swimmer_id )
         expect( flash[:info] ).to include( I18n.t('social.block_successful') )
       end
     end
@@ -591,7 +591,7 @@ describe SocialsController, :type => :controller do
       end
       it "renders successfully the template for a blocked friendship" do
         post :unblock, id: @swimming_buddy.id
-        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
+        expect(response).to redirect_to( controller: :swimmers, action: :radio, id: @swimming_buddy.swimmer_id )
         expect( flash[:info] ).to include( I18n.t('social.unblock_successful') )
       end
     end
@@ -685,7 +685,7 @@ describe SocialsController, :type => :controller do
       end
       it "renders successfully the template for an existing friendship" do
         post :remove, id: @swimming_buddy.id
-        expect(response).to redirect_to( swimmer_radio_path(id: @swimming_buddy.swimmer_id) )
+        expect(response).to redirect_to( controller: :swimmers, action: :radio, id: @swimming_buddy.swimmer_id )
         expect( flash[:info] ).to include( I18n.t('social.remove_successful') )
       end
     end
@@ -731,7 +731,7 @@ describe SocialsController, :type => :controller do
       it "redirects to :show_all for an invalid friendable" do
         @user.set_associated_swimmer(nil)
         get :edit, id: @swimming_buddy.id
-        expect(response).to redirect_to socials_show_all_path()
+        expect(response).to redirect_to( controller: :socials, action: :show_all )
       end
     end
   end
@@ -741,7 +741,7 @@ describe SocialsController, :type => :controller do
 
   shared_examples_for "(POST #edit ok) pending friendship editing shares:" do
     it "redirects to socials_show_all_path when done" do
-      expect(response).to redirect_to socials_show_all_path()
+      expect(response).to redirect_to( controller: :socials, action: :show_all )
     end
     it "handles successfully the request" do
       expect( @editor.is_sharing_passages_with?(@friend) ).to be true
@@ -756,10 +756,10 @@ describe SocialsController, :type => :controller do
 
   shared_examples_for "(POST #edit ok) existing friendship editing shares:" do
     it "redirects to socials_show_all_path when done" do
-      expect(response).to redirect_to socials_show_all_path()
+      expect(response).to redirect_to( controller: :socials, action: :show_all )
     end
     it "renders successfully the template" do
-      expect(response).to redirect_to socials_show_all_path()
+      expect(response).to redirect_to( controller: :socials, action: :show_all )
       expect( flash[:info] ).to include( I18n.t('social.changes_saved') )
     end
   end

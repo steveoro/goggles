@@ -45,7 +45,7 @@ shared_examples_for "(Ap1-V1-Controllers, get actions that requires logged user 
     action_name_array.each do |action_name|
       it '[GET #{action_name}] refuses the request and redirects to app root' do
         get action_name.to_sym
-        expect( response ).to redirect_to( root_path ) 
+        expect( response ).to redirect_to( controller: :home, action: :index ) 
       end
     end
   end
