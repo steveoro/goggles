@@ -61,12 +61,12 @@ describe MeetingsController, :type => :controller do
 
   shared_examples_for "(GET http action with an invalid meeting id)" do |action_sym|
     before(:each) { get action_sym, id: 0}
-    
+
     it "handles the request with a redirect" do
       expect(response.status).to eq( 302 )
     end
     it "redirects to meeting current path" do
-      expect( response ).to redirect_to( meetings_current_path )
+      expect( response ).to redirect_to( controller: :meetings, action: :current )
       end
   end
   #-- -------------------------------------------------------------------------

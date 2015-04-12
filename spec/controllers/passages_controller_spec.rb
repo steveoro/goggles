@@ -25,7 +25,7 @@ describe PassagesController, :type => :controller do
         end
         it "redirects to #index" do
           get :show, id: 0
-          expect( response ).to redirect_to( root_path())
+          expect( response ).to redirect_to( controller: :home, action: :index )
         end
       end
 
@@ -83,7 +83,7 @@ describe PassagesController, :type => :controller do
         end
         it "redirects to #index" do
           get :new
-          expect( response ).to redirect_to( root_path())
+          expect( response ).to redirect_to( controller: :home, action: :index )
         end
       end
 
@@ -134,7 +134,7 @@ describe PassagesController, :type => :controller do
       end
       it "redirects to #show after creation" do
         post :create, passage: @passage.attributes
-        expect( response ).to redirect_to( passage_path( Passage.last ))
+        expect( response ).to redirect_to( controller: :passages, action: :show, id: Passage.last )
       end
     end
     # ===========================================================================
@@ -144,7 +144,7 @@ describe PassagesController, :type => :controller do
       context "with an HTML request and a non-existing id," do
         it "redirects to #index" do
           get :edit, id: 0
-          expect(response).to redirect_to( root_path() )
+          expect(response).to redirect_to( controller: :home, action: :index )
         end
       end
 
@@ -208,7 +208,7 @@ describe PassagesController, :type => :controller do
       end
       it "redirects to #show after saving" do
         put :update, id: @passage.id, passage: @passage.attributes
-        expect( response ).to redirect_to( passage_path( @passage.id ))
+        expect( response ).to redirect_to( controller: :passages, action: :show, id: @passage.id )
       end
     end
     # ===========================================================================
@@ -226,7 +226,7 @@ describe PassagesController, :type => :controller do
       end
       it "redirects to #index after creation" do
         delete :destroy, id: @passage.id
-        expect( response ).to redirect_to( root_path())
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
     end
     # ===========================================================================
