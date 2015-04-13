@@ -19,7 +19,7 @@ require 'framework/console_logger'
 
 =end
 
-LOCALCOPY_DIR = File.join("#{Dir.pwd}.docs", 'meeting_data')
+LOCALCOPY_DIR = File.join("#{Dir.pwd}.docs", 'meeting_data', 'FIN_crawled')
 LOG_DIR       = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 SEARCH_URL    = 'http://google.com/'
 # -----------------------------------------------------------------------------
@@ -206,26 +206,65 @@ namespace :crawler do
   Crawls the web to retrieve currently available FIN Championship result pages,
 meeting entries and manifests.
 
-This task uses the following Kimono APIs:
-
-  - 'FIN_supermasters_meetings', to retrieve all the available links of the pages
-    to be scraped;
-  - 'FIN_manifest_dates', to read the meeting dates from each manifest header.
-
 Options: [output_path=#{LOCALCOPY_DIR}]
+         [season=<season_id>]
          [start_from=0]
 
-  - 'output_path' the path where the files will be stored.
+  - 'output_path' the path where the files will be stored after the crawling.
+
+  - 'season' the season ID used as extension for the output_path above; default is
+    current season (which uses FIN_meetings_current as API to scrape the addresses).
 
   - 'start_from' allows the crawling loop to start from a different offset than 0,
     computed among all the results found from the FIN_supermasters_meetings API.
 
+
+Kimono APIs used to retrieve the list of sub-pages for each year:
+    1) FIN_meetings_current: (current sport year only, season 142)
+       - 'https://www.kimonolabs.com/api/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+         crawls http://www.federnuoto.it/discipline/master/circuito-supermaster.html
+
+    2) FIN_meetings_2012-2013: (season 122)
+       - 'https://www.kimonolabs.com/api/8758dnce?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+         crawls http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
+
+    3) FIN_meetings_2013-2014: (season 132)
+       - 'https://www.kimonolabs.com/api/edy8o246?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+         crawls http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
+
+
+Kimono APIs used to retrieve exact manifest dates for each manifest link found:
+    4) FIN_curr_manifest_dates: (current sport year only, with on-demand parameters)
+       - 'https://www.kimonolabs.com/api/ondemand/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+
+         Sample crawled URL:
+         - 'http://www.federnuoto.it/discipline/master/circuito-supermaster/549.html?view=manifestazione'
+
+         Parameters to append:
+          - '&kimpath4=newvalue', default: '549.html'
+          - '&view=newvalue',     default: 'manifestazione'
+
+    5) FIN_old_manifest_dates: (for all other sport years, with on-demand parameters)
+       - 'https://www.kimonolabs.com/api/ondemand/6va4131o?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+
+         Sample crawled URL:
+         - 'http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014/380.html?view=manifestazione'
+
+         Parameters to append: (with on-demand parameters)
+          - '&kimpath4=newvalue', default: 'stagione-2013-2014'
+          - '&kimpath5=newvalue', default: '380.html'
+          - '&view=newvalue',     default: 'manifestazione'
+
+
   DESC
   task :get_fin_data do |t|
     puts "\r\n*** Crawler:::get_fin_data ***"
-    output_path = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
+    season_id   = ENV.include?("season")      ? ENV["season"].to_i : 142
+    output_path = (ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR) + ".#{season_id}"
     start_from  = ENV.include?("start_from")  ? ENV["start_from"].to_i : 0
     puts "output_path:  #{output_path}"
+                                                    # Create the output path, if missing:
+    FileUtils.mkdir_p( output_path ) if !File.directory?( output_path )
     puts "\r\n"
 
     # [Steve, 20141216] Links used by the APIs below:
@@ -241,49 +280,47 @@ Options: [output_path=#{LOCALCOPY_DIR}]
     # (It is possible to set the FIN_supermasters_meetings API to return everything that is available
     # or just the individual rows that have changed.)
     #
-    if File.directory?( output_path )
-      response = RestClient.get(
-        # API FIN_supermasters_meetings:
-        'https://www.kimonolabs.com/api/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
-
-        # On-Demand API:
-        #
-        # Add these to the below URL to get something different from (1)
-        # &kimpath1=newvalue (default: 'discipline')
-        # &kimpath2=newvalue (default: 'master')
-        # &kimpath3=newvalue (default: 'circuito-supermaster')
-#          'https://www.kimonolabs.com/api/ondemand/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
-      )
-      response = JSON.parse( response )
-      total_rows = response['results']['collection2'].size
-
-      response['results']['collection2'][ start_from .. total_rows ].each_with_index do |row_hash, index|
-        city = row_hash['city']
-        days = row_hash['days']
-        row_title      = row_hash['manifest']['text']
-        manifest_link  = row_hash['manifest']['href']
-        results_link   = row_hash['results'].instance_of?(Hash) ? row_hash['results']['href'] : row_hash['results']
-        startlist_link = results_link.gsub('risultati','startlist') if results_link
-                                                    # Retrieve meeting_dates from the manifest URL:
-        manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
-        puts "\r\n- (#{ start_from + index + 1 }/#{ total_rows }) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
-
-        title, meeting_dates = retrieve_title_and_manifest_dates( manifest_page_name ) if manifest_page_name
-                                                    # Skip file save for cancelled meetings (w/o dates):
-        if meeting_dates
-          iso_date = get_iso_date_from_meeting_dates( meeting_dates )
-          base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
-          puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
-                                                    # For each meeting, get the result and the manifest page:
-          store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
-          store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
-          store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}"), meeting_dates )
-        else
-          puts "  Not found (probably cancelled)."
-        end
-      end
+    api_endpoint = case season_id
+    when 142
+      'https://www.kimonolabs.com/api/247amgrm?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+    when 132
+      'https://www.kimonolabs.com/api/edy8o246?apikey=e1e82989ef91e6287ae417ede85f9ed2'
+    when 122
+      'https://www.kimonolabs.com/api/8758dnce?apikey=e1e82989ef91e6287ae417ede85f9ed2'
     else
-      puts "'#{output_path}' not found: aborting..."
+      puts "\r\nUnsupported/unavailable season ID! Nothing to do..."
+      nil
+    end
+    exit if api_endpoint.nil?
+                                                    # Call correct API:
+    web_response = get_web_response( api_endpoint )
+    response     = JSON.parse( web_response )
+    total_rows   = response['results']['collection2'].size
+
+    response['results']['collection2'][ start_from .. total_rows ].each_with_index do |row_hash, index|
+      city = row_hash['city']
+      days = row_hash['days']
+      row_title      = row_hash['manifest']['text']
+      manifest_link  = row_hash['manifest']['href']
+      results_link   = row_hash['results'].instance_of?(Hash) ? row_hash['results']['href'] : row_hash['results']
+      startlist_link = results_link.gsub('risultati','startlist') if results_link
+                                                  # Retrieve meeting_dates from the manifest URL:
+      manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
+      puts "\r\n- (#{ start_from + index + 1 }/#{ total_rows }) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
+
+      title, meeting_dates = retrieve_title_and_manifest_dates( season_id, manifest_page_name ) if manifest_page_name
+                                                  # Skip file save for cancelled meetings (w/o dates):
+      if meeting_dates
+        iso_date = get_iso_date_from_meeting_dates( meeting_dates )
+        base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
+        puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
+                                                  # For each meeting, get the result and the manifest page:
+        store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
+        store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
+        store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}"), meeting_dates )
+      else
+        puts "  Not found (probably cancelled)."
+      end
     end
     puts "Done."
   end
@@ -293,6 +330,8 @@ Options: [output_path=#{LOCALCOPY_DIR}]
 
   # Returns the web response for a specified page link using RestClient.
   # Note that this method may halt the program in case of errors.
+  #
+  # @param page_link, link to the page to be retrieved
   #
   def get_web_response( page_link )
     web_response = RestClient.get( page_link ) do |response, request, result, &block|
@@ -315,24 +354,30 @@ Options: [output_path=#{LOCALCOPY_DIR}]
   # the specified manifest_page_name is the name of a manifest page linked to FIN results
   # of any type.
   #
-  def retrieve_title_and_manifest_dates( manifest_page_name )
-    puts "  Retrieving manifest dates from API..."
-    # API FIN_manifest_dates:
-    page_link = "https://www.kimonolabs.com/api/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
-
-    # On-Demand API:
-    #
-#    page_link = "https://www.kimonolabs.com/api/ondemand/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
-    web_response = get_web_response( page_link )
-
-    response      = JSON.parse( web_response )
-    result_hash   = response['results']['collection1'].first
+  # @param season_id, the season_id used to select the correct API endpoint
+  # @param manifest_page_name, the page containing the manifest of the meeting
+  #
+  def retrieve_title_and_manifest_dates( season_id, manifest_page_name )
+    api_endpoint = case season_id
+    when 142
+      puts "  Retrieving manifest dates using API 'FIN_curr_manifest_dates'..."
+      "https://www.kimonolabs.com/api/ondemand/dcofgezg?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath4=#{manifest_page_name}"
+    else
+      puts "  Retrieving manifest dates using API 'FIN_old_manifest_dates'..."
+      "https://www.kimonolabs.com/api/ondemand/6va4131o?apikey=e1e82989ef91e6287ae417ede85f9ed2&kimpath5=#{manifest_page_name}"
+    end
+                                                    # Call correct API:
+    web_response = get_web_response( api_endpoint )
+    response     = JSON.parse( web_response )
+    result_hash  = response['results']['collection1'].first
     puts "  response: #{result_hash.inspect}"
     [ result_hash['title'], result_hash['meeting_dates'] ]
   end
 
 
   # Returns the ISO-formatted string date from the text representing the meeting dates.
+  #
+  # @param meeting_dates_text, the string containing the date to be ISO formatted
   #
   def get_iso_date_from_meeting_dates( meeting_dates_text )
     days, month_name, year = meeting_dates_text.split(' ')
@@ -371,6 +416,9 @@ Options: [output_path=#{LOCALCOPY_DIR}]
 
   # Retrieves and stores the specified page_link to the destination output_filename.
   #
+  # @param page_link, link to the manifest page
+  # @param output_filename, the output file name
+  #
   def store_web_manifest( page_link, output_filename )
     if page_link.instance_of?(String) && page_link.size > 1
       puts "  Retrieving '#{page_link}'..."
@@ -401,6 +449,10 @@ Options: [output_path=#{LOCALCOPY_DIR}]
 
 
   # Retrieves and stores the specified page_link to the destination output_filename.
+  #
+  # @param page_link, link to the results or start-list page
+  # @param output_filename, the output file name
+  # @param meeting_dates, the actual dates in which the meeting is held
   #
   def store_web_results( page_link, output_filename, meeting_dates )
     if page_link.instance_of?(String) && page_link.size > 1
