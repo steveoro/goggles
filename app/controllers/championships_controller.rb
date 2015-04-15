@@ -47,6 +47,7 @@ class ChampionshipsController < ApplicationController
 
     championship_calculator = ChampionshipRankingCalculator.new( @season )
     @championship_ranking = championship_calculator.get_season_ranking
+    @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
   end
   #-- -------------------------------------------------------------------------
   #++

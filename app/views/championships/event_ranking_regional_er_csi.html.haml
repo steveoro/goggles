@@ -2,49 +2,50 @@
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
+    - cache( cache_key_for_meeting( 'event_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
 
-    %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
-      %li
-        %a(href="#pageTop")= I18n.t(:top_of_page)
-      - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
+      %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
         %li
-          %a(href="\##{gender_type.code}")= gender_type.i18n_description 
-        - @category_types.each do |category_type|
+          %a(href="#pageTop")= I18n.t(:top_of_page)
+        - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
           %li
-            %a(href="\##{gender_type.code}-#{category_type.code}")= "- #{category_type.get_full_name}"
-  
-    .span10
-      - @season_ranking.each do |gender|
-        .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}"}
-          .h3
-            = gender[:gender_type].i18n_description
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-        - gender[:categories].each do |category|
-          .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}-#{category[:category_type].code}"}
+            %a(href="\##{gender_type.code}")= gender_type.i18n_description 
+          - @category_types.each do |category_type|
+            %li
+              %a(href="\##{gender_type.code}-#{category_type.code}")= "- #{category_type.get_full_name}"
+    
+      .span10
+        - @season_ranking.each do |gender|
+          .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}"}
             .h3
-              = gender[:gender_type].i18n_description + ' ' + category[:category_type].get_full_name
+              = gender[:gender_type].i18n_description
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-              
-              %table.table.table-striped.table-bordered.table-hover.table-condensed
-                %tbody
-                  - category[:events].each do |event|
-                    - if event[:mirs].size > 0
-                      %tr{'class'=>'info'}
-                        %td{ colspan: 5 }
-                          %b
-                            = event[:event_type].i18n_description
-                            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-                        %td.goggles-rightalign.span1= '(' + event[:event_swam].to_s + '/' + event[:event_count].to_s + ')'
-                        - best_timing = event[:mirs].first.get_timing_instance.to_hundreds if event[:mirs].size > 0
-                      - event[:mirs].each_with_index do |mir, counter|
-                        - score = 100 * best_timing / mir.get_timing_instance.to_hundreds
-                        - is_highlighted = (@team && @team.id == mir.team_id)
-                        %tr{ 'class' => is_highlighted ? 'warning' : '' }
-                          %td.goggles-rightalign.span1= counter + 1
-                          %td.span4= mir.swimmer.decorate.get_linked_swimmer_name
-                          %td.goggles-centeralign.span1= mir.swimmer.year_of_birth
-                          %td.span4= mir.team.decorate.get_linked_name
-                          %td.goggles-rightalign.span1= mir.get_timing
-                          %td.goggles-rightalign.span1= score.round(0) 
+          - gender[:categories].each do |category|
+            .row-fluid.goggles-category-gap{'id'=>"#{gender[:gender_type].code}-#{category[:category_type].code}"}
+              .h3
+                = gender[:gender_type].i18n_description + ' ' + category[:category_type].get_full_name
+                %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+                
+                %table.table.table-striped.table-bordered.table-hover.table-condensed
+                  %tbody
+                    - category[:events].each do |event|
+                      - if event[:mirs].size > 0
+                        %tr{'class'=>'info'}
+                          %td{ colspan: 5 }
+                            %b
+                              = event[:event_type].i18n_description
+                              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+                          %td.goggles-rightalign.span1= '(' + event[:event_swam].to_s + '/' + event[:event_count].to_s + ')'
+                          - best_timing = event[:mirs].first.get_timing_instance.to_hundreds if event[:mirs].size > 0
+                        - event[:mirs].each_with_index do |mir, counter|
+                          - score = 100 * best_timing / mir.get_timing_instance.to_hundreds
+                          - is_highlighted = (@team && @team.id == mir.team_id)
+                          %tr{ 'class' => is_highlighted ? 'warning' : '' }
+                            %td.goggles-rightalign.span1= counter + 1
+                            %td.span4= mir.swimmer.decorate.get_linked_swimmer_name
+                            %td.goggles-centeralign.span1= mir.swimmer.year_of_birth
+                            %td.span4= mir.team.decorate.get_linked_name
+                            %td.goggles-rightalign.span1= mir.get_timing
+                            %td.goggles-rightalign.span1= score.round(0) 
 
-.row-fluid.goggles-category-gap
+      .row-fluid.goggles-category-gap

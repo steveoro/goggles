@@ -2,7 +2,7 @@
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
-    - cache( cache_key_for_meeting( 'individual_ranking', @season.season_type_id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
+    - cache( cache_key_for_meeting( 'individual_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
       
       %p= I18n.t('meeting_stats.rank_disclaimer') 
   
