@@ -3,7 +3,6 @@ require 'date'
 require 'rubygems'
 require 'find'
 require 'fileutils'
-require 'benchmark'
 
 require 'framework/version'
 require 'framework/application_constants'
@@ -29,28 +28,41 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 namespace :db do
 
   desc <<-DESC
-Executes the calculation and DB update for Goggle Cup scores.
+Calculate and update DB for Goggle Cup scores.
 Resulting log files are stored into '#{LOG_DIR}'.
 
-Performs a batch, scan of MeetingIndividualResult, while iterating on for seasons 
-where Teams need Goggle Cup calculation.
+Performs a batch, scan of MeetingIndividualResult for given Goggle Cup 
+and calculate goggle cup points if missing or if present and choosen 
+to be forced. Should be limitated to a specific meeting.
 
 Could force recalculating or calculate only missing scores.
 
-Options: [log_dir=#{LOG_DIR}]
+Options: recalculate=false goggle_cup=<goggle_cup_id> [meeting=<meeting_id> log_dir=#{LOG_DIR}]
 
 - 'recalculate' force to override the stored scores with new values.
+- 'goggle_cup'  goggle cup to calculate for.
+- 'meeting'     scan only the given meeting.
 - 'log_dir'     allows to override the default log dir destination.
 
 DESC
   task :goggle_cup do |t|
-    puts "*** db::update_records ***"
+    puts "*** db:goggle_cup ***"
+    recalculate     = ENV.include?("recalculate") ? ENV["recalculate"] == 'true' : false
+    goggle_cup_id   = ENV.include?("goggle_cup")  ? ENV["goggle_cup"].to_i : nil
+    meeting_id      = ENV.include?("meeting")     ? ENV["meeting"].to_i : nil
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
     db_user         = rails_config.database_configuration[Rails.env]['username']
     db_pwd          = rails_config.database_configuration[Rails.env]['password']
     log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
-                                                    # Display some info:
+
+    # Verify parameters
+    unless goggle_cup_id
+      puts("This needs both 'recalculate' && 'goggle_cup' parameters.")
+      exit
+    end
+
+    # Display some info:
     puts "DB name:          #{db_name}"
     puts "DB user:          #{db_user}"
     puts "log_dir:          #{log_dir}"
@@ -60,62 +72,58 @@ DESC
     puts "Requiring Rails environment to allow usage of any Model..."
     require 'rails/all'
     require File.join( Rails.root.to_s, 'config/environment' )
+    
+    # Find target entities
+    goggle_cup = GoggleCup.find( goggle_cup_id )
 
-    records_before = IndividualRecord.count
-    puts Benchmark.measure {
-      scan_by_model_for_records( SeasonType, :season_type, logger )
-      scan_by_model_for_records( Team, :team, logger )
-      records_after = IndividualRecord.count
-      logger.info( "\r\nTotal Records: #{records_before} (before) VS. #{records_after} (after) => added: #{records_after - records_before}" )
-      logger.info( "Measured times:" )
-      logger.info( "    user      system       total        real" )
-      logger.info( "----------------------------------------------" )
-    }
+    # Verify parameters
+    unless goggle_cup
+      puts("This needs a valid 'goggle_cup'.")
+      exit
+    end
+
+    logger.info( "GoggleCup: " + goggle_cup.get_full_name )
+
+    # if meeting passed force the scan
+    meeting = Meeting.find( meeting_id ) if meeting_id
+    if meeting
+      # Scan for meeting individual results of goggle cup for give meeting 
+      logger.info( "\r\nMeeting  : " + meeting.get_full_name )
+      goggle_cup.meeting_individual_results.includes(:meeting).where(['meetings.id = ?', meeting_id]).where(["meeting_individual_results.team_id = ?", goggle_cup.team_id]).each do |meeting_individual_result|
+        calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger )
+      end            
+    else
+      goggle_cup.meetings.each do |current_meeting|
+        # Scan for meeting individual results of goggle cup for give meeting 
+        logger.info( "\r\nMeeting  : " + current_meeting.get_full_name )
+        goggle_cup.meeting_individual_results.includes(:meeting).where(['meetings.id = ?', current_meeting.id]).where(["meeting_individual_results.team_id = ?", goggle_cup.team_id]).each do |meeting_individual_result|
+          calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger )
+        end
+        logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+      end
+    end
+
     logger.info( "\r\nFinished." )
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  # Scans all the instances of a specific +model+, invoking RecordCollector#full_scan,
-  # with a pre-filter created on the current instance of model, using +sym+ as a
-  # parameter to define the filter name.
+  # Calculate goggle cup for given meeting individual result
+  # Verify if goggle cup score already exist and calculate if request
   #
-  def scan_by_model_for_records( model, sym, logger )
-    # Loop on all Model instances and do a full scan. Then serialize the results.
-    list = model.uniq
-    list.each_with_index do |instance, index|
-      collector = RecordCollector.new( sym.to_sym => instance )
-      total = collector.pool_type_code_list.count *
-              collector.event_type_codes_list.count *
-              collector.category_type_codes_list.count *
-              collector.gender_type_codes_list.count
-      logger.info( "\r\nProcessing #{sym}: #{index+1}/#{list.count} '#{instance.get_full_name}', max inner loops tot.: #{total}" )
-      collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
-        # First, initialize the collection by getting the existing records:
-        this.collect_from_records_having(
-          pool_code,
-          event_code,
-          category_code,
-          gender_code,
-          sym == :team ? 'TTB' : 'FOR'
-        )
-        # Then, update the collection if a better record is found from the results:
-        this.collect_from_results_having(
-          pool_code,
-          event_code,
-          category_code,
-          gender_code,
-          sym == :team ? 'TTB' : 'FOR'
-        )
-        putc '.'
-      end
-      logger.info("\r\nFull scan completed. Saving data...")
-      if collector.commit()
-        logger.info("Everything OK.")
-      else
-        logger.warn("WARNING: #{ collector.count } record(s) were not saved due to errors!")
-      end
+  def calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger )
+    # Check if calculation is needed
+    if not meeting_individual_result.is_disqualified and (recalculate or meeting_individual_result.goggle_cup_points == 0)
+      # Calculate goggle cup points
+      score_calculator = GoggleCupScoreCalculator.new( goggle_cup, meeting_individual_result.swimmer, meeting_individual_result.pool_type, meeting_individual_result.event_type )
+      goggle_cup_points = score_calculator.get_goggle_cup_score( meeting_individual_result.get_timing_instance )
+      
+      # Save goggle cup score
+      meeting_individual_result.goggle_cup_points = goggle_cup_points 
+      meeting_individual_result.save
+      
+      logger.info( "\r\n#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{goggle_cup_points.to_s} (#{score_calculator.get_goggle_cup_standard.get_timing})" )
     end
   end
   #-- -------------------------------------------------------------------------

@@ -22,7 +22,7 @@ class GoggleCup < ActiveRecord::Base
   has_many :goggle_cup_definitions
   has_many :seasons, through: :goggle_cup_definitions
   has_many :meetings, through: :seasons
-  has_many :meeting_individual_results, through: :meetings
+  has_many :meeting_individual_results, through: :meetings  # Not properly. We need to filter by team
 
   validates_presence_of     :description
   validates_length_of       :description, within: 1..60, allow_nil: false

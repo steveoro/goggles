@@ -68,13 +68,13 @@ class ScoreCalculator
   #
   def compute_fin_score( time_swam )
     # Without a correct time_swam always return 0
-    fin_score = 0
+    fin_score = 0.0
     if time_swam && time_swam.to_hundreds > 0
       # Retrieves the time standard
       get_time_standard
       if @current_time_standard && @current_time_standard.get_timing_instance.to_hundreds > 0
         # Calculate the score with 2 decimals fixed
-        fin_score = @current_time_standard.get_timing_instance.to_hundreds * 1000 / time_swam.to_hundreds
+        fin_score = @current_time_standard.get_timing_instance.to_hundreds.to_f * 1000 / time_swam.to_hundreds.to_f
       else
         # Without time standard the score is always 1000
         fin_score = 1000

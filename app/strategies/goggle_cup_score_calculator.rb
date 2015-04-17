@@ -71,13 +71,13 @@ class GoggleCupScoreCalculator
   #
   def compute_goggle_cup_score( time_swam )
     # Without a correct time_swam always return 0
-    goggle_cup_score = 0
+    goggle_cup_score = 0.0
     if time_swam && time_swam.to_hundreds > 0
       # Retrieves the time standard
       get_goggle_cup_standard
       if @current_goggle_cup_standard && @current_goggle_cup_standard.get_timing_instance.to_hundreds > 0
         # Calculate the score with 2 decimals fixed
-        goggle_cup_score = @current_goggle_cup_standard.get_timing_instance.to_hundreds * @goggle_cup.max_points / time_swam.to_hundreds
+        goggle_cup_score = @current_goggle_cup_standard.get_timing_instance.to_hundreds.to_f * @goggle_cup.max_points / time_swam.to_hundreds.to_f
       else
         # Without time standard the score is always GoggleCupMaxPoints
         goggle_cup_score = @goggle_cup.max_points
