@@ -67,7 +67,18 @@ where ta.must_calculate_goggle_cup
     and sn.id = 142
     and s.id = 23
 order by s.complete_name, mir.goggle_cup_points desc
+----8<----
 
+
+----8<----
+-- Create swimmer in GASA32
+select s.id, 'CSI' as tipo, s.complete_name, s.year_of_birth, gt.code as sesso, b.number as csi, '' as fin, '' as ricerca, t.name as csi_team
+from swimmers s
+	join gender_types gt on gt.id = s.gender_type_id
+	join badges b on b.swimmer_id = s.id
+	join teams t on t.id = b.team_id
+where s.created_at > '20150413'
+order by id desc;
 
 
 
