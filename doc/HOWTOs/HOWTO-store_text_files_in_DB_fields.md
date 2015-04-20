@@ -10,17 +10,28 @@ is under current directory:
 ### Store an (X)HTML file of a _Meeting.invitation_:
 Use the rake task **db:store_meeting_invitation**:
 
-  With Zeus server running:
+  With Zeus server running (only for development DB):
   > zeus rake db:store_meeting_invitation meeting_id=<meeting_id> file=<path_to_file>
   Or:
   > bundle exec rake db:store_meeting_invitation meeting_id=<meeting_id> file=<path_to_file>
 
-**=> USE the DEDICATED Capistrano task to REMOTELY execute a db:store_meeting_invitation task! <=**
+Launch the rake task twice (once for development and one for production) if both
+DBs need to be updated.
+
+
+- USE the DEDICATED Capistrano task to REMOTELY execute a db:store_meeting_invitation task:
 For more info:
 > cap -D db:remote:store_meeting_invitation
 
 (It does almost everything in one step directly on the remote server, given an already
  existing or converted XHTML invitation file.)
+
+(Steve, Update 20150420)
+Beware of big files that may yield disconnection errors during the execution of the
+above task.
+
+** FOR IMPROVED RELAYABILITY, ALWAYS RUN EVERY RAKE TASK ON A LOCAL COPY OF THE REMOTE
+PRODUCTION DB, AND USE THE REMOTE UPLOAD TASK TO PERFORM THE ACTUAL UPDATE. **
 
 
 ### Store an (X)HTML file of a _Season.rules_:
