@@ -154,4 +154,17 @@ describe ChampionshipsController, :type => :controller do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe '[GET #individual_rank_regional_er_csi]' do
+    it_behaves_like( "(GET http action with or without parameters)", :individual_rank_regional_er_csi, 141 )
+
+    it "assigns the required variables when invoked with valid id" do
+      get :individual_rank_regional_er_csi, id: 141
+      expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
+      expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
+      expect( assigns(:individual_ranking) ).to be_an_instance_of( BalancedIndividualRankingDAO )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

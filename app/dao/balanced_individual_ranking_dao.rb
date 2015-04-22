@@ -23,17 +23,18 @@ class BalancedIndividualRankingDAO
     attr_reader :season
 
     # These can be edited later on:
-    #attr_accessor :event_type, :rank, :rank_points, :event_bonus_points, season_ranking_points
+    attr_accessor :event_bests
     #-- -------------------------------------------------------------------------
     #++
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
     def initialize( season )
-      unless season
+      unless season && season.instance_of?( Season )
         raise ArgumentError.new("Balanced individual ranking seasonal event best manager needs a season")
       end
-      @season = season
+      @season      = season
+      @event_bests = []
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -53,7 +54,7 @@ class BalancedIndividualRankingDAO
     # Creates a new instance from a ameeting_indivudla_result.
     #
     def initialize( meeting_individual_result )
-      unless meeting_individual_result && meeting_indivudla_result.instance_of( MeetingIndividualResults )
+      unless meeting_individual_result && meeting_individual_result.instance_of?( MeetingIndividualResult )
         raise ArgumentError.new("Balanced individual ranking event score needs a meeting individual result")
       end
 
@@ -91,7 +92,7 @@ class BalancedIndividualRankingDAO
     # Creates a new instance from a ameeting_indivudla_result.
     #
     def initialize( meeting, meeting_individual_results )
-      unless meeting && meeting.instance_of( Meetings )
+      unless meeting && meeting.instance_of?( Meeting )
         raise ArgumentError.new("Balanced individual ranking meeting score needs a meeting")
       end
 
@@ -151,24 +152,25 @@ class BalancedIndividualRankingDAO
     attr_reader :swimmer
 
     # These can be edited later on:
-    attr_accessor :category_type, :gender_type, :meetings 
+    attr_accessor :category_type, :gender_type, :meetings, :total_best_5_on_6 
     #-- -------------------------------------------------------------------------
     #++
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
     def initialize( swimmer, season )
-      unless swimmer && swimmer.instance_of( Swimmers )
+      unless swimmer && swimmer.instance_of?( Swimmer )
         raise ArgumentError.new( "Balanced individual ranking swimmer needs a swimmer" )
       end
-      unless season && season.instance_of( Seasons )
+      unless season && season.instance_of?( Season )
         raise ArgumentError.new( "Balanced individual ranking swimmer needs a season" )
       end
 
-      @swimmer       = swimmer
-      @gender_type   = swimmer.gender_type
-      @category_type = swimmer.get_category_type_for_season( season.season_id )
-      @meetings      = [] 
+      @swimmer           = swimmer
+      @gender_type       = swimmer.gender_type
+      @category_type     = swimmer.get_category_type_for_season( season.id )
+      @meetings          = [] 
+      @total_best_5_on_6 = 0
       
       # Search meetings for he swimmer in the season
       season.meetings.each do |meeting|
@@ -183,13 +185,50 @@ class BalancedIndividualRankingDAO
     #++
   end
 
+  # Each swimmer has a gender and a category
+  # Each swimmer has a collection of meetings (results)
+  class BIRGenderCategoryRankingDAO
+    # These must be initialized on creation:
+    attr_reader :gender_type, :category_type
+
+    # These can be edited later on:
+    attr_accessor :swimmers 
+    #-- -------------------------------------------------------------------------
+    #++
+  
+    # Creates a new instance from a ameeting_indivudla_result.
+    #
+    def initialize( season, gender_type, category_type )
+      unless season && season.instance_of?( Season )
+        raise ArgumentError.new("Balanced individual ranking needs a season")
+      end
+      unless gender_type && gender_type.instance_of?( GenderType )
+        raise ArgumentError.new( "Balanced individual ranking for gender and category needs a gender type" )
+      end
+      unless category_type && category_type.instance_of?( CategoryType )
+        raise ArgumentError.new( "Balanced individual ranking for gender and category needs a category type" )
+      end
+
+      @gender_type       = gender_type
+      @category_type     = category_type
+      @swimmers          = [] 
+    
+      # Search swimmers for the season
+      season.swimmers.each do |swimmer|
+        @swimmers << BIRSwimmerScoreDAO.new( swimmer, season )
+      end
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+  end
+
   # These must be initialized on creation:
   attr_reader :season
   #-- -------------------------------------------------------------------------
   #++
 
   # These can be edited later on:
-  attr_accessor :swimmers 
+  attr_accessor :gender_and_categories 
 
   # Creates a new instance.
   #
@@ -197,15 +236,16 @@ class BalancedIndividualRankingDAO
   # to perform correcto sorting
   #
   def initialize( season )
-    unless season && season.instance_of( Seasons )
+    unless season && season.instance_of?( Season )
       raise ArgumentError.new("Balanced individual ranking needs a season")
     end
-    @season = season
-    @swimmers = []
+    @season                = season
+    @gender_and_categories = []
     
-    # Search swimmers for the season
-    season.swimmers.each do |swimmer|
-      @swimmer << BIRSwimmerScoreDAO.new( swimmer, season )
+    GenderType.individual_only.sort_by_courtesy.each do |gender_type|
+      season.category_types.are_not_relays.sort_by_age.each do |category_type|
+        @gender_and_categories = BIRGenderCategoryRankingDAO.new( season, gender_type, category_type )
+      end
     end
   end
   #-- -------------------------------------------------------------------------
