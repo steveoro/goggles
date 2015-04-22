@@ -82,7 +82,7 @@ class BalancedIndividualRankingDAO
     attr_reader :meeting
 
     # These can be edited later on:
-    attr_accessor :header_date, 
+    attr_accessor :meeting, :header_date, 
                   :event_bonus_points, :medal_bonus_points,
                   :event_points, :ranking_points, 
                   :event_results 
@@ -143,6 +143,13 @@ class BalancedIndividualRankingDAO
     end
     #-- -------------------------------------------------------------------------
     #++
+    
+    # Get the total points for the meeting
+    def get_total_points
+      @event_points + @ranking_points + @event_bonus_points + @medal_bonus_points
+    end
+    #-- -------------------------------------------------------------------------
+    #++
   end
 
   # Each swimmer has a gender and a category
@@ -152,7 +159,7 @@ class BalancedIndividualRankingDAO
     attr_reader :swimmer
 
     # These can be edited later on:
-    attr_accessor :category_type, :gender_type, :meetings, :total_best_5_on_6 
+    attr_accessor :swimmer, :category_type, :gender_type, :meetings, :total_best_5_on_6 
     #-- -------------------------------------------------------------------------
     #++
   
@@ -180,6 +187,9 @@ class BalancedIndividualRankingDAO
           @meetings << BIRMeetingScoreDAO.new( meeting, meeting_individual_results )
         end
       end
+      
+      # Sort meetings by total points
+      @meetings.sort{|p,n| n.get_total_points <=> p.get_total_points}
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -192,7 +202,7 @@ class BalancedIndividualRankingDAO
     attr_reader :gender_type, :category_type
 
     # These can be edited later on:
-    attr_accessor :swimmers 
+    attr_accessor :swimmers, :gender_type, :category_type
     #-- -------------------------------------------------------------------------
     #++
   
@@ -209,14 +219,17 @@ class BalancedIndividualRankingDAO
         raise ArgumentError.new( "Balanced individual ranking for gender and category needs a category type" )
       end
 
-      @gender_type       = gender_type
-      @category_type     = category_type
-      @swimmers          = [] 
+      @gender_type   = gender_type
+      @category_type = category_type
+      @swimmers      = [] 
     
-      # Search swimmers for the season
-      season.swimmers.each do |swimmer|
-        @swimmers << BIRSwimmerScoreDAO.new( swimmer, season )
+      # Search swimmers for the season, gender and category
+      season.badges.for_gender_type( gender_type ).for_category_type( category_type ).each do |badge|
+        @swimmers << BIRSwimmerScoreDAO.new( badge.swimmer, season )
       end
+      
+      # TODO Sort swimmers by total points
+      
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -228,7 +241,7 @@ class BalancedIndividualRankingDAO
   #++
 
   # These can be edited later on:
-  attr_accessor :gender_and_categories 
+  attr_accessor :season, :gender_and_categories 
 
   # Creates a new instance.
   #
@@ -244,9 +257,16 @@ class BalancedIndividualRankingDAO
     
     GenderType.individual_only.sort_by_courtesy.each do |gender_type|
       season.category_types.are_not_relays.sort_by_age.each do |category_type|
-        @gender_and_categories = BIRGenderCategoryRankingDAO.new( season, gender_type, category_type )
+        @gender_and_categories << BIRGenderCategoryRankingDAO.new( season, gender_type, category_type )
       end
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+    
+  # Get the total ranking for gender and category
+  def get_ranking_for_gender_and_category( gender_type, category_type )
+    @gender_and_categories.select{|element| element.gender_type = gender_type and element.category_type = category_type }.first
   end
   #-- -------------------------------------------------------------------------
   #++

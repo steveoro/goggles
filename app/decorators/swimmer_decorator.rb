@@ -275,7 +275,8 @@ class SwimmerDecorator < Draper::Decorator
   # or nil if not found
   #
   def get_current_team( season )
-    badges.where( season_id: season.id ).last
+    season_badges = badges.where( season_id: season.id )
+    season_badges.last.team if season_badges.count > 0
   end
   #-- --------------------------------------------------------------------------
 

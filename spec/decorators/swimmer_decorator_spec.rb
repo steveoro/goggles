@@ -319,11 +319,10 @@ describe SwimmerDecorator, type: :model do
 
   describe "#get_current_team" do
     context "with correct parameters" do
-      it_behaves_like(
-        "(the existance of a method with parameters, returning a kind of object or nil)",
+      it_behaves_like( "(the existance of a method with parameter returning a valid instance or nil)",
         :get_current_team,
         Team,
-        :season
+        Season.find(131)
       )
     end
   end

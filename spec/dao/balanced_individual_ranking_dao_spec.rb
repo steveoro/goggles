@@ -60,7 +60,7 @@ describe BalancedIndividualRankingDAO, type: :model do
     subject { BalancedIndividualRankingDAO::BIRMeetingScoreDAO.new( meeting, mir ) }
     
     it_behaves_like( "(the existance of a method)", [
-      :header_date, :event_bonus_points, :medal_bonus_points, :event_points, :ranking_points, :event_results
+      :header_date, :event_bonus_points, :medal_bonus_points, :event_points, :ranking_points, :event_results, :get_total_points
     ] )
 
     describe "#header_date" do
@@ -99,6 +99,16 @@ describe BalancedIndividualRankingDAO, type: :model do
       end
       it "is has an instance per each meeting individual result used in construction" do
         expect( subject.event_results.count ).to eq( mir.count )
+      end
+    end
+    
+    describe "#get_total_points" do
+      it "is a value between 0 and 218 (100 + 100 + 10 + 8)" do
+        expect( subject.get_total_points ).to be >= 0 
+        expect( subject.get_total_points ).to be <= 218 
+      end
+      it "is the sum of event_points, ranking_points, medal_bonus and event_bonus" do
+        expect( subject.get_total_points ).to eq( subject.ranking_points + subject.event_points + subject.event_bonus_points + subject.medal_bonus_points) 
       end
     end
   end
@@ -186,7 +196,7 @@ describe BalancedIndividualRankingDAO, type: :model do
     subject { BalancedIndividualRankingDAO.new( season ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season, :gender_and_categories
+      :season, :gender_and_categories, :get_ranking_for_gender_and_category
     ] )
 
     describe "#season" do
@@ -198,6 +208,12 @@ describe BalancedIndividualRankingDAO, type: :model do
       it "is a collection of BIRSwimmerScoreDAO" do
         expect( subject.gender_and_categories ).to be_a_kind_of( Enumerable )
         expect( subject.gender_and_categories ).to all(be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO ))
+      end
+    end
+    
+    describe "#get_ranking_for_gender_and_category" do
+      it "returns a collection of BIRSwimmerScoreDAO" do
+        expect( subject.get_ranking_for_gender_and_category( swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) ) ).to be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO )
       end
     end
   end
