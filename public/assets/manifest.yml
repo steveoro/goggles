@@ -453,10 +453,10 @@ wut.jpg: wut-f4e0cf730e29294db38ee2f7a995e67e.jpg
 wut/index.jpg: wut-f4e0cf730e29294db38ee2f7a995e67e.jpg
 zoom.png: zoom-197251d7b89d43098f85a9180cf1f648.png
 zoom/index.png: zoom-197251d7b89d43098f85a9180cf1f648.png
-application.js: application-acd4a666eb47e843db71ef06454c8659.js
-application/index.js: application-acd4a666eb47e843db71ef06454c8659.js
-application.css: application-9a8a632e66d3ef4a9ddfeb49855a7121.css
-application/index.css: application-9a8a632e66d3ef4a9ddfeb49855a7121.css
+application.js: application-f91dd88279283933ac63b038a053f5f9.js
+application/index.js: application-f91dd88279283933ac63b038a053f5f9.js
+application.css: application-c2a5a9d6a8b6bb2eae181995ef41e6ff.css
+application/index.css: application-c2a5a9d6a8b6bb2eae181995ef41e6ff.css
 images/animated-overlay.gif: images/animated-overlay-602eee4c79a4796b02bb6442948c9e28.gif
 images/animated-overlay/index.gif: images/animated-overlay-602eee4c79a4796b02bb6442948c9e28.gif
 images/emptylanes2k.jpg: images/emptylanes2k-2fb171d269d3c6d4e0da9e24f10827fa.jpg

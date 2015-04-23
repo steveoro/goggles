@@ -1,16 +1,17 @@
 = render( partial: 'tabs_and_radio_title' )
+
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
-  
-  .row-fluid#full_history_by_date_grid
-    .goggles-category-gap#pageTop
-      -# --- Sub-legend for pool-type
-      .navbar
-        %ul.nav
-          - PoolType.only_for_meetings.each do |pool_type|
-            %li
-              %a.goggles-nav-compact(href="##{pool_type.code}")= pool_type.i18n_description
-          .ghost-divider-vertical
-  
+  .row-fluid#pageTop
+    - PoolType.only_for_meetings.each do |pool_type|
+      .span6.graph-container-full
+        .graph-placeholder-full{ 'id' => "pie#{pool_type.code}" }
+  .row-fluid
+    - PoolType.only_for_meetings.each do |pool_type|
+      .span6
+        .offset5
+          %a(href="##{pool_type.code}")= pool_type.i18n_description
+
+  .row-fluid.goggles-category-gap#full_history_by_date_grid
     - PoolType.only_for_meetings.each do |pool_type|
       .row-fluid
         .goggles-category-gap{ 'id' => "#{pool_type.code}" }
@@ -28,5 +29,40 @@
                   %b= event
             - @full_history_by_date[pool_type.code][1].each do |event_by_date|
               = render( partial: 'full_history_by_date_meeting_row', locals: { event_by_date: event_by_date, event_list: event_list } )
-  
+
   .row-fluid.goggles-category-gap
+
+  :javascript
+    // Custom label formatter:
+    function labelFormatter(label, series) {
+      return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" +
+             label + "<br/>" + Math.round(series.percent) + "%</div>";
+    }
+
+    $( function() {
+        var data25 = JSON.parse( "#{ escape_javascript @full_history_events['25'].to_json }" );
+        var data50 = JSON.parse( "#{ escape_javascript @full_history_events['50'].to_json }" );
+        var options = {
+            series: {
+                pie: {
+                    show: true,
+                    radius: 1,
+                    // tilt: 0.5,
+                    label: {
+                        show: true,
+                        radius: 3/4,
+                        formatter: labelFormatter,
+                        background: { opacity: 0.5 }
+                    }
+                }
+            },
+            grid: {
+                hoverable: true
+            },
+            legend: { show: false }
+        };
+
+        $.plot( "#pie25", data25, options );
+        $.plot( "#pie50", data50, options );
+      }
+    );
