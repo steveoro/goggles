@@ -3,6 +3,7 @@
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
     - cache( cache_key_for_meeting( 'individual_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
+    - meeting_columns = @individual_ranking.meetings_with_results.count
       
       %p= I18n.t('meeting_stats.rank_disclaimer') 
   
@@ -23,12 +24,12 @@
               = gender_type.i18n_description
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
           - @category_types.each do |category_type|
-            - rank_array = @individual_ranking.get_ranking_for_gender_and_category( gender_type, category_type )
+            - rank_array = @individual_ranking.calculate_ranking( gender_type, category_type )
             .row-fluid.goggles-category-gap{'id'=>"#{gender_type.code}-#{category_type.code}"}
               %table.table.table-striped.table-bordered.table-hover.table-condensed
                 %tbody
                   %tr{'class'=>'info'}
-                    %td{ colspan: 5 }
+                    %td{ colspan: 5 + meeting_columns }
                       %b= category_type.get_full_name
                       = ' '
                       %b= gender_type.i18n_description
@@ -43,15 +44,24 @@
                         = index + 1
                       %td
                         = curr_swimmer.get_linked_swimmer_name
-                      %td
+                      %td.goggles-rightalign
                         = curr_swimmer.year_of_birth
                       %td
                         = curr_team.get_linked_name
-                      %td{ 'data-toggle'=>'tooltip', 'title'=>"#{ranked_swimmer.meetings.count.to_s}" }
-                        = ranked_swimmer.total_best_5_on_6.to_s
+                        
+                      - @individual_ranking.meetings_with_results.each do |meeting|
+                        - meeting_score = ranked_swimmer.get_meeting_scores( meeting )
+                        - if meeting_score
+                          %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{meeting_score.event_points}+#{meeting_score.ranking_points}+#{meeting_score.event_bonus_points}+#{meeting_score.medal_bonus_points}" }
+                            = meeting_score.get_total_points
+                        - else
+                          %td
+                        
+                      %td.goggles-rightalign
+                        %b= ranked_swimmer.total_best_5_on_6
                   
                   %tr{'class'=>'info'}
-                    %td{ colspan: 5 }
+                    %td{ colspan: 5 + meeting_columns }
                       %b= I18n.t('meeting_stats.tot_swimmers')
                       %b= ': '
                       %b= rank_array.swimmers.size

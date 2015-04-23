@@ -61,7 +61,7 @@ class BalancedIndividualRankingDAO
       @event_date     = meeting_individual_result.meeting_session.scheduled_date
       @event_type     = meeting_individual_result.event_type
       @rank           = meeting_individual_result.rank
-      @event_points   = meeting_individual_result.meeting_individual_points
+      @event_points   = meeting_individual_result.meeting_individual_points.to_i
       @ranking_points = 0
       
       # TODO Calculate season ranking points
@@ -117,10 +117,10 @@ class BalancedIndividualRankingDAO
 
         # Find out event bonus
         # TODO store bonus information on DB
-        @event_bonus_points = 8 if @event_bonus_points < 8 && meeting_individual_result.event_type.code = '800SL'
-        @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code = '400SL'
-        @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code = '200MI'
-        @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code = '100FA'        
+        @event_bonus_points = 8 if @event_bonus_points < 8 && meeting_individual_result.event_type.code == '800SL'
+        @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code == '400SL'
+        @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code == '200MI'
+        @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code == '100FA'        
       end
       
       # Find out rank bonus
@@ -189,7 +189,19 @@ class BalancedIndividualRankingDAO
       end
       
       # Sort meetings by total points
-      @meetings.sort{|p,n| n.get_total_points <=> p.get_total_points}
+      @meetings.sort!{|p,n| n.get_total_points <=> p.get_total_points}
+      
+      # Calculate best 5 on 6 results
+      @meetings.each_with_index do |meeting,index|
+        @total_best_5_on_6 = @total_best_5_on_6 + meeting.get_total_points if index < 5 
+      end  
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+    
+    # Get the meetings results for the swimmer
+    def get_meeting_scores( meeting )
+      @meetings.select{|element| element.meeting == meeting }.first
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -225,11 +237,11 @@ class BalancedIndividualRankingDAO
     
       # Search swimmers for the season, gender and category
       season.badges.for_gender_type( gender_type ).for_category_type( category_type ).each do |badge|
-        @swimmers << BIRSwimmerScoreDAO.new( badge.swimmer, season )
+        @swimmers << BIRSwimmerScoreDAO.new( badge.swimmer, season ) if badge.meeting_individual_results.count > 0
       end
       
-      # TODO Sort swimmers by total points
-      
+      # Sort swimmers by total points
+      @swimmers.sort!{|p,n| n.total_best_5_on_6 <=> p.total_best_5_on_6}
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -241,7 +253,7 @@ class BalancedIndividualRankingDAO
   #++
 
   # These can be edited later on:
-  attr_accessor :season, :gender_and_categories 
+  attr_accessor :season, :gender_and_categories, :meetings_with_results 
 
   # Creates a new instance.
   #
@@ -253,20 +265,40 @@ class BalancedIndividualRankingDAO
       raise ArgumentError.new("Balanced individual ranking needs a season")
     end
     @season                = season
-    @gender_and_categories = []
-    
-    GenderType.individual_only.sort_by_courtesy.each do |gender_type|
-      season.category_types.are_not_relays.sort_by_age.each do |category_type|
-        @gender_and_categories << BIRGenderCategoryRankingDAO.new( season, gender_type, category_type )
-      end
-    end
+    @meetings_with_results = season.meetings.has_results
+    @gender_and_categories = []    
   end
   #-- -------------------------------------------------------------------------
   #++
     
   # Get the total ranking for gender and category
   def get_ranking_for_gender_and_category( gender_type, category_type )
-    @gender_and_categories.select{|element| element.gender_type = gender_type and element.category_type = category_type }.first
+    @gender_and_categories.select{|element| element.gender_type == gender_type and element.category_type == category_type }.first
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Calculate the total ranking for all genders and categories
+  def scan_for_gender_and_category
+    GenderType.individual_only.sort_by_courtesy.each do |gender_type|
+      season.category_types.are_not_relays.sort_by_age.each do |category_type|
+        set_ranking_for_gender_and_category( gender_type, category_type )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Calculate the ranking for given gender and category
+  def calculate_ranking( gender_type, category_type )
+    BIRGenderCategoryRankingDAO.new( @season, gender_type, category_type )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+    
+  # Set the ranking for given gender and category
+  def set_ranking_for_gender_and_category( gender_type, category_type )
+    @gender_and_categories << calculate_ranking( gender_type, category_type )
   end
   #-- -------------------------------------------------------------------------
   #++

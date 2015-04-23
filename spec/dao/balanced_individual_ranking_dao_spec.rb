@@ -121,7 +121,7 @@ describe BalancedIndividualRankingDAO, type: :model do
     subject { BalancedIndividualRankingDAO::BIRSwimmerScoreDAO.new( swimmer, season ) }
     
     it_behaves_like( "(the existance of a method)", [
-      :swimmer, :category_type, :gender_type, :meetings, :total_best_5_on_6
+      :swimmer, :category_type, :gender_type, :meetings, :total_best_5_on_6, :get_meeting_scores
     ] )
 
     describe "#swimmer" do
@@ -152,6 +152,11 @@ describe BalancedIndividualRankingDAO, type: :model do
       it "is a value between 0 and 1090 (100 + 100 + 10 + 8) * 5" do
         expect( subject.total_best_5_on_6 ).to be >= 0 
         expect( subject.total_best_5_on_6 ).to be <= 1090 
+      end
+    end
+    describe "#get_meeting_scores" do
+      it "returns a BIRMeetingScoreDAO" do
+        expect( subject.get_meeting_scores( subject.meetings.first.meeting ) ).to be_a_kind_of( BalancedIndividualRankingDAO::BIRMeetingScoreDAO )
       end
     end
   end
@@ -196,7 +201,7 @@ describe BalancedIndividualRankingDAO, type: :model do
     subject { BalancedIndividualRankingDAO.new( season ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season, :gender_and_categories, :get_ranking_for_gender_and_category
+      :season, :gender_and_categories, :meetings_with_results, :get_ranking_for_gender_and_category, :scan_for_gender_and_category, :calculate_ranking, :set_ranking_for_gender_and_category
     ] )
 
     describe "#season" do
@@ -206,14 +211,51 @@ describe BalancedIndividualRankingDAO, type: :model do
     end
     describe "#gender_and_categories" do
       it "is a collection of BIRSwimmerScoreDAO" do
+        subject.scan_for_gender_and_category
         expect( subject.gender_and_categories ).to be_a_kind_of( Enumerable )
         expect( subject.gender_and_categories ).to all(be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO ))
       end
     end
+    describe "#meetings_with_results" do
+      it "is a collection of Meeting" do
+        expect( subject.meetings_with_results ).to be_a_kind_of( ActiveRecord::Relation )
+        expect( subject.meetings_with_results ).to all(be_a_kind_of( Meeting ))
+      end
+      it "has a count between 0 and total season meetings" do
+        expect( subject.meetings_with_results.count ).to be >= 0 
+        expect( subject.meetings_with_results.count ).to be <= season.meetings.count 
+      end
+    end
     
     describe "#get_ranking_for_gender_and_category" do
-      it "returns a collection of BIRSwimmerScoreDAO" do
+      it "returns null if ranking not calculated" do
+        expect( subject.get_ranking_for_gender_and_category( swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) ) ).to be_nil
+      end
+      it "returns a BIRSwimmerScoreDAO if ranking calculated" do
+        subject.set_ranking_for_gender_and_category( swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) )
         expect( subject.get_ranking_for_gender_and_category( swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) ) ).to be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO )
+      end
+    end
+    
+    describe "#set_ranking_for_gender_and_category" do
+      it "increments the rank calculated" do
+        subject.gender_and_categories.clear
+        prev_rank = subject.gender_and_categories.size
+        subject.set_ranking_for_gender_and_category( swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) )
+        expect( subject.gender_and_categories.size ).to be > prev_rank 
+      end
+    end
+    
+    describe "#calculate_ranking" do
+      it "returns a BIRSwimmerScoreDAO" do
+        expect( subject.calculate_ranking( swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) ) ).to be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO )
+      end
+    end
+    
+    describe "#scan_for_gender_and_category" do
+      it "returns a collection of BIRSwimmerScoreDAO" do
+        subject.scan_for_gender_and_category
+        expect( subject.gender_and_categories.size ).to be > 0
       end
     end
   end
