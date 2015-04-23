@@ -10,4 +10,5 @@
 //= require wice_grid
 //= require jquery.ui.datepicker
 //= require cocoon
+//= require jquery.flot.min
 //= require_tree .

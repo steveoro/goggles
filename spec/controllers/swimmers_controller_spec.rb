@@ -222,29 +222,56 @@ describe SwimmersController, :type => :controller do
         get :full_history_1, id: @swimmer.id
       end
 
-      context "full_history_by_date general structure," do
-        it "assigns an hash with data collected" do
+      context "@full_history_by_date general structure," do
+        it "is an hash" do
           expect( assigns( :full_history_by_date ) ).to be_a_kind_of( Hash )
         end
-        it "assigns an hash with the same number of element of pool types suitable for meetings" do
+        it "has the same size of the suitable pool types list (for any meetings)" do
           expect( assigns( :full_history_by_date ).size ).to be PoolType.only_for_meetings.count
         end
-        it "assigns an hash that responds to pool type codes" do
+        it "responds to pool type codes" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
             expect( result[pool_type.code] ).not_to be_nil
           end
         end
-        it "assigns an hash with array as elements" do
+        it "is has an array as the value of each hash key" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
             expect( result[pool_type.code] ).to be_a_kind_of( Array )
           end
         end
-        it "assigns an hash with array of two elements as element" do
+        it "has an hash with an array of two elements as element" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
             expect( result[pool_type.code].size ).to be 2
+          end
+        end
+      end
+
+      context "@full_history_events general structure," do
+        it "is an hash" do
+          expect( assigns( :full_history_events ) ).to be_a_kind_of( Hash )
+        end
+        it "has the same size of the suitable pool types list (for any meetings)" do
+          expect( assigns( :full_history_events ).size ).to be PoolType.only_for_meetings.count
+        end
+        it "responds to pool type codes" do
+          result = assigns( :full_history_events )
+          PoolType.only_for_meetings.each do |pool_type|
+            expect( result[pool_type.code] ).not_to be_nil
+          end
+        end
+        it "is has an array for the event list (as the value of each hash key)" do
+          result = assigns( :full_history_events )
+          PoolType.only_for_meetings.each do |pool_type|
+            expect( result[pool_type.code] ).to be_a_kind_of( Array )
+          end
+        end
+        it "has an hash for each item of the event list" do
+          result = assigns( :full_history_events )
+          PoolType.only_for_meetings.each do |pool_type|
+            expect( result[pool_type.code] ).to all be_a_kind_of( Hash )
           end
         end
       end

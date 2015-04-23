@@ -194,35 +194,54 @@ class SwimmersController < ApplicationController
   def full_history_1
     # --- "Full History by date" tab: ---
     @tab_title = I18n.t('radiography.full_history_by_date')
-
-    # Cycles between pool types suitable for meetings
-    @full_history_by_date = Hash.new
+    @full_history_by_date = {}
+    @full_history_events = {}
+                                                    # Cycles between pool types suitable for meetings:
     PoolType.only_for_meetings.each do |pool_type|
-      # Collect results for the pool type
+      pool_code = pool_type.code
+                                                    # Collect results for the current pool type:
       mirs = @swimmer.meeting_individual_results
         .joins(:event_type)
+        .includes(:event_type)
         .for_pool_type( pool_type )
         .sort_by_date
         .select([:id, :minutes, :seconds, :hundreds])
 
-      # The event_by_date structure
+      # *event_by_date* structure:
       # The structure is an array of hashes with elements formed by
       # the meeting (meeting) that contains the meeting reference
       # and the event_type_codes ("50SL", "50FA", etc.) that
       # contains the meeting_individual_result swam in the event_type
       # at the meeting.
       # TODO Refactor that structure as a collection, like personal bests
-      event_by_date = []
+
+      event_by_date = []                            # Init lists of events
+      @full_history_events[ pool_code ] = []
+
       mirs.each do |meeting_individul_result|
-        # If thi is the first meeting result creates a new element, else add the result for the event type
-        found = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individul_result.meeting }
-        if found
-          event_by_date[found][meeting_individul_result.event_type.code] = meeting_individul_result
+        event_code = meeting_individul_result.event_type.code
+        event_name = meeting_individul_result.event_type.i18n_short
+        found_idx = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individul_result.meeting }
+        # If it's the first meeting result found, we create a new element:
+        if found_idx
+          event_by_date[ found_idx ][ event_code ] = meeting_individul_result
+        # ...Else, we add the result for the event type:
         else
-          new_hash = {}
-          new_hash[:meeting] = meeting_individul_result.meeting
-          new_hash[meeting_individul_result.event_type.code] = meeting_individul_result
-          event_by_date << new_hash
+          event_by_date << {
+            :meeting   => meeting_individul_result.meeting,
+            event_code => meeting_individul_result
+          }
+        end
+
+        # Same as above, but for the collection of events used in the graphs:
+        found_idx = @full_history_events[ pool_code ].rindex{ |event_hash| event_hash[:label] == event_name }
+        if found_idx
+          @full_history_events[ pool_code ][ found_idx ][:data] += 1
+        else
+          @full_history_events[ pool_code ] << {
+            :label => event_name,
+            :data  => 0
+          }
         end
       end
 
@@ -232,7 +251,7 @@ class SwimmersController < ApplicationController
       # Sort event type list by event type style order
       #event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
       event_list = EventType.sort_list_by_style_order( event_list )
-      @full_history_by_date[pool_type.code] = [event_list, event_by_date]
+      @full_history_by_date[ pool_code ] = [ event_list, event_by_date ]
     end
 
     # TODO
@@ -335,7 +354,12 @@ class SwimmersController < ApplicationController
       end
 
       # Create has element with event type by pool data
-      @full_history_by_event[hash_key] = [passages_list, results_by_time, passages, events_by_pool_type.i18n_description]
+      @full_history_by_event[hash_key] = [
+        passages_list,
+        results_by_time,
+        passages,
+        events_by_pool_type.i18n_description
+      ]
     end
   end
   #-- -------------------------------------------------------------------------
