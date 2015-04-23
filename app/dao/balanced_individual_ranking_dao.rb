@@ -124,12 +124,12 @@ class BalancedIndividualRankingDAO
       end
       
       # Find out rank bonus
-      @rank_bonus_points = 10 if @rank_bonus_points < 10 && rank_first >= 2
-      @rank_bonus_points = 8 if @rank_bonus_points < 8 && rank_first == 1 && rank_second >= 1
-      @rank_bonus_points = 6 if @rank_bonus_points < 6 && rank_first == 1 && rank_third >= 1
-      @rank_bonus_points = 4 if @rank_bonus_points < 4 && rank_second >= 2
-      @rank_bonus_points = 2 if @rank_bonus_points < 2 && rank_second == 1 && rank_third >= 1
-      @rank_bonus_points = 1 if @rank_bonus_points < 1 && rank_third >= 2
+      @medal_bonus_points = 10 if @medal_bonus_points < 10 && rank_first >= 2
+      @medal_bonus_points = 8 if @medal_bonus_points < 8 && rank_first == 1 && rank_second >= 1
+      @medal_bonus_points = 6 if @medal_bonus_points < 6 && rank_first == 1 && rank_third >= 1
+      @medal_bonus_points = 4 if @medal_bonus_points < 4 && rank_second >= 2
+      @medal_bonus_points = 2 if @medal_bonus_points < 2 && rank_second == 1 && rank_third >= 1
+      @medal_bonus_points = 1 if @medal_bonus_points < 1 && rank_third >= 2
       
       # Find out best event points
       event_total_points = 0
