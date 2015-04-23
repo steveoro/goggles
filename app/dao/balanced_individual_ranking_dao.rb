@@ -30,7 +30,7 @@ class BalancedIndividualRankingDAO
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
-    def initialize( meeting_individual_result )
+    def initialize( meeting_individual_result, seasonal_event_best )
       unless meeting_individual_result && meeting_individual_result.instance_of?( MeetingIndividualResult )
         raise ArgumentError.new("Balanced individual ranking event score needs a meeting individual result")
       end
@@ -39,9 +39,8 @@ class BalancedIndividualRankingDAO
       @event_type     = meeting_individual_result.event_type
       @rank           = meeting_individual_result.rank
       @event_points   = meeting_individual_result.meeting_individual_points.to_i
+      #@ranking_points = 100 * seasonal_event_best.time_swam.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds 
       @ranking_points = 0
-      
-      # TODO Calculate season ranking points
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -68,7 +67,7 @@ class BalancedIndividualRankingDAO
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
-    def initialize( meeting, meeting_individual_results )
+    def initialize( meeting, meeting_individual_results, seasonal_event_bests )
       unless meeting && meeting.instance_of?( Meeting )
         raise ArgumentError.new("Balanced individual ranking meeting score needs a meeting")
       end
@@ -85,7 +84,8 @@ class BalancedIndividualRankingDAO
       rank_second    = 0
       rank_third     = 0
       meeting_individual_results.each do |meeting_individual_result|
-        @event_results << BIREventScoreDAO.new( meeting_individual_result )
+        seasonal_event_best = seasonal_event_bests.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type )
+        @event_results << BIREventScoreDAO.new( meeting_individual_result, seasonal_event_best )
         
         # Store each rank for rank bonus
         rank_first  = rank_first + 1 if meeting_individual_result.rank == 1
@@ -142,7 +142,7 @@ class BalancedIndividualRankingDAO
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
-    def initialize( swimmer, season )
+    def initialize( swimmer, season, seasonal_event_bests )
       unless swimmer && swimmer.instance_of?( Swimmer )
         raise ArgumentError.new( "Balanced individual ranking swimmer needs a swimmer" )
       end
@@ -161,7 +161,7 @@ class BalancedIndividualRankingDAO
         meeting_individual_results = meeting.meeting_individual_results.is_valid.where(["meeting_individual_results.swimmer_id = ?", @swimmer.id])
         if meeting_individual_results.count > 0
           # The swimmer has results for that meeting
-          @meetings << BIRMeetingScoreDAO.new( meeting, meeting_individual_results )
+          @meetings << BIRMeetingScoreDAO.new( meeting, meeting_individual_results, seasonal_event_bests )
         end
       end
       
@@ -197,7 +197,7 @@ class BalancedIndividualRankingDAO
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
-    def initialize( season, gender_type, category_type )
+    def initialize( season, gender_type, category_type, seasonal_event_bests )
       unless season && season.instance_of?( Season )
         raise ArgumentError.new("Balanced individual ranking needs a season")
       end
@@ -210,11 +210,12 @@ class BalancedIndividualRankingDAO
 
       @gender_type   = gender_type
       @category_type = category_type
-      @swimmers      = [] 
+      @swimmers      = []
+      
     
       # Search swimmers for the season, gender and category
       season.badges.for_gender_type( gender_type ).for_category_type( category_type ).each do |badge|
-        @swimmers << BIRSwimmerScoreDAO.new( badge.swimmer, season ) if badge.meeting_individual_results.count > 0
+        @swimmers << BIRSwimmerScoreDAO.new( badge.swimmer, season, seasonal_event_bests ) if badge.meeting_individual_results.count > 0
       end
       
       # Sort swimmers by total points
@@ -230,7 +231,7 @@ class BalancedIndividualRankingDAO
   #++
 
   # These can be edited later on:
-  attr_accessor :season, :gender_and_categories, :meetings_with_results 
+  attr_accessor :season, :gender_and_categories, :meetings_with_results, :seasonal_event_bests
 
   # Creates a new instance.
   #
@@ -243,7 +244,11 @@ class BalancedIndividualRankingDAO
     end
     @season                = season
     @meetings_with_results = season.meetings.has_results
-    @gender_and_categories = []    
+    @gender_and_categories = []
+    @seasonal_event_bests  = SeasonalEventBestDAO.new( season )
+    
+    # Calculate seasonal event bests                     
+    @seasonal_event_bests.scan_for_gender_category_and_event                         
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -268,7 +273,7 @@ class BalancedIndividualRankingDAO
 
   # Calculate the ranking for given gender and category
   def calculate_ranking( gender_type, category_type )
-    BIRGenderCategoryRankingDAO.new( @season, gender_type, category_type )
+    BIRGenderCategoryRankingDAO.new( @season, gender_type, category_type, @seasonal_event_bests )
   end
   #-- -------------------------------------------------------------------------
   #++

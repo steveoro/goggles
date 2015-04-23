@@ -6,13 +6,14 @@ describe BalancedIndividualRankingDAO, type: :model do
   let(:season)  { Season.find(141) }
   let(:swimmer) { season.swimmers[ ((rand * season.swimmers.count) % season.swimmers.count).to_i ] }
   let(:meeting) { season.meetings[ ((rand * season.meetings.count) % season.meetings.count).to_i ] }
-  let(:mir)     { meeting.meeting_individual_results.is_valid.where(["meeting_individual_results.swimmer_id = ?", swimmer.id]) }
+  let(:mirs)    { meeting.meeting_individual_results.is_valid.where(["meeting_individual_results.swimmer_id = ?", swimmer.id]) }
+  let(:sebs)    { SeasonalEventBestDAO.new( season ) }
 
   context "BIREventScoreDAO subclass," do
     
     let(:meeting_individual_result) { create(:meeting_individual_result) }
     
-    subject { BalancedIndividualRankingDAO::BIREventScoreDAO.new( meeting_individual_result ) }
+    subject { BalancedIndividualRankingDAO::BIREventScoreDAO.new( meeting_individual_result, Timing.new(15000) ) }
 
     it_behaves_like( "(the existance of a method)", [
       :event_date, :event_type, :rank, :event_points, :ranking_points, :get_total_points
@@ -57,7 +58,7 @@ describe BalancedIndividualRankingDAO, type: :model do
 
   context "BIRMeetingScoreDAO subclass," do
     
-    subject { BalancedIndividualRankingDAO::BIRMeetingScoreDAO.new( meeting, mir ) }
+    subject { BalancedIndividualRankingDAO::BIRMeetingScoreDAO.new( meeting, mirs, sebs ) }
     
     it_behaves_like( "(the existance of a method)", [
       :header_date, :event_bonus_points, :medal_bonus_points, :event_points, :ranking_points, :event_results, :get_total_points
@@ -98,7 +99,7 @@ describe BalancedIndividualRankingDAO, type: :model do
         expect( subject.event_results ).to all(be_a_kind_of( BalancedIndividualRankingDAO::BIREventScoreDAO ))
       end
       it "is has an instance per each meeting individual result used in construction" do
-        expect( subject.event_results.count ).to eq( mir.count )
+        expect( subject.event_results.count ).to eq( mirs.count )
       end
     end
     
@@ -118,7 +119,7 @@ describe BalancedIndividualRankingDAO, type: :model do
 
   context "BIRSwimmerScoreDAO subclass," do
     
-    subject { BalancedIndividualRankingDAO::BIRSwimmerScoreDAO.new( swimmer, season ) }
+    subject { BalancedIndividualRankingDAO::BIRSwimmerScoreDAO.new( swimmer, season, sebs ) }
     
     it_behaves_like( "(the existance of a method)", [
       :swimmer, :category_type, :gender_type, :meetings, :total_best_5_on_6, :get_meeting_scores
@@ -166,7 +167,7 @@ describe BalancedIndividualRankingDAO, type: :model do
 
   context "BIRGenderCategoryRankingDAO subclass," do
     
-    subject { BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO.new( season, swimmer.gender_type, swimmer.get_category_type_for_season( season.id ) ) }
+    subject { BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO.new( season, swimmer.gender_type, swimmer.get_category_type_for_season( season.id ), sebs ) }
     
     it_behaves_like( "(the existance of a method)", [
       :gender_type, :category_type, :swimmers, 
@@ -201,7 +202,8 @@ describe BalancedIndividualRankingDAO, type: :model do
     subject { BalancedIndividualRankingDAO.new( season ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season, :gender_and_categories, :meetings_with_results, :get_ranking_for_gender_and_category, :scan_for_gender_and_category, :calculate_ranking, :set_ranking_for_gender_and_category
+      :season, :gender_and_categories, :meetings_with_results, :seasonal_event_bests, 
+      :get_ranking_for_gender_and_category, :scan_for_gender_and_category, :calculate_ranking, :set_ranking_for_gender_and_category
     ] )
 
     describe "#season" do
@@ -224,6 +226,11 @@ describe BalancedIndividualRankingDAO, type: :model do
       it "has a count between 0 and total season meetings" do
         expect( subject.meetings_with_results.count ).to be >= 0 
         expect( subject.meetings_with_results.count ).to be <= season.meetings.count 
+      end
+    end
+    describe "#seasonal_event_bests" do
+      it "is a " do
+        expect( subject.seasonal_event_bests ).to be_a_kind_of( SeasonalEventBestDAO )
       end
     end
     
@@ -256,6 +263,7 @@ describe BalancedIndividualRankingDAO, type: :model do
       it "returns a collection of BIRSwimmerScoreDAO" do
         subject.scan_for_gender_and_category
         expect( subject.gender_and_categories.size ).to be > 0
+        expect( subject.gender_and_categories ).to all(be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO ))
       end
     end
   end
