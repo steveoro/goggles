@@ -155,8 +155,8 @@ describe BalancedIndividualRankingDAO, type: :model do
       end
     end
     describe "#get_meeting_scores" do
-      it "returns a BIRMeetingScoreDAO" do
-        expect( subject.get_meeting_scores( subject.meetings.first.meeting ) ).to be_a_kind_of( BalancedIndividualRankingDAO::BIRMeetingScoreDAO )
+      it "returns a BIRMeetingScoreDAO or nil" do
+        expect( subject.get_meeting_scores( meeting ) ).to be_a_kind_of( BalancedIndividualRankingDAO::BIRMeetingScoreDAO ).or be_nil
       end
     end
   end

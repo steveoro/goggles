@@ -17,29 +17,6 @@
 =end
 class BalancedIndividualRankingDAO
   
-  # Manage the seasonal event ranking best performance
-  class SeasonalEventBestDAO
-    # These must be initialized on creation:
-    attr_reader :season
-
-    # These can be edited later on:
-    attr_accessor :event_bests
-    #-- -------------------------------------------------------------------------
-    #++
-  
-    # Creates a new instance from a ameeting_indivudla_result.
-    #
-    def initialize( season )
-      unless season && season.instance_of?( Season )
-        raise ArgumentError.new("Balanced individual ranking seasonal event best manager needs a season")
-      end
-      @season      = season
-      @event_bests = []
-    end
-    #-- -------------------------------------------------------------------------
-    #++
-  end
-
   class BIREventScoreDAO
     # These must be initialized on creation:
     #attr_reader :meeting
@@ -281,7 +258,7 @@ class BalancedIndividualRankingDAO
   # Calculate the total ranking for all genders and categories
   def scan_for_gender_and_category
     GenderType.individual_only.sort_by_courtesy.each do |gender_type|
-      season.category_types.are_not_relays.sort_by_age.each do |category_type|
+      @season.category_types.are_not_relays.sort_by_age.each do |category_type|
         set_ranking_for_gender_and_category( gender_type, category_type )
       end
     end
