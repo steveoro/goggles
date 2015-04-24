@@ -1,12 +1,10 @@
 = render( partial: 'tabs_and_radio_title' )
-- cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
-  
+-# cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
+.row-fluid
   - pool_type_25 = PoolType.find_by_code('25').i18n_verbose
   - pool_type_50 = PoolType.find_by_code('50').i18n_verbose
-  
   .row-fluid#full_history_by_date_grid
     .goggles-category-gap#pageTop
-  
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -28,9 +26,39 @@
               - if index_row[pool_type_50].respond_to?(:each)
                 - index_row[pool_type_50].each do |event_type|
                   %a(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
-  
+    - event_key = nil
+    %script
+      var dataSeries = {};
+
     - @full_history_by_event.each do |full_history_key, full_history_element|
       - if full_history_element[1].respond_to?(:size) && full_history_element[1].size > 0
+        -# Draw a graph placeholder for every different/new style-stroke pair:
+        - if event_key.nil? || ( !event_key.nil? && (full_history_key =~ Regexp.new(event_key)).nil? )
+          -# Extract a less detailed event key, removing length from the current detailed key:
+          - event_key = full_history_key.gsub(/-25|-50/,'')
+          - event_name = full_history_element[3].split(" - ")[0]
+          -# Get the data for the graph:
+          - event_data = full_history_element[4].map{ |mir| [mir.get_scheduled_date.to_datetime.to_i * 1000, mir.get_timing_instance.to_hundreds] }
+          .row-fluid.goggles-category-gap
+          .row-fluid.offset5
+            %b= event_name
+            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          .row-fluid.graph-container-full
+            .graph-placeholder-full{ 'id' => "graph#{event_key}" }
+          -# Store data for the graph in a brand new series list:
+          %script
+            dataSeries[ "#{ event_key }" ] = []
+            dataSeries[ "#{ event_key }" ].push( { label: "#{ full_history_element[3] }", data: JSON.parse("#{ escape_javascript( event_data.to_json ) }") } );
+            console.log( dataSeries[ "#{ event_key }" ] );
+        - else
+          -# Get the data for the graph:
+          - event_data = full_history_element[4].map{ |mir| [mir.get_scheduled_date.to_datetime.to_i * 1000, mir.get_timing_instance.to_hundreds] }
+          -# Append data for the graph in the existing variable:
+          %script
+            dataSeries[ "#{ event_key }" ].push( { label: "#{ full_history_element[3] }", data: JSON.parse("#{ escape_javascript( event_data.to_json ) }") } );
+            console.log( dataSeries[ "#{ event_key }" ] );
+          - event_key = nil
+
         .row-fluid
           .goggles-category-gap{ 'id' => "#{full_history_key}" }
           %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -55,11 +83,54 @@
                   %b= I18n.t('meeting.fin_score')
                 %td.goggles-rightalign
                   %b= I18n.t('meeting.rank')
-  
+
               - if full_history_element[1].respond_to?(:each)
                 - full_history_element[1].each do |meeting_individual_result|
                   - meeting = meeting_individual_result.meeting
                   - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result) if full_history_element[2].respond_to?(:where)
                   = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
-  
+
   .row-fluid.goggles-category-gap
+
+  :javascript
+    // Custom label formatter:
+    function labelFormatter(label, series) {
+      return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" +
+             label + "<br/>" + Math.round(series.percent) + "%</div>";
+    }
+
+    $( function() {
+        var eventKeys = Object.keys( dataSeries );
+        var options = {
+            xaxis: {
+              mode: "time",
+              // minTickSize: [1, "day"],
+              timeformat: "%Y-%m-%d"
+            },
+            series: {
+              lines: {
+                show: true,
+                label: {
+                  show: true,
+                  formatter: labelFormatter
+                }
+              },
+              points: {
+                show: true
+              }
+            },
+            grid: {
+              hoverable: true
+            },
+            legend: {
+              show: true,
+              position: "sw"
+            }
+        };
+        // Plot each graph:
+        for ( index = 0; index < eventKeys.length; index++ ) {
+          var currKey = eventKeys[index];
+          $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
+        }
+      }
+    );

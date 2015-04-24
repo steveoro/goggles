@@ -312,6 +312,11 @@ class SwimmersController < ApplicationController
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
         .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
+      # This is used only for the graphs:
+      results_by_date = @swimmer.meeting_individual_results
+        .sort_by_date( 'ASC' )
+        .for_event_by_pool_type( events_by_pool_type )
+        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
 
       # If has results collect passages and prepares hash for index table
       if results_by_time.count > 0
@@ -358,7 +363,8 @@ class SwimmersController < ApplicationController
         passages_list,
         results_by_time,
         passages,
-        events_by_pool_type.i18n_description
+        events_by_pool_type.i18n_description,
+        results_by_date
       ]
     end
   end
