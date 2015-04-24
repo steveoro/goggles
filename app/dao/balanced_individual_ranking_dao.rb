@@ -30,7 +30,7 @@ class BalancedIndividualRankingDAO
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
-    def initialize( meeting_individual_result, seasonal_event_best )
+    def initialize( meeting_individual_result, seasonal_event_best, time_converted = nil )
       unless meeting_individual_result && meeting_individual_result.instance_of?( MeetingIndividualResult )
         raise ArgumentError.new("Balanced individual ranking event score needs a meeting individual result")
       end
@@ -39,7 +39,11 @@ class BalancedIndividualRankingDAO
       @event_type     = meeting_individual_result.event_type
       @rank           = meeting_individual_result.rank
       @event_points   = meeting_individual_result.meeting_individual_points.to_i
-      @ranking_points = 100 * seasonal_event_best.time_swam.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds 
+      @ranking_points = 0 
+      
+      # Calculate ranking points
+      time_to_use = time_converted ? time_converted : meeting_individual_result.get_timing_instance
+      @ranking_points = 100 * seasonal_event_best.time_swam.to_hundreds / time_to_use.to_hundreds 
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -82,9 +86,17 @@ class BalancedIndividualRankingDAO
       rank_first     = 0
       rank_second    = 0
       rank_third     = 0
+      time_converted = nil
       meeting_individual_results.each do |meeting_individual_result|
+        # Get seasonal event best
         seasonal_event_best = seasonal_event_bests.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type )
-        @event_results << BIREventScoreDAO.new( meeting_individual_result, seasonal_event_best )
+        
+        # Check conversion to short curse needed
+        if meeting_individual_result.pool_type.code == '50'
+          time_converted = seasonal_event_bests.timing_converter.convert_time_to_short( meeting_individual_result.get_timing_instance, meeting_individual_result.gender_type, meeting_individual_result.category_type ) 
+        end
+        
+        @event_results << BIREventScoreDAO.new( meeting_individual_result, seasonal_event_best, time_converted )
         
         # Store each rank for rank bonus
         rank_first  = rank_first + 1 if meeting_individual_result.rank == 1
@@ -245,9 +257,6 @@ class BalancedIndividualRankingDAO
     @meetings_with_results = season.meetings.has_results
     @gender_and_categories = []
     @seasonal_event_bests  = SeasonalEventBestDAO.new( season )
-    
-    # Calculate seasonal event bests                     
-    @seasonal_event_bests.scan_for_gender_category_and_event                         
   end
   #-- -------------------------------------------------------------------------
   #++

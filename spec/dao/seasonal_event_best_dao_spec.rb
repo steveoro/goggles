@@ -60,7 +60,7 @@ describe SeasonalEventBestDAO, type: :model do
     subject { SeasonalEventBestDAO.new( season ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season, :event_bests, :calculate_event_best, :scan_for_gender_category_and_event, :set_best_for_gender_category_and_event, :get_best_for_gender_category_and_event
+      :season, :event_bests, :timing_converter, :calculate_event_best, :scan_for_gender_category_and_event, :set_best_for_gender_category_and_event, :get_best_for_gender_category_and_event
     ] )
 
     describe "#season" do
@@ -70,9 +70,13 @@ describe SeasonalEventBestDAO, type: :model do
     end
     describe "#event_bests" do
       it "is a collection of SingleEventBestDAO" do
-        subject.scan_for_gender_category_and_event
         expect( subject.event_bests ).to be_a_kind_of( Enumerable )
         expect( subject.event_bests ).to all(be_a_kind_of( SeasonalEventBestDAO::SingleEventBestDAO ))
+      end
+    end
+    describe "#timing_converter" do
+      it "is an instance of TimingCurseConverter" do
+        expect( subject.timing_converter ).to be_an_instance_of( TimingCurseConverter )
       end
     end
 

@@ -7,13 +7,13 @@ describe BalancedIndividualRankingDAO, type: :model do
   let(:swimmer) { season.swimmers[ ((rand * season.swimmers.count) % season.swimmers.count).to_i ] }
   let(:meeting) { season.meetings[ ((rand * season.meetings.count) % season.meetings.count).to_i ] }
   let(:mirs)    { meeting.meeting_individual_results.is_valid.where(["meeting_individual_results.swimmer_id = ?", swimmer.id]) }
-  let(:sebs)    { s=SeasonalEventBestDAO.new( season ), s.scan_for_gender_category_and_events, s }
+  let(:sebs)    { SeasonalEventBestDAO.new( season ) }
 
   context "BIREventScoreDAO subclass," do
     
-    let(:meeting_individual_result) { create(:meeting_individual_result) }
+    let(:meeting_individual_result) { season.meeting_individual_results.is_valid[ ((rand * season.meeting_individual_results.is_valid.count) % season.meeting_individual_results.is_valid.count).to_i ] }
     
-    subject { BalancedIndividualRankingDAO::BIREventScoreDAO.new( meeting_individual_result, Timing.new(15000) ) }
+    subject { BalancedIndividualRankingDAO::BIREventScoreDAO.new( meeting_individual_result, sebs.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type ) ) }
 
     it_behaves_like( "(the existance of a method)", [
       :event_date, :event_type, :rank, :event_points, :ranking_points, :get_total_points
