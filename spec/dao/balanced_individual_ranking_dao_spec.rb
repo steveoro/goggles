@@ -11,9 +11,9 @@ describe BalancedIndividualRankingDAO, type: :model do
 
   context "BIREventScoreDAO subclass," do
     
-    let(:meeting_individual_result) { create(:meeting_individual_result) }
+    let(:meeting_individual_result) { season.meeting_individual_results.is_valid[ ((rand * season.meeting_individual_results.is_valid.count) % season.meeting_individual_results.is_valid.count).to_i ] }
     
-    subject { BalancedIndividualRankingDAO::BIREventScoreDAO.new( meeting_individual_result, Timing.new(15000) ) }
+    subject { BalancedIndividualRankingDAO::BIREventScoreDAO.new( meeting_individual_result, sebs.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type ) ) }
 
     it_behaves_like( "(the existance of a method)", [
       :event_date, :event_type, :rank, :event_points, :ranking_points, :get_total_points
@@ -261,6 +261,7 @@ describe BalancedIndividualRankingDAO, type: :model do
     
     describe "#scan_for_gender_and_category" do
       it "returns a collection of BIRSwimmerScoreDAO" do
+        subject.gender_and_categories.clear
         subject.scan_for_gender_and_category
         expect( subject.gender_and_categories.size ).to be > 0
         expect( subject.gender_and_categories ).to all(be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO ))
