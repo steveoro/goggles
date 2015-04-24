@@ -78,7 +78,7 @@ class SeasonalEventBestDAO
       if best_mir.pool_type.length_in_meters == 50
         is_converted = true
         #time_swam = time_swam - @conversion_table["#{gender_type.code}#{even_type_code}"]
-        time_swam = Timing.new(time_swam.to_hundreds - @conversion_table["#{gender_type.code}#{even_type_code}"])
+        time_swam = Timing.new(time_swam.to_hundreds - @conversion_table["#{gender_type.code}#{event_type.code}"])
       # If event type has 50 meters event needs to convert and  to compare  
       else 
         if @conversion_table["#{gender_type.code}#{event_type.code}"]
@@ -102,7 +102,7 @@ class SeasonalEventBestDAO
   
   # Calculate the event best time for all genders and categories
   def scan_for_gender_category_and_event
-    @season.event_types.are_not_relays.uniq.sort_by_style do |event_type|
+    @season.event_types.are_not_relays.uniq.sort_by_style.each do |event_type|
       event_total = @season.event_types.where(['event_types.code = ?', event_type.code]).count
       event_swam  = @season.event_types.where(['event_types.code = ? and meetings.are_results_acquired', event_type.code]).count
       if event_swam > 0

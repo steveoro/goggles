@@ -24,7 +24,7 @@
               = gender_type.i18n_description
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
           - @category_types.each do |category_type|
-            - rank_array = @individual_ranking.calculate_ranking( gender_type, category_type, @individual_ranking.seasonal_event_bests )
+            - rank_array = @individual_ranking.calculate_ranking( gender_type, category_type )
             .row-fluid.goggles-category-gap{'id'=>"#{gender_type.code}-#{category_type.code}"}
               %table.table.table-striped.table-bordered.table-hover.table-condensed
                 %tbody

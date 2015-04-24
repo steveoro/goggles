@@ -7,7 +7,7 @@ describe BalancedIndividualRankingDAO, type: :model do
   let(:swimmer) { season.swimmers[ ((rand * season.swimmers.count) % season.swimmers.count).to_i ] }
   let(:meeting) { season.meetings[ ((rand * season.meetings.count) % season.meetings.count).to_i ] }
   let(:mirs)    { meeting.meeting_individual_results.is_valid.where(["meeting_individual_results.swimmer_id = ?", swimmer.id]) }
-  let(:sebs)    { SeasonalEventBestDAO.new( season ) }
+  let(:sebs)    { s=SeasonalEventBestDAO.new( season ), s.scan_for_gender_category_and_events, s }
 
   context "BIREventScoreDAO subclass," do
     
@@ -261,6 +261,7 @@ describe BalancedIndividualRankingDAO, type: :model do
     
     describe "#scan_for_gender_and_category" do
       it "returns a collection of BIRSwimmerScoreDAO" do
+        subject.gender_and_categories.clear
         subject.scan_for_gender_and_category
         expect( subject.gender_and_categories.size ).to be > 0
         expect( subject.gender_and_categories ).to all(be_a_kind_of( BalancedIndividualRankingDAO::BIRGenderCategoryRankingDAO ))

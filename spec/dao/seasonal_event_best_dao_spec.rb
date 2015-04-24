@@ -107,7 +107,7 @@ describe SeasonalEventBestDAO, type: :model do
     end
 
     describe "#scan_for_gender_category_and_event" do
-      xit "returns a collection of SingleEventBestDAO" do
+      it "returns a collection of SingleEventBestDAO" do
         subject.event_bests.clear
         subject.scan_for_gender_category_and_event
         expect( subject.event_bests.size ).to be > 0

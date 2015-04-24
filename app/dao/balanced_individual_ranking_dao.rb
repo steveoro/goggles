@@ -39,8 +39,7 @@ class BalancedIndividualRankingDAO
       @event_type     = meeting_individual_result.event_type
       @rank           = meeting_individual_result.rank
       @event_points   = meeting_individual_result.meeting_individual_points.to_i
-      #@ranking_points = 100 * seasonal_event_best.time_swam.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds 
-      @ranking_points = 0
+      @ranking_points = 100 * seasonal_event_best.time_swam.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds 
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -100,22 +99,22 @@ class BalancedIndividualRankingDAO
         @event_bonus_points = 4 if @event_bonus_points < 4 && meeting_individual_result.event_type.code == '100FA'        
       end
       
-      # Find out rank bonus
-      @medal_bonus_points = 10 if @medal_bonus_points < 10 && rank_first >= 2
-      @medal_bonus_points = 8 if @medal_bonus_points < 8 && rank_first == 1 && rank_second >= 1
-      @medal_bonus_points = 6 if @medal_bonus_points < 6 && rank_first == 1 && rank_third >= 1
-      @medal_bonus_points = 4 if @medal_bonus_points < 4 && rank_second >= 2
-      @medal_bonus_points = 2 if @medal_bonus_points < 2 && rank_second == 1 && rank_third >= 1
-      @medal_bonus_points = 1 if @medal_bonus_points < 1 && rank_third >= 2
-      
-      # Find out best event points
-      event_total_points = 0
-      @event_results.each do |event_result|
-        if event_result.get_total_points > event_total_points
-          event_total_points = event_result.get_total_points
-          @event_points   = event_result.event_points
-          @ranking_points = event_result.ranking_points
-        end
+      if @event_results.count > 0
+        # Find out rank bonus
+        # TODO store bonus information on DB
+        @medal_bonus_points = 10 if @medal_bonus_points < 10 && rank_first >= 2
+        @medal_bonus_points = 8 if @medal_bonus_points < 8 && rank_first == 1 && rank_second >= 1
+        @medal_bonus_points = 6 if @medal_bonus_points < 6 && rank_first == 1 && rank_third >= 1
+        @medal_bonus_points = 4 if @medal_bonus_points < 4 && rank_second >= 2
+        @medal_bonus_points = 2 if @medal_bonus_points < 2 && rank_second == 1 && rank_third >= 1
+        @medal_bonus_points = 1 if @medal_bonus_points < 1 && rank_third >= 2
+        
+        # Sort events by total points
+        @event_results.sort!{|p,n| n.get_total_points <=> p.get_total_points}
+  
+        # Find out best event points
+        @event_points   = @event_results.first.event_points
+        @ranking_points = @event_results.first.ranking_points
       end
     end
     #-- -------------------------------------------------------------------------
