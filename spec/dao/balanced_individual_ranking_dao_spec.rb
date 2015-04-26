@@ -19,6 +19,19 @@ describe BalancedIndividualRankingDAO, type: :model do
       :event_date, :event_type, :rank, :event_points, :ranking_points, :get_total_points
     ] )
 
+    describe "#initialize" do
+      it "uses the converted_time if given" do
+        meeting_50 = Meeting.find(14105)
+        mirs = meeting_50.meeting_individual_results.is_valid
+        mirs.each do |mir|
+          seb = sebs.get_best_for_gender_category_and_event( mir.gender_type, mir.category_type, mir.event_type )
+          converted_time = sebs.timing_converter.convert_time_to_short( mir.get_timing_instance, mir.gender_type, mir.event_type )
+          bir_50 = BalancedIndividualRankingDAO::BIREventScoreDAO.new( mir, seb )
+          bir_converted = BalancedIndividualRankingDAO::BIREventScoreDAO.new( mir, seb, converted_time )
+          expect( bir_converted.ranking_points ).to be > bir_50.ranking_points
+        end
+      end
+    end
     describe "#event_date" do
       it "is the event date for the meeting individual result used in construction" do
         expect( subject.event_date ).to eq( meeting_individual_result.meeting_session.scheduled_date )
