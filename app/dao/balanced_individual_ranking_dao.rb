@@ -42,7 +42,7 @@ class BalancedIndividualRankingDAO
       @ranking_points = 0 
       
       # Calculate ranking points
-      time_to_use = time_converted ? time_converted : meeting_individual_result.get_timing_instance
+      time_to_use = time_converted ? time_converted : meeting_individual_result.get_timing_instance 
       @ranking_points = 100 * seasonal_event_best.time_swam.to_hundreds / time_to_use.to_hundreds 
     end
     #-- -------------------------------------------------------------------------
@@ -86,14 +86,14 @@ class BalancedIndividualRankingDAO
       rank_first     = 0
       rank_second    = 0
       rank_third     = 0
-      time_converted = nil
       meeting_individual_results.each do |meeting_individual_result|
         # Get seasonal event best
         seasonal_event_best = seasonal_event_bests.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type )
         
         # Check conversion to short curse needed
+        time_converted = nil
         if meeting_individual_result.pool_type.code == '50'
-          time_converted = seasonal_event_bests.timing_converter.convert_time_to_short( meeting_individual_result.get_timing_instance, meeting_individual_result.gender_type, meeting_individual_result.category_type ) 
+          time_converted = seasonal_event_bests.timing_converter.convert_time_to_short( meeting_individual_result.get_timing_instance, meeting_individual_result.gender_type, meeting_individual_result.event_type ) 
         end
         
         @event_results << BIREventScoreDAO.new( meeting_individual_result, seasonal_event_best, time_converted )

@@ -91,6 +91,14 @@ describe SeasonalEventBestDAO, type: :model do
         event_best_50 = subject.calculate_event_best( GenderType.find_by_code("M"), season.category_types.find_by_code("M25"), EventType.find_by_code("50SL"), total_events, events_swam ) 
         expect( subject.calculate_event_best( GenderType.find_by_code("M"), season.category_types.find_by_code("M25"), EventType.find_by_code("100SL"), total_events, events_swam ).time_swam.to_hundreds ).to be > event_best_50.time_swam.to_hundreds
       end
+      it "returns a value smaller tha other of same gender, category and event" do
+        mirs = season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type)
+        best_calculated = subject.calculate_event_best( gender_type, category_type, event_type, total_events, events_swam )
+        mirs.each do |mir|
+          time_swam = mir.pool_type.code == '50' ? subject.timing_converter.convert_time_to_short( mir.get_timing_instance, gender_type, event_type ) : mir.get_timing_instance
+          expect( time_swam.to_hundreds ).to be >= best_calculated.to_hundreds 
+        end 
+      end
     end
 
     describe "#set_best_for_gender_category_and_event" do

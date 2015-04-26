@@ -83,6 +83,8 @@ class ChampionshipsController < ApplicationController
     @category_types = @season.category_types.are_not_relays.sort_by_age     
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
     
+    timing_converter = TimingCurseConverter.new( @season )
+    
     # Calculate ranking for each event/category/gender types
     @season_ranking = []
     GenderType.individual_only.sort_by_courtesy.each do |gender_type|
@@ -106,11 +108,18 @@ class ChampionshipsController < ApplicationController
           #top_timing = Timing.new(best_result.minutes, best_result.seconds, best_result.hundreds) if best_result
           @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.each do |mir|
             # Skip swimmers already ranked
-            if not event_ranking[:mirs].any?{ |collected_mir| collected_mir.swimmer_id == mir.swimmer_id }
+            if event_ranking[:mirs].count < 15 and not event_ranking[:mirs].any?{ |collected_mir| collected_mir.swimmer_id == mir.swimmer_id }
               # TODO convert 50 meters to 25 meters timing
+              if mir.pool_type.code == '50' and timing_converter.is_conversion_possible?( mir.gender_type, mir.event_type ) 
+                time_converted = timing_converter.convert_time_to_short( mir.get_timing_instance, mir.gender_type, mir.event_type )
+                mir.minutes  = time_converted.minutes
+                mir.seconds  = time_converted.seconds
+                mir.hundreds = time_converted.hundreds
+              end
               event_ranking[:mirs] << mir
             end
           end
+          event_ranking[:mirs].sort!{|p,n| p.get_timing_instance.to_hundreds <=> n.get_timing_instance.to_hundreds }
           category_ranking[:events] << event_ranking
         end
         gender_ranking[:categories] << category_ranking

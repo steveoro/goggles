@@ -57,7 +57,7 @@
                         - else
                           %td
                         
-                      %td.goggles-rightalign
+                      %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{@individual_ranking.meetings_with_results.count}" }
                         %b= ranked_swimmer.total_best_5_on_6
                   
                   %tr{'class'=>'info'}
