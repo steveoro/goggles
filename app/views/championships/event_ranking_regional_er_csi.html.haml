@@ -40,12 +40,13 @@
                         - event[:mirs].each_with_index do |mir, counter|
                           - score = 100 * best_timing / mir.get_timing_instance.to_hundreds
                           - is_highlighted = (@team && @team.id == mir.team_id)
+                          - conversion_tag = mir.pool_type.code == '50' ? '*' : ''
                           %tr{ 'class' => is_highlighted ? 'warning' : '' }
                             %td.goggles-rightalign.span1= counter + 1
                             %td.span4= mir.swimmer.decorate.get_linked_swimmer_name
                             %td.goggles-centeralign.span1= mir.swimmer.year_of_birth
                             %td.span4= mir.team.decorate.get_linked_name
-                            %td.goggles-rightalign.span1= mir.get_timing
+                            %td.goggles-rightalign.span1= mir.get_timing + conversion_tag
                             %td.goggles-rightalign.span1= score.round(0) 
 
       .row-fluid.goggles-category-gap

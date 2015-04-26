@@ -28,7 +28,8 @@ describe BalancedIndividualRankingDAO, type: :model do
           converted_time = sebs.timing_converter.convert_time_to_short( mir.get_timing_instance, mir.gender_type, mir.event_type )
           bir_50 = BalancedIndividualRankingDAO::BIREventScoreDAO.new( mir, seb )
           bir_converted = BalancedIndividualRankingDAO::BIREventScoreDAO.new( mir, seb, converted_time )
-          expect( bir_converted.ranking_points ).to be > bir_50.ranking_points
+          expect( converted_time.to_hundreds ).to be < mir.get_timing_instance.to_hundreds
+          expect( bir_converted.ranking_points ).to be >= bir_50.ranking_points
         end
       end
     end
