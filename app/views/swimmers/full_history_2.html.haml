@@ -49,14 +49,14 @@
           %script
             dataSeries[ "#{ event_key }" ] = []
             dataSeries[ "#{ event_key }" ].push( { label: "#{ full_history_element[3] }", data: JSON.parse("#{ escape_javascript( event_data.to_json ) }") } );
-            console.log( dataSeries[ "#{ event_key }" ] );
+            // console.log( dataSeries[ "#{ event_key }" ] );
         - else
           -# Get the data for the graph:
           - event_data = full_history_element[4].map{ |mir| [mir.get_scheduled_date.to_datetime.to_i * 1000, mir.get_timing_instance.to_hundreds] }
           -# Append data for the graph in the existing variable:
           %script
             dataSeries[ "#{ event_key }" ].push( { label: "#{ full_history_element[3] }", data: JSON.parse("#{ escape_javascript( event_data.to_json ) }") } );
-            console.log( dataSeries[ "#{ event_key }" ] );
+            // console.log( dataSeries[ "#{ event_key }" ] );
           - event_key = nil
 
         .row-fluid
@@ -95,19 +95,20 @@
   :javascript
     // Custom label formatter:
     function tickFormatter(val, axis) {
-      var hours = (remainder / 360000).toFixed();
-      remainder  = remainder % 360000;
-      var minutes = (remainder / 6000).toFixed();
-      remainder    = remainder % 6000;
-      var seconds = (remainder / 100).toFixed();
-      remainder    = remainder % 100;
-      var hundreds = remainder;
-      var label = ( hours.toFixed() > 0 ? hours +"h " : "" );
-      if ( minutes.toFixed() > 0 ) {
-        label += minutes.toFixed() + "'" + seconds.toFixed() + "\"" + hundreds.toFixed();
+      var hours     = Math.floor( val / 360000 );
+      var remainder = Math.floor( val % 360000 );
+      var minutes   = Math.floor( remainder / 6000 );
+      remainder     = Math.floor( remainder % 6000 );
+      var seconds   = Math.floor( remainder / 100 );
+      var hundreds  = Math.floor( remainder % 100 );
+      var label     = ( hours > 0 ? hours + "h " : "" );
+      seconds = seconds.toString().length < 2 ? "0" + seconds : seconds;
+      hundreds = hundreds.toString().length < 2 ? "0" + hundreds : hundreds;
+      if ( minutes > 0 ) {
+        label += minutes + "'" + seconds + "\"" + hundreds;
       }
       else {
-        label += seconds.toFixed() + "\"" + hundreds.toFixed();
+        label += seconds + "\"" + hundreds;
       }
       return label;
     }
@@ -119,12 +120,16 @@
               mode: "time",
               timeformat: "#{ Date::DATE_FORMATS[I18n.locale] }"
             },
+            yaxis: {
+              transform: function (v) { return -v; },
+              inverseTransform: function (v) { return -v; },
+              tickFormatter: tickFormatter
+            },
             series: {
               lines: {
                 show: true,
                 label: {
                   show: true,
-                  tickFormatter: tickFormatter
                 }
               },
               points: {
