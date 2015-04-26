@@ -390,7 +390,7 @@ describe SwimmersController, :type => :controller do
         it "assigns an hash with array of four elements as element" do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
-            expect( result[events_by_pool_type.get_key].size ).to be 4
+            expect( result[events_by_pool_type.get_key].size ).to be 5
           end
         end
         it "hasn't elements with results for invalid event for pool type" do

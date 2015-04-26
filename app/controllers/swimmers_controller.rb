@@ -314,6 +314,7 @@ class SwimmersController < ApplicationController
         .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
       # This is used only for the graphs:
       results_by_date = @swimmer.meeting_individual_results
+        .is_valid
         .sort_by_date( 'ASC' )
         .for_event_by_pool_type( events_by_pool_type )
         .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])

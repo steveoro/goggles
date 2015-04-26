@@ -94,9 +94,22 @@
 
   :javascript
     // Custom label formatter:
-    function labelFormatter(label, series) {
-      return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" +
-             label + "<br/>" + Math.round(series.percent) + "%</div>";
+    function tickFormatter(val, axis) {
+      var hours = (remainder / 360000).toFixed();
+      remainder  = remainder % 360000;
+      var minutes = (remainder / 6000).toFixed();
+      remainder    = remainder % 6000;
+      var seconds = (remainder / 100).toFixed();
+      remainder    = remainder % 100;
+      var hundreds = remainder;
+      var label = ( hours.toFixed() > 0 ? hours +"h " : "" );
+      if ( minutes.toFixed() > 0 ) {
+        label += minutes.toFixed() + "'" + seconds.toFixed() + "\"" + hundreds.toFixed();
+      }
+      else {
+        label += seconds.toFixed() + "\"" + hundreds.toFixed();
+      }
+      return label;
     }
 
     $( function() {
@@ -104,15 +117,14 @@
         var options = {
             xaxis: {
               mode: "time",
-              // minTickSize: [1, "day"],
-              timeformat: "%Y-%m-%d"
+              timeformat: "#{ Date::DATE_FORMATS[I18n.locale] }"
             },
             series: {
               lines: {
                 show: true,
                 label: {
                   show: true,
-                  formatter: labelFormatter
+                  tickFormatter: tickFormatter
                 }
               },
               points: {
