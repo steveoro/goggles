@@ -33,9 +33,9 @@ class ContextTypeDef
   def initialize( context_name, condition_array, parent_context_name = nil, line_timeout = 0 )
     unless context_name.instance_of?( Symbol ) ||
            ( context_name.instance_of?( String ) && context_name.size > 0 )
-      raise IllegalArgumentException.new('context_name cannot be nil or empty!')
+      raise ArgumentError.new('context_name cannot be nil or empty!')
     end
-    raise IllegalArgumentException.new('condition_array must be an Array!') unless condition_array.instance_of?( Array )
+    raise ArgumentError.new('condition_array must be an Array!') unless condition_array.instance_of?( Array )
     @context_name = context_name
     @condition_array = condition_array
     @parent_context_name = parent_context_name

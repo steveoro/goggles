@@ -82,7 +82,7 @@ class ContextDetector
   # detected context (specified upon each new line feed).
   #
   def initialize( context_type, logger = nil )
-    raise IllegalArgumentException.new('context_type must be an ContextTypeDef!') unless context_type.instance_of?( ContextTypeDef )
+    raise ArgumentError.new('context_type must be an ContextTypeDef!') unless context_type.instance_of?( ContextTypeDef )
     @context_type = context_type
     @logger = logger
     @current_context = nil

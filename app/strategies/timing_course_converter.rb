@@ -1,13 +1,13 @@
 #
-# == TimingCurseConverter
+# == TimingCourseConverter
 #
-# Strategy Pattern implementation for long curse results
-# conversion to short curse and viceversa
+# Strategy Pattern implementation for long course results
+# conversion to short course and viceversa
 #
 # @author   Leega
 # @version  4.00.777
 #
-class TimingCurseConverter
+class TimingCourseConverter
 
   # Initialization within a season
   #
@@ -37,7 +37,7 @@ class TimingCurseConverter
     value ? value : 0
   end
 
-  # Convert a long curse time swam in a short curse time swam
+  # Convert a long course time swam in a short course time swam
   # subtracting conversion value from time swam
   #
   # == Params:
@@ -50,7 +50,7 @@ class TimingCurseConverter
     Timing.new(time_swam.to_hundreds - convert_value)
   end
 
-  # Convert a short curse time swam in a long curse time swam
+  # Convert a short course time swam in a long course time swam
   # adding conversion value to time swam
   #
   # == Params:

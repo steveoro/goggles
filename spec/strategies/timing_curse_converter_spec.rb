@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe TimingCurseConverter, type: :strategy do
+describe TimingCourseConverter, type: :strategy do
 
   let(:season)      { Season.find(141) }
   let(:gender_type) { GenderType.individual_only[ ((rand * GenderType.individual_only.count) % GenderType.individual_only.count).to_i ] }
@@ -9,7 +9,7 @@ describe TimingCurseConverter, type: :strategy do
 
   context "with requested parameters for given season" do
 
-    subject { TimingCurseConverter.new( season ) }
+    subject { TimingCourseConverter.new( season ) }
 
     it_behaves_like( "(the existance of a method)", [
       :get_conversion_table, :get_conversion_value, :convert_time_to_short, :convert_time_to_long, :is_conversion_possible?

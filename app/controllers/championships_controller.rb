@@ -83,7 +83,7 @@ class ChampionshipsController < ApplicationController
     @category_types = @season.category_types.are_not_relays.sort_by_age     
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0
     
-    timing_converter = TimingCurseConverter.new( @season )
+    timing_converter = TimingCourseConverter.new( @season )
     
     # Calculate ranking for each event/category/gender types
     @season_ranking = []

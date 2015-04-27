@@ -3,7 +3,7 @@
 =begin
 
 = Timing
-  - Goggles framework vers.:  4.00.505
+  - Goggles framework vers.:  4.00.783
   - author: Steve A.
 
  Utility class to store timing data and to allow simple mathematical operations
@@ -110,11 +110,13 @@ class Timing
 
   # Comparable operator. Returns -1, 0, or 1 depending on the order between the
   # two Timing objects.
+  # Returns always 1 for nil values.
+  #
   # (See +Comparable+ class in Ruby library)
   #
   def <=>( timing )
-    raise IllegalArgumentException.new("the parameter is not a Timing instance!") unless timing.instance_of?( Timing )
-    to_hundreds <=> timing.to_hundreds
+    raise ArgumentError.new("the parameter (" + timing.class.name + ") is not a Timing instance or nil!") if ( !timing.nil? && !timing.instance_of?( Timing ) )
+    timing.nil? ? 1 : to_hundreds <=> timing.to_hundreds
   end
   #-- -------------------------------------------------------------------------
   #++

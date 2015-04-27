@@ -90,7 +90,7 @@ class BalancedIndividualRankingDAO
         # Get seasonal event best
         seasonal_event_best = seasonal_event_bests.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type )
         
-        # Check conversion to short curse needed
+        # Check conversion to short course needed
         time_converted = nil
         if meeting_individual_result.pool_type.code == '50'
           time_converted = seasonal_event_bests.timing_converter.convert_time_to_short( meeting_individual_result.get_timing_instance, meeting_individual_result.gender_type, meeting_individual_result.event_type ) 
