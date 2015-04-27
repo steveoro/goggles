@@ -1,6 +1,5 @@
 = render( partial: 'tabs_and_radio_title' )
--# cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
-.row-fluid
+- cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
   - pool_type_25 = PoolType.find_by_code('25').i18n_verbose
   - pool_type_50 = PoolType.find_by_code('50').i18n_verbose
   .row-fluid#full_history_by_date_grid
@@ -144,10 +143,32 @@
               position: "sw"
             }
         };
+
+        $( "<div id='tooltip'></div>" ).css({
+          position: "absolute",
+          display: "none",
+          border: "1px solid #fdd",
+          padding: "2px",
+          "background-color": "#fee",
+          opacity: 0.80
+        }).appendTo( "body" );
+
         // Plot each graph:
         for ( index = 0; index < eventKeys.length; index++ ) {
           var currKey = eventKeys[index];
           $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
+
+          $("#graph" + currKey).bind( "plothover", function (event, pos, item) {
+            if (item) {
+              // console.log( item );
+              var x = new Date( item.datapoint[0] ).toLocaleDateString();
+              var y = tickFormatter( item.datapoint[1].toFixed(2) );
+              $("#tooltip").html(
+                y + ", " + x
+              ).css( { top: item.pageY+5, left: item.pageX+5 } )
+               .fadeIn(200);
+            }
+          } );
         }
       }
     );

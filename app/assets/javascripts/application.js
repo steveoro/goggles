@@ -11,5 +11,5 @@
 //= require jquery.ui.datepicker
 //= require cocoon
 //= require jquery.flot.min
-//= require jquery.colorhelper.min
+//= require jquery.colorhelpers.min
 //= require_tree .
