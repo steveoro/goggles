@@ -108,8 +108,8 @@ class ChampionshipsController < ApplicationController
           #top_timing = Timing.new(best_result.minutes, best_result.seconds, best_result.hundreds) if best_result
           @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.each do |mir|
             # Skip swimmers already ranked
-            if event_ranking[:mirs].count < 15 and not event_ranking[:mirs].any?{ |collected_mir| collected_mir.swimmer_id == mir.swimmer_id }
-              # TODO convert 50 meters to 25 meters timing
+            if not event_ranking[:mirs].any?{ |collected_mir| collected_mir.swimmer_id == mir.swimmer_id and collected_mir.pool_type.id == mir.pool_type.id }
+              # Convert 50 meters to 25 meters timing
               if mir.pool_type.code == '50' and timing_converter.is_conversion_possible?( mir.gender_type, mir.event_type ) 
                 time_converted = timing_converter.convert_time_to_short( mir.get_timing_instance, mir.gender_type, mir.event_type )
                 mir.minutes  = time_converted.minutes
@@ -120,6 +120,16 @@ class ChampionshipsController < ApplicationController
             end
           end
           event_ranking[:mirs].sort!{|p,n| p.get_timing_instance.to_hundreds <=> n.get_timing_instance.to_hundreds }
+          
+          # Remove duplicated swimmer entry (due to conversions from 50 to 25)
+          event_ranking[:mirs].each do |mir|
+            duplicate = event_ranking[:mirs].index{ |collected_mir| collected_mir.swimmer_id == mir.swimmer_id and collected_mir.id != mir.id }
+            event_ranking[:mirs].delete_at( duplicate ) if duplicate
+          end
+          
+          # Trim to 15 results
+          event_ranking[:mirs] = event_ranking[:mirs].take(15)
+          
           category_ranking[:events] << event_ranking
         end
         gender_ranking[:categories] << category_ranking
