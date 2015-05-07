@@ -160,10 +160,10 @@ namespace :app do
         within File.join(shared_path, "public") do
           execute :mkdir, "-p output"
           execute :chmod, "-R 0775 output"
-          execute :chown, "-R #{fetch(:runner)}:www output"
+          execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} output"
           execute :mkdir, "-p uploads"
           execute :chmod, "-R 0775 uploads"
-          execute :chown, "-R #{fetch(:runner)}:www uploads"
+          execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} uploads"
         end
         # [Steve, 20140928] Allow custom log file to be written by nobody:nobody.
         # (Inside the log dir, make sure to "chmod 0665" anything else).

@@ -27,7 +27,7 @@ namespace :web do
       'cap <servername> deploy:web:[enable|disable]' commands.
     DESC
     task :vhost_add do
-      puts "      > Setup remote /etc/apache2/vhosts.d/ip-based_vhosts.conf..."
+      puts "      > Setup remote #{fetch(:web_vhost_conf)}..."
       on roles(:web) do |host|
         default_template = <<-EOF
 
@@ -89,15 +89,20 @@ EOF
           location = fetch(:template_dir, "config/deploy") + '/vhost.erb'
           template = File.file?(location) ? File.read(location) : default_template
           config = ERB.new(template)
-          File.open('/tmp/yast2_vhosts.conf', 'w') do |file|
+          File.open('/tmp/temp_vhosts.conf', 'w') do |file|
             file.puts config.result(binding)
           end
         end
 
-        upload! '/tmp/yast2_vhosts.conf', '/etc/apache2/vhosts.d/ip-based_vhosts.conf'
+        upload! '/tmp/temp_vhosts.conf', fetch(:web_vhost_conf)
 
         run_locally do                              # Remove the local temp file:
-          execute :rm, "/tmp/yast2_vhosts.conf"
+          execute :rm, "/tmp/temp_vhosts.conf"
+        end
+
+        # [Steve, 20150507] This is required only for Ubuntu's Apache2 setup:
+        if test("[ /usr/sbin/a2ensite ]")
+          execute :a2ensite, fetch(:application)
         end
       end
     end
@@ -109,7 +114,7 @@ EOF
     desc "Erases the remote Apache2 vhost configuration file."
     task :vhost_erase do
       on roles(:web) do
-        execute :rm, "/etc/apache2/vhosts.d/ip-based_vhosts.conf"
+        execute :rm, fetch(:web_vhost_conf)
       end
     end
     # -------------------------------------------------------------------------
