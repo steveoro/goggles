@@ -3,9 +3,9 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.577
+# - vers. : 4.00.785
 #
-# This requires Capistrano v. >= 3.1
+# This requires Capistrano v. >= 3.2
 require "erb"
 
 

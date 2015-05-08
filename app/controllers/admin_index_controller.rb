@@ -84,7 +84,7 @@ class AdminIndexController < ApplicationController
         db_user       = rails_config.database_configuration[Rails.env]['username']
         db_pwd        = rails_config.database_configuration[Rails.env]['password']
                                                     # Build up the mysql execution command:
-        mysql_cmd     = "mysql --user=#{db_user} --password=#{db_pwd}"
+        mysql_cmd     = "mysql --user=#{db_user} --password='#{db_pwd}'"
         mysql_cmd << " --database=#{db_name}" unless ( params[:is_a_full_dump] == '1' )
         mysql_cmd << " --execute=\"\\. #{@filename_to_be_run}\""
                                                     # Log what the admin is been doing:
@@ -156,7 +156,7 @@ class AdminIndexController < ApplicationController
         db_user       = rails_config.database_configuration[Rails.env]['username']
         db_pwd        = rails_config.database_configuration[Rails.env]['password']
                                                     # Build up the mysql execution command:
-        mysql_cmd     = "mysql --user=#{db_user} --password=#{db_pwd} --database=#{db_name} --execute=\"\\. #{@filename_to_be_run}\""
+        mysql_cmd     = "mysql --user=#{db_user} --password='#{db_pwd}' --database=#{db_name} --execute=\"\\. #{@filename_to_be_run}\""
                                                     # Log what the admin is been doing:
         logger.info( "\r\n---- upload_db_dump( #{@filename_to_be_run} ) ----" )
         logger.info( "#{current_admin.name} is executing \"#{mysql_cmd}\"...\r\n" )
@@ -499,7 +499,7 @@ class AdminIndexController < ApplicationController
     output        = ''
     is_ok         = false
                                                     # Prepare and execute the mysqldump command:
-    command_line = "mysqldump -u #{db_user} -p#{db_pwd} --no-autocommit --single-transaction --extended-insert --triggers --routines --comments "
+    command_line = "mysqldump -u #{db_user} -p'#{db_pwd}' --no-autocommit --single-transaction --extended-insert --triggers --routines --comments "
     if table_names.instance_of?(Array) && (table_names.size > 0)
       command_line << "--tables #{db_name} #{table_names.join(' ')}"
       file_name << "_#{table_names[0] }"

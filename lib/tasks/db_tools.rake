@@ -299,7 +299,7 @@ end
 def dump_seed_group( output_folder, seed_block_name, table_list, db_name, db_user, db_pwd, db_host )
   file_name  = File.join( output_folder, "seed_#{seed_block_name}.sql" )
   puts "\r\n\r\n- Creating #{file_name} ...\r\n"
-  sh "mysqldump --host=#{db_host} -u #{db_user} -p#{db_pwd} -c -e -t -i --no-autocommit --tables --single-transaction #{db_name} #{table_list} > #{file_name}"
+  sh "mysqldump --host=#{db_host} -u #{db_user} -p'#{db_pwd}' -c -e -t -i --no-autocommit --tables --single-transaction #{db_name} #{table_list} > #{file_name}"
 end
 #-- ---------------------------------------------------------------------------
 #++
