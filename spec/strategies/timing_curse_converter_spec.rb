@@ -44,7 +44,7 @@ describe TimingCourseConverter, type: :strategy do
         expect( subject.get_conversion_value( gender_type, event_type ) ).to be >= 0
       end
       it "returns 0 if non conversion table set" do
-        expect( subject.get_conversion_value( gender_type, event_type ) ).to eq( 0 )
+        expect( subject.get_conversion_value( gender_type, EventType.find_by_code("100MI") ) ).to eq( 0 )
       end
       it "returns a value fo male 400SL (seson 141)" do
         subject.get_conversion_table
