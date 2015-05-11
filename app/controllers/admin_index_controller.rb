@@ -84,7 +84,7 @@ class AdminIndexController < ApplicationController
         db_user       = rails_config.database_configuration[Rails.env]['username']
         db_pwd        = rails_config.database_configuration[Rails.env]['password']
                                                     # Build up the mysql execution command:
-        mysql_cmd     = "mysql --user=#{db_user} --password='#{db_pwd}'"
+        mysql_cmd     = "mysql --user=#{db_user} --password=\"#{db_pwd}\""
         mysql_cmd << " --database=#{db_name}" unless ( params[:is_a_full_dump] == '1' )
         mysql_cmd << " --execute=\"\\. #{@filename_to_be_run}\""
                                                     # Log what the admin is been doing:
@@ -94,7 +94,7 @@ class AdminIndexController < ApplicationController
         @console_output = "Executing \"#{mysql_cmd}\"...\r\n"
         @console_output << `#{zip_pipe} #{filename}` if zip_pipe
         @console_output << `#{mysql_cmd}`
-        @console_output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
+        @console_output.gsub!(/\s--password=".*"\s/, ' --password=[***] ')
 
         @console_output << "Deleting '#{@filename_to_be_run}'...\r\n"
         logger.info( "Deleting '#{@filename_to_be_run}'...\r\n" )
@@ -156,7 +156,7 @@ class AdminIndexController < ApplicationController
         db_user       = rails_config.database_configuration[Rails.env]['username']
         db_pwd        = rails_config.database_configuration[Rails.env]['password']
                                                     # Build up the mysql execution command:
-        mysql_cmd     = "mysql --user=#{db_user} --password='#{db_pwd}' --database=#{db_name} --execute=\"\\. #{@filename_to_be_run}\""
+        mysql_cmd     = "mysql --user=#{db_user} --password=\"#{db_pwd}\" --database=#{db_name} --execute=\"\\. #{@filename_to_be_run}\""
                                                     # Log what the admin is been doing:
         logger.info( "\r\n---- upload_db_dump( #{@filename_to_be_run} ) ----" )
         logger.info( "#{current_admin.name} is executing \"#{mysql_cmd}\"...\r\n" )
@@ -164,7 +164,7 @@ class AdminIndexController < ApplicationController
         @console_output = "Executing \"#{mysql_cmd}\"...\r\n"
         @console_output << `#{zip_pipe} #{filename}` if zip_pipe
         @console_output << `#{mysql_cmd}`
-        @console_output.gsub!(/ --password=\S+\s/, ' --password=(PWD) ')
+        @console_output.gsub!(/\s--password=".*"\s/, ' --password=[***] ')
 
         if ( params[:store_to_seed_dir] == '1' )
           dest_filename = File.join( "db/seed", File.basename(@filename_to_be_run) )
@@ -436,8 +436,8 @@ class AdminIndexController < ApplicationController
       is_ok = wait_thr.value.success?
     end
                                                     # Remove sensible data from output buffer:
-    output.gsub!(/ --password=\S+\s/, ' --password=[***] ')
-    command_line.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+    output.gsub!(/\s--password=".*"\s/, ' --password=[***] ')
+    command_line.gsub!(/\s--password=".*"\s/, ' --password=[***] ')
                                                     # Log the results:
     logger.info( "Resulting output:\r\n----8<----8<----8<----\r\n#{output}\r\n----8<----8<----8<----\r\n" )
     @console_output << "\r\nExecuting \"#{command_line}\" in '#{Dir.pwd}'...\r\n"
@@ -499,7 +499,7 @@ class AdminIndexController < ApplicationController
     output        = ''
     is_ok         = false
                                                     # Prepare and execute the mysqldump command:
-    command_line = "mysqldump -u #{db_user} -p'#{db_pwd}' --no-autocommit --single-transaction --extended-insert --triggers --routines --comments "
+    command_line = "mysqldump -u #{db_user} --password=\"#{db_pwd}\" --no-autocommit --single-transaction --extended-insert --triggers --routines --comments "
     if table_names.instance_of?(Array) && (table_names.size > 0)
       command_line << "--tables #{db_name} #{table_names.join(' ')}"
       file_name << "_#{table_names[0] }"
@@ -519,8 +519,8 @@ class AdminIndexController < ApplicationController
       is_ok = wait_thr.value.success?
     end
                                                     # Remove sensible data from output buffer:
-    output.gsub!(/ --password=\S+\s/, ' --password=[***] ')
-    command_line.gsub!(/ --password=\S+\s/, ' --password=[***] ')
+    output.gsub!(/\s--password=".*"\s/, ' --password=[***] ')
+    command_line.gsub!(/\s--password=".*"\s/, ' --password=[***] ')
                                                     # Log the results:
     logger.info( "Resulting output:\r\n----8<----8<----8<----\r\n#{output}\r\n----8<----8<----8<----\r\n" )
     @console_output = "Executing \"#{command_line}\" in '#{Dir.pwd}'...\r\n"

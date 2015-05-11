@@ -115,9 +115,9 @@ Options: [Rails.env=#{Rails.env}]
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
     puts "\r\nDropping DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password='#{db_pwd}' --execute=\"drop database if exists #{db_name}\""
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"drop database if exists #{db_name}\""
     puts "\r\nRecreating DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password='#{db_pwd}' --execute=\"create database #{db_name}\""
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"create database #{db_name}\""
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -196,7 +196,7 @@ Options: [Rails.env=#{Rails.env}]
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
-    sh "mysqldump --host=#{ db_host } -u #{ db_user } -p'#{ db_pwd }' -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{ db_name } #{ zip_pipe } > #{ file_name }"
+    sh "mysqldump --host=#{ db_host } -u #{ db_user } --password=\"#{db_pwd}\" -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{ db_name } #{ zip_pipe } > #{ file_name }"
     puts "\r\nRecovery dump created.\r\n\r\n"
   end
   #-- -------------------------------------------------------------------------
@@ -251,12 +251,12 @@ Options: [Rails.env=#{Rails.env}]
     sh "bunzip2 -ck #{ file_name } > #{ sql_file_name }"
 
     puts "\r\nDropping destination DB '#{ output_db }'..."
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password='#{db_pwd}' --execute=\"drop database if exists #{ output_db }\""
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --execute=\"drop database if exists #{ output_db }\""
     puts "\r\nRecreating destination DB..."
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password='#{db_pwd}' --execute=\"create database #{ output_db }\""
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --execute=\"create database #{ output_db }\""
 
     puts "\r\nExecuting '#{ file_name }' on #{ output_db }..."
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password='#{db_pwd}' --database=#{ output_db } --execute=\"\\. #{ sql_file_name }\""
+    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --database=#{ output_db } --execute=\"\\. #{ sql_file_name }\""
     puts "Deleting uncompressed file '#{ sql_file_name }'..."
     FileUtils.rm( sql_file_name )
 
@@ -294,14 +294,14 @@ Options: [Rails.env=#{Rails.env}]
     puts "DB user: #{db_user}"
     file_name = File.join( output_folder, "#{db_name}-clone.sql" )
     puts "\r\nDumping #{db_name} on #{file_name} ...\r\n"
-    sh "mysqldump --host=#{db_host} -u #{db_user} -p'#{db_pwd}' --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} > #{file_name}"
+    sh "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --triggers --routines -i -e --no-autocommit --single-transaction #{db_name} > #{file_name}"
     base_db_name = db_name.split('_development')[0]
     puts "\r\nDropping Test DB '#{base_db_name}_test'..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password='#{db_pwd}' --execute=\"drop database if exists #{base_db_name}_test\""
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"drop database if exists #{base_db_name}_test\""
     puts "\r\nRecreating DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password='#{db_pwd}' --execute=\"create database #{base_db_name}_test\""
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"create database #{base_db_name}_test\""
     puts "\r\nExecuting '#{file_name}' on #{base_db_name}_test..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password='#{db_pwd}' --database=#{base_db_name}_test --execute=\"\\. #{file_name}\""
+    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --database=#{base_db_name}_test --execute=\"\\. #{file_name}\""
     puts "Deleting dump file '#{file_name}'..."
     FileUtils.rm( file_name )
 
@@ -351,7 +351,7 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
     puts "extracted tables: " + ( ENV.include?("tables") ? tables : "(entire DB)" )
     file_name = File.join( backup_folder, ( ENV.include?("tables") ? "#{db_name}-update-tables#{file_ext}" : "#{db_name}-#{db_version}#{file_ext}" ) )
     puts "Creating #{file_name} ...\r\n"
-    sh "mysqldump --host=#{db_host} -u #{db_user} -p'#{db_pwd}' --add-drop-database --add-drop-table --extended-insert --triggers --routines --comments -c -i --no-autocommit --single-transaction -B #{db_name} #{zip_pipe} > #{file_name}"
+    sh "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-database --add-drop-table --extended-insert --triggers --routines --comments -c -i --no-autocommit --single-transaction -B #{db_name} #{zip_pipe} > #{file_name}"
 
                                                     # Rotate the backups leaving only the newest ones:
     rotate_backups( backup_folder, max_backups )
@@ -389,7 +389,7 @@ Options: [exec_dir=#{DB_SEED_DIR}] [delete=1|<0>]
                                                     # For each file match in pathname recursively do "process file":
       Dir.glob( File.join(exec_folder, '*.sql'), File::FNM_PATHNAME ).sort.each do |subpathname|
         puts "executing '#{subpathname}'..."
-        sh "mysql --host=#{db_host} --user=#{db_user} --password='#{db_pwd}' --database=#{db_name} --execute=\"\\. #{subpathname}\""
+        sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --database=#{db_name} --execute=\"\\. #{subpathname}\""
         # TODO Eventually, capture output to a log file somewhere
                                                     # Kill the file if asked to do so:
         if ( ENV.include?("delete") && ENV.include?("delete") == '1' )

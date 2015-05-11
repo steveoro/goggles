@@ -327,7 +327,7 @@ execution of the task.
           db_dest.each do |config_name|
             db_name = Rails.configuration.database_configuration[ config_name ]['database']
             puts "\r\nExecuting '#{filename}' on #{config_name} DB (#{db_name})..."
-            sh "mysql --host=#{ db_host } --user=#{ db_user } --password='#{db_pwd}' --database=#{ db_name } --execute=\"\\. #{ filename }\"" do |ok, res|
+            sh "mysql --host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --database=#{ db_name } --execute=\"\\. #{ filename }\"" do |ok, res|
               if !ok
                 puts "Error intercepted: exit status = #{res.exitstatus}"
                 exit
@@ -338,7 +338,7 @@ execution of the task.
         else
           db_name = Rails.configuration.database_configuration[ db_dest ]['database']
           puts "\r\nExecuting '#{filename}' on #{db_dest} DB (#{db_name})..."
-          sh "mysql --host=#{ db_host } --user=#{ db_user } --password='#{db_pwd}' --database=#{ db_name } --execute=\"\\. #{ filename }\"" do |ok, res|
+          sh "mysql --host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --database=#{ db_name } --execute=\"\\. #{ filename }\"" do |ok, res|
             if !ok
               puts "Error intercepted: exit status = #{res.exitstatus}"
               exit

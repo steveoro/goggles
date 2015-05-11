@@ -107,7 +107,7 @@ EOF
         info "Uploading file..."
         upload! file_name, '/tmp/db_upload.sql'
         within release_path do
-          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' --database=#{fetch(:application)} -e \"\\. /tmp/db_upload.sql\""
+          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --database=#{fetch(:application)} -e \"\\. /tmp/db_upload.sql\""
         end
         info "Removing remote temp file..."
         execute :rm, '/tmp/db_upload.sql'           # After execution remove temp file on dest host
@@ -134,7 +134,7 @@ EOF
         info "Uploading file..."
         upload! file_name, "/tmp/invitation.xhtml"
         within release_path do
-          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' -e \"\\. /tmp/db_upload.sql\""
+          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" -e \"\\. /tmp/db_upload.sql\""
         end
         info "Removing remote temp file..."
         execute :rm, '/tmp/db_upload.sql'           # After execution remove temp file on dest host
@@ -202,7 +202,7 @@ EOF
             " day_part_type_id = (SELECT dpt.id FROM day_part_types dpt WHERE dpt.code = '#{ day_part_code }')" <<
             " WHERE meeting_id = #{ meeting_id }; COMMIT;"
           info "Executing:\r\n---8<---\r\n#{update_sql}\r\n---8<---\r\n"
-          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' --database=#{fetch(:application)} -e \"#{update_sql}\""
+          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --database=#{fetch(:application)} -e \"#{update_sql}\""
                                                     # Remote rake db:store_meeting_invitation:
           with rails_env: :production do
             rake "db:store_meeting_invitation meeting_id=#{meeting_id} file='/tmp/invitation.xhtml'"
@@ -261,11 +261,11 @@ EOF
         execute :rm, '/tmp/production.sql.bz2'
 
         info "Dropping production DB..."
-        execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' --execute=\"drop database if exists #{ fetch(:application) }\""
+        execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --execute=\"drop database if exists #{ fetch(:application) }\""
         info "Recreating production DB..."
-        execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' --execute=\"create database #{ fetch(:application) }\""
+        execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --execute=\"create database #{ fetch(:application) }\""
         info "Executing remote extracted file..."
-        execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' --database=#{ fetch(:application) } -e \"\\. /tmp/production.sql\""
+        execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --database=#{ fetch(:application) } -e \"\\. /tmp/production.sql\""
 
         info "Removing remote temp dump file..."
         execute :rm, '/tmp/production.sql'          # After execution remove temp file on dest host
@@ -308,7 +308,7 @@ EOF
         # (The Resulting SQL file will be much longer, though -- but the bzipped
         #  version can result more compressed due to the replicated strings, and it is
         #  indeed much more readable and editable...)
-        execute :mysqldump, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' -l -f --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{fetch(:application)} #{zip_pipe} > /tmp/#{file_name}"
+        execute :mysqldump, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" -l -f --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{fetch(:application)} #{zip_pipe} > /tmp/#{file_name}"
         info "Retrieving the file..."
         download! "/tmp/#{file_name}", File.join(dest_path, file_name)
         info "Removing remote temp file..."
@@ -351,7 +351,7 @@ EOF
         # (The Resulting SQL file will be much longer, though -- but the bzipped
         #  version can result more compressed due to the replicated strings, and it is
         #  indeed much more readable and editable...)
-        execute :mysqldump, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} -p'#{fetch(:db_password)}' -l -f --triggers --routines -i --skip-extended-insert --no-autocommit --tables --single-transaction #{fetch(:application)} articles friendships news_feeds admins #{zip_pipe} > /tmp/#{file_name}"
+        execute :mysqldump, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" -l -f --triggers --routines -i --skip-extended-insert --no-autocommit --tables --single-transaction #{fetch(:application)} articles friendships news_feeds admins #{zip_pipe} > /tmp/#{file_name}"
         info "Retrieving the file..."
         download! "/tmp/#{file_name}", File.join(dest_path, file_name)
         info "Removing remote temp file..."
