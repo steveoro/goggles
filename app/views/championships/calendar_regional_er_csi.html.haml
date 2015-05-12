@@ -39,16 +39,18 @@
                 - if index == 0
                   %td{ rowspan: session_number }
                     = meeting.meeting.decorate.get_linked_name
-                %td.goggles-rightalign
-                  = meeting_session.scheduled_date
+                - if index == 0
+                  %td.goggles-rightalign{ rowspan: session_number }
+                    = meeting_session.scheduled_date
                 %td.goggles-rightalign
                   = meeting_session.warm_up_time
                 %td.goggles-rightalign
                   = meeting_session.begin_time
                 %td
                   = meeting_session.events_list
-                %td
-                  = meeting_session.swimming_pool.decorate.get_city_and_attributes
+                - if index == 0
+                  %td{ rowspan: session_number }
+                    = meeting_session.swimming_pool.decorate.get_city_and_attributes
                  
 .row-fluid.goggles-category-gap#Remark
   %p
