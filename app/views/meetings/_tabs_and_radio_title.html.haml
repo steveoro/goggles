@@ -4,7 +4,7 @@
       - is_active = ( params[:action] == 'show_invitation' )
       %li{ class: is_active ? 'active' : '' }
         = link_to( t('meeting.invitation'), is_active ? '#' : meeting_show_invitation_path( id: @meeting.id ) )
-    - if @meeting.has_start_list && !@meeting.are_results_acquired
+    - if @meeting.has_start_list && (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1)
       - is_active = ( params[:action] == 'show_start_list' )
       %li{ class: is_active ? 'active' : '' }
         = link_to( t('meeting.start_list'), is_active ? '#' : meeting_show_start_list_path( id: @meeting.id ) )
