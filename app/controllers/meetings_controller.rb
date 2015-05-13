@@ -7,13 +7,13 @@ require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_
 
 = MeetingsController
 
-  - version:  4.00.705
+  - version:  4.00.789
   - author:   Steve A.
 
 =end
 class MeetingsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_meeting,  only: [:show_full, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category, :show_team_entries]
+  before_filter :verify_meeting,  only: [:show_full, :show_autoscroll, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category, :show_team_entries]
   before_filter :verify_team,     only: [:show_team_results, :show_team_entries, :show_swimmer_results]
   before_filter :verify_swimmer,  only: [:show_swimmer_results]
   #-- -------------------------------------------------------------------------
@@ -212,17 +212,20 @@ class MeetingsController < ApplicationController
   # - team_id: Team id to be highlighted, defined only when prefiltered from previous search actions.
   #
   def show_full
-    @preselected_swimmer_id = params[:swimmer_id]
-    @preselected_team_id    = params[:team_id]
+    prepare_show_full()
+  end
 
-    @meeting_events_list = @meeting.meeting_events.includes(
-      :event_type, :stroke_type
-    ).order(
-      'event_types.is_a_relay, meeting_events.event_order'
-    )
 
-    # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+  # Custom "Show Full" view with automatic scrolling of the results,
+  # for the specified (single) Meeting.
+  # Assumes params[:id] refers to a specific Meeting row.
+  #
+  # === Optional parameters:
+  # - swimmer_id: Swimmer id to be highlighted, defined only when prefiltered from previous search actions.
+  # - team_id: Team id to be highlighted, defined only when prefiltered from previous search actions.
+  #
+  def show_autoscroll
+    prepare_show_full()
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -616,6 +619,24 @@ class MeetingsController < ApplicationController
 
 
   private
+
+
+  # Prepares the instance variables for the #show_full action.
+  # Used also in #show_autoscroll.
+  #
+  def prepare_show_full
+    @preselected_swimmer_id = params[:swimmer_id]
+    @preselected_team_id    = params[:team_id]
+
+    @meeting_events_list = @meeting.meeting_events.includes(
+      :event_type, :stroke_type
+    ).order(
+      'event_types.is_a_relay, meeting_events.event_order'
+    )
+
+    # Get a timestamp for the cache key:
+    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+  end
 
 
   # Returns an integer timestamp usable as additional cache key, sending the specified
