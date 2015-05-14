@@ -71,9 +71,30 @@ class CsiResultParser
     @data_import_session = data_import_session
     @force_team_or_swimmer_creation = false
     @do_not_consume_file = false
-    update_logs( "Datafile: #{full_pathname}" )
+                                                    # Preliminary conversion to CSV:
+    if @full_pathname =~ /\.dbf/i
+      @full_pathname = full_pathname.gsub(/\.dbf/i, ".csv")
+      update_logs( "Converting data file to CSV-format..." )
+      # [Steve, 20150512] This additional step requires the following:
+      #
+      # Execute on the data-import running machine:
+      # > yum install perl-DBD-XBase
+      #
+      # This will allow us to do:
+      # > dbfdump --fs ";" ATLETI.DBF > ris20YYMMGGcsiprovaN.csv﻿
+      #
+      # For the web-UI of the data-import we are assuming the DBF file has been
+      # previously renamed using the above scheme (we are unable to extract Meeting
+      # info from the file contents otherwise.)
+      #
+      unless system( "dbfdump --fs \";\" #{ full_pathname } > #{ @full_pathname }" )
+        update_logs( "Error intercepted: exit status = #{res.exitstatus}" )
+        exit
+      end
+    end
+    update_logs( "Datafile: #{@full_pathname}" )
                                                     # Scan each line of the file until gets reaches EOF:
-    File.open( full_pathname ) do |f|
+    File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|
         if tot_rows > 0                             # Skip header at line #0
           # Make sure each line has a valid UTF-8 sequence of characters:

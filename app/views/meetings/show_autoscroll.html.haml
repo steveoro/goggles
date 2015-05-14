@@ -1,0 +1,40 @@
+%script
+  new WOW().init();
+- # *** KEEP THIS PAGE UNCACHED! ***
+- # Preloader mask:
+#preloader
+  #load
+
+= render( partial: 'meeting_header' )
+.row-fluid
+  .span12
+    = render( partial: 'full_results_grid' )
+
+:javascript
+  var tStart = 0;
+  var tTimer = 0;
+  var yPos   = 0;
+  var iSpeed = 1;
+  var iDelay = 2000;
+  var iBorderDelay = 4300;
+
+  function loopingScroll() {
+      var speedChange = false;
+      yPos += iSpeed;
+      window.scroll(0, yPos);
+      // Bottom of the page reached?
+      if ( (window.innerHeight + window.scrollY) >= document.body.scrollHeight) {
+          speedChange = true;
+          setTimeout( function(){ window.scroll(0, 0); }, iDelay );
+          setTimeout( function(){ yPos = 0; }, iDelay );
+      }
+      if ( speedChange == true ) {
+          speedChange = false;
+          tTimer = setTimeout("loopingScroll()", iBorderDelay);
+      }
+      else {
+          tTimer = setTimeout("loopingScroll()", 10);
+      }
+  }
+
+  tStart = setTimeout("loopingScroll()", iDelay);
