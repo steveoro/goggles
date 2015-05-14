@@ -3,7 +3,7 @@ Staffetta 4x50 SL
 
         staffetta 4x50 stile libero  Femminile  -  Categoria M100-119Tempo Base   :  1'51"90
 ----------------------------------------------------------------------------------------------
-               1     MASTER AICS BRESCIA                            1'55"30  970,51
+                     MASTER AICS BRESCIA                            1'55"30  970,51
                          Orioli  Chiara Stefania             1984
                          Bellini  Veronica                   1987
                          Taini  Raffaella                    1984
@@ -128,7 +128,7 @@ Staffetta 4x50 SL
 
         staffetta 4x50 stile libero  Maschile   -  Categoria M120-159Tempo Base   :  1'34"94
 ----------------------------------------------------------------------------------------------
-                     VILLA BONELLI NUOTO                            0'00"00 
+                     VILLA BONELLI NUOTO                            0'00"00
                          Panciroli  Matteo                   1984
                          Bonazzi  Nicola                     1984
                          Spina  Pierangelo                   1961
@@ -231,12 +231,12 @@ Staffetta 4x50 SL
 
         staffetta 4x50 stile libero  Maschile   -  Categoria M160-199Tempo Base   :  1'37"38
 ----------------------------------------------------------------------------------------------
-                     ESC SSD - BRESCIA - B                          0'00"00 
+                     ESC SSD - BRESCIA - B                          0'00"00
                          Pasotti  Dario                      1975
                          Belleri  Luca                       1971
                          Fiore  Giuseppe                     1972
                          Mini  Roberto                       1976
-                     MILANO NUOTO MASTER                            0'00"00 
+                     MILANO NUOTO MASTER                            0'00"00
                          Costa  Davide                       1969
                          Lissoni  Fulvio Ottavio             1974
                          Guglielmi  Franco                   1966

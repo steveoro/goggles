@@ -15,6 +15,13 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
     [
     #            10        20        30        40        50        60        70        80        90
     #  0123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-12345
+      "               5     NDC LEGNANO                                    2'34\"36  719,49",
+      "                     MASTER AICS BRESCIA                            1'55\"30  970,51",
+      "               2     ESC SSD - BRESCIA                              1'56\"31  962,08",
+      "      Fuori gara     PROSPORT ACQUA SSD                             2'17\"64  812,99",
+      "      Fuori gara     TIBIDABO SSD                                   1'54\"30  830,62",
+      "                     VILLA BONELLI NUOTO                            0'00\"00",
+
       "                  1     ADRIA NUOTO SSD  AR                 2'07\"17  809,86",
       "         Fuori gara     AS DELFINO 93                       1'54\"15  902,23",
       "                  2     MASTERNUOTOFIDENZA                  2'20\"59  733,12",
@@ -61,6 +68,13 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :result_position
+        "5",
+        '',
+        '2',
+        'Fuori gara',
+        'Fuori gara',
+        '',
+
         '1',
         'Fuori gara',
         '2',
@@ -109,6 +123,13 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :team_name
+        "NDC LEGNANO",
+        'MASTER AICS BRESCIA',
+        'ESC SSD - BRESCIA',
+        'PROSPORT ACQUA SSD',
+        "TIBIDABO SSD",
+        "VILLA BONELLI NUOTO",
+
         'ADRIA NUOTO SSD  AR',
         'AS DELFINO 93',
         'MASTERNUOTOFIDENZA',
@@ -139,12 +160,11 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
         "POLISP. PIAN DEL BR",
         "IL GRILLO",
 
-        # [Steve, 20150303] Regexp output varies due to spacing and row format:
-        "FLAMINIO SPORTING CLUB",
-        "FLAMINIO SPORTING CLUB \"",
+        "FLAMINIO SPORTING CLUB \"B\"",
+        "FLAMINIO SPORTING CLUB \"B\"",
         "ROMA NUOTO MASTER \"B\"",
-        "POLISPORTIVA MIMMO FERRITO",
-        "POLISPORTIVA MIMMO FERRITO"
+        "POLISPORTIVA MIMMO FERRITO SS",
+        "POLISPORTIVA MIMMO FERRITO SS"
       ]
     end
 
@@ -158,6 +178,13 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :result_time
+        "2'34\"36",
+        "1'55\"30",
+        "1'56\"31",
+        "2'17\"64",
+        "1'54\"30",
+        "0'00\"00",
+
         "2'07\"17",
         "1'54\"15",
         "2'20\"59",
@@ -206,6 +233,13 @@ describe "TokenExtractor for RELAY_ROW-type buffers,", type: :integration do
 
     let(:expected_tokens) do
       [ # field = :result_score
+        "719,49",
+        "970,51",
+        "962,08",
+        "812,99",
+        "830,62",
+        "",
+
         '809,86',
         '902,23',
         '733,12',

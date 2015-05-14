@@ -8,7 +8,7 @@ require 'data_import/services/token_extractor'
 
 = FinResultConsts
 
-  - Goggles framework vers.:  4.00.769
+  - Goggles framework vers.:  4.00.791
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -120,7 +120,9 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
     ContextTypeDef.new(
       :relay_row,
       [
-        /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)(\r\n|\n|$|\Z)/i
+        /(?=\s{4}(?<timing>Ritir|Squal|\d{1,2}'\d{2}"\d{2}))/uix
+        # Old version:
+#        /Ritir.*|Squal.*|(\d{1,2}'\d\d"\d\d +\d{1,4}[\,|\.]\d\d)(\r\n|\n|$|\Z)/i
       ],
       :relay_header
     )
@@ -460,8 +462,10 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_relay_row_result_position
     TokenExtractor.new(
       :result_position,
-      8,                                            # (starting idx)
-      10                                            # (max size)
+      /^\s+(\d|fuori|fg|f\.g\.)/i,
+#      8,                                            # (starting idx)
+      /(?<=\d\s)\s|(?<=fuori gara)\s|(?<=f\.g\.)\s|(?<=fg)\s/i
+#      10                                            # (max size)
     )
   end
 
@@ -470,8 +474,25 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   def tokenizer_relay_row_team_name
     TokenExtractor.new(
       :team_name,
-      /(?<=\s{3})(.{25,29}\s{6,12})(?=Ritir|Squal|\d{1,2}'\d{2}"\d{2})/i,
-      25                                            # (max size)
+      /
+        (
+          (?<=\d\s{4})(\s+(?<t1>[a-z]+.{24,29}))|
+          (?<=^\s\s)(\s+(?!fuori\sgara)(?<t2>[a-z]+.{24,29}))|
+          (?<=\d{6}\s{3})((?<t3>[a-z]+.{24,29}))|
+
+          (?<=Fuori\sgara\s\s)(\s+(?<t4>[a-z]+.{24,29}))|
+          (?<=\sf\.g\.)(\s+(?<t5>[a-z]+.{24,29})})|
+          (?<=\sfg)(\s+(?<t6>[a-z]+.{24,29}))
+        )
+        \s{4,20}
+        (?=(?<timing>Ritir|Squal|\d{1,2}'\d{2}"\d{2}))
+      /uix,
+#      /(?<=\s{3})(.{25,29}\s{6,12})(?=Ritir|Squal|\d{1,2}'\d{2}"\d{2})/i,
+      /
+        (?<=\S)(\s{6,65})
+        (?=(?<timing>Ritir|Squal|\d{1,2}'\d{2}"\d{2}))
+      /uix
+#      25                                            # (max size)
     )
   end
 
@@ -482,7 +503,11 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
       :result_time,
   #    / (Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/ui,
       59,                                           # (starting idx)
-      /(\s\d{1,4}[\,|\.]\d\d$|(?<=Squalif\.)(\r\n|\n|$|\Z))/i
+      /
+        (\s\d{1,4}[\,|\.]\d\d|
+        (?<=\ssqualif\.|\ssqualificata)(.*))
+      /uix
+#      /(\s\d{1,4}[\,|\.]\d\d$|(?<=Squalif\.)(\r\n|\n|$|\Z))/i
   #    8                                             # (max size)
     )
   end

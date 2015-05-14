@@ -646,8 +646,22 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
       check_for_parsing_ok( feed, :relay_header )
     end
 
+    it "recognizes the 'FIN relay-row' format #1 (sample #7)" do
+      feed = [
+        "                     VILLA BONELLI NUOTO                            0'00\"00"
+      ]
+      check_for_parsing_ok( feed, :relay_header )
+    end
+
     #-- -----------------------------------------------------------------------
     #++
+
+    it "doesn't recognize a relay_header-like feed (sample #1)" do
+      feed = [
+        "        staffetta 4x50 stile libero  Femminile  -  Categoria M100-119Tempo Base   :  1'51\"90"
+      ]
+      check_for_parsing_fail( feed, 0, :relay_header )
+    end
 
     it "doesn't recognize a ranking-like feed (sample #1)" do
       feed = [
