@@ -40,7 +40,7 @@ The only excluded tables from ugc_* logging are:
    the interesting ones manually.
 
 5) Get the current DB-diff dump via the dedicated remote cap task:
-  > ROLES=app cap staging db:remote:sql_diff_dump
+  > ROLES=app cap ocean db:remote:sql_diff_dump
 
 6) For each backup, open the bzipped tar, edit & merge the contents to obtain a
    single SQL executable file.

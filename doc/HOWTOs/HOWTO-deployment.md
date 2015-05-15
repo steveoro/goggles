@@ -21,14 +21,14 @@ The role required is just _app_. (No _db_ or _web_)
 
 2) **Deploy**
    Deploy the current version with Capistrano:
-    > ROLES=app cap staging deploy
+    > ROLES=app cap ocean deploy
 
    At the end of the deployment, all db:sessions and tmp/cache is cleared out
    automatically before Apache server restart.
 
 3) **Newslog update with Maintenance off**
     Create an additional, standard news-log row to notify the users of the update:
-    > ROLES=app cap staging remote:rake
+    > ROLES=app cap ocean remote:rake
     _(wait for console prompt)_
 
     > RAILS_ENV=production build:news_log build:maintenance mode=0
