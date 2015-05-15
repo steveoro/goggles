@@ -25,7 +25,7 @@ module Version
   MINOR   = '791'
 
   # Current build version.
-  BUILD   = '20150514'
+  BUILD   = '20150515'
 
   # Full versioning for the current release.
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"

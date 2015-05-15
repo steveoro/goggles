@@ -3,12 +3,13 @@
 ### Abstract
 To perform any data-import task or to update the remote prod DB with updated seeds,
 usually you need to apply them locally by first obtaining a remote dump via Capistrano:
-  > ROLES=app cap staging db:remote:sql_dump
+  > ROLES=app cap ocean db:remote:sql_dump
+  ('ocean' is the server config name)
 
 ...Or by manually applying a remote daily-diff, obtained by the dedicated HOWTO
 procedure on file ("daily_diff_apply"), which involves copying locally the remote
 backup ugc_* logs and using the other dedicated Capistrano task:
-  > ROLES=app cap staging db:remote:sql_diff_dump
+  > ROLES=app cap ocean db:remote:sql_diff_dump
 
 For most of the cases, the first solution is preferred and the only one really needed.
 Use the second one only for manual rebuild worst-case scenarios, where typically
@@ -18,7 +19,7 @@ only a db:rebuild_from_scratch could guarantee an up-to-date DB structure.
 ### Procedure
 1) Rebuild locally the remote production DB
   1.1) Get the current remote production DB via Capistrano:
-       > ROLES=app cap staging db:remote:sql_dump
+       > ROLES=app cap ocean db:remote:sql_dump
          => reply to destination dir w/ correct history/backup dir, e.g.:
          ../goggles.docs/backup.db/history.gold/
 
@@ -49,15 +50,15 @@ only a db:rebuild_from_scratch could guarantee an up-to-date DB structure.
    > git push origin
 
 7) Load the updated dump to production DB via remote rake task (db:rebuild_from_dump)
-   > ROLES=app cap staging remote:rake
+   > ROLES=app cap ocean remote:rake
      > RAILS_ENV=production db:rebuild_from_dump from=production to=production
 
 8) (Additional step) Article creation to signal the user for application update:
    (Useful only for major app updates, not simple DB-diff merges)
-   > ROLES=app cap staging remote:rake
+   > ROLES=app cap ocean remote:rake
      > RAILS_ENV=production build:news_feeds
 
 9) (Additional step) Delayed job to signal the users for production data update:
    (Useful only for data-import updates, not simple DB-diff merges)
-   > ROLES=app cap staging remote:rake
+   > ROLES=app cap ocean remote:rake
      > RAILS_ENV=production mailer:job:data_update [meetings=<id_1>[,<id_2>,...] ]

@@ -17,10 +17,11 @@ on the app on the remote Server without losing your mind.
 ### Phase-1: Get the current, remote dump:
 
 1) Set the server in maintenance mode.
-  > ROLES=app cap staging remote:maintenance_on
+  > ROLES=app cap ocean remote:maintenance_on
+  ('ocean' is the server config name)
 
 2) Get the dump and archive it.
-  > ROLES=app cap staging db:remote:sql_dump
+  > ROLES=app cap ocean db:remote:sql_dump
   (Default dir is ok; will store the dump under 'goggles.docs/backup.db/history.gold')
 
 
@@ -69,7 +70,7 @@ on the app on the remote Server without losing your mind.
 ### Phase-3: Upload the updated dump and apply it remotely:
 
 5) Upload the local production dump.
-    > ROLES=app cap staging db:remote:dump_upload
+    > ROLES=app cap ocean db:remote:dump_upload
 
     Explanation from the output description of the command:
     ---8<---
@@ -98,7 +99,7 @@ on the app on the remote Server without losing your mind.
 
 
 6) Exit from maintenance mode.
-  > ROLES=app cap staging remote:maintenance_off
+  > ROLES=app cap ocean remote:maintenance_off
 
 
 Eventually, run a mailer task if the data-update requires generating a news feed
