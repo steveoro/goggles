@@ -62,27 +62,26 @@
             - meeting_id = @individual_result_list.first.meeting.id
 
           - @individual_result_list.each do |individual_result|
-            - event_type_code = individual_result.get_event_type_code
+            - mir = MeetingIndividualResultDecorator.decorate( individual_result )
+            - event_type_code = mir.get_event_type_code
             %tr
               %td
-                %b= individual_result.get_event_type
+                %b= mir.get_event_type
               %td.goggles-rightalign
-                = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
+                = mir.get_rank_description
               %td
-                = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
-                = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
-                = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
+                = mir.show_any_rank_medal()
               %td.goggles-rightalign
-                = individual_result.get_timing
+                = mir.get_timing
               %td.goggles-rightalign
-                = sprintf( "%02.2f", individual_result.standard_points )
+                = sprintf( "%02.2f", mir.standard_points )
               %td.goggles-rightalign
-                = sprintf( "%02.2f", individual_result.meeting_individual_points )
+                = sprintf( "%02.2f", mir.meeting_individual_points )
               %td.goggles-centeralign
                 - personal_bests = MeetingIndividualResult.get_records_for( event_type_code, nil, gender_type_id, pool_type_id, nil, @swimmer.id )
                 - if personal_bests.size > 0
                   %p
-                    %a{'id'=>"rec#{individual_result.id}", 'href'=>"#{ meeting_show_full_path(:id=>personal_bests.first.meeting.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{personal_bests.first.meeting.get_full_name})"}
+                    %a{'id'=>"rec#{mir.id}", 'href'=>"#{ meeting_show_full_path(:id=>personal_bests.first.meeting.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_results_tooltip') + "\r\n(#{personal_bests.first.meeting.get_full_name})"}
                       = personal_bests.first.get_timing
                 - else
                   = ''

@@ -9,7 +9,7 @@ require 'data_import/csi_result_dao'
 
 = ResultTimeParser
 
-  - Goggles framework vers.:  4.00.757
+  - Goggles framework vers.:  4.00.793
   - author: Steve A.
 
  Strategy class dedicated to extracting required Meeting result fields
@@ -64,7 +64,7 @@ class ResultTimeParser
   #
   def is_disqualified?
     if @result_dao
-      @result_dao.is_disqualified
+      @result_dao.is_disqualified || @result_dao.is_retired
     else
       ! ( @result_token =~ /Ritir|Squal/i ).nil?
     end

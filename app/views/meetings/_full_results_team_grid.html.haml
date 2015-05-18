@@ -15,29 +15,28 @@
           - # Individual results
           - unless is_a_relay
             - meeting_event.meeting_individual_results.for_team(@team).sort_by_swimmer.each do |individual_result|
+              - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               %tr
                 %td.span4
-                  %a{'id'=>"swimmer#{individual_result.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>individual_result.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
-                    = individual_result.get_swimmer_name
+                  %a{'id'=>"swimmer#{mir.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                    = mir.get_swimmer_name
                 %td.span1
-                  = individual_result.category_type_short_name
+                  = mir.category_type_short_name
                 %td.span1.goggles-rightalign
-                  = show_tag( individual_result.rank==1 && individual_result.is_valid_for_ranking, "medal_gold_3.png", '' )
-                  = show_tag( individual_result.rank==2 && individual_result.is_valid_for_ranking, "medal_silver_3.png", '' )
-                  = show_tag( individual_result.rank==3 && individual_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
-                  = individual_result.is_disqualified ? 'DSQ' : individual_result.rank
+                  = mir.show_any_rank_medal()
+                  = mir.get_rank_description
                 %td.span1.goggles-rightalign
-                  = individual_result.get_timing
+                  = mir.get_timing
                 %td.span1.goggles-rightalign
-                  - if individual_result.standard_points > 0
-                    = sprintf( "%02.2f", individual_result.standard_points )
+                  - if mir.standard_points > 0
+                    = sprintf( "%02.2f", mir.standard_points )
                 %td.span1.goggles-rightalign
-                  - if individual_result.meeting_individual_points > 0
-                    = sprintf( "%02.2f", individual_result.meeting_individual_points )
+                  - if mir.meeting_individual_points > 0
+                    = sprintf( "%02.2f", mir.meeting_individual_points )
                 - if @meeting.has_start_list
                   %td.span1.goggles-rightalign
-                    - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', individual_result.swimmer_id, individual_result.meeting_program_id]).count > 0
-                      = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', individual_result.swimmer_id, individual_result.meeting_program_id]).first.get_timing
+                    - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
+                      = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
           -# --- Team Relay result rows:
           - if is_a_relay
             - meeting_event.meeting_relay_results.for_team(@team).sort_by_category.each do |relay_result|

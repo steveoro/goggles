@@ -565,6 +565,9 @@ en:
 
   disqualification_code_types:
     code: "code"
+    generic_dsq_code: "DSQ"
+    generic_ret_code: "RET"
+    generic_notime_code: "NT"
     i18n_short_GA: ""
     i18n_description_GA: "False start "
     i18n_short_GB: ""
@@ -662,7 +665,7 @@ en:
     i18n_short_IMB: ""
     i18n_description_IMB: "Not swum in right order "
     i18n_short_IMC: ""
-    i18n_description_IMC: "Stroke infraction � use stroke codes "
+    i18n_description_IMC: "Stroke infraction - use stroke codes "
     i18n_short_RA2: ""
     i18n_description_RA2: "Early swimmer take-off swimmer #2"
     i18n_short_RA3: ""
