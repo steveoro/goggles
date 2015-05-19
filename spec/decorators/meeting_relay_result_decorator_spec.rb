@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 
-describe MeetingIndividualResultDecorator, type: :model do
+describe MeetingRelayResultDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
   before :each do
-    @mir = build( :meeting_individual_result )
-    expect( @mir ).to be_an_instance_of(MeetingIndividualResult)
-    @decorated_instance = MeetingIndividualResultDecorator.decorate( @mir )
+    @mrr = build( :meeting_relay_result )
+    expect( @mrr ).to be_an_instance_of(MeetingRelayResult)
+    @decorated_instance = MeetingRelayResultDecorator.decorate( @mrr )
   end
 
   subject { @decorated_instance }
@@ -134,29 +134,29 @@ describe MeetingIndividualResultDecorator, type: :model do
   end
 
 
-  describe "#get_formatted_individual_points" do
+  describe "#get_formatted_meeting_points" do
     context "when called on a result with 0 points," do
       it "returns an empty string" do
-        subject.meeting_individual_points = 0
-        expect( subject.get_formatted_individual_points ).to eq( "" )
+        subject.meeting_points = 0
+        expect( subject.get_formatted_meeting_points ).to eq( "" )
       end
     end
 
     context "when called on a result with positive points," do
       it "returns the score formatted with decimals" do
-        subject.meeting_individual_points = 30.75
-        expect( subject.get_formatted_individual_points ).to eq( "30.75" )
+        subject.meeting_points = 30.75
+        expect( subject.get_formatted_meeting_points ).to eq( "30.75" )
       end
       it "returns the score formatted with decimals, even when integer" do
-        subject.meeting_individual_points = 40
-        expect( subject.get_formatted_individual_points ).to eq( "40.00" )
+        subject.meeting_points = 40
+        expect( subject.get_formatted_meeting_points ).to eq( "40.00" )
       end
     end
 
     context "when called on a result with 0 points but show_even_when_zero=true," do
       it "returns the (zero) score formatted with decimals" do
-        subject.meeting_individual_points = 0
-        expect( subject.get_formatted_individual_points(true) ).to eq( "0.00" )
+        subject.meeting_points = 0
+        expect( subject.get_formatted_meeting_points(true) ).to eq( "0.00" )
       end
     end
   end

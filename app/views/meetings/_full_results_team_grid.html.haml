@@ -23,16 +23,14 @@
                 %td.span1
                   = mir.category_type_short_name
                 %td.span1.goggles-rightalign
-                  = mir.show_any_rank_medal()
+                  = mir.show_any_rank_medal
                   = mir.get_rank_description
                 %td.span1.goggles-rightalign
                   = mir.get_timing
                 %td.span1.goggles-rightalign
-                  - if mir.standard_points > 0
-                    = sprintf( "%02.2f", mir.standard_points )
+                  = mir.get_formatted_standard_points
                 %td.span1.goggles-rightalign
-                  - if mir.meeting_individual_points > 0
-                    = sprintf( "%02.2f", mir.meeting_individual_points )
+                  = mir.get_formatted_individual_points
                 - if @meeting.has_start_list
                   %td.span1.goggles-rightalign
                     - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
@@ -40,25 +38,22 @@
           -# --- Team Relay result rows:
           - if is_a_relay
             - meeting_event.meeting_relay_results.for_team(@team).sort_by_category.each do |relay_result|
+              - mrr = MeetingRelayResultDecorator.decorate( relay_result )
               %tr
                 %td
-                  = relay_result.get_team_name
+                  = mrr.get_team_name
                 %td
-                  = relay_result.gender_type.code
+                  = mrr.gender_type.code
                   = '-'
-                  = relay_result.category_type.short_name
+                  = mrr.category_type.short_name
                 %td.goggles-rightalign
-                  = show_tag( relay_result.rank==1 && relay_result.is_valid_for_ranking, "medal_gold_3.png", '' )
-                  = show_tag( relay_result.rank==2 && relay_result.is_valid_for_ranking, "medal_silver_3.png", '' )
-                  = show_tag( relay_result.rank==3 && relay_result.is_valid_for_ranking, "medal_bronze_3.png", '' )
-                  = relay_result.is_disqualified ? 'DSQ' : relay_result.rank
+                  = mrr.show_any_rank_medal()
+                  = mrr.get_rank_description
                 %td.goggles-rightalign
-                  = relay_result.get_timing
+                  = mrr.get_timing
                 %td.goggles-rightalign
-                  - if relay_result.standard_points > 0
-                    = sprintf( "%02.2f", relay_result.standard_points )
+                  = mrr.get_formatted_standard_points
                 %td.goggles-rightalign
-                  - if relay_result.meeting_points > 0
-                    = sprintf( "%02.2f", relay_result.meeting_points )
+                  = mrr.get_formatted_meeting_points
 .row-fluid
   .span12

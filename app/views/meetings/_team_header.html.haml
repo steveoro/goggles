@@ -58,24 +58,21 @@
                   %td.goggles-border-right.span1
                     = (mir = @events_per_swimmers[swimmer.id].first) ? mir.category_type.code : '?'
                     = (mir && admin_signed_in? ? " (id=#{mir.category_type.id})" : '')
-                  - @events_per_swimmers[swimmer.id].each do |row|
+                  - @events_per_swimmers[swimmer.id].each do |individual_result|
+                    - mir = MeetingIndividualResultDecorator.decorate( individual_result )
                     %td.goggles-noborder.goggles-rightalign
-                      - event_type = row.meeting_event.event_type
+                      - event_type = mir.meeting_event.event_type
                       %a(href="\##{event_type.code}")= event_type.i18n_short
                     %td.goggles-noborder.goggles-rightalign.span1
-                      = row.get_timing
+                      = mir.get_timing
                     %td.goggles-noborder.goggles-rightalign
-                      = show_tag( row.rank==1 && row.is_valid_for_ranking, "medal_gold_3.png", '' )
-                      = show_tag( row.rank==2 && row.is_valid_for_ranking, "medal_silver_3.png", '' )
-                      = show_tag( row.rank==3 && row.is_valid_for_ranking, "medal_bronze_3.png", '' )
-                      = row.rank > 0 ? row.rank : 'DSQ' 
+                      = mir.show_any_rank_medal
+                      = mir.get_rank_description
                     %td.goggles-border-onlyright.goggles-rightalign
-                      - if row.standard_points > 0
-                        = show_tag( row.standard_points>800, "asterisk_orange.png", '' )
-                        = sprintf( "%02.2f", row.standard_points )
-                      - else 
-                        - if row.meeting_individual_points > 0
-                          = sprintf( "%02.2f", row.meeting_individual_points )
+                      - if mir.standard_points > 0
+                        = format_score( mir.standard_points ).html_safe
+                      - else
+                        = mir.get_formatted_individual_points
 
 %script
   $('#headerTeam').tooltip({placement:'bottom'});

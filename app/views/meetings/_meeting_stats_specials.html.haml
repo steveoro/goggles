@@ -49,7 +49,7 @@
               %td.span1.goggles-rightalign
                 %i= sprintf( "%02.2f", @meeting_stats.average_total_score)
 
-- if @meeting_stats.best_standard_female_scores.size > 0 || @meeting_stats.best_standard_male_scores.size > 0 
+- if @meeting_stats.best_standard_female_scores.size > 0 || @meeting_stats.best_standard_male_scores.size > 0
   %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_specials'}
     .row-fluid
       .span10
@@ -59,15 +59,16 @@
               %td.goggles-centeralign{'colspan'=>5}
                 %b= I18n.t('meeting_stats.specials')
                 %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-      
-            - @meeting_stats.best_standard_female_scores.each_with_index do | mir,index |
+
+            - @meeting_stats.best_standard_female_scores.each_with_index do | individual_result, index |
+              - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               - swimmer = mir.swimmer
               %tr
                 - if index == 0
                   %td.span2{'rowspan'=>@meeting_stats.best_standard_female_scores.count}
                     = I18n.t( 'meeting_stats.best_female_score' )
                 %td.span1.goggles-rightalign
-                  %b= sprintf( "%02.2f", mir.standard_points )
+                  %b= mir.get_formatted_standard_points(true)
                 %td.span3
                   %a{'id'=>"#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>mir.team_id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                     = swimmer.get_full_name + ' (' + mir.get_category_type_short_name + ')'
@@ -75,15 +76,16 @@
                   = mir.get_event_type
                 %td.span1.goggles-rightalign
                   = mir.get_timing.to_s
-      
-            - @meeting_stats.best_standard_male_scores.each_with_index do | mir,index |
+
+            - @meeting_stats.best_standard_male_scores.each_with_index do | individual_result, index |
+              - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               - swimmer = mir.swimmer
               %tr
                 - if index == 0
                   %td.span2{'rowspan'=>@meeting_stats.best_standard_male_scores.count}
                     = I18n.t( 'meeting_stats.best_male_score' )
                 %td.span1.goggles-rightalign
-                  %b= sprintf( "%02.2f", mir.standard_points )
+                  %b= mir.get_formatted_standard_points(true)
                 %td.span3
                   %a{'id'=>"#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>mir.team_id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                     = swimmer.get_full_name + ' (' + mir.get_category_type_short_name + ')'
@@ -91,16 +93,17 @@
                   = mir.get_event_type
                 %td.span1.goggles-rightalign
                   = mir.get_timing.to_s
-    
-            - if false # Disabled by Leega. Should result offensive in some cases, like disablity or so on  
-              - @meeting_stats.worst_standard_female_scores.each_with_index do | mir,index |
+
+            - if false # Disabled by Leega. May result offensive in some cases, like for people with disabilities and so on
+              - @meeting_stats.worst_standard_female_scores.each_with_index do | individual_result, index |
+                - mir = MeetingIndividualResultDecorator.decorate( individual_result )
                 - swimmer = mir.swimmer
                 %tr
                   - if index == 0
                     %td.span2{'rowspan'=>@meeting_stats.worst_standard_female_scores.count}
                       = I18n.t( 'meeting_stats.worst_female_score' )
                   %td.span1.goggles-rightalign
-                    = sprintf( "%02.2f", mir.standard_points )
+                    = mir.get_formatted_standard_points(true)
                   %td.span3
                     %a{'id'=>"#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>mir.team_id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                     = swimmer.get_full_name + ' (' + mir.get_category_type_short_name + ')'
@@ -108,15 +111,16 @@
                     = mir.get_event_type
                   %td.span1.goggles-rightalign
                     = mir.get_timing.to_s
-        
-              - @meeting_stats.worst_standard_male_scores.each_with_index do | mir,index |
+
+              - @meeting_stats.worst_standard_male_scores.each_with_index do | individual_result, index |
+                - mir = MeetingIndividualResultDecorator.decorate( individual_result )
                 - swimmer = mir.swimmer
                 %tr
                   - if index == 0
                     %td.span2{'rowspan'=>@meeting_stats.worst_standard_male_scores.count}
                       = I18n.t( 'meeting_stats.worst_male_score' )
                   %td.span1.goggles-rightalign
-                    = sprintf( "%02.2f", mir.standard_points )
+                    = mir.get_formatted_standard_points(true)
                   %td.span3
                     %a{'id'=>"#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>mir.team_id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                     = swimmer.get_full_name + ' (' + mir.get_category_type_short_name + ')'
@@ -125,7 +129,7 @@
                   %td.span1.goggles-rightalign
                     = mir.get_timing.to_s
 
-- if @meeting_stats.oldest_female_swimmers.size > 0 || @meeting_stats.oldest_male_swimmers.size > 0 
+- if @meeting_stats.oldest_female_swimmers.size > 0 || @meeting_stats.oldest_male_swimmers.size > 0
   %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_oldest'}
     .row-fluid
       .span9

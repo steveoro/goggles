@@ -2,14 +2,14 @@
 
 = MeetingDecorator
 
-  - version:  4.00.793
+  - version:  4.00.795
   - author:   Steve A.
 
-  Decorator for the MeetingIndividualResult model.
+  Decorator for the MeetingRelayResult model.
   Contains all presentation-logic centered methods.
 
 =end
-class MeetingIndividualResultDecorator < Draper::Decorator
+class MeetingRelayResultDecorator < Draper::Decorator
   include Rails.application.routes.url_helpers
   delegate_all
 
@@ -62,11 +62,11 @@ class MeetingIndividualResultDecorator < Draper::Decorator
     ( show_even_when_zero || object.standard_points > 0 ? sprintf( "%02.2f", object.standard_points ) : '' )
   end
 
-  # Returns the meeting_individual_points value as a string formatted with 2 decimals or
+  # Returns the meeting_points value as a string formatted with 2 decimals or
   # an empty string if the points are not greater than 0 (unless show_even_when_zero = true).
   #
-  def get_formatted_individual_points( show_even_when_zero = false )
-    ( show_even_when_zero || object.meeting_individual_points > 0 ? sprintf( "%02.2f", object.meeting_individual_points ) : '' )
+  def get_formatted_meeting_points( show_even_when_zero = false )
+    ( show_even_when_zero || object.meeting_points > 0 ? sprintf( "%02.2f", object.meeting_points ) : '' )
   end
   #-- -------------------------------------------------------------------------
   #++

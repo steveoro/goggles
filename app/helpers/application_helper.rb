@@ -64,7 +64,7 @@ module ApplicationHelper
   # Format the specified score with 2 precision decimals and highlights it with an
   # image if it exceeds the specified bias.
   def format_score( score, bias = 800 )
-    ( sprintf( "%02.2f", score ) + (score>bias ? "#{image_tag("asterisk_orange.png")} !" : '') ).html_safe
+    ( (score>bias ? "#{image_tag("asterisk_orange.png")} " : '') + sprintf("%02.2f", score) ).html_safe
   end
   #-- -------------------------------------------------------------------------
   #++

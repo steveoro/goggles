@@ -74,9 +74,9 @@
               %td.goggles-rightalign
                 = mir.get_timing
               %td.goggles-rightalign
-                = sprintf( "%02.2f", mir.standard_points )
+                = mir.get_formatted_standard_points(true)
               %td.goggles-rightalign
-                = sprintf( "%02.2f", mir.meeting_individual_points )
+                = mir.get_formatted_individual_points(true)
               %td.goggles-centeralign
                 - personal_bests = MeetingIndividualResult.get_records_for( event_type_code, nil, gender_type_id, pool_type_id, nil, @swimmer.id )
                 - if personal_bests.size > 0
