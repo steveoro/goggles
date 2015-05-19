@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.763
+  - Goggles framework vers.:  4.00.795
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -82,10 +82,16 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           athlete_badge = detail_row.badge_code.to_s.size < 1 ? '?' : detail_row.badge_code
           @rank         = detail_row.rank
           result_time   = detail_row.decorated_result_time
-          result_score  = 100 - ( @rank.to_i - 1 ) * 5
-          result_score  = 0 if result_score < 0
-          @standard_points = 0
-          @meeting_points  = result_score
+          # [Steve, 20150520] Score must result 0 if the current program/event is "out of race"
+          if meeting_program.is_out_of_race
+            @standard_points = 0
+            @meeting_points  = 0
+          else
+            result_score  = 100 - ( @rank.to_i - 1 ) * 5
+            result_score  = 0 if result_score < 0
+            @standard_points = 0
+            @meeting_points  = result_score
+          end
         end
 # DEBUG
 #        puts "\r\n- detail_row...: #{detail_row.inspect}"
