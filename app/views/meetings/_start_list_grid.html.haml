@@ -7,8 +7,10 @@
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'info', 'id'=>"#{meeting_event.event_type.code}-#{gender_type.code}"}
-              %td{'colspan'=>'5'}
-                = meeting_event.event_type.i18n_description + ' ' + gender_type.i18n_description 
+              %td{'colspan'=>'4'}
+                = meeting_event.event_type.i18n_description + ' ' + gender_type.i18n_description
+              %td.goggles-rightalign
+                = meeting_event.meeting_entries.for_gender(gender_type.id).count
             - meeting_event.meeting_entries.for_gender(gender_type.id).sort_by_number.each do |entry|
               - is_highlighted = (@team && @team.id == entry.team_id) || (@swimmer && @swimmer.id == entry.swimmer_id)
               = render( partial: 'show_entry', locals: { entry: entry, is_highlighted: is_highlighted } )
