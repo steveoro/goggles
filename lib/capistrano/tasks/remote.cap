@@ -90,6 +90,22 @@ namespace :remote do
       end
     end
   end
+
+
+  # Remote Rake db:rebuild_from_dump invocation.
+  desc <<-DESC
+    Invokes remotely rake db:rebuild_from_dump on the production environment.
+    (Rebuild:  from=production to=production)
+  DESC
+  task db_rebuild_from_dump do
+    on roles(:app) do
+      within release_path do
+        with rails_env: :production do
+          rake "db:rebuild_from_dump from=production to=production"
+        end
+      end
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
