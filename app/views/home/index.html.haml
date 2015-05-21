@@ -13,7 +13,8 @@
       = render( partial: 'right_shortcuts' )
 - else
   - # Not-logged-in welcome part:
-  .row-fluid
-    = render( partial: 'jumbotron' )
-  .row-fluid
-    = render( partial: 'goggles/not_logged_in' )
+  .row-fluid.offset1.span10
+    .row-fluid
+      = render( partial: 'goggles/not_logged_in' )
+    .row-fluid
+      = render( partial: 'jumbotron' )
