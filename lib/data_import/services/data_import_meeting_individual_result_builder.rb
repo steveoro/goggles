@@ -13,7 +13,7 @@ require 'data_import/csi_result_dao'
 
 = DataImportMeetingIndividualResultBuilder
 
-  - Goggles framework vers.:  4.00.795
+  - Goggles framework vers.:  4.00.797
   - author: Steve A.
 
  Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
@@ -60,6 +60,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         team_name     = nil
         athlete_badge = nil
         result_time   = nil
+        @team_points   = 0
 
         if detail_row.instance_of?( Hash )
           @import_text  = detail_row[:import_text]
@@ -83,12 +84,17 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           @rank         = detail_row.rank
           result_time   = detail_row.decorated_result_time
           # [Steve, 20150520] Score must result 0 if the current program/event is "out of race"
-          if meeting_program.is_out_of_race
+          if meeting_program.is_out_of_race || (@rank.to_i == 0)
             @standard_points = 0
             @meeting_points  = 0
+            @team_points     = 0
           else
-            result_score  = 100 - ( @rank.to_i - 1 ) * 5
-            result_score  = 0 if result_score < 0
+            # [Steve, 20150524] TODO Use a DB table to store these 2 formulas,
+            # since these may change from championship to championship.
+            result_score   = 100 - ( @rank.to_i - 1 ) * 5
+            result_score   = 0 if result_score < 0
+            @team_points   = 16 - ( @rank.to_i - 1 ) * 2
+            @team_points   = 2 if @team_points < 2
             @standard_points = 0
             @meeting_points  = result_score
           end
@@ -225,7 +231,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           disqualification_code_type_id:  @dsq_code_type_id,
           standard_points:                @standard_points,
           meeting_individual_points:      @meeting_points,
-          team_points:                    0, # FIXME TODO
+          team_points:                    @team_points,
           goggle_cup_points:              0,
           minutes:                        @mins,
           seconds:                        @secs,

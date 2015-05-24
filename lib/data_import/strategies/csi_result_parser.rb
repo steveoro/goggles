@@ -282,6 +282,7 @@ class CsiResultParser
       unless @do_not_consume_file
         update_logs( "Consuming it..." )
         FileUtils.rm( @full_pathname )
+        # TODO Add rm of .DBF file, when converted!
       end
       @data_import_session.phase = 12               # Update "last completed phase" indicator (12 = '1.2')
       @data_import_session.save!
