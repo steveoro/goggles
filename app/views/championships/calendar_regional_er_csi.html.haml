@@ -2,7 +2,7 @@
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
-    
+
     - if @season.id != @current_season_id
       .navbar
         %ul.nav
@@ -25,20 +25,20 @@
             %b= t('calendars.events')
           %td
             %b= t('calendars.pool')
-        - @season_meetings_calendar.each do |meeting|
-          - session_number = meeting.meeting_sessions.count
+        - @season_meetings_calendar.each do |calendar_dao|
+          - session_number = calendar_dao.meeting_sessions.count
           - if session_number == 0
             %tr
               %td
-                = meeting.meeting.decorate.get_linked_name
+                = calendar_dao.meeting.decorate.get_linked_name
               %td{ colspan: 5 }
                 = t('to_be_defined')
           - else
-            - meeting.meeting_sessions.each_with_index do |meeting_session, index|
+            - calendar_dao.meeting_sessions.each_with_index do |meeting_session, index|
               %tr
                 - if index == 0
                   %td{ rowspan: session_number }
-                    = meeting.meeting.decorate.get_linked_name
+                    = calendar_dao.meeting.decorate.get_linked_name
                 - if index == 0
                   %td.goggles-rightalign{ rowspan: session_number }
                     = meeting_session.scheduled_date
@@ -51,7 +51,7 @@
                 - if index == 0
                   %td{ rowspan: session_number }
                     = meeting_session.swimming_pool.decorate.get_city_and_attributes
-                 
+
 .row-fluid.goggles-category-gap#Remark
   %p
     %b= t('calendars.remark')

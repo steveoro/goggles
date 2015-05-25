@@ -98,9 +98,7 @@ parameters ('RAILS_ENV=production') not before having issued also a:
       # TODO Championship history? (Seasons: 131, 121, 111, 101, 91, 14, 12, 10, 8, 6, 4, 3, 2, 1)
       141
     ]
-    recent_meeting_ids = [
-      14101
-    ]
+    recent_meeting_ids = champ_season_ids.map { |id| Season.find(id).meetings.map{|meeting| meeting.id} }.flatten
 
     puts "\r\nTotals:"
     puts "======="
