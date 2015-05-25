@@ -4,7 +4,7 @@
 # Model class
 #
 # @author   Steve A.
-# @version  4.00.341
+# @version  4.00.797
 #
 class MeetingProgram < ActiveRecord::Base
   include MeetingAccountable
@@ -107,6 +107,15 @@ class MeetingProgram < ActiveRecord::Base
   # Retrieves the Category Type short name
   def get_category_type_name
     self.category_type ? self.category_type.short_name : '?'
+  end
+  # ----------------------------------------------------------------------------
+
+  # Check if this meeting program is valid for the ranking system.
+  def is_valid_for_ranking
+    !(
+      (meeting_event && meeting_event.is_out_of_race) ||
+      (meeting_program && meeting_program.is_out_of_race)
+    )
   end
   # ----------------------------------------------------------------------------
 

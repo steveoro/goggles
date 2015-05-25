@@ -8,7 +8,7 @@ require 'timing_gettable'
 # Model class
 #
 # @author   Steve A., Leega
-# @version  4.00.475
+# @version  4.00.797
 #
 class MeetingIndividualResult < ActiveRecord::Base
   include SwimmerRelatable
@@ -125,7 +125,12 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   # Check if this result is valid for the ranking system.
   def is_valid_for_ranking
-    (!self.is_out_of_race) && (!self.is_disqualified)
+    !(
+      (meeting_event && meeting_event.is_out_of_race) ||
+      (meeting_program && meeting_program.is_out_of_race) ||
+      self.is_out_of_race ||
+      self.is_disqualified
+    )
   end
 
   # Retrieves the associated Team full name

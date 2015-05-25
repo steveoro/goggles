@@ -84,7 +84,10 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           @rank         = detail_row.rank
           result_time   = detail_row.decorated_result_time
           # [Steve, 20150520] Score must result 0 if the current program/event is "out of race"
-          if meeting_program.is_out_of_race || (@rank.to_i == 0)
+          if ( @rank.to_i == 0 ) ||
+             ( meeting_program.is_out_of_race ) ||
+             ( meeting_program.respond_to?(:meeting_event) &&
+               meeting_program.meeting_event && meeting_event.is_out_of_race )
             @standard_points = 0
             @meeting_points  = 0
             @team_points     = 0

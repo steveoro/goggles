@@ -7,7 +7,7 @@ require 'wrappers/timing'
 # Model class
 #
 # @author   Steve A.
-# @version  4.00.341
+# @version  4.00.797
 #
 class MeetingRelayResult < ActiveRecord::Base
   include TimingGettable
@@ -100,7 +100,12 @@ class MeetingRelayResult < ActiveRecord::Base
 
   # Check if this result is valid for the ranking system.
   def is_valid_for_ranking
-    (!self.is_out_of_race) && (!self.is_disqualified)
+    !(
+      (meeting_event && meeting_event.is_out_of_race) ||
+      (meeting_program && meeting_program.is_out_of_race) ||
+      self.is_out_of_race ||
+      self.is_disqualified
+    )
   end
 
   # Retrieves the associated Team full name
