@@ -16,7 +16,6 @@ describe RecordCollector, type: :strategy do
   # TODO test context for prefiltering with a Team => subject { RecordCollector.new(team: Team.find_by_id(1)) }
   # TODO test context for prefiltering with a SeasonType
   # TODO test context for prefiltering with a Swimmer
-  # TODO test context for prefiltering with a Meeting
   # TODO test context for prefiltering with a Season
 
 
@@ -256,6 +255,50 @@ describe RecordCollector, type: :strategy do
 #      end
 #      puts ''
 #    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  context "when filtering with a :meeting," do
+    let(:meeting)   { Meeting.has_results.sort{ rand - 0.5 }[0] }
+    subject         { RecordCollector.new( :meeting => meeting ) }
+
+    describe "#meeting" do
+      it "returns the meeting specified in the constructor" do
+        expect( subject.meeting.id ).to eq( meeting.id )
+      end
+    end
+
+    describe "#pool_type_code_list" do
+      it "returns the pool_type codes of the sessions from the meeting used as filter" do
+        expect(
+          subject.pool_type_code_list
+        ).to match_array( meeting.pool_types.flatten.uniq.map{ |row| row.code }.flatten )
+      end
+    end
+
+    describe "#event_type_codes_list" do
+      it "returns the event_type codes of the sessions from the meeting used as filter" do
+        expect(
+          subject.event_type_codes_list
+        ).to match_array(
+          meeting.event_types.are_not_relays.flatten.uniq.map{ |row| row.code }.flatten
+        )
+      end
+    end
+
+    describe "#category_type_codes_list" do
+      it "returns the category_type codes of the sessions from the meeting used as filter" do
+        expect(
+          subject.category_type_codes_list
+        ).to match_array(
+          meeting.meeting_events.flatten.uniq.map{ |me|
+            me.category_types.flatten.uniq.map{ |row| row.code }
+          }.flatten
+        )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

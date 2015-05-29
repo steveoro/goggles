@@ -3,7 +3,7 @@
 =begin
 
 = RecordCollector
-  - Goggles framework vers.:  4.00.439
+  - Goggles framework vers.:  4.00.799
   - author: Steve A.
 
  Collector strategy class for individual records stored into a newly created
@@ -14,6 +14,12 @@
 
 =end
 class RecordCollector
+  include SqlConverter
+
+  attr_reader :logger, :sql_executable_log
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Creates a new instance while setting the filtering parameters for the records
   # selection.
@@ -48,6 +54,7 @@ class RecordCollector
     end
 
     @collection   = RecordCollection.new( list_of_rows, record_type_code )
+    @sql_executable_log = ''                        # SQL diff log
 
     # Options safety check:
     @swimmer      = options[:swimmer] if options[:swimmer].instance_of?( Swimmer )
@@ -63,10 +70,18 @@ class RecordCollector
 
     # Cache the unique codes lists:
     @record_type_codes   = RecordType.select(:code).uniq.map{ |row| row.code }
-    @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
-    @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
-    @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
-    @gender_type_codes   = GenderType.select(:code).uniq.map{ |row| row.code }.delete_if{ |e| e == 'X' }
+    # Let's refine the full scan loop parameters, when it's the case:
+    if @meeting
+      @pool_type_codes     = @meeting.pool_types.flatten.uniq.map{ |row| row.code }
+      @event_type_codes    = @meeting.event_types.are_not_relays.flatten.uniq.map{ |row| row.code }
+      @category_type_codes = @meeting.meeting_events.flatten.uniq.map{ |me| me.category_types.flatten.uniq.map{|row| row.code} }.flatten
+    else
+      @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
+      @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
+      @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
+    end
+    # Genders for individual records are two, and that's it:
+    @gender_type_codes   = GenderType.individual_only.select(:code).uniq.map{ |row| row.code }
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -139,35 +154,30 @@ class RecordCollector
   #
   def commit( remove_from_list = true )
     persisted_ok = 0
+    is_team_record = false
+    if @team                                        # Team-filtered collection?
+      is_team_record = true
+      @sql_executable_log << "-- TEAM Record collector commit for a total of #{ @collection.count }\r\n\r\n"
+    else
+      @sql_executable_log << "-- (SEASON) Record collector commit for a total of #{ @collection.count }\r\n\r\n"
+    end
+
     @collection.each do |key, row|
-      existing_record = nil
-      is_team_record = false
       is_ok = false
-      if @team                                      # Team-filtered collection?
-        is_team_record = true
-        existing_record = IndividualRecord.where(
-          pool_type_id:     row.pool_type_id,
-          event_type_id:    row.event_type_id,
-          category_type_id: row.category_type_id,
-          gender_type_id:   row.gender_type_id,
-          record_type_id:   row.record_type_id,
-          team_id:          row.team_id,
-          is_team_record:   true
-        ).first
-      else                                          # (Assuming it is a) SeasonType-filtered collection:
-        existing_record = IndividualRecord.where(
-          pool_type_id:     row.pool_type_id,
-          event_type_id:    row.event_type_id,
-          category_type_id: row.category_type_id,
-          gender_type_id:   row.gender_type_id,
-          record_type_id:   row.record_type_id,
-          season_id:        row.season_id,
-          is_team_record:   false
-        ).first
-      end
+      where_attribute_values = {
+        pool_type_id:     row.pool_type_id,
+        event_type_id:    row.event_type_id,
+        category_type_id: row.category_type_id,
+        gender_type_id:   row.gender_type_id,
+        record_type_id:   row.record_type_id,
+        team_id:          @team ? row.team_id : nil,
+        season_id:        @team ? nil : row.season_id,
+        is_team_record:   is_team_record
+      }
+      existing_record = IndividualRecord.where( where_attribute_values ).first
                                                     # Persist row:
       if existing_record                            # Record found already existing?
-        is_ok = existing_record.update_attributes(
+        new_attribute_values = {
           minutes:                      row.minutes,
           seconds:                      row.seconds,
           hundreds:                     row.hundreds,
@@ -177,14 +187,23 @@ class RecordCollector
           federation_type_id:           row.federation_type_id,
           meeting_individual_result_id: row.meeting_individual_result_id,
           is_team_record:               is_team_record
-        )
+        }
+        is_ok = existing_record.update_attributes( new_attribute_values )
+        @sql_executable_log << to_sql_update( existing_record, false, new_attribute_values, "\r\n" ) # (false: no comment)
       else                                          # Record not found?
         row.is_team_record = is_team_record
-        is_ok = row.save
+        @sql_executable_log << to_sql_insert( row, false, "\r\n" ) # (false: no comment)
+        begin
+          is_ok = row.save!
+        rescue
+          puts "\r\nError while saving #{row.inspect}"
+          @sql_executable_log << "-- save statement failed! Row ID: #{row.id}\r\n"
+        end
       end
       persisted_ok += 1 if is_ok
       @collection.delete_with_key(key) if remove_from_list && is_ok
     end
+    @sql_executable_log << "\r\n\r\n-- Tot. committed rows with OK status: #{ persisted_ok }\r\n"
     remove_from_list ? (@collection.count == 0) : (@collection.count == persisted_ok)
   end
   #-- --------------------------------------------------------------------------
@@ -373,9 +392,9 @@ class RecordCollector
     # Store these max first ranking results:
     first_recs = prefiltered_results.order( :minutes, :seconds, :hundreds ).limit(limit)
 # DEBUG
-#    puts "Initial first_recs.size: #{first_recs.size}"
+#    puts "Initial first_recs.size: #{first_recs.to_ary.size}"
 
-    if first_recs.size > 0                          # Compute the first timing result value
+    if first_recs.to_ary.size > 0                          # Compute the first timing result value
       first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
                                                     # Remove from the result all other rows that have a greater timing result (keep same ranking results)
       first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
