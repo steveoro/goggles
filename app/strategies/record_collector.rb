@@ -197,6 +197,7 @@ class RecordCollector
           is_ok = row.save!
         rescue
           puts "\r\nError while saving #{row.inspect}"
+          puts "Exception: #{ $!.to_s }" if $!
           @sql_executable_log << "-- save statement failed! Row ID: #{row.id}\r\n"
         end
       end
@@ -215,11 +216,13 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code, record_type_code )
+  def collect_from_all_category_results_having( pool_type_code, event_type_code, gender_type_code,
+                                                record_type_code )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{gender_type_code}', '#{record_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
       .joins( :pool_type, :event_type, :gender_type )
+      .includes( :pool_type, :event_type, :gender_type )
       .where(
       [
         '(pool_types.code = ?) AND (event_types.code = ?) AND ' +
@@ -227,7 +230,7 @@ class RecordCollector
         '(minutes * 6000 + seconds*100 + hundreds > 0)', # (avoid null times)
         pool_type_code, event_type_code, gender_type_code
       ]
-    )
+    ).readonly(false)
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
@@ -242,11 +245,13 @@ class RecordCollector
   #
   # This method works by scanning existing MeetingIndividualResult(s) on DB.
   #
-  def collect_from_results_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code )
+  def collect_from_results_having( pool_type_code, event_type_code, category_type_code,
+                                   gender_type_code, record_type_code )
 # DEBUG
 #    puts "\r\n---[ RecordCollector#collect_from_results_having('#{pool_type_code}', '#{event_type_code}', '#{category_type_code}', '#{gender_type_code}') ]---"
     mir = MeetingIndividualResult.is_valid
       .joins( :pool_type, :event_type, :category_type, :gender_type )
+      .includes( :pool_type, :event_type, :category_type, :gender_type )
       .where(
       [
         '(pool_types.code = ?) AND (event_types.code = ?) AND ' +
@@ -254,7 +259,7 @@ class RecordCollector
         '(minutes * 6000 + seconds*100 + hundreds > 0)', # (avoid null times)
         pool_type_code, event_type_code, category_type_code, gender_type_code
       ]
-    )
+    ).readonly(false)
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
     mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
@@ -270,9 +275,11 @@ class RecordCollector
   #
   # This method works by scanning existing IndividualRecord(s) on DB.
   #
-  def collect_from_records_having( pool_type_code, event_type_code, category_type_code, gender_type_code, record_type_code )
+  def collect_from_records_having( pool_type_code, event_type_code, category_type_code,
+                                   gender_type_code, record_type_code )
     ir = IndividualRecord
       .joins( :record_type, :pool_type, :event_type, :category_type, :gender_type )
+      .includes( :record_type, :pool_type, :event_type, :category_type, :gender_type )
       .where(
       [
         '(record_types.code = ?) AND ' +
@@ -281,7 +288,7 @@ class RecordCollector
         '(minutes * 6000 + seconds*100 + hundreds > 0)', # (avoid null times)
         record_type_code, pool_type_code, event_type_code, category_type_code, gender_type_code
       ]
-    )
+    ).readonly(false)
     ir = ir.where( swimmer_id: @swimmer.id ) if @swimmer
     ir = ir.where( team_id: @team.id ) if @team
     ir = ir.for_season_type( @season_type.id ) if @season_type

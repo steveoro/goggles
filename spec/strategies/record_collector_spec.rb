@@ -36,7 +36,10 @@ describe RecordCollector, type: :strategy do
         :get_collected_season_types,
         :save,
         :commit,
-        :full_scan
+        :full_scan,
+
+        :logger,
+        :sql_executable_log
       ]
     )
     it_behaves_like( "(the existance of a method returning an Enumerable of non-empty Strings)",
@@ -122,34 +125,40 @@ describe RecordCollector, type: :strategy do
   #++
 
   describe "#collection" do
-    it "returns the collection instance" do
-      expect( subject.collection ).to be_an_instance_of( RecordCollection )
-    end
-    # This is useful if the getter is implemented using #dup or #clone.
-    # [Steve, 20140717] *** Currently: NOT ***
-    it "returns a collection having the same number of elements of the internal collection" do
-      expect( subject.collection.count ).to eq(subject.count)
+    context "when testing an unfiltered subject," do
+      it "returns the collection instance" do
+        expect( subject.collection ).to be_an_instance_of( RecordCollection )
+      end
+      # This is useful if the getter is implemented using #dup or #clone.
+      # [Steve, 20140717] *** Currently: NOT ***
+      it "returns a collection having the same number of elements of the internal collection" do
+        expect( subject.collection.count ).to eq(subject.count)
+      end
     end
   end
 
   describe "#count" do
-    it "returns the size of the internal collection" do
-      subject.clear
-      expect( subject.count ).to eq(0)
-    end
-    it "clears the internal list" do
-      subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
-      expect( subject.count ).to be > 0
+    context "when testing an unfiltered subject," do
+      it "returns the size of the internal collection" do
+        subject.clear
+        expect( subject.count ).to eq(0)
+      end
+      it "clears the internal list" do
+        subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
+        expect( subject.count ).to be > 0
+      end
     end
   end
 
   describe "#clear" do
-    it "returns the cleared collection instance" do
-      expect( subject.clear ).to be_an_instance_of( RecordCollection )
-    end
-    it "clears the internal list" do
-      subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
-      expect{ subject.clear }.to change{ subject.count }.to(0)
+    context "when testing an unfiltered subject," do
+      it "returns the cleared collection instance" do
+        expect( subject.clear ).to be_an_instance_of( RecordCollection )
+      end
+      it "clears the internal list" do
+        subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR')
+        expect{ subject.clear }.to change{ subject.count }.to(0)
+      end
     end
   end
   #-- -------------------------------------------------------------------------
@@ -157,33 +166,62 @@ describe RecordCollector, type: :strategy do
 
 
   describe "#collect_from_results_having" do
-    it "returns an instance of RecordCollection" do
-      expect( subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR') ).to be_an_instance_of( RecordCollection )
+    context "when testing an unfiltered subject," do
+      it "returns an instance of RecordCollection" do
+        expect( subject.collect_from_results_having('25', '100DO', 'M35', 'M', 'FOR') ).to be_an_instance_of( RecordCollection )
+      end
+      it "returns collection of no more than 2 records" do
+        result = subject.collect_from_results_having('50', '100DO', 'M40', 'M', 'FOR')
+        expect( result.count ).to be < 3
+      end
     end
-    it "returns collection of no more than 2 records" do
-      result = subject.collect_from_results_having('50', '100DO', 'M40', 'M', 'FOR')
-      expect( result.count ).to be < 3
+
+    context "with a subject filtered by MEETING," do
+      let(:meeting)   { Meeting.has_results.sort{ rand - 0.5 }[0] }
+      subject         { RecordCollector.new( :meeting => meeting ) }
+
+      # TODO
+    end
+
+    context "with a subject filtered by SEASON," do
+      let(:meeting)   { Meeting.has_results.sort{ rand - 0.5 }[0] }
+      let(:season)    { meeting.season }
+      subject         { RecordCollector.new( :season => season ) }
+
+      # TODO
+    end
+
+    context "with a subject filtered by TEAM," do
+      let(:team)      { Team.has_results.sort{ rand - 0.5 }[0] }
+      subject         { RecordCollector.new( :team => team ) }
+
+      # TODO
+      it "returns only TEAM records (not federation records)"
     end
   end
 
   describe "#collect_from_records_having" do
-    it "returns an instance of RecordCollection" do
-      expect( subject.collect_from_records_having('25', '100DO', 'M35', 'M', 'FOR') ).to be_an_instance_of( RecordCollection )
-    end
-    it "returns collection of no more than 2 records" do
-      result = subject.collect_from_records_having('50', '100DO', 'M40', 'M', 'FOR')
-      expect( result.count ).to be < 3
+    context "when testing an unfiltered subject," do
+      it "returns an instance of RecordCollection" do
+        expect( subject.collect_from_records_having('25', '100DO', 'M35', 'M', 'FOR') ).to be_an_instance_of( RecordCollection )
+      end
+      it "returns collection of no more than 2 records" do
+        result = subject.collect_from_records_having('50', '100DO', 'M40', 'M', 'FOR')
+        expect( result.count ).to be < 3
+      end
     end
   end
   #-- -------------------------------------------------------------------------
   #++
 
   describe "#get_collected_season_types" do
-    it "returns an instance of Hash" do
-      expect( subject.get_collected_season_types ).to be_an_instance_of( Hash )
-    end
-    it "returns at least a number lesser or equal to the total collection count" do
-      expect( subject.get_collected_season_types.count ).to be <= subject.count
+    context "when testing an unfiltered subject," do
+      it "returns an instance of Hash" do
+        expect( subject.get_collected_season_types ).to be_an_instance_of( Hash )
+      end
+      it "returns at least a number lesser or equal to the total collection count" do
+        expect( subject.get_collected_season_types.count ).to be <= subject.count
+      end
     end
   end
   #-- -------------------------------------------------------------------------
@@ -196,15 +234,17 @@ describe RecordCollector, type: :strategy do
       expect( subject.count ).to be > 0
     end
 
-    it "returns true on no-errors found" do
-      expect( subject.save ).to be true
-    end
-    it "does not clear the internal list" do
-      expect{ subject.save }.not_to change{ subject.count }
-    end
-    it "doesn't increase the table size when persisting existing records" do
-      expect( subject.save ).to be true  # make the record persist, without clearing the list
-      expect{ subject.save }.not_to change{ IndividualRecord.count }
+    context "when saving existing records," do
+      it "returns true on no-errors found" do
+        expect( subject.save ).to be true
+      end
+      it "does not clear the internal list" do
+        expect{ subject.save }.not_to change{ subject.count }
+      end
+      it "doesn't increase the table size" do
+        expect( subject.save ).to be true  # make the record persist, without clearing the list
+        expect{ subject.save }.not_to change{ IndividualRecord.count }
+      end
     end
   end
 
@@ -215,20 +255,22 @@ describe RecordCollector, type: :strategy do
       expect( subject.count ).to be > 0
     end
 
-    it "returns true on no-errors found" do
-      expect( subject.commit ).to be true
-    end
-    it "clears the internal list" do
-      expect{ subject.commit }.to change{ subject.count }.to(0)
-    end
-    it "doesn't alter the table size when persisting (just saving) existing records" do
-      before_count = subject.count
-      subject.save  # make sure the record persist, without clearing the list
-      expect{ subject.commit }.not_to change{ IndividualRecord.count }
-    end
-    it "doesn't alter the table size when updating existing records" do
-      before_count = subject.count
-      expect{ subject.commit }.not_to change{ IndividualRecord.count }
+    context "when saving existing records," do
+      it "returns true on no-errors found" do
+        expect( subject.commit ).to be true
+      end
+      it "clears the internal list" do
+        expect{ subject.commit }.to change{ subject.count }.to(0)
+      end
+      it "doesn't alter the table size" do
+        before_count = subject.count
+        subject.save  # make sure the record persist, without clearing the list
+        expect{ subject.commit }.not_to change{ IndividualRecord.count }
+      end
+      it "doesn't alter the table size" do
+        before_count = subject.count
+        expect{ subject.commit }.not_to change{ IndividualRecord.count }
+      end
     end
   end
   #-- -------------------------------------------------------------------------
