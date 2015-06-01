@@ -373,6 +373,29 @@ class SwimmersController < ApplicationController
   #++
 
 
+  # Radiography for a specified swimmer id: "Goggle cup" tab rendering.
+  # Show results which concurrs in current goggle cup score, if any
+  # For each result, ordered by goggle cup points show google cup point
+  # and event datas
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def current_goggle_cup
+    # --- "Goggle cup" tab: ---
+    @tab_title = I18n.t('radiography.goggle_cup_current')
+    @goggle_cups = []
+    
+    # Find out swimmer's currents goggle cup, if any
+    # 
+    @swimmer.get_badges_array_for_year.each do |badge|
+      if badge.team.has_goggle_cup_at?
+        @goggle_cups << badge.team.get_current_goggle_cup_at if @goggle_cups.size == 0 
+      end
+    end
+  end
+
+
   # Radiography for a specified swimmer id: "Trainings" tab rendering
   # Swimmer training stats
   # Training summary:

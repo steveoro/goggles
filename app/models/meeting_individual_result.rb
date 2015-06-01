@@ -89,7 +89,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_timing,              ->(dir = 'ASC') { order("is_disqualified, (hundreds+(seconds*100)+(minutes*6000)) #{dir.to_s}") }
   scope :sort_by_rank,                ->(dir = 'ASC') { order("is_disqualified, rank #{dir.to_s}") }
   scope :sort_by_date,                ->(dir = 'ASC') { includes(:meeting_session).order("meeting_sessions.scheduled_date #{dir.to_s}") }
-  scope :sort_by_goggle_cup,          ->(dir)         { order("goggle_cup_points #{dir.to_s}") }
+  scope :sort_by_goggle_cup,          ->(dir = 'DESC') { order("goggle_cup_points #{dir.to_s}") }
   scope :sort_by_pool_and_event,      ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir.to_s}, event_types.style_order #{dir.to_s}") }
   scope :sort_by_gender_and_category, ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir.to_s}, category_types.code #{dir.to_s}") }
   scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at #{dir.to_s}") }
@@ -101,6 +101,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_category_type,           ->(category_type)       { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
   scope :for_gender_type,             ->(gender_type)         { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
   scope :for_event_type,              ->(event_type)          { joins(:event_type).where(["event_types.id = ?", event_type.id]) }
+  scope :for_swimmer,                 ->(swimmer)             { where(swimmer_id: swimmer.id) }
 
   # ----------------------------------------------------------------------------
   # Base methods:
