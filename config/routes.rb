@@ -140,6 +140,7 @@ Goggles::Application.routes.draw do
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
+      get  "swimmer/current_goggle_cup/:id",    to: "swimmers#current_goggle_cup",      as: "swimmer_current_goggle_cup"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
 
       # === Teams ===

@@ -531,6 +531,28 @@ describe SwimmersController, :type => :controller do
   # ===========================================================================
 
 
+  describe '[GET #current_goggle_cup/:id]' do
+    it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :current_goggle_cup )
+    it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :current_goggle_cup )
+
+    context "as a logged-in user" do
+      let(:team)    { Team.find(1) }
+      let(:swimmer) { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] } 
+      
+      before(:each) do
+        login_user()
+        get :current_goggle_cup, id: swimmer.id
+      end
+
+      context "current_goggle_cup general structure," do
+        it "assigns an array with goggle cup collected" do
+          expect( assigns( :goggle_cups ) ).to be_a_kind_of( Array )
+        end
+      end
+    end
+  end
+  # ===========================================================================
+
   describe '[GET #trainings/:id]' do
     # FIXME This action requires "full goggler" (swimmer associated with user)
     #it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :trainings )

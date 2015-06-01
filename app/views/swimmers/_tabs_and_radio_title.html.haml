@@ -14,6 +14,9 @@
   - is_active = ( params[:action] == 'full_history_by_time' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('radiography.full_history_by_event'),  is_active ? '#' : swimmer_full_history_2_path(id: @swimmer.id) )
+  - is_active = ( params[:action] == 'current_goggle_cup' )
+  %li{ class: is_active ? 'active' : '' }
+    = link_to( t('radiography.goggle_cup_current'),  is_active ? '#' : swimmer_current_goggle_cup_path(id: @swimmer.id) )
   - is_active = ( params[:action] == 'trainings' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('radiography.trainings_tab'),      is_active ? '#' : swimmer_trainings_path(id: @swimmer.id) )

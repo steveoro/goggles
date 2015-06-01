@@ -81,7 +81,7 @@ class Team < ActiveRecord::Base
   # evaluation_date: the date the goggle cup should be current at (default today)
   #
   def has_goggle_cup_at?( evaluation_date = Date.today )
-    goggle_cups.each do |goggle_cup|
+    goggle_cups.sort_goggle_cup_by_year('DESC').each do |goggle_cup|
       return true if goggle_cup.is_current_at?( evaluation_date )
     end
     false
@@ -95,7 +95,7 @@ class Team < ActiveRecord::Base
   # evaluation_date: the date the goggle cup should be current at (default today)
   #
   def get_current_goggle_cup_at( evaluation_date = Date.today )
-    goggle_cups.each do |goggle_cup|
+    goggle_cups.sort_goggle_cup_by_year('DESC').each do |goggle_cup|
       return goggle_cup if goggle_cup.is_current_at?( evaluation_date )
     end
     nil
