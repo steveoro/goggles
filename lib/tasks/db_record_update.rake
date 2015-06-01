@@ -104,6 +104,9 @@ DESC
   #
   def scan_by_model_for_records( model, sym, meeting, season, logger, log_dir )
     collector = nil
+    file_name = File.join(
+      log_dir, "#{ DateTime.now.strftime("%Y%m%d%H%M") }prod_update_records_#{sym}.sql"
+    )
 
     # Loop on all results for the specified Meeting and update or insert the records:
     if meeting
@@ -204,11 +207,6 @@ DESC
     else
       logger.warn("WARNING: #{ collector.count } record(s) were not saved due to errors!")
     end
-
-    logger.info("Storing #{sym.to_s.upcase} records update diff file in Log directory...")
-    file_name = File.join(
-      log_dir, "#{ DateTime.now.strftime("%Y%m%d%H%M") }prod_update_records_#{sym}.sql"
-    )
     File.open( file_name, 'w' ) { |f| f.puts collector.sql_executable_log }
   end
   #-- -------------------------------------------------------------------------
