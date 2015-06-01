@@ -689,6 +689,11 @@ it:
     pool: "Piscina"
     remark: "N.B. Le gare senza gli orari di riscaldamento ed inizio sono da considerarsi bozze non ufficiali"
 
+  privacy:
+    we_use_cookies: "Usiamo i cookies analitici per capire quali pagine sono piu' richieste. Li usiamo solo per cercare di migliorare l'esperienza degli utenti. Non venderemo mai a terzi le informazioni sul vostro browsing!"
+    agreed: "Mi sta bene."
+    disable: "Disabilita."
+
   misc:
     fin_score_calculation: "Calcolo punteggio FIN"
     compute_fin_score_for: "Calcolo punteggio FIN per"

@@ -8,3 +8,5 @@
 
 .goggles-breadcrumb
   = render_navigation( renderer: :breadcrumbs, prefix: "#{I18n.t(:you_are_here)}&nbsp;", join_with: " &gt; " )
+
+= render( partial: AGEX_APP + '/analytics_optout' )
