@@ -87,7 +87,8 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           if ( @rank.to_i == 0 ) ||
              ( meeting_program.is_out_of_race ) ||
              ( meeting_program.respond_to?(:meeting_event) &&
-               meeting_program.meeting_event && meeting_event.is_out_of_race )
+               meeting_program.meeting_event &&
+               meeting_program.meeting_event.is_out_of_race )
             @standard_points = 0
             @meeting_points  = 0
             @team_points     = 0
