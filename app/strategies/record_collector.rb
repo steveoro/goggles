@@ -80,11 +80,11 @@ class RecordCollector
       @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
       if @season_type
         @category_type_codes = CategoryType.is_valid.are_not_relays
-            .includes(:season).where( 'seasons.season_type_id' => @season_type )
-            .select(:code).uniq.map{|row| row.code }
+            .includes(:season).where( 'seasons.season_type_id' => @season_type.id )
+            .select(:code).uniq.map{|row| row.code }.uniq
       else
         @category_type_codes = CategoryType.is_valid.are_not_relays
-            .select(:code).uniq.map{|row| row.code }
+            .select(:code).uniq.map{|row| row.code }.uniq
       end
     end
     # Genders for individual records are two, and that's it:
