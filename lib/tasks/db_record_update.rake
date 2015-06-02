@@ -75,7 +75,7 @@ DESC
     db_pwd          = rails_config.database_configuration[Rails.env]['password']
     log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
     meeting         = ENV.include?("meeting") ? Meeting.find_by_id(ENV["meeting"].to_i) : nil
-    start_from_index = ENV.include?("start_from_index") ? ENV.include?("start_from_index").to_i : nil
+    start_from_index = ENV.include?("start_from_index") ? ENV["start_from_index"].to_i : nil
     season          = meeting.nil? && ENV.include?("season") ? Season.find_by_id(ENV["season"].to_i) : nil
                                                     # Display some info:
     puts "DB name:        #{db_name}"

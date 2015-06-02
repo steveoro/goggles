@@ -226,14 +226,14 @@ class RecordCollector
   # missing record or the need to add a new record row.
   #
   def seek_existing_record_for( result_row, must_be_a_team_record )
-    where_attribute_values = @team ? {
+    where_attribute_values = must_be_a_team_record ? {
       pool_type_id:     result_row.pool_type_id,
       event_type_id:    result_row.event_type_id,
       category_type_id: result_row.category_type_id,
       gender_type_id:   result_row.gender_type_id,
       record_type_id:   result_row.record_type_id,
       team_id:          result_row.team_id,
-      is_team_record:   must_be_a_team_record
+      is_team_record:   true
     } :
     {
       pool_type_id:     result_row.pool_type_id,
@@ -241,8 +241,13 @@ class RecordCollector
       category_type_id: result_row.category_type_id,
       gender_type_id:   result_row.gender_type_id,
       record_type_id:   result_row.record_type_id,
-      season_id:        result_row.season_id,
-      is_team_record:   must_be_a_team_record
+      # [Steve, 20150602] If it's not a "team record", then it must be a federation
+      # record (a season_type_id-governed record). This means that we should not
+      # filter with a season_id (any record could be beaten in different seasons).
+      # Moreover, we don't (and don't want to) keep an history of all the seasonal
+      # records, since it would be too demanding on the storage side.
+#      season_id:        result_row.season_id,
+      is_team_record:   false
     }
     IndividualRecord.where( where_attribute_values ).first
   end
