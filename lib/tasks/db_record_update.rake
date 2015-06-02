@@ -17,7 +17,7 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 
 = Record Update
 
-  - Goggles framework vers.:  4.00.359.20140718
+  - Goggles framework vers.:  4.00.803
   - author: Steve A.
 
   DB Updater for batch collection of Team & Federation Records & Best Individual Results
@@ -29,6 +29,11 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 namespace :db do
 
   desc <<-DESC
+
+***********************************************************************
+*** WARNING: MAY TAKE SEVERAL HOURS TO COMPLETE, EVEN ON A FAST PC! ***
+***********************************************************************
+
 Executes the DB update process for records/best-results as a batch job.
 Resulting log files are stored into '#{LOG_DIR}'.
 
@@ -43,11 +48,16 @@ The results are serialized after each RecordCollector#full_scan() call (upon eac
 iteration of one of the two loops).
 
 Options: [meeting=<meeting_id>] [season=<season_id>]
+         [start_from_index=<team_ordinal_index>]
          [log_dir=#{LOG_DIR}]
 
+  - start_from_index => execute only a Team-record scan, starting from the
+              specified index (ordinal number) specified. This is useful if the
+              previous loop was interrupted for any reason at a certain index.
+
   - meeting => scan only this Meeting.id; when not set, all Meetings are scanned.
-               (This takes precedence over the "season" parameter. It is a very narrow
-               scan loop, ideal for record updates after a single meeting data-import.)
+              (This takes precedence over the "season" parameter. It is a very narrow
+              scan loop, ideal for record updates after a single meeting data-import.)
 
   - season => scan only this Season.id; when not set, all Seasons are scanned
               ("all seasons" implies a scan upon all season types, for all meetings,
@@ -65,6 +75,7 @@ DESC
     db_pwd          = rails_config.database_configuration[Rails.env]['password']
     log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
     meeting         = ENV.include?("meeting") ? Meeting.find_by_id(ENV["meeting"].to_i) : nil
+    start_from_index = ENV.include?("start_from_index") ? ENV.include?("start_from_index").to_i : nil
     season          = meeting.nil? && ENV.include?("season") ? Season.find_by_id(ENV["season"].to_i) : nil
                                                     # Display some info:
     puts "DB name:        #{db_name}"
@@ -81,8 +92,13 @@ DESC
 
     records_before = IndividualRecord.count
     puts Benchmark.measure {
-      scan_by_model_for_records( SeasonType, :season_type, meeting, season, logger, log_dir )
-      scan_by_model_for_records( Team, :team, meeting, season, logger, log_dir )
+      scan_by_model_for_records(
+        SeasonType, :season_type, meeting, season, nil, logger, log_dir
+      ) if start_from_index.nil?
+
+      scan_by_model_for_records(
+        Team, :team, meeting, season, start_from_index, logger, log_dir
+      )
       records_after = IndividualRecord.count
       logger.info( "\r\nTotal Records: #{records_before} (before) VS. #{records_after} (after) => added: #{records_after - records_before}" )
       logger.info( "Measured times:" )
@@ -102,10 +118,10 @@ DESC
   # If meeting or season are not nil, they are used as filtering parameters for
   # the full scan.
   #
-  def scan_by_model_for_records( model, sym, meeting, season, logger, log_dir )
+  def scan_by_model_for_records( model, sym, meeting, season, start_from_index, logger, log_dir )
     collector = nil
     file_name = File.join(
-      log_dir, "#{ DateTime.now.strftime("%Y%m%d%H%M") }prod_update_records_#{sym}.sql"
+      log_dir, "#{ DateTime.now.strftime("%Y%m%d%H%M") }prod_update_records_#{sym}"
     )
 
     # Loop on all results for the specified Meeting and update or insert the records:
@@ -136,10 +152,15 @@ DESC
         )
         putc '.'
       end
+      logger.info("\r\nFull scan completed only for meeting #{meeting.id}. Saving data...")
+      commit_updates( collector, file_name + "-meeting#{meeting.id}.sql", logger )
 
     # Filter using the specified Season while doing a full scan:
     elsif season
       list = model.uniq
+      if start_from_index
+        list = list.to_a[ start_from_index .. list.size ]
+      end
       list.each_with_index do |instance, index|
         collector = RecordCollector.new( sym.to_sym => instance, :season => season )
         total = collector.pool_type_code_list.count *
@@ -166,11 +187,17 @@ DESC
           )
           putc '.'
         end
+        # After each completed Full-scans,, we need to serialize the results:
+        logger.info( "\r\nCommitting updates for #{sym} index #{index})..." )
+        commit_updates( collector, file_name + "-#{index}.sql", logger )
       end
 
     # Loop on all Model instances and do a full scan.
     else
       list = model.uniq
+      if start_from_index
+        list = list.to_a[ start_from_index .. list.size ]
+      end
       list.each_with_index do |instance, index|
         collector = RecordCollector.new( sym.to_sym => instance )
         total = collector.pool_type_code_list.count *
@@ -197,11 +224,23 @@ DESC
           )
           putc '.'
         end
+        # After each completed Full-scans,, we need to serialize the results:
+        logger.info( "\r\nCommitting updates for #{sym} index #{index})..." )
+        commit_updates( collector, file_name + "-#{index}.sql", logger )
       end
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
-    logger.info("\r\nFull scan completed. Saving data...")
-                                                    # Serialize the results
+
+  private
+
+
+  # Performs the commit phase for the record collector, storing the SQL diff contents
+  # on a log file.
+  #
+  def commit_updates( collector, file_name, logger )
     if collector.commit()
       logger.info("Everything OK.")
     else

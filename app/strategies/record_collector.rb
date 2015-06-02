@@ -155,6 +155,9 @@ class RecordCollector
   def commit( remove_from_list = true )
     persisted_ok = 0
     is_team_record = false
+    # Reset the SQL log in between each commit:
+    @sql_executable_log = '' if remove_from_list
+
     if @team                                        # Team-filtered collection?
       is_team_record = true
       @sql_executable_log << "-- TEAM Record collector commit for a total of #{ @collection.count }\r\n\r\n"
