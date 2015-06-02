@@ -78,7 +78,14 @@ class RecordCollector
     else
       @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
       @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
-      @category_type_codes = CategoryType.is_valid.are_not_relays.select(:code).uniq.map{|row| row.code }
+      if @season_type
+        @category_type_codes = CategoryType.is_valid.are_not_relays
+            .includes(:season).where( 'seasons.season_type_id' => @season_type )
+            .select(:code).uniq.map{|row| row.code }
+      else
+        @category_type_codes = CategoryType.is_valid.are_not_relays
+            .select(:code).uniq.map{|row| row.code }
+      end
     end
     # Genders for individual records are two, and that's it:
     @gender_type_codes   = GenderType.individual_only.select(:code).uniq.map{ |row| row.code }
@@ -160,24 +167,15 @@ class RecordCollector
 
     if @team                                        # Team-filtered collection?
       is_team_record = true
-      @sql_executable_log << "-- TEAM Record collector commit for a total of #{ @collection.count }\r\n\r\n"
+      @sql_executable_log << "-- TEAM Record collector commit for a total of #{ @collection.count }\r\n" <<
+                             "-- TEAM ID #{ @team.id }\r\n\r\n"
     else
-      @sql_executable_log << "-- (SEASON) Record collector commit for a total of #{ @collection.count }\r\n\r\n"
+      @sql_executable_log << "-- FEDERATION Record collector commit for a total of #{ @collection.count }\r\n\r\n"
     end
 
     @collection.each do |key, row|
       is_ok = false
-      where_attribute_values = {
-        pool_type_id:     row.pool_type_id,
-        event_type_id:    row.event_type_id,
-        category_type_id: row.category_type_id,
-        gender_type_id:   row.gender_type_id,
-        record_type_id:   row.record_type_id,
-        team_id:          @team ? row.team_id : nil,
-        season_id:        @team ? nil : row.season_id,
-        is_team_record:   is_team_record
-      }
-      existing_record = IndividualRecord.where( where_attribute_values ).first
+      existing_record = seek_existing_record_for( row, is_team_record )
                                                     # Persist row:
       if existing_record                            # Record found already existing?
         new_attribute_values = {
@@ -192,10 +190,8 @@ class RecordCollector
           is_team_record:               is_team_record
         }
         is_ok = existing_record.update_attributes( new_attribute_values )
-        @sql_executable_log << to_sql_update( existing_record, false, new_attribute_values, "\r\n" ) # (false: no comment)
       else                                          # Record not found?
         row.is_team_record = is_team_record
-        @sql_executable_log << to_sql_insert( row, false, "\r\n" ) # (false: no comment)
         begin
           is_ok = row.save!
         rescue
@@ -204,11 +200,51 @@ class RecordCollector
           @sql_executable_log << "-- save statement failed! Row ID: #{row.id}\r\n"
         end
       end
-      persisted_ok += 1 if is_ok
-      @collection.delete_with_key(key) if remove_from_list && is_ok
+
+      if is_ok                                      # Store the SQL diff:
+        if existing_record
+          @sql_executable_log << to_sql_update( existing_record, false, new_attribute_values, "\r\n" ) # (false: no comment)
+        else
+          @sql_executable_log << to_sql_insert( row, false, "\r\n" ) # (false: no comment)
+        end
+        persisted_ok += 1                           # Increase persisted counter
+        @collection.delete_with_key(key) if remove_from_list
+      end
     end
     @sql_executable_log << "\r\n\r\n-- Tot. committed rows with OK status: #{ persisted_ok }\r\n"
     remove_from_list ? (@collection.count == 0) : (@collection.count == persisted_ok)
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  # Returns an existing IndividualRecord matching most of the attributes of the
+  # specified result_row, which may either be an instance of MeetingIndividualResult
+  # or an IndividualRecord row.
+  #
+  # Returns nil when no previous matching record was found, thus implying a
+  # missing record or the need to add a new record row.
+  #
+  def seek_existing_record_for( result_row, must_be_a_team_record )
+    where_attribute_values = @team ? {
+      pool_type_id:     result_row.pool_type_id,
+      event_type_id:    result_row.event_type_id,
+      category_type_id: result_row.category_type_id,
+      gender_type_id:   result_row.gender_type_id,
+      record_type_id:   result_row.record_type_id,
+      team_id:          result_row.team_id,
+      is_team_record:   must_be_a_team_record
+    } :
+    {
+      pool_type_id:     result_row.pool_type_id,
+      event_type_id:    result_row.event_type_id,
+      category_type_id: result_row.category_type_id,
+      gender_type_id:   result_row.gender_type_id,
+      record_type_id:   result_row.record_type_id,
+      season_id:        result_row.season_id,
+      is_team_record:   must_be_a_team_record
+    }
+    IndividualRecord.where( where_attribute_values ).first
   end
   #-- --------------------------------------------------------------------------
   #++

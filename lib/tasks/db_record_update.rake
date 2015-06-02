@@ -127,11 +127,8 @@ DESC
     # Loop on all results for the specified Meeting and update or insert the records:
     if meeting
       collector = RecordCollector.new( :meeting => meeting )
-      total = collector.pool_type_code_list.count *
-              collector.event_type_codes_list.count *
-              collector.category_type_codes_list.count *
-              collector.gender_type_codes_list.count
-      logger.info( "\r\nProcessing #{sym}: 1/1 '#{meeting.get_full_name}', max inner loops tot.: #{total}" )
+      total = log_loop_quantities( collector, logger )
+      logger.info( "\r\nProcessing #{sym}: 1/1 '#{meeting.get_full_name}', worst case inner loops max: #{total}" )
       collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
 #        logger.debug( "\r\n- current event_code: #{event_code}, category_code: #{category_code}, gender_code: #{gender_code}" )
         # First, initialize the collection by getting the existing records:
@@ -163,11 +160,8 @@ DESC
       end
       list.each_with_index do |instance, index|
         collector = RecordCollector.new( sym.to_sym => instance, :season => season )
-        total = collector.pool_type_code_list.count *
-                collector.event_type_codes_list.count *
-                collector.category_type_codes_list.count *
-                collector.gender_type_codes_list.count
-        logger.info( "\r\nProcessing #{sym.to_s.upcase} records: #{index+1}/#{list.count} '#{instance.get_full_name}', max inner loops tot.: #{total}" )
+        total = log_loop_quantities( collector, logger )
+        logger.info( "\r\nProcessing #{sym.to_s.upcase} records: #{index+1}/#{list.count} '#{instance.get_full_name}', worst case inner loops max: #{total}" )
         collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
           # First, initialize the collection by getting the existing records:
           this.collect_from_records_having(
@@ -200,11 +194,8 @@ DESC
       end
       list.each_with_index do |instance, index|
         collector = RecordCollector.new( sym.to_sym => instance )
-        total = collector.pool_type_code_list.count *
-                collector.event_type_codes_list.count *
-                collector.category_type_codes_list.count *
-                collector.gender_type_codes_list.count
-        logger.info( "\r\nProcessing #{sym.to_s.upcase} records: #{index+1}/#{list.count} '#{instance.get_full_name}', max inner loops tot.: #{total}" )
+        total = log_loop_quantities( collector, logger )
+        logger.info( "\r\nProcessing #{sym.to_s.upcase} records: #{index+1}/#{list.count} '#{instance.get_full_name}', worst case inner loops max: #{total}" )
         collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
           # First, initialize the collection by getting the existing records:
           this.collect_from_records_having(
@@ -235,6 +226,26 @@ DESC
 
 
   private
+
+
+  # Outputs on the logger the esteemed number of queries to be performed by the
+  # full scan.
+  # Returns the computed total.
+  #
+  def log_loop_quantities( collector, logger )
+    tot_pool_types = collector.pool_type_code_list.count
+    tot_event_types = collector.event_type_codes_list.count
+    tot_category_types = collector.category_type_codes_list.count
+    tot_gender_types = collector.gender_type_codes_list.count
+    total = tot_pool_types * tot_event_types * tot_category_types * tot_gender_types
+    logger.info( "Tot. pool types.......: #{tot_pool_types}" )
+    logger.info( "Tot. event types......: #{tot_event_types}" )
+    logger.info( "Tot. category types...: #{tot_category_types}" )
+    logger.info( "Tot. gender types.....: #{tot_gender_types}" )
+    logger.info( "=======================" )
+    logger.info( "Grand total...........: #{total}" )
+    total
+  end
 
 
   # Performs the commit phase for the record collector, storing the SQL diff contents

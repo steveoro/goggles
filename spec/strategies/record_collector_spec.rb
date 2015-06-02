@@ -344,4 +344,61 @@ describe RecordCollector, type: :strategy do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  describe "#seek_existing_record_for" do
+    context "when searching for an existing FEDERATION record," do
+      let(:existing_ind_record) { IndividualRecord.where(is_team_record: false).limit(1000).all.sort{ rand - 0.5 }[0] }
+      let(:test_subject) do
+        subject.seek_existing_record_for( existing_ind_record, false )
+      end
+
+      it "returns an instance of IndividualRecord" do
+        expect( test_subject ).to be_an_instance_of( IndividualRecord )
+      end
+    end
+
+    context "when searching for an existing TEAM record," do
+      let(:existing_ind_record) { IndividualRecord.where(is_team_record: true).limit(1000).all.sort{ rand - 0.5 }[0] }
+      let(:test_subject) do
+        subject.seek_existing_record_for( existing_ind_record, true )
+      end
+
+      it "returns an instance of IndividualRecord" do
+        expect( test_subject ).to be_an_instance_of( IndividualRecord )
+      end
+    end
+
+    context "when searching for a missing FEDERATION record," do
+      let(:missing_ind_record) do
+        fixture_row = IndividualRecord.where(is_team_record: false).limit(1000).all.sort{ rand - 0.5 }[0]
+        fixture_row.pool_type_id = PoolType::MT33_ID
+        fixture_row
+      end
+      let(:test_subject) do
+        subject.seek_existing_record_for( missing_ind_record, false )
+      end
+
+      it "returns nil" do
+        expect( test_subject ).to be nil
+      end
+    end
+
+    context "when searching for a missing TEAM record," do
+      let(:missing_ind_record) do
+        fixture_row = IndividualRecord.where(is_team_record: true).limit(1000).all.sort{ rand - 0.5 }[0]
+        fixture_row.pool_type_id = PoolType::MT33_ID
+        fixture_row
+      end
+      let(:test_subject) do
+        subject.seek_existing_record_for( missing_ind_record, true )
+      end
+
+      it "returns nil" do
+        expect( test_subject ).to be nil
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
