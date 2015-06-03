@@ -242,14 +242,11 @@ class RecordCollector
       gender_type_id:   result_row.gender_type_id,
       record_type_id:   result_row.record_type_id,
       # [Steve, 20150602] If it's not a "team record", then it must be a federation
-      # record (a season_type_id-governed record). This means that we should not
-      # filter with a season_id (any record could be beaten in different seasons).
-      # Moreover, we don't (and don't want to) keep an history of all the seasonal
-      # records, since it would be too demanding on the storage side.
-#      season_id:        result_row.season_id,
+      # record (a season_type_id-governed record):
+      'season_types.id' => result_row.season_type.id,
       is_team_record:   false
     }
-    IndividualRecord.where( where_attribute_values ).first
+    IndividualRecord.includes(:season_type).where( where_attribute_values ).first
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -277,7 +274,7 @@ class RecordCollector
     ).readonly(false)
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
-    mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
+#    mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     update_and_return_collection_with_first_results( mir, record_type_code )
@@ -306,7 +303,7 @@ class RecordCollector
     ).readonly(false)
     mir = mir.where( ['swimmer_id = ?', @swimmer.id] ) if @swimmer
     mir = mir.where( ['team_id = ?', @team.id]) if @team
-    mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
+#    mir = mir.joins( :meeting ).where( ['meetings.id = ?', @meeting.id]) if @meeting
     mir = mir.joins( :season ).where( ['seasons.id = ?', @season.id]) if @season
     mir = mir.joins( :season_type ).where( ['season_types.id = ?', @season_type.id]) if @season_type
     mir = mir.joins( :meeting ).where( ['(meetings.header_date >= ?) AND (meetings.header_date <= ?)', @start_date, @end_date]) if @start_date

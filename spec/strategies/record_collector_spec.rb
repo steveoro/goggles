@@ -183,14 +183,6 @@ describe RecordCollector, type: :strategy do
       # TODO
     end
 
-    context "with a subject filtered by SEASON," do
-      let(:meeting)   { Meeting.has_results.sort{ rand - 0.5 }[0] }
-      let(:season)    { meeting.season }
-      subject         { RecordCollector.new( :season => season ) }
-
-      # TODO
-    end
-
     context "with a subject filtered by TEAM," do
       let(:team)      { Team.has_results.sort{ rand - 0.5 }[0] }
       subject         { RecordCollector.new( :team => team ) }
