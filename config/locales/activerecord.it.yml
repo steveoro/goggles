@@ -260,6 +260,11 @@ it:
           attributes:
             name:
               already_exists: "esiste gia'"
+        meeting:
+          attributes:
+            header_year:
+              invalid: "non valido"
+              blank: "non puo' essere vuoto"
         training:
           attributes:
             title:

@@ -258,6 +258,10 @@ en:
           attributes:
             name:
               already_exists: "already exists"
+        meeting:
+          attributes:
+            header_year:
+              blank: "can't be blank"
         training:
           attributes:
             title:
