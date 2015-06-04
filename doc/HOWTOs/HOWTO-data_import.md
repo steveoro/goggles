@@ -27,14 +27,25 @@
     (this will also add to the script: clear sessions, articles, maintenance mode
      OFF, and a new article with the data update news)
 
-  > zeus rake db:update_records meeting=<meeting_id>
+  > zeus rake db:update_records meeting_ids=<meeting1_id>[,<meeting2_id>,...]
     (this may take several minutes to complete)
 
   > zeus rake db:goggle_cup goggle_cup=<cup_id> meeting=<meeting_id>
+    => DO THIS FOR EACH NEW MEETING WITH RESULTS,
+       - 1 time for Dev DB
+       - 1 time for Prod DB
 
 
 - *1)* IF data-import _CSI_:
   > zeus rake db:meeting_team_scores meeting=<meeting_id>
+    => DO THIS AFTER EACH NEW MEETING WITH RESULTS:
+       - 1 time for Dev DB:
+       - 1 time for Prod DB;
+
+    This will update the goggle_cup with ID 9 (2015):
+
+    > zeus rake db:goggle_cup goggle_cup=9
+    > RAILS_ENV=production bundle exec rake db:goggle_cup goggle_cup=9
 
 
 - *2)* IF data-import _FIN_:
