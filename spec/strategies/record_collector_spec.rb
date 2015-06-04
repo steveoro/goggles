@@ -38,7 +38,6 @@ describe RecordCollector, type: :strategy do
         :commit,
         :full_scan,
 
-        :logger,
         :sql_executable_log
       ]
     )
@@ -308,7 +307,7 @@ describe RecordCollector, type: :strategy do
       it "returns the pool_type codes of the sessions from the meeting used as filter" do
         expect(
           subject.pool_type_code_list
-        ).to match_array( meeting.pool_types.flatten.uniq.map{ |row| row.code }.flatten )
+        ).to match_array( meeting.pool_types.flatten.map{ |row| row.code }.flatten.uniq )
       end
     end
 
@@ -317,7 +316,7 @@ describe RecordCollector, type: :strategy do
         expect(
           subject.event_type_codes_list
         ).to match_array(
-          meeting.event_types.are_not_relays.flatten.uniq.map{ |row| row.code }.flatten
+          meeting.event_types.are_not_relays.flatten.map{ |row| row.code }.flatten.uniq
         )
       end
     end
@@ -328,8 +327,8 @@ describe RecordCollector, type: :strategy do
           subject.category_type_codes_list
         ).to match_array(
           meeting.meeting_events.flatten.uniq.map{ |me|
-            me.category_types.flatten.uniq.map{ |row| row.code }
-          }.flatten
+            me.category_types.flatten.map{ |row| row.code }.uniq
+          }.flatten.uniq
         )
       end
     end

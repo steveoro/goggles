@@ -16,7 +16,7 @@
 class RecordCollector
   include SqlConverter
 
-  attr_reader :logger, :sql_executable_log
+  attr_reader :sql_executable_log
   #-- -------------------------------------------------------------------------
   #++
 
@@ -72,12 +72,12 @@ class RecordCollector
     @record_type_codes   = RecordType.select(:code).uniq.map{ |row| row.code }
     # Let's refine the full scan loop parameters, when it's the case:
     if @meeting
-      @pool_type_codes     = @meeting.pool_types.flatten.uniq.map{ |row| row.code }
-      @event_type_codes    = @meeting.event_types.are_not_relays.flatten.uniq.map{ |row| row.code }
-      @category_type_codes = @meeting.meeting_events.flatten.uniq.map{ |me| me.category_types.flatten.uniq.map{|row| row.code} }.flatten
+      @pool_type_codes     = @meeting.pool_types.flatten.map{ |row| row.code }.uniq
+      @event_type_codes    = @meeting.event_types.are_not_relays.flatten.map{ |row| row.code }.uniq
+      @category_type_codes = @meeting.meeting_events.flatten.uniq.map{ |me| me.category_types.flatten.map{|row| row.code} }.flatten.uniq
     else
-      @pool_type_codes     = PoolType.only_for_meetings.select(:code).uniq.map{ |row| row.code }
-      @event_type_codes    = EventType.are_not_relays.select(:code).uniq.map{ |row| row.code }
+      @pool_type_codes     = PoolType.only_for_meetings.select(:code).map{ |row| row.code }.uniq
+      @event_type_codes    = EventType.are_not_relays.select(:code).map{ |row| row.code }.uniq
       if @season_type
         @category_type_codes = CategoryType.is_valid.are_not_relays
             .includes(:season).where( 'seasons.season_type_id' => @season_type.id )
