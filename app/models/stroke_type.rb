@@ -83,15 +83,15 @@ class StrokeType < ActiveRecord::Base
   # *always* MIXED_RELAY_ID.
   #
   def self.parse_stroke_type_from_import_text( style_token )
-    if style_token =~ /(stile).*/ui
+    if style_token =~ /(stile).*|SL/ui
       StrokeType.find_by_id( FREESTYLE_ID )
-    elsif style_token =~ /(farf).*/ui
+    elsif style_token =~ /(farf).*|FA/ui
       StrokeType.find_by_id( BUTTERFLY_ID )
-    elsif style_token =~ /(dorso).*/ui
+    elsif style_token =~ /(dorso).*|DO/ui
       StrokeType.find_by_id( BACKSTROKE_ID )
-    elsif style_token =~ /(rana).*/ui
+    elsif style_token =~ /(rana).*|RA/ui
       StrokeType.find_by_id( BREASTSTROKE_ID )
-    elsif style_token =~ /(mist).*/ui
+    elsif style_token =~ /(mist).*|MI/ui
       StrokeType.find_by_id( MIXED_ID )
     else
       nil
