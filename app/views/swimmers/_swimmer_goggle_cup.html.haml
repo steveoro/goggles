@@ -2,18 +2,16 @@
   .goggles-category-gap#pageTop
     %h2= @title
     - if @goggle_cups.size == 0
-      %p= "Nessuna Goggle Cup definita per l'annata sportiva corrente"
+      %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
     - else
       - @goggle_cups.each do |goggle_cup|
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'info'}
-              %td{ colspan: 3 }
+              %td{ colspan: 4 }
                 %b= goggle_cup.get_verbose_name
-              %td.goggles-rightalign
-                = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
-            - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each do |mir|
-              %tr
+            - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
+              %tr{ 'class' => index < goggle_cup.max_performance ? 'warning' : '' }
                 %td
                   = mir.meeting.description
                 %td
@@ -22,5 +20,8 @@
                   = mir.goggle_cup_points
                 %td.goggles-rightalign
                   = mir.get_timing
+            %tr{'class'=>'info'}
+              %td.goggles-rightalign{ colspan: 4 }
+                = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
       
 .row-fluid.goggles-category-gap
