@@ -224,7 +224,7 @@ Goggles::Application.routes.draw do
   end
 
 
-  # === Admin Interface / Data Import: ===
+  # === OLD (v1 & v2) Admin Interface / Data Import: ===
   scope "goggles_data_import" do
     scope "(:locale)", locale: /en|it/ do
       match "step1_status",                     controller: 'admin_import', action: 'step1_status',                     as: :goggles_di_step1_status
@@ -238,7 +238,7 @@ Goggles::Application.routes.draw do
     end
   end
 
-  # === Admin Interface / commands: ===
+  # === OLD (v1) Admin Interface / commands: ===
   scope "goggles_admin" do
     scope "(:locale)", locale: /en|it/ do
       match "/",                      controller: 'admin_index', action: 'index',             as: :goggles_admin_index
@@ -268,6 +268,36 @@ Goggles::Application.routes.draw do
       match "download_swimmer_dump",  controller: 'admin_index', action: 'download_swimmer_dump'
       match "download_user_dump",     controller: 'admin_index', action: 'download_user_dump'
       match "cleanup_output_dir",     controller: 'admin_index', action: 'cleanup_output_dir'
+    end
+  end
+
+
+  # === Admin Interface V2 / Data Import V3: ===
+  namespace :admin, defaults: { format: "json" } do
+    namespace :v3 do
+      scope "(:locale)", locale: /en|it/ do
+        get     "home/index",                                 to: "home#index"
+
+        # Data-import status display:
+        get     "data_import/index",                          to: "data_import#index"
+        # Phase 1.00, with meta-data serialization:
+        post    "data_import/parse_file",                     to: "data_import#parse_file"
+
+        # Phase 1.10, Team analysis:
+        get     "data_import/team_analysis/:session_id",      to: "data_import#team_analysis/:session_id",    as: "data_import_team_analysis"
+        post    "data_import/team_confirm/:session_id",       to: "data_import#team_confirm/:session_id",     as: "data_import_team_confirm"
+
+        # Phase 1.20, Swimmer analysis:
+        get     "data_import/swimmer_analysis/:session_id",   to: "data_import#swimmer_analysis/:session_id", as: "data_import_swimmer_analysis"
+        post    "data_import/swimmer_confirm/:session_id",    to: "data_import#swimmer_confirm/:session_id",  as: "data_import_swimmer_confirm"
+
+        # Phase 2.00, serialized data edit & review:
+        get     "data_import/edit/:session_id",               to: "data_import#edit/:session_id",             as: "data_import_edit"
+        post    "data_import/commit/:session_id",             to: "data_import#commit/:session_id",           as: "data_import_commit"
+
+        # Phase 3.00, post-commit clean-up:
+        delete  "data_import/destroy/:session_id",            to: "data_import#destroy/:session_id",          as: "data_import_destroy"
+      end
     end
   end
 
