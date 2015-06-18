@@ -6,9 +6,9 @@ end
 source 'https://rubygems.org'
 
 gem 'rails', '= 3.2.19'
-
 gem 'mysql2'
 gem 'json'
+gem 'haml'
 
 # [Steve] Before enabling the following, most of the migrations must be revised
 #         since they are still using legacy inline SQL code for foreign key generation:

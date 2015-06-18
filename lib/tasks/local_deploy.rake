@@ -14,7 +14,7 @@ require 'framework/application_constants'
 
 = Local Deployment helper tasks
 
-  - (p) FASAR Software 2007-2014
+  - (p) FASAR Software 2007-2015
   - Goggles framework vers.:  4.00.785
   - author: Steve A.
 
