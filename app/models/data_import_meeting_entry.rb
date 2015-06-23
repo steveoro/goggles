@@ -1,9 +1,18 @@
 require 'wrappers/timing'
+require 'swimmer_relatable'
 require 'timing_gettable'
 require 'timing_validatable'
 require 'data_importable'
 
 
+#
+# == DataImportMeetingEntry
+#
+# Model class
+#
+# @author   Steve A.
+# @version  4.00.811
+#
 class DataImportMeetingEntry < ActiveRecord::Base
   include SwimmerRelatable
   include TimingGettable
@@ -21,10 +30,10 @@ class DataImportMeetingEntry < ActiveRecord::Base
   belongs_to :data_import_badge
 
   belongs_to :meeting_program
-  belongs_to :swimmer
   belongs_to :team
   belongs_to :team_affiliation
   belongs_to :badge
+
   belongs_to :entry_time_type
 
   validates_presence_of :athlete_name

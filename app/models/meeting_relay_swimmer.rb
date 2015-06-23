@@ -1,4 +1,5 @@
 require 'wrappers/timing'
+require 'swimmer_relatable'
 require 'timing_gettable'
 require 'timing_validatable'
 
@@ -12,18 +13,17 @@ require 'timing_validatable'
 # @version  4.00.341
 #
 class MeetingRelaySwimmer < ActiveRecord::Base
+  include SwimmerRelatable
   include TimingGettable
   include TimingValidatable
 
   belongs_to :user                                  # [Steve, 20120212] Do not validate associated user!
 
   belongs_to :meeting_relay_result
-  belongs_to :swimmer
   belongs_to :badge
   belongs_to :stroke_type
 
   validates_associated :meeting_relay_result
-  validates_associated :swimmer
   validates_associated :badge
   validates_associated :stroke_type
 
@@ -31,6 +31,7 @@ class MeetingRelaySwimmer < ActiveRecord::Base
   has_one  :meeting_session,  through: :meeting_relay_result
   has_one  :meeting_event,    through: :meeting_relay_result
   has_one  :meeting_program,  through: :meeting_relay_result
+  has_one  :team,             through: :badge
 
   has_one  :event_type,       through: :meeting_relay_result
 

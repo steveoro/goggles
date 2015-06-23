@@ -1,4 +1,5 @@
 require 'wrappers/timing'
+require 'swimmer_relatable'
 require 'timing_gettable'
 require 'timing_validatable'
 
@@ -9,7 +10,7 @@ require 'timing_validatable'
 # Model class
 #
 # @author   Leega, Steve A.
-# @version  4.00.355
+# @version  4.00.811
 #
 class Passage < ActiveRecord::Base
   include SwimmerRelatable
