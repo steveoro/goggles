@@ -456,7 +456,7 @@ DESC
       begin
         versioning.a_date = DateTime.parse( end_date )
       rescue
-        versioning.a_date = DateTime.now + 2.hours
+        versioning.a_date = DateTime.now + 4.hours
       end
     end
     puts "Setting flag: #{ versioning.a_bool }, ending date: #{ Format.a_short_datetime( versioning.a_date ) }..."
