@@ -47,43 +47,43 @@ SimpleNavigation::Configuration.run do |navigation|
     #           :method - Specifies the http-method for the generated link - default is :get.
     #           :highlights_on - if autohighlighting is turned off and/or you want to explicitly specify
     #                            when the item should be highlighted, you can set a regexp which is matched
-    #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>. 
+    #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
     primary.item :key_separator1,             '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
     primary.item( :key_sections,              content_tag(:span, t('admin_index.sections') ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
-      lev2_nav.item :key_admin_index,         content_tag(:span, t('admin_index.title') ), goggles_admin_index_path()
+      lev2_nav.item :key_admin_index,         content_tag(:span, t('admin_index.title') ), admin_v2_maintenance_path()
       lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
       lev2_nav.item :key_admin_dashboard,     content_tag(:span, t('admin.actions.dashboard.menu') ), rails_admin_path()
-      lev2_nav.item :key_admin_data_import,   content_tag(:span, t('admin_import.menu') ), goggles_di_step1_status_path()
+      lev2_nav.item :key_admin_data_import,   content_tag(:span, t('admin_import.menu') ), admin_v2_di_step1_status_path()
       lev2_nav.item :key_admin_dj_mon,        content_tag(:span, 'DJ Monitor' ), dj_mon_path()
     end
 
     primary.item( :key_commands,              content_tag(:span, t('admin_index.commands') ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
-      lev2_nav.item :key_admin_db_structure,  content_tag(:span, t('admin_index.db_structure') ), db_structure_path()
+      lev2_nav.item :key_admin_db_structure,  content_tag(:span, t('admin_index.db_structure') ), admin_v2_db_structure_path()
       lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
-      lev2_nav.item :key_admin_delete_meeting,content_tag(:span, t('admin_index.delete_whole_meeting') ), select_meeting_path()
-      lev2_nav.item :key_admin_merge_teams,   content_tag(:span, t('admin_index.merge_teams') ), select_teams_path()
+      lev2_nav.item :key_admin_delete_meeting,content_tag(:span, t('admin_index.delete_whole_meeting') ), admin_v2_select_meeting_path()
+      lev2_nav.item :key_admin_merge_teams,   content_tag(:span, t('admin_index.merge_teams') ), admin_v2_select_teams_path()
       lev2_nav.item :key_separator22,         content_tag(:span, '' ), class: 'divider'
-      lev2_nav.item :key_admin_run_rake,      content_tag(:span, t('admin_index.execute_rake_command') ),   run_rake_path()
-      lev2_nav.item :key_admin_run_bundle,    content_tag(:span, t('admin_index.execute_bundle_command') ), run_bundle_path()
-      lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ), run_sudo_command_path()
+      lev2_nav.item :key_admin_run_rake,      content_tag(:span, t('admin_index.execute_rake_command') ),   admin_v2_run_rake_path()
+      lev2_nav.item :key_admin_run_bundle,    content_tag(:span, t('admin_index.execute_bundle_command') ), admin_v2_run_bundle_path()
+      lev2_nav.item :key_admin_run_sudo,      content_tag(:span, t('admin_index.execute_sudo_command'), class:"text-error" ), admin_v2_run_sudo_command_path()
       lev2_nav.item :key_separator23,         content_tag(:span, '' ), class: 'divider'
-      lev2_nav.item :key_admin_run_upgrade,   content_tag(:span, t('admin_index.execute_source_upgrade') ), run_src_upgrade_path()
-      lev2_nav.item :key_admin_restart_apache,content_tag(:span, t('admin_index.restart_apache') ), restart_apache_path()
+      lev2_nav.item :key_admin_run_upgrade,   content_tag(:span, t('admin_index.execute_source_upgrade') ), admin_v2_run_src_upgrade_path()
+      lev2_nav.item :key_admin_restart_apache,content_tag(:span, t('admin_index.restart_apache') ), admin_v2_restart_apache_path()
     end
 
     primary.item :key_updownload,             t('admin_index.up_download'), '#' do |lev2_nav|
-      lev2_nav.item :key_upload_db_dump,      t('admin_index.upload_db_dump'), upload_db_dump_path()
-      lev2_nav.item :key_upload_db_seed,      t('admin_index.upload_db_seed'), upload_db_seed_path()
+      lev2_nav.item :key_upload_db_dump,      t('admin_index.upload_db_dump'), admin_v2_upload_db_dump_path()
+      lev2_nav.item :key_upload_db_seed,      t('admin_index.upload_db_seed'), admin_v2_upload_db_seed_path()
       lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
-      lev2_nav.item :key_download_db,         t('admin_index.download_db_dump'), download_db_dump_path()
-      lev2_nav.item :key_download_teams,      t('admin_index.download_team_dump'), download_team_dump_path()
-      lev2_nav.item :key_download_swimmers,   t('admin_index.download_swimmer_dump'), download_swimmer_dump_path()
-      lev2_nav.item :key_download_users,      t('admin_index.download_user_dump'), download_user_dump_path()
+      lev2_nav.item :key_download_db,         t('admin_index.download_db_dump'), admin_v2_download_db_dump_path()
+      lev2_nav.item :key_download_teams,      t('admin_index.download_team_dump'), admin_v2_download_team_dump_path()
+      lev2_nav.item :key_download_swimmers,   t('admin_index.download_swimmer_dump'), admin_v2_download_swimmer_dump_path()
+      lev2_nav.item :key_download_users,      t('admin_index.download_user_dump'), admin_v2_download_user_dump_path()
       lev2_nav.item :key_separator21,         content_tag(:span, '' ), class: 'divider'
-      lev2_nav.item :key_cleanup_output,      t('admin_index.cleanup_output_dir'), cleanup_output_dir_path()
+      lev2_nav.item :key_cleanup_output,      t('admin_index.cleanup_output_dir'), admin_v2_cleanup_output_dir_path()
     end
 
     primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
