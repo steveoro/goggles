@@ -8,7 +8,8 @@ require 'framework/version'
 require 'framework/application_constants'
 
 require 'framework/console_logger'
-require 'data_import/strategies/data_importer'
+
+require_relative '../../app/data_import/v2/strategies/data_importer'
 
 
 =begin

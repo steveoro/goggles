@@ -2,8 +2,8 @@
 require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-#require_relative '../../../lib/data_import/strategies/data_importer'
-#require_relative '../../../lib/data_import/header_fields_dao'
+#require_relative '../../../app/data_import/v2/strategies/data_importer'
+#require_relative '../../../app/data_import/v2/dao/header_fields_dao'
 
 
 describe DataImporter, type: :integration do

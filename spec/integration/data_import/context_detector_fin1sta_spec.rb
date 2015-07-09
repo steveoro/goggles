@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 require_relative './context_detector_checks_for_parsing'
-require_relative '../../../lib/data_import/fin_startlist_consts'
+require_relative '../../../app/data_import/v2/fin_startlist_consts'
 
 
 describe "ContextDetector set for 'FIN(1)sta' file types,", type: :integration do

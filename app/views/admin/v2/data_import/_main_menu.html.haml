@@ -1,0 +1,11 @@
+.navbar.navbar-fixed-top
+  .navbar-inner#goggles-inner-navbar
+    %a.goggles-brand(href="#{admin_v2_maintenance_path()}")
+      %span &nbsp;
+      = AGEX_APP_NAME
+      %small.text-error
+        %strong= t('admin_import.title')
+    = render_navigation( context: 'admin_v2_data_import', expand_all: true, renderer: :bootstrap )
+
+.goggles-breadcrumb
+  = render_navigation( context: 'admin_v2_data_import', renderer: :breadcrumbs, prefix: "#{I18n.t(:you_are_here)}&nbsp;", join_with: " &gt; " )

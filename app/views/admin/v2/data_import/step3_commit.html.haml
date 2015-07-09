@@ -1,0 +1,10 @@
+%ul.nav.nav-tabs
+  = content_tag( :li, link_to(t('admin_import.step_1'), admin_v2_di_step1_status_path()), class: 'active' )
+  = content_tag( :li, link_to(t('admin_import.step_2'), '#'), class: 'disabled' )
+  = content_tag( :li, link_to(t('admin_import.step_3'), '#'), class: 'active' )
+%p.text-center.lead
+  = "#{I18n.t('admin_import.import_event_results_title')}"
+  \: (3/3) #{"#{I18n.t(:result_log)}"}
+%div{:align => "left"}
+  %p
+  %pre= @import_log

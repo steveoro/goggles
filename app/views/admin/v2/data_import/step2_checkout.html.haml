@@ -1,0 +1,41 @@
+%ul.nav.nav-tabs
+  = content_tag( :li, link_to(t('admin_import.step_1'), admin_v2_di_step1_status_path()), class: 'active' )
+  = content_tag( :li, link_to(t('admin_import.step_2'), '#'), class: 'active' )
+  = content_tag( :li, link_to(t('admin_import.step_3'), '#'), class: 'disabled' )
+- if @data_import_session
+  %p.text-center.lead
+    = "#{I18n.t('admin_import.import_event_results_title')}"
+    \: (2/3) #{"#{I18n.t(:review_edit_data)}"}
+  .row
+    .span8.offset1
+      = form_tag( 'step3_commit',                                                                                             |
+            :multipart => true, class: 'form-horizontal',                                                                     |
+            :onsubmit => "$('#btnSubmit').hide(); $('#loadingIndicator').show();"                                             |
+        ) do                                                                                                                  |
+        .control-group
+          %label.control-label{:for => "data_import_session_id"}= I18n.t(:session, scope: [:admin_import])
+          .controls
+            = text_field_tag( :data_import_session_id, @data_import_session.id, disabled: true, class: "span1" )
+            = hidden_field_tag( :data_import_session_id, @data_import_session.id )
+            - if @meeting
+              %span.help-inline.strong= "#{@meeting.class.name} ID: #{@meeting.id} (#{@meeting.code}) - "
+            %span.help-inline.strong= @season_description
+            \
+            \#{submit_tag( I18n.t(:commit_rows), id: "btnSubmit", class: 'btn' )}
+            %span#loadingIndicator{:hidden => "true"}
+              = I18n.t(:please_wait)
+              \ #{image_tag( 'indicator.gif' )}
+            #divProgress.progress.progress-striped.active{:hidden => "true"}
+  = netzke :data_import_checkout_container, {                                   |
+        class_name: "DataImportCheckoutPanel",                                  |
+        width: "100%",                                                          |
+        height: @max_view_height,                                               |
+        border: true,                                                           |
+        data_import_session_id: @data_import_session.id,                        |
+        meeting_id: @meeting ? @meeting.id : 0,                                 |
+        view_config: { force_fit: true }                                        |
+    }                                                                           |
+- else
+  %div{:align => "center", :style => "padding-top: 2em; padding-bottom: 20em;"}
+    %p
+      %i= t(:warning_no_import_data_session_found)

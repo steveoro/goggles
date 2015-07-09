@@ -20,7 +20,7 @@ module Goggles
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += %W(#{config.root}/app/reports #{config.root}/app/strategies)
+    config.autoload_paths += %W(#{config.root}/app/reports #{config.root}/app/dao #{config.root}/app/strategies)
                                                     # [Steve, 20140314] Required custom extension
     require File.join( config.root, 'lib/extensions/roman_numeral.rb' )
 

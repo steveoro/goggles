@@ -8,10 +8,18 @@ require 'wrappers/timing'
 = MiscController
 
   - version:  4.00.613
-  - author:   Leega
+  - author:   Leega, Steve A.
 
 =end
 class MiscController < ApplicationController
+
+  # Uncomment this to make this controller available only to logged-id users with
+  # an associated swimmer: (very restrictive)
+  #
+#  before_filter :verify_parameter
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # FIN standard point calculation
   # If logged in and associated to a swimmer

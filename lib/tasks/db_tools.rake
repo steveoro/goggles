@@ -9,7 +9,8 @@ require 'framework/application_constants'
 
 require 'framework/console_logger'
 require 'common/validation_error_tools'
-require 'data_import/services/badge_duplicate_checker'
+
+require_relative '../../app/data_import/v2/services/badge_duplicate_checker'
 
 
 =begin

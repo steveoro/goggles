@@ -10,7 +10,7 @@ require 'i18n'
 
 = User model
 
-  - version:  4.00.529
+  - version:  4.00.815
   - author:   Steve A.
 
 =end
@@ -155,8 +155,8 @@ class User < ActiveRecord::Base
       end
       self.swimmer_id = new_swimmer.id              # Update this user:
       self.year_of_birth = new_swimmer.year_of_birth
-      self.first_name = new_swimmer.first_name.titleize unless new_swimmer.first_name.empty?
-      self.last_name  = new_swimmer.last_name.titleize unless new_swimmer.last_name.empty?
+      self.first_name  = new_swimmer.first_name.titleize unless new_swimmer.first_name.nil? || new_swimmer.first_name.empty?
+      self.last_name   = new_swimmer.last_name.titleize  unless new_swimmer.last_name.nil?  || new_swimmer.last_name.empty?
       self.description = "#{self.first_name} #{self.last_name}"
       save!
       new_swimmer.associated_user_id = self.id      # Update the swimmer

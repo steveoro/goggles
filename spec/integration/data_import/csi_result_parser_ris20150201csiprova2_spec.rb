@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../lib/data_import/strategies/csi_result_parser'
+require_relative '../../../app/data_import/v2/strategies/csi_result_parser'
 
 
 describe "CsiResultParser parsing fixture ris20150201csiprova2.csv,", type: :integration do

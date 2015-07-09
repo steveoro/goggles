@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-require_relative '../../../lib/data_import/fin_startlist_consts'
+require_relative '../../../app/data_import/v2/fin_startlist_consts'
 
 
 describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do

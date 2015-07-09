@@ -15,6 +15,9 @@ require 'common/format'
 =end
 class Admin::V3::DataImportController < ApplicationController
 
+  layout 'admin_v3_data_import'
+
+
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_admin!
   #-- -------------------------------------------------------------------------

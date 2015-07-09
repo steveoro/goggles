@@ -1,0 +1,60 @@
+%ul.nav.nav-tabs
+  = content_tag( :li, link_to(t('admin_import.step_1'), admin_v2_di_step1_status_path()), class: 'active' )
+  = content_tag( :li, link_to(t('admin_import.step_1_1'), '#'), class: 'active' )
+  = content_tag( :li, link_to(t('admin_import.step_2'), '#'),   class: 'disabled' )
+  = content_tag( :li, link_to(t('admin_import.step_3'), '#'),   class: 'disabled' )
+%p.text-center.lead
+  = I18n.t('admin_import.import_event_results_title')
+  \:
+  \#{I18n.t('admin_import.swimmer_analysis_results')}
+  (#{I18n.t('admin_import.session')}: #{@data_import_session.id})
+.alert
+  %button.close{"data-dismiss" => "alert", :type => "button"} ×
+  = I18n.t('admin_import.unconfirmed_results_will_be_added')
+.span12
+  = form_tag( 'step1_1_swimmer_analysis_commit',                        |
+        :multipart => true, class: 'form',             |
+        :onsubmit => "$('#loadingIndicator').show(); " |
+    ) do                                               |
+    = hidden_field_tag( :data_import_session_id, @data_import_session.id )
+    = hidden_field_tag( :force_meeting_creation, @force_missing_meeting_creation ? '1' : '0' )
+    = hidden_field_tag( :force_team_or_swimmer_creation, @force_team_or_swimmer_creation ? '1' : '0' )
+    .row.span11
+      .span3.control-label.goggles-div-centeralign= I18n.t('admin_import.searched_swimmer')
+      .span4.control-label.goggles-div-centeralign= I18n.t('admin_import.swimmer_match_name')
+      .span1.control-label.goggles-div-centeralign= I18n.t('admin_import.add_alias')
+      .span1.control-label.goggles-div-centeralign= I18n.t('admin_import.add_swimmer')
+      .span1.control-label.goggles-div-centeralign= I18n.t('admin_import.is_ok')
+    - @analysis_results.each_with_index do |result_row, idx|
+      - do_insert_alias = result_row.can_insert_alias
+      - do_insert_swimmer = result_row.can_insert_swimmer
+      %div{:class => "row span11 #{(idx%2 == 0) ? 'goggles-divlist-even' : 'goggles-divlist-odd'}"}
+        .control-group
+          .span3
+            %b
+              "#{result_row.searched_swimmer_name} (#{result_row.desired_year_of_birth})"
+          .span4
+            = select( :alias_ids, result_row.id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
+              { prompt: I18n.t(:please_select), selected: result_row.chosen_swimmer_id },           |
+              { class: 'input-xlarge combobox' } )                                                  |
+          .span1
+            = show_tag( do_insert_alias )
+          .span1
+            = show_tag( do_insert_swimmer )
+          .span1
+            = check_box_tag( "id_#{result_row.id}", '1', do_insert_swimmer )
+    .row.span11
+    .row.span11
+      .control-group
+        .span4.control-label{:for => "must_go_back"}= I18n.t('admin_import.on_commit_go_back_to_step1')
+        .span1
+          = check_box_tag( "must_go_back" )
+        .span1
+          = submit_tag( I18n.t('admin_import.confirm'), data: {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+    .row.span11
+      %span#loadingIndicator{:hidden => "true"}
+        = image_tag( 'indicator.gif' )
+      #divProgress.progress.progress-striped.active{:hidden => "true"}
+
+%script
+  $('.combobox').combobox();

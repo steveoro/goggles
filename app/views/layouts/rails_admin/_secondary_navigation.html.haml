@@ -1,7 +1,7 @@
 %ul.nav.pull-right
   - actions(:root).each do |action|
     %li= link_to wording_for(:menu, action), { :action => action.action_name, :controller => 'rails_admin/main' }, class: 'pjax'
-  - if main_app_goggles_admin_index = (main_app.goggles_admin_index_path rescue false)
+  - if main_app_goggles_admin_index = (main_app.admin_v2_maintenance_path rescue false)
     %li= link_to t('admin_index.title').capitalize, main_app_goggles_admin_index
   - if main_app_root_path = (main_app.root_path rescue false)
     %li= link_to t('admin.home.name').capitalize, main_app_root_path

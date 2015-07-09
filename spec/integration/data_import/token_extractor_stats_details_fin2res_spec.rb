@@ -2,9 +2,9 @@
 require 'spec_helper'
 
 #require 'framework/console_logger'
-#require 'data_import/services/context_detector'
-#require 'data_import/services/token_extractor'
-#require 'data_import/fin2_result_consts'
+#require_relative '../../../data_import/v2/services/context_detector'
+#require_relative '../../../data_import/v2/services/token_extractor'
+#require_relative '../../../data_import/v2/fin2_result_consts'
 
 
 describe "TokenExtractor for STATS_DETAILS-type buffers,", type: :integration do
