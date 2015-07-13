@@ -27,7 +27,7 @@ class Admin::V3::DataImportController < ApplicationController
   # TODO
   #
   def index
-    # TODO
+    @existing_import_sessions = DataImportSession.where( user_id: current_admin.id )
   end
   #-- -------------------------------------------------------------------------
   #++

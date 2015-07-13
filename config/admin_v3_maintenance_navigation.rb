@@ -49,25 +49,8 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-#    primary.item :key_status,             t('admin_import.menu'), admin_v2_di_step1_status_path() #, options
-    # TODO: (this is 'data_import.fin_results')
-    # 'data_import.fin_starting_list'
-    # 'data_import.csi_starting_list'
-    # 'data_import.csi_results'
-    primary.item :key_separator1,         '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
-
-
-    # Add an item which has a sub navigation (same params, but with block)
-#    primary.item :key_2, 'name', url, options do |sub_nav|
-      # Add an item to the sub navigation (same params again)
-#      sub_nav.item :key_2_1, 'name', url, options
-#    end
-    # You can also specify a condition-proc that needs to be fullfilled to display an item.
-    # Conditions are part of the options. They are evaluated in the context of the views,
-    # thus you can use all the methods and vars you have available in the views.
-
-    primary.item :key_separator1,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
-    primary.item( :key_admin,         content_tag(:span, t('admin_index.sections') ), '#', if: Proc.new { admin_signed_in? }
+    primary.item :key_separator1,             '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item( :key_sections,              content_tag(:span, t('admin_index.sections') ), '#', if: Proc.new { admin_signed_in? }
     ) do |lev2_nav|
       lev2_nav.item :key_admin_index,        content_tag(:span, t('admin_index.title') ), admin_v3_maintenance_path()
       lev2_nav.item :key_separator21,        content_tag(:span, '' ), class: 'divider'
@@ -76,13 +59,12 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_admin_dj_mon,       content_tag(:span, 'DJ Monitor' ), dj_mon_path()
     end
 
-    primary.item :key_separator2,         '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
-    primary.item :key_home,               t('home'), root_path() #, options
+    primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item :key_home,           t('home'), root_path() #, options
 
-    primary.item :key_separator3,         '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
-
-    primary.item :key_edit_admin,         (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), if: Proc.new { admin_signed_in? }
-    primary.item :key_log_out,            content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), method: Devise.sign_out_via, if: Proc.new { admin_signed_in? }
+    primary.item :key_separator4,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
+    primary.item :key_edit_admin,     (current_admin.nil? ? '' : current_admin.name), rails_admin_path(), if: Proc.new { admin_signed_in? }
+    primary.item :key_log_out,        content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ), destroy_admin_session_path(), method: Devise.sign_out_via, if: Proc.new { admin_signed_in? }
 
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu

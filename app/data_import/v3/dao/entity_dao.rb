@@ -2,16 +2,16 @@
 
 =begin
 
-= EntityDAO
+= V3::EntityDAO
 
-  - Goggles framework vers.:  4.00.809
+  - Goggles framework vers.:  4.00.815
   - author: Steve A.
 
  DAO class for a generic entity resulting from the parsing of a data-import text
  token.
 
 =end
-class EntityDAO
+class V3::EntityDAO
 
 
   attr_reader   :id,                                # unique integer ID for this entity
@@ -47,4 +47,30 @@ class EntityDAO
   #-- -------------------------------------------------------------------------
   #++
 
+  # Checks if two instances are the same
+  #
+  def ==( other_object )
+    return false unless other_object.respond_to?(:id) && other_object.respond_to?(:name) &&
+                        other_object.respond_to?(:parent_context) &&
+                        other_object.respond_to?(:text_token) && other_object.respond_to?(:parsed_value) &&
+                        other_object.respond_to?(:destination_class)
+    (
+      ( self.id == other_object.id ) &&
+      ( self.name == other_object.name ) &&
+      ( self.parent_context == other_object.parent_context ) &&
+      ( self.text_token == other_object.text_token ) &&
+      ( self.parsed_value == other_object.parsed_value ) &&
+      ( self.destination_class == other_object.destination_class )
+    )
+  end
+
+
+  # Convert the current instance to a readable string
+  def to_s
+    "[V3::EntityDAO: ID: #{@id}, #{@name}, value: #{@parsed_value}" +
+    ( @parent_context ? ", parent: '#{@parent_context.name}'" : '' ) +
+    ", text_token: #{@text_token}]"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
