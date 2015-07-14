@@ -113,7 +113,7 @@ class Admin::V2::DataImportController < ApplicationController
 #    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
     data_import_session = DataImportSession.find( data_import_session_id )
     importer            = DataImporter.new( logger, flash, data_import_session )
-    result_processor    = TeamAnalysisResultProcessor.new( logger, flash )
+    result_processor    = V2::TeamAnalysisResultProcessor.new( logger, flash )
                                                     # retrieve results from dedicated table:
     all_results = DataImportTeamAnalysisResult.where( data_import_session_id: data_import_session_id )
 
@@ -255,7 +255,7 @@ class Admin::V2::DataImportController < ApplicationController
 #    logger.debug "Overridden Alias IDs: #{overridden_alias_actions.inspect}\r\n- params['alias_ids']: #{params['alias_ids'].class.name}\r\n- params['alias_ids']: #{params['alias_ids'].inspect}"
     data_import_session = DataImportSession.find( data_import_session_id )
     importer            = DataImporter.new( logger, flash, data_import_session )
-    result_processor    = SwimmerAnalysisResultProcessor.new( logger, flash )
+    result_processor    = V2::SwimmerAnalysisResultProcessor.new( logger, flash )
                                                     # retrieve results from dedicated table:
     all_results = DataImportSwimmerAnalysisResult.where( data_import_session_id: data_import_session_id )
 

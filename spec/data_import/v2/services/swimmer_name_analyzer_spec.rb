@@ -5,10 +5,10 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/swimmer_name_analyzer'
 
 
-describe SwimmerNameAnalyzer, type: :service, data_import: true do
+describe V2::SwimmerNameAnalyzer, type: :service, data_import: true do
 
   context "for a well-defined instance," do
-    subject { SwimmerNameAnalyzer.new() }
+    subject { V2::SwimmerNameAnalyzer.new() }
 
     it_behaves_like( "(the existance of a method)", [
       :swimmers,
@@ -22,8 +22,8 @@ describe SwimmerNameAnalyzer, type: :service, data_import: true do
 
 
     describe "#initialize" do
-      it "returns a TeamNameAnalyzer instance" do
-        expect( subject ).to be_an_instance_of( SwimmerNameAnalyzer )
+      it "returns a V2::TeamNameAnalyzer instance" do
+        expect( subject ).to be_an_instance_of( V2::SwimmerNameAnalyzer )
       end
     end
 

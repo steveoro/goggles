@@ -4,10 +4,10 @@ require 'spec_helper'
 require_relative '../../../app/data_import/v2/txt_result_defs'
 
 
-describe TxtResultDefs, type: :model do
+describe V2::TxtResultDefs, type: :model do
 
   context "for a well-defined instance," do
-    subject { TxtResultDefs.new() }
+    subject { V2::TxtResultDefs.new() }
 
     it_behaves_like( "(the existance of a method)", [
       :context_types, :defined_keys, :required_keys,

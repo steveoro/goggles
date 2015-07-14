@@ -1,20 +1,20 @@
 # encoding: utf-8
 
-require_relative '../../../data_import/v2/services/data_import_entity_builder'
+require_relative '../../../data_import/v3/builders/entity_builder'
 
 
 =begin
 
-= DataImportMeetingRelaySwimmerBuilder
+= V3::MeetingRelaySwimmerBuilder
 
-  - Goggles framework vers.:  4.00.813
+  - Goggles framework vers.:  4.00.815
   - author: Steve A.
 
- Specialized +DataImportEntityBuilder+ for searching (or adding brand new)
- Badge entity rows.
+ Specialized +EntityBuilder+ for searching (or adding brand new)
+ MeetingRelaySwimmer entity rows.
 
 =end
-class DataImportMeetingRelaySwimmerBuilder < DataImportEntityBuilder
+class V3::MeetingRelaySwimmerBuilder < V3::EntityBuilder
 
   # Searches for an existing MeetingRelaySwimmer given the parameters and adds
   # a new one if no matches are found and a corresponding existing Swimmer or
@@ -40,7 +40,7 @@ class DataImportMeetingRelaySwimmerBuilder < DataImportEntityBuilder
       "meeting_relay_result, swimmer_badge and stroke_type must be not nil!"
     ) if meeting_relay_result.nil? || swimmer_badge.nil? || stroke_type.nil?
 # DEBUG
-    puts "\r\nMeetingRelaySwimmer -- build_from_parameters: data_import_session ID: #{data_import_session.id}, " <<
+    puts "\r\nV3::MeetingRelaySwimmerBuilder.build_from_parameters: data_import_session ID: #{data_import_session.id}, " <<
          "swimmer_badge: #{swimmer_badge.inspect}, MRR: #{meeting_relay_result.inspect}"
     self.build( data_import_session ) do
       entity      MeetingRelaySwimmer

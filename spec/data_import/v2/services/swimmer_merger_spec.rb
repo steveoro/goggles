@@ -5,12 +5,12 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/swimmer_merger'
 
 
-describe SwimmerMerger, type: :service do
+describe V2::SwimmerMerger, type: :service do
   let(:swimmer)   { create(:swimmer) }
 
 
   context "for a valid instance," do
-    subject { SwimmerMerger.new( swimmer, swimmer ) }
+    subject { V2::SwimmerMerger.new( swimmer, swimmer ) }
 
     it "responds to #process_text_log" do
       expect( subject ).to respond_to( :process_text_log )
@@ -30,19 +30,19 @@ describe SwimmerMerger, type: :service do
   describe "#process" do
     context "when given invalid parameters," do
       xit "raises an ArgumentError for a nil slave parameter" do
-        expect{ SwimmerMerger.new(nil, swimmer).process }.to raise_error( ArgumentError )
+        expect{ V2::SwimmerMerger.new(nil, swimmer).process }.to raise_error( ArgumentError )
       end
       xit "raises an ArgumentError for a nil master parameter" do
-        expect{ SwimmerMerger.new(swimmer, nil).process }.to raise_error( ArgumentError )
+        expect{ V2::SwimmerMerger.new(swimmer, nil).process }.to raise_error( ArgumentError )
       end
     end
 
     context "when given valid parameters," do
       xit "returns true for a process that does not yield errors" do
-        expect( SwimmerMerger.new(swimmer, create(:swimmer)).process ).to be true
+        expect( V2::SwimmerMerger.new(swimmer, create(:swimmer)).process ).to be true
       end
       xit "returns true for a process that does nothing (src==dest)" do
-        expect( SwimmerMerger.new(swimmer, swimmer).process ).to be true
+        expect( V2::SwimmerMerger.new(swimmer, swimmer).process ).to be true
       end
     end
     #-- -----------------------------------------------------------------------

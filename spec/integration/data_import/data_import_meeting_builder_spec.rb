@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_meeting_builder'
 
 
-describe DataImportMeetingBuilder, type: :integration do
+describe V2::DataImportMeetingBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -20,7 +20,7 @@ describe DataImportMeetingBuilder, type: :integration do
   let(:code_name)           { FFaker::Lorem.word }
   let(:full_pathname)       { File.join( pathname, "#{ prefix }#{ header_text_date }#{ code_name }.txt" ) }
   let(:meeting_dates_text)  { "%04d-%02d-%02d" % [year, month, day] }
-  let(:header_fields_dao)   { FilenameParser.new( full_pathname ).parse }
+  let(:header_fields_dao)   { V2::FilenameParser.new( full_pathname ).parse }
   let(:meeting_header_row) do
     {
       import_text: "#{FFaker::Lorem.word} meeting - organized by #{FFaker::Lorem.word} team",
@@ -43,7 +43,7 @@ describe DataImportMeetingBuilder, type: :integration do
   # Specifying the season will set all meeting dates accordingly:
   let(:meeting)             { create( :meeting, season: searchable_season_out_of_seed ) }
   let(:matching_pathname)   { File.join( pathname, "ris#{ meeting.header_date.strftime("%Y%m%d") }#{ meeting.code }.txt" ) }
-  let(:matching_header_dao) { FilenameParser.new( matching_pathname ).parse }
+  let(:matching_header_dao) { V2::FilenameParser.new( matching_pathname ).parse }
   let(:matching_header_row) do
     {
       import_text: "#{meeting.edition}° #{meeting.description} meeting",
@@ -59,7 +59,7 @@ describe DataImportMeetingBuilder, type: :integration do
   context "after a self.build() with NO matching Meeting row (but with Season)," do
     let(:new_season) { create(:season) }
     subject do
-      DataImportMeetingBuilder.build_from_parameters(
+      V2::DataImportMeetingBuilder.build_from_parameters(
         data_import_session,
         new_season,
         header_fields_dao,
@@ -69,8 +69,8 @@ describe DataImportMeetingBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -110,7 +110,7 @@ describe DataImportMeetingBuilder, type: :integration do
 
   context "after a self.build() with a matching Meeting row (and with Season)," do
     subject do
-      DataImportMeetingBuilder.build_from_parameters(
+      V2::DataImportMeetingBuilder.build_from_parameters(
         data_import_session,
         meeting.season,
         matching_header_dao,
@@ -120,8 +120,8 @@ describe DataImportMeetingBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -166,7 +166,7 @@ describe DataImportMeetingBuilder, type: :integration do
     subject do
 # DEBUG
 #      puts "\r\n*** Subject: meeting ID #{meeting.id}, #{meeting.season.inspect}"
-      DataImportMeetingBuilder.build_from_parameters(
+      V2::DataImportMeetingBuilder.build_from_parameters(
         data_import_session,
         nil,
         matching_header_dao,
@@ -179,8 +179,8 @@ describe DataImportMeetingBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do

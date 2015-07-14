@@ -6,7 +6,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_builder'
 
 =begin
 
-= DataImportCityBuilder
+= V2::DataImportCityBuilder
 
   - Goggles framework vers.:  4.00.583
   - author: Steve A.
@@ -15,12 +15,12 @@ require_relative '../../../data_import/v2/services/data_import_entity_builder'
  City entity rows.
 
 =end
-class DataImportCityBuilder < DataImportEntityBuilder
+class V2::DataImportCityBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing City assuming city name can be deduced
   # by the given Team name.
   #
-  # The current implementation uses CityComparator to detect the matching city
+  # The current implementation uses V2::CityComparator to detect the matching city
   # from the list of already existing rows found in the database.
   #
   # When no matches are found, *no* add operation will be performed.
@@ -32,14 +32,14 @@ class DataImportCityBuilder < DataImportEntityBuilder
       search do                                     # (Custom) Primary search:
 # DEBUG
 #        puts "\r\nSearching: #{team_name}"
-        city = CityComparator.new.search_composed_name( team_name )
+        city = V2::CityComparator.new.search_composed_name( team_name )
         set_result( city )
       end
 
       if_not_found do                               # (Custom) Secondary search:
 # DEBUG
 #        puts "Primary search failure. Searching on secondary entity..."
-        city = CityComparator.new.search_composed_name( team_name, DataImportCity )
+        city = V2::CityComparator.new.search_composed_name( team_name, DataImportCity )
         set_result( city )
       end
 

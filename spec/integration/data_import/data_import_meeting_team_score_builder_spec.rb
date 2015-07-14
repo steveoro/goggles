@@ -9,7 +9,7 @@ require_relative '../../../app/data_import/v2/services/data_import_swimmer_build
 require_relative '../../../app/data_import/v2/services/data_import_badge_builder'
 
 
-describe DataImportMeetingTeamScoreBuilder, type: :integration do
+describe V2::DataImportMeetingTeamScoreBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -38,8 +38,8 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
 
   shared_examples_for( "(build process successfull)" ) do
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -51,7 +51,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   context "after a self.build() with NO matching primary entity (and NO MRR nor DI_MRR)," do
     subject do
-      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+      V2::DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         season,
         meeting,
@@ -141,7 +141,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   context "after a self.build() with NO matching primary entity (but existing MeetingRelayResult)," do
     subject do
-      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+      V2::DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         mrr.meeting.season,
         mrr.meeting,
@@ -173,7 +173,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   context "after a self.build() with NO matching primary entity (but existing DataImportMeetingRelayResult)," do
     subject do
-      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+      V2::DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         di_mrr.meeting.season,
         di_mrr.meeting,
@@ -207,7 +207,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity (w/ MeetingRelayResults)," do
     subject do
-      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+      V2::DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         primary_ts_with_mrrs.meeting.season,
         primary_ts_with_mrrs.meeting,
@@ -271,7 +271,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   context "after a self.build() with a matching secondary entity (w/ DataImportMeetingRelayResults)," do
     subject do
-      DataImportMeetingTeamScoreBuilder.build_from_parameters(
+      V2::DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         secondary_ts_with_mrrs.meeting.season,
         secondary_ts_with_mrrs.meeting,
@@ -317,7 +317,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   describe "self.get_all_relay_results() for a Meeting with no Relay results," do
     subject do
-      DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+      V2::DataImportMeetingTeamScoreBuilder.get_all_relay_results(
         data_import_session,
         meeting,
         create(:team)
@@ -336,7 +336,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   describe "self.get_all_relay_results() for a Meeting with MRRs," do
     subject do
-      DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+      V2::DataImportMeetingTeamScoreBuilder.get_all_relay_results(
         data_import_session,
         primary_ts_with_mrrs.meeting,
         primary_ts_with_mrrs.team
@@ -364,7 +364,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   describe "self.get_all_relay_results() for a Meeting with DI-MRRs," do
     subject do
-      DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+      V2::DataImportMeetingTeamScoreBuilder.get_all_relay_results(
         data_import_session,
         secondary_ts_with_mrrs.meeting,
         secondary_ts_with_mrrs.team
@@ -394,7 +394,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
 
   describe "self.fix_missing_rank()," do
     it "returns the rank value of a meeting with existing DataImportTeamScores" do
-      result_rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
+      result_rank = V2::DataImportMeetingTeamScoreBuilder.fix_missing_rank(
         data_import_session,
         secondary_ts_with_mrrs.meeting
       )
@@ -402,7 +402,7 @@ describe DataImportMeetingTeamScoreBuilder, type: :integration do
     end
 
     it "returns the tot.rows +1 as the rank value for a meeting w/ NO existing DataImportTeamScores" do
-      result_rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
+      result_rank = V2::DataImportMeetingTeamScoreBuilder.fix_missing_rank(
         data_import_session,
         meeting
       )

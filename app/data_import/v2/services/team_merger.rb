@@ -7,7 +7,7 @@ require_relative '../../../strategies/entity_row_dup_collector'
 
 =begin
 
-= TeamMerger
+= V2::TeamMerger
 
   - Goggles framework vers.:  4.00.733
   - author: Steve A.
@@ -30,7 +30,7 @@ require_relative '../../../strategies/entity_row_dup_collector'
  - retrieve the logs using the member variables.
 
 =end
-class TeamMerger
+class V2::TeamMerger
   include SqlConverter
 
   # Creates a new instance

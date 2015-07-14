@@ -7,7 +7,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_builder'
 
 =begin
 
-= DataImportMeetingSessionBuilder
+= V2::DataImportMeetingSessionBuilder
 
   - Goggles framework vers.:  4.00.737
   - author: Steve A.
@@ -16,7 +16,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_builder'
  MeetingSession entity rows.
 
 =end
-class DataImportMeetingSessionBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingSessionBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingSession given the parameters, or it adds a new one, if not found.
   #
@@ -52,7 +52,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
         if meeting.nil?
 # DEBUG
 #          puts "Searching a missing Meeting..."
-          @meeting = DataImportMeetingBuilder.build_from_parameters(
+          @meeting = V2::DataImportMeetingBuilder.build_from_parameters(
             data_import_session,
             nil,  # season
             header_fields_dao,
@@ -94,7 +94,7 @@ class DataImportMeetingSessionBuilder < DataImportEntityBuilder
 
       custom_logic do
         if primary_search_ok?
-          DataImportMeetingSessionBuilder.fix_existing_invalid_meeting_session( @result_row )
+          V2::DataImportMeetingSessionBuilder.fix_existing_invalid_meeting_session( @result_row )
         end
       end
 

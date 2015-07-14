@@ -6,7 +6,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_builder'
 
 =begin
 
-= DataImportSeasonBuilder
+= V2::DataImportSeasonBuilder
 
   - Goggles framework vers.:  4.00.583
   - author: Steve A.
@@ -15,7 +15,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_builder'
  Season entity rows.
 
 =end
-class DataImportSeasonBuilder < DataImportEntityBuilder
+class V2::DataImportSeasonBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing Season given the parameters, or it adds a new one,
   # when not found.

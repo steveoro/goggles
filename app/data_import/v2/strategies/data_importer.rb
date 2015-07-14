@@ -32,9 +32,9 @@ require_relative '../../../data_import/v2/services/data_import_meeting_session_b
 
 =end
 class DataImporter
-  include SeasonDetectUtils
-  include FinResultPhase2
-  include FinResultPhase3
+  include V2::SeasonDetectUtils
+  include V2::FinResultPhase2
+  include V2::FinResultPhase3
 
   attr_reader   :logger, :flash, :data_import_session,
                 :import_log,
@@ -362,12 +362,12 @@ class DataImporter
     #       full_text_file_contents: full_text_file_contents
     #     }
     #
-    # > FinResultParser.field_list_for( context_sym )
+    # > V2::FinResultParser.field_list_for( context_sym )
     # returns the possible fields for either :category_header || :result_row
     #
-    @result_hash = FinResultParser.parse_txt_file( @full_pathname, logger ) # (=> show_progress = false)
+    @result_hash = V2::FinResultParser.parse_txt_file( @full_pathname, logger ) # (=> show_progress = false)
                                                     # Make sure the :parse_result member is in 'standard' form:
-    @result_hash[:parse_result] = ParseResultConverter.new.to_parse_result(
+    @result_hash[:parse_result] = V2::ParseResultConverter.new.to_parse_result(
       @result_hash[:parse_result],
       @result_hash[:parsing_defs],
       @season
@@ -433,11 +433,11 @@ class DataImporter
         update_logs( "meeting_header_row = #{meeting_header_row.inspect}", :debug )
         meeting_dates = meeting_header_row[:fields][:meeting_dates]
         # TODO [Steve, 20140923]
-        #      The new MeetingDateParser now supports multiple date extraction: this should be used
+        #      The new V2::MeetingDateParser now supports multiple date extraction: this should be used
         #      to extract all meeting_session dates, when possible.
         #      (Marked as FUTUREDEV, since we assume all meeting sessions will be existing
         #       before each data-import execution.)
-        scheduled_dates = MeetingDateParser.new.parse( meeting_dates )
+        scheduled_dates = V2::MeetingDateParser.new.parse( meeting_dates )
         scheduled_date  = scheduled_dates.first if scheduled_dates.instance_of?( Array )
         update_logs( "meeting_dates = '#{meeting_dates}' => #{scheduled_dates.inspect} (USING ONLY: #{scheduled_date})", :debug )
       end
@@ -484,7 +484,7 @@ class DataImporter
 
     @meeting = nil
     if is_ok && @season                             # -- MEETING (digest/serialization) --
-      meeting_builder = DataImportMeetingBuilder.build_from_parameters(
+      meeting_builder = V2::DataImportMeetingBuilder.build_from_parameters(
         @data_import_session,
         @season,
         @header_fields_dao,
@@ -497,7 +497,7 @@ class DataImporter
                                                     # --- TEAM RANKING/SCORES (digest/serialization) --
     if @meeting                                     # Check for possible validation failures:
       update_logs( "PHASE #1.2: checking possible Meeting validation failures..." )
-      sql_diff = MeetingHeaderYearChecker.check_and_fix( @meeting )
+      sql_diff = V2::MeetingHeaderYearChecker.check_and_fix( @meeting )
       if sql_diff.size > 0
         @data_import_session.sql_diff << sql_diff
         update_logs( "PHASE #1.2: associated Meeting corrected." )
@@ -505,7 +505,7 @@ class DataImporter
 
       if meeting_header_row.instance_of?( Hash ) && meeting_header_row.has_key?(:fields)
         update_logs( "PHASE #1.2: checking possible missing Meeting notes/organization..." )
-        sql_diff = MeetingNotesOrganizationChecker.check_and_fix(
+        sql_diff = V2::MeetingNotesOrganizationChecker.check_and_fix(
           @meeting,
           meeting_dates,
           meeting_header_row[:fields][:organization]
@@ -530,7 +530,7 @@ class DataImporter
                                                     # -- MEETING SESSION (digest/serialization) --
     meeting_session = nil
     if @meeting                                     # Retrieve default meeting session: (used only for new/missing meeting events or programs)
-      meeting_session_builder = DataImportMeetingSessionBuilder.build_from_parameters(
+      meeting_session_builder = V2::DataImportMeetingSessionBuilder.build_from_parameters(
         @data_import_session,
         @meeting,
         @header_fields_dao,
@@ -711,7 +711,7 @@ class DataImporter
   def header_fields_dao_init_from_filename()
     # Bail out if #header_fields_dao is already defined:
     return if @header_fields_dao.instance_of?( HeaderFieldsDAO )
-    @header_fields_dao = FilenameParser.new( @full_pathname ).parse
+    @header_fields_dao = V2::FilenameParser.new( @full_pathname ).parse
     @result_hash = nil
   end
 

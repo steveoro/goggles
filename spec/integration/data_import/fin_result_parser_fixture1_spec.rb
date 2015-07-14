@@ -10,7 +10,7 @@ require 'spec_helper'
 describe "FinResultParser parsing fixture file 1,", type: :integration do
   # We need to parse the fixture file just once to speed-up tests:
   before( :all ) do
-    @result_hash = FinResultParser.parse_txt_file( File.join(Rails.root, 'test/fixtures/samples/fixture1-ris20120414molinella-sample.txt') )
+    @result_hash = V2::FinResultParser.parse_txt_file( File.join(Rails.root, 'test/fixtures/samples/fixture1-ris20120414molinella-sample.txt') )
   end
 
   it "returns an Hash" do

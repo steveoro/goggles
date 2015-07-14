@@ -564,7 +564,7 @@ class Admin::V2::MaintenanceController < ApplicationController
     src_team  = Team.find_by_id( src_id )
     dest_team = Team.find_by_id( dest_id )
 
-    merger = TeamMerger.new( src_team, dest_team )
+    merger = V2::TeamMerger.new( src_team, dest_team )
     is_ok = merger.process
 
     if is_ok

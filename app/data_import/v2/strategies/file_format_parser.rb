@@ -12,7 +12,7 @@ require_relative '../../../data_import/v2/fin_startlist_defs'
 
 =begin
 
-= FileFormatParser
+= V2::FileFormatParser
 
   - Goggles framework vers.:  4.00.749
   - author: Steve A.
@@ -22,13 +22,13 @@ require_relative '../../../data_import/v2/fin_startlist_defs'
 
 === Typical usage:
 
-    parsing_defs = FileFormatParser.new( full_pathname ).parse
+    parsing_defs = V2::FileFormatParser.new( full_pathname ).parse
 
 =end
-class FileFormatParser
+class V2::FileFormatParser
 
-  # ContextTypeDef definition for detecting "FIN result"-type files.
-  FIN1_RESULT_TYPEDEF = ContextTypeDef.new(
+  # V2::ContextTypeDef definition for detecting "FIN result"-type files.
+  FIN1_RESULT_TYPEDEF = V2::ContextTypeDef.new(
     :fin_result,
     [
       /^\s*|\r\n|\n|$|\Z/i,
@@ -38,8 +38,8 @@ class FileFormatParser
     ]
   )
 
-  # ContextTypeDef definition for detecting "FIN2 result"-type files.
-  FIN2_RESULT_TYPEDEF = ContextTypeDef.new(
+  # V2::ContextTypeDef definition for detecting "FIN2 result"-type files.
+  FIN2_RESULT_TYPEDEF = V2::ContextTypeDef.new(
     :fin2_result,
     [
       /^\s*|^\r\n|^\n|$|^\Z/i,
@@ -52,8 +52,8 @@ class FileFormatParser
     ]
   )
 
-  # ContextTypeDef definition for detecting "FIN starting list"-type files.
-  FIN1_STARTLIST_TYPEDEF = ContextTypeDef.new(
+  # V2::ContextTypeDef definition for detecting "FIN starting list"-type files.
+  FIN1_STARTLIST_TYPEDEF = V2::ContextTypeDef.new(
     :fin_startlist,
     [
       /^\s*|^\r\n|^\n|$|^\Z/i,
@@ -73,26 +73,26 @@ class FileFormatParser
   #++
 
 
-  # Parses the text lines from the filename to detect which TxtResultDefs instance
+  # Parses the text lines from the filename to detect which V2::TxtResultDefs instance
   # has to be used to perform the actual parsing of the whole file.
   #
   # This works on the assumption that, in order to recognize all of the possible
   # data-import text file formats, suffice is to read a few lines of the file itself from the
   # beginning of it.
   #
-  # The logger specified here will be passed on to each ContextDetector
+  # The logger specified here will be passed on to each V2::ContextDetector
   # instance defined internally.
   #
   # == Returns:
-  # - a TxtResultDefs sibling class instance, depending on the type of the file,
+  # - a V2::TxtResultDefs sibling class instance, depending on the type of the file,
   #   or +nil+, when the file type is not recognized.
   #
   def parse( logger = nil )
     result = nil
     line_count = 0
-    detector_fin1_res = ContextDetector.new( FIN1_RESULT_TYPEDEF, logger )
-    detector_fin2_res = ContextDetector.new( FIN2_RESULT_TYPEDEF, logger )
-    detector_fin1_sta = ContextDetector.new( FIN1_STARTLIST_TYPEDEF, logger )
+    detector_fin1_res = V2::ContextDetector.new( FIN1_RESULT_TYPEDEF, logger )
+    detector_fin2_res = V2::ContextDetector.new( FIN2_RESULT_TYPEDEF, logger )
+    detector_fin1_sta = V2::ContextDetector.new( FIN1_STARTLIST_TYPEDEF, logger )
 
     File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
@@ -100,15 +100,15 @@ class FileFormatParser
         line_count += 1
                                                     # While reading the file line by line, detect the type:
         if detector_fin1_res.feed_and_detect( curr_line, line_count, nil )
-          result = FinResultDefs.new( logger )
+          result = V2::FinResultDefs.new( logger )
           break                                     # Break as soon as we have a match (FIFO wins)
 
         elsif detector_fin2_res.feed_and_detect( curr_line, line_count, nil )
-          result = Fin2ResultDefs.new( logger )
+          result = V2::Fin2ResultDefs.new( logger )
           break
 
         elsif detector_fin1_sta.feed_and_detect( curr_line, line_count, nil )
-          result = FinStartListDefs.new( logger )
+          result = V2::FinStartListDefs.new( logger )
           break
 
         else

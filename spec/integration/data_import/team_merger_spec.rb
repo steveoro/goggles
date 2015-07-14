@@ -5,7 +5,7 @@ require 'spec_helper'
 require_relative '../../../app/data_import/v2/services/team_merger'
 
 
-describe TeamMerger, type: :integration do
+describe V2::TeamMerger, type: :integration do
 
   describe "when merging teams having NO badge duplicates, NO dup affiliation (but randomly chosen)," do
     before(:all) do                                 # Prepare context once and for all:
@@ -16,7 +16,7 @@ describe TeamMerger, type: :integration do
       @slave_affiliation  = TeamAffiliationFactoryTools.create_affiliation_with_badge_list( @slave_team )
       @slave_affiliation_badges_count = @slave_team.badges.count
                                                     # Prepare the subject:
-      @subject = TeamMerger.new( @slave_team, @master_team )
+      @subject = V2::TeamMerger.new( @slave_team, @master_team )
       @result = @subject.process
 # DEBUG
 #      puts "\r\n=====================================[rand src+dest non-dup badges, non-dup aff.]\r\n" << @subject.process_text_log
@@ -92,7 +92,7 @@ describe TeamMerger, type: :integration do
       )
       @slave_affiliation_badges_count = @slave_team.badges.count
                                                     # Prepare the subject:
-      @subject = TeamMerger.new( @slave_team, @master_team )
+      @subject = V2::TeamMerger.new( @slave_team, @master_team )
       @result = @subject.process
 # DEBUG
 #      puts "\r\n=====================================[3 src non-dup badges, dup aff.]\r\n" << @subject.process_text_log
@@ -163,7 +163,7 @@ describe TeamMerger, type: :integration do
         )
       end
                                                     # Prepare the subject:
-      @subject = TeamMerger.new( @slave_team, @master_team )
+      @subject = V2::TeamMerger.new( @slave_team, @master_team )
       @result = @subject.process
 # DEBUG
 #      puts "\r\n=====================================[3 src non-dup badges, dup aff.]\r\n" << @subject.process_text_log

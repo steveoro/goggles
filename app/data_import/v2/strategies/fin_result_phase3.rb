@@ -8,7 +8,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_committer'
 
 =begin
 
-= FinResultPhase3
+= V2::FinResultPhase3
 
   - Goggles framework vers.:  4.00.759
   - author: Steve A.
@@ -25,7 +25,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_committer'
   - @committed_data_rows integer variable
 
 =end
-module FinResultPhase3
+module V2::FinResultPhase3
 
   # Total of committed data rows. Increased internally by each one of the following methods.
   @committed_data_rows = 0
@@ -47,7 +47,7 @@ module FinResultPhase3
   #     => DataImportMeetingTeamScore
   #
   def commit_data_import_meeting( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeeting, 1 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeeting, 1 )
     committer.commit do |source_row|
       Meeting.transaction do
         committed_row = Meeting.new(
@@ -106,7 +106,7 @@ module FinResultPhase3
   #     => DataImportMeetingProgram
   #
   def commit_data_import_meeting_session( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingSession, 2 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeetingSession, 2 )
     committer.commit do |source_row|
       MeetingSession.transaction do
         committed_row = MeetingSession.new(
@@ -152,13 +152,13 @@ module FinResultPhase3
   #     => DataImportMeetingRelayResult
   #
   def commit_data_import_meeting_program( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingProgram, 3 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeetingProgram, 3 )
     committer.commit do |source_row|                # Get previously stored meeting event, if available
       last_event  = source_row.meeting_session.meeting.meeting_events.order(:event_order).last
       event_order = last_event ? last_event.event_order + 1 : 1
 
       MeetingProgram.transaction do                 # Create the MeetingEvent first, if missing:
-        mev_builder = DataImportMeetingEventBuilder.build_from_parameters(
+        mev_builder = V2::DataImportMeetingEventBuilder.build_from_parameters(
           data_import_session,
           source_row.meeting_session,
           source_row.event_type,
@@ -226,7 +226,7 @@ module FinResultPhase3
   #     => DataImportTeam
   #
   def commit_data_import_cities( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportCity, 4 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportCity, 4 )
     committer.commit do |source_row|
       City.transaction do
         committed_row = City.new(
@@ -273,7 +273,7 @@ module FinResultPhase3
   def commit_data_import_teams( data_import_session, season )
     # ASSERT: assuming TeamAffiliation DOES NOT exist if the Team row is missing.
     #         (i.e.: this should be the DataImportTeam row condition of existance)
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportTeam, 5 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportTeam, 5 )
     committer.commit do |source_row|
       Team.transaction do
         committed_row = Team.new(
@@ -287,7 +287,7 @@ module FinResultPhase3
         committed_row.save!
         # We must add also a new TeamAffiliation row for this season:
         # Create dependancy: |=> team_affiliations(team, season)
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+        ta_builder = V2::DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,
           committed_row,
           season
@@ -343,7 +343,7 @@ module FinResultPhase3
   #     => DataImportMeetingIndividualResult
   #
   def commit_data_import_swimmers( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportSwimmer, 6 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportSwimmer, 6 )
     committer.commit do |source_row|
 # DEBUG
 #      puts "\r\nCommitting #{source_row.inspect}\r\n- source_row.gender_type_id: #{source_row.gender_type_id}"
@@ -403,7 +403,7 @@ module FinResultPhase3
   #     => DataImportMeetingIndividualResult
   #
   def commit_data_import_badges( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportBadge, 7 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportBadge, 7 )
     committer.commit do |source_row|
 # FIXME Having season & team we could add here a fix if :team_affiliation_id is found missing
 # (instead of raising an error like the following method does)
@@ -455,7 +455,7 @@ module FinResultPhase3
   #     - none (hierachy leaf)
   #
   def commit_data_import_meeting_entries( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingEntry, 8 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeetingEntry, 8 )
     committer.commit do |source_row|
       check_for_non_nil_links(
         source_row,
@@ -509,7 +509,7 @@ module FinResultPhase3
   #     - none (hierachy leaf)
   #
   def commit_data_import_meeting_individual_results( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingIndividualResult, 9 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeetingIndividualResult, 9 )
     committer.commit do |source_row|
       check_for_non_nil_links(
         source_row,
@@ -565,7 +565,7 @@ module FinResultPhase3
   #     - none (hierachy leaf)
   #
   def commit_data_import_meeting_relay_results( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingRelayResult, 10 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeetingRelayResult, 10 )
     committer.commit do |source_row|
       check_for_non_nil_links( source_row, [:meeting_program_id, :team_id, :team_affiliation_id] )
       MeetingRelayResult.transaction do
@@ -617,7 +617,7 @@ module FinResultPhase3
   #     - none (hierachy leaf)
   #
   def commit_data_import_meeting_team_score( data_import_session )
-    committer = DataImportEntityCommitter.new( data_import_session, DataImportMeetingTeamScore, 11 )
+    committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportMeetingTeamScore, 11 )
     committer.commit do |source_row|
       check_for_non_nil_links( source_row, [:meeting_id, :team_id, :team_affiliation_id, :season_id] )
       MeetingTeamScore.transaction do

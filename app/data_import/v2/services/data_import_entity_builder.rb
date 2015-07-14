@@ -5,7 +5,7 @@ require_relative '../../../strategies/sql_converter'
 
 =begin
 
-= DataImportEntityBuilder
+= V2::DataImportEntityBuilder
 
   - Goggles framework vers.:  4.00.751
   - author: Steve A.
@@ -48,7 +48,7 @@ require_relative '../../../strategies/sql_converter'
 
 === Example (for entity Season):
 
-    builder = DataImportEntityBuilder.build( data_import_session ) do
+    builder = V2::DataImportEntityBuilder.build( data_import_session ) do
       # Entity definition step:
       entity                    Season
 
@@ -92,7 +92,7 @@ require_relative '../../../strategies/sql_converter'
     builder.result_id   # => the ID of the row either found or created; 0 on error, negative if the row was found in the primary entity.
 
 =end
-class DataImportEntityBuilder
+class V2::DataImportEntityBuilder
   include SqlConverter
 
   # Common basic scope builder
@@ -159,7 +159,7 @@ class DataImportEntityBuilder
     raise ArgumentError.new(
       "DataImportEntityBuilder requires a valid DataImportSession instance and a block!"
     ) unless block_given? && data_import_session.instance_of?( DataImportSession )
-    DataImportEntityBuilder.new( data_import_session, &block )
+    V2::DataImportEntityBuilder.new( data_import_session, &block )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -168,25 +168,25 @@ class DataImportEntityBuilder
   # Creates a new 'set_up' scope for the specified block.
   #
   def set_up( &block )
-    DataImportEntityBuilder::BasicScope.new( self, &block )
+    V2::DataImportEntityBuilder::BasicScope.new( self, &block )
   end
 
   # Creates a new 'search' scope for the specified block.
   #
   def search( &block )
-    DataImportEntityBuilder::SearchScope.new( self, &block )
+    V2::DataImportEntityBuilder::SearchScope.new( self, &block )
   end
 
   # Creates a new 'custom_logic' scope for the specified block.
   #
   def custom_logic( &block )
-    DataImportEntityBuilder::CustomLogicScope.new( self, &block )
+    V2::DataImportEntityBuilder::CustomLogicScope.new( self, &block )
   end
 
   # Creates a new 'if_not_found' scope for the specified block.
   #
   def if_not_found( &block )
-    DataImportEntityBuilder::IfNotFoundScope.new( self, &block ) if result_not_found?
+    V2::DataImportEntityBuilder::IfNotFoundScope.new( self, &block ) if result_not_found?
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -365,7 +365,7 @@ class DataImportEntityBuilder
         # Also, TeamAffiliation SQL diff creation is skipped during pre-commit phase
         # (which corresponds to last completed phase == 12), because we need to
         # store the SQL diff *after* the Team creation using the @additional_row
-        # feature of the DataImportEntityCommitter, which allows to specify which
+        # feature of the V2::DataImportEntityCommitter, which allows to specify which
         # additional row should be processed as an additional SQL-diff creation parameter.
         #
         # [Convoluted explanation of the reason why:]

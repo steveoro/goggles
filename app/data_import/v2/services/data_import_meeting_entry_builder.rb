@@ -11,7 +11,7 @@ require_relative '../../../data_import/v2/dao/csi_result_dao'
 
 =begin
 
-= DataImportMeetingEntryBuilder
+= V2::DataImportMeetingEntryBuilder
 
   - Goggles framework vers.:  4.00.761
   - author: Steve A.
@@ -20,7 +20,7 @@ require_relative '../../../data_import/v2/dao/csi_result_dao'
  MeetingEntry entity rows.
 
 =end
-class DataImportMeetingEntryBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingEntryBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingEntry given the parameters, or it adds a new one,
   # if none are found.
@@ -93,7 +93,7 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
 #        puts "- team_name........: '#{team_name}'"
 #        puts "- entry_time.......: #{entry_time}"
 
-        team_builder  = DataImportTeamBuilder.build_from_parameters(
+        team_builder  = V2::DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            team_name,
            season,
@@ -105,14 +105,14 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           raise ArgumentError.new("Team '#{team_name}' not found or unable to create it!\r\ndetail_row: #{detail_row.inspect}")
         end
                                                     # Search or add a TeamAffiliation:
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+        ta_builder = V2::DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,
           @team,
           season
         )
         @team_affiliation   = ta_builder.result_row
 
-        swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+        swimmer_builder = V2::DataImportSwimmerBuilder.build_from_parameters(
           data_import_session,
           swimmer_name,
           swimmer_year,
@@ -126,7 +126,7 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
           raise ArgumentError.new("Swimmer '#{swimmer_name}' not found or unable to create it!\r\ndetail row: #{detail_row.inspect}")
         end
 
-        badge_builder = DataImportBadgeBuilder.build_from_parameters(
+        badge_builder = V2::DataImportBadgeBuilder.build_from_parameters(
           data_import_session,
           athlete_badge,
           season,
@@ -148,9 +148,9 @@ class DataImportMeetingEntryBuilder < DataImportEntityBuilder
         else
           result_parser = nil
           if detail_row.instance_of?( Hash )
-            result_parser = ResultTimeParser.new( '', entry_time ).parse
+            result_parser = V2::ResultTimeParser.new( '', entry_time ).parse
           elsif detail_row.instance_of?( CsiResultDAO )
-            result_parser = ResultTimeParser.new( '', entry_time, detail_row ).parse
+            result_parser = V2::ResultTimeParser.new( '', entry_time, detail_row ).parse
           end
           @mins, @secs, @hds = result_parser.mins_secs_hds_array
         end

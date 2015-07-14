@@ -93,7 +93,7 @@ it simply outputs a list of blamed row IDs with their JSON error message(s).
                                                     # Repair mode:
         if repair && row.instance_of?( Meeting )
           sql_diff << "-- Meeting ##{row.id}: header year fix\r\n"
-          sql_diff << MeetingHeaderYearChecker.check_and_fix( row )
+          sql_diff << V2::MeetingHeaderYearChecker.check_and_fix( row )
         end
       else
         putc '.'
@@ -249,7 +249,7 @@ duplicate Badges/TeamAffiliations for the same season.
     seasons.each do |season|
       puts "\r\n\r\nChecking season ##{season.id}..."
       puts "---------------- 8< -------------------"
-      dup_swimmers = BadgeDuplicateChecker.get_swimmers_with_duplicates( season )
+      dup_swimmers = V2::BadgeDuplicateChecker.get_swimmers_with_duplicates( season )
       dup_teams = []
       if dup_swimmers.size == 0
         puts "No problems found."

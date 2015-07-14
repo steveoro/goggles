@@ -47,7 +47,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 =end
 class CsiResultParser
-  include SeasonDetectUtils
+  include V2::SeasonDetectUtils
 
   # These must be initialized on creation:
   attr_reader :full_pathname, :dao_list, :data_import_session,
@@ -219,7 +219,7 @@ class CsiResultParser
       season_starting_year = @season.begin_date.year
       update_logs( "Found season '#{@season.inspect}'; #{@season.season_type.inspect}, season_starting_year=#{season_starting_year}", :debug )
 
-      meeting_builder = DataImportMeetingBuilder.build_from_parameters(
+      meeting_builder = V2::DataImportMeetingBuilder.build_from_parameters(
         @data_import_session,
         @season,
         @header_fields_dao,
@@ -232,7 +232,7 @@ class CsiResultParser
 
     if @meeting                                     # Check for possible validation failures:
       update_logs( "PHASE #1.2: checking possible Meeting validation failures..." )
-      sql_diff = MeetingHeaderYearChecker.check_and_fix( @meeting )
+      sql_diff = V2::MeetingHeaderYearChecker.check_and_fix( @meeting )
       if sql_diff.size > 0
         @data_import_session.sql_diff << sql_diff
         update_logs( "PHASE #1.2: associated Meeting corrected." )
@@ -241,7 +241,7 @@ class CsiResultParser
                                                     # -- MEETING SESSION (digest/serialization) --
     meeting_session = nil
     if @meeting                                     # Retrieve default meeting session: (used only for new/missing meeting events or programs)
-      meeting_session_builder = DataImportMeetingSessionBuilder.build_from_parameters(
+      meeting_session_builder = V2::DataImportMeetingSessionBuilder.build_from_parameters(
         @data_import_session,
         @meeting,
         @header_fields_dao,
@@ -433,7 +433,7 @@ class CsiResultParser
   # Set-up for @data_import_session. Should return an instance of DataImportSession.
   # +nil+ only on error.
   def setup_data_import_session
-    @header_fields_dao = FilenameParser.new( @full_pathname ).parse()
+    @header_fields_dao = V2::FilenameParser.new( @full_pathname ).parse()
 
     if @season.nil?                                 # SEASON DETECT
       try_detect_season_from_file_path
@@ -458,7 +458,7 @@ class CsiResultParser
 
   # Scans internal @dao_list structure to collect all team names found.
   #
-  # For each team name found, a DataImportTeamBuilder instance is executed.
+  # For each team name found, a V2::DataImportTeamBuilder instance is executed.
   # If the Team is not found or some problem arises, that same class will delegate to
   # a strategy class to perform the team name analysis (which will then require human
   #`supervision before commit).
@@ -477,7 +477,7 @@ class CsiResultParser
     )
 
     unique_names.each_with_index do |team_name, idx|
-      team_builder = DataImportTeamBuilder.build_from_parameters(
+      team_builder = V2::DataImportTeamBuilder.build_from_parameters(
         @data_import_session,
         team_name,
         @season,
@@ -501,7 +501,7 @@ class CsiResultParser
 
   # Scans the internal @dao_list structure to collect all swimmer names found.
   #
-  # For each swimmer name found, a DataImportSwimmerBuilder instance is executed.
+  # For each swimmer name found, a V2::DataImportSwimmerBuilder instance is executed.
   # If the Swimmer is not found or some problem arises, that same class will delegate to
   # a strategy class to perform the swimmer name analysis (which will then require human
   #`supervision before commit).
@@ -529,7 +529,7 @@ class CsiResultParser
     )
 
     unique_swimmers.each_with_index do |swimmer_hash, idx|
-      swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+      swimmer_builder = V2::DataImportSwimmerBuilder.build_from_parameters(
         @data_import_session,
         swimmer_hash[:name],
         swimmer_hash[:year],
@@ -592,7 +592,7 @@ class CsiResultParser
         "    - data_import_session ID=#{ @data_import_session.id }"
       )
 
-      meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
+      meeting_program_builder = V2::DataImportMeetingProgramBuilder.build_from_parameters(
         @data_import_session,
         @season,
         meeting_session,
@@ -623,7 +623,7 @@ class CsiResultParser
       return unless is_ok
 
                                                     # -- MEETING ENTRY (digest part) --
-      mentry_builder = DataImportMeetingEntryBuilder.build_from_parameters(
+      mentry_builder = V2::DataImportMeetingEntryBuilder.build_from_parameters(
         @data_import_session,
         @season,
         meeting_program,
@@ -637,7 +637,7 @@ class CsiResultParser
 
                                                     # -- MEETING INDIVIDUAL RESULT (digest part) --
       unless dao.is_result_missing
-        mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
+        mir_builder = V2::DataImportMeetingIndividualResultBuilder.build_from_parameters(
           @data_import_session,
           @season,
           meeting_program,

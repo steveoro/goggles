@@ -7,7 +7,7 @@ require_relative '../../../data_import/v2/services/data_import_season_builder'
 
 =begin
 
-= DataImportMeetingBuilder
+= V2::DataImportMeetingBuilder
 
   - Goggles framework vers.:  4.00.737
   - author: Steve A.
@@ -16,7 +16,7 @@ require_relative '../../../data_import/v2/services/data_import_season_builder'
  Meeting entity rows.
 
 =end
-class DataImportMeetingBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing Meeting given the parameters, or it adds a new one,
   # if not found.
@@ -44,7 +44,7 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
                                   meeting_dates_text = nil,
                                   force_missing_meeting_creation = false )
 # DEBUG
-#    puts "\r\n- DataImportMeetingBuilder.build_from_parameters: #{header_fields_dao}"
+#    puts "\r\n- V2::DataImportMeetingBuilder.build_from_parameters: #{header_fields_dao}"
     self.build( data_import_session ) do
       entity      Meeting
 
@@ -53,7 +53,7 @@ class DataImportMeetingBuilder < DataImportEntityBuilder
         if season.nil?
 # DEBUG
 #          puts "Searching a missing Season..."
-          @season = DataImportSeasonBuilder.build_from_parameters(
+          @season = V2::DataImportSeasonBuilder.build_from_parameters(
             data_import_session,
             header_fields_dao.header_date,
             1, # season_type_id

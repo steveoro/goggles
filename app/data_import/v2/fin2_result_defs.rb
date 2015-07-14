@@ -9,27 +9,27 @@ require_relative '../../data_import/v2/fin2_result_consts'
 
 =begin
 
-= Fin2ResultDefs
+= V2::Fin2ResultDefs
 
   - Goggles framework vers.:  4.00.657
   - author: Steve A.
 
- Value object/Container class for the lists of ContextDetector and TokenExtractor
+ Value object/Container class for the lists of V2::ContextDetector and V2::TokenExtractor
  classes and all the other structures required by the parser processing
  text data files of type 'fin2_result'.
 
 =end
-class Fin2ResultDefs < TxtResultDefs
-  include Fin2ResultConsts
+class V2::Fin2ResultDefs < V2::TxtResultDefs
+  include V2::Fin2ResultConsts
 
-  # This logger will be used by each ContextDetector instance defined internally.
+  # This logger will be used by each V2::ContextDetector instance defined internally.
   attr_reader :logger
   # ----------------------------------------------------------------------------
   #++
 
   # Creates a new instance, storing the parameters for the parsing.
   #
-  # The logger specified here will be passed on to each ContextDetector
+  # The logger specified here will be passed on to each V2::ContextDetector
   # instance defined internally.
   #
   def initialize( logger = nil )
@@ -58,25 +58,25 @@ class Fin2ResultDefs < TxtResultDefs
     # context of data, if the conditions are loose enough).
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
-      meeting_header:   ContextDetector.new( context_type_meeting_header, logger ),
-      event_individual: ContextDetector.new( context_type_event_individual, logger ),
-      event_relay:      ContextDetector.new( context_type_event_relay, logger ),
-      team_ranking:     ContextDetector.new( context_type_team_ranking, logger ),
-      stats:            ContextDetector.new( context_type_stats, logger ),
+      meeting_header:   V2::ContextDetector.new( context_type_meeting_header, logger ),
+      event_individual: V2::ContextDetector.new( context_type_event_individual, logger ),
+      event_relay:      V2::ContextDetector.new( context_type_event_relay, logger ),
+      team_ranking:     V2::ContextDetector.new( context_type_team_ranking, logger ),
+      stats:            V2::ContextDetector.new( context_type_stats, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      result_row:       ContextDetector.new( context_type_result_row, logger ),
-      relay_row:        ContextDetector.new( context_type_relay_row, logger ),
-      ranking_row:      ContextDetector.new( context_type_ranking_row, logger ),
+      result_row:       V2::ContextDetector.new( context_type_result_row, logger ),
+      relay_row:        V2::ContextDetector.new( context_type_relay_row, logger ),
+      ranking_row:      V2::ContextDetector.new( context_type_ranking_row, logger ),
 
       # [Steve, 20141202] Two different sub-formats are possible foe the stats deails:
       # (Only the one actually found will be filled-in)
-      stats_details_1:  ContextDetector.new( context_type_stats_details_type1, logger ),
-      stats_details_2:  ContextDetector.new( context_type_stats_details_type2, logger )
+      stats_details_1:  V2::ContextDetector.new( context_type_stats_details_type1, logger ),
+      stats_details_2:  V2::ContextDetector.new( context_type_stats_details_type2, logger )
     }
 
     # == String tokenizer type hash
     # An Hash of row type symbols pointing to an array of arrays, in which each
-    # single element array is a TokenExtractor instance, used to define each token
+    # single element array is a V2::TokenExtractor instance, used to define each token
     # boundary inside the currently parsed row.
     #
     # For each context defined by the row_types array, and for each possible row,
@@ -318,7 +318,7 @@ class Fin2ResultDefs < TxtResultDefs
 
     @context_types.each { |key, detector|
       raise "Missing parser Hash key '#{key}'!" unless ( @tokenizer_types.has_key?(key) && @tokenizer_fields.has_key?(key) )
-      raise "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)
+      raise "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?( V2::ContextDetector )
     }
   end
   # ----------------------------------------------------------------------------

@@ -7,7 +7,7 @@ require_relative '../../../strategies/entity_row_dup_collector'
 
 =begin
 
-= SwimmerMerger
+= V2::SwimmerMerger
 
   - Goggles framework vers.:  4.00.777
   - author: Steve A.
@@ -30,7 +30,7 @@ require_relative '../../../strategies/entity_row_dup_collector'
  - retrieve the logs using the member variables.
 
 =end
-class SwimmerMerger
+class V2::SwimmerMerger
   include SqlConverter
 
   # Creates a new instance

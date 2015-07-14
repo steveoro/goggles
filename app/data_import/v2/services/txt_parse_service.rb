@@ -5,7 +5,7 @@ require_relative '../../../data_import/v2/services/context_detector'
 
 =begin
 
-= TxtParseService
+= V2::TxtParseService
 
   - Goggles framework vers.:  4.00.657
   - author: Steve A.
@@ -19,17 +19,17 @@ require_relative '../../../data_import/v2/services/context_detector'
 === The typical usage involves:
 
  - creating a dedicated parse definition holder-object, typically
-   by subclassing TxtResultDefs and specifing this in the constructor;
+   by subclassing V2::TxtResultDefs and specifing this in the constructor;
 
  - for each available line of text to be parsed:
-   - for each defined ContextDetector (inside the above TxtResultDefs sibling):
+   - for each defined V2::ContextDetector (inside the above V2::TxtResultDefs sibling):
      - call #parse() on the current line and detector to see if there's a match
 
  - obtain the parsing result either by #result or, more specifically,
    by calling #result_for( context_name )
 
 =end
-class TxtParseService
+class V2::TxtParseService
   include Tools::Logging
 
   # Set this to true or false to enable or disable debugging output, L1.
@@ -51,7 +51,7 @@ class TxtParseService
   #++
 
 
-  # Creates a new instance, given a <tt>parsing_definitions</tt> TxtResultDefs
+  # Creates a new instance, given a <tt>parsing_definitions</tt> V2::TxtResultDefs
   # kind of object.
   #
   def initialize( parsing_definitions )
@@ -79,7 +79,7 @@ class TxtParseService
   # Increases the overall counter of the all the different lines of text parsed.
   #
   # It should be called only when the processing of a single line has been completed
-  # by all of the available ContextDetector objects.
+  # by all of the available V2::ContextDetector objects.
   def increase_line_count
     @line_count += 1
   end
@@ -96,7 +96,7 @@ class TxtParseService
   # file and the previously detected parent context name.
   #
   # This method is assumed to be called iteratively by looping on several different
-  # ContextDetector instances, to try the detection against the same <tt>current_line</tt>
+  # V2::ContextDetector instances, to try the detection against the same <tt>current_line</tt>
   # text specified. It will automatically store the progress for any successful parsing.
   #
   # #parse(), actually, doesn't increase the internal <tt>line_count</tt> and the counter
@@ -192,7 +192,7 @@ class TxtParseService
           # checks each single defined context for possible multiple context assignment
           # (it doesn't stop after the first successfull reckognition and works in a FIFO way,
           # allowing the possibility to have a single text line that spawns multiple contexts
-          # of data), defining a parent_context_name in the ContextDetector instance is the
+          # of data), defining a parent_context_name in the V2::ContextDetector instance is the
           # only correct method to uniquely identify two context with the same RegExp.
         end
       end

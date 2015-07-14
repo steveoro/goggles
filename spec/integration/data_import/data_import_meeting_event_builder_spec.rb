@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_meeting_event_builder'
 
 
-describe DataImportMeetingEventBuilder, type: :integration do
+describe V2::DataImportMeetingEventBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -28,7 +28,7 @@ describe DataImportMeetingEventBuilder, type: :integration do
 
   context "after a self.build() with NO matching MeetingEvent (but existing MeetingSession)," do
     subject do
-      DataImportMeetingEventBuilder.build_from_parameters(
+      V2::DataImportMeetingEventBuilder.build_from_parameters(
         data_import_session,
         meeting_session,
         matching_event_type,
@@ -39,8 +39,8 @@ describe DataImportMeetingEventBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -72,7 +72,7 @@ describe DataImportMeetingEventBuilder, type: :integration do
 
   context "after a self.build() with a matching MeetingEvent & MeetingSession row," do
     subject do
-      DataImportMeetingEventBuilder.build_from_parameters(
+      V2::DataImportMeetingEventBuilder.build_from_parameters(
         data_import_session,
         meeting_event.meeting_session,
         meeting_event.event_type,
@@ -83,8 +83,8 @@ describe DataImportMeetingEventBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -126,7 +126,7 @@ describe DataImportMeetingEventBuilder, type: :integration do
     subject do
 # DEBUG
 #      puts "\r\nSEEKED meeting_event:  #{meeting_event.inspect}"
-      DataImportMeetingEventBuilder.build_from_parameters(
+      V2::DataImportMeetingEventBuilder.build_from_parameters(
         data_import_session,
         # Default meeting session, in case the correct one on the actual event is not found
         create( :meeting_session, meeting: meeting_event.meeting_session.meeting ),
@@ -138,8 +138,8 @@ describe DataImportMeetingEventBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -201,7 +201,7 @@ describe DataImportMeetingEventBuilder, type: :integration do
   ].each do |seed_meeting_session_id, event_type_id, expected_meeting_event_id|
     context "after a self.build(meeting_session_id: #{seed_meeting_session_id}, event_type_id: #{event_type_id}) with data from chosen Meeting seeds," do
       subject do
-        DataImportMeetingEventBuilder.build_from_parameters(
+        V2::DataImportMeetingEventBuilder.build_from_parameters(
           di_seed_session,
           MeetingSession.find( seed_meeting_session_id ),
           EventType.find( event_type_id ),
@@ -212,8 +212,8 @@ describe DataImportMeetingEventBuilder, type: :integration do
         )
       end
 
-      it "returns a DataImportEntityBuilder instance" do
-        expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+      it "returns a V2::DataImportEntityBuilder instance" do
+        expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
       end
       describe "#data_import_session" do
         it "is the DataImportSession specified for the build" do

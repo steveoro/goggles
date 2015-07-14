@@ -8,17 +8,17 @@ require_relative '../../../../app/data_import/v2/fin_result_consts'
 require_relative '../../../../app/data_import/v2/context_type_def'
 
 
-describe ContextDetector, type: :service do
+describe V2::ContextDetector, type: :service do
 
   context "for a well-defined instance," do
     let( :dummy_wrapper ) do
-      class DummyWrapper; include FinResultConsts; end
+      class DummyWrapper; include V2::FinResultConsts; end
       DummyWrapper.new
     end
     let( :context_types_array ) { dummy_wrapper.get_context_types_list() }
     let( :fix_context_type )    { context_types_array[ (rand * context_types_array.size).to_i ] }
 
-    subject { ContextDetector.new( fix_context_type, ConsoleLogger.new ) }
+    subject { V2::ContextDetector.new( fix_context_type, ConsoleLogger.new ) }
 
     it_behaves_like( "(the existance of a method)", [
       :context_type, :logger,
@@ -31,19 +31,19 @@ describe ContextDetector, type: :service do
 
 
     describe "#initialize" do
-      it "is a ContextDetector instance" do
-        expect( subject ).to be_an_instance_of( ContextDetector )
+      it "is a V2::ContextDetector instance" do
+        expect( subject ).to be_an_instance_of( V2::ContextDetector )
       end
     end
 
     describe "#context_type" do
-      it "is a ContextTypeDef instance" do
-        expect( subject.context_type ).to be_an_instance_of( ContextTypeDef )
+      it "is a V2::ContextTypeDef instance" do
+        expect( subject.context_type ).to be_an_instance_of( V2::ContextTypeDef )
       end
       it "is the same context specified in the constructor" do
         expect( subject.context_type ).to be == fix_context_type
       end
-      it "has the expected ContextTypeDef name" do
+      it "has the expected V2::ContextTypeDef name" do
         expect( subject.context_type.context_name ).to eq( fix_context_type.context_name )
       end
     end
@@ -94,7 +94,7 @@ describe ContextDetector, type: :service do
       let( :fixture_line_0 ) { "                                  Campionati Regionali Emilia                                  " }
       let( :fixture_line_1 ) { "                     Manifestazione organizzata da a.s.d. Molinella Nuoto                      " }
       let( :fixture_line_2 ) { "                              Molinella - 15/16/17 Febbraio 2009                               " }
-      subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header ) }
+      subject { V2::ContextDetector.new( dummy_wrapper.context_type_meeting_header ) }
 
       before(:each) do
         subject.feed_and_detect( fixture_line_0, 0, nil )

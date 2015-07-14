@@ -11,7 +11,7 @@ require_relative '../../../data_import/v2/dao/csi_result_dao'
 
 =begin
 
-= DataImportMeetingIndividualResultBuilder
+= V2::DataImportMeetingIndividualResultBuilder
 
   - Goggles framework vers.:  4.00.797
   - author: Steve A.
@@ -20,7 +20,7 @@ require_relative '../../../data_import/v2/dao/csi_result_dao'
  MeetingIndividualResult entity rows.
 
 =end
-class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingIndividualResultBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingIndividualResult given the parameters, or it adds a new one,
   # if none are found.
@@ -110,7 +110,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 #        puts "- result_time......: #{result_time}"
 #        puts "- @meeting_points..: #{@meeting_points}"
 
-        team_builder  = DataImportTeamBuilder.build_from_parameters(
+        team_builder  = V2::DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            team_name,
            season,
@@ -122,14 +122,14 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           raise ArgumentError.new("Team '#{team_name}' not found or unable to create it!\r\ndetail_row: #{detail_row.inspect}")
         end
                                                     # Search or add a TeamAffiliation:
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+        ta_builder = V2::DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,
           @team,
           season
         )
         @team_affiliation   = ta_builder.result_row
 
-        swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+        swimmer_builder = V2::DataImportSwimmerBuilder.build_from_parameters(
           data_import_session,
           swimmer_name,
           swimmer_year,
@@ -145,7 +145,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
           raise ArgumentError.new("Swimmer '#{swimmer_name}' not found or unable to create it!\r\ndetail row: #{detail_row.inspect}")
         end
 
-        badge_builder = DataImportBadgeBuilder.build_from_parameters(
+        badge_builder = V2::DataImportBadgeBuilder.build_from_parameters(
           data_import_session,
           athlete_badge,
           season,
@@ -166,9 +166,9 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
         result_parser       = nil
 
         if detail_row.instance_of?( Hash )
-          result_parser = ResultTimeParser.new( @rank, result_time ).parse
+          result_parser = V2::ResultTimeParser.new( @rank, result_time ).parse
         elsif detail_row.instance_of?( CsiResultDAO )
-          result_parser = ResultTimeParser.new( @rank, result_time, detail_row ).parse
+          result_parser = V2::ResultTimeParser.new( @rank, result_time, detail_row ).parse
         end
         @is_out_of_race     = result_parser.is_out_of_race?
         @is_disqualified    = result_parser.is_disqualified?
@@ -213,7 +213,7 @@ class DataImportMeetingIndividualResultBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "Search failed: adding new MeetingIndividualResult with: @swimmer=#{@swimmer.complete_name}, @team=#{@team.name}, badge: #{@badge.inspect}..."
                                                     # Fix possible blank or missing ranking values:
-        @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+        @rank = V2::DataImportMeetingIndividualResultBuilder.fix_missing_rank(
           DataImportMeetingIndividualResult,
           data_import_session,
           meeting_program,

@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_team_affiliation_builder'
 
 
-describe DataImportTeamAffiliationBuilder, type: :integration do
+describe V2::DataImportTeamAffiliationBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -21,15 +21,15 @@ describe DataImportTeamAffiliationBuilder, type: :integration do
 
   context "after a self.build() with NO matching TeamAffiliation (but existing Team and Season)," do
     subject do
-      DataImportTeamAffiliationBuilder.build_from_parameters(
+      V2::DataImportTeamAffiliationBuilder.build_from_parameters(
         data_import_session,
         team,
         season
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -60,15 +60,15 @@ describe DataImportTeamAffiliationBuilder, type: :integration do
 
   context "after a self.build() with a matching TeamAffiliation row," do
     subject do
-      DataImportTeamAffiliationBuilder.build_from_parameters(
+      V2::DataImportTeamAffiliationBuilder.build_from_parameters(
         data_import_session,
         team_affiliation.team,
         team_affiliation.season
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -107,15 +107,15 @@ describe DataImportTeamAffiliationBuilder, type: :integration do
 
   context "after a self.build() with a DataImportTeam and a valid Season)," do
     subject do
-      DataImportTeamAffiliationBuilder.build_from_parameters(
+      V2::DataImportTeamAffiliationBuilder.build_from_parameters(
         data_import_session,
         create( :data_import_team ),
         season
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do

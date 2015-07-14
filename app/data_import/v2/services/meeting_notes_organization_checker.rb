@@ -3,7 +3,7 @@
 
 =begin
 
-= MeetingNotesOrganizationChecker
+= V2::MeetingNotesOrganizationChecker
 
   - Goggles framework vers.:  4.00.751
   - author: Steve A.
@@ -14,7 +14,7 @@
   SQL-diff text required to reproduce the update on another instance of the DB.
 
 =end
-class MeetingNotesOrganizationChecker
+class V2::MeetingNotesOrganizationChecker
   include Singleton
 
   # Checks if the specified instance of Meeting or DataImportMeeting has a
@@ -42,7 +42,7 @@ class MeetingNotesOrganizationChecker
       else                                          # Something is missing? => Rebuild the notes:
         meeting.notes = meeting_dates ? "#{meeting_dates}\r\n#{organization}" : "#{organization}"
         meeting.save!
-        MeetingNotesOrganizationChecker.build_sql_update( meeting )
+        V2::MeetingNotesOrganizationChecker.build_sql_update( meeting )
       end
     end
   end

@@ -5,9 +5,9 @@ require_relative './context_detector_checks_for_parsing'
 
 
 describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration do
-  include ContextDetectorChecksForParsing
+  include V2::ContextDetectorChecksForParsing
 
-  class DummyWrapper; include FinResultConsts; end
+  class DummyWrapper; include V2::FinResultConsts; end
   let( :dummy_wrapper ) { DummyWrapper.new }
   #-- -------------------------------------------------------------------------
   #++
@@ -16,7 +16,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === MEETING_HEADER examples ===
   #
   context "when parsing MEETING_HEADER," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
 
     it "recognizes the 'FIN Campionati Regionali' format" do
       feed = [
@@ -148,7 +148,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
       check_for_parsing_fail( feed )
     end
 
-    # This examples tests the line_timeout feature of the ContextDetector.
+    # This examples tests the line_timeout feature of the V2::ContextDetector.
     it "doesn't recognize a false-positive (sample #2)" do
       feed = [
         " 19 MAR-034567 1979 GINONE  ALESSANDRO            AS FIGARO NUOTO             0'29\"05  800,69",
@@ -170,7 +170,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === CATEGORY_HEADER examples ===
   #
   context "when parsing CATEGORY_HEADER," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_category_header, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_category_header, nil ) }
 
     it "recognizes the 'FIN category w/ base time' format (sample #1)" do
       feed = [
@@ -293,7 +293,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === RELAY_HEADER examples ===
   #
   context "when parsing RELAY_HEADER," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_relay_header, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_relay_header, nil ) }
 
     it "recognizes the 'FIN mixed relay w/ base time' format (sample #1)" do
       feed = [
@@ -452,7 +452,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === TEAM_RANKING examples ===
   #
   context "when parsing TEAM_RANKING," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_team_ranking, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_team_ranking, nil ) }
 
     it "recognizes the 'FIN team-ranking' format (sample #1)" do
       feed = [
@@ -487,7 +487,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === STATS examples ===
   #
   context "when parsing STATS," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_stats, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_stats, nil ) }
 
     it "recognizes the 'FIN stats' format (sample #1)" do
       feed = [
@@ -514,7 +514,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === RESULT_ROW examples ===
   #
   context "when parsing RESULT_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_result_row, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_result_row, nil ) }
 
     it "recognizes the 'FIN result-row' format #1 (sample #1)" do
       feed = [
@@ -595,7 +595,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === RELAY_ROW examples ===
   #
   context "when parsing RELAY_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_relay_row, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_relay_row, nil ) }
 
     it "recognizes the 'FIN relay-row' format #1 (sample #1)" do
       feed = [
@@ -691,7 +691,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === STATS_DETAILS examples ===
   #
   context "when parsing STATS_DETAILS," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_stats_details, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_stats_details, nil ) }
 
     it "recognizes the 'default' format" do
       check_for_parsing_ok(
@@ -733,7 +733,7 @@ describe "ContextDetector set for 'FIN(1)res' file types,", type: :integration d
   # === RANKING_ROW examples ===
   #
   context "when parsing RANKING_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_ranking_row, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_ranking_row, nil ) }
 
     it "recognizes the 'FIN ranking-row' format #1 (sample #1)" do
       feed = [

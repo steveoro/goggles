@@ -7,11 +7,11 @@ require_relative '../../../../lib/framework/console_logger'
 require_relative '../../../../app/data_import/v2/fin_result_consts'
 
 
-describe TokenExtractor, type: :service do
+describe V2::TokenExtractor, type: :service do
 
   context "for a well-defined instance," do
     let( :dummy_wrapper ) do
-      class DummyWrapper; include FinResultConsts; end
+      class DummyWrapper; include V2::FinResultConsts; end
       DummyWrapper.new
     end
     let( :tokenizers_array ) { dummy_wrapper.get_tokenizers_list() }
@@ -28,8 +28,8 @@ describe TokenExtractor, type: :service do
 
 
     describe "#initialize" do
-      it "returns a TokenExtractor instance" do
-        expect( subject ).to be_an_instance_of( TokenExtractor )
+      it "returns a V2::TokenExtractor instance" do
+        expect( subject ).to be_an_instance_of( V2::TokenExtractor )
       end
       it "has a #field_name Symbol" do
         expect( subject.field_name ).to be_an_instance_of( Symbol )

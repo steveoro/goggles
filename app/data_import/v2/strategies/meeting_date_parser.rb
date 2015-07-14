@@ -6,7 +6,7 @@ require 'common/format'
 
 =begin
 
-= MeetingDateParser
+= V2::MeetingDateParser
 
   - Goggles framework vers.:  4.00.515
   - author: Steve A.
@@ -14,7 +14,7 @@ require 'common/format'
  Strategy class dedicated to parse Meeting dates from tokens of text.
 
 =end
-class MeetingDateParser
+class V2::MeetingDateParser
 
   # Parses a text date extracted from a Meeting result text file.
   # Locale is simply ignored as of this version.

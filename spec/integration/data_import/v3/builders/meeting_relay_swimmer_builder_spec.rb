@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../app/data_import/v2/services/data_import_entity_builder'
-require_relative '../../../app/data_import/v2/services/data_import_meeting_relay_swimmer_builder'
+require_relative '../../../../../app/data_import/v3/builders/entity_builder'
+require_relative '../../../../../app/data_import/v3/builders/meeting_relay_swimmer_builder'
 
 
-describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
+describe V3::MeetingRelaySwimmerBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -46,7 +46,7 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
 
   context "after a self.build() with invalid parameters," do
     # subject do
-      # DataImportBadgeBuilder.build_from_parameters(
+      # V2::DataImportBadgeBuilder.build_from_parameters(
         # data_import_session,
         # nil,
         # data_import_session.season,
@@ -67,7 +67,7 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
 
   context "after a self.build() with a NON-matching entity row," do
     # subject do
-      # DataImportBadgeBuilder.build_from_parameters(
+      # V2::DataImportBadgeBuilder.build_from_parameters(
         # data_import_session,
         # badge_code,
         # data_import_session.season,
@@ -78,8 +78,8 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
       # )
     # end
 #
-    # it "returns a DataImportEntityBuilder instance" do
-      # expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    # it "returns a V2::DataImportEntityBuilder instance" do
+      # expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     # end
     # describe "#data_import_session" do
       # it "is the DataImportSession specified for the build" do
@@ -115,8 +115,8 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
 
 
   # shared_examples_for "(a build w/ a matching primary entity row)" do
-    # it "returns a DataImportEntityBuilder instance" do
-      # expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    # it "returns a V2::DataImportEntityBuilder instance" do
+      # expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     # end
     # describe "#data_import_session" do
       # it "is the DataImportSession specified for the build" do
@@ -152,7 +152,7 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity row (w/ Random BADGE CODE)," do
     # subject do
-      # DataImportBadgeBuilder.build_from_parameters(
+      # V2::DataImportBadgeBuilder.build_from_parameters(
         # data_import_session,
         # badge.number,
         # badge.season,
@@ -168,7 +168,7 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity row (w/ '?' BADGE CODE)," do
     # subject do
-      # DataImportBadgeBuilder.build_from_parameters(
+      # V2::DataImportBadgeBuilder.build_from_parameters(
         # data_import_session,
         # badge_unknown.number,
         # badge_unknown.season,
@@ -185,8 +185,8 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
 
 
   # shared_examples_for "(a build w/ a matching secondary entity row)" do
-    # it "returns a DataImportEntityBuilder instance" do
-      # expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    # it "returns a V2::DataImportEntityBuilder instance" do
+      # expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     # end
     # describe "#data_import_session" do
       # it "is the DataImportSession specified for the build" do
@@ -224,7 +224,7 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
     # subject do
 # # DEBUG
 # #      puts "\r\n#{data_import_badge.inspect}"
-      # DataImportBadgeBuilder.build_from_parameters(
+      # V2::DataImportBadgeBuilder.build_from_parameters(
         # data_import_session,
         # data_import_badge.number,
         # data_import_badge.season,
@@ -242,7 +242,7 @@ describe DataImportMeetingRelaySwimmerBuilder, type: :integration do
     # subject do
 # # DEBUG
 # #      puts "\r\n#{data_import_badge_unknown.inspect}"
-      # DataImportBadgeBuilder.build_from_parameters(
+      # V2::DataImportBadgeBuilder.build_from_parameters(
         # data_import_session,
         # data_import_badge_unknown.number,
         # data_import_badge_unknown.season,

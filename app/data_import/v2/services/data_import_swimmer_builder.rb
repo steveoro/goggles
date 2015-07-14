@@ -6,7 +6,7 @@ require_relative '../../../data_import/v2/services/swimmer_name_analyzer'
 
 =begin
 
-= DataImportSwimmerBuilder
+= V2::DataImportSwimmerBuilder
 
   - Goggles framework vers.:  4.00.743
   - author: Steve A.
@@ -44,7 +44,7 @@ require_relative '../../../data_import/v2/services/swimmer_name_analyzer'
      a manual review/selection of the candidates found.
 
 =end
-class DataImportSwimmerBuilder < DataImportEntityBuilder
+class V2::DataImportSwimmerBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing Swimmer given the parameters, or it adds a new one,
   # if no matches are found.
@@ -141,7 +141,7 @@ class DataImportSwimmerBuilder < DataImportEntityBuilder
           # instance:
           analysis_log = ''
           sql_executable_log = ''
-          analyzer = SwimmerNameAnalyzer.new
+          analyzer = V2::SwimmerNameAnalyzer.new
           # Pre-filter swimmers to speed-up the searches:
           analyzer.swimmers = Swimmer.where(
             "(gender_type_id = #{gender_type.id}) AND " <<

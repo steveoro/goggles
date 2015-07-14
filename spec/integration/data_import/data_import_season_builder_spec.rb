@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_season_builder'
 
 
-describe DataImportSeasonBuilder, type: :integration do
+describe V2::DataImportSeasonBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
   let(:year)                  { ((rand * 100) % 50).to_i + 1945 }
@@ -18,7 +18,7 @@ describe DataImportSeasonBuilder, type: :integration do
 
   context "after a self.build() with NO matching Season row," do
     subject do
-      DataImportSeasonBuilder.build_from_parameters(
+      V2::DataImportSeasonBuilder.build_from_parameters(
         data_import_session,
         not_found_date_text,
         1,   # season_type_id
@@ -27,8 +27,8 @@ describe DataImportSeasonBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -64,7 +64,7 @@ describe DataImportSeasonBuilder, type: :integration do
     let(:season) { create(:season) }
 
     subject do
-      DataImportSeasonBuilder.build_from_parameters(
+      V2::DataImportSeasonBuilder.build_from_parameters(
         data_import_session,
         season.begin_date,
         season.season_type,
@@ -72,8 +72,8 @@ describe DataImportSeasonBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do

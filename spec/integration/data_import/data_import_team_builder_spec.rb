@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_team_builder'
 
 
-describe DataImportTeamBuilder, type: :integration do
+describe V2::DataImportTeamBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
   let(:team)                  { create( :team ) }
@@ -16,7 +16,7 @@ describe DataImportTeamBuilder, type: :integration do
 
   context "after a self.build() with NO matching entity rows," do
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      V2::DataImportTeamBuilder.build_from_parameters(
         data_import_session,
         "#{create(:city).name} swimming club ASD",
         create(:season),
@@ -24,8 +24,8 @@ describe DataImportTeamBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -67,7 +67,7 @@ describe DataImportTeamBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity row," do
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      V2::DataImportTeamBuilder.build_from_parameters(
         data_import_session,
         team.name,
         create(:season), # <== This implies a missing TeamAffiliation link
@@ -75,8 +75,8 @@ describe DataImportTeamBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -116,8 +116,8 @@ describe DataImportTeamBuilder, type: :integration do
 
 
   shared_examples_for "(a self.build() with a fuzzy-matching or equal secondary entity row)" do
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -158,7 +158,7 @@ describe DataImportTeamBuilder, type: :integration do
 
   context "after a self.build() with a matching secondary entity row," do
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      V2::DataImportTeamBuilder.build_from_parameters(
         data_import_session,
         data_import_team.name,
         create(:season), # <== This implies a missing TeamAffiliation link
@@ -172,7 +172,7 @@ describe DataImportTeamBuilder, type: :integration do
 
   context "after a self.build() with a fuzzy-matching secondary entity row," do
     subject do
-      DataImportTeamBuilder.build_from_parameters(
+      V2::DataImportTeamBuilder.build_from_parameters(
         data_import_session,
         data_import_team.name + " ASD",
         create(:season), # <== This implies a missing TeamAffiliation link

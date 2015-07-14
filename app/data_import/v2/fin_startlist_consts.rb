@@ -6,7 +6,7 @@ require_relative '../../data_import/v2/services/token_extractor'
 
 =begin
 
-= FinResultConsts
+= V2::FinResultConsts
 
   - Goggles framework vers.:  4.00.749
   - author: Steve A.
@@ -20,12 +20,12 @@ require_relative '../../data_import/v2/services/token_extractor'
  layouts.
 
 =end
-module FinStartListConsts                           # == HEADER CONTEXT TYPES definitions: ==
+module V2::FinStartListConsts                           # == HEADER CONTEXT TYPES definitions: ==
   extend ActiveSupport::Concern
 
   # "Meeting Header" context type definition.
   def context_type_meeting_header
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :meeting_header,
       [
         /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
@@ -40,7 +40,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "Event Individual" context type definition.
   #
   def context_type_event_individual
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :event_individual,
       [
         /(?<=^)(?<length_in_meters>50|100|200|400|800|1500)\s{1,2}(?<stroke_type>stile|misti|dorso|rana|farf|SL|DO|RA|FA|MI|MX|DF|DS|RN)(?=$|\Z|\n|\r|\0)/ui,
@@ -52,7 +52,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "Entry row" (detail) context type definition.
   #
   def context_type_entry_row
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :entry_row,
       [
         /(?<=\s)(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)/ui
@@ -63,7 +63,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # ----------------------------------------------------------------------------
   #++
 
-  # Returns the list of all the ContextTypeDefs member objects defined.
+  # Returns the list of all the V2::ContextTypeDefs member objects defined.
   # (Commodity method used only inside specs.)
   def get_context_types_list
     [
@@ -79,7 +79,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "meeting_header.title" token extractor definition
   #
   def tokenizer_meeting_header_title
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :title,
       /((?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)/i,
       # Old version; /((?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)/i,
@@ -91,7 +91,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "meeting_header.meeting_dates" token extractor definition
   #
   def tokenizer_meeting_header_meeting_dates
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :meeting_dates,
       /(?<wholedate>(?<=\s\-\s|\s\-\-\-\s|\s\s|^)(?<weekday>(dom|lun|mar|mer|gio|ven|sab)\D*\s)?((?<twodigitsep>(\d{1,2})(\/|-|\,|\s)){1,4}(?<month>\d{1,2}|(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\D*))(\/|-|\,|\s)(?<year>\d{2,4}))/i,
       # Old version: /\d{0,2}((\/|-|\,)\d{0,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/i,
@@ -103,7 +103,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "meeting_header.organization" token extractor definition
   #
   def tokenizer_meeting_header_organization
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :organization,
       /(?<=manifestazione organizzata da )/i,
       /\z/i,
@@ -116,7 +116,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "category_header.distance" token extractor definition
   #
   def tokenizer_event_individual_distance
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :distance,
       /(?<!\dx)(50|100|200|400|800|1500)\s+/i,
       /\s+(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/i
@@ -126,7 +126,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "category_header.style" token extractor definition
   #
   def tokenizer_event_individual_style
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :style,
       /\s*(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/i,
       /\s*(maschi|femmi)/i
@@ -138,7 +138,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "entry_row.entry_order" token extractor definition
   #
   def tokenizer_entry_row_entry_order
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :entry_order,
       /\s*\d{1,3}(?= {1,3})/i,
       /\s(?=[a-z]+)/i
@@ -148,7 +148,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "entry_row.swimmer_name" token extractor definition
   #
   def tokenizer_entry_row_swimmer_name
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :swimmer_name,
       /
         (?<=\d\s)
@@ -173,7 +173,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "entry_row.category_group" token extractor definition
   #
   def tokenizer_entry_row_category_group
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :category_group,
       /\s
         (?<year>
@@ -190,7 +190,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "entry_row.team_name" token extractor definition
   #
   def tokenizer_entry_row_team_name
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :team_name,
       /
         (?<=\d\d\s)
@@ -206,7 +206,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # "entry_row.entry_time" token extractor definition
   #
   def tokenizer_entry_row_entry_time
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :entry_time,
       /(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)/i,
       8                                             # (max size)
@@ -215,7 +215,7 @@ module FinStartListConsts                           # == HEADER CONTEXT TYPES de
   # ----------------------------------------------------------------------------
   #++
 
-  # Returns the list of all the TokenExtractor object members defined.
+  # Returns the list of all the V2::TokenExtractor object members defined.
   # (Commodity method used only inside specs.)
   def get_tokenizers_list
     [

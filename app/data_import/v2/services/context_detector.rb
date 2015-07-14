@@ -4,7 +4,7 @@ require_relative '../../../data_import/v2/tools_logging'
 
 =begin
 
-= ContextDetector
+= V2::ContextDetector
 
   - Goggles framework vers.:  4.00.657
   - author: Steve A.
@@ -53,7 +53,7 @@ require_relative '../../../data_import/v2/tools_logging'
    false).
 
 =end
-class ContextDetector
+class V2::ContextDetector
   include Tools::Logging
 
   attr_reader :context_type, :logger, :current_context, :detection_index
@@ -82,7 +82,7 @@ class ContextDetector
   # detected context (specified upon each new line feed).
   #
   def initialize( context_type, logger = nil )
-    raise ArgumentError.new('context_type must be an ContextTypeDef!') unless context_type.instance_of?( ContextTypeDef )
+    raise ArgumentError.new('context_type must be an V2::ContextTypeDef!') unless context_type.instance_of?( V2::ContextTypeDef )
     @context_type = context_type
     @logger = logger
     @current_context = nil

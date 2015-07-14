@@ -6,7 +6,7 @@ require_relative '../../../strategies/sql_converter'
 
 =begin
 
-= TeamAnalysisResultProcessor
+= V2::TeamAnalysisResultProcessor
 
   - Goggles framework vers.:  4.00.713
   - author: Steve A.
@@ -18,7 +18,7 @@ require_relative '../../../strategies/sql_converter'
  any SQL actions that that have been carried out during the serialization.
 
 =end
-class TeamAnalysisResultProcessor
+class V2::TeamAnalysisResultProcessor
   include SqlConverter
 
   attr_reader :logger, :flash, :sql_executable_log, :process_log,
@@ -71,7 +71,7 @@ class TeamAnalysisResultProcessor
                                                     # -- Can ADD new Team? (Default action for unconfirmed team_analysis_results)
     if (! is_confirmed) || team_analysis_result.can_insert_team
       begin
-        team_builder = DataImportTeamBuilder.build_from_parameters(
+        team_builder = V2::DataImportTeamBuilder.build_from_parameters(
           team_analysis_result.data_import_session,
           team_name,
           team_analysis_result.season,
@@ -84,7 +84,7 @@ class TeamAnalysisResultProcessor
         # not secondary/temporary entities):
         team_id = nil if committed_row.instance_of?( DataImportTeam )
       rescue
-        update_logs( "\r\n*** TeamAnalysisResultProcessor: exception caught during DataImportTeam building! (Name:'#{team_name}')", :error )
+        update_logs( "\r\n*** V2::TeamAnalysisResultProcessor: exception caught during DataImportTeam building! (Name:'#{team_name}')", :error )
         update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
         @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         is_ok = false
@@ -105,11 +105,11 @@ class TeamAnalysisResultProcessor
             @sql_executable_log << "-- aliased with: '#{team_alias.name}' (ID:#{team_alias.id})\r\n" if team_alias
             @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
-            @logger.info( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping DataImportTeamAlias creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id})" ) if @logger
+            @logger.info( "\r\n*** V2::TeamAnalysisResultProcessor: WARNING: skipping DataImportTeamAlias creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id})" ) if @logger
           end
         end
       rescue
-        update_logs( "\r\n*** TeamAnalysisResultProcessor: exception caught during DataImportTeamAlias save! (Name:'#{team_name}', team_id:#{team_id})", :error )
+        update_logs( "\r\n*** V2::TeamAnalysisResultProcessor: exception caught during DataImportTeamAlias save! (Name:'#{team_name}', team_id:#{team_id})", :error )
         update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
         @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         is_ok = false
@@ -136,11 +136,11 @@ class TeamAnalysisResultProcessor
             @committed_rows << committed_row
             @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
-            update_logs( "\r\n*** TeamAnalysisResultProcessor: WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})", :error )
+            update_logs( "\r\n*** V2::TeamAnalysisResultProcessor: WARNING: skipping TeamAffiliation creation because was (unexpectedly) found already existing! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})", :error )
           end
         end
       rescue
-        update_logs( "\r\n*** TeamAnalysisResultProcessor: exception caught during TeamAffiliation save! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})", :error )
+        update_logs( "\r\n*** V2::TeamAnalysisResultProcessor: exception caught during TeamAffiliation save! (Name:'#{team_name}', team_id:#{team_id}, season_id:#{season_id})", :error )
         update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
         @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         is_ok = false

@@ -7,7 +7,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_session_b
 
 =begin
 
-= DataImportMeetingEventBuilder
+= V2::DataImportMeetingEventBuilder
 
   - Goggles framework vers.:  4.00.633
   - author: Steve A.
@@ -16,7 +16,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_session_b
  MeetingEvent entity rows.
 
 =end
-class DataImportMeetingEventBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingEventBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingEvent given the parameters, or it adds a new one,
   # if not found.

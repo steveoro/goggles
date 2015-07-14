@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_time_standard_builder'
 
 
-describe DataImportTimeStandardBuilder, type: :integration do
+describe V2::DataImportTimeStandardBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
   #-- -------------------------------------------------------------------------
@@ -15,7 +15,7 @@ describe DataImportTimeStandardBuilder, type: :integration do
   context "after a self.build() with NO matching TimeStandard row," do
     subject do
       ts = build( :time_standard )                  # Build (without saving) a totally fake time standard
-      DataImportTimeStandardBuilder.build_from_parameters(
+      V2::DataImportTimeStandardBuilder.build_from_parameters(
         data_import_session,
         create(:season),
         ts.event_type_id,
@@ -28,8 +28,8 @@ describe DataImportTimeStandardBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
 
     describe "#data_import_session" do
@@ -64,7 +64,7 @@ describe DataImportTimeStandardBuilder, type: :integration do
       ts = create( :time_standard )
       # Alternatively, we can randomize this with existing rows from seeded TimeStandard:
 #      ts = TimeStandard.all.sort{ rand() - 0.5 }[0]
-      DataImportTimeStandardBuilder.build_from_parameters(
+      V2::DataImportTimeStandardBuilder.build_from_parameters(
         data_import_session,
         ts.season,
         ts.event_type_id,
@@ -77,8 +77,8 @@ describe DataImportTimeStandardBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
 
     describe "#data_import_session" do

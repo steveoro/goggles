@@ -9,27 +9,27 @@ require_relative '../../data_import/v2/fin_startlist_consts'
 
 =begin
 
-= FinResultDefs
+= V2::FinResultDefs
 
   - Goggles framework vers.:  4.00.749
   - author: Steve A.
 
- Value object/Container class for the lists of ContextDetector and TokenExtractor
+ Value object/Container class for the lists of V2::ContextDetector and V2::TokenExtractor
  classes and all the other structures required by the parser processing
  text data files of type 'fin_startlist'.
 
 =end
-class FinStartListDefs < TxtResultDefs
-  include FinStartListConsts
+class V2::FinStartListDefs < V2::TxtResultDefs
+  include V2::FinStartListConsts
 
-  # This logger will be used by each ContextDetector instance defined internally.
+  # This logger will be used by each V2::ContextDetector instance defined internally.
   attr_reader :logger
   # ----------------------------------------------------------------------------
   #++
 
   # Creates a new instance, storing the parameters for the parsing.
   #
-  # The logger specified here will be passed on to each ContextDetector
+  # The logger specified here will be passed on to each V2::ContextDetector
   # instance defined internally.
   #
   def initialize( logger = nil )
@@ -58,15 +58,15 @@ class FinStartListDefs < TxtResultDefs
     # context of data, if the conditions are loose enough).
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
-      meeting_header:   ContextDetector.new( context_type_meeting_header, logger ),
-      event_individual: ContextDetector.new( context_type_event_individual, logger ),
+      meeting_header:   V2::ContextDetector.new( context_type_meeting_header, logger ),
+      event_individual: V2::ContextDetector.new( context_type_event_individual, logger ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      entry_row:        ContextDetector.new( context_type_entry_row, logger )
+      entry_row:        V2::ContextDetector.new( context_type_entry_row, logger )
     }
 
     # == String tokenizer type hash
     # An Hash of row type symbols pointing to an array of arrays, in which each
-    # single element array is a TokenExtractor instance, used to define each token
+    # single element array is a V2::TokenExtractor instance, used to define each token
     # boundary inside the currently parsed row.
     #
     # For each context defined by the row_types array, and for each possible row,
@@ -168,7 +168,7 @@ class FinStartListDefs < TxtResultDefs
 
     @context_types.each { |key, detector|
       raise "Missing parser Hash key '#{key}'!" unless ( @tokenizer_types.has_key?(key) && @tokenizer_fields.has_key?(key) )
-      raise "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?(ContextDetector)
+      raise "Parser Hash element '#{key}' points to an invalid detector instance!" unless detector.instance_of?( V2::ContextDetector )
     }
   end
   # ----------------------------------------------------------------------------

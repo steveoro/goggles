@@ -26,7 +26,7 @@ require_relative '../../../data_import/v2/services/data_import_time_standard_bui
 
 =begin
 
-= FinResultPhase2
+= V2::FinResultPhase2
 
   - Goggles framework vers.:  4.00.767
   - author: Steve A.
@@ -38,7 +38,7 @@ require_relative '../../../data_import/v2/services/data_import_time_standard_bui
   Refactored from the original DataImportController implementation.
 
 =end
-module FinResultPhase2
+module V2::FinResultPhase2
 
   # Bias value used as minimum score to flag a different Team name as a possible match
   # during the pre-scan for unknown team names.
@@ -47,7 +47,7 @@ module FinResultPhase2
 
   # Scans parse_result hash structure to collect all team names found.
   #
-  # For each team name found, a DataImportTeamBuilder instance is executed.
+  # For each team name found, a V2::DataImportTeamBuilder instance is executed.
   # If the Team is not found or some problem arises, that same class will delegate to
   # a strategy class to perform the team name analysis (which will then require human
   #`supervision before commit).
@@ -97,11 +97,11 @@ module FinResultPhase2
       flash[:error] = "*** WARNING *** Possible excessive Team name merge done by pre-analysis!\r\n" <<
                       "CHECK TEAM NAMES in ALIAS MAP inside Log file from phase 1.1 and look for lines WITHOUT comments:\r\n" <<
                       "these are the Team names aliased automatically that need to be checked; if they refer to the same Team, the COMMIT for phase 2 is safe.\r\n" <<
-                      "Otherwise, set a higher bias inside FinResultPhase2 module."
+                      "Otherwise, set a higher bias inside V2::FinResultPhase2 module."
     end
 
     team_names.each_with_index do |team_name, idx|
-      team_builder = DataImportTeamBuilder.build_from_parameters(
+      team_builder = V2::DataImportTeamBuilder.build_from_parameters(
         data_import_session,
         team_name,
         season,
@@ -125,7 +125,7 @@ module FinResultPhase2
 
   # Scans parse_result hash structure to collect all swimmer names found.
   #
-  # For each swimmer name found, a DataImportSwimmerBuilder instance is executed.
+  # For each swimmer name found, a V2::DataImportSwimmerBuilder instance is executed.
   # If the Swimmer is not found or some problem arises, that same class will delegate to
   # a strategy class to perform the swimmer name analysis (which will then require human
   #`supervision before commit).
@@ -158,7 +158,7 @@ module FinResultPhase2
     )
 
     swimmer_names_from_results.each_with_index do |swimmer_hash, idx|
-      swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+      swimmer_builder = V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         swimmer_hash[:name],
         swimmer_hash[:year],
@@ -217,7 +217,7 @@ module FinResultPhase2
 # DEBUG
 #      data_import_session.phase_1_log << "CATEGORY HEADER: Current header_row: #{ header_row.inspect }\r\nResulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }, data_import_session ID=#{ data_import_session.id }"
 
-      meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
+      meeting_program_builder = V2::DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
         season, meeting_session,
         header_row, header_index,
@@ -247,7 +247,7 @@ module FinResultPhase2
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index do |detail_row, detail_row_idx|
                                                     # -- MEETING INDIVIDUAL RESULT (digest part) --
-        mir_builder = DataImportMeetingIndividualResultBuilder.build_from_parameters(
+        mir_builder = V2::DataImportMeetingIndividualResultBuilder.build_from_parameters(
           data_import_session,
           season,
           meeting_program,
@@ -312,7 +312,7 @@ module FinResultPhase2
 #      data_import_session.phase_1_log << "RELAY HEADER: Current header_row: #{ header_row.inspect }\r\n" <<
 #        "Resulting category_type_id=#{ category_type.id }, gender_type_id=#{ gender_type.id }, stroke_type_id=#{ stroke_type.id }"
 
-      meeting_program_builder = DataImportMeetingProgramBuilder.build_from_parameters(
+      meeting_program_builder = V2::DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
         season,
         meeting_session,
@@ -345,7 +345,7 @@ module FinResultPhase2
                                                     # Store each detail into the dedicated temp DB table:
       detail_rows.each_with_index do |detail_row, detail_row_idx|
                                                     # -- MEETING RELAY RESULT (digest part) --
-        mrr_builder = DataImportMeetingRelayResultBuilder.build_from_parameters(
+        mrr_builder = V2::DataImportMeetingRelayResultBuilder.build_from_parameters(
           data_import_session,
           season,
           meeting_program,
@@ -378,7 +378,7 @@ module FinResultPhase2
 # DEBUG
 #      data_import_session.phase_1_log << "\r\nTEAM RANKINGS: Processing ranking #{ detail_row_idx+1 }/#{ ranking_details.size }..."
                                                     # -- TEAM RANKING (digest part) --
-      mts_builder = DataImportMeetingTeamScoreBuilder.build_from_parameters(
+      mts_builder = V2::DataImportMeetingTeamScoreBuilder.build_from_parameters(
         data_import_session,
         season,
         meeting,

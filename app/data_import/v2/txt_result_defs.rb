@@ -3,18 +3,18 @@
 
 =begin
 
-= TxtResultDefs
+= V2::TxtResultDefs
 
   - Goggles framework vers.:  4.00.505
   - author: Steve A.
 
- Base class for any sibling that needs to define lists of ContextDetector and
- TokenExtractor(s) for a specific file format.
+ Base class for any sibling that needs to define lists of V2::ContextDetector and
+ V2::TokenExtractor(s) for a specific file format.
  classes and all the other structures required by the parser processing
  text data files of type 'fin_result'.
 
 =end
-class TxtResultDefs
+class V2::TxtResultDefs
 
   attr_reader :context_types, :context_keys, :tokenizer_types, :tokenizer_fields
   # ----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class TxtResultDefs
   #++
 
 
-  # Returns the specific ContextDetector instance associated with the context
+  # Returns the specific V2::ContextDetector instance associated with the context
   # symbol specified.
   # Returns +nil+ when not found.
   #
@@ -66,7 +66,7 @@ class TxtResultDefs
   end
 
 
-  # Returns +true+ if the specified context symbol points to a ContextDetector
+  # Returns +true+ if the specified context symbol points to a V2::ContextDetector
   # instance that is root or has a +nil+ parent context.
   #
   def is_a_parent( context_sym )
@@ -97,8 +97,8 @@ class TxtResultDefs
   # Returns the intact structure of the tokenizer type defined for
   # the specified context symbol, or +nil+ when not found.
   #
-  # The returned value is the Array (lines) of Array of TokenExtractor
-  # instances (fields), with one TokenExtractor defined for each field
+  # The returned value is the Array (lines) of Array of V2::TokenExtractor
+  # instances (fields), with one V2::TokenExtractor defined for each field
   # that must be extracted, and grouped together in lines (belonging
   # to the same context -- thus the array of array).
   #
@@ -127,7 +127,7 @@ class TxtResultDefs
   #++
 
   # Returns a copy of <tt>#context_types</tt> Hash containing just a selection of
-  # all ContextTypeDef instances that require <tt>parent_context_name</tt> as their
+  # all V2::ContextTypeDef instances that require <tt>parent_context_name</tt> as their
   # recognized parent context.
   #
   def context_types_children_of( parent_context_name )

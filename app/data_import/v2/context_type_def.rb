@@ -10,7 +10,7 @@
  Defines a single context for data parsing in text files.
 
 =end
-class ContextTypeDef
+class V2::ContextTypeDef
 
   attr_reader :context_name, :condition_array, :parent_context_name, :line_timeout
 
@@ -47,7 +47,7 @@ class ContextTypeDef
 
   # "Equals" operator.
   def ==( other_object )
-    return false unless other_object.instance_of?( ContextTypeDef )
+    return false unless other_object.instance_of?( V2::ContextTypeDef )
     (
       @context_name == other_object.context_name &&
       @condition_array == other_object.condition_array &&

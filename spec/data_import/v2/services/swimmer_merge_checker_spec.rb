@@ -5,12 +5,12 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/swimmer_merge_checker'
 
 
-describe SwimmerMergeChecker, type: :service do
+describe V2::SwimmerMergeChecker, type: :service do
   let(:swimmer)     { create(:swimmer) }
 
 
   context "for a valid instance," do
-    subject { SwimmerMergeChecker.new( swimmer, create(:swimmer) ) }
+    subject { V2::SwimmerMergeChecker.new( swimmer, create(:swimmer) ) }
 
     it "responds to #analyze" do
       expect( subject ).to respond_to( :analyze )
@@ -26,19 +26,19 @@ describe SwimmerMergeChecker, type: :service do
   describe "#analyze" do
     context "when given invalid parameters," do
       it "raises an ArgumentError for a nil slave parameter" do
-        expect{ SwimmerMergeChecker.new(nil, swimmer).analyze }.to raise_error( ArgumentError )
+        expect{ V2::SwimmerMergeChecker.new(nil, swimmer).analyze }.to raise_error( ArgumentError )
       end
       it "raises an ArgumentError for a nil master parameter" do
-        expect{ SwimmerMergeChecker.new(swimmer, nil).analyze }.to raise_error( ArgumentError )
+        expect{ V2::SwimmerMergeChecker.new(swimmer, nil).analyze }.to raise_error( ArgumentError )
       end
     end
 
     context "when given valid parameters," do
       it "returns true for a process that does not yield errors (mergeable src!=dest)" do
-        expect( SwimmerMergeChecker.new(swimmer, create(:swimmer)).analyze ).to be true
+        expect( V2::SwimmerMergeChecker.new(swimmer, create(:swimmer)).analyze ).to be true
       end
       it "returns false for a process that does nothing (src==dest)" do
-        expect( SwimmerMergeChecker.new(swimmer, swimmer).analyze ).to be false
+        expect( V2::SwimmerMergeChecker.new(swimmer, swimmer).analyze ).to be false
       end
     end
     #-- -----------------------------------------------------------------------

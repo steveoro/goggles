@@ -36,7 +36,7 @@ class Timing
     set_from_hundreds( to_hundreds )
   end
 
-  # Clears the cached results. This method is useful only if the same TokenExtractor
+  # Clears the cached results. This method is useful only if the same V2::TokenExtractor
   # instance is used to tokenize different source texts.
   #
   def clear()

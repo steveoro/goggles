@@ -5,7 +5,7 @@ require_relative '../../../strategies/fuzzy_string_matcher'
 
 =begin
 
-= CityComparator
+= V2::CityComparator
 
   - Goggles framework vers.:  4.00.558
   - author: Steve A.
@@ -14,7 +14,7 @@ require_relative '../../../strategies/fuzzy_string_matcher'
  into account possible abbreviations and naming variations.
 
 =end
-class CityComparator
+class V2::CityComparator
 
   # Searches for existing matching city names, assuming the
   # specified "composed" name contains the name of target city.

@@ -5,7 +5,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_builder'
 
 =begin
 
-= DataImportCityBuilder
+= V2::DataImportCityBuilder
 
   - Goggles framework vers.:  4.00.743
   - author: Steve A.
@@ -14,7 +14,7 @@ require_relative '../../../data_import/v2/services/data_import_entity_builder'
  Badge entity rows.
 
 =end
-class DataImportBadgeBuilder < DataImportEntityBuilder
+class V2::DataImportBadgeBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing Badge given the parameters, or it adds a new one,
   # if no matches are found.
@@ -110,7 +110,7 @@ class DataImportBadgeBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "NOT found!"
                                                     # Search or add a TeamAffiliation:
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+        ta_builder = V2::DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,
           team,
           season

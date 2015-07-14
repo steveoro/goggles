@@ -9,7 +9,7 @@ require_relative '../../../data_import/v2/dao/csi_result_dao'
 
 =begin
 
-= DataImportMeetingProgramBuilder
+= V2::DataImportMeetingProgramBuilder
 
   - Goggles framework vers.:  4.00.757
   - author: Steve A.
@@ -18,7 +18,7 @@ require_relative '../../../data_import/v2/dao/csi_result_dao'
  MeetingProgram entity rows.
 
 =end
-class DataImportMeetingProgramBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingProgramBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingProgram given the parameters, or it adds a new one,
   # if none are found.
@@ -91,7 +91,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
         # Note: header_index will give a new event_order for each combination of [ :distance, :style, :gender, :category_group ]
         @event_order = header_index + 1             # (Actually, this counts each single Heat as an event)
 
-        @begin_time, @mins, @secs, @hds = DataImportMeetingProgramBuilder.get_begin_time_and_base_time_members(
+        @begin_time, @mins, @secs, @hds = V2::DataImportMeetingProgramBuilder.get_begin_time_and_base_time_members(
           scheduled_date,
           @event_order,
           detail_rows_size,
@@ -100,7 +100,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
           previous_duration_in_secs
         )
 
-        @event_type = DataImportMeetingProgramBuilder.get_event_type(
+        @event_type = V2::DataImportMeetingProgramBuilder.get_event_type(
           category_type,
           length_in_meters,
           stroke_type.id,
@@ -115,7 +115,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
                          meeting_session.data_import_meeting : nil )
         end
         # This will result always in a nil MeetingEvent if the Meeting ID comes from a DataImportMeetingSession:
-        @meeting_event = DataImportMeetingProgramBuilder.get_meeting_event( meeting_id, @event_type.id )
+        @meeting_event = V2::DataImportMeetingProgramBuilder.get_meeting_event( meeting_id, @event_type.id )
 
         # Use the correct MeetingSession or fallback to the default (specified as a parameter):
         @meeting_session = @meeting_event ? @meeting_event.meeting_session : meeting_session
@@ -129,7 +129,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
 #        puts( "@pool_type_id => #{@pool_type_id.inspect}" )
 
         # Define also the base time or standard time, if any:
-        @time_standard = DataImportTimeStandardBuilder.build_from_parameters(
+        @time_standard = V2::DataImportTimeStandardBuilder.build_from_parameters(
           data_import_session,
           season,
           @event_type.id,
@@ -210,7 +210,7 @@ class DataImportMeetingProgramBuilder < DataImportEntityBuilder
   def self.get_begin_time_and_base_time_members( scheduled_date, event_order, total_entries,
                                                  base_time, previous_begin_time,
                                                  previous_duration_in_secs )
-    mins, secs, hds = ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
+    mins, secs, hds = V2::ResultTimeParser.new( 0, base_time ).parse.mins_secs_hds_array
     begin_time = BeginTimeCalculator.compute_from_previous(
       scheduled_date,
       event_order,

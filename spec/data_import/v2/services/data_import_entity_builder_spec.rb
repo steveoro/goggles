@@ -5,7 +5,7 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/data_import_entity_builder'
 
 
-describe DataImportEntityBuilder, type: :service do
+describe V2::DataImportEntityBuilder, type: :service do
 
   let(:data_import_session) { create( :data_import_session ) }
   let(:meeting_ids)         { Meeting.all.map{|m| m.id} }
@@ -15,11 +15,11 @@ describe DataImportEntityBuilder, type: :service do
 
   context "with a valid, empty self.build()," do
     subject do
-      DataImportEntityBuilder.build(data_import_session) {}
+      V2::DataImportEntityBuilder.build(data_import_session) {}
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
 
     it_behaves_like( "(the existance of a method)", [
@@ -78,25 +78,25 @@ describe DataImportEntityBuilder, type: :service do
 
     describe "#set_up" do
       it "is a BasicScope instance" do
-        expect( subject.set_up {} ).to be_an_instance_of( DataImportEntityBuilder::BasicScope )
+        expect( subject.set_up {} ).to be_an_instance_of( V2::DataImportEntityBuilder::BasicScope )
       end
     end
 
     describe "#search" do
       it "is a SearchScope instance" do
-        expect( subject.search {} ).to be_an_instance_of( DataImportEntityBuilder::SearchScope )
+        expect( subject.search {} ).to be_an_instance_of( V2::DataImportEntityBuilder::SearchScope )
       end
     end
 
     describe "#custom_logic" do
       it "is a CustomLogicScope instance" do
-        expect( subject.custom_logic {} ).to be_an_instance_of( DataImportEntityBuilder::CustomLogicScope )
+        expect( subject.custom_logic {} ).to be_an_instance_of( V2::DataImportEntityBuilder::CustomLogicScope )
       end
     end
 
     describe "#if_not_found" do
       it "is a IfNotFoundScope instance" do
-        expect( subject.if_not_found {} ).to be_an_instance_of( DataImportEntityBuilder::IfNotFoundScope )
+        expect( subject.if_not_found {} ).to be_an_instance_of( V2::DataImportEntityBuilder::IfNotFoundScope )
       end
     end
     #-- -----------------------------------------------------------------------

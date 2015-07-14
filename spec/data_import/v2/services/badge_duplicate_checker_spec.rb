@@ -5,7 +5,7 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/badge_duplicate_checker'
 
 
-describe BadgeDuplicateChecker, type: :service do
+describe V2::BadgeDuplicateChecker, type: :service do
   let(:team)            { create(:team) }
   let(:team_affiliation) do
     TeamAffiliationFactoryTools.create_affiliation_with_badge_list( team, 1 )
@@ -35,18 +35,18 @@ describe BadgeDuplicateChecker, type: :service do
 
   describe "self.is_ok?()" do
     it "responds to self.is_ok?()" do
-      expect( BadgeDuplicateChecker ).to respond_to( :is_ok? )
+      expect( V2::BadgeDuplicateChecker ).to respond_to( :is_ok? )
     end
 
     context "for a valid Swimmer instance without duplicates," do
       it "returns true" do
-        expect( BadgeDuplicateChecker.is_ok?(swimmer, season) ).to be true
+        expect( V2::BadgeDuplicateChecker.is_ok?(swimmer, season) ).to be true
       end
     end
 
     context "for a Swimmer instance with duplicate badges," do
       it "returns false" do
-        expect( BadgeDuplicateChecker.is_ok?( duplicate_badge.swimmer, duplicate_badge.season) ).to be false
+        expect( V2::BadgeDuplicateChecker.is_ok?( duplicate_badge.swimmer, duplicate_badge.season) ).to be false
       end
     end
     #-- -----------------------------------------------------------------------
@@ -56,19 +56,19 @@ describe BadgeDuplicateChecker, type: :service do
 
   describe "self.get_swimmers_with_duplicates()" do
     it "responds to self.get_swimmers_with_duplicates()" do
-      expect( BadgeDuplicateChecker ).to respond_to( :get_swimmers_with_duplicates )
+      expect( V2::BadgeDuplicateChecker ).to respond_to( :get_swimmers_with_duplicates )
     end
 
     context "for a valid Season instance without duplicates," do
       it "returns an empty list" do
-        result = BadgeDuplicateChecker.get_swimmers_with_duplicates(season)
+        result = V2::BadgeDuplicateChecker.get_swimmers_with_duplicates(season)
         expect( result.count ).to eq(0)
       end
     end
 
     context "for a Season instance with duplicate badges," do
       it "returns an empty list" do
-        result = BadgeDuplicateChecker.get_swimmers_with_duplicates( duplicate_badge.season )
+        result = V2::BadgeDuplicateChecker.get_swimmers_with_duplicates( duplicate_badge.season )
         expect( result.count ).to be > 0
       end
     end

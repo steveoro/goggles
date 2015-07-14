@@ -6,9 +6,9 @@ require_relative '../../../app/data_import/v2/fin_startlist_consts'
 
 
 describe "ContextDetector set for 'FIN(1)sta' file types,", type: :integration do
-  include ContextDetectorChecksForParsing
+  include V2::ContextDetectorChecksForParsing
 
-  class DummyWrapper; include FinStartListConsts; end
+  class DummyWrapper; include V2::FinStartListConsts; end
   let( :dummy_wrapper ) { DummyWrapper.new }
   #-- -------------------------------------------------------------------------
   #++
@@ -17,7 +17,7 @@ describe "ContextDetector set for 'FIN(1)sta' file types,", type: :integration d
   # === MEETING_HEADER examples ===
   #
   context "when parsing MEETING_HEADER," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_meeting_header, nil ) }
 
     it "recognizes the 'sta20121027verolanuova' fixture" do
       feed = [
@@ -122,7 +122,7 @@ describe "ContextDetector set for 'FIN(1)sta' file types,", type: :integration d
   # === EVENT_INDIVIDUAL examples ===
   #
   context "when parsing EVENT_INDIVIDUAL," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_event_individual, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_event_individual, nil ) }
 
     it "recognizes the shortened 'FIN event' format (sample #1)" do
       feed = [
@@ -216,7 +216,7 @@ describe "ContextDetector set for 'FIN(1)sta' file types,", type: :integration d
   # === ENTRY_ROW examples ===
   #
   context "when parsing ENTRY_ROW," do
-    subject { ContextDetector.new( dummy_wrapper.context_type_entry_row, nil ) }
+    subject { V2::ContextDetector.new( dummy_wrapper.context_type_entry_row, nil ) }
 
     it "recognizes the 'FIN entry-row' format #1 (sample #1)" do
       feed = [

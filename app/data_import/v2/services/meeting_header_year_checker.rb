@@ -4,7 +4,7 @@ require 'common/validation_error_tools'
 
 =begin
 
-= MeetingHeaderYearChecker
+= V2::MeetingHeaderYearChecker
 
   - Goggles framework vers.:  4.00.683
   - author: Steve A.
@@ -12,7 +12,7 @@ require 'common/validation_error_tools'
   Checker/service class for Meeting#header_year validation and fix-up.
 
 =end
-class MeetingHeaderYearChecker
+class V2::MeetingHeaderYearChecker
   include Singleton
 
   # Checks if the specified instance of Meeting or DataImportMeeting has
@@ -34,7 +34,7 @@ class MeetingHeaderYearChecker
       if meeting.season.instance_of?( Season )
         meeting.header_year = meeting.season.build_header_year
         meeting.save!
-        MeetingHeaderYearChecker.build_sql_update( meeting )
+        V2::MeetingHeaderYearChecker.build_sql_update( meeting )
       else                                          # Missing Season link:
         # [Steve, 20141221] Future DEV: add support for rebuilding header_year from data_import_season link.
         # (assuming data_import_season is available)

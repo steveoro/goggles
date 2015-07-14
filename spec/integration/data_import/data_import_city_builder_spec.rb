@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_city_builder'
 
 
-describe DataImportCityBuilder, type: :integration do
+describe V2::DataImportCityBuilder, type: :integration do
 
   let(:data_import_session)     { create( :data_import_session ) }
   let(:city)                    { create( :city ) }
@@ -20,14 +20,14 @@ describe DataImportCityBuilder, type: :integration do
 
   context "after a self.build() with a NON-matching entity row," do
     subject do
-      DataImportCityBuilder.build_from_parameters(
+      V2::DataImportCityBuilder.build_from_parameters(
         data_import_session,
         non_matching_team_name
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -60,14 +60,14 @@ describe DataImportCityBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity row," do
     subject do
-      DataImportCityBuilder.build_from_parameters(
+      V2::DataImportCityBuilder.build_from_parameters(
         data_import_session,
         primary_team_name
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -105,14 +105,14 @@ describe DataImportCityBuilder, type: :integration do
 
   context "after a self.build() with a matching secondary entity row," do
     subject do
-      DataImportCityBuilder.build_from_parameters(
+      V2::DataImportCityBuilder.build_from_parameters(
         data_import_session,
         secondary_team_name
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do

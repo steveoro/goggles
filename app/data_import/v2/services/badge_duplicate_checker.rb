@@ -4,7 +4,7 @@ require 'common/validation_error_tools'
 
 =begin
 
-= BadgeDuplicateChecker
+= V2::BadgeDuplicateChecker
 
   - Goggles framework vers.:  4.00.725
   - author: Steve A.
@@ -12,7 +12,7 @@ require 'common/validation_error_tools'
   Checker service class for Swimmers/Badges duplicates.
 
 =end
-class BadgeDuplicateChecker
+class V2::BadgeDuplicateChecker
   include Singleton
 
   # Checks if the specified instance of Swimmer has more than 1 badge per Team/Season.

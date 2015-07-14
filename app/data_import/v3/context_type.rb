@@ -18,6 +18,25 @@
 
  See the ContextExtractor class for more info.
 
+
+=== Members:
+
+ - <tt>:context_name</tt> is the symbol naming this context
+
+ - <tt>:conditions</tt> is an array of String/Regexp; each String or
+   Regexp must have a successful match on consequent lines (starting from
+   the current one) for the context change to be detected.
+   In other words, the context of the parsing text will be changed
+   as long as there are N consecutive lines of text matching all
+   the N corresponding Regexp (with <tt>conditions.size = N</tt>).
+   If the current line to be checked is a String, an exact (equal) match
+   will be required to be successful; otherwise, for Regexp, the stardard
+   Regexp matching operator will be used.
+
+ - <tt>:line_timeout</tt> when set greater than 0, will be the maximum
+   line number after which the check will be skipped (returning always
+   false).
+
 =end
 class V3::ContextType
 

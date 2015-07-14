@@ -7,7 +7,7 @@ require 'ffaker'
 require_relative '../../../../app/data_import/v2/strategies/city_comparator'
 
 
-describe CityComparator, type: :strategy do
+describe V2::CityComparator, type: :strategy do
 
   let(:composed_city_names) do
     [
@@ -46,7 +46,7 @@ describe CityComparator, type: :strategy do
   end
 
   context "as a stand-alone class," do
-    subject { CityComparator }
+    subject { V2::CityComparator }
 
     # Since subject is already a class, we just need to use this shared existance example
     # instead of the "(the existance of a class method)":
@@ -58,7 +58,7 @@ describe CityComparator, type: :strategy do
     #++
 
     context "instance methods" do
-      subject { CityComparator.new }
+      subject { V2::CityComparator.new }
 
       describe "#search_composed_name" do
         it "returns a City instance when a match is found" do

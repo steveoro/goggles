@@ -9,7 +9,7 @@ require_relative '../../../../app/data_import/v2/fin_result_defs'
 require_relative '../../../../app/data_import/v2/fin2_result_defs'
 
 
-describe FileFormatParser, type: :strategy do
+describe V2::FileFormatParser, type: :strategy do
 
   context "with a FIN(1) result file type," do
     [
@@ -22,8 +22,8 @@ describe FileFormatParser, type: :strategy do
     ].each do |filename|
       describe "#parse" do
         it "returns the correct constant associated with the file type for #{File.basename(filename)}" do
-          format_parser = FileFormatParser.new( filename )
-          expect( format_parser.parse ).to be_an_instance_of( FinResultDefs )
+          format_parser = V2::FileFormatParser.new( filename )
+          expect( format_parser.parse ).to be_an_instance_of( V2::FinResultDefs )
         end
       end
     end
@@ -44,8 +44,8 @@ describe FileFormatParser, type: :strategy do
     ].each do |filename|
       describe "#parse" do
         it "returns the correct constant associated with the file type for #{File.basename(filename)}" do
-          format_parser = FileFormatParser.new( filename )
-          expect( format_parser.parse ).to be_an_instance_of( Fin2ResultDefs )
+          format_parser = V2::FileFormatParser.new( filename )
+          expect( format_parser.parse ).to be_an_instance_of( V2::Fin2ResultDefs )
         end
       end
     end
@@ -67,8 +67,8 @@ describe FileFormatParser, type: :strategy do
     ].each do |filename|
       describe "#parse" do
         it "returns the correct constant associated with the file type for #{File.basename(filename)}" do
-          format_parser = FileFormatParser.new( filename )
-          expect( format_parser.parse ).to be_an_instance_of( FinStartListDefs )
+          format_parser = V2::FileFormatParser.new( filename )
+          expect( format_parser.parse ).to be_an_instance_of( V2::FinStartListDefs )
         end
       end
     end

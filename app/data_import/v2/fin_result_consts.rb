@@ -6,7 +6,7 @@ require_relative '../../data_import/v2/services/token_extractor'
 
 =begin
 
-= FinResultConsts
+= V2::FinResultConsts
 
   - Goggles framework vers.:  4.00.791
   - author: Steve A.
@@ -20,12 +20,12 @@ require_relative '../../data_import/v2/services/token_extractor'
  layouts.
 
 =end
-module FinResultConsts                              # == HEADER CONTEXT TYPES definitions: ==
+module V2::FinResultConsts                              # == HEADER CONTEXT TYPES definitions: ==
   extend ActiveSupport::Concern
 
   # "Meeting Header" context type definition.
   def context_type_meeting_header
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :meeting_header,
       [
         /(\s*(Distanze speciali|((\d{1,3}\D{1,2}|[IXVMCDL]{1,8})\s(\S+|Trof|Region))))|(\d{1,2}((\/|-|\,)\d{1,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4})/i,
@@ -40,7 +40,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Category Header" context type definition.
   #
   def context_type_category_header
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :category_header,
       [
         /^\s*(\r\n|\n|$|\Z)/i,  # matches any kind of newline, an empty line or a line with only invisible chars
@@ -53,7 +53,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Relay Header" context type definition.
   #
   def context_type_relay_header
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :relay_header,
       [
         /^\s*(\r\n|\n|$|\Z)/i,
@@ -66,7 +66,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Team Ranking" (header) context type definition.
   #
   def context_type_team_ranking
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :team_ranking,
       [
         /(classifica)(\s+di)?(\s+societ.)?/i
@@ -80,7 +80,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Team Stats" (header) context type definition.
   #
   def context_type_team_stats
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :team_stats,
       [
         /statistiche\s+societ./i
@@ -91,7 +91,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Meeting Statistics" (header) context type definition.
   #
   def context_type_stats
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :stats,
       [
         /statistiche(?!\ssocie.+)/i
@@ -105,7 +105,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Result row" (detail) context type definition.
   #
   def context_type_result_row
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :result_row,
       [
         /(Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d(\r\n|\n|$|\Z)/i
@@ -117,7 +117,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Ralay row" (detail) context type definition.
   #
   def context_type_relay_row
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :relay_row,
       [
         /(?=\s{4}(?<timing>Ritir|Squal|\d{1,2}'\d{2}"\d{2}))/uix
@@ -131,7 +131,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Team Ranking detail row" context type definition.
   #
   def context_type_ranking_row
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :ranking_row,
       [
        /
@@ -164,7 +164,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "Statistics details section" context type definition.
   #
   def context_type_stats_details
-    ContextTypeDef.new(
+    V2::ContextTypeDef.new(
       :stats_details,
       [
         /numero di soc.+\siscritte\s/i,
@@ -205,7 +205,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # ----------------------------------------------------------------------------
   #++
 
-  # Returns the list of all the ContextTypeDefs member objects defined.
+  # Returns the list of all the V2::ContextTypeDefs member objects defined.
   # (Commodity method used only inside specs.)
   def get_context_types_list
     [
@@ -228,7 +228,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "meeting_header.title" token extractor definition
   #
   def tokenizer_meeting_header_title
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :title,
       /((?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)/i,
       # Old version; /((?<roman>(([IXVMCDL]{1,6})(?<cardinal>°|ª|\^|�|\.o)?\s))(?<type>(Tr|Meeting|Gara|(?<special>region|distanze|campion))\D*\s)|(\d{1,2}(\g<cardinal>))|\g<type>)/i,
@@ -240,7 +240,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "meeting_header.meeting_dates" token extractor definition
   #
   def tokenizer_meeting_header_meeting_dates
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :meeting_dates,
       /(?<wholedate>(?<=\s\-\s|\s\-\-\-\s|\s\s|^)(?<weekday>(dom|lun|mar|mer|gio|ven|sab)\D*\s)?((?<twodigitsep>(\d{1,2})(\/|-|\,|\s)){1,4}(?<month>\d{1,2}|(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\D*))(\/|-|\,|\s)(?<year>\d{2,4}))/i,
       # Old version: /\d{0,2}((\/|-|\,)\d{0,2})*\s(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic).*\s\d{4}/i,
@@ -252,7 +252,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "meeting_header.organization" token extractor definition
   #
   def tokenizer_meeting_header_organization
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :organization,
       /(?<=manifestazione organizzata da )/i,
       /\z/i,
@@ -265,7 +265,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "category_header.distance" token extractor definition
   #
   def tokenizer_category_header_distance
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :distance,
       /(?<!\dx)(50 |100 |200 |400 |800 |1500 ) */i,
       / *(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/i
@@ -275,7 +275,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "category_header.style" token extractor definition
   #
   def tokenizer_category_header_style
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :style,
       / *(stile|mi|do|ra|fa|sl|MX|DF|DS|RN).*/i,
       / *(maschi|femmi)/i
@@ -285,7 +285,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "category_header.gender" token extractor definition
   #
   def tokenizer_category_header_gender
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :gender,
       / *(maschi|femmi)/i,
       # Alt. vers.: /\s+(maschi|femmi)/ui
@@ -296,7 +296,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "category_header.category_group" token extractor definition
   #
   def tokenizer_category_header_group
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :category_group,
       / *((master|under)\s\d\d|[MU]\d\d)/i,
       / *tempo base */i
@@ -306,7 +306,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "category_header.base_time" token extractor definition
   #
   def tokenizer_category_header_base_time
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :base_time,
       /\d{1,2}'\d\d"\d\d/,
       9                                             # (max size)
@@ -318,7 +318,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_header.type" token extractor definition
   #
   def tokenizer_relay_header_type
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :type,
       /(mistaff|staff).*\s+\d{1,2}x\d{2,3}\s+(stile|mi|sl|mx)/i,
       /\s+-\s+cat/i
@@ -328,7 +328,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_header.distance" token extractor definition
   #
   def tokenizer_relay_header_distance
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :distance,
       /\dx\d{2,3}\s+(stile|mi|sl|mx)/i,
       4                                             # (max size)
@@ -338,7 +338,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_header.style" token extractor definition
   #
   def tokenizer_relay_header_style
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :style,
       /(?<=\d\s)\s*(stile|mi|sl|mx)/i,
       /\s+(-\s+cat|masch|femm)/i
@@ -348,7 +348,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_header.category_group" token extractor definition
   #
   def tokenizer_relay_header_category_group
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :category_group,
       /M\d\d0\-\d\d\d/i,
       7                                             # (max size)
@@ -359,7 +359,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_header.base_time" token extractor definition
   #
   def tokenizer_relay_header_base_time
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :base_time,
       /\s\d{1,2}'\d\d"\d\d/i,
       9                                             # (max size)
@@ -371,7 +371,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.result_position" token extractor definition
   #
   def tokenizer_result_row_result_position
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_position,
       0,
       /
@@ -391,7 +391,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.team_code" token extractor definition
   #
   def tokenizer_result_row_team_code
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :team_code,
       /(\w\w\w-\d{6})/i,
       10                                            # (max size)
@@ -401,7 +401,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.swimmer_name" token extractor definition
   #
   def tokenizer_result_row_swimmer_name
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :swimmer_name,
       /
         (
@@ -416,7 +416,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.swimmer_year" token extractor definition
   #
   def tokenizer_result_row_swimmer_year
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :swimmer_year,
       /\b\d{4} +(?=\D+)/i,
       4                                             # (max size)
@@ -426,7 +426,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.team_name" token extractor definition
   #
   def tokenizer_result_row_team_name
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :team_name,
       # [Steve, 20130809] Regexp is too slow!! (And doesn't work for team names with numbers in it.) Using Fixnum absolute index instead:
       49,                                           # (starting idx)
@@ -437,7 +437,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.result_time" token extractor definition
   #
   def tokenizer_result_row_result_time
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_time,
       / (Ritir.*|Squal.*|\d{1,2}'\d\d"\d\d)/i,
       # Alt. vers.: /(Ritirat|Squalif|\d{1,2}'\d\d"\d\d) +\d{1,4}[\,|\.]\d\d$/i,
@@ -448,7 +448,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "result_row.result_score" token extractor definition
   #
   def tokenizer_result_row_result_score
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_score,
       /\b\d{1,4}[\,|\.]\d\d(\r\n|\n|$|\Z)/i,
       7                                             # (max size)
@@ -460,7 +460,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_row.result_position" token extractor definition
   #
   def tokenizer_relay_row_result_position
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_position,
       /^\s+(\d|fuori|fg|f\.g\.)/i,
 #      8,                                            # (starting idx)
@@ -472,7 +472,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_row.team_name" token extractor definition
   #
   def tokenizer_relay_row_team_name
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :team_name,
       /
         (
@@ -499,7 +499,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_row.result_time" token extractor definition
   #
   def tokenizer_relay_row_result_time
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_time,
   #    / (Ritirat|Squalif|\d{1,2}'\d\d"\d\d)/ui,
       59,                                           # (starting idx)
@@ -515,7 +515,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "relay_row.result_score" token extractor definition
   #
   def tokenizer_relay_row_result_score
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_score,
       /\s\d{1,4}[\,|\.]\d\d(\r\n|\n|$|\Z)/i,
   #    68,                                           # (starting idx)
@@ -529,7 +529,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "ranking_row.result_position" token extractor definition
   #
   def tokenizer_ranking_row_result_position
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_position,
       0,
       /(.)(?=[a-z°)])/i
@@ -539,7 +539,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "ranking_row.team_code" token extractor definition
   #
   def tokenizer_ranking_row_team_code
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :team_code,
       /(?<=\s)\w\w\w-\d{6}/i,
       10                                            # (max size)
@@ -549,7 +549,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "ranking_row.team_name" token extractor definition
   #
   def tokenizer_ranking_row_team_name
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :team_name,
       /
         (?!\w{3}-\d{6}\s\s)
@@ -596,7 +596,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "ranking_row.result_score" token extractor definition
   #
   def tokenizer_ranking_row_result_score
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :result_score,
       /
         (?<=\s)
@@ -634,7 +634,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.teams_tot" token extractor definition
   #
   def tokenizer_stats_teams_tot
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :teams_tot,
       /\s{2}\d/i,
       10                                            # (max size)
@@ -644,7 +644,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.teams_presence" token extractor definition
   #
   def tokenizer_stats_teams_presence
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :teams_presence,
       /\s{2}\d/i,
       10
@@ -654,7 +654,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.swimmer_tot" token extractor definition
   #
   def tokenizer_stats_swimmers_tot
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :swimmer_tot,
       /\s{2}\d/i,
       10
@@ -664,7 +664,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.swimmer_presence" token extractor definition
   #
   def tokenizer_stats_swimmers_presence
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :swimmer_presence,
       /\s{2}\d/i,
       10
@@ -674,7 +674,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.entries_tot" token extractor definition
   #
   def tokenizer_stats_entries_tot
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :entries_tot,
       /\s{2}\d+/i,
       10
@@ -684,7 +684,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.entries_presence" token extractor definition
   #
   def tokenizer_stats_entries_presence
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :entries_presence,
       /\s{2}\d+/i,
       10
@@ -694,7 +694,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.disqual_tot" token extractor definition
   #
   def tokenizer_stats_disqual_tot
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :disqual_tot,
       /\s{2}\d/i,
       10
@@ -704,7 +704,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # "stats_details.withdrawals_tot" token extractor definition
   #
   def tokenizer_stats_withdrawals_tot
-    TokenExtractor.new(
+    V2::TokenExtractor.new(
       :withdrawals_tot,
       /\s{2}\d/i,
       10
@@ -713,7 +713,7 @@ module FinResultConsts                              # == HEADER CONTEXT TYPES de
   # ----------------------------------------------------------------------------
   #++
 
-  # Returns the list of all the TokenExtractor object members defined.
+  # Returns the list of all the V2::TokenExtractor object members defined.
   # (Commodity method used only inside specs.)
   def get_tokenizers_list
     [

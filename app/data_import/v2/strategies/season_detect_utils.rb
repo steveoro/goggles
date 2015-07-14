@@ -3,7 +3,7 @@
 
 =begin
 
-= SeasonDetectUtils
+= V2::SeasonDetectUtils
 
   - Goggles framework vers.:  4.00.737
   - author: Steve A.
@@ -22,7 +22,7 @@
   - @header_fields_dao: HeaderFieldsDAO instance obtained from parsing the @full_pathname
 
 =end
-module SeasonDetectUtils
+module V2::SeasonDetectUtils
 
   # Tries to detect/parse the season of the data files by looking at the container
   # path of the files.

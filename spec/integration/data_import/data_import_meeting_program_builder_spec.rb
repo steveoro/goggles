@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_meeting_program_builder'
 
 
-describe DataImportMeetingProgramBuilder, type: :integration do
+describe V2::DataImportMeetingProgramBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -129,8 +129,8 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
 
   shared_examples_for "building with NO matching MeetingProgram and NO MeetingEvent" do
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -169,7 +169,7 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
   context "after a self.build() with NO matching MeetingProgram (and NO MeetingEvent - Random RELAY event)," do
     subject do
-      DataImportMeetingProgramBuilder.build_from_parameters(
+      V2::DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
         season, meeting_session,
         header_row_relay, header_index,
@@ -185,7 +185,7 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 
   context "after a self.build() with NO matching MeetingProgram (and NO MeetingEvent - Random NON-RELAY event)," do
     subject do
-      DataImportMeetingProgramBuilder.build_from_parameters(
+      V2::DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
         season, meeting_session,
         header_row, header_index,
@@ -204,7 +204,7 @@ describe DataImportMeetingProgramBuilder, type: :integration do
   # Execute on actual real data: (ID 14216: FIN Parma 2014-12-14)
   Meeting.find( 14216 ).meeting_programs.each_with_index do |meeting_program, index|
     subject do
-      DataImportMeetingProgramBuilder.build_from_parameters(
+      V2::DataImportMeetingProgramBuilder.build_from_parameters(
         data_import_session,
         meeting_program.season,
         meeting_program.meeting_session,
@@ -226,8 +226,8 @@ describe DataImportMeetingProgramBuilder, type: :integration do
 #        puts "\r\n\r\n----------------------8<-----------------------[#{index}]"
 #        puts "*** #{meeting_program.event_type.i18n_short} ***"
 #      end
-      it "returns a DataImportEntityBuilder instance" do
-        expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+      it "returns a V2::DataImportEntityBuilder instance" do
+        expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
       end
       describe "#data_import_session" do
         it "is the DataImportSession specified for the build" do

@@ -8,7 +8,7 @@ require_relative '../../../../app/data_import/v2/strategies/filename_parser'
 require_relative '../../../../app/data_import/v2/dao/header_fields_dao'
 
 
-describe FilenameParser, type: :strategy do
+describe V2::FilenameParser, type: :strategy do
 
   context "as a valid instance," do
     let(:pathname)      { File.join(FFaker::Lorem.word, FFaker::Lorem.word) }
@@ -21,7 +21,7 @@ describe FilenameParser, type: :strategy do
     let(:code_name)     { FFaker::Lorem.word }
 
     subject do
-      FilenameParser.new(
+      V2::FilenameParser.new(
         File.join( pathname, "#{ prefix }#{ header_date }#{ code_name }.txt" )
       )
     end
@@ -37,11 +37,11 @@ describe FilenameParser, type: :strategy do
         expect( subject.parse() ).to be_an_instance_of( HeaderFieldsDAO )
       end
       it "raises ArgumentError for a non-valid date" do
-        parser = FilenameParser.new( File.join( pathname, "#{ prefix }#{ invalid_date }#{ code_name }.txt" ) )
+        parser = V2::FilenameParser.new( File.join( pathname, "#{ prefix }#{ invalid_date }#{ code_name }.txt" ) )
         expect{ parser.parse }.to raise_error( ArgumentError )
       end
       it "raises ArgumentError for a non-valid filename" do
-        parser = FilenameParser.new( File.join( pathname, "#{ prefix }#{ code_name }.txt" ) )
+        parser = V2::FilenameParser.new( File.join( pathname, "#{ prefix }#{ code_name }.txt" ) )
         expect{ parser.parse }.to raise_error( ArgumentError )
       end
 

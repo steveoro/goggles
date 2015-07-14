@@ -1,10 +1,11 @@
 # encoding: utf-8
 require_relative '../../../data_import/v3/tools_logging'
+require_relative '../../../data_import/v3/context_type'
 
 
 =begin
 
-= ContextDetector
+= V2::ContextDetector
 
   - Goggles framework vers.:  4.00.815
   - author: Steve A.
@@ -32,25 +33,6 @@ require_relative '../../../data_import/v3/tools_logging'
  unnecessary but it could be useful when using the same instance on
  different source data (specially in test, when running against different
  fixture files or while running specs examples using the same subject).
-
-
-=== Members:
-
- - <tt>:context_name</tt> is the symbol naming this context
-
- - <tt>:condition_array</tt> is an array of String/Regexp; each String or
-   Regexp must have a successful match on consequent lines (starting from
-   the current one) for the context change to be detected.
-   In other words, the context of the parsing text will be changed
-   as long as there are N consecutive lines of text matching all
-   the N corresponding Regexp (with <tt>condition_array.size = N</tt>).
-   If the current line to be checked is a String, an exact (equal) match
-   will be required to be successful; otherwise, for Regexp, the stardard
-   Regexp matching operator will be used.
-
- - <tt>:line_timeout</tt> when set greater than 0, will be the maximum
-   line number after which the check will be skipped (returning always
-   false).
 
 =end
 class V3::ContextDetector
@@ -82,7 +64,7 @@ class V3::ContextDetector
   # detected context (specified upon each new line feed).
   #
   def initialize( context_type, logger = nil )
-    raise ArgumentError.new('context_type must be an ContextTypeDef!') unless context_type.instance_of?( ContextTypeDef )
+    raise ArgumentError.new('context_type must be an V3::ContextType!') unless context_type.instance_of?( V3::ContextType )
     @context_type = context_type
     @logger = logger
     @current_context = nil
@@ -117,7 +99,7 @@ class V3::ContextDetector
   # is in the progress of being recognized.
   #
   def detection_is_in_progress()
-    ( 0 < @detection_index ) && ( @detection_index < @context_type.condition_array.size )
+    ( 0 < @detection_index ) && ( @detection_index < @context_type.conditions.size )
   end
 
   # Returns the current buffered lines cache, automatically
@@ -139,56 +121,56 @@ class V3::ContextDetector
   # Always +false+ otherwise.
   #
   def feed_and_detect( text_line, current_line_number, previous_context_name )
-    log_somehow(
+    log(
       @logger,
       "\r\nContextDetector: called for #{@context_type}.\r\n" +
-      "                 Processing line #{current_line_number} (timeout: #{@context_type.line_timeout}), cond. array size: #{@context_type.condition_array.size},\r\n" +
+      "                 Processing line #{current_line_number} (timeout: #{@context_type.line_timeout}), cond. array size: #{@context_type.conditions.size},\r\n" +
       "                 prev. context: <#{previous_context_name.inspect}> (expecting: <#{@context_type.parent_context_name.inspect}>)",
       DEBUG_VERBOSE
     )
     if ( (@context_type.line_timeout > 0) && (current_line_number > @context_type.line_timeout) )
-      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for line timeout.", DEBUG_VERY_VERBOSE )
+      log( @logger, "                 => \033[1;31;40mfalse\033[0m for line timeout.", DEBUG_VERY_VERBOSE )
       return false
     end
-    if @context_type.condition_array.size < 1
-      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for NO conditions defined.", DEBUG_VERY_VERBOSE )
+    if @context_type.conditions.size < 1
+      log( @logger, "                 => \033[1;31;40mfalse\033[0m for NO conditions defined.", DEBUG_VERY_VERBOSE )
       return false
     end
     if !is_a_parent_context && ( @context_type.parent_context_name != previous_context_name )
-      log_somehow( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context (inside CHILD context).", DEBUG_VERY_VERBOSE )
+      log( @logger, "                 => \033[1;31;40mfalse\033[0m for different PARENT context (inside CHILD context).", DEBUG_VERY_VERBOSE )
       return false
     end
     is_context_detected = false
 
-    condition_to_check = @context_type.condition_array[ @detection_index ]
-    log_somehow( @logger, "                 Curr. line: <#{text_line}>", DEBUG_EXTRA_VERBOSE )
+    condition_to_check = @context_type.conditions[ @detection_index ]
+    log( @logger, "                 Curr. line: <#{text_line}>", DEBUG_EXTRA_VERBOSE )
                                                     # Check if the current line condition applies:
     if ( condition_to_check.kind_of?( String ) )
-      log_somehow( @logger, "                 Checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
+      log( @logger, "                 Checking line:#{current_line_number} with String=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
       is_condition_ok = ( text_line == condition_to_check )
     elsif ( condition_to_check.kind_of?( Regexp ) )
-      log_somehow( @logger, "                 Checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
+      log( @logger, "                 Checking line:#{current_line_number} with Regexp=<#{condition_to_check.inspect}>...", DEBUG_EXTRA_VERBOSE )
       is_condition_ok = !( text_line =~ condition_to_check ).nil?
     end
                                                     # Condition satisfied?
     if ( is_condition_ok )
-      log_somehow( @logger, "                 CONDITION OK for \033[1;37;40m#{ @context_type.context_name.to_s.upcase }\033[0m.", DEBUG_VERY_VERBOSE )
+      log( @logger, "                 CONDITION OK for \033[1;37;40m#{ @context_type.context_name.to_s.upcase }\033[0m.", DEBUG_VERY_VERBOSE )
                                                     # Store current line in buffer:
       @array_of_lines << text_line
       @detection_index += 1                         # Increase successful detections
-      log_somehow( @logger, "                 @detection_index=#{@detection_index} VS #{@context_type.condition_array.size}, successful check in progress...", DEBUG_VERY_VERBOSE )
+      log( @logger, "                 @detection_index=#{@detection_index} VS #{@context_type.conditions.size}, successful check in progress...", DEBUG_VERY_VERBOSE )
                                                     # Successful matches are enough for a CONTEXT DETECTION?
-      if ( @detection_index == @context_type.condition_array.size )
-        log_somehow( @logger, "                 \033[32m==> context '\033[1;33;40m#{ @context_type.context_name.to_s.upcase }\033[0m\033[32m' DETECTED <==\033[0m", DEBUG_VERBOSE )
+      if ( @detection_index == @context_type.conditions.size )
+        log( @logger, "                 \033[32m==> context '\033[1;33;40m#{ @context_type.context_name.to_s.upcase }\033[0m\033[32m' DETECTED <==\033[0m", DEBUG_VERBOSE )
         is_context_detected = true
         @current_context  = @context_type
         @detection_index = 0
       end
     else
-      log_somehow( @logger, "                 => \033[1;31;40mno match\033[0m.", DEBUG_VERY_VERBOSE )
+      log( @logger, "                 => \033[1;31;40mno match\033[0m.", DEBUG_VERY_VERBOSE )
       clear()
     end
-    log_somehow( @logger, "---------------- (ContextDetector end)", DEBUG_VERBOSE )
+    log( @logger, "---------------- (ContextDetector end)", DEBUG_VERBOSE )
     is_context_detected
   end
   #-- --------------------------------------------------------------------------
@@ -197,7 +179,7 @@ class V3::ContextDetector
 
   # Convert the current instance to a readable string
   def to_s
-    "[ContextDetector] => #{@context_type}" + ( @current_context ? ", current: '#{@current_context}'" : '' )
+    "[V3::ContextDetector] => #{@context_type}" + ( @current_context ? ", current: '#{@current_context}'" : '' )
   end
   #-- --------------------------------------------------------------------------
   #++

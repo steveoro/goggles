@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v2/services/data_import_entity_builde
 require_relative '../../../app/data_import/v2/services/data_import_meeting_session_builder'
 
 
-describe DataImportMeetingSessionBuilder, type: :integration do
+describe V2::DataImportMeetingSessionBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -18,18 +18,18 @@ describe DataImportMeetingSessionBuilder, type: :integration do
   let(:code_name)             { FFaker::Lorem.word }
   let(:full_pathname)         { "ris#{ header_text_date }#{ code_name }.txt" }
   let(:meeting_dates_text)    { "%04d-%02d-%02d" % [year, month, day] }
-  let(:header_fields_dao)     { FilenameParser.new( full_pathname ).parse }
+  let(:header_fields_dao)     { V2::FilenameParser.new( full_pathname ).parse }
 
   # Existing or matching fixture params:
   let(:meeting_session)       { create(:meeting_session) }
   let(:matching_pathname)     { "ris#{ meeting_session.meeting.header_date.strftime("%Y%m%d") }#{ meeting_session.meeting.code }.txt" }
-  let(:matching_header_dao)   { FilenameParser.new( matching_pathname ).parse }
+  let(:matching_header_dao)   { V2::FilenameParser.new( matching_pathname ).parse }
   #-- -------------------------------------------------------------------------
   #++
 
   context "after a self.build() with NO matching MeetingSession but existing meeting," do
     subject do
-      DataImportMeetingSessionBuilder.build_from_parameters(
+      V2::DataImportMeetingSessionBuilder.build_from_parameters(
         data_import_session,
         meeting_session.meeting,
         matching_header_dao,
@@ -39,8 +39,8 @@ describe DataImportMeetingSessionBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -70,7 +70,7 @@ describe DataImportMeetingSessionBuilder, type: :integration do
 
   context "after a self.build() with NO matching MeetingSession & NO Meeting rows," do
     subject do
-      DataImportMeetingSessionBuilder.build_from_parameters(
+      V2::DataImportMeetingSessionBuilder.build_from_parameters(
         data_import_session,
         nil,
         header_fields_dao,
@@ -80,8 +80,8 @@ describe DataImportMeetingSessionBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -113,7 +113,7 @@ describe DataImportMeetingSessionBuilder, type: :integration do
     subject do
       # Alternatively, we can randomize this with existing rows from seeds:
 #      meeting_session = MeetingSession.all.sort{ rand() - 0.5 }[0]
-      DataImportMeetingSessionBuilder.build_from_parameters(
+      V2::DataImportMeetingSessionBuilder.build_from_parameters(
         data_import_session,
         meeting_session.meeting,
         matching_header_dao,
@@ -123,8 +123,8 @@ describe DataImportMeetingSessionBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do

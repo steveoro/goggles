@@ -8,7 +8,7 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for 'FIN2RES'-MEETING_HEADER-type buffers,", type: :integration do
-  class DummyWrapper2; include Fin2ResultConsts; end
+  class DummyWrapper2; include V2::Fin2ResultConsts; end
   let( :dummy_wrapper2 ) { DummyWrapper2.new }
 
   let(:feed) do

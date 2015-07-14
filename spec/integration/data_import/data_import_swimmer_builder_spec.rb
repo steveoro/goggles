@@ -6,8 +6,8 @@ require_relative '../../../app/data_import/v2/services/data_import_swimmer_build
 
 
 shared_examples_for "DataImportSwimmerBuilder with NO matching entity rows" do
-  it "returns a DataImportEntityBuilder instance" do
-    expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+  it "returns a V2::DataImportEntityBuilder instance" do
+    expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
   end
   describe "#data_import_session" do
     it "is the DataImportSession specified for the build" do
@@ -41,8 +41,8 @@ end
 
 
 shared_examples_for "DataImportSwimmerBuilder with a matching primary entity row" do
-  it "returns a DataImportEntityBuilder instance" do
-    expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+  it "returns a V2::DataImportEntityBuilder instance" do
+    expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
   end
   describe "#data_import_session" do
     it "is the DataImportSession specified for the build" do
@@ -77,8 +77,8 @@ end
 
 
 shared_examples_for "DataImportSwimmerBuilder with a matching secondary entity row" do
-  it "returns a DataImportEntityBuilder instance" do
-    expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+  it "returns a V2::DataImportEntityBuilder instance" do
+    expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
   end
   describe "#data_import_session" do
     it "is the DataImportSession specified for the build" do
@@ -114,7 +114,7 @@ end
 #++
 
 
-describe DataImportSwimmerBuilder, type: :integration do
+describe V2::DataImportSwimmerBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -133,7 +133,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 
   context "after a self.build() with invalid parameters," do
     subject do
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         nil,
         swimmer_year,
@@ -153,7 +153,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 
   context "after a self.build() with NO matching entity rows," do
     subject do
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         swimmer_name,
         swimmer_year,
@@ -175,7 +175,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 #      puts "\r\n- swimmer:      #{mir.swimmer.inspect}"
 #      puts "- badge/season: #{mir.badge.season.inspect}"
 #      puts "- MIR/PRG:      #{mir.meeting_program.inspect}"
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         swimmer_name,
         nil,
@@ -192,7 +192,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity row," do
     subject do
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         swimmer.complete_name,
         swimmer.year_of_birth,
@@ -207,7 +207,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 
   context "after a self.build() with a matching secondary entity row," do
     subject do
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         data_import_swimmer.complete_name,
         data_import_swimmer.year_of_birth,
@@ -231,7 +231,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 #      puts "\r\n- swimmer:      #{mir.swimmer.inspect}"
 #      puts "- badge/season: #{mir.badge.season.inspect}"
 #      puts "- MIR/PRG:      #{mir.meeting_program.inspect}"
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         mir.swimmer.complete_name,
         nil,
@@ -261,7 +261,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 # DEBUG
 #      puts "\r\n- di_swimmer:    #{di_swimmer.inspect}"
 #      puts "- category_type: #{category_type.inspect}"
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         di_swimmer.complete_name,
         nil,
@@ -290,7 +290,7 @@ describe DataImportSwimmerBuilder, type: :integration do
 # DEBUG
 #      puts "\r\n- swimmer:   #{mir.swimmer.inspect}"
 #      puts "- swimmer_2: #{swimmer_2.inspect}"
-      DataImportSwimmerBuilder.build_from_parameters(
+      V2::DataImportSwimmerBuilder.build_from_parameters(
         data_import_session,
         swimmer_2.complete_name,
         nil,
@@ -300,8 +300,8 @@ describe DataImportSwimmerBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do

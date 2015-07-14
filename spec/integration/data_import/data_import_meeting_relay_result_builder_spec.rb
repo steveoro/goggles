@@ -10,7 +10,7 @@ require_relative '../../../app/data_import/v2/services/data_import_swimmer_build
 require_relative '../../../app/data_import/v2/services/data_import_badge_builder'
 
 
-describe DataImportMeetingRelayResultBuilder, type: :integration do
+describe V2::DataImportMeetingRelayResultBuilder, type: :integration do
 
   let(:data_import_session)   { create( :data_import_session ) }
 
@@ -82,7 +82,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
 
   context "after a self.build() with NO matching primary entity (but existing MeetingProgram)," do
     subject do
-      DataImportMeetingRelayResultBuilder.build_from_parameters(
+      V2::DataImportMeetingRelayResultBuilder.build_from_parameters(
         data_import_session,
         season,     # (the data_import_session.season won't be checked inside)
         meeting_program,
@@ -91,8 +91,8 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -134,7 +134,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
 
   context "after a self.build() with NO matching primary entity (but existing DataImportMeetingProgram)," do
     subject do
-      DataImportMeetingRelayResultBuilder.build_from_parameters(
+      V2::DataImportMeetingRelayResultBuilder.build_from_parameters(
         data_import_session,
         di_season,      # (the data_import_session.season won't be checked inside)
         di_meeting_program,
@@ -143,8 +143,8 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -186,7 +186,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
 
   context "after a self.build() with a matching primary entity (and its MeetingProgram)," do
     subject do
-      DataImportMeetingRelayResultBuilder.build_from_parameters(
+      V2::DataImportMeetingRelayResultBuilder.build_from_parameters(
         data_import_session,
         mrr.meeting_program.season, # (by ActiveRecord has_one; the data_import_session.season won't be checked inside)
         mrr.meeting_program,
@@ -195,8 +195,8 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -242,7 +242,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
 
   context "after a self.build() with a matching secondary entity (w/ DataImportMeetingProgram)," do
     subject do
-      DataImportMeetingRelayResultBuilder.build_from_parameters(
+      V2::DataImportMeetingRelayResultBuilder.build_from_parameters(
         data_import_session,
         di_mrr.data_import_meeting_program.meeting_session.season, # (data_import_session.season won't be checked inside)
         di_mrr.data_import_meeting_program,
@@ -251,8 +251,8 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
       )
     end
 
-    it "returns a DataImportEntityBuilder instance" do
-      expect( subject ).to be_an_instance_of( DataImportEntityBuilder )
+    it "returns a V2::DataImportEntityBuilder instance" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityBuilder )
     end
     describe "#data_import_session" do
       it "is the DataImportSession specified for the build" do
@@ -298,7 +298,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
 
   describe "self.fix_missing_rank() for MRRs," do
     it "returns the rank value of a matching MRR having the same program and score" do
-      result_rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+      result_rank = V2::DataImportMeetingIndividualResultBuilder.fix_missing_rank(
         DataImportMeetingRelayResult,
         data_import_session,
         di_mrr.data_import_meeting_program,
@@ -308,7 +308,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
     end
 
     it "returns the tot.rows +1 as the rank value for a matching program, w/ MRRs and a new score" do
-      result_rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+      result_rank = V2::DataImportMeetingIndividualResultBuilder.fix_missing_rank(
         DataImportMeetingRelayResult,
         data_import_session,
         di_mrr.data_import_meeting_program,
@@ -318,7 +318,7 @@ describe DataImportMeetingRelayResultBuilder, type: :integration do
     end
 
     it "returns 1 as the rank value for a matching program and a new score but w/o MRRs" do
-      result_rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+      result_rank = V2::DataImportMeetingIndividualResultBuilder.fix_missing_rank(
         DataImportMeetingRelayResult,
         data_import_session,
         meeting_program,

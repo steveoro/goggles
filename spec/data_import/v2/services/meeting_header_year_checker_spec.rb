@@ -23,7 +23,7 @@ end
 #++
 
 
-describe MeetingHeaderYearChecker, type: :service do
+describe V2::MeetingHeaderYearChecker, type: :service do
   let(:meeting)    { create( :meeting ) }
   let(:di_meeting) { create( :data_import_meeting ) }
   #-- -------------------------------------------------------------------------
@@ -31,18 +31,18 @@ describe MeetingHeaderYearChecker, type: :service do
 
   describe "self.check_and_fix()" do
     it "responds to self.check_and_fix()" do
-      expect( MeetingHeaderYearChecker ).to respond_to( :check_and_fix )
+      expect( V2::MeetingHeaderYearChecker ).to respond_to( :check_and_fix )
     end
 
     context "for a valid Meeting instance," do
       it "returns an empty string" do
-        expect( MeetingHeaderYearChecker.check_and_fix(meeting) ).to eq( '' )
+        expect( V2::MeetingHeaderYearChecker.check_and_fix(meeting) ).to eq( '' )
       end
     end
 
     context "for a valid DataImportMeeting instance," do
       it "returns an empty string" do
-        expect( MeetingHeaderYearChecker.check_and_fix(di_meeting) ).to eq( '' )
+        expect( V2::MeetingHeaderYearChecker.check_and_fix(di_meeting) ).to eq( '' )
       end
     end
     #-- -----------------------------------------------------------------------
@@ -52,7 +52,7 @@ describe MeetingHeaderYearChecker, type: :service do
       before(:all) do
         @fixture = create( :meeting )
         @fixture.header_year = ''
-        @result = MeetingHeaderYearChecker.check_and_fix(@fixture)
+        @result = V2::MeetingHeaderYearChecker.check_and_fix(@fixture)
 # DEBUG
 #        puts "\r\n- Checking @fixture: #{@fixture.inspect}"
 #        puts "- @result: '#{@result}'"
@@ -64,7 +64,7 @@ describe MeetingHeaderYearChecker, type: :service do
       before(:all) do
         @fixture = create( :meeting )
         @fixture.header_year = nil
-        @result = MeetingHeaderYearChecker.check_and_fix(@fixture)
+        @result = V2::MeetingHeaderYearChecker.check_and_fix(@fixture)
 # DEBUG
 #        puts "\r\n- Checking @fixture: #{@fixture.inspect}"
 #        puts "- @result: '#{@result}'"
@@ -76,7 +76,7 @@ describe MeetingHeaderYearChecker, type: :service do
       before(:all) do
         @fixture = create( :data_import_meeting )
         @fixture.header_year = ''
-        @result = MeetingHeaderYearChecker.check_and_fix(@fixture)
+        @result = V2::MeetingHeaderYearChecker.check_and_fix(@fixture)
       end
       it_behaves_like( "[a successful #header_year correction]" )
     end
@@ -85,7 +85,7 @@ describe MeetingHeaderYearChecker, type: :service do
       before(:all) do
         @fixture = create( :data_import_meeting )
         @fixture.header_year = nil
-        @result = MeetingHeaderYearChecker.check_and_fix(@fixture)
+        @result = V2::MeetingHeaderYearChecker.check_and_fix(@fixture)
       end
       it_behaves_like( "[a successful #header_year correction]" )
     end

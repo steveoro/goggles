@@ -8,10 +8,10 @@ require_relative '../../../../app/data_import/v2/txt_result_defs'
 require_relative '../../../../app/data_import/v2/fin_result_defs'
 
 
-describe TxtParseService, type: :service do
+describe V2::TxtParseService, type: :service do
 
   context "for a new empty instance," do
-    subject { TxtParseService.new( FinResultDefs.new ) }
+    subject { V2::TxtParseService.new( V2::FinResultDefs.new ) }
 
     it_behaves_like( "(the existance of a method)", [
       :result, :line_count, :total_data_rows, :previous_parent_context,
@@ -61,10 +61,10 @@ describe TxtParseService, type: :service do
   #++
 
   context "for a valid instance," do
-    subject { TxtParseService.new( FinResultDefs.new ) }
+    subject { V2::TxtParseService.new( V2::FinResultDefs.new ) }
 
     let( :dummy_wrapper ) do
-      class DummyWrapper; include FinResultConsts; end
+      class DummyWrapper; include V2::FinResultConsts; end
       DummyWrapper.new
     end
 
@@ -72,7 +72,7 @@ describe TxtParseService, type: :service do
     describe "#parse" do
       it "recognizes a 'in progress' change of a multi-line context with a single correct feed" do
         subject.clear                               # Clear the service and do a quick parsing:
-        expect( subject.parse( ContextDetector.new(dummy_wrapper.context_type_stats), 'Statistiche' ) ).to be true
+        expect( subject.parse( V2::ContextDetector.new(dummy_wrapper.context_type_stats), 'Statistiche' ) ).to be true
       end
     end
     #-- -----------------------------------------------------------------------
@@ -82,7 +82,7 @@ describe TxtParseService, type: :service do
       before(:each) do
         subject.clear                               # Clear the service and do a quick parsing:
         last_result = false
-        detector    = ContextDetector.new( dummy_wrapper.context_type_stats )
+        detector    = V2::ContextDetector.new( dummy_wrapper.context_type_stats )
         [' Statistiche '].each do |curr_line|
           last_result = subject.parse( detector, curr_line )
           subject.increase_line_count

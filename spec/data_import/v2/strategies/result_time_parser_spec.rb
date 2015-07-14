@@ -7,7 +7,7 @@ require 'ffaker'
 require_relative '../../../../app/data_import/v2/strategies/result_time_parser'
 
 
-describe ResultTimeParser, type: :strategy do
+describe V2::ResultTimeParser, type: :strategy do
 
   context "as a valid instance," do
     let(:mins)    { ((rand * 59) % 59).to_i }
@@ -28,7 +28,7 @@ describe ResultTimeParser, type: :strategy do
     #++
 
     context "before any parsing," do
-      subject { ResultTimeParser.new( rank, valid_result_time ) }
+      subject { V2::ResultTimeParser.new( rank, valid_result_time ) }
 
       it_behaves_like( "(the existance of a method)", [
         :disqualification_code_type_id, :mins_secs_hds_array,
@@ -61,8 +61,8 @@ describe ResultTimeParser, type: :strategy do
 
 
     shared_examples_for "sucessful parsing of a valid timing string" do
-      it "returns an instance of ResultTimeParser" do
-        expect( subject ).to be_an_instance_of( ResultTimeParser )
+      it "returns an instance of V2::ResultTimeParser" do
+        expect( subject ).to be_an_instance_of( V2::ResultTimeParser )
       end
       describe "#disqualification_code_type_id" do
         it "returns nil" do
@@ -83,7 +83,7 @@ describe ResultTimeParser, type: :strategy do
 
 
     context "after the parsing of a valid timing (FIN1, fixture 1)," do
-      subject { ResultTimeParser.new( rank, valid_result_time ).parse }
+      subject { V2::ResultTimeParser.new( rank, valid_result_time ).parse }
 
       it_behaves_like "sucessful parsing of a valid timing string"
 
@@ -103,7 +103,7 @@ describe ResultTimeParser, type: :strategy do
     end
 
     context "after the parsing of a valid timing (FIN1, fixture 2)," do
-      subject { ResultTimeParser.new( rank, valid2_result_time ).parse }
+      subject { V2::ResultTimeParser.new( rank, valid2_result_time ).parse }
 
       it_behaves_like "sucessful parsing of a valid timing string"
 
@@ -129,7 +129,7 @@ describe ResultTimeParser, type: :strategy do
 
 
     context "after the parsing of a valid timing (FIN2, fixture 1)," do
-      subject { ResultTimeParser.new( rank, valid_fin2_result_time ).parse }
+      subject { V2::ResultTimeParser.new( rank, valid_fin2_result_time ).parse }
 
       it_behaves_like "sucessful parsing of a valid timing string"
 
@@ -149,7 +149,7 @@ describe ResultTimeParser, type: :strategy do
     end
 
     context "after the parsing of a valid timing (FIN2, fixture 2)," do
-      subject { ResultTimeParser.new( rank, valid2_fin2_result_time ).parse }
+      subject { V2::ResultTimeParser.new( rank, valid2_fin2_result_time ).parse }
 
       it_behaves_like "sucessful parsing of a valid timing string"
 
@@ -172,9 +172,9 @@ describe ResultTimeParser, type: :strategy do
 
 
     context "after the parsing of a valid disqualify," do
-      subject { ResultTimeParser.new( rank, valid_disqualify ) }
+      subject { V2::ResultTimeParser.new( rank, valid_disqualify ) }
       before(:each) do
-        expect( subject.parse ).to be_an_instance_of( ResultTimeParser )
+        expect( subject.parse ).to be_an_instance_of( V2::ResultTimeParser )
       end
 
       describe "#disqualification_code_type_id" do
@@ -208,9 +208,9 @@ describe ResultTimeParser, type: :strategy do
     #++
 
     context "after the parsing of a valid out-of-race," do
-      subject { ResultTimeParser.new( valid_out_of_race, valid_result_time ) }
+      subject { V2::ResultTimeParser.new( valid_out_of_race, valid_result_time ) }
       before(:each) do
-        expect( subject.parse ).to be_an_instance_of( ResultTimeParser )
+        expect( subject.parse ).to be_an_instance_of( V2::ResultTimeParser )
       end
 
       describe "#disqualification_code_type_id" do
@@ -242,9 +242,9 @@ describe ResultTimeParser, type: :strategy do
     #++
 
     context "after the parsing of a valid withdrawal," do
-      subject { ResultTimeParser.new( rank, valid_withdrawal ) }
+      subject { V2::ResultTimeParser.new( rank, valid_withdrawal ) }
       before(:each) do
-        expect( subject.parse ).to be_an_instance_of( ResultTimeParser )
+        expect( subject.parse ).to be_an_instance_of( V2::ResultTimeParser )
       end
 
       describe "#disqualification_code_type_id" do

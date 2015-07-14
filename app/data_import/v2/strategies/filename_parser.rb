@@ -8,7 +8,7 @@ require_relative '../../../data_import/v2/dao/header_fields_dao'
 
 =begin
 
-= FilenameParser
+= V2::FilenameParser
 
   - Goggles framework vers.:  4.00.629
   - author: Steve A.
@@ -18,10 +18,10 @@ require_relative '../../../data_import/v2/dao/header_fields_dao'
 
 === Typical usage:
 
-    header_fields_dao = FilenameParser.new( full_pathname ).parse
+    header_fields_dao = V2::FilenameParser.new( full_pathname ).parse
 
 =end
-class FilenameParser
+class V2::FilenameParser
 
   attr_reader :full_pathname, :prefix, :header_date, :header_year, :code_name
   #-- -------------------------------------------------------------------------

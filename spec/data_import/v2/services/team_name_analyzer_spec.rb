@@ -5,10 +5,10 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/team_name_analyzer'
 
 
-describe TeamNameAnalyzer, type: :service, data_import: true do
+describe V2::TeamNameAnalyzer, type: :service, data_import: true do
 
   context "for a well-defined instance," do
-    subject { TeamNameAnalyzer.new() }
+    subject { V2::TeamNameAnalyzer.new() }
 
     it_behaves_like( "(the existance of a method)", [
       :all_teams, :all_affiliations,
@@ -21,8 +21,8 @@ describe TeamNameAnalyzer, type: :service, data_import: true do
 
 
     describe "#initialize" do
-      it "returns a TeamNameAnalyzer instance" do
-        expect( subject ).to be_an_instance_of( TeamNameAnalyzer )
+      it "returns a V2::TeamNameAnalyzer instance" do
+        expect( subject ).to be_an_instance_of( V2::TeamNameAnalyzer )
       end
     end
 

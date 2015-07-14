@@ -11,10 +11,10 @@ require_relative '../../../../app/data_import/v2/txt_result_defs'
 require_relative '../../../../app/data_import/v2/fin_result_defs'
 
 
-describe FinResultParser, type: :strategy do
+describe V2::FinResultParser, type: :strategy do
 
   context "as a stand-alone class," do
-    subject { FinResultParser }
+    subject { V2::FinResultParser }
 
     # Since subject is already a class, we just need to use this shared existance example
     # instead of the "(the existance of a class method)":
@@ -24,10 +24,10 @@ describe FinResultParser, type: :strategy do
 
     describe "#parse_txt_file" do
       before(:all) do
-        @result_hash = FinResultParser.parse_txt_file(
+        @result_hash = V2::FinResultParser.parse_txt_file(
           File.join(Rails.root, 'test/fixtures/samples/fixture0-nodata-sample.txt'),
           nil,
-          FinResultDefs.new
+          V2::FinResultDefs.new
         )
       end
       it "returns an Hash instance" do

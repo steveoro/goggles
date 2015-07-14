@@ -6,7 +6,7 @@ require_relative '../../../strategies/sql_converter'
 
 =begin
 
-= SwimmerAnalysisResultProcessor
+= V2::SwimmerAnalysisResultProcessor
 
   - Goggles framework vers.:  4.00.719
   - author: Steve A.
@@ -18,7 +18,7 @@ require_relative '../../../strategies/sql_converter'
  any SQL actions that that have been carried out during the serialization.
 
 =end
-class SwimmerAnalysisResultProcessor
+class V2::SwimmerAnalysisResultProcessor
   include SqlConverter
 
   attr_reader :logger, :flash, :sql_executable_log, :process_log,
@@ -72,7 +72,7 @@ class SwimmerAnalysisResultProcessor
                                                     # -- Can ADD new Swimmer? (Default action for unconfirmed swimmer_analysis_results)
     if (! is_confirmed) || swimmer_analysis_result.can_insert_swimmer
       begin
-        swimmer_builder = DataImportSwimmerBuilder.build_from_parameters(
+        swimmer_builder = V2::DataImportSwimmerBuilder.build_from_parameters(
           swimmer_analysis_result.data_import_session,
           swimmer_name,
           # [Steve] If we have a range of years, signal to the builder that the
@@ -89,7 +89,7 @@ class SwimmerAnalysisResultProcessor
         # not secondary/temporary entities):
         swimmer_id = nil if committed_row.instance_of?( DataImportSwimmer )
       rescue
-        update_logs( "\r\n*** SwimmerAnalysisResultProcessor: exception caught during DataImportSwimmer building! (Name:'#{swimmer_name}')", :error )
+        update_logs( "\r\n*** V2::SwimmerAnalysisResultProcessor: exception caught during DataImportSwimmer building! (Name:'#{swimmer_name}')", :error )
         update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
         @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         is_ok = false
@@ -110,11 +110,11 @@ class SwimmerAnalysisResultProcessor
             @sql_executable_log << "-- aliased with: '#{swimmer_alias.complete_name}' (ID:#{swimmer_alias.id})\r\n" if swimmer_alias
             @sql_executable_log << to_sql_insert( committed_row, false ) # (No user comment)
           else
-            @logger.info( "\r\n*** SwimmerAnalysisResultProcessor: WARNING: skipping DataImportSwimmerAlias creation because was (unexpectedly) found already existing! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})" ) if @logger
+            @logger.info( "\r\n*** V2::SwimmerAnalysisResultProcessor: WARNING: skipping DataImportSwimmerAlias creation because was (unexpectedly) found already existing! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})" ) if @logger
           end
         end
       rescue
-        update_logs( "\r\n*** SwimmerAnalysisResultProcessor: exception caught during DataImportSwimmerAlias save! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})", :error )
+        update_logs( "\r\n*** V2::SwimmerAnalysisResultProcessor: exception caught during DataImportSwimmerAlias save! (Name:'#{swimmer_name}', swimmer_id:#{swimmer_id})", :error )
         update_logs( "*** #{ $!.to_s }\r\n", :error ) if $!
         @flash[:error] = "#{I18n.t(:something_went_wrong)} ['#{ $!.to_s }']"
         is_ok = false

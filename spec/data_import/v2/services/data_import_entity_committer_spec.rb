@@ -5,7 +5,7 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v2/services/data_import_entity_committer'
 
 
-describe DataImportEntityCommitter, type: :service do
+describe V2::DataImportEntityCommitter, type: :service do
   let(:data_import_session) { create( :data_import_session ) }
   let(:total_detail_rows)   { 5 }
   let(:create_di_swimmers)  { create_list( :data_import_swimmer, total_detail_rows, data_import_session: data_import_session ) }
@@ -15,7 +15,7 @@ describe DataImportEntityCommitter, type: :service do
 
   subject do
     create_di_swimmers
-    DataImportEntityCommitter.new( data_import_session, DataImportSwimmer, 6 )
+    V2::DataImportEntityCommitter.new( data_import_session, DataImportSwimmer, 6 )
   end
 
   it_behaves_like( "(the existance of a method)", [
@@ -27,8 +27,8 @@ describe DataImportEntityCommitter, type: :service do
 
 
   context "after a successful #initialize," do
-    it "returns an instance of DataImportEntityCommitter" do
-      expect( subject ).to be_an_instance_of( DataImportEntityCommitter )
+    it "returns an instance of V2::DataImportEntityCommitter" do
+      expect( subject ).to be_an_instance_of( V2::DataImportEntityCommitter )
     end
 
     context "#is_ok?" do
@@ -179,7 +179,7 @@ describe DataImportEntityCommitter, type: :service do
 
   context "after a successful #commit with an empty block and NO detail rows," do
     subject do
-      committer = DataImportEntityCommitter.new( data_import_session, DataImportTeam, 7 )
+      committer = V2::DataImportEntityCommitter.new( data_import_session, DataImportTeam, 7 )
       is_ok = committer.commit {}
       expect( is_ok ).to be true
       committer

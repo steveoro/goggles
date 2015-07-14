@@ -9,7 +9,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_individua
 
 =begin
 
-= DataImportMeetingTeamScoreBuilder
+= V2::DataImportMeetingTeamScoreBuilder
 
   - Goggles framework vers.:  4.00.767
   - author: Steve A.
@@ -18,7 +18,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_individua
  MeetingTeamScore entity rows.
 
 =end
-class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingTeamScoreBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingTeamScore given the parameters, or it adds a new one,
   # if none are found.
@@ -50,7 +50,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
 #        @team_code   = detail_row[:fields][:team_code]
         @team_name   = detail_row[:fields][:team_name]
         # result_time  = detail_row[:fields][:result_time]
-        team_builder = DataImportTeamBuilder.build_from_parameters(
+        team_builder = V2::DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            @team_name,
            season,
@@ -64,7 +64,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
           set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
         end
 
-        relay_results = DataImportMeetingTeamScoreBuilder.get_all_relay_results(
+        relay_results = V2::DataImportMeetingTeamScoreBuilder.get_all_relay_results(
           data_import_session,
           meeting,
           @team
@@ -76,7 +76,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
           .gsub( /\,/, '.' )
           .to_f
 
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+        ta_builder = V2::DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,
           @team,
           season
@@ -111,7 +111,7 @@ class DataImportMeetingTeamScoreBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "Search failed: adding new MeetingTeamScore with: @team=#{@team.name}..."
                                                     # Fix possible blank or missing ranking values:
-        @rank = DataImportMeetingTeamScoreBuilder.fix_missing_rank(
+        @rank = V2::DataImportMeetingTeamScoreBuilder.fix_missing_rank(
           data_import_session,
           meeting
         ) if ( @rank == 0 )

@@ -8,7 +8,7 @@ require_relative '../../../data_import/v2/fin_startlist_defs'
 
 =begin
 
-= ParseResultConverter
+= V2::ParseResultConverter
 
   - Goggles framework vers.:  4.00.767
   - author: Steve A.
@@ -34,7 +34,7 @@ require_relative '../../../data_import/v2/fin_startlist_defs'
 
 === Typical usage:
 
-    common_parse_result = ParseResultConverter.new.to_parse_result(
+    common_parse_result = V2::ParseResultConverter.new.to_parse_result(
       secondary_format_parse_result,
       fin2_result_def_instance
     )
@@ -42,7 +42,7 @@ require_relative '../../../data_import/v2/fin_startlist_defs'
  @see #FinResultParser for an example structure of the +parse_result+ sub-hash.
 
 =end
-class ParseResultConverter
+class V2::ParseResultConverter
 
   # Converts the specified parse result Hash into the common FIN(1) result
   # hash structure.
@@ -56,7 +56,7 @@ class ParseResultConverter
   # == Params:
   # - source_parse_result_hash => the source :parse_result sub-hash in a secondary
   #   or less-common format, which is in need of conversion;
-  # - source_parsing_defs => the specialized TxtResultDefs instance used to obtain
+  # - source_parsing_defs => the specialized V2::TxtResultDefs instance used to obtain
   #   the above :parse_result by parsing.
   # - season => Season instance obtained from the parsing of either the data file
   #   name or its contents; may be used internally to retrieve the correct category
@@ -72,12 +72,12 @@ class ParseResultConverter
     # will get any update)
     parse_result_hash = source_parse_result_hash.clone
                                                     # === From FIN2-result format: ===
-    if source_parsing_defs.instance_of?( Fin2ResultDefs )
+    if source_parsing_defs.instance_of?( V2::Fin2ResultDefs )
       rebuild_category_headers( parse_result_hash )
       rebuild_relay_headers( parse_result_hash, season )
       rebuild_stats_details( parse_result_hash )
                                                     # === From FIN-startlist format: ===
-    elsif source_parsing_defs.instance_of?( FinStartListDefs )
+    elsif source_parsing_defs.instance_of?( V2::FinStartListDefs )
       rebuild_category_headers( parse_result_hash )
 
     # TODO Add other cases (FIN-startlist, FIN2-startlist, ...)

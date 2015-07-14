@@ -5,11 +5,11 @@ require 'ffaker'
 require_relative '../../../../app/data_import/v2/strategies/team_analysis_result_processor'
 
 
-describe TeamAnalysisResultProcessor, type: :strategy do
+describe V2::TeamAnalysisResultProcessor, type: :strategy do
   let(:data_import_session)  { create( :data_import_session ) }
 
   context "for a new empty instance," do
-    subject { TeamAnalysisResultProcessor.new( nil, nil ) }
+    subject { V2::TeamAnalysisResultProcessor.new( nil, nil ) }
 
     it_behaves_like( "(the existance of a method)", [
       :logger,
@@ -23,8 +23,8 @@ describe TeamAnalysisResultProcessor, type: :strategy do
 
 
     describe "#initialize" do
-      it "returns a TeamAnalysisResultProcessor instance" do
-        expect( subject ).to be_an_instance_of( TeamAnalysisResultProcessor )
+      it "returns a V2::TeamAnalysisResultProcessor instance" do
+        expect( subject ).to be_an_instance_of( V2::TeamAnalysisResultProcessor )
       end
       it "sets the #sql_executable_log to an empty string" do
         expect( subject.sql_executable_log ).to eq('')
@@ -40,7 +40,7 @@ describe TeamAnalysisResultProcessor, type: :strategy do
     describe "#run" do
       # Initialize a sharable subject using an instance
       before(:all) do
-        @subject = TeamAnalysisResultProcessor.new( nil, nil )
+        @subject = V2::TeamAnalysisResultProcessor.new( nil, nil )
       end
       # Clean-up in case of errors or example failures leftovers
       after(:all) do

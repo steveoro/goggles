@@ -8,7 +8,7 @@ require 'spec_helper'
 
 
 describe "TokenExtractor for RESULT_ROW-type buffers,", type: :integration do
-  class DummyWrapper; include FinResultConsts; end
+  class DummyWrapper; include V2::FinResultConsts; end
   let( :dummy_wrapper ) { DummyWrapper.new }
 
   let(:feed) do

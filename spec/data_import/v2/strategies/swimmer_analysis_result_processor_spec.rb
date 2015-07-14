@@ -5,11 +5,11 @@ require 'ffaker'
 require_relative '../../../../app/data_import/v2/strategies/swimmer_analysis_result_processor'
 
 
-describe SwimmerAnalysisResultProcessor, type: :strategy do
+describe V2::SwimmerAnalysisResultProcessor, type: :strategy do
   let(:data_import_session)  { create( :data_import_session ) }
 
   context "for a new empty instance," do
-    subject { SwimmerAnalysisResultProcessor.new( nil, nil ) }
+    subject { V2::SwimmerAnalysisResultProcessor.new( nil, nil ) }
 
     it_behaves_like( "(the existance of a method)", [
       :logger,
@@ -23,8 +23,8 @@ describe SwimmerAnalysisResultProcessor, type: :strategy do
 
 
     describe "#initialize" do
-      it "returns a SwimmerAnalysisResultProcessor instance" do
-        expect( subject ).to be_an_instance_of( SwimmerAnalysisResultProcessor )
+      it "returns a V2::SwimmerAnalysisResultProcessor instance" do
+        expect( subject ).to be_an_instance_of( V2::SwimmerAnalysisResultProcessor )
       end
       it "sets the #sql_executable_log to an empty string" do
         expect( subject.sql_executable_log ).to eq('')
@@ -40,7 +40,7 @@ describe SwimmerAnalysisResultProcessor, type: :strategy do
     describe "#run" do
       # Initialize a sharable subject using an instance
       before(:all) do
-        @subject = SwimmerAnalysisResultProcessor.new( nil, nil )
+        @subject = V2::SwimmerAnalysisResultProcessor.new( nil, nil )
       end
       # Clean-up in case of errors or example failures leftovers
       after(:all) do

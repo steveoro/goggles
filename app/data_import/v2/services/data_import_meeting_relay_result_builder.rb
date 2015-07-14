@@ -9,7 +9,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_individua
 
 =begin
 
-= DataImportMeetingRelayResultBuilder
+= V2::DataImportMeetingRelayResultBuilder
 
   - Goggles framework vers.:  4.00.713
   - author: Steve A.
@@ -18,7 +18,7 @@ require_relative '../../../data_import/v2/services/data_import_meeting_individua
  MeetingRelayResult entity rows.
 
 =end
-class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
+class V2::DataImportMeetingRelayResultBuilder < V2::DataImportEntityBuilder
 
   # Searches for an existing MeetingRelayResult given the parameters, or it adds a new one,
   # if none are found.
@@ -50,7 +50,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         @team_name   = detail_row[:fields][:team_name]
         result_time  = detail_row[:fields][:result_time]
         result_score = detail_row[:fields][:result_score].to_s.gsub(/\,/, '.').to_f
-        team_builder = DataImportTeamBuilder.build_from_parameters(
+        team_builder = V2::DataImportTeamBuilder.build_from_parameters(
            data_import_session,
            @team_name,
            season,
@@ -63,7 +63,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
 #          flash[:error] = "#{I18n.t(:something_went_wrong)} ['team not found or nil']"
           set_result( nil ) and raise ArgumentError.new("Team not found or unable to create it!")
         end
-        result_parser      = ResultTimeParser.new( rank, result_time ).parse
+        result_parser      = V2::ResultTimeParser.new( rank, result_time ).parse
         @is_play_off       = true
         @is_out_of_race    = result_parser.is_out_of_race?
         @is_disqualified   = result_parser.is_disqualified?
@@ -72,7 +72,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
         @standard_points   = result_score
         @meeting_points    = result_score
         @rank              = rank.to_i              # Note that 'Fuori gara'.to_i = 0
-        ta_builder = DataImportTeamAffiliationBuilder.build_from_parameters(
+        ta_builder = V2::DataImportTeamAffiliationBuilder.build_from_parameters(
           data_import_session,
           @team,
           season
@@ -114,7 +114,7 @@ class DataImportMeetingRelayResultBuilder < DataImportEntityBuilder
 # DEBUG
 #        puts "Search failed: adding new MeetingRelayResult with: @team=#{@team.name}..."
                                                     # Fix possible blank or missing ranking values:
-        @rank = DataImportMeetingIndividualResultBuilder.fix_missing_rank(
+        @rank = V2::DataImportMeetingIndividualResultBuilder.fix_missing_rank(
           DataImportMeetingRelayResult,
           data_import_session,
           meeting_program,

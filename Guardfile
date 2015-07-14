@@ -112,6 +112,13 @@ group :specs do
       Dir[ "spec/integration/data_import/#{m[2]}*spec.rb" ]
     end
 
+    # Data-Import files with a nesting depth > 1:
+    watch(%r{data_import\/(.+\/)(.+)\.rb$}) do |m|
+#      puts "m1: '#{m[1]}', m2: '#{m[2]}'"
+      [ "spec/data_import/#{m[1]}#{m[2]}_spec.rb" ] +
+      Dir[ "spec/integration/data_import/#{m[1]}#{m[2]}*spec.rb" ]
+    end
+
     # Controller files:
     watch(%r{^app\/controllers\/(.+)_(controller)\.rb$}) do |m|
       [
