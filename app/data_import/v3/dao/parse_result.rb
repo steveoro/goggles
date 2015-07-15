@@ -49,24 +49,4 @@ class V3::ParseResult
   #-- -------------------------------------------------------------------------
   #++
 
-
-  # Uses Marshal::dump to serialize the whole factory and its created instances.
-  # Returns the marshaled binary data, ready to be saved on file.
-  #
-  def serialize
-    # TODO
-  end
-
-
-  # Uses Marshal::load to de-serialize the whole factory and its created instances.
-  # Clears and restores the whole factory from the specified binary_data.
-  #
-  def deserialize( binary_data )
-    # TODO deserialize
-    # TODO re-fill from scratch both lists
-    # TODO rebuild a parse_result instance from the unmarshalled data
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
 end

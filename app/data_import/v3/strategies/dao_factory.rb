@@ -1,4 +1,8 @@
 # encoding: utf-8
+require_relative '../../../data_import/v3/dao/context_dao'
+require_relative '../../../data_import/v3/dao/entity_dao'
+require_relative '../../../data_import/v3/dao/parse_result'
+
 
 =begin
 
@@ -51,6 +55,21 @@ class V3::DAOFactory
   def new_context( name )
     @last_unique_id += 1
     @context_list[ @last_unique_id ] = V3::ContextDAO.new( @last_unique_id, name )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns a V3::ParseResult wrapper object referencing the currently generated
+  # lists of contexts and entities.
+  #
+  # The specified +file_name+ is passed directly into the generated object.
+  #
+  def to_parse_result( file_name )
+    result = V3::ParseResult.new( file_name )
+    result.entity_list.merge!( self.entity_list )
+    result.context_list.merge!( self.context_list )
+    result
   end
   #-- -------------------------------------------------------------------------
   #++
