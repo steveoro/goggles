@@ -197,7 +197,7 @@ class V2::ContextDetector
 
   # Convert the current instance to a readable string
   def to_s
-    "[ContextDetector] => #{@context_type}" + ( @current_context ? ", current: '#{@current_context}'" : '' )
+    "[V2::TxtParseService] => #{@context_type}" + ( @current_context ? ", current: '#{@current_context}'" : '' )
   end
   #-- --------------------------------------------------------------------------
   #++

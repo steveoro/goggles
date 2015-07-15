@@ -11,8 +11,8 @@ describe V3::TokenExtractor, type: :service do
 
   context "for a well-defined instance," do
     let( :dummy_wrapper ) do
-      class DummyWrapper; include V3::FinResultConsts; end
-      DummyWrapper.new
+      class V3::TokenExtractor::DummyWrapper; include V3::FinResultConsts; end
+      V3::TokenExtractor::DummyWrapper.new
     end
     let( :tokenizers_array ) { dummy_wrapper.get_tokenizers_list() }
 

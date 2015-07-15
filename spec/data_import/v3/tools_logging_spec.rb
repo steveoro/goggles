@@ -6,7 +6,7 @@ require_relative '../../../app/data_import/v3/tools_logging'
 
 describe Tools::Logging::V3, type: :model do
 
-  subject { class Dummy; include Tools::Logging::V3; end.new }
+  subject { class Tools::Logging::V3::Dummy; include Tools::Logging::V3; end.new }
 
   it_behaves_like( "(the existance of a method)", [
     :log

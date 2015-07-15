@@ -63,8 +63,8 @@ describe V3::TxtParseService, type: :service do
     subject { V3::TxtParseService.new( V3::FinResultDefs.new ) }
 
     let( :dummy_wrapper ) do
-      class DummyWrapper; include V3::FinResultConsts; end
-      DummyWrapper.new
+      class V3::TxtParseService::DummyWrapper; include V3::FinResultConsts; end
+      V3::TxtParseService::DummyWrapper.new
     end
 
 

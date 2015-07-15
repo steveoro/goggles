@@ -9,7 +9,7 @@ require_relative '../../../app/data_import/v2/services/token_extractor'
 describe V2::FinStartListConsts, type: :model do
 
   context "as an included module," do
-    subject { class DummyWrapper; include V2::FinStartListConsts; end }
+    subject { class V2::FinStartListConsts::DummyWrapper; include V2::FinStartListConsts; end }
 
     it "defines a list of constant V2::ContextTypeDef(s)" do
       expect( subject.new.get_context_types_list ).to all be_an_instance_of( V2::ContextTypeDef )

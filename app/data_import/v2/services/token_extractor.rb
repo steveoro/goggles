@@ -101,7 +101,7 @@ class V2::TokenExtractor
 
   # Converts the current instance to a readable string
   def to_s
-    "[TokenExtractor: #{@field_name}, start=#{@starting_with}, end=#{@ending_with}, timeout:#{@line_timeout}]" +
+    "[V2::TokenExtractor: #{@field_name}, start=#{@starting_with}, end=#{@ending_with}, timeout:#{@line_timeout}]" +
     (@computed_start ? " cached: (#{@computed_start}.." : ' cached: (nil..') +
     (@computed_end ? "#{@computed_end})" : 'nil)')
   end

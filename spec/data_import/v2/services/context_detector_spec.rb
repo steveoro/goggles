@@ -12,8 +12,8 @@ describe V2::ContextDetector, type: :service do
 
   context "for a well-defined instance," do
     let( :dummy_wrapper ) do
-      class DummyWrapper; include V2::FinResultConsts; end
-      DummyWrapper.new
+      class V2::ContextDetector::DummyWrapper; include V2::FinResultConsts; end
+      V2::ContextDetector::DummyWrapper.new
     end
     let( :context_types_array ) { dummy_wrapper.get_context_types_list() }
     let( :fix_context_type )    { context_types_array[ (rand * context_types_array.size).to_i ] }

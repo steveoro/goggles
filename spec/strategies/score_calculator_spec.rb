@@ -3,15 +3,21 @@ require 'spec_helper'
 
 describe ScoreCalculator, type: :strategy do
   before :each do
-    @fix_swimmer = create(:swimmer)
-
-    # Leega
-    # FIXME Data forced for FIN current season
-    @fix_season        = Season.get_last_season_by_type( 'MASFIN' )
-    @fix_gender_type   = @fix_swimmer.gender_type
-    @fix_category_type = @fix_swimmer.get_category_type_for_season( @fix_season.id )
-    @fix_pool_type     = PoolType.only_for_meetings.find( ((rand * 2) % 2).to_i + 1 )
-    @fix_event_type    = EventType.are_not_relays.find( ((rand * 20) % 20).to_i + 1 )
+    @fix_season        = Season.find(142)
+    # Get a random meeting chosen among the first 10:
+    fixture_meeting    = @fix_season.meetings.has_results.all.to_ary[0..9].sort{ rand - 0.5 }[0]
+    # Get a random swimmer result among the ones available:
+    fixture_mir        = fixture_meeting.meeting_individual_results.all.sort{ rand - 0.5 }[0]
+    @fix_gender_type   = fixture_mir.gender_type
+    @fix_category_type = fixture_mir.category_type
+    @fix_pool_type     = fixture_mir.pool_type
+    @fix_event_type    = fixture_mir.event_type
+    # Old method by Leega:
+#    @fix_swimmer = create(:swimmer)
+#    @fix_gender_type   = @fix_swimmer.gender_type
+#    @fix_category_type = @fix_swimmer.get_category_type_for_season( @fix_season.id )
+#    @fix_pool_type     = PoolType.only_for_meetings.find( ((rand * 2) % 2).to_i + 1 )
+#    @fix_event_type    = EventType.are_not_relays.find( ((rand * 20) % 20).to_i + 1 )
   end
 
   context "with requested parameters for given swimmer" do

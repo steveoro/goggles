@@ -64,8 +64,8 @@ describe V2::TxtParseService, type: :service do
     subject { V2::TxtParseService.new( V2::FinResultDefs.new ) }
 
     let( :dummy_wrapper ) do
-      class DummyWrapper; include V2::FinResultConsts; end
-      DummyWrapper.new
+      class V2::TxtParseService::DummyWrapper; include V2::FinResultConsts; end
+      V2::TxtParseService::DummyWrapper.new
     end
 
 
