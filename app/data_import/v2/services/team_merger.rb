@@ -5,6 +5,8 @@ require_relative '../../../strategies/sql_converter'
 require_relative '../../../strategies/entity_row_dup_collector'
 
 
+module V2
+
 =begin
 
 = V2::TeamMerger
@@ -30,7 +32,7 @@ require_relative '../../../strategies/entity_row_dup_collector'
  - retrieve the logs using the member variables.
 
 =end
-class V2::TeamMerger
+class TeamMerger
   include SqlConverter
 
   # Creates a new instance
@@ -507,4 +509,5 @@ class V2::TeamMerger
   end
   #-- -------------------------------------------------------------------------
   #++
+end
 end
