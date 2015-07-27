@@ -1,4 +1,5 @@
 # encoding: utf-8
+require_relative '../../../data_import/v3/strategies/dao_factory'
 
 =begin
 
@@ -12,9 +13,7 @@
 =end
 class V3::ParseResult
 
-  attr_reader   :file_name,                         # Parsed file name
-                :entity_list,                       # Hash list of entities
-                :context_list                       # Hash list of contexts
+  attr_reader   :file_name                          # Parsed file name
   #-- -------------------------------------------------------------------------
   #++
 
@@ -23,11 +22,24 @@ class V3::ParseResult
   #
   def initialize( file_name )
     @file_name = file_name
-    @entity_list = {}
-    @context_list = {}
+    @factory = V3::DAOFactory.new()
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Returns the internal Entity hash list.
+  #
+  def entity_list()
+    @factory.entity_list
+  end
+
+  # Returns the internal Context hash list.
+  #
+  def context_list()
+    @factory.context_list
+  end
+
 
   # Checks if two instances are the same
   #
@@ -40,13 +52,66 @@ class V3::ParseResult
       ( self.context_list == other_object.context_list )
     )
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
-  # Convert the current instance to a readable string
-  def to_s
-    "[V3::ParseResult: #{@file_name}, #{@entity_list.size} entities, #{@context_list.size} contexts]"
+  # Creates a new EntityDAO, adding it to the internal list and returning its
+  # instance.
+  #
+  def new_entity( name, parent_context = nil )
+    @factory.new_entity( name, parent_context )
+  end
+
+  # Creates a new ContextDAO, adding it to the internal list and returning its
+  # instance.
+  #
+  def new_context( name )
+    @factory.new_context( name )
   end
   #-- -------------------------------------------------------------------------
   #++
 
+
+  # Uses Marshal::dump to serialize the whole factory and its created instances.
+  # Returns the marshaled binary data, ready to be saved on file.
+  #
+  def serialize
+    Marshal.dump( @factory )
+  end
+
+
+  # Uses Marshal::load to de-serialize the whole factory and its created instances.
+  # Clears and restores the whole factory from the specified binary_data.
+  #
+  def deserialize( binary_data )
+    @factory.clear
+    @factory = Marshal.load( binary_data )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Convert the current instance to a (short) readable string
+  def to_s
+    "[V3::ParseResult: #{@file_name}, #{@factory.context_list.size} contexts, #{@factory.entity_list.size} entities]"
+  end
+
+
+  # Dumps all the contents of the current instance to a readable string.
+  # (For debugging purposes only.)
+  #
+  def dump_to_s
+    output = "\r\n---- Factory dump: ----"
+    @factory.context_list.each do |context_key, context|
+      output << "\r\n'#{context_key}': #{ context }"
+      @factory.entity_list.each do |entity_key, entity|
+        output << "\r\n'#{entity_key}': #{ entity }"
+      end
+    end
+    output << "\r\n-----------------------\r\n"
+    output
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

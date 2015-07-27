@@ -10,43 +10,66 @@ require_relative '../../../../app/data_import/v3/strategies/dao_factory'
 
 
 describe V3::ParseResult, :type => :model do
+
   let( :length_token ) { [50, 100, 200, 400].sort{ rand - 0.5 }[0] }
   let( :random_fixture )    { StrokeType.is_eventable.all.sort{ rand - 0.5 }[0] }
   let( :stroke_type_token ) { random_fixture.code }
   let( :stroke_type_value ) { random_fixture.id }
-  let( :stroke_entity ) do
-    entity = V3::EntityDAO.new( (rand * 10000).to_i, "stroke_type" )
-    entity.text_token = stroke_type_token
+  let( :fixture_parse_result ) do
+    result = V3::ParseResult.new( FFaker::Lorem.word )
+    context = result.new_context( "event" )
+    @context_id = context.id
+    entity  = result.new_entity( "stroke_type", context )
+    entity.text_token   = stroke_type_token
     entity.parsed_value = stroke_type_value
     entity.destination_class = StrokeType
-    entity
-  end
-  let( :length_entity ) do
-    entity = V3::EntityDAO.new( (rand * 10000).to_i, "length" )
-    entity.text_token = length_token.to_s
+    @stroke_entity_id = entity.id
+    entity  = result.new_entity( "length", context )
+    entity.text_token   = length_token.to_s
     entity.parsed_value = length_token
-    entity
-  end
-
-  let( :fixture_context ) do
-    context = V3::ContextDAO.new( (rand * 10000).to_i, FFaker::Lorem.word.to_sym )
-    context.text_token = "#{ length_token }#{stroke_type_token}"
-    context.entity_list[ length_entity.name.to_sym ] = length_entity
-    context.entity_list[ stroke_entity.name.to_sym ] = stroke_entity
-    context
-  end
-
-  subject do
-    result = V3::ParseResult.new( FFaker::Lorem.word )
-    result.entity_list.merge!( fixture_context.entity_list )
-    result.context_list[ fixture_context.name.to_sym ] = fixture_context
+    @length_entity_id = entity.id
+# DEBUG
+    puts result.dump_to_s
     result
   end
 
+  let( :fixture_context ) { fixture_parse_result.context_list[ @context_id ] }
+  let( :stroke_entity )   { fixture_parse_result.entity_list[ @stroke_entity_id ] }
+  let( :length_entity )   { fixture_parse_result.entity_list[ @length_entity_id ] }
+
+  subject { fixture_parse_result }
+
 
   it_behaves_like( "(the existance of a method)", [
-    :file_name, :entity_list, :context_list, :==, :to_s
+    :file_name, :entity_list, :context_list, :new_entity, :new_context,
+    :serialize, :deserialize, :==, :to_s, :dump_to_s
   ])
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#entity_list" do
+    it "is a Hash" do
+      expect( subject.entity_list ).to be_an_instance_of( Hash )
+    end
+    it "includes the fixture entities" do
+      expect( subject.entity_list.values ).to match_array(
+        [stroke_entity, length_entity]
+      )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "#context_list" do
+    it "is a Hash" do
+      expect( subject.context_list ).to be_an_instance_of( Hash )
+    end
+    it "includes the fixture context" do
+      expect( subject.context_list.values ).to match_array( [fixture_context] )
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -79,5 +102,14 @@ describe V3::ParseResult, :type => :model do
   #++
 
 
-  # TODO
+  describe "#serialize" do
+    # TODO
+  end
+
+
+  describe "#deserialize" do
+    # TODO
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

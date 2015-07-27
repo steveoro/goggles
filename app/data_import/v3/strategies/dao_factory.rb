@@ -43,9 +43,11 @@ class V3::DAOFactory
   # Creates a new EntityDAO, adding it to the internal list and returning its
   # instance.
   #
-  def new_entity( name )
+  def new_entity( name, parent_context = nil )
     @last_unique_id += 1
-    @entity_list[ @last_unique_id ] = V3::EntityDAO.new( @last_unique_id, name )
+    entity = V3::EntityDAO.new( @last_unique_id, name, parent_context )
+    parent_context.entity_list[ name ] = entity if parent_context.instance_of?( V3::ContextDAO )
+    @entity_list[ @last_unique_id ] = entity
   end
 
 
@@ -55,41 +57,6 @@ class V3::DAOFactory
   def new_context( name )
     @last_unique_id += 1
     @context_list[ @last_unique_id ] = V3::ContextDAO.new( @last_unique_id, name )
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Returns a V3::ParseResult wrapper object referencing the currently generated
-  # lists of contexts and entities.
-  #
-  # The specified +file_name+ is passed directly into the generated object.
-  #
-  def to_parse_result( file_name )
-    result = V3::ParseResult.new( file_name )
-    result.entity_list.merge!( self.entity_list )
-    result.context_list.merge!( self.context_list )
-    result
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Uses Marshal::dump to serialize the whole factory and its created instances.
-  # Returns the marshaled binary data, ready to be saved on file.
-  #
-  def serialize
-    # TODO
-  end
-
-
-  # Uses Marshal::load to de-serialize the whole factory and its created instances.
-  # Clears and restores the whole factory from the specified binary_data.
-  #
-  def deserialize( binary_data )
-    # TODO deserialize
-    # TODO re-fill from scratch both lists
-    # TODO rebuild a parse_result instance from the unmarshalled data
   end
   #-- -------------------------------------------------------------------------
   #++
