@@ -70,7 +70,6 @@ class Passage < ActiveRecord::Base
 #  scope :sort_by_swimmer,    ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
 #  scope :sort_by_type,       ->(dir) { order("passage_types.code #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
 
-
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
@@ -124,6 +123,12 @@ class Passage < ActiveRecord::Base
     # Provided the "has_one :meeting_session, through: :meeting_program" above, this should also work:
     # => return meeting_session.scheduled_date
   end
+
+  # Retrieves the total event distance
+  def get_total_distance
+    meeting_program ? meeting_program.event_type.length_in_meters : 0
+  end
+
   #-- -------------------------------------------------------------------------
   #++
 
@@ -173,7 +178,11 @@ class Passage < ActiveRecord::Base
   # Returns a Timing instance.
   #
   def compute_incremental_time
-    passages_list = get_passages.where('length_in_meters < ?', get_passage_distance)
+    if get_total_distance > 400
+      passages_list = get_passages.where('length_in_meters < ? and length_in_meters > 50', get_passage_distance)
+    else
+      passages_list = get_passages.where('length_in_meters < ?', get_passage_distance)
+    end
     total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 ) + hundreds + ( seconds * 100 ) + ( minutes * 6000 )
     Timing.new( total_hundreds )
   end
