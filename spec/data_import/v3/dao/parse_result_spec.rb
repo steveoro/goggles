@@ -29,7 +29,7 @@ describe V3::ParseResult, :type => :model do
     entity.parsed_value = length_token
     @length_entity_id = entity.id
 # DEBUG
-    puts result.dump_to_s
+#    puts result.dump_to_s
     result
   end
 
@@ -41,8 +41,16 @@ describe V3::ParseResult, :type => :model do
 
 
   it_behaves_like( "(the existance of a method)", [
-    :file_name, :entity_list, :context_list, :new_entity, :new_context,
-    :serialize, :deserialize, :==, :to_s, :dump_to_s
+    :file_name, :entity_list, :context_list,
+    :serialize, :deserialize, :==,
+    :to_s,
+    # The following are wrappers for factory methods, so we don't need to test
+    # their implementation here, just their existance:
+    :new_entity, :new_context,
+    :get_entity_unique_name,
+    :get_entity, :get_context,
+    :get_entity_by_names, :get_entities_for_context_name,
+    :dump_to_s
   ])
   #-- -------------------------------------------------------------------------
   #++
@@ -86,6 +94,13 @@ describe V3::ParseResult, :type => :model do
     end
     it "includes the number of contexts enclosed" do
       expect( subject.to_s ).to include( subject.context_list.size.to_s )
+    end
+  end
+
+
+  describe "#dump_to_s" do
+    it "returns a String" do
+      expect( subject.dump_to_s ).to be_an_instance_of( String )
     end
   end
   #-- -------------------------------------------------------------------------

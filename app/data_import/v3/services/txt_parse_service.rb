@@ -64,7 +64,6 @@ class V3::TxtParseService
   # - :logger => override for the logger instance; defaults to parsing_definitions.logger
   #
   def initialize( parsing_definitions, args = {} )
-    @factory        = V3::DAOFactory.new
     @parsing_defs   = parsing_definitions
     @full_pathname  = args[:full_pathname] ? args[:full_pathname] : nil
     @logger         = args[:logger] ? args[:logger] : parsing_definitions.logger
@@ -100,7 +99,7 @@ class V3::TxtParseService
 
   # Returns the V3::ContextDAO result  (obtained so far) for the specified <tt>context_name</tt>.
   def result_for( context_name )
-    @result.context_list[ context_name ]
+    @result.get_context( context_name )
 # XXX OLD:
 #    @result[ context_name ]
   end
