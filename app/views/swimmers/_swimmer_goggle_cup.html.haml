@@ -5,6 +5,11 @@
       %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
     - else
       - @goggle_cups.each do |goggle_cup|
+        - total_points = 0.00
+        - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.first(5).each do |mir|
+          - total_points += mir.goggle_cup_points
+        %h3= I18n.t('goggle_cup.total') + ': ' + total_points.to_s
+
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'info'}
@@ -13,13 +18,13 @@
             - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
               %tr{ 'class' => index < goggle_cup.max_performance ? 'warning' : '' }
                 %td
-                  = mir.meeting.description
+                  = mir.meeting.decorate.get_linked_name
                 %td
                   = mir.event_type.code
                 %td.goggles-rightalign
-                  = mir.goggle_cup_points
-                %td.goggles-rightalign
                   = mir.get_timing
+                %td.goggles-rightalign
+                  = mir.goggle_cup_points
             %tr{'class'=>'info'}
               %td.goggles-rightalign{ colspan: 4 }
                 = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
