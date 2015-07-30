@@ -48,8 +48,9 @@ describe V3::ParseResult, :type => :model do
     # their implementation here, just their existance:
     :new_entity, :new_context,
     :get_entity_unique_name,
-    :get_entity, :get_context,
-    :get_entity_by_names, :get_entities_for_context_name,
+    :get_entity,
+    :get_contexts_named,
+    :get_entities_for_context,
     :dump_to_s
   ])
   #-- -------------------------------------------------------------------------

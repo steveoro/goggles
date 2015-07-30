@@ -31,10 +31,12 @@ describe V3::DAOFactory, :type => :strategy do
 
   it_behaves_like( "(the existance of a method)", [
     :entity_list, :context_list,
-    :clear, :new_entity, :new_context,
+    :clear,
+    :new_entity, :new_context,
     :get_entity_unique_name,
-    :get_entity, :get_context,
-    :get_entity_by_names, :get_entities_for_context_name,
+    :get_entity,
+    :get_contexts_named,
+    :get_entities_for_context,
     :dump_to_s
   ])
   #-- -------------------------------------------------------------------------
@@ -85,7 +87,7 @@ describe V3::DAOFactory, :type => :strategy do
           expect(
             non_empty_subject.get_entity(
               "ent_#{inner_idx}",
-              non_empty_subject.get_context( "ctx_#{outer_idx}" )
+              non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" ).first
             )
           ).to be_an_instance_of( V3::EntityDAO )
         end
@@ -97,7 +99,7 @@ describe V3::DAOFactory, :type => :strategy do
           expect(
             non_empty_subject.get_entity(
               "ent_#{inner_idx}",
-              non_empty_subject.get_context( "ctx_#{outer_idx}" )
+              non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" ).first
             )
           ).to be nil
         end
@@ -105,19 +107,20 @@ describe V3::DAOFactory, :type => :strategy do
     end
   end
 
-  describe "#get_context" do
-    it "returns a V3::ContextDAO object for an existing context" do
+  describe "#get_contexts_named" do
+    it "returns an Array with a single V3::ContextDAO for an existing context with an unique name" do
       (1..5).each do |outer_idx|
-        expect(
-          non_empty_subject.get_context( "ctx_#{outer_idx}" )
-        ).to be_an_instance_of( V3::ContextDAO )
+        result = non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" )
+        expect( result ).to be_an_instance_of( Array )
+        expect( result[0] ).to be_an_instance_of( V3::ContextDAO )
+        expect( result.length ).to eq( 1 )
       end
     end
-    it "returns nil for a non-existing context" do
+    it "returns an empty Array for a non-existing context name" do
       (6..9).each do |outer_idx|
         expect(
-          non_empty_subject.get_context( "ctx_#{outer_idx}" )
-        ).to be nil
+          non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" )
+        ).to eq( [] )
       end
     end
   end
@@ -125,38 +128,22 @@ describe V3::DAOFactory, :type => :strategy do
   #++
 
 
-  describe "#get_entity_by_names" do
-    it "returns a V3::EntityDAO object for an existing entity" do
-      (1..5).each do |outer_idx|
-        ((outer_idx * 10 + 1)..(outer_idx * 10 + 5)).each do |inner_idx|
-          expect(
-            non_empty_subject.get_entity_by_names( "ent_#{inner_idx}", "ctx_#{outer_idx}" )
-          ).to be_an_instance_of( V3::EntityDAO )
-        end
-      end
-    end
-    it "returns nil for a non-existing entity or wrong parent context" do
-      (6..8).each do |outer_idx|
-        ((outer_idx * 10 + 1)..(outer_idx * 10 + 3)).each do |inner_idx|
-          expect(
-            non_empty_subject.get_entity_by_names( "ent_#{inner_idx}", "ctx_#{outer_idx}" )
-          ).to be nil
-        end
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  describe "#get_entities_for_context_name" do
+  describe "#get_entities_for_context" do
     it "returns an empty array for a non existing context" do
-      expect( non_empty_subject.get_entities_for_context_name("non_existing") ).to be_an_instance_of( Array )
-      expect( non_empty_subject.get_entities_for_context_name("non_existing").length ).to eq( 0 )
+      context_out_of_subject = V3::ContextDAO.new( 1, "non_existing" )
+      result = non_empty_subject.get_entities_for_context( context_out_of_subject )
+      expect( result ).to be_an_instance_of( Array )
+      expect( result.length ).to eq( 0 )
+    end
+    it "returns an empty array for a nil context" do
+      result = non_empty_subject.get_entities_for_context( nil )
+      expect( result ).to be_an_instance_of( Array )
+      expect( result.length ).to eq( 0 )
     end
     it "returns a non-empty array for an existing context, with the correct length" do
       (1..5).each do |outer_idx|
-        result = non_empty_subject.get_entities_for_context_name( "ctx_#{outer_idx}" )
+        context = non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" ).first
+        result = non_empty_subject.get_entities_for_context( context )
         expect( result ).to be_an_instance_of( Array )
         expect( result.length ).to eq( 5 )
       end

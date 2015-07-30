@@ -5,7 +5,7 @@ require_relative '../../../data_import/v3/strategies/dao_factory'
 
 = V3::ParseResult
 
-  - Goggles framework vers.:  4.00.815
+  - Goggles framework vers.:  4.00.817
   - author: Steve A.
 
  Container class for the whole result of a data-import parsing.
@@ -62,14 +62,6 @@ class V3::ParseResult
   # Entity names should be unique among the same context. (No check is performed about this, though.)
   # They will be converted to strings internally.
   #
-  # It is convenient to merge into the entity name also, for instance, the line
-  # number of the source data row, to allow multiple
-  # instances of the same entity type inside the same context.
-  #
-  # For example, a same "result" context could hold several different entities of
-  # the same type. Thus, it is imperative to include some kind of counter inside
-  # the name to allow this 1-to-many relationship.
-  #
   # Wrapper for same-named method in V3::DAOFactory.
   #
   def new_entity( name, parent_context = nil )
@@ -79,8 +71,11 @@ class V3::ParseResult
   # Creates a new ContextDAO, adding it to the internal list and returning its
   # instance.
   #
-  # Context names should be unique. (No check is performed about this, though.)
-  # They will be converted to strings internally.
+  # Context names can be duplicated, to allow multiple child-contexts holding
+  # different values of the same group of entities.
+  #
+  # The suggested way to process the contexts is as a sequential list.
+  # (i.e. scanning all the contexts named "result_row" for result values)
   #
   # Wrapper for same-named method in V3::DAOFactory.
   #
@@ -103,29 +98,26 @@ class V3::ParseResult
   def get_entity( name, parent_context = nil )
     @factory.get_entity( name, parent_context )
   end
-
-  # Retrieves a context by its name.
-  # Wrapper for same-named method in V3::DAOFactory.
-  #
-  def get_context( name )
-    @factory.get_context( name )
-  end
   #-- -------------------------------------------------------------------------
   #++
 
-  # Retrieves an entity by its name and its context name.
+  # Retrieves the contexts named as indicated.
+  # (i.e. "all the contexts named 'result_row'")
+  #
   # Wrapper for same-named method in V3::DAOFactory.
   #
-  def get_entity_by_names( name, parent_context_name = nil )
-    @factory.get_entity_by_names( name, parent_context_name )
+  def get_contexts_named( name )
+    @factory.get_contexts_named( name )
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Retrieves all the entities for a specific context name.
   # Wrapper for same-named method in V3::DAOFactory.
   #
-  def get_entities_for_context_name( parent_context_name = nil )
-    @factory.get_entities_for_context_name( name, parent_context_name )
+  def get_entities_for_context( parent_context = nil )
+    @factory.get_entities_for_context( parent_context )
   end
   #-- -------------------------------------------------------------------------
   #++
