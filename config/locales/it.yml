@@ -126,6 +126,7 @@ it:
     goggle_cup_tab: "Goggle cup"
     goggle_cup_all_of_fame_tab: "Albo d'oro"
     goggle_cup_tooltip: "Vai alla classifica della Goggle cup di squadra per la stagione corrente"
+    goggle_cup_current_tooltip: "Vai ai risultati della Goggle cup dell'anno"
     link_to_gravatar_tooltip: "Personalizza il tuo Gravatar!"
     medals_summary: "Riepilogo medaglie"
     medals_by_season_type: "Medaglie per tipo stagione"
