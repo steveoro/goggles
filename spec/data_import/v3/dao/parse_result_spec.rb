@@ -51,6 +51,7 @@ describe V3::ParseResult, :type => :model do
     :get_entity,
     :get_contexts_named,
     :get_entities_for_context,
+    :get_siblings_for_context,
     :dump_to_s
   ])
   #-- -------------------------------------------------------------------------
@@ -108,23 +109,20 @@ describe V3::ParseResult, :type => :model do
   #++
 
 
-  context "when serializing with Marshal::dump," do
-    it "marshalls the whole object" do
+  context "when serializing (low-level) with Marshal (dump+load)," do
+    it "stores and restores the whole object" do
       data = Marshal.dump( subject )
       expect( Marshal.load(data) ).to eq( subject )
     end
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
 
-  describe "#serialize" do
-    # TODO
-  end
-
-
-  describe "#deserialize" do
-    # TODO
+  describe "#serialize / #deserialize" do
+    it "stores and restores the whole object" do
+      string_dump = subject.dump_to_s
+      cloned_subject = subject.deserialize( subject.serialize )
+      expect( cloned_subject.dump_to_s ).to eq( string_dump )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

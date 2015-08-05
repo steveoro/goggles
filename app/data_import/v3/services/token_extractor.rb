@@ -50,6 +50,7 @@ class V3::TokenExtractor
   def get_start_index( text )
     return @computed_start unless @computed_start.nil?
     if starting_with.kind_of?( Regexp )
+# FIXME This was just a test to alter the inner workings. Didn't go too well. Either remove or change the whole class!
 #      matchdata = starting_with.match( text )
 #      if matchdata && matchdata.captures.size > 0
 #        @computed_start = matchdata.begin(0)

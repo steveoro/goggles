@@ -5,10 +5,19 @@ require_relative '../../../data_import/v3/strategies/dao_factory'
 
 = V3::ParseResult
 
-  - Goggles framework vers.:  4.00.817
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  Container class for the whole result of a data-import parsing.
+
+ Each ParseResult contains a list of contexts and each context may have only one
+ other parent context.
+
+ Any context that does not have any parent, is referred as a "root context".
+
+ Each context, in turn, will usually contain more than one entity: one for each
+ field value that has been recognized under its context.
+
 
 =end
 class V3::ParseResult
@@ -79,8 +88,8 @@ class V3::ParseResult
   #
   # Wrapper for same-named method in V3::DAOFactory.
   #
-  def new_context( name )
-    @factory.new_context( name )
+  def new_context( name, parent_context = nil )
+    @factory.new_context( name, parent_context )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -118,6 +127,17 @@ class V3::ParseResult
   #
   def get_entities_for_context( parent_context = nil )
     @factory.get_entities_for_context( parent_context )
+  end
+
+
+  # Retrieves all the (siblings) contexts for a specific context.
+  #
+  # Note that by specifying +nil+ as a parent context, will result in all root
+  # context retrieved.
+  # Wrapper for same-named method in V3::DAOFactory.
+  #
+  def get_siblings_for_context( parent_context = nil )
+    @factory.get_siblings_for_context( parent_context )
   end
   #-- -------------------------------------------------------------------------
   #++

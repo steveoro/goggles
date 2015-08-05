@@ -10,18 +10,34 @@ require_relative '../../../../app/data_import/v3/strategies/dao_factory'
 
 describe V3::DAOFactory, :type => :strategy do
 
+  # These two will affect the length of the tests:
+  MAX_DEPTH_1_OBJECTS = 5
+  MAX_DEPTH_2_OBJECTS = 3
+  PARENT_CONTEXT_NAME = "ctx_#{MAX_DEPTH_1_OBJECTS}"
+  CHILD_CONTEXT_NAME  = "child"
+
   subject { V3::DAOFactory.new() }
 
   let( :non_empty_subject ) do
     factory = V3::DAOFactory.new()
-    (1..5).each do |outer_idx|
+    context = nil
+    (1..MAX_DEPTH_1_OBJECTS).each do |outer_idx|
       context = factory.new_context( "ctx_#{outer_idx}" )
-      ((outer_idx * 10 + 1)..(outer_idx * 10 + 5)).each do |inner_idx|
+      ((outer_idx * 10 + 1)..(outer_idx * 10 + MAX_DEPTH_1_OBJECTS)).each do |inner_idx|
         entity_name = "ent_#{inner_idx}"
         entity = factory.new_entity( entity_name, context )
         entity.text_token = inner_idx.to_s
         entity.parsed_value = inner_idx
       end
+    end
+    # Let's use the last defined context to sample a child context creation with
+    # some level-2 entities...
+    child_context = factory.new_context( CHILD_CONTEXT_NAME, context )
+    (1..MAX_DEPTH_2_OBJECTS).each do |inner_idx|
+      entity_name = "child_ent_#{inner_idx}"
+      entity = factory.new_entity( entity_name, child_context )
+      entity.text_token = inner_idx.to_s
+      entity.parsed_value = inner_idx
     end
 # DEBUG
 #    puts factory.dump_to_s
@@ -37,6 +53,7 @@ describe V3::DAOFactory, :type => :strategy do
     :get_entity,
     :get_contexts_named,
     :get_entities_for_context,
+    :get_siblings_for_context,
     :dump_to_s
   ])
   #-- -------------------------------------------------------------------------
@@ -83,7 +100,7 @@ describe V3::DAOFactory, :type => :strategy do
   describe "#get_entity" do
     it "returns a V3::EntityDAO object for an existing entity" do
       (1..5).each do |outer_idx|
-        ((outer_idx * 10 + 1)..(outer_idx * 10 + 5)).each do |inner_idx|
+        ((outer_idx * 10 + 1)..(outer_idx * 10 + MAX_DEPTH_1_OBJECTS)).each do |inner_idx|
           expect(
             non_empty_subject.get_entity(
               "ent_#{inner_idx}",
@@ -109,7 +126,7 @@ describe V3::DAOFactory, :type => :strategy do
 
   describe "#get_contexts_named" do
     it "returns an Array with a single V3::ContextDAO for an existing context with an unique name" do
-      (1..5).each do |outer_idx|
+      (1..MAX_DEPTH_1_OBJECTS).each do |outer_idx|
         result = non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" )
         expect( result ).to be_an_instance_of( Array )
         expect( result[0] ).to be_an_instance_of( V3::ContextDAO )
@@ -129,24 +146,47 @@ describe V3::DAOFactory, :type => :strategy do
 
 
   describe "#get_entities_for_context" do
-    it "returns an empty array for a non existing context" do
+    it "returns an empty array for a non existing context (non-nil)" do
       context_out_of_subject = V3::ContextDAO.new( 1, "non_existing" )
       result = non_empty_subject.get_entities_for_context( context_out_of_subject )
       expect( result ).to be_an_instance_of( Array )
       expect( result.length ).to eq( 0 )
     end
-    it "returns an empty array for a nil context" do
+    it "returns an empty array for a non existing context (nil)" do
       result = non_empty_subject.get_entities_for_context( nil )
       expect( result ).to be_an_instance_of( Array )
       expect( result.length ).to eq( 0 )
     end
     it "returns a non-empty array for an existing context, with the correct length" do
-      (1..5).each do |outer_idx|
+      (1..MAX_DEPTH_1_OBJECTS).each do |outer_idx|
         context = non_empty_subject.get_contexts_named( "ctx_#{outer_idx}" ).first
         result = non_empty_subject.get_entities_for_context( context )
         expect( result ).to be_an_instance_of( Array )
-        expect( result.length ).to eq( 5 )
+        expect( result.length ).to eq( MAX_DEPTH_1_OBJECTS )
       end
+    end
+  end
+
+
+  describe "#get_siblings_for_context" do
+    it "returns an empty array for a non existing context (non-nil)" do
+      context_out_of_subject = V3::ContextDAO.new( 1, "non_existing" )
+      result = non_empty_subject.get_siblings_for_context( context_out_of_subject )
+      expect( result ).to be_an_instance_of( Array )
+      expect( result.length ).to eq( 0 )
+    end
+    it "returns the list of root contexts for a nil context" do
+      result = non_empty_subject.get_siblings_for_context( nil )
+      expect( result ).to be_an_instance_of( Array )
+      expect( result.length ).to eq( MAX_DEPTH_1_OBJECTS )
+    end
+    it "returns a non-empty array for an existing parent context, with the correct length" do
+      parent_context = non_empty_subject.get_contexts_named( PARENT_CONTEXT_NAME ).first
+      result = non_empty_subject.get_siblings_for_context( parent_context )
+      expect( result ).to be_an_instance_of( Array )
+      expect( result.length ).to eq( 1 )
+      expect( result.first ).to be_an_instance_of( V3::ContextDAO )
+      expect( result.first.entity_list.length ).to eq( MAX_DEPTH_2_OBJECTS )
     end
   end
   #-- -------------------------------------------------------------------------

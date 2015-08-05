@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 require_relative '../../data_import/v3/txt_result_defs'
-require_relative '../../data_import/v3/context_type'
+require_relative '../../data_import/v3/dao/context_type'
 require_relative '../../data_import/v3/services/context_detector'
 require_relative '../../data_import/v3/services/token_extractor'
 require_relative '../../data_import/v3/fin_result_consts'

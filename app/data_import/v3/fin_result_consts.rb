@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require_relative '../../data_import/v3/context_type'
+require_relative '../../data_import/v3/dao/context_type'
 require_relative '../../data_import/v3/services/token_extractor'
 
 
@@ -8,7 +8,7 @@ require_relative '../../data_import/v3/services/token_extractor'
 
 = V2::FinResultConsts
 
-  - Goggles framework vers.:  4.00.815
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  Container module that stores all the common definitions
@@ -205,7 +205,7 @@ module V3::FinResultConsts                              # == HEADER CONTEXT TYPE
   #++
 
   # Returns the list of all the V3::ContextTypes member objects defined.
-  # (Commodity method used only inside specs.)
+  # (Commodity method used only inside specs to check for structural integrity.)
   def get_context_types_list
     [
       context_type_meeting_header,
@@ -713,7 +713,7 @@ module V3::FinResultConsts                              # == HEADER CONTEXT TYPE
   #++
 
   # Returns the list of all the V3::TokenExtractor object members defined.
-  # (Commodity method used only inside specs.)
+  # (Commodity method used only inside specs to check for structural integrity.)
   def get_tokenizers_list
     [
       tokenizer_meeting_header_title,

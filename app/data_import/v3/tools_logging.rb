@@ -3,7 +3,7 @@
 
 = Tools/Utilities module
 
-  - version:  4.00.815
+  - version:  4.00.819
   - author:   Steve A.
 
   Generic collection of utilities for the data-import section.
@@ -18,9 +18,9 @@ module Tools
     #
     # <tt>condition_for_logging</tt> is checked before allowing any logging.
     #
-    def log( logger, msg, condition_for_logging, logging_method_sym = :debug )
+    def log( msg, condition_for_logging, logging_method_sym = :debug )
       return unless condition_for_logging
-      if logger && logger.respond_to?( logging_method_sym )
+      if defined?(logger) && logger && logger.respond_to?( logging_method_sym )
         logger.send( logging_method_sym, msg )
       else
         puts( msg )

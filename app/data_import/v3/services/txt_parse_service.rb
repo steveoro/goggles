@@ -11,7 +11,7 @@ require_relative '../../../data_import/v3/strategies/dao_factory'
 
 = V3::TxtParseService
 
-  - Goggles framework vers.:  4.00.815
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  Service class delegated to the parsing of a single line of text,
@@ -76,16 +76,19 @@ class V3::TxtParseService
   # so far.
   def clear()
     @result = V3::ParseResult.new( @full_pathname )
-# XXX OLD:
-#    @result = {}                                    # parse result structure
     @line_count = 0                                 # current line count
     @total_data_rows = 0                            # total extracted rows with "meaningful" data
-    @previous_parent_context = nil                  # previously detected parent context
-    @previous_key = {}                              # previous result key created with #compose_memstorage_key()
+    # Previously detected parent context: we split the variable in two, because
+    # a detected "context switch may set the context name even before the actual
+    # ContextDao instance is created - which happens only at the end of the parsing
+    # of a bunch of buffered lines.
+    @previous_detected_parent_context_name = nil
+    @previous_parent_context = nil
   end
 
   # Clears just the previously recognized parent context.
   def clear_parent_context
+    @previous_detected_parent_context_name = nil
     @previous_parent_context = nil
   end
 
@@ -97,11 +100,9 @@ class V3::TxtParseService
     @line_count += 1
   end
 
-  # Returns the V3::ContextDAO result  (obtained so far) for the specified <tt>context_name</tt>.
+  # Returns the V3::ContextDAO result liat (obtained so far) for the specified <tt>context_name</tt>.
   def result_for( context_name )
-    @result.get_context( context_name )
-# XXX OLD:
-#    @result[ context_name ]
+    @result.get_contexts_named( context_name )
   end
   # ----------------------------------------------------------------------------
   #++
@@ -111,7 +112,7 @@ class V3::TxtParseService
   # file and the previously detected parent context name.
   #
   # This method is assumed to be called iteratively by looping on several different
-  # V2::ContextDetector instances, to try the detection against the same <tt>current_line</tt>
+  # ContextDetector instances, to try the detection against the same <tt>current_line</tt>
   # text specified. It will automatically store the progress for any successful parsing.
   #
   # #parse(), actually, doesn't increase the internal <tt>line_count</tt> and the counter
@@ -126,103 +127,42 @@ class V3::TxtParseService
   # - +true+ for a successful or a partial detection (a detection "in progress"), +false+ otherwise.
   #
   def parse( detector, current_line )
+    # Store current context type name:
     context_name = detector.context_type.context_name
-    log( @logger, "Using #{detector}...", DEBUG_EXTRA_VERBOSE )
-                                                    # Init parse result data pages if necessary:
-    @result[ context_name ] = [] if @result[ context_name ].nil?
+    log("Using #{detector}...", DEBUG_EXTRA_VERBOSE)
                                                     # Run checkings for current line:
-    anything_detected = detector.feed_and_detect( current_line, @line_count, @previous_parent_context )
+    anything_detected = detector.feed_and_detect( current_line, @line_count, @previous_detected_parent_context_name )
 
     if ( anything_detected )                              # === DETECTION SUCCESSFULL ===
-      log( @logger, "=> Context switched to '\033[1;33;40m#{ context_name.to_s.upcase }\033[0m'. Token extraction in progress...", DEBUG_VERBOSE )
+      log("=> Context switched to '\033[1;33;40m#{ context_name.to_s.upcase }\033[0m'. Token extraction in progress...", DEBUG_VERBOSE)
       cached_rows = detector.dump_line_cache
       token_hash  = tokenize_context_cache( context_name, cached_rows )
 
       if detector.is_a_parent_context               # *** CONTEXT -is- PARENT: HEADER
-        @previous_parent_context = context_name
-        if token_hash.instance_of?( Hash ) && ( token_hash.keys.size > 0 )
-                                                    # There must be a unique key defined for this context
-          if ( @parsing_defs.required_keys( context_name ).size < 1 )
-            key_string = @line_count + 1            # nil key definition arrays happens only when in context with no usable fields to be extracted! (As in :team_ranking or :stats)
-            log(
-              @logger,
-              "---WARNING: missing unique key definition for context '#{context_name}'!\r\n" +
-              "            Using current line count (#{@line_count + 1}) as unique ID.",
-              DEBUG_VERBOSE, :warn
-            )
-          else                                      # Extract unique key and store new current context page
-            key_string = compose_memstorage_key( context_name, token_hash )
-          end
-          log( @logger, "   Adding new PARENT context '#{context_name}', key_string='#{key_string}'.", DEBUG_VERBOSE )
-          add_a_data_row( context_name, key_string, token_hash, cached_rows )
-          # Store new unique key in @previous_key hash linked by current context
-          # (which may be a new parent context for other sub-pages)
-          @previous_key[ context_name ] = key_string
+        @previous_detected_parent_context_name = context_name
+        # Any values to be stored?
+        if token_hash.instance_of?( Hash ) && ( token_hash.values.size > 0 )
+          log("   Adding new PARENT context '#{context_name}'.", DEBUG_VERBOSE)
+          add_context_with_entities( context_name, token_hash, cached_rows, true )
         end
                                                     # *** CONTEXT -is- CHILD: DETAIL
       else                                          # Current context depends on another? ("L1" parse result)
-        parent_context = detector.parent_context_name
-                                                    # No change in parent context?
-        if ( parent_context == @previous_parent_context ) &&
-           token_hash.instance_of?( Hash ) && ( token_hash.keys.size > 0 )
-          # [Steve, 20140919]
-          # The "@previous_key" mechanism was used in the previous version of
-          # this implementation as a fail-safe to detect whether a data storage
-          # was wrongly detected.
-          # It seems that the :id field of the parse result hash is not used
-          # anymore, as of this version.
-
-          # FIXME Really seems that we keep result hashes with duplicated (:id=>key_string), without any compact()/reduce operation...
-                                                    # There must be already a unique key stored for the other (parent) context
-          key_string = @previous_key[ parent_context ]
-          if key_string.nil?
-            # Since nil key definition arrays happens only inside already *unique* parent contexts,
-            # with no usable fields to be extracted (as in :team_ranking or :stats), we can safely
-            # use the current line number as the key ID.
-            key_string = @line_count + 1
-#            key_string = parent_context.to_s
-            log(
-              @logger,
-              "---WARNING: missing unique key definition for context '#{context_name}'!\r\n" +
-              "            Using current line count (#{@line_count + 1}) as unique ID.",
-#              "            Using parent context name ('#{key_string}') as unique ID.",
-              DEBUG_VERBOSE, :warn
-            )
-          else                                      # Retrieve pre-stored unique key of parent context and store new current context page
-            log(
-              @logger,
-              "   Found (parent) key_string='#{@previous_key[ parent_context ] }'.",
-              DEBUG_VERBOSE
-            )
-          end
-          log( @logger, "   Adding new CHILD row '#{context_name}', key_string='#{key_string}'", DEBUG_VERBOSE )
-          add_a_data_row( context_name, key_string, token_hash, cached_rows )
-
-          # ELSE: parent context changed or different? => quietly skip the storing!
-
-          # [Steve, 20130918]
-          # Note that, as of this version, this happens for all result_rows since both the
-          # contexts :result_row and :relay_row have the same defining RegExp. Since the loop
-          # checks each single defined context for possible multiple context assignment
-          # (it doesn't stop after the first successfull reckognition and works in a FIFO way,
-          # allowing the possibility to have a single text line that spawns multiple contexts
-          # of data), defining a parent_context_name in the V2::ContextDetector instance is the
-          # only correct method to uniquely identify two context with the same RegExp.
+                                                    # No change in parent context and values to be stored are present?
+        if ( detector.parent_context_name == @previous_detected_parent_context_name ) &&
+           token_hash.instance_of?( Hash ) && ( token_hash.values.size > 0 )
+          log("   Adding new CHILD row '#{context_name}'.", DEBUG_VERBOSE)
+          add_context_with_entities( context_name, token_hash, cached_rows, false )
         end
+        # ELSE: parent context changed or different? => quietly skip the storing!
       end
-      if @result[ context_name ].last.instance_of?( Hash )
-        log( @logger, "   @result fields = #{@result[ context_name ].last[:fields].inspect}", DEBUG_VERY_VERBOSE && @result[ context_name ].last )
-      else
-        log( @logger, "   @result fields = NIL!", DEBUG_VERY_VERBOSE )
-        log( @logger, "   @result import_text = <#{@result[:import_text].inspect}>", DEBUG_VERY_VERBOSE )
-      end
+      log("   @result: #{ @result.get_contexts_named(context_name).last }>", DEBUG_VERY_VERBOSE)
 
     else                                     # === DETECTION UNSUCCESSFUL (perhaps is "in progress") ===
       # We must report false only if we are sure nothing has been recognized
       # so far to prevent premature parent context reset by the external parser
       # (otherwise "in progress" recognitions will be halted if reported as "not detected"):
       anything_detected = detector.detection_is_in_progress
-      log( @logger, "   Parent context still valid, detection in progress...", DEBUG_VERY_VERBOSE ) if anything_detected
+      log("   Parent context still valid, detection in progress...", DEBUG_VERY_VERBOSE) if anything_detected
     end
     anything_detected
   end
@@ -239,19 +179,19 @@ class V3::TxtParseService
   #
   def log_parsing_stats
     log(
-      @logger,
       "\r\n---------------------------------------------\r\n" +
       "------------------ STATS: -------------------\r\n" +
-      "---------------------------------------------\r\n\r\nFile '#{File.basename( @full_pathname )}':",
+      "---------------------------------------------\r\n" +
+      "r\nFile '#{ @full_pathname ? File.basename(@full_pathname) : '(?)' }':",
       true, :info
     )
     tot_data_rows = 0                               # Count total data rows, just for "fun stats"
-    @result.each { |context_name, result_page_array|
-      log( @logger, "Total '#{context_name}' data pages : #{result_page_array.size} / #{@total_data_rows} lines found", true, :info )
-      tot_data_rows += result_page_array.size       # ASSERT: expect( tot_data_rows == parse_service.total_data_rows )
-    }
+    @result.context_list.each do |key_id, context_dao|
+      log("- #{context_dao}, #{context_dao.entity_list.size} entities / #{@total_data_rows} lines found", true, :info)
+      tot_data_rows += context_dao.entity_list.size
+      # ASSERT: expect( tot_data_rows == parse_service.total_data_rows )
+    end
     log(
-      @logger,
       "\r\nTotal read lines ....... : #{@line_count} (including garbage)" +
       "\r\nProtocol efficiency .... : #{@line_count == 0 ? 0 : ( @total_data_rows.to_f / @line_count.to_f * 10000.0 ).round / 100.0} %" +
       "\r\nFile done.\r\n---------------------------------------------\r\n\r\n\r\n",
@@ -266,30 +206,23 @@ class V3::TxtParseService
   private
 
 
-  # Returns a unique string ID for the context_name and token_hash specified
+  # Adds new data (context with entities) to the @result and increases the total data rows.
   #
-  def compose_memstorage_key( context_name, token_hash )
-    return nil if ( @parsing_defs.required_keys( context_name ).size < 1 )
-    all_keys_list  = @parsing_defs.required_keys( context_name ).flatten.compact
-    log(
-      @logger,
-      "\r\n*** all_keys_list= #{ all_keys_list.inspect }" +
-      "** token_hash= #{ token_hash.inspect }",
-      DEBUG_VERBOSE
-    )
-    ( token_hash.reject{ |key, val| !all_keys_list.include?(key) } ).values.join('-')
-  end
+  def add_context_with_entities( context_name, token_hash, cached_rows, is_a_parent )
+    current_context = nil
 
-
-  # Adds a new data row to the @result and increases the total data rows.
-  #
-  def add_a_data_row( context_name, key_string, token_hash, cached_rows )
-    @result[ context_name ] << {
-      id:           key_string,
-      fields:       token_hash,
-      import_text:  cached_rows.join("\r\n")
-    }
-    @total_data_rows += 1                     # Increase data rows stat only when actually adding any data
+    if is_a_parent
+      current_context = @previous_parent_context = @result.new_context( context_name, nil )
+    else
+      current_context = @result.new_context( context_name, @previous_parent_context )
+    end
+    current_context.text_token = cached_rows.join("\r\n")
+                                                    # Create an entity for each parsable token:
+    token_hash.each do |field_name, field_value|
+      entity = @result.new_entity( field_name, @previous_parent_context )
+      entity.text_token = field_value
+    end
+    @total_data_rows += 1                           # Increase data rows stat only when actually adding any data
   end
 
 
@@ -320,10 +253,10 @@ class V3::TxtParseService
         tokenizer_row_list.each_with_index do |token_extractor, tok_idx|
           token_field = ( @parsing_defs.tokenizer_fields_for( context_name ) )[ row_idx ][ tok_idx ]
 # DEBUG (commented out due to excessive detail)
-#          log( @logger, "-- Processing token '#{token_field}' using #{token_extractor}...", DEBUG_EXTRA_VERBOSE )
+#          log("-- Processing token '#{token_field}' using #{token_extractor}...", DEBUG_EXTRA_VERBOSE)
           token = token_extractor.tokenize( row, @line_count + 1 )
 # DEBUG (commented out due to excessive detail)
-#          log( @logger, "   Extracted '#{token}'.", DEBUG_EXTRA_VERBOSE )
+#          log("   Extracted '#{token}'.", DEBUG_EXTRA_VERBOSE)
           token_extractor.clear()                   # Add to the token list only if it contains anything
           token_list.last[ token_field ] = token if token && token.length > 0
         end
@@ -332,7 +265,7 @@ class V3::TxtParseService
 
     result_token_hash = {}
     token_list.flatten.each { |sub_hash| result_token_hash.merge!(sub_hash) }
-    log( @logger, "-- Returning token list: #{result_token_hash.inspect}", DEBUG_VERBOSE )
+    log("-- Returning token list: #{result_token_hash.inspect}", DEBUG_VERBOSE)
     result_token_hash
   end
   #-- -------------------------------------------------------------------------

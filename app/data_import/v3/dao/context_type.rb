@@ -4,19 +4,44 @@
 
 = V3::ContextType
 
-  - Goggles framework vers.:  4.00.815
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  Defines a single context type for data parsing in text files.
 
+ A single "context type" is used to define the detection features of a single group
+ of several "alike" ContextDao instances.
+
+ For example, a single "event_row" context type may refer to several instances
+ of ContextDao, each one storing different entity (attribute) values for
+ same context type. Like this:
+
+    ContextType: "event_row" (recognized with "context switch")
+
+    - Associated stored contexts:
+          +----------> ContextDao: name: "event_row", values: "50 SL, M35"
+                            +----------> EntityDao: name: "metres", value: "50"
+                            +----------> EntityDao: name: "style", value: "SL"
+                            +----------> EntityDao: name: "category", value: "M35"
+          +----------> ContextDao: name: "event_row", values: "50 SL, M40"
+                            [...]
+          +----------> ContextDao: name: "event_row", values: "50 SL, M44"
+                            [...]
+          [...]
+
+ Each context type may refer to a parent context type (by specifying just its name)
+ since ContextDaos can be nested within a parent.
+
  Each context type may be toggled ON by several conditions (each defined as a RegExp).
  When all of them are true, they mark a "context switch" during the parsing phase.
 
- Since several ContextExtractor groups may be defined in a single contexts, having
- a "context switch" will exclude all the extractors not beloging to the same context
- to be applied.
+ This allows to define several TokenExtractor groups in every single context, and when
+ all conditions are met and the "context switch" occurs, all other extractors
+ not beloging to the same context will not be applied.
+ (That is, multiple token extractor could possibly result appliable to the same group
+  of cached data tokens.)
 
- See the ContextExtractor class for more info.
+ See the ContextDetector and TokenExtractor classes for more info.
 
 
 === Members:
@@ -54,9 +79,7 @@ class V3::ContextType
   #
   # The parent context name defines an additional _prerequisite_ that
   # must be fulfilled for context detection. When not +nil+, the previously
-  # detected context must have the same name .
-  # (For sake of clarity, parent_context_name is _not_ the previously recognized
-  # context during the parsing, but it's checked against it.)
+  # detected *parent* context must have the same name .
   #
   # === Options:
   #

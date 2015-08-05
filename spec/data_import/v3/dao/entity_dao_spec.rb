@@ -28,6 +28,22 @@ describe V3::EntityDAO, :type => :model do
   #++
 
 
+  describe "#==" do
+    it "returns true for equal objects" do
+      expect( subject == subject ).to be true
+    end
+    it "returns false when comparing with a different object" do
+      expect( subject == V3::EntityDAO.new( (rand * 10000).to_i, "another thing" ) ).to be false
+    end
+    it "returns false when comparing with an instance of a different class" do
+      expect( subject == "Any string" ).to be false
+    end
+    it "returns false when comparing with nil" do
+      expect( subject == nil ).to be false
+    end
+  end
+
+
   describe "#to_s" do
     it "returns a String" do
       expect( subject.to_s ).to be_an_instance_of( String )
@@ -54,7 +70,4 @@ describe V3::EntityDAO, :type => :model do
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
-  # TODO
 end

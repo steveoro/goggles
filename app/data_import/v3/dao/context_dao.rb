@@ -5,7 +5,7 @@
 
 = V3::ContextDAO
 
-  - Goggles framework vers.:  4.00.815
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  DAO class for a generic context resulting from the parsing of a group of data-import
@@ -23,8 +23,8 @@ class V3::ContextDAO
                 :name,                              # Symbol representing the context key, as defined in the parser defs.
                 :parent_context                     # Parent ContextDAO (when defined) or nil
 
-  attr_accessor :text_token,                        # text buffer used for the parsing, initially empty
-                :entity_list                        # Hash list of entities parsed for this context
+  attr_accessor :text_token,                        # text buffer used for the parsing, initially empty (i.e.: "50 SL M35", containing text tokens of several entities: "length", "stroke_type" and "category")
+                :entity_list                        # Hash list of entities parsed for this context (each entity key should be its ContextType name)
   #-- -------------------------------------------------------------------------
   #++
 

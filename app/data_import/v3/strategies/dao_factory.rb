@@ -8,7 +8,7 @@ require_relative '../../../data_import/v3/dao/parse_result'
 
 = V3::DAOFactory
 
-  - Goggles framework vers.:  4.00.817
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  Factory class for both EntityDAOs & ContextDAOs.
@@ -66,9 +66,9 @@ class V3::DAOFactory
   # The suggested way to process the contexts is as a sequential list.
   # (i.e. scanning all the contexts named "result_row" for result values)
   #
-  def new_context( name )
+  def new_context( name, parent_context = nil )
     @last_unique_id += 1
-    @context_list[ @last_unique_id ] = V3::ContextDAO.new( @last_unique_id, name.to_s )
+    @context_list[ @last_unique_id ] = V3::ContextDAO.new( @last_unique_id, name.to_s, parent_context )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -101,16 +101,30 @@ class V3::DAOFactory
   #++
 
 
-  # Retrieves all the entities for a specific context name.
+  # Retrieves all the entities for a specific context.
   #
   def get_entities_for_context( parent_context = nil )
     if parent_context.instance_of?( V3::ContextDAO )# Context specified? Return its entity list:
       parent_context.entity_list.values
     else                                            # Let's do a "manual" search among the entities:
+      # [Steve, 20150805] This check allows, so far, to have "root entities" laying around,
+      # waiting to be fetched. 'Still don't know if it's a really useful feature at all...
       @entity_list.values.map do |entity|
         entity if entity.parent_context == parent_context
       end.compact
     end
+  end
+
+
+  # Retrieves all the (siblings) contexts for a specific context.
+  #
+  # Note that by specifying +nil+ as a parent context, will result in all root
+  # context retrieved.
+  #
+  def get_siblings_for_context( parent_context = nil )
+    @context_list.values.map do |context|
+      context if context.respond_to?(:parent_context) && (context.parent_context == parent_context)
+    end.compact
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -122,7 +136,11 @@ class V3::DAOFactory
   def dump_to_s
     output = "\r\n---- Factory dump: ----"
     @context_list.each do |context_key, context|
-      output << "\r\n'#{context_key}': #{ context }"
+      if context.parent_context.instance_of?( V3::ContextDAO )
+        output << "\r\n(#{context.parent_context.id}) => '#{context_key}': #{ context }"
+      else
+        output << "\r\n'#{context_key}': #{ context }"
+      end
     end
     output << "\r\n"
     @entity_list.each do |entity_key, entity|

@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'spec_helper'
+require 'ffaker'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
 require_relative '../../../../app/data_import/v3/services/token_extractor'
@@ -16,7 +17,7 @@ describe V3::TokenExtractor, type: :service do
     end
     let( :tokenizers_array ) { dummy_wrapper.get_tokenizers_list() }
 
-    subject { tokenizers_array[ (rand * tokenizers_array.size).to_i ]  }
+    subject { tokenizers_array[ (rand * tokenizers_array.size).to_i ] }
 
     it_behaves_like( "(the existance of a method)", [
       :field_name, :starting_with, :ending_with, :line_timeout,
@@ -25,6 +26,32 @@ describe V3::TokenExtractor, type: :service do
     ] )
     #-- -----------------------------------------------------------------------
     #++
+
+
+    context "with random attributes," do
+      let(:field_name)        { FFaker::Lorem.word }
+      let(:starting_with)     { (rand * 10).to_i }
+      let(:ending_with)       { (rand * 100).to_i }
+      subject { V3::TokenExtractor.new( field_name, starting_with, ending_with ) }
+
+      describe "#field_name" do
+        it "returns the field name specified in the constructor" do
+          expect( subject.field_name ).to eq( field_name )
+        end
+      end
+
+      describe "#starting_with" do
+        it "returns the field name specified in the constructor" do
+          expect( subject.starting_with ).to eq( starting_with )
+        end
+      end
+
+      describe "#ending_with" do
+        it "returns the field name specified in the constructor" do
+          expect( subject.ending_with ).to eq( ending_with )
+        end
+      end
+    end
 
 
     describe "#initialize" do

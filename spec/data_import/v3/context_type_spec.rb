@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../app/data_import/v3/context_type'
+require_relative '../../../app/data_import/v3/dao/context_type'
 
 
 describe V3::ContextType, type: :model do

@@ -4,7 +4,7 @@
 
 = V3::EntityDAO
 
-  - Goggles framework vers.:  4.00.815
+  - Goggles framework vers.:  4.00.819
   - author: Steve A.
 
  DAO class for a generic entity resulting from the parsing of a data-import text
@@ -18,9 +18,9 @@ class V3::EntityDAO
                 :name,                              # Symbol representing the entity field key, as defined in the parser defs.
                 :parent_context                     # Parent ContextDAO (when defined) or nil
 
-  attr_accessor :text_token,                        # text buffer used for the parsing, initially empty
-                :parsed_value,                      # result value from the parsing
-                :destination_class                  # destination Class for the result value
+  attr_accessor :text_token,                        # text buffer used for the parsing, initially empty (i.e.: "SL", stroke_types.code)
+                :parsed_value,                      # result value from the actual parsing (i.e.: 1, stroke_types.id - filled only during later phases of the data-import procedure)
+                :destination_class                  # destination Class for the result value (i.e.: StrokeType - filled only during later phases of the data-import procedure)
   #-- -------------------------------------------------------------------------
   #++
 
