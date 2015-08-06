@@ -93,6 +93,9 @@ class V3::ContextType
            ( context_name.instance_of?( String ) && context_name.size > 0 )
       raise ArgumentError.new('context_name cannot be nil or empty!')
     end
+    unless args.instance_of?( Hash )
+      raise ArgumentError.new('args must be an Hash of options!')
+    end
     @context_name        = context_name
     @conditions          = args[:conditions]          ? args[:conditions]          : []
     @parent_context_name = args[:parent_context_name] ? args[:parent_context_name] : nil

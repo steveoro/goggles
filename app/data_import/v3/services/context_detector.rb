@@ -38,7 +38,7 @@ require_relative '../../../data_import/v3/dao/context_type'
 class V3::ContextDetector
   include Tools::Logging::V3
 
-  attr_reader :context_type, :logger, :current_context, :detection_index
+  attr_reader :context_type, :current_context, :detection_index
 
   # Set this to true or false to enable or disable debugging output, L1.
   #
@@ -63,10 +63,9 @@ class V3::ContextDetector
   # pre-defined parent context must be equal to previously
   # detected context (specified upon each new line feed).
   #
-  def initialize( context_type, logger = nil )
+  def initialize( context_type )
     raise ArgumentError.new('context_type must be an V3::ContextType!') unless context_type.instance_of?( V3::ContextType )
     @context_type = context_type
-    @logger = logger
     @current_context = nil
     @array_of_lines = []
     @detection_index = 0                            # Current starting index for matching inside the array_of_regexp

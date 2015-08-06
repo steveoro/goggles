@@ -2,14 +2,14 @@
 require 'spec_helper'
 
 # [Steve, 20140925] we must use a relative path for sake of CI server happyness:
-require_relative '../../../app/data_import/v3/fin_result_defs'
+require_relative '../../../app/data_import/v3/fin2_result_defs'
 
 
-describe V3::FinResultDefs, type: :model do
+describe V3::Fin2ResultDefs, type: :model do
 
   context "for a well-defined instance," do
 
-    subject { V3::FinResultDefs.new() }
+    subject { V3::Fin2ResultDefs.new() }
 
     it_behaves_like( "(the existance of a method)", [
       :context_types, :defined_keys, :required_keys,
@@ -28,12 +28,12 @@ describe V3::FinResultDefs, type: :model do
 
       context "when called for :category_header," do
         it "has a only :result_row key" do
-          expect( subject.context_types_children_of(:category_header).keys ).to contain_exactly( :result_row )
+          expect( subject.context_types_children_of(:event_individual).keys ).to contain_exactly( :result_row )
         end
       end
       context "when called for :relay_header," do
         it "has a only :result_row key" do
-          expect( subject.context_types_children_of(:relay_header).keys ).to contain_exactly( :relay_row )
+          expect( subject.context_types_children_of(:event_relay).keys ).to contain_exactly( :relay_row )
         end
       end
       context "when called for :team_ranking," do
@@ -44,7 +44,7 @@ describe V3::FinResultDefs, type: :model do
       context "when called for :stats," do
         it "has all the required keys" do
           expect( subject.context_types_children_of(:stats).keys ).to include(
-            :stats_details
+            :stats_details_1, :stats_details_2
           )
         end
       end
@@ -54,7 +54,8 @@ describe V3::FinResultDefs, type: :model do
           expect( subject.context_types_children_of(:result_row).keys.size ).to eq(0)
           expect( subject.context_types_children_of(:relay_row).keys.size ).to eq(0)
           expect( subject.context_types_children_of(:ranking_row).keys.size ).to eq(0)
-          expect( subject.context_types_children_of(:stats_details).keys.size ).to eq(0)
+          expect( subject.context_types_children_of(:stats_details_1).keys.size ).to eq(0)
+          expect( subject.context_types_children_of(:stats_details_2).keys.size ).to eq(0)
         end
       end
     end

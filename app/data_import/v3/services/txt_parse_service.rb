@@ -50,7 +50,7 @@ class V3::TxtParseService
   #-- -------------------------------------------------------------------------
   #++
 
-  attr_reader :result, :line_count, :total_data_rows, :previous_parent_context
+  attr_reader :result, :full_pathname, :line_count, :total_data_rows, :previous_parent_context
   # ----------------------------------------------------------------------------
   #++
 
@@ -63,10 +63,9 @@ class V3::TxtParseService
   # - :full_pathname => the full pathname to the parsed file;
   # - :logger => override for the logger instance; defaults to parsing_definitions.logger
   #
-  def initialize( parsing_definitions, args = {} )
+  def initialize( parsing_definitions, full_pathname )
     @parsing_defs   = parsing_definitions
-    @full_pathname  = args[:full_pathname] ? args[:full_pathname] : nil
-    @logger         = args[:logger] ? args[:logger] : parsing_definitions.logger
+    @full_pathname  = full_pathname
     clear
   end
   # ----------------------------------------------------------------------------

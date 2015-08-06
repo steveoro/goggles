@@ -4,7 +4,7 @@ require_relative '../../data_import/v3/txt_result_defs'
 require_relative '../../data_import/v3/dao/context_type'
 require_relative '../../data_import/v3/services/context_detector'
 require_relative '../../data_import/v3/services/token_extractor'
-require_relative '../../data_import/v3/fin_result_consts'
+require_relative '../../data_import/v3/fin_startlist_consts'
 
 
 =begin
@@ -16,11 +16,13 @@ require_relative '../../data_import/v3/fin_result_consts'
 
  Value object/Container class for the lists of V3::ContextDetector and V3::TokenExtractor
  classes and all the other structures required by the parser processing
- text data files of type 'fin_result'.
+ text data files of type 'fin_startlist'.
 
 =end
-class V3::FinResultDefs < V3::TxtResultDefs
-  include V3::FinResultConsts
+class V3::FinStartListDefs < V3::TxtResultDefs
+  include V3::FinStartListConsts
+  # ----------------------------------------------------------------------------
+  #++
 
   # Creates a new instance, storing the parameters for the parsing.
   #
@@ -49,18 +51,9 @@ class V3::FinResultDefs < V3::TxtResultDefs
     #
     @context_types = {                                # HEADER CONTEXT(s) def. arrays:
       meeting_header:   V3::ContextDetector.new( context_type_meeting_header ),
-      category_header:  V3::ContextDetector.new( context_type_category_header ),
-      relay_header:     V3::ContextDetector.new( context_type_relay_header ),
-      team_ranking:     V3::ContextDetector.new( context_type_team_ranking ),
-
-      team_stats:       V3::ContextDetector.new( context_type_team_stats ),
-      stats:            V3::ContextDetector.new( context_type_stats ),
+      event_individual: V3::ContextDetector.new( context_type_event_individual ),
                                                       # DETAIL CONTEXT(s) def. arrays:
-      result_row:       V3::ContextDetector.new( context_type_result_row ),
-      relay_row:        V3::ContextDetector.new( context_type_relay_row ),
-      ranking_row:      V3::ContextDetector.new( context_type_ranking_row ),
-
-      stats_details:    V3::ContextDetector.new( context_type_stats_details )
+      entry_row:        V3::ContextDetector.new( context_type_entry_row )
     }
 
     # == String tokenizer type hash
@@ -95,110 +88,25 @@ class V3::FinResultDefs < V3::TxtResultDefs
         ]
       ],
 
-      category_header: [                              # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
-        nil,
-        # -- Fields to be extracted: :distance, :style, :gender, :category_group, :base_time
+      event_individual: [                              # 2 row-type conditions => 2 cached rows => the tokenizer list must have 2 elements
+        # -- Fields to be extracted: :distance, :style
         [
-          tokenizer_category_header_distance,
-          tokenizer_category_header_style,
-          tokenizer_category_header_gender,
-          tokenizer_category_header_group,
-          tokenizer_category_header_base_time
+          tokenizer_event_individual_distance,
+          tokenizer_event_individual_style
         ],
         nil
       ],
 
-      # -- Fields to be extracted: :type, :distance, :style, :gender (can be nil), :category_group, :base_time
-      relay_header: [
-        nil,
-        [
-          tokenizer_relay_header_type,
-          tokenizer_relay_header_distance,
-          tokenizer_relay_header_style,
-          tokenizer_category_header_gender,
-          tokenizer_relay_header_category_group,
-          tokenizer_relay_header_base_time
-        ],
-        nil
-      ],
-
-      # -- Fields to be extracted: (nothing, 1 line in cache)
-      team_ranking: [
-        nil
-      ],
-
-      # -- Fields to be extracted: (nothing, 1 line in cache)
-      team_stats: [
-        nil
-      ],
-
-      # -- Fields to be extracted: (nothing, 1 line in cache)
-      stats: [
-        nil
-      ],
-
-      result_row: [                                 # 1 condition => 1 cached row
+      # -- Fields to be extracted:
+      # [ :entry_order, :swimmer_name, :category_group, :team_name, :entry_time ]
+      entry_row: [                                  # 1 condition => 1 cached row
         [                                           # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
-          tokenizer_result_row_result_position,
-          tokenizer_result_row_team_code,
-          tokenizer_result_row_swimmer_name,
-          tokenizer_result_row_swimmer_year,
-          tokenizer_result_row_team_name,
-          tokenizer_result_row_result_time,
-          tokenizer_result_row_result_score
+          tokenizer_entry_row_entry_order,
+          tokenizer_entry_row_swimmer_name,
+          tokenizer_entry_row_category_group,
+          tokenizer_entry_row_team_name,
+          tokenizer_entry_row_entry_time
         ]
-      ],
-
-      # -- Fields to be extracted: :result_position, :team_name, :result_time, :result_score
-      relay_row: [
-        [                                             # => the tokenizer list must have 1 element (which is 1 array of 2-item arrays)
-          tokenizer_relay_row_result_position,
-          tokenizer_relay_row_team_name,
-          tokenizer_relay_row_result_time,
-          tokenizer_relay_row_result_score
-        ]
-      ],
-
-      # -- Fields to be extracted: :result_position, :team_code, :team_name, :result_score
-      ranking_row: [
-        [
-          tokenizer_ranking_row_result_position,
-          tokenizer_ranking_row_team_code,
-          tokenizer_ranking_row_team_name,
-          tokenizer_ranking_row_result_score
-        ]
-      ],
-
-      # -- Fields to be extracted: :teams_tot, :teams_presence,
-      #    :swimmer_tot, :swimmer_presence, :entries_tot, :entries_presence,
-      #    :disqual_tot, :withdrawals_tot
-      stats_details: [
-        [ tokenizer_stats_teams_tot ],
-        nil,
-        [ tokenizer_stats_teams_presence ], nil,
-
-        [ tokenizer_stats_swimmers_tot ],
-        nil,
-        nil,
-        nil,
-        nil, nil,
-
-        [ tokenizer_stats_swimmers_presence ],
-        nil,
-        nil,
-        nil, nil,
-
-        [ tokenizer_stats_entries_tot ],
-        nil,
-        nil, nil,
-
-        [ tokenizer_stats_entries_presence ],
-        nil, nil,
-
-        nil,
-        nil,
-        [ tokenizer_stats_disqual_tot ],
-        [ tokenizer_stats_withdrawals_tot ]
       ]
     }
 
@@ -216,74 +124,19 @@ class V3::FinResultDefs < V3::TxtResultDefs
         [ :organization, :title ],
         [ :meeting_dates, :organization ]
       ],
-      category_header: [                            # 3 row-type conditions => 3 cached rows => the tokenizer list must have 3 elements
-        nil,
-        [ :distance, :style, :gender, :category_group, :base_time ],
-        nil
-      ],
-      relay_header: [
-        nil,
-        [ :type, :distance, :style, :gender, :category_group, :base_time ],
+      event_individual: [                           # 2 row-type conditions => 3 cached rows => the tokenizer list must have 2 elements
+        [ :distance, :style ],
         nil
       ],
 
-      result_row: [                                 # 1 condition => 1 cached row => the tokenizer list must have 1 element (which is 1 array)
+      entry_row: [                                  # 1 condition => 1 cached row => the tokenizer list must have 1 element (which is 1 array)
         [
-          :result_position,
-          :team_code,
+          :entry_order,
           :swimmer_name,
-          :swimmer_year,
+          :category_group,
           :team_name,
-          :result_time,
-          :result_score
+          :entry_time
         ]
-      ],
-      relay_row: [
-        [ :result_position, :team_name, :result_time, :result_score ]
-      ],
-
-      team_ranking: [                               # 1 row-type conditions => 1 cached rows => the tokenizer list must have 1 element
-        nil
-      ],
-      ranking_row: [
-        [ :result_position, :team_code, :team_name, :result_score ]
-      ],
-
-      team_stats: [
-        nil
-      ],
-
-      stats: [
-        nil
-      ],
-
-      stats_details: [
-        [ :teams_tot ],
-        nil,
-        [ :teams_presence ], nil,
-
-        [ :swimmer_tot ],
-        nil,
-        nil,
-        nil,
-        nil, nil,
-
-        [ :swimmer_presence ],
-        nil,
-        nil,
-        nil, nil,
-
-        [ :entries_tot ],
-        nil,
-        nil, nil,
-
-        [ :entries_presence ],
-        nil,  nil,
-
-        nil,
-        nil,
-        [ :disqual_tot ],
-        [ :withdrawals_tot ]
       ]
     }
 
@@ -298,9 +151,8 @@ class V3::FinResultDefs < V3::TxtResultDefs
     # treated as unique and added to the result array of data pages.
     #
     @context_keys = {
-      meeting_header:  [:title],
-      category_header: [:distance, :style, :gender, :category_group],
-      relay_header:    [:type, :category_group]     # (type includes also the gender token)
+      meeting_header:   [:title],
+      event_individual: [:distance, :style]
     }
                                                     # === Internal structure integrity checks: ===
                                                     # Pre-check format type definition:

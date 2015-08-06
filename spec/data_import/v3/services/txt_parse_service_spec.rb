@@ -9,6 +9,7 @@ require_relative '../../../../app/data_import/v3/dao/context_type'
 
 describe V3::TxtParseService, type: :service do
 
+  let(:fake_file_name) { "import/whatever.txt" }
   let(:fixture_data) do
     [
       "",
@@ -18,10 +19,10 @@ describe V3::TxtParseService, type: :service do
   end
 
   context "for a new empty instance," do
-    subject { V3::TxtParseService.new( V3::FinResultDefs.new ) }
+    subject { V3::TxtParseService.new( V3::FinResultDefs.new, fake_file_name ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :result, :line_count, :total_data_rows, :previous_parent_context,
+      :result, :full_pathname, :line_count, :total_data_rows, :previous_parent_context,
       :clear, :parse, :result_for,
       :increase_line_count, :clear_parent_context, :log_parsing_stats
     ] )
@@ -34,6 +35,14 @@ describe V3::TxtParseService, type: :service do
       it "has no contexts or entities" do
         expect( subject.result.context_list ).to be_empty
         expect( subject.result.entity_list ).to be_empty
+      end
+    end
+    describe "#full_pathname" do
+      it "is a String" do
+        expect( subject.full_pathname ).to be_an_instance_of( String )
+      end
+      it "has the value specified in the constructor" do
+        expect( subject.full_pathname ).to eq( fake_file_name )
       end
     end
     describe "#line_count" do
@@ -71,7 +80,7 @@ describe V3::TxtParseService, type: :service do
 
 
   context "for a valid instance," do
-    subject { V3::TxtParseService.new( V3::FinResultDefs.new ) }
+    subject { V3::TxtParseService.new( V3::FinResultDefs.new, fake_file_name ) }
 
     let( :dummy_wrapper ) do
       class V3::TxtParseService::DummyWrapper; include V3::FinResultConsts; end

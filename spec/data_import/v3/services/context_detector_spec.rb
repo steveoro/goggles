@@ -5,7 +5,6 @@ require 'spec_helper'
 require_relative '../../../../app/data_import/v3/services/context_detector'
 require_relative '../../../../app/data_import/v3/fin_result_consts'
 require_relative '../../../../app/data_import/v3/dao/context_type'
-require_relative '../../../../lib/framework/console_logger'
 
 
 describe V3::ContextDetector, type: :service do
@@ -18,13 +17,15 @@ describe V3::ContextDetector, type: :service do
     let( :context_types_array ) { dummy_wrapper.get_context_types_list() }
     let( :fix_context_type )    { context_types_array[ (rand * context_types_array.size).to_i ] }
 
-    subject { V3::ContextDetector.new( fix_context_type, ConsoleLogger.new ) }
+    subject { V3::ContextDetector.new( fix_context_type ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :context_type, :logger,
+      :context_type,
       :current_context, :dump_line_cache, :feed_and_detect,
       :detection_index, :detection_is_in_progress,
-      :clear, :parent_context_name, :is_a_parent_context, :to_s
+      :clear, :parent_context_name, :is_a_parent_context, :to_s,
+      # The following one is given by the inclusion of Tools::Logging::V3
+      :log
     ] )
     #-- -----------------------------------------------------------------------
     #++
@@ -45,12 +46,6 @@ describe V3::ContextDetector, type: :service do
       end
       it "has the expected V2::ContextTypeDef name" do
         expect( subject.context_type.context_name ).to eq( fix_context_type.context_name )
-      end
-    end
-
-    describe "#logger (when defined)" do
-      it "is a Logger or ConsoleLogger instance" do
-        expect( subject.logger ).to be_an_instance_of( Logger ).or be_an_instance_of( ConsoleLogger )
       end
     end
     #-- -----------------------------------------------------------------------
