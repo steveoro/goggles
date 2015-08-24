@@ -56,7 +56,7 @@ class Meeting < ActiveRecord::Base
   has_many :teams,          through: :meeting_individual_results
   has_many :event_types,    through: :meeting_events
 
-  validates_presence_of :code,        length: { within: 1..20 }, allow_nil: false
+  validates_presence_of :code,        length: { within: 1..50 }, allow_nil: false
   validates_presence_of :header_year, length: { within: 1..9 }, allow_nil: false
   validates_presence_of :edition,     length: { maximum: 3 }, allow_nil: false
   validates_presence_of :description, length: { maximum: 100 }, allow_nil: false
