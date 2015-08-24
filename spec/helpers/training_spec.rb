@@ -27,12 +27,12 @@ describe TrainingsHelper, :type => :helper do
         expect( helper.link_to_trainings() ).not_to be_nil
       end
       it "contains a '#{I18n.t(:back_to_index_view)}' label" do
-        expect( helper.link_to_trainings() ).to include( I18n.t(:back_to_index_view) )
+        expect( helper.link_to_trainings() ).to include( "".html_safe << I18n.t(:back_to_index_view) )
       end
     end
     describe "#link_to_training_show()" do
       it "contains a '#{I18n.t(:show)}' label" do
-        expect( helper.link_to_training_show(fixture) ).to include( I18n.t(:show) )
+        expect( helper.link_to_training_show(fixture) ).to include( "".html_safe << I18n.t(:show) )
       end
     end
     describe "#link_to_training_show_with_label()" do
@@ -49,7 +49,7 @@ describe TrainingsHelper, :type => :helper do
     end
     describe "#link_to_training_duplicate()" do
       it "contains a '#{I18n.t(:duplicate)}' label" do
-        expect( helper.link_to_training_duplicate(fixture) ).to include( I18n.t(:duplicate) )
+        expect( helper.link_to_training_duplicate(fixture) ).to include( "".html_safe << I18n.t(:duplicate) )
       end
     end
     describe "#link_to_training_create_user_training()" do
@@ -116,7 +116,7 @@ describe TrainingsHelper, :type => :helper do
     end
 
     it_behaves_like "TrainingsHelper methods, successful with accessible content" do
-      let( :fixture ) { non_shared_fixture }      
+      let( :fixture ) { non_shared_fixture }
     end
   end
   #-- -------------------------------------------------------------------------

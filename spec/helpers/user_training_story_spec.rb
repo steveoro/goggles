@@ -26,7 +26,7 @@ describe UserTrainingStoriesHelper, :type => :helper do
         expect( helper.link_to_user_training_stories() ).not_to be_nil
       end
       it "contains a '#{I18n.t(:back_to_index_view)}' label" do
-        expect( helper.link_to_user_training_stories() ).to include( I18n.t(:back_to_index_view) )
+        expect( helper.link_to_user_training_stories() ).to include( "".html_safe << I18n.t(:back_to_index_view) )
       end
     end
     describe "#link_to_user_training_from_story()" do
@@ -45,7 +45,7 @@ describe UserTrainingStoriesHelper, :type => :helper do
     end
     describe "#link_to_user_training_story_show()" do
       it "contains a '#{I18n.t(:show)}' label" do
-        expect( helper.link_to_user_training_story_show(fixture) ).to include( I18n.t(:show) )
+        expect( helper.link_to_user_training_story_show(fixture) ).to include( "".html_safe << I18n.t(:show) )
       end
     end
   end
@@ -89,7 +89,7 @@ describe UserTrainingStoriesHelper, :type => :helper do
         expect( helper.link_to_user_training_stories() ).not_to be_nil
       end
       it "contains a '#{I18n.t(:back_to_index_view)}' label" do
-        expect( helper.link_to_user_training_stories() ).to include( I18n.t(:back_to_index_view) )
+        expect( helper.link_to_user_training_stories() ).to include( "".html_safe << I18n.t(:back_to_index_view) )
       end
     end
 
@@ -141,13 +141,13 @@ describe UserTrainingStoriesHelper, :type => :helper do
 
     describe "#link_to_user_training_story_edit()" do
       it "contains a '#{I18n.t(:edit)}' label" do
-        expect( helper.link_to_user_training_story_edit(owned_fixture) ).to include( I18n.t(:edit) )
+        expect( helper.link_to_user_training_story_edit(owned_fixture) ).to include( "".html_safe << I18n.t(:edit) )
       end
     end
 
     describe "#link_to_user_training_story_delete()" do
       it "contains a '#{I18n.t(:delete)}' label" do
-        expect( helper.link_to_user_training_story_delete(owned_fixture) ).to include( I18n.t(:delete) )
+        expect( helper.link_to_user_training_story_delete(owned_fixture) ).to include( "".html_safe << I18n.t(:delete) )
       end
     end
 

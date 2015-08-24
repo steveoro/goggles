@@ -341,6 +341,9 @@ Kimono APIs used to retrieve exact manifest dates for each manifest link found:
       when 503
         puts " The API got frozen! (Try again later; error code: 503)"
         nil
+      when 504
+        puts " Gateway timeout, error code: 504. Try again later."
+        nil
       else
         response.return!(request, result, &block) # Do the defaul behaviour
       end

@@ -27,12 +27,12 @@ describe UserTrainingsHelper, :type => :helper do
         expect( helper.link_to_user_trainings() ).not_to be_nil
       end
       it "contains a '#{I18n.t(:back_to_index_view)}' label" do
-        expect( helper.link_to_user_trainings() ).to include( I18n.t(:back_to_index_view) )
+        expect( helper.link_to_user_trainings() ).to include( "".html_safe << I18n.t(:back_to_index_view) )
       end
     end
     describe "#link_to_user_training_show()" do
       it "contains a '#{I18n.t(:show)}' label" do
-        expect( helper.link_to_user_training_show(fixture) ).to include( I18n.t(:show) )
+        expect( helper.link_to_user_training_show(fixture) ).to include( "".html_safe << I18n.t(:show) )
       end
     end
     describe "#link_to_user_training_show_with_label()" do
@@ -49,7 +49,7 @@ describe UserTrainingsHelper, :type => :helper do
     end
     describe "#link_to_user_training_duplicate()" do
       it "contains a '#{I18n.t(:duplicate)}' label" do
-        expect( helper.link_to_user_training_duplicate(fixture) ).to include( I18n.t(:duplicate) )
+        expect( helper.link_to_user_training_duplicate(fixture) ).to include( "".html_safe << I18n.t(:duplicate) )
       end
     end
     describe "#link_to_user_training_create_user_story()" do
@@ -107,7 +107,7 @@ describe UserTrainingsHelper, :type => :helper do
         expect( helper.link_to_user_trainings() ).not_to be_nil
       end
       it "contains a '#{I18n.t(:back_to_index_view)}' label" do
-        expect( helper.link_to_user_trainings() ).to include( I18n.t(:back_to_index_view) )
+        expect( helper.link_to_user_trainings() ).to include( "".html_safe << I18n.t(:back_to_index_view) )
       end
     end
 
@@ -150,12 +150,12 @@ describe UserTrainingsHelper, :type => :helper do
 
     describe "#link_to_user_training_edit()" do
       it "contains a '#{I18n.t(:edit)}' label" do
-        expect( helper.link_to_user_training_edit(owned_fixture) ).to include( I18n.t(:edit) )
+        expect( helper.link_to_user_training_edit(owned_fixture) ).to include( "".html_safe << I18n.t(:edit) )
       end
     end
     describe "#link_to_user_training_delete()" do
       it "contains a '#{I18n.t(:delete)}' label" do
-        expect( helper.link_to_user_training_delete(owned_fixture) ).to include( I18n.t(:delete) )
+        expect( helper.link_to_user_training_delete(owned_fixture) ).to include( "".html_safe << I18n.t(:delete) )
       end
     end
 
@@ -203,7 +203,7 @@ describe UserTrainingsHelper, :type => :helper do
     end
 
     it_behaves_like "UserTrainingsHelper methods, successful with accessible content" do
-      let( :fixture ) { shared_fixture }      
+      let( :fixture ) { shared_fixture }
     end
   end
   #-- -------------------------------------------------------------------------
