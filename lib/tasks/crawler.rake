@@ -334,6 +334,7 @@ Kimono APIs used to retrieve exact manifest dates for each manifest link found:
   # @param page_link, link to the page to be retrieved
   #
   def get_web_response( page_link )
+    puts "Retrieving '#{page_link}'..."
     web_response = RestClient.get( page_link ) do |response, request, result, &block|
       case response.code
       when 200
