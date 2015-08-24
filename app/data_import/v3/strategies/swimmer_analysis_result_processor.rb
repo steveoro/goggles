@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require_relative '../../../data_import/v3/builders/swimmer_builder'
 require_relative '../../../strategies/sql_converter'
 
 
@@ -7,7 +8,7 @@ require_relative '../../../strategies/sql_converter'
 
 = V3::SwimmerAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.719
+  - Goggles framework vers.:  4.00.821
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single DataImportSwimmerAnalysisResult
@@ -71,7 +72,7 @@ class V3::SwimmerAnalysisResultProcessor
                                                     # -- Can ADD new Swimmer? (Default action for unconfirmed swimmer_analysis_results)
     if (! is_confirmed) || swimmer_analysis_result.can_insert_swimmer
       begin
-        swimmer_builder = V3::DataImportSwimmerBuilder.build_from_parameters(
+        swimmer_builder = V3::SwimmerBuilder.build_from_parameters(
           swimmer_analysis_result.data_import_session,
           swimmer_name,
           # [Steve] If we have a range of years, signal to the builder that the

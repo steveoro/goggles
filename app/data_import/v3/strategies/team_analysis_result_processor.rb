@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-# require_relative '../../../data_import/v3/builders/data_import_swimmer_builder'
+require_relative '../../../data_import/v3/builders/team_builder'
 require_relative '../../../strategies/sql_converter'
 
 
@@ -8,7 +8,7 @@ require_relative '../../../strategies/sql_converter'
 
 = V3::TeamAnalysisResultProcessor
 
-  - Goggles framework vers.:  4.00.819
+  - Goggles framework vers.:  4.00.821
   - author: Steve A.
 
  Strategy class delegated to process (check & serialize) a single DataImportTeamAnalysisResult
@@ -71,7 +71,7 @@ class V3::TeamAnalysisResultProcessor
                                                     # -- Can ADD new Team? (Default action for unconfirmed team_analysis_results)
     if (! is_confirmed) || team_analysis_result.can_insert_team
       begin
-        team_builder = V3::DataImportTeamBuilder.build_from_parameters(
+        team_builder = V3::TeamBuilder.build_from_parameters(
           team_analysis_result.data_import_session,
           team_name,
           team_analysis_result.season,

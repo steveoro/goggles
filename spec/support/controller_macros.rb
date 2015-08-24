@@ -44,7 +44,7 @@ module ControllerMacros
   def login_admin( chosen_admin = nil )
     @request.env["devise.mapping"] = Devise.mappings[:admin]
     @admin = chosen_admin || create(:admin)
-    sign_in :user, @admin # sign_in(scope, resource)
+    sign_in :admin, @admin # sign_in(scope, resource)
   end
 
 
@@ -55,14 +55,14 @@ module ControllerMacros
   # Assigns an @admin User instance with the currently logged-in admin.
   #
   def login_admin_with_capybara( chosen_admin = nil )
-    admin = chosen_admin || create(:admin)
+    @admin = chosen_admin || create(:admin)
     visit new_admin_session_path()
     fill_in "user_email", with: @admin.email
     fill_in "user_password", with: @admin.password
     click_button I18n.t('devise.new_session_submit')
 
 #    expect(response.status).to eq(200)
-#    controller.stub current_user: @admin
+#    controller.stub current_admin: @admin
   end
   #-- -------------------------------------------------------------------------
   #++

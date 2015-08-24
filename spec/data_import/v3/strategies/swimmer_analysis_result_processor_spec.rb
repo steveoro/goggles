@@ -56,8 +56,7 @@ describe V3::SwimmerAnalysisResultProcessor, type: :strategy do
       context "when NOT CONFIRMED or can CREATE SWIMMER (No chosen override + unconfirmed + same name best match)," do
         let(:swimmer_analysis_result) { create( :data_import_swimmer_analysis_result, data_import_session: data_import_session ) }
 
-# FIXME IT FAILS:
-        xit "adds just a new DataImportSwimmer row" do
+        it "adds just a new DataImportSwimmer row" do
           is_ok = nil
           new_swimmer = build( :swimmer )
           swimmer_analysis_result.chosen_swimmer_id = nil

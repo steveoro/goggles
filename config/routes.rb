@@ -278,6 +278,7 @@ Goggles::Application.routes.draw do
         post    "data_import/parse_file",                     to: "data_import#parse_file"
 
         # Phase 1.10, Team analysis:
+#        get     "data_import/team_analysis",                  to: "data_import#team_analysis"
         get     "data_import/team_analysis/:session_id",      to: "data_import#team_analysis/:session_id",              as: "data_import_team_analysis"
         post    "data_import/team_confirm/:session_id",       to: "data_import#team_confirm/:session_id",               as: "data_import_team_confirm"
 

@@ -93,6 +93,7 @@ it:
     on_commit_go_back_to_step1: "Su commit, salva modifiche ma torna al 'Passo 1' (utile per importare solo i nomi mancanti, senza aggiornare l'esistente.)"
     unconfirmed_results_will_be_added: "NOTA: Ricorda che tutti i risultati non confermati saranno trattati come 'non-riconosciuti' o MANCANTI e perciò saranno aggiunti come NUOVI nomi."
     team_analysis_completed: "Analisi dei Team completata."
+    parsing_error_nil_result: "Errore nel parsing: risultato nil da parsing quando era atteso un V3::ParseResult."
 
     continue_with_swimmer_analysis: "Continua Analisi nomi Nuotatori"
     continue_with_swimmer_analysis_tooltip: "(Questo rilancera' la fase 1.1 col flag DISABILITATO per la creazione forzata di Nuotatori mancanti, in modo da fare sempre l'analisi manuale dei risultati esistenti)"

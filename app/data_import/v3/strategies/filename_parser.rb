@@ -10,11 +10,21 @@ require_relative '../../../data_import/v3/dao/header_fields_dao'
 
 = V3::FilenameParser
 
-  - Goggles framework vers.:  4.00.819
+  - Goggles framework vers.:  4.00.821
   - author: Steve A.
 
- Strategy class dedicated to extracting required Meeting fields
- from result file names.
+ Strategy class dedicated to the extraction of some of the required Meeting fields
+ from the import file name.
+
+ The file name is assumed to be formatted like this:
+
+    <3char_prefix><header_date_in_ISO_format><meeting_code_name>-<anything>.<extension>
+
+ This is particolary useful for file formats that do not include this minimum
+ required dataset inside of them. (Think of CSI-results, for instance).
+
+ The file name format is mandatory and allows unique Meeting identification.
+
 
 === Typical usage:
 

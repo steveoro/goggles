@@ -32,9 +32,21 @@ class V3::ParseResult
   def initialize( file_name )
     @file_name = file_name
     @factory = V3::DAOFactory.new()
+    @serialized = false
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Returns +true+ if the #serialize or the #deserialize method have been
+  # called at least once after the creation of new entities or contexts.
+  #
+  # Keep in mind that this does not guaratee the actual serialization of the
+  # binary data returned by the #serialize method.
+  #
+  def is_serialized?()
+    @serialized
+  end
 
 
   # Returns the internal Entity hash list.
@@ -74,6 +86,7 @@ class V3::ParseResult
   # Wrapper for same-named method in V3::DAOFactory.
   #
   def new_entity( name, parent_context = nil )
+    @serialized = false
     @factory.new_entity( name, parent_context )
   end
 
@@ -89,6 +102,7 @@ class V3::ParseResult
   # Wrapper for same-named method in V3::DAOFactory.
   #
   def new_context( name, parent_context = nil )
+    @serialized = false
     @factory.new_context( name, parent_context )
   end
   #-- -------------------------------------------------------------------------
@@ -147,6 +161,7 @@ class V3::ParseResult
   # Returns the marshaled binary data, ready to be saved on file.
   #
   def serialize
+    @serialized = true
     Marshal.dump( @factory )
   end
 
@@ -156,6 +171,7 @@ class V3::ParseResult
   #
   def deserialize( binary_data )
     @factory.clear
+    @serialized = true
     @factory = Marshal.load( binary_data )
   end
   #-- -------------------------------------------------------------------------

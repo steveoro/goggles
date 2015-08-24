@@ -55,8 +55,7 @@ describe V3::TeamAnalysisResultProcessor, type: :strategy do
       context "when NOT CONFIRMED or can CREATE TEAM (No chosen override + unconfirmed + same name best match to avoid affiliation)," do
         let(:team_analysis_result) { create( :data_import_team_analysis_result, data_import_session: data_import_session ) }
 
-# FIXME IT FAILS:
-        xit "adds just a new DataImportTeam row" do
+        it "adds just a new DataImportTeam row" do
           is_ok = nil
           new_team = build( :team )
           team_analysis_result.chosen_team_id = nil

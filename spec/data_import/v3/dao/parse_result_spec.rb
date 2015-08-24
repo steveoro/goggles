@@ -42,6 +42,7 @@ describe V3::ParseResult, :type => :model do
 
   it_behaves_like( "(the existance of a method)", [
     :file_name, :entity_list, :context_list,
+    :is_serialized?,
     :serialize, :deserialize, :==,
     :to_s,
     # The following are wrappers for factory methods, so we don't need to test
@@ -54,6 +55,15 @@ describe V3::ParseResult, :type => :model do
     :get_siblings_for_context,
     :dump_to_s
   ])
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  context "for a newly created instance" do
+    it "is not is_serialized?" do
+      expect( subject.is_serialized? ).to be false
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -117,11 +127,18 @@ describe V3::ParseResult, :type => :model do
   end
 
 
-  describe "#serialize / #deserialize" do
+  context "when using both #serialize & #deserialize," do
     it "stores and restores the whole object" do
       string_dump = subject.dump_to_s
       cloned_subject = subject.deserialize( subject.serialize )
       expect( cloned_subject.dump_to_s ).to eq( string_dump )
+    end
+
+    it "sets is_serialized? to true after each method" do
+      bin_data = subject.serialize
+      expect( subject.is_serialized? ).to be true
+      subject.deserialize( bin_data )
+      expect( subject.is_serialized? ).to be true
     end
   end
   #-- -------------------------------------------------------------------------
