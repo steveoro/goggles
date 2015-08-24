@@ -50,7 +50,7 @@ class DataImportMeeting < ActiveRecord::Base
   has_many :data_import_meeting_relay_results, through: :data_import_meeting_programs
 
   validates_presence_of :code
-  validates_length_of   :code, within: 1..20, allow_nil: false
+  validates_length_of   :code, within: 1..50, allow_nil: false
 
   validates_presence_of :description
   validates_length_of :description, maximum: 100
