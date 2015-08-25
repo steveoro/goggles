@@ -1,6 +1,6 @@
 -- Leega
--- Based on Mino Forlani "Specchietto supermaster"
--- Create seson 2014-2015 FIN meetings with related swimming pools and cities
+-- Based on Mino Forlani "Specchietto supermaster 2015"
+-- Create season 2014-2015 FIN meetings with related swimming pools and cities
 -- Updates existing swimming pools with more appropriate datas
 -- Begin script
 /*!40101 SET character_set_client = latin1 */;
@@ -314,14 +314,14 @@ INSERT INTO meetings (id,header_date,season_id,has_warm_up_pool,is_under_25_admi
 (14274,'2015-02-01',142,0,1,'regpuglia',0,0,0,2,0,'?','REGIONALI PUGLIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14275,'2015-02-07',142,0,1,'reglombardia',0,0,0,2,0,'?','REGIONALI LOMBARDIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14276,'2015-02-08',142,0,1,'regvenetoefriuli',0,0,0,2,0,'?','REGIONALI VENETO E FRIULI',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14277,'2015-01-13',142,0,1,'regsicilia',0,0,0,2,0,'?','REGIONALI SICILIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14278,'2015-01-14',142,0,1,'regcampani',0,0,0,2,0,'?','REGIONALI CAMPANI',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14277,'2015-02-13',142,0,1,'regsicilia',0,0,0,2,0,'?','REGIONALI SICILIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14278,'2015-02-14',142,0,1,'regcampania',0,0,0,2,0,'?','REGIONALI CAMPANIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14279,'2015-02-15',142,0,1,'regliguria',0,0,0,2,0,'?','REGIONALI LIGURIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14280,'2015-02-21',142,0,1,'regabruzzo',0,0,0,2,0,'?','REGIONALI ABRUZZO',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14281,'2015-02-21',142,0,1,'regdelpiemonte',0,0,0,2,0,'?','REGIONALI DEL PIEMONTE',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14282,'2015-02-21',142,0,1,'regtoscani',0,0,0,2,0,'?','REGIONALI TOSCANI',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14283,'2015-01-22',142,0,1,'regtrentinoaltoadige',0,0,0,2,0,'?','REGIONALI TRENTINO-ALTO ADIGE',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14284,'2015-01-22',142,0,1,'regumbria',0,0,0,2,0,'?','REGIONALI UMBRIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14282,'2015-02-21',142,0,1,'regtoscana',0,0,0,2,0,'?','REGIONALI TOSCANA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14283,'2015-02-22',142,0,1,'regtrentinoaltoadige',0,0,0,2,0,'?','REGIONALI TRENTINO-ALTO ADIGE',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14284,'2015-02-22',142,0,1,'regumbria',0,0,0,2,0,'?','REGIONALI UMBRIA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14285,'2015-02-22',142,0,1,'regmarche',0,0,0,2,0,'?','REGIONALI MARCHE',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14286,'2015-02-28',142,0,1,'regsardegna',0,0,0,2,0,'?','REGIONALI SARDEGNA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14287,'2015-03-01',142,0,1,'regmolise',0,0,0,2,0,'?','REGIONALI MOLISE',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
@@ -337,7 +337,7 @@ INSERT INTO meetings (id,header_date,season_id,has_warm_up_pool,is_under_25_admi
 (14297,'2015-03-15',142,0,1,'regcalabri',0,0,0,2,0,'?','REGIONALI CALABRI',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14298,'2015-03-22',142,0,1,'padovamaxzuin',0,0,0,2,0,'?','MEMORIAL MAX ZUIN',2,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14299,'2015-03-22',142,0,1,'rapallomasterdiprimavera',0,0,0,2,0,'?','TROFEO MASTER DI PRIMAVERA',2,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14300,'2015-03-22',142,0,1,'lumezzanesprintalbatros',0,0,0,2,0,'?','TROFEOSPRINT ALBATROS',1,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14300,'2015-03-22',142,0,1,'lumezzanesprintalbatros',0,0,0,2,0,'?','TROFEO SPRINT ALBATROS',1,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14301,'2015-03-22',142,0,1,'baridiprimavera',0,0,0,2,0,'?','TROFEO DI PRIMAVERA',3,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14302,'2015-03-22',142,0,1,'cataniaetnanuoto',0,0,0,2,0,'?','TROFEO ETNA NUOTO',2,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14303,'2015-03-22',142,0,1,'cagliarisardegnanuota',0,0,0,2,0,'?','SARDEGNA NUOTA',0,'2015',2,(select t.id from edition_types t where t.code = 'A'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
@@ -371,7 +371,7 @@ INSERT INTO meetings (id,header_date,season_id,has_warm_up_pool,is_under_25_admi
 (14330,'2015-04-22',142,0,1,'trevisoabettiol',0,0,0,2,0,'?','MEMORIAL A. BETTIOL',15,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14331,'2015-05-23',142,0,1,'genovapiscinedialbaro',0,0,0,2,0,'?','TROFEO PISCINE DI ALBARO',4,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14332,'2015-05-23',142,0,1,'cremonacanottieribaldesio',0,0,0,2,0,'?','MEETING CANOTTIERI BALDESIO',2,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
-(14333,'2015-05-23',142,0,1,'putignanospedonadir',0,0,0,2,0,'?','TROFEO SPEDO NADIR',8,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
+(14333,'2015-05-23',142,0,1,'putignanospeedonadir',0,0,0,2,0,'?','TROFEO SPEEDO NADIR',8,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14334,'2015-05-23',142,0,1,'napoliilgabbiano',0,0,0,2,0,'?','TROFEO IL GABBIANO',7,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14335,'2015-05-24',142,0,1,'palermopinacattarinich',0,0,0,2,0,'?','TROFEO PINA CATTARINICH',6,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
 (14336,'2015-05-30',142,0,1,'caldierodelleterme',0,0,0,2,0,'?','TROFEO DELLE TERME',25,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate()),
@@ -389,81 +389,257 @@ INSERT INTO meetings (id,header_date,season_id,has_warm_up_pool,is_under_25_admi
 (14348,'2015-06-07',142,0,1,'pietrelcinajollynuoto',0,0,0,2,0,'?','TROFEO JOLLY NUOTO',2,'2015',2,(select t.id from edition_types t where t.code = 'R'),(select t.id from timing_types t where t.code = 'A'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'T'),(select t.id from score_computation_types t where t.code = 'INRE'),0,curdate(),curdate());
 
 --
--- Dump dei dati per la tabella meeting_sessions per il Sabato mattina (o unico giorno festivo infrasettimanale)
+-- Dump dei dati per la tabella meeting_sessions per Sabato mattina (o unico giorno infrasettimanale)
 -- 
 INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14230 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14231 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14232 */
 (1,'2014-11-08',14233,(select t.id from swimming_pools t where t.nick_name = 'civitavecchiastadiodelnuoto50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2014-11-08',14234,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14235 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14236 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14237 */
 (1,'2014-11-15',14238,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2014-11-15',14239,(select t.id from swimming_pools t where t.nick_name = 'vicenzacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14240 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14241 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14242 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14243 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14244 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14245 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14246 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14247 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14248 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14249 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14250 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14251 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14252 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14253 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14254 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14255 */
 (1,'2015-12-14',14256,(select t.id from swimming_pools t where t.nick_name = 'tortonadellepiane25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14257 */
 (1,'2015-12-21',14258,(select t.id from swimming_pools t where t.nick_name = 'brescialamarmora25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-12-21',14259,(select t.id from swimming_pools t where t.nick_name = 'paganidiversdrive25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14260 */
 (1,'2015-01-06',14261,(select t.id from swimming_pools t where t.nick_name = 'arezzochimera25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-01-10',14262,(select t.id from swimming_pools t where t.nick_name = 'milanosamuele25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14263 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14264 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14265 */
 (1,'2014-01-18',14266,(select t.id from swimming_pools t where t.nick_name = 'bolzanopircher25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14267 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14268 */
 (1,'2015-01-24',14269,(select t.id from swimming_pools t where t.nick_name = 'porticicomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14270 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14271 */
 (1,'2015-01-31',14272,(select t.id from swimming_pools t where t.nick_name = 'ostiapolonatatorio25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14273 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14274 */
 (1,'2015-02-07',14275,(select t.id from swimming_pools t where t.nick_name = 'lodicomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14276 */
+(1,'2015-02-13',14277,(select t.id from swimming_pools t where t.nick_name = 'paternogiovannipaoloii25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1,'2015-02-14',14278,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14279 */
 (1,'2015-02-21',14280,(select t.id from swimming_pools t where t.nick_name = 'avezzanopinguinonuoto25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-02-21',14281,(select t.id from swimming_pools t where t.nick_name = 'torinopalazzodelnuoto25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-02-21',14282,(select t.id from swimming_pools t where t.nick_name = 'collevaldelsacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14283 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14284 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14285 */
 (1,'2015-02-28',14286,(select t.id from swimming_pools t where t.nick_name = 'cagliariterramaini25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14287 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14288 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14289 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14290 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14291 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14292 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14293 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14294 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14295 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14296 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14297 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14298 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14299 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14300 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14301 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14302 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14303 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14304 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14305 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14306 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14307 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14308 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14309 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14310 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14311 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14312 */
 (1,'2015-04-18',14313,(select t.id from swimming_pools t where t.nick_name = 'trentomadonnabianca25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14314 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14315 */
 (1,'2015-03-18',14316,(select t.id from swimming_pools t where t.nick_name = 'palermopolisportivapalermo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14317 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14318 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14319 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14320 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14321 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14322 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14323 */
 (1,'2015-05-01',14324,(select t.id from swimming_pools t where t.nick_name = 'bustogarolfocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 0 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14325 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14326 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14327 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14328 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14329 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14330 */
 (1,'2015-05-23',14331,(select t.id from swimming_pools t where t.nick_name = 'genovaalbaro50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14332 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14333 */
 (1,'2015-05-23',14334,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14335 */
 (1,'2015-05-30',14336,(select t.id from swimming_pools t where t.nick_name = 'caldierotermedigiunone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-05-30',14337,(select t.id from swimming_pools t where t.nick_name = 'gallaratecomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2014-05-30',14338,(select t.id from swimming_pools t where t.nick_name = 'canosadipugliaaquarius25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14339 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14340 */
 (1,'2015-06-02',14341,(select t.id from swimming_pools t where t.nick_name = 'spoletocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-06',14342,(select t.id from swimming_pools t where t.nick_name = 'trentomanazzon50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-06',14343,(select t.id from swimming_pools t where t.nick_name = 'padovacomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-06',14344,(select t.id from swimming_pools t where t.nick_name = 'cittadicastellobelvedere50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE());
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14345 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14346 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14347 */
+/* Sessione Sabato mattina (o unico giorno infrasettimanale) non presente per il meeting 14348 */
 
 --
--- Dump dei dati per la tabella meeting_sessions per il Sabato pomeriggio (o unico giorno festivo infrasettimanale)
+-- Dump dei dati per la tabella meeting_sessions per Sabato pomeriggio (o unico giorno infrasettimanale)
 -- 
 INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14230 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14231 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14232 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14233 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14234 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14235 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14236 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14237 */
 (2,'2014-11-15',14238,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2014-11-15',14239,(select t.id from swimming_pools t where t.nick_name = 'vicenzacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14240 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14241 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14242 */
 (1,'2014-11-22',14243,(select t.id from swimming_pools t where t.nick_name = 'gorgonzolaseveninfinity25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14244 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14245 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14246 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14247 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14248 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14249 */
 (1,'2014-12-06',14250,(select t.id from swimming_pools t where t.nick_name = 'bergamoitalcementi25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14251 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14252 */
 (1,'2014-12-13',14253,(select t.id from swimming_pools t where t.nick_name = 'modugnocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2014-12-13',14254,(select t.id from swimming_pools t where t.nick_name = 'ostiapolonatatorio25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14255 */
 (2,'2015-12-14',14256,(select t.id from swimming_pools t where t.nick_name = 'tortonadellepiane25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14257 */
 (2,'2015-12-21',14258,(select t.id from swimming_pools t where t.nick_name = 'brescialamarmora25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-12-21',14259,(select t.id from swimming_pools t where t.nick_name = 'paganidiversdrive25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14260 */
 (2,'2015-01-06',14261,(select t.id from swimming_pools t where t.nick_name = 'arezzochimera25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-01-10',14262,(select t.id from swimming_pools t where t.nick_name = 'milanosamuele25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14263 */
 (1,'2015-01-17',14264,(select t.id from swimming_pools t where t.nick_name = 'buonconventocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14265 */
 (2,'2014-01-18',14266,(select t.id from swimming_pools t where t.nick_name = 'bolzanopircher25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14267 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14268 */
 (2,'2015-01-24',14269,(select t.id from swimming_pools t where t.nick_name = 'porticicomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2015-01-24',14270,(select t.id from swimming_pools t where t.nick_name = 'viterbocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14271 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14272 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14273 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14274 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14275 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14276 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14277 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14278 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14279 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14280 */
 (2,'2015-02-21',14281,(select t.id from swimming_pools t where t.nick_name = 'torinopalazzodelnuoto25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-02-21',14282,(select t.id from swimming_pools t where t.nick_name = 'collevaldelsacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14283 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14284 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14285 */
 (2,'2015-02-28',14286,(select t.id from swimming_pools t where t.nick_name = 'cagliariterramaini25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14287 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14288 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14289 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14290 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14291 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14292 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14293 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14294 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14295 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14296 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14297 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14298 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14299 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14300 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14301 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14302 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14303 */
 (1,'2015-03-28',14304,(select t.id from swimming_pools t where t.nick_name = 'romababel25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14305 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14306 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14307 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14308 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14309 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14310 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14311 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14312 */
 (2,'2015-04-18',14313,(select t.id from swimming_pools t where t.nick_name = 'trentomadonnabianca25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2015-03-18',14314,(select t.id from swimming_pools t where t.nick_name = 'gualdotadinocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2015-03-18',14315,(select t.id from swimming_pools t where t.nick_name = 'baritinto50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-03-18',14316,(select t.id from swimming_pools t where t.nick_name = 'palermopolisportivapalermo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14317 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14318 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14319 */
 (1,'2015-03-25',14320,(select t.id from swimming_pools t where t.nick_name = 'romaaquaniene25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2015-03-25',14321,(select t.id from swimming_pools t where t.nick_name = 'civitanovamarcheilgrillo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14322 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14323 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14324 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 0 */
 (1,'2015-05-02',14325,(select t.id from swimming_pools t where t.nick_name = 'bastiaumbracomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14326 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14327 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14328 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14329 */
 (1,'2015-04-22',14330,(select t.id from swimming_pools t where t.nick_name = 'trevisocentronatatorium50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-05-23',14331,(select t.id from swimming_pools t where t.nick_name = 'genovaalbaro50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2015-05-23',14332,(select t.id from swimming_pools t where t.nick_name = 'cremonacanottieribaldesio50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (1,'2015-05-23',14333,(select t.id from swimming_pools t where t.nick_name = 'putignanonadir25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-05-23',14334,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14335 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14336 */
 (2,'2015-05-30',14337,(select t.id from swimming_pools t where t.nick_name = 'gallaratecomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14338 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14339 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14340 */
 (2,'2015-06-02',14341,(select t.id from swimming_pools t where t.nick_name = 'spoletocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14342 */
 (2,'2015-06-06',14343,(select t.id from swimming_pools t where t.nick_name = 'padovacomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-06-06',14344,(select t.id from swimming_pools t where t.nick_name = 'cittadicastellobelvedere50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14345 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14346 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14347 */
+/* Sessione Sabato pomeriggio (o unico giorno infrasettimanale) non presente per il meeting 14348 */
 
 --
--- Dump dei dati per la tabella meeting_sessions per la Domenica mattina
+-- Dump dei dati per la tabella meeting_sessions per Domenica mattina
 -- 
 INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
 (1,'2014-10-26',14230,(select t.id from swimming_pools t where t.nick_name = 'firenzenannini50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -471,6 +647,7 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (1,'2014-11-02',14232,(select t.id from swimming_pools t where t.nick_name = 'milanosamuele50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2014-11-09',14233,(select t.id from swimming_pools t where t.nick_name = 'civitavecchiastadiodelnuoto50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2014-11-09',14234,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14235 */
 (1,'2014-11-09',14236,(select t.id from swimming_pools t where t.nick_name = 'saronnocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2014-11-09',14237,(select t.id from swimming_pools t where t.nick_name = 'laquilacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (3,'2014-11-16',14238,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -489,27 +666,39 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (1,'2014-12-07',14251,(select t.id from swimming_pools t where t.nick_name = 'massarosacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2014-12-07',14252,(select t.id from swimming_pools t where t.nick_name = 'bolzanopircher25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2014-12-14',14253,(select t.id from swimming_pools t where t.nick_name = 'modugnocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(2,'2014-12-14',14254,(select t.id from swimming_pools t where t.nick_name = 'ostiapolonatatorio25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
+(2,'2014-12-14',14254,(select t.id from swimming_pools t where t.nick_name = 'ostiapolonatatorio25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-12-13',14255,(select t.id from swimming_pools t where t.nick_name = 'sondriocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14256 */
 (1,'2015-12-20',14257,(select t.id from swimming_pools t where t.nick_name = 'cagliariterramaini25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14258 */
+/* Sessione Domenica mattina non presente per il meeting 14259 */
 (1,'2014-12-21',14260,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14261 */
+/* Sessione Domenica mattina non presente per il meeting 14262 */
 (1,'2015-01-11',14263,(select t.id from swimming_pools t where t.nick_name = 'conversanoaironclub25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2015-01-18',14264,(select t.id from swimming_pools t where t.nick_name = 'buonconventocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-01-18',14265,(select t.id from swimming_pools t where t.nick_name = 'soricomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14266 */
 (1,'2015-01-18',14267,(select t.id from swimming_pools t where t.nick_name = 'romaforum25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-01-18',14268,(select t.id from swimming_pools t where t.nick_name = 'taorminacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (3,'2015-01-25',14269,(select t.id from swimming_pools t where t.nick_name = 'porticicomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2015-01-25',14270,(select t.id from swimming_pools t where t.nick_name = 'viterbocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-01-25',14271,(select t.id from swimming_pools t where t.nick_name = 'certaldofiammetta25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14272 */
 (1,'2015-02-01',14273,(select t.id from swimming_pools t where t.nick_name = 'catanianesima50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-02-22',14274,(select t.id from swimming_pools t where t.nick_name = 'putignanonadir25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14275 */
 (1,'2015-02-09',14276,(select t.id from swimming_pools t where t.nick_name = 'vicenzacomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14277 */
+/* Sessione Domenica mattina non presente per il meeting 14278 */
 (1,'2015-02-15',14279,(select t.id from swimming_pools t where t.nick_name = 'genovasciorba25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14280 */
 (3,'2015-02-22',14281,(select t.id from swimming_pools t where t.nick_name = 'torinopalazzodelnuoto25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (3,'2015-02-22',14282,(select t.id from swimming_pools t where t.nick_name = 'collevaldelsacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1,'2015-02-22',14283,(select t.id from swimming_pools t where t.nick_name = 'roveretonp256'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1,'2015-02-22',14284,(select t.id from swimming_pools t where t.nick_name = 'umbertidecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-02-22',14285,(select t.id from swimming_pools t where t.nick_name = 'fabrianocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14286 */
 (1,'2015-03-01',14287,(select t.id from swimming_pools t where t.nick_name = 'campodipietranp258'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-01',14288,(select t.id from swimming_pools t where t.nick_name = 'seregnotrabattoni25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-01',14289,(select t.id from swimming_pools t where t.nick_name = 'lignanosabbiadorovillaggiogetur50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -527,9 +716,7 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (1,'2015-03-22',14301,(select t.id from swimming_pools t where t.nick_name = 'barisportclub25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-22',14302,(select t.id from swimming_pools t where t.nick_name = 'catanianesima50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-22',14303,(select t.id from swimming_pools t where t.nick_name = 'cagliariterramaini25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(2,'2015-03-29',14304,(select t.id from swimming_pools t where t.nick_name = 'romababel25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
+(2,'2015-03-29',14304,(select t.id from swimming_pools t where t.nick_name = 'romababel25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-29',14305,(select t.id from swimming_pools t where t.nick_name = 'paviacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-29',14306,(select t.id from swimming_pools t where t.nick_name = 'luccaitiefermi25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-03-29',14307,(select t.id from swimming_pools t where t.nick_name = 'calimeracalimera25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -538,6 +725,7 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (1,'2015-04-12',14310,(select t.id from swimming_pools t where t.nick_name = 'strianofalcosportvillage25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-04-12',14311,(select t.id from swimming_pools t where t.nick_name = 'castellanagrottecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-04-12',14312,(select t.id from swimming_pools t where t.nick_name = 'campodipietrapuntocom25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14313 */
 (2,'2015-03-19',14314,(select t.id from swimming_pools t where t.nick_name = 'gualdotadinocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2015-03-19',14315,(select t.id from swimming_pools t where t.nick_name = 'baritinto50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (3,'2015-03-19',14316,(select t.id from swimming_pools t where t.nick_name = 'palermopolisportivapalermo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -548,19 +736,27 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (2,'2015-03-26',14321,(select t.id from swimming_pools t where t.nick_name = 'civitanovamarcheilgrillo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-04-26',14322,(select t.id from swimming_pools t where t.nick_name = 'massarosacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-04-26',14323,(select t.id from swimming_pools t where t.nick_name = 'massalubrenseatlantis25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14324 */
+/* Sessione Domenica mattina non presente per il meeting 0 */
 (2,'2015-05-02',14325,(select t.id from swimming_pools t where t.nick_name = 'bastiaumbracomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-05-03',14326,(select t.id from swimming_pools t where t.nick_name = 'giulianocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-05-03',14327,(select t.id from swimming_pools t where t.nick_name = 'siracusacittadelladellosport50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1,'2015-05-10',14328,(select t.id from swimming_pools t where t.nick_name = 'tarantomeridiana25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE());
-
-INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
+(1,'2015-05-10',14328,(select t.id from swimming_pools t where t.nick_name = 'tarantomeridiana25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-05-17',14329,(select t.id from swimming_pools t where t.nick_name = 'siracusacittadelladellosport50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14330 */
+/* Sessione Domenica mattina non presente per il meeting 14331 */
 (2,'2015-05-24',14332,(select t.id from swimming_pools t where t.nick_name = 'cremonacanottieribaldesio50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (2,'2015-05-24',14333,(select t.id from swimming_pools t where t.nick_name = 'putignanonadir25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (3,'2015-05-24',14334,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-05-24',14335,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14336 */
+/* Sessione Domenica mattina non presente per il meeting 14337 */
+/* Sessione Domenica mattina non presente per il meeting 14338 */
 (1,'2015-05-31',14339,(select t.id from swimming_pools t where t.nick_name = 'romapietralata50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-05-31',14340,(select t.id from swimming_pools t where t.nick_name = 'nociotrè25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14341 */
+/* Sessione Domenica mattina non presente per il meeting 14342 */
+/* Sessione Domenica mattina non presente per il meeting 14343 */
 (3,'2015-06-06',14344,(select t.id from swimming_pools t where t.nick_name = 'cittadicastellobelvedere50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comohappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-07',14346,(select t.id from swimming_pools t where t.nick_name = 'romahappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
@@ -568,83 +764,143 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (1,'2015-06-07',14348,(select t.id from swimming_pools t where t.nick_name = 'pietrelcinaaquacenter25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE());
 
 --
--- Dump dei dati per la tabella meeting_sessions per la Domenica pomeriggio
+-- Dump dei dati per la tabella meeting_sessions per Domenica mattina
 -- 
 INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
-(1,'2014-10-26',14230,(select t.id from swimming_pools t where t.nick_name = 'firenzenannini50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-10-26',14231,(select t.id from swimming_pools t where t.nick_name = 'rovigopoloacquatico25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-10-26',14230,(select t.id from swimming_pools t where t.nick_name = 'firenzenannini50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-10-26',14231,(select t.id from swimming_pools t where t.nick_name = 'rovigopoloacquatico25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14232 */
+/* Sessione Domenica mattina non presente per il meeting 14233 */
+/* Sessione Domenica mattina non presente per il meeting 14234 */
 (1,'2014-11-09',14235,(select t.id from swimming_pools t where t.nick_name = 'genovasciorba25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-09',14236,(select t.id from swimming_pools t where t.nick_name = 'saronnocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(3,'2014-11-09',14237,(select t.id from swimming_pools t where t.nick_name = 'laquilacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-16',14239,(select t.id from swimming_pools t where t.nick_name = 'vicenzacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-16',14240,(select t.id from swimming_pools t where t.nick_name = 'novaracomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-16',14241,(select t.id from swimming_pools t where t.nick_name = 'andriacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-11-09',14236,(select t.id from swimming_pools t where t.nick_name = 'saronnocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-11-09',14237,(select t.id from swimming_pools t where t.nick_name = 'laquilacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14238 */
+(4,'2014-11-16',14239,(select t.id from swimming_pools t where t.nick_name = 'vicenzacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-11-16',14240,(select t.id from swimming_pools t where t.nick_name = 'novaracomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-11-16',14241,(select t.id from swimming_pools t where t.nick_name = 'andriacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2014-11-16',14242,(select t.id from swimming_pools t where t.nick_name = 'osimocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-23',14243,(select t.id from swimming_pools t where t.nick_name = 'gorgonzolaseveninfinity25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-23',14244,(select t.id from swimming_pools t where t.nick_name = 'romasociale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-11-23',14246,(select t.id from swimming_pools t where t.nick_name = 'mugnanorhyfelvillage25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(3,'2014-11-23',14243,(select t.id from swimming_pools t where t.nick_name = 'gorgonzolaseveninfinity25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-11-23',14244,(select t.id from swimming_pools t where t.nick_name = 'romasociale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14245 */
+(2,'2014-11-23',14246,(select t.id from swimming_pools t where t.nick_name = 'mugnanorhyfelvillage25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14247 */
+/* Sessione Domenica mattina non presente per il meeting 14248 */
 (2,'2014-11-30',14249,(select t.id from swimming_pools t where t.nick_name = 'casalemonferratocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-12-07',14250,(select t.id from swimming_pools t where t.nick_name = 'bergamoitalcementi25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2014-12-07',14251,(select t.id from swimming_pools t where t.nick_name = 'massarosacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(3,'2014-12-07',14250,(select t.id from swimming_pools t where t.nick_name = 'bergamoitalcementi25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2014-12-07',14251,(select t.id from swimming_pools t where t.nick_name = 'massarosacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2014-12-07',14252,(select t.id from swimming_pools t where t.nick_name = 'bolzanopircher25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14253 */
+/* Sessione Domenica mattina non presente per il meeting 14254 */
 (2,'2015-12-13',14255,(select t.id from swimming_pools t where t.nick_name = 'sondriocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14256 */
+/* Sessione Domenica mattina non presente per il meeting 14257 */
+/* Sessione Domenica mattina non presente per il meeting 14258 */
+/* Sessione Domenica mattina non presente per il meeting 14259 */
 (2,'2014-12-21',14260,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14261 */
+/* Sessione Domenica mattina non presente per il meeting 14262 */
 (2,'2015-01-11',14263,(select t.id from swimming_pools t where t.nick_name = 'conversanoaironclub25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-01-18',14267,(select t.id from swimming_pools t where t.nick_name = 'romaforum25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(3,'2015-01-18',14268,(select t.id from swimming_pools t where t.nick_name = 'taorminacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-01-25',14271,(select t.id from swimming_pools t where t.nick_name = 'certaldofiammetta25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-02-01',14273,(select t.id from swimming_pools t where t.nick_name = 'catanianesima50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-02-15',14279,(select t.id from swimming_pools t where t.nick_name = 'genovasciorba25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(3,'2015-02-22',14281,(select t.id from swimming_pools t where t.nick_name = 'torinopalazzodelnuoto25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(0,'2015-02-22',14282,(select t.id from swimming_pools t where t.nick_name = 'collevaldelsacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14264 */
+/* Sessione Domenica mattina non presente per il meeting 14265 */
+/* Sessione Domenica mattina non presente per il meeting 14266 */
+(2,'2015-01-18',14267,(select t.id from swimming_pools t where t.nick_name = 'romaforum25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-01-18',14268,(select t.id from swimming_pools t where t.nick_name = 'taorminacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14269 */
+/* Sessione Domenica mattina non presente per il meeting 14270 */
+(2,'2015-01-25',14271,(select t.id from swimming_pools t where t.nick_name = 'certaldofiammetta25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14272 */
+(2,'2015-02-01',14273,(select t.id from swimming_pools t where t.nick_name = 'catanianesima50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14274 */
+/* Sessione Domenica mattina non presente per il meeting 14275 */
+/* Sessione Domenica mattina non presente per il meeting 14276 */
+/* Sessione Domenica mattina non presente per il meeting 14277 */
+/* Sessione Domenica mattina non presente per il meeting 14278 */
+(2,'2015-02-15',14279,(select t.id from swimming_pools t where t.nick_name = 'genovasciorba25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14280 */
+(4,'2015-02-22',14281,(select t.id from swimming_pools t where t.nick_name = 'torinopalazzodelnuoto25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(4,'2015-02-22',14282,(select t.id from swimming_pools t where t.nick_name = 'collevaldelsacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14283 */
+(2,'2015-02-22',14284,(select t.id from swimming_pools t where t.nick_name = 'umbertidecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-02-22',14285,(select t.id from swimming_pools t where t.nick_name = 'fabrianocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-01',14287,(select t.id from swimming_pools t where t.nick_name = 'campodipietranp258'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-01',14288,(select t.id from swimming_pools t where t.nick_name = 'seregnotrabattoni25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-01',14289,(select t.id from swimming_pools t where t.nick_name = 'lignanosabbiadorovillaggiogetur50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-08',14290,(select t.id from swimming_pools t where t.nick_name = 'livornolabastia25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-08',14292,(select t.id from swimming_pools t where t.nick_name = 'molfettacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-15',14293,(select t.id from swimming_pools t where t.nick_name = 'nibionnowetlife25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-15',14294,(select t.id from swimming_pools t where t.nick_name = 'trentocentrosportivotrentonord25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-15',14295,(select t.id from swimming_pools t where t.nick_name = 'battipagliabalnea25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-15',14296,(select t.id from swimming_pools t where t.nick_name = 'pomeziaromansportcity25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-15',14297,(select t.id from swimming_pools t where t.nick_name = 'lameziatermecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-22',14298,(select t.id from swimming_pools t where t.nick_name = 'padovaplebisicito25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-22',14299,(select t.id from swimming_pools t where t.nick_name = 'rapallocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-22',14300,(select t.id from swimming_pools t where t.nick_name = 'lumezzanecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-22',14301,(select t.id from swimming_pools t where t.nick_name = 'barisportclub25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-22',14302,(select t.id from swimming_pools t where t.nick_name = 'catanianesima50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14286 */
+(2,'2015-03-01',14287,(select t.id from swimming_pools t where t.nick_name = 'campodipietranp258'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-01',14288,(select t.id from swimming_pools t where t.nick_name = 'seregnotrabattoni25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-01',14289,(select t.id from swimming_pools t where t.nick_name = 'lignanosabbiadorovillaggiogetur50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-08',14290,(select t.id from swimming_pools t where t.nick_name = 'livornolabastia25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14291 */
+(2,'2015-03-08',14292,(select t.id from swimming_pools t where t.nick_name = 'molfettacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-15',14293,(select t.id from swimming_pools t where t.nick_name = 'nibionnowetlife25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-15',14294,(select t.id from swimming_pools t where t.nick_name = 'trentocentrosportivotrentonord25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-15',14295,(select t.id from swimming_pools t where t.nick_name = 'battipagliabalnea25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-15',14296,(select t.id from swimming_pools t where t.nick_name = 'pomeziaromansportcity25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-15',14297,(select t.id from swimming_pools t where t.nick_name = 'lameziatermecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-22',14298,(select t.id from swimming_pools t where t.nick_name = 'padovaplebisicito25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-22',14299,(select t.id from swimming_pools t where t.nick_name = 'rapallocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-22',14300,(select t.id from swimming_pools t where t.nick_name = 'lumezzanecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-22',14301,(select t.id from swimming_pools t where t.nick_name = 'barisportclub25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-22',14302,(select t.id from swimming_pools t where t.nick_name = 'catanianesima50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-03-22',14303,(select t.id from swimming_pools t where t.nick_name = 'cagliariterramaini25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-29',14304,(select t.id from swimming_pools t where t.nick_name = 'romababel25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
-
-INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
-(1,'2015-03-29',14305,(select t.id from swimming_pools t where t.nick_name = 'paviacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-29',14306,(select t.id from swimming_pools t where t.nick_name = 'luccaitiefermi25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-29',14307,(select t.id from swimming_pools t where t.nick_name = 'calimeracalimera25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-04-12',14308,(select t.id from swimming_pools t where t.nick_name = 'legnanovilla25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-04-12',14309,(select t.id from swimming_pools t where t.nick_name = 'follonicacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-04-12',14310,(select t.id from swimming_pools t where t.nick_name = 'strianofalcosportvillage25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-04-12',14311,(select t.id from swimming_pools t where t.nick_name = 'castellanagrottecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(3,'2015-03-29',14304,(select t.id from swimming_pools t where t.nick_name = 'romababel25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-29',14305,(select t.id from swimming_pools t where t.nick_name = 'paviacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-29',14306,(select t.id from swimming_pools t where t.nick_name = 'luccaitiefermi25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-03-29',14307,(select t.id from swimming_pools t where t.nick_name = 'calimeracalimera25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-04-12',14308,(select t.id from swimming_pools t where t.nick_name = 'legnanovilla25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-04-12',14309,(select t.id from swimming_pools t where t.nick_name = 'follonicacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-04-12',14310,(select t.id from swimming_pools t where t.nick_name = 'strianofalcosportvillage25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-04-12',14311,(select t.id from swimming_pools t where t.nick_name = 'castellanagrottecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-04-12',14312,(select t.id from swimming_pools t where t.nick_name = 'campodipietrapuntocom25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14313 */
+/* Sessione Domenica mattina non presente per il meeting 14314 */
 (3,'2015-03-19',14315,(select t.id from swimming_pools t where t.nick_name = 'baritinto50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-03-19',14316,(select t.id from swimming_pools t where t.nick_name = 'palermopolisportivapalermo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(4,'2015-03-19',14316,(select t.id from swimming_pools t where t.nick_name = 'palermopolisportivapalermo25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14317 */
+/* Sessione Domenica mattina non presente per il meeting 14318 */
 (2,'2015-04-19',14319,(select t.id from swimming_pools t where t.nick_name = 'sandonadelpiavecomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-04-26',14322,(select t.id from swimming_pools t where t.nick_name = 'massarosacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-04-26',14323,(select t.id from swimming_pools t where t.nick_name = 'massalubrenseatlantis25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-05-03',14326,(select t.id from swimming_pools t where t.nick_name = 'giulianocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-05-03',14327,(select t.id from swimming_pools t where t.nick_name = 'siracusacittadelladellosport50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-05-10',14328,(select t.id from swimming_pools t where t.nick_name = 'tarantomeridiana25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
-
-INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
-(1,'2015-05-17',14329,(select t.id from swimming_pools t where t.nick_name = 'siracusacittadelladellosport50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14320 */
+/* Sessione Domenica mattina non presente per il meeting 14321 */
+(2,'2015-04-26',14322,(select t.id from swimming_pools t where t.nick_name = 'massarosacomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-04-26',14323,(select t.id from swimming_pools t where t.nick_name = 'massalubrenseatlantis25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14324 */
+/* Sessione Domenica mattina non presente per il meeting 0 */
+/* Sessione Domenica mattina non presente per il meeting 14325 */
+(2,'2015-05-03',14326,(select t.id from swimming_pools t where t.nick_name = 'giulianocomunale25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-05-03',14327,(select t.id from swimming_pools t where t.nick_name = 'siracusacittadelladellosport50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-05-10',14328,(select t.id from swimming_pools t where t.nick_name = 'tarantomeridiana25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-05-17',14329,(select t.id from swimming_pools t where t.nick_name = 'siracusacittadelladellosport50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14330 */
+/* Sessione Domenica mattina non presente per il meeting 14331 */
+/* Sessione Domenica mattina non presente per il meeting 14332 */
 (3,'2015-05-24',14333,(select t.id from swimming_pools t where t.nick_name = 'putignanonadir25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-05-24',14334,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-05-24',14335,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-05-31',14339,(select t.id from swimming_pools t where t.nick_name = 'romapietralata50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(4,'2015-05-24',14334,(select t.id from swimming_pools t where t.nick_name = 'napoliscandone50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-05-24',14335,(select t.id from swimming_pools t where t.nick_name = 'palermocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+/* Sessione Domenica mattina non presente per il meeting 14336 */
+/* Sessione Domenica mattina non presente per il meeting 14337 */
+/* Sessione Domenica mattina non presente per il meeting 14338 */
+(2,'2015-05-31',14339,(select t.id from swimming_pools t where t.nick_name = 'romapietralata50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-05-31',14340,(select t.id from swimming_pools t where t.nick_name = 'nociotrè25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comohappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-06-07',14346,(select t.id from swimming_pools t where t.nick_name = 'romahappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(1,'2015-06-07',14347,(select t.id from swimming_pools t where t.nick_name = 'cataniaplaia50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
-(0,'2015-06-07',14348,(select t.id from swimming_pools t where t.nick_name = 'pietrelcinaaquacenter25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
+/* Sessione Domenica mattina non presente per il meeting 14341 */
+/* Sessione Domenica mattina non presente per il meeting 14342 */
+/* Sessione Domenica mattina non presente per il meeting 14343 */
+/* Sessione Domenica mattina non presente per il meeting 14344 */
+(2,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comohappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-06-07',14346,(select t.id from swimming_pools t where t.nick_name = 'romahappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-06-07',14347,(select t.id from swimming_pools t where t.nick_name = 'cataniaplaia50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-06-07',14348,(select t.id from swimming_pools t where t.nick_name = 'pietrelcinaaquacenter25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
 
 COMMIT;
 -- End script
+
+/*
+-- Elenco meeting stagione
+select m.id, m.header_date, ms.scheduled_date, m.description, m.code
+from meetings m
+	join meeting_sessions ms on ms.meeting_id = m.id and ms.session_order = 1
+where m.season_id = 142;
+
+-- Elenco meeting incompleti stagione
+select m.id, m.header_date, m.description, m.code
+from meetings m
+where m.season_id = 142
+	and not exists (select 1 from meeting_sessions ms where ms.meeting_id = m.id and ms.session_order = 1);
+*/
