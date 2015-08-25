@@ -140,8 +140,133 @@ update meeting_sessions ms set ms.swimming_pool_id = 54 where ms.swimming_pool_i
 delete from swimming_pools where id = 65;
 
 --
+-- Swimming pools data update and nickname standardization
+--
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'rovigopoloacquatico25', name = 'Polo acquatico', address = 'Viale Porta Po, 88' where nick_name = 'rovigopolo';
+update swimming_pools set nick_name = 'milanosamuele50', name = 'Samuele', address = 'Via Trani' where nick_name = 'milanosamuele';
+update swimming_pools set nick_name = 'civitavecchiastadiodelnuoto50', name = 'Stadio del nuoto', address = 'Viale Lazio località S. Gordiano' where nick_name = 'civitavecchianp508';
+update swimming_pools set nick_name = 'napoliscandone50', name = 'Scandone', address = 'Viale Giochi del Mediterraneo' where nick_name = 'napolifscandone';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'saronnocomunale25', name = 'Comunale', address = 'Via Cesare Miola, 5' where nick_name = 'saronnocomunale';
+update swimming_pools set nick_name = 'laquilacomunale25', name = 'Comunale' where nick_name = 'laquilanp256';
+update swimming_pools set nick_name = 'palermocomunale50', name = 'Comunale', address = 'Viale del Fante, 11' where nick_name = 'palermocomunale';
+update swimming_pools set nick_name = 'vicenzacomunale25', name = 'Comunale', address = 'Viale Ferrarin, 71' where nick_name = 'vicenzacomunale';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'osimocomunale25', name = 'Comunale', address = 'Via Vescovara' where nick_name = 'osimocomunale';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'romasociale50', name = 'Sociale', address = 'Via San Gaggio, 5' where nick_name = 'romasociale';
+update swimming_pools set nick_name = 'poggibonsicomunale25', name = 'Comunale', address = 'Viale dello sport, località Bernino' where nick_name = 'poggibonsicomunale';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'albengastadiodelnuoto25', name = 'Stadio del nuoto', address = 'Via Amalfi, 1' where nick_name = 'albengastadiodelnuoto';
+update swimming_pools set nick_name = 'rapallocomunale25', name = 'Comunale', address = 'Via S. Pietro di Novella, 35' where nick_name = 'rapallocomunale';
+update swimming_pools set nick_name = 'casalemonferratocomunale25', name = 'Comunale', address = 'Via Papa Giovanni Paolo II' where nick_name = 'casalemonferratonp256';
+update swimming_pools set nick_name = 'bergamoitalcementi25', name = 'Italcementi', address = 'Via Statuto, 43' where nick_name = 'bergamoitalcementi';
+update swimming_pools set nick_name = 'massarosacomunale25', name = 'Comunale' where nick_name = 'massarosacomunale';
+update swimming_pools set nick_name = 'bolzanopircher25', name = 'Pircher', address = 'Via Maso della Pieve' where nick_name = 'bolzanomasodellapieve';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'sondriocomunale25', name = 'Comunale', address = 'Piazzale Merizzi, 1' where nick_name = 'sondriocomunale';
+update swimming_pools set nick_name = 'tortonadellepiane25', name = 'Dellepiane', address = 'Viale Mariano Dellepiane' where nick_name = 'tortonamarianodellepiane';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'brescialamarmora25', name = 'Lamarmora', address = 'Via Rodi, 20' where nick_name = 'brescianp2510';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'milanosamuele25', name = 'Samuele', address = 'Via Trani angolo via Mecentae' where nick_name = 'milanonp258';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'buonconventocomunale25', name = 'Comunale', address = 'Via I Maggio' where nick_name = 'buonconventocomunale';
+update swimming_pools set nick_name = 'soricomunale25', name = 'Comunale', address = 'Piazza Ghio, 2' where nick_name = 'sorinp258';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'romaforum25', name = 'Forum', address = 'Via Cornelia, 493 ' where nick_name = 'romanp258';
+update swimming_pools set nick_name = 'taorminacomunale25', name = 'Comunale', address = 'Contrada Bongiovanni' where nick_name = 'taorminanp258';
+update swimming_pools set nick_name = 'porticicomunale25', name = 'Comunale', address = 'Via De Curtis' where nick_name = 'porticinp258';
+update swimming_pools set nick_name = 'viterbocomunale25', name = 'Comunale', address = 'Via Largo dei Veterani' where nick_name = 'viterbonp2510';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'catanianesima50', name = 'Nesima', address = 'Via Filippo Eredia, 12' where nick_name = 'catanianp508';
+update swimming_pools set nick_name = 'putignanonadir25', name = 'Nadir', address = 'Via Pietro Mascagni' where nick_name = 'putignanonp258';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'collevaldelsacomunale25', name = 'Comunale' where nick_name = 'collevaldelsanp256';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'seregnotrabattoni25', name = 'Trabattoni', address = 'Via G.Colombo, 12' where nick_name = 'seregnonp256';
+update swimming_pools set nick_name = 'lignanosabbiadorovillaggiogetur50', name = 'Villaggio GeTur', address = 'Via Centrale, 29' where nick_name = 'lignanogetur';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'nibionnowetlife25', name = 'Wetlife', address = 'Località Gaggio 1' where nick_name = 'nibionnonp257';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'battipagliabalnea25', name = 'Balnea', address = 'Via Plava, 80' where nick_name = 'battipaglianp258';
+update swimming_pools set nick_name = 'pomeziaromansportcity25', name = 'Roman Sport City', address = 'Via Pontina km. 30' where nick_name = 'pomezianp2510';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'padovaplebisicito25', name = 'Plebisicito', address = 'Via Geremia, 2/2' where nick_name = 'padovanp256';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'barisportclub25', name = 'Sport club', address = 'Via Stifano' where nick_name = 'barinp256';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'romababel25', name = 'Babel', address = 'Via Tommaso Traetta, 70' where nick_name = 'romanp2510';
+update swimming_pools set nick_name = 'paviacomunale25', name = 'Comunale', address = 'Via Folperti, 30' where nick_name = 'pavianp256';
+update swimming_pools set nick_name = 'luccaitiefermi25', name = 'ITI E. Fermi', address = 'Via C.Piaggia' where nick_name = 'luccanp256';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'legnanovilla25', name = 'Villa', address = 'Viale Gorizia, 28/A' where nick_name = 'legnanonp258';
+update swimming_pools set nick_name = 'follonicacomunale25', name = 'Comunale', address = 'Via Sanzio' where nick_name = 'follonicanp256';
+update swimming_pools set nick_name = 'strianofalcosportvillage25', name = 'Falco Sport Village', address = 'Via Piano, 78' where nick_name = 'strianonp256';
+update swimming_pools set nick_name = 'castellanagrottecomunale25', name = 'Comunale', address = 'Via Renato dell''Andro, 2' where nick_name = 'castellanagrottenp256';
+update swimming_pools set nick_name = 'campodipietrapuntocom25', name = 'Punto Com', address = 'C.da Selva, 29' where nick_name = 'campodipietranp257';
+update swimming_pools set nick_name = 'trentomadonnabianca25', name = 'Madonna Bianca', address = 'Via Bettini, 7' where nick_name = 'trentonp258';
+update swimming_pools set nick_name = 'gualdotadinocomunale25', name = 'Comunale', address = 'Via Valsorda' where nick_name = 'gualdotadinonp256';
+update swimming_pools set nick_name = 'baritinto50', name = 'Tinto', address = 'Lungomare Starita, 1 A/B' where nick_name = 'barinp506';
+update swimming_pools set nick_name = 'palermopolisportivapalermo25', name = 'Polisportiva Palermo', address = 'Via Belgio, 2/A' where nick_name = 'palermonp256';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'civitanovamarcheilgrillo25', name = 'Il grillo', address = 'C.da San Domenico, 125/A' where nick_name = 'civitanovamarchegrillo25';
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'massalubrenseatlantis25', name = 'Atlantis', address = 'Via Reola' where nick_name = 'massalubrensenp256';
+update swimming_pools set nick_name = 'bustogarolfocomunale25', name = 'Comunale', address = 'Via Busto Arsizio' where nick_name = 'bustogarolfonp258';
+update swimming_pools set nick_name = 'genovasciorba50', name = 'Sciorba', address = 'Via Adamoli, 57' where nick_name = 'genovasciorba';
+update swimming_pools set nick_name = 'bastiaumbracomunale25', name = 'Comunale', address = 'Via Hochberg' where nick_name = 'bastiaumbranp258';
+update swimming_pools set nick_name = 'giulianocomunale25', name = 'Comunale', address = 'Via Pigna' where nick_name = 'giulianonp258';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'trevisocentronatatorium50', name = 'Centro Natatorium' where nick_name = 'trevisonp508';
+update swimming_pools set nick_name = 'genovaalbaro50', name = 'Albaro', address = 'Piazza Dunant, 22' where nick_name = 'genovanp5010';
+update swimming_pools set nick_name = 'cremonacanottieribaldesio50', name = 'Canottieri Baldesio', address = 'Via al Porto, 3' where nick_name = 'cremonacomunale';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'caldierotermedigiunone50', name = 'Terme di Giunone' where nick_name = 'caldieronp508';
+update swimming_pools set nick_name = 'gallaratecomunale50', name = 'Comunale', address = 'Quartiere Moriggia' where nick_name = 'gallaratenp508';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+update swimming_pools set nick_name = 'cittadicastellobelvedere50', name = 'Belvedere' where nick_name = 'cittadicastellonp508';
+update swimming_pools set nick_name = 'comocomunale50', name = 'Comunale', address = 'Piazza Atleti Azzurri d''Italia' where nick_name = 'comonp508';
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+/* Inserita o già aggiornata */
+
+--
 -- Dump dei dati per la tabella swimming_pools
 -- 
+
 /* FIRENZE Nannini caricato nei seed */
 /* ROVIGO Polo acquatico caricato nei seed */
 /* MILANO Samuele caricato nei seed */
@@ -186,7 +311,7 @@ INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has
 /* CERTALDO Fiammetta caricato nei seed */
 /* OSTIA Polo Natatorio caricato nei seed */
 /* CATANIA Nesima caricato nei seed */
-INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Nadir','?',8,'Via Pietro Mascagni','putignanonadir25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'PUTIGNANO'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
+/* PUTIGNANO Nadir caricato nei seed */
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',10,'Piazzale degli Sport','lodicomunale25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'LODI'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',8,'Viale Ferrarin, 71','vicenzacomunale50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'VICENZA'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Giovanni Paolo II','?',8,'Corso Italia','paternogiovannipaoloii25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'PATERNO'''),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
@@ -206,7 +331,7 @@ INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has
 /* L'AQUILA Comunale caricato nei seed */
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',6,'Contrada Longone della Spina','molfettacomunale25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'MOLFETTA'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 /* NIBIONNO Wetlife caricato nei seed */
-/* TRENTO Centro Sportivo Trento Nord caricato nei seed */
+INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Centro Sportivo Trento Nord','?',8,'Via IV Novembre, 4','trentocentrosportivotrentonord25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'TRENTO'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 /* BATTIPAGLIA Balnea caricato nei seed */
 /* POMEZIA Roman Sport City caricato nei seed */
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',6,'?','lameziatermecomunale25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'LAMEZIA TERME'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
@@ -229,10 +354,10 @@ INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has
 /* GUALDO TADINO Comunale caricato nei seed */
 /* BARI Tinto caricato nei seed */
 /* PALERMO Polisportiva Palermo caricato nei seed */
-/* GENOVA Lago Figoi caricato nei seed */
+INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Lago Figoi','?',8,'Giardini UNICEF','genovalagofigoi25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'GENOVA'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 /* CAGLIARI Terramaini caricato nei seed */
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',6,'Via Vittorio Veneto, 22','sandonadelpiavecomunale25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'SAN DONA'' DEL PIAVE'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
-/* ROMA Aquaniene caricato nei seed */
+INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Aquaniene','?',10,'Viale della Moschea, 130','romaaquaniene25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'ROMA'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 /* CIVITANOVA MARCHE Il grillo caricato nei seed */
 /* MASSAROSA Comunale caricato nei seed */
 /* MASSA LUBRENSE Atlantis caricato nei seed */
@@ -253,14 +378,14 @@ INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has
 /* GALLARATE Comunale caricato nei seed */
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Aquarius','?',5,'Via Montescupolo, 61','canosadipugliaaquarius25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'CANOSA DI PUGLIA'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Pietralata','?',8,'Via del Tufo','romapietralata50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'ROMA'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
-INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('OtrÃ¨','?',8,'Via Zona, B39/F C.da Montedoro','nociotrÃ¨25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'NOCI'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
+INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Otrè','?',8,'Via Zona, B39/F C.da Montedoro','nociotrè25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'NOCI'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',8,'Piazza d''armi','spoletocomunale50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'SPOLETO'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Manazzon','?',8,'Via Fogazzaro, 4','trentomanazzon50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'TRENTO'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Comunale','?',8,'Via Decorati al Valore Civile, 2','padovacomunale50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'PADOVA'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 /* CITTA' DI CASTELLO Belvedere caricato nei seed */
 /* COMO Comunale caricato nei seed */
-/* ROMA Happy Village caricato nei seed */
-/* CATANIA Plaia caricato nei seed */
+INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Happy Village','?',10,'Via San Gaggio, 5','romahappyvillage50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'ROMA'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
+INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Plaia','?',8,'Viale Kennedy, 20','cataniaplaia50',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'CATANIA'),(select t.id from pool_types t where t.code = '50'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 INSERT INTO swimming_pools (name,phone_number,lanes_number,address,nick_name,has_multiple_pools,has_open_area,has_bar,has_restaurant_service,has_gym_area,has_children_area,notes,zip,fax_number,e_mail,contact_name,user_id,city_id,pool_type_id,locker_cabinet_type_id,shower_type_id,hair_dryer_type_id,lock_version,created_at,updated_at) VALUES ('Aquacenter','?',6,'Via Nazionale','pietrelcinaaquacenter25',0,0,0,0,0,0,'','?','?','?','?',2,(select t.id from cities t where t.name = 'PIETRELCINA'),(select t.id from pool_types t where t.code = '25'),(select t.id from locker_cabinet_types t where t.code = ''),(select t.id from shower_types t where t.code = ''),(select t.id from hair_dryer_types t where t.code = ''),0,CURDATE(),CURDATE());
 
 --
@@ -758,7 +883,7 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 /* Sessione Domenica mattina non presente per il meeting 14342 */
 /* Sessione Domenica mattina non presente per il meeting 14343 */
 (3,'2015-06-06',14344,(select t.id from swimming_pools t where t.nick_name = 'cittadicastellobelvedere50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(1,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comohappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-07',14346,(select t.id from swimming_pools t where t.nick_name = 'romahappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-07',14347,(select t.id from swimming_pools t where t.nick_name = 'cataniaplaia50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
 (1,'2015-06-07',14348,(select t.id from swimming_pools t where t.nick_name = 'pietrelcinaaquacenter25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE());
@@ -883,7 +1008,7 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 /* Sessione Domenica mattina non presente per il meeting 14342 */
 /* Sessione Domenica mattina non presente per il meeting 14343 */
 /* Sessione Domenica mattina non presente per il meeting 14344 */
-(2,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comohappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
+(2,'2015-06-07',14345,(select t.id from swimming_pools t where t.nick_name = 'comocomunale50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-06-07',14346,(select t.id from swimming_pools t where t.nick_name = 'romahappyvillage50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-06-07',14347,(select t.id from swimming_pools t where t.nick_name = 'cataniaplaia50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-06-07',14348,(select t.id from swimming_pools t where t.nick_name = 'pietrelcinaaquacenter25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
