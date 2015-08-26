@@ -1013,6 +1013,21 @@ INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_p
 (2,'2015-06-07',14347,(select t.id from swimming_pools t where t.nick_name = 'cataniaplaia50'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE()),
 (2,'2015-06-07',14348,(select t.id from swimming_pools t where t.nick_name = 'pietrelcinaaquacenter25'),'00:00:00','00:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
 
+--
+-- Fix for wrong swimming pools
+--
+update swimming_pools sp set sp.nick_name = 'fix_to_ostiapolonatatorio25', sp.name = 'fix_to_ostiapolonatatorio25' where sp.nick_name = 'ostianp250';
+update swimming_pools sp set sp.nick_name = 'fix_to_pietrelcinaaquacenter25', sp.name = 'fix_to_pietrelcinaaquacenter25' where sp.nick_name = 'pietralcinanp256';
+update swimming_pools sp set sp.nick_name = 'fix_to_cagliariterramaini25', sp.name = 'fix_to_cagliariterramaini25' where sp.nick_name = 'cagliarinp250';
+
+update meeting_sessions ms set ms.swimming_pool_id = (select sp.id from swimming_pools sp where sp.nick_name = 'ostiapolonatatorio25') where ms.swimming_pool_id = (select sp.id from swimming_pools sp where sp.nick_name = 'fix_to_ostiapolonatatorio25');
+update meeting_sessions ms set ms.swimming_pool_id = (select sp.id from swimming_pools sp where sp.nick_name = 'pietrelcinaaquacenter25') where ms.swimming_pool_id = (select sp.id from swimming_pools sp where sp.nick_name = 'fix_to_pietrelcinaaquacenter25');
+update meeting_sessions ms set ms.swimming_pool_id = (select sp.id from swimming_pools sp where sp.nick_name = 'cagliariterramaini25') where ms.swimming_pool_id = (select sp.id from swimming_pools sp where sp.nick_name = 'fix_to_cagliariterramaini25');
+
+delete from swimming_pools where nick_name = 'fix_to_ostiapolonatatorio25';
+delete from swimming_pools where nick_name = 'fix_to_pietrelcinaaquacenter25';
+delete from swimming_pools where nick_name = 'fix_to_cagliariterramaini25';
+
 COMMIT;
 -- End script
 
@@ -1028,4 +1043,12 @@ select m.id, m.header_date, m.description, m.code
 from meetings m
 where m.season_id = 142
 	and not exists (select 1 from meeting_sessions ms where ms.meeting_id = m.id and ms.session_order = 1);
+
+-- Elenco piscine incomplete
+select distinct sp.id, sp.nick_name, sp.lanes_number, m.description, m.header_date
+from swimming_pools sp
+	join meeting_sessions ms on ms.swimming_pool_id = sp.id
+	join meetings m on m.id = ms.meeting_id
+where sp.name = '?'
+order by sp.nick_name;
 */
