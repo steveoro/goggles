@@ -9,12 +9,15 @@ require_relative '../../../data_import/v3/fin_result_defs'
 require_relative '../../../data_import/v3/fin2_result_defs'
 require_relative '../../../data_import/v3/fin_startlist_defs'
 
+require_relative '../../../data_import/v3/strategies/fin_result_parser'
+# require_relative '../../../data_import/v3/strategies/csi_result_parser'
+
 
 =begin
 
 = V3::FileFormatParser
 
-  - Goggles framework vers.:  4.00.819
+  - Goggles framework vers.:  4.00.823
   - author: Steve A.
 
  Strategy class dedicated to detect which format a data-import text file
@@ -26,6 +29,7 @@ require_relative '../../../data_import/v3/fin_startlist_defs'
 
 =end
 class V3::FileFormatParser
+
 
   # V3::ContextType definition for detecting "FIN result"-type files.
   FIN1_RESULT_TYPEDEF = V3::ContextType.new(
@@ -58,19 +62,35 @@ class V3::FileFormatParser
     conditions: [
       /^\s*|^\r\n|^\n|$|^\Z/i,
       /(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)(?=\s\n|\s\r|\s$|\r|\n|$)/i,
-      /(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)(?=\s\n|\s\r|\s$|\r|\n|$)/i,
+      /(?<timing>\d{1,2}['\.\:\s]\d\d["\.\:\s]\d\d)(?=\s\n|\s\r|\s$|\r|\n|$)/i
+    ]
+  )
+
+  # V3::ContextType definition for detecting "CSI result list"-type files.
+  CSI_RESULT_TYPEDEF = V3::ContextType.new(
+    :csi_result,
+    conditions: [
+      /^nome\,c,\d+;anno\,n,\d+/ui,
+      /\w+\s+\w+;\d{4};/ui
     ]
   )
   #-- -------------------------------------------------------------------------
   #++
 
 
+  attr_reader :parsing_defs, :content_parser
+
+
   # Creates a new instance.
   def initialize( full_pathname )
     @full_pathname = full_pathname
+    parse
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  private
 
 
   # Parses the text lines from the filename to detect which V3::TxtResultDefs instance
@@ -90,6 +110,7 @@ class V3::FileFormatParser
     detector_fin1_res = V3::ContextDetector.new( FIN1_RESULT_TYPEDEF )
     detector_fin2_res = V3::ContextDetector.new( FIN2_RESULT_TYPEDEF )
     detector_fin1_sta = V3::ContextDetector.new( FIN1_STARTLIST_TYPEDEF )
+    detector_csi_res  = V3::ContextDetector.new( CSI_RESULT_TYPEDEF )
 
     File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
@@ -97,15 +118,24 @@ class V3::FileFormatParser
         line_count += 1
                                                     # While reading the file line by line, detect the type:
         if detector_fin1_res.feed_and_detect( curr_line, line_count, nil )
-          result = V3::FinResultDefs.new()
+          @parsing_defs   = V3::FinResultDefs.new()
+          @content_parser = V3::FinResultParser.new( @full_pathname, @parsing_defs )
           break                                     # Break as soon as we have a match (FIFO wins)
 
         elsif detector_fin2_res.feed_and_detect( curr_line, line_count, nil )
-          result = V3::Fin2ResultDefs.new()
+          @parsing_defs   = V3::Fin2ResultDefs.new()
+          @content_parser = V3::FinResultParser.new( @full_pathname, @parsing_defs )
           break
 
         elsif detector_fin1_sta.feed_and_detect( curr_line, line_count, nil )
-          result = V3::FinStartListDefs.new()
+          @parsing_defs   = V3::FinStartListDefs.new()
+          @content_parser = V3::FinResultParser.new( @full_pathname, @parsing_defs )
+          break
+
+        elsif detector_csi_res.feed_and_detect( curr_line, line_count, nil )
+          # TODO Adapt CsiResultParser
+          @parsing_defs = nil
+          @content_parser = nil
           break
 
         else
@@ -113,7 +143,6 @@ class V3::FileFormatParser
         end
       end
     end
-    result
   end
   #-- -------------------------------------------------------------------------
   #++

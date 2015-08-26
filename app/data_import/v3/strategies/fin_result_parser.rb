@@ -21,7 +21,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = V3::FinResultParser
 
-  - Goggles framework vers.:  4.00.819
+  - Goggles framework vers.:  4.00.823
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -46,12 +46,24 @@ class V3::FinResultParser
   #++
 
 
-  # Read and parse a single txt file into a complex Hash structure in memory.
-  # Returned data storage is divided into each "context" page found, whose format
-  # is specified by @context_types, @tokenizer_types, @tokenizer_fields and @context_keys.
+  # Creates a new instance of the parser.
   #
   # It's possible to force a specific file format for the parsing by specifying
   # an instance of a sibling of TxtResultDef as +parsing_defs+.
+  #
+  def initialize( full_pathname, parsing_defs )
+    raise ArgumentError.new("Invalid 'full_pathname' parameter!") unless full_pathname.instance_of?( String )
+    raise ArgumentError.new("Invalid 'parsing_defs' parameter!") unless parsing_defs.kind_of?( V3::TxtResultDefs )
+    @full_pathname = full_pathname
+    @parsing_defs = parsing_defs
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Read and parse a single txt file into a complex Hash structure in memory.
+  # Returned data storage is divided into each "context" page found, whose format
+  # is specified by @context_types, @tokenizer_types, @tokenizer_fields and @context_keys.
   #
   # === Returns:
   #
@@ -100,21 +112,18 @@ class V3::FinResultParser
   #   with a new composed Hash element ({id: computed_id, fields: field_value_hash}) added for each
   #   possible value found of the above fields.
   #
-  def self.parse_txt_file( full_pathname, parsing_defs = nil )
-    parsing_defs = parsing_defs || V3::FileFormatParser.new( full_pathname ).parse()
-    raise ArgumentError.new("File format for '#{full_pathname}' NOT recognized!") if parsing_defs.nil?
-
-    service = V3::TxtParseService.new( parsing_defs, full_pathname )
-    service.log("\r\n-- V3::FinResultParser::parse_txt_file(#{ full_pathname }):", true, :info)
+  def parse_file()
+    service = V3::TxtParseService.new( @parsing_defs, @full_pathname )
+    service.log("\r\n-- V3::FinResultParser::parse_txt_file(#{ @full_pathname }):", true, :info)
     full_text_file_contents = ""
                                                     # Scan each line of the file until gets reaches EOF:
-    File.open( full_pathname ) do |f|
+    File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
         curr_line = EncodingTools.force_valid_encoding( curr_line )
         service.log("Reading line #{service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE)
         full_text_file_contents << curr_line
                                                     # -- HEADER (& ALL) Context detection: for each context type defined...
-        parsing_defs.context_types.each do |context_name, detector|
+        @parsing_defs.context_types.each do |context_name, detector|
           service.parse( detector, curr_line )
         end # unless any_children_detection           # Do not loop on all if we already have a matching child context
         service.increase_line_count
@@ -124,7 +133,7 @@ class V3::FinResultParser
 
     {
       parse_result:             service.result,
-      parsing_defs:             parsing_defs,
+      parsing_defs:             @parsing_defs,
       line_count:               service.line_count,
       total_data_rows:          tot_data_rows,
       full_text_file_contents:  full_text_file_contents
