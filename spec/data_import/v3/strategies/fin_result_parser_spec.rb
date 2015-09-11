@@ -24,8 +24,19 @@ describe V3::FinResultParser, type: :strategy do
     # Since subject is already a class, we just need to use this shared existance example
     # instead of the "(the existance of a class method)":
     it_behaves_like( "(the existance of a method)", [
-      :parse_file
+      :parse_file, :process_log
     ] )
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    describe "#process_log" do
+      it "returns a kind of String instance" do
+        expect( subject.process_log ).to be_a_kind_of( String )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
 
 
     describe "#parse_txt_file" do

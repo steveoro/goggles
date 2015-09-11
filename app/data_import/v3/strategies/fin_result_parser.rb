@@ -21,7 +21,7 @@ require 'iconv' unless String.method_defined?( :encode )
 
 = V3::FinResultParser
 
-  - Goggles framework vers.:  4.00.823
+  - Goggles framework vers.:  4.00.825
   - author: Steve A.
 
  Dedicated parser for FIN Results.
@@ -56,9 +56,16 @@ class V3::FinResultParser
     raise ArgumentError.new("Invalid 'parsing_defs' parameter!") unless parsing_defs.kind_of?( V3::TxtResultDefs )
     @full_pathname = full_pathname
     @parsing_defs = parsing_defs
+    @service = nil
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Returns the internal log text string, captured during the process.
+  def process_log
+    @service.respond_to?(:process_log) ? @service.process_log : ""
+  end
 
 
   # Read and parse a single txt file into a complex Hash structure in memory.
@@ -113,28 +120,28 @@ class V3::FinResultParser
   #   possible value found of the above fields.
   #
   def parse_file()
-    service = V3::TxtParseService.new( @parsing_defs, @full_pathname )
-    service.log("\r\n-- V3::FinResultParser::parse_txt_file(#{ @full_pathname }):", true, :info)
+    @service = V3::TxtParseService.new( @parsing_defs, @full_pathname )
+    @service.log("\r\n-- V3::FinResultParser::parse_txt_file(#{ @full_pathname }):", true, :info)
     full_text_file_contents = ""
                                                     # Scan each line of the file until gets reaches EOF:
     File.open( @full_pathname ) do |f|
       f.each_line do |curr_line|                    # Make sure each line has a valid UTF-8 sequence of characters:
         curr_line = EncodingTools.force_valid_encoding( curr_line )
-        service.log("Reading line #{service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE)
+        @service.log("Reading line #{@service.line_count}...: <<#{curr_line}>>", DEBUG_VERY_VERBOSE)
         full_text_file_contents << curr_line
                                                     # -- HEADER (& ALL) Context detection: for each context type defined...
         @parsing_defs.context_types.each do |context_name, detector|
-          service.parse( detector, curr_line )
+          @service.parse( detector, curr_line )
         end # unless any_children_detection           # Do not loop on all if we already have a matching child context
-        service.increase_line_count
+        @service.increase_line_count
       end
     end                                             # (automatically closes the file)
-    tot_data_rows = service.log_parsing_stats()
+    tot_data_rows = @service.log_parsing_stats()
 
     {
-      parse_result:             service.result,
+      parse_result:             @service.result,
       parsing_defs:             @parsing_defs,
-      line_count:               service.line_count,
+      line_count:               @service.line_count,
       total_data_rows:          tot_data_rows,
       full_text_file_contents:  full_text_file_contents
     }

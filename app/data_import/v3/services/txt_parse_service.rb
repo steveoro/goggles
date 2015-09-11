@@ -51,7 +51,7 @@ class V3::TxtParseService
   #++
 
   attr_reader :result, :full_pathname, :line_count, :total_data_rows, :previous_parent_context
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
   #++
 
 

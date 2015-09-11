@@ -47,7 +47,11 @@ class Admin::V3::DataImportController < ApplicationController
 
     logger.debug "FILENAME...: #{params[:datafile].original_filename }"
 
-    # TODO parse datafile
+    # TODO parse datafile:
+    # 1) Parse file format => retrieve parser instance & parsing defs from file format parser
+    # 2) Launch parser instance with parameters (parsing defs)
+    # 3) Retrieve result from parser instance
+
     @result = nil
     if @result.nil?
       flash[:error] = I18n.t("admin_import.parsing_error_nil_result")
