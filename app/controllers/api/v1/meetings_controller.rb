@@ -1,3 +1,7 @@
+# encoding: utf-8
+require 'meeting_finder'
+
+
 #
 # R/O RESTful API controller
 #
@@ -22,17 +26,17 @@ class Api::V1::MeetingsController < ApplicationController
   #
   def index
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:code_like]                           
+    if params[:code_like]
       filter = "%#{params[:code_like]}%"
-      @teams = Meeting.where{ code.like filter }.order(:header_date)
+      @meetings = Meeting.where{ code.like filter }.order(:header_date)
     else
-      @teams = Meeting.order(:header_date)
+      @meetings = Meeting.order(:header_date)
     end
     if params[:header_year]
       filter = params[:header_year].to_i
-      @teams = @teams.where{ header_year == filter }.order(:header_date)
+      @meetings = @teams.where{ header_year == filter }.order(:header_date)
     end
-    respond_with( @teams )
+    respond_with( @meetings )
   end
 
 
@@ -43,7 +47,19 @@ class Api::V1::MeetingsController < ApplicationController
   # - id: the Meeting.id
   #
   def show
-    respond_with( @team = Meeting.find(params[:id]) )
+    respond_with( @meeting = Meeting.find(params[:id]) )
+  end
+
+
+  # Returns an array of JSON-encoded Meeting objects for the specified query
+  # text.
+  #
+  # === Params:
+  # - :query => the text to be searched using a MeetingFinder instance.
+  #
+  def search
+    @meetings = MeetingFinder.new( params[:query] ).search()
+    respond_with( @meetings )
   end
   # ---------------------------------------------------------------------------
 

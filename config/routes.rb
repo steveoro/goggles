@@ -23,6 +23,7 @@ Goggles::Application.routes.draw do
       # === Meetings ===
       get    "meetings/index",                to: "meetings#index",         as: "meetings"
       get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
+      get    "meetings/search",               to: "meetings#search",        as: "meeting_search"
       # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
 
       # === News Feeds ===

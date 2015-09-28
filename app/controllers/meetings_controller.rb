@@ -1,13 +1,14 @@
 # encoding: utf-8
 require 'common/format'
 require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_search query condition
+require 'meeting_finder'
 
 
 =begin
 
 = MeetingsController
 
-  - version:  4.00.789
+  - version:  4.00.825
   - author:   Steve A.
 
 =end
@@ -122,31 +123,8 @@ class MeetingsController < ApplicationController
       serched_team = Team.where( query_teams_condition ).first
       @preselected_team_id = serched_team.id if serched_team
     end
-    ids = []
 
-    # Avoid query build-up if no search text is given:
-    if search_text.to_s.size > 0
-      search_like_text = "%#{search_text}%"
-      # Search among most-used text columns:
-      ids << Meeting.where(
-        [
-          "(description LIKE ?) OR (header_year LIKE ?) OR (notes LIKE ?) OR (reference_name LIKE ?)",
-          search_like_text, search_like_text, search_like_text, search_like_text
-        ]
-      ).map{ |row| row.id }.uniq
-
-      # Search among linked Swimmers:
-      ids << Meeting.includes( :swimmers ).where( query_swimmers_condition ).map{ |row| row.id }.uniq
-      # Search among linked Teams:
-      ids << Meeting.includes( :teams ).where( query_teams_condition ).map{ |row| row.id }.uniq
-
-      # Search among linked EventTypes:
-      event_type_ids = EventType.includes(:stroke_type).find_all do |row|
-        ( row.i18n_short =~ %r(#{search_text})i ) ||
-        ( row.i18n_description =~ %r(#{search_text})i )
-      end.map{ |row| row.id }
-      ids << Meeting.includes( :meeting_events ).where( :'meeting_events.event_type_id' => event_type_ids ).map{ |row| row.id }.uniq
-    end
+    ids = MeetingFinder.new( search_text ).search_ids()
 
     # Initialize the grid:
     @meetings_grid = initialize_grid(
