@@ -20,10 +20,12 @@ Goggles::Application.routes.draw do
       # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
       # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
 
+      # === Search ===
+      get    "search/simple/:query",          to: "search#simple",          as: "search_simple"
+
       # === Meetings ===
       get    "meetings/index",                to: "meetings#index",         as: "meetings"
       get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
-      get    "meetings/search",               to: "meetings#search",        as: "meeting_search"
       # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
 
       # === News Feeds ===

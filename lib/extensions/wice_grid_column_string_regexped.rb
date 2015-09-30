@@ -100,7 +100,7 @@ end
   in config/initializers/wice_grid_config.rb.
 
 =end
-class ConditionsGeneratorColumnStringRegexped < Wice::Columns::ConditionsGeneratorColumn  #:nodoc:
+class ConditionsGeneratorColumnStringRegexped < Wice::Columns::ConditionsGeneratorColumn
 
   # Generate an array of search conditions given the parameters.
   #
@@ -117,7 +117,11 @@ class ConditionsGeneratorColumnStringRegexped < Wice::Columns::ConditionsGenerat
   #-- -------------------------------------------------------------------------
   #++
 
-  def generate_conditions( table_alias, opts ) #:nodoc:
+
+  # Returns an array of valid SQL string search conditions, using the specified
+  # table_alias and options.
+  #
+  def generate_conditions( table_alias, opts )
     if opts.kind_of? String
       string_fragment = opts
       negation = ''

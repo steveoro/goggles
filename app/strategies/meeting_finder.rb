@@ -5,7 +5,7 @@ require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_
 
 = MeetingFinder
 
- - Goggles framework vers.:  4.00.825
+ - Goggles framework vers.:  4.00.827
  - author: Steve A.
 
  Finder (strategy) class used to retrieve lists of Meeting instances based
@@ -26,6 +26,7 @@ class MeetingFinder
   # - query_term: the text to be searched; returns all Meetings when no term is supplied.
   #
   def initialize( query_term = nil )
+    query_term = nil if query_term.to_s == ''
     @query_term = query_term
   end
   #-- --------------------------------------------------------------------------
@@ -39,12 +40,20 @@ class MeetingFinder
     ids = []
     # Avoid query build-up if no search text is given:
     if @query_term
-      query_swimmers_condition = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'swimmers', 'complete_name', @query_term )
-      query_teams_condition    = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'teams', 'name', @query_term )
+      query_swimmers_condition = ConditionsGeneratorColumnStringRegexped.generate_query_conditions(
+        'swimmers',
+        'complete_name',
+        @query_term
+      )
+      query_teams_condition    = ConditionsGeneratorColumnStringRegexped.generate_query_conditions(
+        'teams',
+        'name',
+        @query_term
+      )
       search_like_text = "%#{@query_term}%"
 
       # Search among most-used text columns in Meetings:
-      ids += Meeting.where(
+      ids += Meeting.select(:id).where(
         [
           "(description LIKE ?) OR (header_year LIKE ?) OR (notes LIKE ?) OR (reference_name LIKE ?)",
           search_like_text, search_like_text, search_like_text, search_like_text
@@ -52,10 +61,10 @@ class MeetingFinder
       ).map{ |row| row.id }.flatten.uniq
 
       # Search among linked Swimmers:
-      ids += Meeting.includes( :swimmers ).where( query_swimmers_condition ).map{ |row| row.id }.flatten.uniq
+      ids += Meeting.select(:id).includes( :swimmers ).where( query_swimmers_condition ).map{ |row| row.id }.flatten.uniq
 
       # Search among linked Teams:
-      ids += Meeting.includes( :teams ).where( query_teams_condition ).map{ |row| row.id }.flatten.uniq
+      ids += Meeting.select(:id).includes( :teams ).where( query_teams_condition ).map{ |row| row.id }.flatten.uniq
 
       # Search among linked EventTypes:
       event_type_ids = EventType.includes(:stroke_type).find_all do |row|
@@ -64,7 +73,7 @@ class MeetingFinder
       end.map{ |row| row.id }.flatten.uniq
 
       # Complete the list of IDs to be retrieved:
-      ids += Meeting.includes( :meeting_events ).where( :'meeting_events.event_type_id' => event_type_ids )
+      ids += Meeting.select(:id).includes( :meeting_events ).where( :'meeting_events.event_type_id' => event_type_ids )
         .map{ |row| row.id }.flatten.uniq
       # Return the results:
       ids.uniq
@@ -80,7 +89,8 @@ class MeetingFinder
   #
   def search
     # Avoid query build-up if no search text is given:
-    @query_term ? Meeting.where(id: search_ids()) : Meeting.all
+    @query_term ? Meeting.where( id: search_ids() ) :
+                  Meeting.all
   end
   #-- --------------------------------------------------------------------------
   #++

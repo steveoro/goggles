@@ -49,19 +49,8 @@ class Api::V1::MeetingsController < ApplicationController
   def show
     respond_with( @meeting = Meeting.find(params[:id]) )
   end
-
-
-  # Returns an array of JSON-encoded Meeting objects for the specified query
-  # text.
-  #
-  # === Params:
-  # - :query => the text to be searched using a MeetingFinder instance.
-  #
-  def search
-    @meetings = MeetingFinder.new( params[:query] ).search()
-    respond_with( @meetings )
-  end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   protected
@@ -74,4 +63,6 @@ class Api::V1::MeetingsController < ApplicationController
       return
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end
