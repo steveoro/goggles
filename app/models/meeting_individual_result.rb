@@ -102,7 +102,8 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_gender_type,             ->(gender_type)         { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
   scope :for_event_type,              ->(event_type)          { joins(:event_type).where(["event_types.id = ?", event_type.id]) }
   scope :for_swimmer,                 ->(swimmer)             { where(swimmer_id: swimmer.id) }
-
+  scope :for_category_code,           ->(category_code)       { joins(:category_type).where(['category_types.code = ?', category_code]) }
+  
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------
