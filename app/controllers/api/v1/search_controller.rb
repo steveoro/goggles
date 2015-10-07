@@ -1,4 +1,6 @@
 # encoding: utf-8
+require 'common/format'
+
 require 'meeting_finder'
 require 'swimmer_finder'
 require 'team_finder'
@@ -32,7 +34,7 @@ class Api::V1::SearchController < ApplicationController
   #      class: ['Meeting'|'Swimmer'|'Team'|'SwimmingPool'|...]
   #      id: [id from the retrieved model]
   #      description: [get_verbose_name from the model]
-  #      updated_at:  [updated_at from the model]
+  #      date:  [a relevant date from the model, either updated_at or header_date for Meetings]
   #    }
   #
   #
@@ -54,7 +56,7 @@ class Api::V1::SearchController < ApplicationController
           class:       'Swimmer',
           id:          swimmer.id,
           description: swimmer.get_verbose_name,
-          updated_at:  swimmer.updated_at
+          date:        Format.a_date( swimmer.updated_at )
       }
     end
 
@@ -65,7 +67,7 @@ class Api::V1::SearchController < ApplicationController
           class:       'Team',
           id:          team.id,
           description: team.get_verbose_name,
-          updated_at:  team.updated_at
+          date:        Format.a_date( team.updated_at )
       }
     end
 
@@ -76,7 +78,7 @@ class Api::V1::SearchController < ApplicationController
           class:       'SwimmingPool',
           id:          pool.id,
           description: pool.get_verbose_name,
-          updated_at:  pool.updated_at
+          date:        Format.a_date( pool.updated_at )
       }
     end
 
@@ -87,8 +89,8 @@ class Api::V1::SearchController < ApplicationController
       @result << {
           class:       'Meeting',
           id:          meeting.id,
-          description: meeting.get_verbose_name,
-          updated_at:  meeting.updated_at
+          description: meeting.get_scheduled_date_with_verbose_name,
+          date:        meeting.get_scheduled_date ? meeting.get_scheduled_date : meeting.header_date
       }
     end
 

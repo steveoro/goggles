@@ -22,7 +22,7 @@ describe Api::V1::SearchController, :type => :controller do
       end
       it "returns an array of Hash with the required fields" do
         result_array = JSON.parse(response.body)
-        expect( result_array ).to all include( 'class', 'id', 'description', 'updated_at' )
+        expect( result_array ).to all include( 'class', 'id', 'description', 'date' )
       end
       it "returns at least 1 Swimmer, >2 Meetings and 0 Team rows (with the existing seeds)" do
         result_array = JSON.parse(response.body)

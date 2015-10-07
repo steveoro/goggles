@@ -40,14 +40,176 @@ class Api::V1::MeetingsController < ApplicationController
   end
 
 
-  # Returns a JSON-encoded hash of the specified row data.
-  # The keys of the Hash are the attributes as string.
+  # Returns a JSON-encoded hash of all the details concerning a specified Meeting :id.
   #
   # === Params:
   # - id: the Meeting.id
   #
+  # === Returns:
+  # A JSON-encoded Hash with the structure:
+  #
+  #      {
+  #        # Meeting header:
+  #        id:         @meeting.id,
+  #        name:       @meeting.get_full_name,
+  #        date:       @meeting.get_scheduled_date,
+  #        season:     @meeting.get_season_type,
+  #        pools:      @meeting.swimming_pools.uniq.map{ |pool| pool.get_verbose_name },
+  #
+  #        # Short names to be displayed on tab views or on menus, i.e.:
+  #        events:     ["50 SL", "50 DO", ...],
+  #        genders:    ['M','F']
+  #        categories: ["SEN", "M20", "M25", ...]
+  #
+  #        # Actual result data for this meeting, structed in several self-contained
+  #        # array of Hash, in this hierarchy:
+  #        # array of events -> array of event's programs -> array of program's results
+  #        results:    [
+  #            {
+  #              id: <event_id>,
+  #              name: <displayable event name>,
+  #              date: <scheduled date for event>,
+  #
+  #              progs: [
+  #                  {
+  #                    id: <program_id>,
+  #                    category: <program's category displayable name>,
+  #                    gender: <program's gender>,
+  #
+  #                    mirs: [
+  #                        {
+  #                          id:           mir.id,
+  #                          swimmer:      mir.get_swimmer_name,
+  #                          swimmer_year: mir.get_year_of_birth,
+  #                          team:         mir.get_team_name,
+  #                          timing:       mir.get_timing,
+  #                          rank:         mir.get_rank_description,
+  #                          rank_valid:   mir.is_valid_for_ranking,
+  #                          passages:  [
+  #                              {
+  #                                id:       passage.id,
+  #                                distance: passage.get_passage_distance,
+  #                                timing:   passage.get_timing,
+  #                                label:    passage.get_short_name
+  #                              },
+  #                              { # passage #2, ...
+  #                              }
+  #                          ],
+  #                          std_points:   mir.get_formatted_standard_points,
+  #                          ind_points:   mir.get_formatted_individual_points
+  #                        },
+  #                        { # MIR #2 and so on...
+  #                        },
+  #                    ],
+  #
+  #                    mrrs: [
+  #                        {
+  #                          id:           mrr.id,
+  #                          team:         mrr.get_team_name,
+  #                          timing:       mrr.get_timing,
+  #                          rank:         mrr.get_rank_description,
+  #                          rank_valid:   mrr.is_valid_for_ranking,
+  #                          std_points:   mrr.get_formatted_standard_points,
+  #                          ind_points:   mrr.get_formatted_meeting_points
+  #                        },
+  #                        { # MRR #2 and so on...
+  #                        },
+  #                    ],
+  #                  },
+  #
+  #                  { # program #2 and so on...
+  #                  },
+  #              ]
+  #            },
+  #
+  #            { # event #2 and so on...
+  #            }
+  #        ]
+  #      }
+  #
   def show
-    respond_with( @meeting = Meeting.find(params[:id]) )
+    @meeting    = Meeting.find(params[:id])
+    # List of full event rows:
+    mevs_list   = @meeting.meeting_events.includes( :event_type, :stroke_type )
+                      .order( 'event_types.is_a_relay, meeting_events.event_order' )
+    # Retrieve all results, with hierarchy:
+    result_list = mevs_list.map do |event|
+        {
+          id:         event.id,
+          name:       event.event_type.i18n_short,
+          date:       event.get_scheduled_date,
+
+          progs: event.meeting_programs.includes(:category_type, :gender_type)
+            .order('category_types.id').map do |prog|
+               {
+                 id:       prog.id,
+                 category: prog.category_type.get_short_name,
+                 gender:   prog.gender_type.code,
+                 # MeetingIndividualResult array:
+                 mirs:  prog.meeting_individual_results.includes(:swimmer, :team)
+                          .map do |mir|
+                            mir = MeetingIndividualResultDecorator.new( mir )
+                            {
+                              id:           mir.id,
+                              swimmer:      mir.get_swimmer_name,
+                              swimmer_year: mir.get_year_of_birth,
+                              team:         mir.get_team_name,
+                              timing:       mir.get_timing,
+                              rank:         mir.get_rank_description,
+                              rank_valid:   mir.is_valid_for_ranking,
+                              passages:     mir.get_passages
+                                              .map do |passage|
+                                                {
+                                                  id:       passage.id,
+                                                  distance: passage.get_passage_distance,
+                                                  timing:   passage.get_timing,
+                                                  label:    passage.get_short_name
+                                                }
+                                              end,
+                              std_points:   mir.get_formatted_standard_points,
+                              ind_points:   mir.get_formatted_individual_points
+                            }
+                          end,
+                 # MeetingRelayResult array:
+                 mrr:  prog.meeting_relay_results.includes(:team)
+                          .map do |mrr|
+                            mrr = MeetingRelayResultDecorator.new( mrr )
+                            {
+                              id:           mrr.id,
+                              team:         mrr.get_team_name,
+                              timing:       mrr.get_timing,
+                              rank:         mrr.get_rank_description,
+                              rank_valid:   mrr.is_valid_for_ranking,
+                              std_points:   mrr.get_formatted_standard_points,
+                              met_points:   mrr.get_formatted_meeting_points
+                            }
+                          end,
+               }
+            end
+        }
+      end
+
+    @result_hash = {
+        # Meeting header:
+        id:         @meeting.id,
+        name:       @meeting.get_full_name,
+        date:       @meeting.get_scheduled_date,
+        season:     @meeting.get_season_type,
+        pools:      @meeting.swimming_pools.uniq.map{ |pool| pool.get_verbose_name },
+        # Short names to be displayed on tab views or on menus:
+        events:     mevs_list.map{ |row| row.event_type.i18n_short }
+                      .uniq.compact,
+        genders:    @meeting.meeting_programs.includes(:gender_type)
+                      .map{ |row| row.gender_type.code }
+                      .uniq.compact,
+        categories: @meeting.meeting_programs.includes(:category_type)
+                      .map{ |row| row.category_type.get_short_name }
+                      .uniq.compact,
+        # Actual result data for this meeting:
+        results:    result_list
+    }
+
+    respond_with( @result_hash )
   end
   #-- -------------------------------------------------------------------------
   #++
