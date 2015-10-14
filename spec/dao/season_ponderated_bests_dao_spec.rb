@@ -135,7 +135,8 @@ describe SeasonPonderatedBestsDAO, type: :model do
     subject { SeasonPonderatedBestsDAO.new( season, max_results, bests_to_be_ignored ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season, :single_events, :max_results, :bests_to_be_ignored, :scan_for_gender_category_and_event
+      :season, :single_events, :max_results, :bests_to_be_ignored, :event_types, :categories, 
+      :find_season_type_events, :find_season_type_category_codes, :scan_for_gender_category_and_event
     ] )
 
     describe "#season" do
@@ -159,6 +160,38 @@ describe SeasonPonderatedBestsDAO, type: :model do
         expect( subject.bests_to_be_ignored ).to eq( bests_to_be_ignored )
       end
     end
+    describe "#event_types" do
+      it "is a collection of event types" do
+        expect( subject.event_types ).to be_a_kind_of( ActiveRecord::Relation )
+        expect( subject.event_types ).to all(be_a_kind_of( EventType ))
+      end
+    end
+    describe "#categories" do
+      it "is a collection of category codes" do
+        found_cat = subject.categories
+        expect( found_cat ).to be_a_kind_of( Enumerable )
+        found_cat.each do |category_code|
+          expect( CategoryType.find_by_code(category_code) ).to be_an_instance_of( CategoryType )  
+        end
+      end
+    end
+
+    describe "#find_season_type_events" do
+      it "returns a collection of at least one event types" do
+        subject.find_season_type_events
+        expect( subject.event_types.count ).to be > 0
+        expect( subject.event_types ).to all(be_a_kind_of( EventType ))
+      end
+    end
+    describe "#find_season_type_category_codes" do
+      it "returns a collection of category codes" do
+        found_cat = subject.find_season_type_category_codes
+        expect( found_cat.size ).to be > 0
+        found_cat.each do |category_code|
+          expect( CategoryType.find_by_code(category_code) ).to be_an_instance_of( CategoryType )  
+        end
+      end
+    end
 
     describe "#scan_for_gender_category_and_event" do
       it "returns a collection of EventTargetTimeDAO" do
@@ -171,8 +204,6 @@ describe SeasonPonderatedBestsDAO, type: :model do
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
 
   context "not a valid instance" do
     it "raises an exception for wrong season parameter" do

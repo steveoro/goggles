@@ -30,6 +30,9 @@ class EventType < ActiveRecord::Base
   validates_length_of       :style_order, within: 1..3, allow_nil: false
   validates_numericality_of :style_order
 
+  has_many :meeting_events
+  has_many :meetings,         through: :meeting_events 
+  has_many :season_types,     through: :meetings 
   has_many :events_by_pool_types
   has_many :pool_types,       through: :events_by_pool_types
 
@@ -38,6 +41,8 @@ class EventType < ActiveRecord::Base
   scope :for_fin_calculation, where('((length_in_meters % 50) = 0) AND (length_in_meters <= 1500)')
 
   scope :sort_by_style,       order('style_order')
+
+  scope :for_season_type,     ->(season_type) { joins(:season_types).where(['season_types.id = ?', season_type.id]) }
   #-- -------------------------------------------------------------------------
   #++
 

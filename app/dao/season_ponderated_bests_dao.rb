@@ -45,6 +45,9 @@ class SeasonPonderatedBestsDAO
     # otherwise the maximum number of results
     #
     def collect_event_bests
+      # TODO
+      # Limit the results to the season older than the target one
+      
       MeetingIndividualResult
         .for_season_type( @season_type )
         .for_gender_type( @gender_type )
@@ -117,7 +120,7 @@ class SeasonPonderatedBestsDAO
   attr_reader :season, :max_results, :bests_to_be_ignored
 
   # These can be edited later on:
-  attr_accessor :season, :max_results, :bests_to_be_ignored, :single_events
+  attr_accessor :season, :max_results, :bests_to_be_ignored, :event_types, :categories, :single_events
   #-- -------------------------------------------------------------------------
   #++
 
@@ -131,21 +134,69 @@ class SeasonPonderatedBestsDAO
     @season              = season
     @max_results         = max_results
     @bests_to_be_ignored = bests_to_be_ignored
-    @single_events       = []
-
+    @event_types         = self.find_season_type_events
+    @categories          = self.find_season_type_category_codes
+    @single_events       = [] 
+    
     scan_for_gender_category_and_event
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  # Scan for different gender, categoryand event (pool) to be considered
+  # Scan for different gender, category and event (pool) to be considered
   # For the season type of the target season
   # For each item found i creates an element in single_events
   #
   def scan_for_gender_category_and_event
     # Scan genders, than Category, than events, than pool types
     # An element occurs if at least one meeting individual result is present
+    GenderType.individual_only.each do |gender_type|
+      PoolType.only_for_meetings.each do |pool_type|
+        @event_types.each do |event_type|
+          @categories.each do |category_code|
+            # If at least on meeting individual result add an element
+            if MeetingIndividualResult
+              .for_season_type( @season.season_type )
+              .for_gender_type( gender_type )
+              .for_category_code( category_code )
+              .for_pool_type( pool_type )
+              .for_event_type( event_type )
+              .count > 0
+              
+              @single_events << SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( 
+                @season.season_type, 
+                gender_type, 
+                CategoryType.for_season( @season ).find_by_code(category_code), 
+                event_type, 
+                pool_type, 
+                @max_results, 
+                @bests_to_be_ignored )
+            end
+          end
+        end
+      end
+    end
     
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Find different catgeories of the season type
+  # The categories are those that have at least one meeting result
+  # in a meeting of the season type and are still present in the target season
+  #
+  def find_season_type_category_codes
+    CategoryType.are_not_relays.for_season_type(@season.season_type).for_season(@season).pluck(:code).uniq
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Find different events of the season type
+  # The events are those that have at least one meeting result
+  # in a meeting of the season type
+  #
+  def find_season_type_events
+    EventType.are_not_relays.for_season_type(@season.season_type).uniq
   end
   #-- -------------------------------------------------------------------------
   #++

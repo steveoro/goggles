@@ -87,6 +87,8 @@ class Meeting < ActiveRecord::Base
   scope :has_only_start_list,    -> { where("has_start_list and not are_results_acquired") }
   scope :has_results,            -> { where("are_results_acquired") }
 
+  scope :for_season_type,        ->(season_type) { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+
   # ----------------------------------------------------------------------------
   # Base methods:
   # ----------------------------------------------------------------------------

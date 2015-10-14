@@ -36,6 +36,9 @@ class CategoryType < ActiveRecord::Base
   scope :are_not_relays,  -> { where(is_a_relay: false) }
 
   scope :sort_by_age,     ->(dir = 'ASC') { order("age_begin #{dir.to_s}") }
+
+  scope :for_season_type, ->(season_type) { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+  scope :for_season,      ->(season)      { where(['season_id = ?', season.id]) }
   # ----------------------------------------------------------------------------
 
 
