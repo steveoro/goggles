@@ -15,32 +15,29 @@ class SeasonPonderatedBestsDAO
   # Manage the single event best performance
   class EventPonderatedBestDAO
     # These must be initialized on creation:
-    attr_reader :gender_type, :category_type, :event_type, :pool_type
+    attr_reader :season_type, :gender_type, :category_type, :event_type, :pool_type, :max_results, :bests_to_be_ignored
 
     # These can be edited later on:
-    attr_accessor :gender_type, :category_type, :event_type, :pool_type, :best_results
+    attr_accessor :season_type, :gender_type, :category_type, :event_type, :pool_type, :best_results
     #-- -------------------------------------------------------------------------
     #++
 
     # Creates a new instance.
     #
-    def initialize( gender_type, category_type, event_type, pool_type )
+    def initialize( season_type, gender_type, category_type, event_type, pool_type, max_results, bests_to_be_ignored )
+      @season_type         = season_type
       @gender_type         = gender_type
       @category_type       = category_type
       @event_type          = event_type
       @pool_type           = pool_type
-      @best_results        = []
-      @ponderated_time       = Timing.new()
+      @max_results         = max_results
+      @bests_to_be_ignored = bests_to_be_ignored
+      
+      @best_results        = self.collect_event_bests
+      @ponderated_time     = self.set_ponderated_best
     end
     #-- -------------------------------------------------------------------------
     #++
-    
-    # Clear the best result collection and the pondered time
-    #
-    def clear
-      @best_results  = []
-      @ponderated_time = Timing.new()
-    end
     
     # Find the desidered number of best results for the overall meeting individual resuts
     # of the seasons with the same type of the given one
@@ -48,23 +45,21 @@ class SeasonPonderatedBestsDAO
     # otherwise the maximum number of results
     #
     def collect_event_bests
-      @best_results = MeetingIndividualResult
-        .for_season_type( @season.season_type )
+      MeetingIndividualResult
+        .for_season_type( @season_type )
         .for_gender_type( @gender_type )
         .for_category_code( @category_type.code )
         .for_pool_type( @pool_type )
-        .for_even_type( @event_type )
+        .for_event_type( @event_type )
         .sort_by_timing
         .limit( @bests_to_be_ignored + @max_results )
-      @best_results.count         
       
-      # TODO This will consider only one season because the category is unique in the season
-      # Should use the category code instead of category object
-      # Should verifiy where this scope is used too!!!
+      # TODO
+      # Verify where for_category_type scope is used!!!
     end
     
-    # Calculate and set the pondered best time swam
-    # The pondered best is the everage time calculated on the bests @max_results
+    # Calculate and set the ponderated best time swam
+    # The ponderated best is the everage time calculated on the bests @max_results
     # excluding the first bests_to_be_ignored.
     # If the total amount of meeting individual results is less than
     # bests_to_be_ignored + max_results, all the reuslts will be considered
@@ -73,6 +68,7 @@ class SeasonPonderatedBestsDAO
       total_time        = 0
       result_considered = 0
       result_collected  = @best_results.count
+      everage_time      = 0
 
       # If no results, no action performed
       if result_collected > 0
@@ -81,25 +77,39 @@ class SeasonPonderatedBestsDAO
         if result_collected >= ( @bests_to_be_ignored + @max_results )
           @best_results.each_with_index do |mir, index|
             if index >= @bests_to_be_ignored
-              total_time += mir.get_timing.to_hundreds
+              total_time += mir.get_timing_instance.to_hundreds
             end
           end
           result_considered = @max_results
         else
           @best_results.each do |mir|
-            total_time += mir.get_timing.to_hundreds
+            total_time += mir.get_timing_instance.to_hundreds
           end           
           result_considered = result_collected
         end
         everage_time = (total_time / result_considered).round(0)
-        @ponderated_time = Timing.new(everage_time) 
       end
+      @ponderated_time = Timing.new(everage_time)
     end
     
-    # Gets the pondered best time
+    # Gets the ponderated best time
     #
-    def get_pondered_best
-      @best_results? null : @ponderated_time
+    def get_ponderated_best
+      # Maybe better trace if no results collected
+      #@best_results.count > 0 ? Timing.new() : @ponderated_time
+      @ponderated_time
+    end
+
+    # Gets the max results number to be considered
+    #
+    def get_max_results
+      @max_results
+    end
+
+    # Gets the number of top best results to be ignored
+    #
+    def get_bests_to_be_ignored
+      @bests_to_be_ignored
     end
   end
 
