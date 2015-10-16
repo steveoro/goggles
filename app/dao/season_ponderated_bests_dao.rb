@@ -18,7 +18,7 @@ class SeasonPonderatedBestsDAO
     attr_reader :season_type, :gender_type, :category_type, :event_type, :pool_type, :max_results, :bests_to_be_ignored
 
     # These can be edited later on:
-    attr_accessor :season_type, :gender_type, :category_type, :event_type, :pool_type, :best_results
+    attr_accessor :season_type, :gender_type, :category_type, :event_type, :pool_type, :best_results, :total_results
     #-- -------------------------------------------------------------------------
     #++
 
@@ -32,6 +32,14 @@ class SeasonPonderatedBestsDAO
       @pool_type           = pool_type
       @max_results         = max_results
       @bests_to_be_ignored = bests_to_be_ignored
+      
+      @total_results       = MeetingIndividualResult
+                              .for_season_type( season_type )
+                              .for_gender_type( gender_type )
+                              .for_category_code( category_type.code )
+                              .for_pool_type( pool_type )
+                              .for_event_type( event_type )
+                              .count
       
       @best_results        = self.collect_event_bests
       @ponderated_time     = self.set_ponderated_best
@@ -162,7 +170,6 @@ class SeasonPonderatedBestsDAO
               .for_pool_type( pool_type )
               .for_event_type( event_type )
               .count > 0
-              
               @single_events << SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( 
                 @season.season_type, 
                 gender_type, 
@@ -176,7 +183,6 @@ class SeasonPonderatedBestsDAO
         end
       end
     end
-    
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -186,7 +192,7 @@ class SeasonPonderatedBestsDAO
   # in a meeting of the season type and are still present in the target season
   #
   def find_season_type_category_codes
-    CategoryType.are_not_relays.for_season_type(@season.season_type).for_season(@season).pluck(:code).uniq
+    CategoryType.are_not_relays.for_season_type(@season.season_type).for_season(@season).sort_by_age.pluck(:code).uniq
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -196,9 +202,34 @@ class SeasonPonderatedBestsDAO
   # in a meeting of the season type
   #
   def find_season_type_events
-    EventType.are_not_relays.for_season_type(@season.season_type).uniq
+    EventType.are_not_relays.for_season_type(@season.season_type).sort_by_style.uniq
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Create a CSV file (; delimited) with season ponderated calculation data 
+  #
+  def to_csv( csv_file_name = 'ponderated_season_' + @season.id.to_s )
+    rows = []
+
+    File.open( csv_file_name + '.csv', 'w' ) do |f|
+      titles = ['gender',  'category', 'event', 'pool', 'total_results', 'ponderated best', 'best results'] 
+      rows << titles.join(';') 
+      
+      @single_events.each do |event|
+        event_row = '' 
+        event_row += event.gender_type.code + ';'
+        event_row += event.category_type.code + ';'
+        event_row += event.event_type.code + ';'
+        event_row += event.pool_type.code + ';'
+        event_row += event.total_results.to_s + ';'
+        event_row += event.get_ponderated_best.to_s + ';'
+        event_row += event.best_results.map{ |mir| mir.get_timing.to_s }.join(';')
+        rows << event_row 
+      end
+      #f.puts rows.map{ |row| row }.join("\r\n")
+      f.puts rows.map{ |row| row }
+    end
+  end
 
 end

@@ -26,7 +26,7 @@ describe SeasonPonderatedBestsDAO, type: :model do
 
     it_behaves_like( "(the existance of a method)", [
       :season_type, :gender_type, :category_type, :event_type, :pool_type, 
-      :best_results, 
+      :best_results, :total_results, 
       :get_max_results, :get_bests_to_be_ignored,
       :collect_event_bests, :set_ponderated_best, :get_ponderated_best
     ] )
@@ -60,9 +60,14 @@ describe SeasonPonderatedBestsDAO, type: :model do
     #++
     
     describe "#best_results" do
-      it "is the collection of best meeting individal results to considered for the event" do
+      it "is a collection of best meeting individal results to considered for the event" do
         expect( subject.best_results ).to be_a_kind_of( ActiveRecord::Relation )
         expect( subject.best_results ).to all(be_an_instance_of( MeetingIndividualResult ))
+      end
+    end
+    describe "#total_results" do
+      it "is a valid number" do
+        expect( subject.total_results ).to be >= 0
       end
     end
     #-- -------------------------------------------------------------------------
@@ -200,7 +205,6 @@ describe SeasonPonderatedBestsDAO, type: :model do
         expect( subject.single_events ).to all(be_a_kind_of( SeasonPonderatedBestsDAO::EventPonderatedBestDAO ))
       end
     end
-    
   end
   #-- -------------------------------------------------------------------------
   #++
