@@ -191,7 +191,7 @@ class SeasonPonderatedBestsDAO
   # The categories are those that have at least one meeting result
   # in a meeting of the season type and are still present in the target season
   #
-  def find_season_type_category_codes
+  def find_season_type_category_codes()
     CategoryType.are_not_relays.for_season_type(@season.season_type).for_season(@season).sort_by_age.pluck(:code).uniq
   end
   #-- -------------------------------------------------------------------------
@@ -201,7 +201,7 @@ class SeasonPonderatedBestsDAO
   # The events are those that have at least one meeting result
   # in a meeting of the season type
   #
-  def find_season_type_events
+  def find_season_type_events()
     EventType.are_not_relays.for_season_type(@season.season_type).sort_by_style.uniq
   end
   #-- -------------------------------------------------------------------------
@@ -227,9 +227,16 @@ class SeasonPonderatedBestsDAO
         event_row += event.best_results.map{ |mir| mir.get_timing.to_s }.join(';')
         rows << event_row 
       end
-      #f.puts rows.map{ |row| row }.join("\r\n")
       f.puts rows.map{ |row| row }
     end
   end
 
+  # Store collected data to the db structure of standard time 
+  #
+  def to_db()
+    # TODO Store collected data into time_standard structure
+    @single_events.each do |event|
+      
+    end
+  end
 end
