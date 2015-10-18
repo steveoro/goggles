@@ -31,6 +31,7 @@ class SeasonCreator
     end
     @older_season = older_season
     @description  = description
+    
     @new_id       = older_season.id + 10
     @begin_date   = older_season.begin_date.next_year
     @end_date     = older_season.end_date.next_year
@@ -38,7 +39,6 @@ class SeasonCreator
     @edition      = older_season.edition + 1 
 
     @new_season   = renew_season
-    
     @categories   = renew_categories
     
     @meetings     = older_season.meetings
@@ -51,12 +51,14 @@ class SeasonCreator
   # for the new season
   # 
   def renew_season
-    new_season = Season.new( id: @new_id, description: @description, begin_date: @begin_date, end_date: @end_date, header_year: @header_year, edition: @edition )
-    new_season.season_type         = @older_season.season_type 
-    new_season.edition_type        = @older_season.edition_type 
-    new_season.timing_type         = @older_season.timing_type 
-    new_season.has_individual_rank = @older_season.has_individual_rank 
-    new_season
+    newer_season = Season.new( @older_season.attributes )
+    newer_season.id          = @new_id
+    newer_season.description = @description
+    newer_season.begin_date  = @begin_date
+    newer_season.end_date    = @end_date
+    newer_season.header_year = @header_year
+    newer_season.edition     = @edition
+    newer_season
   end
 
   # Retreive older season categories and prepare them
@@ -65,20 +67,11 @@ class SeasonCreator
   # just associate with new season
   # 
   def renew_categories
-    # TODO There's a more elegant and nice method to do that? Maybe new( entity.attributes )
     newer_categories = []
     @older_season.category_types.each do |category_type|
-      new_cat = CategoryType.new( season_id: @new_id )
-      new_cat.code            = category_type.code
-      new_cat.federation_code = category_type.federation_code
-      new_cat.description     = category_type.description
-      new_cat.short_name      = category_type.short_name
-      new_cat.group_name      = category_type.group_name
-      new_cat.age_begin       = category_type.age_begin
-      new_cat.age_end         = category_type.age_end
-      new_cat.is_a_relay      = category_type.is_a_relay
-      new_cat.is_out_of_race  = category_type.is_out_of_race
-      newer_categories << new_cat
+      newer_category = CategoryType.new( category_type.attributes )
+      newer_category.season_id = @new_id
+      newer_categories << newer_category
     end
     newer_categories
   end
@@ -89,9 +82,9 @@ class SeasonCreator
   def renew_meetings
     newer_meetings = []
     @older_season.meetings.each do |meeting|
-      new_met = Meeting.new( season_id: @new_id )
-      # TODO Update meeting data for new season
-      newer_meetings << new_met
+      newer_meeting = Meeting.new( meeting.attributes )
+      newer_meeting.season_id = @new_id
+      newer_meetings << newer_meeting
     end
     newer_meetings
   end
@@ -132,7 +125,8 @@ class SeasonCreator
     if header_year.length == 9 
       separator = header_year[4]
       years = header_year.split( separator )
-      years.each{ |year| year = ( year.to_i + 1 ).to_s }
+      years[0] = (years[0].to_i + 1 ).to_s
+      years[1] = (years[1].to_i + 1 ).to_s
       header_year = years.join( separator )
     else
       if header_year.to_i > 0
