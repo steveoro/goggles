@@ -193,7 +193,7 @@ describe TeamsController, :type => :controller do
 
     context "with an HTML request for a valid id and a logged-in user for for a team that has a current Goggle cup," do
       before :each do
-        @fixture = Team.find(1)
+        @fixture = Team.find(1).decorate
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup, id: @fixture.id
@@ -201,9 +201,13 @@ describe TeamsController, :type => :controller do
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
-      it "assigns a goggle_cup instance" do
+      it "assigns a goggle_cup instance if the selected team it has currently one" do
         expect( response.status ).to eq( 200 )
-        expect( assigns( :goggle_cup ) ).to be_an_instance_of( GoggleCup )
+        if ( @fixture.get_current_goggle_cup_at )
+          expect( assigns( :goggle_cup ) ).to be_an_instance_of( GoggleCup )
+        else
+          expect( assigns( :goggle_cup ) ).to be nil
+        end
       end
       it "assigns a goggle_cup_rank instance" do
         expect( response.status ).to eq( 200 )
