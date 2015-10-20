@@ -14,14 +14,14 @@ describe SeasonCreator, type: :strategy do
     it_behaves_like( "(the existance of a method)", [
       :description, 
       :new_id, :begin_date, :end_date, :header_year, :edition, 
-      :categories, :meetings,
+      :categories, :meetings, :meeting_sessions, :meeting_events,
       :renew_season, :renew_categories, :renew_meetings
     ] )
 
     describe "#parameters," do
       it "are the given parameters" do
-        expect( subject.older_season ).to be_equal( older_season )
-        expect( subject.description ).to be_equal( description )
+        expect( subject.older_season ).to eq( older_season )
+        expect( subject.description ).to eq( description )
       end
     end
 
@@ -30,7 +30,7 @@ describe SeasonCreator, type: :strategy do
         expect( subject.new_id ).to be > 0
       end
       it "is 10 greater than older season id" do
-        expect( subject.new_id ).to be_equal( newer_season_id ) 
+        expect( subject.new_id ).to eq( newer_season_id ) 
       end
     end
     describe "#begin_date," do
@@ -38,7 +38,7 @@ describe SeasonCreator, type: :strategy do
         expect( subject.begin_date ).to be_a_kind_of( Date )
       end
       it "is one year older than older season begin date" do
-        expect( subject.begin_date ).to be_equal( subject.older_season.begin_date.next_year ) 
+        expect( subject.begin_date ).to eq( subject.older_season.begin_date.next_year ) 
       end
     end
     describe "#end_date," do
@@ -46,7 +46,7 @@ describe SeasonCreator, type: :strategy do
         expect( subject.end_date ).to be_a_kind_of( Date )
       end
       it "is one year older than older season end date" do
-        expect( subject.end_date ).to be_equal( subject.older_season.end_date.next_year ) 
+        expect( subject.end_date ).to eq( subject.older_season.end_date.next_year ) 
       end
     end
     describe "#header_year," do
@@ -78,16 +78,32 @@ describe SeasonCreator, type: :strategy do
         couple_year = year.to_s + '/' + ( year + 1 ).to_s
         next_couple_year = subject.next_header_year( couple_year )
         expect( next_couple_year ).to be_a_kind_of( String )
-        expect( next_couple_year.length ).to be_equal( 9 )
+        expect( next_couple_year.length ).to eq( 9 )
         years = next_couple_year.split('/')
-        expect( years.size ).to be_equal( 2 ) 
+        expect( years.size ).to eq( 2 ) 
         expect( years[0].to_i ).to be < years[1].to_i
-        expect( years[0].to_i ).to be_equal( year + 1 )
-        expect( years[1].to_i ).to be_equal( year + 2 )
+        expect( years[0].to_i ).to eq( year + 1 )
+        expect( years[1].to_i ).to eq( year + 2 )
       end
     end
     #-- -----------------------------------------------------------------------
     
+    describe "#prepare_new_season," do
+      it "returns season, meetings and so on" do
+        expect( subject.new_season ).to be_nil
+        expect( subject.meetings.count ).to eq(0)
+        expect( subject.meeting_sessions.count ).to eq(0)
+        expect( subject.meeting_events.count ).to eq(0)
+        subject.prepare_new_season
+        expect( subject.new_season ).to be_an_instance_of( Season )
+        expect( subject.categories ).to all(be_an_instance_of( CategoryType ))
+        expect( subject.meetings ).to all(be_an_instance_of( Meeting ))
+        expect( subject.meeting_sessions ).to all(be_an_instance_of( MeetingSession ))
+        expect( subject.meeting_events ).to all(be_an_instance_of( MeetingEvent ))
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
     describe "#renew_season," do
       it "returns a valid season" do
         expect( subject.renew_season ).to be_an_instance_of( Season )
@@ -95,19 +111,24 @@ describe SeasonCreator, type: :strategy do
     end
     describe "#new_season," do
       it "is a valid season" do
+        subject.prepare_new_season
         expect( subject.new_season ).to be_an_instance_of( Season )
       end
       it "has the calculated id" do
-        expect( subject.new_season.id ).to be_equal( subject.new_id )
+        subject.prepare_new_season
+        expect( subject.new_season.id ).to eq( subject.new_id )
       end
       it "has the given description" do
-        expect( subject.new_season.description ).to be_equal( subject.description )
+        subject.prepare_new_season
+        expect( subject.new_season.description ).to eq( subject.description )
       end
       it "has the calculated begin date" do
-        expect( subject.new_season.begin_date ).to be_equal( subject.begin_date )
+        subject.prepare_new_season
+        expect( subject.new_season.begin_date ).to eq( subject.begin_date )
       end
       it "has the calculated end date" do
-        expect( subject.new_season.end_date ).to be_equal( subject.end_date )
+        subject.prepare_new_season
+        expect( subject.new_season.end_date ).to eq( subject.end_date )
       end
     end
     #-- -----------------------------------------------------------------------
@@ -119,16 +140,18 @@ describe SeasonCreator, type: :strategy do
         expect( new_categories ).to all(be_an_instance_of( CategoryType ))
       end
       it "returns a collection of category types associated to the new season" do
+        subject.renew_season
         new_categories = subject.renew_categories
         new_categories.each do |category_type|
-          expect( category_type.season_id ).to be_equal( newer_season_id )
-          expect( category_type.season_id ).to be_equal( subject.new_season.id )
+          expect( category_type.season_id ).to eq( newer_season_id )
         end
       end
       it "returns the same number and types of categories of the older season" do
-        expect( subject.renew_categories.count ).to be_equal( older_season.category_types.count )
+        subject.renew_season
+        expect( subject.renew_categories.count ).to eq( older_season.category_types.count )
       end
       it "returns the same category types code of older season" do
+        subject.renew_season
         new_categories = subject.renew_categories
         new_categories.each do |category_type|
           expect( older_season.category_types.find_by_code( category_type.code )).to be_an_instance_of( CategoryType )
@@ -137,25 +160,98 @@ describe SeasonCreator, type: :strategy do
     end
     describe "#categories," do
       it "is a collection of categories" do
+        subject.prepare_new_season
         expect( subject.categories ).to be_a_kind_of( Array )
         expect( subject.categories ).to all(be_an_instance_of( CategoryType ))
       end
     end
     #-- -----------------------------------------------------------------------
 
-
+    describe "#renew_meetings," do
+      it "returns a collection of meetings" do
+        new_meetings = subject.renew_meetings
+        expect( new_meetings ).to be_a_kind_of( Array )
+        expect( new_meetings ).to all(be_an_instance_of( Meeting ))
+      end
+      it "returns a collection of meetings associated to the new season" do
+        new_meetings = subject.renew_meetings
+        new_meetings.each do |meeting|
+          expect( meeting.season_id ).to eq( newer_season_id )
+        end
+      end
+      it "returns the same number of meetings of the older season" do
+        expect( subject.renew_meetings.count ).to eq( older_season.meetings.count )
+      end
+    end
     describe "#meetings," do
       it "is a collection of meetings" do
+        subject.prepare_new_season
         expect( subject.meetings ).to be_a_kind_of( Array )
         expect( subject.meetings ).to all(be_an_instance_of( Meeting ))
       end
     end
+    describe "#meeting_sessions," do
+      it "is a collection of meeting_sessions" do
+        subject.prepare_new_season
+        expect( subject.meeting_sessions ).to be_a_kind_of( Array )
+        expect( subject.meeting_sessions ).to all(be_an_instance_of( MeetingSession ))
+      end
+    end
+    describe "#meeting_events," do
+      it "is a collection of meeting_events" do
+        subject.prepare_new_season
+        expect( subject.meeting_events ).to be_a_kind_of( Array )
+        expect( subject.meeting_events ).to all(be_an_instance_of( MeetingEvent ))
+      end
+    end
     #-- -----------------------------------------------------------------------
 
-    describe "#save_new_season_categories," do
+    describe "#save_all," do
+      it "saves all new season datas" do
+        subject.prepare_new_season
+        expect( subject.save_all ).to be true
+        expect( Season.find( newer_season_id ) ).to be_an_instance_of( Season )       
+        expect( Season.find( newer_season_id ).meetings.count ).to be >= 0
+      end
+    end
+    describe "#save_new_season," do
       it "saves the new season" do
-        expect( subject.save_new_season_categories ).to be_true
-        expect( subject.categories.count ).to be_equal(  CategoryType.for_season( subject.new_season ).count )       
+        subject.prepare_new_season
+        expect( subject.save_new_season ).to be true
+        expect( Season.find( newer_season_id ) ).to be_an_instance_of( Season )       
+      end
+    end
+    describe "#save_new_season_categories," do
+      it "saves the new season categories" do
+        subject.prepare_new_season
+        subject.save_new_season
+        expect( subject.save_new_season_categories ).to be true
+        expect( subject.categories.count ).to eq( subject.new_season.category_types.count )       
+      end
+    end
+    describe "#save_new_season_meetings," do
+      it "saves the new season meetings" do
+        subject.prepare_new_season
+        subject.save_new_season
+        expect( subject.save_new_season_meetings ).to be true
+        expect( subject.meetings.count ).to eq( subject.new_season.meetings.count )       
+      end
+    end
+    describe "#save_new_season_meeting_sessions," do
+      it "saves the new season meeting_sessions" do
+        subject.prepare_new_season
+        subject.save_new_season
+        subject.save_new_season_meetings
+        expect( subject.save_new_season_meeting_sessions ).to be true
+      end
+    end
+    describe "#save_new_season_meeting_events," do
+      it "saves the new season meeting_events" do
+        subject.prepare_new_season
+        subject.save_new_season
+        subject.save_new_season_meetings
+        subject.save_new_season_meeting_sessions
+        expect( subject.save_new_season_meeting_events ).to be true
       end
     end
     #-- -----------------------------------------------------------------------
@@ -169,6 +265,7 @@ describe SeasonCreator, type: :strategy do
       expect{ SeasonCreator.new }.to raise_error( ArgumentError )
       expect{ SeasonCreator.new( 'only such description' ) }.to raise_error( ArgumentError )
       expect{ SeasonCreator.new( older_season ) }.to raise_error( ArgumentError )
+      expect{ SeasonCreator.new( Season.find(131), 'valid description for season already duplicated' ) }.to raise_error( ArgumentError )
     end
   end
   #-- -------------------------------------------------------------------------
