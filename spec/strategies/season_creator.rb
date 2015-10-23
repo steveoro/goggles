@@ -182,6 +182,17 @@ describe SeasonCreator, type: :strategy do
       it "returns the same number of meetings of the older season" do
         expect( subject.renew_meetings.count ).to eq( older_season.meetings.count )
       end
+      it "returns meetings with the given default values" do
+        new_meetings = subject.renew_meetings
+        new_meetings.each do |meeting|
+          expect( meeting.are_results_acquired ).to eq( false )
+          expect( meeting.is_autofilled ).to eq( true )
+          expect( meeting.has_start_list ).to eq( false )
+          expect( meeting.has_invitation ).to eq( false )
+          expect( meeting.invitation ).to eq( nil )
+          expect( meeting.is_confirmed ).to eq( false )
+        end
+      end
     end
     describe "#meetings," do
       it "is a collection of meetings" do

@@ -104,6 +104,7 @@ class SeasonCreator
       newer_meeting.has_start_list       = false
       newer_meeting.has_invitation       = false
       newer_meeting.invitation           = nil
+      newer_meeting.is_confirmed         = false
       newer_meetings << newer_meeting
       
       # Collect meeting sessions too
