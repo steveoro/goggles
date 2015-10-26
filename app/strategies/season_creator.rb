@@ -55,9 +55,9 @@ class SeasonCreator
   # Prepare data for duplication
   # 
   def prepare_new_season
-    @new_season   = renew_season
-    @categories   = renew_categories
-    @meetings     = renew_meetings   
+    @new_season = renew_season
+    @categories = renew_categories
+    @meetings   = renew_meetings   
   end
 
   # Retreive older season categories and prepare them

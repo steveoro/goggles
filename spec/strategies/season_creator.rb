@@ -276,7 +276,7 @@ describe SeasonCreator, type: :strategy do
       expect{ SeasonCreator.new }.to raise_error( ArgumentError )
       expect{ SeasonCreator.new( 'only such description' ) }.to raise_error( ArgumentError )
       expect{ SeasonCreator.new( older_season ) }.to raise_error( ArgumentError )
-      expect{ SeasonCreator.new( Season.find(131), 'valid description for season already duplicated' ) }.to raise_error( ArgumentError )
+      expect{ SeasonCreator.new( Season.find(131), 'damn, that season was already duplicated' ) }.to raise_error( ArgumentError )
     end
   end
   #-- -------------------------------------------------------------------------
