@@ -71,6 +71,7 @@ class SeasonCreator
     newer_season.end_date    = @end_date
     newer_season.header_year = @header_year
     newer_season.edition     = @edition
+    newer_season.rules       = nil
     newer_season
   end
 
@@ -96,9 +97,10 @@ class SeasonCreator
     newer_meetings = []
     @older_season.meetings.each do |meeting|
       newer_meeting = Meeting.new( meeting.attributes )
+      newer_meeting.id                   = meeting.id + 1000
       newer_meeting.season_id            = @new_id
-      newer_meeting.header_date          = newer_meeting.header_date.next_year if newer_meeting.header_date 
-      newer_meeting.entry_deadline       = newer_meeting.entry_deadline.next_year if newer_meeting.entry_deadline 
+      newer_meeting.header_date          = self.next_year_eq_day( newer_meeting.header_date ) 
+      newer_meeting.entry_deadline       = self.next_year_eq_day( newer_meeting.entry_deadline ) 
       newer_meeting.are_results_acquired = false
       newer_meeting.is_autofilled        = true
       newer_meeting.has_start_list       = false
@@ -111,11 +113,12 @@ class SeasonCreator
       meeting.meeting_sessions.each do |meeting_session|
         newer_session = MeetingSession.new( meeting_session.attributes )
         newer_session.meeting_id     = newer_meeting.id
-        newer_session.scheduled_date = newer_session.scheduled_date.next_year if newer_session.scheduled_date > Date.new()
+        newer_session.scheduled_date = self.next_year_eq_day( newer_session.scheduled_date ) if newer_session.scheduled_date > Date.new()
         newer_session.is_autofilled  = true
         @meeting_sessions << newer_session
         
-        # Collect meeting_events too
+        # Collect meeting events too
+        # TODO Fix the meeting_session_id that is still nil at this point 
         meeting_session.meeting_events.each do |meeting_event|
           newer_event = MeetingEvent.new( meeting_event.attributes )
           newer_event.meeting_session_id = newer_session.id
@@ -208,5 +211,19 @@ class SeasonCreator
       end
     end
     header_year    
+  end
+
+  # Increments date of an year and tune it to the equivalent day of week
+  # subtracting some days
+  #
+  def next_year_eq_day( date )
+    if date
+      original_day = date.wday
+      date = date.next_year
+      until ( date.wday == original_day ) do 
+        date = date.prev_day 
+      end
+    end
+    date
   end
 end

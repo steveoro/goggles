@@ -34,9 +34,9 @@ Resulting log files are stored into '#{LOG_DIR}'.
 Create a new season with updated category settings,
 not confirmed set of meetings with sessions and events.
 
-Options: persists=false old_season=<old_season_id> description=<description> [log_dir=#{LOG_DIR}]
+Options: persist=false old_season=<old_season_id> description=<description> [log_dir=#{LOG_DIR}]
 
-- 'persists'    force to persist the created season.
+- 'persist'     force to persist the created season.
 - 'old_season'  older season to copy from.
 - 'description' new season description.
 - 'log_dir'     allows to override the default log dir destination.
@@ -44,14 +44,14 @@ Options: persists=false old_season=<old_season_id> description=<description> [lo
 DESC
   task :season_duplication do |t|
     puts "*** db:season_duplication ***"
-    persists        = ENV.include?("persists")    ? ENV["persists"] == 'true' : false
-    old_season_id   = ENV.include?("old_season")  ? ENV["old_season"].to_i : nil
-    description     = ENV.include?("description") ? ENV["description"] : nil
-    rails_config    = Rails.configuration             # Prepare & check configuration:
-    db_name         = rails_config.database_configuration[Rails.env]['database']
-    db_user         = rails_config.database_configuration[Rails.env]['username']
-    db_pwd          = rails_config.database_configuration[Rails.env]['password']
-    log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
+    persist       = ENV.include?("persist")     ? ENV["persist"] == 'true' : false
+    old_season_id = ENV.include?("old_season")  ? ENV["old_season"].to_i : nil
+    description   = ENV.include?("description") ? ENV["description"] : nil
+    rails_config  = Rails.configuration             # Prepare & check configuration:
+    db_name       = rails_config.database_configuration[Rails.env]['database']
+    db_user       = rails_config.database_configuration[Rails.env]['username']
+    db_pwd        = rails_config.database_configuration[Rails.env]['password']
+    log_dir       = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
 
     # Verify parameters
     unless old_season_id
@@ -99,7 +99,7 @@ DESC
     logger.info( "\r\n<------------------------------------------------------------>\r\n" )
             
     # Save new season
-    if not persists
+    if not persist
       logger.info( "\r\n*** Data not persisted! ***" )
     else
       if season_creator.save_all

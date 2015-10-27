@@ -87,6 +87,22 @@ describe SeasonCreator, type: :strategy do
       end
     end
     #-- -----------------------------------------------------------------------
+
+    describe "#next_year_eq_day," do
+      it "returns a valid date" do
+        fix_date = ( Date.today - ((rand * 365) % 365).to_i )
+        expect( subject.next_year_eq_day( fix_date ) ).to be_a_kind_of( Date )        
+      end
+      it "returns a date greater than given one" do
+        fix_date = ( Date.today - ((rand * 365) % 365).to_i )
+        expect( subject.next_year_eq_day( fix_date ) ).to be > fix_date         
+      end
+      it "returns a date with the same day of week of given one" do
+        fix_date = ( Date.today - ((rand * 365) % 365).to_i )
+        expect( subject.next_year_eq_day( fix_date ).wday ).to eq( fix_date.wday )         
+      end
+    end
+    #-- -----------------------------------------------------------------------
     
     describe "#prepare_new_season," do
       it "returns season, meetings and so on" do
