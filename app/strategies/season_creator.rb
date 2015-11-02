@@ -72,6 +72,7 @@ class SeasonCreator
     newer_season.header_year = @header_year
     newer_season.edition     = @edition
     newer_season.rules       = nil
+    newer_season.save
     newer_season
   end
 
@@ -85,6 +86,7 @@ class SeasonCreator
     @older_season.category_types.each do |category_type|
       newer_category = CategoryType.new( category_type.attributes )
       newer_category.season_id = @new_id
+      newer_category.save
       newer_categories << newer_category
     end
     newer_categories
@@ -107,23 +109,28 @@ class SeasonCreator
       newer_meeting.has_invitation       = false
       newer_meeting.invitation           = nil
       newer_meeting.is_confirmed         = false
-      newer_meetings << newer_meeting
-      
-      # Collect meeting sessions too
-      meeting.meeting_sessions.each do |meeting_session|
-        newer_session = MeetingSession.new( meeting_session.attributes )
-        newer_session.meeting_id     = newer_meeting.id
-        newer_session.scheduled_date = self.next_year_eq_day( newer_session.scheduled_date ) if newer_session.scheduled_date > Date.new()
-        newer_session.is_autofilled  = true
-        @meeting_sessions << newer_session
-        
-        # Collect meeting events too
-        # TODO Fix the meeting_session_id that is still nil at this point 
-        meeting_session.meeting_events.each do |meeting_event|
-          newer_event = MeetingEvent.new( meeting_event.attributes )
-          newer_event.meeting_session_id = newer_session.id
-          newer_event.is_autofilled      = true
-          @meeting_events << newer_event
+      if newer_meeting.save
+        newer_meetings << newer_meeting
+  
+        # Collect meeting sessions too
+        meeting.meeting_sessions.each do |meeting_session|
+          newer_session = MeetingSession.new( meeting_session.attributes )
+          newer_session.meeting_id     = newer_meeting.id
+          newer_session.scheduled_date = self.next_year_eq_day( newer_session.scheduled_date ) if newer_session.scheduled_date > Date.new()
+          newer_session.is_autofilled  = true
+          if newer_session.save
+            @meeting_sessions << newer_session
+             
+            # Collect meeting events too
+            meeting_session.meeting_events.each do |meeting_event|
+              newer_event = MeetingEvent.new( meeting_event.attributes )
+              newer_event.meeting_session_id = newer_session.id
+              newer_event.is_autofilled      = true
+              if newer_event.save
+                @meeting_events << newer_event
+              end
+            end
+          end
         end
       end
     end
@@ -132,68 +139,6 @@ class SeasonCreator
   #-- --------------------------------------------------------------------------
   #++
 
-  # Saves/persists the new season
-  # Returns true on no errors
-  #
-  def save_all
-    save_new_season && 
-      save_new_season_categories &&
-      save_new_season_meetings && save_new_season_meeting_sessions && save_new_season_meeting_events
-  end
-
-  # Saves/persists the new season
-  # Returns true on no errors
-  #
-  def save_new_season
-    @new_season.save
-  end
-
-  # Saves/persists the new season categories
-  # Returns true on no errors
-  #
-  def save_new_season_categories
-    persisted_ok = 0
-    @categories.each do |category_type|
-      persisted_ok += 1 if category_type.save
-    end
-    persisted_ok == @categories.count
-  end
-
-  # Saves/persists the new season meetings
-  # Returns true on no errors
-  #
-  def save_new_season_meetings
-    persisted_ok = 0
-    @meetings.each do |meeting|
-      persisted_ok += 1 if meeting.save
-    end
-    persisted_ok == @meetings.count
-  end
-
-  # Saves/persists the new season meeting sessions
-  # Returns true on no errors
-  #
-  def save_new_season_meeting_sessions
-    persisted_ok = 0
-    @meeting_sessions.each do |meeting_session|
-      persisted_ok += 1 if meeting_session.save
-    end
-    persisted_ok == @meeting_sessions.count
-  end
-
-  # Saves/persists the new season meeting events
-  # Returns true on no errors
-  #
-  def save_new_season_meeting_events
-    persisted_ok = 0
-    @meeting_events.each do |meeting_event|
-      persisted_ok += 1 if meeting_event.save
-    end
-    persisted_ok == @meeting_events.count
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-  
   # Increments header year of the season
   # If header_year is in the format aaaa/aaaa increments both years
   # else increments the numerical corrisponding value

@@ -86,26 +86,25 @@ DESC
     end
 
     # Prepare new season
-    season_creator.prepare_new_season
-    logger.info( "\r\nNew season: " + season_creator.new_season.id.to_s + ' - ' + season_creator.new_season.get_full_name )
-    logger.info( "\r\nCategories (" + season_creator.categories.count.to_s + "):" )
-    season_creator.categories.each do |category_type|
-      logger.info( "\r\n- " + category_type.short_name + " - " + category_type.age_begin.to_s + "-" + category_type.age_end.to_s )
-    end
-    logger.info( "\r\nMeetings (" + season_creator.meetings.count.to_s + "):" )
-    season_creator.meetings.each do |meeting|
-      logger.info( "\r\n- " + meeting.description + " - " + meeting.header_date.to_s )
-    end    
-    logger.info( "\r\n<------------------------------------------------------------>\r\n" )
-            
-    # Save new season
-    if not persist
-      logger.info( "\r\n*** Data not persisted! ***" )
-    else
-      if season_creator.save_all
-        logger.info( "\r\nNew season persisted." )
-      else
+    ActiveRecord::Base.transaction do
+      season_creator.prepare_new_season
+      logger.info( "\r\nNew season: " + season_creator.new_season.id.to_s + ' - ' + season_creator.new_season.get_full_name )
+      logger.info( "\r\nCategories (" + season_creator.categories.count.to_s + "):" )
+      season_creator.categories.each do |category_type|
+        logger.info( "\r\n- " + category_type.short_name + " - " + category_type.age_begin.to_s + "-" + category_type.age_end.to_s )
+      end
+      logger.info( "\r\nMeetings (" + season_creator.meetings.count.to_s + "):" )
+      season_creator.meetings.each do |meeting|
+        logger.info( "\r\n- " + meeting.description + " - " + meeting.header_date.to_s )
+      end    
+      logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+              
+      # Save new season
+      if not persist
         logger.info( "\r\n*** Data not persisted! ***" )
+        raise ActiveRecord::Rollback 
+      else
+        logger.info( "\r\nNew season persisted." )
       end
     end
   end
