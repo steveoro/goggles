@@ -13,6 +13,7 @@ require 'wrappers/timing'
 # @version  4.00.829
 #
 class SeasonCreator
+  include SqlConverter
 
   # These can be edited later on:
   attr_accessor :older_season, :description, :new_id, :begin_date, :end_date, :header_year, :edition, 
@@ -55,16 +56,21 @@ class SeasonCreator
   # Prepare data for duplication
   # 
   def prepare_new_season
+    sql_diff_text_log << "--\r\n"
+    sql_diff_text_log << "-- Duplicating season #{@older_season.id}-#{@older_season.description} into #{@new_id}-#{@description}\r\n"
+    sql_diff_text_log << "--\r\n"
     @new_season = renew_season
     @categories = renew_categories
-    @meetings   = renew_meetings   
+    @meetings   = renew_meetings
+    sql_diff_text_log << "-- #{@new_id}-#{@description} duplication script ended\r\n"
   end
 
   # Retreive older season categories and prepare them
   # for the new season
   # 
   def renew_season
-    newer_season = Season.new( @older_season.attributes )
+    sql_diff_text_log << "-- Season\r\n"
+    newer_season = Season.new( @older_season.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )
     newer_season.id          = @new_id
     newer_season.description = @description
     newer_season.begin_date  = @begin_date
@@ -73,6 +79,8 @@ class SeasonCreator
     newer_season.edition     = @edition
     newer_season.rules       = nil
     newer_season.save
+    sql_diff_text_log << to_sql_insert( newer_season, false ) # no additional comment
+    sql_diff_text_log << "\r\n"
     newer_season
   end
 
@@ -83,12 +91,15 @@ class SeasonCreator
   # 
   def renew_categories
     newer_categories = []
+    sql_diff_text_log << "-- Categories\r\n"
     @older_season.category_types.each do |category_type|
-      newer_category = CategoryType.new( category_type.attributes )
+      newer_category = CategoryType.new( category_type.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )
       newer_category.season_id = @new_id
       newer_category.save
+      sql_diff_text_log << to_sql_insert( newer_category, false ) # no additional comment
       newer_categories << newer_category
     end
+    sql_diff_text_log << "\r\n"
     newer_categories
   end
 
@@ -97,8 +108,10 @@ class SeasonCreator
   # 
   def renew_meetings
     newer_meetings = []
+    sql_diff_text_log << "-- Meetings\r\n"
     @older_season.meetings.each do |meeting|
-      newer_meeting = Meeting.new( meeting.attributes )
+      sql_diff_text_log << "-- #{meeting.id}-#{meeting.code} #{meeting.description} #{meeting.header_date}\r\n"
+      newer_meeting = Meeting.new( meeting.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )
       newer_meeting.id                   = meeting.id + 1000
       newer_meeting.season_id            = @new_id
       newer_meeting.header_date          = self.next_year_eq_day( newer_meeting.header_date ) 
@@ -110,30 +123,35 @@ class SeasonCreator
       newer_meeting.invitation           = nil
       newer_meeting.is_confirmed         = false
       if newer_meeting.save
+        sql_diff_text_log << to_sql_insert( newer_meeting, false ) # no additional comment
         newer_meetings << newer_meeting
   
         # Collect meeting sessions too
         meeting.meeting_sessions.each do |meeting_session|
-          newer_session = MeetingSession.new( meeting_session.attributes )
+          newer_session = MeetingSession.new( meeting_session.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )
           newer_session.meeting_id     = newer_meeting.id
           newer_session.scheduled_date = self.next_year_eq_day( newer_session.scheduled_date ) if newer_session.scheduled_date > Date.new()
           newer_session.is_autofilled  = true
           if newer_session.save
+            sql_diff_text_log << to_sql_insert( newer_session, false ) # no additional comment
             @meeting_sessions << newer_session
              
             # Collect meeting events too
             meeting_session.meeting_events.each do |meeting_event|
-              newer_event = MeetingEvent.new( meeting_event.attributes )
+              newer_event = MeetingEvent.new( meeting_event.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )
               newer_event.meeting_session_id = newer_session.id
               newer_event.is_autofilled      = true
               if newer_event.save
+                sql_diff_text_log << to_sql_insert( newer_event, false ) # no additional comment
                 @meeting_events << newer_event
               end
             end
           end
         end
       end
+      sql_diff_text_log << "\r\n"
     end
+    sql_diff_text_log << "\r\n"
     newer_meetings
   end
   #-- --------------------------------------------------------------------------
@@ -171,4 +189,16 @@ class SeasonCreator
     end
     date
   end
+
+  # Returns the overall SQL diff/log for all the SQL operations that should
+  # be carried out by for replicating the changes (already done by this instance) on
+  # another instance of the same Database (for example, to apply the changes on
+  # a production DB after testing them on a staging version of the same DB).
+  # It is never +nil+, empty at first.
+  #
+  def sql_diff_text_log
+    @sql_diff_text_log ||= ''
+  end
+  # ----------------------------------------------------------------------------
+  #++
 end

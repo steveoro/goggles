@@ -98,7 +98,12 @@ DESC
         logger.info( "\r\n- " + meeting.description + " - " + meeting.header_date.to_s )
       end    
       logger.info( "\r\n<------------------------------------------------------------>\r\n" )
-              
+      
+      # Create diff file
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_season_creation_#{season_creator.new_id}.diff"
+      File.open( LOG_DIR + '/' + file_name + '.sql', 'w' ) { |f| f.puts season_creator.sql_diff_text_log }
+      logger.info( "\r\nLog file " + file_name + " created" )
+
       # Save new season
       if not persist
         logger.info( "\r\n*** Data not persisted! ***" )
