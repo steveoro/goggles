@@ -115,7 +115,8 @@ class SeasonCreator
       newer_meeting.id                   = meeting.id + 1000
       newer_meeting.season_id            = @new_id
       newer_meeting.header_date          = self.next_year_eq_day( newer_meeting.header_date ) 
-      newer_meeting.entry_deadline       = self.next_year_eq_day( newer_meeting.entry_deadline ) 
+      newer_meeting.entry_deadline       = self.next_year_eq_day( newer_meeting.entry_deadline )
+      newer_meeting.header_year          = self.next_header_year( newer_meeting.header_year )
       newer_meeting.are_results_acquired = false
       newer_meeting.is_autofilled        = true
       newer_meeting.has_start_list       = false

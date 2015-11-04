@@ -688,7 +688,7 @@ en:
     begin: "Begin"
     events: "Session events"
     pool: "Swimming"
-    remark: "N.B. Meetings without time scheduling should be considered as not confirmed"
+    remark: "N.B. Dates with asterisks (*) and meetings without time scheduling should be considered as not confirmed"
 
   privacy:
     we_use_cookies: "We use analytic cookies to understand which pages are the most frequently requested. We use them just to enhance the user experience. We won't ever sell your browsing data to third parties!"

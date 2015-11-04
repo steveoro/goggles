@@ -31,8 +31,17 @@
             %tr
               %td
                 = calendar_dao.meeting.decorate.get_linked_name
-              %td{ colspan: 5 }
-                = t('to_be_defined')
+              - if calendar_dao.meeting.header_date
+                %td.goggles-rightalign
+                  - if calendar_dao.meeting.is_confirmed
+                    = calendar_dao.meeting.header_date
+                  - else
+                    = calendar_dao.meeting.header_date.to_s + ' (*)'
+                %td{ colspan: 4 }
+                  = t('to_be_defined')
+              - else
+                %td{ colspan: 5 }
+                  = t('to_be_defined')
           - else
             - calendar_dao.meeting_sessions.each_with_index do |meeting_session, index|
               %tr
@@ -41,7 +50,10 @@
                     = calendar_dao.meeting.decorate.get_linked_name
                 - if index == 0
                   %td.goggles-rightalign{ rowspan: session_number }
-                    = meeting_session.scheduled_date
+                    - if calendar_dao.meeting.is_confirmed
+                      = meeting_session.scheduled_date
+                    - else
+                      = meeting_session.scheduled_date.to_s + ' (*)'
                 %td.goggles-rightalign
                   = meeting_session.warm_up_time
                 %td.goggles-rightalign
