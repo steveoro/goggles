@@ -50,6 +50,10 @@ class CalendarDAO
     meeting.meeting_sessions.sort_by_order.includes(:meeting_programs, :swimming_pool).each do |meeting_session|
       @meeting_sessions << MeetingSessionDAO.new( meeting_session )
     end
+    
+    # TODO
+    # Add attributes to manage notes
+    # Automate is_confirmed and other flags
   end
   #-- -------------------------------------------------------------------------
   #++
