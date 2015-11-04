@@ -67,15 +67,13 @@ describe MiscController, :type => :controller do
     context "as logged and swimmer-associated user" do
       before(:each) do
         @user = create(:user)
-        last_season = Season.get_last_season_by_type( 'MASFIN' )
 
-#        Season.includes(:season_type)
-#          .where( "(season_types.code = 'MASFIN') AND (begin_date > '2010-10-31') AND (end_date < '2015-10-31')" )
-#          .sort{ rand - 0.5 }[0]
+        # Select from seasons that have badges and time standards
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
 
         # Get a random swimmer from the fixture season:
         swimmer = Swimmer.includes(:badges)
-          .where( "badges.season_id" => last_season.id )
+          .where( "badges.season_id" => fix_season.id )
           .sort{ rand - 0.5 }[0]
         expect( swimmer ).not_to be nil
 # DEBUG
@@ -286,17 +284,16 @@ describe MiscController, :type => :controller do
 
     context "with a correct request for a logged user with associated swimmer" do
       before(:each) do
-        last_season = Season.get_last_season_by_type( 'MASFIN' )
-#        @fixture_season = Season.includes(:season_type)
-#          .where( "(season_types.code = 'MASFIN') AND (begin_date > '2010-10-31') AND (end_date < '2015-10-31')" )
-#          .sort{ rand - 0.5 }[0]
+        # Select from seasons that have badges and time standards
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+
         # Get a random swimmer from the fixture season:
         swimmer = Swimmer.includes(:badges)
-          .where( "badges.season_id" => last_season.id )
+          .where( "badges.season_id" => fix_season.id )
           .sort{ rand - 0.5 }[0]
         expect( swimmer ).not_to be nil
 # DEBUG
-#        puts "\r\n- last_season: #{last_season.inspect}"
+#        puts "\r\n- fix_season: #{fix_season.inspect}"
 #        puts "- swimmer: #{swimmer.inspect}"
         @user = create(:user)
 # DEBUG
@@ -305,7 +302,7 @@ describe MiscController, :type => :controller do
 # DEBUG
 #        puts "- @user POST-association: #{@user.inspect}"
         @fixture_gender = swimmer.gender_type
-        @fixture_category = swimmer.get_category_type_for_season( last_season.id )
+        @fixture_category = swimmer.get_category_type_for_season( fix_season.id )
         @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings
           .all
           .sort{ rand - 0.5 }[0]

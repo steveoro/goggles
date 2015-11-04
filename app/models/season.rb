@@ -35,6 +35,7 @@ class Season < ActiveRecord::Base
   has_many :computed_season_ranking
   has_many :category_types
   has_many :event_types, through: :meetings
+  has_many :time_standard
 
   validates_presence_of :header_year
   validates_length_of   :header_year, within: 1..9, allow_nil: false
@@ -53,8 +54,7 @@ class Season < ActiveRecord::Base
   scope :sort_season_by_user,        ->(dir) { order("users.name #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
 
   scope :is_not_ended,               -> { where('end_date is null or end_date >= curdate()') }
-
-
+  
   attr_accessible :season_type_id, :edition_type_id, :timing_type_id,
                   :header_year, :edition, :description, :begin_date, :end_date, :rules, :has_individual_rank
   #-- -------------------------------------------------------------------------
