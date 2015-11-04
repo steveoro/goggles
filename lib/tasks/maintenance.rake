@@ -141,6 +141,7 @@ the meeting will be updated with the specified values.
     puts "Processing meeting row..."
     meeting.invitation = text_file_contents
     meeting.has_invitation = true
+    meeting.is_confirmed = true
     meeting.save!
 
     warm_up_time = ENV.include?("warm_up") ? ENV["warm_up"] : nil

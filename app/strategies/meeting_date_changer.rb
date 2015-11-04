@@ -16,7 +16,7 @@ class MeetingDateChanger
   include SqlConverter
 
   # These can be edited later on:
-  attr_accessor :meeting, :days_to_move_on 
+  attr_accessor :meeting, :days_to_move_on, :confirm 
 
   # Initialization
   #
@@ -24,7 +24,7 @@ class MeetingDateChanger
   # An instance of meeting
   # an amount of days to move meeting header and scheduled date 
   #
-  def initialize( meeting, days_to_move_on )
+  def initialize( meeting, days_to_move_on, confirm = false )
     unless meeting && meeting.instance_of?( Meeting )
       raise ArgumentError.new("Needs the meeting to be changed")
     end
@@ -37,6 +37,7 @@ class MeetingDateChanger
 
     @meeting         = meeting
     @days_to_move_on = days_to_move_on
+    @confirm         = confirm
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -46,8 +47,10 @@ class MeetingDateChanger
   def move_meeting_date
     sql_attributes = {}
     @meeting.header_date = @meeting.header_date + @days_to_move_on
+    @meeting.is_confirmed = true if @confirm
     @meeting.save
     sql_attributes['header_date'] = @meeting.header_date
+    sql_attributes['is_confirmed'] = @meeting.is_confirmed if @confirm
     sql_diff_text_log << to_sql_update( @meeting, false, sql_attributes, "\r\n" )
     @meeting.header_date
   end

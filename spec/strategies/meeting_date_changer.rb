@@ -5,12 +5,13 @@ describe MeetingDateChanger, type: :strategy do
 
   let(:meeting)         { create(:meeting_with_sessions) }
   let(:days_to_move_on) { ((rand * 5) * 7).to_i }
+  let(:confirm)         { (rand >= 0.5) }
   
   context "with requested parameters" do
-    subject { MeetingDateChanger.new( meeting, days_to_move_on ) }
+    subject { MeetingDateChanger.new( meeting, days_to_move_on, confirm ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting, :days_to_move_on, 
+      :meeting, :days_to_move_on, :confirm,
       :sql_diff_text_log,
       :move_meeting_date
     ] )
@@ -19,6 +20,11 @@ describe MeetingDateChanger, type: :strategy do
       it "are the given parameters" do
         expect( subject.meeting ).to eq( meeting )
         expect( subject.days_to_move_on ).to eq( days_to_move_on )
+        expect( subject.confirm ).to eq( confirm )
+      end
+      it "sets default parameters" do
+        not_confirming_mdc = MeetingDateChanger.new( meeting, days_to_move_on )
+        expect( not_confirming_mdc.confirm ).to be false
       end
     end
     #-- -----------------------------------------------------------------------
@@ -38,6 +44,18 @@ describe MeetingDateChanger, type: :strategy do
       it "persists changes" do
         new_date = subject.move_meeting_date
         expect( Meeting.find( subject.meeting.id ).header_date ).to eq( new_date )
+      end
+      it "confirms meeting if requested" do
+        subject.confirm = true
+        subject.meeting.is_confirmed = false
+        subject.move_meeting_date
+        expect( subject.meeting.is_confirmed ).to be true
+      end
+      it "doesn't confirm meeting if not requested" do
+        subject.confirm = false
+        subject.meeting.is_confirmed = false
+        subject.move_meeting_date
+        expect( subject.meeting.is_confirmed ).to be false
       end
     end
       
