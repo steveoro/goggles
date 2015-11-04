@@ -3,7 +3,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.785
+# - vers. : 4.00.835
 #
 # This requires Capistrano v. >= 3.1
 
@@ -48,39 +48,46 @@ namespace :db do
     DESC
     task :store_meeting_invitation do
       puts "\r\n\r\n      > Launching db:store_meeting_invitation..."
-      on roles(:app) do
-        file_name     = fetch(:ask_invitation_file_name)
-        meeting_id    = fetch(:ask_meeting_id)
-        warm_up_time  = fetch(:ask_warm_up_time)
-        begin_time    = fetch(:ask_begin_time)
-        day_part_code = fetch(:ask_day_part_code)
-        unless meeting_id.to_i > 0
-          error "Invalid meeting_id (#{meeting_id}) specified!"
-          exit
-        end
-                                                    # Local-2-remote upload:
-        info "Uploading #{file_name}..."
-        upload! file_name, "/tmp/invitation.xhtml"
 
-        within release_path do                      # Remote SQL update:
-          update_sql = "SET AUTOCOMMIT=0; " <<
-            "START TRANSACTION;" <<
-            " UPDATE meeting_sessions SET warm_up_time = '#{ warm_up_time }'," <<
-            " begin_time = '#{ begin_time }'," <<
-            " day_part_type_id = (SELECT dpt.id FROM day_part_types dpt WHERE dpt.code = '#{ day_part_code }')" <<
-            " WHERE meeting_id = #{ meeting_id }; COMMIT;"
-          info "Executing:\r\n---8<---\r\n#{update_sql}\r\n---8<---\r\n"
-          execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --database=#{fetch(:application)} -e \"#{update_sql}\""
-                                                    # Remote rake db:store_meeting_invitation:
-          with rails_env: :production do
-            rake "db:store_meeting_invitation meeting_id=#{meeting_id} file='/tmp/invitation.xhtml'"
-          end
-        end
-                                                    # Delete remote temp file when done:
-        info "Removing remote temp file..."
-        execute :rm, '/tmp/invitation.xhtml'
-      end
-      puts "      db:remote:store_meeting_invitation done."
+      # FIXME
+      puts "=> TASK DISABLED since the upload! command has given us some issues with the file transfer."
+      puts "   'Sorry, no bonus.'"
+      return
+
+      # on roles(:app) do
+        # file_name     = fetch(:ask_invitation_file_name)
+        # meeting_id    = fetch(:ask_meeting_id)
+        # warm_up_time  = fetch(:ask_warm_up_time)
+        # begin_time    = fetch(:ask_begin_time)
+        # day_part_code = fetch(:ask_day_part_code)
+        # unless meeting_id.to_i > 0
+          # error "Invalid meeting_id (#{meeting_id}) specified!"
+          # exit
+        # end
+                                                    # # Local-2-remote upload:
+        # info "Uploading #{file_name}..."
+        # upload! file_name, "/tmp/invitation.xhtml"
+#
+        # within release_path do                      # Remote SQL update:
+          # update_sql = "SET AUTOCOMMIT=0; " <<
+            # "START TRANSACTION;" <<
+            # " UPDATE meetings SET is_confirmed = TRUE WHERE meetings.id = #{ meeting_id };" <<
+            # " UPDATE meeting_sessions SET warm_up_time = '#{ warm_up_time }'," <<
+            # " begin_time = '#{ begin_time }'," <<
+            # " day_part_type_id = (SELECT dpt.id FROM day_part_types dpt WHERE dpt.code = '#{ day_part_code }')" <<
+            # " WHERE meeting_id = #{ meeting_id }; COMMIT;"
+          # info "Executing:\r\n---8<---\r\n#{update_sql}\r\n---8<---\r\n"
+          # execute :mysql, "-h#{fetch(:db_name_for_config)} -u#{fetch(:db_user)} --password=\"#{fetch(:db_password)}\" --database=#{fetch(:application)} -e \"#{update_sql}\""
+                                                    # # Remote rake db:store_meeting_invitation:
+          # with rails_env: :production do
+            # rake "db:store_meeting_invitation meeting_id=#{meeting_id} file='/tmp/invitation.xhtml'"
+          # end
+        # end
+                                                    # # Delete remote temp file when done:
+        # info "Removing remote temp file..."
+        # execute :rm, '/tmp/invitation.xhtml'
+      # end
+      # puts "      db:remote:store_meeting_invitation done."
     end
     #-- -----------------------------------------------------------------------
     #++

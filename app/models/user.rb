@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
 
   acts_as_token_authenticatable
   acts_as_voter
+  acts_as_tagger
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,

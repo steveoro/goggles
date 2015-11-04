@@ -61,6 +61,7 @@ gem 'delayed_job_active_record'
 gem 'dj_mon', :git => 'https://github.com/fasar-sw/dj_mon.git'    # This version has more verbose exception reporting instead of YAML trace
 gem 'amistad', :git => 'https://github.com/fasar-sw/amistad.git'  # [Steve] Customized version. For Facebook-like friendship management
 gem 'acts_as_votable', '~> 0.9.0'
+gem 'acts-as-taggable-on', '~> 3.4'
 
 gem 'country_select'
 gem 'simple_form'

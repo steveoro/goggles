@@ -19,18 +19,20 @@ Launch the rake task twice (once for development and one for production) if both
 DBs need to be updated.
 
 
-- USE the DEDICATED Capistrano task to REMOTELY execute a db:store_meeting_invitation task:
+- DO NOT USE the DEDICATED Capistrano task to REMOTELY execute a db:store_meeting_invitation task because the upload! of HTML has not been reliable enough for the current version of Capistrano
+
 For more info:
 > cap -D db:remote:store_meeting_invitation
 
 (It does almost everything in one step directly on the remote server, given an already
- existing or converted XHTML invitation file.)
+ existing or converted XHTML invitation file -- but the task is currently **disabled**,
+ see update below.)
 
 (Steve, Update 20150420)
 Beware of big files that may yield disconnection errors during the execution of the
 above task.
 
-** FOR IMPROVED RELAYABILITY, ALWAYS RUN EVERY RAKE TASK ON A LOCAL COPY OF THE REMOTE
+** FOR IMPROVED RELAYABILITY, ALWAYS RUN EVERY THE RAKE TASK ON A LOCAL COPY OF THE REMOTE
 PRODUCTION DB, AND USE THE REMOTE UPLOAD TASK TO PERFORM THE ACTUAL UPDATE. **
 
 

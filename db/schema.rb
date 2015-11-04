@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151023171631) do
+ActiveRecord::Schema.define(:version => 20151104133100) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -26,6 +26,9 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "achievement_id"
     t.integer  "achievement_type_id"
   end
+
+  add_index "achievement_rows", ["achievement_id"], :name => "idx_achievement_rows_achievement"
+  add_index "achievement_rows", ["achievement_type_id"], :name => "idx_achievement_rows_achievement_type"
 
   create_table "achievement_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -128,6 +131,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "articles", ["title"], :name => "index_articles_on_title"
+  add_index "articles", ["user_id"], :name => "idx_articles_user"
 
   create_table "badges", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -150,6 +154,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "badges", ["swimmer_id"], :name => "fk_badges_swimmers"
   add_index "badges", ["team_affiliation_id"], :name => "fk_badges_team_affiliations"
   add_index "badges", ["team_id"], :name => "fk_badges_teams"
+  add_index "badges", ["user_id"], :name => "idx_badges_user"
 
   create_table "base_movements", :force => true do |t|
     t.integer  "lock_version",                        :default => 0
@@ -170,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "base_movements", ["movement_scope_type_id"], :name => "fk_base_movements_movement_scope_types"
   add_index "base_movements", ["movement_type_id"], :name => "fk_base_movements_movement_types"
   add_index "base_movements", ["stroke_type_id"], :name => "fk_base_movements_stroke_types"
+  add_index "base_movements", ["user_id"], :name => "idx_base_movements_user"
 
   create_table "body_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -221,6 +227,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "cities", ["name"], :name => "index_cities_on_name"
+  add_index "cities", ["user_id"], :name => "idx_cities_user"
   add_index "cities", ["zip"], :name => "index_cities_on_zip"
 
   create_table "coach_level_types", :force => true do |t|
@@ -245,6 +252,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
 
   add_index "comments", ["comment_id"], :name => "fk_comments_comments"
   add_index "comments", ["swimming_pool_review_id"], :name => "fk_comments_swimming_pool_reviews"
+  add_index "comments", ["user_id"], :name => "idx_comments_user"
 
   create_table "computed_season_rankings", :force => true do |t|
     t.integer  "lock_version",                                :default => 0
@@ -280,7 +288,18 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "team_affiliation_id"
   end
 
+  add_index "data_import_badges", ["category_type_id"], :name => "idx_di_badges_category_type"
+  add_index "data_import_badges", ["data_import_season_id"], :name => "idx_di_badges_di_season"
+  add_index "data_import_badges", ["data_import_session_id"], :name => "idx_di_badges_di_session"
+  add_index "data_import_badges", ["data_import_swimmer_id"], :name => "idx_di_badges_di_swimmer"
+  add_index "data_import_badges", ["data_import_team_id"], :name => "idx_di_badges_di_team"
+  add_index "data_import_badges", ["entry_time_type_id"], :name => "idx_di_badges_entry_time_type"
   add_index "data_import_badges", ["number"], :name => "index_data_import_badges_on_number"
+  add_index "data_import_badges", ["season_id"], :name => "idx_di_badges_season"
+  add_index "data_import_badges", ["swimmer_id"], :name => "idx_di_badges_swimmer"
+  add_index "data_import_badges", ["team_affiliation_id"], :name => "idx_di_badges_team_affiliation"
+  add_index "data_import_badges", ["team_id"], :name => "idx_di_badges_team"
+  add_index "data_import_badges", ["user_id"], :name => "idx_di_badges_user"
 
   create_table "data_import_cities", :force => true do |t|
     t.integer  "lock_version",                         :default => 0
@@ -297,7 +316,9 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "user_id"
   end
 
+  add_index "data_import_cities", ["data_import_session_id"], :name => "idx_di_cities_di_session"
   add_index "data_import_cities", ["name"], :name => "index_data_import_cities_on_name"
+  add_index "data_import_cities", ["user_id"], :name => "idx_di_cities_user"
   add_index "data_import_cities", ["zip"], :name => "index_data_import_cities_on_zip"
 
   create_table "data_import_meeting_entries", :force => true do |t|
@@ -332,6 +353,19 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "entry_time_type_id"
     t.integer  "user_id"
   end
+
+  add_index "data_import_meeting_entries", ["badge_id"], :name => "idx_di_meeting_entries_badge"
+  add_index "data_import_meeting_entries", ["data_import_badge_id"], :name => "idx_di_meeting_entries_di_badge"
+  add_index "data_import_meeting_entries", ["data_import_meeting_program_id"], :name => "idx_di_meeting_entries_di_meeting_program"
+  add_index "data_import_meeting_entries", ["data_import_session_id"], :name => "idx_di_meeting_entries_di_session"
+  add_index "data_import_meeting_entries", ["data_import_swimmer_id"], :name => "idx_di_meeting_entries_di_swimmer"
+  add_index "data_import_meeting_entries", ["data_import_team_id"], :name => "idx_di_meeting_entries_di_team"
+  add_index "data_import_meeting_entries", ["entry_time_type_id"], :name => "idx_di_meeting_entries_entry_time_type"
+  add_index "data_import_meeting_entries", ["meeting_program_id"], :name => "idx_di_meeting_entries_meeting_program"
+  add_index "data_import_meeting_entries", ["swimmer_id"], :name => "idx_di_meeting_entries_swimmer"
+  add_index "data_import_meeting_entries", ["team_affiliation_id"], :name => "idx_di_meeting_entries_team_affiliation"
+  add_index "data_import_meeting_entries", ["team_id"], :name => "idx_di_meeting_entries_team"
+  add_index "data_import_meeting_entries", ["user_id"], :name => "idx_di_meeting_entries_user"
 
   create_table "data_import_meeting_individual_results", :force => true do |t|
     t.integer  "lock_version",                                                                 :default => 0
@@ -370,6 +404,19 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "team_affiliation_id"
   end
 
+  add_index "data_import_meeting_individual_results", ["badge_id"], :name => "idx_di_mir_badge"
+  add_index "data_import_meeting_individual_results", ["data_import_badge_id"], :name => "idx_di_mir_di_badge"
+  add_index "data_import_meeting_individual_results", ["data_import_meeting_program_id"], :name => "idx_di_mir_di_meeting_program"
+  add_index "data_import_meeting_individual_results", ["data_import_session_id"], :name => "idx_di_mir_di_session"
+  add_index "data_import_meeting_individual_results", ["data_import_swimmer_id"], :name => "idx_di_mir_di_swimmer"
+  add_index "data_import_meeting_individual_results", ["data_import_team_id"], :name => "idx_di_mir_di_team"
+  add_index "data_import_meeting_individual_results", ["disqualification_code_type_id"], :name => "idx_di_mir_disqualification_code_type"
+  add_index "data_import_meeting_individual_results", ["meeting_program_id"], :name => "idx_di_mir_meeting_program"
+  add_index "data_import_meeting_individual_results", ["swimmer_id"], :name => "idx_di_mir_swimmer"
+  add_index "data_import_meeting_individual_results", ["team_affiliation_id"], :name => "idx_di_mir_team_affiliation"
+  add_index "data_import_meeting_individual_results", ["team_id"], :name => "idx_di_mir_team"
+  add_index "data_import_meeting_individual_results", ["user_id"], :name => "idx_di_mir_user"
+
   create_table "data_import_meeting_programs", :force => true do |t|
     t.integer  "lock_version",                                :default => 0
     t.datetime "created_at",                                                     :null => false
@@ -393,10 +440,15 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "time_standard_id"
   end
 
+  add_index "data_import_meeting_programs", ["data_import_meeting_session_id"], :name => "idx_di_meeting_programs_di_meeting_session"
+  add_index "data_import_meeting_programs", ["data_import_session_id"], :name => "idx_di_meeting_programs_di_session"
+  add_index "data_import_meeting_programs", ["heat_type_id"], :name => "idx_di_meeting_programs_heat_type"
   add_index "data_import_meeting_programs", ["meeting_session_id", "category_type_id"], :name => "meeting_category_type"
   add_index "data_import_meeting_programs", ["meeting_session_id", "event_order"], :name => "meeting_order"
   add_index "data_import_meeting_programs", ["meeting_session_id", "event_type_id"], :name => "meeting_event_type"
   add_index "data_import_meeting_programs", ["meeting_session_id", "gender_type_id"], :name => "meeting_gender_type"
+  add_index "data_import_meeting_programs", ["time_standard_id"], :name => "idx_di_meeting_programs_time_standard"
+  add_index "data_import_meeting_programs", ["user_id"], :name => "idx_di_meeting_programs_user"
 
   create_table "data_import_meeting_relay_results", :force => true do |t|
     t.integer  "lock_version",                                                                :default => 0
@@ -429,6 +481,16 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "entry_time_type_id"
   end
 
+  add_index "data_import_meeting_relay_results", ["data_import_meeting_program_id"], :name => "idx_di_mrr_di_meeting_program"
+  add_index "data_import_meeting_relay_results", ["data_import_session_id"], :name => "idx_di_mrr_di_session"
+  add_index "data_import_meeting_relay_results", ["data_import_team_id"], :name => "idx_di_mrr_di_team"
+  add_index "data_import_meeting_relay_results", ["disqualification_code_type_id"], :name => "idx_di_mrr_disqualification_code_type"
+  add_index "data_import_meeting_relay_results", ["entry_time_type_id"], :name => "idx_di_mrr_entry_time_type"
+  add_index "data_import_meeting_relay_results", ["meeting_program_id"], :name => "idx_di_mrr_meeting_program"
+  add_index "data_import_meeting_relay_results", ["team_affiliation_id"], :name => "idx_di_mrr_team_affiliation"
+  add_index "data_import_meeting_relay_results", ["team_id"], :name => "idx_di_mrr_team"
+  add_index "data_import_meeting_relay_results", ["user_id"], :name => "idx_di_mrr_user"
+
   create_table "data_import_meeting_relay_swimmers", :force => true do |t|
     t.integer  "lock_version",                                                                   :default => 0
     t.datetime "created_at",                                                                                    :null => false
@@ -453,6 +515,18 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "team_id"
   end
 
+  add_index "data_import_meeting_relay_swimmers", ["badge_id"], :name => "idx_di_meeting_relay_swimmers_badge"
+  add_index "data_import_meeting_relay_swimmers", ["data_import_badge_id"], :name => "idx_di_meeting_relay_swimmers_di_badge"
+  add_index "data_import_meeting_relay_swimmers", ["data_import_meeting_relay_result_id"], :name => "idx_di_meeting_relay_swimmers_di_meeting_relay_result"
+  add_index "data_import_meeting_relay_swimmers", ["data_import_session_id"], :name => "idx_di_meeting_relay_swimmers_di_session"
+  add_index "data_import_meeting_relay_swimmers", ["data_import_swimmer_id"], :name => "idx_di_meeting_relay_swimmers_di_swimmer"
+  add_index "data_import_meeting_relay_swimmers", ["data_import_team_id"], :name => "idx_di_meeting_relay_swimmers_di_team"
+  add_index "data_import_meeting_relay_swimmers", ["meeting_relay_result_id"], :name => "idx_di_meeting_relay_swimmers_meeting_relay_result"
+  add_index "data_import_meeting_relay_swimmers", ["stroke_type_id"], :name => "idx_di_meeting_relay_swimmers_stroke_type"
+  add_index "data_import_meeting_relay_swimmers", ["swimmer_id"], :name => "idx_di_meeting_relay_swimmers_swimmer"
+  add_index "data_import_meeting_relay_swimmers", ["team_id"], :name => "idx_di_meeting_relay_swimmers_team"
+  add_index "data_import_meeting_relay_swimmers", ["user_id"], :name => "idx_di_meeting_relay_swimmers_user"
+
   create_table "data_import_meeting_sessions", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
     t.datetime "created_at",                                           :null => false
@@ -473,7 +547,13 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "day_part_type_id"
   end
 
+  add_index "data_import_meeting_sessions", ["data_import_meeting_id"], :name => "idx_di_meeting_sessions_di_meeting"
+  add_index "data_import_meeting_sessions", ["data_import_session_id"], :name => "idx_di_meeting_sessions_di_session"
+  add_index "data_import_meeting_sessions", ["day_part_type_id"], :name => "idx_di_meeting_sessions_day_part_type"
+  add_index "data_import_meeting_sessions", ["meeting_id"], :name => "idx_di_meeting_sessions_meeting"
   add_index "data_import_meeting_sessions", ["scheduled_date"], :name => "index_data_import_meeting_sessions_on_scheduled_date"
+  add_index "data_import_meeting_sessions", ["swimming_pool_id"], :name => "idx_di_meeting_sessions_swimming_pool"
+  add_index "data_import_meeting_sessions", ["user_id"], :name => "idx_di_meeting_sessions_user"
 
   create_table "data_import_meeting_team_scores", :force => true do |t|
     t.integer  "lock_version",                                                          :default => 0
@@ -500,6 +580,15 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "season_id"
     t.integer  "team_affiliation_id"
   end
+
+  add_index "data_import_meeting_team_scores", ["data_import_meeting_id"], :name => "idx_di_meeting_team_scores_di_meeting"
+  add_index "data_import_meeting_team_scores", ["data_import_session_id"], :name => "idx_di_meeting_team_scores_di_session"
+  add_index "data_import_meeting_team_scores", ["data_import_team_id"], :name => "idx_di_meeting_team_scores_di_team"
+  add_index "data_import_meeting_team_scores", ["meeting_id"], :name => "idx_di_meeting_team_scores_meeting"
+  add_index "data_import_meeting_team_scores", ["season_id"], :name => "idx_di_meeting_team_scores_season"
+  add_index "data_import_meeting_team_scores", ["team_affiliation_id"], :name => "idx_di_meeting_team_scores_team_affiliation"
+  add_index "data_import_meeting_team_scores", ["team_id"], :name => "idx_di_meeting_team_scores_team"
+  add_index "data_import_meeting_team_scores", ["user_id"], :name => "idx_di_meeting_team_scores_user"
 
   create_table "data_import_meetings", :force => true do |t|
     t.integer  "lock_version",                                        :default => 0
@@ -540,8 +629,14 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "data_import_meetings", ["code", "edition"], :name => "idx_di_meetings_code"
+  add_index "data_import_meetings", ["data_import_season_id"], :name => "idx_di_meetings_di_season"
+  add_index "data_import_meetings", ["data_import_session_id"], :name => "idx_di_meetings_di_session"
+  add_index "data_import_meetings", ["edition_type_id"], :name => "idx_di_meetings_edition_type"
   add_index "data_import_meetings", ["entry_deadline"], :name => "index_data_import_meetings_on_entry_deadline"
   add_index "data_import_meetings", ["header_date"], :name => "idx_di_meetings_header_date"
+  add_index "data_import_meetings", ["season_id"], :name => "idx_di_meetings_season"
+  add_index "data_import_meetings", ["timing_type_id"], :name => "idx_di_meetings_timing_type"
+  add_index "data_import_meetings", ["user_id"], :name => "idx_di_meetings_user"
 
   create_table "data_import_passages", :force => true do |t|
     t.integer  "lock_version",                                                                        :default => 0
@@ -578,6 +673,20 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "user_id"
   end
 
+  add_index "data_import_passages", ["data_import_meeting_entry_id"], :name => "idx_di_passages_di_meeting_entry"
+  add_index "data_import_passages", ["data_import_meeting_individual_result_id"], :name => "idx_di_passages_di_meeting_individual_result"
+  add_index "data_import_passages", ["data_import_meeting_program_id"], :name => "idx_di_passages_di_meeting_program"
+  add_index "data_import_passages", ["data_import_session_id"], :name => "idx_di_passages_di_session"
+  add_index "data_import_passages", ["data_import_swimmer_id"], :name => "idx_di_passages_di_swimmer"
+  add_index "data_import_passages", ["data_import_team_id"], :name => "idx_di_passages_di_team"
+  add_index "data_import_passages", ["meeting_entry_id"], :name => "idx_di_passages_meeting_entry"
+  add_index "data_import_passages", ["meeting_individual_result_id"], :name => "idx_di_passages_meeting_individual_result"
+  add_index "data_import_passages", ["meeting_program_id"], :name => "idx_di_passages_meeting_program"
+  add_index "data_import_passages", ["passage_type_id"], :name => "idx_di_passages_passage_type"
+  add_index "data_import_passages", ["swimmer_id"], :name => "idx_di_passages_swimmer"
+  add_index "data_import_passages", ["team_id"], :name => "idx_di_passages_team"
+  add_index "data_import_passages", ["user_id"], :name => "idx_di_passages_user"
+
   create_table "data_import_seasons", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
     t.datetime "created_at",                                           :null => false
@@ -596,6 +705,10 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "data_import_seasons", ["begin_date"], :name => "index_data_import_seasons_on_begin_date"
+  add_index "data_import_seasons", ["data_import_session_id"], :name => "idx_di_seasons_di_session"
+  add_index "data_import_seasons", ["edition_type_id"], :name => "idx_di_seasons_edition_type"
+  add_index "data_import_seasons", ["season_type_id"], :name => "idx_di_seasons_season_type"
+  add_index "data_import_seasons", ["timing_type_id"], :name => "idx_di_seasons_timing_type"
 
   create_table "data_import_sessions", :force => true do |t|
     t.datetime "created_at",                                               :null => false
@@ -615,6 +728,8 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "log_verbosity",                             :default => 0, :null => false
   end
 
+  add_index "data_import_sessions", ["data_import_season_id"], :name => "idx_di_sessions_di_season"
+  add_index "data_import_sessions", ["season_id"], :name => "idx_di_sessions_season"
   add_index "data_import_sessions", ["user_id"], :name => "user_id"
 
   create_table "data_import_swimmer_aliases", :force => true do |t|
@@ -646,6 +761,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "category_type_id"
   end
 
+  add_index "data_import_swimmer_analysis_results", ["category_type_id"], :name => "idx_di_swimmer_analysis_results_category_type"
   add_index "data_import_swimmer_analysis_results", ["data_import_session_id", "searched_swimmer_name", "desired_year_of_birth", "desired_gender_type_id"], :name => "idx_di_session_swimmer_name", :unique => true
   add_index "data_import_swimmer_analysis_results", ["desired_gender_type_id"], :name => "idx_di_swimmer_gender_type"
 
@@ -665,7 +781,10 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "data_import_swimmers", ["complete_name"], :name => "index_data_import_swimmers_on_complete_name"
+  add_index "data_import_swimmers", ["data_import_session_id"], :name => "idx_di_swimmers_di_session"
+  add_index "data_import_swimmers", ["gender_type_id"], :name => "idx_di_swimmers_gender_type"
   add_index "data_import_swimmers", ["last_name", "first_name"], :name => "full_name"
+  add_index "data_import_swimmers", ["user_id"], :name => "idx_di_swimmers_user"
 
   create_table "data_import_team_aliases", :force => true do |t|
     t.integer  "lock_version",               :default => 0
@@ -711,7 +830,9 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
 
   add_index "data_import_teams", ["city_id"], :name => "city_id"
   add_index "data_import_teams", ["data_import_city_id"], :name => "data_import_city_id"
+  add_index "data_import_teams", ["data_import_session_id"], :name => "idx_di_teams_di_session"
   add_index "data_import_teams", ["name"], :name => "index_data_import_teams_on_name"
+  add_index "data_import_teams", ["user_id"], :name => "idx_di_teams_user"
 
   create_table "day_part_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -759,6 +880,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
 
   add_index "disqualification_code_types", ["is_a_relay", "code"], :name => "code", :unique => true
   add_index "disqualification_code_types", ["is_a_relay"], :name => "index_disqualification_code_types_on_is_a_relay"
+  add_index "disqualification_code_types", ["stroke_type_id"], :name => "idx_disqualification_code_types_stroke_type"
 
   create_table "edition_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -848,6 +970,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "exercises", ["code"], :name => "index_exercises_on_code", :unique => true
+  add_index "exercises", ["user_id"], :name => "idx_exercises_user"
 
   create_table "federation_types", :force => true do |t|
     t.integer  "lock_version",                :default => 0
@@ -925,6 +1048,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
 
   add_index "goggle_cups", ["season_year"], :name => "idx_season_year"
   add_index "goggle_cups", ["team_id"], :name => "fk_goggle_cups_teams"
+  add_index "goggle_cups", ["user_id"], :name => "idx_goggle_cups_user"
 
   create_table "hair_dryer_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -965,7 +1089,16 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "record_type_id"
   end
 
+  add_index "individual_records", ["category_type_id"], :name => "idx_individual_records_category_type"
+  add_index "individual_records", ["event_type_id"], :name => "idx_individual_records_event_type"
+  add_index "individual_records", ["federation_type_id"], :name => "idx_individual_records_federation_type"
+  add_index "individual_records", ["gender_type_id"], :name => "idx_individual_records_gender_type"
+  add_index "individual_records", ["meeting_individual_result_id"], :name => "idx_individual_records_meeting_individual_result"
+  add_index "individual_records", ["pool_type_id"], :name => "idx_individual_records_pool_type"
   add_index "individual_records", ["record_type_id"], :name => "fk_individual_records_record_types"
+  add_index "individual_records", ["season_id"], :name => "idx_individual_records_season"
+  add_index "individual_records", ["swimmer_id"], :name => "idx_individual_records_swimmer"
+  add_index "individual_records", ["team_id"], :name => "idx_individual_records_team"
 
   create_table "kick_aux_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -1018,6 +1151,14 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.boolean  "is_no_time",                       :default => false, :null => false
   end
 
+  add_index "meeting_entries", ["badge_id"], :name => "idx_meeting_entries_badge"
+  add_index "meeting_entries", ["entry_time_type_id"], :name => "idx_meeting_entries_entry_time_type"
+  add_index "meeting_entries", ["meeting_program_id"], :name => "idx_meeting_entries_meeting_program"
+  add_index "meeting_entries", ["swimmer_id"], :name => "idx_meeting_entries_swimmer"
+  add_index "meeting_entries", ["team_affiliation_id"], :name => "idx_meeting_entries_team_affiliation"
+  add_index "meeting_entries", ["team_id"], :name => "idx_meeting_entries_team"
+  add_index "meeting_entries", ["user_id"], :name => "idx_meeting_entries_user"
+
   create_table "meeting_events", :force => true do |t|
     t.integer  "lock_version",                                  :default => 0
     t.datetime "created_at",                                                       :null => false
@@ -1038,6 +1179,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "meeting_events", ["event_type_id"], :name => "fk_meeting_events_event_types"
   add_index "meeting_events", ["heat_type_id"], :name => "fk_meeting_events_heat_types"
   add_index "meeting_events", ["meeting_session_id"], :name => "fk_meeting_events_meeting_sessions"
+  add_index "meeting_events", ["user_id"], :name => "idx_meeting_events_user"
 
   create_table "meeting_individual_results", :force => true do |t|
     t.integer  "lock_version",                                                              :default => 0
@@ -1065,10 +1207,12 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "meeting_individual_results", ["badge_id"], :name => "fk_meeting_individual_results_badges"
+  add_index "meeting_individual_results", ["disqualification_code_type_id"], :name => "idx_mir_disqualification_code_type"
   add_index "meeting_individual_results", ["meeting_program_id"], :name => "fk_meeting_individual_results_meeting_programs"
   add_index "meeting_individual_results", ["swimmer_id"], :name => "fk_meeting_individual_results_swimmers"
   add_index "meeting_individual_results", ["team_affiliation_id"], :name => "fk_meeting_individual_results_team_affiliations"
   add_index "meeting_individual_results", ["team_id"], :name => "fk_meeting_individual_results_teams"
+  add_index "meeting_individual_results", ["user_id"], :name => "idx_mir_user"
 
   create_table "meeting_programs", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
@@ -1092,6 +1236,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "meeting_programs", ["meeting_event_id"], :name => "fk_meeting_programs_meeting_events"
   add_index "meeting_programs", ["pool_type_id"], :name => "fk_meeting_programs_pool_types"
   add_index "meeting_programs", ["time_standard_id"], :name => "fk_meeting_programs_time_standards"
+  add_index "meeting_programs", ["user_id"], :name => "idx_meeting_programs_user"
 
   create_table "meeting_relay_results", :force => true do |t|
     t.integer  "lock_version",                                                               :default => 0
@@ -1119,10 +1264,12 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "entry_time_type_id"
   end
 
+  add_index "meeting_relay_results", ["disqualification_code_type_id"], :name => "idx_mrr_disqualification_code_type"
   add_index "meeting_relay_results", ["entry_time_type_id"], :name => "fk_meeting_relay_results_entry_time_types"
   add_index "meeting_relay_results", ["meeting_program_id", "rank"], :name => "results_x_relay"
   add_index "meeting_relay_results", ["team_affiliation_id"], :name => "fk_meeting_relay_results_team_affiliations"
   add_index "meeting_relay_results", ["team_id"], :name => "fk_meeting_relay_results_teams"
+  add_index "meeting_relay_results", ["user_id"], :name => "idx_mrr_user"
 
   create_table "meeting_relay_swimmers", :force => true do |t|
     t.integer  "lock_version",                                                       :default => 0
@@ -1145,6 +1292,29 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "meeting_relay_swimmers", ["relay_order"], :name => "relay_order"
   add_index "meeting_relay_swimmers", ["stroke_type_id"], :name => "fk_meeting_relay_swimmers_stroke_types"
   add_index "meeting_relay_swimmers", ["swimmer_id"], :name => "fk_meeting_relay_swimmers_swimmers"
+  add_index "meeting_relay_swimmers", ["user_id"], :name => "idx_meeting_relay_swimmers_user"
+
+  create_table "meeting_reservations", :force => true do |t|
+    t.integer  "meeting_id"
+    t.integer  "team_id"
+    t.integer  "swimmer_id"
+    t.integer  "badge_id"
+    t.integer  "meeting_event_id"
+    t.integer  "user_id"
+    t.integer  "suggested_minutes",  :limit => 3
+    t.integer  "suggested_seconds",  :limit => 2
+    t.integer  "suggested_hundreds", :limit => 2
+    t.text     "notes"
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "meeting_reservations", ["badge_id"], :name => "index_meeting_reservations_on_badge_id"
+  add_index "meeting_reservations", ["meeting_event_id"], :name => "index_meeting_reservations_on_meeting_event_id"
+  add_index "meeting_reservations", ["meeting_id"], :name => "index_meeting_reservations_on_meeting_id"
+  add_index "meeting_reservations", ["swimmer_id"], :name => "index_meeting_reservations_on_swimmer_id"
+  add_index "meeting_reservations", ["team_id"], :name => "index_meeting_reservations_on_team_id"
+  add_index "meeting_reservations", ["user_id"], :name => "index_meeting_reservations_on_user_id"
 
   create_table "meeting_sessions", :force => true do |t|
     t.integer  "lock_version",                    :default => 0
@@ -1167,6 +1337,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "meeting_sessions", ["meeting_id"], :name => "fk_meeting_sessions_meetings"
   add_index "meeting_sessions", ["scheduled_date"], :name => "index_meeting_sessions_on_scheduled_date"
   add_index "meeting_sessions", ["swimming_pool_id"], :name => "fk_meeting_sessions_swimming_pools"
+  add_index "meeting_sessions", ["user_id"], :name => "idx_meeting_sessions_user"
 
   create_table "meeting_team_scores", :force => true do |t|
     t.integer  "lock_version",                                             :default => 0
@@ -1193,6 +1364,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "meeting_team_scores", ["season_id"], :name => "fk_meeting_team_scores_seasons"
   add_index "meeting_team_scores", ["team_affiliation_id"], :name => "fk_meeting_team_scores_team_affiliations"
   add_index "meeting_team_scores", ["team_id"], :name => "fk_meeting_team_scores_teams"
+  add_index "meeting_team_scores", ["user_id"], :name => "idx_meeting_team_scores_user"
 
   create_table "meetings", :force => true do |t|
     t.integer  "lock_version",                                             :default => 0
@@ -1240,6 +1412,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "meetings", ["season_id"], :name => "fk_meetings_seasons"
   add_index "meetings", ["team_score_computation_type_id"], :name => "fk_meetings_score_team_score_computation_types"
   add_index "meetings", ["timing_type_id"], :name => "fk_meetings_timing_types"
+  add_index "meetings", ["user_id"], :name => "idx_meetings_user"
 
   create_table "movement_scope_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -1270,6 +1443,8 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.datetime "created_at",                                           :null => false
     t.datetime "updated_at",                                           :null => false
   end
+
+  add_index "news_feeds", ["user_id"], :name => "idx_news_feeds_user"
 
   create_table "passage_types", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
@@ -1308,8 +1483,13 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "team_id"
   end
 
+  add_index "passages", ["meeting_entry_id"], :name => "idx_passages_meeting_entry"
+  add_index "passages", ["meeting_individual_result_id"], :name => "idx_passages_meeting_individual_result"
   add_index "passages", ["meeting_program_id"], :name => "passages_x_badges"
   add_index "passages", ["passage_type_id"], :name => "fk_passages_passage_types"
+  add_index "passages", ["swimmer_id"], :name => "idx_passages_swimmer"
+  add_index "passages", ["team_id"], :name => "idx_passages_team"
+  add_index "passages", ["user_id"], :name => "idx_passages_user"
 
   create_table "pool_types", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
@@ -1372,6 +1552,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
 
   add_index "score_computation_type_rows", ["computation_order"], :name => "idx_score_computation_type_rows_computation_order"
   add_index "score_computation_type_rows", ["score_computation_type_id"], :name => "fk_score_computation_type_rows_score_computation_types"
+  add_index "score_computation_type_rows", ["score_mapping_type_id"], :name => "idx_score_computation_type_rows_score_mapping_type"
 
   create_table "score_computation_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -1390,6 +1571,8 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.decimal  "score",                              :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.integer  "score_mapping_type_id"
   end
+
+  add_index "score_mapping_type_rows", ["score_mapping_type_id"], :name => "idx_score_mapping_type_rows_score_mapping_type"
 
   create_table "score_mapping_types", :force => true do |t|
     t.integer  "lock_version",              :default => 0
@@ -1473,6 +1656,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "achievement_id"
   end
 
+  add_index "swimmer_level_types", ["achievement_id"], :name => "idx_swimmer_level_types_achievement"
   add_index "swimmer_level_types", ["code"], :name => "index_swimmer_level_types_on_code", :unique => true
 
   create_table "swimmers", :force => true do |t|
@@ -1499,6 +1683,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "swimmers", ["gender_type_id"], :name => "fk_swimmers_gender_types"
   add_index "swimmers", ["last_name", "first_name"], :name => "full_name"
   add_index "swimmers", ["nickname"], :name => "index_swimmers_on_nickname"
+  add_index "swimmers", ["user_id"], :name => "idx_swimmers_user"
 
   create_table "swimming_pool_reviews", :force => true do |t|
     t.integer  "lock_version",                    :default => 0
@@ -1512,6 +1697,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
 
   add_index "swimming_pool_reviews", ["swimming_pool_id"], :name => "fk_swimming_pool_reviews_swimming_pools"
   add_index "swimming_pool_reviews", ["title"], :name => "index_swimming_pool_reviews_on_title"
+  add_index "swimming_pool_reviews", ["user_id"], :name => "idx_swimming_pool_reviews_user"
 
   create_table "swimming_pools", :force => true do |t|
     t.integer  "lock_version",                          :default => 0
@@ -1549,26 +1735,24 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "swimming_pools", ["nick_name"], :name => "index_swimming_pools_on_nick_name", :unique => true
   add_index "swimming_pools", ["pool_type_id"], :name => "fk_swimming_pools_pool_types"
   add_index "swimming_pools", ["shower_type_id"], :name => "fk_swimming_pools_shower_types"
+  add_index "swimming_pools", ["user_id"], :name => "idx_swimming_pools_user"
 
-  create_table "tag4_entities", :force => true do |t|
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.string   "entity_name", :null => false
-    t.integer  "entity_id",   :null => false
+  create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
-    t.integer  "user_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context",       :limit => 128
+    t.datetime "created_at"
   end
 
-  add_index "tag4_entities", ["entity_name", "entity_id"], :name => "entity_name_entity_id"
-  add_index "tag4_entities", ["tag_id", "entity_name", "entity_id"], :name => "tag_id_entity_name_entity_id", :unique => true
-  add_index "tag4_entities", ["user_id"], :name => "user_id"
+  add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], :name => "taggings_idx", :unique => true
+  add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
 
   create_table "tags", :force => true do |t|
-    t.integer  "lock_version",               :default => 0
-    t.string   "name",         :limit => 40,                :null => false
-    t.integer  "user_id"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.string  "name"
+    t.integer "taggings_count", :default => 0
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
@@ -1590,6 +1774,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "team_affiliations", ["number"], :name => "index_team_affiliations_on_number"
   add_index "team_affiliations", ["season_id", "team_id"], :name => "uk_team_affiliations_seasons_teams", :unique => true
   add_index "team_affiliations", ["team_id"], :name => "fk_team_affiliations_teams"
+  add_index "team_affiliations", ["user_id"], :name => "idx_team_affiliations_user"
 
   create_table "team_managers", :force => true do |t|
     t.integer  "lock_version",        :default => 0
@@ -1621,6 +1806,12 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.datetime "updated_at",                                              :null => false
   end
 
+  add_index "team_passage_templates", ["event_type_id"], :name => "idx_team_passage_templates_event_type"
+  add_index "team_passage_templates", ["passage_type_id"], :name => "idx_team_passage_templates_passage_type"
+  add_index "team_passage_templates", ["pool_type_id"], :name => "idx_team_passage_templates_pool_type"
+  add_index "team_passage_templates", ["team_id"], :name => "idx_team_passage_templates_team"
+  add_index "team_passage_templates", ["user_id"], :name => "idx_team_passage_templates_user"
+
   create_table "teams", :force => true do |t|
     t.integer  "lock_version",                   :default => 0
     t.string   "name",            :limit => 60,                 :null => false
@@ -1644,6 +1835,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   add_index "teams", ["city_id"], :name => "fk_teams_cities"
   add_index "teams", ["editable_name"], :name => "index_teams_on_editable_name"
   add_index "teams", ["name"], :name => "index_teams_on_name"
+  add_index "teams", ["user_id"], :name => "idx_teams_user"
 
   create_table "time_standards", :force => true do |t|
     t.integer  "lock_version",                  :default => 0
@@ -1737,6 +1929,7 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "trainings", ["title"], :name => "index_trainings_on_title", :unique => true
+  add_index "trainings", ["user_id"], :name => "idx_trainings_user"
 
   create_table "user_achievements", :force => true do |t|
     t.integer  "lock_version",   :default => 0
@@ -1772,10 +1965,12 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "user_results", ["category_type_id"], :name => "fk_user_results_category_types"
+  add_index "user_results", ["disqualification_code_type_id"], :name => "idx_user_results_disqualification_code_type"
   add_index "user_results", ["event_type_id"], :name => "fk_user_results_event_types"
   add_index "user_results", ["meeting_individual_result_id", "rank"], :name => "meeting_id_rank"
   add_index "user_results", ["pool_type_id"], :name => "fk_user_results_pool_types"
   add_index "user_results", ["swimmer_id"], :name => "fk_user_results_swimmers"
+  add_index "user_results", ["user_id"], :name => "idx_user_results_user"
 
   create_table "user_swimmer_confirmations", :force => true do |t|
     t.integer  "lock_version",   :default => 0
@@ -1811,7 +2006,13 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "breath_aux_type_id"
   end
 
+  add_index "user_training_rows", ["arm_aux_type_id"], :name => "idx_user_training_rows_arm_aux_type"
+  add_index "user_training_rows", ["body_aux_type_id"], :name => "idx_user_training_rows_body_aux_type"
+  add_index "user_training_rows", ["breath_aux_type_id"], :name => "idx_user_training_rows_breath_aux_type"
+  add_index "user_training_rows", ["exercise_id"], :name => "idx_user_training_rows_exercise"
   add_index "user_training_rows", ["group_id", "part_order"], :name => "index_user_training_rows_on_group_id_and_part_order"
+  add_index "user_training_rows", ["kick_aux_type_id"], :name => "idx_user_training_rows_kick_aux_type"
+  add_index "user_training_rows", ["training_step_type_id"], :name => "idx_user_training_rows_training_step_type"
   add_index "user_training_rows", ["user_training_id", "part_order"], :name => "idx_user_training_rows_part_order"
 
   create_table "user_training_stories", :force => true do |t|
@@ -1827,6 +2028,9 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
     t.integer  "user_id"
   end
 
+  add_index "user_training_stories", ["swimmer_level_type_id"], :name => "idx_user_training_stories_swimmer_level_type"
+  add_index "user_training_stories", ["swimming_pool_id"], :name => "idx_user_training_stories_swimming_pool"
+  add_index "user_training_stories", ["user_id"], :name => "idx_user_training_stories_user"
   add_index "user_training_stories", ["user_training_id", "swam_date"], :name => "index_user_training_stories_on_user_training_id_and_swam_date"
 
   create_table "user_trainings", :force => true do |t|
@@ -1882,11 +2086,14 @@ ActiveRecord::Schema.define(:version => 20151023171631) do
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
+  add_index "users", ["coach_level_type_id"], :name => "idx_users_coach_level_type"
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["last_name", "first_name", "year_of_birth"], :name => "full_name"
   add_index "users", ["name"], :name => "index_users_on_name", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+  add_index "users", ["swimmer_id"], :name => "idx_users_swimmer"
+  add_index "users", ["swimmer_level_type_id"], :name => "idx_users_swimmer_level_type"
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
 
   create_table "votes", :force => true do |t|

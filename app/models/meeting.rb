@@ -22,6 +22,8 @@ class Meeting < ActiveRecord::Base
   validates_associated :edition_type
   validates_associated :timing_type
 
+  acts_as_taggable_on :bookings
+
   belongs_to( :individual_score_computation_type,
               class_name: "ScoreComputationType",
               foreign_key: "individual_score_computation_type_id"
@@ -43,6 +45,7 @@ class Meeting < ActiveRecord::Base
 
   has_many :meeting_sessions, dependent: :delete_all
   has_many :meeting_team_scores, dependent: :delete_all
+  has_many :meeting_reservations, dependent: :delete_all
 
   has_many :meeting_events, through: :meeting_sessions, dependent: :delete_all
   has_many :meeting_programs, through: :meeting_events, dependent: :delete_all

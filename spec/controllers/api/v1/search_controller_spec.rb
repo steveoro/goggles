@@ -24,14 +24,13 @@ describe Api::V1::SearchController, :type => :controller do
         result_array = JSON.parse(response.body)
         expect( result_array ).to all include( 'class', 'id', 'description', 'date' )
       end
-      it "returns at least 1 Swimmer, >2 Meetings and 0 Team rows (with the existing seeds)" do
+      it "returns at least 1 Swimmer, 1 Team rows and >2 Meetings (with the existing seeds)" do
         result_array = JSON.parse(response.body)
         expect( result_array.any?{ |hash| hash['class'] == 'Swimmer' } ).to be true
+        expect( result_array.any?{ |hash| hash['class'] == 'Team' } ).to be true
         expect( result_array.find_all{ |hash| hash['class'] == 'Meeting' }.size ).to be > 2
-        teams = result_array.find_all{ |hash| hash['class'] == 'Team' }
 # DEBUG
 #        puts "\r\n- teams found: #{teams.inspect}"
-        expect( teams.size ).to eq(0)
       end
     end
 

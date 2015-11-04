@@ -27,6 +27,8 @@ class Swimmer < ActiveRecord::Base
   belongs_to :associated_user, class_name: "User",
              foreign_key: "associated_user_id"
 
+  acts_as_taggable_on :followers
+
   has_many :user_swimmer_confirmations
   has_many :confirmators, through: :user_swimmer_confirmations
 

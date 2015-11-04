@@ -21,7 +21,7 @@ Goggles::Application.routes.draw do
       # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
 
       # === Search ===
-      get    "search/simple/:query",          to: "search#simple",          as: "search_simple"
+      get    "search/simple",                 to: "search#simple",          as: "search_simple"
 
       # === Meetings ===
       get    "meetings/index",                to: "meetings#index",         as: "meetings"
