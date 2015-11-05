@@ -245,7 +245,7 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current FIN season
-    @current_season_id = 142
+    @current_season_id = Season.get_last_season_by_type( @season_type.code )
     
     # Use given season or, in no selection, current one 
     season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
@@ -272,8 +272,8 @@ class ChampionshipsController < ApplicationController
       redirect_to(:back) and return
     end
 
-    # TODO Find current CSI season
-    @current_season_id = 141
+    # Find current CSI season
+    @current_season_id = Season.get_last_season_by_type( @season_type.code )
     
     # Use given season or, in no selection, current one 
     season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
@@ -301,7 +301,7 @@ class ChampionshipsController < ApplicationController
     end
 
     # TODO Find current UISP season
-    @current_season_id = 145
+    @current_season_id = Season.get_last_season_by_type( @season_type.code )
     
     # Use given season or, in no selection, current one 
     season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
