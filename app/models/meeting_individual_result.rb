@@ -94,15 +94,16 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_gender_and_category, ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir.to_s}, category_types.code #{dir.to_s}") }
   scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at #{dir.to_s}") }
 
-  scope :for_event_by_pool_type,      ->(event_by_pool_type)  { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
-  scope :for_pool_type,               ->(pool_type)           { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
-  scope :for_season_type,             ->(season_type)         { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
-  scope :for_team,                    ->(team)                { where(team_id: team.id) }
-  scope :for_category_type,           ->(category_type)       { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
-  scope :for_gender_type,             ->(gender_type)         { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
-  scope :for_event_type,              ->(event_type)          { joins(:event_type).where(["event_types.id = ?", event_type.id]) }
-  scope :for_swimmer,                 ->(swimmer)             { where(swimmer_id: swimmer.id) }
-  scope :for_category_code,           ->(category_code)       { joins(:category_type).where(['category_types.code = ?', category_code]) }
+  scope :for_event_by_pool_type,      ->(event_by_pool_type)   { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
+  scope :for_pool_type,               ->(pool_type)            { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
+  scope :for_season_type,             ->(season_type)          { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+  scope :for_team,                    ->(team)                 { where(team_id: team.id) }
+  scope :for_category_type,           ->(category_type)        { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
+  scope :for_gender_type,             ->(gender_type)          { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
+  scope :for_event_type,              ->(event_type)           { joins(:event_type).where(["event_types.id = ?", event_type.id]) }
+  scope :for_swimmer,                 ->(swimmer)              { where(swimmer_id: swimmer.id) }
+  scope :for_category_code,           ->(category_code)        { joins(:category_type).where(['category_types.code = ?', category_code]) }
+  scope :for_date_range,              ->(date_begin, date_end) { joins(:meeting).where(['meetings.header_date between ? and ?', date_begin, date_end]) }
   
   # ----------------------------------------------------------------------------
   # Base methods:

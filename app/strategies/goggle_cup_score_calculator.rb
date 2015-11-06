@@ -37,7 +37,7 @@ class GoggleCupScoreCalculator
   #-- --------------------------------------------------------------------------
   #++
 
-  # Sets the goggle cup standard froma a time swam
+  # Sets the goggle cup standard from a time swam
   def set_goggle_cup_standard( time_swam )
     if GoggleCupStandard.has_standard?( @goggle_cup.id, @swimmer.id, @pool_type.id, @event_type.id )
       # Updates the standard
@@ -52,6 +52,45 @@ class GoggleCupScoreCalculator
   #-- --------------------------------------------------------------------------
   #++
 
+  # Scan swimmer meeting individual results to find out
+  # goggle cup standard
+  # Goggle cup standard is the best time swam during the past season
+  # If Goggle cup will consider all result types
+  # (is_limited_to_season_types_defined == false)
+  # scans all results, otherwise only resluts for season types to be considered
+  # according to Goggle cup definition
+  # The scan has made "year per year" starting from the the
+  # year preceding the Goggle cup according to the end date
+  def find_swimmer_goggle_cup_standard( swimmer )
+    # TODO
+    # Add Goggle cup end date
+    # Determinate years to scan using that date
+    # Cycle between years from most recent backward
+    # Throw a bit of Madams, of corse
+    
+    EventsByPoolType.not_relays.only_for_meetings.each do |event_by_pool_type|
+      # Check past season
+      mir = swimmer.meeting_individual_results.for_date_range('20140801', '20150731').for_event_by_pool_type( event_by_pool_type ).sort_by_timing.first
+      if mir
+      else
+        # 
+      end
+    end    
+    
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Scans for all team swimmers to define Goggle cup standards
+  # Scans all swimmers with results for the team if  
+  # is_limited_to_season_types_defined == false
+  # Otherwise consider only those who have results for meetings
+  # in the season types to be considered according to Goggle cup definition
+  def create_goggle_cup_standards
+    
+  end
+  #-- --------------------------------------------------------------------------
+  #++
 
   private
 
