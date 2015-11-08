@@ -153,10 +153,10 @@ describe GoggleCupScoreCalculator, type: :strategy do
     #
     let(:goggle_cup)     { create(:goggle_cup, season_year: Date.today.year) }
     let(:active_swimmer) { Meeting.has_results.sort{ rand - 0.5 }[0].meeting_individual_results.sort{ rand - 0.5 }[0].swimmer }
+
     subject { GoggleCupScoreCalculator.new( goggle_cup, @fix_swimmer, @fix_pool_type, @fix_event_type ) }
 
     describe "#oldest_swimmer_result," do
-      
       it "returns a date" do
         expect( subject.oldest_swimmer_result( active_swimmer ) ).to be_an_instance_of( Date )
       end
@@ -167,11 +167,6 @@ describe GoggleCupScoreCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
 
     describe "#get_periods_to_scan," do
-      # Leega
-      # Use existing swimmers with results to test those features
-      #
-      let(:active_swimmer) { Meeting.has_results.sort{ rand - 0.5 }[0].meeting_individual_results.sort{ rand - 0.5 }[0].swimmer }
-      
       it "returns an array" do
         expect( subject.get_periods_to_scan( active_swimmer ) ).to be_a_kind_of( Array )
       end
@@ -195,7 +190,21 @@ describe GoggleCupScoreCalculator, type: :strategy do
         expect( older_dates ).to eq( 1 )
       end
     end
-    #-- -----------------------------------------------------------------------   
+    #-- -----------------------------------------------------------------------
+    
+    describe "#find_swimmer_goggle_cup_standard," do
+      it "returns an array" do
+        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ) ).to be_a_kind_of( Array )
+      end
+      it "returns an array of hashes" do
+        expect( subject.get_periods_to_scan( active_swimmer ) ).to all(be_a_kind_of( Hash ))
+      end
+      it "returns an array cointaining at least one element" do
+        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ).size ).to be >= 1
+      end
+      
+    end   
+    #-- -----------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
   #++
