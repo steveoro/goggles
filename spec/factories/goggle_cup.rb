@@ -1,3 +1,4 @@
+require 'date'
 require 'ffaker'
 
 require 'common/validation_error_tools'
@@ -11,6 +12,7 @@ FactoryGirl.define do
     season_year               { ((rand * 100) % 10).to_i + 2007 }
     max_points                1000
     max_performance           { ((rand * 100) % 5).to_i + 3 }
+    end_date                  { Date.parse("#{season_year}0731") }
     user
 
     before(:create) do |built_instance|

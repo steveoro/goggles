@@ -54,6 +54,7 @@ class Season < ActiveRecord::Base
   scope :sort_season_by_user,        ->(dir) { order("users.name #{dir.to_s}, seasons.begin_date #{dir.to_s}") }
 
   scope :is_not_ended,               -> { where('end_date is null or end_date >= curdate()') }
+  scope :is_ended,                   -> { where('end_date is not null and end_date < curdate()') }
   
   attr_accessible :season_type_id, :edition_type_id, :timing_type_id,
                   :header_year, :edition, :description, :begin_date, :end_date, :rules, :has_individual_rank

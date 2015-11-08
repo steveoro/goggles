@@ -145,6 +145,58 @@ describe GoggleCupScoreCalculator, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
   end
+  #-- -----------------------------------------------------------------------
+    
+  context "Goggle cup time standard definition" do
+    # Leega
+    # Use existing swimmers with results to test those features
+    #
+    let(:goggle_cup)     { create(:goggle_cup, season_year: Date.today.year) }
+    let(:active_swimmer) { Meeting.has_results.sort{ rand - 0.5 }[0].meeting_individual_results.sort{ rand - 0.5 }[0].swimmer }
+    subject { GoggleCupScoreCalculator.new( goggle_cup, @fix_swimmer, @fix_pool_type, @fix_event_type ) }
+
+    describe "#oldest_swimmer_result," do
+      
+      it "returns a date" do
+        expect( subject.oldest_swimmer_result( active_swimmer ) ).to be_an_instance_of( Date )
+      end
+      it "returns a date not greater than other one of swimmer results" do
+        expect( subject.oldest_swimmer_result( active_swimmer ) ).to be <= active_swimmer.meeting_individual_results.sort{ rand - 0.5 }[0].get_scheduled_date
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_periods_to_scan," do
+      # Leega
+      # Use existing swimmers with results to test those features
+      #
+      let(:active_swimmer) { Meeting.has_results.sort{ rand - 0.5 }[0].meeting_individual_results.sort{ rand - 0.5 }[0].swimmer }
+      
+      it "returns an array" do
+        expect( subject.get_periods_to_scan( active_swimmer ) ).to be_a_kind_of( Array )
+      end
+      it "returns an array of dates" do
+        expect( subject.get_periods_to_scan( active_swimmer ) ).to all(be_a_kind_of( Date ))
+      end
+      it "returns a sorted array of dates" do
+        dates = subject.get_periods_to_scan( active_swimmer )
+        elem = 1
+        while elem < dates.size do
+          expect( dates[elem] ).to be < dates[elem - 1]
+          elem = elem + 1
+        end
+      end
+      it "returns an array of dates with only one element older than oldest_swimer_result" do
+        oldest_swimmer_result = subject.oldest_swimmer_result( active_swimmer )
+        older_dates = 0
+        subject.get_periods_to_scan( active_swimmer ).each do |date|
+          older_dates += 1 if date <= oldest_swimmer_result
+        end
+        expect( older_dates ).to eq( 1 )
+      end
+    end
+    #-- -----------------------------------------------------------------------   
+  end
   #-- -------------------------------------------------------------------------
   #++
 end

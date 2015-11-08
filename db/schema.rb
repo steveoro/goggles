@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151106182310) do
+ActiveRecord::Schema.define(:version => 20151107165010) do
 
   create_table "achievement_rows", :force => true do |t|
     t.integer  "lock_version",                      :default => 0
@@ -1045,6 +1045,7 @@ ActiveRecord::Schema.define(:version => 20151106182310) do
     t.integer  "user_id"
     t.integer  "max_performance",                    :limit => 2,  :default => 5,     :null => false
     t.boolean  "is_limited_to_season_types_defined",               :default => false, :null => false
+    t.date     "end_date"
   end
 
   add_index "goggle_cups", ["season_year"], :name => "idx_season_year"
