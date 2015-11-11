@@ -74,6 +74,8 @@ class MeetingIndividualResult < ActiveRecord::Base
   delegate :code,       to: :event_type, prefix: true
 
   scope :is_valid,                    ->              { where(is_out_of_race: false, is_disqualified: false) }
+  scope :is_not_disqualified,         ->              { where(is_disqualified: false) }
+
   scope :is_male,                     ->              { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,                   ->              { joins(:swimmer).where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
