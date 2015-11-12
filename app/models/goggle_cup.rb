@@ -24,6 +24,7 @@ class GoggleCup < ActiveRecord::Base
   has_many :meetings, through: :seasons
   has_many :meeting_individual_results, through: :meetings  # Not properly. We need to filter by team
   has_many :season_types, through: :seasons  
+  has_many :swimmers, through: :goggle_cup_standards # Should used with uniq  
 
   validates_presence_of     :description
   validates_length_of       :description, within: 1..60, allow_nil: false
@@ -43,6 +44,7 @@ class GoggleCup < ActiveRecord::Base
   scope :sort_goggle_cup_by_team,  ->(dir) { order("teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
   scope :sort_goggle_cup_by_year,  ->(dir) { order("goggle_cups.season_year #{dir.to_s}") }
   
+  scope :is_closed_now,            ->      { where("goggle_cups.end_date < curdate()") }
 
   # ----------------------------------------------------------------------------
   # Base methods:
@@ -69,14 +71,14 @@ class GoggleCup < ActiveRecord::Base
   # The Goggle begin date is the earliest begin date of the seasons that compose the Goggle cup
   #
   def get_begin_date
-    goggle_cup_definitions.sort_by_begin_date( 'ASC ').first.season.begin_date 
+    get_end_date.prev_year 
   end
 
   # Get the end date for the Goggle cup
   # The Goggle end date is the latest end date of the seasons that compose the Goggle cup
   #
   def get_end_date
-    goggle_cup_definitions.sort_by_end_date( 'DESC ').first.season.end_date 
+    self.end_date 
   end
 
   # Check if a Goggle cup is closed (terminated) at a certain date

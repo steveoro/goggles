@@ -32,6 +32,7 @@ describe Swimmer, :type => :model do
         :badges,
         :teams,
         :category_types,
+        :goggle_cups,
         :season_types,
         :meeting_individual_results,
         :meeting_relay_swimmers,

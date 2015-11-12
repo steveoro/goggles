@@ -25,6 +25,8 @@ class GoggleCupStandard < ActiveRecord::Base
   scope :sort_by_event_type,  ->(dir) { order("event_types.code #{dir.to_s}, goggle_cups.season_year #{dir.to_s}, pool_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
   scope :sort_by_pool_type,   ->(dir) { order("pool_types.code #{dir.to_s}, goggle_cups.season_year #{dir.to_s}, event_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
 
+  scope :for_swimmer,         ->(swimmer)    { where(swimmer_id: swimmer.id) }
+  scope :for_event_type,      ->(event_type) { where(event_type_id: event_type.id) }
 
   # ----------------------------------------------------------------------------
   # Base methods:
