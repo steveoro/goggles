@@ -17,9 +17,10 @@ module SqlConverter
   # Re-creates an SQL INSERT statement using the attributes of the record instance specified.
   # (It assumes record.kind_of?(ActiveRecord::Base) is +true+).
   #
-  def to_sql_insert( record, with_comment = true, eoln = "\r\n\r\n" )
+  def to_sql_insert( record, with_comment = true, eoln = "\r\n\r\n", explanation = nil )
     con = record.connection
     sql_text = with_comment ? get_sql_comment(record) : ''
+    sql_text << "-- #{explanation}\r\n" if explanation 
     sql_text << "INSERT INTO #{ con.quote_column_name( record.class.table_name ) } "
     columns = []
     values  = []

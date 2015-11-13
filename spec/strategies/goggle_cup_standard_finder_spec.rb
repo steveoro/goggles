@@ -99,13 +99,24 @@ describe GoggleCupStandardFinder, type: :strategy do
         swam_event_by_pool_type = "#{swam_mir.event_type.code}-#{swam_mir.pool_type.code}"  # Should use events_by_pool_type.get_key
         expect( subject.find_swimmer_goggle_cup_standard( active_swimmer )[ swam_event_by_pool_type ] ).to be_an_instance_of( Timing ) 
       end
-      it "returns the same goggle cup standard already present for a stored goggle cup" do
+      it "returns no more than goggle cup standard already presents for a stored goggle cup" do
         # Should use a stored goggle cup
         stored_goggle_cup = GoggleCup.is_closed_now.sort{ rand - 0.5 }[0]
-        involved_swimmer  = stored_goggle_cup.swimmers.uniq.sort{ rand - 0.5 }[0]
-        #involved_swimmer  = Swimmer.find(23)
+        #involved_swimmer  = stored_goggle_cup.swimmers.has_results.uniq.sort{ rand - 0.5 }[0]
+        involved_swimmer  = Swimmer.find(23)
         finder = GoggleCupStandardFinder.new( stored_goggle_cup )
         expect( finder.find_swimmer_goggle_cup_standard( involved_swimmer ).count ).to be <= stored_goggle_cup.goggle_cup_standards.for_swimmer( involved_swimmer ).count 
+      end
+      it "returns the same goggle cup standard already presents for a stored goggle cup" do
+        # Should use a stored goggle cup
+        stored_goggle_cup = GoggleCup.is_closed_now.sort{ rand - 0.5 }[0]
+        #involved_swimmer  = stored_goggle_cup.swimmers.has_results.uniq.sort{ rand - 0.5 }[0]
+        involved_swimmer  = Swimmer.find(23)
+        finder = GoggleCupStandardFinder.new( stored_goggle_cup )
+        finder.find_swimmer_goggle_cup_standard( involved_swimmer ).each_pair do |found_key, found_standard|
+          event_by_pool_type = EventsByPoolType.find_by_key( found_key )
+          expect( found_standard ).to eq( stored_goggle_cup.goggle_cup_standards.for_swimmer( involved_swimmer ).for_event_and_pool( event_by_pool_type ).first.get_timing_instance )
+        end 
       end
     end   
     #-- -----------------------------------------------------------------------
@@ -147,7 +158,7 @@ describe GoggleCupStandardFinder, type: :strategy do
   context "without requested parameters" do
     it "raises an exception for wrong goggle_cup parameter" do
       expect{ GoggleCupStandardFinder.new }.to raise_error( ArgumentError )
-      expect{ GoggleCupStandardFinder.new( 'Wront type parameter' ) }.to raise_error( ArgumentError )
+      expect{ GoggleCupStandardFinder.new( 'Wrong type parameter' ) }.to raise_error( ArgumentError )
     end
   end
   #-- -------------------------------------------------------------------------

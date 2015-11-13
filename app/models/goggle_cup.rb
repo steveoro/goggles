@@ -20,11 +20,12 @@ class GoggleCup < ActiveRecord::Base
 
   has_many :goggle_cup_standards
   has_many :goggle_cup_definitions
-  has_many :seasons, through: :goggle_cup_definitions
-  has_many :meetings, through: :seasons
-  has_many :meeting_individual_results, through: :meetings  # Not properly. We need to filter by team
-  has_many :season_types, through: :seasons  
-  has_many :swimmers, through: :goggle_cup_standards # Should used with uniq  
+  has_many :seasons,                    through: :goggle_cup_definitions
+  has_many :meetings,                   through: :seasons
+  has_many :season_types,               through: :seasons  
+  has_many :badges,                     through: :seasons
+  has_many :swimmers,                   through: :badges # Should used with uniq  
+  has_many :meeting_individual_results, through: :badges
 
   validates_presence_of     :description
   validates_length_of       :description, within: 1..60, allow_nil: false

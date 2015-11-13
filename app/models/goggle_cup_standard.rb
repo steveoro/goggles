@@ -27,6 +27,7 @@ class GoggleCupStandard < ActiveRecord::Base
 
   scope :for_swimmer,         ->(swimmer)    { where(swimmer_id: swimmer.id) }
   scope :for_event_type,      ->(event_type) { where(event_type_id: event_type.id) }
+  scope :for_event_and_pool,  ->(event_by_pool_type) { where(event_type_id: event_by_pool_type.event_type_id, pool_type_id: event_by_pool_type.pool_type_id) }
 
   # ----------------------------------------------------------------------------
   # Base methods:

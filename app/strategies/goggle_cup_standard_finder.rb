@@ -31,16 +31,16 @@ class GoggleCupStandardFinder
   #++
 
   # Find swimmers potentially involved in Goggle Cup
-  # Swimmers involved are those who swam at least on meeting
-  # for the Goggle Cup team before the start of the given Goggle Cup
-  # If Goggle cup will not consider all result types
-  # (is_limited_to_season_types_defined == false)
-  # will considered only involved seasn types according
-  # to Goggle Cup definition
+  # Swimmer involved are those who has a badge in at least
+  # one of the considered season according to the
+  # Goggle cup definition
+  # We shoukld consider all swimmer that swam
+  # at least one meeting before Goggle cup but it would be
+  # not wise... 
   def get_involved_swimmers
     involved_swimmers = []
-    @goggle_cup.team.swimmers.has_results.uniq.each do |swimmer|
-      involved_swimmers << swimmer if swimmer.meeting_individual_results.has_time.is_not_disqualified.count > 0 && 
+    @goggle_cup.swimmers.has_results.uniq.each do |swimmer|
+      involved_swimmers << swimmer if swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.count > 0 && 
        oldest_swimmer_result( swimmer ) <= @goggle_cup.end_date.prev_year
     end
     involved_swimmers
@@ -49,7 +49,7 @@ class GoggleCupStandardFinder
   # Get the oldest swimmer result date
   # Assumes that swimmer has at least one result
   def oldest_swimmer_result( swimmer )
-    swimmer.meeting_individual_results.has_time.is_not_disqualified.sort_by_date('ASC').first.get_scheduled_date
+    swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.sort_by_date('ASC').first.get_scheduled_date
   end
 
   # Determinates the year_by_year periods to scan for
@@ -123,21 +123,22 @@ class GoggleCupStandardFinder
     # during time standard creation to ricreate clear situation
     delete_goggle_cup_standards
 
-    sql_diff_text_log << "-- Found #{@swimmers.count} swimmers\r\n"
+    sql_diff_text_log << "\r\n-- Found #{@swimmers.count} swimmers\r\n"
     @swimmers.each do |swimmer|
-      sql_diff_text_log << "-- Begin swimmer #{swimmer.get_full_name}\r\n"
-      find_swimmer_goggle_cup_standard( swimmer ).each_pair do |event_key, goggle_cup_standard|
+      sql_diff_text_log << "\r\n-- Begin swimmer #{swimmer.get_full_name}\r\n"
+      find_swimmer_goggle_cup_standard( swimmer ).each_pair do |event_key, standard_time|
         event_by_pool_type = EventsByPoolType.find_by_key( event_key )
         goggle_cup_standard               = GoggleCupStandard.new()
         goggle_cup_standard.goggle_cup_id = @goggle_cup.id
         goggle_cup_standard.swimmer_id    = swimmer.id
-        goggle_cup_standard.event_type_id = event_by_pool_type.event_type.id  
-        goggle_cup_standard.pool_type_id  = event_by_pool_type.pool_type.id  
-        goggle_cup_standard.minutes       = goggle_cup_standard.get_timing_instance.minutes
-        goggle_cup_standard.seconds       = goggle_cup_standard.get_timing_instance.seconds
-        goggle_cup_standard.hundreds      = goggle_cup_standard.get_timing_instance.hundreds
+        goggle_cup_standard.event_type_id = event_by_pool_type.event_type_id  
+        goggle_cup_standard.pool_type_id  = event_by_pool_type.pool_type_id  
+        goggle_cup_standard.minutes       = standard_time.minutes
+        goggle_cup_standard.seconds       = standard_time.seconds
+        goggle_cup_standard.hundreds      = standard_time.hundreds
         goggle_cup_standard.save
-        sql_diff_text_log << to_sql_insert( goggle_cup_standard, false ) # no additional comment
+        comment = "#{event_by_pool_type.i18n_description}: #{standard_time.to_s}"
+        sql_diff_text_log << to_sql_insert( goggle_cup_standard, false, "\r\n", comment )
       end
       sql_diff_text_log << "-- End swimmer #{swimmer.get_full_name}. Inserted: #{swimmer.goggle_cups.find(@goggle_cup.id).goggle_cup_standards.count}\r\n"
     end
@@ -152,7 +153,7 @@ class GoggleCupStandardFinder
     sql_diff_text_log << "-- Deleting time standards for #{@goggle_cup.get_verbose_name}\r\n"
     sql_diff_text_log << "--\r\n"
     @goggle_cup.goggle_cup_standards.each do |goggle_cup_standard|
-      sql_diff_text_log << to_sql_delete( goggle_cup_standard, false )
+      sql_diff_text_log << to_sql_delete( goggle_cup_standard, false, "\r\n" )
       goggle_cup_standard.delete
     end
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.count}\r\n"

@@ -79,7 +79,7 @@ class SeasonCreator
     newer_season.edition     = @edition
     newer_season.rules       = nil
     newer_season.save
-    sql_diff_text_log << to_sql_insert( newer_season, false ) # no additional comment
+    sql_diff_text_log << to_sql_insert( newer_season, false, "\r\n" ) # no additional comment
     sql_diff_text_log << "\r\n"
     newer_season
   end
@@ -96,7 +96,7 @@ class SeasonCreator
       newer_category = CategoryType.new( category_type.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )
       newer_category.season_id = @new_id
       newer_category.save
-      sql_diff_text_log << to_sql_insert( newer_category, false ) # no additional comment
+      sql_diff_text_log << to_sql_insert( newer_category, false, "\r\n" ) # no additional comment
       newer_categories << newer_category
     end
     sql_diff_text_log << "\r\n"
@@ -124,7 +124,7 @@ class SeasonCreator
       newer_meeting.invitation           = nil
       newer_meeting.is_confirmed         = false
       if newer_meeting.save
-        sql_diff_text_log << to_sql_insert( newer_meeting, false ) # no additional comment
+        sql_diff_text_log << to_sql_insert( newer_meeting, false, "\r\n" ) # no additional comment
         newer_meetings << newer_meeting
   
         # Collect meeting sessions too
@@ -134,7 +134,7 @@ class SeasonCreator
           newer_session.scheduled_date = self.next_year_eq_day( newer_session.scheduled_date ) if newer_session.scheduled_date > Date.new()
           newer_session.is_autofilled  = true
           if newer_session.save
-            sql_diff_text_log << to_sql_insert( newer_session, false ) # no additional comment
+            sql_diff_text_log << to_sql_insert( newer_session, false, "\r\n" ) # no additional comment
             @meeting_sessions << newer_session
              
             # Collect meeting events too
@@ -143,7 +143,7 @@ class SeasonCreator
               newer_event.meeting_session_id = newer_session.id
               newer_event.is_autofilled      = true
               if newer_event.save
-                sql_diff_text_log << to_sql_insert( newer_event, false ) # no additional comment
+                sql_diff_text_log << to_sql_insert( newer_event, false, "\r\n" ) # no additional comment
                 @meeting_events << newer_event
               end
             end

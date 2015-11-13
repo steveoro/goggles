@@ -14,7 +14,7 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 
 =begin
 
-= Meeting date changer
+= Meeting date change
 
   - Goggles framework vers.:  4.00.833.20151103
   - Author: Leega
@@ -42,7 +42,7 @@ Options: persist=false meeting=<meeting_id> days=<days_to_move_on> [log_dir=#{LO
 - 'log_dir'  allows to override the default log dir destination.
 
 DESC
-  task :meeting_date_changer do |t|
+  task :meeting_date_change do |t|
     puts "*** db:meeting_date_changer ***"
     persist         = ENV.include?("persist") ? ENV["persist"] == 'true' : false
     meeting_id      = ENV.include?("meeting") ? ENV["meeting"].to_i : nil
@@ -55,11 +55,11 @@ DESC
 
     # Verify parameters
     unless meeting_id
-      puts("This needs meeting to move.")
+      puts("This needs the meeting to move.")
       exit
     end
     unless days_to_move_on
-      puts("This needs a<mount of days to move on.")
+      puts("This needs the amount of days to move on.")
       exit
     end
 
