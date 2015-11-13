@@ -103,13 +103,13 @@ describe GoggleCup, :type => :model do
     #++
     
     describe "#get_begin_date" do
-      it "returns the earliest begin date of seasons in goggle_cup_definition" do
+      xit "returns the earliest begin date of seasons in goggle_cup_definition" do
         found_date = subject.get_begin_date
         subject.seasons.each do |season|
           expect( season.begin_date ).to be >= found_date
         end
       end
-      it "returns the expected begin date" do
+      xit "returns the expected begin date" do
         fix_today = Date.today 
         fix_tomorrow = fix_today + 1 
         fix_date = fix_today - ((rand * 100) + 1) 
@@ -122,18 +122,21 @@ describe GoggleCup, :type => :model do
         fix_definition3 = create( :goggle_cup_definition, goggle_cup_id: fix_goggle_cup.id, season_id: fix_season3.id )
         expect( fix_goggle_cup.get_begin_date.to_s ).to eq( fix_date.to_s )
       end
+      it "returns the date at the previous year of goggle_cup end_date" do
+        expect( subject.get_begin_date ).to eq( subject.end_date.prev_year )
+      end
     end
     # ---------------------------------------------------------------------------
     #++
     
     describe "#get_end_date" do
-      it "returns the latest end date of seasons in goggle_cup_definition" do
+      xit "returns the latest end date of seasons in goggle_cup_definition" do
         found_date = subject.get_end_date
         subject.seasons.each do |season|
           expect( season.end_date ).to be <= found_date
         end
       end
-      it "returns the expected end date" do
+      xit "returns the expected end date" do
         fix_today = Date.today 
         fix_yesterday = fix_today - 1 
         fix_year_ago = fix_today - 364 
@@ -146,6 +149,9 @@ describe GoggleCup, :type => :model do
         fix_definition2 = create( :goggle_cup_definition, goggle_cup_id: fix_goggle_cup.id, season_id: fix_season2.id )
         fix_definition3 = create( :goggle_cup_definition, goggle_cup_id: fix_goggle_cup.id, season_id: fix_season3.id )
         expect( fix_goggle_cup.get_end_date.to_s ).to eq( fix_date.to_s )
+      end
+      it "returns the goggle_cup end_date set on db" do
+        expect( subject.get_end_date ).to eq( subject.end_date )
       end
     end
     # ---------------------------------------------------------------------------
