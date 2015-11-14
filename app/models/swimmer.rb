@@ -76,7 +76,7 @@ class Swimmer < ActiveRecord::Base
   scope :is_male,             -> { where(["swimmers.gender_type_id = ?", GenderType::MALE_ID]) }
   scope :is_female,           -> { where(["swimmers.gender_type_id = ?", GenderType::FEMALE_ID]) }
 
-  scope :has_results,         -> { where("exists (select 1 from meeting_individual_results where swimmer_id = swimmers.id)") }
+  scope :has_results,         -> { where("exists (select 1 from meeting_individual_results where swimmer_id = swimmers.id and not is_disqualified)") }
 
   scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
   scope :sort_by_name,        ->(dir) { order("complete_name #{dir.to_s}") }

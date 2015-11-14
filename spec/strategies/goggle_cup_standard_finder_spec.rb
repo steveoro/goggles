@@ -7,11 +7,23 @@ describe GoggleCupStandardFinder, type: :strategy do
   context "with requested parameters" do
     # Leega
     # Use existing team and swimmer with results to test those features
+    # will not run at the beginning of the seasons where thera aren't badges
+    # So should use Ober Ferrari's existing Ober Cup with Leega
+    # 
+    # To test randomly should create:
+    # A team with swimmers (badges) withe results swam before the goggle cup
     #
-    let(:csi_season)     { SeasonType.find_by_code('MASCSI').seasons.is_ended.sort{ rand - 0.5 }[0] }
-    let(:active_team)    { csi_season.teams.uniq.sort{ rand - 0.5 }[0] }
-    let(:goggle_cup)     { create( :goggle_cup, season_year: Date.today.year, team: active_team ) }
-    let(:active_swimmer) { goggle_cup.team.swimmers.has_results.uniq.sort{ rand - 0.5 }[0] }
+    #let(:active_team)    { SeasonType.find_by_code('MASCSI').seasons.is_ended.sort{ rand - 0.5 }[0].teams.uniq.sort{ rand - 0.5 }[0] }
+    #let(:goggle_cup)     { create( :goggle_cup, season_year: Date.today.year, team: active_team ) }
+    #let(:goggle_cup)     { GoggleCup.for_team( active_team ).is_closed_now.sort{ rand - 0.5 }[0] }
+    #let(:active_swimmer) { goggle_cup.swimmers.has_results.uniq.sort{ rand - 0.5 }[0] }
+    #let( :team )    { create(:team) }
+    #let( :badge )   { create( :badge, team: team ) }
+    #let( :swimmer ) { badge.swimmer }
+    #let( :mir_old ) { create( :meeting_individual_result, badge: badge ) }
+    let(:active_team)    { Team.find(1) }
+    let(:goggle_cup)     { GoggleCup.find(9) }
+    let(:active_swimmer) { Swimmer.find(23) }
 
     subject { GoggleCupStandardFinder.new( goggle_cup ) }
 
@@ -36,7 +48,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         expect( subject.get_involved_swimmers ).to all( be_an_instance_of( Swimmer ) )
       end
       it "returns no more than total team swimmers" do
-        expect( subject.get_involved_swimmers.size ).to be <= goggle_cup.team.swimmers.count
+        expect( subject.get_involved_swimmers.size ).to be <= goggle_cup.swimmers.count
       end
     end
     #-- -----------------------------------------------------------------------
@@ -47,6 +59,10 @@ describe GoggleCupStandardFinder, type: :strategy do
       end
       it "returns a date not greater than other one of swimmer results" do
         expect( subject.oldest_swimmer_result( active_swimmer ) ).to be <= active_swimmer.meeting_individual_results.sort{ rand - 0.5 }[0].get_scheduled_date
+      end
+      it "returns tomorrow date if not swam results" do
+        new_swimmer = create( :swimmer )
+        expect( subject.oldest_swimmer_result( new_swimmer ) ).to be >= Date.today
       end
     end
     #-- -----------------------------------------------------------------------
@@ -74,6 +90,10 @@ describe GoggleCupStandardFinder, type: :strategy do
         end
         expect( older_dates ).to eq( 1 )
       end
+      it "returns an empty array if not swam results" do
+        new_swimmer = create( :swimmer )
+        expect( subject.get_periods_to_scan( new_swimmer ).size ).to eq( 0 )
+      end
     end
     #-- -----------------------------------------------------------------------
     
@@ -95,32 +115,40 @@ describe GoggleCupStandardFinder, type: :strategy do
         end
       end
       it "returns a timing instance for an event swam" do
-        swam_mir = active_swimmer.meeting_individual_results.sort_by_date.first
+        swam_mir = active_swimmer.meeting_individual_results.for_team( active_team ).has_time.is_not_disqualified.sort_by_date('ASC').first
         swam_event_by_pool_type = "#{swam_mir.event_type.code}-#{swam_mir.pool_type.code}"  # Should use events_by_pool_type.get_key
         expect( subject.find_swimmer_goggle_cup_standard( active_swimmer )[ swam_event_by_pool_type ] ).to be_an_instance_of( Timing ) 
       end
       it "returns no more than goggle cup standard already presents for a stored goggle cup" do
         # Should use a stored goggle cup
-        stored_goggle_cup = GoggleCup.is_closed_now.sort{ rand - 0.5 }[0]
-        #involved_swimmer  = stored_goggle_cup.swimmers.has_results.uniq.sort{ rand - 0.5 }[0]
-        involved_swimmer  = Swimmer.find(23)
-        finder = GoggleCupStandardFinder.new( stored_goggle_cup )
-        expect( finder.find_swimmer_goggle_cup_standard( involved_swimmer ).count ).to be <= stored_goggle_cup.goggle_cup_standards.for_swimmer( involved_swimmer ).count 
+        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ).count ).to be <= goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count 
       end
       it "returns the same goggle cup standard already presents for a stored goggle cup" do
         # Should use a stored goggle cup
-        stored_goggle_cup = GoggleCup.is_closed_now.sort{ rand - 0.5 }[0]
-        #involved_swimmer  = stored_goggle_cup.swimmers.has_results.uniq.sort{ rand - 0.5 }[0]
-        involved_swimmer  = Swimmer.find(23)
-        finder = GoggleCupStandardFinder.new( stored_goggle_cup )
-        finder.find_swimmer_goggle_cup_standard( involved_swimmer ).each_pair do |found_key, found_standard|
+        subject.find_swimmer_goggle_cup_standard( active_swimmer ).each_pair do |found_key, found_standard|
           event_by_pool_type = EventsByPoolType.find_by_key( found_key )
-          expect( found_standard ).to eq( stored_goggle_cup.goggle_cup_standards.for_swimmer( involved_swimmer ).for_event_and_pool( event_by_pool_type ).first.get_timing_instance )
+          expect( found_standard ).to eq( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).for_event_and_pool( event_by_pool_type ).first.get_timing_instance )
         end 
       end
     end   
     #-- -----------------------------------------------------------------------
     
+    describe "#delete_goggle_cup_standards_for_swimmer," do
+      it "appends text to sql diff" do
+        previous_size = subject.sql_diff_text_log.size
+        subject.delete_goggle_cup_standards_for_swimmer( active_swimmer )
+        expect( subject.sql_diff_text_log.size ).to be > previous_size
+      end
+      it "deletes all goggle cup standard times presents for the given swimmer" do
+        # Should use goggle cup with standard times presents for a certain swimmer
+        expect( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count ).to be > 0
+        subject.delete_goggle_cup_standards_for_swimmer( active_swimmer )
+        expect( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count ).to eq( 0 )
+        expect( goggle_cup.goggle_cup_standards.count ).to be > 0
+      end
+    end   
+    #-- -----------------------------------------------------------------------
+
     describe "#delete_goggle_cup_standards," do
       it "appends text to sql diff" do
         previous_size = subject.sql_diff_text_log.size
@@ -129,11 +157,23 @@ describe GoggleCupStandardFinder, type: :strategy do
       end
       it "deletes all goggle cup standard times presents" do
         # Should use goggle cup with standard times presents
-        goggle_cup_with_standards = create( :goggle_cup_with_standards, team: active_team )
-        expect( goggle_cup_with_standards.goggle_cup_standards.count ).to be > 0
-        finder = GoggleCupStandardFinder.new( goggle_cup_with_standards )
-        finder.delete_goggle_cup_standards
-        expect( goggle_cup_with_standards.goggle_cup_standards.count ).to eq( 0 )
+        expect( goggle_cup.goggle_cup_standards.count ).to be > 0
+        subject.delete_goggle_cup_standards
+        expect( goggle_cup.goggle_cup_standards.count ).to eq( 0 )
+      end
+    end   
+    #-- -----------------------------------------------------------------------
+
+    describe "#create_goggle_cup_standards_for_swimmer," do
+      it "appends text to sql diff" do
+        previous_size = subject.sql_diff_text_log.size
+        subject.create_goggle_cup_standards_for_swimmer( active_swimmer )
+        expect( subject.sql_diff_text_log.size ).to be > previous_size
+      end
+      it "creates standard times found for the swimmer" do
+        subject.delete_goggle_cup_standards_for_swimmer( active_swimmer )
+        subject.create_goggle_cup_standards_for_swimmer( active_swimmer )
+        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ).size ).to eq( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count )
       end
     end   
     #-- -----------------------------------------------------------------------

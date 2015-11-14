@@ -34,7 +34,7 @@ class GoggleCupStandardFinder
   # Swimmer involved are those who has a badge in at least
   # one of the considered season according to the
   # Goggle cup definition
-  # We shoukld consider all swimmer that swam
+  # We should consider all swimmer that swam
   # at least one meeting before Goggle cup but it would be
   # not wise... 
   def get_involved_swimmers
@@ -49,7 +49,9 @@ class GoggleCupStandardFinder
   # Get the oldest swimmer result date
   # Assumes that swimmer has at least one result
   def oldest_swimmer_result( swimmer )
-    swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.sort_by_date('ASC').first.get_scheduled_date
+    swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.count > 0 ?
+     swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.sort_by_date('ASC').first.get_scheduled_date :
+     Date.today.next_day
   end
 
   # Determinates the year_by_year periods to scan for
@@ -62,11 +64,13 @@ class GoggleCupStandardFinder
   def get_periods_to_scan( swimmer )
     goggle_years_to_scan = []
     oldest_result_date = oldest_swimmer_result( swimmer )
-    period_end = @goggle_cup.end_date.prev_year
-    goggle_years_to_scan << period_end 
-    while period_end >= oldest_result_date do
-      period_end = period_end.prev_year
+    if oldest_result_date < @goggle_cup.end_date.prev_year
+      period_end = @goggle_cup.end_date.prev_year
       goggle_years_to_scan << period_end 
+      while period_end >= oldest_result_date do
+        period_end = period_end.prev_year
+        goggle_years_to_scan << period_end 
+      end
     end
     goggle_years_to_scan
   end
@@ -125,23 +129,42 @@ class GoggleCupStandardFinder
 
     sql_diff_text_log << "\r\n-- Found #{@swimmers.count} swimmers\r\n"
     @swimmers.each do |swimmer|
-      sql_diff_text_log << "\r\n-- Begin swimmer #{swimmer.get_full_name}\r\n"
-      find_swimmer_goggle_cup_standard( swimmer ).each_pair do |event_key, standard_time|
-        event_by_pool_type = EventsByPoolType.find_by_key( event_key )
-        goggle_cup_standard               = GoggleCupStandard.new()
-        goggle_cup_standard.goggle_cup_id = @goggle_cup.id
-        goggle_cup_standard.swimmer_id    = swimmer.id
-        goggle_cup_standard.event_type_id = event_by_pool_type.event_type_id  
-        goggle_cup_standard.pool_type_id  = event_by_pool_type.pool_type_id  
-        goggle_cup_standard.minutes       = standard_time.minutes
-        goggle_cup_standard.seconds       = standard_time.seconds
-        goggle_cup_standard.hundreds      = standard_time.hundreds
-        goggle_cup_standard.save
-        comment = "#{event_by_pool_type.i18n_description}: #{standard_time.to_s}"
-        sql_diff_text_log << to_sql_insert( goggle_cup_standard, false, "\r\n", comment )
-      end
-      sql_diff_text_log << "-- End swimmer #{swimmer.get_full_name}. Inserted: #{swimmer.goggle_cups.find(@goggle_cup.id).goggle_cup_standards.count}\r\n"
+      sql_diff_text_log << "\r\n"
+      create_goggle_cup_standards_for_swimmer( swimmer )
     end
+    sql_diff_text_log
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+  
+  # Scans for all team swimmers to define Goggle cup standards
+  # Scans all swimmers with results for the team if  
+  # is_limited_to_season_types_defined == false
+  # Otherwise consider only those who have results for meetings
+  # in the season types to be considered according to Goggle cup definition
+  def create_goggle_cup_standards_for_swimmer( swimmer )
+    # Clear data to avoid incorrect standards
+    # Necessary beacuse a time swam during the Goggle cup year should became
+    # new standard time if not present, but should be not considerd
+    # during time standard creation to ricreate clear situation
+    delete_goggle_cup_standards_for_swimmer( swimmer ) if @goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).count > 0
+
+    sql_diff_text_log << "-- Creating time standards for #{swimmer.get_full_name}\r\n"
+    find_swimmer_goggle_cup_standard( swimmer ).each_pair do |event_key, standard_time|
+      event_by_pool_type = EventsByPoolType.find_by_key( event_key )
+      goggle_cup_standard               = GoggleCupStandard.new()
+      goggle_cup_standard.goggle_cup_id = @goggle_cup.id
+      goggle_cup_standard.swimmer_id    = swimmer.id
+      goggle_cup_standard.event_type_id = event_by_pool_type.event_type_id  
+      goggle_cup_standard.pool_type_id  = event_by_pool_type.pool_type_id  
+      goggle_cup_standard.minutes       = standard_time.minutes
+      goggle_cup_standard.seconds       = standard_time.seconds
+      goggle_cup_standard.hundreds      = standard_time.hundreds
+      goggle_cup_standard.save
+      comment = "#{event_by_pool_type.i18n_description}: #{standard_time.to_s}"
+      sql_diff_text_log << to_sql_insert( goggle_cup_standard, false, "\r\n", comment )
+    end
+    sql_diff_text_log << "-- End swimmer #{swimmer.get_full_name}. Inserted: #{@goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).count}\r\n"
     sql_diff_text_log
   end
   #-- --------------------------------------------------------------------------
@@ -157,6 +180,20 @@ class GoggleCupStandardFinder
       goggle_cup_standard.delete
     end
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.count}\r\n"
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Deletes Goggle cup standard times for a given swimmer
+  def delete_goggle_cup_standards_for_swimmer( swimmer )
+    sql_diff_text_log << "--\r\n"
+    sql_diff_text_log << "-- Deleting time standards for #{swimmer.get_full_name}\r\n"
+    sql_diff_text_log << "--\r\n"
+    @goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).each do |goggle_cup_standard|
+      sql_diff_text_log << to_sql_delete( goggle_cup_standard, false, "\r\n" )
+      goggle_cup_standard.delete
+    end
+    sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).count}\r\n"
   end
   #-- --------------------------------------------------------------------------
   #++

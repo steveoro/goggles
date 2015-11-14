@@ -41,11 +41,13 @@ class GoggleCup < ActiveRecord::Base
   validates_numericality_of :max_performance
 
 
-  scope :sort_goggle_cup_by_user,  ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
-  scope :sort_goggle_cup_by_team,  ->(dir) { order("teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
-  scope :sort_goggle_cup_by_year,  ->(dir) { order("goggle_cups.season_year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_user,  ->(dir)  { order("users.name #{dir.to_s}, teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_team,  ->(dir)  { order("teams.name #{dir.to_s}, goggle_cups.season_year #{dir.to_s}") }
+  scope :sort_goggle_cup_by_year,  ->(dir)  { order("goggle_cups.season_year #{dir.to_s}") }
   
-  scope :is_closed_now,            ->      { where("goggle_cups.end_date < curdate()") }
+  scope :is_closed_now,            ->       { where("goggle_cups.end_date < curdate()") }
+
+  scope :for_team,                 ->(team) { where(team: team) }
 
   # ----------------------------------------------------------------------------
   # Base methods:
