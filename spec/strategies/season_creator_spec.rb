@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe SeasonCreator, type: :strategy do
   # Needs a season not duplicated
-  let(:older_season_id) { SeasonType.find_by_code('MASCSI').seasons.sort_season_by_begin_date('DESC').first }
+  let(:older_season_id) { SeasonType.find_by_code('MASCSI').seasons.sort_season_by_begin_date('DESC').first.id }
   let(:newer_season_id) { older_season_id + 10 }
   let(:older_season)    { Season.find( older_season_id ) }
   let(:description)     { 'Spec proof season ' + newer_season_id.to_s }
