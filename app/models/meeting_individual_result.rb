@@ -106,6 +106,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_swimmer,                 ->(swimmer)              { where(swimmer_id: swimmer.id) }
   scope :for_category_code,           ->(category_code)        { joins(:category_type).where(['category_types.code = ?', category_code]) }
   scope :for_date_range,              ->(date_begin, date_end) { joins(:meeting).where(['meetings.header_date between ? and ?', date_begin, date_end]) }
+  scope :for_season,                  ->(season)               { joins(:season).where(['seasons.id = ?', season.id]) }
   
   # ----------------------------------------------------------------------------
   # Base methods:

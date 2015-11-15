@@ -55,6 +55,8 @@ class Season < ActiveRecord::Base
 
   scope :is_not_ended,               -> { where('end_date is null or end_date >= curdate()') }
   scope :is_ended,                   -> { where('end_date is not null and end_date < curdate()') }
+
+  scope :for_season_type,            ->(season_type) { where(season_type: season_type) }
   
   attr_accessible :season_type_id, :edition_type_id, :timing_type_id,
                   :header_year, :edition, :description, :begin_date, :end_date, :rules, :has_individual_rank

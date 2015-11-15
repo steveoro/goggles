@@ -38,6 +38,7 @@ class Swimmer < ActiveRecord::Base
   has_many :badges
   has_many :teams,          through: :badges
   has_many :category_types, through: :badges
+  has_many :seasons,        through: :badges
   has_many :season_types,   through: :badges
 
   has_many :meeting_individual_results

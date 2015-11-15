@@ -1,9 +1,9 @@
 require 'wrappers/timing'
 
 #
-# == GoggleCupScoreCalculator
+# == GoggleCupSstandardFinder
 #
-# Strategy Pattern implementation for Goggle Cup score calculations
+# Strategy Pattern implementation for Goggle Cup standard times retreiving
 #
 # @author   Leega
 # @version  4.00.835
@@ -46,7 +46,9 @@ class GoggleCupStandardFinder
     involved_swimmers
   end 
 
-  # Get the oldest swimmer result date
+  # Get the oldest swimmer result date considering
+  # only meetings where the swimmer parteciapted
+  # for the goggle cup team
   # Assumes that swimmer has at least one result
   def oldest_swimmer_result( swimmer )
     swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.count > 0 ?

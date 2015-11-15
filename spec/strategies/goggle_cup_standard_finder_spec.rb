@@ -82,7 +82,7 @@ describe GoggleCupStandardFinder, type: :strategy do
           elem = elem + 1
         end
       end
-      it "returns an array of dates with only one element older than oldest_swimer_result" do
+      it "returns an array of dates with only one element older than oldest_swimmer_result" do
         oldest_swimmer_result = subject.oldest_swimmer_result( active_swimmer )
         older_dates = 0
         subject.get_periods_to_scan( active_swimmer ).each do |date|
