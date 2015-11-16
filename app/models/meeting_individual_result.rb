@@ -107,6 +107,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_category_code,           ->(category_code)        { joins(:category_type).where(['category_types.code = ?', category_code]) }
   scope :for_date_range,              ->(date_begin, date_end) { joins(:meeting).where(['meetings.header_date between ? and ?', date_begin, date_end]) }
   scope :for_season,                  ->(season)               { joins(:season).where(['seasons.id = ?', season.id]) }
+  scope :for_closed_seasons,          ->                       { joins(:season).where("seasons.end_date is not null and seasons.end_date < curdate()") }
   
   # ----------------------------------------------------------------------------
   # Base methods:

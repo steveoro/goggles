@@ -51,12 +51,20 @@ class SwimmerBestFinder
     end
     return nil
   end
+
+  # Use events by pool type instead of independent pool type and event type
+  def get_involved_season_last_best_for_key( involved_seasons, event_by_pool_type_key )
+    event_by_pool_type = EventsByPoolType.find_by_key( event_by_pool_type_key )
+    event_by_pool_type ? get_involved_season_last_best_for_event( involved_seasons, event_by_pool_type.event_type, event_by_pool_type.pool_type ) : nil
+  end
   #-- --------------------------------------------------------------------------
   #++
 
   # Find personal best for given season type, event type and pool type
   def get_season_type_best_for_event( season_type, event_type, pool_type )
-    
+    @swimmer.meeting_individual_results.for_season_type( season_type ).for_pool_type( pool_type ).for_event_type( event_type ).is_not_disqualified.count > 0 ?
+      @swimmer.meeting_individual_results.for_season_type( season_type ).for_pool_type( pool_type ).for_event_type( event_type ).is_not_disqualified.sort_by_timing('ASC').first.get_timing_instance :
+      nil
   end
   #-- --------------------------------------------------------------------------
   #++

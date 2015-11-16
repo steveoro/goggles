@@ -49,6 +49,9 @@ class Badge < ActiveRecord::Base
 
   scope :for_category_type,     ->(category_type) { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
   scope :for_gender_type,       ->(gender_type)   { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
+  scope :for_season,            ->(season)        { where(season: season) }
+  scope :for_team,              ->(team)          { where(team: team) }
+  scope :for_swimmer,           ->(swimmer)       { where(swimmer: swimmer) }
   #-- -------------------------------------------------------------------------
   #++
 

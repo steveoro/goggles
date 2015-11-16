@@ -81,7 +81,7 @@ class Swimmer < ActiveRecord::Base
 
   scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
   scope :sort_by_name,        ->(dir) { order("complete_name #{dir.to_s}") }
-  scope :sort_by_gender_type, ->(dir) { order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
+  scope :sort_by_gender_type, ->(dir) { includes(:gender_type).order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
   #-- -------------------------------------------------------------------------
   #++
 

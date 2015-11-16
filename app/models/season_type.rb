@@ -21,6 +21,8 @@ class SeasonType < ActiveRecord::Base
   validates_associated :federation_type             # (foreign key integrity)
 
   has_many :seasons
+  has_many :swimmers,     through: :seasons
+  has_many :event_types,  through: :seasons
   
   scope :is_master, where("code like 'MAS%'")
   # ----------------------------------------------------------------------------
