@@ -51,6 +51,7 @@ class Api::V1::MeetingsController < ApplicationController
   #      {
   #        # Meeting header:
   #        id:         @meeting.id,
+  #        updated_at: @meeting.updated_at.to_i,
   #        name:       @meeting.get_full_name,
   #        date:       @meeting.get_scheduled_date,
   #        season:     @meeting.get_season_type,
@@ -142,9 +143,11 @@ class Api::V1::MeetingsController < ApplicationController
     # List of full event rows:
     mevs_list   = @meeting.meeting_events.includes( :event_type, :stroke_type )
                       .order( 'event_types.is_a_relay, meeting_events.event_order' )
+
     @result_hash = {
         # Meeting header:
         id:         @meeting.id,
+        updated_at: @meeting.updated_at.to_i,
         name:       @meeting.get_full_name,
         date:       @meeting.get_scheduled_date,
         season:     @meeting.get_season_type,
@@ -240,8 +243,22 @@ class Api::V1::MeetingsController < ApplicationController
                           }
                         end,
 
-               # MeetingEntries array: TODO
-               entries:  []
+               # MeetingEntries array:
+               entries:  prog.meeting_entries
+                        .map do |entry|
+                          entry = entry.decorate
+                          {
+                            id:                 entry.id,
+                            swimmer:            entry.get_swimmer_name,
+                            swimmer_year:       entry.get_year_of_birth,
+                            team:               entry.get_team_name,
+                            timing:             entry.get_timing,
+                            start_list_number:  entry.start_list_number,
+                            lane_number:        entry.lane_number,
+                            heat_number:        entry.heat_number,
+                            is_no_time:         entry.is_no_time
+                          }
+                        end
              }
           end
       }
