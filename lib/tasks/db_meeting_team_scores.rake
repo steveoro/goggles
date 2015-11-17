@@ -77,11 +77,22 @@ DESC
       exit
     end
 
-    logger.info( "Meeting: " + meeting.get_full_name )
+    logger.info( "Meeting: #{meeting.get_full_name}" )
 
-    # TODO selecet appropriate calculation method
-
-    calculate_balanced_meeting_team_scores( meeting, logger )
+    # TODO select appropriate calculation method through DB
+    # UGLY at this momento the selection is made using season id...
+    # let you try to find out a worst mode if you can...
+    #
+    # Select appropriate calculation method
+    case meeting.season.id
+    when 141, 151
+      # CSI Seasons 2014-2015 and 2015-2016
+      logger.info( "Season #{meeting.season.get_full_name}" ) 
+      logger.info( "Using CSI balanced meeting team scores by Leega" ) 
+      calculate_balanced_meeting_team_scores( meeting, logger )
+    else
+      logger.info( "No calculation method for season #{meeting.season.get_full_name}" )
+    end
 
     logger.info( "\r\nFinished." )
   end
