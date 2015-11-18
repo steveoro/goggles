@@ -21,13 +21,16 @@ it:
     search_by_swimmer: "Cerca Gare per Atleta"
     search_by_team: "Cerca Gare per Squadra"
     total_attended_meetings: "Partecipaz. a Meeting"
+    results: "Risultati"
     total_results: "Risultati totali"
     total_results_short: "Risult. tot."
     ind_results_short: "Ris. indiv."
     rel_results_short: "Ris. staff."
     total_teams: "Squadre tot."
     scores: "Punteggi"
-    personal_records: "Record personali"
+    personal_records: "Migliori prestazioni personali"
+    personal_best: "Personale"
+    seasonal_best: "Stagionale"
     rank: "Pos."
     standard: "Std."
     timing: "Tempo"
@@ -50,6 +53,8 @@ it:
     start_list_by_category: "Start-list per categoria!"
     team_entries: "Iscritti squadra"
     entry_time: 'Iscriz.'
+    edition: 'Edizione'
+    previous_editions: 'Precedenti edizioni'
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"

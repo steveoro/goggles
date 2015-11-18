@@ -91,6 +91,7 @@ class Meeting < ActiveRecord::Base
   scope :has_results,            -> { where("are_results_acquired") }
 
   scope :for_season_type,        ->(season_type) { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+  scope :for_code,               ->(code)        { where(['code = ?', code]) }
 
   # ----------------------------------------------------------------------------
   # Base methods:

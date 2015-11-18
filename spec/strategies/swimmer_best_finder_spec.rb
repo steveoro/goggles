@@ -59,6 +59,37 @@ describe SwimmerBestFinder, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
     
+    describe "#get_current_seasons_involved_into, " do
+      it "returns an array" do
+        expect( subject.get_current_seasons_involved_into ).to be_a_kind_of( ActiveRecord::Relation )
+      end
+      it "returns an array of seasons" do
+        expect( subject.get_current_seasons_involved_into ).to all(be_an_instance_of( Season ))
+      end
+      it "returns an array of not ended seasons" do
+        subject.get_current_seasons_involved_into.each do |season|
+          expect( season.is_season_ended_at ).to be false
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    
+    describe "#get_contemporary_seasons_involved_into, " do
+      it "returns an array" do
+        expect( subject.get_contemporary_seasons_involved_into( csi_season ) ).to be_a_kind_of( ActiveRecord::Relation )
+      end
+      it "returns an array of seasons" do
+        expect( subject.get_contemporary_seasons_involved_into( csi_season ) ).to all(be_an_instance_of( Season ))
+      end
+      it "returns an array of seasons conteporary of given one" do
+        subject.get_contemporary_seasons_involved_into( csi_season ).each do |season|
+          expect( season.begin_date ).to be <= csi_season.end_date
+          expect( season.end_date ).to be >= csi_season.begin_date
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
     describe "#get_involved_season_last_best_for_event," do
       it "returns a timing instance if event already swam" do
         fix_swimmer = Swimmer.find(23)
@@ -110,6 +141,39 @@ describe SwimmerBestFinder, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
 
+    describe "#get_involved_season_best_for_event," do
+      it "returns a timing instance if event already swam" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_event   = EventType.find_by_code('50FA')
+        fix_pool    = PoolType.find_by_code('25')
+        expect( fix_sbf.get_involved_season_best_for_event( fix_sbf.get_contemporary_seasons_involved_into( Season.find(141) ), fix_event, fix_pool ) ).to be_an_instance_of( Timing )
+      end
+      it "returns nil if event not already swam" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_event   = EventType.find_by_code('100MI')
+        fix_pool    = PoolType.find_by_code('50')
+        expect( fix_sbf.get_involved_season_best_for_event( fix_sbf.get_contemporary_seasons_involved_into( Season.find( 141 ) ), fix_event, fix_pool ) ).to be_nil        
+      end
+      it "returns nil if event not already swam in the seasons" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_event   = EventType.find_by_code('200FA')
+        fix_pool    = PoolType.find_by_code('25')
+        expect( fix_sbf.get_involved_season_best_for_event( fix_sbf.get_closed_seasons_involved_into( csi_season_type ), fix_event, fix_pool ) ).to be_nil        
+      end
+      it "returns a time swam if swam before or nil if not" do
+        event = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
+        if active_swimmer.meeting_individual_results.is_not_disqualified.for_season( csi_season ).for_pool_type( event.pool_type ).for_event_type( event.event_type ).count > 0
+          expect( subject.get_involved_season_best_for_event( subject.get_contemporary_seasons_involved_into( csi_season ), event.event_type, event.pool_type ) ).to be_an_instance_of( Timing )
+        else
+          expect( subject.get_involved_season_best_for_event( subject.get_contemporary_seasons_involved_into( csi_season ), event.event_type, event.pool_type ) ).to be nil
+        end 
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
     describe "#get_involved_season_last_best_for_key," do
       it "returns a time swam if swam before or nil if not" do
         event = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
@@ -139,10 +203,36 @@ describe SwimmerBestFinder, type: :strategy do
       end
       it "returns a time swam if swam before or nil if not" do
         event = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
-        if active_swimmer.meeting_individual_results.is_not_disqualified.for_season_type( csi_season_type ).for_closed_seasons.for_pool_type( event.pool_type ).for_event_type( event.event_type ).count > 0
+        if active_swimmer.meeting_individual_results.is_not_disqualified.for_season_type( csi_season_type ).for_pool_type( event.pool_type ).for_event_type( event.event_type ).count > 0
           expect( subject.get_season_type_best_for_event( csi_season_type, event.event_type, event.pool_type ) ).to be_an_instance_of( Timing )
         else
           expect( subject.get_season_type_best_for_event( csi_season_type, event.event_type, event.pool_type ) ).to be nil
+        end 
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_best_for_event," do
+      it "returns a timing instance if event already swam" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_event   = EventType.find_by_code('50FA')
+        fix_pool    = PoolType.find_by_code('25')
+        expect( fix_sbf.get_best_for_event( fix_event, fix_pool ) ).to be_an_instance_of( Timing )
+      end
+      it "returns nil if event not already swam" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_event   = EventType.find_by_code('100MI')
+        fix_pool    = PoolType.find_by_code('50')
+        expect( fix_sbf.get_best_for_event( fix_event, fix_pool ) ).to be_nil        
+      end
+      it "returns a time swam if swam before or nil if not" do
+        event = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
+        if active_swimmer.meeting_individual_results.is_not_disqualified.for_pool_type( event.pool_type ).for_event_type( event.event_type ).count > 0
+          expect( subject.get_best_for_event( event.event_type, event.pool_type ) ).to be_an_instance_of( Timing )
+        else
+          expect( subject.get_best_for_event( event.event_type, event.pool_type ) ).to be nil
         end 
       end
     end

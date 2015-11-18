@@ -21,6 +21,7 @@ en:
     search_by_swimmer: "Search Meeting by Athlete"
     search_by_team: "Search Meeting by Team"
     total_attended_meetings: "Attended Meetings"
+    results: "Risults"
     total_results: "Total Results"
     total_results_short: "Tot. Results"
     ind_results_short: "Indiv. results"
@@ -28,6 +29,8 @@ en:
     total_teams: "Tot. teams"
     scores: "Scores"
     personal_records: "Personal records"
+    personal_best: "Personal"
+    seasonal_best: "Seasonal"
     rank: "Rank"
     standard: "Std."
     timing: "Timing"
@@ -50,6 +53,8 @@ en:
     start_list_by_category: "Start-list by category"
     team_entries: "Team entries"
     entry_time: 'Entry'
+    edition: 'Edition'
+    previous_editions: 'Previuos editions'
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
