@@ -289,10 +289,14 @@ class SwimmerDecorator < Draper::Decorator
   #-- -------------------------------------------------------------------------
 
   # Retrieves the swimmer complete name
-  # with link to swimmer radiography
+  # with link to swimmer current goggle_cup
   #
-  def get_linked_swimmer_name_to_goggle_cup
-    @linked_swimmer_name ||= h.link_to( get_full_name, swimmer_current_goggle_cup_path(id: swimmer.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_current_tooltip') } )
+  def get_linked_swimmer_name_to_goggle_cup( goggle_cup_id = nil )
+    if goggle_cup_id != nil
+      @linked_swimmer_name ||= h.link_to( get_full_name, swimmer_closed_goggle_cup_path(id: swimmer.id, goggle_cup_id: goggle_cup_id ), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_closed_tooltip') } )
+    else
+      @linked_swimmer_name ||= h.link_to( get_full_name, swimmer_current_goggle_cup_path(id: swimmer.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_current_tooltip') } )
+    end
   end
   #-- -------------------------------------------------------------------------
 

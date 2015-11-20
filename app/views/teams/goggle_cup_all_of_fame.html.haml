@@ -18,7 +18,7 @@
       - @closed_goggle_cup.each do |goggle_cup_rank|
         %tr
           %td
-            %b= goggle_cup_rank[:goggle_cup].get_full_name             
+            %b= goggle_cup_rank[:goggle_cup].decorate.get_linked_name
           %td
             %b= goggle_cup_rank[:first].decorate.get_linked_swimmer_name
           %td.goggles-rightalign

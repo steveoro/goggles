@@ -396,6 +396,30 @@ class SwimmersController < ApplicationController
   end
 
 
+  # Radiography for a specified swimmer id: "Goggle cup" tab rendering.
+  # Show results which concurrs in current goggle cup score, if any
+  # For each result, ordered by goggle cup points show google cup point
+  # and event datas
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  # goggle_cup_id: the goggle_cup id to be processed
+  #
+  # TODO Verify if better using the same view for current and closed
+  def closed_goggle_cup
+    # --- "Closed Goggle cup" tab (not shown): ---
+    unless ( params[:goggle_cup_id] ) && GoggleCup.exists?( params[:goggle_cup_id].to_i )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+
+    @tab_title = I18n.t('radiography.goggle_cup_closed')
+
+    @goggle_cups = []
+    @goggle_cups << GoggleCup.find( params[:goggle_cup_id].to_i )
+  end
+
+
   # Radiography for a specified swimmer id: "Trainings" tab rendering
   # Swimmer training stats
   # Training summary:

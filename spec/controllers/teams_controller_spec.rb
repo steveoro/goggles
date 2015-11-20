@@ -167,8 +167,8 @@ describe TeamsController, :type => :controller do
 
 
   describe '[GET #goggle_cup/:id]' do
-    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
-    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :goggle_cup )
+    it_behaves_like( "(Teams restricted GET action as a logged-in user)", :goggle_cup )
 
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have a current Goggle cup," do
       before :each do
@@ -315,6 +315,24 @@ describe TeamsController, :type => :controller do
           closed_goggle_cup += 1 if goggle_cup.is_closed_at? && goggle_cup.has_results?
         end
         expect( assigns( :closed_goggle_cup ).count == closed_goggle_cup ).to be true
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[GET #closed_goggle_cup/:id]' do
+    context "as a logged-in user" do
+      let(:team)       { Team.find(1) }
+      let(:goggle_cup) { team.goggle_cups[ ((rand * team.goggle_cups.count) % team.goggle_cups.count).to_i ] } 
+
+      before(:each) do
+        login_user()
+        get :closed_goggle_cup, id: goggle_cup.id 
+      end
+
+      it "assigns the closed goggle cup" do
+        expect( assigns( :closed_goggle_cup ) ).to be_an_instance_of( GoggleCup )
       end
     end
   end

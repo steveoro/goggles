@@ -1,0 +1,3 @@
+= render( partial: 'tabs_and_radio_title' )
+- cache( cache_key_for_swimmer( 'closed_goggle_cup', @swimmer.id, @max_updated_at ) ) do
+  = render( partial: 'swimmer_goggle_cup' )

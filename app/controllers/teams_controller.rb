@@ -16,7 +16,7 @@ class TeamsController < ApplicationController
   before_filter :authenticate_user_from_token!, except: [:index, :radio]
   before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:index]
+  before_filter :verify_parameter, except: [:index, :closed_goggle_cup]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -144,6 +144,33 @@ class TeamsController < ApplicationController
       # Sorts the array  by the year
       @closed_goggle_cup.sort!{ |hash_element_prev, hash_element_next| hash_element_next[:year] <=> hash_element_prev[:year] }
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified team id: "Goggle cup" tab rendering
+  # Collects and represents the Goggle cup ranking
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  # TODO Verify if better using the same view for current and closed
+  def closed_goggle_cup
+    unless ( params[:id] ) && GoggleCup.exists?( params[:id].to_i )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+
+    # Gets closed goggle cup
+    @closed_goggle_cup = GoggleCup.find( params[:id].to_i )
+    @team = @closed_goggle_cup.team.decorate if @closed_goggle_cup
+
+
+    @tab_title = @closed_goggle_cup.get_full_name
+
+    # Gets goggle cup ranks
+    @closed_goggle_cup_rank = @closed_goggle_cup ? @closed_goggle_cup.calculate_goggle_cup_rank : []
   end
   #-- -------------------------------------------------------------------------
   #++

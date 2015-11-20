@@ -145,6 +145,7 @@ Goggles::Application.routes.draw do
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
       get  "swimmer/current_goggle_cup/:id",    to: "swimmers#current_goggle_cup",      as: "swimmer_current_goggle_cup"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
+      get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
 
       # === Teams ===
       get  "teams/index",                       to: "teams#index",                      as: "teams"
@@ -157,6 +158,7 @@ Goggles::Application.routes.draw do
       get  "teams/palmares/:id",                to: "teams#palmares",                   as: "team_palmares"
       get  "teams/goggle_cup/:id",              to: "teams#goggle_cup",                 as: "team_goggle_cup"
       get  "teams/goggle_cup_all_of_fame/:id",  to: "teams#goggle_cup_all_of_fame",     as: "team_goggle_cup_all_of_fame"
+      get  "teams/closed_goggle_cup/:id",       to: "teams#closed_goggle_cup",          as: "team_closed_goggle_cup"
 
       # === Swimming Pools ===
       get "swimming_pools/index",               as: "swimming_pools"
