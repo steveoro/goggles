@@ -9,6 +9,16 @@ command is executed, thus they should be always _excluded_ from the public repos
 Always exclude the DB role when deploying because it's not currently possibile to
 connect through _ssh_ to the DB Server (which is an Amazon RDS instance).
 
+### WARNING: the current Capistrano task does ALWAYS a db:rebuild_from_dump at the end of the deploy task!
+
+    => ALWAYS MAKE A LOCAL BACKUP DUMP OF PRODUCTION DB BEFORE DEPLOYING:
+
+    0. > ROLES=app cap ocean remote:maintenance_on
+    1. > ROLES=app cap ocean db:remote:sql_dump
+    2. Copy backup into repo
+    3. Commit + Push
+    4. DEPLOY
+
 
 ### Standard deploy:
 
