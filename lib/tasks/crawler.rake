@@ -12,7 +12,7 @@ require 'framework/console_logger'
 
 = Web-Crawling Helper tasks
 
-  - Goggles framework vers.:  4.00.771
+  - Goggles framework vers.:  4.00.839
   - author: Steve A.
 
   (ASSUMES TO BE rakeD inside Rails.root)
@@ -206,6 +206,8 @@ namespace :crawler do
   Crawls the web to retrieve currently available FIN Championship result pages,
 meeting entries and manifests.
 
+          *** This task uses the API @ kimonolabs.com ***
+
 Options: [output_path=#{LOCALCOPY_DIR}]
          [season=<season_id>]
          [start_from=0]
@@ -255,10 +257,9 @@ Kimono APIs used to retrieve exact manifest dates for each manifest link found:
           - '&kimpath5=newvalue', default: '380.html'
           - '&view=newvalue',     default: 'manifestazione'
 
-
-  DESC
-  task :get_fin_data do |t|
-    puts "\r\n*** Crawler:::get_fin_data ***"
+DESC
+  task :kimono_get_fin_data do |t|
+    puts "\r\n*** Crawler::kimono_get_fin_data ***"
     season_id   = ENV.include?("season")      ? ENV["season"].to_i : 142
     output_path = (ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR) + ".#{season_id}"
     start_from  = ENV.include?("start_from")  ? ENV["start_from"].to_i : 0
@@ -339,6 +340,9 @@ Kimono APIs used to retrieve exact manifest dates for each manifest link found:
       case response.code
       when 200
         response
+      when 404
+        puts " The API returned object not found! (error code: 404)"
+        nil
       when 503
         puts " The API got frozen! (Try again later; error code: 503)"
         nil
@@ -514,6 +518,203 @@ Kimono APIs used to retrieve exact manifest dates for each manifest link found:
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  desc <<-DESC
+  Crawls the web to retrieve all the available FIN Championship result pages,
+meeting entries and manifests except the ones from the current season.
+
+          *** This task uses the API @ apifier.com ***
+
+Options: token=<API_token>
+         [output_path=#{LOCALCOPY_DIR}]
+         [start_from=0]
+
+  - 'output_path' the path where the files will be stored after the crawling.
+
+  - 'start_from' allows the crawling loop to start from a different offset than 0,
+    computed among all the results found from the FIN_supermasters_meetings API.
+
+
+Apifier API used to retrieve the list of all sub-pages for each year:
+
+    1) Supermaster_FIN_old_season_meetings:
+       - Defined at https://www.apifier.com/crawlers/AQm3bFNSvkaWKWXMR
+         crawls all calendar pages except the current one, assuming the calendar
+         pages have the format:
+         http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-20XX-20YY.html
+
+DESC
+  task :apifier_get_old_fin_data do |t|
+    puts "\r\n*** Crawler::apifier_get_old_fin_data ***"
+    output_path = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
+    token       = ENV.include?("token")  ? ENV["token"] : ''
+    start_from  = ENV.include?("start_from")  ? ENV["start_from"].to_i : 0
+    puts "output_path:  #{output_path}"
+                                                    # Create the output path, if missing:
+    FileUtils.mkdir_p( output_path ) if !File.directory?( output_path )
+    puts "\r\n"
+
+    # [Steve, 20151121] Links used by the APIs below:
+    #
+    # Previous FIN championships:
+    # (1) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2014-2015.html
+    # (2) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
+    # (3) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
+    #
+    # To change or update the above links, edit directly the crawler at:
+    # https://www.apifier.com/crawlers/AQm3bFNSvkaWKWXMR
+    #
+    api_run_endpoint = "https://www.apifier.com/api/v1/YZw3JnXkocmreiBvj/crawlers/Supermaster_FIN_old_season_meetings/execute?token=#{token}"
+
+                                                    # Call correct API:
+    puts "Launching crawler..."
+    web_response = post_raw_web_request( api_run_endpoint, true )
+# DEBUG
+#    puts "\r\nResult #{ web_response.inspect }."
+    json_result = JSON.parse( web_response )
+    status      = json_result['status']
+    status_msg  = nil
+    # Possible status codes:
+    # RUNNING, SUCCEEDED, STOPPED, TIMEOUT or FAILED
+    api_status_endpoint = json_result['detailsUrl']
+    api_result_endpoint = json_result['resultsUrl']
+
+    while status == 'RUNNING'
+      sleep(2)
+      putc "."
+      web_response = get_raw_web_response( api_status_endpoint )
+      json_result = JSON.parse( web_response )
+      status     = json_result['status']
+      status_msg = json_result['statusMessage']
+    end
+    puts "\r\n"
+
+    if status != 'SUCCEEDED'
+      puts "Crawler API failed with result status '#{status}': #{status_msg}."
+      puts "Aborting."
+      exit
+    end
+
+    puts "Crawler API SUCCEEDED."
+    puts "Retrieving results..."
+    web_response = get_raw_web_response( api_result_endpoint, true )
+    json_result = JSON.parse( web_response )
+# DEBUG
+#    puts "json_result is an #{ json_result.class }"
+#    puts "json_result.first is a #{ json_result.first.class }\r\n"
+
+    # pageFunctionResult is an array of Hash:
+    result_list = json_result.each do |calendar_hash|
+      label = calendar_hash['label']
+      current_url = calendar_hash['url']
+      puts "\r\n\r\nProcessing results for #{ label }"
+      puts "(#{ current_url })"
+      puts " "
+
+      # For each calendar URL, we have several row result Hash instances:
+      calendar_hash['pageFunctionResult'].each_with_index do |row_hash, index|
+        year = row_hash['year']
+        month = row_hash['month']
+        days = row_hash['days']
+        city = row_hash['city']
+        description = row_hash['description']
+        link = row_hash['link']
+
+        # TODO Extract base file name
+
+        # FIXME / WIP
+        puts "#{year}-#{month}-#{days}_#{city}: #{description}, #{link}"
+
+        if description == 'Risultati'
+          # TODO
+        else  # (Meeting invitation)
+          # TODO
+        end
+
+        # results_link   = row_hash['results'].instance_of?(Hash) ? row_hash['results']['href'] : row_hash['results']
+        # startlist_link = results_link.gsub('risultati','startlist') if results_link
+                                                    # # Retrieve meeting_dates from the manifest URL:
+        # manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
+        # puts "\r\n- (#{ start_from + index + 1 }/#{ total_rows }) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
+  #
+        # title, meeting_dates = retrieve_title_and_manifest_dates( season_id, manifest_page_name ) if manifest_page_name
+                                                    # # Skip file save for cancelled meetings (w/o dates):
+        # if meeting_dates
+          # iso_date = get_iso_date_from_meeting_dates( meeting_dates )
+          # base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
+          # puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
+                                                    # # For each meeting, get the result and the manifest page:
+          # store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
+          # store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
+          # store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}"), meeting_dates )
+        # else
+          # puts "  Not found (probably cancelled)."
+        # end
+      end
+    end
+
+    puts "Done."
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  require 'net/http'
+
+
+  # POST HTTPS for API endpoint.
+  # Returns the web response for a specified URI using Net::HTTP.
+  # Note that this method may halt the program in case of errors.
+  #
+  # This method DOES NOT USE RestClient.
+  #
+  # @param page_link, link to the API endpoint to be called
+  #
+  def post_raw_web_request( page_link, verbose = false )
+    puts "POST '#{page_link}'..." if verbose
+
+    uri = URI.parse( page_link )
+    http = Net::HTTP.new( uri.host, uri.port )
+    http.use_ssl = true
+    request = Net::HTTP::Post.new( uri.request_uri )
+                                                    # Make the actual request:
+    response = http.request(request)
+    if response.nil?                                # Bail out in case of errors
+      puts "No response!\r\nAborting."
+      exit
+    end
+    # [Steve, 20151121] For some reason, each response body has 3 invalid chars
+    # at the begining. So we skip them.
+    response.body[3..-1]
+  end
+
+
+  # GET HTTPS for API endpoint.
+  # Returns the web response for a specified URI using Net::HTTP.
+  # Note that this method may halt the program in case of errors.
+  #
+  # This method DOES NOT USE RestClient.
+  #
+  # @param page_link, link to the API endpoint to be called
+  #
+  def get_raw_web_response( page_link, verbose = false )
+    puts "GET '#{page_link}'..." if verbose
+
+    uri = URI.parse( page_link )
+    http = Net::HTTP.new( uri.host, uri.port )
+    http.use_ssl = true
+    request = Net::HTTP::Get.new( uri.request_uri )
+                                                    # Make the actual request:
+    response = http.request(request)
+    if response.nil?                                # Bail out in case of errors
+      puts "No response!\r\nAborting."
+      exit
+    end
+    # [Steve, 20151121] For some reason, each response body has 3 invalid chars
+    # at the begining. So we skip them.
+    response.body[3..-1]
+  end
 end
 # =============================================================================
 
