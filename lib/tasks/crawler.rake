@@ -595,14 +595,9 @@ Apifier API used to retrieve the list of all sub-pages for each year:
 DESC
   task :apifier_get_old_fin_data do |t|
     puts "\r\n*** Crawler::apifier_get_old_fin_data ***"
-    output_path = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
-    token       = ENV.include?("token")  ? ENV["token"] : ''
-    puts "output_path:  #{output_path}"
-                                                    # Create the base output path, if missing:
-    FileUtils.mkdir_p( output_path ) if !File.directory?( output_path )
-    puts "\r\n"
+    token = ENV.include?("token")  ? ENV["token"] : ''
 
-    # [Steve, 20151121] Links used by the APIs below:
+    # [Steve, 20151121] Links used by the API endpoint below:
     #
     # Previous FIN championships:
     # (1) season 142 => http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2014-2015.html
@@ -613,9 +608,67 @@ DESC
     # https://www.apifier.com/crawlers/AQm3bFNSvkaWKWXMR
     #
     api_run_endpoint = "https://www.apifier.com/api/v1/YZw3JnXkocmreiBvj/crawlers/Supermaster_FIN_old_season_meetings/execute?token=#{token}"
+    run_apifier_crawler( api_run_endpoint )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
-                                                    # Call API to execute the crawler:
-    puts "Launching crawler..."
+
+  desc <<-DESC
+  Crawls the web to retrieve the current FIN Championship result pages,
+meeting entries and manifests for the current season.
+
+          *** This task uses the API @ apifier.com ***
+
+Options: token=<API_token>
+         [output_path=#{LOCALCOPY_DIR}]
+
+  - 'token' the token required to access the API.
+
+  - 'output_path' the path where the files will be stored after the crawling.
+
+
+Apifier API used to retrieve the list of all sub-pages for each year:
+
+    1) Supermaster_FIN_current_season_meetings:
+       - Defined at https://www.apifier.com/crawlers/p2DPKSzRAZWavEH5D
+         crawls the current calendar page stored at:
+         http://www.federnuoto.it/discipline/master/circuito-supermaster.html
+
+DESC
+  task :apifier_get_current_fin_data do |t|
+    puts "\r\n*** Crawler::apifier_get_current_fin_data ***"
+    token = ENV.include?("token")  ? ENV["token"] : ''
+
+    # [Steve, 20151122] Links used by the API endpoint below:
+    #
+    # Current FIN championships:
+    # (1) season 152 => http://www.federnuoto.it/discipline/master/circuito-supermaster.html
+    #
+    # To change or update the above links, edit directly the crawler at:
+    # https://www.apifier.com/crawlers/p2DPKSzRAZWavEH5D
+    #
+    api_run_endpoint = "https://www.apifier.com/api/v1/YZw3JnXkocmreiBvj/crawlers/Supermaster_FIN_current_season_meetings/execute?token=#{token}"
+    run_apifier_crawler( api_run_endpoint )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+  require 'net/http'
+
+
+  # Executes the crawler defined at the specified API endpoint, retrieves the links
+  # and stores the contents on file.
+  #
+  def run_apifier_crawler( api_run_endpoint )
+    output_path = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
+    puts "output_path:  #{output_path}"
+                                                    # Create the base output path, if missing:
+    FileUtils.mkdir_p( output_path ) if !File.directory?( output_path )
+    puts "\r\n"
+    puts "Launching crawler..."                     # Call API to execute the crawler:
     web_response = post_raw_ssl_web_request( api_run_endpoint, true )
 # DEBUG
 #    puts "\r\nResult #{ web_response.inspect }."
@@ -688,10 +741,8 @@ DESC
         coded_suffix  = suffix = get_suffix_from_title_and_city( description, city )
         puts "Processing #{ coded_suffix } => #{base_filename} (#{ index + 1 }/#{ calendar_hash['pageFunctionResult'].size })..."
                                                     # For each meeting, get & store the result and the manifest page:
-        if description == 'Risultati'               # *** MEETING RESULTS ***
+        if description =~ /risultati|start.list/i  # *** MEETING RESULTS / START-LIST ***
           store_web_results( link, File.join(full_output_path, base_filename), city, "#{days} #{month} #{year}", true )
-
-# TODO (Start list)
         else                                        # *** MEETING INVITATION ***
           # For each Meeting invitation found, store its definition:
           meetings_found << {
@@ -713,10 +764,6 @@ DESC
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
-  private
-  require 'net/http'
 
 
   # Returns a normalized country or city name
@@ -770,6 +817,9 @@ DESC
   def get_output_filename_from( iso_date, description, city_name )
     if description =~ /risultati/i
       "ris#{ iso_date }"
+
+    elsif description =~ /start.list/i
+      "sta#{ iso_date }"
 
     elsif description =~ /distanze\sspeciali|regionali\s|/i
       suffix = get_suffix_from_title_and_city( description, city_name )
