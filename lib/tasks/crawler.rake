@@ -77,6 +77,8 @@ namespace :crawler do
   desc <<-DESC
   Searches the web for result links regarding a specific text.
 
+          *** This task uses the Mechanize library ***
+
   Options: text=<text_to_be_searched> [site=#{SEARCH_URL}]
            [dump_forms=<0>|1]
            [form_name='gbqf'] [query_field='q']
@@ -206,7 +208,7 @@ namespace :crawler do
   Crawls the web to retrieve currently available FIN Championship result pages,
 meeting entries and manifests.
 
-          *** This task uses the API @ kimonolabs.com ***
+      *** This task uses the API @ kimonolabs.com + the RestClient gem ***
 
 Options: [output_path=#{LOCALCOPY_DIR}]
          [season=<season_id>]
@@ -309,16 +311,18 @@ DESC
       manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
       puts "\r\n- (#{ start_from + index + 1 }/#{ total_rows }) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
 
-      title, meeting_dates = retrieve_title_and_manifest_dates( season_id, manifest_page_name ) if manifest_page_name
+      title, meeting_dates = retrieve_title_and_manifest_dates_with_kimono( season_id, manifest_page_name ) if manifest_page_name
                                                   # Skip file save for cancelled meetings (w/o dates):
       if meeting_dates
         iso_date = get_iso_date_from_meeting_dates( meeting_dates )
-        base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
-        puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
+        base_man_filename = get_output_filename_from( iso_date, title, city )
+        puts "  #{meeting_dates}, #{title}, #{city} => ris/sta/#{base_man_filename}"
                                                   # For each meeting, get the result and the manifest page:
-        store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
-        store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
-        store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}"), meeting_dates )
+        store_web_manifest( manifest_link,  File.join(output_path, base_man_filename) )
+        # [Steve, 20151122] For the results, the full output name will have the suffix appended after we read its contents,
+        # so, the output filename will be just a base name with just a date:
+        store_web_results(  results_link,   File.join(output_path, "ris#{iso_date}"), city, meeting_dates )
+        store_web_results(  startlist_link, File.join(output_path, "sta#{iso_date}"), city, meeting_dates )
       else
         puts "  Not found (probably cancelled)."
       end
@@ -334,17 +338,17 @@ DESC
   #
   # @param page_link, link to the page to be retrieved
   #
-  def get_web_response( page_link )
-    puts "Retrieving '#{page_link}'..."
+  def get_web_response( page_link, verbose = false )
+    puts "  Retrieving '#{page_link}'..." if verbose
     web_response = RestClient.get( page_link ) do |response, request, result, &block|
       case response.code
       when 200
         response
       when 404
-        puts " The API returned object not found! (error code: 404)"
+        puts " The request returned object not found! (error code: 404)"
         nil
       when 503
-        puts " The API got frozen! (Try again later; error code: 503)"
+        puts " The request got frozen! (Try again later; error code: 503)"
         nil
       when 504
         puts " Gateway timeout, error code: 504. Try again later."
@@ -365,7 +369,7 @@ DESC
   # @param season_id, the season_id used to select the correct API endpoint
   # @param manifest_page_name, the page containing the manifest of the meeting
   #
-  def retrieve_title_and_manifest_dates( season_id, manifest_page_name )
+  def retrieve_title_and_manifest_dates_with_kimono( season_id, manifest_page_name )
     api_endpoint = case season_id
     when 142
       puts "  Retrieving manifest dates using API 'FIN_curr_manifest_dates'..."
@@ -389,7 +393,19 @@ DESC
   #
   def get_iso_date_from_meeting_dates( meeting_dates_text )
     days, month_name, year = meeting_dates_text.split(' ')
-    day   = days.split(/[\,\-]/).first
+    get_iso_date( year, month_name, days )
+  end
+
+
+  # Returns the ISO-formatted string date from each single field
+  # representing the meeting dates.
+  #
+  # @param year, the year of the Meeting
+  # @param month_name, the month name of the Meeting
+  # @param meeting_days, 1 or 2 days for the meeting date, separated either by ',' or '-'
+  #
+  def get_iso_date( year, month_name, meeting_days )
+    day = meeting_days.split(/[\-\,]/).first
     month = case month_name
     when /gen|1/i
       1
@@ -422,33 +438,58 @@ DESC
   end
 
 
-  # Retrieves and stores the specified page_link to the destination output_filename.
+  # Retrieves the specified page_link.
   #
   # @param page_link, link to the manifest page
-  # @param output_filename, the output file name
+  # @param use_restclient, +true+ to use RestClient gem; +false+ to use the standard Net::HTTP library
   #
-  def store_web_manifest( page_link, output_filename )
-    if page_link.instance_of?(String) && page_link.size > 1
-      puts "  Retrieving '#{page_link}'..."
-      web_response = get_web_response( page_link )
+  def get_html_doc_for_storage( page_link, use_restclient = true )
+      puts "  Retrieving '#{page_link}' using #{ use_restclient ? 'RestClient' : 'Net::HTTP'} library..."
+      web_response = use_restclient ? get_web_response( page_link ) : get_raw_web_response( page_link )
+      puts "  #{ web_response.size } chars."
+# DEBUG
+#      puts "\r\n-----8<------"
+#      puts web_response.to_s
+#      puts "-----8<------"
+#      puts " "
+      Nokogiri::HTML( web_response ).css('#content')
+  end
 
-      html_doc = Nokogiri::HTML( web_response ).css('#content')
+
+  # Retrieves and stores the specified page_link to the destination output_filename.
+  #
+  # === Params:
+  #
+  # @param page_link, link to the manifest page
+  #
+  # @param output_filename, the full output file name, minus the extension
+  #
+  # @param use_restclient, +true+ to use RestClient gem; +false+ to use the standard Net::HTTP library
+  #        [Steve, 20151122] Currently the Net::HTTP has issues while retrieving the single result or manifest pages
+  #
+  def store_web_manifest( page_link, output_filename, use_restclient = true )
+    if page_link.instance_of?(String) && page_link.size > 1
+      html_doc = get_html_doc_for_storage( page_link, use_restclient )
       html_doc.css('.stampa-loca').unlink           # Remove non-working external href to PDF print preview
+      # XXX 'Organizer' info is currently not used:
                                                     # Retrieve the Organizer name to be added as a suffix:
-      description = html_doc.css('.organizzazione').text
-      organizer   = description.to_s =~ /\s+Manifestazione\sorganizzata\sda.\s+/i ?
-        description.split(/Manifestazione organizzata da.\s+/i).last
-          .split(/\<br\/?\>|\n/i).first.gsub(/[\s'`\:\.]/i, '').downcase :
-        "unknown"
-      puts "  Organizer code from manifest: #{organizer}"
+      # description = html_doc.css('.organizzazione').text
+      # organizer   = description.to_s =~ /\s+Manifestazione\sorganizzata\sda.\s+/i ?
+        # description.split(/Manifestazione organizzata da.\s+/i).last
+          # .split(/\<br\/?\>|\n/i).first.gsub(/[\s'`\:\.]/i, '').downcase :
+        # "unknown"
+      # puts "  Organizer code from manifest: #{organizer}"
                                                     # Save to file with a minimal header:
-      File.open( output_filename + "_#{organizer}.html", 'w' ) do |f|
+      File.open( "#{output_filename}.html", 'w' ) do |f|
+        f.puts "<!DOCTYPE html>"
+        f.puts "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"it-it\" lang=\"it-it\" dir=\"ltr\" >"
         f.puts "<head>"
         f.puts "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">"
         f.puts "</head>"
         f.puts "<body>"
         f.puts html_doc.to_html
         f.puts "</body>"
+        f.puts "</html>"
       end
     else
       puts "  Manifest link seems to be still undefined. 'Skipping."
@@ -458,37 +499,46 @@ DESC
 
   # Retrieves and stores the specified page_link to the destination output_filename.
   #
-  # @param page_link, link to the results or start-list page
-  # @param output_filename, the output file name
-  # @param meeting_dates, the actual dates in which the meeting is held
+  # === Params:
   #
-  def store_web_results( page_link, output_filename, meeting_dates )
+  # @param page_link, link to the results or start-list page
+  #
+  # @param output_filename, the base for the output file name; a standardized suffix will be appended,
+  #        based upon the file contents (the meeting title) and/or the actual city name
+  #
+  # @param city_name, the city in which the meeting is held
+  #
+  # @param meeting_dates, the actual "verbose date" (or dates) during which the meeting is held
+  #
+  # @param use_restclient, +true+ to use RestClient gem; +false+ to use the standard Net::HTTP library
+  #        [Steve, 20151122] Currently the Net::HTTP has issues while retrieving the single result or manifest pages
+  #
+  def store_web_results( page_link, output_filename, city_name, meeting_dates, use_restclient = true )
     if page_link.instance_of?(String) && page_link.size > 1
-      puts "  Retrieving '#{page_link}'..."
-      web_response = get_web_response( page_link )
-
-      html_doc = Nokogiri::HTML( web_response ).css('#content')
+      html_doc    = get_html_doc_for_storage( page_link, use_restclient )
       title       = html_doc.css( 'h1' ).text
       description = html_doc.css( 'h3' ).text
+      filename_suffix = get_suffix_from_title_and_city( title, city_name )
+      # XXX 'Organizer' info is currently not used:
                                                     # Retrieve the Organizer name to be added as a suffix:
-      organizer   = "unknown"
-      if description.to_s =~ /manifestazione organizzata da /i
-        organizer_token = description.split(/manifestazione organizzata da /i).last
-        unless organizer_token.nil?
-          organizer = organizer_token.gsub(/[\s'`\:\.]/i, '')
-            .gsub('à', 'a')
-            .gsub(/[èé]/, 'e')
-            .gsub('ì', 'i')
-            .gsub('ò', 'o')
-            .gsub('ù', 'ù')
-            .downcase
-        end
-      end
-      puts "  Organizer code for res./sta.: #{organizer}"
+      # organizer   = "unknown"
+      # if description.to_s =~ /manifestazione organizzata da /i
+        # organizer_token = description.split(/manifestazione organizzata da /i).last
+        # unless organizer_token.nil?
+          # organizer = organizer_token.gsub(/[\s'`\:\.]/i, '')
+            # .gsub('à', 'a')
+            # .gsub(/[èé]/, 'e')
+            # .gsub('ì', 'i')
+            # .gsub('ò', 'o')
+            # .gsub('ù', 'ù')
+            # .downcase
+        # end
+      # end
+      # puts "  Organizer code for res./sta.: #{organizer}"
       event_list  = html_doc.css( '.gara h2' ).map { |node| node.text }
       result_list = html_doc.css( '.gara pre' ).map { |node| node.text }
                                                     # Extract the contents on file:
-      File.open( output_filename + "_#{organizer}.txt", 'w' ) do |f|
+      File.open( "#{output_filename}#{filename_suffix}.txt", 'w' ) do |f|
         f.puts title
         f.puts description
         f.puts meeting_dates
@@ -528,12 +578,10 @@ meeting entries and manifests except the ones from the current season.
 
 Options: token=<API_token>
          [output_path=#{LOCALCOPY_DIR}]
-         [start_from=0]
+
+  - 'token' the token required to access the API.
 
   - 'output_path' the path where the files will be stored after the crawling.
-
-  - 'start_from' allows the crawling loop to start from a different offset than 0,
-    computed among all the results found from the FIN_supermasters_meetings API.
 
 
 Apifier API used to retrieve the list of all sub-pages for each year:
@@ -549,29 +597,32 @@ DESC
     puts "\r\n*** Crawler::apifier_get_old_fin_data ***"
     output_path = ENV.include?("output_path") ? ENV["output_path"] : LOCALCOPY_DIR
     token       = ENV.include?("token")  ? ENV["token"] : ''
-    start_from  = ENV.include?("start_from")  ? ENV["start_from"].to_i : 0
     puts "output_path:  #{output_path}"
-                                                    # Create the output path, if missing:
+                                                    # Create the base output path, if missing:
     FileUtils.mkdir_p( output_path ) if !File.directory?( output_path )
     puts "\r\n"
 
     # [Steve, 20151121] Links used by the APIs below:
     #
     # Previous FIN championships:
-    # (1) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2014-2015.html
-    # (2) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
-    # (3) - http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
+    # (1) season 142 => http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2014-2015.html
+    # (2) season 132 => http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2013-2014.html
+    # (3) season 122 => http://www.federnuoto.it/discipline/master/circuito-supermaster/stagione-2012-2013.html
     #
     # To change or update the above links, edit directly the crawler at:
     # https://www.apifier.com/crawlers/AQm3bFNSvkaWKWXMR
     #
     api_run_endpoint = "https://www.apifier.com/api/v1/YZw3JnXkocmreiBvj/crawlers/Supermaster_FIN_old_season_meetings/execute?token=#{token}"
 
-                                                    # Call correct API:
+                                                    # Call API to execute the crawler:
     puts "Launching crawler..."
-    web_response = post_raw_web_request( api_run_endpoint, true )
+    web_response = post_raw_ssl_web_request( api_run_endpoint, true )
 # DEBUG
 #    puts "\r\nResult #{ web_response.inspect }."
+
+    # [Steve, 20151121] For some reason, each response body has 3 invalid chars
+    # at the begining. So we skip them.
+    web_response = web_response.body[3..-1]
     json_result = JSON.parse( web_response )
     status      = json_result['status']
     status_msg  = nil
@@ -580,10 +631,13 @@ DESC
     api_status_endpoint = json_result['detailsUrl']
     api_result_endpoint = json_result['resultsUrl']
 
-    while status == 'RUNNING'
+    while status == 'RUNNING'                       # Wait for the API crawler to succeed (or fail)
       sleep(2)
       putc "."
-      web_response = get_raw_web_response( api_status_endpoint )
+      web_response = get_raw_ssl_web_response( api_status_endpoint )
+      # [Steve, 20151121] For some reason, each response body has 3 invalid chars
+      # at the begining. So we skip them.
+      web_response = web_response.body[3..-1]
       json_result = JSON.parse( web_response )
       status     = json_result['status']
       status_msg = json_result['statusMessage']
@@ -598,8 +652,12 @@ DESC
 
     puts "Crawler API SUCCEEDED."
     puts "Retrieving results..."
-    web_response = get_raw_web_response( api_result_endpoint, true )
+    web_response = get_raw_ssl_web_response( api_result_endpoint, true )
+    # [Steve, 20151121] For some reason, each response body has 3 invalid chars
+    # at the begining. So we skip them.
+    web_response = web_response.body[3..-1]
     json_result = JSON.parse( web_response )
+    meetings_found = []
 # DEBUG
 #    puts "json_result is an #{ json_result.class }"
 #    puts "json_result.first is a #{ json_result.first.class }\r\n"
@@ -608,9 +666,12 @@ DESC
     result_list = json_result.each do |calendar_hash|
       label = calendar_hash['label']
       current_url = calendar_hash['url']
-      puts "\r\n\r\nProcessing results for #{ label }"
-      puts "(#{ current_url })"
+      puts "\r\n\r\nProcessing results for season #{ label }"
+      puts "(#{ current_url }) => #{ calendar_hash['pageFunctionResult'].size } tot. links"
       puts " "
+                                                    # Create the output sub-path, if missing:
+      full_output_path = File.join(output_path, label)
+      FileUtils.mkdir_p( full_output_path ) if !File.directory?( full_output_path )
 
       # For each calendar URL, we have several row result Hash instances:
       calendar_hash['pageFunctionResult'].each_with_index do |row_hash, index|
@@ -619,48 +680,105 @@ DESC
         days = row_hash['days']
         city = row_hash['city']
         description = row_hash['description']
-        link = row_hash['link']
+        link = "http://www.federnuoto.it#{ row_hash['link'] }"
 
-        # TODO Extract base file name
+        # Extract base file name:
+        iso_date = get_iso_date( year, month, days )
+        base_filename = get_output_filename_from( iso_date, description, city )
+        coded_suffix  = suffix = get_suffix_from_title_and_city( description, city )
+        puts "Processing #{ coded_suffix } => #{base_filename} (#{ index + 1 }/#{ calendar_hash['pageFunctionResult'].size })..."
+                                                    # For each meeting, get & store the result and the manifest page:
+        if description == 'Risultati'               # *** MEETING RESULTS ***
+          store_web_results( link, File.join(full_output_path, base_filename), city, "#{days} #{month} #{year}", true )
 
-        # FIXME / WIP
-        puts "#{year}-#{month}-#{days}_#{city}: #{description}, #{link}"
-
-        if description == 'Risultati'
-          # TODO
-        else  # (Meeting invitation)
-          # TODO
+# TODO (Start list)
+        else                                        # *** MEETING INVITATION ***
+          # For each Meeting invitation found, store its definition:
+          meetings_found << {
+            season_id: label,
+            code_name: coded_suffix,
+            year: year,
+            month: month,
+            days: days,
+            city: city,
+            description: description
+          }
+          store_web_manifest( link, File.join(full_output_path, base_filename), true )
         end
-
-        # results_link   = row_hash['results'].instance_of?(Hash) ? row_hash['results']['href'] : row_hash['results']
-        # startlist_link = results_link.gsub('risultati','startlist') if results_link
-                                                    # # Retrieve meeting_dates from the manifest URL:
-        # manifest_page_name = manifest_link.instance_of?(String) ? manifest_link.split('/').last.to_s.split('?').first : nil
-        # puts "\r\n- (#{ start_from + index + 1 }/#{ total_rows }) #{row_title}, #{days}, manifest_page_name: #{manifest_page_name}"
-  #
-        # title, meeting_dates = retrieve_title_and_manifest_dates( season_id, manifest_page_name ) if manifest_page_name
-                                                    # # Skip file save for cancelled meetings (w/o dates):
-        # if meeting_dates
-          # iso_date = get_iso_date_from_meeting_dates( meeting_dates )
-          # base_filename = "#{ iso_date }#{ city.gsub(/[\s'`\:\.]/,'').downcase }"
-          # puts "  #{meeting_dates}, #{title}, #{city} => (ris/man) #{base_filename}"
-                                                    # # For each meeting, get the result and the manifest page:
-          # store_web_manifest( manifest_link,  File.join(output_path, "man#{base_filename}") )
-          # store_web_results(  results_link,   File.join(output_path, "ris#{base_filename}"), meeting_dates )
-          # store_web_results(  startlist_link, File.join(output_path, "sta#{base_filename}"), meeting_dates )
-        # else
-          # puts "  Not found (probably cancelled)."
-        # end
       end
     end
 
+    store_meetings_found( File.join(output_path, "meetings_found"), meetings_found ) if meetings_found.size > 0
     puts "Done."
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
+  private
   require 'net/http'
+
+
+  # Returns a normalized country or city name
+  #
+  def get_normalized_name( name )
+    name.gsub(/[\s'`\:\.]/,'')
+            .gsub(/à/i,'a')
+            .gsub(/[èé]/i,'e')
+            .gsub(/ì/i,'i')
+            .gsub(/ò/i,'o')
+            .gsub(/ù/i,'u')
+            .downcase
+  end
+
+
+  # Returns a standardized suffix for the output filename.
+  # Note that for result files, the actual suffix must be extracted while
+  # parsing the contents, to retrieve the actual meeting title.
+  #
+  # === Params:
+  #
+  # - meeting_title, the description or the title of the Meeting
+  #
+  # - city_name, the city name for the Meeting
+  #
+  def get_suffix_from_title_and_city( meeting_title, city_name )
+    if meeting_title =~ /distanze\sspeciali/i
+      region = get_normalized_name( meeting_title.split(/speciali\s/i).last )
+      "spec#{ region }"
+    elsif meeting_title =~ /regionali\s/i
+      region = get_normalized_name( meeting_title.split(/regionali\s/i).last )
+      "reg#{ region }"
+    else
+      get_normalized_name( city_name )
+    end
+  end
+
+
+  # Builds up the output filename for a crawled page to be stored, according
+  # to the parameters.
+  #
+  # === Params:
+  #
+  # - iso_date, the date of the meeting in ISO format
+  #
+  # - description, the description or the title of the Meeting;
+  #                if the description is 'risultati' no suffix will be appended
+  #
+  # - city_name, the city name for the Meeting
+  #
+  def get_output_filename_from( iso_date, description, city_name )
+    if description =~ /risultati/i
+      "ris#{ iso_date }"
+
+    elsif description =~ /distanze\sspeciali|regionali\s|/i
+      suffix = get_suffix_from_title_and_city( description, city_name )
+      "man#{ iso_date }#{ suffix }"
+
+    else
+      "man#{ iso_date }#{ get_normalized_name( city_name ) }"
+    end
+  end
 
 
   # POST HTTPS for API endpoint.
@@ -671,7 +789,7 @@ DESC
   #
   # @param page_link, link to the API endpoint to be called
   #
-  def post_raw_web_request( page_link, verbose = false )
+  def post_raw_ssl_web_request( page_link, verbose = false )
     puts "POST '#{page_link}'..." if verbose
 
     uri = URI.parse( page_link )
@@ -684,9 +802,7 @@ DESC
       puts "No response!\r\nAborting."
       exit
     end
-    # [Steve, 20151121] For some reason, each response body has 3 invalid chars
-    # at the begining. So we skip them.
-    response.body[3..-1]
+    response
   end
 
 
@@ -697,25 +813,71 @@ DESC
   # This method DOES NOT USE RestClient.
   #
   # @param page_link, link to the API endpoint to be called
+  # @param verbose, true to display an output line showing the request link.
   #
-  def get_raw_web_response( page_link, verbose = false )
+  def get_raw_ssl_web_response( page_link, verbose = false )
+    get_raw_web_response( page_link, verbose, true )
+  end
+
+
+  # GET HTTPS for API endpoint.
+  # Returns the web response for a specified URI using Net::HTTP.
+  # Note that this method may halt the program in case of errors.
+  #
+  # This method DOES NOT USE RestClient.
+  #
+  # @param page_link, link to the API endpoint to be called
+  # @param verbose, true to display an output line showing the request link.
+  # @param use_ssl, true to use SSL (for HTTPS connections)
+  #
+  def get_raw_web_response( page_link, verbose = false, use_ssl = false )
     puts "GET '#{page_link}'..." if verbose
 
     uri = URI.parse( page_link )
     http = Net::HTTP.new( uri.host, uri.port )
-    http.use_ssl = true
-    request = Net::HTTP::Get.new( uri.request_uri )
+    http.use_ssl = use_ssl
+    request = Net::HTTP::Get.new( uri.path )
                                                     # Make the actual request:
     response = http.request(request)
     if response.nil?                                # Bail out in case of errors
       puts "No response!\r\nAborting."
       exit
     end
-    # [Steve, 20151121] For some reason, each response body has 3 invalid chars
-    # at the begining. So we skip them.
-    response.body[3..-1]
+    response
+  end
+
+
+  # Serializes on a simple CSV file all Meeting definitions found so far.
+  #
+  # Assumes each item of the meetings_array is an Hash having the structure:
+  #
+  #    {
+  #      season_id: label,
+  #      code_name: coded_suffix,
+  #      year: year,
+  #      month: verbose month name,
+  #      days: days in string (eventually separated by comma),
+  #      city: full city name,
+  #      description: description
+  #    }
+  #
+  def store_meetings_found( output_filename, meetings_array )
+    File.open( "#{output_filename}.csv", 'w' ) do |f|
+      f.puts meetings_array.first.keys.join(',')
+      meetings_array.each do |meeting_hash|
+        f.puts(
+          [
+            meeting_hash[:season_id],
+            "\"#{ meeting_hash[:code_name] }\"",
+            meeting_hash[:year],
+            "\"#{ meeting_hash[:month] }\"",
+            "\"#{ meeting_hash[:days] }\"",
+            "\"#{ meeting_hash[:city] }\"",
+            "\"#{ meeting_hash[:description] }\""
+          ].join(",")
+        )
+      end
+    end
   end
 end
 # =============================================================================
-
-
