@@ -26,6 +26,7 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 =end
 
 namespace :db do
+  include SqlConverter
 
   desc <<-DESC
 Calculate and update DB for Goggle Cup scores.
@@ -37,8 +38,9 @@ to be forced. Should be limitated to a specific meeting.
 
 Could force recalculating or calculate only missing scores.
 
-Options: recalculate=false goggle_cup=<goggle_cup_id> [meeting=<meeting_id> log_dir=#{LOG_DIR}]
+Options: persist=false recalculate=false goggle_cup=<goggle_cup_id> [meeting=<meeting_id> log_dir=#{LOG_DIR}]
 
+- 'persist'     force to persist the changes.
 - 'recalculate' force to override the stored scores with new values.
 - 'goggle_cup'  goggle cup to calculate for.
 - 'meeting'     scan only the given meeting.
@@ -47,6 +49,7 @@ Options: recalculate=false goggle_cup=<goggle_cup_id> [meeting=<meeting_id> log_
 DESC
   task :goggle_cup do |t|
     puts "*** db:goggle_cup ***"
+    persist         = ENV.include?("persist")     ? ENV["persist"] == 'true' : false
     recalculate     = ENV.include?("recalculate") ? ENV["recalculate"] == 'true' : false
     goggle_cup_id   = ENV.include?("goggle_cup")  ? ENV["goggle_cup"].to_i : nil
     meeting_id      = ENV.include?("meeting")     ? ENV["meeting"].to_i : nil
@@ -84,25 +87,46 @@ DESC
 
     logger.info( "GoggleCup: " + goggle_cup.get_full_name )
 
+    # Create diff file
+    file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_goggle_cup_calc_#{goggle_cup_id}.diff"
+    diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
+    diff_file.puts "-- GoggleCup: #{goggle_cup.get_full_name}"
+
     # if meeting passed force the scan
-    meeting = Meeting.find( meeting_id ) if meeting_id
-    if meeting
-      # Scan for meeting individual results of goggle cup for give meeting 
-      logger.info( "\r\nMeeting  : " + meeting.get_full_name )
-      goggle_cup.meeting_individual_results.includes(:meeting).where(['meetings.id = ?', meeting_id]).where(["meeting_individual_results.team_id = ?", goggle_cup.team_id]).each do |meeting_individual_result|
-        calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger )
-      end            
-    else
-      goggle_cup.meetings.each do |current_meeting|
+    ActiveRecord::Base.transaction do
+      meeting = Meeting.find( meeting_id ) if meeting_id
+      if meeting
         # Scan for meeting individual results of goggle cup for give meeting 
-        logger.info( "\r\nMeeting  : " + current_meeting.get_full_name )
-        goggle_cup.meeting_individual_results.includes(:meeting).where(['meetings.id = ?', current_meeting.id]).where(["meeting_individual_results.team_id = ?", goggle_cup.team_id]).each do |meeting_individual_result|
-          calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger )
+        logger.info( "\r\nMeeting  : " + meeting.get_full_name )
+        diff_file.puts "\r\n-- Meeting  : #{meeting.get_full_name}"
+
+        goggle_cup.meeting_individual_results.includes(:meeting).where(['meetings.id = ?', meeting_id]).where(["meeting_individual_results.team_id = ?", goggle_cup.team_id]).each do |meeting_individual_result|
+          calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger, diff_file )
+        end            
+      else
+        goggle_cup.meetings.each do |current_meeting|
+          if current_meeting.meeting_individual_results.count > 0
+            # Scan for meeting individual results of goggle cup for give meeting 
+            logger.info( "\r\nMeeting  : " + current_meeting.get_full_name )
+            diff_file.puts "\r\n--\r\n-- Meeting  : #{current_meeting.get_full_name}\r\n--"
+            goggle_cup.meeting_individual_results.includes(:meeting).where(['meetings.id = ?', current_meeting.id]).where(["meeting_individual_results.team_id = ?", goggle_cup.team_id]).each do |meeting_individual_result|
+              calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger, diff_file )
+            end
+            logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+          end
         end
-        logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+      end
+
+      # Save new season
+      if not persist
+        logger.info( "\r\n*** Goggle cup points NOT persisted! ***" )
+        raise ActiveRecord::Rollback 
+      else
+        logger.info( "\r\nGoggle cup points persisted." )
       end
     end
 
+    logger.info( "\r\nLog file " + file_name + " created" )
     logger.info( "\r\nFinished." )
   end
   #-- -------------------------------------------------------------------------
@@ -112,7 +136,7 @@ DESC
   # Calculate goggle cup for given meeting individual result
   # Verify if goggle cup score already exist and calculate if request
   #
-  def calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger )
+  def calculate_goggle_cup_for_mir( goggle_cup, meeting_individual_result, recalculate, logger, diff_file )
     # Check if calculation is needed
     if not meeting_individual_result.is_disqualified and (recalculate or meeting_individual_result.goggle_cup_points == 0)
       # Calculate goggle cup points
@@ -122,6 +146,8 @@ DESC
       # Save goggle cup score
       meeting_individual_result.goggle_cup_points = goggle_cup_points 
       meeting_individual_result.save
+      diff_file.puts "\r\n-- #{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{goggle_cup_points.to_s} (#{score_calculator.get_goggle_cup_standard.get_timing})"
+      diff_file.puts to_sql_update( meeting_individual_result, false, {'goggle_cup_points' => goggle_cup_points}, "\r\n" ) 
       
       logger.info( "\r\n#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{goggle_cup_points.to_s} (#{score_calculator.get_goggle_cup_standard.get_timing})" )
     end
