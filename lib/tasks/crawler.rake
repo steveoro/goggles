@@ -769,7 +769,7 @@ DESC
   # Returns a normalized country or city name
   #
   def get_normalized_name( name )
-    name.gsub(/[\s'`\:\.]/,'')
+    name.gsub(/[\s\-_'`\\\/\:\.\,\;]/,'')
             .gsub(/à/i,'a')
             .gsub(/[èé]/i,'e')
             .gsub(/ì/i,'i')
