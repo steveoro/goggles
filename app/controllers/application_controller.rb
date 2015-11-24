@@ -1,9 +1,11 @@
 # encoding: utf-8
+
+
 =begin
 
 = ApplicationController
 
-  - version:  4.00.523
+  - version:  4.00.839
   - author:   Steve A.
 
   Main Application controller.
@@ -19,22 +21,11 @@ class ApplicationController < ActionController::Base
   skip_before_filter :authenticate_user_from_token!
   skip_before_filter :authenticate_user!
 
-# XXX Comment/Uncomment this to show or skip the 'better-errors' output page with stack trace:
-#  rescue_from Exception, :with => :handle_exception
-#  rescue_from ActionController::RoutingError, :with => :render_not_found
-
 
   # Set the default URL options:
   def default_url_options( options={} )
     logger.debug "default_url_options is passed options: #{options.inspect}\n"
     { :locale => I18n.locale }
-  end
-
-
-  # Invoked for any 404/not found request: throws a custom exception
-  # (catchable by this controller)
-  def routing_error
-    raise ActionController::RoutingError.new(params[:path])
   end
 
 
@@ -149,25 +140,6 @@ class ApplicationController < ActionController::Base
   private
 
 
-  # Render a custom 404 message for a not-found route.
-  def render_not_found
-    # Do just a redirect (avoid an infinite loop of redirections):
-    redirect_to( wip_path() ) unless (params[:controller] == 'home') && (params[:action] == 'wip')
-#    render :template => "404"
-  end
-
-  def handle_exception( exception )
-    log_error( exception, true )                    # (use verbose trace)
-#    case exception
-#    when ActiveRecord::RecordNotFound
-#      not_found                                    # Render custom 404 page
-#    else
-#      TODO call other_method                       # Do something else for all other errors
-#    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
   # Returns the same specified Hash with any password-related field stripped away.
   def remove_passwords( params_hash )
     params_hash.delete_if { |key| ['password', 'password_confirmation'].include?(key.to_s) }
@@ -240,8 +212,13 @@ class ApplicationController < ActionController::Base
     versioning = AppParameter.find_by_code( AppParameter::PARAM_VERSIONING_CODE )
     if versioning.a_bool?
       logger.info('--- MAINTENANCE MODE IS ON! ---')
-      # Do just a redirect (avoid an infinite loop of redirections):
-      redirect_to( maintenance_url() ) unless (params[:controller] == 'home') && (params[:action] == 'maintenance')
+      respond_to do |format|
+        format.html do
+          # Do just a redirect (avoid an infinite loop of redirections):
+          redirect_to( maintenance_url() ) unless (params[:controller] == 'home') && (params[:action] == 'maintenance')
+        end
+        format.json { render json: {maintenance: true} and return }
+      end
     end
   end
   #-- -------------------------------------------------------------------------

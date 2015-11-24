@@ -51,5 +51,10 @@ module Goggles
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # For Rails 3.2+, this is one of the best ways to intercept routing errors:
+    config.exceptions_app = ->(env) do
+      ExceptionsController.action(:render_error).call(:env)
+    end
   end
 end

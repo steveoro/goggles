@@ -301,6 +301,8 @@ Goggles::Application.routes.draw do
     end
   end
 
+  # Wildcard route to match all the remaining possibilities:
+  match "*path", to: "exceptions#render_error"
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
