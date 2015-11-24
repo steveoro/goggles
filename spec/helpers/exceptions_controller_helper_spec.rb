@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+
 # Specs in this file have access to a helper object that includes
 # the ErrorControllerHelper. For example:
 #
@@ -10,6 +11,6 @@ require 'rails_helper'
 #     end
 #   end
 # end
-RSpec.describe ErrorControllerHelper, :type => :helper do
+RSpec.describe ExceptionsControllerHelper, :type => :helper do
   pending "add some examples to (or delete) #{__FILE__}"
 end
