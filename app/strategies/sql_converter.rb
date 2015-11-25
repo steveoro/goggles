@@ -42,9 +42,10 @@ module SqlConverter
   # is possible to compose the UPDATE statement only for the columns included in
   # the Hash.
   #
-  def to_sql_update( record, with_comment = true, attribute_hash = record.attributes, eoln = "\r\n\r\n" )
+  def to_sql_update( record, with_comment = true, attribute_hash = record.attributes, eoln = "\r\n\r\n", explanation = nil )
     con = record.connection
     sql_text = with_comment ? get_sql_comment(record) : ''
+    sql_text << "-- #{explanation}\r\n" if explanation 
     sql_text << "UPDATE #{ con.quote_column_name( record.class.table_name ) }\r\n"
     sets = []
     attribute_hash
@@ -61,9 +62,10 @@ module SqlConverter
   # Re-creates an SQL DELETE statement using the attributes of the record instance specified.
   # (It assumes record.kind_of?(ActiveRecord::Base) is +true+).
   #
-  def to_sql_delete( record, with_comment = true, eoln = "\r\n\r\n" )
+  def to_sql_delete( record, with_comment = true, eoln = "\r\n\r\n", explanation = nil )
     con = record.connection
     sql_text = with_comment ? get_sql_comment(record) : ''
+    sql_text << "-- #{explanation}\r\n" if explanation 
     sql_text << "DELETE FROM #{ con.quote_column_name( record.class.table_name ) } "
     sql_text << "WHERE (#{ con.quote_column_name('id') }=#{ record.id });#{ eoln }"
     sql_text

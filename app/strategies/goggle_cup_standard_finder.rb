@@ -9,7 +9,7 @@ require 'wrappers/timing'
 # @version  4.00.835
 #
 class GoggleCupStandardFinder
-  include SqlConverter
+  include SqlConvertable
 
   # These can be edited later on:
   attr_accessor :goggle_cup, :swimmers 
@@ -198,17 +198,5 @@ class GoggleCupStandardFinder
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).count}\r\n"
   end
   #-- --------------------------------------------------------------------------
-  #++
-
-  # Returns the overall SQL diff/log for all the SQL operations that should
-  # be carried out by for replicating the changes (already done by this instance) on
-  # another instance of the same Database (for example, to apply the changes on
-  # a production DB after testing them on a staging version of the same DB).
-  # It is never +nil+, empty at first.
-  #
-  def sql_diff_text_log
-    @sql_diff_text_log ||= ''
-  end
-  # ----------------------------------------------------------------------------
   #++
 end

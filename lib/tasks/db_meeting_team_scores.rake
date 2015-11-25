@@ -36,6 +36,7 @@ and calculate team scores with balanced method.
 
 Options: meeting=<meeting_id> [log_dir=#{LOG_DIR}]
 
+- 'persist'     force to persist the created season.
 - 'meeting'     scan only the given meeting.
 - 'log_dir'     allows to override the default log dir destination.
 
@@ -44,6 +45,7 @@ Options: meeting=<meeting_id> [log_dir=#{LOG_DIR}]
 DESC
   task :meeting_team_scores do |t|
     puts "*** db:meeting_team_scores ***"
+    persist         = ENV.include?("persist")     ? ENV["persist"] == 'true' : false
     meeting_id      = ENV.include?("meeting")     ? ENV["meeting"].to_i : nil
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
@@ -84,14 +86,31 @@ DESC
     # let you try to find out a worst mode if you can...
     #
     # Select appropriate calculation method
-    case meeting.season.id
-    when 141, 151
-      # CSI Seasons 2014-2015 and 2015-2016
-      logger.info( "Season #{meeting.season.get_full_name}" ) 
-      logger.info( "Using CSI balanced meeting team scores by Leega" ) 
-      calculate_balanced_meeting_team_scores( meeting, logger )
-    else
-      logger.info( "No calculation method for season #{meeting.season.get_full_name}" )
+    ActiveRecord::Base.transaction do
+      case meeting.season.id
+      when 141, 151
+        # CSI Seasons 2014-2015 and 2015-2016
+        logger.info( "Season #{meeting.season.get_full_name}" ) 
+        logger.info( "Using CSI balanced meeting team scores by Leega" ) 
+        sql_diff = calculate_balanced_meeting_team_scores( meeting, logger )
+      else
+        logger.info( "No calculation method for season #{meeting.season.get_full_name}" )
+      end
+
+      # Create diff file
+      if sql_diff
+        file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_meeting_team_scores_#{meeting.id}#{meeting.code}.diff"
+        File.open( LOG_DIR + '/' + file_name + '.sql', 'w' ) { |f| f.puts sql_diff }
+        logger.info( "\r\nLog file " + file_name + " created" )
+      end
+        
+      # Save new season
+      if not persist
+        logger.info( "\r\n*** Data not persisted! ***" )
+        raise ActiveRecord::Rollback 
+      else
+        logger.info( "\r\nTeam scores persisted." )
+      end
     end
 
     logger.info( "\r\nFinished." )
@@ -108,6 +127,7 @@ DESC
     meeting_team_scores = balanced_meeting_score_calculator.get_meeting_team_scores
     balanced_meeting_score_calculator.save_computed_score
     logger.info( "\r\n#{meeting_team_scores.count.to_s} team scores saved" )
+    balanced_meeting_score_calculator.sql_diff_text_log
   end
   #-- -------------------------------------------------------------------------
   #++

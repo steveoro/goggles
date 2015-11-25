@@ -13,7 +13,7 @@ require 'wrappers/timing'
 # @version  4.00.829
 #
 class SeasonCreator
-  include SqlConverter
+  include SqlConvertable
 
   # These can be edited later on:
   attr_accessor :older_season, :description, :new_id, :begin_date, :end_date, :header_year, :edition, 
@@ -191,16 +191,4 @@ class SeasonCreator
     end
     date
   end
-
-  # Returns the overall SQL diff/log for all the SQL operations that should
-  # be carried out by for replicating the changes (already done by this instance) on
-  # another instance of the same Database (for example, to apply the changes on
-  # a production DB after testing them on a staging version of the same DB).
-  # It is never +nil+, empty at first.
-  #
-  def sql_diff_text_log
-    @sql_diff_text_log ||= ''
-  end
-  # ----------------------------------------------------------------------------
-  #++
 end

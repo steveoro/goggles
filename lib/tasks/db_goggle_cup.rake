@@ -26,7 +26,7 @@ LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 =end
 
 namespace :db do
-  include SqlConverter
+  include SqlConvertable
 
   desc <<-DESC
 Calculate and update DB for Goggle Cup scores.
@@ -146,8 +146,8 @@ DESC
       # Save goggle cup score
       meeting_individual_result.goggle_cup_points = goggle_cup_points 
       meeting_individual_result.save
-      diff_file.puts "\r\n-- #{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{goggle_cup_points.to_s} (#{score_calculator.get_goggle_cup_standard.get_timing})"
-      diff_file.puts to_sql_update( meeting_individual_result, false, {'goggle_cup_points' => goggle_cup_points}, "\r\n" ) 
+      explanation = "#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{goggle_cup_points.to_s} (#{score_calculator.get_goggle_cup_standard.get_timing})"
+      diff_file.puts to_sql_update( meeting_individual_result, false, {'goggle_cup_points' => goggle_cup_points}, "\r\n", explanation ) 
       
       logger.info( "\r\n#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{goggle_cup_points.to_s} (#{score_calculator.get_goggle_cup_standard.get_timing})" )
     end

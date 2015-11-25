@@ -4,7 +4,7 @@ require 'wrappers/timing'
 # == BalancedMeetingScoreCalculator
 #
 # Strategy Pattern implementation for csi 23014-2015 "balanced"
-# meetuing score calculation
+# meeting team score calculation
 # The "balanced" method is the sum of:
 # - all individual meeting points
 # - best team relays (for category and gender)
@@ -20,6 +20,7 @@ require 'wrappers/timing'
 # @version  4.00.787
 #
 class BalancedMeetingScoreCalculator
+  include SqlConvertable
 
   # Initialization
   #
@@ -27,9 +28,11 @@ class BalancedMeetingScoreCalculator
   # An instance of season
   #
   def initialize( meeting )
-    @meeting = meeting
-    @teams = nil
+    @meeting             = meeting
+    @teams               = nil
     @meeting_team_scores = nil
+
+    create_sql_diff_header( "Team scores calculation for Meeting #{@meeting.get_full_name}" )
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -61,11 +64,29 @@ class BalancedMeetingScoreCalculator
   #
   def save_computed_score
     persisted_ok = 0
+    sql_fields = {}
     @meeting_team_scores = get_meeting_team_scores if not @meeting_team_scores 
     @meeting_team_scores.each do |meeting_team_score|
+      # Prepare SQL dff statement
+      if meeting_team_score.id
+        sql_fields['sum_individual_points']     = meeting_team_score.sum_individual_points
+        sql_fields['sum_relay_points']          = meeting_team_score.sum_relay_points
+        sql_fields['sum_team_points']           = meeting_team_score.sum_team_points
+        sql_fields['meeting_individual_points'] = meeting_team_score.sum_individual_points
+        sql_fields['meeting_relay_points']      = meeting_team_score.sum_relay_points
+        sql_fields['meeting_team_points']       = meeting_team_score.sum_team_points
+        sql_fields['season_individual_points']  = meeting_team_score.sum_individual_points
+        sql_fields['season_relay_points']       = meeting_team_score.sum_relay_points
+        sql_fields['season_team_points']        = meeting_team_score.sum_team_points
+        sql_diff_text_log << to_sql_update( meeting_team_score, false, sql_fields, "\r\n" )
+      else
+        sql_diff_text_log << to_sql_insert( meeting_team_score, false, "\r\n" )
+      end
+      
       # Save calculated scores
       persisted_ok += 1 if meeting_team_score.save
     end
+    create_sql_diff_footer( "Team scores calculation for Meeting #{@meeting.get_full_name} done" )
     persisted_ok
   end
   #-- --------------------------------------------------------------------------
