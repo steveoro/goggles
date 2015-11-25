@@ -19,6 +19,20 @@ class GoggleCupScoreCalculator
   # An instance of event_type
   #
   def initialize( goggle_cup, swimmer, pool_type, event_type )
+    # Verify parameters
+    unless goggle_cup && goggle_cup.instance_of?( GoggleCup )
+      raise ArgumentError.new("Needs a valid Goggle Cup")
+    end
+    unless swimmer && swimmer.instance_of?( Swimmer )
+      raise ArgumentError.new("Needs a valid swimmer")
+    end
+    unless pool_type && pool_type.instance_of?( PoolType )
+      raise ArgumentError.new("Needs a valid pool type")
+    end
+    unless event_type && event_type.instance_of?( EventType )
+      raise ArgumentError.new("Needs a valid event type")
+    end
+
     @goggle_cup = goggle_cup
     @swimmer = swimmer
     @pool_type = pool_type

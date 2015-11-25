@@ -56,13 +56,11 @@ class SeasonCreator
   # Prepare data for duplication
   # 
   def prepare_new_season
-    sql_diff_text_log << "--\r\n"
-    sql_diff_text_log << "-- Duplicating season #{@older_season.id}-#{@older_season.description} into #{@new_id}-#{@description}\r\n"
-    sql_diff_text_log << "--\r\n"
+    create_sql_diff_header( "Duplicating season #{@older_season.id}-#{@older_season.description} into #{@new_id}-#{@description}" )
     @new_season = renew_season
     @categories = renew_categories
     @meetings   = renew_meetings
-    sql_diff_text_log << "-- #{@new_id}-#{@description} duplication script ended\r\n"
+    create_sql_diff_footer( "#{@new_id}-#{@description} duplication done" )
   end
 
   # Retreive older season categories and prepare them
@@ -79,8 +77,7 @@ class SeasonCreator
     newer_season.edition     = @edition
     newer_season.rules       = nil
     newer_season.save
-    sql_diff_text_log << to_sql_insert( newer_season, false, "\r\n" ) # no additional comment
-    sql_diff_text_log << "\r\n"
+    sql_diff_text_log << to_sql_insert( newer_season, false, "\r\n\r\n" ) # no additional comment
     newer_season
   end
 
@@ -108,7 +105,7 @@ class SeasonCreator
   # 
   def renew_meetings
     newer_meetings = []
-    sql_diff_text_log << "-- Meetings\r\n"
+    add_sql_diff_comment( "Meetings" )
     @older_season.meetings.each do |meeting|
       sql_diff_text_log << "-- #{meeting.id}-#{meeting.code} #{meeting.description} #{meeting.header_date}\r\n"
       newer_meeting = Meeting.new( meeting.attributes.reject{ |e| ['lock_version','created_at','updated_at'].include?(e) } )

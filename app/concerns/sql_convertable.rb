@@ -59,4 +59,14 @@ module SqlConvertable
   end
   # ----------------------------------------------------------------------------
   #++
+
+  # Add a diff sql file comment
+  #
+  def add_sql_diff_comment( comment = nil )
+    sql_diff_text_log << "--"  
+    sql_diff_text_log << " #{comment}" if comment  
+    sql_diff_text_log << "\r\n"  
+  end
+  # ----------------------------------------------------------------------------
+  #++
 end

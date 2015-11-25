@@ -146,4 +146,20 @@ describe GoggleCupScoreCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
   end
   #-- -----------------------------------------------------------------------
+
+  context "without requested parameters" do
+    xit "raises an exception with wrong goggle_cup" do
+      expect( GoggleCupScoreCalculator.new( 'wrong_goggle_cup', @fix_swimmer, @fix_pool_type, @fix_event_type) ).to raise_error( ArgumentError )
+    end
+    xit "raises an exception with wrong swimmer" do
+      expect( GoggleCupScoreCalculator.new( @fix_goggle_cup, 'wrong_swimmer', @fix_pool_type, @fix_event_type) ).to raise_error( ArgumentError )
+    end
+    xit "raises an exception with wrong goggle_cup" do
+      expect( GoggleCupScoreCalculator.new( @fix_goggle_cup, @fix_swimmer, 'Wrong pool type', @fix_event_type) ).to raise_error( ArgumentError )
+    end
+    xit "raises an exception with wrong goggle_cup" do
+      expect( GoggleCupScoreCalculator.new( @fix_goggle_cup, @fix_swimmer, @fix_pool_type, 'Wrong event type') ).to raise_error( ArgumentError )
+    end
+  end
+  #-- -----------------------------------------------------------------------
 end

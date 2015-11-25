@@ -197,8 +197,8 @@ describe GoggleCupStandardFinder, type: :strategy do
 
   context "without requested parameters" do
     it "raises an exception for wrong goggle_cup parameter" do
-      expect{ GoggleCupStandardFinder.new }.to raise_error( ArgumentError )
-      expect{ GoggleCupStandardFinder.new( 'Wrong type parameter' ) }.to raise_error( ArgumentError )
+      expect( GoggleCupStandardFinder.new ).to raise_error( ArgumentError )
+      expect( GoggleCupStandardFinder.new( 'Wrong type parameter' ) ).to raise_error( ArgumentError )
     end
   end
   #-- -------------------------------------------------------------------------

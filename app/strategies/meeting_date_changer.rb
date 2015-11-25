@@ -13,7 +13,7 @@ require 'wrappers/timing'
 # @version  4.00.833
 #
 class MeetingDateChanger
-  include SqlConverter
+  include SqlConvertable
 
   # These can be edited later on:
   attr_accessor :meeting, :days_to_move_on, :confirm 
@@ -49,7 +49,7 @@ class MeetingDateChanger
     @meeting.header_date = @meeting.header_date + @days_to_move_on
     @meeting.is_confirmed = true if @confirm
     @meeting.save
-    sql_attributes['header_date'] = @meeting.header_date
+    sql_attributes['header_date']  = @meeting.header_date
     sql_attributes['is_confirmed'] = @meeting.is_confirmed if @confirm
     sql_diff_text_log << to_sql_update( @meeting, false, sql_attributes, "\r\n" )
     @meeting.header_date
@@ -71,22 +71,12 @@ class MeetingDateChanger
   # Set the meeting header date according to the days to move on
   # 
   def change_dates
-    sql_diff_text_log << "--\r\n-- Changing meeting #{@meeting.id}-#{@meeting.code} from #{@meeting.header_date} to #{@meeting.header_date + @days_to_move_on}\r\n--\r\n"
+    create_sql_diff_header( "Changing meeting #{@meeting.id}-#{@meeting.code} from #{@meeting.header_date} to #{@meeting.header_date + @days_to_move_on}" )
     move_meeting_date
     @meeting.meeting_sessions.each do |meeting_session|
       move_meeting_session_date( meeting_session )
     end
-    sql_diff_text_log << "-- #{@meeting.id}-#{@meeting.code} date changing script ended\r\n"
-  end
-
-  # Returns the overall SQL diff/log for all the SQL operations that should
-  # be carried out by for replicating the changes (already done by this instance) on
-  # another instance of the same Database (for example, to apply the changes on
-  # a production DB after testing them on a staging version of the same DB).
-  # It is never +nil+, empty at first.
-  #
-  def sql_diff_text_log
-    @sql_diff_text_log ||= ''
+    create_sql_diff_footer( "#{@meeting.id}-#{@meeting.code} date change done" )
   end
   # ----------------------------------------------------------------------------
   #++
