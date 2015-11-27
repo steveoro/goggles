@@ -55,6 +55,7 @@ en:
     entry_time: 'Entry'
     edition: 'Edition'
     previous_editions: 'Previuos editions'
+    passages: 'Passagges'
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"
@@ -123,3 +124,4 @@ en:
     over_900: "Over 900 scores"
     tot_disqualified: "Disqualifieds total"
     rank_disclaimer: "Individual ranking is nont definitive until the end of championship, as the seasonal event ranking will be complted (see rules)"
+    best_score: "Best score"

@@ -336,28 +336,24 @@ class SwimmerDecorator < Draper::Decorator
   # Returns the total count of all the gold medals for this Swimmer.
   #
   def get_total_gold_medals()
-    #@swimmer_gold_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 1 )
     @swimmer_gold_medals ||= meeting_individual_results.is_valid.has_rank(1).count
   end
 
   # Returns the total count of all the silver medals for this Swimmer.
   #
   def get_total_silver_medals()
-    #@swimmer_silver_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 2 )
     @swimmer_silver_medals ||= meeting_individual_results.is_valid.has_rank(2).count
   end
 
   # Returns the total count of all the bronze medals for this Swimmer.
   #
   def get_total_bronze_medals()
-    #@swimmer_bronze_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 3 )
     @swimmer_bronze_medals ||= meeting_individual_results.is_valid.has_rank(3).count
   end
 
   # Returns the total count of all the "wooden" medals for this Swimmer.
   #
   def get_total_wooden_medals()
-    #@swimmer_wooden_medals ||= MeetingIndividualResult.count_swimmer_ranks_for( id, 4 )
     @swimmer_wooden_medals ||= meeting_individual_results.is_valid.has_rank(4).count
   end
   #-- --------------------------------------------------------------------------

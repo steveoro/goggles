@@ -1,11 +1,11 @@
 .span10
-  - @meeting_events_list.each do |meeting_event|
-    - is_a_relay = meeting_event.event_type.is_a_relay
-    -# --- Header with unique ID for each starting event_type "group":
-    %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_event.id}"}
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
+  %div{'class'=>"goggles-category-gap"}
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        - @meeting_events_list.each do |meeting_event|
+          - is_a_relay = meeting_event.event_type.is_a_relay
+          -# --- Header with unique ID for each starting event_type "group":
+          %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}", 'id'=>"#{meeting_event.event_type.code}"}
             %td{'colspan'=>'6'}
               %b= meeting_event.event_type.i18n_description
               = admin_signed_in? ? " (meeting_events.id=#{meeting_event.id}" : ''

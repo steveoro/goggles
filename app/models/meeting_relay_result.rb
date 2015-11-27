@@ -75,7 +75,7 @@ class MeetingRelayResult < ActiveRecord::Base
   scope :sort_by_rank,           ->(dir = 'ASC') { order("is_disqualified, rank #{dir.to_s}") }
   scope :for_team,               ->(team)                { where(team_id: team.id) }
   scope :sort_by_category,       ->(dir = 'ASC') { joins(:category_type, :gender_type).order("gender_types.code, category_types.code #{dir.to_s}") }
-
+  scope :for_over_that_score,     ->(score_sym = 'standard_points', points = 800) { where("#{score_sym.to_s} > #{points}") }
 
   # ----------------------------------------------------------------------------
   # Base methods:

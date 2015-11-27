@@ -97,31 +97,69 @@
 
   .row-fluid
     .span8
-  .row-fluid
-    .span8
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr
-            %td.goggles-centeralign{'colspan'=>'2'}
-              %i= I18n.t('meeting.previous_editions')
-            %td.goggles-centeralign{'colspan'=>'10'}
-              %i= I18n.t('meeting.results')
-          - @swimmer.meetings.for_code( @meeting.code ).uniq.sort_by_date( 'DESC' ).each do |prev_meeting|
-            - if prev_meeting.id != @meeting.id
+  - @individual_result_list.each do |individual_result|
+    - passages = individual_result.passages.joins(:passage_type)
+    - if passages 
+      - passage_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
+      .row-fluid
+        .span8
+          %table.table.table-striped.table-bordered.table-hover.table-condensed
+            %tbody
+              %tr
+                %td.span2
+                  %b= I18n.t('meeting.passages')
+                - if individual_result.reaction_time > 0
+                  %td.goggles-rightalign.span1
+                    %b= I18n.t('meeting.reaction_time')
+                - passage_list.each do |passage_code|
+                  %td.goggles-centeralign.span1
+                    %b= passage_code
+                %td.goggles-rightalign.span2
+                  %b= I18n.t('meeting.timing')
+                %td
               %tr
                 %td
-                  = prev_meeting.decorate.get_linked_name
+                  = individual_result.get_event_type
+                - if individual_result.reaction_time > 0
+                  %td.goggles-rightalign
+                    = individual_result.reaction_time
+                - passage_list.each_with_index do |passage, index|
+                  %td.goggles-rightalign
+                    - passage_detail = passages.where(['passage_types.length_in_meters = ?', passage]).first  
+                    - if passage_detail
+                      = passage_detail.get_timing
+                %td.goggles-rightalign
+                  = individual_result.get_timing
                 %td
-                  = prev_meeting.get_scheduled_date
-                - prev_meeting.meeting_individual_results.for_swimmer( @swimmer ).sort_by_event_order.each do |mir|
-                  - if event_list.include?( mir.event_type.code )
-                    %td
-                      %b= mir.get_event_type
-                    %td.goggles-rightalign
-                      %b= mir.get_timing
-                  - else
-                    %td
-                      = mir.get_event_type
-                    %td.goggles-rightalign
-                      = mir.get_timing
-              
+          .row-fluid
+            .span8
+
+  - if @swimmer.meetings.for_code( @meeting.code ).uniq.count > 1
+    .row-fluid
+      .span8
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr
+              %td.goggles-centeralign{'colspan'=>'2'}
+                %i= I18n.t('meeting.previous_editions')
+              %td.goggles-centeralign{'colspan'=>'10'}
+                %i= I18n.t('meeting.results')
+            - @swimmer.meetings.for_code( @meeting.code ).uniq.sort_by_date( 'DESC' ).each do |prev_meeting|
+              - if prev_meeting.id != @meeting.id
+                %tr
+                  %td
+                    = prev_meeting.decorate.get_linked_name
+                  %td
+                    = prev_meeting.get_scheduled_date
+                  - prev_meeting.meeting_individual_results.for_swimmer( @swimmer ).sort_by_event_order.each do |mir|
+                    - if event_list.include?( mir.event_type.code )
+                      %td
+                        %b= mir.get_event_type
+                      %td.goggles-rightalign
+                        %b= mir.get_timing
+                    - else
+                      %td
+                        = mir.get_event_type
+                      %td.goggles-rightalign
+                        = mir.get_timing
+                

@@ -55,6 +55,7 @@ it:
     entry_time: 'Iscriz.'
     edition: 'Edizione'
     previous_editions: 'Precedenti edizioni'
+    passages: 'Passaggi'
 
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
@@ -123,3 +124,4 @@ it:
     over_900: "Punteggi oltre 900"
     tot_disqualified: "Totale squalifiche"
     rank_disclaimer: "N.B. La classifica individuale è provvisoria. Sarà completa a fine campionato con il calcolo del ranking stagionale delle specialità (vedi regolamento)"
+    best_score: "Miglior prestazione"

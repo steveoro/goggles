@@ -409,22 +409,26 @@ class MeetingsController < ApplicationController
   #
   def show_team_results
                                                     # Get the events filtered by team_id:
-    mir = MeetingIndividualResult.includes(:meeting, :meeting_event).where(
-      [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
-        @meeting.id, @team.id ]
-    )
+    mir = @meeting.meeting_individual_results.for_team(@team)
+    mrr = @meeting.meeting_relay_results.for_team(@team)
+    unless ( mir.count + mrr.count > 0 )
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
+    
                                                     # Get the swimmer list and some stats:
-    @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order(
-      'swimmers.complete_name ASC'
-    ).collect{ |row| row.swimmer }
+    @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order('swimmers.complete_name ASC').collect{ |row| row.swimmer }
 
     # TODO
     # Refactor with medal_types
-    @team_ranks_1 = @meeting.meeting_individual_results.is_valid.has_rank(1).for_team(@team).count
-    @team_ranks_2 = @meeting.meeting_individual_results.is_valid.has_rank(2).for_team(@team).count
-    @team_ranks_3 = @meeting.meeting_individual_results.is_valid.has_rank(3).for_team(@team).count
-    @team_ranks_4 = @meeting.meeting_individual_results.is_valid.has_rank(4).for_team(@team).count
-    @team_outstanding_scores = MeetingIndividualResult.count_team_results_for( @meeting.id, @team.id, 800 )
+    @team_ranks_1 = mir.is_valid.has_rank(1).count
+    @team_ranks_2 = mir.is_valid.has_rank(2).count
+    @team_ranks_3 = mir.is_valid.has_rank(3).count
+    @team_ranks_4 = mir.is_valid.has_rank(4).count
+
+    # Calculate team highligths
+    @team_outstanding_scores = mir.is_valid.for_over_that_score().count # Use default standard_points and 800
+                                                    
                                                     # Collect an Hash with the swimmer_id pointing to the description of all the events performed by each swimmer:
     meeting_team_swimmers_ids = @meeting_team_swimmers.collect{|row| row.id}
     @events_per_swimmers = {}
@@ -435,10 +439,7 @@ class MeetingsController < ApplicationController
     }
 
     ind_event_ids = mir.collect{ |row| row.meeting_event.id }.uniq
-    rel_event_ids = MeetingRelayResult.includes(:meeting, :meeting_event).where(
-      [ 'meetings.id = ? AND meeting_relay_results.team_id = ?',
-        @meeting.id, @team.id ]
-    ).collect{ |row| row.meeting_event.id }.uniq
+    rel_event_ids = mrr.collect{ |row| row.meeting_event.id }.uniq
     event_ids = (ind_event_ids + rel_event_ids).uniq.sort
     @team_tot_events = event_ids.size
     @meeting_events_list = MeetingEvent.where( id: event_ids ).includes(
@@ -447,11 +448,11 @@ class MeetingsController < ApplicationController
       'event_types.is_a_relay, meeting_events.event_order'
     )
                                                     # Add to the stats the relay results:
-    @team_ranks_1 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 1 )
-    @team_ranks_2 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 2 )
-    @team_ranks_3 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 3 )
-    @team_ranks_4 += MeetingRelayResult.count_team_ranks_for( @meeting.id, @team.id, 4 )
-    @team_outstanding_scores += MeetingRelayResult.count_team_results_for( @meeting.id, @team.id, 800 )
+    @team_ranks_1 += mrr.is_valid.has_rank(1).count
+    @team_ranks_2 += mrr.is_valid.has_rank(2).count
+    @team_ranks_3 += mrr.is_valid.has_rank(3).count
+    @team_ranks_4 += mrr.is_valid.has_rank(4).count
+    @team_outstanding_scores += mrr.is_valid.for_over_that_score().count
 
     # Get the programs filtered by team_id:
     ind_prg_ids = MeetingIndividualResult.includes(:meeting, :meeting_program).where(
@@ -469,8 +470,18 @@ class MeetingsController < ApplicationController
       'event_types.is_a_relay, meeting_events.event_order'
     )
 
+    # Find out top scorer
+    @top_scores = []
+    if mir.has_points.count > 0
+      GenderType.individual_only.each do |gender_type|
+        @top_scores << mir.for_gender_type( gender_type ).sort_by_standard_points.first if mir.for_gender_type( gender_type ).sort_by_standard_points.count > 0
+      end
+    end
+
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+    max_mir_updated_at = mir.count > 0 ? mir.select( :updated_at ).max.updated_at.to_i : 0
+    max_mrr_updated_at = mrr.count > 0 ? mrr.select( :updated_at ).max.updated_at.to_i : 0
+    @max_mir_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at 
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -482,19 +493,21 @@ class MeetingsController < ApplicationController
   # - swimmer_id: Swimmer id.
   #
   def show_swimmer_results
-    @individual_result_list = MeetingIndividualResult.includes(:meeting).where(
-      [
-        'meetings.id = ? AND meeting_individual_results.swimmer_id = ?',
-        @meeting.id, @swimmer.id
-      ]
-    )
+    #@individual_result_list = MeetingIndividualResult.includes(:meeting).where(
+    #  [
+    #    'meetings.id = ? AND meeting_individual_results.swimmer_id = ?',
+    #    @meeting.id, @swimmer.id
+    #  ]
+    #)
+    # Check if this way is faster
+    @individual_result_list = @meeting.meeting_individual_results.for_swimmer( @swimmer )
     unless ( @individual_result_list.size > 0 )
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+    @max_mir_updated_at = @individual_result_list.select( :updated_at ).max.updated_at.to_i
   end
   #-- -------------------------------------------------------------------------
   #++

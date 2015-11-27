@@ -80,7 +80,7 @@ class Swimmer < ActiveRecord::Base
   scope :has_results,         -> { where("exists (select 1 from meeting_individual_results where swimmer_id = swimmers.id and not is_disqualified)") }
 
   scope :sort_by_user,        ->(dir) { order("users.name #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
-  scope :sort_by_name,        ->(dir) { order("complete_name #{dir.to_s}") }
+  scope :sort_by_name,        ->(dir = 'ASC') { order("complete_name #{dir.to_s}") }
   scope :sort_by_gender_type, ->(dir) { includes(:gender_type).order("gender_types.code #{dir.to_s}, swimmers.complete_name #{dir.to_s}") }
   #-- -------------------------------------------------------------------------
   #++

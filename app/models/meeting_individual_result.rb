@@ -92,6 +92,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_rank,                ->(dir = 'ASC') { order("is_disqualified, rank #{dir.to_s}") }
   scope :sort_by_date,                ->(dir = 'ASC') { includes(:meeting_session).order("meeting_sessions.scheduled_date #{dir.to_s}") }
   scope :sort_by_goggle_cup,          ->(dir = 'DESC') { order("goggle_cup_points #{dir.to_s}") }
+  scope :sort_by_standard_points,     ->(dir = 'DESC') { order("standard_points #{dir.to_s}") }
   scope :sort_by_pool_and_event,      ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir.to_s}, event_types.style_order #{dir.to_s}") }
   scope :sort_by_gender_and_category, ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir.to_s}, category_types.code #{dir.to_s}") }
   scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at #{dir.to_s}") }
@@ -109,6 +110,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_date_range,              ->(date_begin, date_end) { joins(:meeting).where(['meetings.header_date between ? and ?', date_begin, date_end]) }
   scope :for_season,                  ->(season)               { joins(:season).where(['seasons.id = ?', season.id]) }
   scope :for_closed_seasons,          ->                       { joins(:season).where("seasons.end_date is not null and seasons.end_date < curdate()") }
+  scope :for_over_that_score,         ->(score_sym = 'standard_points', points = 800) { where("#{score_sym.to_s} > #{points}") }
   
   # ----------------------------------------------------------------------------
   # Base methods:
@@ -233,46 +235,6 @@ class MeetingIndividualResult < ActiveRecord::Base
   #-- --------------------------------------------------------------------------
   #++
 
-
-  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and
-  # minimum result score.
-  #
-  def self.count_team_results_for( meeting_id, team_id, min_meeting_score )
-    self.joins( :meeting ).where(
-      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' <<
-        'meeting_individual_results.meeting_individual_points >= ?',
-        meeting_id, team_id, min_meeting_score ]
-    ).count
-  end
-
-
-  # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and <tt>rank_filter</tt>.
-  # <tt>rank_filter</tt> can be also an Array of required ranks.
-  #
-  def self.count_team_ranks_for( meeting_id, team_id, rank_filter )
-    self.joins( :meeting ).has_rank( rank_filter ).where(
-      [ 'meetings.id = ? AND meeting_individual_results.team_id = ? AND ' <<
-        'meeting_individual_results.meeting_individual_points > 0',
-        meeting_id, team_id ]
-    ).count
-  end
-
-
-  # Counts the query results for a specified <tt>meeting_id</tt> (optional), <tt>swimmer_id</tt> and <tt>rank_filter</tt>.
-  # <tt>rank_filter</tt> can be also an Array of required ranks.
-  #
-  def self.count_swimmer_ranks_for( swimmer_id, rank_filter, meeting_id = nil )
-    mir = MeetingIndividualResult.is_valid.has_rank( rank_filter )
-      .where([
-        '(swimmer_id = ?) AND (meeting_individual_results.meeting_individual_points > 0)',
-        swimmer_id
-      ])
-    mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
-    mir.count
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-
   # Safe getter to retrieve the associated sorted list of passages.
   # Returns an empty array when none are found.
   # (User #get_passages.count to get the total number of passages.)
@@ -282,85 +244,4 @@ class MeetingIndividualResult < ActiveRecord::Base
   end
   #-- --------------------------------------------------------------------------
   #++
-
-
-  # Returns an array of 1st-rank Meeting result records, scoped from MeetingIndividualResult
-  # (an array, in case there is more than one row with the same exact timing result at the same
-  # ranking position), being selected by the speficied parameters.
-  #
-  # This allows to find out what is/are the current record(s) for a specified event, category, gender
-  # and pool type.
-  #
-  # === "Special" parameters:
-  #
-  # - <tt>category_type_id_or_code</tt> => if it's a Fixnum is assumed to be an ID; if it's a String,
-  # it's assumed to be the +code+. If it's +nil+, the "all time" value will be searched.
-  # Obviously, if the value used for this parameter is a Fixnum and the ID is used for the query,
-  # this will allow a more precise fine-tuning of the results, since both the season and the code
-  # identify a single, unique category_types.id (whereas, using the code, you'll get the current
-  # record among all seasons).
-  #
-  # - <tt>pool_type_id</tt> => when supplied, only the results obtained from meetings attended at a
-  # matching pool_type will be selected; if +nil+, this WHERE condition is skipped (and the result
-  # will be computed among all available pool types).
-  #
-  # - <tt>meeting_id</tt> => when supplied, only the best timing records for the specified meeting
-  # are searched; when +nil+, the search is extended to all the individual results specified
-  # with the remaining parameters. Remember that if also <tt>pool_type_id</tt> is present, the latter
-  # must match the actual pool_type_id used for the selected meeting, otherwise the result will
-  # be an empty array.
-  #
-  # - <tt>swimmer_id</tt> => when supplied, only the best timing records for the specified swimmer
-  # will be collected; when +nil+, the search is extended to all swimmers.
-  #
-  # - <tt>team_id</tt> => when supplied, only the best timing records for the specified team
-  # will be collected; when +nil+, the search is extended to all teams.
-  #
-  # @deprecated Use RecordCollection and RecordCollector classes instead.
-  #
-  def self.deprecated_get_records_for( event_type_code, category_type_id_or_code_or_nil, gender_type_id,
-                            pool_type_id = nil, meeting_id = nil, swimmer_id = nil, team_id = nil,
-                            limit_for_same_ranking_results = 3 )
-    mir = MeetingIndividualResult.is_valid.has_rank(1)
-    mir = mir.joins( :pool_type ).where( ['pool_types.id = ?', pool_type_id]) if pool_type_id
-    mir = mir.joins( :meeting ).where( ['meetings.id = ?', meeting_id]) if meeting_id
-    mir = mir.where( ['swimmer_id = ?', swimmer_id]) if swimmer_id
-    if category_type_id_or_code_or_nil
-      if category_type_id_or_code_or_nil.instance_of?(String)
-        mir = mir.where( ['category_types.code = ?', category_type_id_or_code_or_nil])
-      elsif category_type_id_or_code_or_nil.instance_of?(Fixnum)
-        mir = mir.where( ['category_types.id = ?', category_type_id_or_code_or_nil])
-      end
-    end
-    mir = mir.where( ['team_id = ?', team_id]) if team_id
-    where_cond = [
-      "(event_types.code = ?) AND (gender_types.id = ?)",
-      event_type_code, gender_type_id
-    ]
-# DEBUG
-    puts "\r\n---[ #{self.name}.get_records_for() ]---"
-    puts "- pool_type_id = #{pool_type_id}"
-    puts "- meeting_id = #{meeting_id}"
-    puts "- where_cond = #{where_cond.inspect}\r\n"
-
-    first_recs = mir.includes(
-      :meeting_program, :event_type, :category_type, :gender_type
-    ).joins(
-      :meeting_program, :event_type, :category_type, :gender_type
-    ).where( where_cond ).order(
-      :minutes, :seconds, :hundreds
-    ).limit( limit_for_same_ranking_results )
-# DEBUG
-    puts "\r\n- first_recs.size = #{first_recs.size}"
-
-    if first_recs.size > 0                          # Compute the first timing result value
-      first_timing_value = first_recs.first.minutes*6000 + first_recs.first.seconds*100 + first_recs.first.hundreds
-# DEBUG
-      puts "- first_timing_value = #{first_timing_value}"
-      puts "- first_recs.first => #{first_recs.first.get_swimmer_name}, #{first_recs.first.get_meeting_program_verbose_name}\r\n"
-                                                    # Remove from the result all other rows that have a greater timing result (keep same ranking results)
-      first_recs.reject!{ |row| first_timing_value < (row.minutes*6000 + row.seconds*100 + row.hundreds) }
-    end
-    first_recs
-  end
 end

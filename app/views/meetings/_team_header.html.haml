@@ -10,6 +10,11 @@
             = I18n.t(:team_total_events, { scope: [:meeting] }) +':'
           .span2.goggles-div-rightalign
             = "#{@team_tot_events} / #{@meeting.meeting_events.count} #{I18n.t(:tot_events)}"
+          - if @team_outstanding_scores > 0
+            .offset1.span2
+              = I18n.t(:team_total_outstanding_scores, { scope: [:meeting] }) +" (> #{ 800 }):"
+            .span1.goggles-div-rightalign
+              = @team_outstanding_scores
         .row-fluid
           .span3
             = I18n.t(:team_total_gold_medals, { scope: [:meeting] }) +':'
@@ -17,6 +22,17 @@
             = @team_ranks_1
           .span1
             = show_tag( @team_ranks_1>0, "medal_gold_3.png" )
+          - if @top_scores.size > 0
+            .span2
+              = I18n.t( 'meeting_stats.best_score' ) + ' ' + @top_scores[0].gender_type.i18n_description
+            .span2
+              = @top_scores[0].swimmer.get_full_name
+            .span1
+              = @top_scores[0].get_event_type
+            .span1
+              = @top_scores[0].get_timing
+            .span1
+              = @top_scores[0].standard_points.to_s
         .row-fluid
           .span3
             = I18n.t(:team_total_silver_medals, { scope: [:meeting] }) +':'
@@ -24,6 +40,17 @@
             = @team_ranks_2
           .span1
             = show_tag( @team_ranks_2>0, "medal_silver_3.png" )
+          - if @top_scores.size > 1
+            .span2
+              = I18n.t( 'meeting_stats.best_score' ) + ' ' + @top_scores[1].gender_type.i18n_description
+            .span2
+              = @top_scores[1].swimmer.get_full_name
+            .span1
+              = @top_scores[1].get_event_type
+            .span1
+              = @top_scores[1].get_timing
+            .span1
+              = @top_scores[1].standard_points.to_s
         .row-fluid
           .span3
             = I18n.t(:team_total_bronze_medals, { scope: [:meeting] }) +':'
@@ -36,12 +63,6 @@
             = I18n.t(:team_total_wooden_medals, { scope: [:meeting] }) +':'
           .span1.goggles-div-rightalign
             = @team_ranks_4
-        - if @team_outstanding_scores > 0
-          .row-fluid
-            .span3
-              = I18n.t(:team_total_outstanding_scores, { scope: [:meeting] }) +" (> #{ 800 }):"
-            .span1.goggles-div-rightalign
-              = @team_outstanding_scores
 
       .accordion-inner
         %div.span10
@@ -52,10 +73,10 @@
                   %i= I18n.t(:team_total_athletes, { scope: [:meeting] }) + ": #{ @meeting_team_swimmers.size }"
               - @meeting_team_swimmers.each do |swimmer|
                 %tr
-                  %td.span3
+                  %td
                     %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
                       = swimmer.get_full_name
-                  %td.goggles-border-right.span1
+                  %td.goggles-border-right
                     = (mir = @events_per_swimmers[swimmer.id].first) ? mir.category_type.code : '?'
                     = (mir && admin_signed_in? ? " (id=#{mir.category_type.id})" : '')
                   - @events_per_swimmers[swimmer.id].each do |individual_result|
