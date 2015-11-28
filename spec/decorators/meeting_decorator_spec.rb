@@ -60,6 +60,24 @@ describe MeetingDecorator, type: :model do
   #++
 
 
+  describe "#get_linked_full_name" do
+    it "responds to #get_linked_full_name method" do
+      expect( subject ).to respond_to( :get_linked_full_name )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_full_name ).to include( 'href' )
+    end
+    it "returns an HTML link to the meeting show full path" do
+      expect( subject.get_linked_full_name ).to include( meeting_show_full_path(id: subject.id) )
+    end
+    it "returns a string containing the meeting full name" do
+      expect( subject.get_linked_full_name ).to include( ERB::Util.html_escape(subject.get_full_name) )
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
   describe "#get_linked_name" do
     it "responds to #get_linked_name method" do
       expect( subject ).to respond_to( :get_linked_name )

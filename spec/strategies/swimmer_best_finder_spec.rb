@@ -237,6 +237,35 @@ describe SwimmerBestFinder, type: :strategy do
       end
     end
     #-- -----------------------------------------------------------------------
+
+    describe "#get_best_for_meeting_event," do
+      it "returns a timing instance if event already swam" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_meeting = Meeting.find(14201)
+        fix_event   = EventType.find_by_code('50FA')
+        fix_pool    = PoolType.find_by_code('25')
+        expect( fix_sbf.get_best_for_meeting_event( fix_meeting, fix_event, fix_pool ) ).to be_an_instance_of( Timing )
+      end
+      it "returns nil if event not already swam" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        fix_meeting = Meeting.find(14201)
+        fix_event   = EventType.find_by_code('100MI')
+        fix_pool    = PoolType.find_by_code('50')
+        expect( fix_sbf.get_best_for_meeting_event( fix_meeting, fix_event, fix_pool ) ).to be_nil        
+      end
+      it "returns a time swam if swam before or nil if not" do
+        event = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
+        meeting = csi_season.meetings.sort{ rand - 0.5 }[0]
+        if active_swimmer.meeting_individual_results.is_not_disqualified.for_meeting_editions( meeting ).for_pool_type( event.pool_type ).for_event_type( event.event_type ).count > 0
+          expect( subject.get_best_for_meeting_event( meeting, event.event_type, event.pool_type ) ).to be_an_instance_of( Timing )
+        else
+          expect( subject.get_best_for_meeting_event( meeting, event.event_type, event.pool_type ) ).to be nil
+        end 
+      end
+    end
+    #-- -----------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
   #++

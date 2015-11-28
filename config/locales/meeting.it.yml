@@ -31,6 +31,7 @@ it:
     personal_records: "Migliori prestazioni personali"
     personal_best: "Personale"
     seasonal_best: "Stagionale"
+    meeting_best: "Meeting"
     rank: "Pos."
     standard: "Std."
     timing: "Tempo"

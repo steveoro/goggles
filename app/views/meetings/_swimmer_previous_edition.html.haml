@@ -11,7 +11,7 @@
           - if (!@meeting.edition && prev_meeting.id != @meeting.id) || @meeting.edition > prev_meeting.edition  
             %tr
               %td
-                = prev_meeting.decorate.get_linked_name
+                = prev_meeting.decorate.get_linked_full_name
               %td
                 = prev_meeting.get_scheduled_date
               - prev_meeting.meeting_individual_results.for_swimmer( @swimmer ).sort_by_event_order.each do |mir|
@@ -25,4 +25,4 @@
                     = mir.get_event_type
                   %td.goggles-rightalign
                     = mir.get_timing
-                
+  .row-fluid.span8

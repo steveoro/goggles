@@ -111,6 +111,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :for_season,                  ->(season)               { joins(:season).where(['seasons.id = ?', season.id]) }
   scope :for_closed_seasons,          ->                       { joins(:season).where("seasons.end_date is not null and seasons.end_date < curdate()") }
   scope :for_over_that_score,         ->(score_sym = 'standard_points', points = 800) { where("#{score_sym.to_s} > #{points}") }
+  scope :for_meeting_editions,        ->(meeting)              { joins(:meeting).where(['meetings.code = ?', meeting.code]) }
   
   # ----------------------------------------------------------------------------
   # Base methods:

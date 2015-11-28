@@ -22,7 +22,7 @@
           = team_name
   .row-fluid
   .row-fluid.span10
-    .span6
+    .span5
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr
@@ -61,11 +61,11 @@
                 = mir.get_formatted_standard_points(true)
               %td.goggles-rightalign
                 = mir.get_formatted_individual_points(true)
-    .span3.offset1
+    .span4.offset1
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr
-            %td.goggles-centeralign{'colspan'=>'3'}
+            %td.goggles-centeralign{'colspan'=>'4'}
               %i= I18n.t('meeting.personal_records')
           %tr
             %td
@@ -73,6 +73,8 @@
               %i= I18n.t('meeting.personal_best')
             %td
               %i= I18n.t('meeting.seasonal_best')
+            %td
+              %i= I18n.t('meeting.meeting_best')
           - @individual_result_list.each do |individual_result|
             - mir = MeetingIndividualResultDecorator.decorate( individual_result )
             - event_type = mir.event_type
@@ -97,6 +99,15 @@
                       %b= seasonal_best.to_s
                     - else
                       = seasonal_best.to_s
+                  - else
+                    = ''
+                %td.goggles-rightalign
+                  - meeting_best = sbf.get_best_for_meeting_event( @meeting, event_type, pool_type )
+                  - if meeting_best
+                    - if meeting_best.to_hundreds == mir.get_timing_instance.to_hundreds
+                      %b= meeting_best.to_s
+                    - else
+                      = meeting_best.to_s
                   - else
                     = ''
   .row-fluid.span12
