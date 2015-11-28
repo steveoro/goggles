@@ -1,0 +1,34 @@
+%table.table.table-striped.table-bordered.table-hover.table-condensed
+  %tbody
+    %tr
+      %td
+        %i= I18n.t('meeting.passages')
+      - if individual_result.reaction_time > 0
+        %td.goggles-rightalign
+          %i= I18n.t('meeting.reaction_time')
+      - passage_list.each do |passage_code|
+        %td.goggles-centeralign
+          %i= passage_code
+      %td.goggles-rightalign
+        %i= I18n.t('meeting.timing')
+    %tr
+      %td{rowspan: 2}
+        %b= individual_result.get_event_type
+      - if individual_result.reaction_time > 0
+        %td.goggles-rightalign{rowspan: 2}
+          = individual_result.reaction_time
+      - passage_list.each_with_index do |passage, index|
+        %td.goggles-rightalign
+          - passage_detail = passages.where(['passage_types.length_in_meters = ?', passage]).first  
+          - if passage_detail
+            = passage_detail.get_timing
+      %td.goggles-rightalign{rowspan: 2}
+        %b= individual_result.get_timing
+    %tr
+      - passage_list.each_with_index do |passage, index|
+        %td.goggles-rightalign
+          - passage_detail = passages.where(['passage_types.length_in_meters = ?', passage]).first  
+          - if passage_detail
+            = passage_detail.compute_incremental_time.to_s
+
+

@@ -4,7 +4,7 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_swimmer_results', @meeting.id, @max_mir_updated_at, team_id, @swimmer.id) ) do
-  .row-fluid.span12
+  .row-fluid
     .span3.alert.alert-success
       %h4
         %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ swimmer_radio_path(:id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
@@ -21,8 +21,7 @@
         %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
           = team_name
   .row-fluid
-    .span10
-  .row-fluid
+  .row-fluid.span10
     .span6
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
@@ -57,12 +56,12 @@
               %td
                 = mir.show_any_rank_medal()
               %td.goggles-rightalign
-                = mir.get_timing
+                %b= mir.get_timing
               %td.goggles-rightalign
                 = mir.get_formatted_standard_points(true)
               %td.goggles-rightalign
                 = mir.get_formatted_individual_points(true)
-    .span3
+    .span3.offset1
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr
@@ -81,85 +80,37 @@
               - event_list << event_type.code
               %tr
                 %td
-                  = mir.get_event_type
+                  %b= mir.get_event_type
                 %td.goggles-rightalign
                   - personal_best = sbf.get_best_for_event( event_type, pool_type )
                   - if personal_best
-                    = personal_best.to_s
+                    - if personal_best.to_hundreds == mir.get_timing_instance.to_hundreds
+                      %b= personal_best.to_s
+                    - else
+                      = personal_best.to_s
                   - else
                     = ''
                 %td.goggles-rightalign
                   - seasonal_best = sbf.get_involved_season_best_for_event( sbf.get_contemporary_seasons_involved_into( @meeting.season ), event_type, pool_type )
                   - if seasonal_best
-                    = seasonal_best.to_s
+                    - if seasonal_best.to_hundreds == mir.get_timing_instance.to_hundreds
+                      %b= seasonal_best.to_s
+                    - else
+                      = seasonal_best.to_s
                   - else
                     = ''
-
-  .row-fluid
-    .span8
+  .row-fluid.span12
+    
   - @individual_result_list.each do |individual_result|
     - passages = individual_result.passages.joins(:passage_type)
     - if passages 
       - passage_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
-      .row-fluid
-        .span8
-          %table.table.table-striped.table-bordered.table-hover.table-condensed
-            %tbody
-              %tr
-                %td.span2
-                  %b= I18n.t('meeting.passages')
-                - if individual_result.reaction_time > 0
-                  %td.goggles-rightalign.span1
-                    %b= I18n.t('meeting.reaction_time')
-                - passage_list.each do |passage_code|
-                  %td.goggles-centeralign.span1
-                    %b= passage_code
-                %td.goggles-rightalign.span2
-                  %b= I18n.t('meeting.timing')
-                %td
-              %tr
-                %td
-                  = individual_result.get_event_type
-                - if individual_result.reaction_time > 0
-                  %td.goggles-rightalign
-                    = individual_result.reaction_time
-                - passage_list.each_with_index do |passage, index|
-                  %td.goggles-rightalign
-                    - passage_detail = passages.where(['passage_types.length_in_meters = ?', passage]).first  
-                    - if passage_detail
-                      = passage_detail.get_timing
-                %td.goggles-rightalign
-                  = individual_result.get_timing
-                %td
-          .row-fluid
-            .span8
+      - if passage_list.size > 5
+        .row-fluid.span8
+          = render( partial: 'swimmer_result_passages', locals: { individual_result: individual_result, passage_list: passage_list, passages: passages } )
+      - else
+        .row-fluid.span4
+          = render( partial: 'swimmer_result_passages', locals: { individual_result: individual_result, passage_list: passage_list, passages: passages } )
+      .row-fluid.span12
 
-  - if @swimmer.meetings.for_code( @meeting.code ).uniq.count > 1
-    .row-fluid
-      .span8
-        %table.table.table-striped.table-bordered.table-hover.table-condensed
-          %tbody
-            %tr
-              %td.goggles-centeralign{'colspan'=>'2'}
-                %i= I18n.t('meeting.previous_editions')
-              %td.goggles-centeralign{'colspan'=>'10'}
-                %i= I18n.t('meeting.results')
-            - @swimmer.meetings.for_code( @meeting.code ).uniq.sort_by_date( 'DESC' ).each do |prev_meeting|
-              - if prev_meeting.id != @meeting.id
-                %tr
-                  %td
-                    = prev_meeting.decorate.get_linked_name
-                  %td
-                    = prev_meeting.get_scheduled_date
-                  - prev_meeting.meeting_individual_results.for_swimmer( @swimmer ).sort_by_event_order.each do |mir|
-                    - if event_list.include?( mir.event_type.code )
-                      %td
-                        %b= mir.get_event_type
-                      %td.goggles-rightalign
-                        %b= mir.get_timing
-                    - else
-                      %td
-                        = mir.get_event_type
-                      %td.goggles-rightalign
-                        = mir.get_timing
-                
+  = render( partial: 'swimmer_previous_edition', locals: { event_list: event_list } )

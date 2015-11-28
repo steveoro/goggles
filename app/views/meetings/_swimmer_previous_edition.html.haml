@@ -1,0 +1,28 @@
+- if @swimmer.meetings.for_code( @meeting.code ).uniq.count > 1
+  .row-fluid.span8
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr
+          %td.goggles-centeralign{'colspan'=>'2'}
+            %i= I18n.t('meeting.previous_editions')
+          %td.goggles-centeralign{'colspan'=>'10'}
+            %i= I18n.t('meeting.results')
+        - @swimmer.meetings.for_code( @meeting.code ).uniq.sort_by_date( 'DESC' ).each do |prev_meeting|
+          - if (!@meeting.edition && prev_meeting.id != @meeting.id) || @meeting.edition > prev_meeting.edition  
+            %tr
+              %td
+                = prev_meeting.decorate.get_linked_name
+              %td
+                = prev_meeting.get_scheduled_date
+              - prev_meeting.meeting_individual_results.for_swimmer( @swimmer ).sort_by_event_order.each do |mir|
+                - if event_list.include?( mir.event_type.code )
+                  %td
+                    %b= mir.get_event_type
+                  %td.goggles-rightalign
+                    %b= mir.get_timing
+                - else
+                  %td
+                    = mir.get_event_type
+                  %td.goggles-rightalign
+                    = mir.get_timing
+                
