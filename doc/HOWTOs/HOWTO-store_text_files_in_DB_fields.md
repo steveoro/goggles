@@ -40,6 +40,6 @@ PRODUCTION DB, AND USE THE REMOTE UPLOAD TASK TO PERFORM THE ACTUAL UPDATE. **
 Use the rake task **db:store_season_rules**:
 
   With Zeus server running:
-  > zeus rake db:db:store_season_rules season_id=<season_id> file=<path_to_file>
+  > zeus rake db:store_season_rules season_id=<season_id> file=<path_to_file>
   Or:
-  > bundle exec rake db:db:store_season_rules season_id=<season_id> file=<path_to_file>
+  > bundle exec rake db:store_season_rules season_id=<season_id> file=<path_to_file>

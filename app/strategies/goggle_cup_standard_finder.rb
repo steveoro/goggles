@@ -12,7 +12,7 @@ class GoggleCupStandardFinder
   include SqlConvertable
 
   # These can be edited later on:
-  attr_accessor :goggle_cup, :swimmers 
+  attr_accessor :goggle_cup, :swimmers
 
   # Initialization
   #
@@ -23,7 +23,7 @@ class GoggleCupStandardFinder
     unless goggle_cup && goggle_cup.instance_of?( GoggleCup )
       raise ArgumentError.new("Needs a valid Goggle cup")
     end
-    
+
     @goggle_cup = goggle_cup
     @swimmers   = get_involved_swimmers
   end
@@ -36,15 +36,11 @@ class GoggleCupStandardFinder
   # Goggle cup definition
   # We should consider all swimmer that swam
   # at least one meeting before Goggle cup but it would be
-  # not wise... 
+  # not wise...
   def get_involved_swimmers
-    involved_swimmers = []
-    @goggle_cup.swimmers.has_results.uniq.each do |swimmer|
-      involved_swimmers << swimmer if swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.count > 0 && 
-       oldest_swimmer_result( swimmer ) <= @goggle_cup.end_date.prev_year
-    end
-    involved_swimmers
-  end 
+    # [Steve, 20151128] Use memoization pattern to avoid useless multiple calls:
+    @involved_swimmers ||= scan_and_search_for_involved_swimmers
+  end
 
   # Get the oldest swimmer result date considering
   # only meetings where the swimmer parteciapted
@@ -68,10 +64,10 @@ class GoggleCupStandardFinder
     oldest_result_date = oldest_swimmer_result( swimmer )
     if oldest_result_date < @goggle_cup.end_date.prev_year
       period_end = @goggle_cup.end_date.prev_year
-      goggle_years_to_scan << period_end 
+      goggle_years_to_scan << period_end
       while period_end >= oldest_result_date do
         period_end = period_end.prev_year
-        goggle_years_to_scan << period_end 
+        goggle_years_to_scan << period_end
       end
     end
     goggle_years_to_scan
@@ -108,13 +104,13 @@ class GoggleCupStandardFinder
         end
       end
     end
-    swimmer_goggle_cup_standards    
+    swimmer_goggle_cup_standards
   end
   #-- --------------------------------------------------------------------------
   #++
 
   # Scans for all team swimmers to define Goggle cup standards
-  # Scans all swimmers with results for the team if  
+  # Scans all swimmers with results for the team if
   # is_limited_to_season_types_defined == false
   # Otherwise consider only those who have results for meetings
   # in the season types to be considered according to Goggle cup definition
@@ -122,7 +118,7 @@ class GoggleCupStandardFinder
     sql_diff_text_log << "--\r\n"
     sql_diff_text_log << "-- Creating time standards for #{@goggle_cup.get_verbose_name}\r\n"
     sql_diff_text_log << "--\r\n"
-    
+
     # Clear data to avoid incorrect standards
     # Necessary beacuse a time swam during the Goggle cup year should became
     # new standard time if not present, but should be not considerd
@@ -138,9 +134,9 @@ class GoggleCupStandardFinder
   end
   #-- --------------------------------------------------------------------------
   #++
-  
+
   # Scans for all team swimmers to define Goggle cup standards
-  # Scans all swimmers with results for the team if  
+  # Scans all swimmers with results for the team if
   # is_limited_to_season_types_defined == false
   # Otherwise consider only those who have results for meetings
   # in the season types to be considered according to Goggle cup definition
@@ -157,8 +153,8 @@ class GoggleCupStandardFinder
       goggle_cup_standard               = GoggleCupStandard.new()
       goggle_cup_standard.goggle_cup_id = @goggle_cup.id
       goggle_cup_standard.swimmer_id    = swimmer.id
-      goggle_cup_standard.event_type_id = event_by_pool_type.event_type_id  
-      goggle_cup_standard.pool_type_id  = event_by_pool_type.pool_type_id  
+      goggle_cup_standard.event_type_id = event_by_pool_type.event_type_id
+      goggle_cup_standard.pool_type_id  = event_by_pool_type.pool_type_id
       goggle_cup_standard.minutes       = standard_time.minutes
       goggle_cup_standard.seconds       = standard_time.seconds
       goggle_cup_standard.hundreds      = standard_time.hundreds
@@ -171,7 +167,7 @@ class GoggleCupStandardFinder
   end
   #-- --------------------------------------------------------------------------
   #++
-  
+
   # Deletes entire Goggle cup standard times
   def delete_goggle_cup_standards
     sql_diff_text_log << "--\r\n"
@@ -196,6 +192,36 @@ class GoggleCupStandardFinder
       goggle_cup_standard.delete
     end
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).count}\r\n"
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Find swimmers potentially involved in Goggle Cup
+  # Swimmer involved are those who has a badge in at least
+  # one of the considered season according to the
+  # Goggle cup definition
+  # We should consider all swimmer that swam
+  # at least one meeting before Goggle cup but it would be
+  # not wise...
+  def scan_and_search_for_involved_swimmers
+    involved_swimmers = []
+    swimmer_candidates = @goggle_cup.swimmers.has_results.uniq
+# DEBUG
+    puts "\r\nGoggleCupStandardFinder#get_involved_swimmers: swimmer candidates = #{ swimmer_candidates.count }"
+    puts "                                                BEGIN LOOP (each '+' ~ 100 swimmers)"
+    swimmer_candidates.each_with_index do |swimmer, index|
+# DEBUG
+      putc "+" if (index % 100 == 0)
+      involved_swimmers << swimmer if swimmer.meeting_individual_results.for_team( @goggle_cup.team ).has_time.is_not_disqualified.count > 0 &&
+       oldest_swimmer_result( swimmer ) <= @goggle_cup.end_date.prev_year
+    end
+# DEBUG
+    puts "\r\nGoggleCupStandardFinder#get_involved_swimmers: END LOOP"
+    involved_swimmers
   end
   #-- --------------------------------------------------------------------------
   #++

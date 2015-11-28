@@ -9,7 +9,7 @@ describe GoggleCupStandardFinder, type: :strategy do
     # Use existing team and swimmer with results to test those features
     # will not run at the beginning of the seasons where thera aren't badges
     # So should use Ober Ferrari's existing Ober Cup with Leega
-    # 
+    #
     # To test randomly should create:
     # A team with swimmers (badges) withe results swam before the goggle cup
     #
@@ -25,10 +25,11 @@ describe GoggleCupStandardFinder, type: :strategy do
     let(:goggle_cup)     { GoggleCup.find(9) }
     let(:active_swimmer) { Swimmer.find(23) }
 
-    subject { GoggleCupStandardFinder.new( goggle_cup ) }
+    let(:subject)        { GoggleCupStandardFinder.new( goggle_cup ) }
+#    subject { GoggleCupStandardFinder.new( goggle_cup ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :goggle_cup, 
+      :goggle_cup,
       :swimmers, :get_involved_swimmers, :create_goggle_cup_standards, :delete_goggle_cup_standards,
       :sql_diff_text_log
     ] )
@@ -76,10 +77,8 @@ describe GoggleCupStandardFinder, type: :strategy do
       end
       it "returns a sorted array of dates" do
         dates = subject.get_periods_to_scan( active_swimmer )
-        elem = 1
-        while elem < dates.size do
-          expect( dates[elem] ).to be < dates[elem - 1]
-          elem = elem + 1
+        (1 .. dates.size-1).each do |index|
+          expect( dates[index] ).to be < dates[index - 1]
         end
       end
       it "returns an array of dates with only one element older than oldest_swimmer_result" do
@@ -96,7 +95,7 @@ describe GoggleCupStandardFinder, type: :strategy do
       end
     end
     #-- -----------------------------------------------------------------------
-    
+
     describe "#find_swimmer_goggle_cup_standard," do
       it "returns an hash" do
         expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ) ).to be_a_kind_of( Hash )
@@ -117,22 +116,22 @@ describe GoggleCupStandardFinder, type: :strategy do
       it "returns a timing instance for an event swam" do
         swam_mir = active_swimmer.meeting_individual_results.for_team( active_team ).has_time.is_not_disqualified.sort_by_date('ASC').first
         swam_event_by_pool_type = "#{swam_mir.event_type.code}-#{swam_mir.pool_type.code}"  # Should use events_by_pool_type.get_key
-        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer )[ swam_event_by_pool_type ] ).to be_an_instance_of( Timing ) 
+        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer )[ swam_event_by_pool_type ] ).to be_an_instance_of( Timing )
       end
       it "returns no more than goggle cup standard already presents for a stored goggle cup" do
         # Should use a stored goggle cup
-        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ).count ).to be <= goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count 
+        expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ).count ).to be <= goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count
       end
       it "returns the same goggle cup standard already presents for a stored goggle cup" do
         # Should use a stored goggle cup
         subject.find_swimmer_goggle_cup_standard( active_swimmer ).each_pair do |found_key, found_standard|
           event_by_pool_type = EventsByPoolType.find_by_key( found_key )
           expect( found_standard ).to eq( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).for_event_and_pool( event_by_pool_type ).first.get_timing_instance )
-        end 
+        end
       end
-    end   
+    end
     #-- -----------------------------------------------------------------------
-    
+
     describe "#delete_goggle_cup_standards_for_swimmer," do
       it "appends text to sql diff" do
         previous_size = subject.sql_diff_text_log.size
@@ -146,7 +145,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         expect( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count ).to eq( 0 )
         expect( goggle_cup.goggle_cup_standards.count ).to be > 0
       end
-    end   
+    end
     #-- -----------------------------------------------------------------------
 
     describe "#delete_goggle_cup_standards," do
@@ -161,7 +160,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         subject.delete_goggle_cup_standards
         expect( goggle_cup.goggle_cup_standards.count ).to eq( 0 )
       end
-    end   
+    end
     #-- -----------------------------------------------------------------------
 
     describe "#create_goggle_cup_standards_for_swimmer," do
@@ -175,7 +174,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         subject.create_goggle_cup_standards_for_swimmer( active_swimmer )
         expect( subject.find_swimmer_goggle_cup_standard( active_swimmer ).size ).to eq( goggle_cup.goggle_cup_standards.for_swimmer( active_swimmer ).count )
       end
-    end   
+    end
     #-- -----------------------------------------------------------------------
 
     describe "#create_goggle_cup_standards," do
@@ -189,7 +188,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         subject.create_goggle_cup_standards
         expect( goggle_cup.goggle_cup_standards.count ).to be >= subject.swimmers.count
       end
-    end   
+    end
     #-- -----------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
@@ -197,8 +196,8 @@ describe GoggleCupStandardFinder, type: :strategy do
 
   context "without requested parameters" do
     it "raises an exception for wrong goggle_cup parameter" do
-      expect( GoggleCupStandardFinder.new ).to raise_error( ArgumentError )
-      expect( GoggleCupStandardFinder.new( 'Wrong type parameter' ) ).to raise_error( ArgumentError )
+      expect{ GoggleCupStandardFinder.new }.to raise_error( ArgumentError )
+      expect{ GoggleCupStandardFinder.new( 'Wrong type parameter' ) }.to raise_error( ArgumentError )
     end
   end
   #-- -------------------------------------------------------------------------
