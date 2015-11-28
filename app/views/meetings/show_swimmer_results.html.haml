@@ -71,9 +71,9 @@
             %td
             %td.goggles-centeralign
               %i= I18n.t('meeting.personal_best')
-            %td
+            %td.goggles-centeralign
               %i= I18n.t('meeting.seasonal_best')
-            %td
+            %td.goggles-centeralign
               %i= I18n.t('meeting.meeting_best')
           - @individual_result_list.each do |individual_result|
             - mir = MeetingIndividualResultDecorator.decorate( individual_result )
