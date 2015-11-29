@@ -23,24 +23,11 @@ class GoggleCupStandardFinder
     unless goggle_cup && goggle_cup.instance_of?( GoggleCup )
       raise ArgumentError.new("Needs a valid Goggle cup")
     end
-
     @goggle_cup = goggle_cup
-    @swimmers   = get_involved_swimmers
+    @swimmers   = scan_and_search_for_involved_swimmers
   end
   #-- --------------------------------------------------------------------------
   #++
-
-  # Find swimmers potentially involved in Goggle Cup
-  # Swimmer involved are those who has a badge in at least
-  # one of the considered season according to the
-  # Goggle cup definition
-  # We should consider all swimmer that swam
-  # at least one meeting before Goggle cup but it would be
-  # not wise...
-  def get_involved_swimmers
-    # [Steve, 20151128] Use memoization pattern to avoid useless multiple calls:
-    @involved_swimmers ||= scan_and_search_for_involved_swimmers
-  end
 
   # Get the oldest swimmer result date considering
   # only meetings where the swimmer parteciapted
@@ -158,7 +145,7 @@ class GoggleCupStandardFinder
       goggle_cup_standard.minutes       = standard_time.minutes
       goggle_cup_standard.seconds       = standard_time.seconds
       goggle_cup_standard.hundreds      = standard_time.hundreds
-      goggle_cup_standard.save
+      goggle_cup_standard.save!
       comment = "#{event_by_pool_type.i18n_description}: #{standard_time.to_s}"
       sql_diff_text_log << to_sql_insert( goggle_cup_standard, false, "\r\n", comment )
     end
@@ -175,8 +162,9 @@ class GoggleCupStandardFinder
     sql_diff_text_log << "--\r\n"
     @goggle_cup.goggle_cup_standards.each do |goggle_cup_standard|
       sql_diff_text_log << to_sql_delete( goggle_cup_standard, false, "\r\n" )
-      goggle_cup_standard.delete
+#      goggle_cup_standard.destroy
     end
+    @goggle_cup.goggle_cup_standards.destroy_all
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.count}\r\n"
   end
   #-- --------------------------------------------------------------------------
@@ -189,7 +177,7 @@ class GoggleCupStandardFinder
     sql_diff_text_log << "--\r\n"
     @goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).each do |goggle_cup_standard|
       sql_diff_text_log << to_sql_delete( goggle_cup_standard, false, "\r\n" )
-      goggle_cup_standard.delete
+      goggle_cup_standard.destroy
     end
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.for_swimmer( swimmer ).count}\r\n"
   end
@@ -211,8 +199,10 @@ class GoggleCupStandardFinder
     involved_swimmers = []
     swimmer_candidates = @goggle_cup.swimmers.has_results.uniq
 # DEBUG
-    puts "\r\nGoggleCupStandardFinder#get_involved_swimmers: swimmer candidates = #{ swimmer_candidates.count }"
-    puts "                                                BEGIN LOOP (each '+' ~ 100 swimmers)"
+    puts "\r\n- GoggleCupStandardFinder#scan_and_search_for_involved_swimmers: swimmer candidates = #{ swimmer_candidates.count }"
+#    puts "Callers [0..7]:"
+#    puts caller[0..7]
+    puts "--- BEGIN LOOP: (each '+' ~ 100 swimmers)"
     swimmer_candidates.each_with_index do |swimmer, index|
 # DEBUG
       putc "+" if (index % 100 == 0)
@@ -220,7 +210,7 @@ class GoggleCupStandardFinder
        oldest_swimmer_result( swimmer ) <= @goggle_cup.end_date.prev_year
     end
 # DEBUG
-    puts "\r\nGoggleCupStandardFinder#get_involved_swimmers: END LOOP"
+    puts "\r\n--- END LOOP"
     involved_swimmers
   end
   #-- --------------------------------------------------------------------------
