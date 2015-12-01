@@ -285,6 +285,8 @@ en:
     i18n_description_F: "FINALS"
     i18n_short_C: "FB"
     i18n_description_C: "FINAL B"
+    i18n_short_P: "SP"
+    i18n_description_P: "50 SPECIAL"
 
   shower_types:
     code: "code"
