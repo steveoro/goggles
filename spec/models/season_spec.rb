@@ -155,8 +155,8 @@ describe Season, :type => :model do
           :season,
           description: "Newer season",
           edition: subject.edition + 1,
-          begin_date: subject.begin_date + 365,
-          end_date: subject.end_date + 365,
+          begin_date: subject.begin_date + 30065,
+          end_date: subject.end_date + 30065,
           season_type: subject.season_type
         )
         expect( subject.get_last_season_by_type( subject.season_type.code ) ).to eq( seasonnewer )
