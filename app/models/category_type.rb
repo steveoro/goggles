@@ -34,6 +34,7 @@ class CategoryType < ActiveRecord::Base
   scope :is_valid,        -> { where(is_out_of_race: false) }
   scope :only_relays,     -> { where(is_a_relay: true) }
   scope :are_not_relays,  -> { where(is_a_relay: false) }
+  scope :is_divided,      -> { where(is_undivided: false) }
 
   scope :sort_by_age,     ->(dir = 'ASC') { order("age_begin #{dir.to_s}") }
 
@@ -104,7 +105,7 @@ class CategoryType < ActiveRecord::Base
     end
 # DEBUG
 #    puts "\r\n--- target_age = #{target_age}\r\n"
-    category_type = CategoryType.includes( :season ).where(
+    category_type = CategoryType.is_divided.includes( :season ).where(
       [
         '(season_id = ?) AND ' +
         '(category_types.age_begin <= ?) AND ' +
