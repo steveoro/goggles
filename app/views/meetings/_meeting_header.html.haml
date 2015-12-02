@@ -5,27 +5,29 @@
         %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @meeting.get_verbose_name
     .accordion-body.collapse#collapseShw
       .accordion-inner
-        .row-fluid
-          .span2
-            = 'ID:'
-          .span10
-            = @meeting.id if @meeting
+        - if admin_signed_in?
+          .row-fluid
+            .span2
+              = 'ID:'
+            .span10
+              = @meeting.id if @meeting
         .row-fluid
           .span2
             = I18n.t(:season, { scope: [:activerecord, :models] }) +':'
           .span10
-            = @meeting.season.get_full_name
+            = @meeting.season.decorate.get_linked_full_name
             = admin_signed_in? ? " (season.id=#{@meeting.season_id})" : ''
         .row-fluid
           .span2
             = I18n.t(:any_date) +':'
           .span10
-            = @meeting.header_date
-        .row-fluid
-          .span2
-            = I18n.t(:edition, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
-            = @meeting.edition
+            = @meeting.header_date.strftime('%d/%m/%Y')
+        - if @meeting.edition && @meeting.edition > 0
+          .row-fluid
+            .span2
+              = I18n.t(:edition, { scope: [:activerecord, :attributes, :meeting] }) +':'
+            .span10
+              = @meeting.edition
         .row-fluid
           .span2
             = I18n.t('meeting_calendar.pool') +':'
@@ -43,16 +45,17 @@
             = I18n.t(:is_under_25_admitted, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = show_tag( @meeting.is_under_25_admitted )
-        .row-fluid
-          .span2
-            = I18n.t(:has_invitation, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
-            = show_tag( @meeting.has_invitation )
-        .row-fluid
-          .span2
-            = I18n.t(:has_start_list, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
-            = show_tag( @meeting.has_start_list )
+        - if admin_signed_in?
+          .row-fluid
+            .span2
+              = I18n.t(:has_invitation, { scope: [:activerecord, :attributes, :meeting] }) +':'
+            .span10
+              = show_tag( @meeting.has_invitation )
+          .row-fluid
+            .span2
+              = I18n.t(:has_start_list, { scope: [:activerecord, :attributes, :meeting] }) +':'
+            .span10
+              = show_tag( @meeting.has_start_list )
         .row-fluid
           .span2
             = I18n.t(:max_individual_events, { scope: [:activerecord, :attributes, :meeting] }) +':'

@@ -29,4 +29,21 @@ describe SeasonDecorator do
   end
   #-- --------------------------------------------------------------------------
   #++
+
+  describe "#get_linked_full_name" do
+    it "responds to #get_linked_full_name method" do
+      expect( subject ).to respond_to( :get_linked_full_name )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_full_name ).to include( 'href' )
+    end
+    it "returns an HTML link to the season path" do
+      expect( subject.get_linked_full_name ).to include( championships_ranking_regional_er_csi_path(id: subject.id) ).or include( championships_ranking_supermaster_fin_path(id: subject.id) ) 
+    end
+    it "returns a string containing the season full name" do
+      expect( subject.get_linked_full_name ).to include( ERB::Util.html_escape(subject.get_full_name) )
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
 end

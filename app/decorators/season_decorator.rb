@@ -22,4 +22,13 @@ class SeasonDecorator < Draper::Decorator
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Retrieves the season header year
+  # with link to season ranking
+  #
+  def get_linked_full_name
+    h.link_to( get_full_name, championships_ranking_regional_er_csi_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('championships.show_full_season') } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
