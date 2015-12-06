@@ -177,13 +177,6 @@ describe SwimmersController, :type => :controller do
           end
         end
       end
-      it "assigns an array of hashes as medal seasonal collection which responds to :tot_season_records" do
-        # [Steve, 20140911] We cannot test specific values here, because they
-        # will be reset at the start of each new season!
-        assigns(:seasonal_medal_collection).each do |seasonal_medals|
-          expect( seasonal_medals[:tot_season_records] ).to be >= 0
-        end
-      end
       it "assigns an array of hashes as medal event collection which responds to meeting suitable pool types with arrays" do
         PoolType.only_for_meetings.each do |pool_type|
           expect( assigns(:event_medal_collection)[pool_type.code] ).to be_a_kind_of( Array )
@@ -197,6 +190,27 @@ describe SwimmersController, :type => :controller do
               expect( event_medals[medal_type.rank] ).to be >= 0
             end
           end
+        end
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[GET #records/:id]' do
+    #it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :records )
+    #it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :records )
+
+    context "as a logged-in user" do
+      before(:each) do
+        login_user()
+        @swimmer = create(:swimmer)
+        #get :records, id: @swimmer.id
+      end
+
+      xit "assigns an array of hashes as seasonal record collection which responds to :tot_season_records" do
+        assigns(:seasonal_record_collection).each do |seasonal_records|
+          expect( seasonal_records[:tot_season_records] ).to be >= 0
         end
       end
     end

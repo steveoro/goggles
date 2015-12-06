@@ -47,11 +47,12 @@ class Badge < ActiveRecord::Base
   scope :sort_by_swimmer,       ->(dir)  { joins(:swimmer).order("swimmers.complete_name #{dir.to_s}") }
   scope :sort_by_category_type, ->(dir)  { joins(:category_type).order("category_types.code #{dir.to_s}") }
 
-  scope :for_category_type,     ->(category_type) { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
-  scope :for_gender_type,       ->(gender_type)   { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
-  scope :for_season,            ->(season)        { where(season: season) }
-  scope :for_team,              ->(team)          { where(team: team) }
-  scope :for_swimmer,           ->(swimmer)       { where(swimmer: swimmer) }
+  scope :for_category_type,     ->(category_type)  { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
+  scope :for_gender_type,       ->(gender_type)    { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
+  scope :for_season,            ->(season)         { where(season: season) }
+  scope :for_team,              ->(team)           { where(team: team) }
+  scope :for_swimmer,           ->(swimmer)        { where(swimmer: swimmer) }
+  scope :for_final_rank,        ->(final_rank = 1) { where(['final_rank = ?', final_rank]) }
   #-- -------------------------------------------------------------------------
   #++
 

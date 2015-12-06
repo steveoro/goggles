@@ -56,6 +56,9 @@ class SwimmersController < ApplicationController
   # == Params:
   # id: the swimmer id to be processed
   #
+  # Show the swimmer medal standing
+  # presenting by season type and by event (and pool) type
+  #
   def medals
     # --- "Medals" tab: ---
     @tab_title = I18n.t('radiography.medals_tab')
@@ -72,21 +75,6 @@ class SwimmersController < ApplicationController
     @bronze_medals = @swimmer.get_total_bronze_medals
     @wooden_medals = @swimmer.get_total_wooden_medals
 
-    # FIXME this has not been tested yet:
-    all_championships_records = MeetingIndividualResult.includes(
-      :season, :event_type, :category_type, :gender_type, :pool_type
-    ).is_valid.select(
-      'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    ).group(
-      'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    )
-                                                    # Filter all_championships_records and find out how many records this swimmer still holds (if any)
-    # FIXME this has not been tested yet:
-    @tot_season_records_for_this_swimmer = 0         # Count how many Season records are held by this swimmer:
-    all_championships_records.each{ | mir |
-      @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
-    }
-
     # Collects medals for season types and presents in a table
     # with total columns
     @swimmer.season_types.uniq.each do |season_type|
@@ -102,14 +90,6 @@ class SwimmersController < ApplicationController
           .has_rank(medal_rank.to_i)
           .count
       end
-
-      # FIXME this has not been tested yet:
-      seasonal_medals[:tot_season_records] = 0
-      all_championships_records.each{ | mir |
-        if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
-          seasonal_medals[:tot_season_records] += 1
-        end
-      }
 
       @seasonal_medal_collection << seasonal_medals
     end
@@ -141,6 +121,54 @@ class SwimmersController < ApplicationController
         # Consider event only if is present at least one medal
         @event_medal_collection[pool_type.code] << event_medals if event_medals.size > 0
       end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified swimmer id: "Records" tab rendering
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  # TODO Show the record held by swimmer summary
+  #
+  def records
+    # --- "Medals" tab: ---
+    @tab_title = I18n.t('radiography.records_tab')
+    @tot_season_records_for_this_swimmer = 0
+    @seasonal_record_collection = []
+
+    # TODO Until we'll have finished FIN import this scan will be used 
+    # for CSI only.
+    # FIXME this has not been tested yet:
+    #all_championships_records = MeetingIndividualResult.includes(
+    #  :season, :event_type, :category_type, :gender_type, :pool_type
+    #).is_valid.select(
+    #  'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    #).group(
+    #  'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    #)
+                                                    # Filter all_championships_records and find out how many records this swimmer still holds (if any)
+    # FIXME this has not been tested yet:
+    #all_championships_records.each{ | mir |
+    #  @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
+    #}
+
+    @swimmer.season_types.uniq.each do |season_type|
+      # Creates an hash for seasonal medals
+      seasonal_records = Hash.new
+      seasonal_records[:season_type] = season_type.get_full_name
+      seasonal_records[:tot_season_records] = 0
+
+      # FIXME this has not been tested yet:
+      #all_championships_records.each{ | mir |
+      #  if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
+      #    seasonal_medals[:tot_season_records] += 1
+      #  end
+      #}
+      @seasonal_record_collection << seasonal_records
     end
   end
   #-- -------------------------------------------------------------------------

@@ -41,11 +41,6 @@
           = I18n.t('radiography.total_wooden_medals') +':'
         .span6
           = @wooden_medals
-      .row-fluid
-        .span3
-          = I18n.t('radiography.total_season_records') +':'
-        .span6
-          = @tot_season_records_for_this_swimmer
   
   .row-fluid.goggles-category-gap{ 'id' => "by_season_type" }
     %h3
@@ -74,15 +69,6 @@
                     = medal_collection[medal_type.rank]
               %td.goggles-rightalign
                 %b= tot_medals_for_type
-          - if @tot_season_records_for_this_swimmer > 0
-            %tr
-              %td
-                %b= I18n.t('radiography.seasonal_records')
-              - @seasonal_medal_collection.each do |medal_collection|
-                %td.goggles-rightalign
-                  - if medal_collection[:tot_season_records] > 0
-                    = medal_collection[:tot_season_records]
-              %td
   
   - @event_medal_collection.keys.each do |pool_type|
     .row-fluid.goggles-category-gap{ 'id' => "by_event_type_#{pool_type}" }
