@@ -160,6 +160,33 @@ describe MeetingIndividualResultDecorator, type: :model do
       end
     end
   end
+
+  describe "#get_formatted_goggle_cup_points" do
+    context "when called on a result with 0 points," do
+      it "returns an empty string" do
+        subject.goggle_cup_points = 0
+        expect( subject.get_formatted_goggle_cup_points ).to eq( "" )
+      end
+    end
+
+    context "when called on a result with positive points," do
+      it "returns the score formatted with decimals" do
+        subject.goggle_cup_points = 980.75
+        expect( subject.get_formatted_goggle_cup_points ).to eq( "980.75" )
+      end
+      it "returns the score formatted with decimals, even when integer" do
+        subject.goggle_cup_points = 1000
+        expect( subject.get_formatted_goggle_cup_points ).to eq( "1000.00" )
+      end
+    end
+
+    context "when called on a result with 0 points but show_even_when_zero=true," do
+      it "returns the (zero) score formatted with decimals" do
+        subject.goggle_cup_points = 0
+        expect( subject.get_formatted_goggle_cup_points(true) ).to eq( "0.00" )
+      end
+    end
+  end
   #-- --------------------------------------------------------------------------
   #++
 end

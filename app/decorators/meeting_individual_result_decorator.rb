@@ -68,6 +68,13 @@ class MeetingIndividualResultDecorator < Draper::Decorator
   def get_formatted_individual_points( show_even_when_zero = false )
     ( show_even_when_zero || object.meeting_individual_points > 0 ? sprintf( "%02.2f", object.meeting_individual_points ) : '' )
   end
+
+  # Returns the meeting_individual_points value as a string formatted with 2 decimals or
+  # an empty string if the points are not greater than 0 (unless show_even_when_zero = true).
+  #
+  def get_formatted_goggle_cup_points( show_even_when_zero = false )
+    ( show_even_when_zero || object.goggle_cup_points > 0 ? sprintf( "%02.2f", object.goggle_cup_points ) : '' )
+  end
   #-- -------------------------------------------------------------------------
   #++
 end

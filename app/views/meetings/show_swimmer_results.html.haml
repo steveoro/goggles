@@ -1,5 +1,7 @@
-- team_id = @individual_result_list.first.team_id
-- team_name = @individual_result_list.first.team.get_full_name
+- team = @individual_result_list.first.team
+- team_id = team.id
+- team_name = team.get_full_name
+- has_goggle_cup = team.has_goggle_cup_at?
 - event_list = []
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
@@ -28,8 +30,12 @@
           %tr
             %td.goggles-centeralign{'colspan'=>'4'}
               %i= I18n.t('meeting.results')
-            %td.goggles-centeralign{'colspan'=>'2'}
-              %i= I18n.t('meeting.scores')
+            - if has_goggle_cup
+              %td.goggles-centeralign{'colspan'=>'3'}
+                %i= I18n.t('meeting.scores')
+            - else
+              %td.goggles-centeralign{'colspan'=>'2'}
+                %i= I18n.t('meeting.scores')
           %tr
             %td
             %td.goggles-centeralign{'colspan'=>'2'}
@@ -40,6 +46,9 @@
               %i= I18n.t('meeting.standard')
             %td.goggles-centeralign
               %i= I18n.t('meeting.meeting')
+            - if has_goggle_cup 
+              %td.goggles-centeralign
+                %i= team.get_current_goggle_cup_at.get_full_name
 
           - if @individual_result_list.size > 0
             - pool_type = @individual_result_list.first.pool_type
@@ -61,6 +70,10 @@
                 = mir.get_formatted_standard_points(true)
               %td.goggles-rightalign
                 = mir.get_formatted_individual_points(true)
+              - if has_goggle_cup
+                %td.goggles-rightalign
+                  = mir.get_formatted_goggle_cup_points(true)
+               
     .span4.offset1
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody

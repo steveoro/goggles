@@ -1,3 +1,4 @@
+- has_goggle_cup = @team.has_goggle_cup_at?
 .span10
   %div{'class'=>"goggles-category-gap"}
     %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -6,9 +7,17 @@
           - is_a_relay = meeting_event.event_type.is_a_relay
           -# --- Header with unique ID for each starting event_type "group":
           %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}", 'id'=>"#{meeting_event.event_type.code}"}
-            %td{'colspan'=>'6'}
+            %td{'colspan'=>'4'}
               %b= meeting_event.event_type.i18n_description
               = admin_signed_in? ? " (meeting_events.id=#{meeting_event.id}" : ''
+            %td.goggles-centeralign
+              %i= I18n.t('meeting.standard')
+            %td.goggles-centeralign
+              %i= I18n.t('meeting.meeting')
+            - if has_goggle_cup
+              %td.goggles-rightalign
+                - unless is_a_relay 
+                  = @team.get_current_goggle_cup_at.get_full_name
             - if @meeting.has_start_list and !is_a_relay
               %td.goggles-rightalign
                 = '(' + t('meeting.entry_time') + ')'
@@ -28,9 +37,12 @@
                 %td.span1.goggles-rightalign
                   = mir.get_timing
                 %td.span1.goggles-rightalign
-                  = mir.get_formatted_standard_points
+                  = mir.get_formatted_standard_points(true)
                 %td.span1.goggles-rightalign
-                  = mir.get_formatted_individual_points
+                  = mir.get_formatted_individual_points(true)
+                - if has_goggle_cup
+                  %td.span2.goggles-rightalign
+                    = mir.get_formatted_goggle_cup_points(true)
                 - if @meeting.has_start_list
                   %td.span1.goggles-rightalign
                     - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
@@ -52,8 +64,10 @@
                 %td.goggles-rightalign
                   = mrr.get_timing
                 %td.goggles-rightalign
-                  = mrr.get_formatted_standard_points
+                  = mrr.get_formatted_standard_points(true)
                 %td.goggles-rightalign
-                  = mrr.get_formatted_meeting_points
+                  = mrr.get_formatted_meeting_points(true)
+                - if has_goggle_cup
+                  %td
 .row-fluid
   .span12
