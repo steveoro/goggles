@@ -471,11 +471,14 @@ class MeetingsController < ApplicationController
     )
 
     # Find out top scorer
-    @top_scores = []
+    @top_scores = {}
     if mir.has_points.count > 0
       GenderType.individual_only.each do |gender_type|
-        @top_scores << mir.for_gender_type( gender_type ).sort_by_standard_points.first if mir.for_gender_type( gender_type ).sort_by_standard_points.count > 0
+        @top_scores["#{gender_type.code}-standard_points"] = mir.for_gender_type( gender_type ).sort_by_standard_points.first if mir.for_gender_type( gender_type ).has_points.count > 0
       end
+    end
+    if mir.has_points('goggle_cup_points').count > 0
+      @top_scores["goggle_cup_points"] = mir.sort_by_goggle_cup.first
     end
 
     # Get a timestamp for the cache key:

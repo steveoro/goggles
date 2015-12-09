@@ -22,17 +22,17 @@
             = @team_ranks_1
           .span1
             = show_tag( @team_ranks_1>0, "medal_gold_3.png" )
-          - if @top_scores.size > 0
+          - if @top_scores['F-standard_points']
             .span2
-              = I18n.t( 'meeting_stats.best_score' ) + ' ' + @top_scores[0].gender_type.i18n_description
+              = I18n.t( 'meeting_stats.best_female_score' )
             .span2
-              = @top_scores[0].swimmer.get_full_name
+              = @top_scores['F-standard_points'].swimmer.get_full_name
             .span1
-              = @top_scores[0].get_event_type
+              = @top_scores['F-standard_points'].get_event_type
             .span1
-              = @top_scores[0].get_timing
+              = @top_scores['F-standard_points'].get_timing
             .span1
-              = @top_scores[0].standard_points.to_s
+              = @top_scores['F-standard_points'].standard_points.to_s
         .row-fluid
           .span3
             = I18n.t(:team_total_silver_medals, { scope: [:meeting] }) +':'
@@ -40,17 +40,17 @@
             = @team_ranks_2
           .span1
             = show_tag( @team_ranks_2>0, "medal_silver_3.png" )
-          - if @top_scores.size > 1
+          - if @top_scores['M-standard_points']
             .span2
-              = I18n.t( 'meeting_stats.best_score' ) + ' ' + @top_scores[1].gender_type.i18n_description
+              = I18n.t( 'meeting_stats.best_male_score' )
             .span2
-              = @top_scores[1].swimmer.get_full_name
+              = @top_scores['M-standard_points'].swimmer.get_full_name
             .span1
-              = @top_scores[1].get_event_type
+              = @top_scores['M-standard_points'].get_event_type
             .span1
-              = @top_scores[1].get_timing
+              = @top_scores['M-standard_points'].get_timing
             .span1
-              = @top_scores[1].standard_points.to_s
+              = @top_scores['M-standard_points'].standard_points.to_s
         .row-fluid
           .span3
             = I18n.t(:team_total_bronze_medals, { scope: [:meeting] }) +':'
@@ -58,6 +58,17 @@
             = @team_ranks_3
           .span1
             = show_tag( @team_ranks_3>0, "medal_bronze_3.png" )
+          - if @top_scores['goggle_cup_points']
+            .span2
+              = I18n.t( 'meeting_stats.best_score' ) + ' ' + @team.get_current_goggle_cup_name_at( @meeting.header_date)
+            .span2
+              = @top_scores['goggle_cup_points'].swimmer.get_full_name
+            .span1
+              = @top_scores['goggle_cup_points'].get_event_type
+            .span1
+              = @top_scores['goggle_cup_points'].get_timing
+            .span1
+              = @top_scores['goggle_cup_points'].goggle_cup_points.to_s
         .row-fluid
           .span3.right-align
             = I18n.t(:team_total_wooden_medals, { scope: [:meeting] }) +':'

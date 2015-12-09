@@ -66,7 +66,7 @@
               %tr
                 - if index == 0
                   %td.span2{'rowspan'=>@meeting_stats.best_standard_female_scores.count}
-                    = I18n.t( 'meeting_stats.best_female_score' )
+                    = I18n.t( 'meeting_stats.best_female_scores' )
                 %td.span1.goggles-rightalign
                   %b= mir.get_formatted_standard_points(true)
                 %td.span3
@@ -83,7 +83,7 @@
               %tr
                 - if index == 0
                   %td.span2{'rowspan'=>@meeting_stats.best_standard_male_scores.count}
-                    = I18n.t( 'meeting_stats.best_male_score' )
+                    = I18n.t( 'meeting_stats.best_male_scores' )
                 %td.span1.goggles-rightalign
                   %b= mir.get_formatted_standard_points(true)
                 %td.span3
@@ -101,7 +101,7 @@
                 %tr
                   - if index == 0
                     %td.span2{'rowspan'=>@meeting_stats.worst_standard_female_scores.count}
-                      = I18n.t( 'meeting_stats.worst_female_score' )
+                      = I18n.t( 'meeting_stats.worst_female_scores' )
                   %td.span1.goggles-rightalign
                     = mir.get_formatted_standard_points(true)
                   %td.span3
@@ -118,7 +118,7 @@
                 %tr
                   - if index == 0
                     %td.span2{'rowspan'=>@meeting_stats.worst_standard_male_scores.count}
-                      = I18n.t( 'meeting_stats.worst_male_score' )
+                      = I18n.t( 'meeting_stats.worst_male_scores' )
                   %td.span1.goggles-rightalign
                     = mir.get_formatted_standard_points(true)
                   %td.span3
