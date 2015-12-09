@@ -21,18 +21,30 @@ So:
 *(Refer to individual HOW-TO files for more info)*
 
     1. > ROLES=app cap ocean remote:maintenance_on
+
     2. > ROLES=app cap ocean db:remote:sql_dump
+
     3. Copy backup into repo (from backup dir to db/dump)
+
     4. Rebuild local prod DB:
         > zeus rake db:rebuild_from_dump from=production to=production
+
     5. Prod DB: manual DB update (toggle maintenance off, clear sessions...)
+
     6. Run migrations:
         > RAILS_ENV=production bundle exec rake db:migrate
+
     7. Diff apply (when required):
         > zeus rake db:diff_apply
+
+    7.1 Store meeting invitation in production (when required). For example:
+        > RAILS_ENV=production bundle exec rake db:store_meeting_invitation meeting_id=<meeting_id> file=<full_path_to_file> warm_up=14:15 begin=15:00 day_part=P
+
     8. Commit + Push
+
     9. DEPLOY:
         > ROLES=app cap ocean deploy
+
     10. Cache rebuild:
         > RAILS_ENV=production bundle exec rake cache:rebuild user_email=<user_email> user_pwd=<user_password>
 
