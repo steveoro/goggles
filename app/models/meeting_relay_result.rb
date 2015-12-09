@@ -132,6 +132,11 @@ class MeetingRelayResult < ActiveRecord::Base
   def get_meeting_program_verbose_name
     self.meeting_program ? self.meeting_program.get_meeting_program_verbose_name() : '?'
   end
+
+  # Retrieves the Meeting Program verbose name
+  def get_relay_name
+    self.relay_header && self.relay_header != '' ? self.relay_header : self.get_team_name
+  end
   # ----------------------------------------------------------------------------
 
 

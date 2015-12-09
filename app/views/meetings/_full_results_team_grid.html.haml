@@ -1,4 +1,4 @@
-- has_goggle_cup = @team.has_goggle_cup_at?
+- has_goggle_cup = @team.has_goggle_cup_at?( @meeting.header_date )
 .span10
   %div{'class'=>"goggles-category-gap"}
     %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -17,7 +17,7 @@
             - if has_goggle_cup
               %td.goggles-rightalign
                 - unless is_a_relay 
-                  = @team.get_current_goggle_cup_at.get_full_name
+                  = @team.get_current_goggle_cup_name_at( @meeting.header_date )
             - if @meeting.has_start_list and !is_a_relay
               %td.goggles-rightalign
                 = '(' + t('meeting.entry_time') + ')'
@@ -53,7 +53,7 @@
               - mrr = MeetingRelayResultDecorator.decorate( relay_result )
               %tr
                 %td
-                  = mrr.get_team_name
+                  %b= mrr.get_relay_name
                 %td
                   = mrr.gender_type.code
                   = '-'
@@ -69,5 +69,20 @@
                   = mrr.get_formatted_meeting_points(true)
                 - if has_goggle_cup
                   %td
+                - if mrr.meeting_relay_swimmers.count > 0
+                  - mrr.meeting_relay_swimmers.sort_by_order.each do |meeting_relay_swimmer|
+                    %tr
+                      %td.goggles-rightalign{'colspan'=>'3'}
+                        %i= "#{meeting_relay_swimmer.get_swimmer_name} (#{@meeting.header_date.year - meeting_relay_swimmer.swimmer.year_of_birth}) - #{meeting_relay_swimmer.get_stroke_type}"
+                      %td.goggles-rightalign
+                        = meeting_relay_swimmer.get_timing
+                      %td
+                      %td
+                      - if has_goggle_cup
+                        %td
+                      - if @meeting.has_start_list
+                        %td
+                        
+                  
 .row-fluid
   .span12

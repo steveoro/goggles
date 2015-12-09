@@ -104,6 +104,31 @@ describe Team, :type => :model do
         end
       end
     end
+
+    describe "#get_current_goggle_cup_name_at" do
+      it "responds to #get_current_goggle_cup_name_at" do
+        expect( subject ).to respond_to( :get_current_goggle_cup_name_at )
+      end
+      context "without parameters" do
+        it "returns a string" do
+          expect( subject.get_current_goggle_cup_name_at ).to be_an_instance_of( String )
+        end
+      end
+      context "with a date as parameter" do
+        it "returns a string" do
+          fix_date = Date.today
+          expect( subject.get_current_goggle_cup_name_at( fix_date ) ).to be_an_instance_of( String )
+        end
+        it "returns Ober Cup 2014 for CSI Ober Ferrari at 01-01-2014" do
+          fix_date = Date.parse("2014-01-01")
+          expect( subject.get_current_goggle_cup_name_at( fix_date ) ).to include( 'Ober Cup 2014' )
+        end
+        it "returns generic Goggle Cup for CSI Ober Ferrari at 01-01-1990" do
+          fix_date = Date.parse("1990-01-01")
+          expect( subject.get_current_goggle_cup_name_at( fix_date ) ).to eq( 'Goggle cup' )
+        end
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

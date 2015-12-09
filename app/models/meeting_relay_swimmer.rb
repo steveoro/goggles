@@ -46,6 +46,7 @@ class MeetingRelaySwimmer < ActiveRecord::Base
   scope :sort_by_swimmer_name,    ->(dir) { order("swimmer.last_name #{dir.to_s}, swimmer.first_name #{dir.to_s}") }
   scope :sort_by_badge,           ->(dir) { order("badge.number #{dir.to_s}") }
   scope :sort_by_stroke_type,     ->(dir) { order("stroke_type.code #{dir.to_s}") }
+  scope :sort_by_order,           ->(dir = 'ASC') { order("relay_order #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------

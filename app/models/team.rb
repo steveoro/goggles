@@ -103,6 +103,19 @@ class Team < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
+  # Returns the current goggle cup name if present
+  #
+  # params
+  # evaluation_date: the date the goggle cup should be current at (default today)
+  #
+  def get_current_goggle_cup_name_at( evaluation_date = Date.today )
+    goggle_cups.sort_goggle_cup_by_year('DESC').each do |goggle_cup|
+      return goggle_cup.get_full_name if goggle_cup.is_current_at?( evaluation_date )
+    end
+    'Goggle cup'
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.

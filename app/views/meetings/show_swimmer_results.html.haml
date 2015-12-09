@@ -1,7 +1,7 @@
 - team = @individual_result_list.first.team
 - team_id = team.id
 - team_name = team.get_full_name
-- has_goggle_cup = team.has_goggle_cup_at?
+- has_goggle_cup = team.has_goggle_cup_at?( @meeting.header_date )
 - event_list = []
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
@@ -48,7 +48,7 @@
               %i= I18n.t('meeting.meeting')
             - if has_goggle_cup 
               %td.goggles-centeralign
-                %i= team.get_current_goggle_cup_at.get_full_name
+                %i= team.get_current_goggle_cup_name_at( @meeting.header_date )
 
           - if @individual_result_list.size > 0
             - pool_type = @individual_result_list.first.pool_type
