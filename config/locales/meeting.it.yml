@@ -97,6 +97,7 @@ it:
     start_up_time: "Inizio"
     pool: "Piscina"
     federation: "Federazione"
+    scheduled_date: "Data"
 
   meeting_stats:
     females: "Femmine"
