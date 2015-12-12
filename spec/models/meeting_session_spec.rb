@@ -92,8 +92,8 @@ describe MeetingSession, :type => :model do
       ])
 
 
-      it_behaves_like( "date/time formatter method", :get_warm_up_time, :warm_up_time, /\d{1,2}\:\d{1,2}/, I18n.t(:not_available) )
-      it_behaves_like( "date/time formatter method", :get_begin_time, :begin_time, /\d{1,2}\:\d{1,2}/, I18n.t(:not_available) )
+      it_behaves_like( "date/time formatter method", :get_warm_up_time, :warm_up_time, /\d{1,2}\:\d{1,2}/, '' )
+      it_behaves_like( "date/time formatter method", :get_begin_time, :begin_time, /\d{1,2}\:\d{1,2}/, '' )
 
       describe "#get_scheduled_date" do
         it "returns a String instance" do

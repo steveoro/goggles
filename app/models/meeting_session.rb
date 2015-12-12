@@ -91,14 +91,14 @@ class MeetingSession < ActiveRecord::Base
   # If no warm_up time defined returns international 'nd'
   #
   def get_warm_up_time
-    warm_up_time ? Format.a_time(warm_up_time) : I18n.t( :not_available )
+    warm_up_time && Format.a_time(warm_up_time) != '00:00' ? Format.a_time(warm_up_time) : ''
   end
 
   # Retrieve the begin time for the session, if any
   # If no begin time defined returns international 'nd'
   #
   def get_begin_time
-    begin_time ? Format.a_time(begin_time) : I18n.t( :not_available )
+    begin_time && Format.a_time(begin_time) != '00:00' ? Format.a_time(begin_time) : ''
   end
   #-- -------------------------------------------------------------------------
   #++

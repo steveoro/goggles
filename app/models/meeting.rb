@@ -118,7 +118,8 @@ class Meeting < ActiveRecord::Base
     when EditionType::ROMAN_ID
       "#{edition.to_roman} #{description}"
     when EditionType::SEASON_ID
-      "#{description} #{season.get_full_name}"
+      #"#{description} #{season.get_full_name}"
+      "#{description} #{header_year}"
     when EditionType::YEAR_ID
       "#{description} #{header_year}"
     else
@@ -235,15 +236,23 @@ class Meeting < ActiveRecord::Base
   # list for this meeting.
   #
   def get_session_begin_times( separator = "\r\n" )
-    self.meeting_sessions.sort_by_order.map{ |ms| ms.get_begin_time }.join( separator )
+    self.meeting_sessions.sort_by_order.map{ |ms| ms.get_begin_time.empty? ? ms.get_day_part_type(:i18n_short) : ms.get_begin_time }.join( separator )
   end
   # ----------------------------------------------------------------------------
 
-  # Computes a short session warm-up schedule
-  # list for this meeting.
+  # Retrieves the first session swimming pool
+  # for this meeting.
+  #
+  def get_swimming_pool
+    self.meeting_sessions.sort_by_order.first.swimming_pool if self.meeting_sessions.count > 0 
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the first session pool type
+  # for this meeting.
   #
   def get_pool_type
-    self.meeting_sessions.sort_by_order.first.swimming_pool.pool_type
+    self.meeting_sessions.sort_by_order.first.swimming_pool.pool_type if self.meeting_sessions.count > 0 
   end
   # ----------------------------------------------------------------------------
 

@@ -73,17 +73,17 @@ class MeetingDecorator < Draper::Decorator
   # Else if the invititation is present the link should be to invitation
   # Otherwise returns the true name
   #
-  def get_linked_name
+  def get_linked_name( name_method = :get_short_name )
     if are_results_acquired
-      linked_name = h.link_to( get_short_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+      linked_name = h.link_to( object.send(name_method), meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
     else
       if has_start_list
-          linked_name = h.link_to( get_short_name, meeting_show_start_list_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') } )
+          linked_name = h.link_to( object.send(name_method), meeting_show_start_list_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') } )
       else
         if invitation
-          linked_name = h.link_to( get_short_name, meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
+          linked_name = h.link_to( object.send(name_method), meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
         else
-          linked_name = get_short_name
+          linked_name = object.send(name_method)
         end 
       end
     end    
@@ -91,4 +91,37 @@ class MeetingDecorator < Draper::Decorator
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+  # Computes a short session warm-up schedule in html mode
+  # using a new line for each session
+  #
+  def get_session_warm_up_times
+    object.get_session_warm_up_times('<br><br>').html_safe
+  end
+  # ----------------------------------------------------------------------------
+
+  # Computes a short session begin schedule in html mode
+  # using a new line for each session
+  #
+  def get_session_begin_times
+    object.get_session_begin_times('<br><br>').html_safe
+  end
+  # ----------------------------------------------------------------------------
+  
+  # Computes a short session event program in html mode
+  # using a new line for each session
+  #
+  def get_complete_events
+    #object.get_complete_events.split("\r\n").map{ |e| content_tag(:p, e) }.join().html_safe
+    object.get_complete_events.split("\r\n").join('<br><br>').html_safe
+  end
+  # ----------------------------------------------------------------------------
+
+  # Computes a description of the swimming pool
+  # with a link to the swimming pool page
+  #
+  def get_linked_swimming_pool( name_method = :get_verbose_name )
+    object.get_swimming_pool ? h.link_to( object.get_swimming_pool.send( name_method ), swimming_pool_path( object.get_swimming_pool ) ).html_safe : '?'
+  end
+  # ----------------------------------------------------------------------------
 end

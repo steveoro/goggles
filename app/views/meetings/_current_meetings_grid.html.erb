@@ -27,7 +27,7 @@
         attribute: 'description',
         detach_with_id: :flt_description
     ) do |meeting|
-    	meeting.decorate.get_linked_name
+    	meeting.decorate.get_linked_name( :get_full_name )
     end
 
     g.column(
@@ -46,17 +46,17 @@
         attribute: 'header_date',
         detach_with_id: :flt_header_date
     ) do |meeting|
-    	date_list = []
+    	session_date_list = []
     	session_date = ''
         meeting.get_session_dates.split("\r\n").each do |scheduled_date|
           if session_date != scheduled_date
-          	date_list << scheduled_date
+          	session_date_list << scheduled_date
             session_date = scheduled_date
           else
-          	date_list << ''
+          	session_date_list << ''
           end
         end
-        date_list.join('<br><br>').html_safe
+        session_date_list.join('<br><br>').html_safe
     end
 
     g.column(
@@ -64,7 +64,7 @@
         detach_with_id: :flt_warm_up,
         filter: false
     ) do |meeting|
-    	meeting.get_session_warm_up_times('<br><br>').html_safe
+    	meeting.decorate.get_session_warm_up_times
     end
 
     g.column(
@@ -72,7 +72,7 @@
         detach_with_id: :flt_start_up,
         filter: false
     ) do |meeting|
-    	meeting.get_session_begin_times('<br><br>').html_safe
+    	meeting.decorate.get_session_begin_times
     end
 
     g.column(
@@ -86,8 +86,7 @@
         ),
         detach_with_id: :flt_events_list
     ) do |meeting|
-        #meeting.get_complete_events.split("\r\n").map{ |e| content_tag(:p, e) }.join().html_safe
-        meeting.get_complete_events.split("\r\n").join('<br><br>').html_safe
+        meeting.decorate.get_complete_events
     end
 
     g.column(
