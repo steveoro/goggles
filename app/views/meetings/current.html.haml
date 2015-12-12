@@ -16,12 +16,12 @@
             = I18n.t('meeting_calendar.federation')
           .span10
             = grid_filter @meetings_grid, :flt_season_id
+        .row-fluid
+          .span2
+            = I18n.t('meeting_calendar.pool_type')
+          .span10
+            = grid_filter @meetings_grid, :flt_pool_type
         - if 1 == 2
-          .row-fluid
-            .span2
-              = I18n.t('meeting_calendar.pool_type')
-            .span10
-              = grid_filter @meetings_grid, :flt_pool_type
           .row-fluid
             .span2
               = I18n.t('meeting_calendar.meeting_program')
