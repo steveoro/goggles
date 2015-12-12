@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-describe SwimmingPoolDecorator, type: :model do
 
-  subject { SwimmingPool.find(1).decorate }
+describe SwimmingPoolDecorator, type: :model do
+  include Rails.application.routes.url_helpers
+
+  subject { SwimmingPool.find( ((rand * 50) % 50).to_i + 1 ).decorate }
 
   context "[implemented methods]" do
     it_behaves_like "(the existance of a method returning non-empty strings)", [
@@ -31,7 +33,7 @@ describe SwimmingPoolDecorator, type: :model do
       expect( subject.get_maps_url ).to include('maps/')
     end
     it "returns nil for a pool with no address" do
-      fix_pool = create(:swimming_pool, address: nil)
+      fix_pool = create(:swimming_pool, address: nil, city: nil)
       expect( fix_pool.decorate.get_maps_url ).to be_nil
     end
   end
@@ -47,6 +49,24 @@ describe SwimmingPoolDecorator, type: :model do
     it "returns a number between 0 and 10" do
       expect( subject.get_pool_lanes_number ).to be >= 0
       expect( subject.get_pool_lanes_number ).to be <= 10
+    end
+  end
+
+  describe "#get_linked_name" do
+    it "returns a string" do
+      expect( subject.get_linked_name ).to be_a_kind_of( String )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_name ).to include( 'href' )
+    end
+    it "returns an HTML link to the swimming pool path" do
+      expect( subject.get_linked_name ).to include( swimming_pool_path(id: subject.id) )
+    end
+    it "returns a string containing the swimming pool name" do
+      expect( subject.get_linked_name ).to include( ERB::Util.html_escape(subject.get_verbose_name) )
+    end
+    it "returns a string containing the swimming pool choosen type name" do
+      expect( subject.get_linked_name( :get_full_name ) ).to include( ERB::Util.html_escape(subject.get_full_name) )
     end
   end
 end

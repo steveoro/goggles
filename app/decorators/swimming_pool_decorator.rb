@@ -10,11 +10,12 @@
 
 =end
 class SwimmingPoolDecorator < Draper::Decorator
+  include Rails.application.routes.url_helpers
   delegate_all
 
   # Computes a verbose or formal description for the name associated with this data
   def get_verbose_name
-    "'#{get_full_name}', #{get_full_address}"
+    "'#{get_full_name}' #{get_pool_attributes}, #{get_full_address}"
   end
 
   # Retrieves just the city name
@@ -38,7 +39,7 @@ class SwimmingPoolDecorator < Draper::Decorator
   #
   def get_maps_url
     full_address = get_full_address
-    if full_address.size > 0
+    if full_address.size > 1
       full_address.gsub!(' ', '+')
       "https://www.google.com/maps/preview#!q=#{full_address}"
     else
@@ -90,4 +91,8 @@ class SwimmingPoolDecorator < Draper::Decorator
   end
   # ----------------------------------------------------------------------------
 
+  # Compute a swimming poll description with link to swimming pool path
+  def get_linked_name( name_method = :get_verbose_name )
+    h.link_to( self.send( name_method ), swimming_pool_path( id: object.id ) ).html_safe
+  end
 end

@@ -121,7 +121,7 @@ class MeetingDecorator < Draper::Decorator
   # with a link to the swimming pool page
   #
   def get_linked_swimming_pool( name_method = :get_verbose_name )
-    object.get_swimming_pool ? h.link_to( object.get_swimming_pool.send( name_method ), swimming_pool_path( object.get_swimming_pool ) ).html_safe : '?'
+    object.get_swimming_pool ? object.get_swimming_pool.decorate.get_linked_name( name_method ) : '?'
   end
   # ----------------------------------------------------------------------------
 end

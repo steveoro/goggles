@@ -82,14 +82,108 @@ describe MeetingDecorator, type: :model do
     it "responds to #get_linked_name method" do
       expect( subject ).to respond_to( :get_linked_name )
     end
-    it "returns an HTML link" do
-      expect( subject.get_linked_name ).to include( 'href' )
+
+    context "without parameters" do
+      it "returns an HTML link" do
+        expect( subject.get_linked_name ).to include( 'href' )
+      end
+      it "returns an HTML link to the meeting show full path" do
+        expect( subject.get_linked_name ).to include( meeting_show_full_path(id: subject.id) )
+      end
+      it "returns a string containing the meeting short name as default" do
+        expect( subject.get_linked_name ).to include( ERB::Util.html_escape(subject.get_short_name) )
+      end
     end
-    it "returns an HTML link to the meeting show full path" do
-      expect( subject.get_linked_name ).to include( meeting_show_full_path(id: subject.id) )
+
+    context "with get_short_name as parameter" do
+      it "returns an HTML link" do
+        expect( subject.get_linked_name( :get_short_name ) ).to include( 'href' )
+      end
+      it "returns an HTML link to the meeting show full path" do
+        expect( subject.get_linked_name( :get_short_name ) ).to include( meeting_show_full_path(id: subject.id) )
+      end
+      it "returns a string containing the meeting short name" do
+        expect( subject.get_linked_name( :get_short_name ) ).to include( ERB::Util.html_escape(subject.get_short_name) )
+      end
     end
-    it "returns a string containing the meeting short name" do
-      expect( subject.get_linked_name ).to include( ERB::Util.html_escape(subject.get_short_name) )
+
+    context "with :get_full_name as parameter" do
+      it "returns an HTML link" do
+        expect( subject.get_linked_name( :get_full_name ) ).to include( 'href' )
+      end
+      it "returns an HTML link to the meeting show full path" do
+        expect( subject.get_linked_name( :get_full_name ) ).to include( meeting_show_full_path(id: subject.id) )
+      end
+      it "returns a string containing the meeting short name" do
+        expect( subject.get_linked_name( :get_full_name ) ).to include( ERB::Util.html_escape(subject.get_full_name) )
+      end
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  
+  describe "#get_session_warm_up_times" do
+    it "responds to #get_session_warm_up_times method" do
+      expect( subject ).to respond_to( :get_session_warm_up_times )
+    end
+    it "returns a string" do
+      expect( subject.get_session_warm_up_times ).to be_a_kind_of( String )
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  
+  describe "#get_session_begin_times" do
+    it "responds to #get_session_begin_times method" do
+      expect( subject ).to respond_to( :get_session_begin_times )
+    end
+    it "returns a string" do
+      expect( subject.get_session_begin_times ).to be_a_kind_of( String )
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  
+  describe "#get_linked_swimming_pool" do
+    it "responds to #get_linked_swimming_pool" do
+      expect( subject ).to respond_to( :get_linked_swimming_pool )
+    end
+
+    context "meeting with defined swimming pool" do
+      it "returns a string" do
+        expect( subject.get_linked_swimming_pool ).to be_a_kind_of( String )
+      end
+      it "returns an HTML link" do
+        expect( subject.get_linked_swimming_pool ).to include( 'href' )
+      end
+      it "returns an HTML link to the swimming pool path" do
+        expect( subject.get_linked_swimming_pool ).to include( swimming_pool_path(id: subject.get_swimming_pool.id) )
+      end
+      it "returns a string containing the swimming pool name" do
+        expect( subject.get_linked_swimming_pool ).to include( ERB::Util.html_escape(subject.get_swimming_pool.get_full_name) )
+      end
+      it "returns a string containing the swimming pool choosen type name" do
+        expect( subject.get_linked_swimming_pool( :get_verbose_name ) ).to include( ERB::Util.html_escape(subject.get_swimming_pool.get_verbose_name) )
+      end
+    end
+
+    context "meeting without defined swimming pool" do
+      before :each do
+        @empty_meeting = create( :meeting ).decorate  
+      end
+      
+      it "returns a string" do
+        expect( @empty_meeting.get_linked_swimming_pool ).to be_a_kind_of( String )
+      end
+      it "returns an HTML link" do
+        expect( @empty_meeting.get_linked_swimming_pool ).to include( '?' )
+      end
+      it "returns an HTML link" do
+        expect( @empty_meeting.get_linked_swimming_pool ).not_to include( 'href' )
+      end
     end
   end
   #-- --------------------------------------------------------------------------

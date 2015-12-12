@@ -62,7 +62,7 @@
                   = meeting_session.events_list
                 - if index == 0
                   %td{ rowspan: session_number }
-                    = meeting_session.swimming_pool.decorate.get_city_and_attributes
+                    = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
 
 .row-fluid.goggles-category-gap#Remark
   %p
