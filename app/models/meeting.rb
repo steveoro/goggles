@@ -167,14 +167,13 @@ class Meeting < ActiveRecord::Base
 
   # Computes the shortest possible description for the list of all the events created
   # for this meeting.
+  # If sessions = 0 return 'to be defined'
+  # If sessions > 0 return a short description
   #
-  #TODO substitute with meeting_sessions appropriate methods
-  def get_short_events
-    events = self.meeting_events.includes(:event_type).joins(:event_type).collect{ |row| row.event_type.i18n_short }
-
-    # If events count = 0 give 'to be defined' description
-    if events.count > 0
-      events.join('--').gsub(' ','').gsub('--', ', ') # Make the list more readable
+  def get_short_events( separator = ', ' )
+    ms = self.meeting_sessions.sort_by_order
+    if ms.count > 0
+      ms.map{ |ms| ms.get_short_events( separator ) }.join( separator )
     else
       I18n.t('meeting.to_be_defined')
     end
@@ -182,33 +181,69 @@ class Meeting < ActiveRecord::Base
 
   # Computes the complete list of all the meeting events
   # with session informations.
+  # If sessions = 0 return 'to be defined'
+  # If sessions > 0 return a description for each session
   #
-  #TODO substitute with meeting_sessions appropriate methods
-  def get_complete_events
-    ms = self.meeting_sessions
-    complete_desc = ""
-    # If sessions = 0 return 'to be defined'
-    # If sessions = 1 return a short description of events
-    # If sessions > 1 return a complete description for each session
-    if ms.count > 1
-      ms.each { |session|
-        # Create a description for each session
-        event_list_desc = session.meeting_events.includes(:event_type)
-          .joins(:event_type)
-          .collect{ |row|
-            row.event_type.i18n_short if row.event_type
-        }.join('-').gsub(' ','')
-        complete_desc += "#{ session.day_part_type.i18n_short }: " if session.day_part_type
-        complete_desc += "#{ event_list_desc }\r\n"
-      }
-      complete_desc
+  def get_complete_events( separator = ', ' )
+    ms = self.meeting_sessions.sort_by_order
+    if ms.count > 0
+      ms.map{ |ms| ms.get_short_events( separator ) }.join("\r\n")
     else
-      if ms.count == 1
-        self.get_short_events
-      else
-        I18n.t('meeting.to_be_defined')
-      end
+      I18n.t('meeting.to_be_defined')
     end
+  end
+  # ----------------------------------------------------------------------------
+
+  # Computes the shortest session scheduled dates
+  # list for this meeting without duplicated entries.
+  # If sessions = 0 return 'to be defined'
+  # If sessions > 0 return a short list
+  #
+  def get_short_dates( separator = ', ' )
+    ms = self.meeting_sessions.sort_by_order
+    if ms.count > 0
+      ms.map{ |ms| ms.get_scheduled_date }.uniq.join( separator )
+    else
+      I18n.t('meeting.to_be_defined')
+    end
+  end
+
+  # Computes a short session scheduled dates
+  # list for this meeting.
+  # If sessions = 0 return 'to be defined'
+  # If sessions > 0 return a short list
+  #
+  def get_session_dates( separator = "\r\n" )
+    ms = self.meeting_sessions.sort_by_order
+    if ms.count > 0
+      ms.map{ |ms| ms.get_scheduled_date }.join( separator )
+    else
+      I18n.t('meeting.to_be_defined')
+    end
+  end
+  # ----------------------------------------------------------------------------
+
+  # Computes a short session warm-up schedule
+  # list for this meeting.
+  #
+  def get_session_warm_up_times( separator = "\r\n" )
+    self.meeting_sessions.sort_by_order.map{ |ms| ms.get_warm_up_time }.join( separator )
+  end
+  # ----------------------------------------------------------------------------
+
+  # Computes a short session warm-up schedule
+  # list for this meeting.
+  #
+  def get_session_begin_times( separator = "\r\n" )
+    self.meeting_sessions.sort_by_order.map{ |ms| ms.get_begin_time }.join( separator )
+  end
+  # ----------------------------------------------------------------------------
+
+  # Computes a short session warm-up schedule
+  # list for this meeting.
+  #
+  def get_pool_type
+    self.meeting_sessions.sort_by_order.first.swimming_pool.pool_type
   end
   # ----------------------------------------------------------------------------
 

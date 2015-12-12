@@ -8,20 +8,26 @@
       .accordion-inner
         .row-fluid
           .span2
-            = I18n.t(:description)
+            = I18n.t('meeting_calendar.meeting')
           .span10
             = grid_filter @meetings_grid, :flt_description
         .row-fluid
           .span2
-            = I18n.t(:season, { scope: [:activerecord, :models] })
+            = I18n.t('meeting_calendar.federation')
           .span10
             = grid_filter @meetings_grid, :flt_season_id
-        .row-fluid
-          .span2
-            = I18n.t('meeting.planned_events')
-          .span10
-            .ui-widget
-              = grid_filter @meetings_grid, :flt_events_list
+        - if 1 == 2
+          .row-fluid
+            .span2
+              = I18n.t('meeting_calendar.pool_type')
+            .span10
+              = grid_filter @meetings_grid, :flt_pool_type
+          .row-fluid
+            .span2
+              = I18n.t('meeting_calendar.meeting_program')
+            .span10
+              .ui-widget
+                = grid_filter @meetings_grid, :flt_events_list
         .row-fluid
           .span12
             .external-buttons

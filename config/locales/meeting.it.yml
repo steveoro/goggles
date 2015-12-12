@@ -98,6 +98,9 @@ it:
     pool: "Piscina"
     federation: "Federazione"
     scheduled_date: "Data"
+    pool_type: "Vasca"
+    meeting: "Meeting"
+    meeting_program: "Programma gare"
 
   meeting_stats:
     females: "Femmine"

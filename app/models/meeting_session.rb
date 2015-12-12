@@ -61,22 +61,21 @@ class MeetingSession < ActiveRecord::Base
   # Eg MNG: 200SL, 100FA, 50DO, 4x50MX
   #
   def get_short_name
-    "#{get_scheduled_date} #{get_day_part_type(:i18n_short)}: #{get_short_events}"
+    "#{get_day_part_type(:i18n_short)}: #{get_short_events}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part and event list
-  # Eg 25/05/2014 MORNING: 200SL, 100FA, 50DO, 4x50MX
+  # Eg 25/05/2014 MORNING: 200SL, 100FA, 50DO, 4x50MX FINALS
   #
   def get_full_name
     "#{get_scheduled_date} #{get_day_part_type}: #{get_short_events} #{description}"
   end
 
   # Computes a full description for the meeting session comprehensive of date, day part, time schedule and event list
-  # Eg 25/05/2014 MORNING (8.30) 9.30: 200SL, 100FA, 50DO, 4x50MX
+  # Eg 25/05/2014 - 9.30[8.30]: 200SL, 100FA, 50DO, 4x50MX FINALS
   #
   def get_verbose_name
-    #"#{get_meeting_verbose_name} (#{session_order} @ #{Format.a_date( self.scheduled_date )})"
-    "#{get_scheduled_date} #{get_day_part_type} (#{get_warm_up_time}) #{get_begin_time}: #{get_short_events} #{description}"
+    "#{get_scheduled_date} -  #{get_day_part_type} #{get_begin_time}[#{get_warm_up_time}]: #{get_short_events} #{description}"
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -178,15 +177,15 @@ class MeetingSession < ActiveRecord::Base
   # E.g.: 200FS, 100BF, 50BS, 4x50IM
   #
   def get_event_types
-    meeting_events ? meeting_events.includes(:event_type).joins(:event_type).map{ |row| row.event_type } : []
+    meeting_events ? meeting_events.sort_by_order.includes(:event_type).joins(:event_type).map{ |row| row.event_type } : []
   end
 
-  # Retrieves the meeting event list, each as a comma-separated short description.
+  # Retrieves the meeting event list, each as a customizable separated short description.
   # E.g.: '200FS, 100BF, 50BS, 4x50IM'
   # Returns an empty string for no event list.
   #
-  def get_short_events
-    get_event_types.map{ |event_type| event_type.i18n_short }.join(', ')
+  def get_short_events( separator = ', ')
+    get_event_types.map{ |event_type| event_type.i18n_compact }.join( separator )
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -32,6 +32,7 @@ class MeetingEvent < ActiveRecord::Base
                   :meeting_session_id, :event_type_id, :heat_type_id, :has_separate_gender_start_list,
                   :has_separate_category_start_list, :user_id
 
+  scope :sort_by_order,    ->(dir = 'ASC') { order("event_order #{dir.to_s}") }
 
   # ----------------------------------------------------------------------------
   # Base methods:

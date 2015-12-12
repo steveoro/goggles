@@ -98,6 +98,9 @@ en:
     pool: "Swimming Pool"
     federation: "Federation"
     scheduled_date: "Date"
+    pool_type: "Pool"
+    meeting: "Meeting"
+    meeting_program: "Programma gare"
 
   meeting_stats:
     females: "Females"

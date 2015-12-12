@@ -57,6 +57,17 @@ class EventType < ActiveRecord::Base
     end
   end
 
+  # Computes a localized shorter description for the value/code associated with this data
+  def i18n_compact
+    if self.is_a_relay
+      relay_name = I18n.t( (self.is_mixed_gender ? :mixed_relay_short : :relay_short), { scope: [:relay_types] } )
+      "#{ self.phases }x#{ self.phase_length_in_meters }#{ self.stroke_type.i18n_short(true) } " +
+      ( self.partecipants != self.phases ? "(#{relay_name}/#{self.partecipants})" : "(#{relay_name})" )
+    else
+      "#{self.length_in_meters}#{self.stroke_type_i18n_short}"
+    end
+  end
+
   # Computes a localized description for the value/code associated with this data
   def i18n_description
     if self.is_a_relay

@@ -11,7 +11,7 @@
     g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
 
     g.column(
-        name: I18n.t(:season, { scope: [:activerecord, :models] }),
+        name: I18n.t('meeting_calendar.federation'),
         attribute: 'season_id',
         custom_filter: Season.to_dropdown( "(end_date >= '#{@start_date}') AND (end_date <= '#{@end_date}')" ),
         detach_with_id: :flt_season_id
@@ -23,31 +23,60 @@
     end
 
     g.column(
+        name: I18n.t('meeting_calendar.meeting'),
+        attribute: 'description',
+        detach_with_id: :flt_description
+    ) do |meeting|
+    	meeting.decorate.get_linked_name
+    end
+
+    g.column(
+        name: I18n.t('meeting_calendar.pool_type'),
+        #attribute: 'pool_type_id',
+        #model: :swimming_pool,
+        #custom_filter: PoolType.only_for_meetings.to_dropdown,
+        detach_with_id: :flt_pool_type
+    ) do |meeting|
+    	[ meeting.swimming_pools.first.pool_type.code,
+    		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.count > 0
+    end
+
+    g.column(
         name: I18n.t('meeting_calendar.scheduled_date'),
         attribute: 'header_date',
         detach_with_id: :flt_header_date
     ) do |meeting|
-        link_to_if(
-            meeting.has_invitation,
-            meeting.header_date,
-            meeting_show_invitation_path( id: meeting.id )
-        )
+    	date_list = []
+    	session_date = ''
+        meeting.get_session_dates.split("\r\n").each do |scheduled_date|
+          if session_date != scheduled_date
+          	date_list << scheduled_date
+            session_date = scheduled_date
+          else
+          	date_list << ''
+          end
+        end
+        date_list.join('<br><br>').html_safe
     end
 
     g.column(
-        name: I18n.t(:description),
-        attribute: 'description',
-        detach_with_id: :flt_description
+        name: I18n.t('meeting_calendar.warm_up_time'),
+        detach_with_id: :flt_warm_up,
+        filter: false
     ) do |meeting|
-        link_to_if(
-            meeting.are_results_acquired,
-            meeting.description,
-            meeting_show_full_path( id: meeting.id, team_id: @preselected_team_id, swimmer_id: @preselected_swimmer_id )
-        )
+    	meeting.get_session_warm_up_times('<br><br>').html_safe
     end
 
     g.column(
-        name: I18n.t('meeting.events_list'),
+        name: I18n.t('meeting_calendar.start_up_time'),
+        detach_with_id: :flt_start_up,
+        filter: false
+    ) do |meeting|
+    	meeting.get_session_begin_times('<br><br>').html_safe
+    end
+
+    g.column(
+        name: I18n.t('meeting_calendar.meeting_program'),
         attribute: 'id',
         allow_multiple_selection: false,
         custom_filter: Meeting.to_dropdown(
@@ -57,17 +86,14 @@
         ),
         detach_with_id: :flt_events_list
     ) do |meeting|
-        link_to_if(
-        	meeting.has_start_list,
-        	meeting.get_complete_events.split("\r\n").map{ |e| content_tag(:p, e) }.join().html_safe,
-        	meeting_show_start_list_path( id: meeting.id, team_id: @preselected_team_id, swimmer_id: @preselected_swimmer_id )
-        )
+        #meeting.get_complete_events.split("\r\n").map{ |e| content_tag(:p, e) }.join().html_safe
+        meeting.get_complete_events.split("\r\n").join('<br><br>').html_safe
     end
 
     g.column(
         name: I18n.t('meeting_calendar.pool'),
-        attribute: 'id',
-        detach_with_id: :flt_swimming_pool
+        detach_with_id: :flt_swimming_pool,
+        filter: false
     ) do |meeting|
     	link_to( meeting.swimming_pools.first.get_verbose_name, swimming_pool_path(meeting.swimming_pools.first) ) if meeting.swimming_pools.count > 0
     end 
