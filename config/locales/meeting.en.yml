@@ -101,6 +101,7 @@ en:
     pool_type: "Pool"
     meeting: "Meeting"
     meeting_program: "Programma gare"
+    season: "Season"
 
   meeting_stats:
     females: "Females"

@@ -101,6 +101,7 @@ it:
     pool_type: "Vasca"
     meeting: "Meeting"
     meeting_program: "Programma gare"
+    season: "Stagione"
 
   meeting_stats:
     females: "Femmine"
