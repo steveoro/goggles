@@ -129,7 +129,7 @@ class MeetingsController < ApplicationController
     # Initialize the grid:
     @meetings_grid = initialize_grid(
       Meeting,
-      include: [:season, :season_type],
+      include: [:season, :season_type, :meeting_sessions, :swimming_pools],
       conditions: { id: ids },
       order: 'meetings.header_date',
       order_direction: 'asc',
@@ -171,7 +171,7 @@ class MeetingsController < ApplicationController
     # Initialize the grid:
     @meetings_grid = initialize_grid(
       Meeting,
-      include: [:season, :season_type],
+      include: [:season, :season_type, :meeting_sessions, :swimming_pools],
       conditions: ids ? { id: ids } : nil,
       order: 'meetings.header_date',
       order_direction: 'asc',

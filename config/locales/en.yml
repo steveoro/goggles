@@ -148,18 +148,6 @@ en:
     week_training: "Last week trainings"
     last_traininge: "Last training"
 
-  goggle_cup:
-    rank: "Rank"
-    total: "Total"
-    average: "Average"
-    max: "Max"
-    min: "Min"
-    count: "Count"
-    winner: "Winner"
-    second_placed: "Second placed"
-    third_placed: "Third placed"
-    send_us_your_goggle_cups: "Do You want to check out how's going your internal Team Championship? Define a new custom Goggle-Cup just for You and your Team! ...Contact us to know how! It's free! :-)"
-
   misc_main_menu:
     title: "Misc"
     caledar: "Calendar"
