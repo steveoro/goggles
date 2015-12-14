@@ -72,6 +72,7 @@
 
     g.column(
         name: I18n.t('meeting_calendar.meeting_program'),
+        # TODO Filter by meeting events
     ) do |meeting|
         meeting.decorate.get_complete_events
     end

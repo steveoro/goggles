@@ -1,0 +1,27 @@
+it:
+  goggle_cup:
+    rank: "Rank"
+    total: "Total"
+    average: "Average"
+    max: "Max"
+    min: "Min"
+    count: "Count"
+    winner: "Winner"
+    second_placed: "Second placed"
+    third_placed: "Third placed"
+    send_us_your_goggle_cups: "Do You want to check out how's going your internal Team Championship? Define a new custom Goggle-Cup just for You and your Team! ...Contact us to know how! It's free! :-)"
+
+    presentation:
+      part1: " is the master internal championship, consisting in an unique ranking without gender or age distintions."
+      part2: "The score attribution system has been thought to evaluate not the absolute performance, but the performance related to each personal standard."
+      part3: "So the winner will be the one who will be able to enhance his standards."
+      part4: "If you want to know more about evaluation method see the rules below."
+
+    rules:
+      part1: "At the Master {GOGGLE_CUP_NAME} will partecipate all {TEAM_NAME} team masters who has swam at least one meeting in the current seasons."
+      part2: "The ranking of {GOGGLE_CUP_NAME} is obtained calculating a millesimal score for each event sawm by each master and than considering the {MAX_PERFORMANCE} best performance, not reguarding event type, pool type or season type."
+      part3: "Each event score evaluation has done considering the millesimal swam time in relation to the athlete standard time."
+      part4: "A questo punteggio, in funzione dell'età viene aggiunto un eventuale bonus (un punto percentuale ogni 5 anni a partire dal cinquantesimo anno di età)."
+      part5: "La tabella dei tempi base viene calcolata prendendo, per ciascuna specialità di ciascun atleta distinta per tipo di vasca, la migliore prestazione, ottenuta nella stagione precedente. In mancanza di risultati utili nella stagione precedente, la miglior prestazione viene ricercata a ritroso nelle stagioni passate partendo dalle più recenti."
+      part6: "Il sistema è pensato per premiare il miglioramento rispetto alla stagione precedente o, dove non possibile, alle stagioni più recenti disponibili. In questo modo replicando in gara i tempi dell'anno precedente si ottengono {MAX_POINTS} punti, migliorandoli si ottengono più di {MAX_POINTS} punti e, viceversa, peggiornadoli si ottengono meno di {MAX_POINTS} punti."
+      part7: "Se un atleta disputa una specialità che non ha mai tentato in passato, ottiene d'ufficio i {MAX_POINTS} punti ed il tempo realizzato viene inserito immediatamente nella tabella dei tempi base diventando il nuovo riferimento per le future gare della stagione." 

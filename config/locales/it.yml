@@ -148,18 +148,6 @@ it:
     week_training: "Ultima settimana"
     last_training: "Ultimo allenamento"
 
-  goggle_cup:
-    rank: "Pos"
-    total: "Totale"
-    average: "Media"
-    max: "Max"
-    min: "Min"
-    count: "Gare"
-    winner: "Vincitore"
-    second_placed: "Secondo classificato"
-    third_placed: "Terzo classificato"
-    send_us_your_goggle_cups: "Vuoi controllare qui come sta andando il tuo campionato interno di Squadra? Definisci una tua Goggle-Cup personalizzata! ...Contattaci per sapere come fare! E' gratis! :-)"
-
   misc_main_menu:
     title: "Varie"
     caledar: "Calendario"

@@ -1,5 +1,14 @@
 = render( partial: 'tabs_and_radio_title' )
 
+.row-fluid#goggle_cup_presentation
+  .offset1.span10
+    %p
+      %b= @goggle_cup.get_full_name
+      = I18n.t('goggle_cup.presentation.part1')
+      = I18n.t('goggle_cup.presentation.part2')
+      = I18n.t('goggle_cup.presentation.part3')
+      = I18n.t('goggle_cup.presentation.part4')
+
 - if @goggle_cup
   .row-fluid#goggle_cup_grid
     .offset1.span10
@@ -42,3 +51,17 @@
 - else
   .row-fluid
     %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
+
+.row-fluid
+  .offset1.span10
+.row-fluid#goggle_cup_rules
+  .offset1.span10
+    %h3= I18n.t('goggle_cup.rules_title')
+    %p
+      = I18n.t('goggle_cup.rules.part1').gsub('{GOGGLE_CUP_NAME}', @goggle_cup.get_full_name).gsub('{TEAM_NAME}', @team.get_full_name)
+      = I18n.t('goggle_cup.rules.part2').gsub('{GOGGLE_CUP_NAME}', @goggle_cup.get_full_name).gsub('{MAX_PERFORMANCE}', @goggle_cup.max_performance.to_s)
+      = I18n.t('goggle_cup.rules.part3')
+      = I18n.t('goggle_cup.rules.part4')
+      = I18n.t('goggle_cup.rules.part5').gsub('{MAX_POINTS}', @goggle_cup.max_points.to_s)
+      = I18n.t('goggle_cup.rules.part6').gsub('{MAX_POINTS}', @goggle_cup.max_points.to_s)
+      = I18n.t('goggle_cup.rules.part7').gsub('{MAX_POINTS}', @goggle_cup.max_points.to_s)
