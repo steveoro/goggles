@@ -2,7 +2,7 @@ require 'date'
 
 
 =begin
-  
+
 = Format module
 
   - version:  3.00.12.20120204
@@ -162,7 +162,7 @@ module Format
       fval.gsub!(/[.]/, float_point_char) if ( float_point_char != '.')
       fval
     else
-      value.to_s.gsub(/[;]/,' -')                   # Avoid nil values and sanitize text for CSV format (with separator ';') parsing 
+      value.to_s.gsub(/[;]/,' -')                   # Avoid nil values and sanitize text for CSV format (with separator ';') parsing
     end
   end
   # ---------------------------------------------------------------------------
@@ -220,6 +220,11 @@ module Format
         return DateTime.now.strftime(str_format)
       end
     end
+  end
+
+  # Formats a date using the default ISO format of "year-mon-day" ("%Y-%m-%d").
+  def self.a_iso_date( datetime_value )
+    Format.any_datetime( datetime_value, "%Y-%m-%d" )
   end
 
   # Formats a date using a default format of "day-mon-year" ("%d-%m-%Y").

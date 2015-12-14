@@ -6,7 +6,8 @@ class Api::V1::RecordsController < ApplicationController
   respond_to :json
 
   before_filter :ensure_format
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns a JSON-encoded Array of all the IndividualRecord found, filtered by
@@ -27,7 +28,6 @@ class Api::V1::RecordsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
-
   # Returns a JSON-encoded Array of all the IndividualRecord found, filtered by
   # FederationType#id.
   # Returned rows will be 'global' records (not for teams, nor swimmers or seasons).
@@ -46,7 +46,6 @@ class Api::V1::RecordsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
-
   # Returns a JSON-encoded Hash of all the IndividualRecord found, filtered by
   # Team#id.
   # Returned rows will have is_team_record = true.
@@ -63,7 +62,6 @@ class Api::V1::RecordsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   # Returns a JSON-encoded Hash of all the IndividualRecord found, filtered by
   # Swimmer#id and collected by looping on all MeetingIndividualResult.
@@ -90,7 +88,6 @@ class Api::V1::RecordsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   # Counts the records for each federation/season_type for a specified Swimmer.
   #
@@ -135,4 +132,6 @@ class Api::V1::RecordsController < ApplicationController
       return
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -9,7 +9,8 @@ class Api::V1::NewsFeedsController < ApplicationController
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
   before_filter :ensure_format
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns the unread news feed for a specific user.
@@ -21,8 +22,8 @@ class Api::V1::NewsFeedsController < ApplicationController
     news_feed = NewsFeed.unread.where( user_id: params[:id] )
     render json: news_feed
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Creates a news-feed row for a specific user.
   # (JSON format) POST-only action.
@@ -38,8 +39,8 @@ class Api::V1::NewsFeedsController < ApplicationController
     end
     render json: NewsFeed.create(news_feed_attrs).to_json
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Deletes a specific news-feed row.
   # (JSON format) DELETE-only action.
@@ -55,8 +56,8 @@ class Api::V1::NewsFeedsController < ApplicationController
       render( status: 422, json: { success: false } )
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Toggles as read a specific news-feed row.
   # (JSON format) PUT-only action.
@@ -74,7 +75,8 @@ class Api::V1::NewsFeedsController < ApplicationController
     end
     render( status: 422, json: { success: false } )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   protected
@@ -87,4 +89,6 @@ class Api::V1::NewsFeedsController < ApplicationController
       return
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -77,7 +77,8 @@ class Api::V1::SessionsController < Devise::SessionsController
       render( status: 401, json: { success: false, message: I18n.t(:invalid_user) } )
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Log-out from an API session.
@@ -100,7 +101,7 @@ class Api::V1::SessionsController < Devise::SessionsController
 
     # Fetch params
     user = User.find_for_database_authentication( authentication_token: params[:user_token] )
-   
+
     if user.nil?
       render( status: 404, json: { success: false, message: I18n.t(:invalid_token) } )
     else
@@ -110,6 +111,6 @@ class Api::V1::SessionsController < Devise::SessionsController
       render( status: :ok, json: { success: true, message: I18n.t(:log_out_successful) } )
     end
   end
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -18,7 +18,8 @@ class Api::V1::SearchController < ApplicationController
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
   before_filter :ensure_format
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # "Simple search" implementation: searches for the query text in all the main

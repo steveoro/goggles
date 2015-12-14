@@ -127,6 +127,7 @@ Goggles::Application.routes.draw do
       get "meeting/show_team_results/:id",      to: "meetings#show_team_results",       as: "meeting_show_team_results"
       get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
       get "meeting/show_autoscroll/:id",        to: "meetings#show_autoscroll",         as: "meeting_show_autoscroll"
+      get "meeting/edit_passages/:id",          to: "meetings#edit_passages",           as: "meeting_edit_passages"
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

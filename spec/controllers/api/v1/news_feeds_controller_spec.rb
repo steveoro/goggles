@@ -39,7 +39,8 @@ describe Api::V1::NewsFeedsController, :type => :controller do
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[POST create/:news_feed]' do
@@ -49,19 +50,19 @@ describe Api::V1::NewsFeedsController, :type => :controller do
       @news_feed = NewsFeed.new( attributes_for(:news_feed, user_id: @user.id) ).attributes.to_json
     end
 
-    context "with a non-JSON request" do
+    context "with a non-JSON request," do
       it "refuses the request" do
         post :create, news_feed: @news_feed, user_email: @user.email, user_token: @user.authentication_token
         expect(response.status).to eq( 406 )
       end
-      it "doesn't add a news feed" do
+      it "doesn't add a new row" do
         expect {
           post :create, news_feed: @news_feed, user_email: @user.email, user_token: @user.authentication_token
-        }.not_to change{ NewsFeed.count } 
+        }.not_to change{ NewsFeed.count }
       end
     end
 
-    context "with a non valid news_feed parameter" do
+    context "with a non valid news_feed parameter," do
       before :each do
         @invalid_news_feed = NewsFeed.new( attributes_for(:news_feed, user_id: @user.id, title: nil, id: nil) ).attributes.to_json
       end
@@ -75,14 +76,14 @@ describe Api::V1::NewsFeedsController, :type => :controller do
         expect( result ).to be_an_instance_of(Hash)
         expect( result['id'] ).to be_nil
       end
-      it "doesn't add a news feed" do
+      it "doesn't add a new row" do
         expect {
           post :create, format: :json, news_feed: @invalid_news_feed, user_email: @user.email, user_token: @user.authentication_token
-        }.not_to change{ NewsFeed.count } 
+        }.not_to change{ NewsFeed.count }
       end
     end
 
-    context "with valid parameters and credentials" do
+    context "with valid parameters and credentials," do
       it "handles successfully the request" do
         post :create, format: :json, news_feed: @news_feed, user_email: @user.email, user_token: @user.authentication_token
         expect(response.status).to eq( 200 )
@@ -93,14 +94,15 @@ describe Api::V1::NewsFeedsController, :type => :controller do
         expect( result ).to be_an_instance_of(Hash)
         expect( result['id'] > 0 ).to be true
       end
-      it "adds a news-feed row" do
+      it "adds a new row" do
         expect {
           post :create, format: :json, news_feed: @news_feed, user_email: @user.email, user_token: @user.authentication_token
         }.to change{ NewsFeed.count }.by(1)
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[PUT read/:id]' do
@@ -119,7 +121,7 @@ describe Api::V1::NewsFeedsController, :type => :controller do
         expect {
           put :read, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
           @news_feed.reload
-        }.not_to change{ @news_feed.is_read } 
+        }.not_to change{ @news_feed.is_read }
       end
     end
 
@@ -153,7 +155,8 @@ describe Api::V1::NewsFeedsController, :type => :controller do
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[DELETE destroy/:id]' do
@@ -171,7 +174,7 @@ describe Api::V1::NewsFeedsController, :type => :controller do
       it "doesn't delete the news feed" do
         expect {
           delete :destroy, id: @news_feed.id, user_email: @user.email, user_token: @user.authentication_token
-        }.not_to change{ NewsFeed.count } 
+        }.not_to change{ NewsFeed.count }
       end
     end
 
@@ -209,5 +212,6 @@ describe Api::V1::NewsFeedsController, :type => :controller do
       end
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 end

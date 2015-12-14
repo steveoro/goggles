@@ -10,7 +10,8 @@ class Api::V1::TeamsController < ApplicationController
   before_filter :authenticate_user!, except: [:current_swimmers]   # Devise "standard" HTTP log-in strategy
 #  before_filter :authenticate_admin!, only: [:current_swimmers]
   before_filter :ensure_format
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Return the number of meetings attended by a Team instance
@@ -43,7 +44,6 @@ class Api::V1::TeamsController < ApplicationController
     end
   end
 
-
   # Combines both methods above to return a composed string
   # Usage: count_details_team_path( id: team_id_to_be_searched )
   #
@@ -65,7 +65,6 @@ class Api::V1::TeamsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-
 
   # Returns the JSON array of all the Swimmers found for the specified Team id.
   # (The JSON array contains all the swimmers found for all the badges, indipendently
@@ -103,7 +102,8 @@ class Api::V1::TeamsController < ApplicationController
     end
     respond_with( @teams )
   end
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns a JSON-encoded hash of the specified row data.
   # The keys of the Hash are the attributes as string.
@@ -114,7 +114,8 @@ class Api::V1::TeamsController < ApplicationController
   def show
     respond_with( @team = Team.find(params[:id]) )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   protected
@@ -127,4 +128,6 @@ class Api::V1::TeamsController < ApplicationController
       return
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

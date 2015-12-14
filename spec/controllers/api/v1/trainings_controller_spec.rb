@@ -8,7 +8,7 @@ describe Api::V1::TrainingsController, :type => :controller do
   end
 
 
-  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "swimmers" )
+  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "trainings" )
 
 
   describe '[GET trainings/index]' do

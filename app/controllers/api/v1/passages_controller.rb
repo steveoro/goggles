@@ -1,7 +1,7 @@
 #
 # RESTful API controller
 #
-class Api::V1::UserTrainingStoriesController < ApplicationController
+class Api::V1::PassagesController < ApplicationController
 
   respond_to :json
 
@@ -12,22 +12,24 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
-  # Returns a JSON-encoded Array of all the rows.
+  # Returns a JSON-encoded Array of all the selected rows.
   # Each array element is a JSON-encoded hash of a single row.
   # The keys of the Hash are the attributes as string.
   #
   # === Additional params:
-  # - 'swam_date_like':    a matching (sub)string for the UserTrainingStory.:swam_date
+  # - meeting_id: the Meeting.id for passage filtering
+  # - team_id:    the Team.id for passage filtering
   #
   def index
-    # (This uses Squeel DSL syntax for where clauses)
-    if params[:swam_date_like]
-      filter = "%#{params[:swam_date_like]}%"
-      @user_training_story = UserTrainingStory.where{ swam_date.like filter }.order('swam_date DESC', 'updated_at DESC')
+    if params[:meeting_id] && params[:team_id]
+      @passages = Passage.includes(:team, :meeting).where(
+        'meetings.id' => params[:meeting_id],
+        'teams.id' => params[:team_id]
+      ).to_a
     else
-      @user_training_story = UserTrainingStory.order('swam_date DESC', 'updated_at DESC')
+      @passages = []
     end
-    respond_with( @user_training_story )
+    respond_with( @passages )
   end
 
 
@@ -39,7 +41,7 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # - 'name_like': a matching (sub)string for the Team.name
   #
   def show
-    respond_with( @user_training_story = UserTrainingStory.find(params[:id]) )
+    respond_with( @passage = Passage.find(params[:id]) )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -48,10 +50,10 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # (JSON format) POST-only action.
   #
   # === Params:
-  # - :user_training_story => the attributes for the row to be created.
+  # - :passage => the attributes for the row to be created.
   #
   def create
-    respond_with( @user_training_story = UserTrainingStory.create(params[:user_training_story]) )
+    respond_with( @passage = Passage.create(params[:passage]) )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -60,10 +62,10 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # The keys of the Hash are the attributes as string.
   #
   # === Params:
-  # - id: the UserTrainingStory.id
+  # - id: the Passage.id
   #
   def edit
-    respond_with( @user_training_story = UserTrainingStory.find(params[:id]) )
+    respond_with( @passage = Passage.find(params[:id]) )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -75,8 +77,8 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # - id: the id of the row to be updated.
   #
   def update
-    row = UserTrainingStory.find_by_id( params[:id] )
-    is_ok = row && row.update_attributes( params[:user_training_story] )
+    row = Passage.find_by_id( params[:id] )
+    is_ok = row && row.update_attributes( params[:passage] )
     render( status: (is_ok ? :ok : 400), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------
@@ -89,7 +91,7 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # - id: the id of the row to be deleted.
   #
   def destroy
-    row = UserTrainingStory.find_by_id( params[:id] )
+    row = Passage.find_by_id( params[:id] )
     is_ok = row && row.destroy
     render( status: (is_ok ? :ok : 422), json: { success: is_ok } )
   end

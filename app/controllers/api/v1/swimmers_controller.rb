@@ -6,8 +6,8 @@ class Api::V1::SwimmersController < ApplicationController
   respond_to :json
 
   before_filter :ensure_format
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns a JSON-encoded Array of all the rows.
   # Each array element is a JSON-encoded hash of a single row.
@@ -18,7 +18,7 @@ class Api::V1::SwimmersController < ApplicationController
   #
   def index
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:complete_name_like]                           
+    if params[:complete_name_like]
       filter = "%#{params[:complete_name_like]}%"
       @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name)
     else
@@ -26,7 +26,8 @@ class Api::V1::SwimmersController < ApplicationController
     end
     respond_with( @swimmers )
   end
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns a JSON-encoded hash of the specified row data.
   # The keys of the Hash are the attributes as string.
@@ -37,7 +38,8 @@ class Api::V1::SwimmersController < ApplicationController
   def show
     respond_with( @swimmer = Swimmer.find(params[:id]) )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   protected
@@ -50,4 +52,6 @@ class Api::V1::SwimmersController < ApplicationController
       return
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

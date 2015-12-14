@@ -6,8 +6,8 @@ class Api::V1::TrainingsController < ApplicationController
   respond_to :json
 
   before_filter :ensure_format
-  # ---------------------------------------------------------------------------
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns a JSON-encoded Array of all the rows.
   # Each array element is a JSON-encoded hash of a single row.
@@ -18,15 +18,16 @@ class Api::V1::TrainingsController < ApplicationController
   #
   def index
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:title_like]                           
+    if params[:title_like]
       filter = "%#{params[:title_like]}%"
-      @trainings = Training.where{ title.like filter }.order(:title)
+      @trainings = Training.where{ title.like filter }.order('updated_at DESC', 'title')
     else
       @trainings = Training.order(:title)
     end
     respond_with( @trainings )
   end
-
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Returns a JSON-encoded hash of the specified row data.
   # The keys of the Hash are the attributes as string.
@@ -37,7 +38,8 @@ class Api::V1::TrainingsController < ApplicationController
   def show
     respond_with( @training = Training.find(params[:id]) )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   protected
@@ -50,4 +52,6 @@ class Api::V1::TrainingsController < ApplicationController
       return
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

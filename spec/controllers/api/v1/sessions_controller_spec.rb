@@ -33,13 +33,14 @@ describe Api::V1::SessionsController, :type => :controller do
         expect( result['success'] ).to eq( false )
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "with valid credentials" do
       before :each do
         get :create, format: :json, user_email: @user.email, user_password: @user.password
         expect(response.status).to eq( 200 )
-        @result = JSON.parse(response.body) 
+        @result = JSON.parse(response.body)
       end
 
       it "handles successfully the request" do
@@ -55,7 +56,8 @@ describe Api::V1::SessionsController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
 
@@ -87,7 +89,8 @@ describe Api::V1::SessionsController, :type => :controller do
         expect( result['success'] ).to eq( false )
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "with valid credentials" do
       before :each do
@@ -107,5 +110,6 @@ describe Api::V1::SessionsController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 end
