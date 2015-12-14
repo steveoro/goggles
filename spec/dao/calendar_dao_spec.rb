@@ -30,12 +30,12 @@ describe CalendarDAO, type: :model do
     end
     describe "#warm_up_time" do
       it "is the warm_up_time of the session specified for the construction" do
-        expect( Format.a_time(subject.warm_up_time) ).to eq( Format.a_time(meeting_session.warm_up_time) )
+        expect( Format.a_time(subject.warm_up_time) ).to eq( Format.a_time(meeting_session.get_warm_up_time) )
       end
     end
     describe "#begin_time" do
       it "is the begin_time of the session specified for the construction" do
-        expect( Format.a_time(subject.begin_time) ).to eq( Format.a_time(meeting_session.begin_time) )
+        expect( Format.a_time(subject.begin_time) ).to eq( Format.a_time(meeting_session.get_begin_time) )
       end
     end
     describe "#events_list" do
