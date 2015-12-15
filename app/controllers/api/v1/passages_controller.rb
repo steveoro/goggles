@@ -33,12 +33,11 @@ class Api::V1::PassagesController < ApplicationController
   end
 
 
-  # Returns a JSON-encoded Array of all the rows.
-  # Each array element is a JSON-encoded hash of a single row.
+  # Returns a JSON-encoded Hash with the attributes defined for the selected row.
   # The keys of the Hash are the attributes as string.
   #
   # === Additional params:
-  # - 'name_like': a matching (sub)string for the Team.name
+  # - id: the Passage.id
   #
   def show
     respond_with( @passage = Passage.find(params[:id]) )
@@ -92,7 +91,8 @@ class Api::V1::PassagesController < ApplicationController
   #
   def destroy
     row = Passage.find_by_id( params[:id] )
-    is_ok = row && row.destroy
+    # Keep in mind that destroy will return the destroyed row if it successful:
+    is_ok = ( row && row.destroy ? true : false )
     render( status: (is_ok ? :ok : 422), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------

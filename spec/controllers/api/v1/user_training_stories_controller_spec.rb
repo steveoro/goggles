@@ -5,14 +5,17 @@ require 'common/format'
 describe Api::V1::UserTrainingStoriesController, :type => :controller do
   before(:all) do # Force the creation of the required rows:
     @user = FactoryGirl.create( :user )
-    @user_training_story = FactoryGirl.create( :user_training_story, swam_date: Format.a_iso_date(Date.today), user_id: @user.id )
+    @fixture_row = FactoryGirl.create( :user_training_story, swam_date: Format.a_iso_date(Date.today), user_id: @user.id )
   end
 
   before(:each) do
     @request.env["devise.mapping"] = Devise.mappings[:user]
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "user_training_stories" )
+
 
   describe 'GET #index' do
     context "with :swam_date_like filtering parameter" do
@@ -24,7 +27,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
 
       it "returns at least a match with the created fixture" do
         result = JSON.parse(response.body)
-        expect( result.first['id'] ).to eq( @user_training_story.id )
+        expect( result.map{|h| h['id']} ).to include( @fixture_row.id )
       end
     end
 
@@ -40,7 +43,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
   describe 'GET #show/:id' do
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        get :show, format: :json, id: @user_training_story.id
+        get :show, format: :json, id: @fixture_row.id
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
@@ -125,7 +128,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
   describe 'GET #edit/:id' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :edit, id: @user_training_story.id, user_email: @user.email, user_token: @user.authentication_token
+        get :edit, id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 406 ) # 406 = not acceptable
       end
@@ -133,7 +136,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        get :edit, format: :json, id: @user_training_story.id
+        get :edit, format: :json, id: @fixture_row.id
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
@@ -141,7 +144,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
 
     context "with valid parameters and credentials" do
       before(:each) do
-        get :edit, id: @user_training_story.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :edit, id: @fixture_row.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
       it "handles successfully the request" do
         expect( response ).to be_a_success # 200 = success
@@ -149,7 +152,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
       it "returns a JSON hash representing the requested instance" do
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
-        expect( result['id'] ).to eq( @user_training_story.id )
+        expect( result['id'] ).to eq( @fixture_row.id )
       end
     end
   end
@@ -229,6 +232,81 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
         expect( @updatable_row.total_training_time ).not_to eq( @put_attributes[:total_training_time] )
         @updatable_row.reload
         expect( @updatable_row.total_training_time ).to eq( @put_attributes[:total_training_time] )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[DELETE destroy/:id]' do
+    before :each do
+      @deletable_row = FactoryGirl.create( :user_training_story, user_id: @user.id )
+    end
+
+    context "with a non-JSON request" do
+      before(:each) do
+        delete :destroy, id: @deletable_row.id, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "refuses the request" do
+        expect( response ).not_to be_a_success
+        expect(response.status).to eq( 406 ) # 406 = not acceptable
+      end
+      it "returns a false 'success' status flag" do
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( false )
+      end
+      it "doesn't delete the specified row" do
+        @deletable_row.reload
+        expect( @deletable_row.destroyed? ).to be false
+      end
+    end
+
+    context "with a valid request but for an unlogged user," do
+      before(:each) do
+        delete :destroy, format: :json, id: @deletable_row.id
+      end
+      it "refuses the request with unauthorized status" do
+        expect( response ).not_to be_a_success
+        expect(response.status).to eq( 401 ) # 401 = unauthorized
+      end
+      it "doesn't delete the specified row" do
+        @deletable_row.reload
+        expect( @deletable_row.destroyed? ).to be false
+      end
+    end
+
+    context "with a not existing id and valid credentials" do
+      before(:each) do
+        delete :destroy, format: :json, id: 0, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "handles the request with 'unprocessable entity' error result (422)" do
+        expect( response ).not_to be_a_success
+        expect(response.status).to eq( 422 ) # 422 = unprocessable entity
+      end
+      it "returns a JSON result of 'success' as false" do
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( false )
+      end
+      it "doesn't delete the specified row" do
+        @deletable_row.reload
+        expect( @deletable_row.destroyed? ).to be false
+      end
+    end
+
+    context "with an existing id and valid credentials" do
+      before(:each) do
+        delete :destroy, format: :json, id: @deletable_row.id, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true" do
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( true )
+      end
+      it "deletes the specified row" do
+        expect( UserTrainingStory.find_by_id( @deletable_row.id ) ).to be nil
       end
     end
   end

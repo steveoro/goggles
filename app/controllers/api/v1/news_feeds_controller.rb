@@ -25,40 +25,6 @@ class Api::V1::NewsFeedsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
-  # Creates a news-feed row for a specific user.
-  # (JSON format) POST-only action.
-  #
-  # === Params:
-  # - :news_feed => the news_feed attributes for the row to be created.
-  #
-  def create
-    begin
-      news_feed_attrs = params[:news_feed] ? JSON.parse(params[:news_feed]) : nil
-    rescue
-      news_feed_attrs = nil
-    end
-    render json: NewsFeed.create(news_feed_attrs).to_json
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Deletes a specific news-feed row.
-  # (JSON format) DELETE-only action.
-  #
-  # === Params:
-  # - id: the NewsFeed.id to be deleted.
-  #
-  def destroy
-    news_feed = NewsFeed.find_by_id( params[:id] )
-    if news_feed && news_feed.destroy
-      render( status: :ok, json: { success: true } )
-    else
-      render( status: 422, json: { success: false } )
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
   # Toggles as read a specific news-feed row.
   # (JSON format) PUT-only action.
   #
@@ -74,6 +40,21 @@ class Api::V1::NewsFeedsController < ApplicationController
       end
     end
     render( status: 422, json: { success: false } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Deletes a specific news-feed row.
+  # (JSON format) DELETE-only action.
+  #
+  # === Params:
+  # - id: the NewsFeed.id to be deleted.
+  #
+  def destroy
+    row = NewsFeed.find_by_id( params[:id] )
+    # Keep in mind that destroy will return the destroyed row if it successful:
+    is_ok = ( row && row.destroy ? true : false )
+    render( status: (is_ok ? :ok : 422), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------
   #++

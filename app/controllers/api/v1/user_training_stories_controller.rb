@@ -17,7 +17,7 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # The keys of the Hash are the attributes as string.
   #
   # === Additional params:
-  # - 'swam_date_like':    a matching (sub)string for the UserTrainingStory.:swam_date
+  # - 'swam_date_like': a matching (sub)string for the UserTrainingStory.swam_date
   #
   def index
     # (This uses Squeel DSL syntax for where clauses)
@@ -31,12 +31,11 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   end
 
 
-  # Returns a JSON-encoded Array of all the rows.
-  # Each array element is a JSON-encoded hash of a single row.
+  # Returns a JSON-encoded Hash with the attributes defined for the selected row.
   # The keys of the Hash are the attributes as string.
   #
   # === Additional params:
-  # - 'name_like': a matching (sub)string for the Team.name
+  # - id: the UserTrainingStory.id
   #
   def show
     respond_with( @user_training_story = UserTrainingStory.find(params[:id]) )
@@ -90,7 +89,8 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   #
   def destroy
     row = UserTrainingStory.find_by_id( params[:id] )
-    is_ok = row && row.destroy
+    # Keep in mind that destroy will return the destroyed row if it successful:
+    is_ok = ( row && row.destroy ? true : false )
     render( status: (is_ok ? :ok : 422), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------

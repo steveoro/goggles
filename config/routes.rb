@@ -30,12 +30,11 @@ Goggles::Application.routes.draw do
 
       # === News Feeds ===
       get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"
-      post   "news_feed/create/:news_feed",   to: "news_feeds#create",      as: "news_feed_create"
       put    "news_feed/read/:id",            to: "news_feeds#read",        as: "news_feed_read"
       delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
 
       # === Records ===
-      get    "records/for_federation/:id",    to: "records#for_federation", as: "records_ffor_federation"
+      get    "records/for_federation/:id",    to: "records#for_federation", as: "records_for_federation"
       get    "records/for_season_type/:id",   to: "records#for_season_type",as: "records_for_season_type"
       get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
       get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
@@ -59,8 +58,9 @@ Goggles::Application.routes.draw do
       get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
 
       # TODO extract and enlist only the actual routes used:
-      resources :user_trainings         #, only: 'json_list'
-      resources :user_training_stories
+      resources :user_trainings, except: [:new]
+      resources :user_training_stories, except: [:new]
+      resources :passages, except: [:new]
     end
   end
 
