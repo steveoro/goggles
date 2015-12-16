@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'common/format'
 
 
-describe Api::V1::UserTrainingStoriesController, :type => :controller do
+describe Api::V1::UserTrainingsController, :type => :controller do
   before(:all) do # Force the creation of the required rows:
     @user = FactoryGirl.create( :user )
-    @fixture_row = FactoryGirl.create( :user_training_story, swam_date: Format.a_iso_date(Date.today), user_id: @user.id )
+    @fixture_row = FactoryGirl.create( :user_training, user_id: @user.id )
   end
 
   before(:each) do
@@ -14,13 +14,13 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "user_training_stories" )
+  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "user_trainings" )
 
 
   describe 'GET #index' do
-    context "with :swam_date_like filtering parameter" do
+    context "with :user_id filtering parameter" do
       before(:each) do
-        get :index, swam_date_like: Format.a_iso_date(Date.today), format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, user_id: @user.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
@@ -53,71 +53,71 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
   #++
 
 
-  describe 'POST #create/:user_training_story' do
-    let(:post_attributes) { FactoryGirl.attributes_for(:user_training_story, user_id: @user.id) }
+  describe 'POST #create/:user_training' do
+    let(:post_attributes) { FactoryGirl.attributes_for(:user_training, user_id: @user.id) }
 
     context "with a non-JSON request," do
       it "refuses the request" do
-        post :create, user_training_story: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, user_training: post_attributes, user_email: @user.email, user_token: @user.authentication_token
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 406 ) # 406 = not acceptable
       end
       it "doesn't add a new row" do
         expect {
-          post :create, user_training_story: post_attributes, user_email: @user.email, user_token: @user.authentication_token
-        }.not_to change{ UserTrainingStory.count }
+          post :create, user_training: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        }.not_to change{ UserTraining.count }
       end
     end
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        post :create, format: :json, user_training_story: post_attributes
+        post :create, format: :json, user_training: post_attributes
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
       it "doesn't add a new row" do
         expect {
-          post :create, format: :json, user_training_story: post_attributes
-        }.not_to change{ UserTrainingStory.count }
+          post :create, format: :json, user_training: post_attributes
+        }.not_to change{ UserTraining.count }
       end
     end
 
     context "with non-valid attributes," do
-      let(:invalid_post_attributes) { FactoryGirl.attributes_for(:user_training_story, user_id: @user.id, total_training_time: nil) }
+      let(:invalid_post_attributes) { FactoryGirl.attributes_for(:invalid_user_training) }
 
-      it "handles successfully the request" do
-        post :create, format: :json, user_training_story: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+      it "refuses the request" do
+        post :create, format: :json, user_training: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 422 )
       end
       it "returns a valid JSON Hash with a nil 'id' member" do
-        post :create, format: :json, user_training_story: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, user_training: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
         expect( result['id'] ).to be_nil
       end
       it "doesn't add a new row" do
         expect {
-          post :create, format: :json, user_training_story: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
-        }.not_to change{ UserTrainingStory.count }
+          post :create, format: :json, user_training: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        }.not_to change{ UserTraining.count }
       end
     end
 
     context "with a valid request and credentials" do
       it "handles successfully the request" do
-        post :create, format: :json, user_training_story: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, user_training: post_attributes, user_email: @user.email, user_token: @user.authentication_token
         expect(response.status).to eq( 201 ) # 201 = created
       end
       it "returns a valid JSON Hash with a valid, positive, 'id' member" do
-        post :create, format: :json, user_training_story: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, user_training: post_attributes, user_email: @user.email, user_token: @user.authentication_token
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
         expect( result['id'] > 0 ).to be true
       end
       it "adds a new row" do
         expect {
-          post :create, format: :json, user_training_story: post_attributes, user_email: @user.email, user_token: @user.authentication_token
-        }.to change{ UserTrainingStory.count }.by(1)
+          post :create, format: :json, user_training: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        }.to change{ UserTraining.count }.by(1)
       end
     end
   end
@@ -162,14 +162,14 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
 
   describe 'PUT #update/:id' do
     before(:all) do # Force the creation of the required rows:
-      @updatable_row = FactoryGirl.create( :user_training_story, user_id: @user.id, total_training_time: 91 )
-      @put_attributes = FactoryGirl.attributes_for(:user_training_story, user_id: @user.id, total_training_time: 123)
-      @invalid_put_attributes = FactoryGirl.attributes_for(:user_training_story, user_id: @user.id, total_training_time: nil)
+      @updatable_row = FactoryGirl.create( :user_training, user_id: @user.id )
+      @put_attributes = FactoryGirl.attributes_for(:user_training, user_id: @user.id, description: "Another description (UPDATED)")
+      @invalid_put_attributes = FactoryGirl.attributes_for(:invalid_user_training)
     end
 
     context "with a non-JSON request," do
       before(:each) do
-        put :update, id: @updatable_row.id, user_training_story: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
+        put :update, id: @updatable_row.id, user_training: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
       end
       it "refuses the request" do
         expect( response ).not_to be_a_success
@@ -181,13 +181,13 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
       end
       it "doesn't update the existing row" do
         @updatable_row.reload
-        expect( @updatable_row.total_training_time ).not_to eq( @put_attributes[:total_training_time] )
+        expect( @updatable_row.description ).not_to eq( @put_attributes[:description] )
       end
     end
 
     context "with a valid request but for an unlogged user," do
       before(:each) do
-        put :update, format: :json, id: @updatable_row.id, user_training_story: @put_attributes
+        put :update, format: :json, id: @updatable_row.id, user_training: @put_attributes
       end
       it "refuses the request with unauthorized status" do
         expect( response ).not_to be_a_success
@@ -195,16 +195,16 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
       end
       it "doesn't update the existing row" do
         @updatable_row.reload
-        expect( @updatable_row.total_training_time ).not_to eq( @put_attributes[:total_training_time] )
+        expect( @updatable_row.description ).not_to eq( @put_attributes[:description] )
       end
     end
 
     context "with non-valid attributes," do
       before(:each) do
-        put :update, format: :json, id: @updatable_row.id, user_training_story: @invalid_put_attributes, user_email: @user.email, user_token: @user.authentication_token
+        put :update, format: :json, id: @updatable_row.id, user_training: @invalid_put_attributes, user_email: @user.email, user_token: @user.authentication_token
       end
       it "refuses the request" do
-        expect( response ).not_to be_a_success # 400 = bad request
+        expect( response ).not_to be_a_success
         expect(response.status).to eq( 400 ) # 400 = bad request
       end
       it "returns a false 'success' status flag" do
@@ -213,13 +213,13 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
       end
       it "doesn't update the existing row" do
         @updatable_row.reload
-        expect( @updatable_row.total_training_time ).not_to eq( @invalid_put_attributes[:total_training_time] )
+        expect( @updatable_row.description ).not_to eq( @invalid_put_attributes[:description] )
       end
     end
 
     context "with a valid request and credentials" do
       before(:each) do
-        put :update, format: :json, id: @updatable_row.id, user_training_story: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
+        put :update, format: :json, id: @updatable_row.id, user_training: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
       end
       it "handles successfully the request" do
         expect( response ).to be_a_success # 200 = success
@@ -229,9 +229,9 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
         expect( result['success'] ).to eq( true )
       end
       it "updates the existing row" do
-        expect( @updatable_row.total_training_time ).not_to eq( @put_attributes[:total_training_time] )
+        expect( @updatable_row.description ).not_to eq( @put_attributes[:description] )
         @updatable_row.reload
-        expect( @updatable_row.total_training_time ).to eq( @put_attributes[:total_training_time] )
+        expect( @updatable_row.description ).to eq( @put_attributes[:description] )
       end
     end
   end
@@ -241,7 +241,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
 
   describe '[DELETE destroy/:id]' do
     before :each do
-      @deletable_row = FactoryGirl.create( :user_training_story, user_id: @user.id )
+      @deletable_row = FactoryGirl.create( :user_training, user_id: @user.id )
     end
 
     context "with a non-JSON request" do
@@ -306,7 +306,7 @@ describe Api::V1::UserTrainingStoriesController, :type => :controller do
         expect( result['success'] ).to eq( true )
       end
       it "deletes the specified row" do
-        expect( UserTrainingStory.find_by_id( @deletable_row.id ) ).to be nil
+        expect( UserTraining.find_by_id( @deletable_row.id ) ).to be nil
       end
     end
   end

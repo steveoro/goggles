@@ -4,6 +4,15 @@ require 'ffaker'
 
 FactoryGirl.define do
 
+  # [Steve, 20151215] => WARNING: <=
+  #
+  #    *** THIS FACTORY REQUIRES A FULL MIR TO CREATE VALID INSTANCES ***
+  #
+  # To create single and valid passages, either pass an existing MIR (with
+  # a valid swimmer and team) or create a new one from scratch with:
+  #
+  #     create( :meeting_individual_result_with_passages ).passages.first
+  #
   factory :passage do
     meeting_individual_result
     meeting_program           { meeting_individual_result.meeting_program }
