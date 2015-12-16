@@ -7,7 +7,6 @@ describe Api::V1::PassagesController, type: :controller, api: true do
     @user = FactoryGirl.create( :user )
     mir = FactoryGirl.create( :meeting_individual_result_with_passages )
     @fixture_row = mir.passages.first
-#    @fixture_row = FactoryGirl.create( :passage, user_id: @user.id )
   end
 
   before(:each) do
@@ -16,13 +15,20 @@ describe Api::V1::PassagesController, type: :controller, api: true do
   #-- -------------------------------------------------------------------------
   #++
 
-  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "passages" )
-
 
   describe 'GET #index' do
-    context "with :user_id filtering parameter" do
-      before(:each) do
-        get :index, user_id: @user.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+    context "with a non-JSON request" do
+      before :each do
+        get :index, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "refuses the request" do
+        expect(response.status).to eq( 406 )
+      end
+    end
+
+    context "with valid parameters and credentials" do
+      before :each do
+        get :index, team_id: @fixture_row.team_id, meeting_id: @fixture_row.meeting.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
@@ -35,7 +41,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        get :index, format: :json
+        get :index, team_id: @fixture_row.team_id, meeting_id: @fixture_row.meeting.id, format: :json
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
@@ -43,6 +49,29 @@ describe Api::V1::PassagesController, type: :controller, api: true do
   end
 
   describe 'GET #show/:id' do
+    context "with a non-JSON request" do
+      before :each do
+        get :show, id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "refuses the request" do
+        expect(response.status).to eq( 406 )
+      end
+    end
+
+    context "with valid parameters and credentials" do
+      before :each do
+        get :show, id: @fixture_row.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+      end
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON hash representing the requested instance" do
+        result = JSON.parse(response.body)
+        expect( result ).to be_an_instance_of(Hash)
+        expect( result['id'] ).to eq( @fixture_row.id )
+      end
+    end
+
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
         get :show, format: :json, id: @fixture_row.id
@@ -57,7 +86,6 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
   describe 'POST #create/:passage' do
     let(:post_attributes) do
-#      FactoryGirl.attributes_for(:passage, user_id: @user.id)
       mir = FactoryGirl.create( :meeting_individual_result_with_passages )
       mir.passages.first.attributes
     end
@@ -90,9 +118,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with non-valid attributes," do
       let(:invalid_post_attributes) do
-#        FactoryGirl.attributes_for( :passage, user_id: @user.id, meeting_program_id: nil, team_id: nil )
         mir = FactoryGirl.create( :meeting_individual_result_with_passages )
-        mir.passages.first.attributes.reject{|k,v| k == :meeting_program }
+        mir.passages.first.attributes.reject{|k,v| k.to_s == 'meeting_program' }
       end
 
       it "handles successfully the request" do
@@ -172,12 +199,10 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
   describe 'PUT #update/:id' do
     before(:all) do # Force the creation of the required rows:
-#      @updatable_row = FactoryGirl.create( :passage, user_id: @user.id )
       mir = FactoryGirl.create( :meeting_individual_result_with_passages )
       @updatable_row = mir.passages.first
-#      @put_attributes = FactoryGirl.build( :passage, user_id: @user.id, position: @updatable_row.position+1 )
       @put_attributes = mir.passages.last.attributes
-      @invalid_put_attributes = @put_attributes.reject{|k,v| k == :meeting_program }
+      @invalid_put_attributes = @put_attributes.reject{|k,v| k.to_s == 'meeting_program' }
     end
 
     context "with a non-JSON request," do
@@ -194,8 +219,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
       end
       it "doesn't update the existing row" do
         @updatable_row.reload
-        expect( @updatable_row.position ).not_to eq( @put_attributes[:position] )
-        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes[:hundreds_from_start] )
+        expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
+        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
       end
     end
 
@@ -209,8 +234,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
       end
       it "doesn't update the existing row" do
         @updatable_row.reload
-        expect( @updatable_row.position ).not_to eq( @put_attributes[:position] )
-        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes[:hundreds_from_start] )
+        expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
+        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
       end
     end
 
@@ -228,8 +253,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
       end
       it "doesn't update the existing row" do
         @updatable_row.reload
-        expect( @updatable_row.position ).not_to eq( @put_attributes[:position] )
-        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes[:hundreds_from_start] )
+        expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
+        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
       end
     end
 
@@ -245,11 +270,11 @@ describe Api::V1::PassagesController, type: :controller, api: true do
         expect( result['success'] ).to eq( true )
       end
       it "updates the existing row" do
-        expect( @updatable_row.position ).not_to eq( @put_attributes[:position] )
-        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes[:hundreds_from_start] )
+        expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
+        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
         @updatable_row.reload
-        expect( @updatable_row.position ).to eq( @put_attributes[:position] )
-        expect( @updatable_row.hundreds_from_start ).to eq( @put_attributes[:hundreds_from_start] )
+        expect( @updatable_row.position ).to eq( @put_attributes['position'] )
+        expect( @updatable_row.hundreds_from_start ).to eq( @put_attributes['hundreds_from_start'] )
       end
     end
   end
@@ -261,7 +286,6 @@ describe Api::V1::PassagesController, type: :controller, api: true do
     before :each do
       mir = FactoryGirl.create( :meeting_individual_result_with_passages )
       @deletable_row = mir.passages.first
-#      @deletable_row = FactoryGirl.create( :passage, user_id: @user.id )
     end
 
     context "with a non-JSON request" do
