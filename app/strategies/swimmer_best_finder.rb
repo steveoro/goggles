@@ -9,6 +9,7 @@ require 'wrappers/timing'
 # @version  4.00.837
 #
 class SwimmerBestFinder
+  include SqlConvertable
 
   # These can be edited later on:
   attr_accessor :swimmer 
@@ -117,6 +118,63 @@ class SwimmerBestFinder
     @swimmer.meeting_individual_results.for_meeting_editions( meeting ).for_pool_type( pool_type ).for_event_type( event_type ).is_not_disqualified.count > 0 ?
       @swimmer.meeting_individual_results.for_meeting_editions( meeting ).for_pool_type( pool_type ).for_event_type( event_type ).is_not_disqualified.sort_by_timing('ASC').first.get_timing_instance :
       nil
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Reset the personal best indicator (set to false)
+  # for the swimmer given event by pool type
+  #
+  # Parameters
+  # event by pool type
+  #
+  def reset_personal_best( event_by_pool_type )
+    sql_attributes = {}
+    @swimmer.meeting_individual_results.for_event_by_pool_type(event_by_pool_type).is_personal_best.select( :id ).each do |mir_id|
+      mir = MeetingIndividualResult.find( mir_id )
+      mir.is_personal_best = false
+      mir.save
+      sql_attributes['is_personal_best'] = mir.is_personal_best
+      sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n" )
+    end
+  end
+  
+  # Set the personal best indicator to true
+  # for the swimmer given event by pool type
+  #
+  # Parameters
+  # event by pool type
+  #
+  # Returns
+  # Best timing or nil
+  #
+  def set_personal_best( event_by_pool_type )
+    sql_attributes = {}
+    if @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.count > 0
+      mir_id = @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.sort_by_timing( :asc ).first.id
+      mir = MeetingIndividualResult.find( mir_id )
+      mir.is_personal_best = true
+      mir.save
+      sql_attributes['is_personal_best'] = mir.is_personal_best
+      sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n" )
+      mir.get_timing_instance
+    end
+  end
+  
+  # Scan events by pool type
+  # for finding out swimmer personal bests 
+  #
+  # Returns
+  # Swimmer personal bests found number
+  #
+  def scan_for_personal_bests
+    create_sql_diff_header( "Scanning swimmer #{@swimmer.get_full_name} for personal bests" )
+    EventsByPoolType.not_relays.each do |event_by_pool_type|
+      self.reset_personal_best( event_by_pool_type )
+      self.set_personal_best( event_by_pool_type )
+    end
+    create_sql_diff_footer( "Swimmer #{@swimmer.get_full_name}: #{@swimmer.meeting_individual_results.is_personal_best.count} personal bests found" )
+    @swimmer.meeting_individual_results.is_personal_best.count
   end
   #-- --------------------------------------------------------------------------
   #++

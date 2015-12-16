@@ -266,6 +266,89 @@ describe SwimmerBestFinder, type: :strategy do
       end
     end
     #-- -----------------------------------------------------------------------
+
+    describe "#reset_personal_best," do
+      it "clears personal best" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        fix_sbf.reset_personal_best( fix_event_by_pool_type )
+        expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to eq( 0 )
+      end
+      it "clears personal best already set" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        fix_sbf.set_personal_best( fix_event_by_pool_type )
+        expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to be > 0
+        fix_sbf.reset_personal_best( fix_event_by_pool_type )
+        expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to eq( 0 )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#set_personal_best," do
+      it "returns a timing instance if event already swam" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        expect( fix_sbf.set_personal_best( fix_event_by_pool_type ) ).to be_an_instance_of( Timing )
+      end
+      it "sets personal best flag if event already swam" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        fix_sbf.reset_personal_best( fix_event_by_pool_type )
+        expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to eq( 0 )
+        fix_sbf.set_personal_best( fix_event_by_pool_type )
+        expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to be > 0
+      end
+      # Assumes Leega didn't ever swam 3000 in 25 pool.
+      # If he will swim it... not change the spec, but, please, heal Leega
+      it "returns nil if event not already swam" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '3000SL')
+        expect( fix_sbf.set_personal_best( fix_event_by_pool_type ) ).to be_nil        
+      end
+      it "returns a time swam if swam before or nil if not" do
+        event_by_pool_type = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
+        if active_swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.count > 0
+          expect( subject.set_personal_best( event_by_pool_type ) ).to be_an_instance_of( Timing )
+          expect( active_swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_personal_best.count ).to be > 0
+        else
+          expect( subject.set_personal_best( event_by_pool_type ) ).to be nil
+        end 
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#scan_for_personal_bests," do
+      it "sets at least 20 personal bests for Leega" do
+        fix_swimmer = Swimmer.find(23)
+        fix_sbf     = SwimmerBestFinder.new( fix_swimmer )
+        expect( fix_sbf.scan_for_personal_bests ).to be >= 20
+      end
+      it "returns 0 for swimmer without results" do
+        new_swimmer = create( :swimmer )
+        fix_sbf     = SwimmerBestFinder.new( new_swimmer )
+        expect( fix_sbf.scan_for_personal_bests ).to eq( 0 )
+      end
+      it "sets a personal best for each event by pool type swam by swimmer" do
+        event_swam = 0
+        subject.scan_for_personal_bests
+        EventsByPoolType.not_relays.each do |event_by_pool_type|
+          if active_swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.count > 0
+            expect( active_swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_personal_best.count ).to be > 0
+            event_swam += 1
+          else
+            expect( active_swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_personal_best.count ).to eq( 0 )
+          end
+          expect( active_swimmer.meeting_individual_results.is_personal_best.count ).to be >= event_swam
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
   #++
