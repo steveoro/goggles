@@ -1,5 +1,5 @@
-.goggles-category-gap
-  %ul.nav.nav-tabs#topOfPage
+.goggles-category-gap#topOfPage
+  %ul.nav.nav-tabs
     - if @meeting.invitation
       - is_active = ( params[:action] == 'show_invitation' )
       %li{ class: is_active ? 'active' : '' }
