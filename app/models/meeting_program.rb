@@ -73,6 +73,11 @@ class MeetingProgram < ActiveRecord::Base
   # ----------------------------------------------------------------------------
 
   # Computes a short description of just the event name for this row, without dates.
+  def get_complete_event_name
+    "#{event_type.i18n_description} #{get_category_type_name} #{gender_type.i18n_description}"
+  end
+
+  # Computes a short description of just the event name for this row, without dates.
   def get_event_name
     "(#{event_order}) #{event_type.i18n_short} #{get_category_type_code} #{gender_type.i18n_short}"
   end

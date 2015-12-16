@@ -83,6 +83,7 @@ describe MeetingProgram, :type => :model do
         :get_full_name,
         :get_verbose_name,
         :get_event_name,
+        :get_complete_event_name,
         :get_verbose_event_name,
         :get_category_and_gender_short
       ])

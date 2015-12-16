@@ -5,7 +5,7 @@
     = mrr.get_rank_description
   %td.span3{ 'colspan'=>'3' }
     %a{ id: "team#{mrr.id}", href: "#{ meeting_show_team_results_path(id: @meeting.id, team_id: mrr.team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') }
-      = mrr.get_team_name
+      = mrr.get_complete_relay_name
   %td.span1.goggles-rightalign
     = mrr.get_timing
   %td.span1.goggles-rightalign

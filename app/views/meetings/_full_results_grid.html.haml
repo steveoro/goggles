@@ -1,12 +1,8 @@
+-# --- Header with unique ID for each starting event_type "group":
 .span10
   - @meeting_events_list.each do |meeting_event|
-    - is_a_relay = meeting_event.event_type.is_a_relay
-    -# --- Header with unique ID for each starting event_type "group":
-    %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_event.event_type.code}"}
-      %h3= meeting_event.event_type.i18n_description
-    -# --- Sub-legend for each category + gender
     = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
-
+    - is_a_relay = meeting_event.event_type.is_a_relay
     - if meeting_event.meeting_programs.includes(:meeting_individual_results).joins(:meeting_individual_results).count > 0
       - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.id').each do |meeting_program|
         %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
@@ -14,7 +10,8 @@
             %tbody
               %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
                 %td{'colspan'=>'7'}
-                  %b= meeting_program.get_verbose_event_name
+                  %a(href="##{meeting_event.event_type.code}")
+                    %b= meeting_program.get_complete_event_name
                   = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
                 - if @meeting.has_start_list and !is_a_relay
                   %td.goggles-rightalign
@@ -31,7 +28,8 @@
             %tbody
               %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}"}
                 %td{'colspan'=>'7'}
-                  %b= meeting_program.get_verbose_event_name
+                  %a(href="##{meeting_event.event_type.code}")
+                    %b= meeting_program.get_complete_event_name
                   = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
               -# --- Team Relay result rows:
               - if is_a_relay

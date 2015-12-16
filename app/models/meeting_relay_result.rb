@@ -133,11 +133,29 @@ class MeetingRelayResult < ActiveRecord::Base
     self.meeting_program ? self.meeting_program.get_meeting_program_verbose_name() : '?'
   end
 
-  # Retrieves the Meeting Program verbose name
+  # Retrieves the relay header if present
+  # If not present gets the team name
   def get_relay_name
     self.relay_header && self.relay_header != '' ? self.relay_header : self.get_team_name
   end
+
+  # Retrieves the complete names of relay swimmers if present
+  def get_short_relay_swimmers
+    if self.meeting_relay_swimmers.count > 0
+      "(#{self.meeting_relay_swimmers.map{ |mrs| mrs.swimmer.get_full_name }.join('-')})"
+    else
+      ''
+    end
+  end
+
+  # Retrieves a complete relay name
+  # The complete relay name consists in the relay header (or team name)
+  # followed by swimmer's complete names (if stored)
+  def get_complete_relay_name
+    "#{get_relay_name} #{get_short_relay_swimmers}"
+  end
   # ----------------------------------------------------------------------------
+
 
 
   # Counts the query results for a specified <tt>meeting_id</tt>, <tt>team_id</tt> and
