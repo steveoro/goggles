@@ -85,76 +85,75 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
 
   describe 'POST #create/:passage' do
-    let(:post_attributes) do
-      mir = FactoryGirl.create( :meeting_individual_result_with_passages )
-      mir.passages.first.attributes
+    before(:all) do # Force the creation of the required rows:
+      mir_1 = FactoryGirl.create( :meeting_individual_result_with_passages )
+      mir_2 = FactoryGirl.create( :meeting_individual_result_with_passages )
+      @post_attributes = mir_1.passages.first.attributes.reject{ |k,v| ['id'].include?(k.to_s) }
+      # Let's create invalid update attributes by rejecting required attributes:
+      @invalid_post_attributes = @post_attributes.reject{ |k,v| ['id', 'seconds', 'minutes'].include?(k.to_s) }
+      @invalid_post_attributes['hundreds'] = nil
     end
 
     context "with a non-JSON request," do
       it "refuses the request" do
-        post :create, passage: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 406 ) # 406 = not acceptable
       end
       it "doesn't add a new row" do
         expect {
-          post :create, passage: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+          post :create, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
         }.not_to change{ Passage.count }
       end
     end
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        post :create, format: :json, passage: post_attributes
+        post :create, format: :json, passage: @post_attributes
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
       it "doesn't add a new row" do
         expect {
-          post :create, format: :json, passage: post_attributes
+          post :create, format: :json, passage: @post_attributes
         }.not_to change{ Passage.count }
       end
     end
 
     context "with non-valid attributes," do
-      let(:invalid_post_attributes) do
-        mir = FactoryGirl.create( :meeting_individual_result_with_passages )
-        mir.passages.first.attributes.reject{|k,v| k.to_s == 'meeting_program' }
-      end
-
       it "handles successfully the request" do
-        post :create, format: :json, passage: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 422 )
       end
       it "returns a valid JSON Hash with a nil 'id' member" do
-        post :create, format: :json, passage: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
         expect( result['id'] ).to be_nil
       end
       it "doesn't add a new row" do
         expect {
-          post :create, format: :json, passage: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+          post :create, format: :json, passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
         }.not_to change{ Passage.count }
       end
     end
 
     context "with a valid request and credentials" do
       it "handles successfully the request" do
-        post :create, format: :json, passage: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
         expect(response.status).to eq( 201 ) # 201 = created
       end
       it "returns a valid JSON Hash with a valid, positive, 'id' member" do
-        post :create, format: :json, passage: post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
         expect( result['id'] > 0 ).to be true
       end
       it "adds a new row" do
         expect {
-          post :create, format: :json, passage: post_attributes, user_email: @user.email, user_token: @user.authentication_token
-        }.to change{ Passage.count }.by(1)
+          post :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        }.to change{ Passage.count }
       end
     end
   end
@@ -198,11 +197,17 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
 
   describe 'PUT #update/:id' do
-    before(:all) do # Force the creation of the required rows:
-      mir = FactoryGirl.create( :meeting_individual_result_with_passages )
-      @updatable_row = mir.passages.first
-      @put_attributes = mir.passages.last.attributes
-      @invalid_put_attributes = @put_attributes.reject{|k,v| k.to_s == 'meeting_program' }
+    before(:each) do # Force the creation of the required rows:
+      mir_1 = FactoryGirl.create( :meeting_individual_result_with_passages )
+      mir_2 = FactoryGirl.create( :meeting_individual_result_with_passages )
+      @updatable_row = mir_1.passages.first
+      @put_attributes = mir_2.passages.first.attributes.reject{ |k,v| ['id'].include?(k.to_s) }
+      # Make sure the update attributes are at least a little bit different:
+      @put_attributes['position'] = @updatable_row.position + 1 if ( @updatable_row.position == @put_attributes['position'] )
+      @put_attributes['hundreds_from_start'] = @updatable_row.hundreds_from_start + 1 if ( @updatable_row.hundreds_from_start == @put_attributes['hundreds_from_start'] )
+      # Let's create invalid update attributes by rejecting required attributes:
+      @invalid_put_attributes = @put_attributes.reject{ |k,v| ['id', 'seconds', 'minutes'].include?(k.to_s) }
+      @invalid_put_attributes['hundreds'] = nil
     end
 
     context "with a non-JSON request," do
@@ -260,6 +265,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request and credentials" do
       before(:each) do
+        expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
+        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
         put :update, format: :json, id: @updatable_row.id, passage: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
       end
       it "handles successfully the request" do
@@ -270,8 +277,6 @@ describe Api::V1::PassagesController, type: :controller, api: true do
         expect( result['success'] ).to eq( true )
       end
       it "updates the existing row" do
-        expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
-        expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
         @updatable_row.reload
         expect( @updatable_row.position ).to eq( @put_attributes['position'] )
         expect( @updatable_row.hundreds_from_start ).to eq( @put_attributes['hundreds_from_start'] )
