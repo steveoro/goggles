@@ -3,7 +3,7 @@ require 'ffaker'
 require 'wice_grid'
 
 
-describe MeetingsController, :type => :controller do
+describe MeetingsController, type: :controller do
 
   shared_examples_for "(response ok with index grid rendering)" do |action_sym|
     it "handles successfully the request" do
@@ -88,7 +88,7 @@ describe MeetingsController, :type => :controller do
   # ===========================================================================
 
 
-  describe '[GET #current]' do
+  describe 'GET #current' do
     context "without parameters," do
       before(:each) { get :current }
       it_behaves_like( "(response ok with index grid rendering)", :current )
@@ -104,7 +104,7 @@ describe MeetingsController, :type => :controller do
   #++
 
 
-  describe '[GET #simple_search]' do
+  describe 'GET #simple_search' do
     context "without parameters," do
       before(:each) { get :simple_search }
       it_behaves_like( "(response ok with index grid rendering)", :simple_search )
@@ -126,7 +126,7 @@ describe MeetingsController, :type => :controller do
   #++
 
 
-  describe '[GET #custom_search]' do
+  describe 'GET #custom_search' do
     context "without parameters," do
       before(:each) { get :custom_search }
       it_behaves_like( "(response ok with index grid rendering)", :custom_search )
@@ -142,14 +142,14 @@ describe MeetingsController, :type => :controller do
   #++
 
 
-  describe '[GET #show_invitation]' do
+  describe 'GET #show_invitation' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_invitation )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_invitation, 14101 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_start_list]' do
+  describe 'GET #show_start_list' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_start_list )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_start_list, 13106 )
 
@@ -172,7 +172,7 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_team_entries]' do
+  describe 'GET #show_team_entries' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_team_entries )
 
     before(:each) do
@@ -194,7 +194,7 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_start_list_by_category]' do
+  describe 'GET #show_start_list_by_category' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_start_list_by_category )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_start_list_by_category, 13106 )
 
@@ -217,21 +217,21 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_full]' do
+  describe 'GET #show_full' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_full )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_full, 13106 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_ranking]' do
+  describe 'GET #show_ranking' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_ranking )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_ranking, 13105 )
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_stats]' do
+  describe 'GET #show_stats' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_stats )
     it_behaves_like( "(GET http action with a valid meeting id)", :show_stats, 13105 )
 
@@ -250,16 +250,62 @@ describe MeetingsController, :type => :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_team_results]' do
+  describe 'GET #show_team_results' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_team_results )
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  describe '[GET #show_swimmer_results]' do
+  describe 'GET #show_swimmer_results' do
     it_behaves_like( "(GET http action with an invalid meeting id)", :show_swimmer_results )
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  describe 'GET #edit_passages' do
+    context "for a logged-in user, with a valid request (user manages a team and the meeting exists)," do
+      before :each do
+        # XXX We rely directly on the existing seeds to speed up this test:
+        #     Alternatively, we could:
+        # - Choose/Create a user
+        # - Create managed affiliations if missing
+        # - Choose an existing Meeting with passages
+        # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
+
+        login_user( User.find(2) )
+        get :edit_passages, id: 15202
+      end
+
+      it "accepts the request" do
+        expect( response ).to be_a_success
+      end
+      it "assigns a meeting" do
+        expect( assigns(:meeting) ).to be_a( Meeting )
+      end
+      it "assigns a list of managed teams" do
+        expect( assigns(:managed_teams) ).to be_an( Array )
+        expect( assigns(:managed_teams) ).to all be_a( Team )
+      end
+      it "assigns a list of managed team IDs" do
+        expect( assigns(:managed_team_ids) ).to be_an( Array )
+        expect( assigns(:managed_team_ids) ).to all be_a( Fixnum )
+        expect( assigns(:managed_team_ids) ).to all be > 0
+      end
+      it "assigns a list of editable 'stuff' (an array of Hash items)" do
+        expect( assigns(:editable_stuff) ).to be_an( Array )
+        expect( assigns(:editable_stuff) ).to all be_an( Hash )
+      end
+    end
+
+    # TODO Test context: unlogged user
+    # TODO Test context: logged user & manager, but wrong meeting id (wrong request)
+    # TODO Test context: logged user, valid request, but not a team manager
+    # TODO Test context: logged user, but a team manager of teams without MIRs available on the Meeting
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # TODO POST #edit_passages
 
 end

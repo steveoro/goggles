@@ -56,7 +56,7 @@ en:
     entry_time: 'Entry'
     edition: 'Edition'
     previous_editions: 'Previuos editions'
-    passages: 'Passagges'
+    passages: 'Passages'
 
   meeting_session:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'meeting_sessions'!"

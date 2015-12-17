@@ -8,15 +8,16 @@ require 'meeting_finder'
 
 = MeetingsController
 
-  - version:  4.00.825
+  - version:  4.00.849
   - author:   Steve A.
 
 =end
 class MeetingsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_meeting,  only: [:show_full, :show_autoscroll, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category, :show_team_entries]
-  before_filter :verify_team,     only: [:show_team_results, :show_team_entries, :show_swimmer_results]
-  before_filter :verify_swimmer,  only: [:show_swimmer_results]
+  before_filter :verify_meeting,          only: [:show_full, :show_autoscroll, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category, :show_team_entries, :edit_passages]
+  before_filter :verify_team,             only: [:show_team_results, :show_team_entries, :show_swimmer_results]
+  before_filter :verify_swimmer,          only: [:show_swimmer_results]
+  before_filter :verify_is_team_manager,  only: [:edit_passages]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -415,7 +416,7 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
-    
+
                                                     # Get the swimmer list and some stats:
     @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order('swimmers.complete_name ASC').collect{ |row| row.swimmer }
 
@@ -428,7 +429,7 @@ class MeetingsController < ApplicationController
 
     # Calculate team highligths
     @team_outstanding_scores = mir.is_valid.for_over_that_score().count # Use default standard_points and 800
-                                                    
+
                                                     # Collect an Hash with the swimmer_id pointing to the description of all the events performed by each swimmer:
     meeting_team_swimmers_ids = @meeting_team_swimmers.collect{|row| row.id}
     @events_per_swimmers = {}
@@ -484,7 +485,7 @@ class MeetingsController < ApplicationController
     # Get a timestamp for the cache key:
     max_mir_updated_at = mir.count > 0 ? mir.select( :updated_at ).max.updated_at.to_i : 0
     max_mrr_updated_at = mrr.count > 0 ? mrr.select( :updated_at ).max.updated_at.to_i : 0
-    @max_mir_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at 
+    @max_mir_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -577,6 +578,44 @@ class MeetingsController < ApplicationController
 
     # Get a timestamp for the cache key:
     @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Allows editing of the current Meeting results passages, according to the
+  # current_user and its managed affiliations.
+  #
+  # To be reachable this action, requires that the current user is one of
+  # the existing Team managers (indipendently from current season).
+  #
+  # The action then proceeds to fill a list of editable passages, one for
+  # each MIR of the teams managed by the current user.
+  #
+  # If no passage row is existing for the corresponding associated MIR
+  # found, a button to add a new row will be rendered instead.
+  #
+  # === Parameters:
+  # - id: Meeting id for which the Passages must be edited
+  #
+  def edit_passages
+    # Collect the list of managed Teams:
+    @managed_teams = current_user.team_managers.map{ |tm| tm.team }.uniq
+    @managed_team_ids = @managed_teams.map{ |team| team.id }
+
+    # Collect the list of available/editable Passages, for each available MIR
+    # for the managed affiliations by the current user.
+    # The "editable stuff" is returned as an ordered array of Hash, where each
+    # Hash item has as key the related MIR and as value its list of passages.
+    @editable_stuff = @meeting.meeting_individual_results
+        .where( team_id: @managed_team_ids )
+        .includes( :passages )
+        .order( 'meeting_program_id' )
+        .map{ |mir| { mir => mir.passages } }
+
+    # TODO Missing POST action for:
+    # => - create new empty Passage row
+    # => - store changes into existing Passage Row (best_in_place editor gem?)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -712,6 +751,16 @@ class MeetingsController < ApplicationController
     @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request) + ' - Swimmer missing'
+      redirect_to( meetings_current_path() ) and return
+    end
+  end
+
+  # Verifies that a current user is one of the defined team managers.
+  # (Actually, it verifies that the current user has any managed affiliation defined.)
+  #
+  def verify_is_team_manager
+    unless ( current_user.team_managers.count > 0 )
+      flash[:error] = I18n.t(:invalid_action_request) + ' - You are not a Team manager!'
       redirect_to( meetings_current_path() ) and return
     end
   end

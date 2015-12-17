@@ -1,0 +1,50 @@
+%script
+  new WOW().init();
+
+- # Preloader mask:
+#preloader
+  #load
+
+= render( partial: 'meeting_header' )
+= render( partial: 'tabs_and_radio_title' )
+
+%p
+  *** WORK IN PROGRESS ***
+  (Follows a test with gathered data...)
+
+%div{'class'=>"goggles-category-gap"}
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      - @editable_stuff.each do |hash_item|
+        - individual_result = hash_item.keys.first
+        - passages = hash_item.values.first
+        - has_passages = ( passages.count > 0 )
+        - mir = MeetingIndividualResultDecorator.decorate( individual_result )
+        %tr.info
+          %td{'colspan'=>'6'}
+            %a(href="##{mir.meeting_event.event_type.code}")
+              %b= mir.meeting_program.get_complete_event_name
+          %td{'colspan'=>'10'}
+            %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
+              = mir.get_swimmer_name
+            &nbsp;/&nbsp;
+            %a{ id: "team#{mir.id}", href: "#{ meeting_show_team_results_path( id: @meeting.id, team_id: mir.team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') }
+              = mir.get_team_name
+        %tr
+          %td.span1.goggles-rightalign
+            = mir.show_any_rank_medal
+            = mir.get_rank_description
+          %td.span1.goggles-rightalign
+            %b= mir.get_timing
+        %tr
+          - if has_passages
+          - else
+            %td.goggles-rightalign
+              = "(+) Add row"
+          - passages.order(:passage_type_id).each do |passage|
+            %td.goggles-rightalign
+              %i= "#{ passage.get_passage_distance } mt."
+              %br
+              = passage.compute_incremental_time
+              %br
+              = passage.get_timing

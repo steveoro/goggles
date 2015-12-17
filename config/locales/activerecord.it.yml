@@ -51,6 +51,7 @@ it:
       locker_cabinet_type: "Tipo Armadietti"
       hair_dryer_type: "Tipo Asciugacapelli"
       exercise: "Esercizio"
+      passage: "Passaggio"
       score_computation_type: "Tipo Calcolo Punti"
       season_type: "Tipo Stagione"
       season: "Stagione"
