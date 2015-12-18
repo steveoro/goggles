@@ -21,30 +21,58 @@
         - has_passages = ( passages.count > 0 )
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
         %tr.info
-          %td{'colspan'=>'6'}
+          %td{'colspan'=>'16'}
             %a(href="##{mir.meeting_event.event_type.code}")
               %b= mir.meeting_program.get_complete_event_name
-          %td{'colspan'=>'10'}
+            %br
             %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
               = mir.get_swimmer_name
             &nbsp;/&nbsp;
             %a{ id: "team#{mir.id}", href: "#{ meeting_show_team_results_path( id: @meeting.id, team_id: mir.team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') }
               = mir.get_team_name
         %tr
-          %td.span1.goggles-rightalign
+          %td.goggles-rightalign{'colspan'=>'1'}
             = mir.show_any_rank_medal
             = mir.get_rank_description
-          %td.span1.goggles-rightalign
+          %td.goggles-rightalign{'colspan'=>'15'}
             %b= mir.get_timing
         %tr
           - if has_passages
+            - passages.order(:passage_type_id).each do |passage|
+              %td.goggles-rightalign{'colspan'=>'1'}
+                %i= "#{ passage.get_passage_distance } mt."
+                %br
+                %input.input-mini.text-right.timing{'id'=>"passage#{passage.id}", 'type'=>'text', 'value'=>"#{ passage.compute_incremental_time }", 'data-passage'=> "#{passage.id}"}
+                %br
+                = passage.get_timing
           - else
-            %td.goggles-rightalign
-              = "(+) Add row"
-          - passages.order(:passage_type_id).each do |passage|
-            %td.goggles-rightalign
-              %i= "#{ passage.get_passage_distance } mt."
-              %br
-              = passage.compute_incremental_time
-              %br
-              = passage.get_timing
+            - passage_types = TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters )
+            - passage_types.each do |passage_type|
+              %td.goggles-rightalign{'colspan'=>'1'}
+                %i= "#{ passage_type.length_in_meters } mt."
+                %br
+                %input.input-mini.text-right.timing{'id'=>"new#{mir.id}_#{passage_type.id}", 'type'=>'text', 'data-mir'=> "#{mir.id}", 'data-passage-type'=> "#{passage_type.id}"}
+
+:javascript
+  /**
+   * Binds formatting event to key press.
+   */
+  $('input.timing').bind('keyup', function (event) {
+      var key = event.which;
+      var currentValue = $(this).val();
+      _formatTiming( currentValue, $(this) );
+  });
+  // --------------------------------------------------------------------------
+
+  /**
+   * Formats the current value as a timing.
+   */
+  function _formatTiming( currentValue, targetNode ) {
+      // Remove formatting:
+      var newValue = currentValue.replace( /[\'\.\:\"\,]/g, "" );
+      // Enforce formatting:
+      newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
+      newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
+      targetNode.val( newValue );
+  };
+  // --------------------------------------------------------------------------

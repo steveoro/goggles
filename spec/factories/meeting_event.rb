@@ -11,9 +11,9 @@ FactoryGirl.define do
     meeting_session
     event_type_id do                                # This will include also relays
       EventsByPoolType.only_for_meetings
-        .for_pool_type_code(
-          meeting_session.swimming_pool.pool_type.code
-      ){ rand - 0.5 }[0].event_type_id
+        .for_pool_type_code( meeting_session.swimming_pool.pool_type.code )
+        .sort{ rand - 0.5 }[0]
+        .event_type_id
     end
     heat_type                 { HeatType.all.sort{ rand - 0.5 }[0] }
     user

@@ -1,0 +1,358 @@
+4° Trofeo Coopernuoto
+Manifestazione organizzata da Coopernuoto Scsd
+400 SL50 RA100 FA50 DO100 SL200 RA200 SL50 FA100 RA50 SL100 MIStaffetta 4x50 SLStatistiche
+400 SL
+
+  1   FABBRI  DEBORAH                       F   M45  CN UISP - Bologna          8'25"00
+  2   MARINO FRANSONI  STEFANO              M   M55  CN UISP - Bologna          8'00"00
+  3   GARELLO  CARLA                        F   M50  Stradivari Nuoto           8'00"00
+  4   GARINI  MARIA ELENA                   F   M45  Stradivari Nuoto           8'00"00
+  5   BOTTARELLI  DIEGO                     M   M45  Stradivari Nuoto           8'00"00
+  6   SERENA  FEDERICO                      M   M35  Stradivari Nuoto           8'00"00
+  7   BASILIO  ROBERTA                      F   M35  New Olimpic ssd            7'50"00
+  8   BERGAMINI  LISA                       F   M40  Nuovo Nuoto - Bologna      7'45"00
+  9   SABATINI  PATRIZIA                    F   M55  Reggiana Nuoto             7'20"00
+ 10   GROLLI  ADRIANO                       M   M65  Masternuoto Fidenza        7'10"00
+ 11   DI GIUSEPPE  CLAUDIO                  M   M60  Nuovo Nuoto - Bologna      7'00"00
+ 12   SIGONA  ATTILIO MAURIZIO MARIA        M   M45  Master Melzo Nuoto         7'00"00
+ 13   LUISI MAGNO SOLDANI  SERGIO           M   M45  New Olimpic ssd            7'00"00
+ 14   CAPELLI  CHIARA                       F   M35  Canottieri Baldesio        7'00"00
+ 15   FOLEZZANI  SERENA                     F   M30  Multisport scsd            7'00"00
+ 16   REGGIANI  GABRIELLA                   F   M55  Nuoto Club 91 Parma        6'54"00
+ 17   OGNIBENE  LORENO                      M   M55  CN UISP - Bologna          6'50"00
+ 18   MASSAFRA  PAOLO                       M   M45  Villaggio Sport. Eschilo   6'50"00
+ 19   ZATTI  SELENA                         F   M35  Coopernuoto                6'50"00
+ 20   MORESCHI  GIORGIO CESARE              M   M55  asd Quanta Sp.Village - M  6'49"00
+ 21   MARCOMINI  GIORGIO                    M   M55  CN UISP - Bologna          6'49"00
+ 22   CAMPANI  GIOVANNI                     M   M35  Coopernuoto                6'45"00
+ 23   GUERRESCHI  MARTA                     F   M30  Canottieri Baldesio        6'45"00
+ 24   FERRI  LUCA                           M   M50  CSI Nuoto Ober Ferrari     6'40"00
+ 25   NOBILI  CESARE BRENNO                 M   M45  CSI Nuoto Ober Ferrari     6'40"00
+ 26   CANTONI  SAMANTA                      F   M25  CSI Nuoto Ober Ferrari     6'40"00
+ 27   UGOLOTTI  FEDERICA                    F   M40  Masternuoto Fidenza        6'31"50
+ 28   FALCHIERI  EDI                        M   M65  Nuovo Nuoto - Bologna      6'30"00
+ 29   CASTRACANI  GIOVANNI                  M   M65  Aquatic Center ssd         6'30"00
+ 30   BACCIGLIERI  ROBERTA                  F   M50  Nuovo Nuoto - Bologna      6'30"00
+ 31   MAZZANTI  STEFANO                     M   M50  CN UISP - Bologna          6'30"00
+ 32   DE BATTISTI  ALDO                     M   M50  Sport Management Lombardi  6'30"00
+ 33   MONTICELLI FABIO                      M   M50  Coopernuoto                6'30"00
+ 34   VANERIO  SIMONA                       F   M50  Mioclub ssd                6'25"00
+ 35   BOCCUZZI  GIANNANGELO                 M   M35  New Olimpic ssd            6'20"00
+ 36   POLTRONIERI  VALERIA                  F   M30  Multisport scsd            6'20"00
+ 37   CARNASCIALI  MASSIMO                  M   M50  Lerici Sport ssd           6'15"00
+ 38   SESENA  BARBARA                       F   M45  CSI Nuoto Ober Ferrari     6'13"00
+ 39   FAVALESI  FRANCA                      F   M55  Masternuoto Fidenza        6'11"40
+ 40   SABBATINI  ALESSANDRA                 F   M35  Coopernuoto                6'05"00
+ 41   CANZIAN  LUCA                         M   M45  Coopernuoto                6'03"00
+ 42   FRANCESCHINI  STEFANO                 M   M40  CSI Nuoto Ober Ferrari     6'01"00
+ 43   PARMIGIANI  SILVIA                    F   M25  Coopernuoto                6'01"00
+ 44   GIUBBOLINI  ALESSANDRO                M   M40  Nuoto Club Sassuolo        6'00"00
+ 45   VIGONE  GIOVANNI                      M   M40  Sky Line Nuoto - C.puster  6'00"00
+ 46   ALDRIGO  DAVIDE                       M   M35  Multisport scsd            6'00"00
+ 47   GUARINO  RAMONA                       F   M30  Canottieri Baldesio        6'00"00
+ 48   GHIDONI  ANDREA                       M   M30  Coopernuoto                6'00"00
+ 49   CAPONE  AMELIA                        F   M25  Multisport scsd            6'00"00
+ 50   BROCCOLINO  MARCO PIER DAMIANO FULV   M   M60  Master Melzo Nuoto         5'59"00
+ 51   ORLANDINI  DINO                       M   M45  Reggiana Nuoto             5'55"00
+ 52   MALAGUTI  MAURO                       M   M55  CN UISP - Bologna          5'50"00
+ 53   MASINA  CESARE                        M   M45  Nuoto Club Seregno         5'50"00
+ 54   ROSSETTI  GIANCARLO                   M   M45  Lerici Sport ssd           5'50"00
+ 55   BUSSETTI  FABIO                       M   M40  Nuoto Club 91 Parma        5'50"00
+ 56   CIDALE  MARCO                         M   M40  Lerici Sport ssd           5'50"00
+ 57   PISTILLI  GIANLUCA                    M   M35  Multisport scsd            5'50"00
+ 58   LUSARDI  ANDREA                       M   M45  Masternuoto Fidenza        5'49"00
+ 59   BOSSONI  STEFANO                      M   M45  Masternuoto Fidenza        5'49"00
+ 60   PICCOLI  GIOVANNI                     M   M40  Masternuoto Fidenza        5'49"00
+ 61   CANTARELLI  ALESSANDRO                M   M40  Masternuoto Fidenza        5'49"00
+ 62   CARTELLA  GIANMARIO                   M   M45  Tibidabo ssd - Concesio    5'48"00
+ 63   ORLANDINI  IDO PIERALDO               M   M55  CSI Nuoto Ober Ferrari     5'45"00
+ 64   PECCHINI  DARIO                       M   M30  Viadana Nuoto Libertas     5'45"00
+ 65   FAVARON  SARA                         F   U25  Coopernuoto                5'45"00
+ 66   FERRETTI  EDOARDO                     M   M60  Gestisport Coop ssd - Car  5'40"00
+ 67   MALOBERTI  PAOLO                      M   M55  Villa Bonelli Nuoto asd    5'40"00
+ 68   CORRADINI  LUCA                       M   M40  Villa Bonelli Nuoto asd    5'40"00
+ 69   TIRELLI  FULVIO                       M   M50  Tecri Nuoto - Cornaredo    5'35"00
+ 70   ALESSANDRINI  RAFFAELA                F   M50  AICS Acquarè Mafeco        5'30"30
+ 71   PETRILLO  MARCO                       M   M35  Nuovo Nuoto - Bologna      5'30"00
+ 72   BERNARDELLI  FEDERICO                 M   M35  Nuoto AICS Bologna         5'30"00
+ 73   BOSETTI  MATTEO                       M   M35  Stradivari Nuoto           5'30"00
+ 74   PRANDINI  VALENTINA                   F   M25  Coopernuoto                5'30"00
+ 75   ZINELLI  MARIA LAURA                  F   U25  Villa Bonelli Nuoto asd    5'30"00
+ 76   RENNA  GIULIO                         M   U25  Mioclub ssd                5'24"00
+ 77   URBINATI  FRANCESCO                   M   M40  Coopernuoto                5'23"00
+ 78   MORINI  MAURIZIO                      M   M55  Masternuoto Fidenza        5'21"40
+ 79   BERGONZI  STEFANO                     M   M55  Masternuoto Fidenza        5'21"40
+ 80   RAMPINI  STEFANO                      M   M50  Masternuoto Fidenza        5'21"40
+ 81   BONAZZI  CESARE                       M   M50  Masternuoto Fidenza        5'21"40
+ 82   BASINI  GAIA                          F   M25  Masternuoto Fidenza        5'21"40
+ 83   FERRI  PIERO                          M   M50  Nuovo Nuoto - Bologna      5'20"00
+ 84   RIZZI  FABIO                          M   M50  AICS Acquarè Mafeco        5'20"00
+ 85   BELFASTI  CECILIA                     F   M25  Nuoto Club Sassuolo        5'20"00
+ 86   BUDASSI  VALENTINA                    F   M25  CSI Nuoto Ober Ferrari     5'20"00
+ 87   FORGHIERI  PAOLO                      M   M50  Coopernuoto                5'15"00
+ 88   PASSERINI  LUIGI                      M   M45  Nuoto Club 91 Parma        5'15"00
+ 89   NITTI  DARIO                          M   M40  Mioclub ssd                5'15"00
+ 90   ORESTILLI  PAOLO                      M   M35  Multisport scsd            5'15"00
+ 91   CARAMASCHI  FABRIZIO                  M   U25  Coopernuoto                5'15"00
+ 92   PATERLINI  GRETA                      F   U25  Coopernuoto                5'15"00
+ 93   AMATO  DARIO ADRIELE                  M   M35  Nuoto Sud Milano - Pieve   5'11"00
+ 94   KULIS  MARZENA                        F   M50  Nuotopiù Academy asd       5'10"00
+ 95   BERTOZZI  ORLANDO                     M   M45  CSI Nuoto Ober Ferrari     5'10"00
+ 96   LIGABUE  MARCO                        M   M45  CSI Nuoto Ober Ferrari     5'10"00
+ 97   MELLONI  PIETRO                       M   M30  Multisport scsd            5'10"00
+ 98   BERTONI  STEFANO                      M   M25  Verolanuoto                5'08"00
+ 99   BORRELLO  CLIZIA                      F   M40  ASA asd - Cinisello Balsa  5'07"00
+100   REBONATO  GABRIELE                    M   M40  Sport Management Lombardi  5'05"00
+Torna a inizio pagina
+50 RA
+
+  1   MAFFEZZOLI  GIUSEPPE                  M   M75  Masternuoto Fidenza        1'05"00
+  2   DE ANGELIS  MARILENA                  F   M70  CN UISP - Bologna          1'04"00
+  3   BONDUA`  FILIBERTO                    M   M80  Pol Garden Rimini          1'03"00
+  4   INGUSCIO  MARIA LUCIA                 F   M40  Canottieri Baldesio        1'00"00
+  5   MASTELLARI  RINA                      F   M50  Pol.Bondeno Chi Gioca      0'58"00
+  6   RADICA  NATALIA                       F   M50  Nuovo Nuoto - Bologna      0'58"00
+  7   AGRESTINI  PIERFRANCO                 M   M75  Pol Garden Rimini          0'55"00
+  8   GUARNERI  PAOLA                       F   M55  Stradivari Nuoto           0'55"00
+  9   ZAMBELLI  SILVIA                      F   M40  Canottieri Baldesio        0'55"00
+ 10   MURONI  GISELLA                       F   M30  Canottieri Nino Bixio      0'55"00
+ 11   FERRARI  ELISA                        F   M30  Coopernuoto                0'55"00
+ 12   BELLINAZZO  MARCO                     M   M70  AICS Acquarè Mafeco        0'50"00
+ 13   RUGGERI  MARIO                        M   M55  Canottieri Baldesio        0'50"00
+ 14   LUISI MAGNO SOLDANI  SERGIO           M   M45  New Olimpic ssd            0'50"00
+ 15   ALIANI  PAOLO                         M   M45  Stradivari Nuoto           0'50"00
+ 16   SERENA  FEDERICO                      M   M35  Stradivari Nuoto           0'50"00
+ 17   BASILIO  ROBERTA                      F   M35  New Olimpic ssd            0'50"00
+ 18   KELLY  FABIO                          M   M30  Lerici Sport ssd           0'50"00
+ 19   ARTONI  MARTA                         F   U25  Stradivari Nuoto           0'50"00
+ 20   VANERIO  SIMONA                       F   M50  Mioclub ssd                0'49"50
+ 21   ZATTI  SELENA                         F   M35  Coopernuoto                0'49"00
+ 22   MORELLI  MARINA                       F   M50  Nuoto Club 2000 Faenza     0'48"00
+ 23   LUPI  GIANCARLO                       M   M40  Canottieri Baldesio        0'48"00
+ 24   CARRETTI  CECILIA                     F   M25  Coopernuoto                0'48"00
+ 25   PEDRAZZOLI  SERENA                    F   M25  Coopernuoto                0'48"00
+ 26   MAINARDI  ANNA                        F   M25  Canottieri Baldesio        0'47"50
+ 27   LAZZARI  ELISA                        F   M25  Canottieri Baldesio        0'47"50
+ 28   MAZZANTI  STEFANO                     M   M50  CN UISP - Bologna          0'47"00
+ 29   STANZANI  CARLO                       M   M50  CN UISP - Bologna          0'47"00
+ 30   PASSERINI  ALESSANDRO                 M   M30  Villa Bonelli Nuoto asd    0'47"00
+ 31   TERUZZI  DANIELA                      F   M30  Nuoto Club Seregno         0'46"50
+ 32   CARUSO  GIOVANNI                      M   M50  Nuovo Nuoto - Bologna      0'46"00
+ 33   LAERA  GIAMBATTISTA                   M   M50  Nuoto Club 2000 Faenza     0'46"00
+ 34   UGOLOTTI  FEDERICA                    F   M40  Masternuoto Fidenza        0'46"00
+ 35   GAGGIA  MICHELANGELO                  M   M35  Canottieri Baldesio        0'46"00
+ 36   FERRARI  ALESSIA                      F   M35  CSI Nuoto Ober Ferrari     0'45"50
+ 37   POLATI  ALESSIA                       F   M35  Nuoto Master Verona In-Sp  0'45"10
+ 38   TOMELLERI  DANIELE                    M   M30  Nuoto Master Verona In-Sp  0'45"10
+ 39   MELEGATTI  CLAUDIA                    F   M30  Nuoto Master Verona In-Sp  0'45"10
+ 40   ZERBO  ARCANGELO                      M   M60  Master Melzo Nuoto         0'45"00
+ 41   SPERINDE`  MASSIMO                    M   M55  Villa Bonelli Nuoto asd    0'45"00
+ 42   MARINO  VINCENZO                      M   M55  Lerici Sport ssd           0'45"00
+ 43   QUINTAVALLA  FABRIZIO                 M   M50  Lerici Sport ssd           0'45"00
+ 44   BONFANTE  CORRADO                     M   M50  Settefrati Libertas MN 33  0'45"00
+ 45   VITI  PIERLUIGI                       M   M45  Nuoto Club Sassuolo        0'45"00
+ 46   LOSACCO  ANNALISA                     F   M40  Canottieri Baldesio        0'45"00
+ 47   BUSSETTI  FABIO                       M   M40  Nuoto Club 91 Parma        0'45"00
+ 48   CROTTI  MILENA                        F   M40  Coopernuoto                0'45"00
+ 49   PASSERA  GIACOMO                      M   M40  Canottieri Nino Bixio      0'45"00
+ 50   FRANZINI  STEFANO ROBERTO             M   M35  Canottieri Baldesio        0'45"00
+ 51   CLEMENCIGH  MATTEO                    M   M35  Sport Management Lombardi  0'45"00
+ 52   DI RONZA  CRISTINA                    F   M30  Villa Bonelli Nuoto asd    0'45"00
+ 53   GUARINO  RAMONA                       F   M30  Canottieri Baldesio        0'45"00
+ 54   PARDINI  LORENZO                      M   M25  Nuoto Sud Milano - Pieve   0'45"00
+ 55   PIALLI  GIULIA                        F   U25  Stradivari Nuoto           0'45"00
+ 56   BIGIOGGERO  GIORGIA                   F   U25  Mioclub ssd                0'45"00
+ 57   MARCHIONI  DANIELE                    M   M40  Nuovo Nuoto - Bologna      0'44"50
+ 58   LIBE`  GABRIELE                       M   M50  Canottieri Nino Bixio      0'44"00
+ 59   MASSAFRA  PAOLO                       M   M45  Villaggio Sport. Eschilo   0'44"00
+ 60   BETTOLINI  ANNALISA                   F   M45  Tecri Nuoto - Cornaredo    0'44"00
+ 61   PERILLO  TIZIANA                      F   M40  Nuovo Nuoto - Bologna      0'44"00
+ 62   DELAZER  CHIARA                       F   M25  Coopernuoto                0'44"00
+ 63   ROVIDA  MARIA CRISTINA                F   M55  Master Melzo Nuoto         0'43"50
+ 64   FERRARO  SERGIO DOMENICO              M   M45  Master Melzo Nuoto         0'43"00
+ 65   ORLANDI  ERICA                        F   M30  Pol.Bondeno Chi Gioca      0'43"00
+ 66   LEO  FEDERICO                         M   M25  Sport Management Lombardi  0'43"00
+ 67   MANICARDI  VERONICA                   F   U25  Coopernuoto                0'43"00
+ 68   VILLANI  FAUSTO                       M   M50  Master Melzo Nuoto         0'42"00
+ 69   GIACOMETTI  FABIO                     M   M45  Viadana Nuoto Libertas     0'42"00
+ 70   VANNUCCI  PAOLA                       F   M45  Coopernuoto                0'42"00
+ 71   NITTI  DARIO                          M   M40  Mioclub ssd                0'42"00
+ 72   BERGAMIN  DAVIDE                      M   M40  Canottieri Baldesio        0'42"00
+ 73   CAPELLI  LUCA                         M   M35  Canottieri Baldesio        0'42"00
+ 74   BORTOLOTTI  ROBERTO                   M   M35  Nuoto Club 91 Parma        0'42"00
+ 75   SIVELLI  STEFANO                      M   M35  Canottieri Baldesio        0'42"00
+ 76   AMORE  CARMELO                        M   M30  Canottieri Mincio          0'42"00
+ 77   CALZONI  FRANCESCO                    M   M25  Coopernuoto                0'42"00
+ 78   FRIGIERI  FEDERICA                    F   U25  Nuoto Club Sassuolo        0'42"00
+ 79   PATUZZO  ENRICO                       M   M40  Canottieri Mincio          0'41"80
+ 80   ROSSI  ALESSANDRO                     M   M45  Canottieri Baldesio        0'41"00
+ 81   SARAVO  CRISTIAN                      M   M35  CSI Nuoto Ober Ferrari     0'41"00
+Torna a inizio pagina
+100 FA
+
+  1   FABBRI  DEBORAH                       F   M45  CN UISP - Bologna          2'16"00
+  2   SOTTANI  DALILA                       F   M50  CN UISP - Bologna          2'08"00
+  3   GROLLI  ADRIANO                       M   M65  Masternuoto Fidenza        1'57"00
+  4   MORINI  DANIELE                       M   M60  Nuoto Club 2000 Faenza     1'55"00
+  5   MONTICELLI FABIO                      M   M50  Coopernuoto                1'50"00
+  6   OSTI  ROMANO                          M   M55  CN UISP - Bologna          1'45"00
+  7   CICERONE  SARAH                       F   M35  asd Quanta Sp.Village - M  1'44"20
+  8   FERRARI  ALESSIA                      F   M35  CSI Nuoto Ober Ferrari     1'42"00
+  9   BACCIGLIERI  ROBERTA                  F   M50  Nuovo Nuoto - Bologna      1'40"00
+ 10   BONFANTE  CORRADO                     M   M50  Settefrati Libertas MN 33  1'40"00
+ 11   BERGONZI  STEFANO                     M   M55  Masternuoto Fidenza        1'35"50
+ 12   RAMPINI  STEFANO                      M   M50  Masternuoto Fidenza        1'35"50
+ 13   PICCOLI  GIOVANNI                     M   M40  Masternuoto Fidenza        1'35"50
+ 14   FALCHIERI  EDI                        M   M65  Nuovo Nuoto - Bologna      1'35"00
+ 15   FUMASOLI ALESSIA                      F   M40  Settefrati Libertas MN 33  1'35"00
+ 16   MORINI  GIUSEPPE                      M   M60  CUS GEAS Milano asd        1'30"00
+ 17   BOSSONI  STEFANO                      M   M45  Masternuoto Fidenza        1'28"40
+ 18   MORABITO  PAOLO                       M   M45  Canottieri Baldesio        1'28"00
+ 19   FIGAROLI  MASSIMO                     M   M45  ASA asd - Cinisello Balsa  1'26"00
+ 20   CLEMENCIGH  MATTEO                    M   M35  Sport Management Lombardi  1'26"00
+ 21   ORLANDINI  IDO PIERALDO               M   M55  CSI Nuoto Ober Ferrari     1'25"00
+ 22   MALAGUTI  MAURO                       M   M55  CN UISP - Bologna          1'24"00
+ 23   VACCARI  GIAN MARCO                   M   M55  Sport Management Lombardi  1'20"00
+ 24   ROSSI  ALICE                          F   U25  Canottieri Baldesio        1'20"00
+ 25   CICERI  LARA                          F   M40  ASA asd - Cinisello Balsa  1'18"00
+ 26   BONSANTO  GIUSEPPE                    M   M30  Coopernuoto                1'18"00
+ 27   FRIGGERI  MATILDE                     F   M25  Reggiana Nuoto             1'16"00
+ 28   MONTAGNI  MARCO LUIGI                 M   M45  Canottieri Baldesio        1'15"00
+ 29   REBONATO  GABRIELE                    M   M40  Sport Management Lombardi  1'15"00
+ 30   AMATO  DARIO ADRIELE                  M   M35  Nuoto Sud Milano - Pieve   1'15"00
+ 31   ARIOLI  DAVIDE                        M   M30  Sis Nuoto Verona           1'15"00
+ 32   RAMPINI  ELEONORA                     F   U25  Villa Bonelli Nuoto asd    1'15"00
+ 33   BOCCADORO  STEFANO                    M   M50  Gestisport Coop ssd - Car  1'14"00
+ 34   CROTTI  MARIO                         M   M50  Cilo ssd - Milano          1'14"00
+ 35   PAPETTI  GABRIELE                     M   M45  Sport Management Lombardi  1'14"00
+ 36   FRIGNANI  DANIELE                     M   M40  Coopernuoto                1'14"00
+ 37   SCIOCCHETTI  CINZIA                   F   M25  Gymnasium Spilimbergo      1'14"00
+ 38   MATTI  ALESSANDRO                     M   M35  Nuovo Nuoto - Bologna      1'13"00
+ 39   NISCI  PAOLO                          M   M45  Nuoto Club 91 Parma        1'12"00
+ 40   LEONI  ALESSANDRO                     M   M25  Coopernuoto                1'11"00
+ 41   MAZZOLI  ALESSANDRO                   M   M40  Nuovo Nuoto - Bologna      1'10"50
+ 42   DE PONTI  DANIELA                     F   M50  Nuoto Club Milano          1'10"00
+ 43   RIPAMONTI  DAVIDE                     M   M45  Master Melzo Nuoto         1'10"00
+ 44   MORINI  MATTEO                        M   M30  Acquaviva 2001 ssd - egna  1'08"00
+ 45   RIGONI  EMANUEL                       M   M30  Villa Bonelli Nuoto asd    1'08"00
+ 46   GALLONI  PATRICK                      M   M30  Coopernuoto                1'08"00
+ 47   BULGARELLI  LUCA                      M   M40  Coopernuoto                1'07"00
+ 48   MARTINELLI  ANDREA                    M   M25  Coopernuoto                1'07"00
+ 49   BORRIELLO  MARCO                      M   M50  AICS Acquarè Mafeco        1'06"00
+ 50   CONSIGLIO  MARCO                      M   M40  Larus Nuoto                1'06"00
+ 51   QUADRI  ANDREA                        M   M35  Reggiana Nuoto             1'06"00
+ 52   BUSETTA  GIOVANNI                     M   M35  Villa Bonelli Nuoto asd    1'06"00
+ 53   TRINCA  GIULIO                        M   M30  Coopernuoto                1'06"00
+ 54   MANISCALCO  PAOLO                     M   M25  CN UISP - Bologna          1'06"00
+ 55   FONTANA  RENATO                       M   M40  Forum ssd - Assago         1'05"00
+ 56   TARABINI  MATTIA                      M   M30  Circolo Canottieri Aniene  1'05"00
+ 57   VALCAVI  LUCA                         M   M25  CSI Nuoto Ober Ferrari     1'04"50
+ 58   ANSALONI  ETTORE                      M   M40  AICS Acquarè Mafeco        1'03"00
+ 59   BRAZZALE  GIOVANNI COSIMO             M   M30  Nuoto Sud Milano - Pieve   1'03"00
+ 60   SOLAZZO  MATTEO                       M   M25  Gestisport Coop ssd - Car  1'03"00
+ 61   ROTA  ALBERTO                         M   M40  Nuotatori Modenesi         1'02"00
+ 62   ZULIANI  MATTEO                       M   U25  CSI Nuoto Ober Ferrari     1'00"10
+ 63   SACILOTTO  MARCO                      M   M30  Gymnasium Spilimbergo      0'59"00
+Torna a inizio pagina
+Staffetta 4x50 SL
+
+  1   Master Melzo Nuoto                    M200-239  2'39"50      
+          Rovida Maria - Pandolfi Maria - Martelli Daria - Bazzoni Paola
+  2   CSI Nuoto Ober Ferrari                M160-199  2'34"00      
+          Leoncini Valeria - Leonardi Elisa - Toffanetti Laura - Bianchi Elena
+  3   Viadana Nuoto Libertas                M120-159  2'25"00      
+          Fava Barbara - Agazzi Roberta - Cocconi Veronica - Valentini Milena
+  4   Canottieri Baldesio                   M160-199  2'20"00      
+          D`addezio Silvia - Mazzini Cristina - Tornaghi Elena - Ouspenkina Larissa
+  5   Master Melzo Nuoto                    M120-159  2'19"00      
+          Broccolino Susanna - 0migliazza Anna - 7brambilla Cecilia - 4lucchini Francesca
+  6   CSI Nuoto Ober Ferrari                M120-159  2'19"00      
+          Budassi Valentina - Sesena Barbara - Cantoni Samanta - Pezzi Stefania
+  7   Villa Bonelli Nuoto asd               M120-159  2'16"00      
+          Vannucci Eleonora - Vicariotto Michela - Di Ronza Cristina - Ciastra Silvia
+  8   Coopernuoto                           M120-159  2'15"00      
+          Bulgarelli Cristiana - Crotti Milena - Santini Federica - Vezzani Sara
+  9   Villa Bonelli Nuoto asd               M100-119  2'14"00      
+          Rampini Eleonora - Zinelli Maria - Annovi Giorgia - Moscatelli Camilla
+ 10   Coopernuoto                           M100-119  2'14"00      
+          Ferretti Elisa - Parmigiani Silvia - Gandolfi Anna - Delazer Chiara
+ 11   Canottieri Baldesio                   M100-119  2'10"00      
+          Antoniotti Claudia - Vacchelli Laura - Belicchi Fabiana - Rossi Alice
+ 12   Coopernuoto                           M160-199  2'09"00      
+          Borghi Donatella - Gaiti Giuliana - Vannucci Paola - Mastrangelo Laura
+ 13   Canottieri Baldesio                   M100-119  2'00"00      
+          Montemurro Sonia - Neviani Sara - Vacchelli Marta - Sivelli Giulia
+
+
+                    Ordine di partenza staffetta 4x50 stile libero maschile                    
+
+  1   CSI Nuoto Ober Ferrari                M240-279  3'15"00      
+          Rizzello Fernando - Ghezzi Eugenio - Ricco` Orio - Franceschini Stefano
+  2   Canottieri Baldesio - B               M200-239  2'20"00      
+          Barbieri Paolo - Paini Mirco - Pedrola Riccardo - Busachi Tomaso
+  3   Master Melzo Nuoto                    M240-279  2'17"00      
+          Broccolino Marco - Bottari Giuseppe - Neri Umberto - Zerbo Arcangelo
+  4   Nuovo Nuoto - Bologna                 M160-199  2'15"00      
+          Tale` Fabrizio - Mantelli Alessandro - Gardini Riccardo - Rampani Vasco
+  5   Multisport scsd                       M120-159  2'10"00      
+          Orestilli Paolo - Pistilli Gianluca - Rosati Massimo - Carpigiani Andrea
+  6   Villa Bonelli Nuoto asd               M200-239  2'08"00      
+          Spina Pierangelo - Siragusa Roberto - Sperinde` Massimo - Maloberti Paolo
+  7   Coopernuoto - B                       M160-199  2'07"00      
+          Delfini Daniele - Pierantoni Massimo - Furlotti Christian - Torelli Roberto
+  8   Villa Bonelli Nuoto asd               M100-119  2'06"00      
+          Soresina Paolo - Passerini Giulio - Passerini Alessandro - Cugini Francesco
+  9   Canottieri Baldesio - B               M160-199  2'05"00      
+          Quarantelli Michele - Bertasi Giorgio - Pietta Luca - Seghelini Antonio
+ 10   Viadana Nuoto Libertas                M120-159  2'05"00      
+          Fava Claudio - Gennaro Marco - Bellingeri Matteo - Cecchella Stefano
+ 11   Master Melzo Nuoto                    M200-239  2'03"00      
+          Arioli Angelo - Romano Giuseppe - Crespi Enrico - Ferraro Sergio
+ 12   Reggiana Nuoto                        M160-199  2'02"00      
+          Menozzi Andrea - Ferrari Mauro - Orlandini Dino - Cagossi Claudio
+ 13   Villa Bonelli Nuoto asd - B           M160-199  2'00"00      
+          De Cristano Nicola - D`amario Umberto - Ven? Francesco - Passigatti Gino
+ 14   CSI Nuoto Ober Ferrari                M120-159  1'59"00      
+          Del Rio Simone - Formentini Davide - Canovi Gabriele - Giansoldati Matteo
+ 15   Villa Bonelli Nuoto asd - B           M120-159  1'58"00      
+          Bagnoli Gianluca - Parma Lorenzo - Michelini Giovanni - Sassi Lorenzo
+ 16   CSI Nuoto Ober Ferrari                M160-199  1'56"00      
+          Alloro Stefano - Zacchi Francesco - Ligabue Marco - Bondi Andrea
+ 17   Canottieri Baldesio - A               M200-239  1'56"00      
+          Lancetti Alberto - Compiani Paolo - Zagnoni Fabio - Vacchelli Marco
+ 18   Coopernuoto                           M100-119  1'55"05      
+          Martinelli Andrea - Albertin Andrea - Calzoni Francesco - Lasagni Mattia
+ 19   Nuoto Club 91 Parma                   M200-239  1'55"00      
+          Zanza Andrea - Gobbi Stefano - Nisci Paolo - Dallatana Marco
+ 20   Viadana Nuoto Libertas                M160-199  1'54"00      
+          Lasagna Christian - Passeri Luca - Dibitonto Massimiliano - Zatti Roberto
+ 21   Master Melzo Nuoto - B                M160-199  1'53"50      
+          Abrusci Domenico - Accomasso Davide - Leoni Alessandro - Campari Fulvio
+ 22   Villa Bonelli Nuoto asd - A           M160-199  1'52"00      
+          Melegari Matteo - Franchini Mario - Corradini Luca - Jottini Stefano
+ 23   Canottieri Baldesio                   M100-119  1'51"00      
+          Pini Alessandro - Tirelli Marcello - Rossetti Vittorio - Ghiringhelli Agostino
+ 24   Coopernuoto - A                       M160-199  1'50"00      
+          Catellani Luca - Pinto Desiderio - Olivieri Simone - Bonomini Davide
+ 25   Canottieri Baldesio - A               M160-199  1'50"00      
+          Tabladini Marco - Polara Emanuele - Mondini Pietro - Michelotti Leonardo
+ 26   AICS Acquarè Mafeco                   M160-199  1'50"00      
+          Gialdi Massimiliano - Stellari Franco - Stefini Federico - Melli Davide
+ 27   Master Melzo Nuoto - A                M160-199  1'50"00      
+          Jacazio Filippo - Ripamonti Davide - Broccolino Filippo - Somigliana Ugo
+ 28   Nuoto Club Sassuolo                   M100-119  1'50"00      
+          Bagnoli Fabio - Camellini Stefano - Bigi Lorenzo - Borghi Manuele
+ 29   De Akker Team ssd arl                 M120-159  1'50"00      
+          Manfredi Luca - Lanzoni Giovanni - Salomoni Sebastiano - De Patre Carlo
+ 30   Villa Bonelli Nuoto asd - B           M100-119  1'48"00      
+          Ghidoni Marco - Gatti Nicolo` - Scolaro Marco - Sassi Andrea
+ 31   Coopernuoto                           M120-159  1'48"00      
+          Gozzi Fabio - Cucconi Francesco - Galloni Patrick - Martinelli Nicola
+ 32   Reggiana Nuoto                        M120-159  1'47"00      
+          Cristofori Roberto - Quadri Andrea - Incerti Alessandro - Mazzieri Alberto
+ 33   Villa Bonelli Nuoto asd - A           M120-159  1'46"00      
+          Panciroli Matteo - Rigoni Emanuel - Bonazzi Nicola - Busetta Giovanni
+ 34   Villa Bonelli Nuoto asd - A           M100-119  1'42"00      
+          Avanzi Marco - Verzelloni Iacopo - Lombardi Luca - Terzi Stefano
+ 35   Gymnasium Spilimbergo                 M100-119  1'35"00      
+          Cecchin Mirko - Marian Alessandro - Sacilotto Marco - Bonistalli Simone
