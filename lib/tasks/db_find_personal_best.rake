@@ -47,8 +47,8 @@ DESC
     puts "*** db:find_personal_best ***"
     persist         = ENV.include?("persist") ? ENV["persist"] == 'true' : false
     swimmer_id      = ENV.include?("swimmer") ? ENV["swimmer"].to_i : nil
-    event_code      = ENV.include?("event")   ? ENV["event"].to_i : nil
-    pool_code       = ENV.include?("pool")    ? ENV["pool"].to_i : nil
+    event_code      = ENV.include?("event")   ? ENV["event"] : nil
+    pool_code       = ENV.include?("pool")    ? ENV["pool"] : nil
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
     db_user         = rails_config.database_configuration[Rails.env]['username']
@@ -89,7 +89,7 @@ DESC
         puts("Needs both event and pool type to do a specific scan.")
         exit
       end
-      event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes(event_code, pool_code)
+      event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes(pool_code, event_code)
       if ! event_by_pool_type
         puts("Needs a valid event by pool type to do a specific scan.")
         exit
@@ -100,10 +100,10 @@ DESC
       # Check if specific event
       if event_code || pool_code
         # Scan for specific event end/or pool type
-        logger.info( "\r\n#{event_by_pool_type.get_full_name} scan" )
+        logger.info( "\r\n#{event_by_pool_type.i18n_description} scan" )
         logger.info( "\r\n<------------------------------------------------------------>\r\n" )
         best_found = swimmer_best_finder.set_personal_best( event_by_pool_type, reset = true )
-        logger.info( "\r\n#{event_by_pool_type.get_full_name}: #{best_found.to_s}\r\n" )
+        logger.info( "\r\n#{event_by_pool_type.i18n_description}: #{best_found.to_s}\r\n" )
         logger.info( "\r\n<------------------------------------------------------------>\r\n" )
       else
         # Perform a complete scan for the swimmer
