@@ -159,6 +159,7 @@ class SwimmerBestFinder
   # Best timing or nil
   #
   def set_personal_best( event_by_pool_type, reset = true )
+    # TODO Handle multiple bests for same event... maybe
     sql_attributes = {}
     if @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.count > 0
       self.reset_personal_best( event_by_pool_type ) if reset

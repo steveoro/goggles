@@ -31,8 +31,8 @@ namespace :db do
 Find personal best swam by swimmers in events.
 Resulting log files are stored into '#{LOG_DIR}'.
 
-Could be used for a partivcular swimmer event or 
-massive for all swimmers event swam
+Could be used for a particular swimmer event or 
+massive for all swimmer events swam
 
 Options: persist=false swimmer=<swimmer_id> [[event=<event_code> pool=<pool_code>] log_dir=#{LOG_DIR}]
 
@@ -119,7 +119,7 @@ DESC
       File.open( LOG_DIR + '/' + file_name + '.sql', 'w' ) { |f| f.puts swimmer_best_finder.sql_diff_text_log }
       logger.info( "\r\nLog file " + file_name + " created" )
 
-      # Save new season
+      # Save data
       if not persist
         logger.info( "\r\n*** Personal best NOT persisted! ***" )
         raise ActiveRecord::Rollback 
@@ -127,6 +127,85 @@ DESC
         logger.info( "\r\nPersonal best persisted." )
       end
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  desc <<-DESC
+Scan swimmers to perform personal best scan
+Resulting log files are stored into '#{LOG_DIR}'.
+
+Always perform a full scan of events swam by swimmers
+
+Options: persist=false
+
+- 'persist'  force to persist the personal best indicator on results found.
+- 'swimmer'  swimmer to scan.
+- 'event'    event code to scan for (use with pool)
+- 'pool'     pool type code to scan for (use with event)
+- 'log_dir'  allows to override the default log dir destination.
+
+DESC
+  task :scan_all_swimmers_personal_bests do |t|
+    puts "*** db:scan_all_swimmers_personal_bests ***"
+    persist         = ENV.include?("persist") ? ENV["persist"] == 'true' : false
+    rails_config    = Rails.configuration             # Prepare & check configuration:
+    db_name         = rails_config.database_configuration[Rails.env]['database']
+    db_user         = rails_config.database_configuration[Rails.env]['username']
+    db_pwd          = rails_config.database_configuration[Rails.env]['password']
+    log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
+
+    # Display some info:
+    puts "DB name:          #{db_name}"
+    puts "DB user:          #{db_user}"
+    puts "log_dir:          #{log_dir}"
+    puts "\r\n"
+    logger = ConsoleLogger.new
+
+    puts "Requiring Rails environment to allow usage of any Model..."
+    require 'rails/all'
+    require File.join( Rails.root.to_s, 'config/environment' )
+    
+    logger.info( "Oh, my God! This is a complete swimmers scan to find out personal bests!" )
+    logger.info( "Let's rock!!!" )
+    logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+
+    # Create diff file
+    file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets.diff"
+    diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
+    
+    ActiveRecord::Base.transaction do
+      Swimmer.all.each do |current_swimmer|
+        logger.info( "Swimmer to scan: #{current_swimmer.get_full_name}" )
+        logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+
+        # Initialize swimmer best finder
+        swimmer_best_finder = SwimmerBestFinder.new( current_swimmer )
+        if swimmer_best_finder
+          # Perform a complete scan for the swimmer
+          bests_found = swimmer_best_finder.scan_for_personal_bests
+          logger.info( "\r\nFound #{bests_found.to_s} personal bests\r\n" )
+
+          # Update diff file
+          diff_file.puts swimmer_best_finder.sql_diff_text_log
+          logger.info( "\r\nLog file " + file_name + " created" )
+        else
+          puts("Something wrong with swimmer #{current_swimmer.get_full_name}")
+        end
+        logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+      end
+
+      # Save data
+      if not persist
+        logger.info( "\r\n*** Personal best NOT persisted! ***" )
+        raise ActiveRecord::Rollback 
+      else
+        logger.info( "\r\nPersonal best persisted." )
+      end
+    end
+
+    logger.info( "Full swimmer scan finished" )
   end
   #-- -------------------------------------------------------------------------
   #++
