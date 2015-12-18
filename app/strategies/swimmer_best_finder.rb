@@ -134,9 +134,19 @@ class SwimmerBestFinder
       mir = MeetingIndividualResult.find( mir_id )
       mir.is_personal_best = false
       mir.save
+      comment = "Reset #{event_by_pool_type.i18n_description} (was #{mir.get_timing_instance})"
       sql_attributes['is_personal_best'] = mir.is_personal_best
-      sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n" )
+      sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n", comment )
     end
+  end
+
+  # Reset all the personal best indicator (set to false)
+  # for the swimmer
+  #
+  def reset_all_personal_bests
+    sql_attributes = {}
+    @swimmer.meeting_individual_results.update_all({:is_personal_best => false}, {:is_personal_best => true}) 
+    sql_diff_text_log << "update meeting_individual_results set is_personal_best = false where swimmer_id = #{@swimmer.id} and is_personal_best = true;\r\n" 
   end
   
   # Set the personal best indicator to true
@@ -148,15 +158,18 @@ class SwimmerBestFinder
   # Returns
   # Best timing or nil
   #
-  def set_personal_best( event_by_pool_type )
+  def set_personal_best( event_by_pool_type, reset = true )
+    # TODO Handle multiple bests for same event... maybe
     sql_attributes = {}
     if @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.count > 0
+      self.reset_personal_best( event_by_pool_type ) if reset
       mir_id = @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.sort_by_timing( :asc ).first.id
       mir = MeetingIndividualResult.find( mir_id )
       mir.is_personal_best = true
       mir.save
+      comment = "#{event_by_pool_type.i18n_description}: #{mir.get_timing_instance}"
       sql_attributes['is_personal_best'] = mir.is_personal_best
-      sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n" )
+      sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n", comment )
       mir.get_timing_instance
     end
   end
@@ -169,9 +182,10 @@ class SwimmerBestFinder
   #
   def scan_for_personal_bests
     create_sql_diff_header( "Scanning swimmer #{@swimmer.get_full_name} for personal bests" )
+    self.reset_all_personal_bests
     EventsByPoolType.not_relays.each do |event_by_pool_type|
-      self.reset_personal_best( event_by_pool_type )
-      self.set_personal_best( event_by_pool_type )
+      #self.reset_personal_best( event_by_pool_type ) # Better doing an unique update
+      self.set_personal_best( event_by_pool_type, false )
     end
     create_sql_diff_footer( "Swimmer #{@swimmer.get_full_name}: #{@swimmer.meeting_individual_results.is_personal_best.count} personal bests found" )
     @swimmer.meeting_individual_results.is_personal_best.count
