@@ -287,6 +287,15 @@ describe SwimmerBestFinder, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
 
+    describe "#reset_all_personal_bests," do
+      it "clears personal best already set" do
+        subject.scan_for_personal_bests
+        subject.reset_all_personal_bests
+        expect( active_swimmer.meeting_individual_results.is_personal_best.count ).to eq( 0 )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
     describe "#set_personal_best," do
       it "returns a timing instance if event already swam" do
         fix_swimmer            = Swimmer.find(23)
@@ -302,6 +311,10 @@ describe SwimmerBestFinder, type: :strategy do
         expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to eq( 0 )
         fix_sbf.set_personal_best( fix_event_by_pool_type )
         expect( fix_swimmer.meeting_individual_results.for_event_by_pool_type(fix_event_by_pool_type).is_personal_best.count ).to be > 0
+      end
+      it "sets a time corresponding to the best swam" do
+        event = EventsByPoolType.not_relays.sort{ rand - 0.5 }[0]
+        expect( subject.set_personal_best( event ) ).to eq( subject.get_best_for_event( event.event_type, event.pool_type ) )
       end
       # Assumes Leega didn't ever swam 3000 in 25 pool.
       # If he will swim it... not change the spec, but, please, heal Leega
