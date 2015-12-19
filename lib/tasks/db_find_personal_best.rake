@@ -138,11 +138,12 @@ Resulting log files are stored into '#{LOG_DIR}'.
 
 Always perform a full scan of events swam by swimmers
 
-Options: persist=false start_from=1 [split=<swimmer_number_to_split_at>]
+Options: persist=false start_from=first stop_after=last [split=<swimmer_number_to_split_at>]
 
 - 'persist'    force to persist the personal best indicator on results found.
-- 'split'      swimmer ids number to split diff files
 - 'start_from' swimmer id to start from
+- 'stop_after' swimmer id to stop at
+- 'split'      swimmer ids number to split diff files
 - 'log_dir'    allows to override the default log dir destination.
 
 DESC
@@ -151,6 +152,7 @@ DESC
     persist         = ENV.include?("persist")    ? ENV["persist"] == 'true' : false
     start_from      = ENV.include?("start_from") ? ENV["start_from"].to_i : 1
     split           = ENV.include?("split")      ? ENV["split"].to_i : nil
+    stop_after      = ENV.include?("stop_after") ? ENV["stop_after"].to_i : Swimmer.last.id
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
     db_user         = rails_config.database_configuration[Rails.env]['username']
@@ -174,19 +176,21 @@ DESC
 
     # Create diff file (unique if not split or first if split
     if split
-      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets_#{start_from}_#{start_from + split - 1}.diff"
+      limit = (start_from + split - 1) > stop_after ? stop_after : (start_from + split - 1)  
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets_#{start_from}_#{limit}.diff"
       diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
     else
-      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets.diff"
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_best_#{start_from}_#{stop_after}.diff"
       diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
     end
     logger.info( "\r\nCreates log file #{file_name}" )
     
     ActiveRecord::Base.transaction do
-      Swimmer.where("id >= #{start_from ? start_from : 1}").each do |current_swimmer|
+      Swimmer.where("id between #{start_from} and #{stop_after}").each do |current_swimmer|
         # Check if new diff file is needed
         if split && current_swimmer.id % split == 1 && start_from != current_swimmer.id
-          file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets_#{current_swimmer.id}_#{current_swimmer.id + split - 1}.diff"
+          limit = (current_swimmer.id + split - 1) > stop_after ? stop_after : (current_swimmer.id + split - 1)  
+          file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets_#{current_swimmer.id}_#{limit}.diff"
           diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
           logger.info( "\r\n" )
           logger.info( "\r\n<------------------------------------------------------------>" )

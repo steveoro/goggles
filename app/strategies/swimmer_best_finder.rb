@@ -181,7 +181,7 @@ class SwimmerBestFinder
   # Swimmer personal bests found number
   #
   def scan_for_personal_bests
-    create_sql_diff_header( "Scanning swimmer #{@swimmer.get_full_name} for personal bests" )
+    create_sql_diff_header( "Scanning swimmer #{@swimmer.get_full_name} [#{@swimmer.id}] for personal bests" )
     self.reset_all_personal_bests
     EventsByPoolType.not_relays.each do |event_by_pool_type|
       #self.reset_personal_best( event_by_pool_type ) # Better doing an unique update
