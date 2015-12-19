@@ -177,10 +177,10 @@ DESC
     # Create diff file (unique if not split or first if split
     if split
       limit = (start_from + split - 1) > stop_after ? stop_after : (start_from + split - 1)  
-      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets_#{start_from}_#{limit}.diff"
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bests_#{start_from}_#{limit}.diff"
       diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
     else
-      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_best_#{start_from}_#{stop_after}.diff"
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bests_#{start_from}_#{stop_after}.diff"
       diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
     end
     logger.info( "\r\nCreates log file #{file_name}" )
@@ -190,11 +190,11 @@ DESC
         # Check if new diff file is needed
         if split && current_swimmer.id % split == 1 && start_from != current_swimmer.id
           limit = (current_swimmer.id + split - 1) > stop_after ? stop_after : (current_swimmer.id + split - 1)  
-          file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bets_#{current_swimmer.id}_#{limit}.diff"
+          file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_scan_all_swimmer_for_personal_bests_#{current_swimmer.id}_#{limit}.diff"
           diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
           logger.info( "\r\n" )
           logger.info( "\r\n<------------------------------------------------------------>" )
-          logger.info( "\r\nCreates log file #{file_name}" )
+          logger.info( "\r\nCreating log file #{file_name}" )
           logger.info( "\r\n<------------------------------------------------------------>" )
           logger.info( "\r\n" )
         end
