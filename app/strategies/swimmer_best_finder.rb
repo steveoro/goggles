@@ -109,6 +109,13 @@ class SwimmerBestFinder
       @swimmer.meeting_individual_results.for_pool_type( pool_type ).for_event_type( event_type ).is_not_disqualified.sort_by_timing('ASC').first.get_timing_instance :
       nil
   end
+
+  # Find personal best for given event type and pool type
+  def get_best_for_event_result( event_type, pool_type )
+    @swimmer.meeting_individual_results.for_pool_type( pool_type ).for_event_type( event_type ).is_not_disqualified.count > 0 ?
+      @swimmer.meeting_individual_results.for_pool_type( pool_type ).for_event_type( event_type ).is_personal_best.first :
+      nil
+  end
   #-- --------------------------------------------------------------------------
   #++
 
