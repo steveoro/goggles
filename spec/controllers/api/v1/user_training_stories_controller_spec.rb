@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'common/format'
 
 
-describe Api::V1::UserTrainingStoriesController, :type => :controller do
+describe Api::V1::UserTrainingStoriesController, type: :controller, api: true do
   before(:all) do # Force the creation of the required rows:
     @user = FactoryGirl.create( :user )
     @fixture_row = FactoryGirl.create( :user_training_story, swam_date: Format.a_iso_date(Date.today), user_id: @user.id )

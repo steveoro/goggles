@@ -60,7 +60,21 @@ Goggles::Application.routes.draw do
       # TODO extract and enlist only the actual routes used:
       resources :user_trainings, except: [:new]
       resources :user_training_stories, except: [:new]
-      resources :passages, except: [:new]
+      resources :passages, except: [:new, :create]
+      match "passages/create", to: "passages#create", via: :post
+
+#      resource :passages do
+#        member do
+#          get     'show'
+#          post    'create', to: "passages#create", as: "create"
+#          get     'edit'
+#          put     'update'
+#          delete  'destroy'
+#        end
+#        collection do
+#          get 'index'
+#        end
+#      end
     end
   end
 
