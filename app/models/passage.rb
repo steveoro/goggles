@@ -34,15 +34,15 @@ class Passage < ActiveRecord::Base
   has_one :pool_type,       through: :meeting_program
 #  has_one :badge,           through: :meeting_entry
 
-  validates_presence_of     :minutes_from_start
-  validates_length_of       :minutes_from_start, within: 1..3, allow_nil: false
-  validates_numericality_of :minutes_from_start
-  validates_presence_of     :seconds_from_start
-  validates_length_of       :seconds_from_start, within: 1..2, allow_nil: false
-  validates_numericality_of :seconds_from_start
-  validates_presence_of     :hundreds_from_start
-  validates_length_of       :hundreds_from_start, within: 1..2, allow_nil: false
-  validates_numericality_of :hundreds_from_start
+  validates_presence_of     :minutes
+  validates_length_of       :minutes, within: 1..3, allow_nil: false
+  validates_numericality_of :minutes
+  validates_presence_of     :seconds
+  validates_length_of       :seconds, within: 1..2, allow_nil: false
+  validates_numericality_of :seconds
+  validates_presence_of     :hundreds
+  validates_length_of       :hundreds, within: 1..2, allow_nil: false
+  validates_numericality_of :hundreds
   #validates_presence_of     :reaction_time
   #validates_numericality_of :reaction_time
   #validates_presence_of     :stroke_cycles
@@ -108,7 +108,7 @@ class Passage < ActiveRecord::Base
 
   # Retrieves the distance swam in the passage
   def get_passage_distance
-    passage_type.length_in_meters
+    passage_type ? passage_type.length_in_meters : 0
   end
 
   # Retrieves the localized Event Type code
@@ -128,7 +128,6 @@ class Passage < ActiveRecord::Base
   def get_total_distance
     meeting_program ? meeting_program.event_type.length_in_meters : 0
   end
-
   #-- -------------------------------------------------------------------------
   #++
 
@@ -140,6 +139,28 @@ class Passage < ActiveRecord::Base
   def get_passages
     meeting_individual_result ? meeting_individual_result.get_passages : []
   end
+
+  # Memoized getter for the complete list of previous passages
+  #
+  def get_all_previous_passages
+    if get_total_distance > 400
+      @all_previous_passages ||= get_passages.count > 0 ?
+        get_passages.where( 'length_in_meters < ? and length_in_meters > 50', get_passage_distance ) :
+        get_passages
+    else
+      @all_previous_passages ||=  get_passages.count > 0 ?
+        get_passages.where( 'length_in_meters < ?', get_passage_distance ) :
+        get_passages
+    end
+  end
+
+  # Memoized getter for the previous passage instance
+  #
+  def get_previous_passage
+    @previous_passage ||= get_all_previous_passages.last
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Get final time from meeting_individual_result
   # Differs from #compute_final_time, in that it computes the final time
@@ -155,7 +176,7 @@ class Passage < ActiveRecord::Base
   #
   def compute_distance_swam
     passage_distance = get_passage_distance
-    previous_passage = get_passages.where('length_in_meters < ?', passage_distance).last
+    previous_passage = get_previous_passage
     previous_passage ? passage_distance - previous_passage.get_passage_distance : passage_distance
   end
 
@@ -178,11 +199,7 @@ class Passage < ActiveRecord::Base
   # Returns a Timing instance.
   #
   def compute_incremental_time
-    if get_total_distance > 400
-      passages_list = get_passages.where('length_in_meters < ? and length_in_meters > 50', get_passage_distance)
-    else
-      passages_list = get_passages.where('length_in_meters < ?', get_passage_distance)
-    end
+    passages_list = get_all_previous_passages
     total_hundreds = passages_list.sum(:hundreds) + ( passages_list.sum(:seconds) * 100 ) + (passages_list.sum(:minutes) * 6000 ) + hundreds + ( seconds * 100 ) + ( minutes * 6000 )
     Timing.new( total_hundreds )
   end

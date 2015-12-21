@@ -10,21 +10,28 @@
 
 %p
   *** WORK IN PROGRESS ***
-  (Follows a test with gathered data...)
 
-%div{'class'=>"goggles-category-gap"}
+.goggles-category-gap
+  = form_tag( meeting_update_passages_path(@meeting.id) )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
+      - previous_event = nil
       - @editable_stuff.each do |hash_item|
         - individual_result = hash_item.keys.first
         - passages = hash_item.values.first
         - has_passages = ( passages.count > 0 )
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
+        - if previous_event != mir.meeting_event
+          - previous_event = mir.meeting_event
+          %tr.info
+            %td{'colspan'=>'16'}
+              %br
+              %a(href="##{mir.meeting_event.event_type.code}")
+                %b= mir.meeting_program.get_complete_event_name
+              %br
+              &nbsp;
         %tr.info
           %td{'colspan'=>'16'}
-            %a(href="##{mir.meeting_event.event_type.code}")
-              %b= mir.meeting_program.get_complete_event_name
-            %br
             %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
               = mir.get_swimmer_name
             &nbsp;/&nbsp;
@@ -42,7 +49,13 @@
               %td.goggles-rightalign{'colspan'=>'1'}
                 %i= "#{ passage.get_passage_distance } mt."
                 %br
-                %input.input-mini.text-right.timing{'id'=>"passage#{passage.id}", 'type'=>'text', 'value'=>"#{ passage.compute_incremental_time }", 'data-passage'=> "#{passage.id}"}
+                = text_field_tag(                                             |
+                  "pas_#{passage.id}",                                        |
+                  passage.compute_incremental_time,                           |
+                  'class' => "input-mini text-right timing",                  |
+                  'data-mir' => mir.id,                                       |
+                  'data-passage-type' => passage.passage_type_id              |
+                )                                                             |
                 %br
                 = passage.get_timing
           - else
@@ -51,7 +64,16 @@
               %td.goggles-rightalign{'colspan'=>'1'}
                 %i= "#{ passage_type.length_in_meters } mt."
                 %br
-                %input.input-mini.text-right.timing{'id'=>"new#{mir.id}_#{passage_type.id}", 'type'=>'text', 'data-mir'=> "#{mir.id}", 'data-passage-type'=> "#{passage_type.id}"}
+                = text_field_tag(                                             |
+                  "new_#{mir.id}_#{passage_type.id}",                         |
+                  nil,                                                        |
+                  'class' => "input-mini text-right timing",                  |
+                  'data-mir' => mir.id,                                       |
+                  'data-passage-type' => passage_type.id                      |
+                )                                                             |
+
+.row-fluid.goggles-category-gap
+  = submit_tag( I18n.t(:save), confirm: I18n.t('netzke.basepack.grid_panel.actions.are_you_sure') )
 
 :javascript
   /**

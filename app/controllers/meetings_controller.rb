@@ -2,19 +2,27 @@
 require 'common/format'
 require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_search query condition
 require 'meeting_finder'
+require 'wrappers/timing'
+require 'passages_batch_updater'
 
 
 =begin
 
 = MeetingsController
 
-  - version:  4.00.849
+  - version:  4.00.851
   - author:   Steve A.
 
 =end
 class MeetingsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_meeting,          only: [:show_full, :show_autoscroll, :show_ranking, :show_stats, :show_team_results, :show_swimmer_results, :show_invitation, :show_start_list, :show_start_list_by_category, :show_team_entries, :edit_passages]
+  before_filter :verify_meeting, only: [
+      :show_full, :show_autoscroll, :show_ranking, :show_stats,
+      :show_team_results, :show_swimmer_results, :show_invitation,
+      :show_start_list, :show_start_list_by_category, :show_team_entries,
+      :edit_passages, :update_passages
+  ]
+
   before_filter :verify_team,             only: [:show_team_results, :show_team_entries, :show_swimmer_results]
   before_filter :verify_swimmer,          only: [:show_swimmer_results]
   before_filter :verify_is_team_manager,  only: [:edit_passages]
@@ -612,10 +620,62 @@ class MeetingsController < ApplicationController
         .includes( :passages )
         .order( 'meeting_program_id' )
         .map{ |mir| { mir => mir.passages } }
+  end
 
-    # TODO Missing POST action for:
-    # => - create new empty Passage row
-    # => - store changes into existing Passage Row (best_in_place editor gem?)
+
+  # Upodates or creates Meeting results passage/lap times rows, according to the
+  # specified paramters.
+  #
+  # Assumes the POST parameters are encoded as follows:
+  #
+  # . edited or existing passage rows...: "pas_" + passage.id
+  # . new rows to be created............: "new_" + MIR.id + "_" + passage_type.id
+  #
+  # === Parameters:
+  # - id: Meeting id for which the Passages must be edited
+  #
+  def update_passages
+    edited_rows = params.select{ |key, value| key =~ /pas/ }
+    new_rows    = params.select{ |key, value| key =~ /new/ && value.length > 0 }
+    batch_updater = PassagesBatchUpdater.new( current_user )
+
+    # Edit existing row values:
+    edited_rows.each do |key, value|
+      passage_id = key.split('_').last
+      batch_updater.edit_existing_passage( passage_id, value )
+    end
+    # Create new rows:
+    new_rows.each do |key, value|
+      mir_id = key.split('_')[1]
+      passage_type_id = key.split('_').last
+      batch_updater.create_new_passage( mir_id, passage_type_id, value )
+    end
+
+    # Create the SQL diff file, and send it, when operated remotely:
+    log_dir = File.join( Dir.pwd, 'log' )
+    file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}" <<
+                "#{ Rails.env == 'production' ? 'dev' : 'prod' }" <<
+                "_update_passages_#{ @meeting.code }.diff.sql"
+    full_sql_diff_path = File.join( log_dir, file_name )
+    File.open( full_sql_diff_path, 'w' ) { |f| f.puts batch_updater.sql_diff_text_log }
+    logger.info( "\r\nLog file " + file_name + " created" )
+    if Rails.env == 'production'
+      AgexMailer.action_notify_mail(
+        current_user,
+        "update passages",
+        "User #{current_user} has updated remotely the passages for his/hers managed affiliations, for meeting ID #{@meeting.id}.\r\nThe attached log file must be synchronized locally.",
+        file_name,
+        full_sql_diff_path
+      ).deliver
+    end
+
+    # Signal any error or a successful operation:
+    if batch_updater.total_errors > 0
+      flash[:error] = I18n.t('something_went_wrong')
+    else
+      flash[:info] = I18n.t('social.changes_saved')
+    end
+    redirect_to( meeting_edit_passages_path(@meeting.id) ) and return
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -764,5 +824,4 @@ class MeetingsController < ApplicationController
       redirect_to( meetings_current_path() ) and return
     end
   end
-
 end

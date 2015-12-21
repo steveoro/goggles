@@ -306,6 +306,33 @@ describe MeetingsController, type: :controller do
   #-- -------------------------------------------------------------------------
   #++
 
-  # TODO POST #edit_passages
+
+  describe 'POST #update_passages' do
+    context "for a logged-in user, with a valid request (user manages a team and the meeting exists)," do
+      before :each do
+        # XXX We rely directly on the existing seeds to speed up this test:
+        #     Alternatively, we could:
+        # - Choose/Create a user
+        # - Create managed affiliations if missing
+        # - Choose an existing Meeting with passages
+        # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
+
+        login_user( User.find(2) )
+        post :update_passages, id: 15202
+      end
+
+      it "accepts the request" do
+        expect( response.status ).to redirect_to( meeting_edit_passages_path(15202, locale: 'it') )
+      end
+      # TODO
+    end
+
+    # TODO Test context: unlogged user
+    # TODO Test context: logged user & manager, but wrong meeting id (wrong request)
+    # TODO Test context: logged user, valid request, but not a team manager
+    # TODO Test context: logged user, but a team manager of teams without MIRs available on the Meeting
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 end

@@ -2,7 +2,7 @@
 
 = AgexMailer
 
-  - version:  4.00.541
+  - version:  4.00.851
   - author:   Steve A.
 
   Mailer base custom class for the Agex framework.
@@ -52,16 +52,21 @@ class AgexMailer < ActionMailer::Base
   # - user: the current_user instance
   # - action_name: the action name performed by the user
   # - action_description: a more verbose string description for the action carried out by the user
+  # - attachment_file_name: when not nil, it will add a multipart mail attachment with the given name
+  # - attachment_full_local_path: full local path to read the file for the attachment
   #
-  def action_notify_mail( user, action_name, action_description )
+  def action_notify_mail( user, action_name, action_description, attachment_file_name = nil, attachment_full_local_path = nil )
     admin = Admin.find_by_name('steve')
     @user_name = user.name if user.respond_to?(:name)
     @action_name = action_name
     @description = action_description
     @host = HOSTNAME
+    if attachment_file_name
+      attachments[ attachment_file_name ] = File.read( attachment_full_local_path )
+    end
 
     mail(
-      subject: "[#{AGEX_APP_NAME}@#{@host}] AgexMailer action '#{action_name}'",
+      subject: "[#{AGEX_APP_NAME}@#{@host}] AgexMailer '#{action_name}'",
       to:      admin.email,
       date:    Time.now
     )

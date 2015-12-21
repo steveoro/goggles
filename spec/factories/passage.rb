@@ -29,7 +29,7 @@ FactoryGirl.define do
     team                      { meeting_individual_result.team }
     user
     # The following column uses the pre-loaded seed records:
-    passage_type_id           { ((rand * 20) % 20).to_i + 1 }
+    passage_type              { PassageType.all.sort{ rand - 0.5 }[0] }
   end
   #-- -------------------------------------------------------------------------
   #++

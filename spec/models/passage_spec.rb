@@ -22,9 +22,9 @@ describe Passage, :type => :model do
     # Required values
     # minutes, second, hundreds too, but already included in TimingGettable
     it_behaves_like( "(missing required values)", [
-      :minutes_from_start,
-      :hundreds_from_start,
-      :seconds_from_start
+      :minutes,
+      :hundreds,
+      :seconds
     ])
 
     # Validated relations:
@@ -36,7 +36,13 @@ describe Passage, :type => :model do
 
     # Filtering scopes:
     it_behaves_like( "(the existance of a class method)", [
-      :sort_by_distance,
+      :sort_by_distance
+    ])
+
+    it_behaves_like( "(the existance of a method)", [
+      :get_passages,
+      :get_all_previous_passages,
+      :get_previous_passage
     ])
 
     context "[implemented methods]" do
@@ -61,7 +67,7 @@ describe Passage, :type => :model do
         ]
       )
 
-      # Methods that return timimg istancies
+      # Methods that return timing istancies
       [
         :compute_final_time,
         :compute_incremental_time,
