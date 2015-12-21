@@ -1,0 +1,34 @@
+#!/bin/bash
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=3501 stop_after=4500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=4501 stop_after=5500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=5501 stop_after=6500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=6501 stop_after=7500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=7501 stop_after=8500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=8501 stop_after=9500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=9501 stop_after=10500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=10501 stop_after=11500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=11501 stop_after=12500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=12501 stop_after=13500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=13501 stop_after=14500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=14501 stop_after=15500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=15501 stop_after=16500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=16501 stop_after=17500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=17501 stop_after=18500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=18501 stop_after=19500
+zeus rake log:clear
+zeus rake db:scan_all_swimmers_personal_bests split=500 persist=true start_from=19501
