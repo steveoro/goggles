@@ -241,6 +241,33 @@ describe SwimmerBestFinder, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
 
+    describe "#get_best_for_event_result," do
+      it "returns a meeting individual result" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        fix_sbf.set_personal_best( fix_event_by_pool_type )
+        expect( fix_sbf.get_best_for_event_result( fix_event_by_pool_type.event_type, fix_event_by_pool_type.pool_type ) ).to be_an_instance_of( MeetingIndividualResult )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#is_personal_best," do
+      it "returns a boolean" do
+        result = active_swimmer.meeting_individual_results.sort{ rand - 0.5 }[0]
+        expect( subject.is_personal_best( result ) ).to eq( true ).or( eq ( false ) )
+      end
+      it "returns true if personal best" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        fix_sbf.set_personal_best( fix_event_by_pool_type )
+        best_result = fix_sbf.get_best_for_event_result( fix_event_by_pool_type.event_type, fix_event_by_pool_type.pool_type )
+        expect( fix_sbf.is_personal_best( best_result ) ).to eq( true )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+
     describe "#get_best_for_meeting_event," do
       it "returns a timing instance if event already swam" do
         fix_swimmer = Swimmer.find(23)

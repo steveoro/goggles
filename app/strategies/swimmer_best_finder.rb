@@ -116,6 +116,19 @@ class SwimmerBestFinder
       @swimmer.meeting_individual_results.for_pool_type( pool_type ).for_event_type( event_type ).is_personal_best.first :
       nil
   end
+
+  # Check if the result is the personal best
+  # without considering the apposite flag
+  # This is intended for new results or to handle 
+  # best results with same timing.
+  # Returns true if the result ise the personal best
+  # Returns false in any other cases
+  def is_personal_best( meeting_individual_result )
+    get_best_for_event_result( meeting_individual_result.event_type, meeting_individual_result.pool_type ) && 
+     get_best_for_event_result( meeting_individual_result.event_type, meeting_individual_result.pool_type ).get_timing_instance < meeting_individual_result.get_timing_instance ?
+     false :
+     true 
+  end
   #-- --------------------------------------------------------------------------
   #++
 
