@@ -33,6 +33,17 @@ describe PassagesBatchUpdater, type: :strategy do
           subject.edit_existing_passage( passage.id, fixture_value )
         ).to be true
       end
+      it "updates the existing row with the correct source timings parameters" do
+        subject.edit_existing_passage( passage.id, fixture_value )
+        result_row = Passage.find( passage.id )
+        expect( result_row.meeting_individual_result_id ).to eq( passage.meeting_individual_result_id )
+        expect( result_row.passage_type_id ).to eq( passage.passage_type_id )
+        expect( result_row.team_id ).to eq( passage.team_id )
+        expect( result_row.swimmer_id ).to eq( passage.swimmer_id )
+        expect( result_row.minutes_from_start ).to eq( minutes )
+        expect( result_row.seconds_from_start ).to eq( seconds )
+        expect( result_row.hundreds_from_start ).to eq( hundreds )
+      end
       it "changes the resulting SQL diff log" do
         expect{
           subject.edit_existing_passage( passage.id, fixture_value )
@@ -72,6 +83,17 @@ describe PassagesBatchUpdater, type: :strategy do
         expect(
           subject.create_new_passage( passage.meeting_individual_result_id, passage.passage_type_id, fixture_value )
         ).to be true
+      end
+      it "sets the new row with the correct source parameters (MIR, passage type, ...)" do
+        subject.create_new_passage( passage.meeting_individual_result_id, passage.passage_type_id, fixture_value )
+        result_row = Passage.last
+        expect( result_row.meeting_individual_result_id ).to eq( passage.meeting_individual_result_id )
+        expect( result_row.passage_type_id ).to eq( passage.passage_type_id )
+        expect( result_row.team_id ).to eq( passage.team_id )
+        expect( result_row.swimmer_id ).to eq( passage.swimmer_id )
+        expect( result_row.minutes_from_start ).to eq( minutes )
+        expect( result_row.seconds_from_start ).to eq( seconds )
+        expect( result_row.hundreds_from_start ).to eq( hundreds )
       end
       it "changes the resulting SQL diff log" do
         expect{

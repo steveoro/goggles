@@ -30,6 +30,7 @@ class PassagesBatchUpdater
     @new_passages = 0
     @destroyed_passages = 0
     @total_errors = 0
+    @current_user = created_by_user
     create_sql_diff_header( "PassagesBatchUpdater: recorded from actions by #{ created_by_user }" )
   end
   #-- -------------------------------------------------------------------------
@@ -62,7 +63,8 @@ class PassagesBatchUpdater
         sql_attributes = passage.attributes.select do |key,val|
           [
             'id', 'minutes', 'seconds', 'hundreds',
-            'minutes_from_start', 'seconds_from_start', 'hundreds_from_start'
+            'minutes_from_start', 'seconds_from_start', 'hundreds_from_start',
+            'user_id'
           ].include?( key.to_s )
         end
         sql_diff_text_log << to_sql_update( passage, false, sql_attributes, "\r\n" )
@@ -107,16 +109,10 @@ class PassagesBatchUpdater
     timing = TimingParser.parse( incremental_timing_text_value )
     is_ok = true
     if timing                                       # Create the new row:
-      passage = prepare_passage_fields( Passage.new, timing )
+      passage = prepare_passage_fields( Passage.new, timing, mir_id, passage_type_id )
       is_ok = passage.save
       if is_ok
-        sql_attributes = passage.attributes.select do |key,val|
-          [
-            'id', 'minutes', 'seconds', 'hundreds',
-            'minutes_from_start', 'seconds_from_start', 'hundreds_from_start'
-          ].include?( key.to_s )
-        end
-        sql_diff_text_log << to_sql_insert( passage, false, sql_attributes, "\r\n" )
+        sql_diff_text_log << to_sql_insert( passage, false, "\r\n" )
         @new_passages += 1
       else
         sql_diff_text_log << "-- INSERT VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( passage ) }\r\n" if passage.invalid?
@@ -143,7 +139,7 @@ class PassagesBatchUpdater
   # === Returns:
   # The updated Passage instance
   #
-  def prepare_passage_fields( passage, timing )
+  def prepare_passage_fields( passage, timing, mir_id = nil, passage_type_id = nil )
     prev_timing = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
     delta_timing = prev_timing ? timing - prev_timing : timing
     passage.minutes  = delta_timing.minutes
@@ -152,6 +148,16 @@ class PassagesBatchUpdater
     passage.minutes_from_start  = timing.minutes
     passage.seconds_from_start  = timing.seconds
     passage.hundreds_from_start = timing.hundreds
+    passage.user_id = @current_user.id
+    if mir_id
+      mir = MeetingIndividualResult.find( mir_id )
+      passage.meeting_program_id = mir.meeting_program_id
+      passage.meeting_individual_result_id = mir_id
+      passage.swimmer_id = mir.swimmer_id
+      passage.team_id = mir.team_id
+    end
+    passage.passage_type_id = passage_type_id if passage_type_id
+    puts "\r\n-#{mir_id} : " << passage.inspect
     passage
   end
   #-- -------------------------------------------------------------------------

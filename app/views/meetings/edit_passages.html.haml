@@ -8,9 +8,6 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 
-%p
-  *** WORK IN PROGRESS ***
-
 .goggles-category-gap
   = form_tag( meeting_update_passages_path(@meeting.id) )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -73,7 +70,10 @@
                 )                                                             |
 
 .row-fluid.goggles-category-gap
-  = submit_tag( I18n.t(:save), confirm: I18n.t('netzke.basepack.grid_panel.actions.are_you_sure') )
+  .offset1.span2
+    = submit_tag( I18n.t(:save), confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), class: "btn btn-primary" )
+.row-fluid.goggles-category-gap
+  %br
 
 :javascript
   /**
