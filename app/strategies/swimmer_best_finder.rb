@@ -124,10 +124,12 @@ class SwimmerBestFinder
   # Returns true if the result ise the personal best
   # Returns false in any other cases
   def is_personal_best( meeting_individual_result )
-    get_best_for_event_result( meeting_individual_result.event_type, meeting_individual_result.pool_type ) && 
-     get_best_for_event_result( meeting_individual_result.event_type, meeting_individual_result.pool_type ).get_timing_instance < meeting_individual_result.get_timing_instance ?
-     false :
-     true 
+    is_personal_best = false
+    unless meeting_individual_result.is_disqualified
+      best_result = get_best_for_event( meeting_individual_result.event_type, meeting_individual_result.pool_type )
+      is_personal_best = best_result && best_result < meeting_individual_result.get_timing_instance ? false : true
+    end
+    is_personal_best
   end
   #-- --------------------------------------------------------------------------
   #++

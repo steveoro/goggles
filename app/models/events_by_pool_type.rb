@@ -82,4 +82,9 @@ class EventsByPoolType < ActiveRecord::Base
     end
     events_by_pool_type_array
   end
+
+  alias_method :get_full_name, :i18n_short
+  alias_method :get_verbose_name, :i18n_description
+  # ----------------------------------------------------------------------------
 end
+

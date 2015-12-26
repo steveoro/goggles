@@ -31,6 +31,9 @@ describe MeetingIndividualResult, :type => :model do
       :is_valid,
       :is_male,
       :is_female,
+      :is_disqualified,
+      :is_not_disqualified,
+      :is_personal_best,
       :has_rank,
       :for_event_by_pool_type,
       :for_pool_type,
@@ -43,7 +46,8 @@ describe MeetingIndividualResult, :type => :model do
     context "[general methods]" do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [
         :get_full_name,
-        :get_verbose_name
+        :get_verbose_name,
+        :get_event_by_pool_type_code
       ])
     end
 
@@ -58,6 +62,31 @@ describe MeetingIndividualResult, :type => :model do
         ],
         'fakecode'
       )
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#get_event_by_pool_type_code" do
+      it "returns a string that contains event code" do
+        expect( subject.get_event_by_pool_type_code ).to include( subject.event_type.code )
+      end
+      it "returns a string that contains pool code" do
+        expect( subject.get_event_by_pool_type_code ).to include( subject.pool_type.code )
+      end
+      it "returns a string that contains '-' separator" do
+        expect( subject.get_event_by_pool_type_code ).to include( '-' )
+      end
+      it "returns a valid event by pool type code corresponding to an existent event by pool type" do
+        expect( EventsByPoolType.find_by_key( subject.get_event_by_pool_type_code ) ).to be_an_instance_of( EventsByPoolType )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#get_event_by_pool_type" do
+      it "returns a valid event by pool type" do
+        expect( subject.get_event_by_pool_type ).to be_an_instance_of( EventsByPoolType )
+      end
     end
     #-- -----------------------------------------------------------------------
     #++

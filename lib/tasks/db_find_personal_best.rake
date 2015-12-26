@@ -115,9 +115,9 @@ DESC
       end
       
       # Create diff file
-      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_personal_bets_finder_#{swimmer.id}.diff"
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_personal_best_finder_#{swimmer.id}.diff"
       File.open( LOG_DIR + '/' + file_name + '.sql', 'w' ) { |f| f.puts swimmer_best_finder.sql_diff_text_log }
-      logger.info( "\r\nLog file " + file_name + " created" )
+      logger.info( "\r\nDiff file " + file_name + " created" )
 
       # Save data
       if not persist
@@ -194,7 +194,7 @@ DESC
           diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
           logger.info( "\r\n" )
           logger.info( "\r\n<------------------------------------------------------------>" )
-          logger.info( "\r\nCreating log file #{file_name}" )
+          logger.info( "\r\nCreating diff file #{file_name}" )
           logger.info( "\r\n<------------------------------------------------------------>" )
           logger.info( "\r\n" )
         end
@@ -225,6 +225,113 @@ DESC
     end
 
     logger.info( "Full swimmer scan finished" )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  desc <<-DESC
+Check if some of meeting's results are swimmer
+personal bests.
+Resulting log files are stored into '#{LOG_DIR}'.
+
+Intended for new meeting results.
+
+Options: persist=false meeting=meeting_id
+
+- 'persist'    force to persist the personal best indicator on results found.
+- 'meeting'    meeting id to scan results
+- 'log_dir'    allows to override the default log dir destination.
+
+DESC
+  task :scan_meeting_for_personal_bests do |t|
+    puts "*** db:scan_meeting_for_personal_bests ***"
+    persist         = ENV.include?("persist") ? ENV["persist"] == 'true' : false
+    meeting_id      = ENV.include?("meeting") ? ENV["meeting"].to_i : nil
+    rails_config    = Rails.configuration             # Prepare & check configuration:
+    db_name         = rails_config.database_configuration[Rails.env]['database']
+    db_user         = rails_config.database_configuration[Rails.env]['username']
+    db_pwd          = rails_config.database_configuration[Rails.env]['password']
+    log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
+
+    # Display some info:
+    puts "DB name:          #{db_name}"
+    puts "DB user:          #{db_user}"
+    puts "log_dir:          #{log_dir}"
+    puts "\r\n"
+    logger = ConsoleLogger.new
+
+    # Verify parameters
+    unless meeting_id && Meeting.exists?( meeting_id ) 
+      puts("This needs a valid meeting to scan for.")
+      exit
+    end
+
+    puts "Requiring Rails environment to allow usage of any Model..."
+    require 'rails/all'
+    require File.join( Rails.root.to_s, 'config/environment' )
+    
+    # Find target entities
+    meeting = Meeting.find( meeting_id )
+    logger.info( "Meeting to scan: #{meeting.get_full_name}" )
+
+    # Create diff file
+    file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_meeting_personal_best_finder_#{meeting.id}.diff"
+    diff_file  = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
+    diff_file.puts '--'
+    diff_file.puts "-- Swimmer personal bests updates for Meeting #{meeting.get_full_name} (#{meeting.id})"
+    diff_file.puts "-- #{DateTime.now().strftime('%d-%m-%Y %H:%M')}"
+    diff_file.puts '--'
+    personal_bests_found = 0
+    results_scanned      = 0
+
+    ActiveRecord::Base.transaction do
+      meeting.meeting_individual_results.is_not_disqualified.sort_by_team.each do |meeting_individual_result|
+        # Check only if not already the personal best
+        if !meeting_individual_result.is_personal_best
+          # Initialize swimmer best finder
+          swimmer = meeting_individual_result.swimmer
+          swimmer_best_finder = SwimmerBestFinder.new( swimmer )
+          unless swimmer_best_finder
+            puts("Something wrong with swimmer #{swimmer.get_full_name} to scan for (#{meeting_individual_result.get_team_name}).")
+            exit
+          end
+  
+          # Check if result is a new personal best for swimmer
+          if swimmer_best_finder.is_personal_best( meeting_individual_result )
+            event_by_pool_type = meeting_individual_result.get_event_by_pool_type
+            swimmer_best_finder.set_personal_best( event_by_pool_type )
+            personal_bests_found += 1
+  
+            logger.info( "#{meeting_individual_result.get_team_name} - Found #{swimmer.get_full_name} new personal best for #{event_by_pool_type.get_full_name}: #{meeting_individual_result.get_timing}" )
+            diff_file.puts swimmer_best_finder.sql_diff_text_log
+          end
+        end
+        results_scanned += 1
+      end
+
+      # If no personal bests found delete log file
+      if personal_bests_found > 0
+        diff_file.puts "-- Found #{personal_bests_found} new personal bests"
+        diff_file.puts "-- Personal bests update for meeting #{meeting.id} terminated."
+      else
+        File.delete( LOG_DIR + '/' + file_name + '.sql' )
+      end
+  
+      logger.info( "\r\n<------------------------------------------------------------>" )
+      logger.info( "\r\nScanned #{results_scanned} results" )
+      logger.info( "\r\nFound #{personal_bests_found} new personal bests" )
+      logger.info( "\r\nDiff file #{file_name} created" ) if personal_bests_found > 0 
+      logger.info( "\r\nNo diff file created" ) if personal_bests_found == 0 
+      logger.info( "\r\n<------------------------------------------------------------>" )
+
+      # Save or roll back data
+      if not persist
+        logger.info( "\r\n*** Personal bests NOT persisted! ***" )
+        raise ActiveRecord::Rollback 
+      else
+        logger.info( "\r\nPersonal bests persisted." )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

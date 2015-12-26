@@ -252,6 +252,9 @@ describe SwimmerBestFinder, type: :strategy do
     end
     #-- -----------------------------------------------------------------------
 
+    # Test this feature with real data for praticity
+    # Sure that Leega swam 25FA more than two times in 25 pool
+    # and has been disqualified at least one time in 100MI (huncle dog)
     describe "#is_personal_best," do
       it "returns a boolean" do
         result = active_swimmer.meeting_individual_results.sort{ rand - 0.5 }[0]
@@ -264,6 +267,20 @@ describe SwimmerBestFinder, type: :strategy do
         fix_sbf.set_personal_best( fix_event_by_pool_type )
         best_result = fix_sbf.get_best_for_event_result( fix_event_by_pool_type.event_type, fix_event_by_pool_type.pool_type )
         expect( fix_sbf.is_personal_best( best_result ) ).to eq( true )
+      end
+      it "returns false if not personal best" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '50FA')
+        worst_result           = fix_swimmer.meeting_individual_results.for_event_by_pool_type( fix_event_by_pool_type ).sort_by_timing('DESC').first 
+        expect( fix_sbf.is_personal_best( worst_result ) ).to eq( false )
+      end
+      it "returns false if disqualified" do
+        fix_swimmer            = Swimmer.find(23)
+        fix_sbf                = SwimmerBestFinder.new( fix_swimmer )
+        fix_event_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes('25', '100MI')
+        disqualified_result    = fix_swimmer.meeting_individual_results.for_event_by_pool_type( fix_event_by_pool_type ).is_disqualified.first 
+        expect( fix_sbf.is_personal_best( disqualified_result ) ).to eq( false )
       end
     end
     #-- -----------------------------------------------------------------------

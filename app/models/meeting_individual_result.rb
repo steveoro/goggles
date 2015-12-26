@@ -75,6 +75,7 @@ class MeetingIndividualResult < ActiveRecord::Base
 
   scope :is_valid,                    ->              { where(is_out_of_race: false, is_disqualified: false) }
   scope :is_not_disqualified,         ->              { where(is_disqualified: false) }
+  scope :is_disqualified,             ->              { where(is_disqualified: true) }
   scope :is_personal_best,            ->              { where(is_personal_best: true) }
   scope :is_season_type_best,         ->              { where(is_season_type_best: true) }
 
@@ -181,6 +182,16 @@ class MeetingIndividualResult < ActiveRecord::Base
   # Retrieves the Pool Type id as it is; returns 0 in case of an invalid record
   def get_pool_type_id
     self.pool_type ? self.pool_type.id : 0
+  end
+
+  # Computes the event by pool type code
+  def get_event_by_pool_type_code
+    self.pool_type && self.event_type ? "#{self.event_type.code}-#{self.pool_type.code}" : '?'
+  end
+
+  # Retrieves the event by pool type; returns nil in case of an invalid record
+  def get_event_by_pool_type
+    EventsByPoolType.find_by_key( self.get_event_by_pool_type_code  )
   end
   # ----------------------------------------------------------------------------
 
