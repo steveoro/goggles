@@ -67,7 +67,7 @@ class MeetingIndividualResult < ActiveRecord::Base
                   :meeting_individual_points, :minutes, :seconds, :hundreds,
                   :meeting_program_id, :swimmer_id, :team_id, :badge_id, :user_id,
                   :disqualification_code_type_id, :goggle_cup_points, :reaction_time,
-                  :team_points, :team_affiliation_id
+                  :team_points, :team_affiliation_id, :is_personal_best
 
 
   delegate :short_name, to: :category_type, prefix: true

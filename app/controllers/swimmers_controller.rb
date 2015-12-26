@@ -233,7 +233,7 @@ class SwimmersController < ApplicationController
         .includes(:event_type)
         .for_pool_type( pool_type )
         .sort_by_date
-        .select([:id, :minutes, :seconds, :hundreds])
+        .select([:id, :minutes, :seconds, :hundreds, :is_personal_best])
 
       # *event_by_date* structure:
       # The structure is an array of hashes with elements formed by
@@ -339,13 +339,13 @@ class SwimmersController < ApplicationController
       results_by_time = @swimmer.meeting_individual_results
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
-        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
+        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id, :is_personal_best])
       # This is used only for the graphs:
       results_by_date = @swimmer.meeting_individual_results
         .is_valid
         .sort_by_date( 'ASC' )
         .for_event_by_pool_type( events_by_pool_type )
-        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id])
+        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id, :is_personal_best])
 
       # If has results collect passages and prepares hash for index table
       if results_by_time.count > 0

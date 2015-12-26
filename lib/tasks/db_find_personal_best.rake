@@ -215,7 +215,7 @@ DESC
         end
       end
 
-      # Save data
+      # Save or roll back data
       if not persist
         logger.info( "\r\n*** Personal best NOT persisted! ***" )
         raise ActiveRecord::Rollback 
