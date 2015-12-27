@@ -29,6 +29,12 @@
                   %b= event
             - @full_history_by_date[pool_type.code][1].each do |event_by_date|
               = render( partial: 'full_history_by_date_meeting_row', locals: { event_by_date: event_by_date, event_list: event_list } )
+            %tr{'class'=>'info'}
+              %td.goggles-centeralign
+              - event_list = @full_history_by_date[pool_type.code][0]
+              - event_list.each do |event|
+                %td.goggles-centeralign
+                  %b= event
 
   .row-fluid.goggles-category-gap
 

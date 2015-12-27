@@ -160,7 +160,7 @@ class Meeting < ActiveRecord::Base
   # or the general meeting scheduled date if not
   def get_meeting_date
     meeting_date = get_scheduled_date
-    meeting_date ? meeting_date : self.header_date
+    meeting_date ? meeting_date : Format.a_date( self.header_date )
   end
 
   # Gets together the scheduled date with the verbose name but without the header year
@@ -253,6 +253,14 @@ class Meeting < ActiveRecord::Base
   #
   def get_swimming_pool
     self.meeting_sessions.sort_by_order.first.swimming_pool if self.meeting_sessions.count > 0 
+  end
+  # ----------------------------------------------------------------------------
+
+  # Retrieves the city of the meeting
+  # assuming the one of the first session swimming pool
+  #
+  def get_city
+    self.meeting_sessions.count > 0 ? self.meeting_sessions.sort_by_order.first.swimming_pool.city.name : '?'  
   end
   # ----------------------------------------------------------------------------
 

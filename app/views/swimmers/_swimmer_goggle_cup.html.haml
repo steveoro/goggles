@@ -18,7 +18,7 @@
               - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
                 %tr{ 'class' => index < goggle_cup.max_performance ? 'warning' : '' }
                   %td
-                    = mir.meeting.decorate.get_linked_name
+                    = mir.meeting.decorate.get_linked_full_name_with_date
                   %td
                     = mir.event_type.code
                   %td.goggles-rightalign

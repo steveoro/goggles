@@ -30,7 +30,7 @@
               %b= t('championships.team')
             - @championship_ranking.meetings.each do |meeting|
               %td.goggles-centeralign{ colspan: col_x_meeting }
-                = meeting.decorate.get_linked_short_name
+                = meeting.decorate.get_linked_city_with_date
             %td.goggles-rightalign{ rowspan: 2 }
               %b= t('championships.total_points')
           %tr{'class'=>'info'}
@@ -70,7 +70,7 @@
                   %b= t('championships.team')
                 - @championship_ranking.meetings.each do |meeting|
                   %td.goggles-centeralign{ colspan: 3 }
-                    = meeting.decorate.get_linked_short_name
+                    = meeting.decorate.get_linked_city_with_date
               %tr{'class'=>'info'}
                 - @championship_ranking.meetings.each do |meeting|
                   %td.goggles-rightalign

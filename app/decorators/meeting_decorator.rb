@@ -52,8 +52,26 @@ class MeetingDecorator < Draper::Decorator
   # Retrieves the meeting description
   # with link to meeting result show full
   #
+  def get_linked_full_name
+    h.link_to( get_full_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Retrieves the meeting short description
+  # with link to meeting result show full
+  #
   def get_linked_short_name
-    h.link_to( get_short_name + ' (' + get_scheduled_date + ')', meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+    h.link_to( get_short_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Retrieves the meeting shortest description
+  # with link to meeting result show full
+  #
+  def get_linked_city_with_date
+    h.link_to( "#{get_city} (#{get_meeting_date})", meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -61,8 +79,8 @@ class MeetingDecorator < Draper::Decorator
   # Retrieves the meeting description
   # with link to meeting result show full
   #
-  def get_linked_full_name
-    h.link_to( get_full_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+  def get_linked_full_name_with_date
+    h.link_to( "#{get_full_name} (#{get_meeting_date})", meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
   end
   #-- -------------------------------------------------------------------------
   #++

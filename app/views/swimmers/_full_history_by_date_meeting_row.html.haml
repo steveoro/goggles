@@ -1,8 +1,7 @@
 - meeting = event_by_date[:meeting]
 %tr
   %td
-    %a{'id'=>"meeting#{meeting.id}", 'href'=>"#{ meeting_show_full_path(:id=>meeting.id, :swimmer_id=>@swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip')}
-      = meeting.get_short_name + ' ( ' + Format.a_date( meeting.get_scheduled_date ) + ')'
+    = meeting.decorate.get_linked_full_name_with_date
     - event_list.each do |event|
       - individual_result = event_by_date[event]
       - if individual_result

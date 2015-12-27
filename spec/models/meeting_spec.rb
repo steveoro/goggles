@@ -53,7 +53,8 @@ describe Meeting, :type => :model do
       ])
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
         :get_short_events,
-        :get_complete_events
+        :get_complete_events,
+        :get_city
       ])
     end
 

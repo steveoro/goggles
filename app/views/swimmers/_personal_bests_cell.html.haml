@@ -10,8 +10,7 @@
     - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
       = Format.a_date( sched_date )
       %br
-      %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting_individual_result.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip')}
-        = record.meeting_individual_result.meeting.description
+      = record.meeting_individual_result.meeting.decorate.get_linked_full_name
     - else
       = '-'
 

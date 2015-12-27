@@ -1,10 +1,13 @@
 - has_passages = ( individual_result.passages.count > 0 )
 %td.goggles-rightalign{ 'class' => individual_result.is_personal_best ? 'success' : '' }
-  - if has_passages
-    .btn-link{ id: "passages#{individual_result.id}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
-      = individual_result.get_timing
+  - if individual_result.is_disqualified
+    = I18n.t('meeting.disqualified')
   - else
-    = individual_result.get_timing
+    - if has_passages
+      .btn-link{ id: "passages#{individual_result.id}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
+        = individual_result.get_timing
+    - else
+      = individual_result.get_timing
 
 - if has_passages
   %script

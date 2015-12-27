@@ -52,8 +52,47 @@ describe MeetingDecorator, type: :model do
     it "returns a string containing the meeting short name" do
       expect( subject.get_linked_short_name ).to include( ERB::Util.html_escape(subject.get_short_name) )
     end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  describe "#get_linked_city_with_date" do
+    it "responds to #get_linked_short_name method" do
+      expect( subject ).to respond_to( :get_linked_city_with_date )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_city_with_date ).to include( 'href' )
+    end
+    it "returns an HTML link to the meeting show full path" do
+      expect( subject.get_linked_city_with_date ).to include( meeting_show_full_path(id: subject.id) )
+    end
+    it "returns a string containing the meeting shortest name" do
+      expect( subject.get_linked_city_with_date ).to include( ERB::Util.html_escape(subject.get_city) )
+    end
     it "returns a string containing the meeting scheduled date" do
-      expect( subject.get_linked_short_name ).to include( ERB::Util.html_escape(subject.get_scheduled_date) )
+      expect( subject.get_linked_city_with_date ).to include( ERB::Util.html_escape(subject.get_scheduled_date) )
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  describe "#get_linked_full_name_with_date" do
+    it "responds to #get_linked_full_name_with_date method" do
+      expect( subject ).to respond_to( :get_linked_full_name_with_date )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_full_name_with_date ).to include( 'href' )
+    end
+    it "returns an HTML link to the meeting show full path" do
+      expect( subject.get_linked_full_name_with_date ).to include( meeting_show_full_path(id: subject.id) )
+    end
+    it "returns a string containing the meeting full name" do
+      expect( subject.get_linked_full_name_with_date ).to include( ERB::Util.html_escape(subject.get_full_name) )
+    end
+    it "returns a string containing the meeting scheduled date" do
+      expect( subject.get_linked_full_name_with_date ).to include( ERB::Util.html_escape(subject.get_scheduled_date) )
     end
   end
   #-- --------------------------------------------------------------------------
