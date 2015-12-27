@@ -155,6 +155,14 @@ class Meeting < ActiveRecord::Base
     ms ? Format.a_date( ms.scheduled_date ) : nil
   end
 
+  # Retrieves the date for this meeting.
+  # Return the first session one if set, 
+  # or the general meeting scheduled date if not
+  def get_meeting_date
+    meeting_date = get_scheduled_date
+    meeting_date ? meeting_date : self.header_date
+  end
+
   # Gets together the scheduled date with the verbose name but without the header year
   def get_scheduled_date_with_verbose_name
     "#{get_scheduled_date}, #{get_full_name} (#{get_season_type})"
