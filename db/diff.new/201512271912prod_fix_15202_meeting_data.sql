@@ -8,7 +8,7 @@ START TRANSACTION;
 -- 27/12/2015
 -- Fix meeting result error on FRIGNANI DANIELE 400MX at Riccione
 update meeting_individual_results
-set seconds = 53, standard_points = 807.05, rank = 3
+set seconds = 53, standard_points = 817.88, rank = 3, meeting_individual_points = 817.88
 where id = 256417;
 update meeting_individual_results
 set rank = 2
