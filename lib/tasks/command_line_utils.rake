@@ -53,7 +53,7 @@ DESC
 
     # Verify parameters
     unless meeting_code 
-      puts("This needs a code, or a parto of a code to search for.")
+      puts("This needs a code, or a part of a code to search for.")
       exit
     end
 
@@ -70,7 +70,7 @@ DESC
     
     # Search meetings
     meeting_found = 0
-    logger.info( "\r\nSearch meeting with code like '%#{meeting_code}%'" )
+    logger.info( "\r\nSearch meetings with code like '%#{meeting_code}%'" )
     logger.info( "\r\n<------------------------------------------------------------>\r\n" )
     Meeting.where("code like '%#{meeting_code}%'").sort_by_date.each do |meeting|
       meeting_found += 1
@@ -84,6 +84,72 @@ DESC
   #-- -------------------------------------------------------------------------
   #++
 
+  desc <<-DESC
+Find team matching a given name part
+Resulting log files are stored into '#{LOG_DIR}'.
+
+Search teams and team affiliations for teams
+which names contains the searc string
+
+Options: name=<team_name_part> log_dir=#{LOG_DIR}]
+
+- 'name'     team name or part of team name to search for.
+- 'log_dir'  allows to override the default log dir destination.
+
+DESC
+  task :find_team_by_name do |t|
+    puts "*** ut:find_team_by_name ***"
+    team_name       = ENV.include?("name") ? ENV["name"] : nil
+    rails_config    = Rails.configuration             # Prepare & check configuration:
+    db_name         = rails_config.database_configuration[Rails.env]['database']
+    db_user         = rails_config.database_configuration[Rails.env]['username']
+    db_pwd          = rails_config.database_configuration[Rails.env]['password']
+    log_dir         = ENV.include?("log_dir") ? ENV["log_dir"] : LOG_DIR
+
+    # Verify parameters
+    unless team_name 
+      puts("This needs a team name, or a part of a team name to search for.")
+      exit
+    end
+
+    # Display some info:
+    puts "DB name:          #{db_name}"
+    puts "DB user:          #{db_user}"
+    puts "log_dir:          #{log_dir}"
+    puts "\r\n"
+    logger = ConsoleLogger.new
+
+    puts "Requiring Rails environment to allow usage of any Model..."
+    require 'rails/all'
+    require File.join( Rails.root.to_s, 'config/environment' )
+    
+    # Search meetings
+    teams_found = []
+    logger.info( "\r\nSearch teams with names like '%#{team_name}%'" )
+    logger.info( "\r\n<------------------------------------------------------------>\r\n" )
+    Team.where("name like '%#{team_name}%' or editable_name like '%#{team_name}%' or name_variations like '%#{team_name}%'").each do |team|
+      teams_found << team
+    end
+    TeamAffiliation.where("name like '%#{team_name}%'").each do |team_affiliation|
+      teams_found << team_affiliation.team unless teams_found.include?( team_affiliation.team ) 
+    end
+
+    # Log teams found and affiliations
+    teams_found.sort{ |a,b| a.name <=> b.name }.each do |team|
+      logger.info( "\r\n#{team.id} - #{team.get_verbose_name} (#{team.name})" )
+      logger.info( "<------------------------------------------------------------>" )
+      team.team_affiliations.select(:name).uniq.each do |team_affiliation|
+        logger.info( " - #{team_affiliation.name}" )
+      end
+      logger.info( "\r\n\r\n" ) 
+    end
+      
+    # If no meetings found log warning
+    logger.info( "\r\nNo teams found with #{team_name}. Perhaps you mispelled it.\r\n" ) if teams_found.size == 0
+    logger.info( "\r\n\r\n" ) 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 end
 # =============================================================================

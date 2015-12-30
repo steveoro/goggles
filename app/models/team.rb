@@ -46,6 +46,7 @@ class Team < ActiveRecord::Base
 
   scope :sort_team_by_user, ->(dir) { order("users.name #{dir.to_s}, teams.name #{dir.to_s}") }
   scope :sort_team_by_city, ->(dir) { order("cities.name #{dir.to_s}, teams.name #{dir.to_s}") }
+  scope :sort_by_name,      ->(dir) { order("teams.name #{dir.to_s}") }
 
 
   delegate :name, to: :user, prefix: true
