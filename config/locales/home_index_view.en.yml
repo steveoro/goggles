@@ -1,3 +1,21 @@
 en:
   home_index_view:
     id_card_button: "Your 'Radiography'"
+
+  supermaster:
+    supermaster: "FIN Supermaster"
+    rankings: "Rankings"
+    season_meetings: "Seasonal meetings"
+    supermaster: "Supermaster"
+    supermaster_short: "SM"
+    ironmaster: "Ironmaster"
+    ironmaster_short: "IM"
+    team_ranking: "Team ranking"
+    team_ranking_short: "CS"
+    number_short: "N."
+    score: "Score"
+    everage: "Avg"
+    best: "Best"
+    worts: "Worts"
+    meetings: "Meetings attended"
+    event_type: "Event"

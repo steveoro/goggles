@@ -134,14 +134,15 @@ module SwimmersHelper
   # Getter for a unique string key viable for use as a cache key for fragments involving
   # the rending of any specified <tt>action_name</tt> of this controller.
   #
-  def cache_key_for_swimmer( action_name, swimmer_id, max_updated_at, show_passages = :true, show_trainings = :true )
+  def cache_key_for_swimmer( action_name, swimmer_id, max_updated_at, show_passages = :true, show_trainings = :true, subentity_id = nil )
     [
       action_name,
       swimmer_id,
       max_updated_at.to_i.to_s,
       I18n.locale.to_s,
       show_passages,
-      show_trainings
+      show_trainings,
+      subentity_id,
     ].compact.join('-')
   end
   #-- -------------------------------------------------------------------------

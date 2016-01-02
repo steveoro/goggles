@@ -63,7 +63,6 @@ describe Swimmer, :type => :model do
     # ---------------------------------------------------------------------------
     #++
 
-
     describe "#get_badges_array_for_year" do
       it "returns always a processable list" do
         expect( subject.get_badges_array_for_year ).to respond_to( :each )
@@ -73,6 +72,31 @@ describe Swimmer, :type => :model do
         swimmer = Swimmer.find(142)
         result = swimmer.get_badges_array_for_year
         expect( result ).to all( be_an_instance_of( Badge ) )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "#has_badge_for_season_and_year?" do
+      it "returns a boolean" do
+        expect( subject.has_badge_for_season_and_year? ).to eq( true ).or eq( false )
+      end
+      it "returns true if swimmer has badge for FIN season" do
+        swimmer = Swimmer.find(23)
+        expect( swimmer.has_badge_for_season_and_year?( header_year = 2014 ) ).to be true
+      end
+      it "returns true if swimmer has badge for CSI season but not FIN" do
+        swimmer = Swimmer.find(23)
+        season_type = SeasonType.find_by_code('MASCSI')
+        expect( swimmer.has_badge_for_season_and_year?( header_year = 2002, season_type = season_type ) ).to be true
+      end
+      it "returns false if swimmer hasn't badge for FIN season but CSI" do
+        swimmer = Swimmer.find(23)
+        expect( swimmer.has_badge_for_season_and_year?( header_year = 2002 ) ).to be false
+      end
+      it "returns false if swimmer hasn't badge for FIN season" do
+        swimmer = Swimmer.find(23)
+        expect( swimmer.has_badge_for_season_and_year?( header_year = 1970 ) ).to be false
       end
     end
     #-- -----------------------------------------------------------------------

@@ -190,8 +190,17 @@ class Swimmer < ActiveRecord::Base
   # Returns an +Array+ of Badge row instances linked to this Swimmer,
   # filtered by season, having <tt>seasons.header_year = season_header_year</tt>.
   #
-  def get_badges_array_for_year( season_header_year = Season.build_header_year_from_date )
-    badges.includes(:season, :team).where( 'seasons.header_year' => season_header_year )
+  def get_badges_array_for_year( header_year = Season.build_header_year_from_date )
+    badges.for_year( header_year ).includes(:season, :team)
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Returns true if swimmer has a badge for the given season type and header year.
+  # Default values are 'MASFIN' and current year (calendar).
+  #
+  def has_badge_for_season_and_year?( header_year = Season.build_header_year_from_date, season_type = SeasonType.find_by_code('MASFIN') )
+    badges.for_season_type( season_type ).for_year( header_year ).count > 0
   end
   #-- -------------------------------------------------------------------------
   #++

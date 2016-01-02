@@ -160,6 +160,7 @@ Goggles::Application.routes.draw do
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
       get  "swimmer/current_goggle_cup/:id",    to: "swimmers#current_goggle_cup",      as: "swimmer_current_goggle_cup"
+      get  "swimmer/sumpermaster/:id",          to: "swimmers#supermaster",             as: "swimmer_supermaster"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
       get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
 

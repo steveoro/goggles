@@ -38,6 +38,9 @@ class TeamAffiliation < ActiveRecord::Base
 
   attr_accessible :name, :number, :team_id, :season_id,
                   :user_id, :is_autofilled, :must_calculate_goggle_cup
+
+  scope :for_season_type,       ->(season_type)    { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+  scope :for_year,              ->(header_year)    { joins(:season).where( ['seasons.header_year = ?', header_year]) }
   #-- -------------------------------------------------------------------------
   #++
 

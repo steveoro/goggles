@@ -424,6 +424,36 @@ class SwimmersController < ApplicationController
   end
 
 
+  # Radiography for a specified swimmer id: "Supermaster" tab rendering.
+  # Show FIN supermaster results and main rankings
+  # Main rankings are:
+  # - Supermaster  -> Best different event types 5 results
+  # - Ironmaster   -> All event types best results (one per type)
+  # - Team ranking -> Best different event types 3 results with at least 3 meetings
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def supermaster
+    unless ( @swimmer.has_badge_for_season_and_year? )
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to(:back) and return
+    end
+    
+    # --- "Supermaster" tab: ---
+    @tab_title        = I18n.t('supermaster.supermaster')
+    @season_type      = SeasonType.find_by_code('MASFIN')
+    @header_year      = Season.build_header_year_from_date
+    @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
+    @season           = @badge.season
+    @team             = @badge.team
+    @team_affiliation = @team.get_current_affiliation( @season_type )
+    
+    @meeting_individual_results = @swimmer.meeting_individual_results.for_season( @season )
+    
+  end
+
+
   # Radiography for a specified swimmer id: "Goggle cup" tab rendering.
   # Show results which concurrs in current goggle cup score, if any
   # For each result, ordered by goggle cup points show google cup point

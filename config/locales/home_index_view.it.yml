@@ -1,3 +1,22 @@
 it:
   home_index_view:
     id_card_button: "La tua 'Radiografia'"
+
+  supermaster:
+    title: "FIN Supermaster"
+    rankings: "Classifiche"
+    season_meetings: "Meeting della stagione"
+    supermaster: "Supermaster"
+    supermaster_short: "SM"
+    ironmaster: "Ironmaster"
+    ironmaster_short: "IM"
+    team_ranking: "Classifica di società"
+    team_ranking_short: "CS"
+    number_short: "N."
+    score: "Punti"
+    everage: "Media"
+    best: "Migliore"
+    worst: "Peggiore"
+    meetings: "Manifestazioni"
+    event_type: "Specialità"
+    

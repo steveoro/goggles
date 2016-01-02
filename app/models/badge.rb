@@ -53,6 +53,8 @@ class Badge < ActiveRecord::Base
   scope :for_team,              ->(team)           { where(team: team) }
   scope :for_swimmer,           ->(swimmer)        { where(swimmer: swimmer) }
   scope :for_final_rank,        ->(final_rank = 1) { where(['final_rank = ?', final_rank]) }
+  scope :for_season_type,       ->(season_type)    { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
+  scope :for_year,              ->(header_year)    { joins(:season).where( ['seasons.header_year = ?', header_year]) }
   #-- -------------------------------------------------------------------------
   #++
 

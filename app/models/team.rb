@@ -118,6 +118,17 @@ class Team < ActiveRecord::Base
   #-- -------------------------------------------------------------------------
   #++
 
+  # Returns the current affiliation for the given season
+  #
+  # params
+  # season_type: the season type to search for (default MASFIN)
+  #
+  def get_current_affiliation( season_type = SeasonType.find_by_code('MASFIN') )
+    team_affiliations.for_season_type( season_type ).for_year( Season.build_header_year_from_date ).first
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
   # Label symbol corresponding to either a column name or a model method to be used
   # mainly in generating DropDown option lists.
   #

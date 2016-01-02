@@ -104,6 +104,8 @@ describe Team, :type => :model do
         end
       end
     end
+    # ---------------------------------------------------------------------------
+    #++
 
     describe "#get_current_goggle_cup_name_at" do
       it "responds to #get_current_goggle_cup_name_at" do
@@ -129,6 +131,36 @@ describe Team, :type => :model do
         end
       end
     end
+    # ---------------------------------------------------------------------------
+    #++
+    
+    describe "#get_current_affiliation" do
+      it "responds to #get_current_affiliationt" do
+        expect( subject ).to respond_to( :get_current_affiliation )
+      end
+      context "without parameters" do
+        it "returns an instance of team affiliation or nil" do
+          expect( subject.get_current_affiliation ).to be_an_instance_of( TeamAffiliation ).or be_nil
+        end
+      end
+      context "with a season type as parameter" do
+        it "returns an instance of goggle_cup or nil" do
+          fix_season_type = SeasonType.all[ ((rand * SeasonType.count) % SeasonType.count).to_i ]
+          expect( subject.get_current_affiliation( fix_season_type ) ).to be_an_instance_of( TeamAffiliation ).or be_nil
+        end
+        it "returns a valid team affiliation for CSI Ober Ferrari" do
+          fix_season_type = SeasonType.find_by_code('MASFIN')
+          expect( subject.get_current_affiliation( fix_season_type ) ).to be_an_instance_of( TeamAffiliation )
+        end
+        it "returns nil for newely created team" do
+          fix_team = create( :team )
+          fix_season_type = SeasonType.all[ ((rand * SeasonType.count) % SeasonType.count).to_i ]
+          expect( fix_team.get_current_affiliation( fix_season_type ) ).to be_nil
+        end
+      end
+    end
+    # ---------------------------------------------------------------------------
+    #++   
   end
   #-- -------------------------------------------------------------------------
   #++

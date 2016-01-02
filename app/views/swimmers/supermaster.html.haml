@@ -1,0 +1,85 @@
+= render( partial: 'tabs_and_radio_title' )
+- cache( cache_key_for_swimmer( 'supermaster', @swimmer.id, @max_updated_at, false, false, @badge.id ) ) do
+  .row-fluid#swimmer_supermaster
+    .goggles-category-gap#pageTop
+      %h1= @season.get_full_name
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td
+              %b= @swimmer.get_full_name  
+            %td
+              %b= @badge.number
+            %td
+              %b= @team.get_verbose_name  
+            %td
+              %b= @team_affiliation.number
+
+  .row-fluid
+    .goggles-category-gap#rankings
+      %h3
+        = t('supermaster.rankings')
+        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td
+            %td.goggles-rightalign
+              %b= t('supermaster.number_short')
+            %td.goggles-rightalign
+              %b= t('supermaster.score')
+            %td.goggles-rightalign
+              %b= t('supermaster.everage')
+            %td.goggles-rightalign
+              %b= t('supermaster.best')
+            %td.goggles-rightalign
+              %b= t('supermaster.worst')
+          %tr
+            %td
+              %b= t('supermaster.supermaster')
+          %tr
+            %td
+              %b= t('supermaster.ironmaster')
+          %tr
+            %td
+              %b= t('supermaster.team_ranking')
+
+  .row-fluid
+    .goggles-category-gap#meetings
+      %h3
+        = t('supermaster.meetings')
+        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td
+              %b= t('calendars.meeting')
+            %td
+              %b= I18n.t('supermaster.event_type')
+            %td.goggles-rightalign
+              %b= I18n.t('meeting.rank')
+            %td.goggles-rightalign
+              %b= I18n.t('meeting.timing')
+            %td.goggles-rightalign
+              %b= I18n.t('meeting.standard')
+            %td.goggles-centeralign
+              %b= I18n.t('supermaster.supermaster_short')
+            %td.goggles-centeralign
+              %b= I18n.t('supermaster.ironmaster_short')
+            %td.goggles-centeralign
+              %b= I18n.t('supermaster.team_ranking_short')
+          - @meeting_individual_results.each do |mir|
+            %tr
+              %td
+                = mir.meeting.decorate.get_linked_full_name_with_date
+              %td
+                = mir.event_type.code
+              %td.goggles-rightalign
+                = mir.rank
+              %td.goggles-rightalign
+                = mir.get_timing
+              %td.goggles-rightalign
+                = mir.standard_points
+              
+  .row-fluid
+    .goggles-category-gap#bottom_of_page

@@ -587,6 +587,32 @@ describe SwimmersController, :type => :controller do
   end
   # ===========================================================================
 
+  describe '[GET #supermaster/:id]' do
+    context "as a logged-in user" do
+      let(:season)     { Season.find(142) } 
+      let(:team)       { Team.find(1) }
+      let(:swimmer)    { team.badges.for_season( season )[ ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i ].swimmer } 
+      
+      before(:each) do
+        login_user()
+        get :supermaster, id: swimmer.id, season_id: season.id 
+      end
+
+      context "supermaster general structure," do
+        it "assigns required variables" do
+          expect( assigns( :season_type ) ).to be_a_instance_of( SeasonType )
+          expect( assigns( :header_year ) ).to be_a_kind_of( String )
+          expect( assigns( :badge ) ).to be_a_instance_of( Badge )
+          expect( assigns( :season ) ).to be_a_instance_of( Season )
+          expect( assigns( :team ) ).to be_a_instance_of( Team )
+          expect( assigns( :team_affiliation ) ).to be_a_instance_of( TeamAffiliation )
+          expect( assigns( :meeting_individual_results ) ).to all( be_a_instance_of( MeetingIndividualResult ) )
+        end
+      end
+    end
+  end
+  # ===========================================================================
+
   describe '[GET #trainings/:id]' do
     # FIXME This action requires "full goggler" (swimmer associated with user)
     #it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :trainings )
