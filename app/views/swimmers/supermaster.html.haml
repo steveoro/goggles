@@ -34,9 +34,21 @@
               %b= t('supermaster.best')
             %td.goggles-rightalign
               %b= t('supermaster.worst')
-          %tr
-            %td
-              %b= t('supermaster.supermaster')
+          - supermaster_score = @sssc.calculate_supermaster_score
+          - if supermaster_score[:score] > 0
+            %tr
+              %td
+                %b= t('supermaster.supermaster')
+              %td.goggles-rightalign
+                = supermaster_score[:number] 
+              %td.goggles-rightalign
+                = supermaster_score[:score] 
+              %td.goggles-rightalign
+                = supermaster_score[:average] 
+              %td.goggles-rightalign
+                = supermaster_score[:max] 
+              %td.goggles-rightalign
+                = supermaster_score[:min] 
           %tr
             %td
               %b= t('supermaster.ironmaster')

@@ -449,7 +449,9 @@ class SwimmersController < ApplicationController
     @team             = @badge.team
     @team_affiliation = @team.get_current_affiliation( @season_type )
     
-    @meeting_individual_results = @swimmer.meeting_individual_results.for_season( @season )
+    @sssc = SwimmerSeasonalScoreCalculator.new( @swimmer, @season )
+    
+    @meeting_individual_results = @sssc.get_results
     
   end
 

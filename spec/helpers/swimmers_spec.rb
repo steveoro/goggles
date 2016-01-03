@@ -248,6 +248,10 @@ describe SwimmersHelper, :type => :helper do
       # 2 IDs + 1 locale key + 2 flag + 1 date
       expect( result_plain.split('-').count ).to eq( 6 )
     end
+    it "returns different strings as invoked with different parameters" do
+      another_result = helper.send(:cache_key_for_swimmer, 'radio', (rand * 10000).to_i, DateTime.now + 100, ((rand * 2).to_i > 1), ((rand * 2).to_i > 1), (rand * 10000).to_i )
+      expect( result_plain == another_result ).to be false
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
