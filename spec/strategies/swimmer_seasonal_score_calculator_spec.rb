@@ -63,23 +63,8 @@ describe SwimmerSeasonalScoreCalculator, type: :strategy do
     #-- -----------------------------------------------------------------------
     
     describe "#calculate_supermaster_score," do
-      it "returns an hash" do
-        expect( subject.calculate_supermaster_score ).to be_a_kind_of( Hash )
-      end
-      it "returns an hash which responds to given keys" do
-        supermaster_hash = subject.calculate_supermaster_score
-        expect( supermaster_hash[:results] ).to be_a_kind_of( ActiveRecord::Relation )
-        expect( supermaster_hash[:number] ).to be >= 0
-        expect( supermaster_hash[:score] ).to be >= 0
-        expect( supermaster_hash[:average] ).to be >= 0
-        expect( supermaster_hash[:min] ).to be >= 0
-        expect( supermaster_hash[:max] ).to be >= 0
-      end
-      it "returns congruent values" do
-        supermaster_hash = subject.calculate_supermaster_score
-        expect( supermaster_hash[:max] ).to be >= supermaster_hash[:min]
-        expect( supermaster_hash[:score] ).to be >= supermaster_hash[:min]
-        expect( supermaster_hash[:number] ).to be >= supermaster_hash[:results].count
+      it "returns a best limited ranking dao" do
+        expect( subject.calculate_supermaster_score ).to be_an_instance_of( BestLimitedRankingDAO )
       end
     end
     #-- -----------------------------------------------------------------------

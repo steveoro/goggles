@@ -59,13 +59,7 @@ class SwimmerSeasonalScoreCalculator
   # Returns an hash with datas for supermaster calculation
   #
   def calculate_supermaster_score( number_of_bests = 5 )
-    supermaster_datas = Hash.new
-    supermaster_datas[:results] = get_results.limit( number_of_bests )
-    supermaster_datas[:number]  = supermaster_datas[:results].count
-    supermaster_datas[:score]   = supermaster_datas[:results].sum( :standard_points )
-    supermaster_datas[:average] = (supermaster_datas[:score] / supermaster_datas[:number]).round(2)
-    supermaster_datas[:min]     = supermaster_datas[:results].last.standard_points
-    supermaster_datas[:max]     = supermaster_datas[:results].first.standard_points
+    supermaster_datas = BestLimitedRankingDAO.new( get_results.limit( number_of_bests ) )
     supermaster_datas
   end
   #-- --------------------------------------------------------------------------
