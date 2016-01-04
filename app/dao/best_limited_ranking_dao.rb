@@ -42,10 +42,7 @@ class BestLimitedRankingDAO
 
     @column  = column
     
-    if mirs
-      @results = mirs.order( "#{@column} desc" )
-      synchronize
-    end
+    set_results( mirs ) if mirs
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -86,7 +83,7 @@ class BestLimitedRankingDAO
     @max     = calculate_max
   end
 
-  # Performs all the operation needed to synchronize DAO data
+  # Performs all the operation needed to reset DAO data
   def reset
     @results = []
     @number  = 0
@@ -95,17 +92,23 @@ class BestLimitedRankingDAO
     @min     = 0
     @max     = 0
   end
-
+  #-- -------------------------------------------------------------------------
+  #++
+  
   # Add a meeting individual result to the results collection
   def set_results( meeting_individual_results )
-    @results = meeting_individual_results.order( "#{@column} desc" )
+    @results = [] 
+    meeting_individual_results.each do |meeting_individual_result|
+      @results << meeting_individual_result
+    end
+    sort_results
     synchronize
   end
 
   # Add a meeting individual result to the results collection
   def add_result( meeting_individual_result )
     @results << meeting_individual_result
-    @result = @result.order( "#{@column} desc" )
+    sort_results
     synchronize
   end
   #-- -------------------------------------------------------------------------
@@ -113,6 +116,10 @@ class BestLimitedRankingDAO
 
   private
   
+  def sort_results
+    @results.sort!{ |p,n| n.send(@column.to_sym) <=> p.send(@column.to_sym) }
+  end
+
   # Calculate results number
   def calculate_results_number
     @results.count

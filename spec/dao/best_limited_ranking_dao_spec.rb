@@ -10,11 +10,10 @@ describe BestLimitedRankingDAO, type: :model do
 
   let(:sum_of_mirs) { mirs.collect{ |mir| mir.standard_points }.sum }
 
-  let(:fix_swimmer) { create( :swimmer ) }
-  let(:fix_mir_min) { create( :meeting_individual_result, swimmer_id: fix_swimmer.id, standard_points: 750.00, goggle_cup_points: 950.00 ) }
-  let(:fix_mir_avg) { create( :meeting_individual_result, swimmer_id: fix_swimmer.id, standard_points: 800.00, goggle_cup_points: 1000.00 ) }
-  let(:fix_mir_max) { create( :meeting_individual_result, swimmer_id: fix_swimmer.id, standard_points: 850.00, goggle_cup_points: 1050.00 ) }
-  let(:fix_mirs)    { fix_swimmer.meeting_individual_results }
+  let(:fix_mir_min) { create( :meeting_individual_result, standard_points: 750.00, goggle_cup_points: 950.00 ) }
+  let(:fix_mir_avg) { create( :meeting_individual_result, standard_points: 800.00, goggle_cup_points: 1000.00 ) }
+  let(:fix_mir_max) { create( :meeting_individual_result, standard_points: 850.00, goggle_cup_points: 1050.00 ) }
+  let(:fix_mirs)    { [fix_mir_min, fix_mir_max, fix_mir_avg] }
 
   it_behaves_like( "(the existance of a method)", [
     :results, 
@@ -90,6 +89,17 @@ describe BestLimitedRankingDAO, type: :model do
       expect( subject.number ).to eq( subject.results.count )
     end
 
+    describe "#reset" do
+      it "reset all dao values" do
+        subject.reset
+        expect( subject.results.count ).to eq( 0 )
+        expect( subject.number ).to eq( 0 )
+        expect( subject.max ).to eq( 0 )
+        expect( subject.score ).to eq( 0 )
+        expect( subject.average ).to eq( 0 )
+      end
+    end
+
     describe "#get_results_number" do
       it "returns a positive number" do
         expect( subject.get_results_number ).to be >= 0
@@ -146,6 +156,7 @@ describe BestLimitedRankingDAO, type: :model do
     describe "#set_results" do
       it "assigns given results" do
         expect( subject.results.size ).to eq( 0 )
+        expect( fix_mirs.count ).to be > 0
         subject.set_results( fix_mirs )
         expect( subject.results.count ).to eq( fix_mirs.count )
       end
@@ -160,6 +171,37 @@ describe BestLimitedRankingDAO, type: :model do
       end
       it "contains sorted results" do
         subject.set_results( fix_mirs )
+        max = subject.results.first.standard_points
+        subject.results.each do |mir|
+          expect( mir.standard_points ).to be <= max
+          max = mir.standard_points
+        end
+      end
+    end    
+    
+    describe "#add_results" do
+      it "assigns given results" do
+        expect( subject.results.size ).to eq( 0 )
+        subject.add_result( fix_mir_min )
+        expect( subject.results.count ).to eq( 1 )
+        subject.add_result( fix_mir_max )
+        expect( subject.results.count ).to eq( 2 )
+      end
+      it "calculates dao attributes" do
+        expect( subject.number ).to eq( 0 )
+        subject.add_result( fix_mir_avg )
+        subject.add_result( fix_mir_min )
+        subject.add_result( fix_mir_max )
+        expect( subject.number ).to eq( 3 )
+        expect( subject.score ).to eq( fix_mir_min.standard_points + fix_mir_avg.standard_points + fix_mir_max.standard_points )
+        expect( subject.average ).to eq( fix_mir_avg.standard_points )
+        expect( subject.min ).to eq( fix_mir_min.standard_points )
+        expect( subject.max ).to eq( fix_mir_max.standard_points )
+      end
+      it "contains sorted results" do
+        subject.add_result( fix_mir_avg )
+        subject.add_result( fix_mir_min )
+        subject.add_result( fix_mir_max )
         max = subject.results.first.standard_points
         subject.results.each do |mir|
           expect( mir.standard_points ).to be <= max
