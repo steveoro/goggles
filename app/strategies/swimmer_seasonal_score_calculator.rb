@@ -56,13 +56,57 @@ class SwimmerSeasonalScoreCalculator
   # Supermaster score is calculated considering
   # the best 5 standard points
   #
-  # Returns an hash with datas for supermaster calculation
+  # Returns a BestLimitedRankingDAO for supermaster calculation
   #
   def calculate_supermaster_score( number_of_bests = 5 )
-    supermaster_datas = BestLimitedRankingDAO.new( get_results.limit( number_of_bests ) )
-    supermaster_datas
+    supermaster_results = []
+    events = []
+    get_results.each do |meeting_individual_result|
+      if !events.include?( meeting_individual_result.get_event_by_pool_type_code )
+        supermaster_results << meeting_individual_result
+        events << meeting_individual_result.get_event_by_pool_type_code
+        break if supermaster_results.count == number_of_bests
+      end      
+    end
+    BestLimitedRankingDAO.new( supermaster_results )
   end
   #-- --------------------------------------------------------------------------
   #++
 
+  # Calculates ironmaster score
+  # Ironmaster score is calculated considering
+  # the best standard point results obtained 
+  # in each event type not regarding pool type
+  #
+  # Returns a BestLimitedRankingDAO for ironmaster calculation
+  #
+  def calculate_ironmaster_score
+    ironmaster_results = []
+    events = []
+    get_results.each do |meeting_individual_result|
+      if !events.include?( meeting_individual_result.event_type.code )
+        ironmaster_results << meeting_individual_result
+        events << meeting_individual_result.event_type.code
+      end
+    end
+    BestLimitedRankingDAO.new( ironmaster_results )
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  # Calculates team ranking score
+  # Team ranking score is calculated considering
+  # the best 3 standard point results obtained 
+  # in at least 3 different meetings
+  #
+  # Returns a BestLimitedRankingDAO for team ranking calculation
+  #
+  def calculate_team_ranking_score
+    blr = BestLimitedRankingDAO.new
+    if @badge.meetings.uniq.count >= 3
+      blr.set_results( get_results.limit( 3 ))
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
 end

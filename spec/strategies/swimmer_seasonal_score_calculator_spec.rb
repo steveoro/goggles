@@ -66,9 +66,41 @@ describe SwimmerSeasonalScoreCalculator, type: :strategy do
       it "returns a best limited ranking dao" do
         expect( subject.calculate_supermaster_score ).to be_an_instance_of( BestLimitedRankingDAO )
       end
+      it "returns an object with no more than 5 results" do
+        expect( subject.calculate_supermaster_score.number ).to be <= 5
+      end
+      it "returns an object with no more than given number of results" do
+        number_of_results = ((rand * 10).to_i + 1)
+        expect( subject.calculate_supermaster_score( number_of_results ).number ).to be <= number_of_results
+      end
     end
     #-- -----------------------------------------------------------------------
     
+    describe "#calculate_ironmaster_score," do
+      it "returns a best limited ranking dao" do
+        expect( subject.calculate_ironmaster_score ).to be_an_instance_of( BestLimitedRankingDAO )
+      end
+      it "returns an object with no more than 18 results" do
+        expect( subject.calculate_ironmaster_score.number ).to be <= 18
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    
+    describe "#calculate_team_ranking_score," do
+      it "returns a best limited ranking dao" do
+        expect( subject.calculate_team_ranking_score ).to be_an_instance_of( BestLimitedRankingDAO )
+      end
+      it "returns an object with no more than 3 results" do
+        expect( subject.calculate_team_ranking_score.number ).to be <= 3
+      end
+      xit "returns an empty object if no more 3 meetings attended" do
+        
+      end
+      xit "returns a non empty object if more than 2 meetings attended" do
+        
+      end
+    end
+    #-- -----------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -44,17 +44,41 @@
               %td.goggles-rightalign
                 = supermaster_score.score 
               %td.goggles-rightalign
-                = supermaster_score.average 
+                = supermaster_score.average.round(2)
               %td.goggles-rightalign
                 = supermaster_score.max 
               %td.goggles-rightalign
                 = supermaster_score.min 
-          %tr
-            %td
-              %b= t('supermaster.ironmaster')
-          %tr
-            %td
-              %b= t('supermaster.team_ranking')
+          - ironmaster_score = @sssc.calculate_ironmaster_score
+          - if ironmaster_score.score > 0
+            %tr
+              %td
+                %b= t('supermaster.ironmaster')
+              %td.goggles-rightalign
+                = ironmaster_score.number 
+              %td.goggles-rightalign
+                = ironmaster_score.score 
+              %td.goggles-rightalign
+                = ironmaster_score.average.round(2)
+              %td.goggles-rightalign
+                = ironmaster_score.max 
+              %td.goggles-rightalign
+                = ironmaster_score.min 
+          - team_ranking_score = @sssc.calculate_ironmaster_score
+          - if team_ranking_score.score > 0
+            %tr
+              %td
+                %b= t('supermaster.team_ranking')
+              %td.goggles-rightalign
+                = team_ranking_score.number 
+              %td.goggles-rightalign
+                = team_ranking_score.score 
+              %td.goggles-rightalign
+                = team_ranking_score.average.round(2)
+              %td.goggles-rightalign
+                = team_ranking_score.max 
+              %td.goggles-rightalign
+                = team_ranking_score.min 
 
   .row-fluid
     .goggles-category-gap#meetings
@@ -85,7 +109,7 @@
               %td
                 = mir.meeting.decorate.get_linked_full_name_with_date
               %td
-                = mir.event_type.code
+                = "#{mir.event_type.code} (#{mir.pool_type.code})"
               %td.goggles-rightalign
                 = mir.rank
               %td.goggles-rightalign

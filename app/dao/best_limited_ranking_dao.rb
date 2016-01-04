@@ -74,15 +74,6 @@ class BestLimitedRankingDAO
   #-- -------------------------------------------------------------------------
   #++
 
-  # Performs all the operation needed to synchronize DAO data
-  def synchronize
-    @number  = calculate_results_number
-    @score   = calculate_score
-    @average = calculate_average
-    @min     = calculate_min
-    @max     = calculate_max
-  end
-
   # Performs all the operation needed to reset DAO data
   def reset
     @results = []
@@ -118,6 +109,15 @@ class BestLimitedRankingDAO
   
   def sort_results
     @results.sort!{ |p,n| n.send(@column.to_sym) <=> p.send(@column.to_sym) }
+  end
+
+  # Performs all the operation needed to synchronize DAO data
+  def synchronize
+    @number  = calculate_results_number
+    @score   = calculate_score
+    @average = calculate_average
+    @min     = calculate_min
+    @max     = calculate_max
   end
 
   # Calculate results number

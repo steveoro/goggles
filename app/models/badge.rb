@@ -32,6 +32,7 @@ class Badge < ActiveRecord::Base
   has_many :swimmer_results
   has_many :passages
   has_many :goggle_cup_standards
+  has_many :meetings,    through: :meeting_individual_results
 
   validates_presence_of   :number, length: { within: 1..40 }, allow_nil: false
 
