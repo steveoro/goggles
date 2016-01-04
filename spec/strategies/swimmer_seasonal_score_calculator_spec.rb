@@ -93,10 +93,16 @@ describe SwimmerSeasonalScoreCalculator, type: :strategy do
       it "returns an object with no more than 3 results" do
         expect( subject.calculate_team_ranking_score.number ).to be <= 3
       end
-      xit "returns an empty object if no more 3 meetings attended" do
+      xit "returns an empty object if less than 3 meetings attended" do
         
       end
       xit "returns a non empty object if more than 2 meetings attended" do
+        
+      end
+      xit "returns an empty object if under 25" do
+        
+      end
+      xit "returns an object that doesn't contains results obtained before 25th year" do
         
       end
     end

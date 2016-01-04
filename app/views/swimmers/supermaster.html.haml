@@ -1,5 +1,8 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_swimmer( 'supermaster', @swimmer.id, @max_updated_at, false, false, @badge.id ) ) do
+  - supermaster_score = @sssc.calculate_supermaster_score
+  - ironmaster_score = @sssc.calculate_ironmaster_score
+  - team_ranking_score = @sssc.calculate_team_ranking_score
   .row-fluid#swimmer_supermaster
     .goggles-category-gap#pageTop
       %h1= @season.get_full_name
@@ -18,7 +21,7 @@
   .row-fluid
     .goggles-category-gap#rankings
       %h3
-        = t('supermaster.rankings')
+        = I18n.t('supermaster.rankings')
         %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
@@ -34,45 +37,42 @@
               %b= t('supermaster.best')
             %td.goggles-rightalign
               %b= t('supermaster.worst')
-          - supermaster_score = @sssc.calculate_supermaster_score
           - if supermaster_score.score > 0
             %tr
               %td
-                %b= t('supermaster.supermaster')
+                %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')}"
               %td.goggles-rightalign
                 = supermaster_score.number 
               %td.goggles-rightalign
-                = supermaster_score.score 
+                %b= supermaster_score.score 
               %td.goggles-rightalign
                 = supermaster_score.average.round(2)
               %td.goggles-rightalign
                 = supermaster_score.max 
               %td.goggles-rightalign
                 = supermaster_score.min 
-          - ironmaster_score = @sssc.calculate_ironmaster_score
           - if ironmaster_score.score > 0
             %tr
               %td
-                %b= t('supermaster.ironmaster')
+                %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}"
               %td.goggles-rightalign
                 = ironmaster_score.number 
               %td.goggles-rightalign
-                = ironmaster_score.score 
+                %b= ironmaster_score.score 
               %td.goggles-rightalign
                 = ironmaster_score.average.round(2)
               %td.goggles-rightalign
                 = ironmaster_score.max 
               %td.goggles-rightalign
                 = ironmaster_score.min 
-          - team_ranking_score = @sssc.calculate_ironmaster_score
           - if team_ranking_score.score > 0
             %tr
               %td
-                %b= t('supermaster.team_ranking')
+                %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}"
               %td.goggles-rightalign
                 = team_ranking_score.number 
               %td.goggles-rightalign
-                = team_ranking_score.score 
+                %b= team_ranking_score.score 
               %td.goggles-rightalign
                 = team_ranking_score.average.round(2)
               %td.goggles-rightalign
@@ -83,13 +83,13 @@
   .row-fluid
     .goggles-category-gap#meetings
       %h3
-        = t('supermaster.meetings')
+        = "#{I18n.t('supermaster.meetings')} (#{@badge.meetings.uniq.count})"
         %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td
-              %b= t('calendars.meeting')
+              %b= I18n.t('calendars.meeting')
             %td
               %b= I18n.t('supermaster.event_type')
             %td.goggles-rightalign
@@ -116,6 +116,13 @@
                 = mir.get_timing
               %td.goggles-rightalign
                 = mir.standard_points
+              %td.goggles-centeralign
+                = show_tag( supermaster_score.results.include?( mir ) )
+              %td.goggles-centeralign
+                = show_tag( ironmaster_score.results.include?( mir ) )
+              %td.goggles-centeralign
+                = show_tag( team_ranking_score.results.include?( mir ) )
+                
               
   .row-fluid
     .goggles-category-gap#bottom_of_page

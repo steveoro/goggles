@@ -98,14 +98,23 @@ class SwimmerSeasonalScoreCalculator
   # Team ranking score is calculated considering
   # the best 3 standard point results obtained 
   # in at least 3 different meetings
+  # Results obtained before the year of 25th birthday
+  # hasn't been considered 
   #
   # Returns a BestLimitedRankingDAO for team ranking calculation
   #
   def calculate_team_ranking_score
-    blr = BestLimitedRankingDAO.new
-    if @badge.meetings.uniq.count >= 3
-      blr.set_results( get_results.limit( 3 ))
+    team_ranking_results = []
+    if @badge.category_type.code != 'U25' &&
+     @badge.meetings.uniq.count >= 3
+      get_results.each do |meeting_individual_result|
+        if meeting_individual_result.get_scheduled_date.year - @swimmer.year_of_birth >= 25
+          team_ranking_results << meeting_individual_result
+          break if team_ranking_results.count == 3
+        end
+      end
     end
+    BestLimitedRankingDAO.new( team_ranking_results )
   end
   #-- --------------------------------------------------------------------------
   #++
