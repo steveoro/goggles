@@ -12,6 +12,10 @@
             %td
               %b= @swimmer.get_full_name  
             %td
+              %b= @swimmer.year_of_birth 
+            %td
+              %b= @badge.category_type.code  
+            %td
               %b= @badge.number
             %td
               %b= @team.get_verbose_name  
@@ -19,29 +23,46 @@
               %b= @team_affiliation.number
 
   .row-fluid
+    .goggles-category-gap#charts
+      .span4
+        %p.btn.btn-large.btn-block.btn-success
+          %b= I18n.t('supermaster.supermaster')
+          %b= supermaster_score.score
+          = ''
+      .span4
+        %p.btn.btn-large.btn-block.btn-warning
+          %b= I18n.t('supermaster.ironmaster')
+          %b= ironmaster_score.score
+          = ''
+      .span4
+        %p.btn.btn-large.btn-block.btn-info
+          %b= I18n.t('supermaster.team_ranking')
+          %b= team_ranking_score.score
+          = ''
+
+  .row-fluid
     .goggles-category-gap#rankings
-      %h3
-        = I18n.t('supermaster.rankings')
-        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td
+              %b= I18n.t('supermaster.rankings')
+              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
             %td.goggles-rightalign
-              %b= t('supermaster.number_short')
+              %b= I18n.t('supermaster.number_short')
             %td.goggles-rightalign
-              %b= t('supermaster.score')
+              %b= I18n.t('supermaster.score')
             %td.goggles-rightalign
-              %b= t('supermaster.everage')
+              %b= I18n.t('supermaster.everage')
             %td.goggles-rightalign
-              %b= t('supermaster.best')
+              %b= I18n.t('supermaster.best')
             %td.goggles-rightalign
-              %b= t('supermaster.worst')
+              %b= I18n.t('supermaster.worst')
           - if supermaster_score.score > 0
             %tr
               %td
                 %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')}"
-              %td.goggles-rightalign
+              %td.goggles-rightalign{ 'class' => supermaster_score.number >= 5 ? 'success' : supermaster_score.number > 2 ? 'warning' : 'error' }
                 = supermaster_score.number 
               %td.goggles-rightalign
                 %b= supermaster_score.score 
@@ -55,7 +76,7 @@
             %tr
               %td
                 %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}"
-              %td.goggles-rightalign
+              %td.goggles-rightalign{ 'class' => ironmaster_score.number >= 18 ? 'success' : ironmaster_score.number > 9 ? 'warning' : 'error' }
                 = ironmaster_score.number 
               %td.goggles-rightalign
                 %b= ironmaster_score.score 
@@ -69,7 +90,7 @@
             %tr
               %td
                 %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}"
-              %td.goggles-rightalign
+              %td.goggles-rightalign{ 'class' => team_ranking_score.number >= 3 ? 'success' : team_ranking_score.number > 2 ? 'warning' : 'error' }
                 = team_ranking_score.number 
               %td.goggles-rightalign
                 %b= team_ranking_score.score 
@@ -82,14 +103,12 @@
 
   .row-fluid
     .goggles-category-gap#meetings
-      %h3
-        = "#{I18n.t('supermaster.meetings')} (#{@badge.meetings.uniq.count})"
-        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td
-              %b= I18n.t('calendars.meeting')
+              %b= "#{I18n.t('supermaster.meetings')} (#{@badge.meetings.uniq.count})"
+              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
             %td
               %b= I18n.t('supermaster.event_type')
             %td.goggles-rightalign
