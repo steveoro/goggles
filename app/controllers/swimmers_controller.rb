@@ -411,16 +411,7 @@ class SwimmersController < ApplicationController
   #
   def current_goggle_cup
     # --- "Goggle cup" tab: ---
-    @tab_title = I18n.t('radiography.goggle_cup_current')
-    @goggle_cups = []
-    
-    # Find out swimmer's currents goggle cup, if any
-    # 
-    @swimmer.get_badges_array_for_year.each do |badge|
-      if badge.team.has_goggle_cup_at?
-        @goggle_cups << badge.team.get_current_goggle_cup_at if @goggle_cups.size == 0 
-      end
-    end
+    @tab_title = @goggle_cups_tab_title
   end
 
 
@@ -588,6 +579,7 @@ class SwimmersController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
     end
+    set_goggle_cups
   end
 
   # Find out the last update of meeting_individual result
@@ -608,4 +600,15 @@ class SwimmersController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+  def set_goggle_cups
+    @goggle_cups = []
+    
+    # Find out swimmer's current(s) goggle cup, if any
+    # 
+    @swimmer.goggle_cups.is_current.each do |goggle_cup|
+      @goggle_cups << goggle_cup if !@goggle_cups.include?(goggle_cup)
+    end
+    @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')  
+  end
 end

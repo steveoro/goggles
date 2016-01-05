@@ -15,4 +15,18 @@ class MedalType < ActiveRecord::Base
   scope :sort_by_rank, order(:rank)
   # ----------------------------------------------------------------------------
   
+  # Returns the image tag corresponding to the medal symbol
+  #
+  def get_medal_tag()
+    case rank
+    when 1
+      "medal_gold_3.png"
+    when 2
+      "medal_silver_3.png"
+    when 3
+      "medal_bronze_3.png"
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

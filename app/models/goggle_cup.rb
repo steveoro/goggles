@@ -46,6 +46,7 @@ class GoggleCup < ActiveRecord::Base
   scope :sort_goggle_cup_by_year,  ->(dir)  { order("goggle_cups.season_year #{dir.to_s}") }
   
   scope :is_closed_now,            ->       { where("goggle_cups.end_date < curdate()") }
+  scope :is_current,               ->       { where("goggle_cups.end_date >= curdate()") }
 
   scope :for_team,                 ->(team) { where(team: team) }
 

@@ -1,22 +1,21 @@
-.row-fluid#swimmer_goggle_cup
-  .goggles-category-gap#pageTop
+.row-fluid#pageTop
+  .goggles-category-gap#swimmer_goggle_cup
     - if @goggle_cups.size == 0
       %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
     - else
-      .offset1.span10
-        - @goggle_cups.each do |goggle_cup|
-          - total_points = 0.00
-          - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.first(5).each do |mir|
-            - total_points += mir.goggle_cup_points
+      - @goggle_cups.each do |goggle_cup|
+        - total_points = 0.00
+        - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.first(5).each do |mir|
+          - total_points += mir.goggle_cup_points
+        - total_results = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
+        .span8
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
               %tr{'class'=>'info'}
-                %td{ colspan: 3 }
+                %td{ colspan: 4 }
                   %b= link_to( goggle_cup.get_verbose_name, team_goggle_cup_path(id: goggle_cup.team_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )
-                %td.goggles-rightalign
-                  %b= total_points
               - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
-                %tr{ 'class' => index < goggle_cup.max_performance ? 'warning' : '' }
+                %tr{ 'class' => index < goggle_cup.max_performance ? 'success' : '' }
                   %td
                     = mir.meeting.decorate.get_linked_full_name_with_date
                   %td
@@ -26,7 +25,35 @@
                   %td.goggles-rightalign
                     = mir.goggle_cup_points
               %tr{'class'=>'info'}
-                %td.goggles-rightalign{ colspan: 4 }
-                  %b= goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
+                %td{ colspan: 3 }
+                  = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', goggle_cup.max_performance > total_results ? total_results.to_s : goggle_cup.max_performance.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
+                %td.goggles-rightalign
+                  %b= total_points
+
+        .span4
+          %p.btn.btn-large.btn-block.btn-info
+            %b= "#{goggle_cup.get_full_name}<br><br>#{goggle_cup.team.get_full_name}<br><br>#{total_points}".html_safe
       
-.row-fluid.goggles-category-gap
+.row-fluid.goggles-category-gap#standards
+  - events_list = []
+  - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).each do |events_by_pool_type|
+    - events_list << events_by_pool_type.event_type
+  - @goggle_cups.each do |goggle_cup|
+    %h3= "Tempi limite #{goggle_cup.get_full_name}"
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            = 'Vasca'
+          - events_list.each do |event_type|
+            %td
+              %b= event_type.code
+        - PoolType.only_for_meetings.each do |pool_type|
+          %tr
+            %td
+              = pool_type.code
+            - events_list.each do |event_type|
+              %td
+                = @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).first.get_timing if @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).count > 0
+        
+.row-fluid.goggles-category-gap#bottom_of_page

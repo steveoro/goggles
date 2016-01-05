@@ -5,43 +5,43 @@
   - team_ranking_score = @sssc.calculate_team_ranking_score
   .row-fluid#swimmer_supermaster
     .goggles-category-gap#pageTop
-      %h1= @season.get_full_name
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
-            %td
-              %b= @swimmer.get_full_name  
-            %td
-              %b= @swimmer.year_of_birth 
-            %td
-              %b= @badge.category_type.code  
-            %td
-              %b= @badge.number
-            %td
-              %b= @team.get_verbose_name  
-            %td
-              %b= @team_affiliation.number
+      .offset1.span10
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'info'}
+              %td.goggles-centeralign{'colspan'=>6}
+                %b= @season.get_full_name
+            %tr
+              %td
+                %b= @swimmer.get_full_name  
+              %td
+                %b= @swimmer.year_of_birth 
+              %td
+                %b= @badge.category_type.code  
+              %td
+                %b= @badge.number
+              %td
+                %b= @team.get_verbose_name  
+              %td
+                %b= @team_affiliation.number
 
   .row-fluid
     .goggles-category-gap#charts
       .span4
         %p.btn.btn-large.btn-block.btn-success
-          %b= I18n.t('supermaster.supermaster')
-          %b= supermaster_score.score
+          %b= "#{I18n.t('supermaster.supermaster')}<br>#{supermaster_score.score}".html_safe
           = ''
       .span4
-        %p.btn.btn-large.btn-block.btn-warning
-          %b= I18n.t('supermaster.ironmaster')
-          %b= ironmaster_score.score
+        .btn.btn-large.btn-block.btn-warning
+          %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe
           = ''
       .span4
         %p.btn.btn-large.btn-block.btn-info
-          %b= I18n.t('supermaster.team_ranking')
-          %b= team_ranking_score.score
+          %b= "#{I18n.t('supermaster.team_ranking')}<br>#{team_ranking_score.score}".html_safe
           = ''
 
-  .row-fluid
-    .goggles-category-gap#rankings
+  .row-fluid.goggles-category-gap#rankings
+    .span8
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -100,6 +100,42 @@
                 = team_ranking_score.max 
               %td.goggles-rightalign
                 = team_ranking_score.min 
+    .span2
+      %table.table.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td{'colspan'=>2}
+              %b= I18n.t('medals')
+              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          - MedalType.are_not_jokes.sort_by_rank.each do |medal_type|
+            %tr
+              %td
+                = image_tag( medal_type.get_medal_tag )
+                %b= medal_type.i18n_description
+              %td.goggles-rightalign
+                %b= @meeting_individual_results.has_rank(medal_type.rank).count
+    .span2
+      %table.table.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td{'colspan'=>2}
+              %b= I18n.t('supermaster.score')
+              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          %tr
+            %td
+              = I18n.t('supermaster.best')
+            %td.goggles-rightalign
+              %b= @meeting_individual_results.first.standard_points
+          %tr
+            %td
+              = I18n.t('supermaster.worst')
+            %td.goggles-rightalign
+              %b= @meeting_individual_results.last.standard_points
+          %tr
+            %td
+              = I18n.t('supermaster.everage')
+            %td.goggles-rightalign
+              %b= (@meeting_individual_results.collect{ |row| row.standard_points }.sum / @meeting_individual_results.count).round(2)
 
   .row-fluid
     .goggles-category-gap#meetings
@@ -116,7 +152,7 @@
             %td.goggles-rightalign
               %b= I18n.t('meeting.timing')
             %td.goggles-rightalign
-              %b= I18n.t('meeting.standard')
+              %b= I18n.t('supermaster.score')
             %td.goggles-centeralign
               %b= I18n.t('supermaster.supermaster_short')
             %td.goggles-centeralign
@@ -130,7 +166,8 @@
               %td
                 = "#{mir.event_type.code} (#{mir.pool_type.code})"
               %td.goggles-rightalign
-                = mir.rank
+                = mir.decorate.show_any_rank_medal
+                = mir.decorate.get_rank_description
               %td.goggles-rightalign
                 = mir.get_timing
               %td.goggles-rightalign

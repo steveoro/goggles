@@ -51,6 +51,7 @@ class Swimmer < ActiveRecord::Base
   has_many :user_results
 
   has_many :goggle_cups,            through: :teams
+  has_many :goggle_cup_standards
 
   validates_presence_of :complete_name
   validates_length_of   :complete_name, within: 1..100, allow_nil: false
