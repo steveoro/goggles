@@ -12,4 +12,8 @@ describe MedalType, :type => :model do
     :are_not_jokes,
     :sort_by_rank
   ])
+
+  it_behaves_like( "(the existance of a method returning strings)", [
+    :get_medal_tag
+  ])
 end

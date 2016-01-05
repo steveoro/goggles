@@ -123,17 +123,17 @@
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
           %tr
             %td
-              = I18n.t('supermaster.best')
+              %b= I18n.t('supermaster.best')
             %td.goggles-rightalign
               %b= @meeting_individual_results.first.standard_points
           %tr
             %td
-              = I18n.t('supermaster.worst')
+              %b= I18n.t('supermaster.worst')
             %td.goggles-rightalign
               %b= @meeting_individual_results.last.standard_points
           %tr
             %td
-              = I18n.t('supermaster.everage')
+              %b= I18n.t('supermaster.everage')
             %td.goggles-rightalign
               %b= (@meeting_individual_results.collect{ |row| row.standard_points }.sum / @meeting_individual_results.count).round(2)
 
