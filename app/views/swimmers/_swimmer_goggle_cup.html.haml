@@ -23,7 +23,7 @@
                   %td.goggles-rightalign
                     = mir.get_timing
                   %td.goggles-rightalign
-                    = mir.goggle_cup_points
+                    = mir.decorate.get_formatted_goggle_cup_points
               %tr{'class'=>'info'}
                 %td{ colspan: 3 }
                   = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', goggle_cup.max_performance > total_results ? total_results.to_s : goggle_cup.max_performance.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
@@ -43,15 +43,15 @@
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
-          %td
-            = 'Vasca'
+          %td.goggles-centeralign
+            %b= I18n.t('meeting_calendar.pool_type')
           - events_list.each do |event_type|
-            %td
+            %td.goggles-centeralign
               %b= event_type.code
         - PoolType.only_for_meetings.each do |pool_type|
           %tr
-            %td
-              = pool_type.code
+            %td.goggles-centeralign{'class'=>'info'}
+              %b= pool_type.code
             - events_list.each do |event_type|
               %td
                 = @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).first.get_timing if @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).count > 0
