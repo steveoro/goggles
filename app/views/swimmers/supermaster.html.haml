@@ -28,9 +28,7 @@
   .row-fluid
     .goggles-category-gap#charts
       .span4
-        %p.btn.btn-large.btn-block.btn-success
-          %b= "#{I18n.t('supermaster.supermaster')}<br>#{supermaster_score.score}".html_safe
-          = ''
+        = render( partial: 'supermaster_gauge', locals: { supermaster_score: supermaster_score } )
       .span4
         .btn.btn-large.btn-block.btn-warning
           %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe

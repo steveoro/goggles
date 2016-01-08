@@ -1,0 +1,29 @@
+%script
+  var current_score = supermaster_score.score;
+%p.btn.btn-large.btn-block.btn-success#supermaster_chart
+  %b= "#{I18n.t('supermaster.supermaster')}<br>#{supermaster_score.score}".html_safe
+
+:javascript
+  google.charts.load('current', {'packages':['gauge']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+    var data = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Supermaster', current_score],
+    ]);
+
+    var options = {
+      width: 400, height: 120,
+      greenFrom: 3500, redTo: 3999,
+      yellowFrom:4000, yellowTo: 4499,
+      redFrom: 4500, redTo: 5000,
+      min: 500, max: 5000
+      majorTicks: 5, minorTicks: 5
+    };
+
+    var chart = new google.visualization.Gauge(document.getElementById('supermaster_chart'));
+
+    chart.draw(data, options);
+  };
