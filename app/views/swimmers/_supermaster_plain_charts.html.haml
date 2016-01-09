@@ -1,0 +1,32 @@
+.row-fluid
+  .offset1.span10
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-centeralign{'colspan'=>6}
+            %b= @season.get_full_name
+        %tr
+          %td
+            %b= @swimmer.get_full_name  
+          %td
+            %b= @swimmer.year_of_birth 
+          %td
+            %b= @badge.category_type.code  
+          %td
+            %b= @badge.number
+          %td
+            %b= @team.get_verbose_name  
+          %td
+            %b= @team_affiliation.number
+
+.row-fluid
+  .goggles-category-gap#charts
+    .span4
+      .btn.btn-large.btn-block.btn-warning
+        %b= "#{I18n.t('supermaster.supermaster')}<br>#{supermaster_score.score}".html_safe
+    .span4
+      .btn.btn-large.btn-block.btn-success
+        %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe
+    .span4
+      %p.btn.btn-large.btn-block.btn-info
+        %b= "#{I18n.t('supermaster.team_ranking')}<br>#{team_ranking_score.score}".html_safe

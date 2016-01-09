@@ -1,0 +1,93 @@
+%script{ 'type' => "text/javascript", 'src' => "https://www.gstatic.com/charts/loader.js" }
+
+%script
+  var sm_score = Number.parseFloat( "#{supermaster_score.score}" );
+  var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
+  var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
+
+.goggles-category-gap
+  .span5
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-centeralign
+            %b= @season.get_full_name
+        %tr
+          %td.goggles-centeralign
+            %b= @swimmer.get_full_name  
+        %tr
+          %td.goggles-centeralign
+            = @swimmer.year_of_birth 
+        %tr
+          %td.goggles-centeralign
+            = @badge.category_type.code  
+        %tr
+          %td.goggles-centeralign
+            = @badge.number
+        %tr
+          %td.goggles-centeralign
+            %b= @team.get_verbose_name  
+        %tr
+          %td.goggles-centeralign
+            = @team_affiliation.number
+
+  .span7
+    .span4
+      .div{'align' => 'center', 'id' => 'supermaster_chart' }
+    .span4
+      .div{'align' => 'center', 'id' => 'ironmaster_chart' }
+    .span4
+      .div{'align' => 'center', 'id' => 'team_ranking_chart' }
+
+:javascript
+  google.charts.load('current', {'packages':['gauge']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+    var dataSM = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['SuperMaster', sm_score]
+    ]);
+    var dataIM = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['IronMaster', im_score]
+    ]);
+    var dataTR = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Società', tr_score]
+    ]);
+
+    var optionsSM = {
+      greenFrom: 3500, greenTo: 3999,
+      yellowFrom:4000, yellowTo: 4499,
+      redFrom: 4500, redTo: 5000,
+      min: 2500, max: 5000,
+      majorTicks: ['2500', '', '', '', '', '5000'],
+      minorTicks: 5
+    };
+    var optionsIM = {
+      greenFrom: 12600, greenTo: 14399,
+      yellowFrom:14400, yellowTo: 16199,
+      redFrom: 16200, redTo: 18000,
+      min: 9000, max: 18000,
+      majorTicks: ['9000', '', '', '', '18000'],
+      minorTicks: 5
+    };
+    var optionsTR = {
+      greenFrom: 2100, greenTo: 2399,
+      yellowFrom:2400, yellowTo: 2699,
+      redFrom: 2700, redTo: 3000,
+      min: 1500, max: 3000,
+      majorTicks: ['1500', '', '', '', '', '', '3000'],
+      minorTicks: 5
+    };
+
+    var chartSM = new google.visualization.Gauge(document.getElementById('supermaster_chart'));
+    var chartIM = new google.visualization.Gauge(document.getElementById('ironmaster_chart'));
+    var chartTR = new google.visualization.Gauge(document.getElementById('team_ranking_chart'));
+
+    chartSM.draw(dataSM, optionsSM);
+    chartIM.draw(dataIM, optionsIM);
+    chartTR.draw(dataTR, optionsTR);
+  };

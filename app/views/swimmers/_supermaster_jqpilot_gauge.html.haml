@@ -1,0 +1,32 @@
+- #.btn.btn-large.btn-block.btn-warning
+- #  %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe
+
+%script{ 'type' => "text/javascript", 'src' => "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
+%script{ 'type' => "text/javascript", 'src' => "/public/jquery/jquery.jqplot.js" }
+%script{ 'type' => "text/javascript", 'src' => "/public/jquery/plugins/jqplot.meterGaugeRenderer.js" }
+%link{ 'rel' => "stylesheet", 'type' => "text/css", 'hrf' => "/public/jquery/jqplot.css" }
+
+%script
+  var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
+
+.div#ironmaster_chart
+
+:javascript
+  $(document).ready(function(){
+     plot4 = $.jqplot('ironmaster_chart',[im_score],{
+         seriesDefaults: {
+             renderer: $.jqplot.MeterGaugeRenderer,
+             rendererOptions: {
+                 label: 'IronMaster',
+                 labelPosition: 'bottom',
+                 labelHeightAdjust: -5,
+                 min: 0,
+                 max: 5100,
+                 intervalOuterRadius: 85,
+                 ticks: [0, 1000, 2000, 3000, 4000, 5000],
+                 intervals:[4000, 4500, 5100],
+                 intervalColors:['#66cc66', '#E7E658', '#cc6666']
+             }
+         }
+     });
+  });

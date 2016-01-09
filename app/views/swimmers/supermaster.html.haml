@@ -3,40 +3,12 @@
   - supermaster_score = @sssc.calculate_supermaster_score
   - ironmaster_score = @sssc.calculate_ironmaster_score
   - team_ranking_score = @sssc.calculate_team_ranking_score
-  .row-fluid#swimmer_supermaster
-    .goggles-category-gap#pageTop
-      .offset1.span10
-        %table.table.table-striped.table-bordered.table-hover.table-condensed
-          %tbody
-            %tr{'class'=>'info'}
-              %td.goggles-centeralign{'colspan'=>6}
-                %b= @season.get_full_name
-            %tr
-              %td
-                %b= @swimmer.get_full_name  
-              %td
-                %b= @swimmer.year_of_birth 
-              %td
-                %b= @badge.category_type.code  
-              %td
-                %b= @badge.number
-              %td
-                %b= @team.get_verbose_name  
-              %td
-                %b= @team_affiliation.number
+  .row-fluid#pageTop
 
-  .row-fluid
-    .goggles-category-gap#charts
-      .span4
-        = render( partial: 'supermaster_gauge', locals: { supermaster_score: supermaster_score } )
-      .span4
-        .btn.btn-large.btn-block.btn-warning
-          %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe
-          = ''
-      .span4
-        %p.btn.btn-large.btn-block.btn-info
-          %b= "#{I18n.t('supermaster.team_ranking')}<br>#{team_ranking_score.score}".html_safe
-          = ''
+  .row-fluid#charts
+    = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+    -#= render( partial: 'supermaster_jqpilot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+    -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
 
   .row-fluid.goggles-category-gap#rankings
     .span8
