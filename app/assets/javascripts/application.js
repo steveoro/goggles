@@ -12,4 +12,6 @@
 //= require cocoon
 //= require jquery.flot.min
 //= require jquery.colorhelpers.min
+//= require jquery.jqplot.min
+//= require jqplot.meterGaugeRenderer.min
 //= require_tree .

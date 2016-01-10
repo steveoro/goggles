@@ -33,43 +33,43 @@
               %td
                 %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')}"
               %td.goggles-rightalign{ 'class' => supermaster_score.number >= 5 ? 'success' : supermaster_score.number > 2 ? 'warning' : 'error' }
-                = supermaster_score.number 
+                = supermaster_score.number
               %td.goggles-rightalign
-                %b= supermaster_score.score 
+                %b= supermaster_score.score
               %td.goggles-rightalign
                 = supermaster_score.average.round(2)
               %td.goggles-rightalign
-                = supermaster_score.max 
+                = supermaster_score.max
               %td.goggles-rightalign
-                = supermaster_score.min 
+                = supermaster_score.min
           - if ironmaster_score.score > 0
             %tr
               %td
                 %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}"
               %td.goggles-rightalign{ 'class' => ironmaster_score.number >= 18 ? 'success' : ironmaster_score.number > 9 ? 'warning' : 'error' }
-                = ironmaster_score.number 
+                = ironmaster_score.number
               %td.goggles-rightalign
-                %b= ironmaster_score.score 
+                %b= ironmaster_score.score
               %td.goggles-rightalign
                 = ironmaster_score.average.round(2)
               %td.goggles-rightalign
-                = ironmaster_score.max 
+                = ironmaster_score.max
               %td.goggles-rightalign
-                = ironmaster_score.min 
+                = ironmaster_score.min
           - if team_ranking_score.score > 0
             %tr
               %td
                 %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}"
               %td.goggles-rightalign{ 'class' => team_ranking_score.number >= 3 ? 'success' : team_ranking_score.number > 2 ? 'warning' : 'error' }
-                = team_ranking_score.number 
+                = team_ranking_score.number
               %td.goggles-rightalign
-                %b= team_ranking_score.score 
+                %b= team_ranking_score.score
               %td.goggles-rightalign
                 = team_ranking_score.average.round(2)
               %td.goggles-rightalign
-                = team_ranking_score.max 
+                = team_ranking_score.max
               %td.goggles-rightalign
-                = team_ranking_score.min 
+                = team_ranking_score.min
     .span2
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
@@ -148,7 +148,7 @@
                 = show_tag( ironmaster_score.results.include?( mir ) )
               %td.goggles-centeralign
                 = show_tag( team_ranking_score.results.include?( mir ) )
-                
-              
+
+
   .row-fluid
     .goggles-category-gap#bottom_of_page
