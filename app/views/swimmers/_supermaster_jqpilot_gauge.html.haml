@@ -1,19 +1,18 @@
-- #.btn.btn-large.btn-block.btn-warning
-- #  %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe
-
 %script{ 'type' => "text/javascript", 'src' => "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
 %script{ 'type' => "text/javascript", 'src' => "/public/jquery/jquery.jqplot.js" }
 %script{ 'type' => "text/javascript", 'src' => "/public/jquery/plugins/jqplot.meterGaugeRenderer.js" }
 %link{ 'rel' => "stylesheet", 'type' => "text/css", 'hrf' => "/public/jquery/jqplot.css" }
 
 %script
+  var sm_score = Number.parseFloat( "#{supermaster_score.score}" );
   var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
+  var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
 
 .div#ironmaster_chart
 
 :javascript
   $(document).ready(function(){
-     plot4 = $.jqplot('ironmaster_chart',[im_score],{
+     plotIM = $.jqplot('ironmaster_chart',[im_score],{
          seriesDefaults: {
              renderer: $.jqplot.MeterGaugeRenderer,
              rendererOptions: {
