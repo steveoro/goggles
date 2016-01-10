@@ -1,6 +1,8 @@
+= javascript_include_tag 'jquery.jqplot'
+= javascript_include_tag 'jqplot.meterGaugeRenderer'
+
 %script{ 'type' => "text/javascript", 'src' => "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
-%script{ 'type' => "text/javascript", 'src' => "/public/jquery/jquery.jqplot.js" }
-%script{ 'type' => "text/javascript", 'src' => "/public/jquery/plugins/jqplot.meterGaugeRenderer.js" }
+
 %link{ 'rel' => "stylesheet", 'type' => "text/css", 'hrf' => "/public/jquery/jqplot.css" }
 
 %script
@@ -8,15 +10,47 @@
   var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
   var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
 
-.div#ironmaster_chart
+.goggles-category-gap
+  .span5
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-centeralign
+            %b= @season.get_full_name
+        %tr
+          %td.goggles-centeralign
+            %b= @swimmer.get_full_name  
+        %tr
+          %td.goggles-centeralign
+            = @swimmer.year_of_birth 
+        %tr
+          %td.goggles-centeralign
+            = @badge.category_type.code  
+        %tr
+          %td.goggles-centeralign
+            = @badge.number
+        %tr
+          %td.goggles-centeralign
+            %b= @team.get_verbose_name  
+        %tr
+          %td.goggles-centeralign
+            = @team_affiliation.number
+
+  .span7
+    .span4
+      .div{'align' => 'center', 'id' => 'supermaster_chart' }
+    .span4
+      .div{'align' => 'center', 'id' => 'ironmaster_chart' }
+    .span4
+      .div{'align' => 'center', 'id' => 'team_ranking_chart' }
 
 :javascript
   $(document).ready(function(){
-     plotIM = $.jqplot('ironmaster_chart',[im_score],{
+     plotSM = $.jqplot('supermaster_chart',[sm_score],{
          seriesDefaults: {
              renderer: $.jqplot.MeterGaugeRenderer,
              rendererOptions: {
-                 label: 'IronMaster',
+                 label: 'SuperMaster',
                  labelPosition: 'bottom',
                  labelHeightAdjust: -5,
                  min: 0,
@@ -27,5 +61,38 @@
                  intervalColors:['#66cc66', '#E7E658', '#cc6666']
              }
          }
+
+     plotIM = $.jqplot('ironmaster_chart',[im_score],{
+         seriesDefaults: {
+             renderer: $.jqplot.MeterGaugeRenderer,
+             rendererOptions: {
+                 label: 'IronMaster',
+                 labelPosition: 'bottom',
+                 labelHeightAdjust: -5,
+                 min: 0,
+                 max: 18100,
+                 intervalOuterRadius: 85,
+                 ticks: [0, 3000, 6000, 9000, 12000, 18000],
+                 intervals:[14400, 16200, 18100],
+                 intervalColors:['#66cc66', '#E7E658', '#cc6666']
+             }
+         }
+
+     plotTR = $.jqplot('team_ranking_chart',[tr_score],{
+         seriesDefaults: {
+             renderer: $.jqplot.MeterGaugeRenderer,
+             rendererOptions: {
+                 label: 'Classifica di società',
+                 labelPosition: 'bottom',
+                 labelHeightAdjust: -5,
+                 min: 0,
+                 max: 3100,
+                 intervalOuterRadius: 85,
+                 ticks: [0, 500, 1000, 1500, 2000, 2500, 3000],
+                 intervals:[2400, 2700, 3100],
+                 intervalColors:['#66cc66', '#E7E658', '#cc6666']
+             }
+         }
      });
   });
+

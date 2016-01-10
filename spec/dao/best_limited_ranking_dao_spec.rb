@@ -27,8 +27,7 @@ describe BestLimitedRankingDAO, type: :model do
     :get_average,
     :get_min,
     :get_max,
-    :reset,
-    :synchronize
+    :reset
   ] )
 
   context "initialization without parameters," do

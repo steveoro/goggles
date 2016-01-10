@@ -25,6 +25,8 @@ class MedalType < ActiveRecord::Base
       "medal_silver_3.png"
     when 3
       "medal_bronze_3.png"
+    else
+      ''
     end
   end
   #-- -------------------------------------------------------------------------
