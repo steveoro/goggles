@@ -2,8 +2,6 @@
   - @meeting_events_list.each do |meeting_event|
     -# --- Header with unique ID for each starting event_type "group":
     %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_event.event_type.code}"}
-      %h3= meeting_event.event_type.i18n_description
-
     -# --- Sub-legend for each category + gender
     = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
 
