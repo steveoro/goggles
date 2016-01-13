@@ -1,16 +1,14 @@
-it:
+en:
   goggle_cup:
-    rank: "Rank"
-    total: "Total"
-    average: "Average"
-    max: "Max"
-    min: "Min"
+    rules_title: "Rules"
     count: "Count"
     winner: "Winner"
     second_placed: "Second placed"
     third_placed: "Third placed"
     send_us_your_goggle_cups: "Do You want to check out how's going your internal Team Championship? Define a new custom Goggle-Cup just for You and your Team! ...Contact us to know how! It's free! :-)"
-    summary: "Classificated {USED_RESULTS} of {TOTAL_RESULTS} total results"
+    summary: "Classified {USED_RESULTS} of {TOTAL_RESULTS} total results"
+    standard_times: "Standard times"
+    ranked: "Ranked"
 
     presentation:
       part1: " is the master internal championship, consisting in an unique ranking without gender or age distintions."

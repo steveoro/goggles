@@ -4,7 +4,6 @@ it:
 
   supermaster:
     title: "FIN SuperMaster"
-    rankings: "Classifiche"
     season_meetings: "Meeting della stagione"
     supermaster: "SuperMaster"
     supermaster_short: "SM"
@@ -12,15 +11,13 @@ it:
     ironmaster_short: "IM"
     team_ranking: "Classifica di società"
     team_ranking_short: "CS"
-    number_short: "N."
-    score: "Punti"
     scores_summary: "Punteggi"
     medals_summary: "Medagliere"
-    everage: "Media"
-    best: "Migliore"
-    worst: "Peggiore"
     results_detail: "Dettaglio risultati"
-    meetings: "Manifestazioni"
-    event_type: "Specialità"
     ranked_for: "In classifica per"
+    ranking_rules: "Regolamenti delle classifiche supermaster"
+    how_to_supermaster: "La classifica Supermaster (SM) prende in considerazione i 5 migliori punteggi ottenuti in 5 differenti specialità, senza considerare il tipo visca in cui sono state disputate le gare."
+    how_to_ironmaster: "La classifica Ironmaster (IM) prende in considerazione i migliori punteggi ottenuti nelle differenti 18 possibili specialità, senza considerare il tipo visca in cui sono state disputate le gare. L'IronMaster si considera completo se vengono diputate tutte e 18 le diverse specialità."
+    how_to_team_ranking: "La classifica di società (CS) prende in considerazione i migliori 3 punteggi ottenuti in 3 differenti specialità, senza considerare il tipo visca in cui sono state disputate le gare. Per entrare a fare parte delal classifica occorre aver preso parte ad almeno 2 manifestazioni. Non sono ammessi gli under 25 e gli M25 a partire dall'anno solare del compimento del venticinquesimo anno."
+
     

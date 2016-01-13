@@ -3,6 +3,33 @@ en:
   no: "No"
   ok: OK
 
+  rank: "Rank"
+  average: "Average"
+  best: "Best"
+  worst: "Worst"
+  total: "Totale"
+  score: "Score"
+  scores: "Scores"
+  points: "Points"
+  timing: "Timing"
+  rnk: "Rnk"
+  avg: "Avg"
+  max: "Max"
+  min: "Min"
+  tot: "Tot"
+  number_short: "N."
+  meeting: 'Meeting'
+  meetings: 'Meetings'
+  event: 'Event'
+  events: 'Events'
+  medals: Medals
+  ranking: "Ranking"
+  rankings: "Rankings"
+  result: "Result"
+  results: Risultati
+  team: Team
+  teams: Teams
+
   swimmers:
     last_name: "Surname"
     first_name: "Name"
@@ -592,9 +619,6 @@ en:
   meetings: "Meetings"
   event: "Event"
   tot_events: "Total events"
-  ranking: "Ranking"
-  rankings: "Rankings"
-  results: "Results"
   results_and_rankings: "Results/Rankings"
   stats: "Statistics"
   team_results: "Team Results"

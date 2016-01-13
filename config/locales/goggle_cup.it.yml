@@ -1,17 +1,14 @@
 it:
   goggle_cup:
     rules_title: "Regolamento"
-    rank: "Pos"
-    total: "Totale"
-    average: "Media"
-    max: "Max"
-    min: "Min"
     count: "Gare"
     winner: "Vincitore"
     second_placed: "Secondo classificato"
     third_placed: "Terzo classificato"
     send_us_your_goggle_cups: "Vuoi controllare qui come sta andando il tuo campionato interno di Squadra? Definisci una tua Goggle-Cup personalizzata! ...Contattaci per sapere come fare! E' gratis! :-)"
     summary: "Classificati {USED_RESULTS} su {TOTAL_RESULTS} risultati totali"
+    standard_times: "Tempi base"
+    ranked: "Class."
 
     presentation:
       part1: " è il campionato interno del gruppo master ed è costituito da una unica classifica generale senza distinzione di sesso o età."

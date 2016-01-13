@@ -1,0 +1,25 @@
+-# Swimmer badge render
+-# Need: season, swimmer, badge, team, team_affiliation
+%table.table.table-hover.table-condensed
+  %tbody
+    %tr{'class'=>'info'}
+      %td.goggles-centeralign
+        %b= season.get_full_name
+    %tr{'class'=>'success'}
+      %td.goggles-centeralign
+        %b= swimmer.get_full_name
+    %tr{'class'=>'success'}
+      %td.goggles-centeralign
+        = "#{badge.category_type.code} (#{swimmer.year_of_birth})"  
+    %tr{'class'=>'success'}
+      %td.goggles-centeralign
+        = badge.number
+    %tr{'class'=>'success'}
+      %td.goggles-centeralign
+        %b= team.decorate.get_linked_name
+    %tr{'class'=>'success'}
+      %td.goggles-centeralign
+        %b= team.city ? team.city.get_full_name : ''
+    %tr{'class'=>'success'}
+      %td.goggles-centeralign
+        = team_affiliation.number

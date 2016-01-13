@@ -10,32 +10,46 @@
         - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.first(5).each do |mir|
           - total_points += mir.goggle_cup_points
         - total_results = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
+        - ranked_results = goggle_cup.max_performance > total_results ? total_results : goggle_cup.max_performance
         .span8
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
               %tr{'class'=>'info'}
-                %td{ colspan: 4 }
+                %td
                   %b= link_to( goggle_cup.get_verbose_name, team_goggle_cup_path(id: goggle_cup.team_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )
+                %td
+                  %b= I18n.t('event')
+                %td.goggles-rightalign
+                  %b= I18n.t('timing')
+                %td.goggles-rightalign
+                  %b= I18n.t('score')
+                %td.goggles-centeralign
+                  %b= I18n.t('goggle_cup.ranked')
               - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
-                %tr{ 'class' => index < goggle_cup.max_performance ? 'success' : '' }
+                %tr
                   %td
                     = mir.meeting.decorate.get_linked_full_name_with_date
                   %td
                     = mir.event_type.code
-                  %td.goggles-rightalign
+                  %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
                     = mir.get_timing
                   %td.goggles-rightalign
                     = mir.decorate.get_formatted_goggle_cup_points
+                  %td.goggles-centeralign
+                    = show_tag( index < goggle_cup.max_performance )
               %tr{'class'=>'info'}
                 %td{ colspan: 3 }
-                  = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', goggle_cup.max_performance > total_results ? total_results.to_s : goggle_cup.max_performance.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
+                  = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', ranked_results.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
                 %td.goggles-rightalign
                   %b= total_points
+                %td.goggles-centeralign
+                  %b= ranked_results
 
         .span4
           %script
             var score = Number.parseFloat( "#{total_points}" );
             var title = "#{goggle_cup.get_full_name}_chart"
+            var gauge_height = Number.parseInt( "#{total_results < 4 ? 200 : 300 }" )
           .div{'align' => 'center', 'id' => "#{goggle_cup.get_full_name}_chart" }
       
 .row-fluid.goggles-category-gap#standards
@@ -43,7 +57,7 @@
   - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).sort_by_event.each do |events_by_pool_type|
     - events_list << events_by_pool_type.event_type
   - @goggle_cups.each do |goggle_cup|
-    %h3= "Tempi limite #{goggle_cup.get_full_name}"
+    %h3= "#{I18n.t('goggle_cup.standard_times')} #{goggle_cup.get_full_name}"
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -74,7 +88,7 @@
     ]);
 
     var options = {
-      height: 350,
+      height: gauge_height,
       greenFrom: 5000, greenTo: 5249,
       yellowFrom:5250, yellowTo: 5399,
       redFrom: 5400, redTo: 5500,

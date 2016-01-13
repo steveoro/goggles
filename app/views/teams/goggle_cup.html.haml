@@ -16,19 +16,19 @@
         %tbody
           %tr{'class'=>'info'}
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.rank')
+              %b= I18n.t('rank')
             %td
               %b= I18n.t('activerecord.models.swimmer')
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.total')
+              %b= I18n.t('total')
             %td.goggles-centeralign
               %b= I18n.t('goggle_cup.count')
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.average')
+              %b= I18n.t('average')
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.max')
+              %b= I18n.t('max')
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.min')
+              %b= I18n.t('min')
           - @goggle_cup_rank.each_with_index do |rank_element,index|
             %tr
               %td.goggles-rightalign
