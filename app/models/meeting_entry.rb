@@ -48,7 +48,7 @@ class MeetingEntry < ActiveRecord::Base
 
   scope :sort_by_number,        -> { order('start_list_number ASC, is_no_time DESC, (minutes*6000+seconds*100+hundreds) DESC ') }
   scope :sort_by_gender_number, -> { joins(:meeting_program).order('meeting_programs.gender_type_id DESC, start_list_number ASC, is_no_time DESC, (minutes*6000+seconds*100+hundreds) DESC ') }
-  scope :sort_by_swimmer,       -> { joins(:swimmer).order('swimmer.complete_name)') }
+  scope :sort_by_swimmer,       -> { joins(:swimmer).order('swimmers.complete_name') }
 
   # ----------------------------------------------------------------------------
   # Base methods:
