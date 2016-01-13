@@ -1,10 +1,13 @@
 %script
   var sm_score = Number.parseFloat( "#{supermaster_score.score}" );
+  var sm_label = "#{t('supermaster.supermaster')}: #{supermaster_score.score}";
   var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
+  var im_label = "#{t('supermaster.ironmaster')}: #{ironmaster_score.score}";
   var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
+  var tr_label = "#{t('supermaster.team_ranking')}: #{team_ranking_score.score}";
 
-.goggles-category-gap
-  .span5
+.row-fluid.goggles-category-gap
+  .span4
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -13,90 +16,80 @@
         %tr
           %td.goggles-centeralign
             %b= @swimmer.get_full_name
-        %tr
-          %td.goggles-centeralign
-            = @swimmer.year_of_birth
-        %tr
-          %td.goggles-centeralign
-            = @badge.category_type.code
+            = " - #{@swimmer.year_of_birth}"  
+            = " (#{@badge.category_type.code})"  
         %tr
           %td.goggles-centeralign
             = @badge.number
         %tr
           %td.goggles-centeralign
-            %b= @team.get_verbose_name
+            %b= @team.decorate.get_linked_name
+        %tr
+          %td.goggles-centeralign
+            %b= @team.city ? @team.city.get_full_name : ''
         %tr
           %td.goggles-centeralign
             = @team_affiliation.number
 
-  .span7
-    .span4
-      .div{'align' => 'center', 'id' => 'supermaster_chart' }
-    .span4
-      .div{'align' => 'center', 'id' => 'ironmaster_chart' }
-    .span4
-      .div{'align' => 'center', 'id' => 'team_ranking_chart' }
+  .span8
+    .span4#sm_chart
+    .span4#im_chart
+    .span4#tr_chart
 
 :javascript
   $(document).ready( function(){
-    console.log( "sm_score:" );
-    console.log( sm_score );
-    $.jqplot( 'supermaster_chart',
-      [ sm_score ],
+    $.jqplot( 'sm_chart',
+      [[ sm_score ]],
       {
-        title: 'SuperMaster',
         seriesDefaults: {
             renderer: $.jqplot.MeterGaugeRenderer,
             rendererOptions: {
-                label: 'SuperMaster',
+                label: sm_label,
                 labelPosition: 'bottom',
                 labelHeightAdjust: -5,
-                min: 0,
-                max: 5100,
-                intervalOuterRadius: 85,
-                ticks: [0, 1000, 2000, 3000, 4000, 5000],
-                intervals:[4000, 4500, 5100],
-                intervalColors:['#66cc66', '#E7E658', '#cc6666']
+                min: 2500,
+                max: 5000,
+                intervalOuterRadius: 40,
+                ticks: [2500, 3000, 3500, 4000, 4500, 5000],
+                intervals:[3000, 4000, 4500, 5000],
+                intervalColors:['#efefef', '#66cc66', '#E7E658', '#cc6666']
             }
         }
       }
     );
-    $.jqplot( 'ironmaster_chart',
-      [ im_score ],
+    $.jqplot( 'im_chart',
+      [[ im_score ]],
       {
-        title: 'IronMaster',
         seriesDefaults: {
              renderer: $.jqplot.MeterGaugeRenderer,
              rendererOptions: {
-                label: 'IronMaster',
+                label: im_label,
                 labelPosition: 'bottom',
                 labelHeightAdjust: -5,
-                min: 0,
-                max: 18100,
-                intervalOuterRadius: 85,
-                ticks: [0, 3000, 6000, 9000, 12000, 18000],
-                intervals:[14400, 16200, 18100],
-                intervalColors:['#66cc66', '#E7E658', '#cc6666']
+                min: 9000,
+                max: 18000,
+                intervalOuterRadius: 40,
+                ticks: [9000, 12000, 15000, 18000],
+                intervals:[10800,14400, 16200, 18000],
+                intervalColors:['#efefef', '#66cc66', '#E7E658', '#cc6666']
             }
         }
       }
     );
-    $.jqplot('team_ranking_chart',
-      [ tr_score ],
+    $.jqplot('tr_chart',
+      [[ tr_score ]],
       {
-        title: 'Classifica di società',
         seriesDefaults: {
              renderer: $.jqplot.MeterGaugeRenderer,
              rendererOptions: {
-                label: 'Classifica di società',
+                label: tr_label,
                 labelPosition: 'bottom',
                 labelHeightAdjust: -5,
-                min: 0,
-                max: 3100,
-                intervalOuterRadius: 85,
-                ticks: [0, 500, 1000, 1500, 2000, 2500, 3000],
-                intervals:[2400, 2700, 3100],
-                intervalColors:['#66cc66', '#E7E658', '#cc6666']
+                min: 1500,
+                max: 3000,
+                intervalOuterRadius: 40,
+                intervals:[1800, 2400, 2700, 3000],
+                intervalColors:['#efefef', '#66cc66', '#E7E658', '#cc6666']
             }
         }
       }

@@ -5,10 +5,9 @@
   - team_ranking_score = @sssc.calculate_team_ranking_score
   .row-fluid#pageTop
 
-  .row-fluid#charts
-    = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-    -#= render( partial: 'supermaster_jqpilot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-    -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+  = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+  -#= render( partial: 'supermaster_jqpilot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+  -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
 
   .row-fluid.goggles-category-gap#rankings
     .span8

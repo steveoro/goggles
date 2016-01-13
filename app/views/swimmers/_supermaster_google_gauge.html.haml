@@ -5,8 +5,8 @@
   var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
   var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
 
-.goggles-category-gap
-  .span5
+.row-fluid#charts.goggles-category-gap
+  .span4
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -14,24 +14,23 @@
             %b= @season.get_full_name
         %tr
           %td.goggles-centeralign
-            %b= @swimmer.get_full_name  
-        %tr
-          %td.goggles-centeralign
-            = @swimmer.year_of_birth 
-        %tr
-          %td.goggles-centeralign
-            = @badge.category_type.code  
+            %b= @swimmer.get_full_name
+            = " - #{@swimmer.year_of_birth}"  
+            = " (#{@badge.category_type.code})"  
         %tr
           %td.goggles-centeralign
             = @badge.number
         %tr
           %td.goggles-centeralign
-            %b= @team.get_verbose_name  
+            %b= @team.decorate.get_linked_name
+        %tr
+          %td.goggles-centeralign
+            %b= @team.city ? @team.city.get_full_name : ''
         %tr
           %td.goggles-centeralign
             = @team_affiliation.number
 
-  .span7
+  .span8
     .span4
       .div{'align' => 'center', 'id' => 'supermaster_chart' }
     .span4
