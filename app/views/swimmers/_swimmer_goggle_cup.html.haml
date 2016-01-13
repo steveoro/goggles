@@ -1,3 +1,5 @@
+%script{ 'type' => "text/javascript", 'src' => "https://www.gstatic.com/charts/loader.js" }
+
 .row-fluid#pageTop
   .goggles-category-gap#swimmer_goggle_cup
     - if @goggle_cups.size == 0
@@ -31,12 +33,14 @@
                   %b= total_points
 
         .span4
-          %p.btn.btn-large.btn-block.btn-info
-            %b= "#{goggle_cup.get_full_name}<br><br>#{goggle_cup.team.get_full_name}<br><br>#{total_points}".html_safe
+          %script
+            var score = Number.parseFloat( "#{total_points}" );
+            var title = "#{goggle_cup.get_full_name}_chart"
+          .div{'align' => 'center', 'id' => "#{goggle_cup.get_full_name}_chart" }
       
 .row-fluid.goggles-category-gap#standards
   - events_list = []
-  - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).each do |events_by_pool_type|
+  - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).sort_by_event.each do |events_by_pool_type|
     - events_list << events_by_pool_type.event_type
   - @goggle_cups.each do |goggle_cup|
     %h3= "Tempi limite #{goggle_cup.get_full_name}"
@@ -53,7 +57,33 @@
             %td.goggles-centeralign{'class'=>'info'}
               %b= pool_type.code
             - events_list.each do |event_type|
-              %td
+              %td.goggles-rightalign
                 = @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).first.get_timing if @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).count > 0
         
 .row-fluid.goggles-category-gap#bottom_of_page
+
+:javascript
+  google.charts.load('current', {'packages':['gauge']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+    var data = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['', score]
+    ]);
+
+    var options = {
+      height: 350,
+      greenFrom: 5000, greenTo: 5249,
+      yellowFrom:5250, yellowTo: 5399,
+      redFrom: 5400, redTo: 5500,
+      min: 4500, max: 5500,
+      majorTicks: ['4500', '', '5000', '', '5500'],
+      minorTicks: 5
+    };
+
+    var chart = new google.visualization.Gauge(document.getElementById(title));
+
+    chart.draw(data, options);
+  };
