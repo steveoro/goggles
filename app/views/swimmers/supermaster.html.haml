@@ -75,7 +75,7 @@
         %tbody
           %tr{'class'=>'info'}
             %td{'colspan'=>2}
-              %b= I18n.t('medals')
+              %b= I18n.t('supermaster.medals_summary')
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
           - MedalType.are_not_jokes.sort_by_rank.each do |medal_type|
             %tr
@@ -89,7 +89,7 @@
         %tbody
           %tr{'class'=>'info'}
             %td{'colspan'=>2}
-              %b= I18n.t('supermaster.score')
+              %b= I18n.t('supermaster.scores_summary')
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
           %tr
             %td
@@ -107,13 +107,34 @@
             %td.goggles-rightalign
               %b= (@meeting_individual_results.collect{ |row| row.standard_points }.sum / @meeting_individual_results.count).round(2)
 
-  .row-fluid
-    .goggles-category-gap#meetings
+  .row-fluid.goggles-category-gap#meetings
+    -# Shows all meetings attended
+    .span5
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td{'colspan'=>4}
+              %b= I18n.t('supermaster.meetings')
+              %b= " (#{@meetings.count})"
+              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          - @meetings.each do |meeting|
+            %tr
+              %td
+                = meeting.decorate.get_linked_full_name
+              %td
+                = meeting.get_meeting_date
+              %td
+                = meeting.get_swimming_pool.pool_type.code
+              %td
+                = meeting.get_city
+  
+    -# Shows all supermaster results
+    .span7
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td
-              %b= "#{I18n.t('supermaster.meetings')} (#{@badge.meetings.uniq.count})"
+              %b= I18n.t('supermaster.results_detail')
               %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
             %td
               %b= I18n.t('supermaster.event_type')
@@ -123,11 +144,11 @@
               %b= I18n.t('meeting.timing')
             %td.goggles-rightalign
               %b= I18n.t('supermaster.score')
-            %td.goggles-centeralign
+            %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('supermaster.supermaster')}
               %b= I18n.t('supermaster.supermaster_short')
-            %td.goggles-centeralign
+            %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('supermaster.ironmaster')}
               %b= I18n.t('supermaster.ironmaster_short')
-            %td.goggles-centeralign
+            %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('supermaster.team_ranking')}
               %b= I18n.t('supermaster.team_ranking_short')
           - @meeting_individual_results.each do |mir|
             %tr
@@ -138,15 +159,15 @@
               %td.goggles-rightalign
                 = mir.decorate.show_any_rank_medal
                 = mir.decorate.get_rank_description
-              %td.goggles-rightalign
+              %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
                 = mir.get_timing
               %td.goggles-rightalign
                 = mir.decorate.get_formatted_standard_points
-              %td.goggles-centeralign
+              %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.supermaster')}"}
                 = show_tag( supermaster_score.results.include?( mir ) )
-              %td.goggles-centeralign
+              %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.ironmaster')}"}
                 = show_tag( ironmaster_score.results.include?( mir ) )
-              %td.goggles-centeralign
+              %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.team_ranking')}"}
                 = show_tag( team_ranking_score.results.include?( mir ) )
 
 

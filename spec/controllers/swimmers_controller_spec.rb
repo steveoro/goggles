@@ -606,6 +606,7 @@ describe SwimmersController, :type => :controller do
           expect( assigns( :season ) ).to be_a_instance_of( Season )
           expect( assigns( :team ) ).to be_a_instance_of( Team )
           expect( assigns( :team_affiliation ) ).to be_a_instance_of( TeamAffiliation )
+          expect( assigns( :meetings ) ).to all(be_a_instance_of( Meeting ))
           expect( assigns( :meeting_individual_results ) ).to all( be_a_instance_of( MeetingIndividualResult ) )
         end
       end
