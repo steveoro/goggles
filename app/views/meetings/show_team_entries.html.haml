@@ -1,11 +1,14 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_team_entries', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
+  - swimmers = []
+  - @meeting.meeting_entries.for_team(@team).sort_by_swimmer.each do |meeting_entry|
+    - swimmers << meeting_entry.swimmer if !swimmers.include?( meeting_entry.swimmer )
   .row.fluid.goggles-category-gap
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
           %td{'rowspan'=>'2'}
-            %b= t('swimmers.swimmers')
+            %b= "#{t('swimmers.swimmers')} (#{swimmers.count})"
           - @meeting.meeting_sessions.each do |meeting_session|
             - event_num = meeting_session.meeting_events.count
             %td{'colspan'=>event_num}
@@ -18,9 +21,6 @@
             - meeting_session.meeting_events.each do |meeting_event|
               %td.goggles-centeralign
                 = meeting_event.event_type.code
-        - swimmers = []
-        - @meeting.meeting_entries.for_team(@team).sort_by_swimmer.each do |meeting_entry|
-          - swimmers << meeting_entry.swimmer if !swimmers.include?( meeting_entry.swimmer )
         - swimmers.each do |swimmer|
           %tr
             %td
