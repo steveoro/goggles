@@ -96,7 +96,7 @@ parameters ('RAILS_ENV=production') not before having issued also a:
 
     champ_season_ids = [
       # TODO Championship history? (Seasons: 131, 121, 111, 101, 91, 14, 12, 10, 8, 6, 4, 3, 2, 1)
-      141
+      151, 141
     ]
     recent_meeting_ids = champ_season_ids.map { |id| Season.find(id).meetings.map{|meeting| meeting.id} }.flatten
 
