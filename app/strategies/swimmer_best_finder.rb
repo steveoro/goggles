@@ -156,7 +156,7 @@ class SwimmerBestFinder
       mir = MeetingIndividualResult.find( mir_id )
       mir.is_personal_best = false
       mir.save
-      comment = "Reset #{event_by_pool_type.i18n_description} (was #{mir.get_timing_instance})"
+      comment = "#{@swimmer.get_full_name}: Reset #{event_by_pool_type.i18n_description} (was #{mir.get_timing_instance})"
       sql_attributes['is_personal_best'] = mir.is_personal_best
       sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n", comment )
     end
@@ -176,20 +176,22 @@ class SwimmerBestFinder
   #
   # Parameters
   # event by pool type
+  # reset previous results
+  # new personal best id
   #
   # Returns
   # Best timing or nil
   #
-  def set_personal_best( event_by_pool_type, reset = true )
+  def set_personal_best( event_by_pool_type, reset = true, mir_id = nil )
     # TODO Handle multiple bests for same event... maybe
     sql_attributes = {}
     if @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.count > 0
       self.reset_personal_best( event_by_pool_type ) if reset
-      mir_id = @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.sort_by_timing( :asc ).first.id
+      mir_id = @swimmer.meeting_individual_results.for_event_by_pool_type( event_by_pool_type ).is_not_disqualified.sort_by_timing( :asc ).first.id if not mir_id
       mir = MeetingIndividualResult.find( mir_id )
       mir.is_personal_best = true
       mir.save
-      comment = "#{event_by_pool_type.i18n_description}: #{mir.get_timing_instance}"
+      comment = "#{@swimmer.get_full_name} #{event_by_pool_type.i18n_description}: #{mir.get_timing_instance}"
       sql_attributes['is_personal_best'] = mir.is_personal_best
       sql_diff_text_log << to_sql_update( mir, false, sql_attributes, "\r\n", comment )
       mir.get_timing_instance

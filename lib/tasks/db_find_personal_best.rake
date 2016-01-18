@@ -240,6 +240,7 @@ Options: persist=false meeting=meeting_id
 
 - 'persist'    force to persist the personal best indicator on results found.
 - 'meeting'    meeting id to scan results
+- 'force'      force to reset and recalculate meeting results
 - 'log_dir'    allows to override the default log dir destination.
 
 DESC
@@ -247,6 +248,7 @@ DESC
     puts "*** db:scan_meeting_for_personal_bests ***"
     persist         = ENV.include?("persist") ? ENV["persist"] == 'true' : false
     meeting_id      = ENV.include?("meeting") ? ENV["meeting"].to_i : nil
+    force           = ENV.include?("force") ?   ENV["force"] == 'true' : false
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
     db_user         = rails_config.database_configuration[Rails.env]['username']
@@ -287,7 +289,7 @@ DESC
     ActiveRecord::Base.transaction do
       meeting.meeting_individual_results.is_not_disqualified.sort_by_team.each do |meeting_individual_result|
         # Check only if not already the personal best
-        if !meeting_individual_result.is_personal_best
+        if force || !meeting_individual_result.is_personal_best
           # Initialize swimmer best finder
           swimmer = meeting_individual_result.swimmer
           swimmer_best_finder = SwimmerBestFinder.new( swimmer )
@@ -299,7 +301,7 @@ DESC
           # Check if result is a new personal best for swimmer
           if swimmer_best_finder.is_personal_best( meeting_individual_result )
             event_by_pool_type = meeting_individual_result.get_event_by_pool_type
-            swimmer_best_finder.set_personal_best( event_by_pool_type )
+            swimmer_best_finder.set_personal_best( event_by_pool_type, true, meeting_individual_result.id )
             personal_bests_found += 1
   
             logger.info( "#{meeting_individual_result.get_team_name} - Found #{swimmer.get_full_name} new personal best for #{event_by_pool_type.get_full_name}: #{meeting_individual_result.get_timing}" )
