@@ -15,9 +15,9 @@
   %td.span1.goggles-rightalign
     - if has_passages
       .btn-link{ id: "passages#{mir.id}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
-        = mir.get_timing
+        %b= mir.get_timing
     - else
-      = mir.get_timing
+      %b= mir.get_timing
   %td.span1.goggles-rightalign
     = mir.get_formatted_standard_points
   %td.span1.goggles-rightalign
