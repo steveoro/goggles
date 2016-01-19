@@ -18,22 +18,29 @@
         - passages = hash_item.values.first
         - has_passages = ( passages.count > 0 )
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
-        - passage_types = TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters )
         - if previous_event != mir.meeting_event
           - previous_event = mir.meeting_event
           %tr.info
-            %td
+            %td{'colspan'=>'16'}
+              %br
               %a(href="##{mir.meeting_event.event_type.code}")
-                %b= mir.meeting_event.get_verbose_name
-            - passage_types.each do |passage_type|
-              %td.goggles-rightalign
-                %i= "#{ passage_type.length_in_meters } mt."
-            %td.goggles-rightalign
-              =I18n.t('meeting.timing')
-        %tr
-          %td
+                %b= mir.meeting_program.get_complete_event_name
+              %br
+              &nbsp;
+        %tr.info
+          %td{'colspan'=>'16'}
             %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
               = mir.get_swimmer_name
+            &nbsp;/&nbsp;
+            %a{ id: "team#{mir.id}", href: "#{ meeting_show_team_results_path( id: @meeting.id, team_id: mir.team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') }
+              = mir.get_team_name
+        %tr
+          %td.goggles-rightalign{'colspan'=>'1'}
+            = mir.show_any_rank_medal
+            = mir.get_rank_description
+          %td.goggles-rightalign{'colspan'=>'15'}
+            %b= mir.get_timing
+        %tr
           - if has_passages
             - passages.order(:passage_type_id).each do |passage|
               %td.goggles-rightalign{'colspan'=>'1'}
@@ -49,8 +56,11 @@
                 %br
                 = passage.get_timing
           - else
+            - passage_types = TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters )
             - passage_types.each do |passage_type|
               %td.goggles-rightalign{'colspan'=>'1'}
+                %i= "#{ passage_type.length_in_meters } mt."
+                %br
                 = text_field_tag(                                             |
                   "new_#{mir.id}_#{passage_type.id}",                         |
                   nil,                                                        |
@@ -58,8 +68,6 @@
                   'data-mir' => mir.id,                                       |
                   'data-passage-type' => passage_type.id                      |
                 )                                                             |
-          %td.goggles-rightalign
-            %b= mir.get_timing
 
 .row-fluid.goggles-category-gap
   .offset1.span2

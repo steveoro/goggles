@@ -19,12 +19,12 @@ class TeamPassageTemplate < ActiveRecord::Base
   # Returns an array of PassageType rows enlisting the default sequence of
   # passage types for the specified length_in_meters.
   #
-  def self.get_default_passage_types_for( total_length_in_meters )
+  def self.get_default_passage_types_for( total_length_in_meters, pool_length = 50 )
     PassageType.where( ["length_in_meters <= ?", total_length_in_meters] )
       .order( :length_in_meters )
       .to_a
       .delete_if do |row|
-        (total_length_in_meters > 100) && (row.length_in_meters % 50 != 0)
+        (total_length_in_meters > 100) && (row.length_in_meters % 50 != 0) || ( row.length_in_meters % pool_length != 0 )
       end
   end
 end
