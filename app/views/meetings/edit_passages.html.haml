@@ -35,10 +35,11 @@
             %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
               = mir.get_swimmer_name
           - if has_passages
-            - passages.order(:passage_type_id).each do |passage|
+            - passages.order(:passage_type_id).each_with_index do |passage, index|
               %td.goggles-rightalign{'colspan'=>'1'}
-                %i= "#{ passage.get_passage_distance } mt."
-                %br
+                - if passage.get_passage_distance != passage_types[index].length_in_meters 
+                  %i= "#{ passage.get_passage_distance } mt."
+                  %br
                 = text_field_tag(                                             |
                   "pas_#{passage.id}",                                        |
                   passage.compute_incremental_time,                           |

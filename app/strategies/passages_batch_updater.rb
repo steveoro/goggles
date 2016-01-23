@@ -141,13 +141,31 @@ class PassagesBatchUpdater
   #
   def prepare_passage_fields( passage, timing, mir_id = nil, passage_type_id = nil )
     prev_timing = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
-    delta_timing = prev_timing ? timing - prev_timing : timing
-    passage.minutes  = delta_timing.minutes
-    passage.seconds  = delta_timing.seconds
-    passage.hundreds = delta_timing.hundreds
-    passage.minutes_from_start  = timing.minutes
-    passage.seconds_from_start  = timing.seconds
-    passage.hundreds_from_start = timing.hundreds
+
+    # TODO
+    # Detrminates if passage is delta or incremental
+    is_delta = false
+
+    if is_delta == true
+      # Timing is the delta.
+      # Should calculate time from start
+      passage.minutes  = timing.minutes
+      passage.seconds  = timing.seconds
+      passage.hundreds = timing.hundreds
+      passage.minutes_from_start  = timing.minutes + prev_timing ? prev_timing.minutes : 0
+      passage.seconds_from_start  = timing.seconds + prev_timing ? prev_timing.seconds : 0
+      passage.hundreds_from_start = timing.hundreds + prev_timing ? prev_timing.hundreds : 0
+    else
+      # Timing is the incremental.
+      # Should calculate delta time
+      delta_timing = prev_timing ? timing - prev_timing : timing
+      passage.minutes  = delta_timing.minutes
+      passage.seconds  = delta_timing.seconds
+      passage.hundreds = delta_timing.hundreds
+      passage.minutes_from_start  = timing.minutes
+      passage.seconds_from_start  = timing.seconds
+      passage.hundreds_from_start = timing.hundreds
+    end
     passage.user_id = @current_user.id
     if mir_id
       mir = MeetingIndividualResult.find( mir_id )
