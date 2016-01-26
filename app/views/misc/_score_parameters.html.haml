@@ -1,0 +1,11 @@
+- default_score = @standard_points ? @standard_points : 0
+
+.control-group
+  = label_tag( :timing, t('misc.fin_standard_points'), :for => :timing, class: 'control-label' )
+  .controls
+    = text_field_tag( :timing, default_score, class: 'input-micro' )
+    &nbsp;
+    &nbsp;
+    = submit_tag( I18n.t('misc.compute'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+    %span(id='loadingIndicator' hidden='true')
+      = image_tag( 'indicator.gif' )

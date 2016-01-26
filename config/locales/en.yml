@@ -720,3 +720,6 @@ en:
     fin_standard_points: "FIN standard points"
     time_standard: "Base time"
     fin_score_calculation_tooltip: "Go to theoric FIN score computation"
+    fin_timing_calculation: "FIN goal timing computation"
+    fin_timing_calculation_tooltip: "Go to FIN goal score timing computation"
+    how_to_calculate_timing: "Select gender, category, pool type and event and fill in the goal score field, than press calculate button to know the timing needed to reach goal score"

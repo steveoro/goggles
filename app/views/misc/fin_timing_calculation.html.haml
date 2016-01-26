@@ -1,0 +1,15 @@
+.row-fluid#fin_time_calculation
+  .goggles-category-gap#pageTop
+
+.container-fluid
+  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+    %h4
+      = @tab_title
+
+  = render( partial: 'calculation_parameters' )
+  = render( partial: 'score_parameters' )
+  - if @timing.to_hundreds >= 0
+    = render( partial: 'score_calculation_result' )
+  - else
+    = render( partial: 'timing_calculation_how_to' )
+

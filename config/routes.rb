@@ -199,6 +199,7 @@ Goggles::Application.routes.draw do
 
       # === Misc ===
       match "misc/fin_score_calculation",       to: "misc#fin_score_calculation",               as: "misc_fin_score_calculation", via: [:get, :post]
+      match "misc/fin_timing_calculation",      to: "misc#fin_timing_calculation",              as: "misc_fin_timing_calculation", via: [:get, :post]
 
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do

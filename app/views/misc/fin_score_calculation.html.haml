@@ -2,11 +2,15 @@
   .goggles-category-gap#pageTop
 
 .container-fluid
-  .row-fluid.span12.alert.alert-success.goggles-div-centeralign
+  .row-fluid.alert.alert-success.goggles-div-centeralign
     %h4
       = @tab_title
 
-  = render( partial: 'score_calculation_parameters' )
+  .row-fluid
+    = form_tag( :misc_fin_score_calculation, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+      = render( partial: 'calculation_parameters' )
+      = render( partial: 'timing_parameters' )
+
   - if @standard_points.to_i >= 0
     = render( partial: 'score_calculation_result' )
   - else

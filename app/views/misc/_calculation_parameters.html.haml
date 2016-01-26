@@ -1,0 +1,28 @@
+- default_gender = @swimmer_gender.id if @swimmer_gender
+- default_category = @swimmer_category.id if @swimmer_category
+- default_pool = @current_pool.id if @current_pool
+- default_event = @current_event.id if @current_event
+- default_minutes = @timing ? @timing.minutes : 0
+- default_seconds = @timing ? @timing.seconds : 0
+- default_hundreds = @timing ? @timing.hundreds : 0
+
+.control-group
+  = label_tag( :season, I18n.t('activerecord.models.season'), :for => :season, class: 'control-label' )
+  .controls
+    = select_tag( :season_id, options_for_select([@current_season.get_full_name]), { disabled: true, class: 'input-xxlarge' })
+.control-group
+  = label_tag( :gender_type, I18n.t('activerecord.models.gender_type'), :for => :gender_type, class: 'control-label' )
+  .controls
+    = button_option_group( :gender_type_id, default_gender, GenderType.individual_only.to_dropdown )
+.control-group
+  = label_tag( :category_type, I18n.t('activerecord.models.category_type'), :for => :category_type, class: 'control-label' )
+  .controls
+    = button_option_group( :category_type_id, default_category, @current_season.category_types.are_not_relays.is_valid.to_dropdown )
+.control-group
+  = label_tag( :pool_type, I18n.t('activerecord.models.pool_type'), :for => :pool_type, class: 'control-label' )
+  .controls
+    = button_option_group( :pool_type_id, default_pool, PoolType.only_for_meetings.to_dropdown )
+.control-group
+  = label_tag( :event_type, I18n.t('activerecord.models.event_type'), :for => :event_type, class: 'control-label' )
+  .controls
+    = button_option_group( :event_type_id, default_event, EventType.are_not_relays.for_fin_calculation.sort_by_style.to_unsorted_dropdown )
