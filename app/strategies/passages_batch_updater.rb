@@ -140,11 +140,21 @@ class PassagesBatchUpdater
   # The updated Passage instance
   #
   def prepare_passage_fields( passage, timing, mir_id = nil, passage_type_id = nil )
-    prev_timing = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
-
     # TODO
     # Detrminates if passage is delta or incremental
     is_delta = false
+
+    passage.user_id = @current_user.id
+    if mir_id
+      mir = MeetingIndividualResult.find( mir_id )
+      passage.meeting_program_id = mir.meeting_program_id
+      passage.meeting_individual_result_id = mir_id
+      passage.swimmer_id = mir.swimmer_id
+      passage.team_id = mir.team_id
+    end
+    passage.passage_type_id = passage_type_id if passage_type_id
+
+    prev_timing = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
 
     if is_delta == true
       # Timing is the delta.
@@ -166,15 +176,6 @@ class PassagesBatchUpdater
       passage.seconds_from_start  = timing.seconds
       passage.hundreds_from_start = timing.hundreds
     end
-    passage.user_id = @current_user.id
-    if mir_id
-      mir = MeetingIndividualResult.find( mir_id )
-      passage.meeting_program_id = mir.meeting_program_id
-      passage.meeting_individual_result_id = mir_id
-      passage.swimmer_id = mir.swimmer_id
-      passage.team_id = mir.team_id
-    end
-    passage.passage_type_id = passage_type_id if passage_type_id
     puts "\r\n-#{mir_id} : " << passage.inspect
     passage
   end

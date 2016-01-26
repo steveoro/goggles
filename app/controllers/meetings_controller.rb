@@ -617,7 +617,8 @@ class MeetingsController < ApplicationController
     # Hash item has as key the related MIR and as value its list of passages.
     @editable_stuff = @meeting.meeting_individual_results
         .sort_by_event_order
-        .where( team_id: @managed_team_ids )
+        .joins( :event_type, :pool_type )
+        .where( ['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids] )
         .includes( :passages )
         .map{ |mir| { mir => mir.passages } }
         
