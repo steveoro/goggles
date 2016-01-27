@@ -10,7 +10,7 @@
     <p>DB / Domain Architect:
     <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
                  :subject => I18n.t(:questions_about) + ' ' + AGEX_APP_NAME,
-                 :encode => "javascript" ) %> 
+                 :encode => "javascript" ) %>
     </p>
 
     <hr/>
@@ -18,12 +18,18 @@
     <p><%= I18n.t(:title_wrong_meeting_result) %>
     <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
                  :subject => "[#{AGEX_APP_NAME}] #{I18n.t(:title_wrong_meeting_result)}",
-                 :encode => "javascript" ) %> 
+                 :encode => "javascript" ) %>
     </p>
 
     <p><%= I18n.t(:title_feature_request) %>
     <%= mail_to( "fasar.software@email.it" , "Steve" ,
                  :subject => "[#{AGEX_APP_NAME}] #{I18n.t(:title_feature_request)}",
-                 :encode => "javascript" ) %> 
+                 :encode => "javascript" ) %>
+    </p>
+
+    <p><%= I18n.t(:title_enable_passages_editing) %>
+    <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
+                 :subject => "[#{AGEX_APP_NAME}] #{I18n.t(:title_enable_passages_editing)}",
+                 :encode => "javascript" ) %>
     </p>
 </div>
