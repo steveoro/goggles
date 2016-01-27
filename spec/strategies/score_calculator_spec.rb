@@ -78,6 +78,46 @@ describe ScoreCalculator, type: :strategy do
       end
       #-- -----------------------------------------------------------------------
     end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_fin_timing," do
+      before :each do
+        @fix_goal_score = ((rand * 550) + 500).round(2)
+        create(:time_standard,
+          season_id: @fix_season.id,
+          gender_type_id: @fix_gender_type.id,
+          category_type_id: @fix_category_type.id,
+          event_type_id: @fix_event_type.id,
+          pool_type_id: @fix_pool_type.id
+        ) if subject.get_time_standard.nil?
+      end
+      it "responds to get_fin_timing methods" do
+        expect(subject).to respond_to(:get_fin_timing)
+      end
+      it "returns a timing value" do
+        expect( subject.get_fin_timing( @fix_goal_score ) ).to be_an_instance_of( Timing )
+      end
+      #-- -----------------------------------------------------------------------
+
+      it "checks for correct calculation for no time standard present" do
+        wrong_pool_type = PoolType.where(is_suitable_for_meetings: false).first
+        no_standard_time = ScoreCalculator.new( @fix_season, @fix_gender_type, @fix_category_type, wrong_pool_type, @fix_event_type )
+        expect( no_standard_time.get_fin_timing( @fix_goal_score ).to_hundreds ).to eq( 0 )
+      end
+      it "checks for correct calculation for goal score > 1000" do
+        score_over_1000 = ((rand * 100) + 1000.01).round(2)
+        expect( subject.get_fin_timing( score_over_1000 ).to_hundreds ).to be <= subject.get_time_standard.get_timing_instance.to_hundreds
+      end
+      it "checks for correct calculation for goal score < 1000" do
+        score_under_1000 = ((rand * 500) + 499.99).round(2)
+        expect( subject.get_fin_timing( score_under_1000 ).to_hundreds ).to be >= subject.get_time_standard.get_timing_instance.to_hundreds
+      end
+      it "checks for correct calculation for goal score 1000" do
+        score_1000 = 1000.round(2)
+        expect( subject.get_fin_timing( score_1000 ).to_hundreds ).to eq( subject.get_time_standard.get_timing_instance.to_hundreds )
+      end
+      #-- -----------------------------------------------------------------------
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

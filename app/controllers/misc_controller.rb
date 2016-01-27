@@ -147,9 +147,7 @@ class MiscController < ApplicationController
   def fin_timing_calculation
     @tab_title = I18n.t('misc.fin_timing_calculation')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
-    @minutes  = 0                              # Init timing as a non displayable value
-    @seconds  = 0                              # Init timing as a non displayable value
-    @hundreds = 0                              # Init timing as a non displayable value
+    @timing   = Timing.new( 0 )
 
     # if user is logged in and associated to a swimmer
     # determinates default gender and category
@@ -169,7 +167,7 @@ class MiscController < ApplicationController
       event_type_id    = params[:event_type_id] ? params[:event_type_id].to_i : 0
       unless ( gender_type_id > 0 && category_type_id > 0 && pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
-        redirect_to( misc_fin_score_calculation_path ) and return
+        redirect_to( misc_fin_timing_calculation_path ) and return
       end
 
       @swimmer_category = CategoryType.find_by_id( category_type_id )
@@ -177,9 +175,9 @@ class MiscController < ApplicationController
       @current_pool = PoolType.find_by_id( pool_type_id )
       @current_event = EventType.find_by_id( event_type_id )
 
-      @standard_points  = params[:standard_points] ? params[:standard_points].to_i : 0
+      @standard_points  = params[:standard_points] ? params[:standard_points].to_f : 0.00
 
-      if @standard_points && @standard_points > 0
+      if @standard_points && @standard_points > 300 && @standard_points < 1200
         # Verify event is ammissible for pool type
         if events_by_pool_type = EventsByPoolType.find_by_pool_and_event_codes( @current_pool.code, @current_event.code )
           score_calculation = ScoreCalculator.new( @current_season, @swimmer_gender, @swimmer_category, @current_pool, @current_event )
@@ -246,11 +244,11 @@ class MiscController < ApplicationController
           end
         else
           flash[:error] = I18n.t('misc.wrong_event_or_pool')
-          redirect_to( misc_fin_score_calculation_path ) and return
+          redirect_to( misc_fin_timing_calculation_path ) and return
         end
       else
-        flash[:error] = I18n.t('misc.wrong_timing')
-        redirect_to( misc_fin_score_calculation_path ) and return
+        flash[:error] = I18n.t('misc.wrong_score')
+        redirect_to( misc_fin_timing_calculation_path ) and return
       end
     end
   end

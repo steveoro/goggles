@@ -720,6 +720,8 @@ it:
     fin_timing_calculation: "Calcolo tempo obiettivo FIN"
     fin_timing_calculation_tooltip: "Vai al calcolo del tempo obiettivo FIN"
     how_to_calculate_timing: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il punteggio obiettivo, infine premi il pulsante Calcola punteggio FIN per calcolare il tempoda realizzare per ottenre eil punteggio obiettivo FIN"
+    compute_goal_timing: "Calcola tempo obiettivo"
+    wrong_score: "Punteggio non ammissimbile. Verifica il punteggio immesso"
 
   netzke:
     basepack:

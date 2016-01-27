@@ -2,9 +2,6 @@
 - default_category = @swimmer_category.id if @swimmer_category
 - default_pool = @current_pool.id if @current_pool
 - default_event = @current_event.id if @current_event
-- default_minutes = @timing ? @timing.minutes : 0
-- default_seconds = @timing ? @timing.seconds : 0
-- default_hundreds = @timing ? @timing.hundreds : 0
 
 .control-group
   = label_tag( :season, I18n.t('activerecord.models.season'), :for => :season, class: 'control-label' )

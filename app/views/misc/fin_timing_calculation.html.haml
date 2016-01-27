@@ -6,10 +6,14 @@
     %h4
       = @tab_title
 
-  = render( partial: 'calculation_parameters' )
-  = render( partial: 'score_parameters' )
-  - if @timing.to_hundreds >= 0
-    = render( partial: 'score_calculation_result' )
+  .row-fluid
+    = form_tag( :misc_fin_timing_calculation, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+      = render( partial: 'calculation_parameters' )
+      = render( partial: 'score_parameters' )
+
+  - if @timing.to_hundreds > 0
+    = render( partial: 'timing_calculation_result' )
+    = render( partial: 'fin_highlights' )
   - else
     = render( partial: 'timing_calculation_how_to' )
 

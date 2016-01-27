@@ -13,6 +13,7 @@
 
   - if @standard_points.to_i >= 0
     = render( partial: 'score_calculation_result' )
+    = render( partial: 'fin_highlights' )
   - else
     = render( partial: 'score_calculation_how_to' )
 

@@ -723,3 +723,6 @@ en:
     fin_timing_calculation: "FIN goal timing computation"
     fin_timing_calculation_tooltip: "Go to FIN goal score timing computation"
     how_to_calculate_timing: "Select gender, category, pool type and event and fill in the goal score field, than press calculate button to know the timing needed to reach goal score"
+    compute_goal_timing: "Compute goal timing"
+    wrong_score: "Wrong goal score. Please review score inserted"
+    

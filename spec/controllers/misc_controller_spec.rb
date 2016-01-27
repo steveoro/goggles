@@ -14,9 +14,6 @@ describe MiscController, :type => :controller do
     it "assigns a current season" do
       expect( assigns(:current_season) ).to be_an_instance_of( Season )
     end
-    it "assigns -1 value to standard points" do
-      expect( assigns(:standard_points) ).to eq( -1 )
-    end
     it "renders the template" do
       expect(response).to render_template( action_sym )
     end
@@ -32,6 +29,9 @@ describe MiscController, :type => :controller do
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
 
+      it "assigns -1 value to standard points" do
+        expect( assigns(:standard_points) ).to eq( -1 )
+      end
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
       end
@@ -107,6 +107,9 @@ describe MiscController, :type => :controller do
 # DEBUG
 #        puts( "\r\n- swimmer_gender assign: #{assigns(:swimmer_gender).inspect} => #{assigns(:swimmer).inspect}" )
         expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
+      end
+      it "assigns -1 value to standard points" do
+        expect( assigns(:standard_points) ).to eq( -1 )
       end
     end
   end
@@ -359,6 +362,284 @@ describe MiscController, :type => :controller do
     end
     #-- -----------------------------------------------------------------------
     #++
+  end
+  #-- =========================================================================
+  #++
+
+  describe '[GET #fin_timing_calculation]' do
+
+    context "as an unlogged user" do
+      before(:each) { get :fin_timing_calculation }
+
+      it_behaves_like( "(Misc not restricted GET action)", :fin_timing_calculation )
+
+      it "assigns 0 value to goal timing" do
+        expect( assigns(:timing) ).to eq( Timing.new( 0 ) )
+      end
+      it "doesn't assign a swimmer" do
+        expect( assigns(:swimmer) ).to be_nil
+      end
+      it "doesn't assign a category_type" do
+        expect( assigns(:swimmer_category) ).to be_nil
+      end
+      it "doesn't assign a gender_type" do
+        expect( assigns(:swimmer_gender) ).to be_nil
+      end
+    end
+
+    context "as logged but not associated user" do
+      before(:each) do
+        login_user()
+        expect( subject.current_user ).to be_an_instance_of( User )
+        get :fin_timing_calculation
+      end
+
+      it_behaves_like( "(Misc not restricted GET action)", :fin_timing_calculation )
+
+      it "doesn't assign a swimmer" do
+        expect( assigns(:swimmer) ).to be_nil
+      end
+      it "doesn't assign a category_type" do
+        expect( assigns(:swimmer_category) ).to be_nil
+      end
+      it "doesn't assign a gender_type" do
+        expect( assigns(:swimmer_gender) ).to be_nil
+      end
+    end
+
+
+    context "as logged and swimmer-associated user" do
+      before(:each) do
+        @user = create(:user)
+
+        # Select from seasons that have badges and time standards
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+
+        # Get a random swimmer from the fixture season:
+        swimmer = Swimmer.includes(:badges)
+          .where( "badges.season_id" => fix_season.id )
+          .sort{ rand - 0.5 }[0]
+        expect( swimmer ).not_to be nil
+        @user.set_associated_swimmer( swimmer )
+
+        login_user( @user )
+        expect( subject.current_user ).to be_an_instance_of( User )
+        expect( subject.current_user.swimmer_id ).not_to be nil
+        get :fin_timing_calculation
+      end
+
+      it_behaves_like( "(Misc not restricted GET action)", :fin_timing_calculation )
+
+      it "assigns the required variables" do
+        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
+      end
+      it "assigns a category_type" do
+        expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )
+      end
+      it "assigns a gender_type" do
+        expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
+      end
+      it "assigns 0 value to goal timing" do
+        expect( assigns(:timing) ).to eq( Timing.new( 0 ) )
+      end
+    end
+  end
+  #-- =========================================================================
+  #++
+
+  describe '[POST #fin_timing_calculation]' do
+
+    let(:standard_points)  { ((rand * 550) + 500).round(2) }
+
+    context "without requested parameters" do
+      before(:each) do
+        post(
+          :fin_timing_calculation,
+          gender_type_id:   0,  # Force invalid event type and pool type
+          category_type_id: 0,
+          event_type:       {id: 0},
+          pool_type:        {id: 0},
+          standard_points:  standard_points
+        )
+      end
+      it "handles the request with a redirect" do
+        expect(response.status).to eq( 302 )
+      end
+      it "redirects to #fin_timing_calculation" do
+        expect( response ).to redirect_to( controller: :misc, action: :fin_timing_calculation )
+      end
+      it "displays the flash error message" do
+        expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) )
+      end
+      it "assigns 0 value to goal timing" do
+        expect( assigns(:timing) ).to eq( Timing.new( 0 ) )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    context "with an invalid goal score" do
+      before(:each) do
+        @fixture_gender = GenderType.find_by_code('M')
+        @fixture_category = CategoryType.find_by_code('M40')
+        @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
+        post(
+          :fin_timing_calculation,
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type_id:    @fixture_events_by_pool_type.event_type_id,
+          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+          standard_points:  50  # Force invalid score
+        )
+      end
+      it "handles the request with a redirect" do
+        expect(response.status).to eq( 302 )
+      end
+      it "redirects to #misc" do
+        expect( response ).to redirect_to( controller: :misc, action: :fin_timing_calculation )
+      end
+      it "displays the flash error message" do
+        expect( flash[:error] ).to include( I18n.t('misc.wrong_score') )
+      end
+      it "assigns 0 value to goal timing" do
+        expect( assigns(:timing) ).to eq( Timing.new( 0 ) )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    context "with not allowed pool type and event type parameters" do
+      before(:each) do
+        @fixture_gender = GenderType.find_by_code('M')
+        @fixture_category = CategoryType.find_by_code('M40')
+        post(
+          :fin_timing_calculation,
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type_id:    EventType.where(code: '100MI').first.id,
+          pool_type_id:     PoolType.where(code: '50').first.id,
+          standard_points:  standard_points
+        )
+      end
+      it "handles the request with a redirect" do
+        expect(response.status).to eq( 302 )
+      end
+      it "redirects to #misc" do
+        expect( response ).to redirect_to( controller: :misc, action: :fin_timing_calculation )
+      end
+      it "displays the flash error message" do
+        expect( flash[:error] ).to include( I18n.t('misc.wrong_event_or_pool') )
+      end
+      it "assigns 0 value to goal timing" do
+        expect( assigns(:timing) ).to eq( Timing.new( 0 ) )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    context "with a correct request" do
+      before(:each) do
+        @fixture_gender = GenderType.find_by_code('M')
+        @fixture_category = CategoryType.find_by_code('M40')
+        @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
+        post(
+          :fin_timing_calculation,
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type_id:    @fixture_events_by_pool_type.event_type_id,
+          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+          standard_points:  standard_points
+        )
+      end
+
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "assigns the tab title" do
+        expect( assigns(:tab_title) ).to be_an_instance_of( String )
+      end
+      it "renders the template" do
+        expect(response).to render_template(:fin_timing_calculation)
+      end
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
+      it "assigns a category_type" do
+        expect( assigns(:swimmer_category) ).to be_an_instance_of( CategoryType )
+      end
+      it "assigns a gender_type" do
+        expect( assigns(:swimmer_gender) ).to be_an_instance_of( GenderType )
+      end
+      it "assigns a pool_type" do
+        expect( assigns(:current_pool) ).to be_an_instance_of( PoolType )
+      end
+      it "assigns a event_type" do
+        expect( assigns(:current_event) ).to be_an_instance_of( EventType )
+      end
+      it "accepts event type which is in event_by_pool_type for current season" do
+        expect( assigns(:current_event).events_by_pool_types.where(pool_type_id: @fixture_events_by_pool_type.pool_type_id).count ).to be > 0
+      end
+      it "accepts a goal score" do
+        expect( assigns(:standard_points) ).to be > 300
+      end
+      it "accepts a goal score" do
+        expect( assigns(:standard_points) ).to be < 1200
+      end
+      it "assigns timing data" do
+        expect( assigns(:timing) ).to be_an_instance_of( Timing )
+      end
+      it "assigns current time standard" do
+        expect( assigns(:current_time_standard) ).to be_an_instance_of( TimeStandard ).or be_nil
+      end
+      it "assigns world record" do
+        expect( assigns(:world_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+      end
+      it "assigns national record" do
+        expect( assigns(:national_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    context "with a correct request for a logged user with associated swimmer" do
+      before(:each) do
+        # Select from seasons that have badges and time standards
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+
+        # Get a random swimmer from the fixture season:
+        swimmer = Swimmer.includes(:badges)
+          .where( "badges.season_id" => fix_season.id )
+          .sort{ rand - 0.5 }[0]
+        expect( swimmer ).not_to be nil
+        @user = create(:user)
+        @user.set_associated_swimmer( swimmer )
+        @fixture_gender = swimmer.gender_type
+        @fixture_category = swimmer.get_category_type_for_season( fix_season.id )
+        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings
+          .all
+          .sort{ rand - 0.5 }[0]
+
+        login_user( @user )
+        expect( subject.current_user ).to be_an_instance_of( User )
+        expect( subject.current_user.swimmer_id ).not_to be nil
+
+        post(
+          :fin_timing_calculation,
+          gender_type_id:   @fixture_gender.id,
+          category_type_id: @fixture_category.id,
+          event_type_id:    @fixture_events_by_pool_type.event_type_id,
+          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+          standard_points:  standard_points
+        )
+      end
+
+      it "assigns the required variables" do
+        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
+      end
+      it "assigns season record" do
+        expect( assigns(:seasonal_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
+      end
+    end
   end
   #-- =========================================================================
   #++

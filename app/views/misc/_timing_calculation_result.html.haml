@@ -3,16 +3,17 @@
     %h3= "#{@swimmer_gender.i18n_alternate}, #{@swimmer_category.code}<br>#{@current_event.i18n_description}, #{@current_pool.i18n_description}".html_safe
   .row.fluid.span2.text-center
     %br
-    %h3= "#{@timing.to_s}"
+    %h3= "#{@standard_points}"
   .row.fluid.span1.text-center
     %br
     %h3= '=>'
   - if @current_time_standard
     .row.fluid.span3.alert-info.text-center
       %br
-      %h3= format_score(@standard_points).html_safe
+      %h3= @timing.to_s
   - else
     .row.fluid.span3.text-center
       %br
       %h3.text-warning= t('not_computable')
 .row.fluid
+      
