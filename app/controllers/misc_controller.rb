@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MiscController
 
-  - version:  4.00.613
+  - version:  4.00.855
   - author:   Leega, Steve A.
 
 =end
@@ -21,6 +21,8 @@ class MiscController < ApplicationController
   #++
 
 
+  # #GET fin_score_calculation.
+  #
   # FIN standard point calculation
   # If logged in and associated to a swimmer
   # suggests gender and category
@@ -37,25 +39,32 @@ class MiscController < ApplicationController
       @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
       @swimmer_gender = @swimmer.gender_type
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
-    # TODO
-    # Leave parameters if presents
+  # #AJAX POST-only compute_fin_score.
+  #
+  # Computes and renders the actual result of the FIN standard point calculation.
+  #
+  def compute_fin_score
+    @current_season = Season.get_last_season_by_type( 'MASFIN' )
+    @standard_points = -1                              # Init score with a non-displayable value
 
-    if request.post?                                # === POST: ===
+    if request.xhr? && request.post?                   # === AJAX POST: ===
       category_type_id = params[:category_type_id] ? params[:category_type_id].to_i : 0
       gender_type_id   = params[:gender_type_id] ? params[:gender_type_id].to_i : 0
       pool_type_id     = params[:pool_type_id] ? params[:pool_type_id].to_i : 0
       event_type_id    = params[:event_type_id] ? params[:event_type_id].to_i : 0
       unless ( gender_type_id > 0 && category_type_id > 0 && pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
-        redirect_to( misc_fin_score_calculation_path ) and return
+        return
       end
 
       @swimmer_category = CategoryType.find_by_id( category_type_id )
       @swimmer_gender = GenderType.find_by_id( gender_type_id )
       @current_pool = PoolType.find_by_id( pool_type_id )
       @current_event = EventType.find_by_id( event_type_id )
-
       minutes  = params[:minutes] ? params[:minutes].to_i : -1
       seconds  = params[:seconds] ? params[:seconds].to_i : -1
       hundreds = params[:hundreds] ? params[:hundreds].to_i : -1
@@ -128,11 +137,9 @@ class MiscController < ApplicationController
           end
         else
           flash[:error] = I18n.t('misc.wrong_event_or_pool')
-          redirect_to( misc_fin_score_calculation_path ) and return
         end
       else
         flash[:error] = I18n.t('misc.wrong_timing')
-        redirect_to( misc_fin_score_calculation_path ) and return
       end
     end
   end
@@ -140,6 +147,8 @@ class MiscController < ApplicationController
   #++
 
 
+  # #GET fin_timing_calculation.
+  #
   # FIN timing calculation based on given goal score
   # If logged in and associated to a swimmer
   # suggests gender and category
@@ -156,25 +165,34 @@ class MiscController < ApplicationController
       @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
       @swimmer_gender = @swimmer.gender_type
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
-    # TODO
-    # Leave parameters if presents
+  # #AJAX POST compute_fin_timing.
+  #
+  # FIN timing calculation based on given goal score
+  # If logged in and associated to a swimmer
+  # suggests gender and category
+  #
+  def compute_fin_timing
+    @current_season = Season.get_last_season_by_type( 'MASFIN' )
+    @timing   = Timing.new( 0 )
 
-    if request.post?                                # === POST: ===
+    if request.xhr? && request.post?                   # === AJAX POST: ===
       category_type_id = params[:category_type_id] ? params[:category_type_id].to_i : 0
       gender_type_id   = params[:gender_type_id] ? params[:gender_type_id].to_i : 0
       pool_type_id     = params[:pool_type_id] ? params[:pool_type_id].to_i : 0
       event_type_id    = params[:event_type_id] ? params[:event_type_id].to_i : 0
       unless ( gender_type_id > 0 && category_type_id > 0 && pool_type_id > 0 && event_type_id > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
-        redirect_to( misc_fin_timing_calculation_path ) and return
+        return
       end
 
       @swimmer_category = CategoryType.find_by_id( category_type_id )
       @swimmer_gender = GenderType.find_by_id( gender_type_id )
       @current_pool = PoolType.find_by_id( pool_type_id )
       @current_event = EventType.find_by_id( event_type_id )
-
       @standard_points  = params[:standard_points] ? params[:standard_points].to_f : 0.00
 
       if @standard_points && @standard_points > 300 && @standard_points < 1200
@@ -244,16 +262,15 @@ class MiscController < ApplicationController
           end
         else
           flash[:error] = I18n.t('misc.wrong_event_or_pool')
-          redirect_to( misc_fin_timing_calculation_path ) and return
         end
       else
         flash[:error] = I18n.t('misc.wrong_score')
-        redirect_to( misc_fin_timing_calculation_path ) and return
       end
     end
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   private
 

@@ -1,0 +1,8 @@
+$('#loadingIndicator').hide();
+<% if flash[:error] %>
+ alert('<%= escape_javascript( flash[:error] ) %>' );
+<% end %>
+$('#calculation_result').replaceWith('<%= escape_javascript( render(partial: 'score_calculation_result') ) %>');
+$('#fin_highlights').replaceWith('<%= escape_javascript( render(partial: 'fin_highlights') ) %>');
+$('#calculation_result').show();
+$('#fin_highlights').show();

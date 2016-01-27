@@ -2,7 +2,7 @@
 
 = MiscHelper
 
-  - Goggles framework vers.:  4.00.675
+  - Goggles framework vers.:  4.00.855
   - author: Steve A.
 
 =end
@@ -27,18 +27,21 @@ module MiscHelper
         {
           id: "btn_#{field_name}",
           class: 'btn',
-          'onclick' => "$('##{field_name}').val(#{key}); $('##{display_field_name}').val('#{label}')",
+          'onclick' => "$('##{field_name}').val(#{key}); $('##{display_field_name}').text('#{label}')",
           'data-toggle' => 'tooltip',
           title: label
         }
       )
       rendered_html += "\r\n".html_safe
     end
-    rendered_html += "</div>\r\n".html_safe
     if show_additional_display_label
-      rendered_html += "<p></p>\r\n".html_safe
-      rendered_html += text_field_tag( display_field_name, '', class: 'input-mini disabled', disabled: true )
+      default_label_text = array_of_labels_and_keys_couples.kind_of?(Array) && default_value && array_of_labels_and_keys_couples[default_value] ? array_of_labels_and_keys_couples[default_value].first : ''
+      rendered_html += content_tag( :span, default_label_text, id: display_field_name )
+      # [Steve A., 20160127] Alternative rendering with a disabled text field as current selection label:
+#      rendered_html += "<p></p>\r\n".html_safe
+#      rendered_html += text_field_tag( display_field_name, '', class: 'input-mini disabled', disabled: true )
     end
+    rendered_html += "</div>\r\n".html_safe
     rendered_html.html_safe
   end
   #-- -------------------------------------------------------------------------

@@ -117,7 +117,7 @@ describe MiscController, :type => :controller do
   #++
 
 
-  describe '[POST #fin_score_calculation]' do
+  describe '[XHR POST #compute_fin_score]' do
 
     let(:minutes)  { ((rand * 10) % 10).to_i + 1 }
     let(:seconds)  { ((rand * 59) % 59).to_i + 1 }
@@ -125,8 +125,9 @@ describe MiscController, :type => :controller do
 
     context "without requested parameters" do
       before(:each) do
-        post(
-          :fin_score_calculation,
+        xhr(
+          :post,
+          :compute_fin_score,
           gender_type_id:   0,  # Force invalid event type and pool type
           category_type_id: 0,
           event_type:       {id: 0},
@@ -136,13 +137,10 @@ describe MiscController, :type => :controller do
           hundreds:         hundreds
         )
       end
-      it "handles the request with a redirect" do
-        expect(response.status).to eq( 302 )
+      it "handles the request" do
+        expect( response ).to be_a_success
       end
-      it "redirects to #fin_score_calculation" do
-        expect( response ).to redirect_to( controller: :misc, action: :fin_score_calculation )
-      end
-      it "displays the flash error message" do
+      it "sets the flash error message" do
         expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) )
       end
       it "assigns -1 value to standard points" do
@@ -158,8 +156,9 @@ describe MiscController, :type => :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        post(
-          :fin_score_calculation,
+        xhr(
+          :post,
+          :compute_fin_score,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    @fixture_events_by_pool_type.event_type_id,
@@ -169,13 +168,10 @@ describe MiscController, :type => :controller do
           hundreds:         -1
         )
       end
-      it "handles the request with a redirect" do
-        expect(response.status).to eq( 302 )
+      it "handles the request" do
+        expect( response ).to be_a_success
       end
-      it "redirects to #misc" do
-        expect( response ).to redirect_to( controller: :misc, action: :fin_score_calculation )
-      end
-      it "displays the flash error message" do
+      it "sets the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_timing') )
       end
       it "assigns -1 value to standard points" do
@@ -186,12 +182,13 @@ describe MiscController, :type => :controller do
     #++
 
 
-    context "with not allowed pool type and event type parameters" do
+    context "with a not-allowed pool type and event type parameters" do
       before(:each) do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
-        post(
-          :fin_score_calculation,
+        xhr(
+          :post,
+          :compute_fin_score,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    EventType.where(code: '100MI').first.id,
@@ -201,13 +198,10 @@ describe MiscController, :type => :controller do
           hundreds:         hundreds
         )
       end
-      it "handles the request with a redirect" do
-        expect(response.status).to eq( 302 )
+      it "handles the request" do
+        expect( response ).to be_a_success
       end
-      it "redirects to #misc" do
-        expect( response ).to redirect_to( controller: :misc, action: :fin_score_calculation )
-      end
-      it "displays the flash error message" do
+      it "sets the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_event_or_pool') )
       end
       it "assigns -1 value to standard points" do
@@ -223,8 +217,9 @@ describe MiscController, :type => :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        post(
-          :fin_score_calculation,
+        xhr(
+          :post,
+          :compute_fin_score,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    @fixture_events_by_pool_type.event_type_id,
@@ -237,12 +232,6 @@ describe MiscController, :type => :controller do
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
-      end
-      it "assigns the tab title" do
-        expect( assigns(:tab_title) ).to be_an_instance_of( String )
-      end
-      it "renders the template" do
-        expect(response).to render_template(:fin_score_calculation)
       end
       it "assigns a current season" do
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
@@ -314,8 +303,9 @@ describe MiscController, :type => :controller do
         expect( subject.current_user ).to be_an_instance_of( User )
         expect( subject.current_user.swimmer_id ).not_to be nil
 
-        post(
-          :fin_score_calculation,
+        xhr(
+          :post,
+          :compute_fin_score,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    @fixture_events_by_pool_type.event_type_id,
@@ -326,9 +316,6 @@ describe MiscController, :type => :controller do
         )
       end
 
-      it "assigns the required variables" do
-        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
-      end
       it "assigns season record" do
         expect( assigns(:seasonal_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
@@ -447,14 +434,15 @@ describe MiscController, :type => :controller do
   #-- =========================================================================
   #++
 
-  describe '[POST #fin_timing_calculation]' do
+  describe '[XHR POST #fin_timing_calculation]' do
 
     let(:standard_points)  { ((rand * 550) + 500).round(2) }
 
     context "without requested parameters" do
       before(:each) do
-        post(
-          :fin_timing_calculation,
+        xhr(
+          :post,
+          :compute_fin_timing,
           gender_type_id:   0,  # Force invalid event type and pool type
           category_type_id: 0,
           event_type:       {id: 0},
@@ -462,13 +450,10 @@ describe MiscController, :type => :controller do
           standard_points:  standard_points
         )
       end
-      it "handles the request with a redirect" do
-        expect(response.status).to eq( 302 )
+      it "handles the request" do
+        expect( response ).to be_a_success
       end
-      it "redirects to #fin_timing_calculation" do
-        expect( response ).to redirect_to( controller: :misc, action: :fin_timing_calculation )
-      end
-      it "displays the flash error message" do
+      it "sets the flash error message" do
         expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) )
       end
       it "assigns 0 value to goal timing" do
@@ -483,8 +468,9 @@ describe MiscController, :type => :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        post(
-          :fin_timing_calculation,
+        xhr(
+          :post,
+          :compute_fin_timing,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    @fixture_events_by_pool_type.event_type_id,
@@ -492,13 +478,10 @@ describe MiscController, :type => :controller do
           standard_points:  50  # Force invalid score
         )
       end
-      it "handles the request with a redirect" do
-        expect(response.status).to eq( 302 )
+      it "handles the request" do
+        expect( response ).to be_a_success
       end
-      it "redirects to #misc" do
-        expect( response ).to redirect_to( controller: :misc, action: :fin_timing_calculation )
-      end
-      it "displays the flash error message" do
+      it "sets the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_score') )
       end
       it "assigns 0 value to goal timing" do
@@ -512,8 +495,9 @@ describe MiscController, :type => :controller do
       before(:each) do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
-        post(
-          :fin_timing_calculation,
+        xhr(
+          :post,
+          :compute_fin_timing,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    EventType.where(code: '100MI').first.id,
@@ -521,13 +505,10 @@ describe MiscController, :type => :controller do
           standard_points:  standard_points
         )
       end
-      it "handles the request with a redirect" do
-        expect(response.status).to eq( 302 )
+      it "handles the request" do
+        expect( response ).to be_a_success
       end
-      it "redirects to #misc" do
-        expect( response ).to redirect_to( controller: :misc, action: :fin_timing_calculation )
-      end
-      it "displays the flash error message" do
+      it "sets the flash error message" do
         expect( flash[:error] ).to include( I18n.t('misc.wrong_event_or_pool') )
       end
       it "assigns 0 value to goal timing" do
@@ -542,8 +523,9 @@ describe MiscController, :type => :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        post(
-          :fin_timing_calculation,
+        xhr(
+          :post,
+          :compute_fin_timing,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    @fixture_events_by_pool_type.event_type_id,
@@ -554,12 +536,6 @@ describe MiscController, :type => :controller do
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
-      end
-      it "assigns the tab title" do
-        expect( assigns(:tab_title) ).to be_an_instance_of( String )
-      end
-      it "renders the template" do
-        expect(response).to render_template(:fin_timing_calculation)
       end
       it "assigns a current season" do
         expect( assigns(:current_season) ).to be_an_instance_of( Season )
@@ -623,8 +599,9 @@ describe MiscController, :type => :controller do
         expect( subject.current_user ).to be_an_instance_of( User )
         expect( subject.current_user.swimmer_id ).not_to be nil
 
-        post(
-          :fin_timing_calculation,
+        xhr(
+          :post,
+          :compute_fin_timing,
           gender_type_id:   @fixture_gender.id,
           category_type_id: @fixture_category.id,
           event_type_id:    @fixture_events_by_pool_type.event_type_id,
@@ -633,9 +610,6 @@ describe MiscController, :type => :controller do
         )
       end
 
-      it "assigns the required variables" do
-        expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
-      end
       it "assigns season record" do
         expect( assigns(:seasonal_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end

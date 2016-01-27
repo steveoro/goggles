@@ -4,8 +4,3 @@
   = label_tag( :standard_points, t('misc.fin_standard_points'), :for => :standard_points, class: 'control-label' )
   .controls
     = text_field_tag( :standard_points, default_score, class: 'input-small' )
-    &nbsp;
-    &nbsp;
-    = submit_tag( I18n.t('misc.compute_goal_timing'), :data => {:disable_with => I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
-    %span(id='loadingIndicator' hidden='true')
-      = image_tag( 'indicator.gif' )

@@ -711,17 +711,17 @@ it:
     compute_fin_score_for: "Calcolo punteggio FIN per"
     compute: "Calcola punteggio FIN"
     timing: "Tempo di gara"
-    wrong_timing: "Tempo non ammissimbile. Verifica il tempo immesso"
+    wrong_timing: "Tempo non ammissimbile. Verifica il tempo immesso."
     wrong_event_or_pool: "Oh, no! La specialità non può essere nuotata in questo tipo di vasca"
-    how_to_calculate: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il tempo presunto, infine premi il pulsante Calcola punteggio FIN per ottenere il punteggio FIN"
+    how_to_calculate: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il tempo presunto; infine premi il pulsante 'Calcola punteggio FIN' per ottenere il punteggio FIN"
     fin_standard_points: "Punteggio FIN"
     time_standard: "Tempo base"
     fin_score_calculation_tooltip: "Vai al calcolo del punteggio FIN ipotetico"
     fin_timing_calculation: "Calcolo tempo obiettivo FIN"
     fin_timing_calculation_tooltip: "Vai al calcolo del tempo obiettivo FIN"
-    how_to_calculate_timing: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il punteggio obiettivo, infine premi il pulsante Calcola punteggio FIN per calcolare il tempoda realizzare per ottenre eil punteggio obiettivo FIN"
+    how_to_calculate_timing: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il punteggio obiettivo, infine premi il pulsante 'Calcola tempo obiettivo FIN' per calcolare il tempo da realizzare per ottenere il punteggio obiettivo FIN"
     compute_goal_timing: "Calcola tempo obiettivo"
-    wrong_score: "Punteggio non ammissimbile. Verifica il punteggio immesso"
+    wrong_score: "Punteggio non ammissibile. Verifica il punteggio immesso."
 
   netzke:
     basepack:

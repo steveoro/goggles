@@ -1,6 +1,9 @@
-.row.fluid.span8.offset2
+.row.fluid.span8.offset2#calculation_result
   .row.fluid.span4.offset1.text-right
-    %h3= "#{@swimmer_gender.i18n_alternate}, #{@swimmer_category.code}<br>#{@current_event.i18n_description}, #{@current_pool.i18n_description}".html_safe
+    - if @swimmer_gender && @swimmer_category && @current_event && @current_pool
+      %h3= "#{ @swimmer_gender.i18n_alternate }, #{ @swimmer_category.code }<br />#{ @current_event.i18n_description }, #{ @current_pool.i18n_description }".html_safe
+    - else
+      %h3 ??, ???<br />???, ???
   .row.fluid.span2.text-center
     %br
     %h3= "#{@timing.to_s}"

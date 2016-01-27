@@ -5,15 +5,20 @@
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
     %h4
       = @tab_title
-
   .row-fluid
-    = form_tag( :misc_fin_timing_calculation, class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show(); ") do
+    = I18n.t('misc.how_to_calculate_timing')
+  .row-fluid
+    %p/
+  .row-fluid
+    = form_tag( :misc_compute_fin_timing, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#score_calculation_result').hide(); $('#fin_highlights').hide();" ) do
       = render( partial: 'calculation_parameters' )
       = render( partial: 'score_parameters' )
+      .control-group
+        .controls
+          = submit_tag( I18n.t('misc.compute_goal_timing'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+          %span( id='loadingIndicator' hidden='true' )
+            = image_tag( 'indicator.gif' )
 
-  - if @timing.to_hundreds > 0
-    = render( partial: 'timing_calculation_result' )
-    = render( partial: 'fin_highlights' )
-  - else
-    = render( partial: 'timing_calculation_how_to' )
-
+#calculation_result
+#fin_highlights
+%p/
