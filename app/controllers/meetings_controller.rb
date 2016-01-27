@@ -616,7 +616,7 @@ class MeetingsController < ApplicationController
     # The "editable stuff" is returned as an ordered array of Hash, where each
     # Hash item has as key the related MIR and as value its list of passages.
     @editable_stuff = @meeting.meeting_individual_results
-        .sort_by_event_order
+        .sort_by_event_and_timing
         .joins( :event_type, :pool_type )
         .where( ['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids] )
         .includes( :passages )
@@ -625,6 +625,9 @@ class MeetingsController < ApplicationController
     # TODO
     # Should order by start-list.
     # If no start-list present should use timing
+    #if @meeting.has_start_list
+    #  @editable_stuff.sort{ |mir_n, mir_p| MeetingEntry.where( badge_id: mir_n.keys.first.badge_id, meeting_program_id: mir_n.keys.first.meeting_program_id ).first.get_timing <=> MeetingEntry.where( badge_id: mir_p.keys.first.badge_id, meeting_program_id: mir_n.keys.first.meeting_program_id ).first.get_timing }
+    #end
   end
 
 

@@ -100,6 +100,7 @@ class MeetingIndividualResult < ActiveRecord::Base
   scope :sort_by_gender_and_category, ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir.to_s}, category_types.code #{dir.to_s}") }
   scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at #{dir.to_s}") }
   scope :sort_by_event_order,         ->(dir = 'ASC') { includes(:meeting_event, :meeting_session).order("(meeting_sessions.session_order*100)+meeting_events.event_order #{dir.to_s}") }
+  scope :sort_by_event_and_timing,    ->(dir = 'ASC') { includes(:meeting_event, :meeting_session).order("(meeting_sessions.session_order*100)+meeting_events.event_order #{dir.to_s}, is_disqualified, (hundreds+(seconds*100)+(minutes*6000)) DESC") }
 
   scope :for_event_by_pool_type,      ->(event_by_pool_type)   { joins(:event_type, :pool_type).where(["event_types.id = ? AND pool_types.id = ?", event_by_pool_type.event_type_id, event_by_pool_type.pool_type_id]) }
   scope :for_pool_type,               ->(pool_type)            { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }

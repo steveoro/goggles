@@ -50,15 +50,26 @@
                 %br
                 = passage.get_timing
           - else
-            - passage_types.each do |passage_type|
-              %td.goggles-rightalign{'colspan'=>'1'}
-                = text_field_tag(                                             |
-                  "new_#{mir.id}_#{passage_type.id}",                         |
-                  nil,                                                        |
-                  'class' => "input-mini text-right timing",                  |
-                  'data-mir' => mir.id,                                       |
-                  'data-passage-type' => passage_type.id                      |
-                )                                                             |
+            - count = ( passage_types.count - 1 )
+            - passage_types.each_with_index do |passage_type, index|
+              - if index < count
+                %td.goggles-rightalign{'colspan'=>'1'}
+                  = text_field_tag(                                             |
+                    "new_#{mir.id}_#{passage_type.id}",                         |
+                    nil,                                                        |
+                    'class' => "input-mini text-right timing",                  |
+                    'data-mir' => mir.id,                                       |
+                    'data-passage-type' => passage_type.id                      |
+                  )                                                             |
+              - else
+                %td.goggles-rightalign{'colspan'=>'1'}
+                  = text_field_tag(                                             |
+                    "new_#{mir.id}_#{passage_type.id}",                         |
+                    mir.get_timing,                                                        |
+                    'class' => "input-mini text-right timing",                  |
+                    'data-mir' => mir.id,                                       |
+                    'data-passage-type' => passage_type.id                      |
+                  )                                                             |
           %td.goggles-rightalign
             %b= mir.get_timing
 
