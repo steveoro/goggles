@@ -16,29 +16,29 @@ on the app on the remote Server without losing your mind.
 
 ### Phase-1: Get the current, remote dump:
 
-1) Set the server in maintenance mode.
+1. Set the server in maintenance mode.
   > ROLES=app cap ocean remote:maintenance_on
   ('ocean' is the server config name)
 
-2) Get the dump and archive it.
+2. Get the dump and archive it.
   > ROLES=app cap ocean db:remote:sql_dump
   (Default dir is ok; will store the dump under 'goggles.docs/backup.db/history.gold')
 
 
 ### Phase-2: Apply the dump locally:
 
-3) Rebuild the local DB.
+3. Rebuild the local DB.
   With Zeus server running:
   > zeus rake db:rebuild_from_dump from=production to=production
   Or:
   > bundle exec rake db:rebuild_from_dump from=production to=production
 
-3.1) Run any pending migration on production DB:
+3.1. Run any pending migration on production DB:
   > RAILS_ENV=production bundle exec rake db:migrate
   (Assuming migrations have been already executed and tested on Development DB. Do it also
    for Dev. DB, if not)
 
-3.2) Re-update the DB dumps when using the **rebuild** option of the task:
+3.2. Re-update the DB dumps when using the **rebuild** option of the task:
   When using the option "rebuild=1" of the db:diff_apply task, remember to update
   the local dumps before invoking the task itself, since it will recreate the DBs
   from scratch before applying the diff files.
@@ -53,7 +53,7 @@ on the app on the remote Server without losing your mind.
   As a safety precaution, do also a backup copy of the dump file at this stage, before
   issuing the rake task.
 
-4) Apply the DB diffs created locally (on all DBs):
+4. Apply the DB diffs created locally (on all DBs):
   With Zeus server running:
   > zeus rake db:diff_apply
   Or:
@@ -69,7 +69,7 @@ on the app on the remote Server without losing your mind.
 
 ### Phase-3: Upload the updated dump and apply it remotely:
 
-5) Upload the local production dump.
+5. Upload the local production dump.
     > ROLES=app cap ocean db:remote:dump_upload
 
     Explanation from the output description of the command:
@@ -85,8 +85,9 @@ on the app on the remote Server without losing your mind.
       - drop the production DB
       - recreate the empty DB
       - execute the uncompressed dump file on the new, empty, production DB
-      - remove the temp. files
-      - finally, start Apache
+      - remove the temp. unzipped file
+      - start Apache
+      - clear the cache (so that each cached page will receive new data)
 
     This remote Capistrano task may prove useful each time a production dump has
     been updated locally but a new release of the app has not been scheduled for
@@ -98,8 +99,11 @@ on the app on the remote Server without losing your mind.
     ---8<---
 
 
-6) Exit from maintenance mode.
+6. Exit from maintenance mode (unless the dump was already edited to be out-of-maintenance).
   > ROLES=app cap ocean remote:maintenance_off
+
+7. Cache rebuild:
+    > RAILS_ENV=production bundle exec rake cache:rebuild user_email=<user_email> user_pwd=<user_password>
 
 
 Eventually, run a mailer task if the data-update requires generating a news feed

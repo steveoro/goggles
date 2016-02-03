@@ -158,8 +158,9 @@ EOF
       - drop the production DB
       - recreate the empty DB
       - execute the uncompressed dump file on the new, empty, production DB
-      - remove the temp. files
-      - finally, start Apache
+      - remove the temp. unzipped file
+      - start Apache
+      - clear the cache (so that each cached page will receive new data)
 
       This remote Capistrano task may prove useful each time a production dump has
       been updated locally but a new release of the app has not been scheduled for
@@ -181,6 +182,13 @@ EOF
 
         info "Shutting down Apache during the rebuild..."
         execute '/etc/init.d/apache2 stop'
+
+        # [Steve, 20160203] This is the same as invoking "cap remote:tmp_clear"
+        within release_path do
+          with rails_env: :production do
+            rake "tmp:clear"
+          end
+        end
 
         info "Unzipping remote temp file..."
         execute :bunzip2, '-c /tmp/production.sql.bz2 > /tmp/production.sql'
@@ -316,3 +324,4 @@ end
 
 # Custom hooks:
 before 'deploy:check:linked_files', 'db:setup:config'
+after 'db:remote:dump_upload', 'remote:tmp_clear'       # Clear the cache after a dump upload
