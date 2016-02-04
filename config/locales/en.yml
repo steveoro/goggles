@@ -29,6 +29,9 @@ en:
   results: Risultati
   team: Team
   teams: Teams
+  qualified: Qualified
+  qualifieds: Qualifieds
+  swimmer: Nuotatore
 
   swimmers:
     last_name: "Surname"

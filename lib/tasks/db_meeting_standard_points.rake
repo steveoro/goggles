@@ -91,6 +91,7 @@ DESC
 
     logger.info( "Meeting: " + meeting.get_full_name )
     season = meeting.season
+    qualified_number = meeting.get_swimming_pool.lanes_number
     
     # Verify if should use forced category
     category_type =  nil
@@ -149,7 +150,7 @@ DESC
       # Calculate ranking, if needed
       if rank
         # Create csv file for ranking
-        csv_file_header =  ['NUOTATORE', 'SQUADRA', 'CAT', 'SPEC1', 'TEMPO1', 'PUNTI1', 'SPEC2', 'TEMPO2', 'PUNTI2', 'PUNTIMAX']
+        csv_file_header =  [I18n.t('qualified'), I18n.t('swimmer'), I18n.t('team'), 'CAT', "#{I18n.t('event')}1", "#{I18n.t('timing')}1", "#{I18n.t('points')}1", "#{I18n.t('event')}2", "#{I18n.t('timing')}2", "#{I18n.t('points')}2", I18n.t('max')]
         csv_file_name   = "#{DateTime.now().strftime('%Y%m%d%H%M')}_#{meeting.code}_standard_points_calc"
         ranking_male    = []
         ranking_female  = []
@@ -163,8 +164,8 @@ DESC
         end
 
         # Add data to csv ranking for male and female
-        ranking_to_csv( ranking_male, csv_file_name + '_M.csv', csv_file_header, logger ) if ranking_male.size > 0
-        ranking_to_csv( ranking_female, csv_file_name + '_F.csv', csv_file_header, logger ) if ranking_female.size > 0
+        ranking_to_csv( ranking_male, csv_file_name + '_M.csv', csv_file_header, logger, qualified_number ) if ranking_male.size > 0
+        ranking_to_csv( ranking_female, csv_file_name + '_F.csv', csv_file_header, logger, qualified_number ) if ranking_female.size > 0
       end
       
       # Rollback if not persist
@@ -193,24 +194,25 @@ DESC
   def ranking_line( ranking_array, meeting_individual_result )
     swimmer_name = meeting_individual_result.swimmer.get_full_name
     team_name   = meeting_individual_result.team.get_full_name
-    first_event = ranking_array.index{ |e| e[0] == swimmer_name and e[1] == team_name }
+    first_event = ranking_array.index{ |e| e[1] == swimmer_name and e[2] == team_name }
 
     if first_event
-      ranking_array[first_event][6] = meeting_individual_result.event_type.code
-      ranking_array[first_event][7] = meeting_individual_result.get_timing
-      ranking_array[first_event][8] = meeting_individual_result.standard_points
-      ranking_array[first_event][9] = ranking_array[first_event][8] > ranking_array[first_event][5] ? ranking_array[first_event][8] : ranking_array[first_event][5]
+      ranking_array[first_event][7] = meeting_individual_result.event_type.code
+      ranking_array[first_event][8] = meeting_individual_result.get_timing
+      ranking_array[first_event][9] = meeting_individual_result.standard_points
+      ranking_array[first_event][10] = ranking_array[first_event][9] > ranking_array[first_event][6] ? ranking_array[first_event][9] : ranking_array[first_event][6]
     else
-      ranking_array << [swimmer_name, 
-                       team_name,
-                       meeting_individual_result.category_type.code,
-                       meeting_individual_result.event_type.code,
-                       meeting_individual_result.get_timing,
-                       meeting_individual_result.standard_points,
-                       nil,
-                       nil,
-                       0,
-                       meeting_individual_result.standard_points]
+      ranking_array << [nil,
+                        swimmer_name, 
+                        team_name,
+                        meeting_individual_result.category_type.code,
+                        meeting_individual_result.event_type.code,
+                        meeting_individual_result.get_timing,
+                        meeting_individual_result.standard_points,
+                        nil,
+                        nil,
+                        0,
+                        meeting_individual_result.standard_points]
     end
     ranking_array
   end
@@ -218,19 +220,28 @@ DESC
   #++
 
   # Creates csv file from ranking array
-  # Sorts ranking array using max score (9th element)
+  # Sorts ranking array using max score (10th element)
   # Create csv file using given header
   # Appena ranking lines
-  def ranking_to_csv( ranking_array, csv_file_name, csv_file_header, logger )
+  def ranking_to_csv( ranking_array, csv_file_name, csv_file_header, logger, qualified_number )
+    teams = []
+    
     # Sort ranking by max score
-    ranking_array.sort!{ |n,p| p[9] <=> n[9] }
+    ranking_array.sort!{ |n,p| p[10] <=> n[10] }
     
     # Create csv file
     csv_file = File.open( LOG_DIR + '/' + csv_file_name, 'w' )
-    csv_file << csv_file_header.join(',') 
+    csv_file << csv_file_header.join(',').upcase
 
     # Add ranking to csv
+    logger.info( "\r\n#{csv_file_name}")
+    logger.info( "#{I18n.t('qualified')}:" )
     ranking_array.each do |ranking_el|
+      if teams.count < qualified_number && !teams.include?( ranking_el[2] )
+        teams << ranking_el[2]
+        ranking_el[0] = 'X' 
+        logger.info( "#{teams.count}. #{ranking_el[1]} - #{ranking_el[2]}")
+      end
       csv_file << "\r\n#{ranking_el.join(',')}"
     end
 
