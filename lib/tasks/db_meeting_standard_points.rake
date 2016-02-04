@@ -125,21 +125,23 @@ DESC
     diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
     diff_file.puts "-- Meeting: #{meeting.get_full_name}"
 
-    # if meeting passed force the scan
+    # Open DB transaction for final roll back if persist is false
     ActiveRecord::Base.transaction do
-      # Scan for meeting individual results 
+      # Scan for meeting individual results (for simmers more than 20 years old) 
       meeting.meeting_individual_results.is_not_disqualified.each do |meeting_individual_result|
-        if (recalculate or !meeting_individual_result.standard_points or meeting_individual_result.standard_points == 0)
+        if (recalculate or meeting_individual_result.standard_points == nil or meeting_individual_result.standard_points == 0) && 
+         meeting_individual_result.category_type.age_end > 20 && 
+         meeting_individual_result.category_type.is_undivided == false
           # Calculate standard points
           score_calculator = ScoreCalculator.new( season, meeting_individual_result.gender_type, category_type ? category_type : meeting_individual_result.category_type, pool_type ? pool_type : meeting_individual_result.pool_type, meeting_individual_result.event_type )
           if score_calculator.get_time_standard
             standard_points = score_calculator.get_fin_score( meeting_individual_result.get_timing_instance )
             meeting_individual_result.standard_points = standard_points 
             meeting_individual_result.save
+            
             explanation = "#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{standard_points.to_s} (#{score_calculator.get_time_standard.get_timing})"
             diff_file.puts to_sql_update( meeting_individual_result, false, {'standard_points' => standard_points}, "\r\n", explanation )
-
-            logger.info( "\r\n#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{standard_points.to_s} (#{score_calculator.get_time_standard.get_timing})" )
+            logger.info( "#{meeting_individual_result.swimmer.get_full_name} #{meeting_individual_result.event_type.code} #{meeting_individual_result.get_timing}: #{standard_points.to_s} (#{score_calculator.get_time_standard.get_timing})" )
           end
         end
       end            
@@ -147,56 +149,22 @@ DESC
       # Calculate ranking, if needed
       if rank
         # Create csv file for ranking
+        csv_file_header =  ['NUOTATORE', 'SQUADRA', 'CAT', 'SPEC1', 'TEMPO1', 'PUNTI1', 'SPEC2', 'TEMPO2', 'PUNTI2', 'PUNTIMAX']
+        csv_file_name   = "#{DateTime.now().strftime('%Y%m%d%H%M')}_#{meeting.code}_standard_points_calc"
         ranking_male    = []
         ranking_female  = []
-        csv_file_hedaer =  ['NUOTATORE','SQUADRA','SPEC','TEMPO','PUNTI']
-        csv_file_name   = "#{DateTime.now().strftime('%Y%m%d%H%M')}_#{meeting.code}_standard_points_calc"
-        csv_file_male   = File.open( LOG_DIR + '/' + csv_file_name + '_M.csv', 'w' )
-        csv_file_female = File.open( LOG_DIR + '/' + csv_file_name + '_F.csv', 'w' )
 
-        meeting.meeting_individual_results.is_not_disqualified.each do |meeting_individual_result|
+        meeting.meeting_individual_results.has_points.each do |meeting_individual_result|
           if meeting_individual_result.gender_type.code == 'M'
-            ranking_male.reject!{ |e| e[0] == meeting_individual_result.swimmer.get_full_name and e[1] == meeting_individual_result.team.get_full_name and e[4] <= meeting_individual_result.standard_points }
-            ranking_male << [meeting_individual_result.swimmer.get_full_name, 
-                             meeting_individual_result.team.get_full_name,
-                             meeting_individual_result.event_type.code,
-                             meeting_individual_result.get_timing,
-                             meeting_individual_result.standard_points]
+            ranking_male = ranking_line( ranking_male, meeting_individual_result )
           else
-            ranking_female.reject!{ |e| e[0] == meeting_individual_result.swimmer.get_full_name and e[1] == meeting_individual_result.team.get_full_name and e[4] <= meeting_individual_result.standard_points }
-            ranking_female << [meeting_individual_result.swimmer.get_full_name,
-                               meeting_individual_result.team.get_full_name,
-                               meeting_individual_result.event_type.code,
-                               meeting_individual_result.get_timing,
-                               meeting_individual_result.standard_points]
+            ranking_female = ranking_line( ranking_female, meeting_individual_result )
           end
         end
 
-        # Add data to csv ranking for male
-        if ranking_male.size > 0
-          csv_file_male << csv_file_hedaer.join(',') 
-          
-          # Sort male ranking
-          ranking_male.sort!{ |n,p| p[4] <=> n[4] }
-          
-          # Add male ranking to csv
-          ranking_male.each do |ranking_el|
-            csv_file_male << "\r\n#{ranking_el.join(',')}"
-          end
-        end
-          
-        # Add data to csv ranking for female
-        if ranking_female.size > 0
-          csv_file_female << csv_file_hedaer.join(',') 
-          
-          # Sort female ranking
-          ranking_female.sort!{ |n,p| p[4] <=> n[4] }
-  
-          # Add female ranking to csv
-          ranking_female.each do |ranking_el|
-            csv_file_female << "\r\n#{ranking_el.join(',')}"
-          end
-        end
+        # Add data to csv ranking for male and female
+        ranking_to_csv( ranking_male, csv_file_name + '_M.csv', csv_file_header, logger ) if ranking_male.size > 0
+        ranking_to_csv( ranking_female, csv_file_name + '_F.csv', csv_file_header, logger ) if ranking_female.size > 0
       end
       
       # Rollback if not persist
@@ -213,6 +181,61 @@ DESC
   end
   #-- -------------------------------------------------------------------------
   #++
+  
+  # Creates an individual row in ranking
+  # each swimmer may have up to 2 results
+  # to be collected and the best score should be
+  # computed to estabilish ranking
+  # If swimmer isn't present in ranking array
+  # it will create new record
+  # else it will fill second evet data and calculate
+  # max score
+  def ranking_line( ranking_array, meeting_individual_result )
+    swimmer_name = meeting_individual_result.swimmer.get_full_name
+    team_name   = meeting_individual_result.team.get_full_name
+    first_event = ranking_array.index{ |e| e[0] == swimmer_name and e[1] == team_name }
+
+    if first_event
+      ranking_array[first_event][6] = meeting_individual_result.event_type.code
+      ranking_array[first_event][7] = meeting_individual_result.get_timing
+      ranking_array[first_event][8] = meeting_individual_result.standard_points
+      ranking_array[first_event][9] = ranking_array[first_event][8] > ranking_array[first_event][5] ? ranking_array[first_event][8] : ranking_array[first_event][5]
+    else
+      ranking_array << [swimmer_name, 
+                       team_name,
+                       meeting_individual_result.category_type.code,
+                       meeting_individual_result.event_type.code,
+                       meeting_individual_result.get_timing,
+                       meeting_individual_result.standard_points,
+                       nil,
+                       nil,
+                       0,
+                       meeting_individual_result.standard_points]
+    end
+    ranking_array
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Creates csv file from ranking array
+  # Sorts ranking array using max score (9th element)
+  # Create csv file using given header
+  # Appena ranking lines
+  def ranking_to_csv( ranking_array, csv_file_name, csv_file_header, logger )
+    # Sort ranking by max score
+    ranking_array.sort!{ |n,p| p[9] <=> n[9] }
+    
+    # Create csv file
+    csv_file = File.open( LOG_DIR + '/' + csv_file_name, 'w' )
+    csv_file << csv_file_header.join(',') 
+
+    # Add ranking to csv
+    ranking_array.each do |ranking_el|
+      csv_file << "\r\n#{ranking_el.join(',')}"
+    end
+
+    logger.info( "\r\nRanked #{ranking_array.count} swimmers in #{csv_file_name}.")
+  end
 end
 # =============================================================================
 
