@@ -40,7 +40,7 @@ to be forced.
 
 Could force recalculating or calculate only missing scores.
 
-Options: meeting=<meeting_id> [use_category=<category_code> use_pool=<pool_code> rank=false recalculate=false persist=false log_dir=#{LOG_DIR}]
+Options: meeting=<meeting_id> [use_category=<category_code> use_pool=<pool_code> rank=false recalculate=false persist=false clear=false log_dir=#{LOG_DIR}]
 
 - 'meeting'        meeting to scan for.
 - 'use_category'   optional category type forced for calcultaion.
@@ -48,7 +48,30 @@ Options: meeting=<meeting_id> [use_category=<category_code> use_pool=<pool_code>
 - 'rank'           force ranking calculation with csv output.
 - 'recalculate'    force to override the stored scores with new values.
 - 'persist'        force to persist the changes.
+- 'clear'          force standard points clearing (assumes recalculate=true persist=true and rank=false).
 - 'log_dir'        allows to override the default log dir destination.
+
+Examples:
+- To calculate missing FIN standard points (without persisting and without creating rank)
+rake meeting_standard_points meeting=15201 
+
+- To calculate all FIN standard points (recaluculate those already presents without persisting and without creating rank)
+rake meeting_standard_points meeting=15201 recalculate=true
+
+- To calculate and persist all FIN standard points (recaluculate those already presents without creating rank)
+rake meeting_standard_points meeting=15201 recalculate=true persist=true
+
+- To calculate and persist all CSI standard points forceing M25 standards (recaluculate those already presents without creating rank)
+rake meeting_standard_points meeting=15103 recalculate=true persist=true use_category=M25
+
+- To calculate and persist all CSI standard points forceing M25 standards and calulating rank (recaluculate those already presents)
+rake meeting_standard_points meeting=15103 recalculate=true persist=true use_category=M25 rank=true
+
+- To calculate and persist all CSI standard points forceing M25 standards 25 meters pool and calulating rank (recaluculate those already presents)
+rake meeting_standard_points meeting=15103 recalculate=true persist=true use_category=M25 use_pool=25 rank=true
+
+- To clear all standard points (always persist and recalculate and never rank)
+rake meeting_standard_points meeting=15103 clear=true
 
 DESC
   task :meeting_standard_points do |t|
@@ -58,6 +81,7 @@ DESC
     pool_code       = ENV.include?("use_pool")     ? ENV["use_pool"] : nil
     rank            = ENV.include?("rank")         ? ENV["rank"] == 'true' : false
     persist         = ENV.include?("persist")      ? ENV["persist"] == 'true' : false
+    clear           = ENV.include?("clear")        ? ENV["clear"] == 'true' : false
     recalculate     = ENV.include?("recalculate")  ? ENV["recalculate"] == 'true' : false
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
@@ -88,8 +112,25 @@ DESC
       puts("This needs a valid 'meeting'.")
       exit
     end
+    logger.info( "\r\n#{I18n.t('general.meeting')}: #{meeting.get_full_name}" )
+    
+    # If clear option perform a zero assign to all results
+    if clear
+      file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}#{persist ? 'prod' : 'all'}_standard_points_clear_#{meeting_id}.diff"
+      diff_file = File.open( LOG_DIR + '/' + file_name + '.sql', 'w' )
+      diff_file.puts "-- Meeting: #{meeting.get_full_name}"
+      standard_points = 0
+      meeting.meeting_individual_results.is_not_disqualified.each do |meeting_individual_result|
+        meeting_individual_result.standard_points = standard_points 
+        meeting_individual_result.save
+        diff_file.puts to_sql_update( meeting_individual_result, false, {'standard_points' => standard_points}, "\r\n" )
+      end
+      logger.info( "\r\nLog file " + file_name + " created" )
+      logger.info( "\r\nFinished." )
+      exit
+    end
 
-    logger.info( "Meeting: " + meeting.get_full_name )
+    # Some frequently asked values
     season = meeting.season
     qualified_number = meeting.get_swimming_pool.lanes_number
     
@@ -150,7 +191,17 @@ DESC
       # Calculate ranking, if needed
       if rank
         # Create csv file for ranking
-        csv_file_header =  [I18n.t('qualified'), I18n.t('swimmer'), I18n.t('team'), 'CAT', "#{I18n.t('event')}1", "#{I18n.t('timing')}1", "#{I18n.t('points')}1", "#{I18n.t('event')}2", "#{I18n.t('timing')}2", "#{I18n.t('points')}2", I18n.t('max')]
+        csv_file_header =  [I18n.t('qualified'), 
+                            I18n.t('general.swimmer'), 
+                            I18n.t('general.team'), 
+                            'CAT', 
+                            "#{I18n.t('event')} 1", 
+                            "#{I18n.t('timing')} 1", 
+                            "#{I18n.t('points')} 1", 
+                            "#{I18n.t('event')} 2", 
+                            "#{I18n.t('timing')} 2", 
+                            "#{I18n.t('points')} 2", 
+                            "#{I18n.t('points')} #{I18n.t('max')}"]
         csv_file_name   = "#{DateTime.now().strftime('%Y%m%d%H%M')}_#{meeting.code}_standard_points_calc"
         ranking_male    = []
         ranking_female  = []
@@ -164,8 +215,8 @@ DESC
         end
 
         # Add data to csv ranking for male and female
-        ranking_to_csv( ranking_male, csv_file_name + '_M.csv', csv_file_header, logger, qualified_number ) if ranking_male.size > 0
-        ranking_to_csv( ranking_female, csv_file_name + '_F.csv', csv_file_header, logger, qualified_number ) if ranking_female.size > 0
+        ranking_to_csv( I18n.t('males'), ranking_male, csv_file_name + '_M.csv', csv_file_header, logger, qualified_number ) if ranking_male.size > 0
+        ranking_to_csv( I18n.t('females'), ranking_female, csv_file_name + '_F.csv', csv_file_header, logger, qualified_number ) if ranking_female.size > 0
       end
       
       # Rollback if not persist
@@ -223,7 +274,7 @@ DESC
   # Sorts ranking array using max score (10th element)
   # Create csv file using given header
   # Appena ranking lines
-  def ranking_to_csv( ranking_array, csv_file_name, csv_file_header, logger, qualified_number )
+  def ranking_to_csv( description, ranking_array, csv_file_name, csv_file_header, logger, qualified_number )
     teams = []
     
     # Sort ranking by max score
@@ -234,18 +285,18 @@ DESC
     csv_file << csv_file_header.join(',').upcase
 
     # Add ranking to csv
-    logger.info( "\r\n#{csv_file_name}")
-    logger.info( "#{I18n.t('qualified')}:" )
+    logger.info( "\r\n#{description}: #{csv_file_name}")
+    logger.info( "\r\n  #{I18n.t('qualifieds')}:" )
     ranking_array.each do |ranking_el|
       if teams.count < qualified_number && !teams.include?( ranking_el[2] )
         teams << ranking_el[2]
         ranking_el[0] = 'X' 
-        logger.info( "#{teams.count}. #{ranking_el[1]} - #{ranking_el[2]}")
+        logger.info( "  #{teams.count}. #{ranking_el[1].ljust(25)} - #{ranking_el[2]}")
       end
       csv_file << "\r\n#{ranking_el.join(',')}"
     end
 
-    logger.info( "\r\nRanked #{ranking_array.count} swimmers in #{csv_file_name}.")
+    logger.info( "\r\n#{I18n.t('ranked')} #{ranking_array.count} #{I18n.t('general.swimmers')} in #{csv_file_name}.")
   end
 end
 # =============================================================================

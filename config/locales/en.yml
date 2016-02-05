@@ -1,8 +1,7 @@
 en:
   yes: "Yes"
   no: "No"
-  ok: OK
-
+  ok: 'OK'
   rank: "Rank"
   average: "Average"
   best: "Best"
@@ -25,13 +24,23 @@ en:
   medals: Medals
   ranking: "Ranking"
   rankings: "Rankings"
+  ranked: 'Ranked'
   result: "Result"
-  results: Risultati
-  team: Team
-  teams: Teams
-  qualified: Qualified
-  qualifieds: Qualifieds
-  swimmer: Nuotatore
+  results: 'Results'
+  qualified: 'Qualified'
+  qualifieds: 'Qualifieds'
+  swimmer: 'Swimmer'
+  swimmers: 'Swimmers'
+  team: 'Team'
+  teams: 'Teams'
+
+  general:
+    swimmer: 'Swimmer'
+    swimmers: 'Swimmers'
+    team: 'Team'
+    teams: 'Teams'
+    meeting: 'Meeting'
+    meetings: 'Meetings'
 
   swimmers:
     last_name: "Surname"

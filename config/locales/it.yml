@@ -1,7 +1,7 @@
 it:
   yes: "Sì"
   no: "No"
-  ok: OK
+  ok: 'OK'
   rank: "Posizione"
   average: "Media"
   best: "Migliore"
@@ -16,21 +16,31 @@ it:
   max: "Max"
   min: "Min"
   tot: "Tot"
-  number_short: N.
-  meeting: Gara
-  meetings: Gare
-  event: Specialità
-  events: Specialità
-  medals: Medaglie
-  ranking: Classifica
-  rankings: Classifiche
-  result: Risultato
-  results: Risultati
-  team: Squadra
-  teams: Squadre
-  qualified: Qualficato
-  qualifieds: Qualficati
-  swimmer: Nuotatore
+  number_short: 'N.'
+  meeting: 'Gara'
+  meetings: 'Gare'
+  event: 'Specialità'
+  events: 'Specialità'
+  medals: 'Medaglie'
+  ranking: 'Classifica'
+  rankings: 'Classifiche'
+  ranked: 'Classificato'
+  result: 'Risultato'
+  results: 'Risultati'
+  qualified: 'Qualficato'
+  qualifieds: 'Qualficati'
+  team: 'Squadra'
+  teams: 'Squadre'
+  swimmer: 'Nuotatore'
+  swimmers: 'Nuotatori'
+
+  general:
+    team: 'Squadra'
+    teams: 'Squadre'
+    swimmer: 'Nuotatore'
+    swimmers: 'Nuotatori'
+    meeting: 'Gara'
+    meetings: 'Gare'
 
   swimmers:
     last_name: "Cognome"
