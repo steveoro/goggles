@@ -282,7 +282,7 @@ DESC
     
     # Create csv file
     csv_file = File.open( LOG_DIR + '/' + csv_file_name, 'w' )
-    csv_file << csv_file_header.join(',').upcase
+    csv_file.puts( csv_file_header.join(',').upcase )
 
     # Add ranking to csv
     logger.info( "\r\n#{description}: #{csv_file_name}")
@@ -293,7 +293,9 @@ DESC
         ranking_el[0] = 'X' 
         logger.info( "  #{teams.count}. #{ranking_el[1].ljust(25)} - #{ranking_el[2]}")
       end
-      csv_file << "\r\n#{ranking_el.join(',')}"
+      ranking_el << '=SE(VAL.VUOTO(INDIRETTO(INDIRIZZO(RIF.RIGA();1)));"";INDIRETTO(INDIRIZZO(RIF.RIGA();2)))'
+      ranking_el << '=SE(VAL.VUOTO(INDIRETTO(INDIRIZZO(RIF.RIGA();1)));"";INDIRETTO(INDIRIZZO(RIF.RIGA();3)))'
+      csv_file.puts( ranking_el.join(',') )
     end
 
     logger.info( "\r\n#{I18n.t('ranked')} #{ranking_array.count} #{I18n.t('general.swimmers')} in #{csv_file_name}.")
