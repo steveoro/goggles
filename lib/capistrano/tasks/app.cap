@@ -203,7 +203,8 @@ before 'deploy:check:linked_files', 'app:setup:common_output'
 #
 before 'deploy:restart', 'remote:tmp_clear'
 
-# [Steve, 20141201] Warning: this may lead to errors on "cold" deploys, where the creation of the DB has been somehow skipped volontarily:
+# [Steve, 20141201] Warning: this may lead to errors on "cold" deploys, where the creation
+# of the DB has been somehow skipped volontarily.
 # Commented-out since we now clear the DB directly on the backup dump and we rebuild
 # the whole DB with the solution below.
 #
@@ -217,3 +218,7 @@ before 'deploy:restart', 'remote:tmp_clear'
 # >>> THE FOLLOWING LINE CAN WORK ONLY IF THE BACKUP DB DUMP IS HOSTED ON THE REPO! <<<
 #
 before 'deploy:restart', 'remote:db_rebuild_from_dump'
+
+# Clear the cache after a dump upload:
+#
+after 'db:remote:dump_upload', 'remote:tmp_clear'

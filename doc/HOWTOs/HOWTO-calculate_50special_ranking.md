@@ -9,18 +9,19 @@ Always force the calculation on M25 category type and 25 pool type.
 The csv output files should opened considering comma (,) as separator
 and not the (;) because used in the spreadshit formulas
 
-The csv output contains two addictional columns with formulas
-that evidentiates qualified swimmers. 
+The csv output contains two additional columns with formulas
+that highlights qualified swimmers.
 Moving the 'X' in the Qualified column will automatic report changes
 in the formulas colomns.
 
 Needs the meeting id.
-2015/2016 season is the 151 and csi meetings are form 15101 to 15106.
-To find meeting id use:
+2015/2016 season is the 151 and csi meetings are IDs ranging inside 15101..15106.
+
+To find the specific meeting id use:
 
     > zeus rake ut:find_meeting_by_code code=csiprova1
 
-where csiprova1 is the name of the meeting  
+where csiprova1 is the name of the meeting
 
 #### For info, see:
 

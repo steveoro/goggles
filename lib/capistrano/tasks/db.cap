@@ -324,4 +324,3 @@ end
 
 # Custom hooks:
 before 'deploy:check:linked_files', 'db:setup:config'
-after 'db:remote:dump_upload', 'remote:tmp_clear'       # Clear the cache after a dump upload
