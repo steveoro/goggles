@@ -218,7 +218,3 @@ before 'deploy:restart', 'remote:tmp_clear'
 # >>> THE FOLLOWING LINE CAN WORK ONLY IF THE BACKUP DB DUMP IS HOSTED ON THE REPO! <<<
 #
 before 'deploy:restart', 'remote:db_rebuild_from_dump'
-
-# Clear the cache after a dump upload:
-#
-after 'db:remote:dump_upload', 'remote:tmp_clear'
