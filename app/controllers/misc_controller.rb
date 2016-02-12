@@ -50,6 +50,14 @@ class MiscController < ApplicationController
   def compute_fin_score
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                              # Init score with a non-displayable value
+    # if user is logged in and associated to a swimmer
+    # determinates default gender and category
+
+    if current_user && current_user.swimmer
+      @swimmer = current_user.swimmer.decorate if current_user
+      @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
+      @swimmer_gender = @swimmer.gender_type
+    end
 
     if request.xhr? && request.post?                   # === AJAX POST: ===
       category_type_id = params[:category_type_id] ? params[:category_type_id].to_i : 0
@@ -178,6 +186,14 @@ class MiscController < ApplicationController
   def compute_fin_timing
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @timing   = Timing.new( 0 )
+
+    # if user is logged in and associated to a swimmer
+    # determinates default gender and category
+    if current_user && current_user.swimmer
+      @swimmer = current_user.swimmer.decorate if current_user
+      @swimmer_category = @swimmer.get_category_type_for_season( @current_season.id )
+      @swimmer_gender = @swimmer.gender_type
+    end
 
     if request.xhr? && request.post?                   # === AJAX POST: ===
       category_type_id = params[:category_type_id] ? params[:category_type_id].to_i : 0
