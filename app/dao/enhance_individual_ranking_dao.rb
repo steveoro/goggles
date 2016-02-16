@@ -30,7 +30,7 @@ class EnhanceIndividualRankingDAO
   
     # Creates a new instance from a meeting_individual_result.
     #
-    def initialize( meeting_individual_result, past_season_event_best, time_converted = nil )
+    def initialize( meeting_individual_result )
       unless meeting_individual_result && meeting_individual_result.instance_of?( MeetingIndividualResult )
         raise ArgumentError.new("Enhance individual ranking event score needs a meeting individual result")
       end
@@ -42,8 +42,8 @@ class EnhanceIndividualRankingDAO
       @enhance_points = 0 
       
       # Calculate ranking points
-      time_to_use = time_converted ? time_converted : meeting_individual_result.get_timing_instance 
-      @enhance_points = 100 * past_season_event_best.time_swam.to_hundreds / time_to_use.to_hundreds 
+      past_season_event_best = Timing.new(0) 
+      @enhance_points = (10 * past_season_event_best.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds).to_i 
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -70,7 +70,7 @@ class EnhanceIndividualRankingDAO
   
     # Creates a new instance from a meeting_individualresult.
     #
-    def initialize( meeting, meeting_individual_results, past_season_event_bests )
+    def initialize( meeting, meeting_individual_results )
       unless meeting && meeting.instance_of?( Meeting )
         raise ArgumentError.new("Enhance individual ranking meeting score needs a meeting")
       end
@@ -87,16 +87,7 @@ class EnhanceIndividualRankingDAO
       rank_second    = 0
       rank_third     = 0
       meeting_individual_results.each do |meeting_individual_result|
-        # Get seasonal event best
-        past_season_event_best = past_season_event_bests.get_best_for_gender_category_and_event( meeting_individual_result.gender_type, meeting_individual_result.category_type, meeting_individual_result.event_type )
-        
-        # Check conversion to short course needed
-        time_converted = nil
-        if meeting_individual_result.pool_type.code == '50'
-          time_converted = seasonal_event_bests.timing_converter.convert_time_to_short( meeting_individual_result.get_timing_instance, meeting_individual_result.gender_type, meeting_individual_result.event_type ) 
-        end
-        
-        @event_results << EIREventScoreDAO.new( meeting_individual_result, past_season_event_best, time_converted )
+        @event_results << EIREventScoreDAO.new( meeting_individual_result )
         
         # Store each rank for rank bonus
         rank_first  = rank_first + 1 if meeting_individual_result.rank == 1
@@ -153,7 +144,7 @@ class EnhanceIndividualRankingDAO
   
     # Creates a new instance from a ameeting_indivudla_result.
     #
-    def initialize( swimmer, season, past_season_event_bests )
+    def initialize( swimmer, season )
       unless swimmer && swimmer.instance_of?( Swimmer )
         raise ArgumentError.new( "Enhance individual ranking swimmer needs a swimmer" )
       end
@@ -172,7 +163,7 @@ class EnhanceIndividualRankingDAO
         meeting_individual_results = meeting.meeting_individual_results.is_valid.where(["meeting_individual_results.swimmer_id = ?", @swimmer.id])
         if meeting_individual_results.count > 0
           # The swimmer has results for that meeting
-          @meetings << EIRMeetingScoreDAO.new( meeting, meeting_individual_results, past_season_event_bests )
+          @meetings << EIRMeetingScoreDAO.new( meeting, meeting_individual_results )
         end
       end
       
@@ -208,7 +199,7 @@ class EnhanceIndividualRankingDAO
   
     # Creates a new instance
     #
-    def initialize( season, gender_type, category_type, seasonal_event_bests )
+    def initialize( season, gender_type, category_type )
       unless season && season.instance_of?( Season )
         raise ArgumentError.new("Balanced individual ranking needs a season")
       end
@@ -226,7 +217,7 @@ class EnhanceIndividualRankingDAO
     
       # Search swimmers for the season, gender and category
       season.badges.for_gender_type( gender_type ).for_category_type( category_type ).each do |badge|
-        @swimmers << EIRSwimmerScoreDAO.new( badge.swimmer, season, seasonal_event_bests ) if badge.meeting_individual_results.count > 0
+        @swimmers << EIRSwimmerScoreDAO.new( badge.swimmer, season ) if badge.meeting_individual_results.count > 0
       end
       
       # Sort swimmers by total points
@@ -242,7 +233,7 @@ class EnhanceIndividualRankingDAO
   #++
 
   # These can be edited later on:
-  attr_accessor :season, :gender_and_categories, :meetings_with_results, :past_season_event_bests
+  attr_accessor :season, :gender_and_categories, :meetings_with_results
 
   # Creates a new instance.
   #
@@ -256,7 +247,6 @@ class EnhanceIndividualRankingDAO
     @season                = season
     @meetings_with_results = season.meetings.has_results
     @gender_and_categories = []
-    @past_season_event_bests  = SeasonalEventBestDAO.new( season )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -281,7 +271,7 @@ class EnhanceIndividualRankingDAO
 
   # Calculate the ranking for given gender and category
   def calculate_ranking( gender_type, category_type )
-    EIRGenderCategoryRankingDAO.new( @season, gender_type, category_type, @seasonal_event_bests )
+    EIRGenderCategoryRankingDAO.new( @season, gender_type, category_type )
   end
   #-- -------------------------------------------------------------------------
   #++
