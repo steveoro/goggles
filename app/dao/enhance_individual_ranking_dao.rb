@@ -39,15 +39,37 @@ class EnhanceIndividualRankingDAO
       @event_type     = meeting_individual_result.event_type
       @rank           = meeting_individual_result.rank
       @event_points   = meeting_individual_result.meeting_individual_points.to_i
-      @enhance_points = 0 
-      
-      # Calculate ranking points
-      past_season_event_best = Timing.new(0) 
-      @enhance_points = (10 * past_season_event_best.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds).to_i 
+      @enhance_points = compute_enhance_points( meeting_individual_result )
     end
     #-- -------------------------------------------------------------------------
     #++
     
+    # Calculate the enhance points for the event
+    # The enhance points are calculated considering the last season best performance
+    # 
+    # If the time swam is worst or the same enhance points are 0
+    # If this is the first time for that event for the swimmer enhance points are 0
+    # If time swam is better enhance points are up to 10
+    #
+    def compute_enhance_points( meeting_individual_result )
+      season = meeting_individual_result.season
+      pool_type = meeting_individual_result.pool_type
+      event_type = meeting_individual_result.event_type
+      if SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, pool_type.id, event_type.id )
+        past_season_event_best = SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, pool_type.id, event_type.id )
+        if past_season_event_best.get_timing_instance.to_hundreds <= meeting_individual_result.get_timing_instance.to_hundreds
+          @enhance_points = 0
+        else
+          @enhance_points = (100 * past_season_event_best.get_timing_instance.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds).to_i - 100
+        end
+      else 
+        @enhance_points = 0
+      end
+      @enhance_points > 10 ? 10 : @enhance_points 
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
     # Get the total points for the event
     def get_total_points
       @event_points + @enhance_points

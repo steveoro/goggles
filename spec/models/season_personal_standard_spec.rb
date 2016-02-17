@@ -20,11 +20,11 @@ describe SeasonPersonalStandard, :type => :model do
       :pool_type
     ])
     # Filtering scopes:
-    it_behaves_like( "(the existance of a class method)", [
-      :sort_by_swimmer,
-      :sort_by_event_type,
-      :sort_by_pool_type
-    ])
+    #it_behaves_like( "(the existance of a class method)", [
+    #  :sort_by_swimmer,
+    #  :sort_by_event_type,
+    #  :sort_by_pool_type
+    #])
 
     context "[general methods]" do
       it_behaves_like( "(the existance of a method returning non-empty strings)", [ 
