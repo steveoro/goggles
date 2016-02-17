@@ -52,31 +52,50 @@ describe EnhanceIndividualRankingDAO, type: :model do
         expect( subject.compute_enhance_points( meeting_individual_result ) ).to be <= 10 
       end
       
-      xit "returns a value > 0 if time swam better than standard" do
-        worst_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
-        worst_personal_standard.minutes = meeting_individual_result.minutes + 1  
+      it "returns 0 if time swam worst than standard" do
+        better_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
         expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
+        better_personal_standard.minutes = meeting_individual_result.minutes > 1 ? meeting_individual_result.minutes - 1 : 0  
+        better_personal_standard.seconds = meeting_individual_result.seconds > 14 ? meeting_individual_result.minutes - 14 : meeting_individual_result.seconds
+        better_personal_standard.hundreds = 0
+        better_personal_standard.save
+        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be < meeting_individual_result.get_timing_instance.to_hundreds  
+        expect( subject.compute_enhance_points( meeting_individual_result ) ).to eq( 0 ) 
+      end
+
+      it "returns a value > 0 if time swam better than standard" do
+        worst_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
+        expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
+        worst_personal_standard.minutes = meeting_individual_result.minutes + 1
+        worst_personal_standard.save
+        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be > meeting_individual_result.get_timing_instance.to_hundreds  
         expect( subject.compute_enhance_points( meeting_individual_result ) ).to be > 0 
         expect( subject.compute_enhance_points( meeting_individual_result ) ).to be <= 10 
       end
 
-      xit "returns 0 if time swam worst than standard" do
-        better_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
-        better_personal_standard.minutes = meeting_individual_result.minutes > 1 ? meeting_individual_result.minutes - 1 : 0  
-        better_personal_standard.seconds = meeting_individual_result.seconds > 20 ? meeting_individual_result.minutes - 20 : meeting_individual_result.seconds
-        expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
-        expect( subject.compute_enhance_points( meeting_individual_result ) ).to eq( 0 ) 
-      end
-
-      xit "returns 10 if time swam better than 10% of standard" do
+      it "returns 10 if time swam better than 10% of standard" do
         time_standard = Timing.new( ( meeting_individual_result.get_timing_instance.to_hundreds * 1.2 ).to_i ) 
         worst_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
+        expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
         worst_personal_standard.minutes = time_standard.minutes  
         worst_personal_standard.seconds = time_standard.seconds  
         worst_personal_standard.hundreds = time_standard.hundreds  
-        expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
+        worst_personal_standard.save
         expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be >= (meeting_individual_result.get_timing_instance.to_hundreds * 1.2).to_i  
         expect( subject.compute_enhance_points( meeting_individual_result ) ).to eq( 10 ) 
+      end
+
+      it "returns a number corresponding to the improvement percentage" do
+        improvement = 1 + ( ( rand * 10 ).to_i ) / 10
+        time_standard = Timing.new( ( meeting_individual_result.get_timing_instance.to_hundreds * improvement ).to_i ) 
+        worst_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
+        expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
+        worst_personal_standard.minutes = time_standard.minutes  
+        worst_personal_standard.seconds = time_standard.seconds  
+        worst_personal_standard.hundreds = time_standard.hundreds  
+        worst_personal_standard.save
+        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be >= (meeting_individual_result.get_timing_instance.to_hundreds * improvement ).to_i  
+        expect( subject.compute_enhance_points( meeting_individual_result ) ).to eq( ( improvement - 1 ) * 10 ) 
       end
     end
 
