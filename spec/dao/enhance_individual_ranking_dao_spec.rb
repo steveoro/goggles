@@ -16,7 +16,7 @@ describe EnhanceIndividualRankingDAO, type: :model do
     subject { EnhanceIndividualRankingDAO::EIREventScoreDAO.new( meeting_individual_result ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :event_date, :event_type, :rank, :event_points, :enhance_points, :get_total_points
+      :event_date, :event_type, :rank, :event_points, :enhance_points, :prestation_points, :get_total_points
     ] )
 
     describe "#event_date" do
@@ -43,6 +43,12 @@ describe EnhanceIndividualRankingDAO, type: :model do
       it "is a value between 0 and 10" do
         expect( subject.enhance_points ).to be >= 0 
         expect( subject.enhance_points ).to be <= 10 
+      end
+    end
+    describe "#prestation_points" do
+      it "is a value between 0 and 100" do
+        expect( subject.prestation_points ).to be >= 0 
+        expect( subject.prestation_points ).to be <= 100 
       end
     end
     
@@ -100,8 +106,8 @@ describe EnhanceIndividualRankingDAO, type: :model do
     end
 
     describe "#get_total_points" do
-      it "is the sum of event_points and enhance_points" do
-        expect( subject.get_total_points ).to eq( subject.enhance_points + subject.event_points ) 
+      it "is the sum of event_points, prestation points and enhance_points" do
+        expect( subject.get_total_points ).to eq( subject.enhance_points + subject.prestation_points + subject.event_points ) 
       end
     end
   end
@@ -114,7 +120,7 @@ describe EnhanceIndividualRankingDAO, type: :model do
     subject { EnhanceIndividualRankingDAO::EIRMeetingScoreDAO.new( meeting, mirs ) }
     
     it_behaves_like( "(the existance of a method)", [
-      :header_date, :event_bonus_points, :medal_bonus_points, :event_points, :enhance_points, :event_results, :get_total_points
+      :header_date, :event_bonus_points, :medal_bonus_points, :event_points, :prestation_points, :enhance_points, :event_results, :get_total_points
     ] )
 
     describe "#header_date" do
@@ -140,6 +146,12 @@ describe EnhanceIndividualRankingDAO, type: :model do
         expect( subject.event_points ).to be <= 100 
       end
     end
+    describe "#prestation_points" do
+      it "is a value between 0 and 100" do
+        expect( subject.prestation_points ).to be >= 0 
+        expect( subject.prestation_points ).to be <= 100 
+      end
+    end
     describe "#enhance_points" do
       it "is a value between 0 and 10" do
         expect( subject.enhance_points ).to be >= 0 
@@ -161,8 +173,8 @@ describe EnhanceIndividualRankingDAO, type: :model do
         expect( subject.get_total_points ).to be >= 0 
         expect( subject.get_total_points ).to be <= 128 
       end
-      it "is the sum of event_points, ranking_points, medal_bonus and event_bonus" do
-        expect( subject.get_total_points ).to eq( subject.enhance_points + subject.event_points + subject.event_bonus_points + subject.medal_bonus_points) 
+      it "is the sum of event_points, prestation_points, enhance_points, ranking_points, medal_bonus and hard event_bonus" do
+        expect( subject.get_total_points ).to eq( subject.event_points + subject.prestation_points + subject.enhance_points + subject.event_bonus_points + subject.medal_bonus_points ) 
       end
     end
   end

@@ -2,6 +2,9 @@ require 'spec_helper'
 
 
 describe ScoreCalculator, type: :strategy do
+  let( :standard_points ) { ( ( rand * 999 ).to_i + 1 ) }
+  let( :fix_time_swam )   { Timing.new(((rand * 99) % 99).to_i + 1, ((rand * 59) % 59).to_i + 1, ((rand * 10) % 10).to_i) }
+
   before :each do
     @fix_season        = Season.find(142)
     # Get a random meeting chosen among the first 10:
@@ -75,6 +78,46 @@ describe ScoreCalculator, type: :strategy do
       it "checks for correct calculation for time standard present equal to time swam" do
         same_time_swam = Timing.new(subject.get_time_standard.get_timing_instance.to_hundreds)
         expect( subject.get_fin_score(same_time_swam) ).to eq(1000)
+      end
+      #-- -----------------------------------------------------------------------
+    end
+    #-- -----------------------------------------------------------------------
+
+    describe "#get_custom_score," do
+      before :each do
+        create(:time_standard,
+          season_id: @fix_season.id,
+          gender_type_id: @fix_gender_type.id,
+          category_type_id: @fix_category_type.id,
+          event_type_id: @fix_event_type.id,
+          pool_type_id: @fix_pool_type.id
+        ) if subject.get_time_standard.nil?
+      end
+      
+      it "responds to get_custom_score methods" do
+        expect(subject).to respond_to(:get_custom_score)
+      end
+      it "returns a numeric value" do
+        expect( subject.get_custom_score( fix_time_swam, standard_points ) ).to be >= 0
+      end
+      #-- -----------------------------------------------------------------------
+
+      it "checks for correct calculation for no time standard present" do
+        wrong_pool_type = PoolType.where(is_suitable_for_meetings: false).first
+        score_1000 = ScoreCalculator.new( @fix_season, @fix_gender_type, @fix_category_type, wrong_pool_type, @fix_event_type )
+        expect( score_1000.get_custom_score( fix_time_swam, standard_points ) ).to eq( standard_points )
+      end
+      it "checks for correct calculation for time standard present better than time swam" do
+        worst_time_swam = Timing.new(subject.get_time_standard.get_timing_instance.to_hundreds + 150)
+        expect( subject.get_custom_score( worst_time_swam, standard_points ) ).to be < standard_points
+      end
+      it "checks for correct calculation for time standard present worst than time swam" do
+        better_time_swam = Timing.new(subject.get_time_standard.get_timing_instance.to_hundreds - 150)
+        expect( subject.get_custom_score( better_time_swam, standard_points ) ).to be > standard_points
+      end
+      it "checks for correct calculation for time standard present equal to time swam" do
+        same_time_swam = Timing.new(subject.get_time_standard.get_timing_instance.to_hundreds)
+        expect( subject.get_custom_score( same_time_swam, standard_points ) ).to eq( standard_points )
       end
       #-- -----------------------------------------------------------------------
     end

@@ -9,8 +9,12 @@
 
  DAO class containing the structure for enhance individual ranking rendering.
  Enhance individual ranking (EIR) is a method adopted by csi 2015-2016 season
- in which individual scores are calculated considering placement, personal enhancement
- and special bonuses. Personal enhancement are referred to past seasons personal bests.
+ in which individual scores are calculated considering placement, 
+ prestation value, personal enhancement and special bonuses. 
+ prestation value are calculated in relation of best season type results
+ Personal enhancement are referred to past seasons personal bests.
+ Special bonuses are obtained with multiple medals placement in the same meeting
+ or partecipation at particularly "hard" event types.  
  For each swimmer involved in season the DAO provides a collection of meeting results
  (the championship takes) 
 
@@ -24,7 +28,7 @@ class EnhanceIndividualRankingDAO
     # These can be edited later on:
     attr_accessor :event_date, :event_type, 
                   :rank, :event_points, 
-                  :enhance_points
+                  :prestation_points, :enhance_points
     #-- -------------------------------------------------------------------------
     #++
   
@@ -35,15 +39,40 @@ class EnhanceIndividualRankingDAO
         raise ArgumentError.new("Enhance individual ranking event score needs a meeting individual result")
       end
 
-      @event_date     = meeting_individual_result.meeting_session.scheduled_date
-      @event_type     = meeting_individual_result.event_type
-      @rank           = meeting_individual_result.rank
-      @event_points   = meeting_individual_result.meeting_individual_points.to_i
-      @enhance_points = compute_enhance_points( meeting_individual_result )
+      @event_date        = meeting_individual_result.meeting_session.scheduled_date
+      @event_type        = meeting_individual_result.event_type
+      @rank              = meeting_individual_result.rank
+      @event_points      = meeting_individual_result.meeting_individual_points.to_i
+
+      # TODO store on DB standard points score (100)
+      @prestation_points = compute_prestation_points( meeting_individual_result, 100 )
+
+      @enhance_points    = compute_enhance_points( meeting_individual_result )
     end
     #-- -------------------------------------------------------------------------
     #++
     
+    # Calculate the prestation points for the event
+    # The prestation points are calculated considering the time swam related to
+    # the season type best performance (for event, category, gender and pool type)
+    # 
+    # best_performance : time_swam = 100 : prestation_points
+    # If time swam is the same prestation points are 100
+    # If time swam is better prestation points are greater than 100
+    # If time swam is worst prestation points are less than 100
+    #
+    def compute_prestation_points( meeting_individual_result, standard_points )
+      season = meeting_individual_result.season
+      pool_type = meeting_individual_result.pool_type
+      event_type = meeting_individual_result.event_type
+      gender_type = meeting_individual_result.gender_type
+      category_type = meeting_individual_result.category_type
+      score_calculator = ScoreCalculator.new( season, gender_type, category_type, pool_type, event_type )
+      @prestation_points = score_calculator.get_custom_score( meeting_individual_result.get_timing_instance, standard_points )
+    end
+    #-- -------------------------------------------------------------------------
+    #++
+
     # Calculate the enhance points for the event
     # The enhance points are calculated considering the last season best performance
     # 
@@ -71,8 +100,9 @@ class EnhanceIndividualRankingDAO
     #++
 
     # Get the total points for the event
+    # Totale point is the sum of event, prestation value and enhanchement 
     def get_total_points
-      @event_points + @enhance_points
+      @event_points + @prestation_points + @enhance_points
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -85,7 +115,7 @@ class EnhanceIndividualRankingDAO
     # These can be edited later on:
     attr_accessor :meeting, :header_date, 
                   :event_bonus_points, :medal_bonus_points,
-                  :event_points, :enhance_points, 
+                  :event_points, :prestation_points, :enhance_points, 
                   :event_results 
     #-- -------------------------------------------------------------------------
     #++
@@ -102,6 +132,7 @@ class EnhanceIndividualRankingDAO
       @event_bonus_points = 0
       @medal_bonus_points = 0
       @event_points       = 0
+      @prestation_points  = 0
       @enhance_points     = 0
       
       @event_results = []
@@ -147,7 +178,7 @@ class EnhanceIndividualRankingDAO
     
     # Get the total points for the meeting
     def get_total_points
-      @event_points + @enhance_points + @event_bonus_points + @medal_bonus_points
+      @event_points + @prestation_points + @enhance_points + @event_bonus_points + @medal_bonus_points
     end
     #-- -------------------------------------------------------------------------
     #++
