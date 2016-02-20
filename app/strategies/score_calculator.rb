@@ -35,8 +35,8 @@ class ScoreCalculator
     @fin_score ||= compute_fin_score( time_swam )
   end
 
-  def get_custom_score( time_swam, standard_points )
-    compute_fin_score( time_swam, standard_points )
+  def get_custom_score( time_swam, standard_points = 1000, decimals = 2 )
+    compute_fin_score( time_swam, standard_points, decimals )
   end
 
   def get_fin_timing( goal_score )
@@ -74,7 +74,7 @@ class ScoreCalculator
   # == Params:
   # time_swam: the time swam for calculation
   #
-  def compute_fin_score( time_swam, standard_points = 1000.00 )
+  def compute_fin_score( time_swam, standard_points = 1000.00, decimals = 2 )
     # Without a correct time_swam always return 0
     fin_score = 0.0
     if time_swam && time_swam.to_hundreds > 0
@@ -88,7 +88,7 @@ class ScoreCalculator
         fin_score = standard_points
       end
     end
-    fin_score.round(2)
+    fin_score.round( decimals )
   end
   #-- --------------------------------------------------------------------------
   #++

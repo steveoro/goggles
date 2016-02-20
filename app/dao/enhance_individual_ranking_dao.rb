@@ -44,8 +44,8 @@ class EnhanceIndividualRankingDAO
       @rank              = meeting_individual_result.rank
       @event_points      = meeting_individual_result.meeting_individual_points.to_i
 
-      # TODO store on DB standard points score (100)
-      @prestation_points = compute_prestation_points( meeting_individual_result, 100 )
+      # TODO store on DB standard points score (100 with no decimals)
+      @prestation_points = compute_prestation_points( meeting_individual_result, 100, 0 )
 
       @enhance_points    = compute_enhance_points( meeting_individual_result )
     end
@@ -61,14 +61,14 @@ class EnhanceIndividualRankingDAO
     # If time swam is better prestation points are greater than 100
     # If time swam is worst prestation points are less than 100
     #
-    def compute_prestation_points( meeting_individual_result, standard_points )
+    def compute_prestation_points( meeting_individual_result, standard_points, decimals )
       season = meeting_individual_result.season
       pool_type = meeting_individual_result.pool_type
       event_type = meeting_individual_result.event_type
       gender_type = meeting_individual_result.gender_type
       category_type = meeting_individual_result.category_type
       score_calculator = ScoreCalculator.new( season, gender_type, category_type, pool_type, event_type )
-      @prestation_points = score_calculator.get_custom_score( meeting_individual_result.get_timing_instance, standard_points )
+      @prestation_points = score_calculator.get_custom_score( meeting_individual_result.get_timing_instance, standard_points, decimals )
     end
     #-- -------------------------------------------------------------------------
     #++
