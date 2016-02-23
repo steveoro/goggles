@@ -44,7 +44,8 @@ class EnhanceIndividualRankingDAO
       @rank              = meeting_individual_result.rank
       @event_points      = meeting_individual_result.meeting_individual_points.to_i
 
-      # TODO store on DB standard points score (100 with no decimals)
+      # TODO store on DB standard points score definition (100 with no decimals)
+      # Should use calculation rules definition
       @prestation_points = compute_prestation_points( meeting_individual_result, 100, 0 )
 
       @enhance_points    = compute_enhance_points( meeting_individual_result )
