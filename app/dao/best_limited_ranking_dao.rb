@@ -67,7 +67,7 @@ class BestLimitedRankingDAO
     @min ||= calculate_min
   end
   
-  # Retrieve the minimum score
+  # Retrieve the maximum score
   def get_max
     @max ||= calculate_max
   end

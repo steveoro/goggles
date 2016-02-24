@@ -22,17 +22,22 @@ describe SeasonPonderatedBestsDAO, type: :model do
 
   context "EventPonderatedBestDAO subclass," do
 
-    subject { SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( season.season_type, gender_type, category_type, event_type, pool_type, max_results, bests_to_be_ignored ) }
+    subject { SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( season, gender_type, category_type, event_type, pool_type, max_results, bests_to_be_ignored ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season_type, :gender_type, :category_type, :event_type, :pool_type, 
+      :season, :season_type, :gender_type, :category_type, :event_type, :pool_type, 
       :best_results, :total_results, 
       :get_max_results, :get_bests_to_be_ignored,
       :collect_event_bests, :set_ponderated_best, :get_ponderated_best
     ] )
 
+    describe "#season" do
+      it "is the season used in construction" do
+        expect( subject.season ).to eq( season )
+      end
+    end
     describe "#season_type" do
-      it "is the season type used in construction" do
+      it "is the season type of the season used in construction" do
         expect( subject.season_type ).to eq( season.season_type )
       end
     end
@@ -88,7 +93,7 @@ describe SeasonPonderatedBestsDAO, type: :model do
 
     context "as a valid instance" do
       # Ensure there are times swam
-      subject { SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( season.season_type, gender_type, sure_category_type, sure_event_type, sure_pool_type, max_results, bests_to_be_ignored ) }
+      subject { SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( season, gender_type, sure_category_type, sure_event_type, sure_pool_type, max_results, bests_to_be_ignored ) }
 
       describe "#collect_event_bests" do
         it "it collects the first given number of best results for the event" do
@@ -118,7 +123,7 @@ describe SeasonPonderatedBestsDAO, type: :model do
 
         context "without bests collected" do
           # Ensure there are times swam
-          subject { SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( season.season_type, gender_type, empty_category_type, empty_event_type, empty_pool_type, max_results, bests_to_be_ignored ) }
+          subject { SeasonPonderatedBestsDAO::EventPonderatedBestDAO.new( season, gender_type, empty_category_type, empty_event_type, empty_pool_type, max_results, bests_to_be_ignored ) }
 
           it "returns nil" do
             expect( subject.get_ponderated_best ).to be_an_instance_of( Timing )
@@ -140,7 +145,7 @@ describe SeasonPonderatedBestsDAO, type: :model do
     subject { SeasonPonderatedBestsDAO.new( season, max_results, bests_to_be_ignored ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :season, :single_events, :max_results, :bests_to_be_ignored, :event_types, :categories, 
+      :season, :single_events, :insert_events, :update_events, :max_results, :bests_to_be_ignored, :event_types, :categories, 
       :find_season_type_events, :find_season_type_category_codes, :scan_for_gender_category_and_event
     ] )
 
@@ -153,6 +158,18 @@ describe SeasonPonderatedBestsDAO, type: :model do
       it "is a collection of EventTargetTimeDAO" do
         expect( subject.single_events ).to be_a_kind_of( Enumerable )
         expect( subject.single_events ).to all(be_a_kind_of( SeasonPonderatedBestsDAO::EventPonderatedBestDAO ))
+      end
+    end
+    describe "#insert_events" do
+      it "is a collection of EventTargetTimeDAO" do
+        expect( subject.insert_events ).to be_a_kind_of( Enumerable )
+        expect( subject.insert_events ).to all(be_a_kind_of( SeasonPonderatedBestsDAO::EventPonderatedBestDAO ))
+      end
+    end
+    describe "#update_events" do
+      it "is a collection of EventTargetTimeDAO" do
+        expect( subject.update_events ).to be_a_kind_of( Enumerable )
+        expect( subject.update_events ).to all(be_a_kind_of( SeasonPonderatedBestsDAO::EventPonderatedBestDAO ))
       end
     end
     describe "#max_results" do
@@ -203,6 +220,28 @@ describe SeasonPonderatedBestsDAO, type: :model do
         subject.scan_for_gender_category_and_event
         expect( subject.single_events.size ).to be >= 0
         expect( subject.single_events ).to all(be_a_kind_of( SeasonPonderatedBestsDAO::EventPonderatedBestDAO ))
+      end
+    end
+
+    describe "#prepare_to_store" do
+      it "returns true" do
+        expect( subject.prepare_to_store ).to be true
+      end
+      it "populates insert and/or update arrays" do
+        expect( subject.insert_events.size ).to eq( 0 )
+        expect( subject.update_events.size ).to eq( 0 )
+        subject.prepare_to_store
+        expect( subject.insert_events.size + subject.update_events.size ).to be >= 0
+        expect( subject.insert_events.size + subject.update_events.size ).to eq( subject.single_events.size )
+      end
+    end
+
+    describe "#to_db" do
+      it "stores on DB each single event" do
+        subject.to_db
+        subject.single_events.each do |event|
+          expect( TimeStandard.exists?( :season => season, :gender_type => event.gender_type, :category_type => event.category_type, :pool_type => event.pool_type, :event_type => event.event_type ) ).to be true
+        end
       end
     end
   end

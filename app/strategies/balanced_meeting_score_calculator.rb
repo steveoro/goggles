@@ -78,13 +78,20 @@ class BalancedMeetingScoreCalculator
         sql_fields['season_individual_points']  = meeting_team_score.sum_individual_points
         sql_fields['season_relay_points']       = meeting_team_score.sum_relay_points
         sql_fields['season_team_points']        = meeting_team_score.sum_team_points
-        sql_diff_text_log << to_sql_update( meeting_team_score, false, sql_fields, "\r\n" )
-      else
-        sql_diff_text_log << to_sql_insert( meeting_team_score, false, "\r\n" )
-      end
       
-      # Save calculated scores
-      persisted_ok += 1 if meeting_team_score.save
+        # Save calculated scores
+        if meeting_team_score.save
+          persisted_ok += 1 
+          sql_diff_text_log << to_sql_update( meeting_team_score, false, sql_fields, "\r\n" )
+        end
+      else
+        # Save calculated scores
+        if meeting_team_score.save
+          persisted_ok += 1
+          meeting_team_score.reload
+          sql_diff_text_log << to_sql_insert( meeting_team_score, false, "\r\n" )
+        end
+      end
     end
     create_sql_diff_footer( "Team scores calculation for Meeting #{@meeting.get_full_name} done" )
     persisted_ok
