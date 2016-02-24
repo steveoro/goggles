@@ -6,7 +6,7 @@
     - is_active = ( params[:action] == 'ranking_regional_er_csi' )
     %li{ class: is_active ? 'active' : '' }
       = link_to( t('championships.team_ranking'), is_active ? '#' : championships_ranking_regional_er_csi_path( id: @season.id ))
-    - if @season.id == 141 || @season.id == 151
+    - if @season.id == 141 #|| @season.id == 151
       - is_active = ( params[:action] == 'individual_rank_regional_er_csi' )
       %li{ class: is_active ? 'active' : '' }
         = link_to( t('championships.individual_rank'), is_active ? '#' : championships_individual_rank_regional_er_csi_path( id: @season.id ))
