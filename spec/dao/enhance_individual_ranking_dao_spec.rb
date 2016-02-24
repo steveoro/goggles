@@ -169,9 +169,9 @@ describe EnhanceIndividualRankingDAO, type: :model do
     end
     
     describe "#get_total_points" do
-      it "is a value between 0 and 128 (100 + 10 + 10 + 8)" do
+      it "is a value between 0 and 278 (100 + 150 + 10 + 10 + 8)" do
         expect( subject.get_total_points ).to be >= 0 
-        expect( subject.get_total_points ).to be <= 128 
+        expect( subject.get_total_points ).to be <= 278 
       end
       it "is the sum of event_points, prestation_points, enhance_points, ranking_points, medal_bonus and hard event_bonus" do
         expect( subject.get_total_points ).to eq( subject.event_points + subject.prestation_points + subject.enhance_points + subject.event_bonus_points + subject.medal_bonus_points ) 

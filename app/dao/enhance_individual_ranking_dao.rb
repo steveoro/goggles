@@ -70,6 +70,7 @@ class EnhanceIndividualRankingDAO
       category_type = meeting_individual_result.category_type
       score_calculator = ScoreCalculator.new( season, gender_type, category_type, pool_type, event_type )
       @prestation_points = score_calculator.get_custom_score( meeting_individual_result.get_timing_instance, standard_points, decimals )
+      @prestation_points
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -170,8 +171,9 @@ class EnhanceIndividualRankingDAO
         @event_results.sort!{|p,n| n.get_total_points <=> p.get_total_points}
   
         # Find out best event points
-        @event_points   = @event_results.first.event_points
-        @enhance_points = @event_results.first.enhance_points
+        @event_points      = @event_results.first.event_points
+        @prestation_points = @event_results.first.prestation_points
+        @enhance_points    = @event_results.first.enhance_points
       end
     end
     #-- -------------------------------------------------------------------------
