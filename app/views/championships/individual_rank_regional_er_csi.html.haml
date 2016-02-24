@@ -5,7 +5,10 @@
     - cache( cache_key_for_meeting( 'individual_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
     - meeting_columns = @individual_ranking.meetings_with_results.count
       
-      %p= I18n.t('meeting_stats.rank_disclaimer') 
+      - if @season.id == 141 && @individual_ranking.meetings_with_results.count < 6
+        %p= I18n.t('meeting_stats.rank_disclaimer') 
+        
+      %p= @individual_ranking.get_html_ranking_description
   
       %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
         %li
@@ -52,7 +55,7 @@
                       - @individual_ranking.meetings_with_results.each do |meeting|
                         - meeting_score = ranked_swimmer.get_meeting_scores( meeting )
                         - if meeting_score
-                          %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{meeting_score.event_points}+#{meeting_score.ranking_points}+#{meeting_score.event_bonus_points}+#{meeting_score.medal_bonus_points}" }
+                          %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{meeting_score.get_meeting_scores_detail}" }  
                             = meeting_score.get_total_points
                         - else
                           %td

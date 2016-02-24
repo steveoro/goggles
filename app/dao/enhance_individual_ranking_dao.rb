@@ -183,6 +183,13 @@ class EnhanceIndividualRankingDAO
     end
     #-- -------------------------------------------------------------------------
     #++
+
+    # Get the meetings results detail description for the swimmer
+    def get_meeting_scores_detail
+      "#{@event_points}+#{@prestation_points}+#{@enhance_points}+#{@event_bonus_points}+#{@medal_bonus_points}"
+    end
+    #-- -------------------------------------------------------------------------
+    #++
   end
 
   # Each swimmer has a gender and a category
@@ -333,6 +340,14 @@ class EnhanceIndividualRankingDAO
   # Set the ranking for given gender and category
   def set_ranking_for_gender_and_category( gender_type, category_type )
     @gender_and_categories << calculate_ranking( gender_type, category_type )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+    
+  # Set the ranking for given gender and category
+  # TODO Localize and store on DB
+  def get_html_ranking_description
+    'La classifica finale è calcolata considerando le 5 migliori prove su 6.<br>Per ogni prova vengono totalizzati i punti in base a:<ul><li>piazzamento</li><li>valore della prestazione rapportata ai record regionali</li><li>miglioramento personale</li><li>doppio podio nella manifestazione</li><li>premio gare impegnative</li></ul>'.html_safe
   end
   #-- -------------------------------------------------------------------------
   #++

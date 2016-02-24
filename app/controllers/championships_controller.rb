@@ -144,8 +144,18 @@ class ChampionshipsController < ApplicationController
   def individual_rank_regional_er_csi
     @title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name     
 
-    @category_types = @season.category_types.are_not_relays.sort_by_age      
-    @individual_ranking = BalancedIndividualRankingDAO.new( @season )
+    @category_types = @season.category_types.are_not_relays.is_divided.sort_by_age      
+    
+    # Decides what kind of calculation for the season
+    # TODO store it on DB using calculation formulas
+    case @season.id
+    when 141 # CSI 2014/2015
+      # Balanced individual ranking
+      @individual_ranking = BalancedIndividualRankingDAO.new( @season )
+    when 151 # CSI 2015/2016
+      # Enhance individual ranking
+      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
+    end
 
     # Manage updates for cache
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ? @season.meeting_individual_results.select( :updated_at ).max.updated_at.to_i : 0

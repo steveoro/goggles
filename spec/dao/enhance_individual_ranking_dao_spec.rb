@@ -62,7 +62,7 @@ describe EnhanceIndividualRankingDAO, type: :model do
         better_personal_standard = create( :season_personal_standard, season: season, swimmer: meeting_individual_result.swimmer, event_type: meeting_individual_result.event_type, pool_type: meeting_individual_result.pool_type )
         expect( SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ) ).to be true 
         better_personal_standard.minutes = meeting_individual_result.minutes > 1 ? meeting_individual_result.minutes - 1 : 0  
-        better_personal_standard.seconds = meeting_individual_result.seconds > 14 ? meeting_individual_result.minutes - 14 : meeting_individual_result.seconds
+        better_personal_standard.seconds = meeting_individual_result.seconds > 14 ? meeting_individual_result.seconds - 14 : meeting_individual_result.seconds
         better_personal_standard.hundreds = 0
         better_personal_standard.save
         expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be < meeting_individual_result.get_timing_instance.to_hundreds  
@@ -175,6 +175,12 @@ describe EnhanceIndividualRankingDAO, type: :model do
       end
       it "is the sum of event_points, prestation_points, enhance_points, ranking_points, medal_bonus and hard event_bonus" do
         expect( subject.get_total_points ).to eq( subject.event_points + subject.prestation_points + subject.enhance_points + subject.event_bonus_points + subject.medal_bonus_points ) 
+      end
+    end
+
+    describe "#get_meeting_scores_detail" do
+      it "returns a string" do
+        expect( subject.get_meeting_scores_detail ).to be_a_kind_of( String ) 
       end
     end
   end
