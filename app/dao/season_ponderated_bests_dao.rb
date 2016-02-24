@@ -236,7 +236,8 @@ class SeasonPonderatedBestsDAO
   def to_db()
     # TODO Store collected data into time_standard structure
     @single_events.each do |event|
-      
+      # Check if time standard already exists and create or update
+      #TimeStandard.new()
     end
   end
 end
