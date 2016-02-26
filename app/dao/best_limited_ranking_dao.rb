@@ -31,6 +31,8 @@ class BestLimitedRankingDAO
   #++
   
   # Creates a new instance.
+  # Should use given column
+  # Automatically sets given mirs as results
   #
   def initialize( mirs = nil, column = :standard_points )
     @results = []
