@@ -35,7 +35,7 @@ Resulting log files are stored into '#{LOG_DIR}'.
 Create time standards based on best results found
 for gender, category and event types.
 
-Options:  recalculate=false season=<season_id> [persist=false results=10 ignore=1 log_dir=#{LOG_DIR}]
+Options: season=<season_id> [persist=false results=10 ignore=1 log_dir=#{LOG_DIR}]
 
 - 'persist'     force to persist the created season.
 - 'season'      season to define time standards.
