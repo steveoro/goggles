@@ -87,7 +87,7 @@ describe EnhanceIndividualRankingDAO, type: :model do
         worst_personal_standard.seconds = time_standard.seconds  
         worst_personal_standard.hundreds = time_standard.hundreds  
         worst_personal_standard.save
-        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be >= (meeting_individual_result.get_timing_instance.to_hundreds * 1.2).to_i  
+        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to eq( worst_personal_standard.get_timing_instance.to_hundreds )  
         expect( subject.compute_enhance_points( meeting_individual_result ) ).to eq( 10 ) 
       end
 
@@ -100,7 +100,7 @@ describe EnhanceIndividualRankingDAO, type: :model do
         worst_personal_standard.seconds = time_standard.seconds  
         worst_personal_standard.hundreds = time_standard.hundreds  
         worst_personal_standard.save
-        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to be >= (meeting_individual_result.get_timing_instance.to_hundreds * improvement ).to_i  
+        expect( SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, meeting_individual_result.pool_type.id, meeting_individual_result.event_type.id ).get_timing_instance.to_hundreds ).to eq( worst_personal_standard.get_timing_instance.to_hundreds )  
         expect( subject.compute_enhance_points( meeting_individual_result ) ).to eq( ( improvement - 1 ) * 10 ) 
       end
     end
