@@ -135,7 +135,11 @@ describe BestLimitedRankingDAO, type: :model do
         expect( subject.get_min ).to be >= 0
       end
       it "returns the minimum value of standard points" do
-        expect( subject.get_min ).to eq( subject.results.last.standard_points )
+        if subject.results.count > 0
+          expect( subject.get_min ).to eq( subject.results.last.standard_points )
+        else
+          expect( subject.get_min ).to eq( 0 )
+        end
       end
     end
 
@@ -144,7 +148,11 @@ describe BestLimitedRankingDAO, type: :model do
         expect( subject.get_max ).to be >= 0
       end
       it "returns the maximum value of standard points" do
-        expect( subject.get_max ).to eq( subject.results.first.standard_points )
+        if subject.results.count > 0
+          expect( subject.get_max ).to eq( subject.results.first.standard_points )
+        else
+          expect( subject.get_max ).to eq( 0 )
+        end
       end
     end
   end
