@@ -58,6 +58,52 @@ describe Meeting, :type => :model do
       ])
     end
 
+    context "[meeting structure methods]" do
+      it "has a method to find out meeting pool type" do
+        expect( subject ).to respond_to( :get_pool_type )
+      end
+      it "returns a valid pool type for 14105 meeting (Reggio Emilia CSI)" do
+        fix_meeting = Meeting.find( 14105 )
+        expect( fix_meeting.get_pool_type ).to be_an_instance_of( PoolType )
+      end
+      it "returns 50 pool type for 14105 meeting (Reggio Emilia CSI)" do
+        fix_meeting = Meeting.find( 14105 )
+        pool_type = fix_meeting.get_pool_type
+        expect( pool_type.code ).to eq( '50' )
+      end
+      it "returns 25 pool type for 14101 meeting (Parma CSI)" do
+        fix_meeting = Meeting.find( 14101 )
+        pool_type = fix_meeting.get_pool_type
+        expect( pool_type.code ).to eq( '25' )
+      end
+
+      it "has a method to find out meeting events by pool type" do
+        expect( subject ).to respond_to( :get_events_by_pool_types )
+      end
+      it "returns an array" do
+        fix_meeting_50 = Meeting.find( 14105 )
+        fix_meeting_25 = Meeting.find( 14101 )
+        expect( subject.get_events_by_pool_types ).to be_a_kind_of( Array )
+        expect( fix_meeting_50.get_events_by_pool_types ).to be_a_kind_of( Array )
+        expect( fix_meeting_25.get_events_by_pool_types ).to be_a_kind_of( Array )
+      end
+      it "returns an array of events by pool types" do
+        fix_meeting_50 = Meeting.find( 14105 )
+        event_by_pool_types = fix_meeting_50.get_events_by_pool_types
+        expect( event_by_pool_types.count ).to eq( 5 )
+        event_by_pool_types.each do |event_by_pool_type|
+          expect( event_by_pool_type ).to be_an_instance_of( EventsByPoolType )
+        end
+        fix_meeting_25 = Meeting.find( 14101 )
+        event_by_pool_types = fix_meeting_25.get_events_by_pool_types
+        expect( event_by_pool_types.count ).to eq( 5 )
+        event_by_pool_types.each do |event_by_pool_type|
+          expect( event_by_pool_type ).to be_an_instance_of( EventsByPoolType )
+        end
+      end
+      
+    end      
+
     context "[meeting result methods]" do      
       it "has a method to determine the meeting team charts"
     end

@@ -119,7 +119,7 @@ DESC
         end
       end
 
-      # Save new season
+      # Persist data if needed
       if not persist
         logger.info( "\r\n*** Goggle cup points NOT persisted! ***" )
         raise ActiveRecord::Rollback 

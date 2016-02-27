@@ -272,10 +272,19 @@ class Meeting < ActiveRecord::Base
   end
   # ----------------------------------------------------------------------------
 
-  # Computes the complete list of all the meeting events
-  # with session informations.
+  # Retrieves the meeting events_by_pool_type
+  # for this meeting.
   #
-  def get_athletes_count_by_gender
+  def get_events_by_pool_types
+    events_by_pool_types = []
+    pool_type = self.get_pool_type 
+    if pool_type
+      self.event_types.uniq.each do |event_type|
+        event_key = "#{event_type.code}-#{pool_type.code}"
+        events_by_pool_types << EventsByPoolType.find_by_key( event_key )
+      end
+    end
+    events_by_pool_types
   end
   # ----------------------------------------------------------------------------
 end
