@@ -23,12 +23,13 @@ class EnhanceIndividualRankingDAO
   
   class EIREventScoreDAO
     # These must be initialized on creation:
-    #attr_reader :meeting
+    attr_reader :meeting_individual_result
 
     # These can be edited later on:
     attr_accessor :event_date, :event_type, 
                   :rank, :event_points, 
-                  :prestation_points, :enhance_points
+                  :prestation_points, :enhance_points,
+                  :season, :pool_type, :event_type, :gender_type, :category_type, :swimmer
     #-- -------------------------------------------------------------------------
     #++
   
@@ -39,16 +40,23 @@ class EnhanceIndividualRankingDAO
         raise ArgumentError.new("Enhance individual ranking event score needs a meeting individual result")
       end
 
-      @event_date        = meeting_individual_result.meeting_session.scheduled_date
-      @event_type        = meeting_individual_result.event_type
-      @rank              = meeting_individual_result.rank
-      @event_points      = meeting_individual_result.meeting_individual_points.to_i
+      @meeting_individual_result = meeting_individual_result
+      @event_date                = meeting_individual_result.meeting_session.scheduled_date
+      @event_type                = meeting_individual_result.event_type
+      @rank                      = meeting_individual_result.rank
+      @event_points              = meeting_individual_result.meeting_individual_points.to_i
+      @season                    = meeting_individual_result.season
+      @pool_type                 = meeting_individual_result.pool_type
+      @event_type                = meeting_individual_result.event_type
+      @gender_type               = meeting_individual_result.gender_type
+      @category_type             = meeting_individual_result.category_type
+      @swimmer                   = meeting_individual_result.swimmer
 
       # TODO store on DB standard points score definition (100 with no decimals)
       # Should use calculation rules definition
-      @prestation_points = compute_prestation_points( meeting_individual_result, 100, 0 )
+      @prestation_points = compute_prestation_points( 100, 0 )
 
-      @enhance_points    = compute_enhance_points( meeting_individual_result )
+      @enhance_points    = compute_enhance_points
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -62,15 +70,9 @@ class EnhanceIndividualRankingDAO
     # If time swam is better prestation points are greater than 100
     # If time swam is worst prestation points are less than 100
     #
-    def compute_prestation_points( meeting_individual_result, standard_points, decimals )
-      season = meeting_individual_result.season
-      pool_type = meeting_individual_result.pool_type
-      event_type = meeting_individual_result.event_type
-      gender_type = meeting_individual_result.gender_type
-      category_type = meeting_individual_result.category_type
-      score_calculator = ScoreCalculator.new( season, gender_type, category_type, pool_type, event_type )
-      @prestation_points = score_calculator.get_custom_score( meeting_individual_result.get_timing_instance, standard_points, decimals )
-      @prestation_points
+    def compute_prestation_points( standard_points, decimals )
+      score_calculator = ScoreCalculator.new( @season, @gender_type, @category_type, @pool_type, @event_type )
+      score_calculator.get_custom_score( @meeting_individual_result.get_timing_instance, standard_points, decimals )
     end
     #-- -------------------------------------------------------------------------
     #++
@@ -82,13 +84,10 @@ class EnhanceIndividualRankingDAO
     # If this is the first time for that event for the swimmer enhance points are 0
     # If time swam is better enhance points are up to 10
     #
-    def compute_enhance_points( meeting_individual_result )
-      season = meeting_individual_result.season
-      pool_type = meeting_individual_result.pool_type
-      event_type = meeting_individual_result.event_type
-      if SeasonPersonalStandard.has_standard?( season.id, meeting_individual_result.swimmer_id, pool_type.id, event_type.id )
-        past_season_event_best = SeasonPersonalStandard.get_standard( season.id, meeting_individual_result.swimmer_id, pool_type.id, event_type.id )
-        if past_season_event_best.get_timing_instance.to_hundreds <= meeting_individual_result.get_timing_instance.to_hundreds
+    def compute_enhance_points
+      if SeasonPersonalStandard.has_standard?( @season.id, @swimmer.id, @pool_type.id, @event_type.id )
+        past_season_event_best = SeasonPersonalStandard.get_standard( @season.id, @swimmer.id, @pool_type.id, @event_type.id )
+        if past_season_event_best.get_timing_instance.to_hundreds <= @meeting_individual_result.get_timing_instance.to_hundreds
           @enhance_points = 0
         else
           @enhance_points = (100 * past_season_event_best.get_timing_instance.to_hundreds / meeting_individual_result.get_timing_instance.to_hundreds).to_i - 100
