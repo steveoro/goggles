@@ -554,6 +554,7 @@ describe SwimmersController, :type => :controller do
       let(:swimmer) { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] } 
       
       before(:each) do
+        request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
         get :current_goggle_cup, id: swimmer.id
       end
@@ -574,6 +575,7 @@ describe SwimmersController, :type => :controller do
       let(:goggle_cup) { swimmer.goggle_cups.for_team( team )[ ((rand * swimmer.goggle_cups.for_team( team ).count) % swimmer.goggle_cups.for_team( team ).count).to_i ] } 
       
       before(:each) do
+        request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
         get :closed_goggle_cup, id: swimmer.id, goggle_cup_id: goggle_cup.id 
       end
@@ -589,11 +591,14 @@ describe SwimmersController, :type => :controller do
 
   describe '[GET #supermaster/:id]' do
     context "as a logged-in user" do
-      let(:season)     { Season.find(142) } 
-      let(:team)       { Team.find(1) }
-      let(:swimmer)    { team.badges.for_season( season )[ ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i ].swimmer } 
+      let(:header_year) { Season.build_header_year_from_date }
+      let(:season_type) { SeasonType.find_by_code('MASFIN') }
+      let(:season)      { Season.exists?( season_type: season_type, header_year: header_year) ? Season.where( season_type: season_type, header_year: header_year).first : Season.find(152) } 
+      let(:team)        { Team.find(1) }
+      let(:swimmer)     { team.badges.for_season( season )[ ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i ].swimmer } 
       
       before(:each) do
+        request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
         get :supermaster, id: swimmer.id, season_id: season.id 
       end
