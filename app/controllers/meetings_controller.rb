@@ -288,7 +288,7 @@ class MeetingsController < ApplicationController
   #
   def show_stats
     # Using MeetingStat
-    @meeting_stats = MeetingStat.new(@meeting)
+    @meeting_stats = MeetingStatDAO.new(@meeting)
 
     @preselected_team_id = params[:team_id]
 # DEBUG

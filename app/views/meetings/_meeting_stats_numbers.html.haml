@@ -10,8 +10,7 @@
             %td.span2
               %a(href="#meeting_stats_teams")= I18n.t('meeting_stats.tot_teams')
             %td.span1.goggles-rightalign
-              -# = @meeting_stats.team_count.to_s
-              = @teams_array.count.to_s
+              = @meeting_stats.team_count
           %tr
             %td.span2
               %a(href="#meeting_stats_categories")= I18n.t('meeting_stats.tot_swimmers')

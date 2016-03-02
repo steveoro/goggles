@@ -241,7 +241,7 @@ describe MeetingsController, type: :controller do
     end
 
     it "assigns the meeting stats" do
-      expect( assigns(:meeting_stats) ).to be_an_instance_of( MeetingStat )
+      expect( assigns(:meeting_stats) ).to be_an_instance_of( MeetingStatDAO )
     end
     it "assigns the max updated timestamp" do
       expect( assigns(:max_mir_updated_at) ).not_to be_nil

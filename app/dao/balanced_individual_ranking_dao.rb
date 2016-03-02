@@ -28,7 +28,7 @@ class BalancedIndividualRankingDAO
     #-- -------------------------------------------------------------------------
     #++
   
-    # Creates a new instance from a ameeting_indivudla_result.
+    # Creates a new instance from a meeting_individual_result.
     #
     def initialize( meeting_individual_result, seasonal_event_best, time_converted = nil )
       unless meeting_individual_result && meeting_individual_result.instance_of?( MeetingIndividualResult )
