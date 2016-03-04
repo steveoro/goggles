@@ -1,37 +1,20 @@
 require 'spec_helper'
 
-
-shared_examples_for "(existance of meeting stats relation of swimmers)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
+shared_examples_for "(existance of a member array of hashes)" do |member_name_array|
+  member_name_array.each do |member_name|
+    it "responds to ##{member_name}" do
+      expect( subject ).to respond_to( member_name )
     end
 
-    it "#{method_name} returns a list of swimmer instances" do
-      subject.send(method_name.to_sym).each do |item|
-        expect(item).to be_an_instance_of( Swimmer )
-      end
+    it "has a ##{member_name} array" do
+      expect( subject.send(member_name.to_sym) ).to be_a_kind_of( Array )
     end
   end
 end
-
-shared_examples_for "(existance of meeting stats relation of meeting individual results)" do |method_name_array|
-  method_name_array.each do |method_name|
-    it "responds to ##{method_name}" do
-      expect( subject ).to respond_to( method_name )
-    end
-
-    it "#{method_name} returns a list of swimmer instances" do
-      subject.send(method_name.to_sym).each do |item|
-        expect(item).to be_an_instance_of( MeetingIndividualResult )
-      end
-    end
-  end
-end
-# =============================================================================
 
 
 describe MeetingStatDAO, :type => :model do
+  
   # Pre-loaded seeded last CSI season and some acquired FIN
   before(:all) do
     @seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 13223]
@@ -42,33 +25,63 @@ describe MeetingStatDAO, :type => :model do
   let( :meeting )              { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
   let( :meet_with_entries )    { Meeting.find( @meeting_with_entries.at( ( rand * @meeting_with_entries.size ).to_i ) ) }
   let( :meet_without_entries ) { Meeting.find( @meeting_without_entries.at( ( rand * @meeting_without_entries.size ).to_i ) ) }
+
+  context "TeamMeetingStatDAO subclass," do
+    
+    let( :team )               { meeting.teams.at( ( rand * meeting.teams.count ).to_i ) }
+
+    subject { MeetingStatDAO::TeamMeetingStatDAO.new( team ) }
+  
+    describe "[a well formed instance]" do
+      it "team is the one used in costruction" do
+        expect( subject.team ).to eq( team )
+      end
+
+      it_behaves_like( "(the existance of a method returning numeric values)", [
+        :male_entries,      :female_entries, 
+        :male_ent_swimmers, :female_ent_swimmers,
+        :male_results,      :female_results,
+        :male_swimmers,     :female_swimmers,
+        :male_best,         :female_best,
+        :male_worst,        :female_worst,
+        :male_average,      :female_average
+      ])
+    end
+    #-- -------------------------------------------------------------------------
+
+    describe "#get_entries_count" do
+      it "returns sum of male and female entries count" do
+        expect(subject.get_entries_count).to eq(subject.male_entries + subject.female_entries)
+      end
+    end
+
+    describe "#get_results_count" do
+      it "returns sum of male and female results count" do
+        expect(subject.get_results_count).to eq(subject.male_results + subject.female_results)
+      end
+    end
+
+    describe "#get_swimmers_count" do
+      it "returns sum of male and female swimmers count" do
+        expect(subject.get_swimmers_count).to eq(subject.male_swimmers + subject.female_swimmers)
+      end
+    end
+    #-- -------------------------------------------------------------------------
+
+    context "not a valid instance" do   
+      it "raises an exception for wrong meeting parameter" do
+        expect{ MeetingStatDAO::TeamMeetingStatDAO.new() }.to raise_error( ArgumentError )
+        expect{ MeetingStatDAO::TeamMeetingStatDAO.new( 'Wrong parameter' ) }.to raise_error( ArgumentError )
+      end   
+    end
+    #-- -------------------------------------------------------------------------
+  end
+  #-- -------------------------------------------------------------------------
+  #++
   
   subject { MeetingStatDAO.new( meeting ) }
 
   describe "[a well formed instance]" do
-    it_behaves_like( "(the existance of a method returning numeric values)", [
-      :get_entries_count,
-      :get_entered_swimmers_count,
-      :get_swimmers_count,
-      :get_results_count,
-      :get_teams_count,
-      :get_disqualifieds_count,
-      :get_average,
-      :get_over_target_count
-    ])
-
-    it_behaves_like( "(existance of meeting stats relation of swimmers)", [
-      # Methods
-      :get_oldest_swimmers,
-      :get_oldest_swimmers
-    ])
-
-    it_behaves_like( "(existance of meeting stats relation of meeting individual results)", [
-      # Methods
-      :get_best_standard_scores,
-      :get_worst_standard_scores
-    ])
-
     it "meeting is the one used in costruction" do
       expect( subject.meeting ).to eq( meeting )
     end
@@ -76,209 +89,51 @@ describe MeetingStatDAO, :type => :model do
     it "has a valid meeting instance" do
       expect(subject.get_meeting).to be_an_instance_of( Meeting )
     end
-    
-    describe "#has_results?" do
-      it "returns true for a meeting with results" do
-        expect( subject.has_results? ).to be true
-      end
-      it "returns false for a meeting without results" do
-        new_meeting = create( :meeting ) 
-        stat_without_results = MeetingStatDAO.new( new_meeting )
-        expect( stat_without_results.has_results? ).to be false
-      end
+
+    it "responds to generals" do
+      expect( subject ).to respond_to( :generals )
     end
 
-    describe "#has_entries?" do
-      it "returns true for a meeting with entries" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        expect( stat_with_entries.has_entries? ).to be true
-      end
-      it "returns false for a meeting without entries" do
-        new_meeting = create( :meeting ) 
-        stat_without_entries = MeetingStatDAO.new( new_meeting )
-        expect( stat_without_entries.has_entries? ).to be false
-      end
+    it "has a generals hash" do
+      expect( subject.generals ).to be_a_kind_of( Hash )
     end
+
+    it_behaves_like( "(existance of a member array of hashes)", [
+      :teams,
+      :categories,
+      :events
+    ])
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  context "entry-based methods" do
-    describe "#get_entries_count" do
-      it "returns a number > 0 for meeting with entries" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        expect( stat_with_entries.get_entries_count ).to be > 0
-        expect( stat_with_entries.get_entries_count( :is_male ) ).to be > 0
-        expect( stat_with_entries.get_entries_count( :is_female ) ).to be > 0
-      end
-      it "returns 0 for meeting without entries" do
-        stat_without_entries = MeetingStatDAO.new( meet_without_entries )
-        expect( stat_without_entries.get_entries_count ).to eq( 0 )
-        expect( stat_without_entries.get_entries_count( :is_male ) ).to eq( 0 )
-        expect( stat_without_entries.get_entries_count( :is_female ) ).to eq( 0 )
-      end
-      it "returns the total entries number for males and females" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        expect( stat_with_entries.get_entries_count( :is_male ) + stat_with_entries.get_entries_count( :is_female ) ).to eq( meet_with_entries.meeting_entries.count )
-      end
-    end
-    
-    describe "#get_team_entries_count" do
-      it "returns a number > 0 for a team with entries for the meeting" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        fix_team = meet_with_entries.teams.at( (rand * meet_with_entries.teams.count).to_i )
-        expect( stat_with_entries.get_team_entries_count( fix_team, :is_male ) + stat_with_entries.get_team_entries_count( fix_team, :is_female ) ).to be > 0
-      end
-      it "returns 0 for a team without entries for the meeting" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        new_team = create( :team )
-        expect( stat_with_entries.get_team_entries_count( new_team ) ).to eq( 0 )
-        expect( stat_with_entries.get_team_entries_count( new_team, :is_male ) ).to eq( 0 )
-        expect( stat_with_entries.get_team_entries_count( new_team, :is_female ) ).to eq( 0 )
-      end
-      it "returns 0 for meeting without entries" do
-        stat_without_entries = MeetingStatDAO.new( meet_without_entries )
-        fix_team = meet_without_entries.teams.at( (rand * meet_without_entries.teams.count).to_i )
-        expect( stat_without_entries.get_team_entries_count( fix_team ) ).to eq( 0 )
-        expect( stat_without_entries.get_team_entries_count( fix_team, :is_male ) ).to eq( 0 )
-        expect( stat_without_entries.get_team_entries_count( fix_team, :is_female ) ).to eq( 0 )
-      end
-      it "returns the total entered swimmers number for team male and female" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        fix_team = meet_with_entries.teams.at( (rand * meet_with_entries.teams.count).to_i )
-        expect( stat_with_entries.get_team_entries_count( fix_team, :is_male ) + stat_with_entries.get_team_entries_count( fix_team, :is_female ) ).to eq( meet_with_entries.meeting_entries.for_team( fix_team ).count )
-      end
-    end
-    
-    describe "#get_entered_swimmers_count" do
-      it "returns a number > 0 for meeting with entries" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        expect( stat_with_entries.get_entered_swimmers_count ).to be > 0
-        expect( stat_with_entries.get_entered_swimmers_count( :is_male ) ).to be > 0
-        expect( stat_with_entries.get_entered_swimmers_count( :is_female ) ).to be > 0
-      end
-      it "returns 0 for meeting without entries" do
-        stat_without_entries = MeetingStatDAO.new( meet_without_entries )
-        expect( stat_without_entries.get_entered_swimmers_count ).to eq( 0 )
-        expect( stat_without_entries.get_entered_swimmers_count( :is_male ) ).to eq( 0 )
-        expect( stat_without_entries.get_entered_swimmers_count( :is_female ) ).to eq( 0 )
-      end
-      it "returns the total entered swimmers number for males and females" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        expect( stat_with_entries.get_entered_swimmers_count( :is_male ) + stat_with_entries.get_entered_swimmers_count( :is_female ) ).to be <= meet_with_entries.meeting_entries.count
-      end
-    end
-    
-    describe "#get_team_entered_swimmers_count" do
-      it "returns a number > 0 for a team with entries for the meeting" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        fix_team = meet_with_entries.teams.at( (rand * meet_with_entries.teams.count).to_i )
-        expect( stat_with_entries.get_team_entered_swimmers_count( fix_team, :is_male ) + stat_with_entries.get_team_entered_swimmers_count( fix_team, :is_female ) ).to be > 0
-      end
-      it "returns 0 for a team without entries for the meeting" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        new_team = create( :team )
-        expect( stat_with_entries.get_team_entered_swimmers_count( new_team ) ).to eq( 0 )
-        expect( stat_with_entries.get_team_entered_swimmers_count( new_team, :is_male ) ).to eq( 0 )
-        expect( stat_with_entries.get_team_entered_swimmers_count( new_team, :is_female ) ).to eq( 0 )
-      end
-      it "returns 0 for meeting without entries" do
-        stat_without_entries = MeetingStatDAO.new( meet_without_entries )
-        fix_team = meet_without_entries.teams.at( (rand * meet_without_entries.teams.count).to_i )
-        expect( stat_without_entries.get_team_entered_swimmers_count( fix_team ) ).to eq( 0 )
-        expect( stat_without_entries.get_team_entered_swimmers_count( fix_team, :is_male ) ).to eq( 0 )
-        expect( stat_without_entries.get_team_entered_swimmers_count( fix_team, :is_female ) ).to eq( 0 )
-      end
-      it "returns the total entered swimmers number for team male and female" do
-        stat_with_entries = MeetingStatDAO.new( meet_with_entries )
-        fix_team = meet_with_entries.teams.at( (rand * meet_with_entries.teams.count).to_i )
-        expect( stat_with_entries.get_team_entered_swimmers_count( fix_team, :is_male ) + stat_with_entries.get_team_entered_swimmers_count( fix_team, :is_female ) ).to be <= meet_with_entries.meeting_entries.for_team( fix_team ).count
-      end
+  describe "#get_entered_swimmers_count" do
+    it "returns sum of male and female entered swimmers count" do
+      expect(subject.get_entered_swimmers_count).to eq(subject.ent_swimmers_male_count + subject.ent_swimmers_female_count)
     end
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
-  context "result-based methods" do
-    
+  describe "#get_entries_count" do
+    it "returns sum of male and female entries count" do
+      expect(subject.get_entries_count).to eq(subject.entries_male_count + subject.entries_female_count)
+    end
   end
-  
-  describe "#swimmers_count" do
+
+  describe "#get swimmers_count" do
     it "returns sum of male and female swimmers count" do
-      expect(subject.swimmers_count).to eq(subject.swimmer_male_count + subject.swimmer_female_count)
+      expect(subject.get_swimmers_count).to eq(subject.swimmers_male_count + subject.swimmers_female_count)
     end
   end
 
-  describe "#results_count" do
+  describe "#get_results_count" do
     it "returns sum of male and female results count" do
-      expect(subject.results_count).to eq(subject.result_male_count + subject.result_female_count)
+      expect(subject.get_results_count).to eq(subject.results_male_count + subject.results_female_count)
     end
   end
 
-  describe "#disqualifieds_count" do
+  describe "#get_disqualifieds_count" do
     it "returns sum of male and female results count" do
-      expect(subject.disqualifieds_count).to eq(subject.disqualified_male_count + subject.disqualified_female_count)
-    end
-  end
-
-
-  describe "#get_oldest_swimmers" do
-    it "returns only male swimmers" do
-      subject.get_oldest_swimmers.each do |item|
-        expect(item.is_male).to be true
-      end
-    end
-    it "returns only female swimmers" do
-      subject.get_oldest_swimmers(:is_female).each do |item|
-        expect(item.is_female).to be true
-      end
-    end
-    it "returns a list sorted by swimmer year_of_birth" do
-      current_item_year = subject.get_oldest_swimmers.first.year_of_birth
-      subject.get_oldest_swimmers.each do |item|
-        expect(item.year_of_birth).to be >= current_item_year
-        current_item_year = item.year_of_birth
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  describe "#get_best_standard_scores" do
-    it "returns only not disqualified results" do
-      subject.get_best_standard_scores.each do |item|
-        expect(item.is_disqualified).to be false
-      end
-      subject.get_best_standard_scores(:is_female).each do |item|
-        expect(item.is_disqualified).to be false
-      end
-    end
-    it "returns a list sorted by standard points descending" do
-      current_item_score = subject.get_best_standard_scores.first.standard_points if subject.get_best_standard_scores.first
-      subject.get_best_standard_scores.each do |item|
-        expect(item.standard_points).to be <= current_item_score
-        current_item_score = item.standard_points
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  describe "#get_worst_standard_scores" do
-    it "returns only not disqualified results" do
-      subject.get_worst_standard_scores.each do |item|
-        expect(item.is_disqualified).to be false
-      end
-      subject.get_worst_standard_scores(:is_female).each do |item|
-        expect(item.is_disqualified).to be false
-      end
-    end
-    it "returns a list sorted by standard points" do
-      current_item_score = subject.get_worst_standard_scores.first.standard_points if subject.get_worst_standard_scores.first
-      subject.get_worst_standard_scores.each do |item|
-        expect(item.standard_points).to be >= current_item_score
-        current_item_score = item.standard_points
-      end
+      expect(subject.get_disqualifieds_count).to eq(subject.dsqs_male_count + subject.dsqs_female_count)
     end
   end
   #-- -------------------------------------------------------------------------
