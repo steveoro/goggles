@@ -79,6 +79,18 @@ class MeetingStatDAO
     def get_swimmers_count
       @male_swimmers + @female_swimmers
     end
+    
+    def get_golds_count
+      @male_golds + @female_golds
+    end
+    
+    def get_silvers_count
+      @male_silvers + @female_silvers
+    end
+    
+    def get_bronzes_count
+      @male_bronzes + @female_bronzes
+    end
   end
   # ---------------------------------------------------------------------------
 

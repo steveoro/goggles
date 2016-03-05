@@ -66,6 +66,24 @@ describe MeetingStatDAO, :type => :model do
         expect(subject.get_swimmers_count).to eq(subject.male_swimmers + subject.female_swimmers)
       end
     end
+
+    describe "#get_golds_count" do
+      it "returns sum of male and female golds count" do
+        expect(subject.get_golds_count).to eq(subject.male_golds + subject.female_golds)
+      end
+    end
+
+    describe "#get_silvers_count" do
+      it "returns sum of male and female silvers count" do
+        expect(subject.get_silvers_count).to eq(subject.male_silvers + subject.female_silvers)
+      end
+    end
+
+    describe "#get_bronzes_count" do
+      it "returns sum of male and female bronzes count" do
+        expect(subject.get_bronzes_count).to eq(subject.male_bronzes + subject.female_bronzes)
+      end
+    end
     #-- -------------------------------------------------------------------------
 
     context "not a valid instance" do   
