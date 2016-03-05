@@ -31,7 +31,10 @@ class MeetingStatDAO
                   :male_ent_swimmers, :female_ent_swimmers,
                   :male_best,         :female_best,
                   :male_worst,        :female_worst,
-                  :male_average,      :female_average
+                  :male_average,      :female_average,
+                  :male_golds,        :female_golds,
+                  :male_silvers,      :female_silvers,
+                  :male_bronzes,      :female_bronzes
 
     # Creates a new instance.
     # Note the ascending precision of the parameters, which allows to skip
@@ -57,6 +60,12 @@ class MeetingStatDAO
       @female_best         = 0
       @female_worst        = 0
       @female_average      = 0
+      @male_golds          = 0
+      @male_silvers        = 0
+      @male_bronzes        = 0
+      @female_golds        = 0
+      @female_silvers      = 0
+      @female_bronzes      = 0
     end
     
     def get_entries_count
@@ -134,30 +143,14 @@ class MeetingStatDAO
   end  
   # ---------------------------------------------------------------------------
 
-  # Sum male and female disqualified count
+  # Ceates a new team element
   #
   def new_team( team )
     TeamMeetingStatDAO.new( team )
   end
   # ---------------------------------------------------------------------------
-  
-  # Create a team hash with entry data
-  #
-  def get_team_entries
-    teams_array = []
-    @meeting.teams.uniq.each do |team|
-      team_hash = {}
-      team_hash[:team] = team
-      team_hash[:males] = @meeting.meeting_entries.for_team(team).is_female.includes(:swimmers).select('swimmers.id').uniq.count
-      team_hash[:females] = @meeting.meeting_entries.for_team(team).is_male.includes(:swimmers).select('swimmers.id').uniq.count
-      team_hash[:males_entries] = @meeting.meeting_entries.for_team(team).is_male.count
-      team_hash[:females_entries] = @meeting.meeting_entries.for_team(team).is_female.count
-      teams_array << team_hash 
-    end
-    teams_array
-  end  
-  # ---------------------------------------------------------------------------
 
+  
   # General property setter
   # 
   def set_general( stat, value )
