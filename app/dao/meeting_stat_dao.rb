@@ -198,7 +198,19 @@ class MeetingStatDAO
   # Override standard one using hash elements keys as methods
   #
   def method_missing( method, *args )
-    @generals.has_key?( method.to_sym ) ? @generals[method.to_sym] : BasicObject.send( :method_missing, method, *args )  
+    key_name = method.to_s
+    
+    # Remove = for setter requests
+    if key_name.end_with?('=')
+      key_name.chop!
+    end
+
+    # Remove get/set for requests
+    if key_name.start_with?('get_') || key_name.start_with?('set_') 
+      key_name.slice!(0..3)
+    end
+     
+    @generals.has_key?( key_name.to_sym ) ? @generals[key_name.to_sym] : BasicObject.send( :method_missing, method, *args )  
   end  
   # ---------------------------------------------------------------------------
 end

@@ -196,14 +196,14 @@ describe MeetingStatCalculator, :type => :model do
       end
     end
 
-    describe "#get_enetered_teams_count" do
+    describe "#get_entered_teams_count" do
       it "returns a number > 0 for a meeting with entries" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
-        expect( stat_with_entries.get_enetered_teams_count ).to be > 0
+        expect( stat_with_entries.get_entered_teams_count ).to be > 0
       end
       it "returns 0 for meeting without entries" do
         stat_without_entries = MeetingStatCalculator.new( meet_without_entries )
-        expect( stat_without_entries.get_enetered_teams_count ).to eq( 0 )
+        expect( stat_without_entries.get_entered_teams_count ).to eq( 0 )
       end
     end
   end
@@ -211,34 +211,33 @@ describe MeetingStatCalculator, :type => :model do
   #++
 
   context "result-based methods" do
-    
     describe "#get_teams_count" do
       it "returns a number > 0 for a meeting with results" do
         expect( subject.get_teams_count ).to be > 0
       end
       it "returns 0 for meeting without entries" do
         stat_without_results = MeetingStatCalculator.new( create( :meeting ) )
-        expect( stat_without_results.get_enetered_teams_count ).to eq( 0 )
+        expect( stat_without_results.get_teams_count ).to eq( 0 )
       end
     end
-  end
   
-  describe "#get_oldest_swimmers" do
-    it "returns only male swimmers" do
-      subject.get_oldest_swimmers.each do |item|
-        expect(item.is_male).to be true
+    describe "#get_oldest_swimmers" do
+      it "returns only male swimmers" do
+        subject.get_oldest_swimmers.each do |item|
+          expect(item.is_male).to be true
+        end
       end
-    end
-    it "returns only female swimmers" do
-      subject.get_oldest_swimmers(:is_female).each do |item|
-        expect(item.is_female).to be true
+      it "returns only female swimmers" do
+        subject.get_oldest_swimmers(:is_female).each do |item|
+          expect(item.is_female).to be true
+        end
       end
-    end
-    it "returns a list sorted by swimmer year_of_birth" do
-      current_item_year = subject.get_oldest_swimmers.first.year_of_birth
-      subject.get_oldest_swimmers.each do |item|
-        expect(item.year_of_birth).to be >= current_item_year
-        current_item_year = item.year_of_birth
+      it "returns a list sorted by swimmer year_of_birth" do
+        current_item_year = subject.get_oldest_swimmers.first.year_of_birth
+        subject.get_oldest_swimmers.each do |item|
+          expect(item.year_of_birth).to be >= current_item_year
+          current_item_year = item.year_of_birth
+        end
       end
     end
   end
@@ -309,6 +308,14 @@ describe MeetingStatCalculator, :type => :model do
     end
     it "returns a MeetingStatDAO" do
       expect( subject.calculate ).to be_an_instance_of( MeetingStatDAO )
+    end
+    it "returns a MeetingStatDAO with teams count for a meeting with results" do
+      expect( subject.has_results? ).to be true
+      expect( subject.get_teams_count ).to be > 0
+      expect( subject.get_results_count ).to be > 0
+      ms = subject.calculate
+      expect( ms.teams_count ).to be > 0
+      expect( ms.get_results_count ).to eq( subject.get_results_count( :is_male ) + subject.get_results_count( :is_female ) )
     end
   end
   #-- -------------------------------------------------------------------------

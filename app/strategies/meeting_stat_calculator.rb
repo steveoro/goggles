@@ -61,7 +61,7 @@ class MeetingStatCalculator
   # Statistic calculation for the team count
   # Temas are intended the distinct team with entries in the meeting
   #
-  def get_enetered_teams_count()
+  def get_entered_teams_count()
     @meeting.meeting_entries.includes(:team).select('teams.id').uniq.count    
   end
   # ---------------------------------------------------------------------------
@@ -199,7 +199,7 @@ class MeetingStatCalculator
       @meeting_stats.swimmers_female_count  = get_swimmers_count(:is_female)
       @meeting_stats.results_male_count     = get_results_count(:is_male)
       @meeting_stats.results_female_count   = get_results_count(:is_female)
-      @meeting_stats.teams_count            = get_teams_count()
+      @meeting_stats.generals[:teams_count]            = get_teams_count()
       @meeting_stats.oldest_male_swimmers   = get_oldest_swimmers(:is_male, oldests )
       @meeting_stats.oldest_female_swimmers = get_oldest_swimmers(:is_female, oldests )
   
@@ -235,8 +235,8 @@ class MeetingStatCalculator
       if has_entries?
         team_stat.male_swimmers   = get_team_entered_swimmers_count( team, :is_male )
         team_stat.female_swimmers = get_team_entered_swimmers_count( team, :is_female )
-        team_stat.males_entries   = get_team_entries_count( team, :is_male )
-        team_stat.females_entries = get_team_entries_count( team, :is_female )
+        team_stat.male_entries    = get_team_entries_count( team, :is_male )
+        team_stat.female_entries  = get_team_entries_count( team, :is_female )
       end
 
       # Result-based

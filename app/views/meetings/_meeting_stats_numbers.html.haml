@@ -10,17 +10,17 @@
             %td.span2
               %a(href="#meeting_stats_teams")= I18n.t('meeting_stats.tot_teams')
             %td.span1.goggles-rightalign
-              = @meeting_stats.team_count
+              = @meeting_stats.get_teams_count
           %tr
             %td.span2
               %a(href="#meeting_stats_categories")= I18n.t('meeting_stats.tot_swimmers')
             %td.span1.goggles-rightalign
-              = @meeting_stats.swimmer_count.to_s
+              = @meeting_stats.get_swimmers_count
           %tr
             %td.span2
               %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_athletes_by_event')
             %td.span1.goggles-rightalign
-              = @meeting_stats.result_count.to_s
+              = @meeting_stats.get_results_count
           - if @meeting_stats.average_total_score > 0
             %tr
               %td.span2
@@ -34,7 +34,7 @@
                 - else
                   = I18n.t('meeting_stats.over_1000')
               %td.span1.goggles-rightalign
-                = @meeting_stats.over_1000_count.to_s
+                = @meeting_stats.over_1000_count
             %tr
               %td.span2
                 - if @meeting_stats.over_950_count > 0
@@ -42,7 +42,7 @@
                 - else
                   = I18n.t('meeting_stats.over_950')
               %td.span1.goggles-rightalign
-                = @meeting_stats.over_950_count.to_s
+                = @meeting_stats.over_950_count
             %tr
               %td.span2
                 - if @meeting_stats.over_900_count > 0
@@ -50,9 +50,9 @@
                 - else
                   = I18n.t('meeting_stats.over_900')
               %td.span1.goggles-rightalign
-                = @meeting_stats.over_900_count.to_s
+                = @meeting_stats.over_900_count
           %tr
             %td.span2
               %a(href="#meeting_stats_disqualified")= I18n.t('meeting_stats.tot_disqualified')
             %td.span1.goggles-rightalign
-              = @meeting_stats.disqualified_count.to_s
+              = @meeting_stats.get_disqualifieds_count

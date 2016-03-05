@@ -11,17 +11,17 @@
             %td.span2
               = I18n.t('meeting_stats.females')
             %td.span1.goggles-rightalign
-              = @meeting_stats.disqualified_female_count.to_s
+              = @meeting_stats.dsqs_female_count
           %tr
             %td.span2
               = I18n.t('meeting_stats.males')
             %td.span1.goggles-rightalign
-              = @meeting_stats.disqualified_male_count.to_s
+              = @meeting_stats.dsqs_male_count.to_s
           %tr
             %td.span2
               %i= I18n.t('meeting_stats.total')
             %td.span1.goggles-rightalign
-              %i= @meeting_stats.disqualified_count.to_s
+              %i= @meeting_stats.get_disqualifieds_count
 
 - if @meeting_stats.average_total_score > 0
   %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_average'}
@@ -49,7 +49,7 @@
               %td.span1.goggles-rightalign
                 %i= sprintf( "%02.2f", @meeting_stats.average_total_score)
 
-- if @meeting_stats.best_standard_female_scores.size > 0 || @meeting_stats.best_standard_male_scores.size > 0
+- if @meeting_stats.best_std_female_scores.size > 0 || @meeting_stats.best_std_male_scores.size > 0
   %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_specials'}
     .row-fluid
       .span10
@@ -60,7 +60,7 @@
                 %b= I18n.t('meeting_stats.specials')
                 %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
 
-            - @meeting_stats.best_standard_female_scores.each_with_index do | individual_result, index |
+            - @meeting_stats.best_std_female_scores.each_with_index do | individual_result, index |
               - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               - swimmer = mir.swimmer
               %tr
@@ -77,7 +77,7 @@
                 %td.span1.goggles-rightalign
                   = mir.get_timing.to_s
 
-            - @meeting_stats.best_standard_male_scores.each_with_index do | individual_result, index |
+            - @meeting_stats.best_std_male_scores.each_with_index do | individual_result, index |
               - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               - swimmer = mir.swimmer
               %tr
@@ -95,7 +95,7 @@
                   = mir.get_timing.to_s
 
             - if false # Disabled by Leega. May result offensive in some cases, like for people with disabilities and so on
-              - @meeting_stats.worst_standard_female_scores.each_with_index do | individual_result, index |
+              - @meeting_stats.worst_std_female_scores.each_with_index do | individual_result, index |
                 - mir = MeetingIndividualResultDecorator.decorate( individual_result )
                 - swimmer = mir.swimmer
                 %tr
@@ -112,7 +112,7 @@
                   %td.span1.goggles-rightalign
                     = mir.get_timing.to_s
 
-              - @meeting_stats.worst_standard_male_scores.each_with_index do | individual_result, index |
+              - @meeting_stats.worst_std_male_scores.each_with_index do | individual_result, index |
                 - mir = MeetingIndividualResultDecorator.decorate( individual_result )
                 - swimmer = mir.swimmer
                 %tr
