@@ -103,6 +103,39 @@ describe MeetingStatDAO, :type => :model do
       :categories,
       :events
     ])
+
+    describe "#get_general" do
+      it "respondo to #get_general" do
+        expect( subject ).to respond_to( :get_general )
+      end
+      it "returns a value if parameter corrisponding to a valid key" do
+        valid_key = :teams_count
+        expect( subject.generals.has_key?( valid_key ) ).to be true
+        expect( subject.get_general( valid_key ) ).not_to be_nil
+      end
+      it "returns nil if parameter not corrisponding to a valid key" do
+        expect( subject.get_general( :wrong_key ) ).to be_nil
+      end
+      it "returns a not nil value for each general valid key" do
+        subject.generals.keys.each do |valid_key|
+          expect( subject.get_general( valid_key ) ).not_to be_nil
+        end
+      end
+    end
+
+    describe "#set_general" do
+      it "respondo to #set_general" do
+        expect( subject ).to respond_to( :set_general )
+      end
+      it "sets the given value to the parameter if parameter corrisponding to a valid key" do
+        valid_key = :teams_count
+        value     = ( rand * 100 ).to_i
+        expect( subject.generals.has_key?( valid_key ) ).to be true
+        expect( subject.get_general( valid_key ) ).to eq( 0 )
+        subject.set_general( valid_key, value )
+        expect( subject.get_general( valid_key ) ).to eq( value )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

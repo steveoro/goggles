@@ -186,36 +186,36 @@ class MeetingStatCalculator
   def calculate( bests = 3, worsts = 1, oldests = 1, teams = true )
     # Entry-based
     if has_entries?
-      @meeting_stats.ent_swimmers_male_count   = get_entered_swimmers_count(:is_male)
-      @meeting_stats.ent_swimmers_female_count = get_entered_swimmers_count(:is_female)
-      @meeting_stats.entries_male_count        = get_entries_count(:is_male)
-      @meeting_stats.entries_female_count      = get_entries_count(:is_female)
-      @meeting_stats.ent_team_count            = get_entered_teams_count()
+      @meeting_stats.set_general( :ent_swimmers_male_count  , get_entered_swimmers_count(:is_male) )
+      @meeting_stats.set_general( :ent_swimmers_female_count, get_entered_swimmers_count(:is_female) )
+      @meeting_stats.set_general( :entries_male_count       , get_entries_count(:is_male) )
+      @meeting_stats.set_general( :entries_female_count     , get_entries_count(:is_female) )
+      @meeting_stats.set_general( :ent_team_count           , get_entered_teams_count() )
     end
   
     # Result-based
     if has_results?
-      @meeting_stats.swimmers_male_count    = get_swimmers_count(:is_male)
-      @meeting_stats.swimmers_female_count  = get_swimmers_count(:is_female)
-      @meeting_stats.results_male_count     = get_results_count(:is_male)
-      @meeting_stats.results_female_count   = get_results_count(:is_female)
-      @meeting_stats.generals[:teams_count]            = get_teams_count()
-      @meeting_stats.oldest_male_swimmers   = get_oldest_swimmers(:is_male, oldests )
-      @meeting_stats.oldest_female_swimmers = get_oldest_swimmers(:is_female, oldests )
+      @meeting_stats.set_general( :swimmers_male_count   , get_swimmers_count(:is_male) )
+      @meeting_stats.set_general( :swimmers_female_count , get_swimmers_count(:is_female) )
+      @meeting_stats.set_general( :results_male_count    , get_results_count(:is_male) )
+      @meeting_stats.set_general( :results_female_count  , get_results_count(:is_female) )
+      @meeting_stats.set_general( :teams_count           , get_teams_count() )
+      @meeting_stats.set_general( :oldest_male_swimmers  , get_oldest_swimmers(:is_male, oldests ) )
+      @meeting_stats.set_general( :oldest_female_swimmers, get_oldest_swimmers(:is_female, oldests ) )
   
       # Score-based
-      @meeting_stats.dsqs_male_count         = get_disqualifieds_count(:is_male)
-      @meeting_stats.dsqs_female_count       = get_disqualifieds_count(:is_female)
-      @meeting_stats.average_male_score      = get_average(:is_male)
-      @meeting_stats.average_female_score    = get_average(:is_female)
-      @meeting_stats.average_total_score     = get_average(:has_points)
-      @meeting_stats.over_1000_count         = get_over_target_count(1000)
-      @meeting_stats.over_950_count          = get_over_target_count(950) - @meeting_stats.over_1000_count
-      @meeting_stats.over_900_count          = get_over_target_count(900) - @meeting_stats.over_950_count 
-      @meeting_stats.best_std_male_scores    = get_best_standard_scores(:is_male, bests )
-      @meeting_stats.best_std_female_scores  = get_best_standard_scores(:is_female, bests )
-      @meeting_stats.worst_std_male_scores   = get_worst_standard_scores(:is_male, worsts )
-      @meeting_stats.worst_std_female_scores = get_worst_standard_scores(:is_female, worsts )
+      @meeting_stats.set_general( :dsqs_male_count        , get_disqualifieds_count(:is_male) )
+      @meeting_stats.set_general( :dsqs_female_count      , get_disqualifieds_count(:is_female) )
+      @meeting_stats.set_general( :average_male_score     , get_average(:is_male) )
+      @meeting_stats.set_general( :average_female_score   , get_average(:is_female) )
+      @meeting_stats.set_general( :average_total_score    , get_average(:has_points) )
+      @meeting_stats.set_general( :over_1000_count        , get_over_target_count(1000) )
+      @meeting_stats.set_general( :over_950_count         , get_over_target_count(950) - @meeting_stats.over_1000_count )
+      @meeting_stats.set_general( :over_900_count         , get_over_target_count(900) - @meeting_stats.over_950_count )
+      @meeting_stats.set_general( :best_std_male_scores   , get_best_standard_scores(:is_male, bests ) )
+      @meeting_stats.set_general( :best_std_female_scores , get_best_standard_scores(:is_female, bests ) )
+      @meeting_stats.set_general( :worst_std_male_scores  , get_worst_standard_scores(:is_male, worsts ) )
+      @meeting_stats.set_general( :worst_std_female_scores, get_worst_standard_scores(:is_female, worsts ) )
     end
     
     calculate_teams if teams

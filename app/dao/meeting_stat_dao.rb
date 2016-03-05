@@ -158,6 +158,19 @@ class MeetingStatDAO
   end  
   # ---------------------------------------------------------------------------
 
+  # General property setter
+  # 
+  def set_general( stat, value )
+    @generals[stat.to_sym] = value if @generals.has_key?( stat.to_sym )
+  end
+
+  # General property getter
+  # Note that get operation will run even with the only property name 
+  # 
+  def get_general( stat )
+    @generals[stat.to_sym] if @generals.has_key?( stat.to_sym )
+  end
+  
   private
   
   def prepare_generals
@@ -194,19 +207,13 @@ class MeetingStatDAO
     generals    
   end
 
-  
   # Override standard one using hash elements keys as methods
   #
   def method_missing( method, *args )
     key_name = method.to_s
     
-    # Remove = for setter requests
-    if key_name.end_with?('=')
-      key_name.chop!
-    end
-
-    # Remove get/set for requests
-    if key_name.start_with?('get_') || key_name.start_with?('set_') 
+    # Remove get for requests
+    if key_name.start_with?('get_') 
       key_name.slice!(0..3)
     end
      
