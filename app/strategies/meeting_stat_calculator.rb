@@ -108,14 +108,6 @@ class MeetingStatCalculator
     @meeting.teams.uniq.count
   end
 
-  # Statistic calculation for the meeting swimmer count
-  # swimmers are intended the physical distinct swimmers swam in the meeting
-  #
-  def get_swimmers_count( scope_name = :is_male )
-    @meeting.swimmers.send(scope_name.to_sym).uniq.count    
-  end
-  # ---------------------------------------------------------------------------
-  
   # Statistic calculation for the meeting results count
   # Results are intended the distinct results swam in the meeting
   #
@@ -124,11 +116,71 @@ class MeetingStatCalculator
   end
   # ---------------------------------------------------------------------------
   
+  # Statistic calculation for the meeting results count for a given team
+  # Results are intended the distinct results swam in the meeting
+  #
+  def get_team_results_count( team, scope_name = :is_male )
+    @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).count
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation for the meeting swimmer count
+  # swimmers are intended the physical distinct swimmers swam in the meeting
+  #
+  def get_swimmers_count( scope_name = :is_male )
+    @meeting.swimmers.send(scope_name.to_sym).uniq.count    
+  end
+  # ---------------------------------------------------------------------------
+  
+  # Statistic calculation for the meeting swimmer count for a given team
+  # swimmers are intended the physical distinct swimmers swam in the meeting
+  #
+  def get_team_swimmers_count( team, scope_name = :is_male )
+    @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).includes(:swimmers).select('swimmers.id').uniq.count    
+  end
+  # ---------------------------------------------------------------------------
+  
   # Statistic calculation for the meeting disqualified count
   # Disqualified are intended the results in the meeting with is_disqualified attribute set to true
   #
   def get_disqualifieds_count( scope_name = :is_male )
-    @meeting.meeting_individual_results.send(scope_name.to_sym).where(:is_disqualified).count
+    @meeting.meeting_individual_results.is_disqualified.send(scope_name.to_sym).count
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation for the meeting disqualified count for a given team
+  # Disqualified are intended the results in the meeting with is_disqualified attribute set to true
+  #
+  def get_team_disqualifieds_count( team, scope_name = :is_male )
+    @meeting.meeting_individual_results.is_disqualified.for_team(team).send(scope_name.to_sym).count
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation of the best standard score for a given team
+  # Best results are intended evaluating the standard (FIN) points not 0
+  # Assumes the standard (FIN) pints are always calculated
+  # Returns 0 in no standard points
+  #
+  def get_team_best_standard( team, scope_name = :is_male )
+    @meeting.meeting_individual_results.for_team(team).is_valid.send(scope_name.to_sym).has_points.count > 0 ? @meeting.meeting_individual_results.for_team(team).is_valid.send(scope_name.to_sym).has_points.order('standard_points DESC').first.standard_points : 0.00
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation of the worst standard score for a given team
+  # Worst results are intended evaluating the standard (FIN) points not 0
+  # Assumes the standard (FIN) pints are always calculated
+  # Returns 0 in no standard points
+  #
+  def get_team_worst_standard( team, scope_name = :is_male )
+    @meeting.meeting_individual_results.for_team(team).is_valid.send(scope_name.to_sym).has_points.count > 0 ? @meeting.meeting_individual_results.for_team(team).is_valid.send(scope_name.to_sym).has_points.order('standard_points ASC').first.standard_points : 0.00
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation of the medals number for a given team
+  # Medals are intended as ranking (1=gold, 2=silver, 3=bronze, 4=wooden) 
+  #
+  def get_team_medals( team, scope_name = :is_male, rank = 1 )
+    @meeting.meeting_individual_results.for_team(team).is_valid.send(scope_name.to_sym).has_rank(rank).count
   end
   # ---------------------------------------------------------------------------
 
@@ -147,6 +199,20 @@ class MeetingStatCalculator
     result_count = @meeting.meeting_individual_results.send(scope_name.to_sym).has_points.count
     if result_count > 0
       standard_points_sum = @meeting.meeting_individual_results.send(scope_name.to_sym).sum(:standard_points)
+      (standard_points_sum / result_count).round(2)
+    else
+      result_count
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  # Statistic calculation for the meeting average standard points for a given team
+  # Average is calculated considering only > 0 standard point results
+  #
+  def get_team_average( team, scope_name = :is_male )
+    result_count = @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).has_points.count
+    if result_count > 0
+      standard_points_sum = @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).sum(:standard_points)
       (standard_points_sum / result_count).round(2)
     else
       result_count
@@ -183,9 +249,9 @@ class MeetingStatCalculator
 
   # General stats calculation
   #
-  def calculate( bests = 3, worsts = 1, oldests = 1, teams = true )
+  def calculate( bests = 3, worsts = 1, oldests = 1, entries = true, teams = true )
     # Entry-based
-    if has_entries?
+    if entries && has_entries?
       @meeting_stats.set_general( :ent_swimmers_male_count  , get_entered_swimmers_count(:is_male) )
       @meeting_stats.set_general( :ent_swimmers_female_count, get_entered_swimmers_count(:is_female) )
       @meeting_stats.set_general( :entries_male_count       , get_entries_count(:is_male) )
@@ -218,7 +284,7 @@ class MeetingStatCalculator
       @meeting_stats.set_general( :worst_std_female_scores, get_worst_standard_scores(:is_female, worsts ) )
     end
     
-    calculate_teams if teams
+    calculate_teams( entries ) if teams
     
     @meeting_stats    
   end
@@ -227,21 +293,38 @@ class MeetingStatCalculator
 
   # Team stats calculation
   #
-  def calculate_teams
+  def calculate_teams( entries = true )
     @meeting.teams.uniq.each do |team|
       team_stat = @meeting_stats.new_team( team )
 
       # Entry-based
-      if has_entries?
-        team_stat.male_swimmers   = get_team_entered_swimmers_count( team, :is_male )
-        team_stat.female_swimmers = get_team_entered_swimmers_count( team, :is_female )
-        team_stat.male_entries    = get_team_entries_count( team, :is_male )
-        team_stat.female_entries  = get_team_entries_count( team, :is_female )
+      if entries && has_entries?
+        team_stat.male_ent_swimmers   = get_team_entered_swimmers_count( team, :is_male )
+        team_stat.female_ent_swimmers = get_team_entered_swimmers_count( team, :is_female )
+        team_stat.male_entries        = get_team_entries_count( team, :is_male )
+        team_stat.female_entries      = get_team_entries_count( team, :is_female )
       end
 
       # Result-based
       if has_results?
-        
+        team_stat.male_results         = get_team_results_count( team, :is_male )
+        team_stat.female_results       = get_team_results_count( team, :is_male )
+        team_stat.male_swimmers        = get_team_swimmers_count( team, :is_male )
+        team_stat.female_swimmers      = get_team_swimmers_count( team, :is_female )
+        team_stat.male_best            = get_team_best_standard( team, :is_male )
+        team_stat.male_worst           = get_team_worst_standard( team, :is_male )
+        team_stat.male_average         = get_team_average( team, :is_male )
+        team_stat.female_best          = get_team_best_standard( team, :is_female )
+        team_stat.female_worst         = get_team_worst_standard( team, :is_female )
+        team_stat.female_average       = get_team_average( team, :is_female )
+        team_stat.male_disqualifieds   = get_team_disqualifieds_count( team, :is_male )
+        team_stat.female_disqualifieds = get_team_disqualifieds_count( team, :is_female )
+        team_stat.male_golds           = get_team_medals( team, :is_male, 1 )
+        team_stat.male_silvers         = get_team_medals( team, :is_male, 2 )
+        team_stat.male_bronzes         = get_team_medals( team, :is_male, 3 )
+        team_stat.female_golds         = get_team_medals( team, :is_female, 1 )
+        team_stat.female_silvers       = get_team_medals( team, :is_female, 2 )
+        team_stat.female_bronzes       = get_team_medals( team, :is_female, 3 )
       end
       
       @meeting_stats.teams << team_stat 

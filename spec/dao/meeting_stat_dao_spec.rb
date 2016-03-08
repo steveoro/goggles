@@ -38,13 +38,17 @@ describe MeetingStatDAO, :type => :model do
       end
 
       it_behaves_like( "(the existance of a method returning numeric values)", [
-        :male_entries,      :female_entries, 
-        :male_ent_swimmers, :female_ent_swimmers,
-        :male_results,      :female_results,
-        :male_swimmers,     :female_swimmers,
-        :male_best,         :female_best,
-        :male_worst,        :female_worst,
-        :male_average,      :female_average
+        :male_entries,       :female_entries, 
+        :male_ent_swimmers,  :female_ent_swimmers,
+        :male_results,       :female_results,
+        :male_swimmers,      :female_swimmers,
+        :male_best,          :female_best,
+        :male_worst,         :female_worst,
+        :male_average,       :female_average,
+        :male_disqualifieds, :female_disqualifieds,
+        :male_golds,         :female_golds,
+        :male_silvers,       :female_silvers,
+        :male_bronzes,       :female_bronzes
       ])
     end
     #-- -------------------------------------------------------------------------
@@ -64,6 +68,12 @@ describe MeetingStatDAO, :type => :model do
     describe "#get_swimmers_count" do
       it "returns sum of male and female swimmers count" do
         expect(subject.get_swimmers_count).to eq(subject.male_swimmers + subject.female_swimmers)
+      end
+    end
+
+    describe "#get_disqualifieds_count" do
+      it "returns sum of male and female disqualifieds count" do
+        expect(subject.get_disqualifieds_count).to eq(subject.male_disqualifieds + subject.female_disqualifieds)
       end
     end
 

@@ -25,16 +25,17 @@ class MeetingStatDAO
     attr_reader :team
   
     # These can be edited later on:
-    attr_accessor :male_entries,      :female_entries, 
-                  :male_results,      :female_results,
-                  :male_swimmers,     :female_swimmers,
-                  :male_ent_swimmers, :female_ent_swimmers,
-                  :male_best,         :female_best,
-                  :male_worst,        :female_worst,
-                  :male_average,      :female_average,
-                  :male_golds,        :female_golds,
-                  :male_silvers,      :female_silvers,
-                  :male_bronzes,      :female_bronzes
+    attr_accessor :male_entries,       :female_entries, 
+                  :male_results,       :female_results,
+                  :male_swimmers,      :female_swimmers,
+                  :male_ent_swimmers,  :female_ent_swimmers,
+                  :male_best,          :female_best,
+                  :male_worst,         :female_worst,
+                  :male_average,       :female_average,
+                  :male_disqualifieds, :female_disqualifieds,
+                  :male_golds,         :female_golds,
+                  :male_silvers,       :female_silvers,
+                  :male_bronzes,       :female_bronzes
 
     # Creates a new instance.
     # Note the ascending precision of the parameters, which allows to skip
@@ -45,27 +46,29 @@ class MeetingStatDAO
         raise ArgumentError.new("Team meeting stat needs a valid team")
       end
   
-      @team                = team
-      @male_entries        = 0
-      @female_entries      = 0
-      @male_ent_swimmers   = 0
-      @female_ent_swimmers = 0
-      @male_results        = 0
-      @female_results      = 0
-      @male_swimmers       = 0
-      @female_swimmers     = 0
-      @male_best           = 0
-      @male_worst          = 0
-      @male_average        = 0
-      @female_best         = 0
-      @female_worst        = 0
-      @female_average      = 0
-      @male_golds          = 0
-      @male_silvers        = 0
-      @male_bronzes        = 0
-      @female_golds        = 0
-      @female_silvers      = 0
-      @female_bronzes      = 0
+      @team                 = team
+      @male_entries         = 0
+      @female_entries       = 0
+      @male_ent_swimmers    = 0
+      @female_ent_swimmers  = 0
+      @male_results         = 0
+      @female_results       = 0
+      @male_swimmers        = 0
+      @female_swimmers      = 0
+      @male_best            = 0
+      @male_worst           = 0
+      @male_average         = 0
+      @female_best          = 0
+      @female_worst         = 0
+      @female_average       = 0
+      @male_disqualifieds   = 0
+      @female_disqualifieds = 0
+      @male_golds           = 0
+      @male_silvers         = 0
+      @male_bronzes         = 0
+      @female_golds         = 0
+      @female_silvers       = 0
+      @female_bronzes       = 0
     end
     
     def get_entries_count
@@ -78,6 +81,10 @@ class MeetingStatDAO
     
     def get_swimmers_count
       @male_swimmers + @female_swimmers
+    end
+    
+    def get_disqualifieds_count
+      @male_disqualifieds + @female_disqualifieds
     end
     
     def get_golds_count
