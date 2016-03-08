@@ -59,6 +59,12 @@ describe MeetingStatDAO, :type => :model do
       end
     end
 
+    describe "#get_ent_swimmers_count" do
+      it "returns sum of male and female entered swimmers count" do
+        expect(subject.get_ent_swimmers_count).to eq(subject.male_ent_swimmers + subject.female_swimmers)
+      end
+    end
+
     describe "#get_results_count" do
       it "returns sum of male and female results count" do
         expect(subject.get_results_count).to eq(subject.male_results + subject.female_results)

@@ -298,7 +298,7 @@ class MeetingStatCalculator
       team_stat = @meeting_stats.new_team( team )
 
       # Entry-based
-      if entries && has_entries?
+      if entries && has_entries? && @meeting.meeting_entries.for_team( team ).count > 0
         team_stat.male_ent_swimmers   = get_team_entered_swimmers_count( team, :is_male )
         team_stat.female_ent_swimmers = get_team_entered_swimmers_count( team, :is_female )
         team_stat.male_entries        = get_team_entries_count( team, :is_male )
@@ -306,7 +306,7 @@ class MeetingStatCalculator
       end
 
       # Result-based
-      if has_results?
+      if has_results? && @meeting.meeting_individual_results.for_team( team ).count > 0
         team_stat.male_results         = get_team_results_count( team, :is_male )
         team_stat.female_results       = get_team_results_count( team, :is_male )
         team_stat.male_swimmers        = get_team_swimmers_count( team, :is_male )
@@ -327,7 +327,7 @@ class MeetingStatCalculator
         team_stat.female_bronzes       = get_team_medals( team, :is_female, 3 )
       end
       
-      @meeting_stats.teams << team_stat 
+      @meeting_stats.teams << team_stat if team_stat.get_entries_count + team_stat.get_results_count + team_stat.get_disqualifieds_count > 0  
     end
     @meeting_stats.teams
   end  

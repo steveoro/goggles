@@ -75,6 +75,10 @@ class MeetingStatDAO
       @male_entries + @female_entries
     end
     
+    def get_ent_swimmers_count
+      @male_ent_swimmers + @female_ent_swimmers
+    end
+    
     def get_results_count
       @male_results + @female_results
     end
