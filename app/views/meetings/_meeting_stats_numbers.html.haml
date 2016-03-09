@@ -21,7 +21,25 @@
               %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_athletes_by_event')
             %td.span1.goggles-rightalign
               = @meeting_stats.get_results_count
-          - if @meeting_stats.average_total_score > 0
+          - if @meeting_stat_calculator.has_relays?
+            %tr
+              %td.span2
+                %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_relays')
+              %td.span1.goggles-rightalign
+                = @meeting_stats.get_results_relay_count
+          %tr
+            %td.span2
+              %a(href="#meeting_stats_disqualified")= I18n.t('meeting_stats.tot_disqualified')
+            %td.span1.goggles-rightalign
+              = @meeting_stats.get_disqualifieds_count
+
+    - if @meeting_stats.average_total_score > 0
+      .span3
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'success'}
+              %td.goggles-centeralign{'colspan'=>2}
+                %b= I18n.t('meeting_stats.scores')
             %tr
               %td.span2
                 %a(href="#meeting_stats_average")= I18n.t('meeting_stats.tot_average')
@@ -51,8 +69,3 @@
                   = I18n.t('meeting_stats.over_900')
               %td.span1.goggles-rightalign
                 = @meeting_stats.over_900_count
-          %tr
-            %td.span2
-              %a(href="#meeting_stats_disqualified")= I18n.t('meeting_stats.tot_disqualified')
-            %td.span1.goggles-rightalign
-              = @meeting_stats.get_disqualifieds_count

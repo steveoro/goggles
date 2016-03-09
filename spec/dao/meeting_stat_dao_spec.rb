@@ -124,6 +124,90 @@ describe MeetingStatDAO, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
   
+  context "CategoryMeetingStatDAO subclass," do
+    
+    let( :category_type )         { meeting.season.category_types.at( ( rand * meeting.season.category_types.count ).to_i ) }
+
+    subject { MeetingStatDAO::CategoryMeetingStatDAO.new( category_type ) }
+  
+    describe "[a well formed instance]" do
+      it "category type is the one used in costruction" do
+        expect( subject.category_type ).to eq( category_type )
+      end
+
+      it_behaves_like( "(the existance of a method returning numeric values)", [
+        :male_ent_swimmers, :female_ent_swimmers, 
+        :male_swimmers,     :female_swimmers
+      ])
+    end
+    #-- -------------------------------------------------------------------------
+
+    describe "#get_ent_swimmers_count" do
+      it "returns sum of male and female entered swimmers count" do
+        expect(subject.get_ent_swimmers_count).to eq(subject.male_ent_swimmers + subject.female_ent_swimmers)
+      end
+    end
+
+    describe "#get_swimmers_count" do
+      it "returns sum of male and female swimmers count" do
+        expect(subject.get_swimmers_count).to eq(subject.male_swimmers + subject.female_swimmers)
+      end
+    end
+    #-- -------------------------------------------------------------------------
+
+    context "not a valid instance" do   
+      it "raises an exception for wrong category parameter" do
+        expect{ MeetingStatDAO::CategoryMeetingStatDAO.new() }.to raise_error( ArgumentError )
+        expect{ MeetingStatDAO::CategoryMeetingStatDAO.new( 'Wrong parameter' ) }.to raise_error( ArgumentError )
+      end   
+    end
+    #-- -------------------------------------------------------------------------
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
+  context "EventMeetingStatDAO subclass," do
+    
+    let( :event_type )         { meeting.event_types.at( ( rand * meeting.event_types.count ).to_i ) }
+
+    subject { MeetingStatDAO::EventMeetingStatDAO.new( event_type ) }
+  
+    describe "[a well formed instance]" do
+      it "event type is the one used in costruction" do
+        expect( subject.event_type ).to eq( event_type )
+      end
+
+      it_behaves_like( "(the existance of a method returning numeric values)", [
+        :male_entries,       :female_entries, 
+        :male_results,       :female_results
+      ])
+    end
+    #-- -------------------------------------------------------------------------
+
+    describe "#get_entries_count" do
+      it "returns sum of male and female entries count" do
+        expect(subject.get_entries_count).to eq(subject.male_entries + subject.female_entries)
+      end
+    end
+
+    describe "#get_results_count" do
+      it "returns sum of male and female results count" do
+        expect(subject.get_results_count).to eq(subject.male_results + subject.female_results)
+      end
+    end
+    #-- -------------------------------------------------------------------------
+
+    context "not a valid instance" do   
+      it "raises an exception for wrong event parameter" do
+        expect{ MeetingStatDAO::EventMeetingStatDAO.new() }.to raise_error( ArgumentError )
+        expect{ MeetingStatDAO::EventMeetingStatDAO.new( 'Wrong parameter' ) }.to raise_error( ArgumentError )
+      end   
+    end
+    #-- -------------------------------------------------------------------------
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
   subject { MeetingStatDAO.new( meeting ) }
 
   describe "[a well formed instance]" do

@@ -58,6 +58,7 @@ class Meeting < ActiveRecord::Base
   has_many :swimmers,       through: :meeting_individual_results
   has_many :teams,          through: :meeting_individual_results
   has_many :event_types,    through: :meeting_events
+  has_many :category_types, through: :meeting_programs
 
   validates_presence_of :code,        length: { within: 1..50 }, allow_nil: false
   validates_presence_of :header_year, length: { within: 1..9 }, allow_nil: false

@@ -14,24 +14,30 @@
               %i= I18n.t('meeting_stats.males')
             %td.span1.goggles-centeralign
               %i= I18n.t('meeting_stats.total')
-          - gtot_fem = gtot_mal = gtot = 0
-          - @meeting_stats.categories.each do |category_stat|
-            - gtot_fem  += category_stat.female_swimmers
-            - gtot_mal  += category_stat.male_swimmers
-            - gtot      += category_stat.get_swimmers_count
+          - gtot_name = gtot_fem = gtot_mal = gtot = 0
+          - @categories_array.each do |category_array|
+            - name = category_array[1]
+            - tot_fem = category_array[2]
+            - tot_mal = category_array[3]
+            - sub_tot = category_array[4]
+            - gtot_name += 1
+            - gtot_fem  += tot_fem
+            - gtot_mal  += tot_mal
+            - gtot      += sub_tot
             %tr
               %td.span2
-                = category_stat.category_type.code
+                = name
               %td.span1.goggles-rightalign
-                = category_stat.female_swimmers
+                = tot_fem
               %td.span1.goggles-rightalign
-                = category_stat.male_swimmers
+                = tot_mal
               %td.span1.goggles-rightalign
-                = category_stat.get_swimmers_count
+                = sub_tot
           -# Totals
+          -# Leega: TODO Apply description to the first column of total row
           %tr
             %td.span2.goggles-rightalign
-              %i= @meeting_stats.categories.count
+              %i= gtot_name
             %td.span1.goggles-rightalign
               %i= gtot_fem
             %td.span1.goggles-rightalign

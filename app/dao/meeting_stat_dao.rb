@@ -119,6 +119,74 @@ class MeetingStatDAO
   end
   # ---------------------------------------------------------------------------
 
+  class CategoryMeetingStatDAO
+    # These must be initialized on creation:
+    attr_reader :category_type
+  
+    # These can be edited later on:
+    attr_accessor :male_ent_swimmers, :female_ent_swimmers, 
+                  :male_swimmers,     :female_swimmers
+
+    # Creates a new instance.
+    # Note the ascending precision of the parameters, which allows to skip
+    # the rarely used ones.
+    #
+    def initialize( category_type )
+      unless category_type && category_type.instance_of?( CategoryType )
+        raise ArgumentError.new("Category meeting stat needs a valid category type")
+      end
+  
+      @category_type        = category_type
+      @male_ent_swimmers    = 0
+      @female_ent_swimmers  = 0
+      @male_swimmers        = 0
+      @female_swimmers      = 0
+    end
+    
+    def get_ent_swimmers_count
+      @male_ent_swimmers + @female_ent_swimmers
+    end
+    
+    def get_swimmers_count
+      @male_swimmers + @female_swimmers
+    end
+  end
+  # ---------------------------------------------------------------------------
+
+  class EventMeetingStatDAO
+    # These must be initialized on creation:
+    attr_reader :event_type
+  
+    # These can be edited later on:
+    attr_accessor :male_entries,       :female_entries, 
+                  :male_results,       :female_results
+
+    # Creates a new instance.
+    # Note the ascending precision of the parameters, which allows to skip
+    # the rarely used ones.
+    #
+    def initialize( event_type )
+      unless event_type && event_type.instance_of?( EventType )
+        raise ArgumentError.new("Event meeting stat needs a valid event type")
+      end
+  
+      @event_type           = event_type
+      @male_entries         = 0
+      @female_entries       = 0
+      @male_results         = 0
+      @female_results       = 0
+    end
+    
+    def get_entries_count
+      @male_entries + @female_entries
+    end
+    
+    def get_results_count
+      @male_results + @female_results
+    end
+  end
+  # ---------------------------------------------------------------------------
+
   # These must be initialized on creation:
   attr_reader :meeting
 
@@ -187,6 +255,19 @@ class MeetingStatDAO
   end
   # ---------------------------------------------------------------------------
 
+  # Ceates a new category element
+  #
+  def new_category( category_type )
+    CategoryMeetingStatDAO.new( category_type )
+  end
+  # ---------------------------------------------------------------------------
+
+  # Ceates a new event element
+  #
+  def new_event( event_type )
+    EventMeetingStatDAO.new( event_type )
+  end
+  # ---------------------------------------------------------------------------
   
   # General property setter
   # 
@@ -219,6 +300,7 @@ class MeetingStatDAO
     generals[:swimmers_female_count]  = 0
     generals[:results_male_count]     = 0
     generals[:results_female_count]   = 0
+    generals[:results_relay_count]    = 0
     generals[:oldest_male_swimmers]   = []
     generals[:oldest_female_swimmers] = []
 

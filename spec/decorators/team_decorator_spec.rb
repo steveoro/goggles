@@ -25,11 +25,35 @@ describe TeamDecorator, type: :model do
     it "returns an HTML link" do
       expect( subject.get_linked_name ).to include( 'href' )
     end
-    it "returns an HTML link to the swimmer radiography path" do
+    it "returns an HTML link to the team radiography path" do
       expect( subject.get_linked_name ).to include( team_radio_path(id: subject.id) )
     end
     it "returns a string containing the team full name" do
       expect( subject.get_linked_name ).to include( ERB::Util.html_escape(subject.get_full_name) )
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+  describe "#get_linked_to_results_name" do
+    # Pre-loaded seeded meeting
+    before(:all) do
+      @seeded_meets = [12101, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 13223, 14216, 14101, 14105]
+    end
+    
+    let( :meeting )                   { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
+
+    it "responds to #get_linked_to_results_name method" do
+      expect( subject ).to respond_to( :get_linked_to_results_name )
+    end
+    it "returns an HTML link" do
+      expect( subject.get_linked_to_results_name( meeting ) ).to include( 'href' )
+    end
+    it "returns an HTML link to the team results path" do
+      expect( subject.get_linked_to_results_name( meeting ) ).to include( meeting_show_team_results_path(id: meeting.id, team_id: subject.id) )
+    end
+    it "returns a string containing the team full name" do
+      expect( subject.get_linked_to_results_name( meeting ) ).to include( ERB::Util.html_escape(subject.get_full_name) )
     end
   end
   #-- --------------------------------------------------------------------------

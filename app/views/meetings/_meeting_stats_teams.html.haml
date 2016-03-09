@@ -12,11 +12,11 @@
               %i= I18n.t('meeting_stats.females')
             %td.span1.goggles-centeralign
               %i= I18n.t('meeting_stats.males')
+            %td.span1.goggles-centeralign
+              %i= I18n.t('meeting_stats.total')
             - if @meeting_stat_calculator.has_relays?
               %td.span1.goggles-centeralign
                 %i= I18n.t('meeting_stats.relays')
-            %td.span1.goggles-centeralign
-              %i= I18n.t('meeting_stats.total')
             %td.span1.goggles-centeralign
               = image_tag( "medal_gold_3.png" )
             %td.span1.goggles-centeralign
@@ -41,16 +41,16 @@
 
             %tr{'class' => is_highlighted ? 'warning' : ''}
               %td.span3
-                = team_stat.team.decorate.get_linked_name
+                = team_stat.team.decorate.get_linked_to_results_name(@meeting)
               %td.span1.goggles-rightalign
                 = team_stat.female_swimmers
               %td.span1.goggles-rightalign
                 = team_stat.male_swimmers
+              %td.span1.goggles-rightalign
+                = team_stat.get_swimmers_count
               - if @meeting_stat_calculator.has_relays?
                 %td.span1.goggles-rightalign
                   = team_stat.relay_results
-              %td.span1.goggles-rightalign
-                = team_stat.get_swimmers_count
               %td.span1.goggles-rightalign
                 = team_stat.get_golds_count
               %td.span1.goggles-rightalign
@@ -66,11 +66,11 @@
               %i= gtot_fem
             %td.span1.goggles-rightalign
               %i= gtot_mal
+            %td.span1.goggles-rightalign
+              %i= gtot
             - if @meeting_stat_calculator.has_relays?
               %td.span1.goggles-rightalign
                 %i= gtot_rel
-            %td.span1.goggles-rightalign
-              %i= gtot
             %td.span1.goggles-rightalign
               %i= tot_gold
             %td.span1.goggles-rightalign

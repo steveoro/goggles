@@ -87,6 +87,20 @@ class MeetingStatCalculator
   def get_team_entries_count( team, scope_name = :is_male )
     @meeting.meeting_entries.for_team(team).send(scope_name.to_sym).count
   end
+
+  # Statistic calculation for the meeting entries count for a given category
+  # Entries are intended the distinct entries for the meeting
+  #
+  def get_category_ent_swimmers_count( category_type, scope_name = :is_male )
+    @meeting.meeting_entries.for_category_type(category_type).send(scope_name.to_sym).select('swimmer_id').uniq.count
+  end
+
+  # Statistic calculation for the meeting entries count for a given event
+  # Entries are intended the distinct entries for the meeting
+  #
+  def get_event_entries_count( event_type, scope_name = :is_male )
+    @meeting.meeting_entries.for_event_type(event_type).send(scope_name.to_sym).count
+  end
   # ---------------------------------------------------------------------------
 
   # Statistic calculation for the meeting entries swimmer count
@@ -122,13 +136,26 @@ class MeetingStatCalculator
   def get_results_count( scope_name = :is_male )
     @meeting.meeting_individual_results.send(scope_name.to_sym).count
   end
-  # ---------------------------------------------------------------------------
   
   # Statistic calculation for the meeting results count for a given team
   # Results are intended the distinct results swam in the meeting
   #
   def get_team_results_count( team, scope_name = :is_male )
     @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).count
+  end
+  
+  # Statistic calculation for the meeting results count for a given category
+  # Results are intended the distinct results swam in the meeting
+  #
+  def get_category_swimmers_count( category_type, scope_name = :is_male )
+    @meeting.meeting_individual_results.for_category_type(category_type).send(scope_name.to_sym).select('swimmer_id').uniq.count
+  end
+  
+  # Statistic calculation for the meeting results count for a given event
+  # Results are intended the distinct results swam in the meeting
+  #
+  def get_event_results_count( event_type, scope_name = :is_male )
+    @meeting.meeting_individual_results.for_event_type(event_type).send(scope_name.to_sym).count
   end
   # ---------------------------------------------------------------------------
 
@@ -257,7 +284,7 @@ class MeetingStatCalculator
 
   # General stats calculation
   #
-  def calculate( bests = 3, worsts = 1, oldests = 1, entries = true, teams = true )
+  def calculate( bests = 3, worsts = 1, oldests = 1, entries = true, teams = true, categories = true, events = true )
     # Entry-based
     if entries && has_entries?
       @meeting_stats.set_general( :ent_teams_count          , get_entered_teams_count() )
@@ -274,6 +301,7 @@ class MeetingStatCalculator
       @meeting_stats.set_general( :swimmers_female_count , get_swimmers_count(:is_female) )
       @meeting_stats.set_general( :results_male_count    , get_results_count(:is_male) )
       @meeting_stats.set_general( :results_female_count  , get_results_count(:is_female) )
+      @meeting_stats.set_general( :results_relay_count   , @meeting.meeting_relay_results.count )
       @meeting_stats.set_general( :oldest_male_swimmers  , get_oldest_swimmers(:is_male, oldests ) )
       @meeting_stats.set_general( :oldest_female_swimmers, get_oldest_swimmers(:is_female, oldests ) )
   
@@ -293,6 +321,8 @@ class MeetingStatCalculator
     end
     
     calculate_teams( entries ) if teams
+    calculate_categories( entries ) if categories
+    calculate_events( entries ) if events
     
     @meeting_stats    
   end
@@ -305,7 +335,7 @@ class MeetingStatCalculator
       team_stat = @meeting_stats.new_team( team )
 
       # Entry-based
-      if entries && has_entries? && @meeting.meeting_entries.for_team( team ).count > 0
+      if entries && has_entries?
         team_stat.male_ent_swimmers   = get_team_entered_swimmers_count( team, :is_male )
         team_stat.female_ent_swimmers = get_team_entered_swimmers_count( team, :is_female )
         team_stat.male_entries        = get_team_entries_count( team, :is_male )
@@ -313,7 +343,7 @@ class MeetingStatCalculator
       end
 
       # Result-based
-      if has_results? && @meeting.meeting_individual_results.for_team( team ).count > 0
+      if has_results?
         # Default
         team_stat.male_results         = get_team_results_count( team, :is_male )
         team_stat.female_results       = get_team_results_count( team, :is_male )
@@ -353,6 +383,54 @@ class MeetingStatCalculator
       @meeting_stats.teams << team_stat #if team_stat.get_entries_count + team_stat.get_results_count + team_stat.get_disqualifieds_count > 0  
     end
     @meeting_stats.teams
+  end  
+  # ---------------------------------------------------------------------------
+
+  # Category stats calculation
+  #
+  def calculate_categories( entries = true )
+    @meeting.category_types.are_not_relays.is_divided.sort_by_age.uniq.each do |category_type|
+      category_stat = @meeting_stats.new_category( category_type )
+
+      # Entry-based
+      if entries && has_entries?
+        category_stat.male_ent_swimmers   = get_category_ent_swimmers_count( category_type, :is_male )
+        category_stat.female_ent_swimmers = get_category_ent_swimmers_count( category_type, :is_female )
+      end
+
+      # Result-based
+      if has_results?
+        category_stat.male_swimmers        = get_category_swimmers_count( category_type, :is_male )
+        category_stat.female_swimmers      = get_category_swimmers_count( category_type, :is_female )
+      end
+      
+      @meeting_stats.categories << category_stat  
+    end
+    @meeting_stats.categories
+  end  
+  # ---------------------------------------------------------------------------
+
+  # Event stats calculation
+  #
+  def calculate_events( entries = true )
+    @meeting.event_types.uniq.each do |event_type|
+      event_stat = @meeting_stats.new_event( event_type )
+
+      # Entry-based
+      if entries && has_entries?
+        event_stat.male_entries        = get_event_entries_count( event_type, :is_male )
+        event_stat.female_entries      = get_event_entries_count( event_type, :is_female )
+      end
+
+      # Result-based
+      if has_results?
+        event_stat.male_results         = get_event_results_count( event_type, :is_male )
+        event_stat.female_results       = get_event_results_count( event_type, :is_female )
+      end
+      
+      @meeting_stats.events << event_stat  
+    end
+    @meeting_stats.events
   end  
   # ---------------------------------------------------------------------------
 

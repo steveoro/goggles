@@ -45,6 +45,8 @@ class MeetingEntry < ActiveRecord::Base
 
   scope :for_gender, ->(gender_type_id) { joins(:meeting_program).where(["meeting_programs.gender_type_id = ?", gender_type_id]) }
   scope :for_team,   ->(team_id) { where(["team_id = ?", team_id]) }
+  scope :for_category_type, ->(category_type) { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
+  scope :for_event_type,    ->(event_type)    { joins(:event_type).where(["event_types.id = ?", event_type.id]) }
 
   scope :sort_by_number,        -> { order('start_list_number ASC, is_no_time DESC, (minutes*6000+seconds*100+hundreds) DESC ') }
   scope :sort_by_gender_number, -> { joins(:meeting_program).order('meeting_programs.gender_type_id DESC, start_list_number ASC, is_no_time DESC, (minutes*6000+seconds*100+hundreds) DESC ') }
