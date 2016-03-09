@@ -43,12 +43,20 @@ class MeetingStatCalculator
     (( @meeting.are_results_acquired || @meeting.meeting_individual_results.count > 0 ) && @meeting.teams.uniq.count > 1 )
   end
 
+  # Verify if meeting has relays
+  # Meeting should have results
+  # and some meeting_relay_results
+  #
+  def has_relays?()
+    ( has_results? && @meeting.meeting_relay_results.count > 0 )
+  end
+
   # Verify if meeting has entries
   # Meeting should have some meeting_entries
   # and more than one entered team
   #
   def has_entries?()
-    ( @meeting.meeting_entries.count > 0 && @meeting.meeting_entries.includes(:team).select('teams.id').uniq.count > 1 )
+    ( @meeting.meeting_entries.count > 0 && @meeting.meeting_entries.select('team_id').uniq.count > 1 )
   end
   # ---------------------------------------------------------------------------
 
@@ -85,14 +93,14 @@ class MeetingStatCalculator
   # swimmers are intended the physical distinct swimmers entered the meeting
   #
   def get_entered_swimmers_count( scope_name = :is_male )
-    @meeting.meeting_entries.send(scope_name.to_sym).includes(:swimmers).select('swimmers.id').uniq.count    
+    @meeting.meeting_entries.send(scope_name.to_sym).select('swimmer_id').uniq.count    
   end
 
   # Statistic calculation for the meeting entries swimmer count for a given team
   # swimmers are intended the physical distinct swimmers entered the meeting
   #
   def get_team_entered_swimmers_count( team, scope_name = :is_male )
-    @meeting.meeting_entries.for_team(team).send(scope_name.to_sym).includes(:swimmers).select('swimmers.id').uniq.count    
+    @meeting.meeting_entries.for_team(team).send(scope_name.to_sym).select('swimmer_id').uniq.count    
   end
   # ---------------------------------------------------------------------------
   
@@ -136,7 +144,7 @@ class MeetingStatCalculator
   # swimmers are intended the physical distinct swimmers swam in the meeting
   #
   def get_team_swimmers_count( team, scope_name = :is_male )
-    @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).includes(:swimmers).select('swimmers.id').uniq.count    
+    @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).select('swimmer_id').uniq.count    
   end
   # ---------------------------------------------------------------------------
   
@@ -198,7 +206,7 @@ class MeetingStatCalculator
   def get_average( scope_name = :is_male )
     result_count = @meeting.meeting_individual_results.send(scope_name.to_sym).has_points.count
     if result_count > 0
-      standard_points_sum = @meeting.meeting_individual_results.send(scope_name.to_sym).sum(:standard_points)
+      standard_points_sum = @meeting.meeting_individual_results.send(scope_name.to_sym).has_points.sum(:standard_points)
       (standard_points_sum / result_count).round(2)
     else
       result_count
@@ -212,7 +220,7 @@ class MeetingStatCalculator
   def get_team_average( team, scope_name = :is_male )
     result_count = @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).has_points.count
     if result_count > 0
-      standard_points_sum = @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).sum(:standard_points)
+      standard_points_sum = @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).has_points.sum(:standard_points)
       (standard_points_sum / result_count).round(2)
     else
       result_count
@@ -252,20 +260,20 @@ class MeetingStatCalculator
   def calculate( bests = 3, worsts = 1, oldests = 1, entries = true, teams = true )
     # Entry-based
     if entries && has_entries?
+      @meeting_stats.set_general( :ent_teams_count          , get_entered_teams_count() )
       @meeting_stats.set_general( :ent_swimmers_male_count  , get_entered_swimmers_count(:is_male) )
       @meeting_stats.set_general( :ent_swimmers_female_count, get_entered_swimmers_count(:is_female) )
       @meeting_stats.set_general( :entries_male_count       , get_entries_count(:is_male) )
       @meeting_stats.set_general( :entries_female_count     , get_entries_count(:is_female) )
-      @meeting_stats.set_general( :ent_team_count           , get_entered_teams_count() )
     end
   
     # Result-based
     if has_results?
+      @meeting_stats.set_general( :teams_count           , get_teams_count() )
       @meeting_stats.set_general( :swimmers_male_count   , get_swimmers_count(:is_male) )
       @meeting_stats.set_general( :swimmers_female_count , get_swimmers_count(:is_female) )
       @meeting_stats.set_general( :results_male_count    , get_results_count(:is_male) )
       @meeting_stats.set_general( :results_female_count  , get_results_count(:is_female) )
-      @meeting_stats.set_general( :teams_count           , get_teams_count() )
       @meeting_stats.set_general( :oldest_male_swimmers  , get_oldest_swimmers(:is_male, oldests ) )
       @meeting_stats.set_general( :oldest_female_swimmers, get_oldest_swimmers(:is_female, oldests ) )
   
@@ -290,11 +298,10 @@ class MeetingStatCalculator
   end
   # ---------------------------------------------------------------------------
 
-
   # Team stats calculation
   #
-  def calculate_teams( entries = true )
-    @meeting.teams.uniq.each do |team|
+  def calculate_teams( entries = true, scores = true, ranks = true )
+    @meeting.teams.sort_by_name('ASC').uniq.each do |team|
       team_stat = @meeting_stats.new_team( team )
 
       # Entry-based
@@ -307,29 +314,161 @@ class MeetingStatCalculator
 
       # Result-based
       if has_results? && @meeting.meeting_individual_results.for_team( team ).count > 0
+        # Default
         team_stat.male_results         = get_team_results_count( team, :is_male )
         team_stat.female_results       = get_team_results_count( team, :is_male )
         team_stat.male_swimmers        = get_team_swimmers_count( team, :is_male )
         team_stat.female_swimmers      = get_team_swimmers_count( team, :is_female )
-        team_stat.male_best            = get_team_best_standard( team, :is_male )
-        team_stat.male_worst           = get_team_worst_standard( team, :is_male )
-        team_stat.male_average         = get_team_average( team, :is_male )
-        team_stat.female_best          = get_team_best_standard( team, :is_female )
-        team_stat.female_worst         = get_team_worst_standard( team, :is_female )
-        team_stat.female_average       = get_team_average( team, :is_female )
-        team_stat.male_disqualifieds   = get_team_disqualifieds_count( team, :is_male )
-        team_stat.female_disqualifieds = get_team_disqualifieds_count( team, :is_female )
-        team_stat.male_golds           = get_team_medals( team, :is_male, 1 )
-        team_stat.male_silvers         = get_team_medals( team, :is_male, 2 )
-        team_stat.male_bronzes         = get_team_medals( team, :is_male, 3 )
-        team_stat.female_golds         = get_team_medals( team, :is_female, 1 )
-        team_stat.female_silvers       = get_team_medals( team, :is_female, 2 )
-        team_stat.female_bronzes       = get_team_medals( team, :is_female, 3 )
+        team_stat.relay_results        = @meeting.meeting_relay_results.for_team( team ).count
+        
+        # Score stats
+        if scores
+          team_stat.male_best            = get_team_best_standard( team, :is_male )
+          team_stat.male_worst           = get_team_worst_standard( team, :is_male )
+          team_stat.male_average         = get_team_average( team, :is_male )
+          team_stat.female_best          = get_team_best_standard( team, :is_female )
+          team_stat.female_worst         = get_team_worst_standard( team, :is_female )
+          team_stat.female_average       = get_team_average( team, :is_female )
+        end
+
+        # Ranking stats
+        if ranks
+          team_stat.male_disqualifieds   = get_team_disqualifieds_count( team, :is_male )
+          team_stat.female_disqualifieds = get_team_disqualifieds_count( team, :is_female )
+          team_stat.male_golds           = get_team_medals( team, :is_male, 1 )
+          team_stat.male_silvers         = get_team_medals( team, :is_male, 2 )
+          team_stat.male_bronzes         = get_team_medals( team, :is_male, 3 )
+          team_stat.female_golds         = get_team_medals( team, :is_female, 1 )
+          team_stat.female_silvers       = get_team_medals( team, :is_female, 2 )
+          team_stat.female_bronzes       = get_team_medals( team, :is_female, 3 )
+        end
+        if has_relays? && @meeting.meeting_relay_results.for_team( team ).count > 0
+          team_stat.relay_disqualifieds  = @meeting.meeting_relay_results.for_team( team ).is_disqualified.count
+          team_stat.relay_golds          = @meeting.meeting_relay_results.for_team( team ).has_rank( 1 ).count
+          team_stat.relay_silvers        = @meeting.meeting_relay_results.for_team( team ).has_rank( 2 ).count
+          team_stat.relay_bronzes        = @meeting.meeting_relay_results.for_team( team ).has_rank( 3 ).count
+        end
       end
       
-      @meeting_stats.teams << team_stat if team_stat.get_entries_count + team_stat.get_results_count + team_stat.get_disqualifieds_count > 0  
+      @meeting_stats.teams << team_stat #if team_stat.get_entries_count + team_stat.get_results_count + team_stat.get_disqualifieds_count > 0  
     end
     @meeting_stats.teams
   end  
   # ---------------------------------------------------------------------------
+
+  # Calculate stats cycling meeting individual results
+  # Deprecate but useful to check single stat methods
+  #
+  def calculate_by_cycle
+    teams_hash = {}
+    # Stores, for each Team id as key:
+    # team_id => [ [array of processed swimmer ids], Team name, Male count, female count, tot. count, is_highlighted, gold_count, silver_count, bronze_count ],
+    # Sort resulting list by team name, ASC
+
+    categories_hash = {}
+    # Stores, for each category id as key:
+    # category_id => [ [array of processed swimmer ids], category name, Male count, female count, tot. count ],
+    # Sort resulting list by category ID, ASC
+
+    event_types_hash = {}
+    # Stores, for each EventType id as key:
+    # event_type_id => [ EventType name, Male count, female count, tot. count ],
+    # Sort resulting list by event_type name, ASC
+
+    mir = @meeting.meeting_individual_results.is_valid
+                                                    # Loop upon all individual results and count the athletes, without duplicates (each athlete may have more than 1 result for its own team):
+    mir.each { |ind_result|                         # "1 loop to bind them all..."
+      swimmer = ind_result.swimmer
+      female = swimmer.is_female ? 1 : 0
+      male   = swimmer.is_male ? 1 : 0
+      male_female = male + female
+      #gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      #silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      #bronze = ( (ind_result.rank==3) && ind_result.is_valid_for_ranking && (ind_result.meeting_individual_points>0) ? 1 : 0 )
+      gold   = ( (ind_result.rank==1) && ind_result.is_valid_for_ranking ? 1 : 0 )
+      silver = ( (ind_result.rank==2) && ind_result.is_valid_for_ranking ? 1 : 0 )
+      bronze = ( (ind_result.rank==3) && ind_result.is_valid_for_ranking ? 1 : 0 )
+                                                    # Collect athletes' gender for each team:
+      if teams_hash[ ind_result.team_id ].nil?
+        teams_hash[ ind_result.team_id ] = [
+          [ind_result.swimmer_id],
+          ind_result.team.get_full_name,
+          female,
+          male,
+          male_female,
+          false,
+          gold,
+          silver,
+          bronze
+        ]
+      else
+        team_arr = teams_hash[ ind_result.team_id ]
+        unless team_arr[0].include?( ind_result.swimmer_id )
+          team_arr[0] << ind_result.swimmer_id      # Add current result's swimmer to the "already processed list"
+          team_arr[2] += female
+          team_arr[3] += male
+          team_arr[4] += male_female
+          # idx 5 => is_highlighted
+        end
+                                                    # Always count the medals: (we have to count just one swimmer for each result, but we want to count all the medals)
+        team_arr[6] += gold
+        team_arr[7] += silver
+        team_arr[8] += bronze
+      end
+                                                    # Collect athletes' gender for each category, without duplicates (each athlete may have more than 1 result for its own category):
+      if categories_hash[ ind_result.get_category_type_id ].nil?
+        categories_hash[ ind_result.get_category_type_id ] = [
+          [ind_result.swimmer_id],
+          ind_result.get_category_type_short_name,
+          female,
+          male,
+          male_female
+        ]
+      else
+        cat_arr = categories_hash[ ind_result.get_category_type_id ]
+        unless cat_arr[0].include?( ind_result.swimmer_id )
+          cat_arr[0] << ind_result.swimmer_id       # Add current result's swimmer to the "already processed list"
+          cat_arr[2] += female
+          cat_arr[3] += male
+          cat_arr[4] += male_female
+        end
+      end
+                                                    # Collect athletes' gender for each event type (each athlete will ALWAYS have just 1 result for each event type):
+      if event_types_hash[ ind_result.get_event_type_id ].nil?
+        event_types_hash[ ind_result.get_event_type_id ] = [
+          ind_result.get_event_type_description,
+          female,
+          male,
+          male_female
+        ]
+      else
+        evnt_arr = event_types_hash[ ind_result.get_event_type_id ]
+        evnt_arr[1] += female
+        evnt_arr[2] += male
+        evnt_arr[3] += male_female
+      end
+    }
+                                                    # Add also relay medals to the medal count:
+    mrr = @meeting.meeting_relay_results.is_valid
+    mrr.each { |rel_result|
+      team_arr = teams_hash[ rel_result.team_id ]
+      if team_arr
+        gold   = ( rel_result.rank==1 && rel_result.is_valid_for_ranking ? 1 : 0 )
+        silver = ( rel_result.rank==2 && rel_result.is_valid_for_ranking ? 1 : 0 )
+        bronze = ( rel_result.rank==3 && rel_result.is_valid_for_ranking ? 1 : 0 )
+        team_arr[6] += gold
+        team_arr[7] += silver
+        team_arr[8] += bronze
+      end
+    }
+                                                  # Prepare the team gender count list and sort it by name:
+    teams_hash.each { |key, val| val[0] = key }   # Substitute each 0-th element with the key (team_id)
+    @teams_array = teams_hash.values.sort{ |a, b|  a[1] <=> b[1] }
+                                                  # Prepare the category gender count list and sort it by category ID (hash key):
+    @categories_array = categories_hash.keys.sort.collect{ |k| categories_hash[k] }
+                                                  # Prepare the event type gender count list and sort it by name:
+    @event_types_array = event_types_hash.values.sort{ |a, b|  a[0] <=> b[0] }
+  end
+  # ---------------------------------------------------------------------------
+
 end

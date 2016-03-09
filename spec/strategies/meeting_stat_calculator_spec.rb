@@ -34,11 +34,12 @@ end
 describe MeetingStatCalculator, :type => :model do
   # Pre-loaded seeded last CSI season and some acquired FIN
   before(:all) do
-    @seeded_meets = [12101, 12102, 12103, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 13223]
-    @csi_meets = [12101, 12104, 12105, 13101, 13105, 13106, 14101, 14105, 14106]
+    @seeded_meets = [12101, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 13223, 14216, 14101, 14105]
+    @csi_meets = [12101, 12104, 12105, 13101, 13105, 14101, 14105]
     @meeting_with_entries = [14105, 14106, 15101, 15102, 15103]
     @meeting_without_entries = [12101, 12102, 12103, 13223, 15207]
     @meeting_with_standard_points = [13223, 13216, 14216, 15216]
+    @meeting_without_relays = [14207, 13207, 12207]
   end
   
   let( :meeting )                   { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
@@ -46,6 +47,7 @@ describe MeetingStatCalculator, :type => :model do
   let( :meet_with_entries )         { Meeting.find( @meeting_with_entries.at( ( rand * @meeting_with_entries.size ).to_i ) ) }
   let( :meet_without_entries )      { Meeting.find( @meeting_without_entries.at( ( rand * @meeting_without_entries.size ).to_i ) ) }
   let( :meet_with_standard_points ) { Meeting.find( @meeting_with_standard_points.at( ( rand * @meeting_with_standard_points.size ).to_i ) ) }
+  let( :meet_without_relays )       { Meeting.find( @meeting_without_relays.at( ( rand * @meeting_without_relays.size ).to_i ) ) }
   
   subject { MeetingStatCalculator.new( meeting ) }
 
@@ -89,6 +91,22 @@ describe MeetingStatCalculator, :type => :model do
         new_meeting = create( :meeting ) 
         stat_without_results = MeetingStatCalculator.new( new_meeting )
         expect( stat_without_results.has_results? ).to be false
+      end
+    end
+
+    describe "#has_relasys?" do
+      it "returns true for a meeting with relays" do
+        stat_csi = MeetingStatCalculator.new( csi_meeting )
+        expect( stat_csi.has_relays? ).to be true
+      end
+      it "returns false for a meeting without relays" do
+        stat_without_relays = MeetingStatCalculator.new( meet_without_relays )
+        expect( stat_without_relays.has_relays? ).to be false
+      end
+      it "returns false for a meeting without results" do
+        new_meeting = create( :meeting ) 
+        stat_without_results = MeetingStatCalculator.new( new_meeting )
+        expect( stat_without_results.has_relays? ).to be false
       end
     end
 
@@ -351,12 +369,12 @@ describe MeetingStatCalculator, :type => :model do
       it "returns the highest standard point for the team for the meeting" do
         fix_team = meeting.teams.uniq.at( (rand * meeting.teams.uniq.count).to_i )
         fix_result = meeting.meeting_individual_results.for_team( fix_team ).first 
-        fix_result.standard_points = ( rand * 1000 + 2000.00 ).round( 2 )
+        fix_result.standard_points = ( ( rand * 1000 ).to_i + 2000 )
         fix_result.save
         if fix_result.gender_type.code == 'F'
-          expect( subject.get_team_best_standard( fix_team, :is_female ).round( 2 ) ).to eq( fix_result.standard_points )
+          expect( subject.get_team_best_standard( fix_team, :is_female ) ).to eq( fix_result.standard_points )
         else
-          expect( subject.get_team_best_standard( fix_team, :is_male ).round( 2 ) ).to eq( fix_result.standard_points )
+          expect( subject.get_team_best_standard( fix_team, :is_male ) ).to eq( fix_result.standard_points )
         end
       end
     end
@@ -376,12 +394,12 @@ describe MeetingStatCalculator, :type => :model do
       it "returns the lowest standard point for the team for the meeting" do
         fix_team = meeting.teams.uniq.at( (rand * meeting.teams.uniq.count).to_i )
         fix_result = meeting.meeting_individual_results.for_team( fix_team ).first 
-        fix_result.standard_points = ( rand * 200 + 10 ).round( 2 )
+        fix_result.standard_points = ( ( rand * 200 ).to_i + 10 )
         fix_result.save
         if fix_result.gender_type.code == 'F'
-          expect( subject.get_team_worst_standard( fix_team, :is_female ).round( 2 ) ).to eq( fix_result.standard_points )
+          expect( subject.get_team_worst_standard( fix_team, :is_female ) ).to eq( fix_result.standard_points )
         else
-          expect( subject.get_team_worst_standard( fix_team, :is_male ).round( 2 ) ).to eq( fix_result.standard_points )
+          expect( subject.get_team_worst_standard( fix_team, :is_male ) ).to eq( fix_result.standard_points )
         end
       end
     end
@@ -524,7 +542,7 @@ describe MeetingStatCalculator, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
-  # Assumes values are corrects and already spec'd
+  # Assumes each single values are corrects and already spec'd
   # before for each single calculation method
   describe "#calculate_teams" do
     it "responds to #calculate_teams" do
@@ -537,17 +555,17 @@ describe MeetingStatCalculator, :type => :model do
       expect( subject.calculate_teams.count ).to be > 0
     end
     it "returns an array with the team count number of elements" do
-      expect( subject.calculate_teams( false ).count ).to eq( subject.get_teams_count )
+      expect( subject.calculate_teams( false ).count ).to eq( subject.calculate( 3, 1, 1, false, false ).get_teams_count )
     end
-    it "returns an array with at least the team count number of elements if entries considered" do
-      expect( subject.calculate_teams.count ).to be >= subject.get_teams_count
+    it "returns an array with at least the entered team count number of elements if entries considered" do
+      expect( subject.calculate_teams.count ).to be >= subject.calculate( 3, 1, 1, true, false ).get_ent_teams_count
     end
     it "returns an array of MeetingStatDAO::TeamMeetingStatDAO" do
       expect( subject.calculate_teams ).to all(be_an_instance_of( MeetingStatDAO::TeamMeetingStatDAO ))
     end
     it "returns stats data for each team considered" do
       subject.calculate_teams.each do |team_stat|
-        expect( team_stat.get_results_count + team_stat.get_entries_count + team_stat.get_disqualifieds_count ).to be > 0
+        expect( team_stat.get_results_count + team_stat.get_entries_count + team_stat.get_disqualifieds_count + team_stat.relay_results ).to be > 0
         expect( team_stat.get_swimmers_count + team_stat.get_ent_swimmers_count ).to be > 0
       end
     end
@@ -586,7 +604,7 @@ describe MeetingStatCalculator, :type => :model do
       expect( subject.has_results? ).to be true
       expect( subject.get_teams_count ).to be > 0
       expect( subject.get_results_count ).to be > 0
-      ms = subject.calculate
+      ms = subject.calculate( 3, 1, 1, false, false )
       expect( ms.teams_count ).to be > 0
       expect( ms.get_results_count ).to eq( subject.get_results_count( :is_male ) + subject.get_results_count( :is_female ) )
     end

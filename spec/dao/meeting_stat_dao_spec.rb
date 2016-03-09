@@ -48,7 +48,12 @@ describe MeetingStatDAO, :type => :model do
         :male_disqualifieds, :female_disqualifieds,
         :male_golds,         :female_golds,
         :male_silvers,       :female_silvers,
-        :male_bronzes,       :female_bronzes
+        :male_bronzes,       :female_bronzes,
+        :relay_results,
+        :relay_disqualifieds,
+        :relay_golds,
+        :relay_silvers,
+        :relay_bronzes
       ])
     end
     #-- -------------------------------------------------------------------------
@@ -79,25 +84,31 @@ describe MeetingStatDAO, :type => :model do
 
     describe "#get_disqualifieds_count" do
       it "returns sum of male and female disqualifieds count" do
-        expect(subject.get_disqualifieds_count).to eq(subject.male_disqualifieds + subject.female_disqualifieds)
+        expect(subject.get_disqualifieds_count).to eq(subject.male_disqualifieds + subject.female_disqualifieds + subject.relay_disqualifieds)
       end
     end
 
     describe "#get_golds_count" do
-      it "returns sum of male and female golds count" do
-        expect(subject.get_golds_count).to eq(subject.male_golds + subject.female_golds)
+      it "returns sum of males, females and relays golds count" do
+        expect(subject.get_golds_count).to eq(subject.male_golds + subject.female_golds + subject.relay_golds)
       end
     end
 
     describe "#get_silvers_count" do
-      it "returns sum of male and female silvers count" do
-        expect(subject.get_silvers_count).to eq(subject.male_silvers + subject.female_silvers)
+      it "returns sum of males, females and relays silvers count" do
+        expect(subject.get_silvers_count).to eq(subject.male_silvers + subject.female_silvers + subject.relay_silvers)
       end
     end
 
     describe "#get_bronzes_count" do
-      it "returns sum of male and female bronzes count" do
-        expect(subject.get_bronzes_count).to eq(subject.male_bronzes + subject.female_bronzes)
+      it "returns sum of males, females and relays bronzes count" do
+        expect(subject.get_bronzes_count).to eq(subject.male_bronzes + subject.female_bronzes + subject.relay_bronzes)
+      end
+    end
+
+    describe "#get_medals_count" do
+      it "returns sum of males, females and relays golds, silver and bronzes count" do
+        expect(subject.get_medals_count).to eq(subject.get_golds_count + subject.get_silvers_count + subject.get_bronzes_count)
       end
     end
     #-- -------------------------------------------------------------------------

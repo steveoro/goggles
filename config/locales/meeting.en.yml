@@ -107,6 +107,7 @@ en:
   meeting_stats:
     females: "Females"
     males: "Males"
+    relays: "Relays"
     total: "Total"
     team_athletes: "Swimmers for Team"
     category_athletes: "Swimmers by category"

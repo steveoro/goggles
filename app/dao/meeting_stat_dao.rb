@@ -35,7 +35,12 @@ class MeetingStatDAO
                   :male_disqualifieds, :female_disqualifieds,
                   :male_golds,         :female_golds,
                   :male_silvers,       :female_silvers,
-                  :male_bronzes,       :female_bronzes
+                  :male_bronzes,       :female_bronzes,
+                  :relay_results,
+                  :relay_disqualifieds,
+                  :relay_golds,
+                  :relay_silvers,
+                  :relay_bronzes
 
     # Creates a new instance.
     # Note the ascending precision of the parameters, which allows to skip
@@ -69,6 +74,11 @@ class MeetingStatDAO
       @female_golds         = 0
       @female_silvers       = 0
       @female_bronzes       = 0
+      @relay_results        = 0
+      @relay_disqualifieds  = 0
+      @relay_golds          = 0
+      @relay_silvers        = 0
+      @relay_bronzes        = 0
     end
     
     def get_entries_count
@@ -88,19 +98,23 @@ class MeetingStatDAO
     end
     
     def get_disqualifieds_count
-      @male_disqualifieds + @female_disqualifieds
+      @male_disqualifieds + @female_disqualifieds + @relay_disqualifieds
     end
     
     def get_golds_count
-      @male_golds + @female_golds
+      @male_golds + @female_golds + @relay_golds
     end
     
     def get_silvers_count
-      @male_silvers + @female_silvers
+      @male_silvers + @female_silvers + @relay_silvers
     end
     
     def get_bronzes_count
-      @male_bronzes + @female_bronzes
+      @male_bronzes + @female_bronzes + @relay_bronzes
+    end
+    
+    def get_medals_count
+      get_golds_count + get_silvers_count + get_bronzes_count 
     end
   end
   # ---------------------------------------------------------------------------
@@ -191,18 +205,20 @@ class MeetingStatDAO
   
   def prepare_generals
     generals = Hash.new
+
+    # Entry-based
+    generals[:ent_teams_count]           = 0
     generals[:ent_swimmers_male_count]   = 0
     generals[:ent_swimmers_female_count] = 0
     generals[:entries_male_count]        = 0
     generals[:entries_female_count]      = 0
-    generals[:ent_team_count]            = 0
 
     # Result-based
+    generals[:teams_count]            = 0
     generals[:swimmers_male_count]    = 0
     generals[:swimmers_female_count]  = 0
     generals[:results_male_count]     = 0
     generals[:results_female_count]   = 0
-    generals[:teams_count]            = 0
     generals[:oldest_male_swimmers]   = []
     generals[:oldest_female_swimmers] = []
 

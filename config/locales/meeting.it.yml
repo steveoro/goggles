@@ -107,6 +107,7 @@ it:
   meeting_stats:
     females: "Femmine"
     males: "Maschi"
+    relays: "Staffette"
     total: "Totale"
     team_athletes: "Nuotatori per Squadra"
     category_athletes: "Nuotatori per categoria"
