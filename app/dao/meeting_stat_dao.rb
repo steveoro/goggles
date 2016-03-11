@@ -281,6 +281,14 @@ class MeetingStatDAO
   def get_general( stat )
     @generals[stat.to_sym] if @generals.has_key?( stat.to_sym )
   end
+
+  # Get team stats
+  # Returns the team stats if any
+  #
+  def get_team_stats( team )
+    
+  end
+
   
   private
   

@@ -1,4 +1,5 @@
 - col_x_meeting = @championship_ranking.columns.count + 1
+- meeting_stats = []
 
 .row-fluid#regional_er_csi
   .goggles-category-gap#pageTop
@@ -71,6 +72,9 @@
                 - @championship_ranking.meetings.each do |meeting|
                   %td.goggles-centeralign{ colspan: 3 }
                     = meeting.decorate.get_linked_city_with_date
+                  - meeting_stat_calculator = MeetingStatCalculator.new( meeting )
+                  - meeting_stats << meeting_stat_calculator.calculate_teams( false, false, false )
+
               %tr{'class'=>'info'}
                 - @championship_ranking.meetings.each do |meeting|
                   %td.goggles-rightalign
@@ -79,8 +83,21 @@
                     = t('championships.females')
                   %td.goggles-rightalign
                     = t('championships.relays')
-              %tr
-                %td{ colspan: 16 }
-                  .p= t('coming_soon')
-                       
+              - @championship_ranking.team_scores.each do |team_score|
+                %tr
+                  %td
+                    = team_score.team.decorate.get_linked_name
+                  - meeting_stats.each do |meeting_stat|
+                    - team = meeting_stat.rindex{ |team_stat| team_stat.team == team_score.team } 
+                    %td.goggles-rightalign
+                      - if team
+                        = meeting_stat[team].female_swimmers
+                    %td.goggles-rightalign
+                      - if team
+                        = meeting_stat[team].male_swimmers
+                    %td.goggles-rightalign
+                      - if team
+                        = meeting_stat[team].relay_results
+                  
+
       .row-fluid.goggles-category-gap

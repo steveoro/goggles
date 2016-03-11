@@ -36,20 +36,68 @@ describe MeetingStatCalculator, :type => :model do
   before(:all) do
     @seeded_meets = [12101, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 15216, 14216, 14101, 14105]
     @csi_meets = [12101, 12104, 12105, 13101, 13105, 14101, 14105]
-    @meeting_with_entries = [14104, 14105, 15101, 15102, 15103]
-    @meeting_without_entries = [12101, 12102, 12103, 13223, 15207]
-    @meeting_with_standard_points = [13223, 13216, 14216, 15216]
-    @meeting_without_relays = [14207, 13207, 12207]
+    @meets_with_entries = [14104, 14105, 15101, 15102, 15103]
+    @meets_without_entries = [12101, 12102, 12103, 13223, 15207]
+    @meets_with_standard_points = [13213, 13216, 13223, 14213, 14216, 15216]
+    @meets_without_relays = [13106, 14207, 13207, 13213, 14213]
   end
   
   let( :meeting )                   { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
   let( :csi_meeting )               { Meeting.find( @csi_meets.at( (rand * @csi_meets.size).to_i ) ) }
-  let( :meet_with_entries )         { Meeting.find( @meeting_with_entries.at( ( rand * @meeting_with_entries.size ).to_i ) ) }
-  let( :meet_without_entries )      { Meeting.find( @meeting_without_entries.at( ( rand * @meeting_without_entries.size ).to_i ) ) }
-  let( :meet_with_standard_points ) { Meeting.find( @meeting_with_standard_points.at( ( rand * @meeting_with_standard_points.size ).to_i ) ) }
-  let( :meet_without_relays )       { Meeting.find( @meeting_without_relays.at( ( rand * @meeting_without_relays.size ).to_i ) ) }
+  let( :meet_with_entries )         { Meeting.find( @meets_with_entries.at( ( rand * @meets_with_entries.size ).to_i ) ) }
+  let( :meet_without_entries )      { Meeting.find( @meets_without_entries.at( ( rand * @meets_without_entries.size ).to_i ) ) }
+  let( :meet_with_standard_points ) { Meeting.find( @meets_with_standard_points.at( ( rand * @meets_with_standard_points.size ).to_i ) ) }
+  let( :meet_without_relays )       { Meeting.find( @meets_without_relays.at( ( rand * @meets_without_relays.size ).to_i ) ) }
   
   subject { MeetingStatCalculator.new( meeting ) }
+
+  describe "[fixed data sets]" do
+    it "meeting set has results" do
+      @seeded_meets.each do |meeting_id|
+        meeting = Meeting.find( meeting_id )
+        expect( meeting.are_results_acquired ).to be true
+        expect( meeting.meeting_individual_results.count ).to be > 0
+      end
+    end
+    it "csi meeting set has results fro CSI Ober Ferrari" do
+      @csi_meets.each do |meeting_id|
+        csi_meeting = Meeting.find( meeting_id )
+        expect( csi_meeting.are_results_acquired ).to be true
+        expect( meeting.meeting_individual_results.count ).to be > 0
+        expect( meeting.meeting_individual_results.for_team( Team.find( 1 ) ).count ).to be > 0
+      end
+    end
+    it "meet_with_entries set has entries" do
+      @meets_with_entries.each do |meeting_id|
+        meet_with_entries = Meeting.find( meeting_id )
+        expect( meet_with_entries.has_start_list ).to be true
+        expect( meet_with_entries.meeting_entries.count ).to be > 0
+      end
+    end
+    it "meet_without_entries set hasn't entries" do
+      @meets_without_entries.each do |meeting_id|
+        meet_without_entries = Meeting.find( meeting_id )
+        expect( meet_without_entries.has_start_list ).to be false
+        expect( meet_without_entries.meeting_entries.count ).to eq( 0 )
+      end
+    end
+    it "meet_with_standard_points set has standard points" do
+      @meets_with_standard_points.each do |meeting_id|
+        meet_with_standard_points = Meeting.find( meeting_id )
+        expect( meet_with_standard_points.are_results_acquired ).to be true
+        expect( meet_with_standard_points.meeting_individual_results.count ).to be > 0
+        expect( meet_with_standard_points.meeting_individual_results.has_points.count ).to be > 0
+      end
+    end
+    it "meet_without_relays set hasn't relay results" do
+      @meets_without_relays.each do |meeting_id|
+        meet_without_relays = Meeting.find( meeting_id )
+        expect( meet_without_relays.are_results_acquired ).to be true
+        expect( meet_without_relays.meeting_individual_results.count ).to be > 0
+        expect( meet_without_relays.meeting_relay_results.count ).to eq( 0 )
+      end
+    end
+  end
 
   describe "[a well formed instance]" do
     it_behaves_like( "(the existance of a method returning numeric values)", [

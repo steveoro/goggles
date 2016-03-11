@@ -337,6 +337,7 @@ class MeetingStatCalculator
   # Team stats calculation
   #
   def calculate_teams( entries = true, scores = true, ranks = true )
+    @meeting_stats.teams = []
     @meeting.teams.sort_by_name('ASC').uniq.each do |team|
       team_stat = @meeting_stats.new_team( team )
 
@@ -377,12 +378,13 @@ class MeetingStatCalculator
           team_stat.female_golds         = get_team_medals( team, :is_female, 1 )
           team_stat.female_silvers       = get_team_medals( team, :is_female, 2 )
           team_stat.female_bronzes       = get_team_medals( team, :is_female, 3 )
-        end
-        if has_relays? && @meeting.meeting_relay_results.for_team( team ).count > 0
-          team_stat.relay_disqualifieds  = @meeting.meeting_relay_results.for_team( team ).is_disqualified.count
-          team_stat.relay_golds          = @meeting.meeting_relay_results.for_team( team ).has_rank( 1 ).count
-          team_stat.relay_silvers        = @meeting.meeting_relay_results.for_team( team ).has_rank( 2 ).count
-          team_stat.relay_bronzes        = @meeting.meeting_relay_results.for_team( team ).has_rank( 3 ).count
+
+          if has_relays? && @meeting.meeting_relay_results.for_team( team ).count > 0
+            team_stat.relay_disqualifieds  = @meeting.meeting_relay_results.for_team( team ).is_disqualified.count
+            team_stat.relay_golds          = @meeting.meeting_relay_results.for_team( team ).has_rank( 1 ).count
+            team_stat.relay_silvers        = @meeting.meeting_relay_results.for_team( team ).has_rank( 2 ).count
+            team_stat.relay_bronzes        = @meeting.meeting_relay_results.for_team( team ).has_rank( 3 ).count
+          end
         end
       end
       
@@ -395,6 +397,7 @@ class MeetingStatCalculator
   # Category stats calculation
   #
   def calculate_categories( entries = true )
+    @meeting_stats.categories = []
     @meeting.category_types.are_not_relays.is_divided.sort_by_age.uniq.each do |category_type|
       category_stat = @meeting_stats.new_category( category_type )
 
@@ -419,6 +422,7 @@ class MeetingStatCalculator
   # Event stats calculation
   #
   def calculate_events( entries = true )
+    @meeting_stats.events = []
     @meeting.event_types.are_not_relays.uniq.each do |event_type|
       event_stat = @meeting_stats.new_event( event_type )
 
