@@ -721,12 +721,7 @@ describe MeetingStatCalculator, :type => :model do
       stat_csi = MeetingStatCalculator.new( csi_meeting )
       team_stats = stat_csi.calculate_teams 
       expect( team_stats.size ).to be > 0
-      #expect( team_stats.include?( team: fix_team ) ).to be true
-      found = false
-      team_stats.each do |team_stat|
-        found = true if team_stat.team == fix_team
-      end
-      expect( found ).to be true
+      expect( team_stats.rindex{ |ts| ts.team == fix_team } ).not_to be nil
     end
     it "ignores entries stats if not requested" do
       subject.calculate_teams( false ).each do |team_stat|
