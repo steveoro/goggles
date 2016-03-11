@@ -301,12 +301,13 @@ class MeetingStatDAO
     generals[:results_male_count]     = 0
     generals[:results_female_count]   = 0
     generals[:results_relay_count]    = 0
+    generals[:dsqs_male_count]        = 0
+    generals[:dsqs_female_count]      = 0
+    generals[:dsqs_relay_count]       = 0
     generals[:oldest_male_swimmers]   = []
     generals[:oldest_female_swimmers] = []
 
     # Score-based
-    generals[:dsqs_male_count]         = 0
-    generals[:dsqs_female_count]       = 0
     generals[:average_male_score]      = 0
     generals[:average_female_score]    = 0
     generals[:average_total_score]     = 0

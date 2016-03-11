@@ -36,7 +36,7 @@ describe MeetingStatCalculator, :type => :model do
   before(:all) do
     @seeded_meets = [12101, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 15216, 14216, 14101, 14105]
     @csi_meets = [12101, 12104, 12105, 13101, 13105, 14101, 14105]
-    @meeting_with_entries = [14105, 14106, 15101, 15102, 15103]
+    @meeting_with_entries = [14104, 14105, 15101, 15102, 15103]
     @meeting_without_entries = [12101, 12102, 12103, 13223, 15207]
     @meeting_with_standard_points = [13223, 13216, 14216, 15216]
     @meeting_without_relays = [14207, 13207, 12207]
@@ -184,9 +184,14 @@ describe MeetingStatCalculator, :type => :model do
     end
     
     describe "#get_category_ent_swimmers_count" do
+      # Should be 0 for meeting where the only swimmer of a certain category has been added withou entry (extremely rare)
       it "returns a number > 0 for a category with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
         fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
+        while meet_with_entries.meeting_entries.for_category_type( fix_category ).count == 0 do 
+          fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
+        end
+        expect( meet_with_entries.meeting_entries.for_category_type( fix_category ).count ).to be > 0
         expect( stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_male ) + stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_female ) ).to be > 0
       end
       it "returns 0 for a category without entries for the meeting" do
@@ -211,9 +216,13 @@ describe MeetingStatCalculator, :type => :model do
     end
     
     describe "#get_event_entries_count" do
+      # Should be 0 for meeting where the only swimmer of a certain category has been added withou entry (extremely rare)
       it "returns a number > 0 for an event with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
         fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
+        while meet_with_entries.meeting_entries.for_event_type( fix_event ).count == 0 do 
+          fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
+        end
         expect( stat_with_entries.get_event_entries_count( fix_event, :is_male ) + stat_with_entries.get_event_entries_count( fix_event, :is_female ) ).to be > 0
       end
       it "returns 0 for an event without entries for the meeting" do
