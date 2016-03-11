@@ -268,7 +268,7 @@ class SwimmersController < ApplicationController
         else
           @full_history_events[ pool_code ] << {
             :label => event_name,
-            :data  => 0
+            :data  => 1
           }
         end
       end
