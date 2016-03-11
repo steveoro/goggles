@@ -34,7 +34,7 @@ end
 describe MeetingStatCalculator, :type => :model do
   # Pre-loaded seeded last CSI season and some acquired FIN
   before(:all) do
-    @seeded_meets = [12101, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 13223, 14216, 14101, 14105]
+    @seeded_meets = [12101, 12104, 12105, 13101, 13102, 13103, 13104, 13105, 13106, 15216, 14216, 14101, 14105]
     @csi_meets = [12101, 12104, 12105, 13101, 13105, 14101, 14105]
     @meeting_with_entries = [14105, 14106, 15101, 15102, 15103]
     @meeting_without_entries = [12101, 12102, 12103, 13223, 15207]
@@ -186,7 +186,7 @@ describe MeetingStatCalculator, :type => :model do
     describe "#get_category_ent_swimmers_count" do
       it "returns a number > 0 for a category with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
-        fix_category = meet_with_entries.category_types.uniq.at( (rand * meet_with_entries.category_types.uniq.count).to_i )
+        fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
         expect( stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_male ) + stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_female ) ).to be > 0
       end
       it "returns 0 for a category without entries for the meeting" do
@@ -198,22 +198,22 @@ describe MeetingStatCalculator, :type => :model do
       end
       it "returns 0 for meeting without entries" do
         stat_without_entries = MeetingStatCalculator.new( meet_without_entries )
-        fix_category = meet_with_entries.category_types.uniq.at( (rand * meet_with_entries.category_types.uniq.count).to_i )
+        fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
         expect( stat_without_entries.get_category_ent_swimmers_count( fix_category ) ).to eq( 0 )
         expect( stat_without_entries.get_category_ent_swimmers_count( fix_category, :is_male ) ).to eq( 0 )
         expect( stat_without_entries.get_category_ent_swimmers_count( fix_category, :is_female ) ).to eq( 0 )
       end
       it "returns the total entries number for category male and female" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
-        fix_category = meet_with_entries.category_types.uniq.at( (rand * meet_with_entries.category_types.uniq.count).to_i )
-        expect( stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_male ) + stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_female ) ).to eq( meet_with_entries.meeting_entries.for_category_type( fix_category ).count )
+        fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
+        expect( stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_male ) + stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_female ) ).to be <= meet_with_entries.meeting_entries.for_category_type( fix_category ).count
       end
     end
     
     describe "#get_event_entries_count" do
       it "returns a number > 0 for an event with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
-        fix_event = meet_with_entries.event_types.uniq.at( (rand * meet_with_entries.event_types.uniq.count).to_i )
+        fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
         expect( stat_with_entries.get_event_entries_count( fix_event, :is_male ) + stat_with_entries.get_event_entries_count( fix_event, :is_female ) ).to be > 0
       end
       it "returns 0 for an event without entries for the meeting" do
@@ -225,14 +225,14 @@ describe MeetingStatCalculator, :type => :model do
       end
       it "returns 0 for meeting without entries" do
         stat_without_entries = MeetingStatCalculator.new( meet_without_entries )
-        fix_event = meet_with_entries.event_types.uniq.at( (rand * meet_with_entries.event_types.uniq.count).to_i )
+        fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
         expect( stat_without_entries.get_event_entries_count( fix_event ) ).to eq( 0 )
         expect( stat_without_entries.get_event_entries_count( fix_event, :is_male ) ).to eq( 0 )
         expect( stat_without_entries.get_event_entries_count( fix_event, :is_female ) ).to eq( 0 )
       end
       it "returns the total entries number for event male and female" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
-        fix_event = meet_with_entries.event_types.uniq.at( (rand * meet_with_entries.event_types.uniq.count).to_i )
+        fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
         expect( stat_with_entries.get_event_entries_count( fix_event, :is_male ) + stat_with_entries.get_event_entries_count( fix_event, :is_female ) ).to eq( meet_with_entries.meeting_entries.for_event_type( fix_event ).count )
       end
     end
@@ -333,7 +333,7 @@ describe MeetingStatCalculator, :type => :model do
   
     describe "#get_category_swimmers_count" do
       it "returns a number > 0 for a category with results for the meeting" do
-        fix_category = meeting.category_types.uniq.at( (rand * meeting.category_types.uniq.count).to_i )
+        fix_category = meeting.category_types.are_not_relays.uniq.at( (rand * meeting.category_types.are_not_relays.uniq.count).to_i )
         expect( subject.get_category_swimmers_count( fix_category, :is_male ) + subject.get_category_swimmers_count( fix_category, :is_female ) ).to be > 0
       end
       it "returns 0 for a team without results for the meeting" do
@@ -343,14 +343,14 @@ describe MeetingStatCalculator, :type => :model do
         expect( subject.get_category_swimmers_count( new_category, :is_female ) ).to eq( 0 )
       end
       it "returns the total results number for category male and female" do
-        fix_category = meeting.category_types.uniq.at( (rand * meeting.category_types.uniq.count).to_i )
-        expect( subject.get_category_swimmers_count( fix_category, :is_male ) + subject.get_category_swimmers_count( fix_category, :is_female ) ).to eq( meeting.meeting_individual_results.for_category_type( fix_category ).count )
+        fix_category = meeting.category_types.are_not_relays.uniq.at( (rand * meeting.category_types.are_not_relays.uniq.count).to_i )
+        expect( subject.get_category_swimmers_count( fix_category, :is_male ) + subject.get_category_swimmers_count( fix_category, :is_female ) ).to be <= meeting.meeting_individual_results.for_category_type( fix_category ).count
       end
     end
   
     describe "#get_event_results_count" do
       it "returns a number > 0 for an event with results for the meeting" do
-        fix_event = meeting.event_types.uniq.at( (rand * meeting.event_types.uniq.count).to_i )
+        fix_event = meeting.event_types.are_not_relays.uniq.at( (rand * meeting.event_types.are_not_relays.uniq.count).to_i )
         expect( subject.get_event_results_count( fix_event, :is_male ) + subject.get_event_results_count( fix_event, :is_female ) ).to be > 0
       end
       it "returns 0 for a team without results for the meeting" do
@@ -360,7 +360,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( subject.get_event_results_count( new_event, :is_female ) ).to eq( 0 )
       end
       it "returns the total results number for event male and female" do
-        fix_event = meeting.event_types.uniq.at( (rand * meeting.event_types.uniq.count).to_i )
+        fix_event = meeting.event_types.are_not_relays.uniq.at( (rand * meeting.event_types.are_not_relays.uniq.count).to_i )
         expect( subject.get_event_results_count( fix_event, :is_male ) + subject.get_event_results_count( fix_event, :is_female ) ).to eq( meeting.meeting_individual_results.for_event_type( fix_event ).count )
       end
     end
@@ -653,6 +653,8 @@ describe MeetingStatCalculator, :type => :model do
     end
     it "returns stats data for each team considered" do
       subject.calculate_teams.each do |team_stat|
+        # Try to find out a fucking random failure, that, of corse, will no more happen, huncle dog!
+        puts "#{subject.meeting.id} #{subject.meeting.get_full_name} - #{team_stat.team.get_full_name}" if ( team_stat.get_results_count + team_stat.get_entries_count + team_stat.get_disqualifieds_count + team_stat.relay_results ) == 0
         expect( team_stat.get_results_count + team_stat.get_entries_count + team_stat.get_disqualifieds_count + team_stat.relay_results ).to be > 0
         expect( team_stat.get_swimmers_count + team_stat.get_ent_swimmers_count ).to be > 0
       end
@@ -673,6 +675,60 @@ describe MeetingStatCalculator, :type => :model do
       subject.calculate_teams( false ).each do |team_stat|
         expect( team_stat.get_entries_count ).to eq( 0 )
         expect( team_stat.get_ent_swimmers_count ).to eq( 0 )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Assumes each single values are corrects and already spec'd
+  # before for each single calculation method
+  describe "#calculate_categories" do
+    it "responds to #calculate_categories" do
+      expect( subject ).to respond_to( :calculate_categories )
+    end
+    it "returns an array" do
+      expect( subject.calculate_categories ).to be_a_kind_of( Array )
+    end
+    it "returns an array with at least one category" do
+      expect( subject.calculate_categories.count ).to be > 0
+    end
+    it "returns an array with the category count number of elements" do
+      expect( subject.calculate_categories.count ).to eq( meeting.category_types.are_not_relays.uniq.count )
+    end
+    it "returns an array of MeetingStatDAO::CategoryMeetingStatDAO" do
+      expect( subject.calculate_categories ).to all(be_an_instance_of( MeetingStatDAO::CategoryMeetingStatDAO ))
+    end
+    it "returns stats data for each category considered" do
+      subject.calculate_categories.each do |category_stat|
+        expect( category_stat.get_ent_swimmers_count + category_stat.get_swimmers_count ).to be > 0
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Assumes each single values are corrects and already spec'd
+  # before for each single calculation method
+  describe "#calculate_events" do
+    it "responds to #calculate_events" do
+      expect( subject ).to respond_to( :calculate_events )
+    end
+    it "returns an array" do
+      expect( subject.calculate_events ).to be_a_kind_of( Array )
+    end
+    it "returns an array with at least one event" do
+      expect( subject.calculate_events.count ).to be > 0
+    end
+    it "returns an array with the event count number of elements" do
+      expect( subject.calculate_events.count ).to eq( meeting.event_types.are_not_relays.uniq.count )
+    end
+    it "returns an array of MeetingStatDAO::EventMeetingStatDAO" do
+      expect( subject.calculate_events ).to all(be_an_instance_of( MeetingStatDAO::EventMeetingStatDAO ))
+    end
+    it "returns stats data for each event considered" do
+      subject.calculate_events.each do |event_stat|
+        expect( event_stat.get_entries_count + event_stat.get_results_count ).to be > 0
       end
     end
   end

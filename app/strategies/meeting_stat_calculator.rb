@@ -346,7 +346,7 @@ class MeetingStatCalculator
       if has_results?
         # Default
         team_stat.male_results         = get_team_results_count( team, :is_male )
-        team_stat.female_results       = get_team_results_count( team, :is_male )
+        team_stat.female_results       = get_team_results_count( team, :is_female )
         team_stat.male_swimmers        = get_team_swimmers_count( team, :is_male )
         team_stat.female_swimmers      = get_team_swimmers_count( team, :is_female )
         team_stat.relay_results        = @meeting.meeting_relay_results.for_team( team ).count
@@ -413,7 +413,7 @@ class MeetingStatCalculator
   # Event stats calculation
   #
   def calculate_events( entries = true )
-    @meeting.event_types.uniq.each do |event_type|
+    @meeting.event_types.are_not_relays.uniq.each do |event_type|
       event_stat = @meeting_stats.new_event( event_type )
 
       # Entry-based
