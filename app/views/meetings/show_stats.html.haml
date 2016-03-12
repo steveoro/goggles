@@ -1,10 +1,27 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_stats', @meeting.id, @max_mir_updated_at, @team ? @team.id : 0 ) ) do
-  = render( partial: 'meeting_stats_numbers' )
-  = render( partial: 'meeting_stats_teams' )
-  = render( partial: 'meeting_stats_categories' )
-  = render( partial: 'meeting_stats_events' )
-  = render( partial: 'meeting_stats_specials' )
+  %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_numbers'}
+    .row-fluid
+      = render( partial: 'meeting_stats_numbers' )
+  - if @meeting_stats.teams.size > 0
+    %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_teams'}
+      .row-fluid
+        = render( partial: 'meeting_stats_teams' )
+  - if @meeting_stats.categories.size > 0 || @meeting_stats.events.size > 0
+    %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_categories'}
+      .row-fluid
+        - if @meeting_stats.categories.size > 0
+          = render( partial: 'meeting_stats_categories' )
+        - if @meeting_stats.events.size > 0
+          = render( partial: 'meeting_stats_events' )
+  - if @meeting_stats.best_std_female_scores.size > 0 || @meeting_stats.best_std_male_scores.size > 0
+    %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_evidence'}
+      .row-fluid
+        = render( partial: 'meeting_stats_evidence' )
+  - if @meeting_stats.oldest_female_swimmers.size > 0 || @meeting_stats.oldest_male_swimmers.size > 0
+    %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_specials'}
+      .row-fluid
+        = render( partial: 'meeting_stats_specials' )
   .row-fluid.goggles-category-gap
 
