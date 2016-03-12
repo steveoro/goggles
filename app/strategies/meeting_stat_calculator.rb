@@ -241,6 +241,20 @@ class MeetingStatCalculator
   end
   # ---------------------------------------------------------------------------
 
+  # Statistic calculation for the meeting relays average standard points
+  # Average is calculated considering only > 0 standard point results
+  #
+  def get_relays_average
+    result_count = @meeting.meeting_relay_results.has_points.count
+    if result_count > 0
+      standard_points_sum = @meeting.meeting_relay_results.has_points.sum(:standard_points)
+      (standard_points_sum / result_count).round(2)
+    else
+      result_count
+    end
+  end
+  # ---------------------------------------------------------------------------
+
   # Statistic calculation for the meeting average standard points for a given team
   # Average is calculated considering only > 0 standard point results
   #
@@ -309,6 +323,10 @@ class MeetingStatCalculator
       if has_relays?
         @meeting_stats.set_general( :results_relay_count   , @meeting.meeting_relay_results.count )
         @meeting_stats.set_general( :dsqs_relay_count      , @meeting.meeting_relay_results.is_disqualified.count )
+  
+        if @meeting.meeting_relay_results.has_points.count > 0
+          @meeting_stats.set_general( :average_relay_score   , get_relays_average )
+        end
       end
       
       # Score-based

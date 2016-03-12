@@ -318,6 +318,7 @@ class MeetingStatDAO
     # Score-based
     generals[:average_male_score]      = 0
     generals[:average_female_score]    = 0
+    generals[:average_relay_score]     = 0
     generals[:average_total_score]     = 0
     generals[:over_1000_count]         = 0
     generals[:over_950_count]          = 0

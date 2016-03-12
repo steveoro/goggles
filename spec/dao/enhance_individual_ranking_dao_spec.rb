@@ -50,9 +50,9 @@ describe EnhanceIndividualRankingDAO, type: :model do
       end
     end
     describe "#prestation_points" do
-      it "is a value between 0 and 100" do
+      it "is a value between 0 and 150" do
         expect( subject.prestation_points ).to be >= 0 
-        expect( subject.prestation_points ).to be <= 100 
+        expect( subject.prestation_points ).to be <= 150 
       end
     end
 

@@ -84,6 +84,11 @@
             = I18n.t('meeting_stats.males')
           %td.span1.goggles-rightalign
             = sprintf( "%02.2f", @meeting_stats.average_male_score)
+        %tr
+          %td.span2
+            = I18n.t('meeting_stats.relays')
+          %td.span1.goggles-rightalign
+            = sprintf( "%02.2f", @meeting_stats.average_relay_score)
 
 .span2
   %table.table.table-striped.table-bordered.table-hover.table-condensed

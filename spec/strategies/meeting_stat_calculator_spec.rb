@@ -40,6 +40,7 @@ describe MeetingStatCalculator, :type => :model do
     @meets_without_entries = [12101, 12102, 12103, 13223, 15207]
     @meets_with_standard_points = [13213, 13216, 13223, 14213, 14216, 15216]
     @meets_without_relays = [13106, 14207, 13207, 13213, 14213]
+    @meets_with_std_relays = [14216, 15216, 14201, 15201]
   end
   
   let( :meeting )                   { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
@@ -48,6 +49,7 @@ describe MeetingStatCalculator, :type => :model do
   let( :meet_without_entries )      { Meeting.find( @meets_without_entries.at( ( rand * @meets_without_entries.size ).to_i ) ) }
   let( :meet_with_standard_points ) { Meeting.find( @meets_with_standard_points.at( ( rand * @meets_with_standard_points.size ).to_i ) ) }
   let( :meet_without_relays )       { Meeting.find( @meets_without_relays.at( ( rand * @meets_without_relays.size ).to_i ) ) }
+  let( :meet_with_std_relays )          { Meeting.find( @meets_with_std_relays.at( ( rand * @meets_with_std_relays.size ).to_i ) ) }
   
   subject { MeetingStatCalculator.new( meeting ) }
 
@@ -594,6 +596,21 @@ describe MeetingStatCalculator, :type => :model do
         expect( ave_male ).to be >= stat_with_standard_points.get_team_worst_standard( fix_team, :is_male )
         expect( ave_female ).to be <= stat_with_standard_points.get_team_best_standard( fix_team, :is_female )
         expect( ave_female ).to be >= stat_with_standard_points.get_team_worst_standard( fix_team, :is_female )
+      end
+    end
+
+    describe "#get_relays_average" do
+      it "returns a number > 0 for a meeting with results with standard points" do
+        stat_with_standard_relays = MeetingStatCalculator.new( meet_with_std_relays )
+        expect( stat_with_standard_relays.get_relays_average ).to be > 0
+      end
+      it "returns 0 for a meeting without results" do
+        stat_without_results = MeetingStatCalculator.new( create( :meeting ) )
+        expect( stat_without_results.get_relays_average ).to eq( 0 )
+      end
+      it "returns 0 for a meeting without relays" do
+        stat_without_relays = MeetingStatCalculator.new( meet_without_relays )
+        expect( stat_without_relays.get_relays_average ).to eq( 0 )
       end
     end
 
