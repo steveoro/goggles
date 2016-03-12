@@ -1,11 +1,10 @@
-- col_x_meeting = @championship_ranking.columns.count + 1
-- meeting_stats = []
-
 .row-fluid#regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
     - cache( cache_key_for_meeting( 'team_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
+      - col_x_meeting = @championship_ranking.columns.count + 1
+      - meeting_stats = []
     
       -# --- Sub-legend for each argument
       .navbar
@@ -73,14 +72,14 @@
                   %td.goggles-centeralign{ colspan: 3 }
                     = meeting.decorate.get_linked_city_with_date
                   - meeting_stat_calculator = MeetingStatCalculator.new( meeting )
-                  - meeting_stats << meeting_stat_calculator.calculate_teams( false, false, false )
+                  - meeting_stats << meeting_stat_calculator.calculate( 0, 0, 0, false, true, false, false, false, false )
 
               %tr{'class'=>'info'}
                 - @championship_ranking.meetings.each do |meeting|
                   %td.goggles-rightalign
-                    = t('championships.males')
-                  %td.goggles-rightalign
                     = t('championships.females')
+                  %td.goggles-rightalign
+                    = t('championships.males')
                   %td.goggles-rightalign
                     = t('championships.relays')
               - @championship_ranking.team_scores.each do |team_score|
@@ -88,16 +87,25 @@
                   %td
                     = team_score.team.decorate.get_linked_name
                   - meeting_stats.each do |meeting_stat|
-                    - team = meeting_stat.rindex{ |team_stat| team_stat.team == team_score.team } 
+                    - team = meeting_stat.teams.rindex{ |team_stat| team_stat.team == team_score.team } 
                     %td.goggles-rightalign
                       - if team
-                        = meeting_stat[team].female_swimmers
+                        = meeting_stat.teams[team].female_swimmers
                     %td.goggles-rightalign
                       - if team
-                        = meeting_stat[team].male_swimmers
+                        = meeting_stat.teams[team].male_swimmers
                     %td.goggles-rightalign
                       - if team
-                        = meeting_stat[team].relay_results
-                  
+                        = meeting_stat.teams[team].relay_results
+              %tr{'class'=>'info'}
+                %td.goggles-rightalign
+                  %b= t('championships.meeting_total')
+                - meeting_stats.each do |meeting_stat|
+                  %td.goggles-rightalign
+                    %b= meeting_stat.swimmers_female_count
+                  %td.goggles-rightalign
+                    %b= meeting_stat.swimmers_male_count
+                  %td.goggles-rightalign
+                    %b= meeting_stat.results_relay_count
 
       .row-fluid.goggles-category-gap

@@ -804,6 +804,59 @@ describe MeetingStatCalculator, :type => :model do
       expect( ms.teams_count ).to be > 0
       expect( ms.get_results_count ).to eq( subject.get_results_count( :is_male ) + subject.get_results_count( :is_female ) )
     end
+    it "returns a MeetingStatDAO with congruent data between general and teams" do
+      expect( subject.has_results? ).to be true
+      ms = subject.calculate( 0, 0, 0, false, true, false, false, false, false )
+      expect( ms.categories.count ).to eq( 0 )
+      expect( ms.events.count ).to eq( 0 )
+      expect( ms.teams_count ).to be > 0
+      expect( ms.teams_count ).to eq( ms.teams.count )
+      males = 0
+      females = 0
+      s_males = 0
+      s_females = 0
+      relays = 0
+      ms.teams.each do |team_stat|
+        males = males + team_stat.male_results
+        females = females + team_stat.female_results
+        relays = relays + team_stat.relay_results
+        s_males = s_males + team_stat.male_swimmers
+        s_females = s_females + team_stat.female_swimmers
+      end
+      expect( ms.results_male_count ).to eq( males )
+      expect( ms.results_female_count ).to eq( females )
+      expect( ms.swimmers_male_count ).to eq( s_males )
+      expect( ms.swimmers_female_count ).to eq( s_females )
+      expect( ms.results_relay_count ).to eq( relays )
+    end
+    it "returns a MeetingStatDAO with congruent data between general and categories" do
+      expect( subject.has_results? ).to be true
+      ms = subject.calculate( 0, 0, 0, false, false, true, false, false, false )
+      expect( ms.teams.count ).to eq( 0 )
+      expect( ms.events.count ).to eq( 0 )
+      s_males = 0
+      s_females = 0
+      ms.categories.each do |category_stat|
+        s_males = s_males + category_stat.male_swimmers
+        s_females = s_females + category_stat.female_swimmers
+      end
+      expect( ms.swimmers_male_count ).to eq( s_males )
+      expect( ms.swimmers_female_count ).to eq( s_females )
+    end
+    it "returns a MeetingStatDAO with congruent data between general and events" do
+      expect( subject.has_results? ).to be true
+      ms = subject.calculate( 0, 0, 0, false, false, false, true, false, false )
+      expect( ms.teams.count ).to eq( 0 )
+      expect( ms.categories.count ).to eq( 0 )
+      males = 0
+      females = 0
+      ms.events.each do |event_stat|
+        males = males + event_stat.male_results
+        females = females + event_stat.female_results
+      end
+      expect( ms.results_male_count ).to eq( males )
+      expect( ms.results_female_count ).to eq( females )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

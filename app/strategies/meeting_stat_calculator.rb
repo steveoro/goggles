@@ -284,7 +284,7 @@ class MeetingStatCalculator
 
   # General stats calculation
   #
-  def calculate( bests = 3, worsts = 1, oldests = 1, entries = true, teams = true, categories = true, events = true )
+  def calculate( bests = 3, worsts = 1, oldests = 1, entries = true, teams = true, categories = true, events = true, scores = true, ranks = true )
     # Entry-based
     if entries && has_entries?
       @meeting_stats.set_general( :ent_teams_count          , get_entered_teams_count() )
@@ -326,7 +326,7 @@ class MeetingStatCalculator
       end
     end
     
-    calculate_teams( entries ) if teams
+    calculate_teams( entries, scores, ranks ) if teams
     calculate_categories( entries ) if categories
     calculate_events( entries ) if events
     
