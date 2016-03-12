@@ -25,9 +25,11 @@
       - is_active = ( params[:action] == 'show_ranking' )
       %li{ class: is_active ? 'active' : '' }
         = link_to( t(:ranking), is_active ? '#' : meeting_show_ranking_path( id: @meeting.id ) )
+    - if @meeting.are_results_acquired || @meeting.has_start_list
       - is_active = ( params[:action] == 'show_stats' )
       %li{ class: is_active ? 'active' : '' }
         = link_to( t(:stats), is_active ? '#' : meeting_show_stats_path( id: @meeting.id ) )
+    - if @meeting.are_results_acquired
       - is_active = ( params[:action] == 'show_team_results' )
       %li{ class: is_active ? 'active' : (@team ? '' : 'disabled') }
         = link_to( t(:team_results), is_active ? '#' : @team ? meeting_show_team_results_path( id: @meeting.id, team_id: @team.id ) : '#' )

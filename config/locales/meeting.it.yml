@@ -137,3 +137,5 @@ it:
     tot_disqualified: "Totale squalifiche"
     rank_disclaimer: "N.B. La classifica individuale è provvisoria. Sarà completa a fine campionato con il calcolo del ranking stagionale delle specialità (vedi regolamento)"
     best_score: "Miglior punteggio"
+    swimmers: "Atleti"
+    athletes_by_event: "Atleti / Gara"
