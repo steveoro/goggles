@@ -50,6 +50,20 @@ class SwimmerMatchEvaluator
       false
     end
   end
+
+  # Search if locale and visitor swimmer has ever swam in the
+  # same meeting_program
+  #
+  def has_matches?
+    @locale_swimmer.meeting_programs.count > 0 &&
+     @visitor_swimmer.id &&
+     @locale_swimmer.meeting_programs.where("exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = #{@visitor_swimmer.id} and mir.meeting_program_id = meeting_programs.id)").count > 0
+  end
   
-  
+  # Scan for meeting_programs in which locale and visitor are
+  # all present
+  #
+  def scan_for_matches
+    
+  end
 end

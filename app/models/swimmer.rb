@@ -45,6 +45,8 @@ class Swimmer < ActiveRecord::Base
   has_many :meeting_relay_swimmers
   has_many :meeting_relay_results,  through: :meeting_relay_swimmers
 
+  has_many :meeting_programs,       through: :meeting_individual_results
+  has_many :meeting_events,         through: :meeting_programs
   has_many :meeting_sessions,       through: :meeting_individual_results
   has_many :meetings,               through: :meeting_individual_results
 
