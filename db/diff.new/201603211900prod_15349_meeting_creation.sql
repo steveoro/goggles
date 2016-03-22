@@ -17,30 +17,30 @@ INSERT INTO meetings (id,header_date,season_id,entry_deadline,has_warm_up_pool,i
 --
 -- Aggiunta dati FIN 15/16 per la tabella meeting_sessions
 -- 
-INSERT INTO meeting_sessions (session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
-(1,'2016-03-20',15349,190,'08:00:00','09:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
-(2,'2016-03-20',15349,190,'14:00:00','15:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
+INSERT INTO meeting_sessions (id,session_order,scheduled_date,meeting_id,swimming_pool_id,warm_up_time,begin_time,notes,description,user_id,day_part_type_id,lock_version,created_at,updated_at) VALUES 
+(1256,1,'2016-03-20',15349,190,'08:00:00','09:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'M'),0,CURDATE(),CURDATE()),
+(1257,2,'2016-03-20',15349,190,'14:00:00','15:00:00','','FINALI',2,(select t.id from day_part_types t where t.code = 'P'),0,CURDATE(),CURDATE());
 
 --
 -- Aggiunta dati FIN 15/16 per la tabella meeting_events
 -- 
-INSERT INTO meeting_events (event_order,begin_time,is_out_of_race,user_id,meeting_session_id,event_type_id,heat_type_id,lock_version,created_at,updated_at) VALUES 
-(1,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '100DO'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(2,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '200SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(3,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '50RA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(4,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '100MI'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(5,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '50SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(6,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '100RA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(7,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '400SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(8,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '200MI'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(9,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '50FA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(10,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '200RA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(11,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '50DO'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(12,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '100FA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
-(13,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '100SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+INSERT INTO meeting_events (id,event_order,begin_time,is_out_of_race,user_id,meeting_session_id,event_type_id,heat_type_id,lock_version,created_at,updated_at) VALUES 
+(4794,1,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '100DO'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4795,2,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '200SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4796,3,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '50RA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4797,4,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '100MI'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4798,5,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '50SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4799,6,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '100RA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4800,7,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 1),(select t.id from event_types t where t.code = '400SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4801,8,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '200MI'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4802,9,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '50FA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4803,10,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '200RA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4804,11,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '50DO'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4805,12,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '100FA'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE()),
+(4806,13,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = '100SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE());
 
 --
 -- Aggiunta dati FIN 15/16 per la tabella meeting_events
 -- 
-INSERT INTO meeting_events (event_order,begin_time,is_out_of_race,user_id,meeting_session_id,event_type_id,heat_type_id,lock_version,created_at,updated_at) VALUES 
-(14,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = 'M4X50SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE());
+INSERT INTO meeting_events (id,event_order,begin_time,is_out_of_race,user_id,meeting_session_id,event_type_id,heat_type_id,lock_version,created_at,updated_at) VALUES 
+(4807,14,'00:00:00',0,2,(select t.id from meeting_sessions t where t.meeting_id = 15349 and t.session_order = 2),(select t.id from event_types t where t.code = 'M4X50SL'),(select t.id from heat_types t where t.code = 'F'),0,CURDATE(),CURDATE());
