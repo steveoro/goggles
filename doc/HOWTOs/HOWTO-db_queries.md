@@ -1,5 +1,19 @@
 ## HOWTO: Create queries to search db
 
+-- Compare MIR counts from Prod/Dev dumps, in dual query:
+SELECT  (
+        SELECT COUNT(*)
+        FROM   goggles.meeting_individual_results
+     ) AS prod_mir,
+     (
+        SELECT COUNT(*)
+        FROM   goggles_development.meeting_individual_results
+     ) AS dev_mir
+FROM dual
+
+----8<----
+
+
 -- Query MIRs for meeting_id
 select mir.team_points, mir.id, mir.meeting_individual_points
     from meeting_individual_results mir
