@@ -22,23 +22,26 @@
 class SwimmerMatchDAO
   class SwimmerMatchProgramDAO
     # These must be initialized on creation:
-    #attr_reader
+    attr_reader :description, :meeting, :event_type
   
     # These can be edited later on:
-    attr_accessor :description, :locale_result, :visitor_result 
+    attr_accessor :locale_result, :visitor_result 
 
     # Creates a new instance.
     # Note the ascending precision of the parameters, which allows to skip
     # the rarely used ones.
     #
-    def initialize( description = nil )
+    def initialize( locale_result = nil, visitor_result = nil, description = nil, meeting = nil, event_type = nil )
       @description     = description
-      @locale_result   = nil
-      @visitor_result  = nil
+      @locale_result   = locale_result
+      @visitor_result  = visitor_result
+      @meeting         = meeting
+      @event_type      = event_type
     end
     
     # Gets the description of the match result
     # If no alternative description returns the locale result one
+    #
     def get_description
       if @description
         @description
@@ -49,6 +52,48 @@ class SwimmerMatchDAO
           '?'
         end
       end
+    end
+
+    # Gets the meeting of the match result
+    # If no meeting set returns the locale result one
+    #
+    def get_meeting
+      if @meeting
+        @meeting
+      else
+        if @locale_result
+          @locale_result.meeting 
+        else
+          '?'
+        end
+      end
+    end
+
+    # Gets the event_type of the match result
+    # If no event_type set returns the locale result one
+    #
+    def get_event_type
+      if @event_type
+        @event_type
+      else
+        if @locale_result
+          @locale_result.event_type 
+        else
+          '?'
+        end
+      end
+    end
+
+    # Gets the locale timing
+    #
+    def get_locale_timing
+      @locale_result.get_timing if @locale_result
+    end
+
+    # Gets the visitor timing
+    #
+    def get_visitor_timing
+      @visitor_result.get_timing if @visitor_result
     end
   end
   # ---------------------------------------------------------------------------
@@ -138,7 +183,7 @@ class SwimmerMatchDAO
   #
   # If results not valid nothing is done and returns -1
   #
-  def add_match( locale_result, visitor_result, description = nil )
+  def add_match( locale_result, visitor_result, description = nil, meeting = nil, event_type = nil )
     # Check if results are valids
     if locale_result && 
      locale_result.instance_of?( MeetingIndividualResult ) &&
@@ -149,9 +194,7 @@ class SwimmerMatchDAO
       locale_timing  = locale_result.is_disqualified ? 999999999999 : locale_result.get_timing_instance.to_hundreds
       visitor_timing = visitor_result.is_disqualified ? 999999999999 : visitor_result.get_timing_instance.to_hundreds
 
-      match = SwimmerMatchProgramDAO.new( description )
-      match.locale_result = locale_result
-      match.visitor_result = visitor_result
+      match = SwimmerMatchProgramDAO.new( locale_result, visitor_result, description, meeting, event_type )
       
       # Verify reults timing
       # locale better than visitor

@@ -142,7 +142,7 @@ describe SwimmerMatchEvaluator, :type => :model do
       expect( subject ).to respond_to( :get_matches )
     end
     it "returns all swimmer meeting programs for same swimmer" do
-      create_list( :meeting_individual_result, ( rand * 15 ).to_i, swimmer: swimmer )
+      create_list( :meeting_individual_result, ( rand * 15 ).to_i + 1, swimmer: swimmer )
       subject.set_visitor( swimmer )
       matches = subject.get_matches
       expect( matches ).to be_an_instance_of( ActiveRecord::Relation )
@@ -250,7 +250,7 @@ describe SwimmerMatchEvaluator, :type => :model do
       expect( dao.get_matches_count ).to eq( 0 )
     end
     it "returns a SwimmerMatchDAO with matches set if some matches for swimmers" do
-      create_list( :meeting_individual_result, ( rand * 15 ).to_i, swimmer: swimmer )
+      create_list( :meeting_individual_result, ( rand * 15 ).to_i + 1, swimmer: swimmer )
       expect( subject.set_visitor( swimmer ) ).to be true
       dao = subject.matches_to_dao
       expect( dao.get_matches_count ).to be > 0
@@ -263,7 +263,7 @@ describe SwimmerMatchEvaluator, :type => :model do
       expect( dao.get_matches_count ).to eq( matches.count )
     end
     it "returns a SwimmerMatchDAO with only neutrals if same swimmer" do
-      create_list( :meeting_individual_result, ( rand * 15 ).to_i, swimmer: swimmer )
+      create_list( :meeting_individual_result, ( rand * 15 ).to_i + 1, swimmer: swimmer )
       expect( subject.set_visitor( swimmer ) ).to be true
       dao = subject.matches_to_dao
       expect( dao.get_wons_count ).to eq( 0 )

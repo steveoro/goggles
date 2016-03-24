@@ -18,16 +18,37 @@ describe SwimmerMatchDAO, :type => :model do
   context "SwimmerMatchProgramDAO subclass," do
     
     let( :description )        { "This is the match number #{(rand * 100).to_i}" }
+    let( :fix_event )          { EventType.are_not_relays[ ( rand * EventType.are_not_relays.count ).to_i ] }
 
-    subject { SwimmerMatchDAO::SwimmerMatchProgramDAO.new( description ) }
+    subject { SwimmerMatchDAO::SwimmerMatchProgramDAO.new }
   
     describe "[a well formed instance]" do
-      it "description is the one used in costruction" do
-        expect( subject.description ).to eq( description )
-      end
       it "hasn't description if not given" do
-        no_desc = SwimmerMatchDAO::SwimmerMatchProgramDAO.new()
-        expect( no_desc.description ).to be nil
+        expect( subject.description ).to be nil
+      end
+      it "description is the one used in costruction" do
+        with_desc = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, nil, description )
+        expect( with_desc.description ).to eq( description )
+      end
+      it "locale_result is the one used in costruction" do
+        mir = create( :meeting_individual_result )
+        with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir, nil )
+        expect( with_loc_res.locale_result ).to eq( mir )
+        expect( with_loc_res.visitor_result ).to be nil
+      end
+      it "visitor_result is the one used in costruction" do
+        mir = create( :meeting_individual_result )
+        with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, mir )
+        expect( with_loc_res.locale_result ).to be nil
+        expect( with_loc_res.visitor_result ).to eq( mir )
+      end
+      it "stored values are the one used in costruction" do
+        mir_loc = create( :meeting_individual_result )
+        mir_vis = create( :meeting_individual_result )
+        full = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir_loc, mir_vis, description )
+        expect( full.locale_result ).to eq( mir_loc )
+        expect( full.visitor_result ).to eq( mir_vis )
+        expect( full.description ).to eq( description )
       end
 
       it "responds to locale_result" do
@@ -52,15 +73,90 @@ describe SwimmerMatchDAO, :type => :model do
           expect( no_desc.get_description ).to eq( '?' )
         end
         it "returns the description attribute if set" do
-          expect( subject.description ).not_to be nil
-          expect( subject.get_description ).to eq( subject.description )
+          with_desc = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, nil, description )
+          expect( with_desc.description ).not_to be nil
+          expect( with_desc.get_description ).to eq( with_desc.description )
         end
         it "returns the locale result description if result present and no description attribute set" do
-          no_desc = SwimmerMatchDAO::SwimmerMatchProgramDAO.new()
-          expect( no_desc.description ).to be nil
           mir = create( :meeting_individual_result )
-          no_desc.locale_result = mir
-          expect( no_desc.get_description ).to include( mir.get_full_name )
+          expect( subject.description ).to be nil
+          subject.locale_result = mir
+          expect( subject.get_description ).to include( mir.get_full_name )
+        end
+      end
+
+      describe "#get_meeting" do
+        it "responds to #get_meeting" do
+          expect( subject ).to respond_to( :get_meeting )
+        end
+        it "returns the meeting used in costruction" do
+          meeting = create( :meeting )
+          with_meeting = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, nil, nil, meeting )
+          expect( with_meeting.get_meeting ).to eq( meeting )
+        end
+        it "returns ? if not set" do
+          expect( subject.get_meeting ).to eq( '?' )
+        end
+        it "returns teh locale result meeting if set" do
+          mir = create( :meeting_individual_result )
+          with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir )
+          meeting = with_loc_res.get_meeting 
+          expect( meeting ).to be_an_instance_of( Meeting )
+          expect( meeting ).to eq( mir.meeting )
+        end
+      end
+
+      describe "#get_event_type" do
+        it "responds to #get_event_type" do
+          expect( subject ).to respond_to( :get_event_type )
+        end
+        it "returns the event_type used in costruction" do
+          with_event = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, nil, nil, nil, fix_event )
+          expect( with_event.get_event_type ).to eq( fix_event )
+        end
+        it "returns ? if not set" do
+          expect( subject.get_event_type ).to eq( '?' )
+        end
+        it "returns teh locale result event_type if set" do
+          mir = create( :meeting_individual_result )
+          with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir )
+          event_type = with_loc_res.get_event_type 
+          expect( event_type ).to be_an_instance_of( EventType )
+          expect( event_type ).to eq( mir.event_type )
+        end
+      end
+
+      describe "#get_locale_timing" do
+        it "responds to #get_locale_timing" do
+          expect( subject ).to respond_to( :get_locale_timing )
+        end
+        it "returns the locale result timing if set" do
+          mir = create( :meeting_individual_result )
+          with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir )
+          timing = with_loc_res.get_locale_timing 
+          expect( timing ).to be_a_kind_of( String )
+          expect( timing ).to eq( mir.get_timing )
+          expect( with_loc_res.get_visitor_timing ).to be nil
+        end
+        it "returns nil if locale result not set" do
+          expect( subject.get_locale_timing ).to be nil
+        end
+      end
+
+      describe "#get_visitor_timing" do
+        it "responds to #get_visitor_timing" do
+          expect( subject ).to respond_to( :get_visitor_timing )
+        end
+        it "returns the visitor result timing if set" do
+          mir = create( :meeting_individual_result )
+          with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, mir )
+          timing = with_loc_res.get_visitor_timing 
+          expect( timing ).to be_a_kind_of( String )
+          expect( timing ).to eq( mir.get_timing )
+          expect( with_loc_res.get_locale_timing ).to be nil
+        end
+        it "returns nil if locale result not set" do
+          expect( subject.get_visitor_timing ).to be nil
         end
       end
     end

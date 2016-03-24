@@ -98,11 +98,11 @@ class SwimmerMatchEvaluator
       sme_dao.set_visitor( @visitor_swimmer )
       
       # Assumes in the same meeting program a swimmer should has only one result
-      # In any case it will consider the best one if more than one ()
+      # In any case it will consider the best one if more than one
       @matches.each do |meeting_program|
         locale_result = @locale_swimmer.meeting_individual_results.where( meeting_program: meeting_program ).sort_by_timing.first 
         visitor_result = @visitor_swimmer.meeting_individual_results.where( meeting_program: meeting_program ).sort_by_timing.first
-        sme_dao.add_match( locale_result, visitor_result ) 
+        sme_dao.add_match( locale_result, visitor_result, nil, meeting_program.meeting, meeting_program.event_type ) 
       end
       
       sme_dao
