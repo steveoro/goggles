@@ -258,7 +258,7 @@ describe SwimmerBestFinder, type: :strategy do
     describe "#is_personal_best," do
       it "returns a boolean" do
         result = active_swimmer.meeting_individual_results.sort{ rand - 0.5 }[0]
-        expect( subject.is_personal_best( result ) ).to eq( true ).or( eq ( false ) )
+        expect( subject.is_personal_best( result ) ).to eq( true ).or( eq( false ) )
       end
       it "returns true if personal best" do
         fix_swimmer            = Swimmer.find(23)

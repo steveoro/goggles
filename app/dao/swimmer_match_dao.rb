@@ -44,7 +44,7 @@ class SwimmerMatchDAO
         @description
       else
         if @locale_result
-          @locale_result.get_full_name
+          "#{@locale_result.get_full_name} - #{@visitor_result.get_full_name if @visitor_result}" 
         else
           '?'
         end

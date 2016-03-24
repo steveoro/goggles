@@ -30,7 +30,8 @@ class SwimmerMatchEvaluator
     end
 
     @locale_swimmer  = locale_swimmer 
-    @visitor_swimmer = nil 
+    @visitor_swimmer = nil
+    @matches         = [] 
   end
   
   # Sets the target visitor swimmer
@@ -73,13 +74,40 @@ class SwimmerMatchEvaluator
   # all present
   #
   def get_matches
-    @locale_swimmer.meeting_programs.includes( :meeting, :event_type ).where(['exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', @visitor_swimmer.id]) if has_matches?
+    @matches = @locale_swimmer.meeting_programs.includes( :meeting, :event_type ).where(['exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', @visitor_swimmer.id]) if has_matches?
   end
   
   # Scan for meeting_programs in which locale and visitor are
   # all present for given event_types
   #
-  def get_matches_for_event( event_type )
-    
+  def get_matches_on_event( event_type )
+    @matches = @locale_swimmer.meeting_programs.includes( :meeting, :event_type ).where(['meeting_events.event_type_id = ? and exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', event_type.id, visitor_swimmer.id]) if has_matches_on_event?( event_type )
+  end
+  
+  # Returns a DAO structure fotr matches handling
+  # containing the matche previously found
+  # If matches nt found already found, will find it
+  # If not visitor swimmer set returns nil
+  #
+  def matches_to_dao
+    if @visitor_swimmer
+      get_matches if @matches.count == 0
+      
+      sme_dao = SwimmerMatchDAO.new()
+      sme_dao.set_locale( @locale_swimmer )
+      sme_dao.set_visitor( @visitor_swimmer )
+      
+      # Assumes in the same meeting program a swimmer should has only one result
+      # In any case it will consider the best one if more than one ()
+      @matches.each do |meeting_program|
+        locale_result = @locale_swimmer.meeting_individual_results.where( meeting_program: meeting_program ).sort_by_timing.first 
+        visitor_result = @visitor_swimmer.meeting_individual_results.where( meeting_program: meeting_program ).sort_by_timing.first
+        sme_dao.add_match( locale_result, visitor_result ) 
+      end
+      
+      sme_dao
+    else
+      nil
+    end
   end
 end

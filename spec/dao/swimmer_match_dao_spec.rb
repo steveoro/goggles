@@ -60,7 +60,7 @@ describe SwimmerMatchDAO, :type => :model do
           expect( no_desc.description ).to be nil
           mir = create( :meeting_individual_result )
           no_desc.locale_result = mir
-          expect( no_desc.get_description ).to eq( mir.get_full_name )
+          expect( no_desc.get_description ).to include( mir.get_full_name )
         end
       end
     end
