@@ -313,13 +313,9 @@ class MiscController < ApplicationController
   # Find out and show swimmer matches
   #
   def show_swimmer_matches
-    @locale_swimmer  = nil
-    @visitor_swimmer = nil
-    @sme             = nil
-    @sme_dao         = nil
     if request.xhr? && request.post?                   # === AJAX POST: ===
-      #locale_swimmer_id  = params[:local_swimmer_id] ? params[:local_swimmer_id][:id].to_i : 0
-      locale_swimmer_id  = 23
+      locale_swimmer_id  = params[:locale_swimmer_id] ? params[:locale_swimmer_id][:id].to_i : 0
+      #locale_swimmer_id  = 23
       visitor_swimmer_id = params[:visitor_swimmer_id] ? params[:visitor_swimmer_id][:id].to_i : 0
       #visitor_swimmer_id = 142
 
@@ -336,6 +332,7 @@ class MiscController < ApplicationController
         @sme_dao = @sme.matches_to_dao
       else
         flash[:error] = I18n.t('misc.not_matched_swimmer')
+        return
       end
     end
   end

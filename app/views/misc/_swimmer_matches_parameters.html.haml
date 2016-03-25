@@ -1,34 +1,21 @@
-- locale_swimmer = @locale_swimmer ? @locale_swimmer.get_full_name : nil
-- visitor_swimmer = @visitor_swimmer ? @visitor_swimmer.get_full_name : nil
-
 .span4
   .control-group
     = label_tag( :locale_swimmer, t('misc.locale_swimmer'), :for => :locale_swimmer, class: 'control-label' )
     .controls
-      = text_field_tag( :locale_swimmer, locale_swimmer, class: 'input-large,' )
-  -#.control-group
-  -#  = label_tag( :locale_swimmer, t('misc.locale_swimmer'), :for => :locale_swimmer, class: 'control-label' )
-  -#  .controls
-  -#    = select( :locale_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
+      -#= text_field_tag( :locale_swimmer, @locale_swimmer, class: 'input-large,' )
+      -#= select( :locale_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
+      = select( :locale_swimmer_id, :id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
+        { prompt: I18n.t(:please_select), selected: @locale_swimmer ? @locale_swimmer.id : 0 },           |
+        { class: 'input-xlarge combobox' } )                                                  |
 
 .span4
-  -#.control-group
-  -#  = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
-  -#  .controls
-  -#    = text_field_tag( :visitor_swimmer, visitor_swimmer, class: 'input-large,' )
-  -#  = select( :visitor_swimmer_id, visitor_swimmer_id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
-  -#    { prompt: I18n.t(:please_select), selected: result_row.chosen_swimmer_id },           |
-  -#    { class: 'input-xlarge combobox' } )                                                  |
       
   .control-group
     = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
+    -#.controls
+    -#  = text_field_tag( :visitor_swimmer, @visitor_swimmer, class: 'input-large,' )
     .controls
-      = select( :visitor_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
-      
-
-.span2
-  .control-group
-    .controls
-      = submit_tag( I18n.t('misc.find_matches'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
-      %span( id='loadingIndicator' hidden='true' )
-        = image_tag( 'indicator.gif' )
+      = select( :visitor_swimmer_id, :id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
+        { prompt: I18n.t(:please_select), selected: @visitor_swimmer ? @visitor_swimmer.id : 0 },           |
+        { class: 'input-xlarge combobox' } )                                                  |
+      -#= select( :visitor_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )

@@ -738,6 +738,7 @@ it:
     wrong_score: "Punteggio non ammissibile. Verifica il punteggio immesso."
     swimmer_matches: "Duel in the pool"
     not_matched_swimmer: "Questi nuotatori non hanno ancora mai incrociato le cuffie!"
+    not_matchable_swimmer: "Accidenti, questi nuotatori non possono sfidarsi direttamente a causa del sesso o della categoria :-/"
     match_wons: "Vittorie"
     match_losses: "Sconfitte"
     match_neutrals: "Parimerito"

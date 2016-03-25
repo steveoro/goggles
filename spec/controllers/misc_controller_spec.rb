@@ -11,9 +11,6 @@ describe MiscController, :type => :controller do
     it "assigns the tab title" do
       expect( assigns(:tab_title) ).to be_an_instance_of( String )
     end
-    it "assigns a current season" do
-      expect( assigns(:current_season) ).to be_an_instance_of( Season )
-    end
     it "renders the template" do
       expect(response).to render_template( action_sym )
     end
@@ -28,6 +25,9 @@ describe MiscController, :type => :controller do
       before(:each) { get :fin_score_calculation }
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
 
       it "assigns -1 value to standard points" do
         expect( assigns(:standard_points) ).to eq( -1 )
@@ -51,6 +51,9 @@ describe MiscController, :type => :controller do
       end
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
 
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
@@ -69,13 +72,14 @@ describe MiscController, :type => :controller do
         @user = create(:user)
 
         # Select from seasons that have badges and time standards
-        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
 
         # Get a random swimmer from the fixture season:
-        swimmer = Swimmer.includes(:badges)
-          .where( "badges.season_id" => fix_season.id )
-          .sort{ rand - 0.5 }[0]
+        swimmer = Swimmer
+          .includes(:badges)
+          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
         expect( swimmer ).not_to be nil
+
 # DEBUG
 #        puts( "\r\n- fixture season: #{@fixture_season.inspect}" )
 #        puts( "- swimmer: #{swimmer.inspect}" )
@@ -94,6 +98,9 @@ describe MiscController, :type => :controller do
       end
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_score_calculation )
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
 
       it "assigns the required variables" do
 # DEBUG
@@ -277,12 +284,12 @@ describe MiscController, :type => :controller do
     context "with a correct request for a logged user with associated swimmer" do
       before(:each) do
         # Select from seasons that have badges and time standards
-        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
 
         # Get a random swimmer from the fixture season:
-        swimmer = Swimmer.includes(:badges)
-          .where( "badges.season_id" => fix_season.id )
-          .sort{ rand - 0.5 }[0]
+        swimmer = Swimmer
+          .includes(:badges)
+          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
         expect( swimmer ).not_to be nil
 # DEBUG
 #        puts "\r\n- fix_season: #{fix_season.inspect}"
@@ -295,9 +302,7 @@ describe MiscController, :type => :controller do
 #        puts "- @user POST-association: #{@user.inspect}"
         @fixture_gender = swimmer.gender_type
         @fixture_category = swimmer.get_category_type_for_season( fix_season.id )
-        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings
-          .all
-          .sort{ rand - 0.5 }[0]
+        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings.all[ ( rand * EventsByPoolType.not_relays.only_for_meetings.count - 1 ).to_i ]
 
         login_user( @user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -359,6 +364,9 @@ describe MiscController, :type => :controller do
       before(:each) { get :fin_timing_calculation }
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_timing_calculation )
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
 
       it "assigns 0 value to goal timing" do
         expect( assigns(:timing) ).to eq( Timing.new( 0 ) )
@@ -382,6 +390,9 @@ describe MiscController, :type => :controller do
       end
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_timing_calculation )
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
 
       it "doesn't assign a swimmer" do
         expect( assigns(:swimmer) ).to be_nil
@@ -400,13 +411,14 @@ describe MiscController, :type => :controller do
         @user = create(:user)
 
         # Select from seasons that have badges and time standards
-        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
 
         # Get a random swimmer from the fixture season:
-        swimmer = Swimmer.includes(:badges)
-          .where( "badges.season_id" => fix_season.id )
-          .sort{ rand - 0.5 }[0]
+        swimmer = Swimmer
+          .includes(:badges)
+          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
         expect( swimmer ).not_to be nil
+
         @user.set_associated_swimmer( swimmer )
 
         login_user( @user )
@@ -416,6 +428,9 @@ describe MiscController, :type => :controller do
       end
 
       it_behaves_like( "(Misc not restricted GET action)", :fin_timing_calculation )
+      it "assigns a current season" do
+        expect( assigns(:current_season) ).to be_an_instance_of( Season )
+      end
 
       it "assigns the required variables" do
         expect( assigns(:swimmer) ).to be_an_instance_of( SwimmerDecorator )
@@ -580,20 +595,19 @@ describe MiscController, :type => :controller do
     context "with a correct request for a logged user with associated swimmer" do
       before(:each) do
         # Select from seasons that have badges and time standards
-        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.sort{ rand - 0.5 }[0].season
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
 
         # Get a random swimmer from the fixture season:
-        swimmer = Swimmer.includes(:badges)
-          .where( "badges.season_id" => fix_season.id )
-          .sort{ rand - 0.5 }[0]
+        swimmer = Swimmer
+          .includes(:badges)
+          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
         expect( swimmer ).not_to be nil
+
         @user = create(:user)
         @user.set_associated_swimmer( swimmer )
         @fixture_gender = swimmer.gender_type
         @fixture_category = swimmer.get_category_type_for_season( fix_season.id )
-        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings
-          .all
-          .sort{ rand - 0.5 }[0]
+        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings.all[ ( rand * EventsByPoolType.not_relays.only_for_meetings.count - 1 ).to_i ]
 
         login_user( @user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -614,6 +628,105 @@ describe MiscController, :type => :controller do
         expect( assigns(:seasonal_record) ).to be_an_instance_of( ActiveSupport::SafeBuffer ).or be_an_instance_of( String )
       end
     end
+  end
+  #-- =========================================================================
+  #++
+
+  describe '[GET #swimmer_matches]' do
+
+    context "as an unlogged user" do
+      before(:each) { get :swimmer_matches }
+
+      it_behaves_like( "(Misc not restricted GET action)", :swimmer_matches )
+
+      it "doesn't assigns locale_swimmer" do
+        expect( assigns( :locale_swimmer ) ).to be nil
+      end
+      it "doesn't assign visitor_swimmer" do
+        expect( assigns( :visitor_swimmer ) ).to be nil
+      end
+      it "doesn't assign a sme" do
+        expect( assigns( :sme ) ).to be nil
+      end
+      it "doesn't assign a sme_dao" do
+        expect( assigns( :sme_dao ) ).to be nil
+      end
+    end
+
+    context "as logged but not associated user" do
+      before(:each) do
+        login_user()
+        expect( subject.current_user ).to be_an_instance_of( User )
+        get :swimmer_matches
+      end
+
+      it_behaves_like( "(Misc not restricted GET action)", :swimmer_matches )
+
+      it "doesn't assigns locale_swimmer" do
+        expect( assigns( :locale_swimmer ) ).to be nil
+      end
+      it "doesn't assign visitor_swimmer" do
+        expect( assigns( :visitor_swimmer ) ).to be nil
+      end
+      it "doesn't assign a sme" do
+        expect( assigns( :sme ) ).to be nil
+      end
+      it "doesn't assign a sme_dao" do
+        expect( assigns( :sme_dao ) ).to be nil
+      end
+    end
+
+    context "as logged and swimmer-associated user" do
+      before(:each) do
+        user = create(:user)
+        swimmer = Swimmer.all[ ( rand * ( Swimmer.count - 1 ) ).to_i ]
+        user.set_associated_swimmer( swimmer )
+        login_user( user )
+        expect( subject.current_user ).to be_an_instance_of( User )
+        expect( subject.current_user.swimmer_id ).not_to be nil
+        get :swimmer_matches
+      end
+
+      it_behaves_like( "(Misc not restricted GET action)", :swimmer_matches )
+
+      it "assigns the required variables" do
+        expect( assigns( :locale_swimmer ) ).to be_an_instance_of( Swimmer )
+      end
+      it "doesn't assign visitor_swimmer" do
+        expect( assigns( :visitor_swimmer ) ).to be nil
+      end
+      it "doesn't assign a sme" do
+        expect( assigns( :sme ) ).to be nil
+      end
+      it "doesn't assign a sme_dao" do
+        expect( assigns( :sme_dao ) ).to be nil
+      end
+    end
+  end
+  #-- =========================================================================
+  #++
+
+  describe '[XHR POST #show_swimmer_matches]' do
+
+    context "without requested parameters" do
+      before(:each) do
+        xhr(
+          :post,
+          :show_swimmer_matches,
+          locale_swimmer_id:   {id: 23},
+          visitor_swimmer_id:  {id: 0}    # Force invalid value
+        )
+      end
+      it "handles the request" do
+        expect( response ).to be_a_success
+      end
+      it "sets the flash error message" do
+        expect( flash[:error] ).to include( I18n.t(:missing_request_parameter) )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
   end
   #-- =========================================================================
   #++
