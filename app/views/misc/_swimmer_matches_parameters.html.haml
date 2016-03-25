@@ -8,10 +8,19 @@
       = text_field_tag( :locale_swimmer, locale_swimmer, class: 'input-large,' )
 
 .span4
+  -#.control-group
+  -#  = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
+  -#  .controls
+  -#    = text_field_tag( :visitor_swimmer, visitor_swimmer, class: 'input-large,' )
+  -#  = select( :visitor_swimmer_id, visitor_swimmer_id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
+  -#    { prompt: I18n.t(:please_select), selected: result_row.chosen_swimmer_id },           |
+  -#    { class: 'input-xlarge combobox' } )                                                  |
+      
   .control-group
     = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
     .controls
-      = text_field_tag( :visitor_swimmer, visitor_swimmer, class: 'input-large,' )
+      = select( :visitor_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
+      
 
 .span2
   .control-group

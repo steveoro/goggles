@@ -744,6 +744,12 @@ it:
     locale_swimmer: "Il 'campione'"
     visitor_swimmer: "Lo 'sfidante'"
     find_matches: "Cerca le sfide"
+    match_events_summary: "Riepilogo specialità"
+    match_first: "Per quanto ne sa Goggles {LOCALE_SWIMMER} ha incrociato la cuffia con {VISITOR_SWIMMER} la prima volta il"
+    match_total: "Sino ad ora gli ha dato battaglia complessivamente {TOT_MATCHES} volte"
+    match_last: "L'ultima volta che lo ha sfidato risale al"
+    match_none: "Bah, per quanto ne sa Goggles {LOCALE_SWIMMER} e {VISITOR_SWIMMER} non hanno ancora mai incrociato le cuffie"
+    how_to_find_matches: "Seleziona il 'Campione' e lo 'Sfidante' per vedere tutte le gare in cui si sono confrontati"
 
   netzke:
     basepack:

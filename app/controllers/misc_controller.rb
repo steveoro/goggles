@@ -295,8 +295,10 @@ class MiscController < ApplicationController
   #
   def swimmer_matches
     @tab_title = I18n.t('misc.swimmer_matches')
-    #@locale_swimmer = nil
-    #@visitor_swimmer = nil
+    @locale_swimmer  = nil
+    @visitor_swimmer = nil
+    @sme             = nil
+    @sme_dao         = nil
 
     # if user is logged in and associated to a swimmer
     if current_user && current_user.swimmer
@@ -311,18 +313,23 @@ class MiscController < ApplicationController
   # Find out and show swimmer matches
   #
   def show_swimmer_matches
+    @locale_swimmer  = nil
+    @visitor_swimmer = nil
+    @sme             = nil
+    @sme_dao         = nil
     if request.xhr? && request.post?                   # === AJAX POST: ===
-      #locale_swimmer_id  = params[:local_swimmer_id] ? params[:local_swimmer_id].to_i : 0
-      #visitor_swimmer_id = params[:visitor_swimmer_id] ? params[:visitor_swimmer_id].to_i : 0
+      #locale_swimmer_id  = params[:local_swimmer_id] ? params[:local_swimmer_id][:id].to_i : 0
       locale_swimmer_id  = 23
-      visitor_swimmer_id = 142
-      unless ( locale_swimmer_id > 0 && locale_swimmer_id > 0 )
+      visitor_swimmer_id = params[:visitor_swimmer_id] ? params[:visitor_swimmer_id][:id].to_i : 0
+      #visitor_swimmer_id = 142
+
+      unless ( locale_swimmer_id > 0 && visitor_swimmer_id > 0 && Swimmer.exists?( locale_swimmer_id ) && Swimmer.exists?( visitor_swimmer_id ) )
         flash[:error] = I18n.t(:missing_request_parameter)
         return
       end
 
-      @locale_swimmer  = Swimmer.find_by_id( locale_swimmer_id )
-      @visitor_swimmer = Swimmer.find_by_id( visitor_swimmer_id )
+      @locale_swimmer  = Swimmer.find( locale_swimmer_id )
+      @visitor_swimmer = Swimmer.find( visitor_swimmer_id )
       
       @sme = SwimmerMatchEvaluator.new( @locale_swimmer )
       if @sme.set_visitor( @visitor_swimmer )

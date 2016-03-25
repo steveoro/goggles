@@ -7,6 +7,8 @@
   .row-fluid
     = form_tag( :misc_show_swimmer_matches, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#swimmer_matches_result').hide()" ) do
       = render( partial: 'swimmer_matches_parameters' )
+  .row-fluid.alert.alert-info.goggles-div-centeralign
+    = t('misc.how_to_find_matches')
 
   #calculation_result
   %p/
