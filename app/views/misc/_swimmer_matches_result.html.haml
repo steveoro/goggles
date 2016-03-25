@@ -1,0 +1,74 @@
+.row.fluid.goggles-div-centeralign#swimmer_matches_result
+  %h2= "#{@sme_dao.get_locale.get_full_name} - #{@sme_dao.get_visitor.get_full_name}  #{@sme_dao.get_wons_count} - #{@sme_dao.get_losses_count}" 
+.row.fluid.goggles-div-centeralign#swimmer_matches_result
+  .span6#won_matches
+    %h3.alert-success= "#{t('misc.match_wons')} (#{@sme_dao.get_wons_count})"
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            %b= I18n.t('general.meeting')
+          %td.goggles-centeralign
+            %b= I18n.t('event')
+          %td.goggles-centeralign
+            %b= @sme_dao.get_locale.get_full_name
+          %td.goggles-centeralign
+            %b= @sme_dao.get_visitor.get_full_name
+        - @sme_dao.wons.each do |match|
+          %tr
+            %td
+              = match.get_meeting.decorate.get_linked_full_name_with_date
+            %td.goggles-centeralign
+              = match.get_event_type.code
+            %td.goggles-rightalign
+              = match.get_locale_timing
+            %td.goggles-rightalign
+              = match.get_visitor_timing
+  .span6#lost_matches
+    %h3.alert-error= "#{t('misc.match_losses')} (#{@sme_dao.get_losses_count})"
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            %b= I18n.t('general.meeting')
+          %td.goggles-centeralign
+            %b= I18n.t('event')
+          %td.goggles-centeralign
+            %b= @sme_dao.get_locale.get_full_name
+          %td.goggles-centeralign
+            %b= @sme_dao.get_visitor.get_full_name
+        - @sme_dao.losses.each do |match|
+          %tr
+            %td
+              = match.get_meeting.decorate.get_linked_full_name_with_date
+            %td.goggles-centeralign
+              = match.get_event_type.code
+            %td.goggles-rightalign
+              = match.get_locale_timing
+            %td.goggles-rightalign
+              = match.get_visitor_timing
+- if @sme_dao.get_neutrals_count > 0
+  .row.fluid.goggles-div-centeralign.goggles-category-gap
+    .span6.offset3#neutral_matches
+      %h3.alert-info= "#{t('misc.match_neutrals')} (#{@sme_dao.get_neutrals_count})"
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td
+              %b= I18n.t('general.meeting')
+            %td.goggles-centeralign
+              %b= I18n.t('event')
+            %td.goggles-centeralign
+              %b= @sme_dao.get_locale.get_full_name
+            %td.goggles-centeralign
+              %b= @sme_dao.get_visitor.get_full_name
+          - @sme_dao.neutrals.each do |match|
+            %tr
+              %td
+                = match.get_meeting.decorate.get_linked_full_name_with_date
+              %td.goggles-centeralign
+                = match.get_event_type.code
+              %td.goggles-rightalign
+                = match.get_locale_timing
+              %td.goggles-rightalign
+                = match.get_visitor_timing

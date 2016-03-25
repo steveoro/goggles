@@ -107,6 +107,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_separator4_0,          content_tag(:span, ''), class: 'divider'
       lev2_nav.item :key_fin_score_calc,        t('misc.fin_score_calculation'),            misc_fin_score_calculation_path()
       lev2_nav.item :key_fin_timing_calc,       t('misc.fin_timing_calculation'),           misc_fin_timing_calculation_path()
+      lev2_nav.item :key_swimmer_matches,       t('misc.swimmer_matches'),                  misc_swimmer_matches_path()
       lev2_nav.item :key_separator4_1,          content_tag(:span, ''), class: 'divider'
       lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()
       lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()

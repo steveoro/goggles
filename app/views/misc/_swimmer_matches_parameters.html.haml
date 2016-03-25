@@ -1,0 +1,21 @@
+- locale_swimmer = @locale_swimmer ? @locale_swimmer.get_full_name : nil
+- visitor_swimmer = @visitor_swimmer ? @visitor_swimmer.get_full_name : nil
+
+.span4
+  .control-group
+    = label_tag( :locale_swimmer, t('misc.locale_swimmer'), :for => :locale_swimmer, class: 'control-label' )
+    .controls
+      = text_field_tag( :locale_swimmer, locale_swimmer, class: 'input-large,' )
+
+.span4
+  .control-group
+    = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
+    .controls
+      = text_field_tag( :visitor_swimmer, visitor_swimmer, class: 'input-large,' )
+
+.span2
+  .control-group
+    .controls
+      = submit_tag( I18n.t('misc.find_matches'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+      %span( id='loadingIndicator' hidden='true' )
+        = image_tag( 'indicator.gif' )

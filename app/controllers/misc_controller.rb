@@ -287,6 +287,54 @@ class MiscController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # #GET swimmer_matches
+  # Swimmer matches "Duel in the pool"
+  #
+  # If logged in and associated to a swimmer
+  # suggests locale swimmer
+  #
+  def swimmer_matches
+    @tab_title = I18n.t('misc.swimmer_matches')
+    #@locale_swimmer = nil
+    #@visitor_swimmer = nil
+
+    # if user is logged in and associated to a swimmer
+    if current_user && current_user.swimmer
+      @locale_swimmer = current_user.swimmer.decorate if current_user
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # #AJAX POST-only swimmer_matches
+  #
+  # Find out and show swimmer matches
+  #
+  def show_swimmer_matches
+    if request.xhr? && request.post?                   # === AJAX POST: ===
+      #locale_swimmer_id  = params[:local_swimmer_id] ? params[:local_swimmer_id].to_i : 0
+      #visitor_swimmer_id = params[:visitor_swimmer_id] ? params[:visitor_swimmer_id].to_i : 0
+      locale_swimmer_id  = 23
+      visitor_swimmer_id = 142
+      unless ( locale_swimmer_id > 0 && locale_swimmer_id > 0 )
+        flash[:error] = I18n.t(:missing_request_parameter)
+        return
+      end
+
+      @locale_swimmer  = Swimmer.find_by_id( locale_swimmer_id )
+      @visitor_swimmer = Swimmer.find_by_id( visitor_swimmer_id )
+      
+      @sme = SwimmerMatchEvaluator.new( @locale_swimmer )
+      if @sme.set_visitor( @visitor_swimmer )
+        @sme_dao = @sme.matches_to_dao
+      else
+        flash[:error] = I18n.t('misc.not_matched_swimmer')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   private
 

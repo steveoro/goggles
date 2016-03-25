@@ -1,0 +1,12 @@
+.row-fluid.goggles-category-gap#pageTop#swimmer_matches
+
+.container-fluid
+  .row-fluid.alert.alert-success.goggles-div-centeralign
+    %h4
+      = @tab_title
+  .row-fluid
+    = form_tag( :misc_show_swimmer_matches, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#swimmer_matches_result').hide()" ) do
+      = render( partial: 'swimmer_matches_parameters' )
+
+  #calculation_result
+  %p/

@@ -736,6 +736,14 @@ it:
     how_to_calculate_timing: "Seleziona il sesso, la categoria, il tipo di vasca, la specialità ed inserisci il punteggio obiettivo, infine premi il pulsante 'Calcola tempo obiettivo FIN' per calcolare il tempo da realizzare per ottenere il punteggio obiettivo FIN"
     compute_goal_timing: "Calcola tempo obiettivo"
     wrong_score: "Punteggio non ammissibile. Verifica il punteggio immesso."
+    swimmer_matches: "Duel in the pool"
+    not_matched_swimmer: "Questi nuotatori non hanno ancora mai incrociato le cuffie!"
+    match_wons: "Vittorie"
+    match_losses: "Sconfitte"
+    match_neutrals: "Parimerito"
+    locale_swimmer: "Il 'campione'"
+    visitor_swimmer: "Lo 'sfidante'"
+    find_matches: "Cerca le sfide"
 
   netzke:
     basepack:

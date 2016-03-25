@@ -74,14 +74,14 @@ class SwimmerMatchEvaluator
   # all present
   #
   def get_matches
-    @matches = @locale_swimmer.meeting_programs.includes( :meeting, :event_type ).where(['exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', @visitor_swimmer.id]) if has_matches?
+    @matches = @locale_swimmer.meeting_programs.sort_by_date( 'DESC' ).includes( :meeting, :event_type ).where(['exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', @visitor_swimmer.id]) if has_matches?
   end
   
   # Scan for meeting_programs in which locale and visitor are
   # all present for given event_types
   #
   def get_matches_on_event( event_type )
-    @matches = @locale_swimmer.meeting_programs.includes( :meeting, :event_type ).where(['meeting_events.event_type_id = ? and exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', event_type.id, visitor_swimmer.id]) if has_matches_on_event?( event_type )
+    @matches = @locale_swimmer.meeting_programs.sort_by_date( 'DESC' ).includes( :meeting, :event_type ).where(['meeting_events.event_type_id = ? and exists (select 1 from meeting_individual_results mir join swimmers s on s.id = mir.swimmer_id where s.id = ? and mir.meeting_program_id = meeting_programs.id)', event_type.id, visitor_swimmer.id]) if has_matches_on_event?( event_type )
   end
   
   # Returns a DAO structure fotr matches handling

@@ -50,6 +50,7 @@ class MeetingProgram < ActiveRecord::Base
   scope :sort_meeting_program_by_event_type,      ->(dir) { order("event_types.code #{dir.to_s}") }
   scope :sort_meeting_program_by_category_type,   ->(dir) { order("category_types.code #{dir.to_s}") }
   scope :sort_meeting_program_by_gender_type,     ->(dir) { order("gender_type.code #{dir.to_s}") }
+  scope :sort_by_date,                            ->(dir = 'ASC') { order("meeting_sessions.scheduled_date #{dir.to_s}, meeting_programs.event_order #{dir.to_s}") }
 
 
   # ----------------------------------------------------------------------------
