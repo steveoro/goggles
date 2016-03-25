@@ -328,8 +328,8 @@ class MiscController < ApplicationController
         return
       end
 
-      @locale_swimmer  = Swimmer.find( locale_swimmer_id )
-      @visitor_swimmer = Swimmer.find( visitor_swimmer_id )
+      @locale_swimmer  = Swimmer.find_by_id( locale_swimmer_id )
+      @visitor_swimmer = Swimmer.find_by_id( visitor_swimmer_id )
       
       @sme = SwimmerMatchEvaluator.new( @locale_swimmer )
       if @sme.set_visitor( @visitor_swimmer )

@@ -6,6 +6,10 @@
     = label_tag( :locale_swimmer, t('misc.locale_swimmer'), :for => :locale_swimmer, class: 'control-label' )
     .controls
       = text_field_tag( :locale_swimmer, locale_swimmer, class: 'input-large,' )
+  -#.control-group
+  -#  = label_tag( :locale_swimmer, t('misc.locale_swimmer'), :for => :locale_swimmer, class: 'control-label' )
+  -#  .controls
+  -#    = select( :locale_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
 
 .span4
   -#.control-group
