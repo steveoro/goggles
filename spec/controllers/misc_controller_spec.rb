@@ -639,8 +639,8 @@ describe MiscController, :type => :controller do
 
       it_behaves_like( "(Misc not restricted GET action)", :swimmer_matches )
 
-      it "doesn't assigns locale_swimmer" do
-        expect( assigns( :locale_swimmer ) ).to be nil
+      it "doesn't assigns local_swimmer" do
+        expect( assigns( :local_swimmer ) ).to be nil
       end
       it "doesn't assign visitor_swimmer" do
         expect( assigns( :visitor_swimmer ) ).to be nil
@@ -662,8 +662,8 @@ describe MiscController, :type => :controller do
 
       it_behaves_like( "(Misc not restricted GET action)", :swimmer_matches )
 
-      it "doesn't assigns locale_swimmer" do
-        expect( assigns( :locale_swimmer ) ).to be nil
+      it "doesn't assigns local_swimmer" do
+        expect( assigns( :local_swimmer ) ).to be nil
       end
       it "doesn't assign visitor_swimmer" do
         expect( assigns( :visitor_swimmer ) ).to be nil
@@ -690,7 +690,7 @@ describe MiscController, :type => :controller do
       it_behaves_like( "(Misc not restricted GET action)", :swimmer_matches )
 
       it "assigns the required variables" do
-        expect( assigns( :locale_swimmer ) ).to be_an_instance_of( Swimmer )
+        expect( assigns( :local_swimmer ) ).to be_an_instance_of( Swimmer )
       end
       it "doesn't assign visitor_swimmer" do
         expect( assigns( :visitor_swimmer ) ).to be nil
@@ -713,7 +713,7 @@ describe MiscController, :type => :controller do
         xhr(
           :post,
           :show_swimmer_matches,
-          locale_swimmer_id:   {id: 23},
+          local_swimmer_id:   {id: 23},
           visitor_swimmer_id:  {id: 0}    # Force invalid value
         )
       end

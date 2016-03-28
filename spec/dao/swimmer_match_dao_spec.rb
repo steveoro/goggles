@@ -30,29 +30,29 @@ describe SwimmerMatchDAO, :type => :model do
         with_desc = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, nil, description )
         expect( with_desc.description ).to eq( description )
       end
-      it "locale_result is the one used in costruction" do
+      it "local_result is the one used in costruction" do
         mir = create( :meeting_individual_result )
         with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir, nil )
-        expect( with_loc_res.locale_result ).to eq( mir )
+        expect( with_loc_res.local_result ).to eq( mir )
         expect( with_loc_res.visitor_result ).to be nil
       end
       it "visitor_result is the one used in costruction" do
         mir = create( :meeting_individual_result )
         with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, mir )
-        expect( with_loc_res.locale_result ).to be nil
+        expect( with_loc_res.local_result ).to be nil
         expect( with_loc_res.visitor_result ).to eq( mir )
       end
       it "stored values are the one used in costruction" do
         mir_loc = create( :meeting_individual_result )
         mir_vis = create( :meeting_individual_result )
         full = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir_loc, mir_vis, description )
-        expect( full.locale_result ).to eq( mir_loc )
+        expect( full.local_result ).to eq( mir_loc )
         expect( full.visitor_result ).to eq( mir_vis )
         expect( full.description ).to eq( description )
       end
 
-      it "responds to locale_result" do
-        expect( subject ).to respond_to( :locale_result )
+      it "responds to local_result" do
+        expect( subject ).to respond_to( :local_result )
       end
 
       it "responds to visitor_result" do
@@ -69,7 +69,7 @@ describe SwimmerMatchDAO, :type => :model do
         it "returns a '?' if no data set" do
           no_desc = SwimmerMatchDAO::SwimmerMatchProgramDAO.new()
           expect( no_desc.description ).to be nil
-          expect( no_desc.locale_result ).to be nil
+          expect( no_desc.local_result ).to be nil
           expect( no_desc.get_description ).to eq( '?' )
         end
         it "returns the description attribute if set" do
@@ -80,7 +80,7 @@ describe SwimmerMatchDAO, :type => :model do
         it "returns the locale result description if result present and no description attribute set" do
           mir = create( :meeting_individual_result )
           expect( subject.description ).to be nil
-          subject.locale_result = mir
+          subject.local_result = mir
           expect( subject.get_description ).to include( mir.get_full_name )
         end
       end

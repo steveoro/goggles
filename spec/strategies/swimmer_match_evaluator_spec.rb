@@ -16,8 +16,8 @@ describe SwimmerMatchEvaluator, :type => :model do
   subject { SwimmerMatchEvaluator.new( swimmer ) }
 
   describe "[a well formed instance]" do
-    it "locale_swimmer is the one used in costruction" do
-      expect( subject.locale_swimmer ).to eq( swimmer )
+    it "local_swimmer is the one used in costruction" do
+      expect( subject.local_swimmer ).to eq( swimmer )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -64,16 +64,16 @@ describe SwimmerMatchEvaluator, :type => :model do
     it "returns false if locale and visitor have never swam in the same program" do
       create( :meeting_individual_result, swimmer: swimmer )
       subject.set_visitor( younger_swimmer )
-      expect( subject.locale_swimmer ).not_to eq( subject.visitor_swimmer )
-      expect( subject.locale_swimmer.meeting_individual_results.count ).to be > 0
+      expect( subject.local_swimmer ).not_to eq( subject.visitor_swimmer )
+      expect( subject.local_swimmer.meeting_individual_results.count ).to be > 0
       expect( subject.visitor_swimmer.meeting_individual_results.count ).to be >= 0
       expect( subject.has_matches? ).to be false
     end
     it "returns true if locale and visitor are the same swimmer" do
       create( :meeting_individual_result, swimmer: swimmer )
       subject.set_visitor( swimmer )
-      expect( subject.locale_swimmer ).to eq( subject.visitor_swimmer )
-      expect( subject.locale_swimmer.meeting_individual_results.count ).to be > 0
+      expect( subject.local_swimmer ).to eq( subject.visitor_swimmer )
+      expect( subject.local_swimmer.meeting_individual_results.count ).to be > 0
       expect( subject.has_matches? ).to be true
     end
     it "returns false for Leega and Cavallo" do
@@ -104,16 +104,16 @@ describe SwimmerMatchEvaluator, :type => :model do
     it "returns false if locale and visitor have never swam in the same program" do
       create( :meeting_individual_result, swimmer: swimmer )
       subject.set_visitor( younger_swimmer )
-      expect( subject.locale_swimmer ).not_to eq( subject.visitor_swimmer )
-      expect( subject.locale_swimmer.meeting_individual_results.count ).to be > 0
+      expect( subject.local_swimmer ).not_to eq( subject.visitor_swimmer )
+      expect( subject.local_swimmer.meeting_individual_results.count ).to be > 0
       expect( subject.visitor_swimmer.meeting_individual_results.count ).to be >= 0
       expect( subject.has_matches_on_event?( fix_event ) ).to be false
     end
     it "returns true if locale and visitor are the same swimmer" do
       mir = create( :meeting_individual_result, swimmer: swimmer )
       subject.set_visitor( swimmer )
-      expect( subject.locale_swimmer ).to eq( subject.visitor_swimmer )
-      expect( subject.locale_swimmer.meeting_individual_results.count ).to be > 0
+      expect( subject.local_swimmer ).to eq( subject.visitor_swimmer )
+      expect( subject.local_swimmer.meeting_individual_results.count ).to be > 0
       expect( subject.has_matches_on_event?( mir.event_type ) ).to be true
     end
     it "returns false for Leega and Cavallo" do

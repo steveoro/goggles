@@ -1,15 +1,14 @@
 .span4
   .control-group
-    = label_tag( :locale_swimmer, t('misc.locale_swimmer'), :for => :locale_swimmer, class: 'control-label' )
+    = label_tag( :local_swimmer, t('misc.local_swimmer'), :for => :local_swimmer, class: 'control-label' )
     .controls
-      -#= text_field_tag( :locale_swimmer, @locale_swimmer, class: 'input-large,' )
-      -#= select( :locale_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
-      = select( :locale_swimmer_id, :id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
-        { prompt: I18n.t(:please_select), selected: @locale_swimmer ? @locale_swimmer.id : 0 },           |
-        { class: 'input-xlarge combobox' } )                                                  |
+      -#= text_field_tag( :local_swimmer, @local_swimmer, class: 'input-large,' )
+      -#= select( :local_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
+      = select( :local_swimmer_id, :id, Swimmer.includes(:gender_type).to_dropdown(nil, :id, :get_verbose_name),  |
+        { prompt: I18n.t(:please_select), selected: @local_swimmer ? @local_swimmer.id : 0 },                     |
+        { class: 'input-xlarge combobox' } )                                                                      |
 
 .span4
-      
   .control-group
     = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
     -#.controls
@@ -19,3 +18,7 @@
         { prompt: I18n.t(:please_select), selected: @visitor_swimmer ? @visitor_swimmer.id : 0 },           |
         { class: 'input-xlarge combobox' } )                                                  |
       -#= select( :visitor_swimmer_id, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
+
+%script
+  // JS Combo is Too slow, commented out:
+  //$('.combobox').combobox();

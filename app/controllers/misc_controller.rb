@@ -295,14 +295,14 @@ class MiscController < ApplicationController
   #
   def swimmer_matches
     @tab_title = I18n.t('misc.swimmer_matches')
-    @locale_swimmer  = nil
+    @local_swimmer  = nil
     @visitor_swimmer = nil
     @sme             = nil
     @sme_dao         = nil
 
     # if user is logged in and associated to a swimmer
     if current_user && current_user.swimmer
-      @locale_swimmer = current_user.swimmer.decorate if current_user
+      @local_swimmer = current_user.swimmer.decorate if current_user
     end
   end
   #-- -------------------------------------------------------------------------
@@ -313,27 +313,32 @@ class MiscController < ApplicationController
   # Find out and show swimmer matches
   #
   def show_swimmer_matches
+# DEBUG
+    puts "\r\n*********** show_swimmer_matches ***********"
+    puts params.inspect
     if request.xhr? && request.post?                   # === AJAX POST: ===
-      locale_swimmer_id  = params[:locale_swimmer_id] ? params[:locale_swimmer_id][:id].to_i : 0
-      #locale_swimmer_id  = 23
-      visitor_swimmer_id = params[:visitor_swimmer_id] ? params[:visitor_swimmer_id][:id].to_i : 0
+      local_swimmer_id  = params['local_swimmer_id'] ? params['local_swimmer_id']['id'].to_i : 0
+      #local_swimmer_id  = 23
+      visitor_swimmer_id = params['visitor_swimmer_id'] ? params['visitor_swimmer_id']['id'].to_i : 0
       #visitor_swimmer_id = 142
 
-      unless ( locale_swimmer_id > 0 && visitor_swimmer_id > 0 && Swimmer.exists?( locale_swimmer_id ) && Swimmer.exists?( visitor_swimmer_id ) )
+      unless ( local_swimmer_id > 0 && visitor_swimmer_id > 0 && Swimmer.exists?( local_swimmer_id ) && Swimmer.exists?( visitor_swimmer_id ) )
         flash[:error] = I18n.t(:missing_request_parameter)
         return
       end
 
-      @locale_swimmer  = Swimmer.find_by_id( locale_swimmer_id )
+      @local_swimmer  = Swimmer.find_by_id( local_swimmer_id )
       @visitor_swimmer = Swimmer.find_by_id( visitor_swimmer_id )
-      
-      @sme = SwimmerMatchEvaluator.new( @locale_swimmer )
+
+      @sme = SwimmerMatchEvaluator.new( @local_swimmer )
+      puts "\r\n- SME (before visitor set): " << @sme.inspect
       if @sme.set_visitor( @visitor_swimmer )
         @sme_dao = @sme.matches_to_dao
       else
         flash[:error] = I18n.t('misc.not_matched_swimmer')
         return
       end
+      puts "\r\n- SME (AFTER visitor set): " << @sme.inspect
     end
   end
   #-- -------------------------------------------------------------------------

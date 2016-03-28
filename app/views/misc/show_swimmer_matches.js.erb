@@ -2,5 +2,5 @@ $('#loadingIndicator').hide();
 <% if flash[:error] %>
  alert('<%= escape_javascript( flash[:error] ) %>' );
 <% end %>
-$('#calculation_result').replaceWith('<%= escape_javascript( render(partial: 'swimmer_matches_result') ) %>');
+$('#calculation_result').html('<%= escape_javascript( render(partial: 'swimmer_matches_result') ) %>');
 $('#calculation_result').show();

@@ -10,12 +10,12 @@
 
 === Members:
  - <tt>:swimmer_male_count</tt> => Count of male swimmers with result
- - <tt>:result_male_count_count</tt> => Count of male total results 
- - <tt>:oldest_male_swimmer</tt> => Oldest male swimmer with result 
+ - <tt>:result_male_count_count</tt> => Count of male total results
+ - <tt>:oldest_male_swimmer</tt> => Oldest male swimmer with result
  - <tt>:disqualified_male_count</tt> => Count of male disqualified results
  - <tt>:swimmer_female_count</tt> => Count of male swimmers with result
  - <tt>:result_female_count</tt> => Count of male total results
- - <tt>:oldest_female_swimmer</tt> => Oldest male swimmer with result 
+ - <tt>:oldest_female_swimmer</tt> => Oldest male swimmer with result
  - <tt>:disqualified_female_count</tt> => Count of female disqualified results
 
 =end
@@ -23,22 +23,22 @@ class SwimmerMatchDAO
   class SwimmerMatchProgramDAO
     # These must be initialized on creation:
     attr_reader :description, :meeting, :event_type
-  
+
     # These can be edited later on:
-    attr_accessor :locale_result, :visitor_result 
+    attr_accessor :local_result, :visitor_result
 
     # Creates a new instance.
     # Note the ascending precision of the parameters, which allows to skip
     # the rarely used ones.
     #
-    def initialize( locale_result = nil, visitor_result = nil, description = nil, meeting = nil, event_type = nil )
+    def initialize( local_result = nil, visitor_result = nil, description = nil, meeting = nil, event_type = nil )
       @description     = description
-      @locale_result   = locale_result
+      @local_result    = local_result
       @visitor_result  = visitor_result
       @meeting         = meeting
       @event_type      = event_type
     end
-    
+
     # Gets the description of the match result
     # If no alternative description returns the locale result one
     #
@@ -46,7 +46,7 @@ class SwimmerMatchDAO
       if @description
         @description
       else
-        @locale_result ? "#{@locale_result.get_full_name} - #{@visitor_result.get_full_name if @visitor_result}" : '?'
+        @local_result ? "#{@local_result.get_full_name} - #{@visitor_result.get_full_name if @visitor_result}" : '?'
       end
     end
 
@@ -57,7 +57,7 @@ class SwimmerMatchDAO
       if @meeting
         @meeting
       else
-        @locale_result ? @locale_result.meeting : '?' 
+        @local_result ? @local_result.meeting : '?'
       end
     end
 
@@ -68,14 +68,14 @@ class SwimmerMatchDAO
       if @event_type
         @event_type
       else
-        @locale_result ? @locale_result.event_type : '?' 
+        @local_result ? @local_result.event_type : '?'
       end
     end
 
     # Gets the locale timing
     #
     def get_locale_timing
-      @locale_result.get_timing if @locale_result
+      @local_result.get_timing if @local_result
     end
 
     # Gets the visitor timing
@@ -89,9 +89,9 @@ class SwimmerMatchDAO
   class SwimmerMatchEventSumDAO
     # These must be initialized on creation:
     #attr_reader :event_type
-  
+
     # These can be edited later on:
-    attr_accessor :event_type, :wons_count, :losses_count, :neutrals_count 
+    attr_accessor :event_type, :wons_count, :losses_count, :neutrals_count
 
     # Creates a new instance.
     # Note the ascending precision of the parameters, which allows to skip
@@ -107,7 +107,7 @@ class SwimmerMatchDAO
       @losses_count   = losses_count
       @neutrals_count = neutrals_count
     end
-    
+
     # Increments the given summary voice
     #
     def increment( summary )
@@ -127,7 +127,7 @@ class SwimmerMatchDAO
   attr_reader :locale, :visitor
 
   # These can be edited later on:
-  attr_accessor :wons, :losses, :neutrals, :events_summary, :first_meeting, :last_meeting 
+  attr_accessor :wons, :losses, :neutrals, :events_summary, :first_meeting, :last_meeting
 
   # Creates a new instance.
   # Note the ascending precision of the parameters, which allows to skip
@@ -146,61 +146,61 @@ class SwimmerMatchDAO
   # ---------------------------------------------------------------------------
 
   # Sets the locale swimmer
-  # 
-  def set_locale( locale_swimmer )
-    @locale = locale_swimmer if locale_swimmer && locale_swimmer.instance_of?( Swimmer )
+  #
+  def set_locale( local_swimmer )
+    @locale = local_swimmer if local_swimmer && local_swimmer.instance_of?( Swimmer )
   end
   # ---------------------------------------------------------------------------
 
   # Sets the visitor swimmer
-  # 
+  #
   def set_visitor( visitor_swimmer )
     @visitor = visitor_swimmer if visitor_swimmer && visitor_swimmer.instance_of?( Swimmer )
   end
   # ---------------------------------------------------------------------------
 
   # Gets the locale swimmer
-  # 
+  #
   def get_locale
     @locale
   end
   # ---------------------------------------------------------------------------
 
   # Gets the locale swimmer
-  # 
+  #
   def get_visitor
     @visitor
   end
   # ---------------------------------------------------------------------------
 
   # Gets the wons matches count
-  # 
+  #
   def get_wons_count
     @wons.size
   end
   # ---------------------------------------------------------------------------
 
   # Gets the losses matches count
-  # 
+  #
   def get_losses_count
     @losses.size
   end
   # ---------------------------------------------------------------------------
 
   # Gets the neutrals matches count
-  # 
+  #
   def get_neutrals_count
     @neutrals.size
   end
   # ---------------------------------------------------------------------------
 
   # Gets the total matches count
-  # 
+  #
   def get_matches_count
-    get_wons_count + get_losses_count + get_neutrals_count 
+    get_wons_count + get_losses_count + get_neutrals_count
   end
   # ---------------------------------------------------------------------------
-  
+
   # Add a couple of results in the appropriate collection
   #   If locale better than visitor add to the wons
   #   if locale worst than visitor add to the losses
@@ -211,26 +211,26 @@ class SwimmerMatchDAO
   #
   # If results not valid nothing is done and returns -1
   #
-  def add_match( locale_result, visitor_result, description = nil, meeting = nil, event_type = nil )
+  def add_match( local_result, visitor_result, description = nil, meeting = nil, event_type = nil )
     # Check if results are valids
-    if locale_result && 
-     locale_result.instance_of?( MeetingIndividualResult ) &&
-     locale_result.swimmer == @locale &&
-     visitor_result && 
+    if local_result &&
+     local_result.instance_of?( MeetingIndividualResult ) &&
+     local_result.swimmer == @locale &&
+     visitor_result &&
      visitor_result.instance_of?( MeetingIndividualResult ) &&
      visitor_result.swimmer == @visitor
-      locale_timing  = locale_result.is_disqualified ? 999999999999 : locale_result.get_timing_instance.to_hundreds
+      locale_timing  = local_result.is_disqualified ? 999999999999 : local_result.get_timing_instance.to_hundreds
       visitor_timing = visitor_result.is_disqualified ? 999999999999 : visitor_result.get_timing_instance.to_hundreds
 
-      meeting = locale_result.meeting if meeting == nil
-      event_type = locale_result.event_type if event_type == nil
-      
-      # Populate first and last meetings
-      @first_meeting = meeting if @first_meeting == nil || @first_meeting.get_meeting_date.to_date > meeting.get_meeting_date.to_date 
-      @last_meeting = meeting if @last_meeting == nil || @last_meeting.get_meeting_date.to_date < meeting.get_meeting_date.to_date 
+      meeting = local_result.meeting if meeting == nil
+      event_type = local_result.event_type if event_type == nil
 
-      match = SwimmerMatchProgramDAO.new( locale_result, visitor_result, description, meeting, event_type )
-      
+      # Populate first and last meetings
+      @first_meeting = meeting if @first_meeting == nil || @first_meeting.get_meeting_date.to_date > meeting.get_meeting_date.to_date
+      @last_meeting = meeting if @last_meeting == nil || @last_meeting.get_meeting_date.to_date < meeting.get_meeting_date.to_date
+
+      match = SwimmerMatchProgramDAO.new( local_result, visitor_result, description, meeting, event_type )
+
       # Verify reults timing
       # locale better than visitor
       if locale_timing < visitor_timing
@@ -240,20 +240,20 @@ class SwimmerMatchDAO
       else
         matches = add_match_to_collection( match, @neutrals, event_type, :neutrals )
       end
-      matches > 0 ? get_matches_count : matches 
+      matches > 0 ? get_matches_count : matches
     else
       -1
     end
   end
-  
+
   private
-  
+
   # Adds a program DAO to a give collection
   # Retruns 0 if already present
   # Returns the collectyion matches number if added
   #
   def add_match_to_collection( match, collection, event_type, summary )
-    if collection.rindex{ |e| e.locale_result == match.locale_result && e.visitor_result == match.visitor_result }
+    if collection.rindex{ |e| e.local_result == match.local_result && e.visitor_result == match.visitor_result }
       0
     else
       # Handle event summary
@@ -261,13 +261,13 @@ class SwimmerMatchDAO
       if event
         @events_summary[event].increment( summary )
       else
-        event_summary = SwimmerMatchEventSumDAO.new( event_type ) 
+        event_summary = SwimmerMatchEventSumDAO.new( event_type )
         event_summary.increment( summary )
         @events_summary << event_summary
       end
-      
+
       collection << match
       collection.count
-    end 
+    end
   end
 end
