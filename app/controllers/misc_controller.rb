@@ -314,8 +314,8 @@ class MiscController < ApplicationController
   #
   def show_swimmer_matches
 # DEBUG
-    puts "\r\n*********** show_swimmer_matches ***********"
-    puts params.inspect
+    #puts "\r\n*********** show_swimmer_matches ***********"
+    #puts params.inspect
     if request.xhr? && request.post?                   # === AJAX POST: ===
       local_swimmer_id  = params['local_swimmer_id'] ? params['local_swimmer_id']['id'].to_i : 0
       #local_swimmer_id  = 23
@@ -331,14 +331,9 @@ class MiscController < ApplicationController
       @visitor_swimmer = Swimmer.find_by_id( visitor_swimmer_id )
 
       @sme = SwimmerMatchEvaluator.new( @local_swimmer )
-      puts "\r\n- SME (before visitor set): " << @sme.inspect
-      if @sme.set_visitor( @visitor_swimmer )
-        @sme_dao = @sme.matches_to_dao
-      else
-        flash[:error] = I18n.t('misc.not_matched_swimmer')
-        return
-      end
-      puts "\r\n- SME (AFTER visitor set): " << @sme.inspect
+      #puts "\r\n- SME (before visitor set): " << @sme.inspect
+      @sme_dao = @sme.matches_to_dao if @sme.set_visitor( @visitor_swimmer )
+      #puts "\r\n- SME (AFTER visitor set): " << @sme.inspect
     end
   end
   #-- -------------------------------------------------------------------------
