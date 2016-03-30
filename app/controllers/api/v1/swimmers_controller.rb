@@ -14,16 +14,20 @@ class Api::V1::SwimmersController < ApplicationController
   # The keys of the Hash are the attributes as string.
   #
   # === Additional params:
-  # - ':complete_name_like':    a matching (sub)string for the Swimmer.complete_name
+  # - 'q':    a matching (sub)string for the Swimmer.complete_name
   #
   def index
+# DEBUG
+    puts "\r\n**** Api::V1::SwimmersController #index ****"
+    puts "- PARAMS: " << params.inspect
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:complete_name_like]
-      filter = "%#{params[:complete_name_like]}%"
-      @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name)
+    if params['q']
+      filter = "%#{params['q']}%"
+      @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name).limit(16)
     else
-      @swimmers = Swimmer.order(:complete_name)
+      @swimmers = Swimmer.order(:complete_name).limit(16)
     end
+    puts "- returning #{ @swimmers.size } result..."
     respond_with( @swimmers )
   end
   #-- -------------------------------------------------------------------------

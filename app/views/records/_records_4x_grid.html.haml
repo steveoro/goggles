@@ -1,17 +1,18 @@
-- cache( @grid_builder.cache_key ) do
-  .row-fluid#records_4x_grid
-    .goggles-category-gap#pageTop
-      %h2= @title
-      -# --- Sub-legend for each gender + pool-type
-      .navbar
-        - @grid_builder.gender_types.each do |gender_type|
-          %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
-          %ul.nav
-            - @grid_builder.pool_types.each do |pool_type|
-              %li
-                %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
-            .ghost-divider-vertical
-    - @grid_builder.gender_types.each do |gender_type|
-      - @grid_builder.pool_types.each do |pool_type|
-        = render( partial: 'records_grid', locals: { gender_type: gender_type, pool_type: pool_type, grid_builder: @grid_builder } )
-  .row-fluid.goggles-category-gap
+- if @grid_builder
+  - cache( @grid_builder.cache_key ) do
+    .row-fluid#records_4x_grid
+      .goggles-category-gap#pageTop
+        %h2= @title
+        -# --- Sub-legend for each gender + pool-type
+        .navbar
+          - @grid_builder.gender_types.each do |gender_type|
+            %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
+            %ul.nav
+              - @grid_builder.pool_types.each do |pool_type|
+                %li
+                  %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
+              .ghost-divider-vertical
+      - @grid_builder.gender_types.each do |gender_type|
+        - @grid_builder.pool_types.each do |pool_type|
+          = render( partial: 'records_grid', locals: { gender_type: gender_type, pool_type: pool_type, grid_builder: @grid_builder } )
+    .row-fluid.goggles-category-gap

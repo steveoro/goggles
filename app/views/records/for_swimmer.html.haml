@@ -11,13 +11,91 @@
               #tooltipLabel= label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
               .controls
                 .ui-widget
+                  -#= hidden_field_tag( :swimmer_id )
+                  -#= select_tag( :swimmer, '', { class: "swimmer-dropdown input-xlarge" } )
                   = select( :swimmer, :id, Swimmer.to_dropdown(), { class: 'input-xlarge' } )
-              %script
-                $('#swimmer_id').combobox();
-                $('#tooltipLabel').tooltip();
           .row-fluid
             .controls
               = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
               %span(id='loadingIndicator' hidden='true')
                 = image_tag( 'indicator.gif' )
+
 #records_4x_grid
+
+:javascript
+  // $('#swimmer_id').combobox(); (TOO SLOW! TOO MANY SWIMMERS!)
+  $('#tooltipLabel').tooltip();
+
+  /* WIP TEST w/ removed Select2 (not working)
+  $(function() {
+    var resultArray = [];
+
+    $(".swimmer-dropdown").select2({
+      placeholder: "#{ I18n.t('combobox_generic_tooltip') }",
+      ajax: {
+        url: "#{ api_v1_swimmers_path() }",
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term //,
+            // page: params.page
+          };
+        },
+        processResults: function (data, params) {
+          //console.log( "processResults:" );
+          // Clear & rebuild the result array:
+          resultArray = [{id:0, text: "-", remote_id: 0}];
+          for ( idx = 0; idx < data.length; idx++ ) {
+            resultArray.push( { id: idx+1, text: data[idx].complete_name, remote_id: data[idx].id } );
+          };
+          //console.log( resultArray );
+          return {
+            results: resultArray
+            // pagination: { more: (params.page * 30) < data.total_count }
+          };
+        },
+        cache: false
+      },
+      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+      minimumInputLength: 3,
+      //templateResult: function ( data, container ) {
+      //  console.log( "templateResult:" );
+      //  console.log( data );
+      //  console.log( container );
+        //$("#swimmer_id").val();
+        //return data.complete_name;
+      //},
+      //templateSelection: function ( data, container ) {
+        //console.log( "templateSelection:" );
+        //console.log( data );
+        //console.log( container );
+        //return data.text;
+      //}
+    })
+    .on( "select2:open", function (e) {
+      console.log( "select2:open:", e );
+      // Clear the last selected ID whenever the drop-down is opened:
+      $("#swimmer_id").val( null );
+      $("select#swimmer").children( null );
+    })
+    .on( "select2:select", function (e) {
+      console.log( "select2:select:", e );
+      if ( $("select#swimmer").val() ) {
+        var iCurrentlySelected = $("select#swimmer").val();
+        console.log( "selected: ", iCurrentlySelected );
+        console.log( "item:", resultArray[iCurrentlySelected] );
+        $("#swimmer_id").val( resultArray[iCurrentlySelected].remote_id );
+      }
+    })
+    .on( "select2:change", function (e) {
+      console.log( "select2:change:", e );
+      if ( $("select#swimmer").val() ) {
+        var iCurrentlySelected = $("select#swimmer").val();
+        console.log( "selected: ", iCurrentlySelected );
+        console.log( "item:", resultArray[iCurrentlySelected] );
+        $("#swimmer_id").val( resultArray[iCurrentlySelected].remote_id );
+      }
+    });
+
+  }); */

@@ -8,14 +8,14 @@ describe Api::V1::SwimmersController, :type => :controller do
   end
 
 
-  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "swimmers" )    
+  it_behaves_like( "(Ap1-V1-Controllers, #index & #show actions)", "swimmers" )
 
 
   describe '[GET swimmers/index]' do
     context "with :complete_name_like filtering parameter" do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :index, complete_name_like: 'stef', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, q: 'stef', format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )

@@ -12,12 +12,13 @@
               .controls
                 .ui-widget
                   = select( :team, :id, Team.to_dropdown(), { class: 'input-xlarge' } )
-              %script
-                $('#team_id').combobox();
-                $('#tooltipLabel').tooltip();
           .row-fluid
             .controls
               = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
               %span(id='loadingIndicator' hidden='true')
                 = image_tag( 'indicator.gif' )
 #records_4x_grid
+
+%script
+  //$('#team_id').combobox(); TOO SLOW, TOO MANY TEAMS!
+  $('#tooltipLabel').tooltip();

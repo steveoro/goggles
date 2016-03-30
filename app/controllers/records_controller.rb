@@ -115,8 +115,8 @@ class RecordsController < ApplicationController
 #    logger.debug "> #{params.inspect}"
 #    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
-    if request.xhr?
-      swimmer = Swimmer.find_by_id( params[:swimmer][:id] ) if params[:swimmer] && params[:swimmer][:id]
+    if request.xhr? && params['swimmer'] && params['swimmer']['id']
+      swimmer = Swimmer.find_by_id( params['swimmer']['id'] )
       collector = RecordCollector.new( swimmer: swimmer, record_type_code: 'FOR' )
       collector.full_scan do |this, pool_code, event_code, category_code, gender_code|
         this.collect_from_results_having( pool_code, event_code, category_code, gender_code, 'FOR' )
