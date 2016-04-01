@@ -289,4 +289,33 @@ class Meeting < ActiveRecord::Base
     events_by_pool_types
   end
   # ----------------------------------------------------------------------------
+
+  # Retrieves the first scheduled date for this meeting; nil when not found
+  def get_scheduled_date
+  end
+
+  # Retrieves the date for this meeting.
+  # Return the first session one if set, 
+  # or the general meeting scheduled date if not
+  # in iso (yyyymmdd) format
+  #
+  def meeting_date_to_iso
+    ms = self.meeting_sessions.first
+    date = ms ? ms.scheduled_date : self.header_date
+    date.strftime( '%Y%m%d' )
+  end
+
+  # Computes the data import file name
+  # for this meeting.
+  # The data import fiel name is: <type_prefix><iso_date><meeting_code>
+  # - type_prefix is the one given or "ris" by default
+  # - iso_date is the meeting date in iso yyyymmdd format
+  # - meeting_code is the meeting stored code
+  #
+  # Should give an extension (default: 'ris')
+  #
+  def get_data_import_file_name( operation_prefix = 'ris', extension = 'txt' )
+    "#{operation_prefix}#{self.meeting_date_to_iso}#{self.code}.#{extension}" 
+  end
+  # ----------------------------------------------------------------------------
 end

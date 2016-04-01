@@ -200,7 +200,8 @@ DESC
     logger.info( "\r\n<------------------------------------------------------------>\r\n" )
     season.meetings.has_not_results.sort_by_date.each do |meeting|
       meeting_found += 1
-      logger.info( "\r\n#{meeting.id} - #{meeting.get_meeting_date} #{meeting.get_full_name} (#{meeting.code}) #{meeting.meeting_individual_results.count if meeting.meeting_individual_results.count > 0}\r\n" )
+      result_file_name = 
+      logger.info( "\r\n#{meeting.id} - #{meeting.get_meeting_date} #{meeting.get_full_name} (#{meeting.code}) #{meeting.meeting_individual_results.count if meeting.meeting_individual_results.count > 0} -> #{meeting.get_data_import_file_name}\r\n" )
     end
       
     # If no meetings found log warning

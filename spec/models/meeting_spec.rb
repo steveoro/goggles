@@ -101,12 +101,45 @@ describe Meeting, :type => :model do
           expect( event_by_pool_type ).to be_an_instance_of( EventsByPoolType )
         end
       end
-      
-    end      
 
-    context "[meeting result methods]" do      
-      it "has a method to determine the meeting team charts"
-    end
+      describe "#get_meeting_date" do      
+        it "has a method to find out meeting date" do
+          expect( subject ).to respond_to( :get_meeting_date )
+        end
+        it "returns a string" do
+          expect( subject.get_meeting_date ).to be_an_instance_of( String )
+        end
+      end
+      
+      describe "#meeting_date_to_iso" do      
+        it "has a method to find out meeting date in iso format" do
+          expect( subject ).to respond_to( :meeting_date_to_iso )
+        end
+        it "returns a string" do
+          expect( subject.meeting_date_to_iso ).to be_an_instance_of( String )
+        end
+        it "returns a string containing the meeting date" do
+          str_date = subject.get_meeting_date
+          expect( subject.meeting_date_to_iso ).to eq( str_date.to_date.strftime( '%Y%m%d' ) )
+        end
+      end
+      
+      describe "#get_data_import_file_name" do      
+        it "has a method to find out meeting data import file name" do
+          expect( subject ).to respond_to( :get_data_import_file_name )
+        end
+        it "returns a string" do
+          expect( subject.get_data_import_file_name ).to be_an_instance_of( String )
+        end
+        it "returns a string containing the meeting date" do
+          str_date = subject.get_meeting_date
+          expect( subject.get_data_import_file_name ).to include( str_date.to_date.strftime( '%Y%m%d' ) )
+        end
+        it "returns a string containing the meeting code" do
+          expect( subject.get_data_import_file_name ).to include( subject.code )
+        end
+      end
+    end      
   end
   #-- -------------------------------------------------------------------------
   #++
