@@ -122,10 +122,10 @@ describe Api::V1::TeamsController, :type => :controller do
 
 
   describe '[GET teams/index]' do
-    context "with :name_like filtering parameter" do
+    context "with :q filtering parameter" do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :index, name_like: 'OBER', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, q: 'OBER', format: :json, user_email: @user.email, user_token: @user.authentication_token
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )

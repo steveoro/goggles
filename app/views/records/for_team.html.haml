@@ -8,10 +8,12 @@
         = form_tag( :records_for_team, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
           .row-fluid
             .control-group
-              #tooltipLabel= label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
+              #tooltipLabel= label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label' )
               .controls
                 .ui-widget
-                  = select( :team, :id, Team.to_dropdown(), { class: 'input-xlarge' } )
+                  = hidden_field( :team, :id )
+                  = text_field_tag( :team_name, nil, {autocomplete: 'off', class: "input-xlarge typeahead",  |
+                      "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )          |
           .row-fluid
             .controls
               = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
@@ -19,6 +21,54 @@
                 = image_tag( 'indicator.gif' )
 #records_4x_grid
 
-%script
-  //$('#team_id').combobox(); TOO SLOW, TOO MANY TEAMS!
-  $('#tooltipLabel').tooltip();
+:javascript
+  /* Lopk-up function for IDs stored in the list of result objects */
+  function lookupIdInResultListByName( name, resultList ) {
+    for ( var j = 0; j < resultList.length; j++ ) {
+      if ( resultList[j].name.match( name ) )
+        return resultList[j].id;
+    }
+    return -1;
+  }
+
+  // (Wait for the page to be ready)
+  $(function() {
+    var resultList = [];
+
+    // Define the typeahead callback handlers:
+    $( ".typeahead" ).typeahead({
+      items:     20,
+      minLength: 3,
+
+      source: function( queryText, processResults ) {
+        console.log( "get Ajax swimmers queryText: ", queryText );
+        return $.get(
+          "#{ api_v1_teams_path() }",
+          { q: queryText },
+          function (data) {
+            //console.log( "returning data:", data );
+            // Clear & rebuild the result list and the list of searchable names:
+            resultList = [];
+            var searchables = [];
+            for ( idx = 0; idx < data.length; idx++ ) {
+              resultList.push( { id: data[idx].id, name: data[idx].name } );
+              searchables.push( data[idx].name );
+            };
+            // DEBUG
+            //console.log( "resultList:", resultList );
+            //console.log( "searchables:", searchables );
+            return processResults( searchables );
+        });
+      },
+
+      updater: function( matchedText ) {
+        // DEBUG
+        //console.log( "getChosenSwimmer matchedText: ", matchedText );
+        var remote_id = lookupIdInResultListByName( matchedText, resultList );
+        //console.log( "remote_id: ", remote_id );
+        $("#team_id").val( remote_id );
+        return matchedText;
+      }
+    });
+
+  });

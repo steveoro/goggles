@@ -84,8 +84,9 @@ describe RecordsController, :type => :controller do
         it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
           expect( assigns(:title) ).to  be_an_instance_of( String )
-          expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
-          expect( assigns(:grid_builder).count ).to eq(0)
+          # [Steve, 20160401] This is no longer true: (to be removed)
+          #expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
+          #expect( assigns(:grid_builder).count ).to eq(0)
           expect(response).to render_template(:for_team)
         end
       end
@@ -140,6 +141,7 @@ describe RecordsController, :type => :controller do
         it "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
           expect( assigns(:title) ).to be_an_instance_of( String )
+          # [Steve, 20160401] This is no longer true: (to be removed)
           #expect( assigns(:grid_builder) ).to be_an_instance_of( RecordGridBuilder )
           #expect( assigns(:grid_builder).count ).to eq(0)
           expect(response).to render_template(:for_swimmer)

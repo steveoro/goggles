@@ -6,8 +6,8 @@ class Api::V1::TeamsController < ApplicationController
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:current_swimmers]
-  before_filter :authenticate_user!, except: [:current_swimmers]   # Devise "standard" HTTP log-in strategy
+  before_filter :authenticate_user_from_token!, except: [:current_swimmers, :index]
+  before_filter :authenticate_user!, except: [:current_swimmers, :index]   # Devise "standard" HTTP log-in strategy
 #  before_filter :authenticate_admin!, only: [:current_swimmers]
   before_filter :ensure_format
   #-- -------------------------------------------------------------------------
@@ -89,16 +89,22 @@ class Api::V1::TeamsController < ApplicationController
   # Each array element is a JSON-encoded hash of a single row.
   # The keys of the Hash are the attributes as string.
   #
+  # This action is not restricted by authorization because is capped to
+  # return 20 rows max.
+  #
   # === Additional params:
-  # - 'name_like': a matching (sub)string for the Team.name
+  # - 'q': a matching (sub)string for the Team.name
   #
   def index
+# DEBUG
+#    puts "\r\n**** Api::V1::SwimmersController #index ****"
+#    puts "- PARAMS: " << params.inspect
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:name_like]
-      filter = "%#{params[:name_like]}%"
-      @teams = Team.where{ name.like filter }.order(:name)
+    if params['q']
+      filter = "%#{params['q']}%"
+      @teams = Team.where{ name.like filter }.order(:name).limit(20)
     else
-      @teams = Team.order(:name).all
+      @teams = Team.order(:name).limit(20)
     end
     respond_with( @teams )
   end

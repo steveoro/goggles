@@ -444,6 +444,7 @@ it:
 
 
   combobox_generic_tooltip: "Scrivi direttamente quello che vuoi cercare o premi il pulsante per mostrare tutte le voci."
+  combobox_3char_tooltip: "Scrivi almeno i primi 3 caratteri..."
   something_went_wrong: "Qualcosa e' andato storto, controllare il file di log."
   requested_entity_missing: "Un entita' fondamentale non e' stata ancora creata"
   transaction_cancelled: "Transazione annullata."

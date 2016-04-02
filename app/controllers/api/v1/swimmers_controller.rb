@@ -13,19 +13,22 @@ class Api::V1::SwimmersController < ApplicationController
   # Each array element is a JSON-encoded hash of a single row.
   # The keys of the Hash are the attributes as string.
   #
+  # This action is not restricted by authorization because is capped to
+  # return 20 rows max.
+  #
   # === Additional params:
   # - 'q':    a matching (sub)string for the Swimmer.complete_name
   #
   def index
 # DEBUG
-    puts "\r\n**** Api::V1::SwimmersController #index ****"
-    puts "- PARAMS: " << params.inspect
+#    puts "\r\n**** Api::V1::SwimmersController #index ****"
+#    puts "- PARAMS: " << params.inspect
     # (This uses Squeel DSL syntax for where clauses)
     if params['q']
       filter = "%#{params['q']}%"
-      @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name).limit(16)
+      @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name).limit(20)
     else
-      @swimmers = Swimmer.order(:complete_name).limit(16)
+      @swimmers = Swimmer.order(:complete_name).limit(20)
     end
     puts "- returning #{ @swimmers.size } result..."
     respond_with( @swimmers )

@@ -67,12 +67,12 @@ class RecordsController < ApplicationController
 #    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
 #    logger.debug "> #{params.inspect}\r\n\r\n=====================================================\r\n\r\n"
     # AJAX call? Parse parameter and retrieve records range:
-    if request.xhr?
+    if request.xhr? && params['team'] && params['team']['id']
       # Check if we have also a possibile swimmer parameter to highlight his/her results:
       # (This is used by the swimmers_controller#radio tab, to show an highlighted swimmer
       #  among the Team records)
       @highlight_swimmer = Swimmer.find_by_id( params['highlight_swimmer_id'] ) if params['highlight_swimmer_id']
-      team = Team.find_by_id( params[:team][:id] ) if params[:team] && params[:team][:id]
+      team = Team.find_by_id( params['team']['id'] )
       logger.debug "> @highlight_swimmer: #{@highlight_swimmer.inspect}"
       logger.debug "> team: #{team.inspect}"
       @title = team ? "#{ I18n.t('records.team_title') } (#{team.decorate.get_linked_name})".html_safe : I18n.t('records.team_title')
@@ -145,8 +145,8 @@ class RecordsController < ApplicationController
   #
   def for_personal_best
     # AJAX call? Parse parameter and retrieve records range:
-    if request.xhr?
-      swimmer = Swimmer.find_by_id( params[:swimmer][:id] ) if params[:swimmer] && params[:swimmer][:id]
+    if request.xhr? && params['swimmer'] && params['swimmer']['id']
+      swimmer = Swimmer.find_by_id( params['swimmer']['id'] )
       collector = PersonalBestCollector.new( swimmer: swimmer )
 
       if swimmer
