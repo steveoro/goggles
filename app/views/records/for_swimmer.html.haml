@@ -42,11 +42,13 @@
       minLength: 3,
 
       source: function( queryText, processResults ) {
-        console.log( "get Ajax swimmers queryText: ", queryText );
+        // DEBUG
+        //console.log( "get Ajax swimmers queryText: ", queryText );
         return $.get(
           "#{ api_v1_swimmers_path() }",
           { q: queryText },
           function (data) {
+            // DEBUG
           	//console.log( "returning data:", data );
             // Clear & rebuild the result list and the list of searchable names:
             resultList = [];

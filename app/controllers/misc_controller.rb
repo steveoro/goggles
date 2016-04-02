@@ -314,12 +314,12 @@ class MiscController < ApplicationController
   #
   def show_swimmer_matches
 # DEBUG
-    #puts "\r\n*********** show_swimmer_matches ***********"
-    #puts params.inspect
+#    puts "\r\n*********** show_swimmer_matches ***********"
+#    puts params.inspect
     if request.xhr? && request.post?                   # === AJAX POST: ===
-      local_swimmer_id  = params['local_swimmer_id'] ? params['local_swimmer_id']['id'].to_i : 0
+      local_swimmer_id  = params['local_swimmer'] ? params['local_swimmer']['id'].to_i : 0
       #local_swimmer_id  = 23
-      visitor_swimmer_id = params['visitor_swimmer_id'] ? params['visitor_swimmer_id']['id'].to_i : 0
+      visitor_swimmer_id = params['visitor_swimmer'] ? params['visitor_swimmer']['id'].to_i : 0
       #visitor_swimmer_id = 142
 
       unless ( local_swimmer_id > 0 && visitor_swimmer_id > 0 && Swimmer.exists?( local_swimmer_id ) && Swimmer.exists?( visitor_swimmer_id ) )

@@ -1,18 +1,22 @@
-.row-fluid.goggles-category-gap#pageTop
-.row-fluid.alert.alert-success.goggles-div-centeralign
-  %h4= @tab_title
-.row-fluid.goggles-div-centeralign
+.row-fluid
+  .goggles-category-gap#pageTop
+.row-fluid
+  .alert.alert-success.goggles-div-centeralign
+    %h4= @tab_title
+.row-fluid
   = form_tag( :misc_show_swimmer_matches, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#swimmer_matches_result').hide()" ) do
-    = render( partial: 'swimmer_matches_parameters' )
-    .span2
+    .row.span12
+      = render( partial: 'swimmer_matches_parameters' )
+    .row.span12
       .control-group
         .controls
           = submit_tag( I18n.t('misc.find_matches'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
           %span( id='loadingIndicator' hidden='true' )
             = image_tag( 'indicator.gif' )
-.row-fluid.alert.alert-info.goggles-div-centeralign
-  = t('misc.how_to_find_matches')
-.row-fluid.goggles-div-centeralign
-  
+.row-fluid
+  .alert.alert-info.goggles-div-centeralign
+    = t('misc.how_to_find_matches')
+
+.row-fluid
   #calculation_result
   %p/

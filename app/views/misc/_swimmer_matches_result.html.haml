@@ -2,9 +2,9 @@
 -#  %p
 -#    = "SME DAO: " < @sme_dao.inspect
 - if @sme_dao && @sme_dao.get_matches_count > 0
-  .row.fluid.goggles-div-centeralign#swimmer_matches_result
+  .row-fluid.goggles-div-centeralign#swimmer_matches_result
     .span6.offset1
-      .row.fluid.goggles-div-centeralign.goggles-category-gap
+      .row-fluid.goggles-div-centeralign.goggles-category-gap
         %h2= "#{@sme_dao.get_locale.get_full_name} vs #{@sme_dao.get_visitor.get_full_name} : #{@sme_dao.get_wons_count} - #{@sme_dao.get_losses_count}"
         %p
           %b= "#{t('misc.match_first').gsub( '{local_swimmer}', @sme_dao.get_locale.get_full_name ).gsub( '{VISITOR_SWIMMER}', @sme_dao.get_visitor.get_full_name )} #{@sme_dao.first_meeting.get_meeting_date} - #{@sme_dao.first_meeting.get_full_name}"
@@ -13,7 +13,7 @@
         %p
           %b= "#{t('misc.match_last')}  #{@sme_dao.last_meeting.get_meeting_date} - #{@sme_dao.last_meeting.get_full_name}"
 
-    .span3.offset2
+    .span3.offset1
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -48,7 +48,7 @@
             %td.goggles-rightalign
               %b= @sme_dao.get_neutrals_count
 
-  .row.fluid.goggles-div-centeralign.goggles-category-gap
+  .row-fluid.goggles-div-centeralign.goggles-category-gap
     .span6#won_matches
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
@@ -101,7 +101,7 @@
               %td.goggles-rightalign
                 = match.get_visitor_timing
   - if @sme_dao.get_neutrals_count > 0
-    .row.fluid.goggles-div-centeralign.goggles-category-gap
+    .row-fluid.goggles-div-centeralign.goggles-category-gap
       .span6.offset3#neutral_matches
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
@@ -128,11 +128,11 @@
                 %td.goggles-rightalign
                   = match.get_visitor_timing
 - elsif @sme_dao && @sme_dao.get_matches_count == 0
-  .row.fluid.goggles-div-centeralign
+  .row-fluid.goggles-div-centeralign
     .span6.offset3
       %h2= "#{@sme_dao.get_locale.get_full_name} - #{@sme_dao.get_visitor.get_full_name} : #{@sme_dao.get_wons_count} - #{@sme_dao.get_losses_count}"
       %p= t('misc.match_none').gsub( '{local_swimmer}', @sme_dao.get_locale.get_full_name ).gsub( '{VISITOR_SWIMMER}', @sme_dao.get_visitor.get_full_name )
 - else
-  .row.fluid.goggles-div-centeralign
+  .row-fluid.goggles-div-centeralign
     .span6.offset3
       %b= t('misc.not_matchable_swimmer')

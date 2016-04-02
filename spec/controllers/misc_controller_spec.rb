@@ -713,8 +713,8 @@ describe MiscController, :type => :controller do
         xhr(
           :post,
           :show_swimmer_matches,
-          local_swimmer_id:   {id: 23},
-          visitor_swimmer_id:  {id: 0}    # Force invalid value
+          local_swimmer_id:   23,
+          visitor_swimmer_id: 0  # Force invalid value
         )
       end
       it "handles the request" do
