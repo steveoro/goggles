@@ -54,8 +54,9 @@
             resultList = [];
             var searchables = [];
             for ( idx = 0; idx < data.length; idx++ ) {
-              resultList.push( { id: data[idx].id, complete_name: data[idx].complete_name } );
-              searchables.push( data[idx].complete_name );
+              var verboseName = data[idx].complete_name + " (" + data[idx].year_of_birth + ")";
+              resultList.push({ id: data[idx].id, complete_name: verboseName });
+              searchables.push( verboseName );
             };
             // DEBUG
             //console.log( "resultList:", resultList );
@@ -67,7 +68,9 @@
       updater: function( matchedText ) {
         // DEBUG
         //console.log( "getChosenSwimmer matchedText: ", matchedText );
-        var remote_id = lookupIdInResultListByName( matchedText, resultList );
+        //console.log( this.$element.context.id );
+        // Extract just the name part (brakets will mess up with Regexp.match
+        var remote_id = lookupIdInResultListByName( matchedText.split("(")[0], resultList );
         //console.log( "remote_id: ", remote_id );
         $("#swimmer_id").val( remote_id );
         return matchedText;
