@@ -8,7 +8,6 @@ require 'framework/version'
 require 'framework/application_constants'
 require 'framework/console_logger'
 
-
 LOG_DIR = File.join( Dir.pwd, 'log' ) unless defined? LOG_DIR
 
 
@@ -158,15 +157,17 @@ Resulting log files are stored into '#{LOG_DIR}'.
 Presents an header date ordered list 
 of meetings without results acquired for the given season
 
-Options: season=<season_id> log_dir=#{LOG_DIR}]
+Options: season=<season_id> [past=false log_dir=#{LOG_DIR}]
 
 - 'season'   id of teh season to search for.
+- 'past'     limt the search to meetings with past scheduled date
 - 'log_dir'  allows to override the default log dir destination.
 
 DESC
   task :meeting_without_results do |t|
     puts "*** ut:meeting_without_results ***"
-    season_id       = ENV.include?("season") ? ENV["season"] : nil
+    season_id       = ENV.include?("season")  ? ENV["season"] : nil
+    past            = ENV.include?("past")    ? ENV["past"] == 'true' : false
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
     db_user         = rails_config.database_configuration[Rails.env]['username']
@@ -193,20 +194,40 @@ DESC
     require File.join( Rails.root.to_s, 'config/environment' )
 
     season = Season.find( season_id )
+
+    # Creates a csv file
+    titles = ['id',  'date', 'meeting', 'code', 'import_data_file', 'effective_date', 'days_to_move'] 
+    csv_file = File.open( LOG_DIR + '/' + 'season_' + season_id + '_meets_without_results.csv', 'w' )
+    csv_file.puts titles.join(';')
     
     # Search meetings
     meeting_found = 0
     logger.info( "\r\nSearch meetings without results for season #{season.get_full_name}" )
     logger.info( "\r\n<------------------------------------------------------------>\r\n" )
     season.meetings.has_not_results.sort_by_date.each do |meeting|
-      meeting_found += 1
-      result_file_name = 
-      logger.info( "\r\n#{meeting.id} - #{meeting.get_meeting_date} #{meeting.get_full_name} (#{meeting.code}) #{meeting.meeting_individual_results.count if meeting.meeting_individual_results.count > 0} -> #{meeting.get_data_import_file_name}\r\n" )
+      if ! past || ! meeting.meeting_date_to_iso || meeting.meeting_date_to_iso <= DateTime.now.strftime( '%Y%m%d' ) 
+        meeting_found += 1
+        logger.info( "\r\n#{meeting.id} - #{meeting.get_meeting_date} #{meeting.get_full_name} (#{meeting.code}) #{meeting.meeting_individual_results.count if meeting.meeting_individual_results.count > 0} -> #{meeting.get_data_import_file_name}\r\n" )
+
+        meeting_row = '' 
+        meeting_row += "#{meeting.id};"
+        meeting_row += "#{meeting.get_meeting_date};"
+        meeting_row += "#{meeting.get_full_name};"
+        meeting_row += "#{meeting.code};"
+        meeting_row += "#{meeting.get_data_import_file_name};"
+        meeting_row += ';'
+        csv_file.puts meeting_row 
+      end
     end
       
     # If no meetings found log warning
-    logger.info( "\r\nNo meetings without results found for season #{season.get_full_name}\r\n" ) if meeting_found == 0
+    if meeting_found == 0
+      logger.info( "\r\nNo meetings without results found for season #{season.get_full_name}\r\n" )
+    else
+      logger.info( "\r\nFound #{meeting_found} meetings without results for season #{season.get_full_name}\r\n" )
+    end
     logger.info( "\r\n\r\n" ) 
+
   end
   #-- -------------------------------------------------------------------------
   #++

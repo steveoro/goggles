@@ -167,7 +167,7 @@ class Meeting < ActiveRecord::Base
 
   # Gets together the scheduled date with the verbose name but without the header year
   def get_scheduled_date_with_verbose_name
-    "#{get_scheduled_date}, #{get_full_name} (#{get_season_type})"
+    "#{get_meeting_date}, #{get_full_name} (#{get_season_type})"
   end
 
   # Retrieves the Season Type short name
