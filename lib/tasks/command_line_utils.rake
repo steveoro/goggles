@@ -165,7 +165,7 @@ Options: season=<season_id> [past=false log_dir=#{LOG_DIR}]
 
 DESC
   task :meeting_without_results do |t|
-    puts "*** ut:meeting_without_results ***"
+    puts "*** ut:meetings_without_results ***"
     season_id       = ENV.include?("season")  ? ENV["season"] : nil
     past            = ENV.include?("past")    ? ENV["past"] == 'true' : false
     rails_config    = Rails.configuration             # Prepare & check configuration:
