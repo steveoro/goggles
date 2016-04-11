@@ -41,8 +41,8 @@ Options: code=<meeting_code> log_dir=#{LOG_DIR}]
 - 'log_dir'  allows to override the default log dir destination.
 
 DESC
-  task :find_meeting_by_code do |t|
-    puts "*** ut:find_meeting_by_code ***"
+  task :meeting_find_by_code do |t|
+    puts "*** ut:meeting_find_by_code ***"
     meeting_code    = ENV.include?("code") ? ENV["code"] : nil
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
@@ -96,8 +96,8 @@ Options: name=<team_name_part> log_dir=#{LOG_DIR}]
 - 'log_dir'  allows to override the default log dir destination.
 
 DESC
-  task :find_team_by_name do |t|
-    puts "*** ut:find_team_by_name ***"
+  task :team_find_by_name do |t|
+    puts "*** ut:team_find_by_name ***"
     team_name       = ENV.include?("name") ? ENV["name"] : nil
     rails_config    = Rails.configuration             # Prepare & check configuration:
     db_name         = rails_config.database_configuration[Rails.env]['database']
@@ -164,7 +164,7 @@ Options: season=<season_id> [past=false log_dir=#{LOG_DIR}]
 - 'log_dir'  allows to override the default log dir destination.
 
 DESC
-  task :meeting_without_results do |t|
+  task :meetings_without_results do |t|
     puts "*** ut:meetings_without_results ***"
     season_id       = ENV.include?("season")  ? ENV["season"] : nil
     past            = ENV.include?("past")    ? ENV["past"] == 'true' : false
