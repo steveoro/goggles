@@ -171,6 +171,23 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_without_entries.has_entries? ).to be false
       end
     end
+
+    describe "#get_teams" do
+      it "returns an array of teams for a meeting with results" do
+        teams = subject.get_teams
+        expect( teams ).to all(be_an_instance_of( Team ))
+      end
+      it "returns an array of teams for a meeting with entries" do
+        stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
+        teams = stat_with_entries.get_teams
+        expect( teams ).to all(be_an_instance_of( Team ))
+      end
+      it "returns nil for a meeting without entries and results" do
+        new_meeting = create( :meeting ) 
+        stat_without_entries = MeetingStatCalculator.new( new_meeting )
+        expect( stat_without_entries.get_teams ).to be_nil
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

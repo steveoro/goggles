@@ -60,6 +60,24 @@ class MeetingStatCalculator
   end
   # ---------------------------------------------------------------------------
 
+  # Retrieves the teams lis for the meeting
+  # If results are acquired the teams are those with at least one result
+  # If results are not acquired the teams are those with at least one entry
+  #
+  def get_teams()
+    if has_results?
+      teams = @meeting.teams.sort_by_name('ASC').uniq
+    elsif has_entries?
+      teams = []
+      @meeting.meeting_entries.select( 'team_id' ).uniq.map{ |e| e.team_id }.each do |team_id|
+        teams << Team.find( team_id )
+      end
+      teams.sort!{ |n,p| n.name <=> p.name }
+    else
+      teams = nil
+    end
+    teams
+  end
 
   # Meeting entries methods
   # Those methods are based on meeting entries
@@ -356,10 +374,7 @@ class MeetingStatCalculator
   #
   def calculate_teams( entries = true, scores = true, ranks = true )
     @meeting_stats.teams = []
-    
-    # FIXME Teams are found inly if results are present wih that relation.
-    #       Should use a method that consider entries or results
-    @meeting.teams.sort_by_name('ASC').uniq.each do |team|
+    get_teams.each do |team|
       team_stat = @meeting_stats.new_team( team )
 
       # Entry-based
