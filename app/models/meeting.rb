@@ -153,7 +153,7 @@ class Meeting < ActiveRecord::Base
 
   # Retrieves the first scheduled date for this meeting; nil when not found
   def get_scheduled_date
-    ms = self.meeting_sessions.first
+    ms = self.meeting_sessions.sort_by_order.first
     ms ? Format.a_date( ms.scheduled_date ) : nil
   end
 
@@ -289,10 +289,6 @@ class Meeting < ActiveRecord::Base
     events_by_pool_types
   end
   # ----------------------------------------------------------------------------
-
-  # Retrieves the first scheduled date for this meeting; nil when not found
-  def get_scheduled_date
-  end
 
   # Retrieves the date for this meeting.
   # Return the first session one if set, 

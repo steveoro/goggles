@@ -62,7 +62,7 @@
           - m = @swimmer.get_first_meeting
           - if m
             %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
-              = m.get_scheduled_date
+              = m.get_meeting_date
             = ', '
             %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
               = "#{m.get_full_name} (#{m.get_season_type})"
@@ -73,7 +73,7 @@
           - m = @swimmer.get_last_meeting
           - if m
             %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
-              = m.get_scheduled_date
+              = m.get_meeting_date
             = ', '
             %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
               = "#{m.get_full_name} (#{m.get_season_type})"
