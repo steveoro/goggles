@@ -356,6 +356,9 @@ class MeetingStatCalculator
   #
   def calculate_teams( entries = true, scores = true, ranks = true )
     @meeting_stats.teams = []
+    
+    # FIXME Teams are found inly if results are present wih that relation.
+    #       Should use a method that consider entries or results
     @meeting.teams.sort_by_name('ASC').uniq.each do |team|
       team_stat = @meeting_stats.new_team( team )
 
