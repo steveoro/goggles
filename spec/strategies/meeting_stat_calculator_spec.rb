@@ -42,7 +42,7 @@ describe MeetingStatCalculator, :type => :model do
     @meets_without_relays = [13106, 14207, 13207, 13213, 14213]
     @meets_with_std_relays = [14216, 15216, 14201, 15201]
   end
-  
+
   let( :meeting )                   { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
   let( :csi_meeting )               { Meeting.find( @csi_meets.at( (rand * @csi_meets.size).to_i ) ) }
   let( :meet_with_entries )         { Meeting.find( @meets_with_entries.at( ( rand * @meets_with_entries.size ).to_i ) ) }
@@ -50,7 +50,7 @@ describe MeetingStatCalculator, :type => :model do
   let( :meet_with_standard_points ) { Meeting.find( @meets_with_standard_points.at( ( rand * @meets_with_standard_points.size ).to_i ) ) }
   let( :meet_without_relays )       { Meeting.find( @meets_without_relays.at( ( rand * @meets_without_relays.size ).to_i ) ) }
   let( :meet_with_std_relays )          { Meeting.find( @meets_with_std_relays.at( ( rand * @meets_with_std_relays.size ).to_i ) ) }
-  
+
   subject { MeetingStatCalculator.new( meeting ) }
 
   describe "[fixed data sets]" do
@@ -132,13 +132,13 @@ describe MeetingStatCalculator, :type => :model do
     it "has a valid meeting instance" do
       expect(subject.get_meeting).to be_an_instance_of( Meeting )
     end
-    
+
     describe "#has_results?" do
       it "returns true for a meeting with results" do
         expect( subject.has_results? ).to be true
       end
       it "returns false for a meeting without results" do
-        new_meeting = create( :meeting ) 
+        new_meeting = create( :meeting )
         stat_without_results = MeetingStatCalculator.new( new_meeting )
         expect( stat_without_results.has_results? ).to be false
       end
@@ -154,7 +154,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_without_relays.has_relays? ).to be false
       end
       it "returns false for a meeting without results" do
-        new_meeting = create( :meeting ) 
+        new_meeting = create( :meeting )
         stat_without_results = MeetingStatCalculator.new( new_meeting )
         expect( stat_without_results.has_relays? ).to be false
       end
@@ -166,7 +166,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_with_entries.has_entries? ).to be true
       end
       it "returns false for a meeting without entries" do
-        new_meeting = create( :meeting ) 
+        new_meeting = create( :meeting )
         stat_without_entries = MeetingStatCalculator.new( new_meeting )
         expect( stat_without_entries.has_entries? ).to be false
       end
@@ -183,9 +183,9 @@ describe MeetingStatCalculator, :type => :model do
         expect( teams ).to all(be_an_instance_of( Team ))
       end
       it "returns nil for a meeting without entries and results" do
-        new_meeting = create( :meeting ) 
+        new_meeting = create( :meeting )
         stat_without_entries = MeetingStatCalculator.new( new_meeting )
-        expect( stat_without_entries.get_teams ).to be_nil
+        expect( stat_without_entries.get_teams ).to be_empty
       end
     end
   end
@@ -222,7 +222,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_with_entries.get_entries_count( :is_male ) + stat_with_entries.get_entries_count( :is_female ) ).to eq( meet_with_entries.meeting_entries.count )
       end
     end
-    
+
     describe "#get_team_entries_count" do
       it "returns a number > 0 for a team with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
@@ -249,13 +249,13 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_with_entries.get_team_entries_count( fix_team, :is_male ) + stat_with_entries.get_team_entries_count( fix_team, :is_female ) ).to eq( meet_with_entries.meeting_entries.for_team( fix_team ).count )
       end
     end
-    
+
     describe "#get_category_ent_swimmers_count" do
       # Should be 0 for meeting where the only swimmer of a certain category has been added withou entry (extremely rare)
       it "returns a number > 0 for a category with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
         fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
-        while meet_with_entries.meeting_entries.for_category_type( fix_category ).count == 0 do 
+        while meet_with_entries.meeting_entries.for_category_type( fix_category ).count == 0 do
           fix_category = meet_with_entries.category_types.are_not_relays.uniq.at( (rand * meet_with_entries.category_types.are_not_relays.uniq.count).to_i )
         end
         expect( meet_with_entries.meeting_entries.for_category_type( fix_category ).count ).to be > 0
@@ -281,13 +281,13 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_male ) + stat_with_entries.get_category_ent_swimmers_count( fix_category, :is_female ) ).to be <= meet_with_entries.meeting_entries.for_category_type( fix_category ).count
       end
     end
-    
+
     describe "#get_event_entries_count" do
       # Should be 0 for meeting where the only swimmer of a certain category has been added withou entry (extremely rare)
       it "returns a number > 0 for an event with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
         fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
-        while meet_with_entries.meeting_entries.for_event_type( fix_event ).count == 0 do 
+        while meet_with_entries.meeting_entries.for_event_type( fix_event ).count == 0 do
           fix_event = meet_with_entries.event_types.are_not_relays.uniq.at( (rand * meet_with_entries.event_types.are_not_relays.uniq.count).to_i )
         end
         expect( stat_with_entries.get_event_entries_count( fix_event, :is_male ) + stat_with_entries.get_event_entries_count( fix_event, :is_female ) ).to be > 0
@@ -312,7 +312,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_with_entries.get_event_entries_count( fix_event, :is_male ) + stat_with_entries.get_event_entries_count( fix_event, :is_female ) ).to eq( meet_with_entries.meeting_entries.for_event_type( fix_event ).count )
       end
     end
-    
+
     describe "#get_entered_swimmers_count" do
       it "returns a number > 0 for meeting with entries" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
@@ -331,7 +331,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( stat_with_entries.get_entered_swimmers_count( :is_male ) + stat_with_entries.get_entered_swimmers_count( :is_female ) ).to be <= meet_with_entries.meeting_entries.count
       end
     end
-    
+
     describe "#get_team_entered_swimmers_count" do
       it "returns a number > 0 for a team with entries for the meeting" do
         stat_with_entries = MeetingStatCalculator.new( meet_with_entries )
@@ -406,7 +406,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( subject.get_team_results_count( fix_team, :is_male ) + subject.get_team_results_count( fix_team, :is_female ) ).to eq( meeting.meeting_individual_results.for_team( fix_team ).count )
       end
     end
-  
+
     describe "#get_category_swimmers_count" do
       it "returns a number > 0 for a category with results for the meeting" do
         fix_category = meeting.category_types.are_not_relays.uniq.at( (rand * meeting.category_types.are_not_relays.uniq.count).to_i )
@@ -423,7 +423,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( subject.get_category_swimmers_count( fix_category, :is_male ) + subject.get_category_swimmers_count( fix_category, :is_female ) ).to be <= meeting.meeting_individual_results.for_category_type( fix_category ).count
       end
     end
-  
+
     describe "#get_event_results_count" do
       it "returns a number > 0 for an event with results for the meeting" do
         fix_event = meeting.event_types.are_not_relays.uniq.at( (rand * meeting.event_types.are_not_relays.uniq.count).to_i )
@@ -440,7 +440,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( subject.get_event_results_count( fix_event, :is_male ) + subject.get_event_results_count( fix_event, :is_female ) ).to eq( meeting.meeting_individual_results.for_event_type( fix_event ).count )
       end
     end
-  
+
     describe "#get_swimmers_count" do
       it "returns a number > 0 for meeting with results" do
         expect( subject.get_swimmers_count ).to be > 0
@@ -495,7 +495,7 @@ describe MeetingStatCalculator, :type => :model do
     describe "#get_team_disqualifieds_count" do
       it "returns a number > 0 for a team with disqualifieds for the meeting" do
         fix_team = meeting.teams.uniq.at( (rand * meeting.teams.uniq.count).to_i )
-        fix_result = meeting.meeting_individual_results.for_team( fix_team ).first 
+        fix_result = meeting.meeting_individual_results.for_team( fix_team ).first
         fix_result.is_disqualified = true
         fix_result.save
         expect( meeting.meeting_individual_results.is_disqualified.for_team( fix_team ).count ).to be > 0
@@ -512,7 +512,7 @@ describe MeetingStatCalculator, :type => :model do
         expect( subject.get_team_disqualifieds_count( fix_team, :is_male ) + subject.get_team_disqualifieds_count( fix_team, :is_female ) ).to eq( meeting.meeting_individual_results.is_disqualified.for_team( fix_team ).count )
       end
     end
-  
+
     describe "#get_team_best_standard" do
       it "returns a number > 0 for a team with results with standard points for the meeting" do
         stat_with_standard_points = MeetingStatCalculator.new( meet_with_standard_points )
@@ -532,7 +532,7 @@ describe MeetingStatCalculator, :type => :model do
       end
       it "returns the highest standard point for the team for the meeting" do
         fix_team = meeting.teams.uniq.at( (rand * meeting.teams.uniq.count).to_i )
-        fix_result = meeting.meeting_individual_results.for_team( fix_team ).first 
+        fix_result = meeting.meeting_individual_results.for_team( fix_team ).first
         fix_result.standard_points = ( ( rand * 1000 ).to_i + 2000 )
         fix_result.save
         if fix_result.gender_type.code == 'F'
@@ -557,7 +557,7 @@ describe MeetingStatCalculator, :type => :model do
       end
       it "returns the lowest standard point for the team for the meeting" do
         fix_team = meeting.teams.uniq.at( (rand * meeting.teams.uniq.count).to_i )
-        fix_result = meeting.meeting_individual_results.for_team( fix_team ).first 
+        fix_result = meeting.meeting_individual_results.for_team( fix_team ).first
         fix_result.standard_points = ( ( rand * 200 ).to_i + 10 )
         fix_result.save
         if fix_result.gender_type.code == 'F'
@@ -753,7 +753,7 @@ describe MeetingStatCalculator, :type => :model do
     it "returns stats data for CSI Nuoto Ober Ferrari in CSI meetings" do
       fix_team = Team.find(1)
       stat_csi = MeetingStatCalculator.new( csi_meeting )
-      team_stats = stat_csi.calculate_teams 
+      team_stats = stat_csi.calculate_teams
       expect( team_stats.size ).to be > 0
       expect( team_stats.rindex{ |ts| ts.team == fix_team } ).not_to be nil
     end
@@ -895,11 +895,11 @@ describe MeetingStatCalculator, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
-  context "not a valid instance" do   
+  context "not a valid instance" do
     it "raises an exception for wrong meeting parameter" do
       expect{ MeetingStatCalculator.new() }.to raise_error( ArgumentError )
       expect{ MeetingStatCalculator.new( 'Wrong parameter' ) }.to raise_error( ArgumentError )
-    end   
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

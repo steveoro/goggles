@@ -26,7 +26,7 @@ class MeetingStatCalculator
     end
 
     @meeting       = meeting
-    @meeting_stats = MeetingStatDAO.new( meeting ) 
+    @meeting_stats = MeetingStatDAO.new( meeting )
   end
 
   def get_meeting
@@ -74,7 +74,7 @@ class MeetingStatCalculator
       end
       teams.sort!{ |n,p| n.name <=> p.name }
     else
-      teams = nil
+      teams = []
     end
     teams
   end
@@ -88,10 +88,10 @@ class MeetingStatCalculator
   # Temas are intended the distinct team with entries in the meeting
   #
   def get_entered_teams_count()
-    @meeting.meeting_entries.includes(:team).select('teams.id').uniq.count    
+    @meeting.meeting_entries.includes(:team).select('teams.id').uniq.count
   end
   # ---------------------------------------------------------------------------
-  
+
   # Statistic calculation for the meeting entries count
   # Entries are intended the distinct entries for the meeting
   #
@@ -125,17 +125,17 @@ class MeetingStatCalculator
   # swimmers are intended the physical distinct swimmers entered the meeting
   #
   def get_entered_swimmers_count( scope_name = :is_male )
-    @meeting.meeting_entries.send(scope_name.to_sym).select('swimmer_id').uniq.count    
+    @meeting.meeting_entries.send(scope_name.to_sym).select('swimmer_id').uniq.count
   end
 
   # Statistic calculation for the meeting entries swimmer count for a given team
   # swimmers are intended the physical distinct swimmers entered the meeting
   #
   def get_team_entered_swimmers_count( team, scope_name = :is_male )
-    @meeting.meeting_entries.for_team(team).send(scope_name.to_sym).select('swimmer_id').uniq.count    
+    @meeting.meeting_entries.for_team(team).send(scope_name.to_sym).select('swimmer_id').uniq.count
   end
   # ---------------------------------------------------------------------------
-  
+
 
   # Meeting result methods
   # Those methods are based on meeting results
@@ -154,21 +154,21 @@ class MeetingStatCalculator
   def get_results_count( scope_name = :is_male )
     @meeting.meeting_individual_results.send(scope_name.to_sym).count
   end
-  
+
   # Statistic calculation for the meeting results count for a given team
   # Results are intended the distinct results swam in the meeting
   #
   def get_team_results_count( team, scope_name = :is_male )
     @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).count
   end
-  
+
   # Statistic calculation for the meeting results count for a given category
   # Results are intended the distinct results swam in the meeting
   #
   def get_category_swimmers_count( category_type, scope_name = :is_male )
     @meeting.meeting_individual_results.for_category_type(category_type).send(scope_name.to_sym).select('swimmer_id').uniq.count
   end
-  
+
   # Statistic calculation for the meeting results count for a given event
   # Results are intended the distinct results swam in the meeting
   #
@@ -181,18 +181,18 @@ class MeetingStatCalculator
   # swimmers are intended the physical distinct swimmers swam in the meeting
   #
   def get_swimmers_count( scope_name = :is_male )
-    @meeting.swimmers.send(scope_name.to_sym).uniq.count    
+    @meeting.swimmers.send(scope_name.to_sym).uniq.count
   end
   # ---------------------------------------------------------------------------
-  
+
   # Statistic calculation for the meeting swimmer count for a given team
   # swimmers are intended the physical distinct swimmers swam in the meeting
   #
   def get_team_swimmers_count( team, scope_name = :is_male )
-    @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).select('swimmer_id').uniq.count    
+    @meeting.meeting_individual_results.for_team(team).send(scope_name.to_sym).select('swimmer_id').uniq.count
   end
   # ---------------------------------------------------------------------------
-  
+
   # Statistic calculation for the meeting disqualified count
   # Disqualified are intended the results in the meeting with is_disqualified attribute set to true
   #
@@ -230,7 +230,7 @@ class MeetingStatCalculator
   # ---------------------------------------------------------------------------
 
   # Statistic calculation of the medals number for a given team
-  # Medals are intended as ranking (1=gold, 2=silver, 3=bronze, 4=wooden) 
+  # Medals are intended as ranking (1=gold, 2=silver, 3=bronze, 4=wooden)
   #
   def get_team_medals( team, scope_name = :is_male, rank = 1 )
     @meeting.meeting_individual_results.for_team(team).is_valid.send(scope_name.to_sym).has_rank(rank).count
@@ -325,7 +325,7 @@ class MeetingStatCalculator
       @meeting_stats.set_general( :entries_male_count       , get_entries_count(:is_male) )
       @meeting_stats.set_general( :entries_female_count     , get_entries_count(:is_female) )
     end
-  
+
     # Result-based
     if has_results?
       @meeting_stats.set_general( :teams_count           , get_teams_count() )
@@ -341,12 +341,12 @@ class MeetingStatCalculator
       if has_relays?
         @meeting_stats.set_general( :results_relay_count   , @meeting.meeting_relay_results.count )
         @meeting_stats.set_general( :dsqs_relay_count      , @meeting.meeting_relay_results.is_disqualified.count )
-  
+
         if @meeting.meeting_relay_results.has_points.count > 0
           @meeting_stats.set_general( :average_relay_score   , get_relays_average )
         end
       end
-      
+
       # Score-based
       if @meeting.meeting_individual_results.has_points.count > 0
         @meeting_stats.set_general( :average_male_score     , get_average(:is_male) )
@@ -361,12 +361,12 @@ class MeetingStatCalculator
         @meeting_stats.set_general( :worst_std_female_scores, get_worst_standard_scores(:is_female, worsts ) ) if worsts > 0
       end
     end
-    
+
     calculate_teams( entries, scores, ranks ) if teams
     calculate_categories( entries ) if categories
     calculate_events( entries ) if events
-    
-    @meeting_stats    
+
+    @meeting_stats
   end
   # ---------------------------------------------------------------------------
 
@@ -393,7 +393,7 @@ class MeetingStatCalculator
         team_stat.male_swimmers        = get_team_swimmers_count( team, :is_male )
         team_stat.female_swimmers      = get_team_swimmers_count( team, :is_female )
         team_stat.relay_results        = @meeting.meeting_relay_results.for_team( team ).count
-        
+
         # Score stats
         if scores
           team_stat.male_best            = get_team_best_standard( team, :is_male )
@@ -423,11 +423,11 @@ class MeetingStatCalculator
           end
         end
       end
-      
-      @meeting_stats.teams << team_stat #if team_stat.get_entries_count + team_stat.get_results_count + team_stat.get_disqualifieds_count > 0  
+
+      @meeting_stats.teams << team_stat #if team_stat.get_entries_count + team_stat.get_results_count + team_stat.get_disqualifieds_count > 0
     end
     @meeting_stats.teams
-  end  
+  end
   # ---------------------------------------------------------------------------
 
   # Category stats calculation
@@ -448,11 +448,11 @@ class MeetingStatCalculator
         category_stat.male_swimmers        = get_category_swimmers_count( category_type, :is_male )
         category_stat.female_swimmers      = get_category_swimmers_count( category_type, :is_female )
       end
-      
-      @meeting_stats.categories << category_stat  
+
+      @meeting_stats.categories << category_stat
     end
     @meeting_stats.categories
-  end  
+  end
   # ---------------------------------------------------------------------------
 
   # Event stats calculation
@@ -473,11 +473,11 @@ class MeetingStatCalculator
         event_stat.male_results         = get_event_results_count( event_type, :is_male )
         event_stat.female_results       = get_event_results_count( event_type, :is_female )
       end
-      
-      @meeting_stats.events << event_stat  
+
+      @meeting_stats.events << event_stat
     end
     @meeting_stats.events
-  end  
+  end
   # ---------------------------------------------------------------------------
 
   # Calculate stats cycling meeting individual results
