@@ -534,8 +534,9 @@ class MeetingsController < ApplicationController
   #
   def update_passages
     edited_rows = params.select{ |key, value| key =~ /pas/ }
-    new_rows    = params.select{ |key, value| key =~ /new/ && value.length > 0 }
+    new_rows    = params.select{ |key, value| ( key =~ /new/ || key =~ /auto/ ) && value.length > 0 }
     batch_updater = PassagesBatchUpdater.new( current_user )
+    inserted_mirs = []
 
     # Edit existing row values:
     edited_rows.each do |key, value|
@@ -544,9 +545,12 @@ class MeetingsController < ApplicationController
     end
     # Create new rows:
     new_rows.each do |key, value|
+      # Verify if passage is the only one for mir and is added automatically in the view (auto)
+      passage_mode = key.split('_')[0]
       mir_id = key.split('_')[1]
       passage_type_id = key.split('_').last
-      batch_updater.create_new_passage( mir_id, passage_type_id, value )
+      batch_updater.create_new_passage( mir_id, passage_type_id, value ) if passage_mode == 'new' || inserted_mirs.include?( mir_id )
+      inserted_mirs << mir_id
     end
 
     # Create the SQL diff file, and send it, when operated remotely:
