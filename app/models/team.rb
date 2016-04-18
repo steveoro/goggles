@@ -29,6 +29,7 @@ class Team < ActiveRecord::Base
   has_many :team_managers,  through: :team_affiliations
   has_many :goggle_cups
   has_many :computed_season_ranking
+  has_many :team_passage_templates
 
   validates_presence_of :name
   validates_length_of :name, within: 1..60, allow_nil: false

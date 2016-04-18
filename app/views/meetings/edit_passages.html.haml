@@ -18,7 +18,7 @@
         - passages = hash_item.values.first
         - has_passages = ( passages.count > 0 )
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
-        - passage_types = TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters )
+        - passage_types = mir.team.team_passage_templates.for_event_type( mir.event_type ).for_pool_type( mir.pool_type ).count == 0 ? TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters ) : TeamPassageTemplate.get_template_passage_types_for( mir.team, mir.event_type, mir.pool_type )
         - if previous_event != mir.meeting_event
           - previous_event = mir.meeting_event
           %tr.info
