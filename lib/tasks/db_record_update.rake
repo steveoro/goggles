@@ -70,6 +70,7 @@ DESC
     meeting_ids     = ENV.include?("meeting_ids") ? ENV["meeting_ids"].split(',').map{ |s| s.to_i } : nil
     season_types_only = ENV.include?("season_types_only") ? ENV["season_types_only"].to_i > 0 : false
     teams_only      = ENV.include?("teams_only") ? ENV["teams_only"].to_i > 0 : false
+    team_ids        = ENV.include?("team_ids") ? ENV["team_ids"].split(',').map{ |s| s.to_i } : nil
                                                     # Display some info:
     puts "DB name:            #{db_name}"
     puts "DB user:            #{db_user}"
@@ -91,6 +92,7 @@ DESC
     else
       mir_list = MeetingIndividualResult.is_valid.has_time.uniq
     end
+    mir_list = mir_list.where( 'team_id' => team_ids ) if team_ids 
     file_name = File.join(
       log_dir, "#{ DateTime.now.strftime("%Y%m%d%H%M") }prod_update_records_"
     )

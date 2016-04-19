@@ -17,6 +17,7 @@ class TeamPassageTemplate < ActiveRecord::Base
 
   scope :sort_by_length,     includes( :passage_type ).order('passage_types.length_in_meters')
 
+  scope :for_team,           ->(team)       { where(['team_id = ?', team.id]) }
   scope :for_event_type,     ->(event_type) { where(['event_type_id = ?', event_type.id]) }
   scope :for_pool_type,      ->(pool_type)  { where(['pool_type_id = ?', pool_type.id]) }
 
@@ -36,6 +37,8 @@ class TeamPassageTemplate < ActiveRecord::Base
   # passage types for the specified team passage template
   #
   def self.get_template_passage_types_for( team, event_type, pool_type )
-    team.team_passage_templates.for_event_type( event_type ).for_pool_type( pool_type ).includes( :passage_type ).sort_by_length.map{ |t| t.passage_type }
+    team.team_passage_templates.for_event_type( event_type ).for_pool_type( pool_type ).count > 0 ?
+      team.team_passage_templates.for_event_type( event_type ).for_pool_type( pool_type ).includes( :passage_type ).sort_by_length.map{ |t| t.passage_type } :
+      []
   end
 end

@@ -79,11 +79,11 @@ class RecordCollector
       @pool_type_codes     = PoolType.only_for_meetings.select(:code).map{ |row| row.code }.uniq
       @event_type_codes    = EventType.are_not_relays.select(:code).map{ |row| row.code }.uniq
       if @season_type
-        @category_type_codes = CategoryType.is_valid.are_not_relays
+        @category_type_codes = CategoryType.is_valid.are_not_relays.is_divided
             .includes(:season).where( 'seasons.season_type_id' => @season_type.id )
             .select(:code).uniq.map{|row| row.code }.uniq
       else
-        @category_type_codes = CategoryType.is_valid.are_not_relays
+        @category_type_codes = CategoryType.is_valid.are_not_relays.is_divided
             .select(:code).uniq.map{|row| row.code }.uniq
       end
     end

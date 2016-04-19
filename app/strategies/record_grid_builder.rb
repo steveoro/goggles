@@ -57,8 +57,8 @@ class RecordGridBuilder
     # Get the list of Ids from all the most recent Season(s), by available SeasonType (uses Squeel DSL syntax):
     season_ids = season_types.map{ |st| Season.where{ season_type_id == st.id }.max.id }
     # Get the list of available CategoryType(s) filtered by Season#id (uses Squeel DSL syntax):
-    category_types = CategoryType.is_valid.are_not_relays.where{ season_id.in season_ids }
-    uniq_codes = category_types.order(:age_begin).map{ |c| c.code }.uniq
+    category_types = CategoryType.is_valid.are_not_relays.is_divided.sort_by_age.where{ season_id.in season_ids }
+    uniq_codes = category_types.map{ |c| c.code }.uniq
     # Filter out duplicate categories by code:
     @category_types = []
     category_types.each do |category_type|
