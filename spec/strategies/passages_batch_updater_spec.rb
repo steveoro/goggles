@@ -13,7 +13,8 @@ describe PassagesBatchUpdater, type: :strategy do
     :total_errors,
     :sql_diff_text_log,
     :edit_existing_passage,
-    :create_new_passage
+    :create_new_passage,
+    :is_delta?
   ] )
   #-- -------------------------------------------------------------------------
   #++
@@ -106,6 +107,22 @@ describe PassagesBatchUpdater, type: :strategy do
         }.to change{ subject.new_passages }.by(1)
       end
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#is_delta?" do
+    it "responds to #is_delta?" do
+      expect( subject ).to respond_to( :is_delta? )
+    end
+    it "returns a boolean" do
+      expect( subject.is_delta?( create( :passage) ) ).to eq( true ).or eq( false )
+    end
+    it "returns true if first passage" do
+      expect( subject.is_delta?( passage ) ).to eq( true )
+    end
+    it "returns false if time swam equals to total time swam"
+    it "returns true if time swam smaller than total time swam in previous passage"
   end
   #-- -------------------------------------------------------------------------
   #++

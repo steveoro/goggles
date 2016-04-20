@@ -129,6 +129,38 @@ class PassagesBatchUpdater
   #-- -------------------------------------------------------------------------
   #++
 
+  
+  # Estabilsh if a pasage is a delta
+  # A passage is a delta if passage timing is the time swam in the passage distance
+  # First passage is always a delta
+  # A passage is a delta if lesser than prevvoius one
+  # A passage is a delta if greater than prevvoius one but
+  # not more 50% of difference with previous distance swam.
+  # (so a passage is incremental only if greater than prevvoius one)
+  #
+  # EG 1.
+  #  50: 3000 -> delta (first passage)
+  # 100: 6130 -> incremental (50 in 6130 is a variation greater than 50% of previous one)
+  # 150: 9300 -> incremental (50 in 9300 is a variation lesser than 50% of previous one)
+  # EG 2.
+  #  50: 3000 -> delta (first passage)
+  # 100: 3130 -> delta (50 in 3130 is a variation lesser than 50% of previous one)
+  # 150: 3270 -> delta (50 in 3270 is a variation lesser than 50% of previous one)
+  #
+  def is_delta?( passage )
+    is_delta = false
+    previous_passage = passage.get_previous_passage
+    if previous_passage
+      total_time_before = previous_passage.compute_incremental_time
+      if total_time_before > passage.get_timing_instance
+        is_delta = true
+      elsif (total_time_before.to_hundreds / previous_passage.get_passage_distance) > 0
+        is_delta = false
+      end
+    else
+      is_delta = true
+    end
+  end
 
   private
 
@@ -182,36 +214,4 @@ class PassagesBatchUpdater
   end
   #-- -------------------------------------------------------------------------
   #++
-  
-  # Estabilsh if a pasage is a delta
-  # A passage is a delta if passage timing is the time swam in the passage distance
-  # First passage is always a delta
-  # A passage is a delta if lesser than prevvoius one
-  # A passage is a delta if greater than prevvoius one but
-  # not more 50% of difference with previous distance swam.
-  # (so a passage is incremental only if greater than prevvoius one)
-  #
-  # EG 1.
-  #  50: 3000 -> delta (first passage)
-  # 100: 6130 -> incremental (50 in 6130 is a variation greater than 50% of previous one)
-  # 150: 9300 -> incremental (50 in 9300 is a variation lesser than 50% of previous one)
-  # EG 2.
-  #  50: 3000 -> delta (first passage)
-  # 100: 3130 -> delta (50 in 3130 is a variation lesser than 50% of previous one)
-  # 150: 3270 -> delta (50 in 3270 is a variation lesser than 50% of previous one)
-  #
-  def is_delta?( passage )
-    is_delta = false
-    previous_passage = passage.get_previous_passage
-    if previous_passage
-      total_time_before = previous_passage.compute_incremental_time
-      if total_time_before > passage.get_timing_instance
-        is_delta = true
-      elsif (total_time_before.to_hundreds / previous_passage.get_passage_distance) > 0
-        is_delta = false
-      end
-    else
-      is_delta = true
-    end
-  end
 end

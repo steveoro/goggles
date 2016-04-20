@@ -13,12 +13,8 @@ id;date;meeting;code;import_data_file;effective_date;days_to_move
 15203;13-12-2015;XVII MEETING DEGLI AUGURI;livornoauguri;ris20151213livornoauguri.txt;;
 15204;20-12-2015;X TROFEO MUSSI-LOMBARDI-FEMIANO;viareggio;ris20151220viareggio.txt;;
 15261;06-01-2016;MEETING DEL SARACINO MASTER 2016;arezzodelsaracinomaster;ris20160106arezzodelsaracinomaster.txt;;
-15268;17-01-2016;IV TROFEO MAYDAY ITALIA MASTER;taorminamaydayitaliamaster;ris20160117taorminamaydayitaliamaster.txt;;
 15264;23-01-2016;VI TROFEO CITTÀ DI BUONCONVENTO;buonconvento;ris20160123buonconvento.txt;;
-15269;23-01-2016;VII TROFEO DELLA CITTÀ;portici;ris20160123portici.txt;;
-15270;23-01-2016;XIV TROFEO LARUS MASTER;viterbolarusmaster;ris20160123viterbolarusmaster.txt;;
 15271;24-01-2016;II MEETING DEL BOCCACCIO;certaldodelboccaccio;ris20160124certaldodelboccaccio.txt;;
-15273;31-01-2016;XII TROFEO S. AGATA;cataniasagata;ris20160131cataniasagata.txt;;
 15282;20-02-2016;REGIONALI TOSCANA 2016;regtoscana;ris20160220regtoscana.txt;;
 15305;27-03-2016;VI TROFEO CITTÀ DI PAVIA;pavia;ris20160327pavia.txt;;
 15306;27-03-2016;IX TROFEO ILARIA DEL CARRETTO;luccailariadelcarretto;ris20160327luccailariadelcarretto.txt;;
@@ -26,5 +22,5 @@ id;date;meeting;code;import_data_file;effective_date;days_to_move
 15290;03-04-2016;II NUOTOPIÙ SWIM FESTIVAL;livornonuotopiuswimfestival;ris20160403livornonuotopiuswimfestival.txt;;
 15309;10-04-2016;V COPPA CITTÀ DI FOLLONICA;follonica;ris20160410follonica.txt;;
 15312;10-04-2016;IV TROFEO OK MASTER M2;campodipietraokmasterm2;ris20160410campodipietraokmasterm2.txt;;
-15318;17-04-2016;IV MEMORIAL KIKKO MONTISCI;cagliarikikkomontisci;ris20160417cagliarikikkomontisci.txt;;
 15319;17-04-2016;III TROFEO DEL PIAVE;sandonadelpiavedelpiave;ris20160417sandonadelpiavedelpiave.txt;;
+15330;20-04-2016;XVI MEMORIAL A. BETTIOL;trevisoabettiol;ris20160420trevisoabettiol.txt;;
