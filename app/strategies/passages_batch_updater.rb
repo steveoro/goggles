@@ -149,16 +149,22 @@ class PassagesBatchUpdater
   #
   def is_delta?( passage )
     is_delta = false
-    previous_passage = passage.get_previous_passage
-    if previous_passage
-      total_time_before = previous_passage.compute_incremental_time
-      if total_time_before > passage.get_timing_instance
-        is_delta = true
-      elsif (total_time_before.to_hundreds / previous_passage.get_passage_distance) > 0
-        is_delta = false
-      end
+    
+    # Is incremental (not delta) if passage time swam equal to mir time swam
+    if passage.get_timing == passage.get_final_time
+      is_delta = false
     else
-      is_delta = true
+      previous_passage = passage.get_previous_passage
+      if previous_passage
+        total_time_before = previous_passage.compute_incremental_time
+        if total_time_before > passage.get_timing_instance
+          is_delta = true
+        elsif (total_time_before.to_hundreds / previous_passage.get_passage_distance) > 0
+          is_delta = false
+        end
+      else
+        is_delta = true
+      end
     end
   end
 

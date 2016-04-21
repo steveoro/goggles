@@ -24,6 +24,7 @@ describe PassagesBatchUpdater, type: :strategy do
   let(:hundreds)  { (rand * 59).to_i }
   let(:fixture_value) { "#{ minutes }\'#{ seconds }\"#{ hundreds }" }
   let(:passage) { FactoryGirl.create( :meeting_individual_result_with_passages ).passages.first }
+  let(:last_passage) { FactoryGirl.create( :meeting_individual_result_with_passages ).passages.last }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -119,10 +120,22 @@ describe PassagesBatchUpdater, type: :strategy do
       expect( subject.is_delta?( create( :passage) ) ).to eq( true ).or eq( false )
     end
     it "returns true if first passage" do
+      expect( passage.get_timing ).not_to eq( passage.get_final_time )
       expect( subject.is_delta?( passage ) ).to eq( true )
     end
-    it "returns false if time swam equals to total time swam"
-    it "returns true if time swam smaller than total time swam in previous passage"
+    it "returns false if time swam equals to total time swam" do
+      last_passage.minutes  = last_passage.meeting_individual_result.minutes 
+      last_passage.seconds  = last_passage.meeting_individual_result.seconds 
+      last_passage.hundreds = last_passage.meeting_individual_result.hundreds
+      last_passage.save
+      expect( last_passage.get_timing ).to eq( last_passage.get_final_time )
+      expect( subject.is_delta?( last_passage ) ).to eq( false )
+    end
+    it "returns true if time swam smaller than total time swam in previous passage" do
+      expect( last_passage.get_previous_passage ).to be_an_instance_of( Passage )
+      expect( last_passage.get_timing_instance ).to be < last_passage.get_previous_passage.compute_incremental_time
+      expect( subject.is_delta?( last_passage ) ).to eq( true )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
