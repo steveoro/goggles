@@ -3,7 +3,7 @@ require 'wrappers/timing'
 #
 # == SwimmerBestFinder
 #
-# Strategy Pattern implementation for swimmer best result retreiving
+# Strategy Pattern implementation for swimmer best result retrieving
 #
 # @author   Leega
 # @version  4.00.837
