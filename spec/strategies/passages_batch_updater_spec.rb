@@ -19,12 +19,16 @@ describe PassagesBatchUpdater, type: :strategy do
   #-- -------------------------------------------------------------------------
   #++
 
-  let(:minutes)   { (rand * 59).to_i }
-  let(:seconds)   { (rand * 59).to_i }
-  let(:hundreds)  { (rand * 59).to_i }
+  let(:minutes)       { (rand * 59).to_i }
+  let(:seconds)       { (rand * 59).to_i }
+  let(:hundreds)      { (rand * 59).to_i }
   let(:fixture_value) { "#{ minutes }\'#{ seconds }\"#{ hundreds }" }
-  let(:passage) { FactoryGirl.create( :meeting_individual_result_with_passages ).passages.first }
-  let(:last_passage) { FactoryGirl.create( :meeting_individual_result_with_passages ).passages.last }
+  let(:passage)       { create( :meeting_individual_result_with_passages ).passages.sort_by_distance.first }
+
+  let(:long_event)    { EventType.are_not_relays.for_fin_calculation.where('length_in_meters >= 200')[ rand * (EventType.are_not_relays.for_fin_calculation.where('length_in_meters >= 200').count - 1) ] }
+  let(:mir_with_pass) { Passage.for_event_type( long_event )[ rand * (Passage.for_event_type( long_event ).count - 1)].meeting_individual_result }
+  let(:first_passage) { mir_with_pass.passages.sort_by_distance.first }
+  let(:last_passage)  { mir_with_pass.passages.sort_by_distance.last }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -120,21 +124,53 @@ describe PassagesBatchUpdater, type: :strategy do
       expect( subject.is_delta?( create( :passage) ) ).to eq( true ).or eq( false )
     end
     it "returns true if first passage" do
-      expect( passage.get_timing ).not_to eq( passage.get_final_time )
+      expect( passage.get_timing_instance ).not_to eq( passage.get_final_time )
+      expect( passage.get_previous_passage ).to be_nil
       expect( subject.is_delta?( passage ) ).to eq( true )
     end
     it "returns false if time swam equals to total time swam" do
       last_passage.minutes  = last_passage.meeting_individual_result.minutes 
       last_passage.seconds  = last_passage.meeting_individual_result.seconds 
       last_passage.hundreds = last_passage.meeting_individual_result.hundreds
-      last_passage.save
-      expect( last_passage.get_timing ).to eq( last_passage.get_final_time )
+      expect( last_passage.get_timing_instance ).to eq( last_passage.get_final_time )
       expect( subject.is_delta?( last_passage ) ).to eq( false )
     end
     it "returns true if time swam smaller than total time swam in previous passage" do
       expect( last_passage.get_previous_passage ).to be_an_instance_of( Passage )
       expect( last_passage.get_timing_instance ).to be < last_passage.get_previous_passage.compute_incremental_time
       expect( subject.is_delta?( last_passage ) ).to eq( true )
+    end
+    it "returns true if time swam per meter is less than total time swam per meter * 50%" do
+      if ! mir_with_pass.is_disqualified
+        total_distance = mir_with_pass.event_type.length_in_meters
+        total_timing   = mir_with_pass.get_timing_instance.to_hundreds
+        mir_with_pass.get_passages.each do |delta_passage|
+          #passage.minutes  = passage.minutes 
+          #passage.seconds  = passage.seconds 
+          #passage.hundreds = passage.hundreds
+          expect( delta_passage.get_timing_instance.to_hundreds / delta_passage.compute_distance_swam ).to be <= ( total_timing / total_distance * 1.5 )
+          expect( subject.is_delta?( delta_passage ) ).to eq( true )
+        end
+      end
+    end
+    it "returns false if time swam per meter is more than total time swam per meter * 50%" do
+      if ! mir_with_pass.is_disqualified
+        total_distance = mir_with_pass.event_type.length_in_meters
+        total_timing   = mir_with_pass.get_timing_instance.to_hundreds
+        mir_with_pass.get_passages.each_with_index do |incremental_passage,index|
+          if index > 0
+            incremental_time = incremental_passage.compute_incremental_time
+            if incremental_passage.get_timing_instance.to_hundreds < incremental_time.to_hundreds
+              incremental_passage.minutes  = incremental_time.minutes 
+              incremental_passage.seconds  = incremental_time.seconds 
+              incremental_passage.hundreds = incremental_time.hundreds
+              expect( incremental_passage.get_timing_instance.to_hundreds ).to eq( incremental_time.to_hundreds )
+              expect( incremental_passage.get_timing_instance.to_hundreds / incremental_passage.compute_distance_swam ).to be >= ( total_timing / total_distance * 1.5 )
+              expect( subject.is_delta?( incremental_passage ) ).to eq( false )
+            end
+          end
+        end
+      end
     end
   end
   #-- -------------------------------------------------------------------------

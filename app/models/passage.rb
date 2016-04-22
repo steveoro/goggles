@@ -66,6 +66,8 @@ class Passage < ActiveRecord::Base
 
   scope :sort_by_user,       ->(dir) { order("users.name #{dir.to_s}, swimmer_id #{dir.to_s}") }
   scope :sort_by_distance,   joins(:passage_type).order('passage_types.length_in_meters')
+
+  scope :for_event_type,     ->(event_type) { joins(:event_type).where(['event_types.id = ?', event_type.id]) }
 #  scope :sort_by_program,    ->(dir) { order("meeting_programs.begin_time #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
 #  scope :sort_by_swimmer,    ->(dir) { order("swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
 #  scope :sort_by_type,       ->(dir) { order("passage_types.code #{dir.to_s}, swimmers.last_name #{dir.to_s}, swimmers.first_name #{dir.to_s}") }
@@ -167,7 +169,7 @@ class Passage < ActiveRecord::Base
   # by evaluating each passage.
   #
   def get_final_time
-    meeting_individual_result ? meeting_individual_result.get_timing : "#{compute_final_time} ***"
+    meeting_individual_result ? meeting_individual_result.get_timing_instance : "#{compute_final_time} ***"
   end
 
   # Computes the distance swam for the passage.

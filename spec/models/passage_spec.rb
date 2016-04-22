@@ -10,7 +10,7 @@ describe Passage, :type => :model do
   context "[a well formed instance]" do
     #subject { Passage.find_by_id( ((rand * Passage.count) % Passage.count).to_i + 1 ) }
     #subject { create( :passage ) }
-    subject { create( :meeting_individual_result_with_passages ).passages.first }
+    subject { create( :meeting_individual_result_with_passages ).passages.sort_by_distance.first }
 
     it "is a not nil" do                            # (we check for nil to make sure the seed exists in the DB)
       expect( subject ).not_to be_nil
@@ -51,7 +51,6 @@ describe Passage, :type => :model do
           :get_short_name,
           :get_full_name,
           :get_verbose_name,
-          :get_final_time,
           :get_user_name
         ]
       )
@@ -69,6 +68,7 @@ describe Passage, :type => :model do
 
       # Methods that return timing istancies
       [
+        :get_final_time,
         :compute_final_time,
         :compute_incremental_time,
       ].each do |method_name|
@@ -99,7 +99,7 @@ describe Passage, :type => :model do
       end
       it "returns a list of sorted passages" do
         mir = create( :meeting_individual_result_with_passages )
-        fixture = mir.passages.first                # Get the first passage from the linked set
+        fixture = mir.passages.sort_by_distance.first  # Get the first passage from the linked set
         current_item_distance = 0
         fixture.get_passages.each do |item|
           expect(item.passage_type.length_in_meters).to be >= current_item_distance  # >= because the factory can create passages having same distance
@@ -109,6 +109,27 @@ describe Passage, :type => :model do
     end
     #-- -----------------------------------------------------------------------
     #++
+
+
+    describe "#get_previous_passage" do
+      it "returns nil if first passage" do
+        expect( subject.get_previous_passage ).to be_nil
+      end
+      it "returns a passage if not first" do
+        expect( subject.get_passages.count ).to be > 1
+        last = subject.get_passages.last
+        expect( last ).to be_an_instance_of( Passage )
+        expect( last.get_previous_passage ).to be_an_instance_of( Passage )
+      end
+      it "returns a passage with total distance swam smaller than last" do
+        expect( subject.get_passages.count ).to be > 1
+        last = subject.get_passages.last
+        expect( last.get_previous_passage.get_passage_distance ).to be <= last.get_passage_distance
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
 
 
     describe "#compute_final_time" do

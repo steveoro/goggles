@@ -135,8 +135,8 @@ class PassagesBatchUpdater
   # First passage is always a delta
   # A passage is a delta if lesser than prevvoius one
   # A passage is a delta if greater than prevvoius one but
-  # not more 50% of difference with previous distance swam.
-  # (so a passage is incremental only if greater than prevvoius one)
+  # not more 50% of difference with previous distance swam (average speed per meter).
+  # (so a passage is incremental only if greater than previous one)
   #
   # EG 1.
   #  50: 3000 -> delta (first passage)
@@ -151,21 +151,28 @@ class PassagesBatchUpdater
     is_delta = false
     
     # Is incremental (not delta) if passage time swam equal to mir time swam
-    if passage.get_timing == passage.get_final_time
+    if passage.get_timing_instance == passage.get_final_time
       is_delta = false
     else
       previous_passage = passage.get_previous_passage
       if previous_passage
         total_time_before = previous_passage.compute_incremental_time
+        # Is delta if passage time swam smaller than time swam before
         if total_time_before > passage.get_timing_instance
           is_delta = true
-        elsif (total_time_before.to_hundreds / previous_passage.get_passage_distance) > 0
+        # Is delta if passage swam speed per meter smaller than average swam speed per meter * 50%
+        elsif (passage.get_timing_instance.to_hundreds / passage.compute_distance_swam) <= (( passage.get_final_time.to_hundreds / passage.get_total_distance ) * 1.5 )
+          is_delta = true
+        # Is incremental if passage swam speed per meter greater than average swam speed per meter * 50%
+        else
           is_delta = false
         end
+      # Is delta if first passage (or no previous one)
       else
         is_delta = true
       end
     end
+    is_delta
   end
 
   private
@@ -178,11 +185,6 @@ class PassagesBatchUpdater
   # The updated Passage instance
   #
   def prepare_passage_fields( passage, timing, mir_id = nil, passage_type_id = nil )
-    # TODO
-    # Detrminates if passage is delta or incremental
-    #is_delta = is_delta?( passage )
-    is_delta = false
-
     passage.user_id = @current_user.id
     if mir_id
       mir = MeetingIndividualResult.find( mir_id )
@@ -195,15 +197,22 @@ class PassagesBatchUpdater
 
     prev_timing = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
 
+    # Detrminates if passage is delta or incremental
+    #is_delta = false
+    passage.minutes  = timing.minutes
+    passage.seconds  = timing.seconds
+    passage.hundreds = timing.hundreds
+    is_delta = is_delta?( passage )
+
     if is_delta == true
       # Timing is the delta.
       # Should calculate time from start
       passage.minutes  = timing.minutes
       passage.seconds  = timing.seconds
       passage.hundreds = timing.hundreds
-      passage.minutes_from_start  = timing.minutes + prev_timing ? prev_timing.minutes : 0
-      passage.seconds_from_start  = timing.seconds + prev_timing ? prev_timing.seconds : 0
-      passage.hundreds_from_start = timing.hundreds + prev_timing ? prev_timing.hundreds : 0
+      passage.minutes_from_start  = timing.minutes + ( prev_timing ? prev_timing.minutes : 0 )
+      passage.seconds_from_start  = timing.seconds + ( prev_timing ? prev_timing.seconds : 0 )
+      passage.hundreds_from_start = timing.hundreds + ( prev_timing ? prev_timing.hundreds : 0 )
     else
       # Timing is the incremental.
       # Should calculate delta time

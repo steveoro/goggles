@@ -83,7 +83,7 @@ FactoryGirl.define do
       after(:create) do |created_instance, evaluator|
         create_list(
           :passage,
-          ((rand * 10) % 3).to_i + 1,
+          ((rand * 10) % 3).to_i + 2,
           meeting_individual_result: created_instance # association enforce for each sub-row
         )
       end
