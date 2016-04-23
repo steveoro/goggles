@@ -22,7 +22,7 @@ class TeamBestFinder
   #
   def initialize( team )
     unless team && team.instance_of?( Team )
-      raise ArgumentError.new("Needs a valid team")
+      raise ArgumentError.new("Needs a valid team: #{team.inspect}")
     end
     unless team.meeting_individual_results.count > 0
       raise ArgumentError.new("Team #{team.get_full_name} hasn't results")
@@ -58,6 +58,15 @@ class TeamBestFinder
     @event_types = event_types
   end
 
+  # Find out the category in the distinct_category array
+  # using the category code
+  # Return nil if category code not present
+  #
+  def find_category_by_code( category_code )
+    element = @distinct_categories.rindex{ |e| e.code == category_code }
+    @distinct_categories[element] if element
+  end
+
   # Find out the categories to retrieve best for
   # Only individual categories will be considered
   # Different season types have different categories
@@ -89,6 +98,24 @@ class TeamBestFinder
       needs_split = true
     end
     needs_split
+  end 
+
+  # Find out the category to split in the actual one
+  # The category to split in is the one, not splitted
+  # with correct age range considering the swimmer age
+  # at the moment of individual result
+  #
+  def get_category_to_split_into( meeting_individual_result )
+    category_type = meeting_individual_result.category_type
+    if category_needs_split?( category_type )
+      # Find the swimmer age 
+      swimmer_age = meeting_individual_result.get_swimmer_age
+      element = @distinct_categories.rindex{ |e| e.code != category_type.code && e.age_begin <= swimmer_age && e.age_end >= swimmer_age && ! e.is_undivided }
+      @distinct_categories[element]
+    else
+      # The category is the result one
+      find_category_by_code( category_type.code )
+    end
   end 
 
   # Verify if exists results for given gender, pool, event and category 

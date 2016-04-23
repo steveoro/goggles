@@ -259,4 +259,9 @@ class MeetingIndividualResult < ActiveRecord::Base
   end
   #-- --------------------------------------------------------------------------
   #++
+  
+  # Calculate the swimemr age
+  def get_swimmer_age
+    get_scheduled_date.year - swimmer.year_of_birth + ( get_scheduled_date.month > 9 ? 1 : 0 )
+  end
 end

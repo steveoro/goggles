@@ -5,8 +5,8 @@ require 'wrappers/timing'
 describe TeamBestFinder, type: :strategy do
 
   let(:season_type)     { SeasonType.where("code in ('MASCSI', 'MASFIN')").sort{ rand - 0.5 }[0] }
-  let(:season)          { season_type.seasons[(rand * (season_type.seasons.count - 1)).to_i] }
-  let(:active_team)     { season_type.teams[(rand * (season_type.teams.count - 1)).to_i] }
+  let(:season)          { season_type.seasons.has_results[(rand * (season_type.seasons.has_results.count - 1)).to_i] }
+  let(:active_team)     { season.teams.has_many_results.count > 0 ? season.teams.has_many_results[(rand * (season.teams.has_many_results.count - 1)).to_i] : Team.find(1) }
   let(:gender)          { GenderType.individual_only[(rand * (GenderType.individual_only.count - 1)).to_i] }
   let(:pool)            { PoolType.only_for_meetings[(rand * (PoolType.only_for_meetings.count - 1)).to_i] }
   let(:event)           { EventType.are_not_relays.for_fin_calculation[(rand * (EventType.are_not_relays.for_fin_calculation.count - 1)).to_i] }
@@ -14,6 +14,7 @@ describe TeamBestFinder, type: :strategy do
   let(:fin_season)      { SeasonType.find_by_code('MASFIN').seasons[(rand * (season_type.seasons.count - 1)).to_i] }
   let(:fix_team)        { Team.find(1) }
   let(:fix_tbf)         { TeamBestFinder.new( fix_team ) }
+  let(:fix_mir)         { active_team.meeting_individual_results.is_not_disqualified[(rand * (active_team.meeting_individual_results.is_not_disqualified.count - 1)).to_i] }
 
   subject { TeamBestFinder.new( active_team ) }
 
@@ -28,7 +29,9 @@ describe TeamBestFinder, type: :strategy do
       :set_pools,
       :set_events,
       :retrieve_distinct_categories,
+      :find_category_by_code,
       :category_needs_split?,
+      :get_category_to_split_into,
       :has_individual_result?,
       :get_team_best_individual_result
     ] )
@@ -146,6 +149,25 @@ describe TeamBestFinder, type: :strategy do
   end
   #-- -----------------------------------------------------------------------
 
+  describe "#find_category_by_code," do
+    it "returns a category type or nil" do
+      expect( subject.find_category_by_code( category.code ) ).to be_an_instance_of( CategoryType ).or be nil
+    end
+    it "returns nil for a wrong category code" do
+      expect( subject.find_category_by_code( 'WRONG_CAT' ) ).to be nil
+    end
+    it "returns a category type with the given code if present" do
+      element = subject.distinct_categories.rindex{ |e| e.code == category.code }
+      if element
+        expect( subject.find_category_by_code( category.code ) ).to be_an_instance_of( CategoryType )
+        expect( subject.find_category_by_code( category.code ).code ).to eq( category.code )
+      else
+        expect( subject.find_category_by_code( category.code ) ).to be nil
+      end
+    end
+  end
+  #-- -----------------------------------------------------------------------
+
   describe "#category_needs_split?," do
     it "returns a boolean" do
       expect( subject.category_needs_split?( category ) ).to eq( true ).or eq( false )
@@ -185,6 +207,45 @@ describe TeamBestFinder, type: :strategy do
   end
   #-- -----------------------------------------------------------------------
 
+  describe "#get_category_to_split_into," do
+    it "returns a category type" do
+      expect( subject.get_category_to_split_into( fix_mir ) ).to be_an_instance_of( CategoryType )
+    end
+    it "returns the same category if split not needed" do
+      m45_mir = fix_team.meeting_individual_results.for_category_code('M45')[(rand * (fix_team.meeting_individual_results.for_category_code('M45').count - 1)).to_i]
+      expect( m45_mir.category_type.code ).to eq( 'M45' )
+      expect( fix_tbf.get_category_to_split_into( m45_mir ).code ).to eq( 'M45' )
+      m30_mir = fix_team.meeting_individual_results.for_category_code('M30')[(rand * (fix_team.meeting_individual_results.for_category_code('M30').count - 1)).to_i]
+      expect( m30_mir.category_type.code ).to eq( 'M30' )
+      expect( fix_tbf.get_category_to_split_into( m30_mir ).code ).to eq( 'M30' )
+    end
+    it "returns a different category if split needed" do
+      over_mir = fix_team.meeting_individual_results.for_category_code('OVER')[(rand * (fix_team.meeting_individual_results.for_category_code('OVER').count - 1)).to_i]
+      expect( over_mir.category_type.code ).to eq( 'OVER' )
+      expect( fix_tbf.get_category_to_split_into( over_mir ).code ).not_to eq( 'OVER' )
+      s50_mir = fix_team.meeting_individual_results.for_category_code('50S')[(rand * (fix_team.meeting_individual_results.for_category_code('50S').count - 1)).to_i]
+      expect( s50_mir.category_type.code ).to eq( '50S' )
+      expect( fix_tbf.get_category_to_split_into( s50_mir ).code ).not_to eq( '50S' )
+    end
+    it "returns the correct category if split needed" do
+      over_mir = fix_team.meeting_individual_results.for_category_code('OVER')[(rand * (fix_team.meeting_individual_results.for_category_code('OVER').count - 1)).to_i]
+      split_cat = fix_tbf.get_category_to_split_into( over_mir )
+      swimmer_age = over_mir.get_swimmer_age
+      expect( over_mir.category_type.age_begin ).to be <= swimmer_age 
+      expect( over_mir.category_type.age_end ).to be >= swimmer_age 
+      expect( split_cat.age_begin ).to be <= swimmer_age 
+      expect( split_cat.age_end ).to be >= swimmer_age 
+      s50_mir = fix_team.meeting_individual_results.for_category_code('50S')[(rand * (fix_team.meeting_individual_results.for_category_code('50S').count - 1)).to_i]
+      split_cat = fix_tbf.get_category_to_split_into( s50_mir )
+      swimmer_age = s50_mir.get_swimmer_age
+      expect( s50_mir.category_type.age_begin ).to be <= swimmer_age 
+      expect( s50_mir.category_type.age_end ).to be >= swimmer_age 
+      expect( split_cat.age_begin ).to be <= swimmer_age 
+      expect( split_cat.age_end ).to be >= swimmer_age 
+    end
+  end
+  #-- -----------------------------------------------------------------------
+
   describe "#has_individual_result?," do
     it "returns a boolean" do
       expect( subject.has_individual_result?( gender, pool, event, category.code ) ).to eq( true ).or eq( false )
@@ -215,7 +276,6 @@ describe TeamBestFinder, type: :strategy do
       expect( subject.get_team_best_individual_result( gender, fix_pool, fix_event, category.code ) ).to be_nil
     end
     it "returns a meeting individual result for event with results" do
-      fix_mir = active_team.meeting_individual_results.is_not_disqualified[(rand * (active_team.meeting_individual_results.is_not_disqualified.count - 1)).to_i]
       fix_gender   = fix_mir.gender_type
       fix_pool     = fix_mir.pool_type
       fix_event    = fix_mir.event_type
