@@ -22,6 +22,7 @@ class SeasonType < ActiveRecord::Base
 
   has_many :seasons
   has_many :swimmers,     through: :seasons
+  has_many :teams,        through: :seasons
   has_many :event_types,  through: :seasons
   
   scope :is_master, where("code like 'MAS%'")
