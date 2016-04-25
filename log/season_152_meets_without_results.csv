@@ -8,7 +8,6 @@ id;date;meeting;code;import_data_file;effective_date;days_to_move
 15239;21-11-2015;VIII TROFEO MASTER VICENZA;vicenzamastervicenza;ris20151121vicenzamastervicenza.txt;;
 15244;22-11-2015;V TROFEO PAOLO COSTOLI;romapaolocostoli;ris20151122romapaolocostoli.txt;;
 15245;22-11-2015;IV TROFEO POGGIBONSI;poggibonsi;ris20151122poggibonsi.txt;;
-15352;05-12-2015;II MEMORIAL LEONE;pozzuolileone;ris20151205pozzuolileone.txt;;
 15221;06-12-2015;II MEMORIAL E. BRUNELLI;verona;ris20151206verona.txt;;
 15251;06-12-2015;XI TROFEO CITTÀ DI MASSAROSA;massarosa;ris20151206massarosa.txt;;
 15203;13-12-2015;XVII MEETING DEGLI AUGURI;livornoauguri;ris20151213livornoauguri.txt;;
@@ -24,3 +23,7 @@ id;date;meeting;code;import_data_file;effective_date;days_to_move
 15309;10-04-2016;V COPPA CITTÀ DI FOLLONICA;follonica;ris20160410follonica.txt;;
 15312;10-04-2016;IV TROFEO OK MASTER M2;campodipietraokmasterm2;ris20160410campodipietraokmasterm2.txt;;
 15319;17-04-2016;III TROFEO DEL PIAVE;sandonadelpiavedelpiave;ris20160417sandonadelpiavedelpiave.txt;;
+15320;23-04-2016;IV TROFEO ACQANIENE;romaacqaniene;ris20160423romaacqaniene.txt;;
+15318;24-04-2016;IV MEMORIAL KIKKO MONTISCI;cagliarikikkomontisci;ris20160424cagliarikikkomontisci.txt;;
+15322;24-04-2016;XVI MEMORIAL GIOVANNI CIUFFRIDA;massarosagiovanniciuffrida;ris20160424massarosagiovanniciuffrida.txt;;
+15323;24-04-2016;III MEETING TERRE DELLE SIRENE;massalubrenseterredellesirene;ris20160424massalubrenseterredellesirene.txt;;
