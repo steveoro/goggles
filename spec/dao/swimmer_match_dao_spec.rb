@@ -18,7 +18,7 @@ describe SwimmerMatchDAO, :type => :model do
   context "SwimmerMatchProgramDAO subclass," do
     
     let( :description )        { "This is the match number #{(rand * 100).to_i}" }
-    let( :fix_event )          { EventType.are_not_relays[ ( rand * EventType.are_not_relays.count ).to_i ] }
+    let( :fix_event )          { EventType.are_not_relays[ ( rand * (EventType.are_not_relays.count - 1)).to_i ] }
 
     subject { SwimmerMatchDAO::SwimmerMatchProgramDAO.new }
   

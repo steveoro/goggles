@@ -282,6 +282,31 @@ describe TeamBestFinder, type: :strategy do
       fix_category = fix_mir.category_type
       expect( subject.get_team_best_individual_result( fix_gender, fix_pool, fix_event, fix_category.code ) ).to be_an_instance_of( MeetingIndividualResult )
     end
+    it "returns the best meeting individual result for event with results" do
+      results = []
+      new_team = create( :team )
+      mp = create( :meeting_program )
+      fix_gender   = mp.gender_type
+      fix_pool     = mp.pool_type
+      fix_event    = mp.event_type
+      fix_category = mp.category_type
+      result_num = ( rand * 10 ).to_i + 5
+      (1..result_num).each do
+        results << create( :meeting_individual_result, meeting_program: mp, team: new_team ).get_timing_instance.to_hundreds
+      end
+      results.sort!
+
+      # DEBUG
+      #expect( results.size ).to eq( result_num )
+      #puts results.inspect
+      # DEBUG
+      
+      new_tbf = TeamBestFinder.new( new_team )
+      new_best = new_tbf.get_team_best_individual_result( fix_gender, fix_pool, fix_event, fix_category.code )
+      expect( new_best ).to be_an_instance_of( MeetingIndividualResult )
+      expect( new_best.get_timing_instance.to_hundreds ).to eq( results[0] )
+      expect( new_best.get_timing_instance.to_hundreds ).to be <= results[( rand * ( result_num - 2 ) ).to_i + 1]
+    end
   end
   #-- -----------------------------------------------------------------------
 
