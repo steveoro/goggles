@@ -32,6 +32,12 @@ describe RecordX4dDAO, :type => :model do
         :get_gender_type,
         :get_event_type,
         :get_category_type,
+        :get_record_instance
+      ] )
+        
+      it_behaves_like( "(the existance of a method returning strings)", [
+        :get_record_timing,
+        :get_record_date
       ] )
         
       describe "#parameters," do
@@ -80,12 +86,42 @@ describe RecordX4dDAO, :type => :model do
         end
       end
   
-      describe "#get_record," do
+      describe "#get_record_instance," do
         it "returns a meeting individual result" do
-          expect( subject.get_record ).to be_an_instance_of( MeetingIndividualResult )
+          expect( subject.get_record_instance ).to be_an_instance_of( MeetingIndividualResult )
         end
         it "returns the pool parameter set" do
-          expect( subject.get_record ).to eq( mir )
+          expect( subject.get_record_instance ).to eq( mir )
+        end
+      end
+
+      describe "#get_record_timing," do
+        it "retrurns the record timing" do
+          expect( subject.get_record_timing ).to eq( mir.get_timing )
+        end
+      end
+
+      describe "#get_record_date," do
+        it "retrurns the meeting scheduled daterecord timing" do
+          expect( subject.get_record_date ).to eq( mir.meeting.get_scheduled_date )
+        end
+      end
+      
+      describe "#get_record_swimmer," do
+        it "responds to #get_record_swimmer" do
+          expect( subject ).to respond_to( :get_record_swimmer )
+        end
+        it "returns an HTML link" do
+          expect( subject.get_record_swimmer ).to include( mir.swimmer.get_full_name )
+        end
+      end
+      
+      describe "#get_record_meeting," do
+        it "responds to #get_record_swimmer" do
+          expect( subject ).to respond_to( :get_record_meeting )
+        end
+        it "returns an HTML link" do
+          expect( subject.get_record_meeting ).to include( mir.meeting.get_short_name )
         end
       end
     end
@@ -110,6 +146,10 @@ describe RecordX4dDAO, :type => :model do
       :records
     ])
       
+    it_behaves_like( "(the existance of a method)", [
+      :add_record,
+    ] )
+
     describe "#parameters," do
       it "are the given parameters" do
         expect( subject.owner ).to eq( "Something" )
@@ -122,7 +162,7 @@ describe RecordX4dDAO, :type => :model do
   #-- -------------------------------------------------------------------------
   #++
 
-  describe "without requested parameters" do
+  describe "without requested parameters," do
     it "raises an exception for missing parameter" do
       expect{ RecordX4dDAO.new() }.to raise_error( ArgumentError )
       expect{ RecordX4dDAO.new( "Something" ) }.to raise_error( ArgumentError )
@@ -130,6 +170,24 @@ describe RecordX4dDAO, :type => :model do
     it "raises an exception for wrong record parameter" do
       expect{ RecordX4dDAO.new( "Something", "Wrong record type" ) }.to raise_error( ArgumentError )
     end
+  end
+
+  describe "#add_record," do
+    it "returns a boolean" do
+      expect( subject.add_record( mir ) ).to eq( true ).or eq( false )
+    end
+    it "adds an element to records collection" do
+      record_num = subject.records.size
+      expect( subject.add_record( mir ) ).to eq( true )
+      expect( subject.records.size ).to be > record_num
+    end
+    it "doesn't add an element to records collection if wrong parameters" do
+      record_num = subject.records.size
+      expect( subject.add_record( "wrong_par" ) ).to eq( false )
+      expect( subject.records.size ).to eq( record_num )
+    end
+    xit "uses record pool, gender, event and category if not forced"
+    xit "uses forced pool, gender, event and category instead of record ones if forced"
   end
   #-- -------------------------------------------------------------------------
   #++

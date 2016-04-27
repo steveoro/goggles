@@ -50,7 +50,7 @@ describe SwimmerDecorator, type: :model do
       ]
     )
     it_behaves_like( "(the existance of a method returning strings)", [
-        :get_linked_team_names,
+        :get_linked_team_names
       ]
     )
   end

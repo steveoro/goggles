@@ -314,7 +314,7 @@ class SwimmerDecorator < Draper::Decorator
     else
       linked_list = I18n.t('none')
     end 
-    @linked_team_list ||= linked_list
+    linked_list
   end
   #-- -------------------------------------------------------------------------
   #++
