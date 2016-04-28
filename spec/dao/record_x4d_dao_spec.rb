@@ -148,6 +148,11 @@ describe RecordX4dDAO, :type => :model do
       
     it_behaves_like( "(the existance of a method)", [
       :add_record,
+      :record_count,
+      :has_record?,
+      :get_record_instance,
+      :get_record,
+      :delete_record
     ] )
 
     describe "#parameters," do
@@ -181,13 +186,176 @@ describe RecordX4dDAO, :type => :model do
       expect( subject.add_record( mir ) ).to eq( true )
       expect( subject.records.size ).to be > record_num
     end
+    it "adds an element to records collection if optional parameters given" do
+      record_num = subject.records.size
+      expect( subject.add_record( mir, category, pool, gender, event ) ).to eq( true )
+      expect( subject.records.size ).to be > record_num
+    end
     it "doesn't add an element to records collection if wrong parameters" do
       record_num = subject.records.size
       expect( subject.add_record( "wrong_par" ) ).to eq( false )
       expect( subject.records.size ).to eq( record_num )
     end
-    xit "uses record pool, gender, event and category if not forced"
-    xit "uses forced pool, gender, event and category instead of record ones if forced"
+    it "adds an element of RecordElement type" do
+      expect( subject.records.size ).to eq( 0 )
+      subject.add_record( mir )
+      expect( subject.records.size ).to eq( 1 )
+      expect( subject.records[0] ).to be_an_instance_of( RecordX4dDAO::RecordElementDAO )
+    end
+    it "uses record pool, gender, event and category if not forced" do
+      subject.add_record( mir )
+      expect( subject.records[0].get_pool_type ).to eq( mir.pool_type.code )
+      expect( subject.records[0].get_gender_type ).to eq( mir.gender_type.code )
+      expect( subject.records[0].get_event_type ).to eq( mir.event_type.code )
+      expect( subject.records[0].get_category_type ).to eq( mir.category_type.code )
+    end
+    it "uses forced pool, gender, event and category instead of record ones if forced" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.records[0].get_pool_type ).to eq( pool )
+      expect( subject.records[0].get_gender_type ).to eq( gender )
+      expect( subject.records[0].get_event_type ).to eq( event )
+      expect( subject.records[0].get_category_type ).to eq( category )
+    end
+  end
+
+  describe "#record_count," do
+    it "returns a number" do
+      expect( subject.record_count ).to be >= 0
+    end
+    it "returns 0 for empty record collection" do
+      expect( subject.records.size ).to eq( 0 )
+      expect( subject.record_count ).to eq( 0 )
+    end
+    it "returns the number of records colelction" do
+      num_record = ( rand * 10 ).to_i + 5
+      (0..num_record).each_with_index do |index|
+        subject.add_record( mir, index.to_s )
+      end
+      expect( subject.records.size ).to be > 0
+      expect( subject.record_count ).to eq( subject.records.size )
+    end
+  end
+
+  describe "#has_record?," do
+    it "returns nil if no records present" do
+      expect( subject.records.size ).to eq( 0 )
+      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+    end
+    it "returns nil if no record present for given parameters" do
+      subject.add_record( mir )
+      expect( subject.records.size ).to be > 0
+      expect( subject.has_record?( 'not_possible_pool', 'impossible_gender', 'unknown_event', 'non_existent_category' ) ).to be nil
+    end
+    it "returns a number if record present for given parameters" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.has_record?( pool, gender, event, category ) ).to be >= 0
+    end
+    it "returns the correct number if record present for given parameters" do
+      subject.add_record( mir, category, pool, gender, event )
+      subject.add_record( mir, 'another_category', pool, gender, event )
+      subject.add_record( mir, category, 'another_pool', gender, event )
+      subject.add_record( mir, category, pool, 'another_gender', event )
+      subject.add_record( mir, category, pool, gender, 'another_event' )
+      expect( subject.has_record?( pool, gender, event, category ) ).to eq( 0 )
+    end
+  end
+
+  describe "#get_record_instance," do
+    it "returns nil if no records set" do
+      expect( subject.records.size ).to eq( 0 )
+      expect( subject.get_record_instance( pool, gender, event, category ) ).to be nil
+    end
+    it "returns nil if no record set for given parameters" do
+      subject.add_record( mir, 'non_existent_category', 'not_possible_pool', 'impossible_gender', 'unknown_event' )
+      subject.add_record( mir, 'another_category' )
+      subject.add_record( mir, 'the_last_category' )
+      subject.add_record( mir, mir.category_type.code, 'different_pool' )
+      subject.add_record( mir, mir.category_type.code, mir.pool_type.code, 'different_gender' )
+      subject.add_record( mir, mir.category_type.code, mir.pool_type.code, mir.gender_type.code, 'different_event' )
+      expect( subject.records.size ).to be > 0
+      expect( subject.get_record_instance( pool, gender, event, category ) ).to be nil
+    end
+    it "returns a meeting individual record if record present" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.get_record_instance( pool, gender, event, category ) ).to be_an_instance_of( MeetingIndividualResult )
+    end
+  end
+
+  describe "#get_record," do
+    it "returns nil if no records set" do
+      expect( subject.records.size ).to eq( 0 )
+      expect( subject.get_record( pool, gender, event, category ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_timing ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_date ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_swimmer ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_meeting ) ).to be nil
+    end
+    it "returns nil if no record set for given parameters" do
+      subject.add_record( mir, 'non_existent_category', 'not_possible_pool', 'impossible_gender', 'unknown_event' )
+      subject.add_record( mir, 'another_category' )
+      subject.add_record( mir, 'the_last_category' )
+      subject.add_record( mir, mir.category_type.code, 'different_pool' )
+      subject.add_record( mir, mir.category_type.code, mir.pool_type.code, 'different_gender' )
+      subject.add_record( mir, mir.category_type.code, mir.pool_type.code, mir.gender_type.code, 'different_event' )
+      expect( subject.records.size ).to be > 0
+      expect( subject.get_record( pool, gender, event, category ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_timing ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_date ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_swimmer ) ).to be nil
+      expect( subject.get_record( pool, gender, event, category, :get_record_meeting ) ).to be nil
+    end
+    it "returns a meeting individual record if record present and attribute not set" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.get_record( pool, gender, event, category ) ).to be_an_instance_of( MeetingIndividualResult )
+    end
+    it "returns the record element timing if timing is requested" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.get_record( pool, gender, event, category, :get_record_timing ) ).to eq( subject.records[0].get_record_timing )
+    end
+    it "returns the record element date if date is requested" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.get_record( pool, gender, event, category, :get_record_date ) ).to eq( subject.records[0].get_record_date )
+    end
+    it "returns the record element swimmer if swimmer is requested" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.get_record( pool, gender, event, category, :get_record_swimmer ) ).to eq( subject.records[0].get_record_swimmer )
+    end
+    it "returns the record element meeting if meeting is requested" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.get_record( pool, gender, event, category, :get_record_meeting ) ).to eq( subject.records[0].get_record_meeting )
+    end
+  end
+
+  describe "#delete_record," do
+    it "returns a boolean" do
+      expect( subject.delete_record( pool, gender, event, category ) ).to eq( true ).or eq( false )
+    end
+    it "returns false if no record to delete" do
+      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.delete_record( pool, gender, event, category ) ).to eq( false )
+      expect( subject.add_record( mir, 'impossible_to_match' ) ).to eq( true )
+      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.delete_record( pool, gender, event, category ) ).to eq( false )
+    end
+    it "returns true if exists a record to delete" do
+      subject.add_record( mir, category, pool, gender, event )
+      expect( subject.has_record?( pool, gender, event, category ) ).to be >= 0
+      expect( subject.delete_record( pool, gender, event, category ) ).to eq( true )
+    end
+    it "deletes the record if exists" do
+      subject.add_record( mir, category, pool, gender, event )
+      subject.add_record( mir, 'non_existent_category', 'not_possible_pool', 'impossible_gender', 'unknown_event' )
+      subject.add_record( mir, 'another_category' )
+      subject.add_record( mir, 'the_last_category' )
+      subject.add_record( mir, mir.category_type.code, 'different_pool' )
+      subject.add_record( mir, mir.category_type.code, mir.pool_type.code, 'different_gender' )
+      subject.add_record( mir, mir.category_type.code, mir.pool_type.code, mir.gender_type.code, 'different_event' )
+      expect( subject.has_record?( pool, gender, event, category ) ).to be >= 0
+      element_num = subject.records.size
+      expect( subject.delete_record( pool, gender, event, category ) ).to eq( true )
+      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.records.size ).to eq( element_num - 1 )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

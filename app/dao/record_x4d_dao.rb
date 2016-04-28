@@ -123,7 +123,7 @@ class RecordX4dDAO
   # Adds a record to the record collection
   #
   def add_record( meeting_individual_result, category_code = nil, pool_code = nil, gender_code = nil, event_code = nil )
-    is_ok = false 
+    added = false 
     if meeting_individual_result && meeting_individual_result.instance_of?( MeetingIndividualResult )
       category_code = meeting_individual_result.category_type.code if !category_code 
       pool_code = meeting_individual_result.pool_type.code if !pool_code 
@@ -136,9 +136,51 @@ class RecordX4dDAO
       new_record = RecordElementDAO.new( pool_code, gender_code, event_code, category_code, meeting_individual_result )
       if new_record
         @records << new_record
-        is_ok = true
+        added = true
       end
     end
-    is_ok
+    added
   end
+  
+  # Returns the total number of record collected
+  #
+  def record_count
+    @records.size
+  end
+  
+  # Returns the element number of the record in records collection
+  # Return nil if no record set
+  #
+  def has_record?( pool_code, gender_code, event_code, category_code )
+    @records.rindex{ |e| e.pool_type_code == pool_code && e.gender_type_code == gender_code && e.event_type_code == event_code && e.category_type_code == category_code }
+  end
+  
+  # Gets the record for the given parameters
+  # Return nil if no record set
+  #
+  def get_record_instance( pool_code, gender_code, event_code, category_code )
+    if element = has_record?( pool_code, gender_code, event_code, category_code )
+      @records[element].get_record_instance
+    end
+  end
+  
+  # Gets the record attribute for the given parameters
+  # Return nil if no record set
+  #
+  def get_record( pool_code, gender_code, event_code, category_code, attribute = :get_record_instance )
+    if element = has_record?( pool_code, gender_code, event_code, category_code )
+      @records[element].send( attribute.to_sym )
+    end
+  end
+
+  # Remove a record from the record collection
+  #
+  def delete_record( pool_code, gender_code, event_code, category_code )
+    deleted = false
+    if element = has_record?( pool_code, gender_code, event_code, category_code )
+      @records.delete_if{ |e| e.pool_type_code == pool_code && e.gender_type_code == gender_code && e.event_type_code == event_code && e.category_type_code == category_code }
+      deleted = true
+    end
+    deleted 
+  end  
 end
