@@ -149,7 +149,7 @@ describe RecordX4dDAO, :type => :model do
     it_behaves_like( "(the existance of a method)", [
       :add_record,
       :record_count,
-      :has_record?,
+      :has_record_for?,
       :get_record_instance,
       :get_record,
       :delete_record
@@ -236,19 +236,19 @@ describe RecordX4dDAO, :type => :model do
     end
   end
 
-  describe "#has_record?," do
+  describe "#has_record_for?," do
     it "returns nil if no records present" do
       expect( subject.records.size ).to eq( 0 )
-      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be nil
     end
     it "returns nil if no record present for given parameters" do
       subject.add_record( mir )
       expect( subject.records.size ).to be > 0
-      expect( subject.has_record?( 'not_possible_pool', 'impossible_gender', 'unknown_event', 'non_existent_category' ) ).to be nil
+      expect( subject.has_record_for?( 'not_possible_pool', 'impossible_gender', 'unknown_event', 'non_existent_category' ) ).to be nil
     end
     it "returns a number if record present for given parameters" do
       subject.add_record( mir, category, pool, gender, event )
-      expect( subject.has_record?( pool, gender, event, category ) ).to be >= 0
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be >= 0
     end
     it "returns the correct number if record present for given parameters" do
       subject.add_record( mir, category, pool, gender, event )
@@ -256,7 +256,7 @@ describe RecordX4dDAO, :type => :model do
       subject.add_record( mir, category, 'another_pool', gender, event )
       subject.add_record( mir, category, pool, 'another_gender', event )
       subject.add_record( mir, category, pool, gender, 'another_event' )
-      expect( subject.has_record?( pool, gender, event, category ) ).to eq( 0 )
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to eq( 0 )
     end
   end
 
@@ -331,15 +331,15 @@ describe RecordX4dDAO, :type => :model do
       expect( subject.delete_record( pool, gender, event, category ) ).to eq( true ).or eq( false )
     end
     it "returns false if no record to delete" do
-      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be nil
       expect( subject.delete_record( pool, gender, event, category ) ).to eq( false )
       expect( subject.add_record( mir, 'impossible_to_match' ) ).to eq( true )
-      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be nil
       expect( subject.delete_record( pool, gender, event, category ) ).to eq( false )
     end
     it "returns true if exists a record to delete" do
       subject.add_record( mir, category, pool, gender, event )
-      expect( subject.has_record?( pool, gender, event, category ) ).to be >= 0
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be >= 0
       expect( subject.delete_record( pool, gender, event, category ) ).to eq( true )
     end
     it "deletes the record if exists" do
@@ -350,10 +350,10 @@ describe RecordX4dDAO, :type => :model do
       subject.add_record( mir, mir.category_type.code, 'different_pool' )
       subject.add_record( mir, mir.category_type.code, mir.pool_type.code, 'different_gender' )
       subject.add_record( mir, mir.category_type.code, mir.pool_type.code, mir.gender_type.code, 'different_event' )
-      expect( subject.has_record?( pool, gender, event, category ) ).to be >= 0
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be >= 0
       element_num = subject.records.size
       expect( subject.delete_record( pool, gender, event, category ) ).to eq( true )
-      expect( subject.has_record?( pool, gender, event, category ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, event, category ) ).to be nil
       expect( subject.records.size ).to eq( element_num - 1 )
     end
   end

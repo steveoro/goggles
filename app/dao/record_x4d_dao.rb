@@ -151,7 +151,7 @@ class RecordX4dDAO
   # Returns the element number of the record in records collection
   # Return nil if no record set
   #
-  def has_record?( pool_code, gender_code, event_code, category_code )
+  def has_record_for?( pool_code, gender_code, event_code, category_code )
     @records.rindex{ |e| e.pool_type_code == pool_code && e.gender_type_code == gender_code && e.event_type_code == event_code && e.category_type_code == category_code }
   end
   
@@ -159,7 +159,7 @@ class RecordX4dDAO
   # Return nil if no record set
   #
   def get_record_instance( pool_code, gender_code, event_code, category_code )
-    if element = has_record?( pool_code, gender_code, event_code, category_code )
+    if element = has_record_for?( pool_code, gender_code, event_code, category_code )
       @records[element].get_record_instance
     end
   end
@@ -168,7 +168,7 @@ class RecordX4dDAO
   # Return nil if no record set
   #
   def get_record( pool_code, gender_code, event_code, category_code, attribute = :get_record_instance )
-    if element = has_record?( pool_code, gender_code, event_code, category_code )
+    if element = has_record_for?( pool_code, gender_code, event_code, category_code )
       @records[element].send( attribute.to_sym )
     end
   end
@@ -177,7 +177,7 @@ class RecordX4dDAO
   #
   def delete_record( pool_code, gender_code, event_code, category_code )
     deleted = false
-    if element = has_record?( pool_code, gender_code, event_code, category_code )
+    if element = has_record_for?( pool_code, gender_code, event_code, category_code )
       @records.delete_if{ |e| e.pool_type_code == pool_code && e.gender_type_code == gender_code && e.event_type_code == event_code && e.category_type_code == category_code }
       deleted = true
     end
