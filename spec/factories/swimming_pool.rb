@@ -14,7 +14,8 @@ FactoryGirl.define do
     has_restaurant_service  { (rand * 100).to_i.even? }
     has_gym_area            { (rand * 100).to_i.even? }
     has_children_area       { (rand * 100).to_i.even? }
-    pool_type_id            { ((rand * 100) % 2).to_i + 1 }  # ASSERT: 25 and 50 meters type should exists
+    #pool_type_id            { PoolType.only_for_meetings[(rand * (PoolType.only_for_meetings.count - 1)).round(0)].id }
+    pool_type_id            { PoolType.only_for_meetings.sample.id }
 
     city
     user

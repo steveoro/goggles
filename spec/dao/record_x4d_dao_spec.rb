@@ -15,12 +15,19 @@ end
 
 describe RecordX4dDAO, :type => :model do
 
-  let(:pool)            { PoolType.only_for_meetings[(rand * (PoolType.only_for_meetings.count - 1)).to_i].code }
-  let(:gender)          { GenderType.individual_only[(rand * (GenderType.individual_only.count - 1)).to_i].code }
-  let(:event)           { EventType.are_not_relays.for_fin_calculation[(rand * (EventType.are_not_relays.for_fin_calculation.count - 1)).to_i].code }
-  let(:category)        { CategoryType.are_not_relays[(rand * (CategoryType.are_not_relays.count - 1)).to_i].code }
+  #let(:pool)            { PoolType.only_for_meetings[(rand * (PoolType.only_for_meetings.count - 1)).round(0)].code }
+  #let(:gender)          { GenderType.individual_only[(rand * (GenderType.individual_only.count - 1)).round(0)].code }
+  #let(:event)           { EventType.are_not_relays.for_fin_calculation[(rand * (EventType.are_not_relays.for_fin_calculation.count - 1)).round(0)].code }
+  #let(:category)        { CategoryType.are_not_relays[(rand * (CategoryType.are_not_relays.count - 1)).round(0)].code }
+  #let(:record_type)     { RecordType.all[(rand * (RecordType.all.count - 1)).round(0)] }
+
+  let(:gender)          { GenderType.individual_only.order('RAND()').first.code }
+  let(:pool)            { PoolType.only_for_meetings.order('RAND()').first.code }
+  let(:event)           { EventType.are_not_relays.for_fin_calculation.order('RAND()').first.code }
+  let(:category)        { CategoryType.are_not_relays.order('RAND()').first.code }
+  let(:record_type)     { RecordType.order('RAND()').first }
+
   let(:mir)             { create( :meeting_individual_result ) }
-  let(:record_type)     { RecordType.all[(rand * (RecordType.all.count - 1)).to_i] }
 
   context "RecordElementDAO subclass," do
 
@@ -195,6 +202,13 @@ describe RecordX4dDAO, :type => :model do
       record_num = subject.records.size
       expect( subject.add_record( "wrong_par" ) ).to eq( false )
       expect( subject.records.size ).to eq( record_num )
+    end
+    it "replace an element to records collection if already present" do
+      record_num = subject.records.size
+      expect( subject.add_record( mir, category, pool, gender, event ) ).to eq( true )
+      expect( subject.add_record( mir, category, pool, gender, event ) ).to eq( true )
+      expect( subject.add_record( create( :meeting_individual_result ), category, pool, gender, event ) ).to eq( true )
+      expect( subject.records.size ).to be > record_num
     end
     it "adds an element of RecordElement type" do
       expect( subject.records.size ).to eq( 0 )

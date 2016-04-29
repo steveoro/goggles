@@ -136,4 +136,75 @@ class TeamBestFinder
       team.meeting_individual_results.is_not_disqualified.for_gender_type(gender_type).for_pool_type(pool_type).for_event_type(event_type).for_category_code(category_code).sort_by_timing.first :
       nil
   end
+  
+  # Cycle between distinct categories to find out team bests
+  # Team bests found should be rearranged for category split&merge operation
+  # Returns a RecordX4dDAO with a RecordElement for each 
+  # pool type, gender type, event type and distinct category
+  # with at least one not disqualified result
+  #
+  def scan_for_distinct_bests
+    team_distinct_best = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
+
+    # Cycle between set genders, pools, events and distinct categories
+    @gender_types.each do |gender_type|
+      @pool_types.each do |pool_type|
+        @event_types.each do |event_type|
+          @distinct_categories.each do |category_code|
+            record = get_team_best_individual_result( gender_type, pool_type, event_type, category_code )
+            if record
+              team_distinct_best.add_record( record )
+            end
+          end
+        end
+      end
+    end
+
+    team_distinct_best
+  end
+  
+  def bencha
+    def random1
+      rand_id = rand(Team.count)
+      rand_record = Team.first(:conditions => [ "id >= ?", rand_id])
+    end
+    
+    def random2
+      if (c = Team.count) != 0
+        Team.find(:first, :offset =>rand(c))
+      end
+    end
+    
+    def random3
+      Team.find(Team.pluck(:id).sample)
+    end
+    
+    def random4
+      Team.all.sample
+    end
+    
+    def random5
+      Team.all[( rand * Team.count - 1).round(0)]
+    end
+    
+    def random6
+      Team.order('RAND()').first
+    end
+    
+    def random7
+      Team.all.sort{ rand - 0.5 }[0]
+    end
+    
+    n = 10
+    Benchmark.bm(7) do |x|
+      x.report("next id:")  { n.times {|i| random1 } }
+      x.report("offset :")  { n.times {|i| random2 } }
+      x.report("pluck  :")  { n.times {|i| random3 } }
+      x.report("sample :")  { n.times {|i| random4 } }
+      x.report("rand   :")  { n.times {|i| random5 } }
+      x.report("sort   :")  { n.times {|i| random6 } }
+      x.report("steve  :")  { n.times {|i| random7 } }
+    end
+  end
+
 end

@@ -23,14 +23,12 @@ FactoryGirl.define do
     data_import_meeting_session_id nil
     meeting_session
     event_type do
-      EventsByPoolType.only_for_meetings
-        .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
-        .event_type
+      EventsByPoolType.only_for_meetings.for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).order('RAND()').first.event_type
     end
     category_type do                                # Get a coherent category according to the meeting_event:
       event_type.is_a_relay ?
-      CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] :
-      CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+        CategoryType.is_valid.only_relays.order('RAND()').first :
+        CategoryType.is_valid.are_not_relays.order('RAND()').first
     end
     minutes                   { ((rand * 2) % 2).to_i }
     seconds                   { ((rand * 60) % 60).to_i }
@@ -48,11 +46,10 @@ FactoryGirl.define do
       event_type do
         EventsByPoolType.only_for_meetings
           .not_relays
-          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
-          .event_type
+          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).order('RAND()').first.event_type
       end
       category_type do                              # Get a coherent category according to the meeting_event:
-        CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+        CategoryType.is_valid.are_not_relays.order('RAND()').first
       end
     end
 
@@ -60,11 +57,10 @@ FactoryGirl.define do
       event_type do
         EventsByPoolType.only_for_meetings
           .are_relays
-          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
-          .event_type
+          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).order('RAND()').first.event_type
       end
       category_type do                              # Get a coherent category according to the meeting_event:
-        CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0]
+        CategoryType.is_valid.only_relays.order('RAND()').first
       end
     end
   end
@@ -77,8 +73,8 @@ FactoryGirl.define do
     meeting_event
     category_type do                                # Get a coherent category according to the meeting_event:
       meeting_event.event_type.is_a_relay ?
-      CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] :
-      CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0]
+        CategoryType.is_valid.only_relays.order('RAND()').first :
+        CategoryType.is_valid.are_not_relays.order('RAND()').first
     end
     pool_type                 { meeting_event.meeting_session.swimming_pool.pool_type }
 
@@ -91,16 +87,16 @@ FactoryGirl.define do
 
     # This should yield only valid MeetingProgram rows, for individual results (not relays):
     factory :meeting_program_individual do
-      pool_type               { PoolType.only_for_meetings{ rand - 0.5 }[0] }
+      pool_type               { PoolType.only_for_meetings.sample }
       meeting_event           { create( :meeting_event_individual ) }
-      category_type           { CategoryType.is_valid.are_not_relays.sort{ rand - 0.5 }[0] }
+      category_type           { CategoryType.is_valid.are_not_relays.order('RAND()').first }
     end
 
     # This should yield only valid MeetingProgram rows, for relay results (not individual):
     factory :meeting_program_relay do
-      pool_type               { PoolType.only_for_meetings{ rand - 0.5 }[0] }
+      pool_type               { PoolType.only_for_meetings.sample }
       meeting_event           { create( :meeting_event_relay ) }
-      category_type           { CategoryType.is_valid.only_relays.sort{ rand - 0.5 }[0] }
+      category_type           { CategoryType.is_valid.only_relays.order('RAND()').first }
     end
   end
   #-- -------------------------------------------------------------------------

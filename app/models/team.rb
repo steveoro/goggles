@@ -50,7 +50,7 @@ class Team < ActiveRecord::Base
   scope :sort_by_name,      ->(dir) { order("teams.name #{dir.to_s}") }
 
   scope :has_results,       ->      { where("EXISTS(SELECT 1 from meeting_individual_results where not is_disqualified and team_id = teams.id)") }
-  scope :has_many_results,  ->(how_many=100) { where(["(SELECT count(id) from meeting_individual_results where not is_disqualified and team_id = teams.id) > ?", how_many]) }
+  scope :has_many_results,  ->(how_many=20) { where(["(SELECT count(id) from meeting_individual_results where not is_disqualified and team_id = teams.id) > ?", how_many]) }
 
   delegate :name, to: :user, prefix: true
 

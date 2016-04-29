@@ -11,11 +11,9 @@ FactoryGirl.define do
     meeting_session
     event_type_id do                                # This will include also relays
       EventsByPoolType.only_for_meetings
-        .for_pool_type_code( meeting_session.swimming_pool.pool_type.code )
-        .sort{ rand - 0.5 }[0]
-        .event_type_id
+        .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).order('RAND()').first.event_type_id
     end
-    heat_type                 { HeatType.all.sort{ rand - 0.5 }[0] }
+    heat_type                 { HeatType.all.sample }
     user
   end
   #-- -------------------------------------------------------------------------
@@ -35,20 +33,17 @@ FactoryGirl.define do
     # This should yield only valid MeetingEvent rows, for individual results (not relays):
     factory :meeting_event_individual do
       event_type do
-        EventsByPoolType.only_for_meetings
-          .not_relays
-          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
-          .event_type
+        EventsByPoolType.only_for_meetings.not_relays
+          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code )
+          .distance_more_than(50).distance_less_than(1500).order('RAND()').first.event_type
       end
     end
 
     # This should yield only valid MeetingEvent rows, for relay results (not individual):
     factory :meeting_event_relay do
       event_type do
-        EventsByPoolType.only_for_meetings
-          .are_relays
-          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ){ rand - 0.5 }[0]
-          .event_type
+        EventsByPoolType.only_for_meetings.are_relays
+          .for_pool_type_code( meeting_session.swimming_pool.pool_type.code ).order('RAND()').first.event_type
       end
     end
   end

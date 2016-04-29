@@ -130,11 +130,12 @@ class RecordX4dDAO
       gender_code = meeting_individual_result.gender_type.code if !gender_code 
       event_code = meeting_individual_result.event_type.code if !event_code
       
-      # TODO Manage scenarios with records already present
+      # TODO Eventually manage scenarios with records already present
       # - Should be an error (consider only the best) 
-      # - Should be a pair (same time swam in different results)
+      # - Should be a pair (same time swam in different results). In this case should review get methods too
       new_record = RecordElementDAO.new( pool_code, gender_code, event_code, category_code, meeting_individual_result )
       if new_record
+        delete_record( pool_code, gender_code, event_code, category_code )
         @records << new_record
         added = true
       end
