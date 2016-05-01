@@ -207,7 +207,8 @@ DESC
     season.meetings.has_not_results.sort_by_date.each do |meeting|
       if ! past || ! meeting.meeting_date_to_iso || meeting.meeting_date_to_iso <= DateTime.now.strftime( '%Y%m%d' ) 
         meeting_found += 1
-        logger.info( "\r\n#{meeting.id} - #{meeting.get_meeting_date} #{meeting.get_full_name} (#{meeting.code}) #{meeting.meeting_individual_results.count if meeting.meeting_individual_results.count > 0} -> #{meeting.get_data_import_file_name}\r\n" )
+        pool_type = meeting.get_pool_type
+        logger.info( "\r\n#{meeting.id} - #{meeting.get_meeting_date} #{meeting.get_full_name} (#{meeting.code}) #{pool_type.code if pool_type} #{meeting.meeting_individual_results.count if meeting.meeting_individual_results.count > 0} -> #{meeting.get_data_import_file_name}\r\n" )
 
         meeting_row = '' 
         meeting_row += "#{meeting.id};"

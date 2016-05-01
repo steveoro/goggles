@@ -270,7 +270,7 @@ class Meeting < ActiveRecord::Base
   # for this meeting.
   #
   def get_pool_type
-    self.meeting_sessions.sort_by_order.first.swimming_pool.pool_type if self.meeting_sessions.count > 0 
+    self.meeting_sessions.sort_by_order.first.swimming_pool.pool_type if self.meeting_sessions.count > 0 && self.meeting_sessions.sort_by_order.first.swimming_pool 
   end
   # ----------------------------------------------------------------------------
 
