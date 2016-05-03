@@ -7,8 +7,8 @@ describe GoggleCupScoreCalculator, type: :strategy do
     @fix_swimmer    = create(:swimmer)
 
     # Data forced from seeds
-    @fix_pool_type  = PoolType.only_for_meetings[ ((rand * 100) % PoolType.only_for_meetings.count).to_i ]
-    @fix_event_type = EventType.are_not_relays[ ((rand * 100) % EventType.are_not_relays.count).to_i ]
+    @fix_pool_type  = PoolType.only_for_meetings.sample
+    @fix_event_type = EventType.are_not_relays.order('RAND()').first
   end
 
   context "with requested parameters" do

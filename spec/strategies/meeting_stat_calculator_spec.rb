@@ -43,13 +43,13 @@ describe MeetingStatCalculator, :type => :model do
     @meets_with_std_relays = [14216, 15216, 14201, 15201]
   end
 
-  let( :meeting )                   { Meeting.find( @seeded_meets.at( (rand * @seeded_meets.size).to_i ) ) }
-  let( :csi_meeting )               { Meeting.find( @csi_meets.at( (rand * @csi_meets.size).to_i ) ) }
-  let( :meet_with_entries )         { Meeting.find( @meets_with_entries.at( ( rand * @meets_with_entries.size ).to_i ) ) }
-  let( :meet_without_entries )      { Meeting.find( @meets_without_entries.at( ( rand * @meets_without_entries.size ).to_i ) ) }
-  let( :meet_with_standard_points ) { Meeting.find( @meets_with_standard_points.at( ( rand * @meets_with_standard_points.size ).to_i ) ) }
-  let( :meet_without_relays )       { Meeting.find( @meets_without_relays.at( ( rand * @meets_without_relays.size ).to_i ) ) }
-  let( :meet_with_std_relays )          { Meeting.find( @meets_with_std_relays.at( ( rand * @meets_with_std_relays.size ).to_i ) ) }
+  let( :meeting )                   { Meeting.find( @seeded_meets.sample ) }
+  let( :csi_meeting )               { Meeting.find( @csi_meets.sample ) }
+  let( :meet_with_entries )         { Meeting.find( @meets_with_entries.sample ) }
+  let( :meet_without_entries )      { Meeting.find( @meets_without_entries.sample ) }
+  let( :meet_with_standard_points ) { Meeting.find( @meets_with_standard_points.sample ) }
+  let( :meet_without_relays )       { Meeting.find( @meets_without_relays.sample ) }
+  let( :meet_with_std_relays )      { Meeting.find( @meets_with_std_relays.sample ) }
 
   subject { MeetingStatCalculator.new( meeting ) }
 

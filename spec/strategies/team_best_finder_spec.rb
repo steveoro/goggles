@@ -45,7 +45,9 @@ describe TeamBestFinder, type: :strategy do
       :get_category_to_split_into,
       :has_individual_result?,
       :get_team_best_individual_result,
-      :scan_for_distinct_bests
+      :scan_for_distinct_bests,
+      :get_categories_to_split,
+      :split_categories
     ] )
 
     describe "#parameters," do
@@ -336,12 +338,10 @@ describe TeamBestFinder, type: :strategy do
     # because the team considered can have many results  
     before( :each ) do
       @new_team = create( :team )
-      (1..result_num).each do
-        create( :meeting_individual_result, team: @new_team )
-      end
+      create_list( :meeting_individual_result, result_num, team: @new_team )
       @new_tbf = TeamBestFinder.new( @new_team )
       @new_team.meeting_individual_results.is_not_disqualified.each do |mir|
-        @new_tbf.distinct_categories << mir.category_type.code if ! @new_tbf.distinct_categories.rindex( mir.category_type.code )
+        @new_tbf.distinct_categories << mir.category_type if ! @new_tbf.distinct_categories.rindex( mir.category_type.code )
       end
       expect( @new_tbf.distinct_categories.size ).to be > 0
     end
@@ -356,9 +356,54 @@ describe TeamBestFinder, type: :strategy do
       expect( records ).to be_an_instance_of( RecordX4dDAO )
       @new_team.meeting_individual_results.is_not_disqualified.each do |mir|
         # DEBUG
-        puts "\n\r#{mir.pool_type.code} - #{mir.gender_type.code} - #{mir.event_type.code} - #{mir.category_type.code}"
+        #puts "\n\r#{mir.pool_type.code} - #{mir.gender_type.code} - #{mir.event_type.code} - #{mir.category_type.code}"
         # DEBUG
         expect( records.has_record_for?( mir.pool_type.code, mir.gender_type.code, mir.event_type.code, mir.category_type.code ) ).to be >= 0
+      end
+    end
+  end
+  #-- -----------------------------------------------------------------------
+
+  describe "#get_categories_to_split," do
+    it "returns an array" do
+      expect( subject.get_categories_to_split ).to be_a_kind_of( Array )
+    end
+    it "returns an array of category types" do
+      expect( subject.get_categories_to_split ).to all( be_an_instance_of( CategoryType ) )
+    end
+    it "returns an array of category types that needs to splitted" do
+      categories_to_split = subject.get_categories_to_split
+      categories_to_split.each do |category_type|
+        expect( subject.category_needs_split?( category_type ) ).to be true
+      end
+    end
+  end
+  #-- -----------------------------------------------------------------------
+
+  describe "#split_categories," do
+    # Those specs should be very slow using real data
+    # because the team considered can have many results  
+    before( :each ) do
+      @new_team = create( :team )
+      create_list( :meeting_individual_result, result_num, team: @new_team )
+      @new_tbf = TeamBestFinder.new( @new_team )
+      @new_team.meeting_individual_results.is_not_disqualified.each do |mir|
+        @new_tbf.distinct_categories << mir.category_type if ! @new_tbf.distinct_categories.rindex( mir.category_type.code )
+      end
+      expect( @new_tbf.distinct_categories.size ).to be > 0
+      @x4d_records = @new_tbf.scan_for_distinct_bests
+    end
+
+    it "returns a RecordX4dDAO instance not greater than given one" do
+      splitted_records = @new_tbf.split_categories( @x4d_records )
+      expect( splitted_records ).to be_an_instance_of( RecordX4dDAO )
+      expect( splitted_records.record_count ).to be <= @x4d_records.record_count
+    end
+    it "returns a RecordX4dDAO instance without category to split" do
+      if @new_tbf.distinct_categories.rindex{ |e| e.code == '50S' }
+        expect( @x4d_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be >= 0
+        splitted_records = @new_tbf.split_categories( @x4d_records )
+        expect( splitted_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be nil
       end
     end
   end

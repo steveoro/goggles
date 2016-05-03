@@ -13,10 +13,10 @@ describe GoggleCupStandardFinder, type: :strategy do
     # To test randomly should create:
     # A team with swimmers (badges) withe results swam before the goggle cup
     #
-    #let(:@active_team)    { SeasonType.find_by_code('MASCSI').seasons.is_ended.sort{ rand - 0.5 }[0].teams.uniq.sort{ rand - 0.5 }[0] }
+    #let(:@active_team)    { SeasonType.find_by_code('MASCSI').seasons.is_ended.order('RAND()').first.teams.uniq.order('RAND()').first }
     #let(:@goggle_cup)     { create( :@goggle_cup, season_year: Date.today.year, team: @active_team ) }
-    #let(:@goggle_cup)     { GoggleCup.for_team( @active_team ).is_closed_now.sort{ rand - 0.5 }[0] }
-    #let(:@active_swimmer) { @goggle_cup.swimmers.has_results.uniq.sort{ rand - 0.5 }[0] }
+    #let(:@goggle_cup)     { GoggleCup.for_team( @active_team ).is_closed_now.order('RAND()').first }
+    #let(:@active_swimmer) { @goggle_cup.swimmers.has_results.uniq.order('RAND()').first }
     #let( :team )    { create(:team) }
     #let( :badge )   { create( :badge, team: team ) }
     #let( :swimmer ) { badge.swimmer }
@@ -72,7 +72,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         expect( @subject.oldest_swimmer_result( @active_swimmer ) ).to be_an_instance_of( Date )
       end
       it "returns a date not greater than other one of swimmer results" do
-        expect( @subject.oldest_swimmer_result( @active_swimmer ) ).to be <= @active_swimmer.meeting_individual_results.sort{ rand - 0.5 }[0].get_scheduled_date
+        expect( @subject.oldest_swimmer_result( @active_swimmer ) ).to be <= @active_swimmer.meeting_individual_results.order('RAND()').first.get_scheduled_date
       end
       it "returns tomorrow date if not swam results" do
         new_swimmer = create( :swimmer )
@@ -172,8 +172,7 @@ describe GoggleCupStandardFinder, type: :strategy do
         @subject.delete_goggle_cup_standards
         expect( @subject.sql_diff_text_log.size ).to be > previous_size
       end
-# FIXME THIS FAILS:
-      xit "deletes all associated goggle cup standard times" do
+      it "deletes all associated goggle cup standard times" do
         expect( @subject.goggle_cup.goggle_cup_standards.count ).to be > 0
         expect( @goggle_cup.goggle_cup_standards.count ).to be > 0
         @subject.delete_goggle_cup_standards

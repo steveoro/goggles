@@ -150,8 +150,8 @@ class TeamBestFinder
     @gender_types.each do |gender_type|
       @pool_types.each do |pool_type|
         @event_types.each do |event_type|
-          @distinct_categories.each do |category_code|
-            record = get_team_best_individual_result( gender_type, pool_type, event_type, category_code )
+          @distinct_categories.each do |category_type|
+            record = get_team_best_individual_result( gender_type, pool_type, event_type, category_type.code )
             if record
               team_distinct_best.add_record( record )
             end
@@ -162,49 +162,65 @@ class TeamBestFinder
 
     team_distinct_best
   end
-  
-  def bencha
-    def random1
-      rand_id = rand(Team.count)
-      rand_record = Team.first(:conditions => [ "id >= ?", rand_id])
+
+  # Category split definition
+  # Check out categories which needs to be splitted
+  # and associates with target category
+  # 
+  # Return an array with categories to split
+  #
+  def get_categories_to_split
+    categories_to_split = []
+    @distinct_categories.each do |category_type|
+      if category_needs_split?( category_type )
+        categories_to_split << category_type
+      end
     end
-    
-    def random2
-      if (c = Team.count) != 0
-        Team.find(:first, :offset =>rand(c))
+    categories_to_split
+  end
+
+  # Split category records for grouped category
+  # Cycle beetween distinct categories and suppress category
+  # that needs to be splitted checking best records
+  # with split destination category one
+  #
+  def split_categories( team_distinct_best )
+    # Verify there are some categories thjat needs to be splitted
+    category_to_split = get_categories_to_split.map{ |category_type| category_type.code }
+    if category_to_split.size > 0
+      # Scan team records searching for those with categories that needs split
+      records_to_split = team_distinct_best.records.select{ |record| category_to_split.rindex( record.get_category_type ) }
+      if records_to_split.size > 0
+        # DEBUG
+        puts "\r\nFind #{records_to_split.size} to split"
+        puts records_to_split.inspect
+        # DEBUG
+        
+        # Split records
+        # Finds taregt category
+        # Check if for target category a record is already present
+        # If present choses the better one
+        records_to_split.each do |record_to_split|
+          record      = record_to_split.get_record_instance
+          pool_code   = record_to_split.get_pool_type
+          gender_code = record_to_split.get_gender_type
+          event_code  = record_to_split.get_event_type
+          target_category_code = get_category_to_split_into( record )
+          if team_distinct_best.has_record_for?( pool_code, gender_code, event_code, target_category_code )
+            if record.get_timing_instance < team_distinct_best.get_record_instance( pool_code, gender_code, event_code, target_category_code ).get_timing_instance
+              # Update previous target record
+              team_distinct_best.delete_record( pool_code, gender_code, event_code, target_category_code ) 
+              team_distinct_best.add_record( record, target_category_code, pool_code, gender_code, event_code ) 
+            end
+          else
+            # Creates new record
+            team_distinct_best.add_record( record, target_category_code, pool_code, gender_code, event_code ) 
+          end
+          team_distinct_best.delete_record( pool_code, gender_code, event_code, record_to_split.get_category_type ) 
+        end
       end
     end
     
-    def random3
-      Team.find(Team.pluck(:id).sample)
-    end
-    
-    def random4
-      Team.all.sample
-    end
-    
-    def random5
-      Team.all[( rand * Team.count - 1).round(0)]
-    end
-    
-    def random6
-      Team.order('RAND()').first
-    end
-    
-    def random7
-      Team.all.sort{ rand - 0.5 }[0]
-    end
-    
-    n = 10
-    Benchmark.bm(7) do |x|
-      x.report("next id:")  { n.times {|i| random1 } }
-      x.report("offset :")  { n.times {|i| random2 } }
-      x.report("pluck  :")  { n.times {|i| random3 } }
-      x.report("sample :")  { n.times {|i| random4 } }
-      x.report("rand   :")  { n.times {|i| random5 } }
-      x.report("sort   :")  { n.times {|i| random6 } }
-      x.report("steve  :")  { n.times {|i| random7 } }
-    end
+    team_distinct_best
   end
-
 end

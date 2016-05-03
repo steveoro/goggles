@@ -10,6 +10,7 @@ describe BalancedMeetingScoreCalculator, type: :strategy do
 #  let(:meeting) { season.meetings.has_results.last } # .all.sort{ rand - 0.5 }[0] }
   let(:meeting) { season.meetings.has_results.all.to_ary[0..4].sort{ rand - 0.5 }[0] }
 
+
   context "with requested parameters" do
     subject { BalancedMeetingScoreCalculator.new( meeting ) }
 
@@ -51,7 +52,7 @@ describe BalancedMeetingScoreCalculator, type: :strategy do
         meeting_team_scores.each do |meeting_team_score|
           consolided_one = meeting.meeting_team_scores.where(['meeting_team_scores.team_id = ?', meeting_team_score.team_id]).first
 # DEBUG
-          puts "- Team: #{meeting_team_score.team.get_full_name}"
+#          puts "- Team: #{meeting_team_score.team.get_full_name}"
           expect( meeting_team_score.rank ).to be == consolided_one.rank
           expect( meeting_team_score.meeting_individual_points.to_f ).to be == consolided_one.meeting_individual_points.to_f
           expect( meeting_team_score.meeting_relay_points.to_f ).to be == consolided_one.meeting_relay_points.to_f
