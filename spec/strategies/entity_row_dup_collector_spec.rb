@@ -48,11 +48,11 @@ describe EntityRowDupCollector, type: :strategy do
 =begin
         As of 2015-01-29, the fixture data contains:
 
-        CategoryType.where( age_begin: 20).where('season_id < 145').count
+        CategoryType.where( age_end: 24).where('season_id < 145').count
         => 40
-        CategoryType.where( age_begin: 20).where('season_id < 145').where(code: 'M20').count
+        CategoryType.where( age_end: 24).where('season_id < 145').where(code: 'M20').count
         => 13
-        CategoryType.where( age_begin: 20).where('season_id < 145').where(code: 'U25').count
+        CategoryType.where( age_end: 24).where('season_id < 145').where(code: 'U25').count
         => 27
 =end
         @season_1 = SeasonFactoryTools.get_season_with_full_categories()
@@ -61,8 +61,8 @@ describe EntityRowDupCollector, type: :strategy do
         @subject = EntityRowDupCollector.new( CategoryType )
         @subject.process(
           # param.  lambda filter:
-          20,       ->(age) { where( age_begin: age).where('season_id < 145') }, # source (min 40, 13 dups)
-          20,       ->(age) { where( age_begin: age).where('season_id < 145').where(code: 'M20') }, # dest. (min 13)
+          24,       ->(age) { where( age_end: age).where('season_id < 145') }, # source (min 40, 13 dups)
+          24,       ->(age) { where( age_end: age).where('season_id < 145').where(code: 'M20') }, # dest. (min 13)
         ) do |src_row, dest_row|
           (src_row.code == dest_row.code)         # equality check block
         end
